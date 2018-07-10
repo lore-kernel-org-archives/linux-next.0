@@ -1,83 +1,90 @@
-From: Petr Mladek <pmladek@suse.com>
-Subject: Re: linux-next: build warning after merge of the printk tree
-Date: Tue, 10 Jul 2018 11:19:09 +0200
-Message-ID: <20180710091909.rwgtahcew6grhd6n@pathway.suse.cz>
-References: <20180710164514.22c552db@canb.auug.org.au>
- <CGME20180710064527epcas1p16fd9ad765711d69264b3251890bbcc2e@epcms5p5>
- <2014348883.271177.1531206974788.JavaMail.jboss@ep1ml503>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] watchdog/softlockup: Fix SOFTLOCKUP_DETECTOR=n build
+Date: Tue, 10 Jul 2018 13:42:10 +0200
+Message-ID: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
+References: <1531129883.6480.7.camel@abdul.in.ibm.com>
+ <20180709114716.GN2476@hirez.programming.kicks-ass.net>
+ <1531159814.6480.11.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2014348883.271177.1531206974788.JavaMail.jboss@ep1ml503>
+In-Reply-To: <1531159814.6480.11.camel@abdul.in.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maninder Singh <maninder1.s@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vaneet Narang <v.narang@samsung.com>, PANKAJ MISHRA <pankaj.m@samsung.com>
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, stephen Rothwell <sfr@canb.auug.org.au>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue 2018-07-10 12:46:14, Maninder Singh wrote:
-> Hi Petr,
->  
-> > Hi all,
->  
-> > After merging the printk tree, today's linux-next build (x86_64
-> > allnoconfig) produced this warning:
->  
-> > kernel/printk/printk.c:2033:13: warning: 'suppress_message_printing' defined but not used [-Wunused-function]
-> > static bool suppress_message_printing(int level) { return false; }
->              ^~~~~~~~~~~~~~~~~~~~~~~~~
->  
-> seems there is no user for suppress_message_printing when CONFIG_PRINTK is disabled,
-> because earlier it was getting used in console_unlock and now we shifted this into vprintk_emit
-> which will be disabled on disabling CONFIG_PRINTk.
+On Mon, Jul 09, 2018 at 11:40:14PM +0530, Abdul Haleem wrote:
+
+> Thanks Peter for the patch, build and boot is fine.
 > 
-> should we remove this defination when CONFIG_PRINTK is disabled ?
-> 
-> > Introduced by commit
-> >  375899cddcbb ("printk: make sure to print log on console.")
+> Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 
-Grr, I wonder how I missed it. I usually try build with CONFIG_PRINTK
-disabled.
+Excellent, Ingo can you stick this in?
 
-Anyway, I have just pushed the following patch into printk.git,
-branch for-4.19:
-
-
->From 7b83946e61a1e4a080d48c24396aeb18b6366203 Mon Sep 17 00:00:00 2001
-From: Petr Mladek <pmladek@suse.com>
-Date: Tue, 10 Jul 2018 10:44:53 +0200
-Subject: [PATCH] printk: Fix warning about unused suppress_message_printing
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-suppress_message_printing() is not longer called in console_unlock().
-Therefore it is not longer needed with disabled CONFIG_PRINTK.
-
-This fixes the warning:
-
-kernel/printk/printk.c:2033:13: warning: ‘suppress_message_printing’ defined but not used [-Wunused-function]
- static bool suppress_message_printing(int level) { return false; }
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Suggested-by: Maninder Singh <maninder1.s@samsung.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/printk/printk.c | 1 -
- 1 file changed, 1 deletion(-)
+Subject: watchdog/softlockup: Fix SOFTLOCKUP_DETECTOR=n build
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Mon, 9 Jul 2018 13:47:16 +0200
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index fcc1992c040a..e2cb0fc18e2d 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2021,7 +2021,6 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
- 				 const char *text, size_t len) {}
- static size_t msg_print_text(const struct printk_log *msg,
- 			     bool syslog, char *buf, size_t size) { return 0; }
--static bool suppress_message_printing(int level) { return false; }
+I got confused by all the various CONFIG options here about and
+conflated CONFIG_LOCKUP_DETECTOR and CONFIG_SOFTLOCKUP_DETECTOR. This
+results in a build failure for:
+
+   CONFIG_LOCKUP_DETECTOR=y && CONFIG_SOFTLOCKUP_DETECTOR=n
+
+As reported by Abdul.
+
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>
+Cc: mpe <mpe@ellerman.id.au>
+Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Fixes: 9cf57731b63e ("watchdog/softlockup: Replace "watchdog/%u" threads with cpu_stop_work")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180709114716.GN2476@hirez.programming.kicks-ass.net
+---
+ include/linux/nmi.h |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -33,15 +33,10 @@ extern int sysctl_hardlockup_all_cpu_bac
+ #define sysctl_hardlockup_all_cpu_backtrace 0
+ #endif /* !CONFIG_SMP */
  
- #endif /* CONFIG_PRINTK */
+-extern int lockup_detector_online_cpu(unsigned int cpu);
+-extern int lockup_detector_offline_cpu(unsigned int cpu);
+-
+ #else /* CONFIG_LOCKUP_DETECTOR */
+ static inline void lockup_detector_init(void) { }
+ static inline void lockup_detector_soft_poweroff(void) { }
+ static inline void lockup_detector_cleanup(void) { }
+-#define lockup_detector_online_cpu	NULL
+-#define lockup_detector_offline_cpu	NULL
+ #endif /* !CONFIG_LOCKUP_DETECTOR */
  
--- 
-2.13.7
+ #ifdef CONFIG_SOFTLOCKUP_DETECTOR
+@@ -50,12 +45,18 @@ extern void touch_softlockup_watchdog(vo
+ extern void touch_softlockup_watchdog_sync(void);
+ extern void touch_all_softlockup_watchdogs(void);
+ extern unsigned int  softlockup_panic;
+-#else
++
++extern int lockup_detector_online_cpu(unsigned int cpu);
++extern int lockup_detector_offline_cpu(unsigned int cpu);
++#else /* CONFIG_SOFTLOCKUP_DETECTOR */
+ static inline void touch_softlockup_watchdog_sched(void) { }
+ static inline void touch_softlockup_watchdog(void) { }
+ static inline void touch_softlockup_watchdog_sync(void) { }
+ static inline void touch_all_softlockup_watchdogs(void) { }
+-#endif
++
++#define lockup_detector_online_cpu	NULL
++#define lockup_detector_offline_cpu	NULL
++#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK
+ void reset_hung_task_detector(void);
