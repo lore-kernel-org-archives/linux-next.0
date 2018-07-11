@@ -1,62 +1,48 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Boot failures with
- "mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER" on powerpc (was
- Re: mmotm 2018-07-10-16-50 uploaded)
-Date: Wed, 11 Jul 2018 14:13:44 -0700
-Message-ID: <20180711141344.10eb6d22b0ee1423cc94faf8@linux-foundation.org>
-References: <20180710235044.vjlRV%akpm@linux-foundation.org>
-        <87lgai9bt5.fsf@concordia.ellerman.id.au>
-        <20180711133737.GA29573@techadventures.net>
-        <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the arm-current
+ tree
+Date: Thu, 12 Jul 2018 07:38:03 +1000
+Message-ID: <20180712073803.7bfbbf1a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/S18ASbJq5AhJJQY+gXEoyhf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: osalvador@techadventures.net, mpe@ellerman.id.au, broonie@kernel.org, mhocko@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, bhe@redhat.com, aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com
+To: Russell King <rmk@armlinux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 11 Jul 2018 09:55:59 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+--Sig_/S18ASbJq5AhJJQY+gXEoyhf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Jul 11, 2018 at 9:37 AM Oscar Salvador
-> <osalvador@techadventures.net> wrote:
-> >
-> > On Wed, Jul 11, 2018 at 10:49:58PM +1000, Michael Ellerman wrote:
-> > > akpm@linux-foundation.org writes:
-> > > > The mm-of-the-moment snapshot 2018-07-10-16-50 has been uploaded to
-> > > >
-> > > >    http://www.ozlabs.org/~akpm/mmotm/
-> > > ...
-> > >
-> > > > * mm-sparse-add-a-static-variable-nr_present_sections.patch
-> > > > * mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
-> > > > * mm-sparsemem-defer-the-ms-section_mem_map-clearing-fix.patch
-> > > > * mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
-> > > > * mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
-> > > > * mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes.patch
-> > >
-> > > > * mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch
-> > >
-> > > This seems to be breaking my powerpc pseries qemu boots.
-> > >
-> > > The boot log with some extra debug shows eg:
-> > >
-> > >   $ make pseries_le_defconfig
-> >
-> > Could you please share the config?
-> > I was not able to find such config in the kernel tree.
+Hi Russell,
 
-(top-posting repaired so I can reply to your email, add other people
-and not confuse the heck out of them.  Please don't)
+Commit
 
-> I am OK, if this patch is removed from Baoquan's series. But, I would
-> still like to get rid of CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER, I
-> can work on this in my sparse_init re-write series. ppc64 should
-> really fallback safely to small chunks allocs, and if it does not
-> there is some existing bug. Michael please send the config that you
-> used.
+  6ef09e48c2bc ("ARM: 8780/1: ftrace: Only set kernel memory back to read-o=
+nly after boot")
 
-OK, I shall drop
-mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch for now.
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/S18ASbJq5AhJJQY+gXEoyhf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltGeLsACgkQAVBC80lX
+0Gwb0gf8C53qWdofWVadKuo/2cgMEfk/tnIB0yNrBRJiRBSSmQ5F2j19ShOE4jxo
+XwOnAzaRA/mD8eBS1p1HluuFalBogBW6KpdjwOcSxVNIBcugOefIfO94aLIC/R/t
+JfiKhZjqjJEu7DHINqN7gg+FSm0IwvGVP0Qsl/lA3E3JRWfewxARXYeKbG9sM4xB
+n9TujU4KHoF8gQshHEn8Xy/DhxOoQr6nS/roS35uNNvqO3E13FBKFwW1hkJVJ4Dh
+hFARUvHx372+A/RDIZdj3gWMyOLWbJ6VLnVvXotB6h4JgOmSaHmvwzUW6iSv8pvD
+gDxFudq4E1MTjsHvWm18CJiH9CXmHg==
+=+dcl
+-----END PGP SIGNATURE-----
+
+--Sig_/S18ASbJq5AhJJQY+gXEoyhf--
