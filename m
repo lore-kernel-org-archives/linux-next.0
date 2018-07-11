@@ -1,358 +1,192 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2018-07-10-16-50 uploaded
-Date: Tue, 10 Jul 2018 16:50:44 -0700
-Message-ID: <20180710235044.vjlRV%akpm@linux-foundation.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs tree
+Date: Wed, 11 Jul 2018 03:11:37 +0100
+Message-ID: <20180711021136.GN30522@ZenIV.linux.org.uk>
+References: <20180710101736.32d6cc6c@canb.auug.org.au>
+ <20180710150455.GK30522@ZenIV.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180710150455.GK30522@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-07-10-16-50 has been uploaded to
+On Tue, Jul 10, 2018 at 04:04:55PM +0100, Al Viro wrote:
+> First of all, I'm still not at all convinced that this "noaccount" thing is
+> sane, especially since path_open() is exported.  But that aside, __get_empty_filp()
+> needs to be shot, just for the name and calling conventions alone.
+> 
+> It gets a bullshit argument (bool account) *AND* does not get the argument it
+> does need.  Note that the first thing get_empty_filp() (now __get...) does
+> is
+>         const struct cred *cred = current_cred();
+> followed by
+>         f->f_cred = get_cred(cred);
+> 
+> Now look at path_open().  What happens to the cred argument it gets?  It goes
+> to do_dentry_open(), where it gets passed to security_file_open() and not
+> used by anything else.  In security_file_open() we have it passed to
+> 	ret = call_int_hook(file_open, 0, file, cred);
+> and there are three instances of ->file_open() - apparmor, selinux and tomoyo.
+> The last one ignores cred entirely; the other two do checks based on it,
+> but *all* of them leave file->f_cred as it was.
+> 
+> This is not a new crap.  It had been inherited from dentry_open(), which got it
+> from "CRED: Pass credentials through dentry_open()" back in 2008.  Note that
+> 	* among the callers of dentry_open() (20) and vfs_open() (2 more)
+> only these
+> fs/cachefiles/rdwr.c:913:       file = dentry_open(&path, O_RDWR | O_LARGEFILE, cache->cache_cred);
+> security/apparmor/file.c:695:   devnull = dentry_open(&aa_null, O_RDWR, cred);
+> security/selinux/hooks.c:2628:  devnull = dentry_open(&selinux_null, O_RDWR, cred);
+> get cred != current_cred().  Which helps masking the issue, but makes the
+> decision to add that argument (instead of a separate helper) rather dubious.
+> 	* overlayfs itself appears to *have* run into the problem, judging
+> by
+>         old_cred = ovl_override_creds(inode->i_sb);
+>         realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+>                              realinode, current_cred(), false);
+>         revert_creds(old_cred);
+> in there.
+> 
+> Folks, if you have to go to that kind of contortions, why not do it right?
+> 	* add static __alloc_file(cred), which would get cred pointer (and not
+> use current_cred() internally), allocated a file (without bothering with
+> nr_files) and returned it
+> 	* have alloc_empty_file(cred) that would do the song and dance
+> with nr_files (and used __alloc_file() internally).
+> 	* use that as a replacement for get_empty_filp() - path_openat() would
+> *probably* use current_cred() for argument, alloc_file() definitely would and
+> dentry_open() would pass its cred argument.
+> 	* in internal.h, static inline alloc_empty_file_noaccount(cred) would
+> use __alloc_file() and set FMODE_NOACCOUNT in case of success.
+> 	* do_dentry_open() loses the fucking cred argument - it should be in
+> file->f_cred.
+> 	* vfs_open() goes away - in your branch it's absolutely pointless.
+> 	* path_open() loses its 'account' argument - it's always false.
+> Uses alloc_empty_file_noaccount() to allocate the sucker.  And for fsck
+> sake, pass it the creds you want to use rather than playing that kind of
+> games with override/revert.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+FWIW, see vfs.git#work.open2 for part of that program.  I have not pulled
+the overlayfs stuff in, but doing the rest based at circa e9cf4c40af4c
+("fold put_filp() into fput()") is trivial.  Remains to be done out of the
+above:
+ 	* add static __alloc_file(cred), which would be basically
+alloc_empty_file() sans nr_files-related parts.  Make alloc_empty_file()
+call it for actual allocation.
+ 	* in internal.h, static inline alloc_empty_file_noaccount(cred) would
+use __alloc_file() and set FMODE_NOACCOUNT in case of success.
+	* path_open() loses its 'account' argument - it's always false.
+Uses alloc_empty_file_noaccount() to allocate the sucker.  And for fsck
+sake, pass it the creds you want to use rather than playing that kind of
+games with override/revert.
+	* (after the overlayfs changes to vfs_open()) vfs_open() goes away,
+expanded into callers.
 
-mmotm-readme.txt says
+Stuff currently in work.open2:
 
-README for mm-of-the-moment:
+Preparatory fixes (this cycle fodder):
+      drm_mode_create_lease_ioctl(): fix open-coded filp_clone_open()
+      cxl_getfile(): fix double-iput() on alloc_file() failures
+      ocxlflash_getfile(): fix double-iput() on alloc_file() failures
+More preparatory massage:
+      make get_empty_filp() to call file_free_rcu() directly
+      fold security_file_free() into file_free()
+      turn filp_clone_open() into inline wrapper for dentry_open()
+      create_pipe_files(): use fput() if allocation of the second file fails
+      make sure do_dentry_open() won't return positive as an error
+Providing the right ->f_cred:
+      pass creds to get_empty_filp(), make sure dentry_open() passes the right creds
+      get rid of cred argument of vfs_open() and do_dentry_open()
+      security_file_open(): lose cred argument
+      ->file_open(): lose cred argument
+Mirror the "do we need fput() or do we need put_filp()" in ->f_mode:
+      introduce FMODE_OPENED
+      fold put_filp() into fput()
+At that point we can start simplifying open-related paths, now that
+cleanups are a lot more uniform:
+      lift fput() on late failures into path_openat()
+      now we can fold open_check_o_direct() into do_dentry_open()
+      switch all remaining checks for FILE_OPENED to FMODE_OPENED
+Half of the reasons for ->atomic_open() 'opened' argument is gone, let's deal with
+the rest:
+      introduce FMODE_CREATED and switch to it
+      IMA: don't propagate opened through the entire thing
+      getting rid of 'opened' argument of ->atomic_open() - step 1
+      getting rid of 'opened' argument of ->atomic_open() - part 2
+      get rid of 'opened' argument of ->atomic_open() - part 3
+      get rid of 'opened' in path_openat() and the helpers downstream
+      ->atomic_open(): return 0 in all success cases
+      document ->atomic_open() changes
+      switch atomic_open() and lookup_open() to returning 0 in all success cases
+      kill FILE_{CREATED,OPENED}
+At that point we've got _much_ simpler ->atomic_open() calling conventions as well
+as the code using it.  Next part - alloc_file() calling conventions:
+      new wrapper: alloc_file_pseudo()
+      __shmem_file_setup(): reorder allocations
+      ... and switch shmem_file_setup() to alloc_file_pseudo()
+      cxl_getfile(): switch to alloc_file_pseudo()
+      ocxlflash_getfile(): switch to alloc_file_pseudo()
+      hugetlb_file_setup(): switch to alloc_file_pseudo()
+      anon_inode_getfile(): switch to alloc_file_pseudo()
+      create_pipe_files(): switch the first allocation to alloc_file_pseudo()
+      new helper: alloc_file_clone()
+      do_shmat(): grab shp->shm_file earlier, switch to alloc_file_clone()
+      make alloc_file() static
+      document alloc_file() changes
+And cleanups in pathname-resolving loops from better calling conventions
+for path_init()/link_path_walk():
+      make path_init() unconditionally paired with terminate_walk()
+      allow link_path_walk() to take ERR_PTR()
+      few more cleanups of link_path_walk() callers
 
-http://www.ozlabs.org/~akpm/mmotm/
+IMO the diffstat is not too bad -
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.18-rc4:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* mm-do-not-drop-unused-pages-when-userfaultd-is-running.patch
-* mm-fix-locked-field-in-proc-pid-smaps.patch
-* autofs-fix-slab-out-of-bounds-read-in-getname_kernel.patch
-* mm-allow-arch-to-supply-p_free_tlb-functions.patch
-* net-9p-clientc-put-refcount-of-trans_mod-in-error-case-in-parse_opts.patch
-* x86-purgatory-add-missing-force-to-makefile-target.patch
-* fs-elf-make-sure-to-page-align-bss-in-load_elf_library.patch
-* memblock-do-not-complain-about-top-down-allocations-for-memory_hotremove.patch
-* mm-do-not-bug_on-on-incorrect-lenght-in-__mm_populate.patch
-* kvm-mm-account-shadow-page-tables-to-kmemcg.patch
-* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
-* slub-track-number-of-slabs-irrespective-of-config_slub_debug.patch
-* kasan-only-select-slub_debug-with-sysfs=y.patch
-* checkpatch-fix-duplicate-invalid-vsprintf-pointer-extension-%pfoo-messages.patch
-* reiserfs-fix-buffer-overflow-with-long-warning-messages.patch
-* mm-fix-vma_is_anonymous-false-positives.patch
-* maintainers-update-e-mail-address.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* dax-remove-vm_mixedmap-for-fsdax-and-device-dax.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* spdxcheck-work-with-current-head-licenses-directory.patch
-* ntfs-dont-disable-interrupts-during-kmap_atomic.patch
-* ntfs-aops-remove-vla-usage.patch
-* ntfs-decompress-remove-vla-usage.patch
-* ntfs-mft-remove-vla-usage.patch
-* sh-make-use-of-for_each_node_by_type.patch
-* h8300-correct-signature-of-test_bit.patch
-* ocfs2-return-erofs-when-filesystem-becomes-read-only.patch
-* ocfs2-return-erofs-when-filesystem-becomes-read-only-checkpatch-fixes.patch
-* ocfs2-clean-up-some-unnecessary-code.patch
-* ocfs2-make-several-functions-and-variables-static-and-some-const.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* ocfs2-dlmglue-clean-up-timestamp-handling.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* fs-9p-adding-new-return-type-vm_fault_t.patch
-* net-9p-clientc-add-missing-n-at-the-end-of-p9_debug.patch
-* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
-* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
-* vfs-discard-attr_attr_flag.patch
-* vfs-simplify-seq_file-iteration-code-and-interface.patch
-* vfs-simplify-seq_file-iteration-code-and-interface-fix.patch
-  mm.patch
-* mm-convert-return-type-of-handle_mm_fault-caller-to-vm_fault_t.patch
-* mm-skip-invalid-pages-block-at-a-time-in-zero_resv_unresv.patch
-* thp-use-mm_file_counter-to-determine-update-which-rss-counter.patch
-* tools-modifying-page-types-to-include-shared-map-counts.patch
-* tools-modifying-page-types-to-include-shared-map-counts-checkpatch-fixes.patch
-* tools-modifying-page-types-to-include-shared-map-counts-fix.patch
-* tools-modifying-page-types-to-include-shared-map-counts-fix-checkpatch-fixes.patch
-* tools-adding-support-for-idle-page-tracking-to-tool.patch
-* tools-adding-support-for-idle-page-tracking-to-tool-fix.patch
-* tools-adding-support-for-idle-page-tracking-to-tool-fix-2.patch
-* mm-page_alloc-actually-ignore-mempolicies-for-high-priority-allocations.patch
-* shmem-use-monotonic-time-for-i_generation.patch
-* mm-page_ext-drop-definition-of-unused-page_ext_debug_poison.patch
-* mm-page_ext-constify-lookup_page_ext-argument.patch
-* mm-condense-scan_control.patch
-* mm-mempool-remove-unused-argument-in-kasan_unpoison_element-and-remove_element.patch
-* mm-thp-register-mm-for-khugepaged-when-merging-vma-for-shmem-v3.patch
-* mm-thp-inc-counter-for-collapsed-shmem-thp.patch
-* mpage-add-argument-structure-for-do_mpage_readpage.patch
-* mpage-mpage_readpages-should-submit-io-as-read-ahead.patch
-* btrfs-readpages-should-submit-io-as-read-ahead.patch
-* ext4-readpages-should-submit-io-as-read-ahead.patch
-* mm-clear_huge_page-move-order-algorithm-into-a-separate-function.patch
-* mm-huge-page-copy-target-sub-page-last-when-copy-huge-page.patch
-* mm-hugetlbfs-rename-address-to-haddr-in-hugetlb_cow.patch
-* mm-hugetlbfs-pass-fault-address-to-cow-handler.patch
-* mm-drop-vm_bug_on-from-__get_free_pages.patch
-* mm-drop-vm_bug_on-from-__get_free_pages-fix.patch
-* mm-workingset-remove-local_irq_disable-from-count_shadow_nodes.patch
-* mm-workingset-make-shadow_lru_isolate-use-locking-suffix.patch
-* mm-list_lruc-fold-__list_lru_count_one-into-its-caller.patch
-* mm-memory_hotplug-make-add_memory_resource-use-__try_online_node.patch
-* mm-memory_hotplug-call-register_mem_sect_under_node.patch
-* mm-memory_hotplug-make-register_mem_sect_under_node-a-cb-of-walk_memory_range.patch
-* mm-memory_hotplug-drop-unnecessary-checks-from-register_mem_sect_under_node.patch
-* mm-provide-a-fallback-for-page_kernel_ro-for-architectures.patch
-* mm-provide-a-fallback-for-page_kernel_exec-for-architectures.patch
-* mm-introduce-mem_cgroup_put-helper.patch
-* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
-* fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix.patch
-* fs-mm-account-buffer_head-to-kmemcg.patch
-* fs-mm-account-buffer_head-to-kmemcgpatchfix.patch
-* writeback-update-stale-account_page_redirty-comment.patch
-* mm-memblock-add-missing-include-linux-bootmemh.patch
-* mm-zsmalloc-make-several-functions-and-a-struct-static.patch
-* mm-zsmalloc-make-several-functions-and-a-struct-static-fix.patch
-* mm-swap-make-swap_slots_cache_mutex-and-swap_slots_cache_enable_mutex-static.patch
-* mm-fadvise-fix-signed-overflow-ubsan-complaint.patch
-* mm-fadvise-fix-signed-overflow-ubsan-complaint-fix.patch
-* mm-thp-passing-correct-vm_flags-to-hugepage_vma_check.patch
-* kernel-memremap-kasan-make-zone_device-with-work-with-kasan.patch
-* mm-make-deferred_struct_page_init-explicitly-depend-on-sparsemem.patch
-* memcg-oom-move-out_of_memory-back-to-the-charge-path.patch
-* mm-sparse-make-sparse_init_one_section-void-and-remove-check.patch
-* mm-sparse-make-sparse_init_one_section-void-and-remove-check-fix.patch
-* mm-sparse-make-sparse_init_one_section-void-and-remove-check-fix-2.patch
-* mm-memblock-replace-u64-with-phys_addr_t-where-appropriate.patch
-* list_lru-combine-code-under-the-same-define.patch
-* mm-introduce-config_memcg_kmem-as-combination-of-config_memcg-config_slob.patch
-* mm-assign-id-to-every-memcg-aware-shrinker.patch
-* mm-assign-id-to-every-memcg-aware-shrinker-v9.patch
-* memcg-move-up-for_each_mem_cgroup-_tree-defines.patch
-* mm-assign-memcg-aware-shrinkers-bitmap-to-memcg.patch
-* mm-assign-memcg-aware-shrinkers-bitmap-to-memcg-v9.patch
-* mm-refactoring-in-workingset_init.patch
-* mm-refactoring-in-workingset_init-v9.patch
-* fs-refactoring-in-alloc_super.patch
-* fs-propagate-shrinker-id-to-list_lru.patch
-* list_lru-add-memcg-argument-to-list_lru_from_kmem.patch
-* list_lru-pass-dst_memcg-argument-to-memcg_drain_list_lru_node.patch
-* list_lru-pass-lru-argument-to-memcg_drain_list_lru_node.patch
-* mm-export-mem_cgroup_is_root.patch
-* mm-set-bit-in-memcg-shrinker-bitmap-on-first-list_lru-item-apearance.patch
-* mm-set-bit-in-memcg-shrinker-bitmap-on-first-list_lru-item-apearance-v9.patch
-* mm-iterate-only-over-charged-shrinkers-during-memcg-shrink_slab.patch
-* mm-iterate-only-over-charged-shrinkers-during-memcg-shrink_slab-v9.patch
-* mm-generalize-shrink_slab-calls-in-shrink_node.patch
-* mm-add-shrink_empty-shrinker-methods-return-value.patch
-* mm-clear-shrinker-bit-if-there-are-no-objects-related-to-memcg.patch
-* mm-clear-shrinker-bit-if-there-are-no-objects-related-to-memcg-v9.patch
-* mm-sparse-add-a-static-variable-nr_present_sections.patch
-* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
-* mm-sparsemem-defer-the-ms-section_mem_map-clearing-fix.patch
-* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
-* mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
-* mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes.patch
-* mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch
-* mm-oom-fix-unnecessary-killing-of-additional-processes.patch
-* revert-mm-always-flush-vma-ranges-affected-by-zap_page_range.patch
-* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
-* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
-* mm-memblock-introduce-memblock_search_pfn_regions.patch
-* mm-memblock-introduce-pfn_valid_region.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
-* z3fold-fix-wrong-handling-of-headless-pages.patch
-* mm-cma-remove-unsupported-gfp_mask-parameter-from-cma_alloc.patch
-* dma-remove-unsupported-gfp_mask-parameter-from-dma_alloc_from_contiguous.patch
-* mm-oom-remove-sleep-from-under-oom_lock.patch
-* mm-drop-unneeded-vm_ops-checks.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-oom-refactor-the-oom_kill_process-function.patch
-* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
-* mm-oom-cgroup-aware-oom-killer.patch
-* mm-oom-cgroup-aware-oom-killer-fix.patch
-* mm-oom-cgroup-aware-oom-killer-fix-2.patch
-* mm-oom-cgroup-aware-oom-killer-fix-3.patch
-* mm-oom-introduce-memoryoom_group.patch
-* mm-oom-introduce-memoryoom_group-fix.patch
-* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
-* cgroup-list-groupoom-in-cgroup-features.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* proc-fixup-pde-allocation-bloat.patch
-* proc-fixup-pde-allocation-bloat-fix.patch
-* procfs-uptime-use-ktime_get_boottime_ts64.patch
-* proc-test-proc-self-symlink.patch
-* proc-test-proc-thread-self-symlink.patch
-* proc-smaller-readlock-section-in-readdir-proc.patch
-* proc-put-task-earlier-in-proc-fail-nth.patch
-* proc-save-2-atomic-ops-on-write-to-proc-attr.patch
-* proc-use-macro-in-proc-latency-hook.patch
-* proc-spread-const-a-bit.patch
-* proc-use-unsigned-int-in-proc-stat-hook.patch
-* proc-use-%02u-format.patch
-* fs-proc-adding-new-typedef-vm_fault_t.patch
-* include-asm-generic-bugh-clarify-valid-uses-of-warn.patch
-* kernelh-documentation-for-roundup-vs-round_up.patch
-* crash-print-timestamp-using-time64_t.patch
-* kernel-hung_taskc-allow-to-set-checking-interval-separately-from-timeout.patch
-* kernel-hung_taskc-allow-to-set-checking-interval-separately-from-timeout-fix.patch
-* iomap-use-non-raw-io-functions-for-ioreadwritexxbe.patch
-* parisc-iomap-introduce-ioreadwrite64.patch
-* iomap-introduce-ioreadwrite64_lo_hihi_lo.patch
-* io-64-nonatomic-add-ioreadwrite64_lo_hi_hi_lo-macros.patch
-* ntb-ntb_hw_intel-use-io-64-nonatomic-instead-of-in-driver-hacks.patch
-* crypto-caam-cleanup-config_64bit-ifdefs-when-using-ioreadwrite64.patch
-* ntb-ntb_hw_switchtec-cleanup-64bit-io-defines-to-use-the-common-header.patch
-* spellingtxt-add-more-spellings-to-spellingtxt.patch
-* arch-enable-relative-relocations-for-arm64-power-and-x86.patch
-* module-allow-symbol-exports-to-be-disabled.patch
-* module-use-relative-references-for-__ksymtab-entries.patch
-* init-allow-initcall-tables-to-be-emitted-using-relative-references.patch
-* pci-add-support-for-relative-addressing-in-quirk-tables.patch
-* kernel-tracepoints-add-support-for-relative-references.patch
-* bitmap-drop-unnecessary-0-check-for-u32-array-operations.patch
-* bitops-introduce-bits_per_type.patch
-* lib-make-struct-pointer-foo-static.patch
-* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
-* checkpatch-add-fix-for-concatenated_string-and-string_fragments.patch
-* checkpatch-improve-runtime-execution-speed-a-little.patch
-* checkpatch-update-section-keywords.patch
-* sparse-remove-uneffective-sparse-disabling.patch
-* autofs-fix-directory-and-symlink-access.patch
-* autofs-fix-inconsistent-use-of-now-variable.patch
-* autofs-fix-clearing-autofs_exp_leaves-in-autofs_expire_indirect.patch
-* autofs-make-autofs_expire_direct-static.patch
-* autofs-make-autofs_expire_indirect-static.patch
-* autofs-make-expire-flags-usage-consistent-with-v5-params.patch
-* autofs-add-autofs_exp_forced-flag.patch
-* nilfs2-use-64-bit-superblock-timstamps.patch
-* fs-nilfs2-adding-new-return-type-vm_fault_t.patch
-* hfsplus-dont-return-0-when-fill_super-failed.patch
-* hfsplus-prevent-crash-on-exit-from-failed-search.patch
-* hfs-prevent-crash-on-exit-from-failed-search.patch
-* hfsplus-avoid-deadlock-on-file-truncation.patch
-* reiserfs-use-monotonic-time-for-j_trans_start_time.patch
-* reiserfs-remove-obsolete-print_time-function.patch
-* reiserfs-change-j_timestamp-type-to-time64_t.patch
-* fat-add-fitrim-ioctl-for-fat-file-system.patch
-* fat-propagate-64-bit-inode-timestamps.patch
-* signal-make-force_sigsegv-void.patch
-* signal-make-kill_as_cred_perm-return-bool.patch
-* signal-make-may_ptrace_stop-return-bool.patch
-* signal-make-do_sigpending-void.patch
-* signal-simplify-rt_sigaction.patch
-* signal-make-kill_ok_by_cred-return-bool.patch
-* signal-make-sig_handler_ignored-return-bool.patch
-* signal-make-sig_task_ignored-return-bool.patch
-* signal-make-sig_ignored-return-bool.patch
-* signal-make-has_pending_signals-return-bool.patch
-* signal-make-recalc_sigpending_tsk-return-bool.patch
-* signal-make-unhandled_signal-return-bool.patch
-* signal-make-flush_sigqueue_mask-void.patch
-* signal-make-wants_signal-return-bool.patch
-* signal-make-legacy_queue-return-bool.patch
-* signal-make-sigkill_pending-return-bool.patch
-* signal-make-get_signal-return-bool.patch
-* fork-dont-copy-inconsistent-signal-handler-state-to-child.patch
-* sysctl-fix-typos-in-comments.patch
-* adfs-use-timespec64-for-time-conversion.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-* ipc-reorganize-initialization-of-kern_ipc_permid.patch
-* ipc-reorganize-initialization-of-kern_ipc_permseq.patch
-* ipc-utilc-use-ipc_rcu_putref-for-failues-in-ipc_addid.patch
-* ipc-rename-ipcctl_pre_down_nolock.patch
-* ipc-utilc-correct-comment-in-ipc_obtain_object_check.patch
-* ipc-rename-ipc_lock-to-ipc_lock_idr.patch
-* ipc_idr_alloc-refactoring.patch
-* lib-rhashtable-simplify-bucket_table_alloc.patch
-* lib-rhashtable-guarantee-initial-hashtable-allocation.patch
-* ipc-get-rid-of-ids-tables_initialized-hack.patch
-* ipc-simplify-ipc-initialization.patch
-* ipc-utilc-further-ipc_idr_alloc-cleanups.patch
-  linux-next.patch
-  linux-next-rejects.patch
-* hwtracing-intel_th-change-return-type-to-vm_fault_t.patch
-* fs-nfs-adding-new-return-type-vm_fault_t.patch
-* fs-afs-adding-new-return-type-vm_fault_t.patch
-* treewide-correct-differenciate-and-instanciate-typos.patch
-* vmcore-hide-vmcoredd_mmap_dumps-for-nommu-builds.patch
-* locking-lockdep-dump-state-of-percpu_rwsem-upon-hung-up.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+ Documentation/filesystems/Locking     |   2 +-
+ Documentation/filesystems/porting     |  20 +++
+ Documentation/filesystems/vfs.txt     |  18 +--
+ drivers/gpu/drm/drm_lease.c           |  16 +--
+ drivers/misc/cxl/api.c                |  21 +---
+ drivers/scsi/cxlflash/ocxl_hw.c       |  24 +---
+ fs/9p/vfs_inode.c                     |   7 +-
+ fs/9p/vfs_inode_dotl.c                |   7 +-
+ fs/aio.c                              |  26 +---
+ fs/anon_inodes.c                      |  29 +----
+ fs/bad_inode.c                        |   2 +-
+ fs/binfmt_misc.c                      |   2 +-
+ fs/ceph/file.c                        |   7 +-
+ fs/ceph/super.h                       |   3 +-
+ fs/cifs/cifsfs.h                      |   3 +-
+ fs/cifs/dir.c                         |   7 +-
+ fs/file_table.c                       |  71 +++++++----
+ fs/fuse/dir.c                         |  10 +-
+ fs/gfs2/inode.c                       |  32 +++--
+ fs/hugetlbfs/inode.c                  |  55 +++------
+ fs/internal.h                         |   6 +-
+ fs/namei.c                            | 223 +++++++++++++---------------------
+ fs/nfs/dir.c                          |  14 ++-
+ fs/nfs/nfs4_fs.h                      |   2 +-
+ fs/nfs/nfs4proc.c                     |   2 +-
+ fs/nfsd/vfs.c                         |   2 +-
+ fs/open.c                             |  86 ++++---------
+ fs/pipe.c                             |  38 ++----
+ include/linux/file.h                  |   8 +-
+ include/linux/fs.h                    |  16 +--
+ include/linux/ima.h                   |   4 +-
+ include/linux/lsm_hooks.h             |   2 +-
+ include/linux/security.h              |   5 +-
+ ipc/shm.c                             |  39 +++---
+ mm/shmem.c                            |  50 ++------
+ net/socket.c                          |  27 +---
+ security/apparmor/lsm.c               |   4 +-
+ security/integrity/ima/ima.h          |   4 +-
+ security/integrity/ima/ima_appraise.c |   4 +-
+ security/integrity/ima/ima_main.c     |  16 +--
+ security/security.c                   |   4 +-
+ security/selinux/hooks.c              |   4 +-
+ security/smack/smack_lsm.c            |   6 +-
+ security/tomoyo/tomoyo.c              |   2 +-
+ 44 files changed, 360 insertions(+), 570 deletions(-)
