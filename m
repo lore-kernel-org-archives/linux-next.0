@@ -1,33 +1,56 @@
-From: Russell King <rmk@armlinux.org.uk>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-current
- tree
-Date: Wed, 11 Jul 2018 22:56:44 +0100
-Message-ID: <20180711215644.GA18831@flint.armlinux.org.uk>
-References: <20180712073803.7bfbbf1a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Boot failures with "mm/sparse: Remove
+ CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER" on powerpc (was Re: mmotm
+ 2018-07-10-16-50 uploaded)
+Date: Thu, 12 Jul 2018 09:47:29 +1000
+Message-ID: <20180712094729.1112f290@canb.auug.org.au>
+References: <20180710235044.vjlRV%akpm@linux-foundation.org>
+        <87lgai9bt5.fsf@concordia.ellerman.id.au>
+        <20180711133737.GA29573@techadventures.net>
+        <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
+        <20180711141344.10eb6d22b0ee1423cc94faf8@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EYBWYqRmT+9CpTkc3L=Ei9_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180712073803.7bfbbf1a@canb.auug.org.au>
+In-Reply-To: <20180711141344.10eb6d22b0ee1423cc94faf8@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>, osalvador@techadventures.net, mpe@ellerman.id.au, broonie@kernel.org, mhocko@suse.cz, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, bhe@redhat.com, aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 12, 2018 at 07:38:03AM +1000, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Commit
-> 
->   6ef09e48c2bc ("ARM: 8780/1: ftrace: Only set kernel memory back to read-only after boot")
-> 
-> is missing a Signed-off-by from its author.
+--Sig_/EYBWYqRmT+9CpTkc3L=Ei9_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for spotting, but it's worse than that.  It does have a sign-off
-from its author, but the authorship wasn't preserved by Stefan Agner
-(no From: line in the email body, as there was in Steven's original
-post to the mailing list.)  I'll fix that in the next few days.
+Hi Andrew,
 
--- 
-Russell King
-ARM architecture Linux Kernel maintainer
+On Wed, 11 Jul 2018 14:13:44 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> OK, I shall drop
+> mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch for now.
+
+I have dropped it from linux-next today (in case you don't get time).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EYBWYqRmT+9CpTkc3L=Ei9_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltGlxEACgkQAVBC80lX
+0GwoUwf/bx0m01nkKzrGDRN2EbV745BfGn4LcFCUqgnVbtIwvCgd21+BSMQKZeBQ
+hXceLO2LFHU5+BQxG8CsGyLob2rijmXu35ie3boJKXPjMPdng8QaCCtSDyUkjTuu
+XkiNYUspbTMVZWlnHX3tFV0Urm4SI7xHOG5lrE/c58rLoJnTOqL9ssC2cdiN0j2w
+glkgPVXLSljiB5RwUmF/cXf3Q6knDeHF2f3XikAlUjKv5NIa+JR3wz1H/pzzIw7K
+kSVxPcRjwRBaAmqxPMep92ZpthSBZ9sJfTxQajHFyTKfgpSfWB6aP8FuavEL8zuC
+xHM1AI0ggVguLGhN2yKqtxRw77KLmQ==
+=c4bd
+-----END PGP SIGNATURE-----
+
+--Sig_/EYBWYqRmT+9CpTkc3L=Ei9_--
