@@ -1,48 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the arm-current
- tree
-Date: Thu, 12 Jul 2018 07:38:03 +1000
-Message-ID: <20180712073803.7bfbbf1a@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the imx-mxs tree
+Date: Thu, 12 Jul 2018 07:41:40 +1000
+Message-ID: <20180712074140.12dd9ca7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S18ASbJq5AhJJQY+gXEoyhf"; protocol="application/pgp-signature"
+ boundary="Sig_/3Yx4vHU4FIQj3EpNPIFY9yV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <rmk@armlinux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/S18ASbJq5AhJJQY+gXEoyhf
+--Sig_/3Yx4vHU4FIQj3EpNPIFY9yV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi Shawn,
 
 Commit
 
-  6ef09e48c2bc ("ARM: 8780/1: ftrace: Only set kernel memory back to read-o=
-nly after boot")
+  3a27f1ac04df ("ARM: dts: imx6ul: add GPIO clocks")
 
-is missing a Signed-off-by from its author.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/S18ASbJq5AhJJQY+gXEoyhf
+--Sig_/3Yx4vHU4FIQj3EpNPIFY9yV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltGeLsACgkQAVBC80lX
-0Gwb0gf8C53qWdofWVadKuo/2cgMEfk/tnIB0yNrBRJiRBSSmQ5F2j19ShOE4jxo
-XwOnAzaRA/mD8eBS1p1HluuFalBogBW6KpdjwOcSxVNIBcugOefIfO94aLIC/R/t
-JfiKhZjqjJEu7DHINqN7gg+FSm0IwvGVP0Qsl/lA3E3JRWfewxARXYeKbG9sM4xB
-n9TujU4KHoF8gQshHEn8Xy/DhxOoQr6nS/roS35uNNvqO3E13FBKFwW1hkJVJ4Dh
-hFARUvHx372+A/RDIZdj3gWMyOLWbJ6VLnVvXotB6h4JgOmSaHmvwzUW6iSv8pvD
-gDxFudq4E1MTjsHvWm18CJiH9CXmHg==
-=+dcl
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltGeZQACgkQAVBC80lX
+0GzTHAf/buSsQGGltidJiyWwHVD77maCRHwBvwDg5enSty0rrUT95R5cph2GxdTq
+rBT8j1P2PMgEo7IIa7cAjJI91xuLxEQQV3qw01kEN+i8IOGcg7KRUIiZJTbUPVoY
+ZpxjIXg5C6TN744XNkcnkaF91D7YRv1IJz6HM4f2LieD/N2rHFOyy9QHbXyHrOXg
+i8PXTxrO55xfZGqQBfV3vE5nnBySi0WDcIMC6w0dNgsDeJ15L3MBtaLUJEr8UqXA
+Vb6Ymj0+0XAaiqF8k+l0zLiVyu0r5RL2juQPNdI//RaZWzrC6VExOXurVyvjI5cy
+7AHQDksSo2D+VaMs9SiAOjzO5Agm0Q==
+=iAxX
 -----END PGP SIGNATURE-----
 
---Sig_/S18ASbJq5AhJJQY+gXEoyhf--
+--Sig_/3Yx4vHU4FIQj3EpNPIFY9yV--
