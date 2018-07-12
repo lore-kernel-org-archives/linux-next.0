@@ -1,48 +1,87 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2018-07-10-16-50 uploaded (gpio: gpio-mt721.c)
-Date: Wed, 11 Jul 2018 23:01:57 -0700
-Message-ID: <74774f1a-9ba3-63db-5777-b122d4b17cea@infradead.org>
-References: <20180710235044.vjlRV%akpm@linux-foundation.org>
+From: Sean Wang <sean.wang@mediatek.com>
+Subject: Re: next/master boot: 173 boots: 4 failed, 136 passed with 32
+ offline, 1 untried/unknown (next-20180710)
+Date: Thu, 12 Jul 2018 14:01:44 +0800
+Message-ID: <1531375304.26214.26.camel@mtkswgap22>
+References: <5b44b87b.1c69fb81.97804.0122@mx.google.com>
+ <20180710140213.GB8104@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180710235044.vjlRV%akpm@linux-foundation.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.orgStephen Rothwell <sfr@canb.auug.org.au>, Gabor Juhos <juhosg@openwrt.org>, John Crispin <blogic@openwrt.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180710140213.GB8104@sirena.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org, Kevin hilman <khilman@baylibre.com>, linux-next@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On 07/10/2018 04:50 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-07-10-16-50 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+Hi, Mark
 
-from linux-next.patch:
+thanks for reporting this issue.
 
-on x86_64:
-when CONFIG_OF is not enabled:
+I have fixed the issue in [1], which is caused by an update on pinctrl
+core and the driver doesn't have an immediate follow-up to the change.
 
-../drivers/gpio/gpio-mt7621.c: In function 'mediatek_gpio_bank_probe':
-../drivers/gpio/gpio-mt7621.c:228:10: error: 'struct gpio_chip' has no member named 'of_node'
-  rg->chip.of_node = node;
-          ^
-../drivers/gpio/gpio-mt7621.c:243:10: error: 'struct gpio_chip' has no member named 'of_gpio_n_cells'
-  rg->chip.of_gpio_n_cells = 2;
-          ^
-../drivers/gpio/gpio-mt7621.c:244:10: error: 'struct gpio_chip' has no member named 'of_xlate'
-  rg->chip.of_xlate = mediatek_gpio_xlate;
-          ^
+Hi, Matthias
+
+Could you help to add earlycon I posted in [2], which is helpful to
+identify at which point the boot is stuck instead of no any hint in the
+console?
+
+[1]
+http://lists.infradead.org/pipermail/linux-mediatek/2018-July/014070.html
 
 
--- 
-~Randy
+[2]
+http://lists.infradead.org/pipermail/linux-mediatek/2018-June/013709.html
+
+
+On Tue, 2018-07-10 at 15:02 +0100, Mark Brown wrote:
+> On Tue, Jul 10, 2018 at 06:45:31AM -0700, kernelci.org bot wrote:
+> 
+> Today's linux-next fails to boot on mt7622-rfb1 with defconfig and
+> defconfig+RANDOMIZE_BASE:
+> 
+> > arm64:
+> 
+> >     defconfig:
+> >         mt7622-rfb1:
+> >             lab-baylibre-seattle: new failure (last pass: next-20180709)
+> 
+> >     defconfig+CONFIG_RANDOMIZE_BASE=y:
+> >         mt7622-rfb1:
+> >             lab-baylibre-seattle: new failure (last pass: next-20180709)
+> 
+> I'm not 100% sure if this is a lab failure or an early boot failure:
+> 
+> | Starting kernel ...
+> 
+> | [ATF][    34.233534]save kernel info
+> | [ATF][    34.236565]Kernel_EL2
+> | [ATF][    34.239322]Kernel is 64Bit
+> | [ATF][    34.242509]pc=0x40080000, r0=0x5cf48000, r1=0x0
+> | INFO:    BL3-1: Preparing for EL3 exit to normal world, Kernel
+> | INFO:    BL3-1: Next image address = 0x40080000
+> | INFO:    BL3-1: Next image spsr = 0x3c9
+> | [ATF][    34.260778]el3_exit
+> | ~$off
+> | # PYBOOT: Exception: kernel: ERROR: did not start booting.
+> 
+> It only seems to affect this platform, other arm64 platforms seem fine.
+> More details at:
+> 
+>    https://kernelci.org/boot/id/5b44981a59b5141e5996baa1/
+> 
+> for the defconfig case, symptoms seem similar with RANDOMIZE_BASE.
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
