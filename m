@@ -1,115 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: mmotm 2018-07-13-16-51 uploaded (PSI)
-Date: Sat, 14 Jul 2018 12:47:28 +1000
-Message-ID: <20180714124728.562ff3af@canb.auug.org.au>
-References: <20180713235138.HoxHd%akpm@linux-foundation.org>
-        <cf4f5b65-6333-a1f0-6118-16fc0e5bc221@infradead.org>
+Subject: linux-next: Signed-off-by missing for commits in the arm-soc tree
+Date: Mon, 16 Jul 2018 07:57:18 +1000
+Message-ID: <20180716075718.4e5ef491@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cSnV=4v+WpvU7pDVBd56S1W"; protocol="application/pgp-signature"
+ boundary="Sig_/SNo_UrQAryXNh9eCq+Jn1SD"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cf4f5b65-6333-a1f0-6118-16fc0e5bc221@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, Johannes Weiner <hannes@cmpxchg.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org, mhocko@suse.cz, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Eric Anholt <eric@anholt.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/cSnV=4v+WpvU7pDVBd56S1W
+--Sig_/SNo_UrQAryXNh9eCq+Jn1SD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 13 Jul 2018 18:41:40 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> On 07/13/2018 04:51 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2018-07-13-16-51 has been uploaded to
-> >=20
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> >=20
-> > mmotm-readme.txt says
-> >=20
-> > README for mm-of-the-moment:
-> >=20
-> > http://www.ozlabs.org/~akpm/mmotm/
-> >=20
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> >=20
-> > You will need quilt to apply these patches to the latest Linus release =
-(4.x
-> > or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
- in
-> > http://ozlabs.org/~akpm/mmotm/series
-> >=20
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > followed by the base kernel version against which this patch series is =
-to
-> > be applied. =20
->=20
->=20
-> ../include/linux/psi.h:12:13: error: conflicting types for 'psi_disabled'
-> extern bool psi_disabled;
->=20
->=20
-> choose one:)
->=20
-> kernel/sched/psi.c:
-> bool psi_disabled __read_mostly;
->=20
->=20
-> include/linux/sched/stat.h:
-> 	extern int psi_disabled;
+Commits
 
-I have added this to linux-next (in case Andrew doesn't have time to
-revise mmotm):
+  b8ccf02a5014 ("ARM: dts: bcm283x: Add the PMU to the devicetree.")
+  b7dd29b401f5 ("ARM: dts: bcm283x: Add Transposer block")
+  74d1e007915f ("hwmon: Add support for RPi voltage sensor")
+  70eea1bbb556 ("firmware: raspberrypi: Register hwmon driver")
+  a1547e0bca51 ("firmware: raspberrypi: Remove VLA usage")
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sat, 14 Jul 2018 12:35:19 +1000
-Subject: [PATCH]  psi-pressure-stall-information-for-cpu-memory-and-io-fix-=
-fix-fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/sched/stat.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
-index ac39435d1521..bd477b819237 100644
---- a/include/linux/sched/stat.h
-+++ b/include/linux/sched/stat.h
-@@ -31,7 +31,7 @@ static inline int sched_info_on(void)
- 	if (delayacct_on)
- 		return 1;
- #elif defined(CONFIG_PSI)
--	extern int psi_disabled;
-+	extern bool psi_disabled;
- 	if (!psi_disabled)
- 		return 1;
- #endif
---=20
-2.18.0
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/cSnV=4v+WpvU7pDVBd56S1W
+--Sig_/SNo_UrQAryXNh9eCq+Jn1SD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltJZEAACgkQAVBC80lX
-0GwK3wf+Os6pRMdZfpbKSD5a2x0xR30Pin0lr8kdsqUFegBcfJyZXbVOZO7j6KKX
-ft08/CzR1yk/rVQ3VI4s3mX0VgzzrzSBnkGf4NCSyrQjHsPR2ZebjVBxPIav8Rfl
-HQ94nNJ3HwuQtZDkSJfMljpA7LTUHzKFYazZQ3X825JtDLsaSM2HF2KT8t69wCTI
-UDHBs8GJ1ZSQe6ug11fL41i5rnU8FiH7fTaIiAHVixgZ+KSAqFVJeUiFYULgAW4+
-FRdfV8NVNqznNb/xZJJTWD5jzp8Bu9C/uMXsrTZW3EVPhZesaHFhYh03wqNyWa+W
-93+ps8XDP04xptRpvFh0CE2h8ZpQqQ==
-=xWxi
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltLwz4ACgkQAVBC80lX
+0Gwf1Qf7B4Xn4xAMfPxVb0M+sskBPq51kCv/IbejqNZvlKN+TScnlQIvw+0sIDSf
+pjEgCBc2Ep3IdJzwEyXAtd9RswCSoTwgTsWjxYNl5IcPJAy4k+0iPcVdcO30UVIA
+W7GamnTTdq0Bzac8JwTKweI1RicgfjpNcsrDY+owCzv7UaBA/AoAmPzAUjOMp3lI
+IaG5TXWPqHnSYm6+cHhoUf+gEazQh/bIQV7DOuiD3xYgo+6bHWsl65dqmWzjs0hw
+0W4EH2RAmwkp2AjPRR3ojBmnkk1qXUx+l0vm3a10lKQNN/NzmhS0IEVOWrTsKt+X
+KFpt0Fpn5WOhtYKhbDvXaXXHYnPtYg==
+=sKqP
 -----END PGP SIGNATURE-----
 
---Sig_/cSnV=4v+WpvU7pDVBd56S1W--
+--Sig_/SNo_UrQAryXNh9eCq+Jn1SD--
