@@ -1,37 +1,30 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Mon, 16 Jul 2018 08:18:00 +0200
-Message-ID: <87601faelj.fsf@belgarion.home>
-References: <20180716091337.6c1b2a4d@canb.auug.org.au>
-        <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
+Date: Mon, 16 Jul 2018 09:47:44 +0200
+Message-ID: <CACRpkdaw5s4=-6Pfko9SoCScwBYHVuMJzPk7jr6mrqhPp6b02Q@mail.gmail.com>
+References: <20180716081018.21bfe495@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
-        (Olof Johansson's message of "Sun, 15 Jul 2018 16:50:25 -0700")
+In-Reply-To: <20180716081018.21bfe495@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Olof Johansson <olof@lixom.net> writes:
+On Mon, Jul 16, 2018 at 12:10 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> It's a known issue due to dependencies with a driver tree. :(
+>   bc319333c156 ("pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions")
+>   99500c6a4836 ("pinctrl: sh-pfc: r8a77990: Revise USB ID pin name")
+>   3d3c62d3458a ("pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and functions")
+>   1e0f13198edf ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and functions")
 >
-> Robert, this is unfortunate. What's the dependent patches? We can pick
-> them up in our tree as duplicates if needed.
-I'd rather postpone one of the patches, as I explained in the pull request.
-As Stephen noticed, this will be :
-0d0b16b8e008 ("dmaengine: pxa: make the filter function internal")
+> are missing a Signed-off-by from their committer.
 
-I'll queue this one for the 4.20 cycle. By the way, all of this cames from the
-fact that I didn't take this very patch in my imutable branch for this change
-...
+Oh initially it was just one of them, I rebased and fixed the one I thought
+was the offender.
 
-I'll also resend a pull request, without this patch if that's good for you,
-which will solve the breakage.
+Oh well. I go back and fix all.
 
-Cheers.
-
--- 
-Robert
+Yours,
+Linus Walleij
