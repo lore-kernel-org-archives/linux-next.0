@@ -1,31 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
-Date: Mon, 16 Jul 2018 15:03:42 +0200
-Message-ID: <CACRpkdbC6Z6NY2LAki2cwyGs4ohokWoXYBBR+gAx4DPU0S-YsA@mail.gmail.com>
-References: <20180716081018.21bfe495@canb.auug.org.au> <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
- <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the h8300 tree
+Date: Tue, 17 Jul 2018 05:24:19 +1000
+Message-ID: <20180717052419.11610795@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+GR_hUZnM=8DEUoEo7.sKGa"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 16, 2018 at 9:59 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+--Sig_/+GR_hUZnM=8DEUoEo7.sKGa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> The previous issue was a missing commit from the _author_, not committer.
-> As you rebased the branch, _you_ are now the committer, not me anymore.
-> So now your SoBs must be present, too.
+Hi Yoshinori,
 
-Yeah I figured. Sorry.
+Commit
 
-> As I already told you I had fixed up the author SoB, and updated the tag,
-> just drop the above commits, pull sh-pfc-for-v4.19-tag1 again, and be done
-> with it ;-)
+  39f077046d46 ("h8300: switch to NO_BOOTMEM")
 
-But it's no fun if I can't do all mistakes myself! ;)
+is missing a Signed-off-by from its committer.
 
-Yours,
-Linus Walleij
+Commits
+
+  d6bde68ad18e ("h8300: Add missing output register.")
+  5aa2f1573e0c ("h8300: gcc-8.1 fix")
+
+are missing a Signed-off-by from their author and committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+GR_hUZnM=8DEUoEo7.sKGa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltM8OMACgkQAVBC80lX
+0GwelggAopKfFijj7Ic2JesEeru4GJbcuLeNpHo/UL0AcArrP8IrXYheTsV0fkjA
+e/gV9e5cx9VM0KxveN0xMjr9Afb0KZWXs1gKKHSwbuK8MuxLYq4h6iZz3Bw33xmg
+z1bcfPDrP8L58gpvgMTs05Po6lDUOWfW6AiNlJbvrUgbtSo/kR+g/uYV0juhwn27
+qpMopuCxShJQqxMxmJbb4EXCL9xXBPQS6ePQ8b3QjqLOK+1cUjZcvggTabgPnpD0
+RW10HlYGc3iaswwTLMFBCVnSwIbGtIzW9qyRq+xnvZL/0KmWXCHoPyfI58w4Dpc8
+NNdPuiwQj71DoYqh9lg1ooVYGJhxFA==
+=k+l1
+-----END PGP SIGNATURE-----
+
+--Sig_/+GR_hUZnM=8DEUoEo7.sKGa--
