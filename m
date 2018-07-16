@@ -1,88 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl
- tree
-Date: Mon, 16 Jul 2018 18:29:44 +1000
-Message-ID: <20180716182944.593cca3c@canb.auug.org.au>
-References: <20180716081018.21bfe495@canb.auug.org.au>
-        <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the arm-soc tree
+Date: Mon, 16 Jul 2018 02:13:55 -0700
+Message-ID: <6a9fa6f3-7aef-a83b-72a6-dc9492964b5e@gmail.com>
+References: <20180716075718.4e5ef491@canb.auug.org.au>
+ <CAOesGMhVeo6Wc=nMcEnusa+FfwQBWJnxs0LY-zXm4HMau+SMhg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kLgnjxYTczi979.lb9L=53H"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+In-Reply-To: <CAOesGMhVeo6Wc=nMcEnusa+FfwQBWJnxs0LY-zXm4HMau+SMhg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Anholt <eric@anholt.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kLgnjxYTczi979.lb9L=53H
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
 
-On Mon, 16 Jul 2018 09:52:44 +0200 Linus Walleij <linus.walleij@linaro.org>=
- wrote:
->
-> On Mon, Jul 16, 2018 at 12:10 AM Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> > Commits
-> >
-> >   bc319333c156 ("pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and=
- functions")
-> >   99500c6a4836 ("pinctrl: sh-pfc: r8a77990: Revise USB ID pin name")
-> >   3d3c62d3458a ("pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and=
- functions")
-> >   1e0f13198edf ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and=
- functions")
-> >
-> > are missing a Signed-off-by from their committer. =20
->=20
-> I am looking at this and I just feel confused. Top to bottom:
->=20
-  ...
->=20
-> This is very confusing, it looks correct to me.
->=20
-> As usual it must be some minor syntactic thing like a character missing or
-> something, I am just soo.... what's wrong here, really?
+On 07/15/2018 03:50 PM, Olof Johansson wrote:
+> Thanks Stephen, I keep saying every time you catch these that I need
+> to run the same script. :(
+> 
+> Florian, I wonder if this happened when you rebased to squash in the fix?
 
-In the tree I fetched this morning, those commits are all committed by
-you, but you did not add a Signed-off-by to then.  This usually happens
-when you rebase a branch/tree.
+Humm, could be, all I did (and it was not the first time) was to do an
+interactive rebase with --preserve-merges. AFAICT, all of these commits
+came from Eric's pull request, so what I typically do is just sign off
+on the merge commit, but do not apply my SoB to all commits coming from
+that pull request if that makes sense?
 
-$ git show --pretty=3Dfull bc319333c156
-Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Commit: Linus Walleij <linus.walleij@linaro.org>
+> 
+> I'll figure out where to get this into my workflow so we catch it
+> before I merge from now on.
+> 
+> 
+> -Olof
+> 
+> On Sun, Jul 15, 2018 at 2:57 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
+>>
+>> Commits
+>>
+>>   b8ccf02a5014 ("ARM: dts: bcm283x: Add the PMU to the devicetree.")
+>>   b7dd29b401f5 ("ARM: dts: bcm283x: Add Transposer block")
+>>   74d1e007915f ("hwmon: Add support for RPi voltage sensor")
+>>   70eea1bbb556 ("firmware: raspberrypi: Register hwmon driver")
+>>   a1547e0bca51 ("firmware: raspberrypi: Remove VLA usage")
+>>
+>> are missing a Signed-off-by from their committer.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
 
-    pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions
-   =20
-    This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
-    the R8A77965 SoC.
-   =20
-    Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-...
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kLgnjxYTczi979.lb9L=53H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMV3gACgkQAVBC80lX
-0GxMWwf/YZvd4hqOAfL2UhJyun7iZGlsrpadv91AJ4UhAUAa2HSlvZxm2+tzvKIz
-8rtPPKdGAfdD7Vat+ERMnXGqopUPB/nDWS6sHgkvcYOocPbrfpD6B2bwx6vGlD/V
-E83iWksEpWSdw1DxI+CApncqY5CZl57H0rpatsgZ8Nz5Q6iGHbD7JGBddPpyiYU1
-gQtV9E8Tu/DMHyRbUbwdKzdVHWztWOgckHuMeMrcoLhFLyA1J0/OfRAujlWqubkG
-kvryf1/WdOvNbhi4VDlYhoPnAzxpLZDIANihK/lUELPVmLtf1GRtCY86Ro0sRY9o
-rjp2hE6Ao3zEAmQOG70PDMlz8HcYsw==
-=l3ht
------END PGP SIGNATURE-----
-
---Sig_/kLgnjxYTczi979.lb9L=53H--
+-- 
+Florian
