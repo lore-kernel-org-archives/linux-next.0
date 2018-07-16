@@ -1,62 +1,29 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the arm-soc tree
-Date: Mon, 16 Jul 2018 04:55:50 -0700
-Message-ID: <6a6d47fa-cc7f-b977-339e-ea215bc40541@gmail.com>
-References: <20180716075718.4e5ef491@canb.auug.org.au>
- <CAOesGMhVeo6Wc=nMcEnusa+FfwQBWJnxs0LY-zXm4HMau+SMhg@mail.gmail.com>
- <6a9fa6f3-7aef-a83b-72a6-dc9492964b5e@gmail.com>
- <CAGb2v667K4Z6o-KEQROWuCbgJbKLNX_OCpCBOWaECb_qfRMBpw@mail.gmail.com>
- <20180716095700.GC17271@n2100.armlinux.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
+Date: Mon, 16 Jul 2018 14:45:36 +0200
+Message-ID: <CACRpkdZ0ufcXDbxHsvuXO59Ot3g7L57gk8CJuOGWwmHK7VA9Mg@mail.gmail.com>
+References: <20180716081018.21bfe495@canb.auug.org.au> <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+ <20180716182944.593cca3c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180716095700.GC17271@n2100.armlinux.org.uk>
-Content-Language: en-US
+In-Reply-To: <20180716182944.593cca3c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Anholt <eric@anholt.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Mon, Jul 16, 2018 at 10:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> In the tree I fetched this morning, those commits are all committed by
+> you, but you did not add a Signed-off-by to then.  This usually happens
+> when you rebase a branch/tree.
 
-On 07/16/2018 02:57 AM, Russell King - ARM Linux wrote:
-> On Mon, Jul 16, 2018 at 05:24:08PM +0800, Chen-Yu Tsai wrote:
->> On Mon, Jul 16, 2018 at 5:13 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->>>
->>>
->>> On 07/15/2018 03:50 PM, Olof Johansson wrote:
->>>> Thanks Stephen, I keep saying every time you catch these that I need
->>>> to run the same script. :(
->>>>
->>>> Florian, I wonder if this happened when you rebased to squash in the fix?
->>>
->>> Humm, could be, all I did (and it was not the first time) was to do an
->>> interactive rebase with --preserve-merges. AFAICT, all of these commits
->>> came from Eric's pull request, so what I typically do is just sign off
->>> on the merge commit, but do not apply my SoB to all commits coming from
->>> that pull request if that makes sense?
->>
->> When you rebase, if the commit is re-applied, the committer changes to
->> you, so you need to add your SoB to all commits you rebased.
->>
->> I suppose you could override it with GIT_COMMITTER_NAME and
->> GIT_COMMITTER_EMAIL environment variables, but that sort of distorts
->> the SoB if any changes were added due to rebasing, such as resolution
->> of merge conflicts.
-> 
-> A different point: should *anyone* be rebasing commits that they did not
-> themselves commit.  Discuss.
-> 
-> IMHO no - the commits were made public, and anyone could pull the tree
-> from which they came in order to do further work before submitting that.
-> Rebasing changes the commit IDs, which can lead to duplicate commits
-> ending up in mainline.  With other changes on top, this causes totally
-> unnecessary conflicts.
-> 
+Ah sorry man. Mark Brown told me the same thing this morning in
+conversation, and of course I need to sign them off as I am now on
+the delivery path.
 
-Well in that case, I thought it would be cleaner to just squash Arnd's
-build fix since the commit had not been merged into arm-soc, but I will
-keep in mind not to do that anymore.
--- 
-Florian
+Sorry for the fuzz :(
+
+Yours,
+Linus Walleij
