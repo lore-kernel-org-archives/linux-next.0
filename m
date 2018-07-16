@@ -1,84 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
-Date: Mon, 16 Jul 2018 09:52:44 +0200
-Message-ID: <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
-References: <20180716081018.21bfe495@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for Jul 16
+Date: Mon, 16 Jul 2018 17:56:07 +1000
+Message-ID: <20180716175607.66099a5f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FKS3XK1H8Uv.3a0NTAZfCtd"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180716081018.21bfe495@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 16, 2018 at 12:10 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/FKS3XK1H8Uv.3a0NTAZfCtd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Commits
->
->   bc319333c156 ("pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions")
->   99500c6a4836 ("pinctrl: sh-pfc: r8a77990: Revise USB ID pin name")
->   3d3c62d3458a ("pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and functions")
->   1e0f13198edf ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and functions")
->
-> are missing a Signed-off-by from their committer.
+Hi all,
 
-I am looking at this and I just feel confused. Top to bottom:
+Changes since 20180713:
 
-commit bc319333c156a710891942d34560b9fca0f52f5d
-Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Date:   Thu Dec 14 13:04:55 2017 +0900
+The arm-soc tree gained a build failure so I used the version from
+next-20180713.
 
-    pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions
+Non-merge commits (relative to Linus' tree): 6029
+ 5901 files changed, 216652 insertions(+), 121372 deletions(-)
 
-    This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
-    the R8A77965 SoC.
+----------------------------------------------------------------------------
 
-    Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-commit 99500c6a48360ebc9083c690add888c17afed519
-Author: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Date:   Wed Jun 6 15:43:04 2018 +0900
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
+multi_v7_defconfig for arm and a native build of tools/perf. After
+the final fixups (if any), I do an x86_64 modules_install followed by
+builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
+and sparc64 defconfig. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
 
-    pinctrl: sh-pfc: r8a77990: Revise USB ID pin name
+Below is a summary of the state of the merge.
 
-    Since the datasheet Rev.1.00 has an error about the USB ID pin name,
-    this patch revises it.
+I am currently merging 283 trees (counting Linus' and 65 trees of bug
+fix patches pending for the current merge release).
 
-    Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
 
-commit 3d3c62d3458aef24f819834791c364c9f86146c7
-Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Date:   Wed Jun 6 15:43:05 2018 +0900
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
 
-    pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and functions
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
 
-    This patch adds USB0_{PWEN,OVC}_{A,B} and USB0_ID pins, groups and
-    functions to the R8A77990 SoC.
 
-    Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-    Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 1e0f13198edf47d0df1a8c0561eaeb525eac2154
-Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Date:   Tue Jul 3 19:53:28 2018 +0900
+--=20
+Cheers,
+Stephen Rothwell
 
-    pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and functions
+--Sig_/FKS3XK1H8Uv.3a0NTAZfCtd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-    This patch adds USB30_{PWEN,OVC} and USB3HS0_ID pins, groups and functions
-    to the R8A77990 SoC.
+-----BEGIN PGP SIGNATURE-----
 
-    Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-    Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMT5cACgkQAVBC80lX
+0GzLiwgApCVFePPQyCCuY8PHZlwQB1tY5HiyvHDJGqdk7SgBJN49TQDbWGB6aJy7
+ACLznX8IGPNwqFNhD2hj9uOhPrpJFGkAim1YeFYmdaGhAkTp3x8QvqLJxLGl3qYp
+CmXANRq5mE0MRha+pq+LfyZf6a/Z8BRGWXlN4ws/+g9ugcZ2y1wS5UEy7UK7ybqr
+oaRISl+crSI2Axd+tDMqGlYLpJowhr7iJywGbFSlwgUTqErgxsMER71M/IF7GY6D
+vXFBxGYPXIrVwmGIJ20mcKEtiBZytw4rpadNLeH9txqz5yBb3cnPU5kLrJRewmiG
+cvQ8E2F4BKxwBjZfj8yDx5hfk9uwbQ==
+=+lIO
+-----END PGP SIGNATURE-----
 
-This is very confusing, it looks correct to me.
-
-As usual it must be some minor syntactic thing like a character missing or
-something, I am just soo.... what's wrong here, really?
-
-Yours,
-Linus Walleij
+--Sig_/FKS3XK1H8Uv.3a0NTAZfCtd--
