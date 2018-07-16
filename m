@@ -1,55 +1,53 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Sun, 15 Jul 2018 17:38:59 -0700
-Message-ID: <CAOesGMgWu4P+n9Bm_OJS-DjGysbtytaVVZp9W81Rb9yrLfw26g@mail.gmail.com>
-References: <20180716091337.6c1b2a4d@canb.auug.org.au>
- <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the random tree
+Date: Mon, 16 Jul 2018 15:52:07 +1000
+Message-ID: <20180716155207.09fc752f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5PZ+fWbZrxkOjg9w2AfWn7B"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 15, 2018 at 4:50 PM, Olof Johansson <olof@lixom.net> wrote:
-> On Sun, Jul 15, 2018 at 4:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> After merging the arm-soc tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> sound/arm/pxa2xx-pcm-lib.c: In function '__pxa2xx_pcm_open':
->> sound/arm/pxa2xx-pcm-lib.c:129:6: error: 'pxad_filter_fn' undeclared (first use in this function); did you mean 'dma_filter_fn'?
->>       pxad_filter_fn,
->>       ^~~~~~~~~~~~~~
->>       dma_filter_fn
->>
->> Caused by commit
->>
->>   0d0b16b8e008 ("dmaengine: pxa: make the filter function internal")
->>
->> I have used the arm-soc tree from next-20180713 for today.
->
-> It's a known issue due to dependencies with a driver tree. :(
->
-> Robert, this is unfortunate. What's the dependent patches? We can pick
-> them up in our tree as duplicates if needed.
+--Sig_/5PZ+fWbZrxkOjg9w2AfWn7B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ok, it was easy to drop PXA this time around, so I've done that.
-Stephen; arm-soc/for-next should be building again (for tomorrow).
+Hi Ted,
 
+After merging the random tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-Thanks,
+drivers/char/random.c: In function 'write_pool.constprop':
+drivers/char/random.c:1912:11: warning: 't' may be used uninitialized in th=
+is function [-Wmaybe-uninitialized]
+    buf[i] ^=3D t;
+           ^~
 
--Olof
+Introduced by commit
+
+  349ddb707fb7 ("random: mix rdrand with entropy sent in from userspace")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5PZ+fWbZrxkOjg9w2AfWn7B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMMocACgkQAVBC80lX
+0Gz9KggAmFSVNwv17rtO9QrZGAkRxn8m6Vb1GFqAHE4E/EAOh7iGHrJnab1/vHHL
+ibfT+qpj0nj90ZuW4+NkBRLcIBFmybNu5gn0b97jQbetigZW+7KT6LUoyUMz5ylb
+o8yrvHo9PW5/vJMrkp0AqmzsD/Hd+sEdEWV6+tPcC8WsqlzymafV80HBT2WtRsbV
+8IAGp4+8BUl/LzEa5GsLQA60KNFmDZ6sIfKBSrtOdJqTMRFF0fckhdCZQw6tbl/m
+BYfkga8IkaqV+dbrSD18pkxVn8TzScGpT+fA8RQHuEU2PTfi06zN51JRTEnxNHkY
+7/dGWW7xWyOfMz1KJvUorw12M1KZsQ==
+=96qE
+-----END PGP SIGNATURE-----
+
+--Sig_/5PZ+fWbZrxkOjg9w2AfWn7B--
