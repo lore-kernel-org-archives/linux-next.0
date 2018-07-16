@@ -1,53 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the random tree
-Date: Mon, 16 Jul 2018 15:52:07 +1000
-Message-ID: <20180716155207.09fc752f@canb.auug.org.au>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Mon, 16 Jul 2018 08:18:00 +0200
+Message-ID: <87601faelj.fsf@belgarion.home>
+References: <20180716091337.6c1b2a4d@canb.auug.org.au>
+        <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5PZ+fWbZrxkOjg9w2AfWn7B"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
+        (Olof Johansson's message of "Sun, 15 Jul 2018 16:50:25 -0700")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5PZ+fWbZrxkOjg9w2AfWn7B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Olof Johansson <olof@lixom.net> writes:
 
-Hi Ted,
+> It's a known issue due to dependencies with a driver tree. :(
+>
+> Robert, this is unfortunate. What's the dependent patches? We can pick
+> them up in our tree as duplicates if needed.
+I'd rather postpone one of the patches, as I explained in the pull request.
+As Stephen noticed, this will be :
+0d0b16b8e008 ("dmaengine: pxa: make the filter function internal")
 
-After merging the random tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+I'll queue this one for the 4.20 cycle. By the way, all of this cames from the
+fact that I didn't take this very patch in my imutable branch for this change
+...
 
-drivers/char/random.c: In function 'write_pool.constprop':
-drivers/char/random.c:1912:11: warning: 't' may be used uninitialized in th=
-is function [-Wmaybe-uninitialized]
-    buf[i] ^=3D t;
-           ^~
+I'll also resend a pull request, without this patch if that's good for you,
+which will solve the breakage.
 
-Introduced by commit
+Cheers.
 
-  349ddb707fb7 ("random: mix rdrand with entropy sent in from userspace")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5PZ+fWbZrxkOjg9w2AfWn7B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMMocACgkQAVBC80lX
-0Gz9KggAmFSVNwv17rtO9QrZGAkRxn8m6Vb1GFqAHE4E/EAOh7iGHrJnab1/vHHL
-ibfT+qpj0nj90ZuW4+NkBRLcIBFmybNu5gn0b97jQbetigZW+7KT6LUoyUMz5ylb
-o8yrvHo9PW5/vJMrkp0AqmzsD/Hd+sEdEWV6+tPcC8WsqlzymafV80HBT2WtRsbV
-8IAGp4+8BUl/LzEa5GsLQA60KNFmDZ6sIfKBSrtOdJqTMRFF0fckhdCZQw6tbl/m
-BYfkga8IkaqV+dbrSD18pkxVn8TzScGpT+fA8RQHuEU2PTfi06zN51JRTEnxNHkY
-7/dGWW7xWyOfMz1KJvUorw12M1KZsQ==
-=96qE
------END PGP SIGNATURE-----
-
---Sig_/5PZ+fWbZrxkOjg9w2AfWn7B--
+-- 
+Robert
