@@ -1,72 +1,72 @@
-From: Stefano Brivio <sbrivio@redhat.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 17 Jul 2018 07:47:42 +0200
-Message-ID: <20180717074742.62101999@epycfail>
-References: <20180717123306.3e030fde@canb.auug.org.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+Date: Mon, 16 Jul 2018 23:08:08 -0700
+Message-ID: <20180717060808.GW99251@atomide.com>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+ <20180620102904.GC112168@atomide.com>
+ <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+ <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+ <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+ <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+ <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
+ <20180702093243.GO112168@atomide.com>
+ <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717123306.3e030fde@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Pismenny <borisp@mellanox.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Roger Quadros <rogerq@ti.com>, Naresh Kamboju <naresh.kamboju@linaro.org>, Tejun Heo <tj@kernel.org>, linux-omap@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org, Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Samuel Morris <samorris@lexmark.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 17 Jul 2018 12:33:06 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Tejun & Stephen,
 
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->   include/linux/skbuff.h
-> 
-> between commit:
-> 
->   8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
-> 
-> from the net tree and commit:
-> 
->   784abe24c903 ("net: Add decrypted field to skb")
-> 
-> from the net-next tree.
->
-> [...]
->
-> @@@ -736,7 -737,11 +738,11 @@@ struct sk_buff 
->   				peeked:1,
->   				head_frag:1,
->   				xmit_more:1,
->  +				pfmemalloc:1;
-> + #ifdef CONFIG_TLS_DEVICE
->  -				decrypted:1;
->  -#else
->  -				__unused:1;
-> ++	__u8			decrypted:1,
-> ++				__unused:7;
-> + #endif
->   
->   	/* fields enclosed in headers_start/headers_end are copied
->   	 * using a single memcpy() in __copy_skb_header()
+The following regression is still pending in next, see below.
 
-I checked the layout of sk_buff after this, we already had a 1-byte
-hole there, that now becomes a 7-bits hole (or disappears with
-__unused). That's fine.
+* Samuel Morris <samorris@lexmark.com> [180702 13:35]:
+> On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:
+> > Hi,
+> >
+> > * Roger Quadros <rogerq@ti.com> [180621 14:56]:
+> >> On 21/06/18 17:31, Samuel Morris wrote:
+> >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote:
+> >> >> +Rafael
+> >> >>
+> >> >> On 20/06/18 18:30, Samuel Morris wrote:
+> >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:
+> >> >>>> Tony,
+> >> >>>>
+> >> >>>> On 20/06/18 13:29, Tony Lindgren wrote:
+> >> >>>>> Hi,
+> >> >>>>>
+> >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
+> >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
+> >> >>>>>
+> >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
+> >> >>>>> hotplug to save power").
+> >> >>>>>
+> >> >>>>> Reverting the patch makes things work again. Any ideas what
+> >> >>>>> might be going wrong here? Things clearly idle but then there
+> >> >>>>> seems to be some register access with clocks disabled.
+> >
+> > So this issue is still happening as of next-20180702. Can you guys
+> > please revert the commit above while working on a better solution?
+> 
+> That's fine with me. I'm not very familiar with the process here, does
+> this require anything on my end? And would that require the
+> accompanying patch to be reverted: "ata: ahci: rpm_put port on
+> port_stop to match rpm_get in port_start"? There shouldn't be any
+> problem leaving that one in, but I just want to know before submitting
+> my next patch set.
 
-Boris, I read your commit 784abe24c903 ("net: Add decrypted field to
-skb") just now.
+Well usually the maintainer just reverts the regression causing
+patch in the related branch and that's it.
 
-I think 'decrypted' shouldn't go there, because you then copy it on
-copy and clone: if you move if after headers_start[0] you don't need to
-explicitly copy it in __copy_skb_header().
+Stephen, can you please revert in next until we hear back from
+Tejun?
 
-While at it, the copy you added in __skb_clone() is redundant (no
-matter the position of 'decrypted').
+Regards,
 
-I can send a clean-up patch against net-next. I guess this might cause
-again a linux-next merge conflict, but it's again trivial (the __unused
-field above would go away).
-
--- 
-Stefano
+Tony
