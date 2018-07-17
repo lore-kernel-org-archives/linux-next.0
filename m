@@ -1,72 +1,92 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-Date: Mon, 16 Jul 2018 23:08:08 -0700
-Message-ID: <20180717060808.GW99251@atomide.com>
-References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
- <20180620102904.GC112168@atomide.com>
- <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
- <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
- <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
- <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
- <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
- <20180702093243.GO112168@atomide.com>
- <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Tue, 17 Jul 2018 16:28:39 +1000
+Message-ID: <20180717162839.2f5e7053@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/G4=UAVGCdduh6QkxzOe22w3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Roger Quadros <rogerq@ti.com>, Naresh Kamboju <naresh.kamboju@linaro.org>, Tejun Heo <tj@kernel.org>, linux-omap@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org, Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Samuel Morris <samorris@lexmark.com>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Ivan Safonov <insafonov@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Tejun & Stephen,
+--Sig_/G4=UAVGCdduh6QkxzOe22w3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The following regression is still pending in next, see below.
+Hi Greg,
 
-* Samuel Morris <samorris@lexmark.com> [180702 13:35]:
-> On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:
-> > Hi,
-> >
-> > * Roger Quadros <rogerq@ti.com> [180621 14:56]:
-> >> On 21/06/18 17:31, Samuel Morris wrote:
-> >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote:
-> >> >> +Rafael
-> >> >>
-> >> >> On 20/06/18 18:30, Samuel Morris wrote:
-> >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:
-> >> >>>> Tony,
-> >> >>>>
-> >> >>>> On 20/06/18 13:29, Tony Lindgren wrote:
-> >> >>>>> Hi,
-> >> >>>>>
-> >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
-> >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
-> >> >>>>>
-> >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
-> >> >>>>> hotplug to save power").
-> >> >>>>>
-> >> >>>>> Reverting the patch makes things work again. Any ideas what
-> >> >>>>> might be going wrong here? Things clearly idle but then there
-> >> >>>>> seems to be some register access with clocks disabled.
-> >
-> > So this issue is still happening as of next-20180702. Can you guys
-> > please revert the commit above while working on a better solution?
-> 
-> That's fine with me. I'm not very familiar with the process here, does
-> this require anything on my end? And would that require the
-> accompanying patch to be reverted: "ata: ahci: rpm_put port on
-> port_stop to match rpm_get in port_start"? There shouldn't be any
-> problem leaving that one in, but I just want to know before submitting
-> my next patch set.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Well usually the maintainer just reverts the regression causing
-patch in the related branch and that's it.
+drivers/staging/rtl8188eu/core/rtw_security.c: In function 'rtw_tkip_decryp=
+t':
+drivers/staging/rtl8188eu/core/rtw_security.c:399:21: error: storage size o=
+f 'mycontext' isn't known
+  struct arc4context mycontext;
+                     ^~~~~~~~~
+drivers/staging/rtl8188eu/core/rtw_security.c:437:4: error: implicit declar=
+ation of function 'phase1' [-Werror=3Dimplicit-function-declaration]
+    phase1((u16 *)&ttkey[0], prwskey, &prxattrib->ta[0], pnh);
+    ^~~~~~
+drivers/staging/rtl8188eu/core/rtw_security.c:438:4: error: implicit declar=
+ation of function 'phase2' [-Werror=3Dimplicit-function-declaration]
+    phase2(&rc4key[0], prwskey, (unsigned short *)&ttkey[0], pnl);
+    ^~~~~~
+drivers/staging/rtl8188eu/core/rtw_security.c:442:4: error: implicit declar=
+ation of function 'arcfour_init'; did you mean 'rcu_init'? [-Werror=3Dimpli=
+cit-function-declaration]
+    arcfour_init(&mycontext, rc4key, 16);
+    ^~~~~~~~~~~~
+    rcu_init
+drivers/staging/rtl8188eu/core/rtw_security.c:443:4: error: implicit declar=
+ation of function 'arcfour_encrypt'; did you mean 'rtw_wep_encrypt'? [-Werr=
+or=3Dimplicit-function-declaration]
+    arcfour_encrypt(&mycontext, payload, payload, length);
+    ^~~~~~~~~~~~~~~
+    rtw_wep_encrypt
+drivers/staging/rtl8188eu/core/rtw_security.c:445:23: error: implicit decla=
+ration of function 'getcrc32'; did you mean 'get_cred'? [-Werror=3Dimplicit=
+-function-declaration]
+    *((__le32 *)crc) =3D getcrc32(payload, length-4);
+                       ^~~~~~~~
+                       get_cred
+drivers/staging/rtl8188eu/core/rtw_security.c:399:21: warning: unused varia=
+ble 'mycontext' [-Wunused-variable]
+  struct arc4context mycontext;
+                     ^~~~~~~~~
 
-Stephen, can you please revert in next until we hear back from
-Tejun?
+Caused by commit
 
-Regards,
+  0d4876f4e977 ("staging:r8188eu: Use lib80211 to encrypt (TKIP) tx frames")
 
-Tony
+interacting with commit
+
+  69a1d98c831e ("Revert "staging:r8188eu: Use lib80211 to support TKIP"")
+
+from the staging.current tree.
+
+I just reverted the staging.current commit ...
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/G4=UAVGCdduh6QkxzOe22w3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltNjJcACgkQAVBC80lX
+0GxBegf/c9zGNcFo+qqZh4zuePSUerglo/jeGrTWiWiHxMmz/rjM4JYbU4OISdwl
+ReSeAg+0vjstdBxu9VZD6LmRZJE/QrFzKIWy12hYG8//GhcGUR9QZ+MbPOK57z+P
+P8IbwWRmm5wWWPDPPbm5lC6aW28ivlWrbl1TDDX7WPRCJaKREi+oPf7+fD3yRyiH
+mvEQGXzQRauYvaRGoYTETG6JZm96LdPSGRrsgJXpJmHKPY7iOejXQ74uC4nUYluZ
+hKRSAKHaX0nq91YdfgGm046IPa3CUls8e9ybcZXnwuebYxtValWvxOJs98raOzij
+VuuZm+Z8sVEquzEdcGA3IwvQNEoUBA==
+=D/Ta
+-----END PGP SIGNATURE-----
+
+--Sig_/G4=UAVGCdduh6QkxzOe22w3--
