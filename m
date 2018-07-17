@@ -1,53 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the h8300 tree
-Date: Tue, 17 Jul 2018 05:24:19 +1000
-Message-ID: <20180717052419.11610795@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 17 Jul 2018 12:33:06 +1000
+Message-ID: <20180717123306.3e030fde@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+GR_hUZnM=8DEUoEo7.sKGa"; protocol="application/pgp-signature"
+ boundary="Sig_/R2RZjPx4TyHgkOtDzbO5d0i"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>, Boris Pismenny <borisp@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/+GR_hUZnM=8DEUoEo7.sKGa
+--Sig_/R2RZjPx4TyHgkOtDzbO5d0i
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yoshinori,
+Hi all,
 
-Commit
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  39f077046d46 ("h8300: switch to NO_BOOTMEM")
+  include/linux/skbuff.h
 
-is missing a Signed-off-by from its committer.
+between commit:
 
-Commits
+  8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
 
-  d6bde68ad18e ("h8300: Add missing output register.")
-  5aa2f1573e0c ("h8300: gcc-8.1 fix")
+from the net tree and commit:
 
-are missing a Signed-off-by from their author and committer.
+  784abe24c903 ("net: Add decrypted field to skb")
+
+from the net-next tree.
+
+I fixed it up (see below - maybe not the best resolution) and can carry
+the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/+GR_hUZnM=8DEUoEo7.sKGa
+diff --cc include/linux/skbuff.h
+index 610a201126ee,3ceb8dcc54da..000000000000
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@@ -630,7 -630,7 +630,8 @@@ typedef unsigned char *sk_buff_data_t
+   *	@hash: the packet hash
+   *	@queue_mapping: Queue mapping for multiqueue devices
+   *	@xmit_more: More SKBs are pending for this queue
+ + *	@pfmemalloc: skbuff was allocated from PFMEMALLOC reserves
++  *	@decrypted: Decrypted SKB
+   *	@ndisc_nodetype: router type (from link layer)
+   *	@ooo_okay: allow the mapping of a socket to a queue to be changed
+   *	@l4_hash: indicate hash is a canonical 4-tuple hash over transport
+@@@ -736,7 -737,11 +738,11 @@@ struct sk_buff=20
+  				peeked:1,
+  				head_frag:1,
+  				xmit_more:1,
+ +				pfmemalloc:1;
++ #ifdef CONFIG_TLS_DEVICE
+ -				decrypted:1;
+ -#else
+ -				__unused:1;
+++	__u8			decrypted:1,
+++				__unused:7;
++ #endif
+ =20
+  	/* fields enclosed in headers_start/headers_end are copied
+  	 * using a single memcpy() in __copy_skb_header()
+
+--Sig_/R2RZjPx4TyHgkOtDzbO5d0i
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltM8OMACgkQAVBC80lX
-0GwelggAopKfFijj7Ic2JesEeru4GJbcuLeNpHo/UL0AcArrP8IrXYheTsV0fkjA
-e/gV9e5cx9VM0KxveN0xMjr9Afb0KZWXs1gKKHSwbuK8MuxLYq4h6iZz3Bw33xmg
-z1bcfPDrP8L58gpvgMTs05Po6lDUOWfW6AiNlJbvrUgbtSo/kR+g/uYV0juhwn27
-qpMopuCxShJQqxMxmJbb4EXCL9xXBPQS6ePQ8b3QjqLOK+1cUjZcvggTabgPnpD0
-RW10HlYGc3iaswwTLMFBCVnSwIbGtIzW9qyRq+xnvZL/0KmWXCHoPyfI58w4Dpc8
-NNdPuiwQj71DoYqh9lg1ooVYGJhxFA==
-=k+l1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltNVWIACgkQAVBC80lX
+0GxJDAf7BW5N4RmxlnCIm57PBOKM4axQk+io2wG99dwG3gUaGmUPaS0yV+Jwl6KY
+yT4Y5wJAiFXliGifiy/p4HvfLujqpfrl8GWHuTfejrT3/GKxLg4XDg5W/3+m77n6
+gE8/lZeDk+PShNNGVhVuT8bb9VdaaAlHzA1ukiHNBe1Gbb2pW3C/ZqFLWIztz7BV
+LIM0iglWaz+8Fcg/WxVwm9Ie3pP4DIs+jhK5IG1GBARVd1zR5h9LhPqHm/iJQN1r
+49GdluWKOV2om1wM87EpU/eknmGcuzgF3lNm1F906vqtLYwZXRH/Igbxi3QdGt4T
+CSu2MMtpio7y6UHa6QmeU4nlT+x5Mg==
+=gDxA
 -----END PGP SIGNATURE-----
 
---Sig_/+GR_hUZnM=8DEUoEo7.sKGa--
+--Sig_/R2RZjPx4TyHgkOtDzbO5d0i--
