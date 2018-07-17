@@ -1,45 +1,66 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: linux-next: build failure after merge of the integrity tree
-Date: Tue, 17 Jul 2018 09:18:06 -0400
-Message-ID: <1531833486.3380.18.camel@linux.ibm.com>
-References: <20180717144038.50394022@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commits in the h8300 tree
+Date: Wed, 18 Jul 2018 07:57:50 +1000
+Message-ID: <20180718075750.037fd403@canb.auug.org.au>
+References: <20180717052419.11610795@canb.auug.org.au>
+        <87o9f6l0ck.wl-ysato@users.sourceforge.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ni.5GwuzH1_MzH_g4yD+hnb"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717144038.50394022@canb.auug.org.au>
+In-Reply-To: <87o9f6l0ck.wl-ysato@users.sourceforge.jp>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2018-07-17 at 14:40 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the integrity tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> security/integrity/ima/ima_main.c:549:5: error: redefinition of 'ima_load_data'
->  int ima_load_data(enum kernel_load_data_id id)
->      ^~~~~~~~~~~~~
-> security/integrity/ima/ima_main.c:506:5: note: previous definition of 'ima_load_data' was here
->  int ima_load_data(enum kernel_load_data_id id)
->      ^~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   4995c7ac4490 ("ima: based on policy require signed kexec kernel images")
-> 
-> interacting with commit
-> 
->   16c267aac86b ("ima: based on policy require signed kexec kernel images")
-> 
-> from the sceurity tree.
-> 
-> Basically the same set of patches are in the security tree and the
-> integrity tree as different commits.  The merge managed to add this
-> function twice.  I have added a patche to remove one copy of the function.
-> 
-> Please clean up the integrity tree relative to the security tree.
+--Sig_/ni.5GwuzH1_MzH_g4yD+hnb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Done
+Hi Yoshinori,
+
+On Tue, 17 Jul 2018 17:42:35 +0900 Yoshinori Sato <ysato@users.sourceforge.=
+jp> wrote:
+>
+> On Tue, 17 Jul 2018 04:24:19 +0900, Stephen Rothwell wrote:
+> >=20
+> > Commit
+> >=20
+> >   39f077046d46 ("h8300: switch to NO_BOOTMEM")
+> >=20
+> > is missing a Signed-off-by from its committer.
+> >=20
+> > Commits
+> >=20
+> >   d6bde68ad18e ("h8300: Add missing output register.")
+> >   5aa2f1573e0c ("h8300: gcc-8.1 fix")
+> >=20
+> > are missing a Signed-off-by from their author and committer.
+>=20
+> OK. Fixed.
+
+Not really, you now have those patches in your tree twice :-(  To fix
+the missing SOB lines you really needed to rewrite your branch without
+the original commits above.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ni.5GwuzH1_MzH_g4yD+hnb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltOZl4ACgkQAVBC80lX
+0GzCVwf/a7etmJTu01sQD63kSbLkW4nsah1W6eALEpuVwk9hGXiUNhAody4ShtAU
+dtz32oHrMEZeSW/IGUk9PVzzs6YuqJ7gGFuwpSiBf6bKDUtc77I41HKA8hjU6YhW
++cyjrdcP3QDySbvP8HIGz84pUJGz0iWgbwQBKO3xB/hPA6RipZwYUZ8/9CRpe3Pj
+tH29IcUZ9TwfIH2HndXctCKUATEuBuWnYiogeivKp3lbd4pCynUtRILPx9RcsnnY
+PjRWqrH+MrXc06RyDuZ/B39Gl91XmSFGuW8WnaDOj9JXoLNSi0s7n36/uuSoWqde
+tXpa8x1f+JColuvVsN32Ak5/B5lBxw==
+=ORMB
+-----END PGP SIGNATURE-----
+
+--Sig_/ni.5GwuzH1_MzH_g4yD+hnb--
