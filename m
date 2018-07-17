@@ -1,68 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the integrity tree
-Date: Tue, 17 Jul 2018 14:40:38 +1000
-Message-ID: <20180717144038.50394022@canb.auug.org.au>
+From: Stefano Brivio <sbrivio@redhat.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 17 Jul 2018 07:47:42 +0200
+Message-ID: <20180717074742.62101999@epycfail>
+References: <20180717123306.3e030fde@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ai.jCjB9ONn6CD0SP3vdnNf"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180717123306.3e030fde@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>
+To: Boris Pismenny <borisp@mellanox.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ai.jCjB9ONn6CD0SP3vdnNf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 17 Jul 2018 12:33:06 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   include/linux/skbuff.h
+> 
+> between commit:
+> 
+>   8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
+> 
+> from the net tree and commit:
+> 
+>   784abe24c903 ("net: Add decrypted field to skb")
+> 
+> from the net-next tree.
+>
+> [...]
+>
+> @@@ -736,7 -737,11 +738,11 @@@ struct sk_buff 
+>   				peeked:1,
+>   				head_frag:1,
+>   				xmit_more:1,
+>  +				pfmemalloc:1;
+> + #ifdef CONFIG_TLS_DEVICE
+>  -				decrypted:1;
+>  -#else
+>  -				__unused:1;
+> ++	__u8			decrypted:1,
+> ++				__unused:7;
+> + #endif
+>   
+>   	/* fields enclosed in headers_start/headers_end are copied
+>   	 * using a single memcpy() in __copy_skb_header()
 
-After merging the integrity tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+I checked the layout of sk_buff after this, we already had a 1-byte
+hole there, that now becomes a 7-bits hole (or disappears with
+__unused). That's fine.
 
-security/integrity/ima/ima_main.c:549:5: error: redefinition of 'ima_load_d=
-ata'
- int ima_load_data(enum kernel_load_data_id id)
-     ^~~~~~~~~~~~~
-security/integrity/ima/ima_main.c:506:5: note: previous definition of 'ima_=
-load_data' was here
- int ima_load_data(enum kernel_load_data_id id)
-     ^~~~~~~~~~~~~
+Boris, I read your commit 784abe24c903 ("net: Add decrypted field to
+skb") just now.
 
-Caused by commit
+I think 'decrypted' shouldn't go there, because you then copy it on
+copy and clone: if you move if after headers_start[0] you don't need to
+explicitly copy it in __copy_skb_header().
 
-  4995c7ac4490 ("ima: based on policy require signed kexec kernel images")
+While at it, the copy you added in __skb_clone() is redundant (no
+matter the position of 'decrypted').
 
-interacting with commit
+I can send a clean-up patch against net-next. I guess this might cause
+again a linux-next merge conflict, but it's again trivial (the __unused
+field above would go away).
 
-  16c267aac86b ("ima: based on policy require signed kexec kernel images")
-
-from the sceurity tree.
-
-Basically the same set of patches are in the security tree and the
-integrity tree as different commits.  The merge managed to add this
-function twice.  I have added a patche to remove one copy of the function.
-
-Please clean up the integrity tree relative to the security tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ai.jCjB9ONn6CD0SP3vdnNf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltNc0YACgkQAVBC80lX
-0Gz+lQgAj/zzeIaU8cXZQesXXSczjGxfPtCv1HNJhy4NRVNh6Zcn1fXI7SRNvZEr
-UMBIz68eF2h1xFfcU3SerzAZth8LJ0m5BiW2RueJT++y8ZnqaasBZpWVSCNOOIfC
-bv4P3z2/b7u9TaqMiEOTrXGQz9mFsxDWGNCHRTSMZVxvd2ILK0s03ZXlKxBWaC2A
-/PmUztfQP2A14BLjMLradzY6RH0qOWVeotZsZPSd0uIc9A+kyc0SspANJl3piNUk
-SvgJ6kLAeoAxIZKwExD5qrGJYaAFMafpZuQmymEyZ1VDmupszO9PpOP0CTEvdmwR
-1P4oXE1vFDDMmhYxZDPZxGpyv9k+MA==
-=w+ya
------END PGP SIGNATURE-----
-
---Sig_/ai.jCjB9ONn6CD0SP3vdnNf--
+-- 
+Stefano
