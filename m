@@ -1,90 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 17 Jul 2018 12:33:06 +1000
-Message-ID: <20180717123306.3e030fde@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the integrity tree
+Date: Tue, 17 Jul 2018 14:40:38 +1000
+Message-ID: <20180717144038.50394022@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/R2RZjPx4TyHgkOtDzbO5d0i"; protocol="application/pgp-signature"
+ boundary="Sig_/ai.jCjB9ONn6CD0SP3vdnNf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>, Boris Pismenny <borisp@mellanox.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/R2RZjPx4TyHgkOtDzbO5d0i
+--Sig_/ai.jCjB9ONn6CD0SP3vdnNf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the integrity tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  include/linux/skbuff.h
+security/integrity/ima/ima_main.c:549:5: error: redefinition of 'ima_load_d=
+ata'
+ int ima_load_data(enum kernel_load_data_id id)
+     ^~~~~~~~~~~~~
+security/integrity/ima/ima_main.c:506:5: note: previous definition of 'ima_=
+load_data' was here
+ int ima_load_data(enum kernel_load_data_id id)
+     ^~~~~~~~~~~~~
 
-between commit:
+Caused by commit
 
-  8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
+  4995c7ac4490 ("ima: based on policy require signed kexec kernel images")
 
-from the net tree and commit:
+interacting with commit
 
-  784abe24c903 ("net: Add decrypted field to skb")
+  16c267aac86b ("ima: based on policy require signed kexec kernel images")
 
-from the net-next tree.
+from the sceurity tree.
 
-I fixed it up (see below - maybe not the best resolution) and can carry
-the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
+Basically the same set of patches are in the security tree and the
+integrity tree as different commits.  The merge managed to add this
+function twice.  I have added a patche to remove one copy of the function.
+
+Please clean up the integrity tree relative to the security tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/skbuff.h
-index 610a201126ee,3ceb8dcc54da..000000000000
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@@ -630,7 -630,7 +630,8 @@@ typedef unsigned char *sk_buff_data_t
-   *	@hash: the packet hash
-   *	@queue_mapping: Queue mapping for multiqueue devices
-   *	@xmit_more: More SKBs are pending for this queue
- + *	@pfmemalloc: skbuff was allocated from PFMEMALLOC reserves
-+  *	@decrypted: Decrypted SKB
-   *	@ndisc_nodetype: router type (from link layer)
-   *	@ooo_okay: allow the mapping of a socket to a queue to be changed
-   *	@l4_hash: indicate hash is a canonical 4-tuple hash over transport
-@@@ -736,7 -737,11 +738,11 @@@ struct sk_buff=20
-  				peeked:1,
-  				head_frag:1,
-  				xmit_more:1,
- +				pfmemalloc:1;
-+ #ifdef CONFIG_TLS_DEVICE
- -				decrypted:1;
- -#else
- -				__unused:1;
-++	__u8			decrypted:1,
-++				__unused:7;
-+ #endif
- =20
-  	/* fields enclosed in headers_start/headers_end are copied
-  	 * using a single memcpy() in __copy_skb_header()
-
---Sig_/R2RZjPx4TyHgkOtDzbO5d0i
+--Sig_/ai.jCjB9ONn6CD0SP3vdnNf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltNVWIACgkQAVBC80lX
-0GxJDAf7BW5N4RmxlnCIm57PBOKM4axQk+io2wG99dwG3gUaGmUPaS0yV+Jwl6KY
-yT4Y5wJAiFXliGifiy/p4HvfLujqpfrl8GWHuTfejrT3/GKxLg4XDg5W/3+m77n6
-gE8/lZeDk+PShNNGVhVuT8bb9VdaaAlHzA1ukiHNBe1Gbb2pW3C/ZqFLWIztz7BV
-LIM0iglWaz+8Fcg/WxVwm9Ie3pP4DIs+jhK5IG1GBARVd1zR5h9LhPqHm/iJQN1r
-49GdluWKOV2om1wM87EpU/eknmGcuzgF3lNm1F906vqtLYwZXRH/Igbxi3QdGt4T
-CSu2MMtpio7y6UHa6QmeU4nlT+x5Mg==
-=gDxA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltNc0YACgkQAVBC80lX
+0Gz+lQgAj/zzeIaU8cXZQesXXSczjGxfPtCv1HNJhy4NRVNh6Zcn1fXI7SRNvZEr
+UMBIz68eF2h1xFfcU3SerzAZth8LJ0m5BiW2RueJT++y8ZnqaasBZpWVSCNOOIfC
+bv4P3z2/b7u9TaqMiEOTrXGQz9mFsxDWGNCHRTSMZVxvd2ILK0s03ZXlKxBWaC2A
+/PmUztfQP2A14BLjMLradzY6RH0qOWVeotZsZPSd0uIc9A+kyc0SspANJl3piNUk
+SvgJ6kLAeoAxIZKwExD5qrGJYaAFMafpZuQmymEyZ1VDmupszO9PpOP0CTEvdmwR
+1P4oXE1vFDDMmhYxZDPZxGpyv9k+MA==
+=w+ya
 -----END PGP SIGNATURE-----
 
---Sig_/R2RZjPx4TyHgkOtDzbO5d0i--
+--Sig_/ai.jCjB9ONn6CD0SP3vdnNf--
