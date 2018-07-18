@@ -1,48 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the vfs tree
-Date: Wed, 18 Jul 2018 23:21:23 +1000
-Message-ID: <20180718232123.06511414@canb.auug.org.au>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: build failure after merge of the ida tree
+Date: Wed, 18 Jul 2018 15:25:52 +0200
+Message-ID: <20180718132552.oxy5gmwwyysoa7xr@salvia>
+References: <20180718165406.6f262266@canb.auug.org.au>
+ <20180718092426.mxdti3jes5jsssta@salvia>
+ <20180718115919.GB4949@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0Qtrx1P_uO9oac+/ucCOoGE"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180718115919.GB4949@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Varsha Rao <rvarsha016@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/0Qtrx1P_uO9oac+/ucCOoGE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 18, 2018 at 04:59:19AM -0700, Matthew Wilcox wrote:
+> On Wed, Jul 18, 2018 at 11:24:26AM +0200, Pablo Neira Ayuso wrote:
+> > I see, we have no more lockless API for IDA anymore :-(. In our case,
+> > we were already protected by the the nfnl_lock mutex, which it was
+> > sufficient to ensure non-concurrent access to IDA structures.
+> 
+> You're actually the first user for whom this is true.  For every other
+> user, the requirement to manage their own spinlock was a pain.
+> 
+> > Unless I'm missing anything, the new API forces use to the spinlock
+> > call with disabled irq for each time we update something from the
+> > netfilter netlink interface, so that's a no-go for us.
+> 
+> I can't believe that's a serious problem for you, though.  You're calling
+> sscanf(), this can't possibly be a performance path.
 
-Hi Al,
-
-Commits
-
-  a8dc7ffc48c6 ("vfs: syscall: Add open_tree(2) to reference or clone a mou=
-nt")
-  13d2b3d505c2 ("teach move_mount(2) to work with OPEN_TREE_CLONE")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0Qtrx1P_uO9oac+/ucCOoGE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltPPtMACgkQAVBC80lX
-0Gx44wf9GyE/+LqrLEiV+G3j7l7I5dQ7gsBRrg4ybDeZ9KCFdGvXIsfQvfCG4MWg
-ypT2Eq7B4Y+B/akIFo7M/syyUsHhDrkEuDcbDn03Zc6rl517jQaqDjgrsm2tzddV
-IgkT0RW6EqQYcau5xHiSgpFyd/S1p8QRg9mmj1m5Ke8ET/AQVCLVAJ28TNfHUej6
-ZRO1VK/X4IWtBsQJg+E4tr5b/70UNwwNnIZ4Sa1MTGZajYvd7PsB4mGLobyvMTjw
-lxqddzcmRkmTA6whH6OjfcPR8sdcmwUHFLL+vy9aNMECBIzMf/tCNAJn5vkJf07A
-8svJI58NcCtEAB/rbRIuWlh1LZslzg==
-=axEE
------END PGP SIGNATURE-----
-
---Sig_/0Qtrx1P_uO9oac+/ucCOoGE--
+It's not about performance, this is control plane code. This is
+disabling irqs, which is something we don't need.
