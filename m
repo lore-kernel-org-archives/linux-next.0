@@ -1,49 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the integrity tree
-Date: Wed, 18 Jul 2018 08:21:24 +1000
-Message-ID: <20180718082124.136546d2@canb.auug.org.au>
-References: <20180717144038.50394022@canb.auug.org.au>
-        <1531833486.3380.18.camel@linux.ibm.com>
+Subject: linux-next: manual merge of the netfilter-next tree with the net
+ tree
+Date: Wed, 18 Jul 2018 11:28:53 +1000
+Message-ID: <20180718112853.6abca6f2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3PVrC1+GHFGZdzHh+gUfgBi"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531833486.3380.18.camel@linux.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>
+ boundary="Sig_/V_RE9HVP16QSLnzQbLQwU91"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3PVrC1+GHFGZdzHh+gUfgBi
+--Sig_/V_RE9HVP16QSLnzQbLQwU91
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mimi,
+Hi all,
 
-On Tue, 17 Jul 2018 09:18:06 -0400 Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Done
+Today's linux-next merge of the netfilter-next tree got a conflict in:
 
-Thanks
+  include/net/netfilter/nf_tables_core.h
+
+between commit:
+
+  e240cd0df481 ("netfilter: nf_tables: place all set backends in one single=
+ module")
+
+from the net tree and commit:
+
+  da8f7d227adc ("netfilter: nf_tables: handle meta/lookup with direct call")
+
+from the netfilter-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/3PVrC1+GHFGZdzHh+gUfgBi
+diff --cc include/net/netfilter/nf_tables_core.h
+index a05134507e7b,0096f65096b5..000000000000
+--- a/include/net/netfilter/nf_tables_core.h
++++ b/include/net/netfilter/nf_tables_core.h
+@@@ -65,10 -65,11 +65,17 @@@ extern const struct nft_expr_ops nft_pa
+  extern struct static_key_false nft_counters_enabled;
+  extern struct static_key_false nft_trace_enabled;
+ =20
+ +extern struct nft_set_type nft_set_rhash_type;
+ +extern struct nft_set_type nft_set_hash_type;
+ +extern struct nft_set_type nft_set_hash_fast_type;
+ +extern struct nft_set_type nft_set_rbtree_type;
+ +extern struct nft_set_type nft_set_bitmap_type;
+ +
++ struct nft_expr;
++ struct nft_regs;
++ struct nft_pktinfo;
++ void nft_meta_get_eval(const struct nft_expr *expr,
++ 		       struct nft_regs *regs, const struct nft_pktinfo *pkt);
++ void nft_lookup_eval(const struct nft_expr *expr,
++ 		     struct nft_regs *regs, const struct nft_pktinfo *pkt);
+  #endif /* _NET_NF_TABLES_CORE_H */
+
+--Sig_/V_RE9HVP16QSLnzQbLQwU91
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltOa+QACgkQAVBC80lX
-0Gy/twf/bjdXPCJDeLIgRLTi9knQ/kmpFxikl5hYBayGzOViqKJ7twqLm9coK0Cv
-GGQPDCcG/jx2Hj9UNlJL33KHDUoX5vxado7xbtRdxf0jZ080GcaxNnwCx+j5DVn8
-aCbVXuPtrr/dMUxVpfxJy8iHpPRE2qs5/MrttMy7/i8Q4uTFL00Ji1WOdGHY3RdF
-i2vyCDZidQC9Klo03UkzXy5Q8KrmVvHb0I1EWPtsAjVkbxzTudLyI3U5UK9qrIoU
-LY7dOQtMYJt9yyVD7BEH1It6vbKokPq2JE8rIa1mhxiU3azMHF85N2dVZ8WgvGSj
-c2W0WCEdiTrHpAxohwivx47lGjgL4w==
-=KH3s
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltOl9UACgkQAVBC80lX
+0GxjeQf9HZlBEGIbKTOJvj/a0hjYbtv/ZWRp0NK40hBOwvIeG4piq571ogqHmeFU
+Mh/FPPluqhV5VH53EOCKCzSsaJ3ASBAar6O8PninCeQtp0+ZpA4M2ICtkwzSyStt
+odzN7ekGVAJZ/aIdMQXq8hJRuBgEXA9a+UrF4sFxEjge5tnA2Kko16ZoDaRx75Yb
+pW2Sk8ZhAZW0KntVFBb2gbx2sxujvbyEq8kMbG82KRhq3oioGo/5qCCmm2avy4X0
+QwEGB0K4t4G5nf71fHb7ziRWfdtGeOaHWfwWACrwuvZxRL/iNmWWilAs+5WBfL0A
+VmOu0ZsNwp6rth9u5iqBWx9s4DJqeA==
+=d2fY
 -----END PGP SIGNATURE-----
 
---Sig_/3PVrC1+GHFGZdzHh+gUfgBi--
+--Sig_/V_RE9HVP16QSLnzQbLQwU91--
