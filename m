@@ -1,42 +1,48 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: linux-next: build failure after merge of the ida tree
-Date: Wed, 18 Jul 2018 06:14:46 -0700
-Message-ID: <20180718131446.GC4949@bombadil.infradead.org>
-References: <20180718165406.6f262266@canb.auug.org.au>
- <20180718092426.mxdti3jes5jsssta@salvia>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the vfs tree
+Date: Wed, 18 Jul 2018 23:21:23 +1000
+Message-ID: <20180718232123.06511414@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0Qtrx1P_uO9oac+/ucCOoGE"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180718092426.mxdti3jes5jsssta@salvia>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Varsha Rao <rvarsha016@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jul 18, 2018 at 11:24:26AM +0200, Pablo Neira Ayuso wrote:
-> > interacting with commit
-> > 
-> >   9679150a0bd5 ("netfilter: nf_tables: Use id allocation")
-> > 
-> > from the netfilter-next tree.
-> 
-> @Varsha, I'm very sorry, but I guess I have to toss your patch, I
-> would prefer avoid dependencies with the IDA API by now.
+--Sig_/0Qtrx1P_uO9oac+/ucCOoGE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've had a chance to read this patch a bit more carefully.  It transforms
-one anti-pattern into another, so I can't say I'm a fan.
+Hi Al,
 
-The first is specific to the networking code; having a list of things
-with IDs, and constructing a bitmap when we need to allocate a new ID.
+Commits
 
-The second is having both an IDA and a list of things.
+  a8dc7ffc48c6 ("vfs: syscall: Add open_tree(2) to reference or clone a mou=
+nt")
+  13d2b3d505c2 ("teach move_mount(2) to work with OPEN_TREE_CLONE")
 
-The more effective way to do all of this is to use an IDR.  You can get
-rid of the linked list *and* the IDA, and it's faster to iterate over.
-The root of the IDR is the same size as the list_head, and then you need
-only store the 4-byte ID in each element instead of the 16-byte list_head.
+are missing a Signed-off-by from their committer.
 
-So Varsha, if you would like to take a look at transforming table->sets
-from a LIST_HEAD to an IDR, I think that would be a great use of your
-time.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0Qtrx1P_uO9oac+/ucCOoGE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltPPtMACgkQAVBC80lX
+0Gx44wf9GyE/+LqrLEiV+G3j7l7I5dQ7gsBRrg4ybDeZ9KCFdGvXIsfQvfCG4MWg
+ypT2Eq7B4Y+B/akIFo7M/syyUsHhDrkEuDcbDn03Zc6rl517jQaqDjgrsm2tzddV
+IgkT0RW6EqQYcau5xHiSgpFyd/S1p8QRg9mmj1m5Ke8ET/AQVCLVAJ28TNfHUej6
+ZRO1VK/X4IWtBsQJg+E4tr5b/70UNwwNnIZ4Sa1MTGZajYvd7PsB4mGLobyvMTjw
+lxqddzcmRkmTA6whH6OjfcPR8sdcmwUHFLL+vy9aNMECBIzMf/tCNAJn5vkJf07A
+8svJI58NcCtEAB/rbRIuWlh1LZslzg==
+=axEE
+-----END PGP SIGNATURE-----
+
+--Sig_/0Qtrx1P_uO9oac+/ucCOoGE--
