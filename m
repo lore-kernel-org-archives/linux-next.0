@@ -1,56 +1,63 @@
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Subject: Re: [next-20180711][Oops] linux-next kernel boot is broken on powerpc
-Date: Tue, 17 Jul 2018 22:00:20 -0400
-Message-ID: <CAGM2reav2giqHjUTWADWzqb-8m7AqUBJxerA1Oc+4YJhTLXrDA@mail.gmail.com>
-References: <1531416305.6480.24.camel@abdul.in.ibm.com> <CAGM2rebtisZda0kqhg0u92fTDxC+=zMNNgKFBLH38osphk0fdA@mail.gmail.com>
- <1531473191.6480.26.camel@abdul.in.ibm.com> <20180714105500.3694b93f@canb.auug.org.au>
- <1531824532.15016.30.camel@abdul.in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ipvs-next tree with the
+ netfilter-next tree
+Date: Wed, 18 Jul 2018 12:04:31 +1000
+Message-ID: <20180718120431.68189264@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/s5py6xYsqSWVfpA8CYdG42t"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531824532.15016.30.camel@abdul.in.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: abdhalee@linux.vnet.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, sachinp@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>, sim@linux.vnet.ibm.com, venkatb3@in.ibm.com, LKML <linux-kernel@vger.kernel.org>, manvanth@linux.vnet.ibm.com, Linux Memory Management List <linux-mm@kvack.org>, linux-next@vger.kernel.org, aneesh.kumar@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 17, 2018 at 6:49 AM Abdul Haleem
-<abdhalee@linux.vnet.ibm.com> wrote:
->
-> On Sat, 2018-07-14 at 10:55 +1000, Stephen Rothwell wrote:
-> > Hi Abdul,
-> >
-> > On Fri, 13 Jul 2018 14:43:11 +0530 Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
-> > >
-> > > On Thu, 2018-07-12 at 13:44 -0400, Pavel Tatashin wrote:
-> > > > > Related commit could be one of below ? I see lots of patches related to mm and could not bisect
-> > > > >
-> > > > > 5479976fda7d3ab23ba0a4eb4d60b296eb88b866 mm: page_alloc: restore memblock_next_valid_pfn() on arm/arm64
-> > > > > 41619b27b5696e7e5ef76d9c692dd7342c1ad7eb mm-drop-vm_bug_on-from-__get_free_pages-fix
-> > > > > 531bbe6bd2721f4b66cdb0f5cf5ac14612fa1419 mm: drop VM_BUG_ON from __get_free_pages
-> > > > > 479350dd1a35f8bfb2534697e5ca68ee8a6e8dea mm, page_alloc: actually ignore mempolicies for high priority allocations
-> > > > > 088018f6fe571444caaeb16e84c9f24f22dfc8b0 mm: skip invalid pages block at a time in zero_resv_unresv()
-> > > >
-> > > > Looks like:
-> > > > 0ba29a108979 mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-> > > >
-> > > > This patch is going to be reverted from linux-next. Abdul, please
-> > > > verify that issue is gone once  you revert this patch.
-> > >
-> > > kernel booted fine when the above patch is reverted.
-> >
-> > And it has been removed from linux-next as of next-20180713.  (Friday
-> > the 13th is not all bad :-))
->
-> Hi Stephen,
->
-> After reverting 0ba29a108979, our bare-metal machines boot fails with
-> kernel panic, is this related ?
->
-> I have attached the boot logs.
+--Sig_/s5py6xYsqSWVfpA8CYdG42t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The panic happens much later in boot and looks unrelated to the
-sparse_init changes.
+Hi Simon,
 
-Thank you,
-Pavel
+Today's linux-next merge of the ipvs-next tree got conflicts in:
+
+  net/ipv6/netfilter/Kconfig
+  net/netfilter/Kconfig
+  net/netfilter/Makefile
+
+caused by commits
+
+66c524acfb51 netfilter: conntrack: remove l3proto abstraction
+5a733aa21d2f netfilter: conntrack: remove get_l4proto indirection from l3 p=
+rotocol trackers
+e33ae98088b4 netfilter: Kconfig: Make NETFILTER_XT_MATCH_SOCKET select NF_S=
+OCKET_IPV4/6
+35bf1ccecaaa netfilter: Kconfig: Change IPv6 select dependencies
+
+which appear as different commits in the the netfilter-next tree (along
+with further changes to these files there).
+
+I fixed it up (I used the netfilter-net tree versions of these files) and
+can carry the fix as necessary. Please clean up your tree wrt the
+netfilter-next tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/s5py6xYsqSWVfpA8CYdG42t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltOoC8ACgkQAVBC80lX
+0GzRGgf/Ta8owGnIo1sVmxDMkWaCn24X0i20Jn/gCu3H1VkYL8W/q5eibxFgqU7W
+CLXbpDpreMsjy3Jf5lO5+thtrhHPmvIvvkBiuuWfjcM17pPcdtHT+yfySU/iQHzG
+tSSyjD5gtve1vbiM7RG6DdeQruz+Pu0ZNlXx17q8aLPPQScoOz26FFaiaRGTOAJs
+VaM85Lzs2PiDmytNqVPcxzBpA9YRXoHmjZF2Vk93xRj+hGmIdLoEOS7/Ll4KVD+U
+0zRyIFONOwYBBpiN8LMoGX5JR97ghkNrY4r9arGB2GqSDqZBFEjtHa3fhBZ7UDgS
+zeSQLAlkzaWFVBWwwqrckBz8zH2aAg==
+=n4ju
+-----END PGP SIGNATURE-----
+
+--Sig_/s5py6xYsqSWVfpA8CYdG42t--
