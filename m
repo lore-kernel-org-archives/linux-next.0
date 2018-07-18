@@ -1,36 +1,31 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [BUG BISECT] "Support fs_context" causes systemd issues
- (linux-next)
-Date: Wed, 18 Jul 2018 15:29:57 +0200
-Message-ID: <20180718132957.GA17254@kroah.com>
-References: <CAJKOXPftCn+qcJtG6bBjUMa2ZX=_YAoHkoYH69-+jSam4-z86Q@mail.gmail.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: linux-next: build failure after merge of the ida tree
+Date: Wed, 18 Jul 2018 06:31:26 -0700
+Message-ID: <20180718133126.GD4949@bombadil.infradead.org>
+References: <20180718165406.6f262266@canb.auug.org.au>
+ <20180718092426.mxdti3jes5jsssta@salvia>
+ <20180718131446.GC4949@bombadil.infradead.org>
+ <20180718132746.txspsjvw3xxlqtey@salvia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPftCn+qcJtG6bBjUMa2ZX=_YAoHkoYH69-+jSam4-z86Q@mail.gmail.com>
+In-Reply-To: <20180718132746.txspsjvw3xxlqtey@salvia>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org, fenghua.yu@intel.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Varsha Rao <rvarsha016@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jul 18, 2018 at 01:46:35PM +0200, Krzysztof Kozłowski wrote:
-> Hi,
+On Wed, Jul 18, 2018 at 03:27:46PM +0200, Pablo Neira Ayuso wrote:
+> On Wed, Jul 18, 2018 at 06:14:46AM -0700, Matthew Wilcox wrote:
+> > So Varsha, if you would like to take a look at transforming table->sets
+> > from a LIST_HEAD to an IDR, I think that would be a great use of your
+> > time.
 > 
-> On recent linux-next, the commit f8076f3b0996 ("kernfs, sysfs, cgroup,
-> intel_rdt: Support fs_context") causes weird behavior of two of
-> systemd units: systemd-timesyncd.service and systemd-resolved.service
-> fail to start.
-> 
-> Logs:
-> 
-> Jul 18 09:51:33 odroidu3 systemd[376]: systemd-timesyncd.service:
-> Failed to set up mount namespacing: Invalid argument
+> Please, don't do so, we don't need a radix tree datastructure, it's
+> just more complexity.
 
-Looks like the parsing for kernel mount options is broken somehow in the
-above patch :(
+It's no more complex to use than the list_* macros.
 
-thanks,
-
-greg k-h
+> We just wanted to have a simple way to allocate IDs using a bitmap
+> structure in the background without reinventing the wheel.
