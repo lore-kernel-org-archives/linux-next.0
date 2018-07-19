@@ -1,115 +1,106 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Thu, 19 Jul 2018 16:37:10 -0700
-Message-ID: <20180719233710.GA340@roeck-us.net>
-References: <20180719120447.6e7ba23d@canb.auug.org.au>
- <cbc20089-6847-c0eb-5b5a-735245986be1@roeck-us.net>
- <20180719152940.0720e9c1@canb.auug.org.au>
- <6dabf12b-e3db-dfe8-101c-02772039e21a@roeck-us.net>
- <20180720080906.7a30c573@canb.auug.org.au>
- <20180719223521.GA30287@roeck-us.net>
- <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
+ tree
+Date: Fri, 20 Jul 2018 09:51:38 +1000
+Message-ID: <20180720095138.275cc9aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/M/wB7O1tQxgKIF7Eg3TSknz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARfZH=ZEdFuRq_g1HsJ+Pv1m=v343JLyE-6+uM_d+3eWA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@ozlabs.org>, Alex Williamson <alex.williamson@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 20, 2018 at 08:19:34AM +0900, Masahiro Yamada wrote:
-> 2018-07-20 7:35 GMT+09:00 Guenter Roeck <linux@roeck-us.net>:
-> > On Fri, Jul 20, 2018 at 08:09:06AM +1000, Stephen Rothwell wrote:
-> >> Hi Guenter,
-> >>
-> >> On Thu, 19 Jul 2018 06:49:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> >> >
-> >> > On 07/18/2018 10:29 PM, Stephen Rothwell wrote:
-> >> > >
-> >> > > On Wed, 18 Jul 2018 20:52:56 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> >> > >>
-> >> > >> On 07/18/2018 07:04 PM, Stephen Rothwell wrote:
-> >> > >>>
-> >> > >>> After merging the net-next tree, today's linux-next build (x86_64
-> >> > >>> allmodconfig) produced this warning:
-> >> > >>>
-> >> > >>> *
-> >> > >>> * Restart config...
-> >> > >>> *
-> >> > >>> ....
-> >> > >>>
-> >> > >>> This is output by my "make allmodconfig" and only started after merging
-> >> > >>> the net-next tree today.  It has continued for further merges/builds.
-> >> > >>>
-> >> > >>> I suspect commit
-> >> > >>>
-> >> > >>>     1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
-> >> > >>>
-> >> > >>> which added an "imply" clause.
-> >> > >>>
-> >> > >> I thought "imply" was better than "depends on HWMON || HWMON=n", but maybe
-> >> > >> not. Is that a caveat when using "imply", and does it mean that "imply"
-> >> > >> should better not be used ?
-> >> > >
-> >> > > I don't know, sorry.  It was just my best guess from what I could see
-> >> > > had changed.
-> >> > >
-> >> > > I wonder if it makes a difference that I am doing my "make
-> >> > > allmodconfig" on top of a previous "make allmodconfig" and some symbols
-> >> > > are marked as "NEW" (though they are not symbols related to the changes
-> >> > > that happened during the net-next tree merge)?
-> >> > >
-> >> >
-> >> > I tried to reproduce the problem, but I don't see the message.
-> >> >
-> >> > What I do see, though, is that "make allmodconfig" on a clean tree,
-> >> > followed by "make menuconfig", results in configuration changes.
-> >> > Specifically,
-> >> >
-> >> >  > CONFIG_ARC_EMAC_CORE=m
-> >> >  > CONFIG_ARC_EMAC=m
-> >> >  > CONFIG_EMAC_ROCKCHIP=m
-> >> >
-> >> > is removed by menuconfig, and a large number of "# ... is not set"
-> >> > configuration lines are added. Weird and bad, since several of the
-> >> > disabled configurations _should_ be enabled by "make allmodconfig",
-> >> > and a large number of hwmon drivers are affected. Bisect does point
-> >> > to "net: phy: sfp: Add HWMON support for module sensors", meaning
-> >> > "imply hwmon" does have severe side effects and can not be used.
-> >> >
-> >> > I'll try to find a fix.
-> >>
-> >> OK, my mistake, the "make allmodconfig" works, the following "make"
-> >> causes the config restart.  (I am actually doing cross builds and using
-> >> an external object directory, in case that matters.)
-> >>
-> >> I removed the "imply HWMON" line added by the above commit and the
-> >> problem went away.  Also, using "depends on HWMON || HWMON=n" instead
-> >> of the imply fixes it.
-> >
-> > Yes, replacing imply with the dependency is what I did in the fixup patch.
-> > Sorry, I should have copied you: https://patchwork.kernel.org/patch/10534925/
-> >
-> > It is a bit different - imply was supposed to enforce HWMON={y,n} if SFP=y,
-> > and the depends line enforces SFP={n,m} if HWMON=m. I have no idea why
-> > imply doesn't work, but I think I'll stay away from it in the future.
-> >
-> > Guenter
-> 
-> 
-> Hmm, this could be a Kconfig bug.
-> 
-> I will take a look.
-> 
-> 
-> BTW,
-> 'depends on HWMON || HWMON=n' is pointless
-> because it is always true.
-> 
+--Sig_/M/wB7O1tQxgKIF7Eg3TSknz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I disagree. Its purpose is to enforce SFP=m if HWMON=m while still
-permitting HWMON=n.
+Hi all,
 
-Guenter
+Today's linux-next merge of the powerpc tree got a conflict in:
+
+  drivers/vfio/vfio_iommu_spapr_tce.c
+
+between commit:
+
+  1463edca6734 ("vfio/spapr: Use IOMMU pageshift rather than pagesize")
+
+from the powerpc-fixes tree and commit:
+
+  00a5c58d9499 ("KVM: PPC: Make iommu_table::it_userspace big endian")
+
+from the powerpc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/vfio/vfio_iommu_spapr_tce.c
+index 7cd63b0c1a46,11a4c194d6e3..000000000000
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@@ -487,11 -449,11 +449,11 @@@ static void tce_iommu_unuse_page_v2(str
+  	if (!pua)
+  		return;
+ =20
+- 	ret =3D tce_iommu_prereg_ua_to_hpa(container, *pua, tbl->it_page_shift,
+- 			&hpa, &mem);
++ 	ret =3D tce_iommu_prereg_ua_to_hpa(container, be64_to_cpu(*pua),
+ -			IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
+++			tbl->it_page_shift, &hpa, &mem);
+  	if (ret)
+- 		pr_debug("%s: tce %lx at #%lx was not cached, ret=3D%d\n",
+- 				__func__, *pua, entry, ret);
++ 		pr_debug("%s: tce %llx at #%lx was not cached, ret=3D%d\n",
++ 				__func__, be64_to_cpu(*pua), entry, ret);
+  	if (mem)
+  		mm_iommu_mapped_dec(mem);
+ =20
+@@@ -599,19 -561,12 +561,12 @@@ static long tce_iommu_build_v2(struct t
+  	unsigned long hpa;
+  	enum dma_data_direction dirtmp;
+ =20
+- 	if (!tbl->it_userspace) {
+- 		ret =3D tce_iommu_userspace_view_alloc(tbl, container->mm);
+- 		if (ret)
+- 			return ret;
+- 	}
+-=20
+  	for (i =3D 0; i < pages; ++i) {
+  		struct mm_iommu_table_group_mem_t *mem =3D NULL;
+- 		unsigned long *pua =3D IOMMU_TABLE_USERSPACE_ENTRY(tbl,
+- 				entry + i);
++ 		__be64 *pua =3D IOMMU_TABLE_USERSPACE_ENTRY(tbl, entry + i);
+ =20
+  		ret =3D tce_iommu_prereg_ua_to_hpa(container,
+ -				tce, IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
+ +				tce, tbl->it_page_shift, &hpa, &mem);
+  		if (ret)
+  			break;
+ =20
+
+--Sig_/M/wB7O1tQxgKIF7Eg3TSknz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltRJAoACgkQAVBC80lX
+0GyGIwf/UsUGTDeLCB1dBOXDnIOy937KSGh90Zwx+oOyTE8mjziQB/MtJjZeEhVi
+GtTzPDqTwZeOKU963SX9EmrkpmyHby/aSWB2iBeVnsCqvsUxSEAXMIUlbttfyCxT
+4wDxGKIgAHoSTn7aDJoOjfLd88FiNmCKwX51UFSNqqkbMbQY9s8U7AQ6yuba23gr
+y7rZtAddwYo401xYF5TtUxv9OBgkm1vKyA5vtRPvvHuR023ax9+JkI7NX8Djo4BK
+/6JyLVIQRqkjal7HoJ9lgUkk2KLB77ENvCdR82DOJZETPG56zSxH6zwPaG5eWRK1
+o270Y/I3BCyXzZjC/f8RQg7KGprJcw==
+=n+fN
+-----END PGP SIGNATURE-----
+
+--Sig_/M/wB7O1tQxgKIF7Eg3TSknz--
