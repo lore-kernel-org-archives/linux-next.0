@@ -1,65 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 19 Jul 2018 11:25:02 +1000
-Message-ID: <20180719112502.14cbe80a@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Thu, 19 Jul 2018 11:40:27 +1000
+Message-ID: <20180719114027.2722d075@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CXRQpIDxX.rJEPn13Ifp4Bi"; protocol="application/pgp-signature"
+ boundary="Sig_/6IWCp4mbw_59ajOlpprefbY"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>, Boris Pismenny <borisp@mellanox.com>, Ilya Lesokhin <ilyal@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CXRQpIDxX.rJEPn13Ifp4Bi
+--Sig_/6IWCp4mbw_59ajOlpprefbY
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  include/linux/skbuff.h
+WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
+see include/linux/module.h for more information
 
-between commit:
+Introduced by commit
 
-  8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
-
-from the net tree and commits:
-
-  784abe24c903 ("net: Add decrypted field to skb")
-  a48d189ef531 ("net: Move skb decrypted field, avoid explicity copy")
-
-from the net-next tree.
-
-The conflict only occurs because a48d189ef531 didn't put the comment
-back on the __unused field that was there before 784abe24c903.
-
-I fixed it up (I used the former version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/CXRQpIDxX.rJEPn13Ifp4Bi
+--Sig_/6IWCp4mbw_59ajOlpprefbY
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltP6G4ACgkQAVBC80lX
-0GyYXQf+KHuepdh2fKjGtP2B3ts1dGIoiJyMZDukUKpEt59KCiJ5Qazyv0Sif3av
-ndHMEzoiZYBK5o37pYYb/uoYRWnf1WGWW/0eDFI/cjidRbY4sJRYR1jy9h+o9wEF
-LFjIxrdvSKg2iRHOg7bQNUiDSNklickI1mPbZ7uAczwVod9V806zTxD1G4G9mB1f
-0EyM/Qu0Y66P1k0xUrWAay2ur4gzAfmUhw2VxoErk20YpF5Ad7ZajGtG2RAf/vRy
-DEI/q9iZHQGfZxLbafRZIamcvFLdwA2ivY83bZOyq3Szul8MrIEzk8VQwxiUi2lC
-OrxRPXuEmh5xuCDNu1d6MivTM/ccIw==
-=YhjJ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltP7AsACgkQAVBC80lX
+0GxLKAf/SDcgIqF9K5hvpclc5LhLwbX09L7bVB3iDeq3p1lmlHaA0DU4UU6iqBoO
+gmJ3KJXbsnYtDNkS6dyMuP+oPVRJXSLSEhdCnA9vTDNQCqHyMTVca8+IE2UuQobQ
+Ei7Pw8BmmR+j5k3AGZiowh6evvUW+G79k+ItP6lrj/w5aPVtlTcTgVbxK1ciMCjJ
+qflstXxDbOcd8v2vxsQFK2LQizyAhknnooY+zE6cG2LAKBlkK2AiYj+xygtXxDk8
+ZWzTsDKt26yF62/gecMZuZk1KTVBbMAbomueT2tsG4Y8uCeOKWr4lanDHIT5FL9f
+2h0yV2L3GHFkP3M8neNoOjE3FPoVIg==
+=ajjv
 -----END PGP SIGNATURE-----
 
---Sig_/CXRQpIDxX.rJEPn13Ifp4Bi--
+--Sig_/6IWCp4mbw_59ajOlpprefbY--
