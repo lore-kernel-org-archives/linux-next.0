@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build warning after merge of the net-next tree
-Date: Thu, 19 Jul 2018 11:40:27 +1000
-Message-ID: <20180719114027.2722d075@canb.auug.org.au>
+Date: Thu, 19 Jul 2018 12:04:47 +1000
+Message-ID: <20180719120447.6e7ba23d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6IWCp4mbw_59ajOlpprefbY"; protocol="application/pgp-signature"
+ boundary="Sig_/XvlZXxxCXQ8aWEMxZC.Hr6V"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Andrew Lunn <andrew@lunn.ch>, Guenter Roeck <linux@roeck-us.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6IWCp4mbw_59ajOlpprefbY
+--Sig_/XvlZXxxCXQ8aWEMxZC.Hr6V
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,31 +20,38 @@ Hi all,
 After merging the net-next tree, today's linux-next build (x86_64
 allmodconfig) produced this warning:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
-see include/linux/module.h for more information
+*
+* Restart config...
+*
+....
 
-Introduced by commit
+This is output by my "make allmodconfig" and only started after merging
+the net-next tree today.  It has continued for further merges/builds.
 
-  d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
+I suspect commit
+
+  1323061a018a ("net: phy: sfp: Add HWMON support for module sensors")
+
+which added an "imply" clause.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/6IWCp4mbw_59ajOlpprefbY
+--Sig_/XvlZXxxCXQ8aWEMxZC.Hr6V
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltP7AsACgkQAVBC80lX
-0GxLKAf/SDcgIqF9K5hvpclc5LhLwbX09L7bVB3iDeq3p1lmlHaA0DU4UU6iqBoO
-gmJ3KJXbsnYtDNkS6dyMuP+oPVRJXSLSEhdCnA9vTDNQCqHyMTVca8+IE2UuQobQ
-Ei7Pw8BmmR+j5k3AGZiowh6evvUW+G79k+ItP6lrj/w5aPVtlTcTgVbxK1ciMCjJ
-qflstXxDbOcd8v2vxsQFK2LQizyAhknnooY+zE6cG2LAKBlkK2AiYj+xygtXxDk8
-ZWzTsDKt26yF62/gecMZuZk1KTVBbMAbomueT2tsG4Y8uCeOKWr4lanDHIT5FL9f
-2h0yV2L3GHFkP3M8neNoOjE3FPoVIg==
-=ajjv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltP8b8ACgkQAVBC80lX
+0GxYdAf+P0Em8KecENiUi4Z5IVmYro5pvYQIENjFbQhfjQzVwDd/W5gWogovXjwY
+miy2aw7W6M3+2sarrJggq3jeXCrTBe225PgU28YoRehf/Qj8k//HQqtxMEIsqfsc
+Yie8/mbppFA7p+xVJs81zqj4h7eW8pP3QGZwco30w0xksJwxWnh/qM1BbSEt8BT1
+01ISuqORnG2l6m2AN6TdRvIP8EaJcAjnhPm/6dyPSyEhEjCItoloXTQq9/6gfjoO
+mx9oC6lVnhx/fi8DdKGIxdSoI69qy4pkHeQsjd+lulu4nxHdJ/exoOF1ew6m3vQY
+hRRb1qgzLqysVgn3knauPC/FBu7PbA==
+=E/kj
 -----END PGP SIGNATURE-----
 
---Sig_/6IWCp4mbw_59ajOlpprefbY--
+--Sig_/XvlZXxxCXQ8aWEMxZC.Hr6V--
