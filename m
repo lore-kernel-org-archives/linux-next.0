@@ -1,50 +1,50 @@
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
-Date: Fri, 20 Jul 2018 12:49:15 +0200
-Message-ID: <20180720124915.47ead719@windsurf>
-References: <20180720110310.6d07e86e@canb.auug.org.au>
-        <20180720091553.GA23214@red-moon>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the amlogic tree
+Date: Fri, 20 Jul 2018 10:22:49 -0500
+Message-ID: <7hh8ku53ue.fsf@baylibre.com>
+References: <20180716080014.75c9016b@canb.auug.org.au>
+        <7h4lgvm3go.fsf@baylibre.com>
+        <CAOesGMghENGioK2o_dZKGPJYT01yoP9Fks1k-i1SUXZFENu3Lg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180720091553.GA23214@red-moon>
+In-Reply-To: <CAOesGMghENGioK2o_dZKGPJYT01yoP9Fks1k-i1SUXZFENu3Lg@mail.gmail.com>
+        (Olof Johansson's message of "Thu, 19 Jul 2018 14:57:19 -0700")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Evan Wang <xswang@marvell.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: ARM-SoC Maintainers <arm@kernel.org>, Carlo Caione <carlo@caione.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+Olof Johansson <olof@lixom.net> writes:
 
-On Fri, 20 Jul 2018 10:15:53 +0100, Lorenzo Pieralisi wrote:
+> On Thu, Jul 19, 2018 at 12:26 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>>
+>>> Commits
+>>>
+>>>   3f1ad8c53b29 ("ARM64: dts: meson: enable the saradc node in meson-gx-p23x-q20x.dtsi")
+>>>   4dabd157d48e ("ARM64: dts: meson-gx-p23x-q20x: move the wifi node to each board's .dts")
+>>>
+>>> are missing a Signed-off-by from their committer.
+>>
+>> Oops.  I missed these.
+>>
+>> Olof, these were just merged by you in my PR[1].  How do you want me to
+>> handle this?
+>>
+>> I could respin the PR, or just send another with them reverted then
+>> re-applied with signoff?
+>>
+>> Or, since these branches don't need to be static (yet), I suppose you
+>> could just edit the commits and add my signoff.
+>>
+>> I'm OK with any of the above, let me know your preferene.
+>
+> Hi,
+>
+> Fresh pull requests is probably easiest for all. I'll drop the one I brought in.
+>
 
-> >   		switch (resource_type(res)) {
-> >   		case IORESOURCE_IO:
-> > - 			advk_pcie_set_ob_win(pcie, 1,
-> > - 					     upper_32_bits(res->start),
-> > - 					     lower_32_bits(res->start),
-> > - 					     0,	0xF8000000, 0,
-> > - 					     lower_32_bits(res->start),
-> > - 					     OB_PCIE_IO);
-> >  -			err = pci_remap_iospace(res, iobase);
-> >  +			err = devm_pci_remap_iospace(dev, res, iobase);
-> >   			if (err) {
-> >   				dev_warn(dev, "error %d: failed to map resource %pR\n",
-> >   					 err, res);  
-> 
-> Hi Stephen,
-> 
-> thanks for fixing this up, the fix looks fine to me (Thomas please
-> confirm), if it is I would ask Bjorn please to send it upstream when the
-> time for the PCI pull request comes.
+Ack, I'll resend.  Thanks.
 
-I confirm that the fix looks good to me. Thanks Stephen for fixing it
-up.
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kevin
