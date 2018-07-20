@@ -1,50 +1,37 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the amlogic tree
-Date: Fri, 20 Jul 2018 10:22:49 -0500
-Message-ID: <7hh8ku53ue.fsf@baylibre.com>
-References: <20180716080014.75c9016b@canb.auug.org.au>
-        <7h4lgvm3go.fsf@baylibre.com>
-        <CAOesGMghENGioK2o_dZKGPJYT01yoP9Fks1k-i1SUXZFENu3Lg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 20 (drivers/memory/jz4780_nemc)
+Date: Fri, 20 Jul 2018 09:28:14 -0700
+Message-ID: <bb6cccb4-5e5c-b5dc-170d-f878af1374f1@infradead.org>
+References: <20180720183212.6bc3477a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMghENGioK2o_dZKGPJYT01yoP9Fks1k-i1SUXZFENu3Lg@mail.gmail.com>
-        (Olof Johansson's message of "Thu, 19 Jul 2018 14:57:19 -0700")
+In-Reply-To: <20180720183212.6bc3477a@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: ARM-SoC Maintainers <arm@kernel.org>, Carlo Caione <carlo@caione.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alex Smith <alex.smith@imgtec.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
 List-Id: linux-next.vger.kernel.org
 
-Olof Johansson <olof@lixom.net> writes:
+On 07/20/2018 01:32 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180719:
+> 
 
-> On Thu, Jul 19, 2018 at 12:26 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->>
->>> Commits
->>>
->>>   3f1ad8c53b29 ("ARM64: dts: meson: enable the saradc node in meson-gx-p23x-q20x.dtsi")
->>>   4dabd157d48e ("ARM64: dts: meson-gx-p23x-q20x: move the wifi node to each board's .dts")
->>>
->>> are missing a Signed-off-by from their committer.
->>
->> Oops.  I missed these.
->>
->> Olof, these were just merged by you in my PR[1].  How do you want me to
->> handle this?
->>
->> I could respin the PR, or just send another with them reverted then
->> re-applied with signoff?
->>
->> Or, since these branches don't need to be static (yet), I suppose you
->> could just edit the commits and add my signoff.
->>
->> I'm OK with any of the above, let me know your preferene.
->
-> Hi,
->
-> Fresh pull requests is probably easiest for all. I'll drop the one I brought in.
->
+on i386 or x86_64:
 
-Ack, I'll resend.  Thanks.
+when CONFIG_OF is not enabled, COMPILE_TEST is set:
 
-Kevin
+../drivers/memory/jz4780-nemc.c: In function 'jz4780_nemc_num_banks':
+../drivers/memory/jz4780-nemc.c:72:3: error: implicit declaration of function 'of_read_number' [-Werror=implicit-function-declaration]
+   bank = of_read_number(prop, 1);
+   ^
+
+<linux/of.h> does not have a stub for of_read_number() when CONFIG_OF is not set
+(it has no way to return an error).
+
+
+-- 
+~Randy
