@@ -1,36 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
- tree
-Date: Fri, 20 Jul 2018 09:51:38 +1000
-Message-ID: <20180720095138.275cc9aa@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Date: Fri, 20 Jul 2018 11:03:10 +1000
+Message-ID: <20180720110310.6d07e86e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M/wB7O1tQxgKIF7Eg3TSknz"; protocol="application/pgp-signature"
+ boundary="Sig_/X2ehTojAadPModQngJYUH7O"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@ozlabs.org>, Alex Williamson <alex.williamson@redhat.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Evan Wang <xswang@marvell.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/M/wB7O1tQxgKIF7Eg3TSknz
+--Sig_/X2ehTojAadPModQngJYUH7O
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+Today's linux-next merge of the pci tree got a conflict in:
 
-  drivers/vfio/vfio_iommu_spapr_tce.c
+  drivers/pci/controller/pci-aardvark.c
 
 between commit:
 
-  1463edca6734 ("vfio/spapr: Use IOMMU pageshift rather than pagesize")
+  1df3e5b3feeb ("PCI: aardvark: Fix I/O space page leak")
 
-from the powerpc-fixes tree and commit:
+from Linus' tree and commit:
 
-  00a5c58d9499 ("KVM: PPC: Make iommu_table::it_userspace big endian")
+  6df6ba974a55 ("PCI: aardvark: Remove PCIe outbound window configuration")
 
-from the powerpc tree.
+from the pci tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,64 +42,40 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/vfio/vfio_iommu_spapr_tce.c
-index 7cd63b0c1a46,11a4c194d6e3..000000000000
---- a/drivers/vfio/vfio_iommu_spapr_tce.c
-+++ b/drivers/vfio/vfio_iommu_spapr_tce.c
-@@@ -487,11 -449,11 +449,11 @@@ static void tce_iommu_unuse_page_v2(str
-  	if (!pua)
-  		return;
+diff --cc drivers/pci/controller/pci-aardvark.c
+index 0fae816fba39,d5030cd06197..000000000000
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@@ -843,13 -809,7 +809,7 @@@ static int advk_pcie_parse_request_of_p
  =20
-- 	ret =3D tce_iommu_prereg_ua_to_hpa(container, *pua, tbl->it_page_shift,
-- 			&hpa, &mem);
-+ 	ret =3D tce_iommu_prereg_ua_to_hpa(container, be64_to_cpu(*pua),
- -			IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
-++			tbl->it_page_shift, &hpa, &mem);
-  	if (ret)
-- 		pr_debug("%s: tce %lx at #%lx was not cached, ret=3D%d\n",
-- 				__func__, *pua, entry, ret);
-+ 		pr_debug("%s: tce %llx at #%lx was not cached, ret=3D%d\n",
-+ 				__func__, be64_to_cpu(*pua), entry, ret);
-  	if (mem)
-  		mm_iommu_mapped_dec(mem);
- =20
-@@@ -599,19 -561,12 +561,12 @@@ static long tce_iommu_build_v2(struct t
-  	unsigned long hpa;
-  	enum dma_data_direction dirtmp;
- =20
-- 	if (!tbl->it_userspace) {
-- 		ret =3D tce_iommu_userspace_view_alloc(tbl, container->mm);
-- 		if (ret)
-- 			return ret;
-- 	}
--=20
-  	for (i =3D 0; i < pages; ++i) {
-  		struct mm_iommu_table_group_mem_t *mem =3D NULL;
-- 		unsigned long *pua =3D IOMMU_TABLE_USERSPACE_ENTRY(tbl,
-- 				entry + i);
-+ 		__be64 *pua =3D IOMMU_TABLE_USERSPACE_ENTRY(tbl, entry + i);
- =20
-  		ret =3D tce_iommu_prereg_ua_to_hpa(container,
- -				tce, IOMMU_PAGE_SIZE(tbl), &hpa, &mem);
- +				tce, tbl->it_page_shift, &hpa, &mem);
-  		if (ret)
-  			break;
- =20
+  		switch (resource_type(res)) {
+  		case IORESOURCE_IO:
+- 			advk_pcie_set_ob_win(pcie, 1,
+- 					     upper_32_bits(res->start),
+- 					     lower_32_bits(res->start),
+- 					     0,	0xF8000000, 0,
+- 					     lower_32_bits(res->start),
+- 					     OB_PCIE_IO);
+ -			err =3D pci_remap_iospace(res, iobase);
+ +			err =3D devm_pci_remap_iospace(dev, res, iobase);
+  			if (err) {
+  				dev_warn(dev, "error %d: failed to map resource %pR\n",
+  					 err, res);
 
---Sig_/M/wB7O1tQxgKIF7Eg3TSknz
+--Sig_/X2ehTojAadPModQngJYUH7O
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltRJAoACgkQAVBC80lX
-0GyGIwf/UsUGTDeLCB1dBOXDnIOy937KSGh90Zwx+oOyTE8mjziQB/MtJjZeEhVi
-GtTzPDqTwZeOKU963SX9EmrkpmyHby/aSWB2iBeVnsCqvsUxSEAXMIUlbttfyCxT
-4wDxGKIgAHoSTn7aDJoOjfLd88FiNmCKwX51UFSNqqkbMbQY9s8U7AQ6yuba23gr
-y7rZtAddwYo401xYF5TtUxv9OBgkm1vKyA5vtRPvvHuR023ax9+JkI7NX8Djo4BK
-/6JyLVIQRqkjal7HoJ9lgUkk2KLB77ENvCdR82DOJZETPG56zSxH6zwPaG5eWRK1
-o270Y/I3BCyXzZjC/f8RQg7KGprJcw==
-=n+fN
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltRNM4ACgkQAVBC80lX
+0GzuSgf3f+bamRU7gw2KJLxSFzsbIaW3XtrwlURFfagQ5qq3Dn5o3e22cjX8TFc3
+JN/Ha6/qVWNRKPaRwPJQV8C1ms7+Ea9uVogIz0U/Y7qDtCtvy/3Q9jpyTz9kUinZ
+bwvXemoSq1079TjIOrzPpKZ/QF3iRMk7m5Sw9GTpeJiAvdKsq25Gbu+8iEy5QPVM
+J37gD+mFiFORauxC47PVQNJCnCpWOtXrz9y788DguVFg1H3RqPQhYMeq6U9x1nxg
+Ikdor2LwwuH6YkAExJ2+DRLE3hWrDIBnjqLLEjk3XsSuiCre3LN8OrDCYcmUenuj
+Xbd6D7XmKbf2cdKQZFAv0yblelg2
+=sD9w
 -----END PGP SIGNATURE-----
 
---Sig_/M/wB7O1tQxgKIF7Eg3TSknz--
+--Sig_/X2ehTojAadPModQngJYUH7O--
