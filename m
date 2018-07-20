@@ -1,37 +1,33 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 20 (drivers/memory/jz4780_nemc)
-Date: Fri, 20 Jul 2018 09:28:14 -0700
-Message-ID: <bb6cccb4-5e5c-b5dc-170d-f878af1374f1@infradead.org>
-References: <20180720183212.6bc3477a@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Fri, 20 Jul 2018 22:31:56 +0200
+Message-ID: <CACRpkdZffsC0RsX9Q72+AwWZynjBfTZ4=RE+o=HVd3H0yCdAgA@mail.gmail.com>
+References: <20180719114027.2722d075@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180720183212.6bc3477a@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <20180719114027.2722d075@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alex Smith <alex.smith@imgtec.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 07/20/2018 01:32 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20180719:
-> 
+On Thu, Jul 19, 2018 at 3:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-on i386 or x86_64:
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/net/dsa/realtek.o
+> see include/linux/module.h for more information
+>
+> Introduced by commit
+>
+>   d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
 
-when CONFIG_OF is not enabled, COMPILE_TEST is set:
+Thanks, there is already a patch for it.
 
-../drivers/memory/jz4780-nemc.c: In function 'jz4780_nemc_num_banks':
-../drivers/memory/jz4780-nemc.c:72:3: error: implicit declaration of function 'of_read_number' [-Werror=implicit-function-declaration]
-   bank = of_read_number(prop, 1);
-   ^
+I'm pretty grateful that this was the worst the integration testing
+could find :) new drivers always make me nervous.
 
-<linux/of.h> does not have a stub for of_read_number() when CONFIG_OF is not set
-(it has no way to return an error).
-
-
--- 
-~Randy
+Yours,
+Linus Walleij
