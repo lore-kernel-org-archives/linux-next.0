@@ -1,37 +1,36 @@
-From: "Jiang, Dave" <dave.jiang@intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the nvdimm tree
-Date: Sat, 21 Jul 2018 15:00:24 +0000
-Message-ID: <E0B67B6C-0862-4E2F-9796-C266E6ECF4FE@intel.com>
-References: <20180722003608.42e7164c@canb.auug.org.au>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the kvm-arm
+ tree
+Date: Sat, 21 Jul 2018 16:05:53 +0100
+Message-ID: <20180721160553.3cd29fe0@why.wild-wind.fr.eu.org>
+References: <20180722003152.447551b1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180722003608.42e7164c@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <20180722003152.447551b1@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Williams, Dan J" <dan.j.williams@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Christoffer Dall <cdall@cs.columbia.edu>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Sun, 22 Jul 2018 00:31:52 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+Hi Stephen,
 
-> On Jul 21, 2018, at 7:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 > 
-> Hi Dan,
+> Commit
 > 
-> Commits
+>   9904b113fb90 ("KVM: arm/arm64: Fix vgic init race")
 > 
->  212a28b4dae9 ("MAINTAINERS: Add Jan Kara for filesystem DAX")
->  30153e5ba54d ("MAINTAINERS: update Ross Zwisler's email address")
-> 
-> are missing a Signed-off-by from their committer.
+> is missing a Signed-off-by from its committer.
 
-That’s my fault. I’ll fix. 
+Thanks for spotting this. Now fixed and pushed out again.
 
+Cheers,
 
-
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
