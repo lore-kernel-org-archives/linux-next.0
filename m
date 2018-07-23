@@ -1,38 +1,72 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: linux-next: build warning after merge of the tty tree
-Date: Mon, 23 Jul 2018 12:03:17 +0300
-Message-ID: <769fd35a95a6918faaee8403510ff6aff59431e7.camel@linux.intel.com>
-References: <20180723153914.563af11c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 23 Jul 2018 19:42:31 +1000
+Message-ID: <20180723194231.3d8f0439@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NHprnNiS2jM/SsWHL+q63Cu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180723153914.563af11c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Omar Sandoval <osandov@fb.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2018-07-23 at 15:39 +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the tty tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/tty/serial/8250/8250_exar.c: In function 'pci_xr17v35x_setup':
-> drivers/tty/serial/8250/8250_exar.c:380:31: warning: unused variable
-> 'board' [-Wunused-variable]
->   const struct exar8250_board *board = priv->board;
->                                ^~~~~
-> 
-> Introduced by commit
-> 
->   328c11f24b57 ("serial: 8250_exar: Remove useless has_slave member")
+--Sig_/NHprnNiS2jM/SsWHL+q63Cu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oops, my fault. Usually I compile with W=1, but I somehow missed this
-warning (Okay, found, I used to have it in another patch). Sorry, the
-just sent patch should fix it.
+Hi Andrew,
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+After merging the akpm tree, today's linux-next build (sparc (32 bit)
+defconfig) failed like this:
+
+In file included from kernel/crash_core.c:9:0:
+kernel/crash_core.c: In function 'crash_save_vmcoreinfo_init':
+include/linux/crash_core.h:44:66: error: lvalue required as unary '&' opera=
+nd
+  vmcoreinfo_append_str("SYMBOL(%s)=3D%lx\n", #name, (unsigned long)&name)
+                                                                  ^
+kernel/crash_core.c:404:2: note: in expansion of macro 'VMCOREINFO_SYMBOL'
+  VMCOREINFO_SYMBOL(swapper_pg_dir);
+  ^~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  e527c514996a ("proc/kcore: add vmcoreinfo note to /proc/kcore")
+
+It seems that sparc does not declare swapper_pg_dir for 32 but builds,
+they just define it to be NULL.  As do some others:
+
+$ git grep -w 'define.*swapper_pg_dir'
+arch/arm/include/asm/pgtable-nommu.h:#define swapper_pg_dir ((pgd_t *) 0)
+arch/c6x/include/asm/pgtable.h:#define swapper_pg_dir ((pgd_t *) 0)
+arch/h8300/include/asm/pgtable.h:#define swapper_pg_dir ((pgd_t *) 0)
+arch/m68k/include/asm/pgtable_no.h:#define swapper_pg_dir ((pgd_t *) 0)
+arch/microblaze/include/asm/pgtable.h:#define swapper_pg_dir ((pgd_t *) NUL=
+L)
+arch/sparc/include/asm/pgtable_32.h:#define swapper_pg_dir NULL
+arch/xtensa/include/asm/pgtable.h:# define swapper_pg_dir NULL
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NHprnNiS2jM/SsWHL+q63Cu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVowcACgkQAVBC80lX
+0Gwk/gf/S8czSjJdefz5x1juG2ZcS/h8NUij56ml9wY897HxNUhK46y5njdTZkY5
+VECtk9Z060MqHiHgGtLDZ/wZH/32glvkvjwLpY+ap3CuuuV/Fx3TFLIUVtgPgQ08
+w6SikG+54oZHnyre/YmTmLFN2Jlz1r9f4WeB6oEk645IaUXrQVsEXoPQ6Seynbq4
+e/3CuEZf/5FYmQ7TtZ56WN6RxM9vC+5DAWVcYuXUskHHM7rN7g4uu9kT4XEqpmyo
+Dtd4FZuXpX8GjiOqzqyauByQ+QxKEuEuxgKWNbySKMVe4v0+pE2M/VJB6ygTyqy9
+IK8oSsY7yL/ydsYWlAm58swesaEYYg==
+=af6O
+-----END PGP SIGNATURE-----
+
+--Sig_/NHprnNiS2jM/SsWHL+q63Cu--
