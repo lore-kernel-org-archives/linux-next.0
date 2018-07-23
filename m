@@ -1,66 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Tue, 24 Jul 2018 08:50:15 +1000
-Message-ID: <20180724085015.029efd54@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the arm64 tree
+Date: Tue, 24 Jul 2018 09:05:45 +1000
+Message-ID: <20180724090545.2270d975@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/p7_ied2/1DM2Hs/LiWVGBwZ"; protocol="application/pgp-signature"
+ boundary="Sig_/jN7heVklmlR9WX36Z.SMHz5"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Paul Kocialkowski <contact@paulk.fr>, Laura Abbott <labbott@redhat.com>, Greg Hackmann <ghackmann@android.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, AKASHI Takahiro <takahiro.akashi@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/p7_ied2/1DM2Hs/LiWVGBwZ
+--Sig_/jN7heVklmlR9WX36Z.SMHz5
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+After merging the arm64 tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  arch/arm64/Makefile
+drivers/acpi/Kconfig:6:error: recursive dependency detected!
+drivers/acpi/Kconfig:6:	symbol ACPI depends on EFI
+arch/x86/Kconfig:1920:	symbol EFI depends on ACPI
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
 
-between commits:
+Introduced by commit
 
-  38fc42486775 ("arm64: Use aarch64elf and aarch64elfb emulation mode varia=
-nts")
-  2893af07e507 ("arm64: add endianness option to LDFLAGS instead of LD")
-  96f95a17c1cf ("Revert "arm64: Use aarch64elf and aarch64elfb emulation mo=
-de variants"")
-
-from Linus' tree and commit:
-
-  c931d34ea085 ("arm64: build with baremetal linker target instead of Linux=
- when available")
-
-from the arm64 tree.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  5bcd44083a08 ("drivers: acpi: add dependency of EFI for arm64")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/p7_ied2/1DM2Hs/LiWVGBwZ
+--Sig_/jN7heVklmlR9WX36Z.SMHz5
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltWW6cACgkQAVBC80lX
-0GyAwwf/RD8Hr7QkeYFpIzBdmyqPiNUndF3umskSD0zcju51nXvuk5CizLtczUc1
-sWv1Kumdyf6wm6J8knJu0pEPle0j16Yx61eOvY+Z8T9hVfpOk7gDhqINGa7UFI7v
-Uupkdh8Z5p2ff9jwzvSCRsrzUMbQnUERtEwOXEf+94nW1//fiBGv1Vs59XB8qRSH
-v2ECtsBHwwrxvVeSd0q7qcR3liAK3fTZp1h8q22NW8jiwumwhyB/sqfg8ESdDHxl
-Biaw8I/uqyoU9BH8YIImUbBiv3uq9Z7IhtygPO8Fx4QnWL4rCwbKCNQj8ifmf9XS
-PYmmaIfWYf9bZSTebyzmEIQs1kYOww==
-=Onrj
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltWX0kACgkQAVBC80lX
+0GzRbQgAlEZ8ZMHeOq65ZF6UPW1pUTvOAfGcxsKpe9ibZERHJtWjjSlvD02v4BLc
+Y74KCIhysKHbQFjI4emZUce1573E70gvDMqoe8JIYqAY2x3DdkUOh2sqge5yPQMB
+XCInvqs7LlkiObH8VFjRMr81CeH7OqvYUsDu9lEBrvc9HCIzFtM8e+f2WWsiLGW6
+e9gTEHrsoMMOb7qi2vSPtXl5gdl5HHUbw/Cmhy7ZKyjOdUML1m/qmnwm0meeDq3a
+RNj/joNkt2H+fRA1Ym4J7qfX7k1+V7A7VTsGJRGIcj2LIGVsuoo16K3B9zUofYcg
+QPhrfTv7FryyVR2sbt9JzJGOzCfQQg==
+=UW3N
 -----END PGP SIGNATURE-----
 
---Sig_/p7_ied2/1DM2Hs/LiWVGBwZ--
+--Sig_/jN7heVklmlR9WX36Z.SMHz5--
