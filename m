@@ -1,90 +1,79 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- net-next tree
-Date: Mon, 23 Jul 2018 08:20:46 +0200
-Message-ID: <20180723062046.GA2577@kroah.com>
-References: <20180723151224.69a73892@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xarray tree with the nvdimm tree
+Date: Mon, 23 Jul 2018 16:51:34 +1000
+Message-ID: <20180723165115.4c96278b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/arOsxl+6MdhuZX6xEIj6HGW"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180723151224.69a73892@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rajat Jain <rajatja@google.com>
+To: Matthew Wilcox <willy@infradead.org>, Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ross Zwisler <zwisler@kernel.org>, Dave Jiang <dave.jiang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 23, 2018 at 03:12:24PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in:
-> 
->   fs/sysfs/group.c
-> 
-> between commit:
-> 
->   5f81880d5204 ("sysfs, kobject: allow creating kobject belonging to arbitrary users")
-> 
-> from the net-next tree and commit:
-> 
->   c855cf2759d2 ("sysfs: Fix internal_create_group() for named group updates")
-> 
-> from the driver-core tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc fs/sysfs/group.c
-> index c7a716c4acc9,38240410f831..000000000000
-> --- a/fs/sysfs/group.c
-> +++ b/fs/sysfs/group.c
-> @@@ -122,15 -118,23 +122,24 @@@ static int internal_create_group(struc
->   			kobj->name, grp->name ?: "");
->   		return -EINVAL;
->   	}
->  +	kobject_get_ownership(kobj, &uid, &gid);
->   	if (grp->name) {
-> - 		kn = kernfs_create_dir_ns(kobj->sd, grp->name,
-> - 					  S_IRWXU | S_IRUGO | S_IXUGO,
-> - 					  uid, gid, kobj, NULL);
-> - 		if (IS_ERR(kn)) {
-> - 			if (PTR_ERR(kn) == -EEXIST)
-> - 				sysfs_warn_dup(kobj->sd, grp->name);
-> - 			return PTR_ERR(kn);
-> + 		if (update) {
-> + 			kn = kernfs_find_and_get(kobj->sd, grp->name);
-> + 			if (!kn) {
-> + 				pr_warn("Can't update unknown attr grp name: %s/%s\n",
-> + 					kobj->name, grp->name);
-> + 				return -EINVAL;
-> + 			}
-> + 		} else {
->  -			kn = kernfs_create_dir(kobj->sd, grp->name,
->  -					       S_IRWXU | S_IRUGO | S_IXUGO,
->  -					       kobj);
-> ++			kn = kernfs_create_dir_ns(kobj->sd, grp->name,
-> ++						  S_IRWXU | S_IRUGO | S_IXUGO,
-> ++						  uid, gid, kobj, NULL);
-> + 			if (IS_ERR(kn)) {
-> + 				if (PTR_ERR(kn) == -EEXIST)
-> + 					sysfs_warn_dup(kobj->sd, grp->name);
-> + 				return PTR_ERR(kn);
-> + 			}
->   		}
->   	} else
->   		kn = kobj->sd;
+--Sig_/arOsxl+6MdhuZX6xEIj6HGW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Matthew,
 
-I think this is correct.  Rajat, can you verify it please?
+Today's linux-next merge of the xarray tree got a conflict in:
 
-thanks,
+  MAINTAINERS
 
-greg k-h
+between commits:
+
+  30153e5ba54d ("MAINTAINERS: update Ross Zwisler's email address")
+  212a28b4dae9 ("MAINTAINERS: Add Jan Kara for filesystem DAX")
+
+from the nvdimm tree and commit:
+
+  40c8f8eed61c ("Update email address")
+
+from the xarray tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 7afb9ad5a85c,9bcfd5caa248..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -4330,9 -4272,8 +4330,9 @@@ S:	Maintaine
+  F:	drivers/i2c/busses/i2c-diolan-u2c.c
+ =20
+  FILESYSTEM DIRECT ACCESS (DAX)
+- M:	Matthew Wilcox <mawilcox@microsoft.com>
++ M:	Matthew Wilcox <willy@infradead.org>
+ -M:	Ross Zwisler <ross.zwisler@linux.intel.com>
+ +M:	Ross Zwisler <zwisler@kernel.org>
+ +M:	Jan Kara <jack@suse.cz>
+  L:	linux-fsdevel@vger.kernel.org
+  S:	Supported
+  F:	fs/dax.c
+
+--Sig_/arOsxl+6MdhuZX6xEIj6HGW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVevYACgkQAVBC80lX
+0GxIwAf9E1gQXy0MwWvVyOuJNlIoZlv+8GrlQIJLmNT39iq712spd8zAonNFnRCP
+iqOfKQSWkCVkDKwInuyR9m5lpnyEGdVS0FW8bjOg7t9DV2ZSmf32dKmwNmNW3UaL
+g3d6S92y83mAGzQYgEtND4piqoLBjR/sA4gnepxG2A3zC+PeB3sOoCZswKqQ3UkO
+96kY4JdbiknwtpGdzmf54vcidPwjarIHrPqSq/CcQW22qfiUo71VH53or+T3iDg9
+uhhXlK+iTcY+qiSO6ezXkwI+watkFbiYB/CZvAIXYJitfgsNbPUaSXY5spliZQzc
+PHuafseGslugf0Jqx/T1FuoE3eWygw==
+=LsyE
+-----END PGP SIGNATURE-----
+
+--Sig_/arOsxl+6MdhuZX6xEIj6HGW--
