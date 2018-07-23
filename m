@@ -1,46 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the s390 tree
-Date: Mon, 23 Jul 2018 21:38:18 +1000
-Message-ID: <20180723213818.0941d58d@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: Tree for Jul 23
+Date: Tue, 24 Jul 2018 00:35:22 +1000
+Message-ID: <877elmhvf9.fsf@concordia.ellerman.id.au>
+References: <20180723200032.221a8f18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kPGe7MnWhCbRzNbsiUkcCBf"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180723200032.221a8f18@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Richter <tmricht@linux.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kPGe7MnWhCbRzNbsiUkcCBf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi all,
+> Hi all,
+>
+> Changes since 20180720:
+>
+> Dropped trees: xarray, ida (complex conflicts)
+>
+> The drm-msm tree gained a conflict against the drm tree and a build
+> failure due to an interaction with the drm tree for which I added a
+> merge fix patch.
+>
+> The kvm-arm tree gained a conflict against the arm64 tree.
+>
+> The driver-core tree gained a conflict against the net-next tree.
+>
+> The xarray tree gained complex conflicts against the nvdimm tree so I have
+> dropped it for today (along with the ida tree that is built on top of it).
+>
+> The akpm-current tree gained a conflict against Linus' tree and also a
+> build failure for which I reverted a commit.
+>
+> Non-merge commits (relative to Linus' tree): 7606
+>  7110 files changed, 316203 insertions(+), 143278 deletions(-)
 
-Commit
+Hi Stephen,
 
-  5b6f5ee0f97f ("s390 cio: Rewrite trace point in s390_cio_interrupt")
+Would you mind adding my "topic/hvc" branch to linux-next.
 
-is missing a Signed-off-by from its author.
+We (ppc) are notionally the maintainers for that code but it's used by
+some other folks, so I'd like it to get some wider testing before I
+commit it.
 
---=20
-Cheers,
-Stephen Rothwell
+You should get:
 
---Sig_/kPGe7MnWhCbRzNbsiUkcCBf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  9f65b81f36e3 ("tty: hvc: introduce the hv_ops.flush operation for hvc drivers")
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVvioACgkQAVBC80lX
-0GwocQf+PknemI9BjDhL3ItqzOKKn6gKx1oXVXIKautpW9ABGSoag+LTNYlf4/va
-P70ExGNNObLmpgSvyLHvZQMMK5VPQ9uqCaib291wfLI6xPvS9+BGY5oa6IHsC+cr
-u3aQttVVG87GOd4p7xQRyv4IRmy+ySyhTvAJz0cbS5H64GFYTawLNakZNBnZ4++X
-/I0+MauuMhoxm03oWWeHtZ8EpshrXJGkJ6pbyqtgfB+HKI+aPKX6uvPK4zkHl9rN
-vLzPe6VYEa2NyVE3JL9ACAEI2n3BZDAC8B0go4oyEeN5jhahLln7esBQHL1jEe0d
-3EpjUnru7/i6TZZNOadeBOMohtLYRA==
-=DhWe
------END PGP SIGNATURE-----
-
---Sig_/kPGe7MnWhCbRzNbsiUkcCBf--
+cheers
