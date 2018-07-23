@@ -1,119 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-msm tree
-Date: Mon, 23 Jul 2018 14:50:06 +1000
-Message-ID: <20180723145006.5a26207f@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the net-next
+ tree
+Date: Mon, 23 Jul 2018 15:12:24 +1000
+Message-ID: <20180723151224.69a73892@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0612575490=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IOndqov/G_gyZt2cVw+4vKf"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rajat Jain <rajatja@google.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0612575490==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+xjnmUetd=y0duXd=.MLNVr"; protocol="application/pgp-signature"
-
---Sig_/+xjnmUetd=y0duXd=.MLNVr
+--Sig_/IOndqov/G_gyZt2cVw+4vKf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi Greg,
 
-[Dave, this will presumably soon turn up in the drm tree]
+Today's linux-next merge of the driver-core tree got a conflict in:
 
-After merging the drm-msm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+  fs/sysfs/group.c
 
-drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c: In function 'dpu_plane_destroy':
-drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:1483:3: error: too few arguments =
-to function 'drm_plane_helper_disable'
-   drm_plane_helper_disable(plane);
-   ^~~~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/gpu/drm/msm/msm_drv.h:43:0,
-                 from drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:24:
-include/drm/drm_plane_helper.h:72:5: note: declared here
- int drm_plane_helper_disable(struct drm_plane *plane,
-     ^~~~~~~~~~~~~~~~~~~~~~~~
+between commit:
 
-Caused by commit
+  5f81880d5204 ("sysfs, kobject: allow creating kobject belonging to arbitr=
+ary users")
 
-  drm_plane_helper_disable ("drm/msm: Add SDM845 DPU support")
+from the net-next tree and commit:
 
-interacting with commit
+  c855cf2759d2 ("sysfs: Fix internal_create_group() for named group updates=
+")
 
-  070473bcf703 ("drm: add missing ctx argument to plane transitional helper=
-s")
+from the driver-core tree.
 
-from the drm tree.
-
-I have added this merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 23 Jul 2018 12:47:04 +1000
-Subject: [PATCH] drm: msm: merge fix for drm_plane_helper_disable() API cha=
-nge
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/ms=
-m/disp/dpu1/dpu_plane.c
-index d3d7ebf0c394..b640e39ebaca 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -1480,7 +1480,7 @@ static void dpu_plane_destroy(struct drm_plane *plane)
-=20
- 		mutex_destroy(&pdpu->lock);
-=20
--		drm_plane_helper_disable(plane);
-+		drm_plane_helper_disable(plane, NULL);
-=20
- 		/* this will destroy the states as well */
- 		drm_plane_cleanup(plane);
---=20
-2.18.0
+I fixed it up (I think - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/+xjnmUetd=y0duXd=.MLNVr
+diff --cc fs/sysfs/group.c
+index c7a716c4acc9,38240410f831..000000000000
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@@ -122,15 -118,23 +122,24 @@@ static int internal_create_group(struc
+  			kobj->name, grp->name ?: "");
+  		return -EINVAL;
+  	}
+ +	kobject_get_ownership(kobj, &uid, &gid);
+  	if (grp->name) {
+- 		kn =3D kernfs_create_dir_ns(kobj->sd, grp->name,
+- 					  S_IRWXU | S_IRUGO | S_IXUGO,
+- 					  uid, gid, kobj, NULL);
+- 		if (IS_ERR(kn)) {
+- 			if (PTR_ERR(kn) =3D=3D -EEXIST)
+- 				sysfs_warn_dup(kobj->sd, grp->name);
+- 			return PTR_ERR(kn);
++ 		if (update) {
++ 			kn =3D kernfs_find_and_get(kobj->sd, grp->name);
++ 			if (!kn) {
++ 				pr_warn("Can't update unknown attr grp name: %s/%s\n",
++ 					kobj->name, grp->name);
++ 				return -EINVAL;
++ 			}
++ 		} else {
+ -			kn =3D kernfs_create_dir(kobj->sd, grp->name,
+ -					       S_IRWXU | S_IRUGO | S_IXUGO,
+ -					       kobj);
+++			kn =3D kernfs_create_dir_ns(kobj->sd, grp->name,
+++						  S_IRWXU | S_IRUGO | S_IXUGO,
+++						  uid, gid, kobj, NULL);
++ 			if (IS_ERR(kn)) {
++ 				if (PTR_ERR(kn) =3D=3D -EEXIST)
++ 					sysfs_warn_dup(kobj->sd, grp->name);
++ 				return PTR_ERR(kn);
++ 			}
+  		}
+  	} else
+  		kn =3D kobj->sd;
+
+--Sig_/IOndqov/G_gyZt2cVw+4vKf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVXn4ACgkQAVBC80lX
-0GzjNgf/Z6u2dz+1Fp7VQC3NvGWmKTfv7kkl/Anz1D6xfWlOCaJTi+Dv7VZFHcZp
-oWnAolpBpEHeUHU/BIjm+HdieSYdg6nqFJg5mjLVPxe7CUUO0s9Mvh7rg+Th0vNK
-NTj+vGPLgSSIVtPWw7NVkZXj1DEDLQpmYMhGDVdARudHSbnbMG8Udq5xCV1RVLJC
-gDApa50kjrfb3Ujsh5dZ8x1qaOXX5KE0taakB4545enOiFvfTuPHKRFG5t38OGwh
-a+/7yOZguW831CkJ1g2u+Noe2Vo7nn5IfPwpthfq/kBUkXyokkhSmPkCVFhsGnKj
-ht7Tf+2gNgNLtIsAoOzUfCk3VPoaVw==
-=pqLA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVY7gACgkQAVBC80lX
+0GzHPQf+J0/auWMhpVVK4yFCEdUYpMxE7Rdox/lf6dwyOLQOM2TK1d1mWywV5eLy
+qhIRwzOfSP7IJsAS5Oed/zZjdaNt6YYSFaKkzqiIq9yNasCqvr0fmvgfUucr/gE4
+irv5YMDWKsBbJ1oOsTVsbc1MeB7RfPE5vekea3RWG1QqEeh09lyJcwtysCwUdM62
+Nlw44p+oGPi+L+x/poGCOoPuUKBAtJsi5dqbCfeegdx0OyAA5kNnr1FadkCuL4sY
+5Cwr7yj3ArhGrMMBuFwKnNCIO0efptr+kRaYp9O8jOA3X0o5zn8r3vRsRGadxu3e
+N6Zd1ieT0ARvdJtAnZVUGRBqdkpcig==
+=ImcX
 -----END PGP SIGNATURE-----
 
---Sig_/+xjnmUetd=y0duXd=.MLNVr--
-
---===============0612575490==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0612575490==--
+--Sig_/IOndqov/G_gyZt2cVw+4vKf--
