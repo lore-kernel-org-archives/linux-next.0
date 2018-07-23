@@ -1,104 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the net-next
- tree
-Date: Mon, 23 Jul 2018 15:12:24 +1000
-Message-ID: <20180723151224.69a73892@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tty tree
+Date: Mon, 23 Jul 2018 15:39:14 +1000
+Message-ID: <20180723153914.563af11c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IOndqov/G_gyZt2cVw+4vKf"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rajat Jain <rajatja@google.com>
+ boundary="Sig_/JThGx3CUaLtSkoddMj+oiW4"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/IOndqov/G_gyZt2cVw+4vKf
+--Sig_/JThGx3CUaLtSkoddMj+oiW4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the driver-core tree got a conflict in:
+After merging the tty tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  fs/sysfs/group.c
+drivers/tty/serial/8250/8250_exar.c: In function 'pci_xr17v35x_setup':
+drivers/tty/serial/8250/8250_exar.c:380:31: warning: unused variable 'board=
+' [-Wunused-variable]
+  const struct exar8250_board *board =3D priv->board;
+                               ^~~~~
 
-between commit:
+Introduced by commit
 
-  5f81880d5204 ("sysfs, kobject: allow creating kobject belonging to arbitr=
-ary users")
-
-from the net-next tree and commit:
-
-  c855cf2759d2 ("sysfs: Fix internal_create_group() for named group updates=
-")
-
-from the driver-core tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  328c11f24b57 ("serial: 8250_exar: Remove useless has_slave member")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/sysfs/group.c
-index c7a716c4acc9,38240410f831..000000000000
---- a/fs/sysfs/group.c
-+++ b/fs/sysfs/group.c
-@@@ -122,15 -118,23 +122,24 @@@ static int internal_create_group(struc
-  			kobj->name, grp->name ?: "");
-  		return -EINVAL;
-  	}
- +	kobject_get_ownership(kobj, &uid, &gid);
-  	if (grp->name) {
-- 		kn =3D kernfs_create_dir_ns(kobj->sd, grp->name,
-- 					  S_IRWXU | S_IRUGO | S_IXUGO,
-- 					  uid, gid, kobj, NULL);
-- 		if (IS_ERR(kn)) {
-- 			if (PTR_ERR(kn) =3D=3D -EEXIST)
-- 				sysfs_warn_dup(kobj->sd, grp->name);
-- 			return PTR_ERR(kn);
-+ 		if (update) {
-+ 			kn =3D kernfs_find_and_get(kobj->sd, grp->name);
-+ 			if (!kn) {
-+ 				pr_warn("Can't update unknown attr grp name: %s/%s\n",
-+ 					kobj->name, grp->name);
-+ 				return -EINVAL;
-+ 			}
-+ 		} else {
- -			kn =3D kernfs_create_dir(kobj->sd, grp->name,
- -					       S_IRWXU | S_IRUGO | S_IXUGO,
- -					       kobj);
-++			kn =3D kernfs_create_dir_ns(kobj->sd, grp->name,
-++						  S_IRWXU | S_IRUGO | S_IXUGO,
-++						  uid, gid, kobj, NULL);
-+ 			if (IS_ERR(kn)) {
-+ 				if (PTR_ERR(kn) =3D=3D -EEXIST)
-+ 					sysfs_warn_dup(kobj->sd, grp->name);
-+ 				return PTR_ERR(kn);
-+ 			}
-  		}
-  	} else
-  		kn =3D kobj->sd;
-
---Sig_/IOndqov/G_gyZt2cVw+4vKf
+--Sig_/JThGx3CUaLtSkoddMj+oiW4
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVY7gACgkQAVBC80lX
-0GzHPQf+J0/auWMhpVVK4yFCEdUYpMxE7Rdox/lf6dwyOLQOM2TK1d1mWywV5eLy
-qhIRwzOfSP7IJsAS5Oed/zZjdaNt6YYSFaKkzqiIq9yNasCqvr0fmvgfUucr/gE4
-irv5YMDWKsBbJ1oOsTVsbc1MeB7RfPE5vekea3RWG1QqEeh09lyJcwtysCwUdM62
-Nlw44p+oGPi+L+x/poGCOoPuUKBAtJsi5dqbCfeegdx0OyAA5kNnr1FadkCuL4sY
-5Cwr7yj3ArhGrMMBuFwKnNCIO0efptr+kRaYp9O8jOA3X0o5zn8r3vRsRGadxu3e
-N6Zd1ieT0ARvdJtAnZVUGRBqdkpcig==
-=ImcX
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltVagIACgkQAVBC80lX
+0Gw7egf/Wu5CCVzZk+VPQvsuw/2M8rL1UtId6v08Gb8Pmt5M4FMrzwPdzO92udyK
+Cf8+JHJGmLQkzE6V4fKxpRdb/cKxhSeff/JtM3edrfctwKIUDKUkoLaMJIWzSSp4
+jEv0Xq4pV1BJeWdXcyk6kgUPtPAYcsYY19rsMHA4jlzRLhpCC8F/X9jduyN2nVHW
+eYX+EK5VWGd0hjRh7xLkaku3zxXZ0VFSCptXTDLa24xF8187XWxZ0qVrqPG2wsTV
+QGXTO0oUpV9dSA5GZM1EZs8MAq0O4UtdOvJoqkQPbFSnr/f6vcP7j53cPAAaDBb6
+f5y5DmBnxD/5FSG27mLEs6hWr0gr9w==
+=Za2y
 -----END PGP SIGNATURE-----
 
---Sig_/IOndqov/G_gyZt2cVw+4vKf--
+--Sig_/JThGx3CUaLtSkoddMj+oiW4--
