@@ -1,79 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20180723 build: 2 failures 11 warnings (next-20180723)
-Date: Mon, 23 Jul 2018 19:25:03 +0100
-Message-ID: <20180723182503.GH13981@sirena.org.uk>
-References: <E1fheAy-0003tU-Dq@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jul 23
+Date: Tue, 24 Jul 2018 07:03:42 +1000
+Message-ID: <20180724070342.36c5a2d9@canb.auug.org.au>
+References: <20180723200032.221a8f18@canb.auug.org.au>
+        <877elmhvf9.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5945030942620407874=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1fheAy-0003tU-Dq@optimist>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, Russell King <linux@armlinux.org.uk>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Davidlohr Bueso <dave@stgolabs.net>, linux-next@vger.kernel.org, linux-mm@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.vKZNXdL2uNbeeSvD13OLGZ"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <877elmhvf9.fsf@concordia.ellerman.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/.vKZNXdL2uNbeeSvD13OLGZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---===============5945030942620407874==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XRI2XbIfl/05pQwm"
-Content-Disposition: inline
+Hi Michael,
 
+On Tue, 24 Jul 2018 00:35:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
+>
+> Would you mind adding my "topic/hvc" branch to linux-next.
+>=20
+> We (ppc) are notionally the maintainers for that code but it's used by
+> some other folks, so I'd like it to get some wider testing before I
+> commit it.
+>=20
+> You should get:
+>=20
+>   9f65b81f36e3 ("tty: hvc: introduce the hv_ops.flush operation for hvc d=
+rivers")
 
---XRI2XbIfl/05pQwm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Added from today.
 
-On Mon, Jul 23, 2018 at 05:59:12PM +0100, Build bot for Mark Brown wrote:
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Today's -next fails to build an arm allnoconfig (and a bunch of other
-arm configs from the look of some of the other builder reports) with:
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-> 	arm-allnoconfig
-> ../mm/vmacache.c:14:39: error: 'PMD_SHIFT' undeclared (first use in this function)
-> ../mm/vmacache.c:14:39: error: 'PMD_SHIFT' undeclared (first use in this function)
-> ../mm/vmacache.c:127:26: error: 'addr' undeclared (first use in this function)
-> ../mm/vmacache.c:14:39: error: 'PMD_SHIFT' undeclared (first use in this function)
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-due to 5d2f33872046e (mm, vmacache: hash addresses based on pmd) which
-uses PMD_SHIFT rather than PAGE_SHIFT for VMACACHE_HASH() but that's not
-defined in at least !MMU arm configs.  There is a reference to it in
-arm/pgtable-nommu.h but only in comments with FIXMEs next to them.
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---XRI2XbIfl/05pQwm
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/.vKZNXdL2uNbeeSvD13OLGZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltWHX8ACgkQJNaLcl1U
-h9CV1wf8Drr0zu5PAlo075hV5OM4Ayd1BKHlEe7yxOqzkr4mcfNvpPix4wwTf+YN
-ENemtEyJCHHeX8rozTn9DhDhwZDEjBwnt38RpAmpFiLntLC9oBpG0vUinFLKwIwd
-GLU6CA0B2hd2uxxZSmmmJI7VvfNufidj4BOam5N7uYc9IMFWRz2ifCAyTMH81aIV
-W08RMQ7zoR4b2ifFVxRJ4gIjIwdI8I9HM5NoXqXtyVNC1J1hD8ccIOWRq3ck80pb
-di7Qwl9F+OYrE4uAdprfPCPqtbiV8MGDv4cRt+omPLXreuUaXmRO5vv0h4MEV8f+
-/cB6mo6seGoz4Qy/weMH7UObOepPYA==
-=/Uou
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltWQq4ACgkQAVBC80lX
+0GyI7gf+P5pl3lh9oWieWUcUDvlW9IaG50WC3U9/+CzkfeD5t+2sbJKrHOUBphcd
+WgJkCloTcYBzr4KQ7xeyGYPIjvguHadZnvbmjn3vU0gyaQ5p64IgvKBT5raBPI9y
+agzuJusSiizIhi2/MU53v/LP5l/WcNfQFxW/Jq/0r0aAKiunxg3EGGfuzA2yVPgU
+PzEC9T/MFlg9KWBPT4E68B97L8g5HutHoe02tjPxbpOOLF3ixEz3DSdPCWXdOJ49
+dwCtHn/UHTSzE94P3wg7d2aynn53ruNJLXe7NLNn1WA/DII5ALQYdjuSWU3S+JxW
+o6CJY9nyfJ0N1buaeOXrUmkkVkPOkg==
+=xVNS
 -----END PGP SIGNATURE-----
 
---XRI2XbIfl/05pQwm--
-
-
---===============5945030942620407874==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5945030942620407874==--
+--Sig_/.vKZNXdL2uNbeeSvD13OLGZ--
