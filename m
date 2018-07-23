@@ -1,77 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jul 23
-Date: Tue, 24 Jul 2018 07:03:42 +1000
-Message-ID: <20180724070342.36c5a2d9@canb.auug.org.au>
-References: <20180723200032.221a8f18@canb.auug.org.au>
-        <877elmhvf9.fsf@concordia.ellerman.id.au>
+Subject: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Tue, 24 Jul 2018 08:50:15 +1000
+Message-ID: <20180724085015.029efd54@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.vKZNXdL2uNbeeSvD13OLGZ"; protocol="application/pgp-signature"
+ boundary="Sig_/p7_ied2/1DM2Hs/LiWVGBwZ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <877elmhvf9.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Paul Kocialkowski <contact@paulk.fr>, Laura Abbott <labbott@redhat.com>, Greg Hackmann <ghackmann@android.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.vKZNXdL2uNbeeSvD13OLGZ
+--Sig_/p7_ied2/1DM2Hs/LiWVGBwZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi all,
 
-On Tue, 24 Jul 2018 00:35:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
-ote:
->
-> Would you mind adding my "topic/hvc" branch to linux-next.
->=20
-> We (ppc) are notionally the maintainers for that code but it's used by
-> some other folks, so I'd like it to get some wider testing before I
-> commit it.
->=20
-> You should get:
->=20
->   9f65b81f36e3 ("tty: hvc: introduce the hv_ops.flush operation for hvc d=
-rivers")
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-Added from today.
+  arch/arm64/Makefile
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+between commits:
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+  38fc42486775 ("arm64: Use aarch64elf and aarch64elfb emulation mode varia=
+nts")
+  2893af07e507 ("arm64: add endianness option to LDFLAGS instead of LD")
+  96f95a17c1cf ("Revert "arm64: Use aarch64elf and aarch64elfb emulation mo=
+de variants"")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+from Linus' tree and commit:
+
+  c931d34ea085 ("arm64: build with baremetal linker target instead of Linux=
+ when available")
+
+from the arm64 tree.
+
+I fixed it up (I just used the latter version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell
 
---Sig_/.vKZNXdL2uNbeeSvD13OLGZ
+--Sig_/p7_ied2/1DM2Hs/LiWVGBwZ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltWQq4ACgkQAVBC80lX
-0GyI7gf+P5pl3lh9oWieWUcUDvlW9IaG50WC3U9/+CzkfeD5t+2sbJKrHOUBphcd
-WgJkCloTcYBzr4KQ7xeyGYPIjvguHadZnvbmjn3vU0gyaQ5p64IgvKBT5raBPI9y
-agzuJusSiizIhi2/MU53v/LP5l/WcNfQFxW/Jq/0r0aAKiunxg3EGGfuzA2yVPgU
-PzEC9T/MFlg9KWBPT4E68B97L8g5HutHoe02tjPxbpOOLF3ixEz3DSdPCWXdOJ49
-dwCtHn/UHTSzE94P3wg7d2aynn53ruNJLXe7NLNn1WA/DII5ALQYdjuSWU3S+JxW
-o6CJY9nyfJ0N1buaeOXrUmkkVkPOkg==
-=xVNS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltWW6cACgkQAVBC80lX
+0GyAwwf/RD8Hr7QkeYFpIzBdmyqPiNUndF3umskSD0zcju51nXvuk5CizLtczUc1
+sWv1Kumdyf6wm6J8knJu0pEPle0j16Yx61eOvY+Z8T9hVfpOk7gDhqINGa7UFI7v
+Uupkdh8Z5p2ff9jwzvSCRsrzUMbQnUERtEwOXEf+94nW1//fiBGv1Vs59XB8qRSH
+v2ECtsBHwwrxvVeSd0q7qcR3liAK3fTZp1h8q22NW8jiwumwhyB/sqfg8ESdDHxl
+Biaw8I/uqyoU9BH8YIImUbBiv3uq9Z7IhtygPO8Fx4QnWL4rCwbKCNQj8ifmf9XS
+PYmmaIfWYf9bZSTebyzmEIQs1kYOww==
+=Onrj
 -----END PGP SIGNATURE-----
 
---Sig_/.vKZNXdL2uNbeeSvD13OLGZ--
+--Sig_/p7_ied2/1DM2Hs/LiWVGBwZ--
