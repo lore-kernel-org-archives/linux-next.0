@@ -1,64 +1,145 @@
-From: Rob Clark <robdclark@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm-msm tree
-Date: Wed, 25 Jul 2018 08:08:33 -0400
-Message-ID: <CAF6AEGsX6p853OG-e_PN6umpG0aM0hr0KvecOKJ+bbLi2362nQ@mail.gmail.com>
-References: <20180723145006.5a26207f@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jul 25
+Date: Wed, 25 Jul 2018 06:32:57 -0700
+Message-ID: <20180725133257.GA29961@roeck-us.net>
+References: <20180725164408.371c73fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180723145006.5a26207f@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180725164408.371c73fb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Russell King <rmk+kernel@armlinux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gTW9uLCBKdWwgMjMsIDIwMTggYXQgMTI6NTAgQU0sIFN0ZXBoZW4gUm90aHdlbGwgPHNmckBj
-YW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPiBIaSBSb2IsCj4KPiBbRGF2ZSwgdGhpcyB3aWxsIHBy
-ZXN1bWFibHkgc29vbiB0dXJuIHVwIGluIHRoZSBkcm0gdHJlZV0KPgo+IEFmdGVyIG1lcmdpbmcg
-dGhlIGRybS1tc20gdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkIChhcm0KPiBtdWx0aV92
-N19kZWZjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4KPiBkcml2ZXJzL2dwdS9kcm0vbXNtL2Rp
-c3AvZHB1MS9kcHVfcGxhbmUuYzogSW4gZnVuY3Rpb24gJ2RwdV9wbGFuZV9kZXN0cm95JzoKPiBk
-cml2ZXJzL2dwdS9kcm0vbXNtL2Rpc3AvZHB1MS9kcHVfcGxhbmUuYzoxNDgzOjM6IGVycm9yOiB0
-b28gZmV3IGFyZ3VtZW50cyB0byBmdW5jdGlvbiAnZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlJwo+
-ICAgIGRybV9wbGFuZV9oZWxwZXJfZGlzYWJsZShwbGFuZSk7Cj4gICAgXn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+Cj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2RybS9tc20vbXNt
-X2Rydi5oOjQzOjAsCj4gICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9tc20v
-ZGlzcC9kcHUxL2RwdV9wbGFuZS5jOjI0Ogo+IGluY2x1ZGUvZHJtL2RybV9wbGFuZV9oZWxwZXIu
-aDo3Mjo1OiBub3RlOiBkZWNsYXJlZCBoZXJlCj4gIGludCBkcm1fcGxhbmVfaGVscGVyX2Rpc2Fi
-bGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+
-fn4KPgo+IENhdXNlZCBieSBjb21taXQKPgo+ICAgZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlICgi
-ZHJtL21zbTogQWRkIFNETTg0NSBEUFUgc3VwcG9ydCIpCj4KPiBpbnRlcmFjdGluZyB3aXRoIGNv
-bW1pdAo+Cj4gICAwNzA0NzNiY2Y3MDMgKCJkcm06IGFkZCBtaXNzaW5nIGN0eCBhcmd1bWVudCB0
-byBwbGFuZSB0cmFuc2l0aW9uYWwgaGVscGVycyIpCj4KPiBmcm9tIHRoZSBkcm0gdHJlZS4KPgo+
-IEkgaGF2ZSBhZGRlZCB0aGlzIG1lcmdlIGZpeCBwYXRjaC4KClRoaXMgbG9va3MgbGlrZSB0aGUg
-Y29ycmVjdCBmaXguICBJJ2xsIHJlYmFzZSBteSBtc20tbmV4dCBicmFuY2ggdG8KY29ycmVjdCB0
-aGlzIGFuZCB0aGUgb3RoZXIgbWVyZ2UgY29uZmxpY3QuLgoKQlIsCi1SCgo+Cj4gRnJvbTogU3Rl
-cGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4gRGF0ZTogTW9uLCAyMyBKdWwg
-MjAxOCAxMjo0NzowNCArMTAwMAo+IFN1YmplY3Q6IFtQQVRDSF0gZHJtOiBtc206IG1lcmdlIGZp
-eCBmb3IgZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlKCkgQVBJIGNoYW5nZQo+Cj4gU2lnbmVkLW9m
-Zi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4gLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9tc20vZGlzcC9kcHUxL2RwdV9wbGFuZS5jIHwgMiArLQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPgo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vbXNtL2Rpc3AvZHB1MS9kcHVfcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9tc20vZGlzcC9kcHUxL2RwdV9wbGFuZS5jCj4gaW5kZXggZDNkN2ViZjBjMzk0Li5iNjQwZTM5
-ZWJhY2EgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21zbS9kaXNwL2RwdTEvZHB1X3Bs
-YW5lLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbXNtL2Rpc3AvZHB1MS9kcHVfcGxhbmUuYwo+
-IEBAIC0xNDgwLDcgKzE0ODAsNyBAQCBzdGF0aWMgdm9pZCBkcHVfcGxhbmVfZGVzdHJveShzdHJ1
-Y3QgZHJtX3BsYW5lICpwbGFuZSkKPgo+ICAgICAgICAgICAgICAgICBtdXRleF9kZXN0cm95KCZw
-ZHB1LT5sb2NrKTsKPgo+IC0gICAgICAgICAgICAgICBkcm1fcGxhbmVfaGVscGVyX2Rpc2FibGUo
-cGxhbmUpOwo+ICsgICAgICAgICAgICAgICBkcm1fcGxhbmVfaGVscGVyX2Rpc2FibGUocGxhbmUs
-IE5VTEwpOwo+Cj4gICAgICAgICAgICAgICAgIC8qIHRoaXMgd2lsbCBkZXN0cm95IHRoZSBzdGF0
-ZXMgYXMgd2VsbCAqLwo+ICAgICAgICAgICAgICAgICBkcm1fcGxhbmVfY2xlYW51cChwbGFuZSk7
-Cj4gLS0KPiAyLjE4LjAKPgo+IC0tCj4gQ2hlZXJzLAo+IFN0ZXBoZW4gUm90aHdlbGwKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed, Jul 25, 2018 at 04:44:08PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180724:
+> 
+> Dropped trees: xarray, ida (complex conflicts)
+> 
+> The xarray tree still had its complex conflicts against the nvdimm tree
+> so I have dropped it again for today (along with the ida tree that is
+> built on top of it).
+> 
+> The akpm-current tree still had its build failure for which I reverted
+> a commit.
+> 
+> Non-merge commits (relative to Linus' tree): 8119
+>  7489 files changed, 334256 insertions(+), 150745 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
+
+Build results:
+	total: 134 pass: 125 fail: 9
+Failed builds: 
+	alpha:allmodconfig 
+	arm:axm55xx_defconfig
+	arm:keystone_defconfig
+	parisc:allmodconfig 
+	s390:allmodconfig 
+	sparc32:allmodconfig 
+	sparc64:allmodconfig 
+	unicore32:defconfig 
+	unicore32:allnoconfig 
+Qemu test results:
+	total: 172 pass: 172 fail: 0
+
+---
+alpha:allmodconfig, parisc:allmodconfig, sparc64:allmodconfig:
+
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2410_nand_read_buf':
+drivers/mtd/nand/raw/s3c2410.c:674:2: error:
+	implicit declaration of function 'readsb'; did you mean 'readb'?
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2440_nand_read_buf':
+drivers/mtd/nand/raw/s3c2410.c:681:2: error:
+	implicit declaration of function 'readsl'; did you mean 'readl'?
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2410_nand_write_buf':
+drivers/mtd/nand/raw/s3c2410.c:696:2: error:
+	implicit declaration of function 'writesb'; did you mean 'writeb'?
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2440_nand_write_buf':
+drivers/mtd/nand/raw/s3c2410.c:704:2: error:
+	implicit declaration of function 'writesl'; did you mean 'writel'
+
+---
+arm:axm55xx_defconfig, arm:keystone_defconfig:
+
+mm/memory.c: In function 'tlb_remove_table_smp_sync':
+mm/memory.c:339:2: error:
+	implicit declaration of function 'tlb_flush_remove_tables_local'; did you mean 'tlb_remove_table'?
+mm/memory.c: In function 'tlb_table_flush':
+mm/memory.c:372:2: error:
+	implicit declaration of function 'tlb_flush_remove_tables'; did you mean 'tlb_remove_table'?
+
+---
+s390:allmodconfig:
+
+drivers/fsi/fsi-master-ast-cf.c:440:13: error: conflicting types for 'dump_trace'
+ static void dump_trace(struct fsi_master_acf *master)
+              ^~~~~~~~~~
+In file included from include/linux/mutex.h:19:0,
+	from include/linux/kernfs.h:13,
+	from include/linux/sysfs.h:16,
+	from include/linux/kobject.h:20,
+	from include/linux/device.h:16,
+	from drivers/fsi/fsi-master-ast-cf.c:9:
+arch/s390/include/asm/processor.h:216:6: note:
+	previous declaration of 'dump_trace' was here
+void dump_trace(dump_trace_func_t func, void *data,
+
+---
+sparc32:allmodconfig:
+
+arch/sparc/kernel/head_32.o: In function `current_pc':
+arch/sparc/kernel/.tmp_head_32.o:(.head.text+0x5040): relocation truncated to fit: R_SPARC_WDISP22 against `.init.text'
+arch/sparc/kernel/head_32.o: In function `halt_notsup':
+arch/sparc/kernel/.tmp_head_32.o:(.head.text+0x5100): relocation truncated to fit: R_SPARC_WDISP22 against `.init.text'
+arch/sparc/kernel/head_32.o: In function `leon_init':
+arch/sparc/kernel/.tmp_head_32.o:(.init.text+0xa4): relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section
+in arch/sparc/kernel/trampoline_32.o
+arch/sparc/kernel/process_32.o:(.fixup+0x4): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/process_32.o:(.fixup+0xc): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x0): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x8): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x10): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x18): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x20): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x28): additional relocation overflows omitted from the output
+
+---
+unicore32:defconfig, unicore32:allnoconfig:
+
+In file included from include/linux/mm.h:17,
+                 from arch/unicore32/kernel/asm-offsets.c:17:
+include/linux/mm_types.h:497: error:
+	flexible array member in otherwise empty struct
+
+---
+>From qemu log for arm:integratorcp:integrator_defconfig:
+
+Console: colour dummy device 80x30
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:180
+sched_clock_register+0x44/0x278
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc6-next-20180725 #1
+Hardware name: ARM Integrator/CP (Device Tree)
+[<c0010cb4>] (unwind_backtrace) from [<c000dc24>] (show_stack+0x10/0x18)
+[<c000dc24>] (show_stack) from [<c03ff6d4>] (dump_stack+0x18/0x24)
+[<c03ff6d4>] (dump_stack) from [<c001a000>] (__warn+0xc8/0xf0)
+[<c001a000>] (__warn) from [<c001a13c>] (warn_slowpath_null+0x3c/0x4c)
+[<c001a13c>] (warn_slowpath_null) from [<c052367c>] (sched_clock_register+0x44/0x278)
+[<c052367c>] (sched_clock_register) from [<c05238d8>] (generic_sched_clock_init+0x28/0x88)
+[<c05238d8>] (generic_sched_clock_init) from [<c0521a00>] (sched_clock_init+0x54/0x74)
+[<c0521a00>] (sched_clock_init) from [<c0519c18>] (start_kernel+0x310/0x3e4)
+[<c0519c18>] (start_kernel) from [<00000000>] (  (null))
+---[ end trace 08080eb81afa002c ]---
+
+---
+
+Complete daily logs are available at http://kerneltests.org/builders.
+
+Guenter
