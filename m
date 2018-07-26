@@ -1,58 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Thu, 26 Jul 2018 12:19:42 +1000
-Message-ID: <20180726121942.0ab69aac@canb.auug.org.au>
+From: Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: linux-next: build warning after merge of the rdma tree
+Date: Wed, 25 Jul 2018 21:05:03 -0600
+Message-ID: <20180726030503.GA18170@mellanox.com>
+References: <20180726105553.00a36e3c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YjM7=yOaxRk=SNBTV.oS5t0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180726105553.00a36e3c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Akshu Agrawal <akshu.agrawal@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>, Chuck Lever <chuck.lever@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YjM7=yOaxRk=SNBTV.oS5t0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 26, 2018 at 10:55:53AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the rdma tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> net/sunrpc/xprtrdma/svc_rdma_rw.c: In function 'svc_rdma_post_chunk_ctxt':
+> net/sunrpc/xprtrdma/svc_rdma_rw.c:350:5: warning: 'bad_wr' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   if (bad_wr != first_wr)
+>      ^
 
-Hi all,
+Huh. I'm quite surprised 0-day build service didn't warn on this.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+> Introduced by commit
+> 
+>   ed288d74a9e5 ("net/xprtrdma: Simplify ib_post_(send|recv|srq_recv)() calls")
+> 
+> This is an actual problem.
 
-sound/soc/amd/acp-da7219-max98357a.c: In function 'cz_probe':
-sound/soc/amd/acp-da7219-max98357a.c:367:3: warning: 'ret' may be used unin=
-itialized in this function [-Wmaybe-uninitialized]
-   dev_err(&pdev->dev, "Failed to register regulator: %d\n",
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ret);
-    ~~~~
+Yes, for sure. Bart?
 
-Introduced by commit
-
-  7b5317aa809f ("ASoC: AMD: Add a fix voltage regulator for DA7219 and ADAU=
-7002")
-
-This is a real bug.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YjM7=yOaxRk=SNBTV.oS5t0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltZL74ACgkQAVBC80lX
-0Gx0Ygf+LvO5hWnIFXRM3Hb7izDlFAhQpjr8fHlPAkmHrTtm2QHAGHvdZ8fyMDsC
-XKxGXlxbMFD+deMzL5uyfw0n+MyBd3C3KeAXHsqdZhyN+bBSSuG9VgO8ICOVsGOU
-YqD02KZrTHWzZPCTWO/8el7dpeipkpXVyg4CLjFALWyRA8UaEtymIuZzA/MLGvzM
-xwE8tLVVPCcpR5dRxnu82fDBGCYAQEWnBUM5HeXJQPk+A1BuIRjCOjURhxbhTOF7
-Oa1Onvg8zDiUp9ny2wWr458lBPqIpyRN/7qk5QaaTrftoupuyqJEYAlINZ0ugOvn
-A8u+7Fx/JjeI+WYswHOI8PIZ5rKBNg==
-=yefy
------END PGP SIGNATURE-----
-
---Sig_/YjM7=yOaxRk=SNBTV.oS5t0--
+Thanks,
+Jason
