@@ -1,50 +1,63 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 26 Jul 2018 14:13:55 -0700
-Message-ID: <3e162f1d-f252-0f76-8929-fa9a0f566cb2@kernel.dk>
-References: <20180726145624.13a604ed@canb.auug.org.au>
- <20180726084833.GA23310@lst.de>
- <a65a6023-a527-b9c6-0d78-a175d47f55cf@kernel.dk>
- <bddc1cad-5646-edf5-2253-9490717ae8e5@wdc.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the drm-msm tree
+Date: Fri, 27 Jul 2018 08:08:21 +1000
+Message-ID: <20180727080821.3f277eb6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hLSTXTZjtA37Kq.INSGfP_0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bddc1cad-5646-edf5-2253-9490717ae8e5@wdc.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bart Van Assche <bart.vanassche@wdc.com>, Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Wise <swise@opengridcomputing.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-On 7/26/18 1:54 PM, Bart Van Assche wrote:
-> On 07/26/18 10:48, Jens Axboe wrote:
->> On 7/26/18 1:48 AM, Christoph Hellwig wrote:
->>> On Thu, Jul 26, 2018 at 02:56:24PM +1000, Stephen Rothwell wrote:
->>>> diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
->>>> index 86121a7a19b2..8c30ac7d8078 100644
->>>> --- a/drivers/nvme/target/rdma.c
->>>> +++ b/drivers/nvme/target/rdma.c
->>>> @@ -891,7 +891,7 @@ nvmet_rdma_find_get_device(struct rdma_cm_id *cm_id)
->>>>   
->>>>   	inline_page_count = num_pages(port->inline_data_size);
->>>>   	inline_sge_count = max(cm_id->device->attrs.max_sge_rd,
->>>> -				cm_id->device->attrs.max_sge) - 1;
->>>> +				cm_id->device->attrs.max_send_sge) - 1;
->>>
->>> This should be max_recv_sge.
->>
->> Why do we even have this conflicts to begin with?
-> 
-> Hello Jens,
-> 
-> A detailed description of why that change is necessary is available at
-> https://www.spinics.net/lists/linux-rdma/msg65954.html. As far as I know
-> the entire RDMA community supports that change.
+--Sig_/hLSTXTZjtA37Kq.INSGfP_0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks - I'm not against the change, I just always get a little
-suspicious when we have merge conflicts across subsystems. But this
-one seems warranted.
+Hi Rob,
 
--- 
-Jens Axboe
+Commits
+
+  746e4fe9c852 ("drm/msm/gpu: Add the buffer objects from the submit to the=
+ crash dump")
+  f757c7aa9f52 ("drm/msm/adreno: Add a5xx specific registers for the GPU st=
+ate")
+  8ab75ab4f1a7 ("drm/msm/adreno: Add ringbuffer data to the GPU state")
+  db71c98cb23c ("drm/msm/adreno: Convert the show/crash file format")
+  abd069d0e0d8 ("drm/msm/gpu: Capture the GPU state on a GPU hang")
+  2426bf25885c ("drm/msm/gpu: Rearrange the code that collects the task dur=
+ing a hang")
+  34ee9abb541d ("drm/msm/gpu: Convert the GPU show function to use the GPU =
+state")
+  e0283c3c191a ("drm/msm/gpu: Capture the state of the GPU")
+  fb72cf6167a3 ("drm: Add puts callback for the coredump printer")
+  e0624c7467b3 ("drm: Add a -puts() function for the seq_file printer")
+  3f7719f78570 ("drm: Add drm_puts() to complement drm_printf()")
+  c7cec5d9fa96 ("drm: drm_printer: Add printer for devcoredump")
+  bdf6119e70d8 ("include: Move ascii85 functions from i915 to linux/ascii85=
+.h")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hLSTXTZjtA37Kq.INSGfP_0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltaRlUACgkQAVBC80lX
+0GyIDgf8C8xINg8t0D1erYzli9CShyMdT/DA5aHiTrtkUXjRq9N5347iGbloTmUE
+gLKzVAsJ45wYlugEXGE38JBrz5xFuhvK2qwzaTkjlllW9kn+JN11aEwIe2XsfRec
+gIEn0tVKRa1RZWE6OYW6mw9jCuUL1XF4j7eZ/Yw584h5m2IZpIzwuN+c5wKdeml3
+zYLhV607vP9/Z6sAEn1s01RXpyiIhlwPcjDSP6jE2abU51nNzGYimzn1VHb6kc2B
+EXGPvc0MpzNle0C4E9HT4xwAkriK8/zrMoyI0d06fDtVjpWtRyto2tLXH1tp46m7
+fIn+0jQEhIprNH6jSqmle5MM60LVCQ==
+=xMGE
+-----END PGP SIGNATURE-----
+
+--Sig_/hLSTXTZjtA37Kq.INSGfP_0--
