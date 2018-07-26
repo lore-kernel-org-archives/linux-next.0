@@ -1,82 +1,28 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: next/master boot: 171 boots: 6 failed, 162 passed with 3 offline
- (next-20180724)
-Date: Thu, 26 Jul 2018 09:09:18 +0200
-Message-ID: <6b5a8c5c-8483-22f1-cc09-e12bd7740f10@i2se.com>
-References: <5b5757ee.1c69fb81.411a5.52e2@mx.google.com>
- <20180725161151.GA340@sirena.org.uk>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Thu, 26 Jul 2018 10:48:33 +0200
+Message-ID: <20180726084833.GA23310@lst.de>
+References: <20180726145624.13a604ed@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180725161151.GA340@sirena.org.uk>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>, Kevin Hilman <khilman@kernel.org>, clabbe@baylibre.com
-Cc: linux-next@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180726145624.13a604ed@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Wise <swise@opengridcomputing.com>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+On Thu, Jul 26, 2018 at 02:56:24PM +1000, Stephen Rothwell wrote:
+> diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+> index 86121a7a19b2..8c30ac7d8078 100644
+> --- a/drivers/nvme/target/rdma.c
+> +++ b/drivers/nvme/target/rdma.c
+> @@ -891,7 +891,7 @@ nvmet_rdma_find_get_device(struct rdma_cm_id *cm_id)
+>  
+>  	inline_page_count = num_pages(port->inline_data_size);
+>  	inline_sge_count = max(cm_id->device->attrs.max_sge_rd,
+> -				cm_id->device->attrs.max_sge) - 1;
+> +				cm_id->device->attrs.max_send_sge) - 1;
 
-thanks for forwarding. Unfortunately i don't have the time for real 
-investigation until next week, so here some remote diagnostics.
-
-
-Am 25.07.2018 um 18:11 schrieb Mark Brown:
-> On Tue, Jul 24, 2018 at 09:46:38AM -0700, kernelci.org bot wrote:
->
-> For a little while now the RPi B has been failing to boot using the
-> bcm2835 defconfig in -next:
->
->>      bcm2835_defconfig:
->>          bcm2835-rpi-b:
->>              lab-baylibre-seattle: failing since 5 days (last pass: next-20180718 - first fail: next-20180719)
->>          bcm2837-rpi-3-b:
->>              lab-baylibre: failing since 5 days (last pass: next-20180718 - first fail: next-20180719)
-> It's working fine on arm64, whatever's going on appears to be specific
-> to this config (it's not getting booted with any other 32 bit configs).
-> Full info and boot logs for one of the boards here:
->
->     https://kernelci.org/boot/id/5b58416759b514139596baae/
->
-> it looks like it hangs somewhere shortly after or during initializing
-> MMC so never makes it to the console, the tail of the failing logs looks
-> like:
->
-> | 09:18:36.332120  [    1.459801] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-> | 09:18:36.345711  [    1.467585] mmcblk0: mmc0:59b4 USD   7.51 GiB
-> | 09:18:36.346169  [    1.474834]  mmcblk0: p1
-> | 09:18:36.410184  [    1.539600] random: fast init done
-> | 09:18:36.458065  [    1.578056] mmc1: new high speed SDIO card at address 0001
-> | 09:20:39.745370  ShellCommand command timed out.: Sending # in case of corruption. Connection timeout 00:04:10, retry in 00:02:05
-> | 09:20:39.846848  #
->
-> but like I say the same -next boots with arm64 defconfig.
->
-
-There is at least 1 difference between bcm2835_defconfig and arm64 
-defconfig. bcm2835_defconfig uses DMA
-
-[ 1.265671] sdhost-bcm2835 3f202000.mmc: loaded - DMA enabled (>1)
-
-while arm64 defconfig uses PIO mode for SD interface mmc0 (please ignore 
-mmc1 since it's the onboard wifi and it uses a different driver):
-
-[ 1.907766] sdhost-bcm2835 3f202000.mmc: unable to initialise DMA 
-channel. Falling back to PIO
-[ 1.995407] sdhost-bcm2835 3f202000.mmc: loaded - DMA disabled
-
-The reason for this output is expected, because the DMA driver isn't 
-build-in for this config.
-
-I think this issue is DMA related.
-
-Regards Stefan
+This should be max_recv_sge.
