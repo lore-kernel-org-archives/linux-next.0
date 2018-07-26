@@ -1,75 +1,37 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: build warning after merge of the rdma tree
-Date: Thu, 26 Jul 2018 11:38:06 -0600
-Message-ID: <20180726173806.GG10178@mellanox.com>
-References: <20180726105553.00a36e3c@canb.auug.org.au>
- <20180726030503.GA18170@mellanox.com>
- <36211fbe8a548742cf8e41a57f02f81e55c86794.camel@wdc.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Thu, 26 Jul 2018 10:48:21 -0700
+Message-ID: <a65a6023-a527-b9c6-0d78-a175d47f55cf@kernel.dk>
+References: <20180726145624.13a604ed@canb.auug.org.au>
+ <20180726084833.GA23310@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <36211fbe8a548742cf8e41a57f02f81e55c86794.camel@wdc.com>
+In-Reply-To: <20180726084833.GA23310@lst.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "dledford@redhat.com" <dledford@redhat.com>, "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Wise <swise@opengridcomputing.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 26, 2018 at 05:10:13AM +0000, Bart Van Assche wrote:
-> On Wed, 2018-07-25 at 21:05 -0600, Jason Gunthorpe wrote:
-> > On Thu, Jul 26, 2018 at 10:55:53AM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > After merging the rdma tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) produced this warning:
-> > > 
-> > > net/sunrpc/xprtrdma/svc_rdma_rw.c: In function 'svc_rdma_post_chunk_ctxt':
-> > > net/sunrpc/xprtrdma/svc_rdma_rw.c:350:5: warning: 'bad_wr' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> > >   if (bad_wr != first_wr)
-> > >      ^
-> > 
-> > Huh. I'm quite surprised 0-day build service didn't warn on this.
-> > 
-> > > Introduced by commit
-> > > 
-> > >   ed288d74a9e5 ("net/xprtrdma: Simplify ib_post_(send|recv|srq_recv)() calls")
-> > > 
-> > > This is an actual problem.
-> > 
-> > Yes, for sure. Bart?
+On 7/26/18 1:48 AM, Christoph Hellwig wrote:
+> On Thu, Jul 26, 2018 at 02:56:24PM +1000, Stephen Rothwell wrote:
+>> diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+>> index 86121a7a19b2..8c30ac7d8078 100644
+>> --- a/drivers/nvme/target/rdma.c
+>> +++ b/drivers/nvme/target/rdma.c
+>> @@ -891,7 +891,7 @@ nvmet_rdma_find_get_device(struct rdma_cm_id *cm_id)
+>>  
+>>  	inline_page_count = num_pages(port->inline_data_size);
+>>  	inline_sge_count = max(cm_id->device->attrs.max_sge_rd,
+>> -				cm_id->device->attrs.max_sge) - 1;
+>> +				cm_id->device->attrs.max_send_sge) - 1;
 > 
-> Thanks Stephen for having reported this. I propose to revert the changes in
-> net/sunrpc/xprtrdma/svc_rdma_rw.c. Jason, do you want me to submit the below
-> as a formal patch?
+> This should be max_recv_sge.
 
-I applied the below.. Please let me know if there is an error.
+Why do we even have this conflicts to begin with?
 
-Thanks,
-Jason
 
-commit 5d85a822fae2b484f26ddb09815063a88962a0cb
-Author: Jason Gunthorpe <jgg@mellanox.com>
-Date:   Thu Jul 26 11:36:50 2018 -0600
-
-    net/xprtrdma: Restore needed argument to ib_post_send
-    
-    The call in svc_rdma_post_chunk_ctxt() does actually use bad_wr.
-    
-    Fixes: ed288d74a9e5 ("net/xprtrdma: Simplify ib_post_(send|recv|srq_recv)() calls")
-    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-    Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-index 80975427f5235f..ce3ea841970483 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-@@ -329,7 +329,7 @@ static int svc_rdma_post_chunk_ctxt(struct svc_rdma_chunk_ctxt *cc)
- 	do {
- 		if (atomic_sub_return(cc->cc_sqecount,
- 				      &rdma->sc_sq_avail) > 0) {
--			ret = ib_post_send(rdma->sc_qp, first_wr, NULL);
-+			ret = ib_post_send(rdma->sc_qp, first_wr, &bad_wr);
- 			trace_svcrdma_post_rw(&cc->cc_cqe,
- 					      cc->cc_sqecount, ret);
- 			if (ret)
+-- 
+Jens Axboe
