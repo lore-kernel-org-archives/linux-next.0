@@ -1,86 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the powerpc tree
-Date: Fri, 27 Jul 2018 17:59:11 +1000
-Message-ID: <20180727175911.76ed6d44@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the powerpc
+ tree
+Date: Fri, 27 Jul 2018 10:36:19 +0200
+Message-ID: <20180727083619.GA17942@kroah.com>
+References: <20180727175911.76ed6d44@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/L97V92Xz7lZANjfkOVsej2B"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180727175911.76ed6d44@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Michael Hanselmann <linux-kernel@hansmi.ch>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Michael Hanselmann <linux-kernel@hansmi.ch>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/L97V92Xz7lZANjfkOVsej2B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 27, 2018 at 05:59:11PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the staging tree got a conflict in:
+> 
+>   MAINTAINERS
+> 
+> between commit:
+> 
+>   d69ccc00c497 ("MAINTAINERS: Remove the entry for the orphaned ams driver")
+> 
+> from the powerpc tree and commit:
+> 
+>   28d1a7ac2a0d ("iio: dac: Add AD5758 support")
+> 
+> from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Hi all,
+Looks good to me, thanks!
 
-Today's linux-next merge of the staging tree got a conflict in:
-
-  MAINTAINERS
-
-between commit:
-
-  d69ccc00c497 ("MAINTAINERS: Remove the entry for the orphaned ams driver")
-
-from the powerpc tree and commit:
-
-  28d1a7ac2a0d ("iio: dac: Add AD5758 support")
-
-from the staging tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index fc92aab3ca2a,b9503cefc42d..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -807,6 -791,19 +807,14 @@@ S:	Supporte
-  F:	drivers/net/ethernet/amd/xgbe/
-  F:	arch/arm64/boot/dts/amd/amd-seattle-xgbe*.dtsi
- =20
- -AMS (Apple Motion Sensor) DRIVER
- -M:	Michael Hanselmann <linux-kernel@hansmi.ch>
- -S:	Supported
- -F:	drivers/macintosh/ams/
- -
-+ ANALOG DEVICES INC AD5758 DRIVER
-+ M:	Stefan Popa <stefan.popa@analog.com>
-+ L:	linux-iio@vger.kernel.org
-+ W:	http://ez.analog.com/community/linux-device-drivers
-+ S:	Supported
-+ F:	drivers/iio/dac/ad5758.c
-+ F:	Documentation/devicetree/bindings/iio/dac/ad5758.txt
-+=20
-  ANALOG DEVICES INC AD5686 DRIVER
-  M:	Stefan Popa <stefan.popa@analog.com>
-  L:	linux-pm@vger.kernel.org
-
---Sig_/L97V92Xz7lZANjfkOVsej2B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlta0M8ACgkQAVBC80lX
-0GzA1wf/SAWQBwpGl2//kv3uNZcfXQbHK1Igv2Ep82CgDzsyA6W2J34947rS9m9r
-MokmbvEcac4BJWVRVismDosGNNFwYZiTxI1XHsmj5pZIUxzF9ejCAiN/R8wcy4Z2
-bkHn3MAThP9HWVFYmT9VGXEpTHkhPuWNvgmmVfr+xre/PaSBrIs8gMAnotF/+0qB
-cTRufaMJfEpgXatqE8sGvtx0WMsRwtP1hF8AOlHOKt0SRk1ibOOBQQ7uhROvZCCw
-M755bev3wwaQ3C9YRR6lDrEy+33qa2h3Ohe1Lt6e3ozb+1wDgm1XvFEwbkkd73wS
-DZ8cfYBeytGlYRmmX1ha4RWGM4U7rg==
-=Rdb9
------END PGP SIGNATURE-----
-
---Sig_/L97V92Xz7lZANjfkOVsej2B--
+greg k-h
