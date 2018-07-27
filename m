@@ -1,64 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Fri, 27 Jul 2018 19:06:47 +1000
-Message-ID: <20180727190647.3525f5f7@canb.auug.org.au>
-References: <20180727190207.7ce1c9b0@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: linux-next: manual merge of the drm tree with the v4l-dvb tree
+Date: Fri, 27 Jul 2018 07:32:42 -0300
+Message-ID: <20180727073242.4b18aa05@coco.lan>
+References: <20180727143640.4dc3fa54@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wdFTLvqeutYeitww.T9kxwp"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180727190207.7ce1c9b0@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Popov <alex.popov@linux.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180727143640.4dc3fa54@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steve Longerbeam <steve_longerbeam@mentor.com>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/wdFTLvqeutYeitww.T9kxwp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Fri, 27 Jul 2018 19:02:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the kspp tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> cc1: error: plugin stackleak_plugin should be specified before -fplugin-a=
-rg-stackleak_plugin-disable in the command line
->=20
-> Maybe caused by commit
->=20
->   a8b9eaddb9c0 ("gcc-plugins: Add STACKLEAK plugin for tracking the kerne=
-l stack")
->=20
-> I have used the kspp tree from next-20180726 for today.
-
-Well, that obviously didn't work since the tree hasn't changed for a
-few days.
-
-I can't see what has interacted to make this happen, so I have dropped
-the kspp tree for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wdFTLvqeutYeitww.T9kxwp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlta4KcACgkQAVBC80lX
-0Gzr3QgAkqCIZaHJGSaKsPNx8+PQOnrGT1M5B4QL6QPbBWeWMZXbBWV62hXQ4V+l
-FiGNTxJa/49dOZaC7uZDusL9Xn67wi8M/v5jGQ9c36p+sJiVn+xk2XyY6kIHpWwy
-AgBE20pn6ByBnkqTiQMtfpPVvRs+Thdr5Kx/lgOYFJ+feOq/SuRjlR2/oZLEd5jy
-eRhLaVkYPXz9ptir/4i4hj+/kCJ62mHHQfUPe9I+AZaSZ5qRlv8YxHHsNes/uWtI
-2xgaom7FuCK4Vfmc2sSLBtZ/3EaaSKlu+L51rrGb6JTTcwX74hyZ3bCvdbr8T/vi
-99OSV7Dtlj1TYo0MNLWABoAAQQUqwQ==
-=kCEe
------END PGP SIGNATURE-----
-
---Sig_/wdFTLvqeutYeitww.T9kxwp--
+RW0gRnJpLCAyNyBKdWwgMjAxOCAxNDozNjo0MCArMTAwMApTdGVwaGVuIFJvdGh3ZWxsIDxzZnJA
+Y2FuYi5hdXVnLm9yZy5hdT4gZXNjcmV2ZXU6Cgo+IEhpIGFsbCwKPiAKPiBUb2RheSdzIGxpbnV4
+LW5leHQgbWVyZ2Ugb2YgdGhlIGRybSB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJp
+dmVycy9ncHUvaXB1LXYzL2lwdS1jcG1lbS5jCj4gCj4gYmV0d2VlbiBjb21taXQ6Cj4gCj4gICAz
+NDNiMjNhN2M2YjYgKCJtZWRpYTogZ3B1OiBpcHUtdjM6IEFsbG93IG5lZ2F0aXZlIG9mZnNldHMg
+Zm9yIGludGVybGFjZWQgc2Nhbm5pbmciKQo+IAo+IGZyb20gdGhlIHY0bC1kdmIgdHJlZSBhbmQg
+Y29tbWl0Ogo+IAo+ICAgNGUzYzVkN2UwNWJlICgiZ3B1OiBpcHUtdjM6IEFsbG93IG5lZ2F0aXZl
+IG9mZnNldHMgZm9yIGludGVybGFjZWQgc2Nhbm5pbmciKQo+IAo+IGZyb20gdGhlIGRybSB0cmVl
+Lgo+IAo+IEkgZml4ZWQgaXQgdXAgKEkganVzdCB1c2VkIHRoZSBkcm0gdHJlZSB2ZXJzaW9uKSBh
+bmQgY2FuIGNhcnJ5IHRoZSBmaXgKPiBhcyBuZWNlc3NhcnkuIFRoaXMgaXMgbm93IGZpeGVkIGFz
+IGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0Cj4gYW55IG5vbiB0cml2aWFsIGNv
+bmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lcgo+
+IHdoZW4geW91ciB0cmVlIGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3
+YW50IHRvIGNvbnNpZGVyCj4gY29vcGVyYXRpbmcgd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUg
+Y29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkKPiBwYXJ0aWN1bGFybHkgY29tcGxleCBj
+b25mbGljdHMuCgpNeSBtaXN0YWtlLiBOb3Qgc3VyZSB3aHkgbWVkaWEgTUwgd2FzIGMvYyBvbiB0
+aGlzIHBhdGNoLiBBcyB0aGUgYXV0aG9yCmlzIGFuIHVzdWFsIG1lZGlhIGNvbnRyaWJ1dG9yIGFu
+ZCB3ZSBoYXZlIGFuIElQVTMgZHJpdmVyIHRoYXQgaGFzIGJlaW5nCnRha2luZyBzb21lIGRpc2N1
+c3Npb25zIHRob3NlIGRheXMsIEkgZW5kZWQgYnkgbWVyZ2luZyBpdCB3aXRob3V0Cm5vdGljaW5n
+IHRoYXQgaXQgd2FzIGZvciB0aGUgZ3B1IGRyaXZlci4KCkknbGwgcmVtb3ZlIGl0IGZyb20gbXkg
+dHJlZSBpbiBvcmRlciB0byBhdm9pZCBjb25mbGljdHMuCgpUaGFua3MsCk1hdXJvCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
