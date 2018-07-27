@@ -1,65 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net-next tree with the rdma
+Subject: linux-next: manual merge of the staging tree with the devicetree
  tree
-Date: Fri, 27 Jul 2018 15:09:03 +1000
-Message-ID: <20180727150903.0f2816ba@canb.auug.org.au>
-References: <20180727123301.3ac97ddc@canb.auug.org.au>
-        <20180727024832.GA30023@mellanox.com>
-        <20180727132847.2be8563b@canb.auug.org.au>
-        <VI1PR0502MB3008702AFA64F44DE57DC9F5D12A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+Date: Fri, 27 Jul 2018 17:53:13 +1000
+Message-ID: <20180727175300.0a1fb512@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ag3SSCB8sRIv52EdCbiJq_m"; protocol="application/pgp-signature"
+ boundary="Sig_/WNBfMglvghU829apFzZsnTg"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <VI1PR0502MB3008702AFA64F44DE57DC9F5D12A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Parav Pandit <parav@mellanox.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.ibm.com>, Leon Romanovsky <leonro@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Rob Herring <robherring2@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Brian Masney <masneyb@onstation.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ag3SSCB8sRIv52EdCbiJq_m
+--Sig_/WNBfMglvghU829apFzZsnTg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Parav,
+Hi all,
 
-On Fri, 27 Jul 2018 04:57:41 +0000 Parav Pandit <parav@mellanox.com> wrote:
->
-> >  	for (i =3D 0; i < smcibdev->pattr[ibport - 1].gid_tbl_len; i++) {
-> > -		memset(&_gid, 0, SMC_GID_SIZE);
-> > -		memset(&gattr, 0, sizeof(gattr));
-> > -		if (ib_query_gid(smcibdev->ibdev, ibport, i, &_gid, &gattr))
-> > +		gattr =3D rdma_get_gid_attr(smcibdev->ibdev, ibport, i);
-> > +		if (IS_ERR(gattr))
-> >  			continue;
-> > -		if (!gattr.ndev)
-> > +		if (!gattr->ndev)
-> >  			continue; =20
-> This requires a small fix.
-> If (!gattr->ndev {
-> 	rdma_put_gid_attr(gattr);
-> 	continue;
-> }
+Today's linux-next merge of the staging tree got a conflict in:
 
-Thanks, I have fixed this up for Monday.
+  Documentation/devicetree/bindings/iio/pressure/bmp085.txt
+
+between commit:
+
+  791d3ef2e111 ("dt-bindings: remove 'interrupt-parent' from bindings")
+
+from the devicetree tree and commit:
+
+  d2b863baf1c7 ("iio: pressure: bmp280: remove unused options from device t=
+ree documentation")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ag3SSCB8sRIv52EdCbiJq_m
+diff --cc Documentation/devicetree/bindings/iio/pressure/bmp085.txt
+index 5498b0688b6f,abcab02504fb..000000000000
+--- a/Documentation/devicetree/bindings/iio/pressure/bmp085.txt
++++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.txt
+@@@ -8,10 -8,7 +8,6 @@@ Required properties
+    "bosch,bme280"
+ =20
+  Optional properties:
+- - chip-id: configurable chip id for non-default chip revisions
+- - temp-measurement-period: temperature measurement period (milliseconds)
+- - default-oversampling: default oversampling value to be used at startup,
+-   value range is 0-3 with rising sensitivity.
+ -- interrupt-parent: should be the phandle for the interrupt controller
+  - interrupts: interrupt mapping for IRQ
+  - reset-gpios: a GPIO line handling reset of the sensor: as the line is
+    active low, it should be marked GPIO_ACTIVE_LOW (see gpio/gpio.txt)
+
+--Sig_/WNBfMglvghU829apFzZsnTg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltaqO8ACgkQAVBC80lX
-0Gxj2gf/cGH4xP5XiC5RN6dQEw44mUZPC9/9aOF2QhcWj/6AmlFYWqdYzqKtlKhg
-UiwaQ0uYQhxYbmbJr4/nvuwemDwwF1H2RmoWBvgxTJIBtjnI1kQm02aKm8ikwYoP
-RkSHlmi9+CESZQ2hFDMs09nD9hZIk1GxVwPZ0XAUQJa4n6emcThqoanEvOeCb00B
-IiA0gS5ETYF6KBxXpTzWHQVtR9sUmBt7927jy2AwsBKBJHTahEO4oOFJrmYZVuBJ
-naa4Fa4zCpzj3f1gwHhxRf9UONYPqIMIcX7P1IlfCaKASuFIRJrbhPehpqvLDD6F
-QurSJ3XodiwHbsvCXHiA8xzYdmx5IA==
-=2BXY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltaz2kACgkQAVBC80lX
+0GypHwf8DfJTFkjZktIrpfFPyhqZ9GIkAEAQUTpP1FgzxJTLwoomihxtC8k4uR06
+pZt8dDC6cXNByDJNSsqOqm6Dc7e4Sq23vicRLsCoRPXCM/DAquPaze530B7aEfL5
+TtLg9KU23rwIPi1MgoFvU/SYCvwNDAfjS78aL2Bx1kSHaAV5HQYyTYiLBTnDICht
+IiiKch1pPerr18FXrLudZuqzKJLnWFxCfGhrg5VcQqcn1nV6p4S10C49pw+dgvoO
+ezJs6abFxJYnRD3zvG28wRTo73MGYOibdMV85KykhJ6rL3gy0QaNGhOM37WQxcAa
+JgOrG7Q1oQRk5zzt1A0NixlOKisusg==
+=vSgt
 -----END PGP SIGNATURE-----
 
---Sig_/ag3SSCB8sRIv52EdCbiJq_m--
+--Sig_/WNBfMglvghU829apFzZsnTg--
