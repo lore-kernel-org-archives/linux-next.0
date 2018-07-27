@@ -1,80 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the devicetree
- tree
-Date: Fri, 27 Jul 2018 17:53:13 +1000
-Message-ID: <20180727175300.0a1fb512@canb.auug.org.au>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: linux-next: manual merge of the drm tree with the v4l-dvb tree
+Date: Fri, 27 Jul 2018 09:57:43 +0200
+Message-ID: <1532678263.4694.4.camel@pengutronix.de>
+References: <20180727143640.4dc3fa54@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WNBfMglvghU829apFzZsnTg"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Rob Herring <robherring2@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Brian Masney <masneyb@onstation.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180727143640.4dc3fa54@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Steve Longerbeam <steve_longerbeam@mentor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WNBfMglvghU829apFzZsnTg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the staging tree got a conflict in:
-
-  Documentation/devicetree/bindings/iio/pressure/bmp085.txt
-
-between commit:
-
-  791d3ef2e111 ("dt-bindings: remove 'interrupt-parent' from bindings")
-
-from the devicetree tree and commit:
-
-  d2b863baf1c7 ("iio: pressure: bmp280: remove unused options from device t=
-ree documentation")
-
-from the staging tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/devicetree/bindings/iio/pressure/bmp085.txt
-index 5498b0688b6f,abcab02504fb..000000000000
---- a/Documentation/devicetree/bindings/iio/pressure/bmp085.txt
-+++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.txt
-@@@ -8,10 -8,7 +8,6 @@@ Required properties
-    "bosch,bme280"
- =20
-  Optional properties:
-- - chip-id: configurable chip id for non-default chip revisions
-- - temp-measurement-period: temperature measurement period (milliseconds)
-- - default-oversampling: default oversampling value to be used at startup,
--   value range is 0-3 with rising sensitivity.
- -- interrupt-parent: should be the phandle for the interrupt controller
-  - interrupts: interrupt mapping for IRQ
-  - reset-gpios: a GPIO line handling reset of the sensor: as the line is
-    active low, it should be marked GPIO_ACTIVE_LOW (see gpio/gpio.txt)
-
---Sig_/WNBfMglvghU829apFzZsnTg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltaz2kACgkQAVBC80lX
-0GypHwf8DfJTFkjZktIrpfFPyhqZ9GIkAEAQUTpP1FgzxJTLwoomihxtC8k4uR06
-pZt8dDC6cXNByDJNSsqOqm6Dc7e4Sq23vicRLsCoRPXCM/DAquPaze530B7aEfL5
-TtLg9KU23rwIPi1MgoFvU/SYCvwNDAfjS78aL2Bx1kSHaAV5HQYyTYiLBTnDICht
-IiiKch1pPerr18FXrLudZuqzKJLnWFxCfGhrg5VcQqcn1nV6p4S10C49pw+dgvoO
-ezJs6abFxJYnRD3zvG28wRTo73MGYOibdMV85KykhJ6rL3gy0QaNGhOM37WQxcAa
-JgOrG7Q1oQRk5zzt1A0NixlOKisusg==
-=vSgt
------END PGP SIGNATURE-----
-
---Sig_/WNBfMglvghU829apFzZsnTg--
+T24gRnJpLCAyMDE4LTA3LTI3IGF0IDE0OjM2ICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Ogo+IEhpIGFsbCwKPiAKPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIGRybSB0cmVl
+IGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJpdmVycy9ncHUvaXB1LXYzL2lwdS1jcG1lbS5j
+Cj4gCj4gYmV0d2VlbiBjb21taXQ6Cj4gCj4gICAzNDNiMjNhN2M2YjYgKCJtZWRpYTogZ3B1OiBp
+cHUtdjM6IEFsbG93IG5lZ2F0aXZlIG9mZnNldHMgZm9yIGludGVybGFjZWQgc2Nhbm5pbmciKQo+
+IAo+IGZyb20gdGhlIHY0bC1kdmIgdHJlZSBhbmQgY29tbWl0Ogo+IAo+ICAgNGUzYzVkN2UwNWJl
+ICgiZ3B1OiBpcHUtdjM6IEFsbG93IG5lZ2F0aXZlIG9mZnNldHMgZm9yIGludGVybGFjZWQgc2Nh
+bm5pbmciKQo+IAo+IGZyb20gdGhlIGRybSB0cmVlLgo+Cj4gSSBmaXhlZCBpdCB1cCAoSSBqdXN0
+IHVzZWQgdGhlIGRybSB0cmVlIHZlcnNpb24pCgpUaGlzIGlzIGNvcnJlY3QuCgo+ICBhbmQgY2Fu
+IGNhcnJ5IHRoZSBmaXgKPiBhcyBuZWNlc3NhcnkuIFRoaXMgaXMgbm93IGZpeGVkIGFzIGZhciBh
+cyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0Cj4gYW55IG5vbiB0cml2aWFsIGNvbmZsaWN0
+cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lcgo+IHdoZW4g
+eW91ciB0cmVlIGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRv
+IGNvbnNpZGVyCj4gY29vcGVyYXRpbmcgd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29uZmxp
+Y3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkKPiBwYXJ0aWN1bGFybHkgY29tcGxleCBjb25mbGlj
+dHMuCgpTdGV2ZSBoYWQgcG9pbnRlZCBvdXQgYSB2YWxpZCBpc3N1ZSB3aXRoIDM0M2IyM2E3YzZi
+NiwgSSBkaWRuJ3QgZXhwZWN0CnRoaXMgcGF0Y2ggdG8gZ2V0IHBpY2tlZCB1cC4gSSBzaG91bGQg
+aGF2ZSBtZW50aW9uZWQgb24gbGludXgtbWVkaWEgdGhhdApJIGhhZCBzdWJtaXR0ZWQgdGhlIGZp
+eGVkIHZlcnNpb24gZm9yIGluY2x1c2lvbiBpbiBkcm0tbmV4dC4KCnJlZ2FyZHMKUGhpbGlwcApf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
