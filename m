@@ -1,73 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Fri, 27 Jul 2018 20:55:11 +1000
-Message-ID: <20180727205511.7c0f2e62@canb.auug.org.au>
-References: <20180727190207.7ce1c9b0@canb.auug.org.au>
-        <20180727190647.3525f5f7@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arm64
+ tree
+Date: Fri, 27 Jul 2018 20:55:32 +1000
+Message-ID: <20180727205532.28de3353@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//MxW2J=yvZSzDuys=8bHiKQ"; protocol="application/pgp-signature"
+ boundary="Sig_/I6jsFjSkCEl6JqXAley0Bo6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180727190647.3525f5f7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Popov <alex.popov@linux.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Laura Abbott <labbott@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laura Abbott <labbott@redhat.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//MxW2J=yvZSzDuys=8bHiKQ
+--Sig_/I6jsFjSkCEl6JqXAley0Bo6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-On Fri, 27 Jul 2018 19:06:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Fri, 27 Jul 2018 19:02:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the kspp tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > cc1: error: plugin stackleak_plugin should be specified before -fplugin=
--arg-stackleak_plugin-disable in the command line
-> >=20
-> > Maybe caused by commit
-> >=20
-> >   a8b9eaddb9c0 ("gcc-plugins: Add STACKLEAK plugin for tracking the ker=
-nel stack")
-> >=20
-> > I have used the kspp tree from next-20180726 for today. =20
->=20
-> Well, that obviously didn't work since the tree hasn't changed for a
-> few days.
->=20
-> I can't see what has interacted to make this happen, so I have dropped
-> the kspp tree for today.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Actually, it may have been caused by commit
+  drivers/firmware/efi/libstub/Makefile
+
+between commit:
 
   0b3e336601b8 ("arm64: Add support for STACKLEAK gcc plugin")
 
-from the arm64 tree.
+from the arm64 tree and commit:
+
+  08cc64a7109b ("module: allow symbol exports to be disabled")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//MxW2J=yvZSzDuys=8bHiKQ
+diff --cc drivers/firmware/efi/libstub/Makefile
+index 25dd2a14560d,0d0d3483241c..000000000000
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@@ -21,7 -21,7 +21,8 @@@ KBUILD_CFLAGS			:=3D $(cflags-y) -DDISABL
+  				   -D__NO_FORTIFY \
+  				   $(call cc-option,-ffreestanding) \
+  				   $(call cc-option,-fno-stack-protector) \
+- 				   $(DISABLE_STACKLEAK_PLUGIN)
+++				   $(DISABLE_STACKLEAK_PLUGIN) \
++ 				   -D__DISABLE_EXPORTS
+ =20
+  GCOV_PROFILE			:=3D n
+  KASAN_SANITIZE			:=3D n
+
+--Sig_/I6jsFjSkCEl6JqXAley0Bo6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlta+g8ACgkQAVBC80lX
-0GyW5Af/Y2U/8zWYM6WuJoKtsZqilpTLFdQTb6qu1uonQZvNl7BrVSTLVsNx8Bqf
-XCxyp7kpi8MU5PPcZIz9uzpZFlSyERGC8RLz+8lYF9eTTMwZ3tj1bv51GZiY7odK
-6uuFelrtmzwbRzkvGJg5ixcVLL3RMRjW51Y8QnEgQTPKHuV3Db6LtjYrm5tY6HJb
-HqI7aQqjrmiXU8SsMpYc/7uNJqmUEk8CoQb9mOULy5q935T7KKjx62+1GedlNhY5
-1wGKxCmjPrzJoqi9Lu/z5DCvlwR2cjMxVehOHmA9O8f6PMP3RS2kWDab6demzBvo
-slqxP9aY3hewkb8/Hn+2rFOhQazF5Q==
-=G802
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlta+iQACgkQAVBC80lX
+0GyBBQgAkjx9lFZiVVmRQG0IHn6JyjQYAuHrN/pDk1XEG+IsupYq0zEfKVC8wLrL
+mWkCYbQRw3tpFOTMzCoIfde45u7bTjYgAwPUzcqMRCXrSm/U3u3bRLLdax8h0hrN
+7lBnbHX6mJ0jFM81AwwqNRxyNE9SwVHgUke4XtboVKbnaIz8kLTwfx6rK3t6A793
+Za09IQe8V5KBAUqJThchsULA1nfEhYXTsomMMQFxZ88NV+4Q8yVHx38/3EPoG90a
+XBhc/x4/CF2vwm6lzXJyXh3TE35iIVrizSb4UjUr9u1K+UHo1iRtaiZiD3lChmiF
+q1AzuTw/WtLnkfh4UbRH5BPTRbUN5Q==
+=Amwj
 -----END PGP SIGNATURE-----
 
---Sig_//MxW2J=yvZSzDuys=8bHiKQ--
+--Sig_/I6jsFjSkCEl6JqXAley0Bo6--
