@@ -1,135 +1,106 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Fri, 27 Jul 2018 09:00:19 -0700
-Message-ID: <CAGXu5jJ=0YBYKkQM3=KZRp1o3fT0yGY6-0UDkkit0WenFM3oDg@mail.gmail.com>
-References: <20180727190207.7ce1c9b0@canb.auug.org.au> <20180727190647.3525f5f7@canb.auug.org.au>
- <20180727205511.7c0f2e62@canb.auug.org.au> <20180727125522.GA6173@arm.com>
- <20180727130106.GB6173@arm.com> <20180727132742.GB28549@arm.com>
+From: Parav Pandit <parav@mellanox.com>
+Subject: RE: [PATCH rdma] IB/cache: Restore compatibility for ib_query_gid
+Date: Fri, 27 Jul 2018 16:04:33 +0000
+Message-ID: <VI1PR0502MB3008B0D78AB418E263819EE7D12A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+References: <20180727155402.GA15253@ziepe.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180727132742.GB28549@arm.com>
+In-Reply-To: <20180727155402.GA15253@ziepe.ca>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Popov <alex.popov@linux.com>, Catalin Marinas <catalin.marinas@arm.com>, Laura Abbott <labbott@redhat.com>
+To: Jason Gunthorpe <jgg@mellanox.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.ibm.com>, Leon Romanovsky <leonro@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 27, 2018 at 6:27 AM, Will Deacon <will.deacon@arm.com> wrote:
-> On Fri, Jul 27, 2018 at 02:01:06PM +0100, Will Deacon wrote:
->> On Fri, Jul 27, 2018 at 01:55:22PM +0100, Will Deacon wrote:
->> > On Fri, Jul 27, 2018 at 08:55:11PM +1000, Stephen Rothwell wrote:
->> > > On Fri, 27 Jul 2018 19:06:47 +1000 Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote:
->> > > >
->> > > > On Fri, 27 Jul 2018 19:02:07 +1000 Stephen Rothwell <sfr@canb.auug=
-.org.au> wrote:
->> > > > >
->> > > > > After merging the kspp tree, today's linux-next build (x86_64
->> > > > > allmodconfig) failed like this:
->> > > > >
->> > > > > cc1: error: plugin stackleak_plugin should be specified before -=
-fplugin-arg-stackleak_plugin-disable in the command line
->> > > > >
->> > > > > Maybe caused by commit
->> > > > >
->> > > > >   a8b9eaddb9c0 ("gcc-plugins: Add STACKLEAK plugin for tracking =
-the kernel stack")
->> > > > >
->> > > > > I have used the kspp tree from next-20180726 for today.
->> > > >
->> > > > Well, that obviously didn't work since the tree hasn't changed for=
- a
->> > > > few days.
->> > > >
->> > > > I can't see what has interacted to make this happen, so I have dro=
-pped
->> > > > the kspp tree for today.
->> > >
->> > > Actually, it may have been caused by commit
->> > >
->> > >   0b3e336601b8 ("arm64: Add support for STACKLEAK gcc plugin")
->> > >
->> > > from the arm64 tree.
->> >
->> > Thanks, Stephen. I managed to reproduce this by merging for-next/kspp =
-from
->> > Kees's tree and for-next/core from the arm64 tree. The failure happens=
- when
->> > building the EFI stub, so the commit you mention above is almost certa=
-inly
->> > the culprit.
->> >
->> > We build the stub with the following GCC invocation:
->> >
->> >  gcc -Wp,-MD,drivers/firmware/efi/libstub/.efi-stub-helper.o.d  -nostd=
-inc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include=
- -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./=
-arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi=
- -include ./include/linux/kconfig.h -include ./include/linux/compiler_types=
-.h -D__KERNEL__ -mcmodel=3Dsmall -m64 -D__KERNEL__ -O2 -fPIC -fno-strict-al=
-iasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -DDISABLE_BRANCH_PROFI=
-LING -D__NO_FORTIFY -ffreestanding -fno-stack-protector -fplugin-arg-stackl=
-eak_plugin-disable   -fno-builtin      -DKBUILD_BASENAME=3D'"efi_stub_helpe=
-r"' -DKBUILD_MODNAME=3D'"efi_stub_helper"' -c -o drivers/firmware/efi/libst=
-ub/.tmp_efi-stub-helper.o drivers/firmware/efi/libstub/efi-stub-helper.c
->> >
->> > so given that we're not passing any -fplugin=3D option anyway (because=
- we
->> > override KBUILD_CFLAGS for the stub), I don't understand why we need
->> > to the disable option at all.
->> >
->> > Laura?
->>
->> ... ah, but arm and arm64 inherit the old KBUILD_CFLAGS via the
->> cflags-$(CONFIG_ARM64) and cflags-$(CONFIG_ARM) definitions, so they
->> would be the places where we need to disable the plugin.
->
-> i.e. something like the diff below.
->
-> Will
->
-> --->8
->
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi=
-/libstub/Makefile
-> index 25dd2a14560d..f3700fe08908 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -11,9 +11,11 @@ cflags-$(CONFIG_X86)         +=3D -m$(BITS) -D__KERNEL=
-__ -O2 \
->                                    -fPIC -fno-strict-aliasing -mno-red-zo=
-ne \
->                                    -mno-mmx -mno-sse -fshort-wchar
->
-> -cflags-$(CONFIG_ARM64)         :=3D $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
-> +cflags-$(CONFIG_ARM64)         :=3D $(subst -pg,,$(KBUILD_CFLAGS)) -fpie=
- \
-> +                                  $(DISABLE_STACKLEAK_PLUGIN)
->  cflags-$(CONFIG_ARM)           :=3D $(subst -pg,,$(KBUILD_CFLAGS)) \
-> -                                  -fno-builtin -fpic -mno-single-pic-bas=
-e
-> +                                  -fno-builtin -fpic -mno-single-pic-bas=
-e \
-> +                                  $(DISABLE_STACKLEAK_PLUGIN)
->
->  cflags-$(CONFIG_EFI_ARMSTUB)   +=3D -I$(srctree)/scripts/dtc/libfdt
->
-> @@ -21,7 +23,6 @@ KBUILD_CFLAGS                 :=3D $(cflags-y) -DDISABL=
-E_BRANCH_PROFILING \
->                                    -D__NO_FORTIFY \
->                                    $(call cc-option,-ffreestanding) \
->                                    $(call cc-option,-fno-stack-protector)=
- \
-> -                                  $(DISABLE_STACKLEAK_PLUGIN)
->
->  GCOV_PROFILE                   :=3D n
->  KASAN_SANITIZE                 :=3D n
 
-Ah! Thanks for tracking this down!
 
--Kees
+> -----Original Message-----
+> From: Jason Gunthorpe
+> Sent: Friday, July 27, 2018 10:54 AM
+> To: linux-rdma@vger.kernel.org; Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: David Miller <davem@davemloft.net>; Networking
+> <netdev@vger.kernel.org>; Doug Ledford <dledford@redhat.com>; Linux-Next
+> Mailing List <linux-next@vger.kernel.org>; Linux Kernel Mailing List <lin=
+ux-
+> kernel@vger.kernel.org>; Parav Pandit <parav@mellanox.com>; Ursula Braun
+> <ubraun@linux.ibm.com>; Leon Romanovsky <leonro@mellanox.com>; linux-
+> rdma@vger.kernel.org
+> Subject: [PATCH rdma] IB/cache: Restore compatibility for ib_query_gid
+>=20
+> Code changes in smc have become so complicated this cycle that the RDMA
+> patches to remove ib_query_gid in smc create too complex merge conflicts.
+> Allow those conflicts to be resolved by using the net/smc hunks by provid=
+ing a
+> compatibility wrapper. During the second phase of the merge window this
+> wrapper will be deleted and smc updated to use the new API.
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+> ---
+>  include/rdma/ib_cache.h | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>=20
+> The resolution Stephen had to make is too complicated, I think we should =
+go this
+> way instead. Parav can send a patch to DaveM during the 2nd half of the m=
+erge
+> window to safely update SMC and delete this wrapper.
+>=20
+Last night Stephen send the changes, if Ursula can test it, its preferred b=
+ut if that is not possible,=20
+I am with below approach too.
 
---=20
-Kees Cook
-Pixel Security
+> Parav, can you check this?
+>=20
+> Ursula, this is only for SMC, are you able to test SMC with it? You will =
+need to
+> apply it to the RDMA tree here:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=3Dfo=
+r-next
+>=20
+> Thanks,
+> Jason
+>=20
+> diff --git a/include/rdma/ib_cache.h b/include/rdma/ib_cache.h index
+> 1108d422027696..c7e9b42b96e5b8 100644
+> --- a/include/rdma/ib_cache.h
+> +++ b/include/rdma/ib_cache.h
+> @@ -132,4 +132,28 @@ const struct ib_gid_attr *rdma_get_gid_attr(struct
+> ib_device *device,
+>  					    u8 port_num, int index);
+>  void rdma_put_gid_attr(const struct ib_gid_attr *attr);  void
+> rdma_hold_gid_attr(const struct ib_gid_attr *attr);
+> +
+> +/*
+> + * This is to be removed. It only exists to make merging rdma and smc si=
+mpler.
+> + */
+> +static inline __deprecated int ib_query_gid(struct ib_device *device,
+> +					    u8 port_num, int index,
+> +					    union ib_gid *gid,
+> +					    struct ib_gid_attr *attr_out)
+> +{
+> +	const struct ib_gid_attr *attr;
+> +
+> +	attr =3D rdma_get_gid_attr(device,port_num,index);
+White space after each variable is needed to avoid warnings.
+
+> +	if (IS_ERR(attr))
+> +		return PTR_ERR(attr);
+> +
+> +	if (attr->ndev)
+> +		dev_hold(attr->ndev);
+> +	*attr_out =3D *attr;
+> +
+> +	rdma_put_gid_attr(attr);
+> +
+> +	return 0;
+> +}
+> +
+>  #endif /* _IB_CACHE_H */
+
+Rest looks fine.
+RB: parav@mellanox.com
