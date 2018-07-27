@@ -1,45 +1,86 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: linux-next: manual merge of the drm tree with the v4l-dvb tree
-Date: Fri, 27 Jul 2018 09:57:43 +0200
-Message-ID: <1532678263.4694.4.camel@pengutronix.de>
-References: <20180727143640.4dc3fa54@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the powerpc tree
+Date: Fri, 27 Jul 2018 17:59:11 +1000
+Message-ID: <20180727175911.76ed6d44@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180727143640.4dc3fa54@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Steve Longerbeam <steve_longerbeam@mentor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/L97V92Xz7lZANjfkOVsej2B"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Popa <stefan.popa@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Michael Hanselmann <linux-kernel@hansmi.ch>
 List-Id: linux-next.vger.kernel.org
 
-T24gRnJpLCAyMDE4LTA3LTI3IGF0IDE0OjM2ICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
-Ogo+IEhpIGFsbCwKPiAKPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIGRybSB0cmVl
-IGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJpdmVycy9ncHUvaXB1LXYzL2lwdS1jcG1lbS5j
-Cj4gCj4gYmV0d2VlbiBjb21taXQ6Cj4gCj4gICAzNDNiMjNhN2M2YjYgKCJtZWRpYTogZ3B1OiBp
-cHUtdjM6IEFsbG93IG5lZ2F0aXZlIG9mZnNldHMgZm9yIGludGVybGFjZWQgc2Nhbm5pbmciKQo+
-IAo+IGZyb20gdGhlIHY0bC1kdmIgdHJlZSBhbmQgY29tbWl0Ogo+IAo+ICAgNGUzYzVkN2UwNWJl
-ICgiZ3B1OiBpcHUtdjM6IEFsbG93IG5lZ2F0aXZlIG9mZnNldHMgZm9yIGludGVybGFjZWQgc2Nh
-bm5pbmciKQo+IAo+IGZyb20gdGhlIGRybSB0cmVlLgo+Cj4gSSBmaXhlZCBpdCB1cCAoSSBqdXN0
-IHVzZWQgdGhlIGRybSB0cmVlIHZlcnNpb24pCgpUaGlzIGlzIGNvcnJlY3QuCgo+ICBhbmQgY2Fu
-IGNhcnJ5IHRoZSBmaXgKPiBhcyBuZWNlc3NhcnkuIFRoaXMgaXMgbm93IGZpeGVkIGFzIGZhciBh
-cyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0Cj4gYW55IG5vbiB0cml2aWFsIGNvbmZsaWN0
-cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lcgo+IHdoZW4g
-eW91ciB0cmVlIGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRv
-IGNvbnNpZGVyCj4gY29vcGVyYXRpbmcgd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29uZmxp
-Y3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkKPiBwYXJ0aWN1bGFybHkgY29tcGxleCBjb25mbGlj
-dHMuCgpTdGV2ZSBoYWQgcG9pbnRlZCBvdXQgYSB2YWxpZCBpc3N1ZSB3aXRoIDM0M2IyM2E3YzZi
-NiwgSSBkaWRuJ3QgZXhwZWN0CnRoaXMgcGF0Y2ggdG8gZ2V0IHBpY2tlZCB1cC4gSSBzaG91bGQg
-aGF2ZSBtZW50aW9uZWQgb24gbGludXgtbWVkaWEgdGhhdApJIGhhZCBzdWJtaXR0ZWQgdGhlIGZp
-eGVkIHZlcnNpb24gZm9yIGluY2x1c2lvbiBpbiBkcm0tbmV4dC4KCnJlZ2FyZHMKUGhpbGlwcApf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+--Sig_/L97V92Xz7lZANjfkOVsej2B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the staging tree got a conflict in:
+
+  MAINTAINERS
+
+between commit:
+
+  d69ccc00c497 ("MAINTAINERS: Remove the entry for the orphaned ams driver")
+
+from the powerpc tree and commit:
+
+  28d1a7ac2a0d ("iio: dac: Add AD5758 support")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index fc92aab3ca2a,b9503cefc42d..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -807,6 -791,19 +807,14 @@@ S:	Supporte
+  F:	drivers/net/ethernet/amd/xgbe/
+  F:	arch/arm64/boot/dts/amd/amd-seattle-xgbe*.dtsi
+ =20
+ -AMS (Apple Motion Sensor) DRIVER
+ -M:	Michael Hanselmann <linux-kernel@hansmi.ch>
+ -S:	Supported
+ -F:	drivers/macintosh/ams/
+ -
++ ANALOG DEVICES INC AD5758 DRIVER
++ M:	Stefan Popa <stefan.popa@analog.com>
++ L:	linux-iio@vger.kernel.org
++ W:	http://ez.analog.com/community/linux-device-drivers
++ S:	Supported
++ F:	drivers/iio/dac/ad5758.c
++ F:	Documentation/devicetree/bindings/iio/dac/ad5758.txt
++=20
+  ANALOG DEVICES INC AD5686 DRIVER
+  M:	Stefan Popa <stefan.popa@analog.com>
+  L:	linux-pm@vger.kernel.org
+
+--Sig_/L97V92Xz7lZANjfkOVsej2B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlta0M8ACgkQAVBC80lX
+0GzA1wf/SAWQBwpGl2//kv3uNZcfXQbHK1Igv2Ep82CgDzsyA6W2J34947rS9m9r
+MokmbvEcac4BJWVRVismDosGNNFwYZiTxI1XHsmj5pZIUxzF9ejCAiN/R8wcy4Z2
+bkHn3MAThP9HWVFYmT9VGXEpTHkhPuWNvgmmVfr+xre/PaSBrIs8gMAnotF/+0qB
+cTRufaMJfEpgXatqE8sGvtx0WMsRwtP1hF8AOlHOKt0SRk1ibOOBQQ7uhROvZCCw
+M755bev3wwaQ3C9YRR6lDrEy+33qa2h3Ohe1Lt6e3ozb+1wDgm1XvFEwbkkd73wS
+DZ8cfYBeytGlYRmmX1ha4RWGM4U7rg==
+=Rdb9
+-----END PGP SIGNATURE-----
+
+--Sig_/L97V92Xz7lZANjfkOVsej2B--
