@@ -1,47 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the arc-current
- tree
-Date: Sun, 29 Jul 2018 12:13:51 +1000
-Message-ID: <20180729121351.26912f3c@canb.auug.org.au>
+From: Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH rdma] IB/cache: Restore compatibility for ib_query_gid
+Date: Sun, 29 Jul 2018 13:42:30 -0600
+Message-ID: <20180729194230.GB15106@ziepe.ca>
+References: <20180727155402.GA15253@ziepe.ca>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bP1TogKgY+TMCHMoYvJmZfV"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180727155402.GA15253@ziepe.ca>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-rdma@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Parav Pandit <parav@mellanox.com>, Ursula Braun <ubraun@linux.ibm.com>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/bP1TogKgY+TMCHMoYvJmZfV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 27, 2018 at 09:54:02AM -0600, Jason Gunthorpe wrote:
+> Code changes in smc have become so complicated this cycle that the RDMA
+> patches to remove ib_query_gid in smc create too complex merge conflicts.
+> Allow those conflicts to be resolved by using the net/smc hunks by
+> providing a compatibility wrapper. During the second phase of the merge
+> window this wrapper will be deleted and smc updated to use the new API.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+>  include/rdma/ib_cache.h | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> The resolution Stephen had to make is too complicated, I think we
+> should go this way instead. Parav can send a patch to DaveM during the
+> 2nd half of the merge window to safely update SMC and delete this
+> wrapper.
+> 
+> Parav, can you check this?
+> 
+> Ursula, this is only for SMC, are you able to test SMC with it? You
+> will need to apply it to the RDMA tree here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=for-next
+> 
+> Thanks,
+> Jason
 
-Hi Vineet,
+I applied this to rdma for-next with Parav's notes.
 
-Commit
-
-  fa52704e2816 ("ARC: add SMP_CACHE_BYTES value validate")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bP1TogKgY+TMCHMoYvJmZfV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltdIt8ACgkQAVBC80lX
-0GzUHQgAk4ZkHYWgVDL9X2LfqrFaQEqpiZyB2VCvysq268etv9YW66ySfCgR7hLv
-O0HxtGPpYiMpISvJxtUw0kmDkfolZp36j+EZIYOW8cia5F86YF6uVwCNLU1LfE0J
-XSaDTnXPsAK/A7uT32APZFEwla6H6GecMlG+2k0cAnJfuCULUAPQM34s+Fv1PPdI
-0jBAao9YNLWIOwLL7WSRsypvZtQ4ejF7sebYAEkr64HWaVMrt43wmIbYF22vJSS9
-uqndV+4nt+zZbpGCiZszQc/kJ94VATz/2qCCuIMmkJhCL+c93S96XSgtx6EcvDkZ
-lsX5uuOQ/UlyKdebhIEyfJ1FqawdsQ==
-=BDEO
------END PGP SIGNATURE-----
-
---Sig_/bP1TogKgY+TMCHMoYvJmZfV--
+Jason
