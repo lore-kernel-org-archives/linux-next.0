@@ -1,45 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net-next tree
-Date: Sat, 28 Jul 2018 14:21:58 +1000
-Message-ID: <20180728142158.43c4ff0a@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the arc-current
+ tree
+Date: Sun, 29 Jul 2018 12:13:51 +1000
+Message-ID: <20180729121351.26912f3c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jjxPZDkflDqeMO+HWVUJ39t"; protocol="application/pgp-signature"
+ boundary="Sig_/bP1TogKgY+TMCHMoYvJmZfV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Taht <dave.taht@gmail.com>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jjxPZDkflDqeMO+HWVUJ39t
+--Sig_/bP1TogKgY+TMCHMoYvJmZfV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Vineet,
+
 Commit
 
-  2db6dc2662ba ("sch_cake: Make gso-splitting configurable from userspace")
+  fa52704e2816 ("ARC: add SMP_CACHE_BYTES value validate")
 
-is missing a Signed-off-by from its author.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/jjxPZDkflDqeMO+HWVUJ39t
+--Sig_/bP1TogKgY+TMCHMoYvJmZfV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltb72YACgkQAVBC80lX
-0Gy+bQf+Iz9UtZMOK/YQTUsrQZKvEuKGzXYg5PQ9venxJbUp7L5yooA/aF+Q54tJ
-+c0QE2SVVwzqFCmu6zHwVkm1MoS+qDtX1bhomLtSje5fdwoT3qyypQGdJJFi/J4k
-emt4F7GS1nWa9Btif6NVcSpvKNM78BkkPUm1TL1k+8JxBEkX3nNF4dnqJDl3AaGK
-gH6ojrcFJrJEcFTQkZioaKWhUK1k6e+O+8VJuEhUuNAEzXToKudjbuD1XhNQanz3
-fJO4JrXKDCGGXFqGR9OhiOAvQO9sWl2LoUEuTwZmbWkQ3hOV5dJKJJb8y85pFMYC
-igJrO/E1xgSXy2iYXj7ouDAOIolrbA==
-=5UN6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltdIt8ACgkQAVBC80lX
+0GzUHQgAk4ZkHYWgVDL9X2LfqrFaQEqpiZyB2VCvysq268etv9YW66ySfCgR7hLv
+O0HxtGPpYiMpISvJxtUw0kmDkfolZp36j+EZIYOW8cia5F86YF6uVwCNLU1LfE0J
+XSaDTnXPsAK/A7uT32APZFEwla6H6GecMlG+2k0cAnJfuCULUAPQM34s+Fv1PPdI
+0jBAao9YNLWIOwLL7WSRsypvZtQ4ejF7sebYAEkr64HWaVMrt43wmIbYF22vJSS9
+uqndV+4nt+zZbpGCiZszQc/kJ94VATz/2qCCuIMmkJhCL+c93S96XSgtx6EcvDkZ
+lsX5uuOQ/UlyKdebhIEyfJ1FqawdsQ==
+=BDEO
 -----END PGP SIGNATURE-----
 
---Sig_/jjxPZDkflDqeMO+HWVUJ39t--
+--Sig_/bP1TogKgY+TMCHMoYvJmZfV--
