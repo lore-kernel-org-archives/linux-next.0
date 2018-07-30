@@ -1,121 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the xen-tip
- tree
-Date: Mon, 30 Jul 2018 19:02:10 +1000
-Message-ID: <20180730190210.48a75b72@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Mon, 30 Jul 2018 10:47:37 +0100
+Message-ID: <2379.1532944057@warthog.procyon.org.uk>
+References: <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com> <20180730161622.3837cb15@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RQ/f9UhlBN2KABzauLfOSxw"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+Content-ID: <2377.1532944057.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Michal Hocko <mhocko@suse.com>
+To: Gao Xiang <gaoxiang25@huawei.com>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/RQ/f9UhlBN2KABzauLfOSxw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Gao Xiang <gaoxiang25@huawei.com> wrote:
 
-Hi all,
+> >   sb->s_flags |= MS_RDONLY | MS_NOATIME;
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+This should be using SB_* rather than MS_* for interaction with sb->s_flags.
 
-  drivers/xen/gntdev.c
+> > drivers/staging/erofs/super.c: In function 'erofs_mount':
+> > drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+> >    &priv, erofs_fill_super);
+> >           ^~~~~~~~~~~~~~~~
+> > In file included from include/linux/buffer_head.h:12:0,
+> >                  from drivers/staging/erofs/super.c:14:
+> > include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+> >  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+> >                        ^~~~~~~~~~
+> > drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+> >   return mount_bdev(fs_type, flags, dev_name,
+> >          ^~~~~~~~~~
 
-between commit:
+There's a patch in Al Viro's tree that passes a size_t argument indicating the
+size of the mount data from mount down into the filesystem and into the
+helpers as the data may be on a kernel stack or in kernel .rodata rather than
+in a full page of its own.
 
-  1d3145675538 ("xen/gntdev: Make private routines/structures accessible")
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
 
-from the xen-tip tree and commit:
+Currently this is commit 0a191e4505a4f255e6513b49426213da69bf0e80
 
-  aaefcabe9c25 ("mm, oom: distinguish blockable mode for mmu notifiers")
+vfs: Require specification of size of mount data for internal mounts
 
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/xen/gntdev.c
-index c866a62f766d,55b4f0e3f4d6..000000000000
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@@ -479,7 -441,20 +479,20 @@@ static const struct vm_operations_struc
- =20
-  /* ------------------------------------------------------------------ */
- =20
- -static bool in_range(struct grant_map *map,
-++static bool in_range(struct gntdev_grant_map *map,
-+ 			      unsigned long start, unsigned long end)
-+ {
-+ 	if (!map->vma)
-+ 		return false;
-+ 	if (map->vma->vm_start >=3D end)
-+ 		return false;
-+ 	if (map->vma->vm_end <=3D start)
-+ 		return false;
-+=20
-+ 	return true;
-+ }
-+=20
- -static void unmap_if_in_range(struct grant_map *map,
- +static void unmap_if_in_range(struct gntdev_grant_map *map,
-  			      unsigned long start, unsigned long end)
-  {
-  	unsigned long mstart, mend;
-@@@ -503,15 -472,26 +510,26 @@@
-  	WARN_ON(err);
-  }
- =20
-- static void mn_invl_range_start(struct mmu_notifier *mn,
-+ static int mn_invl_range_start(struct mmu_notifier *mn,
-  				struct mm_struct *mm,
-- 				unsigned long start, unsigned long end)
-+ 				unsigned long start, unsigned long end,
-+ 				bool blockable)
-  {
-  	struct gntdev_priv *priv =3D container_of(mn, struct gntdev_priv, mn);
- -	struct grant_map *map;
- +	struct gntdev_grant_map *map;
-+ 	int ret =3D 0;
-+=20
-+ 	/* TODO do we really need a mutex here? */
-+ 	if (blockable)
-+ 		mutex_lock(&priv->lock);
-+ 	else if (!mutex_trylock(&priv->lock))
-+ 		return -EAGAIN;
- =20
-- 	mutex_lock(&priv->lock);
-  	list_for_each_entry(map, &priv->maps, next) {
-+ 		if (in_range(map, start, end)) {
-+ 			ret =3D -EAGAIN;
-+ 			goto out_unlock;
-+ 		}
-  		unmap_if_in_range(map, start, end);
-  	}
-  	list_for_each_entry(map, &priv->freeable_maps, next) {
-
---Sig_/RQ/f9UhlBN2KABzauLfOSxw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlte1BIACgkQAVBC80lX
-0GyG1wf+KGs6g2d6zFRQetpC8V37YhGvenZX4vHrVb7nXp9wmUVt3fRrOGvAJFGx
-r9aZVBdZeBDIt1Hj5XClOm4xB3MkDUAzEAC0qp8zQxh+OopZwALw/rT+laHdTlLY
-9UhtdxjieNyHVr56160LUtInU6dh13GS8nvowWMz0QRahdHnObEu/rffWgbOluKv
-wPmS8tGiY/blbx5oNqMYZPUQ7I80iTrml7OrDLRQq9bWRlAaDWOe7fH6e6gbfuVF
-DP89e2ojb8N9kl2UR77cJiy6XjzNvGqrbyOYiolmhqy4D2FZMiAoLSPBDwEC9OiQ
-JFolvw3vycLsazHFkuuTJmlD2CdGug==
-=BIWe
------END PGP SIGNATURE-----
-
---Sig_/RQ/f9UhlBN2KABzauLfOSxw--
+David
