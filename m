@@ -1,45 +1,55 @@
-From: Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH rdma] IB/cache: Restore compatibility for ib_query_gid
-Date: Sun, 29 Jul 2018 13:42:30 -0600
-Message-ID: <20180729194230.GB15106@ziepe.ca>
-References: <20180727155402.GA15253@ziepe.ca>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pm tree
+Date: Mon, 30 Jul 2018 12:00:53 +1000
+Message-ID: <20180730120053.62732d27@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4GX83W.4ulaCHnjPxIlqjoD"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180727155402.GA15253@ziepe.ca>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rdma@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Parav Pandit <parav@mellanox.com>, Ursula Braun <ubraun@linux.ibm.com>, Leon Romanovsky <leonro@mellanox.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 27, 2018 at 09:54:02AM -0600, Jason Gunthorpe wrote:
-> Code changes in smc have become so complicated this cycle that the RDMA
-> patches to remove ib_query_gid in smc create too complex merge conflicts.
-> Allow those conflicts to be resolved by using the net/smc hunks by
-> providing a compatibility wrapper. During the second phase of the merge
-> window this wrapper will be deleted and smc updated to use the new API.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
->  include/rdma/ib_cache.h | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> The resolution Stephen had to make is too complicated, I think we
-> should go this way instead. Parav can send a patch to DaveM during the
-> 2nd half of the merge window to safely update SMC and delete this
-> wrapper.
-> 
-> Parav, can you check this?
-> 
-> Ursula, this is only for SMC, are you able to test SMC with it? You
-> will need to apply it to the RDMA tree here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=for-next
-> 
-> Thanks,
-> Jason
+--Sig_/4GX83W.4ulaCHnjPxIlqjoD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I applied this to rdma for-next with Parav's notes.
+Hi Rafael,
 
-Jason
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+drivers/media/i2c/mt9v111.c: In function 'mt9v111_set_format':
+drivers/media/i2c/mt9v111.c:887:15: warning: 'idx' may be used uninitialize=
+d in this function [-Wmaybe-uninitialized]
+  unsigned int idx;
+               ^~~
+
+Introduced by commit
+
+  aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
+
+Looks like a false positive, but not something that gcc can easily see.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4GX83W.4ulaCHnjPxIlqjoD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltecVUACgkQAVBC80lX
+0GyGmAf/YnA1cpHCSACdOVYt/o32oVQBzSJIqlfdKBZ8+JUQ7OIpj/WbVZI/Mw4h
+/Ek+RhkDH3aftLdL6xf3ou1xa+1VNR0G0x0gQc0B40hINfk0JxqeWB1zFRjqMXFv
+z4k7W4GvaIFqV/83lemiihdO2UYcqFeoAffHUuT6Zt8njQ/Fn1OgSyu7XPiMPeSc
+zYsiWLqb0YPUomV1A1ke7DVSkmBYBQ2oqs+72iVeqeAnlAd/pHM5th9Zp7qxQwgv
+MbdnJg7M2rQ1p+AU/c8AY1tJ/WvCmX6LcT+fJZ6wwSLAhxbPxJIEZr22pYLcnDl4
+ywyFTrHO+pSd19fBv6kQT8jZvxB9ZQ==
+=/yfL
+-----END PGP SIGNATURE-----
+
+--Sig_/4GX83W.4ulaCHnjPxIlqjoD--
