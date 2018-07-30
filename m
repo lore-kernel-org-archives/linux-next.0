@@ -1,67 +1,46 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: [PATCH] efi/libstub: Only disable stackleak plugin for arm64
-Date: Mon, 30 Jul 2018 12:09:49 -0700
-Message-ID: <CAGXu5j+iuCig4jYY-89nBFB8ZPxu932B5kfkqMCXse9MVxE-mA@mail.gmail.com>
-References: <20180730163722.GD4276@arm.com> <20180730183118.25869-1-labbott@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the kvms390 tree
+Date: Tue, 31 Jul 2018 06:45:26 +1000
+Message-ID: <20180731064526.4610e416@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=pLY+Bs6uWaKtBdewsNVOCs"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180730183118.25869-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Popov <alex.popov@linux.com>, Catalin Marinas <catalin.marinas@arm.com>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cohuck@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janosch Frank <frankja@linux.ibm.com>, Dominik Dingel <dingel@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 30, 2018 at 11:31 AM, Laura Abbott <labbott@redhat.com> wrote:
-> arm64 uses the full KBUILD_CFLAGS for building libstub as opposed
-> to x86 which doesn't. This means that x86 doesn't pick up
-> the gcc-plugins. We need to disable the stackleak plugin but
-> doing this unconditionally breaks x86 build since it doesn't
-> have any plugins. Switch to disabling the stackleak plugin for
-> arm64 only.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+--Sig_/=pLY+Bs6uWaKtBdewsNVOCs
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Hi all,
 
-Thanks!
+Commit
 
--Kees
+  47dad49df4db ("s390/mm: hugetlb pages within a gmap can not be freed")
 
-> ---
->  drivers/firmware/efi/libstub/Makefile | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> index 25dd2a14560d..88c322d7c71e 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -11,7 +11,10 @@ cflags-$(CONFIG_X86)         += -m$(BITS) -D__KERNEL__ -O2 \
->                                    -fPIC -fno-strict-aliasing -mno-red-zone \
->                                    -mno-mmx -mno-sse -fshort-wchar
->
-> -cflags-$(CONFIG_ARM64)         := $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
-> +# arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
-> +# disable the stackleak plugin
-> +cflags-$(CONFIG_ARM64)         := $(subst -pg,,$(KBUILD_CFLAGS)) -fpie \
-> +                                  $(DISABLE_STACKLEAK_PLUGIN)
->  cflags-$(CONFIG_ARM)           := $(subst -pg,,$(KBUILD_CFLAGS)) \
->                                    -fno-builtin -fpic -mno-single-pic-base
->
-> @@ -21,7 +24,6 @@ KBUILD_CFLAGS                 := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
->                                    -D__NO_FORTIFY \
->                                    $(call cc-option,-ffreestanding) \
->                                    $(call cc-option,-fno-stack-protector) \
-> -                                  $(DISABLE_STACKLEAK_PLUGIN)
->
->  GCOV_PROFILE                   := n
->  KASAN_SANITIZE                 := n
-> --
-> 2.17.1
->
+is missing a Signed-off-by from its committer.
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/=pLY+Bs6uWaKtBdewsNVOCs
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Kees Cook
-Pixel Security
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltfeOYACgkQAVBC80lX
+0GyJeAf8DzTyV7ZBzUaBmqHBmVuaD1x1Nrz3xoe4KTyDocqqTnROhm9DF8WQeObe
+DCsQ2GZggELZzv3b+IL8F96NoXfWk+s7EhhWDQI4ySmRivbLf9+Y9RSWEQ2JQftJ
+/MkBDuRPxF6d+NdKjmfub6Wo3u8OYXnxKyMMy3NHfEkvvr06UHYOCywVmcIzeqHC
+8RPjwEBIQSZSH9IWSD1NWGBAhkqgvkI5RwOiRYpJhJ1M68eBbVuUBA1OyN3b4V79
+nnJeYNN8xQK0TuBslBTSvgE25QBNnBxIcITgbq1jAlj7wXN9Lim5nHTV38BrrONy
+VcY1RiCKjC9PJeG7LMVI8CgwP/TPMQ==
+=c9uf
+-----END PGP SIGNATURE-----
+
+--Sig_/=pLY+Bs6uWaKtBdewsNVOCs--
