@@ -1,54 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Tue, 31 Jul 2018 21:27:25 +1000
-Message-ID: <20180731212725.5523d5dd@canb.auug.org.au>
-References: <20180727190207.7ce1c9b0@canb.auug.org.au>
-        <20180727190647.3525f5f7@canb.auug.org.au>
-        <20180727205511.7c0f2e62@canb.auug.org.au>
-        <20180727125522.GA6173@arm.com>
-        <20180730173356.694fbf4e@canb.auug.org.au>
-        <20180731100918.GC23281@arm.com>
+From: Anna Schumaker <schumaker.anna@gmail.com>
+Subject: Re: linux-next: build warning after merge of the nfs-anna tree
+Date: Tue, 31 Jul 2018 09:46:52 -0400
+Message-ID: <35966b8f-43c9-ed1c-215e-f26a0fc1395b@gmail.com>
+References: <20180730185200.0d836ca7@canb.auug.org.au>
+ <1533027885.3710.2.camel@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/h_Pcn/AX+rHq_Hoij_BAYX8"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180731100918.GC23281@arm.com>
+In-Reply-To: <1533027885.3710.2.camel@redhat.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Kees Cook <keescook@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Popov <alex.popov@linux.com>, Catalin Marinas <catalin.marinas@arm.com>, Laura Abbott <labbott@redhat.com>
+To: David Wysochanski <dwysocha@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/h_Pcn/AX+rHq_Hoij_BAYX8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi Will,
+On 07/31/2018 05:04 AM, David Wysochanski wrote:
+> On Mon, 2018-07-30 at 18:52 +1000, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the nfs-anna tree, today's linux-next build (powerpc
+>> ppc44x_defconfig, sparc defconfig) produced this warning:
+>>
+>> net/sunrpc/stats.c: In function 'rpc_clnt_show_stats':
+>> /home/sfr/next/next/net/sunrpc/stats.c:258:32: warning: excess elements in struct initializer
+>>    struct rpc_iostats stats = { 0 };
+>>         
+> 
+> Apologies I did not see this before submission.
+> 
+> The below fixup compiles without warning for me on ppc64le.
+> 
+>    struct rpc_iostats stats = {};
 
-On Tue, 31 Jul 2018 11:09:18 +0100 Will Deacon <will.deacon@arm.com> wrote:
->
-> I've pushed out Laura's fix to the arm64 for-next/core branch, so this
-> should be resolved in the next next.
+Can you resend the patch with that change, please?
 
-Thanks.  I actually applied Laura's patch to today's linux-next as well.
+Thanks,
+Anna
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/h_Pcn/AX+rHq_Hoij_BAYX8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltgR50ACgkQAVBC80lX
-0Gxkggf+I5vS7vNiekkQqPRuo9x5AE+WdFyzudW9KS82YsscJXsd7tDT6jjI7/T0
-EEiygPK0fuj9KotzIJ9xJsksCB5OXrlPwkEn74ApMh1BryWhtkjqi2ER6wPCuO5n
-mw13WG1uEEj4RZAUBZpY83I/OXgO+kQzprGy9nWvp44VGYMhnmLSZszOpNpHravy
-4Mo/VYOdAiWHy6595CITi2Ne0M/gtzCqPqF71JgS95qK3ROJw7A2unx9oDP3O5Y3
-hsu46Rl08JtynbieVixUXhdk2O764QBHpLFNJoCwY/vVgz7wiQBJgrD8BFJIrROy
-QZObclEv1wfq8vyRYp4XAhvXY9a2Zg==
-=YBjO
------END PGP SIGNATURE-----
-
---Sig_/h_Pcn/AX+rHq_Hoij_BAYX8--
+> 
+> 
+>>                         ^
+>>
+>> Introduced by commit
+>>
+>>   c3b588a2d5be ("sunrpc: Change rpc_print_iostats to rpc_clnt_show_stats and handle rpc_clnt clones")
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
