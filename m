@@ -1,63 +1,61 @@
-From: Parav Pandit <parav@mellanox.com>
-Subject: RE: linux-next: manual merge of the net-next tree with the rdma tree
-Date: Tue, 31 Jul 2018 21:12:00 +0000
-Message-ID: <VI1PR0502MB3008076016496152D4898D8ED12E0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
-References: <20180727123301.3ac97ddc@canb.auug.org.au>
-        <20180727024832.GA30023@mellanox.com>
-        <20180727132847.2be8563b@canb.auug.org.au>
-        <VI1PR0502MB3008702AFA64F44DE57DC9F5D12A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
- <20180727150903.0f2816ba@canb.auug.org.au>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: next/master boot: 171 boots: 6 failed, 162 passed with 3
+ offline (next-20180724)
+Date: Tue, 31 Jul 2018 23:35:09 +0200 (CEST)
+Message-ID: <1380807549.9923.1533072909710@email.1und1.de>
+References: <5b5757ee.1c69fb81.411a5.52e2@mx.google.com>
+ <20180725161151.GA340@sirena.org.uk> <20180731155246.GG5719@sirena.org.uk>
+ <bb89388b-db7e-a59f-6fd1-4e88b602054c@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180727150903.0f2816ba@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jason Gunthorpe <jgg@mellanox.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.ibm.com>, Leon Romanovsky <leonro@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <bb89388b-db7e-a59f-6fd1-4e88b602054c@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Eric Anholt <eric@anholt.net>, Kevin Hilman <khilman@kernel.org>, Robin Murphy <robin.murphy@arm.com>, clabbe@baylibre.com, Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
 
-> -----Original Message-----
-> From: linux-rdma-owner@vger.kernel.org <linux-rdma-owner@vger.kernel.org>
-> On Behalf Of Stephen Rothwell
-> Sent: Friday, July 27, 2018 12:09 AM
-> To: Parav Pandit <parav@mellanox.com>
-> Cc: Jason Gunthorpe <jgg@mellanox.com>; David Miller
-> <davem@davemloft.net>; Networking <netdev@vger.kernel.org>; Doug
-> Ledford <dledford@redhat.com>; Linux-Next Mailing List <linux-
-> next@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>; Ursula Braun <ubraun@linux.ibm.com>; Leon
-> Romanovsky <leonro@mellanox.com>; linux-rdma@vger.kernel.org
-> Subject: Re: linux-next: manual merge of the net-next tree with the rdma =
-tree
->=20
-> Hi Parav,
->=20
-> On Fri, 27 Jul 2018 04:57:41 +0000 Parav Pandit <parav@mellanox.com> wrot=
-e:
-> >
-> > >  	for (i =3D 0; i < smcibdev->pattr[ibport - 1].gid_tbl_len; i++) {
-> > > -		memset(&_gid, 0, SMC_GID_SIZE);
-> > > -		memset(&gattr, 0, sizeof(gattr));
-> > > -		if (ib_query_gid(smcibdev->ibdev, ibport, i, &_gid, &gattr))
-> > > +		gattr =3D rdma_get_gid_attr(smcibdev->ibdev, ibport, i);
-> > > +		if (IS_ERR(gattr))
-> > >  			continue;
-> > > -		if (!gattr.ndev)
-> > > +		if (!gattr->ndev)
-> > >  			continue;
-> > This requires a small fix.
-> > If (!gattr->ndev {
-> > 	rdma_put_gid_attr(gattr);
-> > 	continue;
-> > }
->=20
-> Thanks, I have fixed this up for Monday.
-You might want to consider this compatibility patch in Linux-rdma tree to a=
-void a merge conflict of smc.
+> Robin Murphy <robin.murphy@arm.com> hat am 31. Juli 2018 um 19:00 geschrieben:
+> 
+> 
+> On 31/07/18 16:52, Mark Brown wrote:
+> > On Wed, Jul 25, 2018 at 05:11:51PM +0100, Mark Brown wrote:
+> >> On Tue, Jul 24, 2018 at 09:46:38AM -0700, kernelci.org bot wrote:
+> > 
+> >> For a little while now the RPi B has been failing to boot using the
+> >> bcm2835 defconfig in -next:
+> > 
+> > ...
+> > 
+> >> It's working fine on arm64, whatever's going on appears to be specific
+> >> to this config (it's not getting booted with any other 32 bit configs).
+> >> Full info and boot logs for one of the boards here:
+> > 
+> >>     https://kernelci.org/boot/id/5b58416759b514139596baae/
+> > 
+> >> it looks like it hangs somewhere shortly after or during initializing
+> >> MMC so never makes it to the console, the tail of the failing logs looks
+> >> like:
+> > 
+> > This went away for a day or two but it looks like it's back again I'm
+> > afraid:
+> 
+> FWIW, it looks like that blip was due to me completely breaking DMA API 
+> functionality for DT devices in next-20180727. Funny that that actually 
+> "helped" in this case (unlike all the others...), but it definitely 
+> reinforces Stefan's observation.
+> 
+> Robin.
+> 
 
-https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=3Df=
-or-next&id=3D7aaa1807e698f73094b78f0ef25b1a37a4409a55
+Sorry, still not much time this week. All i can say that next-20180731 is broken, but dma-mapping/for-next is not.
