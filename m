@@ -1,64 +1,63 @@
-From: Niklas Cassel <niklas.cassel@linaro.org>
-Subject: Re: next/master boot: 179 boots: 11 failed, 167 passed with 1
- offline (next-20180731)
-Date: Tue, 31 Jul 2018 21:50:37 +0200
-Message-ID: <20180731195037.GA6737@centauri.lan>
-References: <5b607cc4.1c69fb81.6c1d6.6534@mx.google.com>
- <20180731161114.GI5719@sirena.org.uk>
+From: Parav Pandit <parav@mellanox.com>
+Subject: RE: linux-next: manual merge of the net-next tree with the rdma tree
+Date: Tue, 31 Jul 2018 21:12:00 +0000
+Message-ID: <VI1PR0502MB3008076016496152D4898D8ED12E0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+References: <20180727123301.3ac97ddc@canb.auug.org.au>
+        <20180727024832.GA30023@mellanox.com>
+        <20180727132847.2be8563b@canb.auug.org.au>
+        <VI1PR0502MB3008702AFA64F44DE57DC9F5D12A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+ <20180727150903.0f2816ba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180731161114.GI5719@sirena.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: kernel-build-reports@lists.linaro.org, linux-arm-msm@vger.kernel.org, David Brown <david.brown@linaro.org>, linux-next@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180727150903.0f2816ba@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jason Gunthorpe <jgg@mellanox.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.ibm.com>, Leon Romanovsky <leonro@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 31, 2018 at 05:11:14PM +0100, Mark Brown wrote:
-> On Tue, Jul 31, 2018 at 08:14:12AM -0700, kernelci.org bot wrote:
-> 
-> Today's -next fails to boot on db820c:
-> 
-> > arm64:
-> 
-> >     defconfig:
-> >         apq8096-db820c:
-> >             lab-bjorn: new failure (last pass: next-20180730)
-> 
-> There's nothing immediately obvious as the boot failure cause in the
-> logs, the last output is a failure to load the ath10k_pci firmware:
-> 
-> 04:02:53.750283  [    4.503980] ath10k_pci 0000:01:00.0: Failed to find firmware-N.bin (N between 2 and 6) from ath10k/QCA6174/hw3.0: -2
-> 04:02:53.756384  [    4.504010] ath10k_pci 0000:01:00.0: could not fetch firmware files (-2)
-> 04:02:53.760522  [    4.513736] ath10k_pci 0000:01:00.0: could not probe fw (-2)
-> 
-> but I'm not sure that's the actual cause.  More details, including the
-> full boot log, here:
-> 
->    https://kernelci.org/boot/id/5b6042b559b514136096babf/
+Hi Stephen,
 
-I tried booting today's -next on db820c, using arm64 defconfig,
-and it booted correctly:
+> -----Original Message-----
+> From: linux-rdma-owner@vger.kernel.org <linux-rdma-owner@vger.kernel.org>
+> On Behalf Of Stephen Rothwell
+> Sent: Friday, July 27, 2018 12:09 AM
+> To: Parav Pandit <parav@mellanox.com>
+> Cc: Jason Gunthorpe <jgg@mellanox.com>; David Miller
+> <davem@davemloft.net>; Networking <netdev@vger.kernel.org>; Doug
+> Ledford <dledford@redhat.com>; Linux-Next Mailing List <linux-
+> next@vger.kernel.org>; Linux Kernel Mailing List <linux-
+> kernel@vger.kernel.org>; Ursula Braun <ubraun@linux.ibm.com>; Leon
+> Romanovsky <leonro@mellanox.com>; linux-rdma@vger.kernel.org
+> Subject: Re: linux-next: manual merge of the net-next tree with the rdma =
+tree
+>=20
+> Hi Parav,
+>=20
+> On Fri, 27 Jul 2018 04:57:41 +0000 Parav Pandit <parav@mellanox.com> wrot=
+e:
+> >
+> > >  	for (i =3D 0; i < smcibdev->pattr[ibport - 1].gid_tbl_len; i++) {
+> > > -		memset(&_gid, 0, SMC_GID_SIZE);
+> > > -		memset(&gattr, 0, sizeof(gattr));
+> > > -		if (ib_query_gid(smcibdev->ibdev, ibport, i, &_gid, &gattr))
+> > > +		gattr =3D rdma_get_gid_attr(smcibdev->ibdev, ibport, i);
+> > > +		if (IS_ERR(gattr))
+> > >  			continue;
+> > > -		if (!gattr.ndev)
+> > > +		if (!gattr->ndev)
+> > >  			continue;
+> > This requires a small fix.
+> > If (!gattr->ndev {
+> > 	rdma_put_gid_attr(gattr);
+> > 	continue;
+> > }
+>=20
+> Thanks, I have fixed this up for Monday.
+You might want to consider this compatibility patch in Linux-rdma tree to a=
+void a merge conflict of smc.
 
-I also tried removing the ath10k firmware from my initrd, but it still booted
-correctly.
-
-# cat /proc/version
-Linux version 4.18.0-rc7-next-20180731-00001-g47055e3ba913 (nks@centauri) (gcc version 7.2.1 20171011 (Linaro GCC 7.2-2017.11)) #9 SMP PREEMPT Tue Jul 31 21:34:43 CEST 2018
-
-I guess it could be a bug that does not trigger on every boot,
-or it could be a problem in the kernelci infrastructure.
-
-
-Kind regards,
-Niklas
+https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=3Df=
+or-next&id=3D7aaa1807e698f73094b78f0ef25b1a37a4409a55
