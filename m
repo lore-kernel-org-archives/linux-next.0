@@ -1,11 +1,11 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next/master boot: 179 boots: 11 failed, 167 passed with 1
  offline (next-20180731)
-Date: Tue, 31 Jul 2018 17:06:23 +0100
-Message-ID: <20180731160623.GH5719@sirena.org.uk>
+Date: Tue, 31 Jul 2018 17:11:14 +0100
+Message-ID: <20180731161114.GI5719@sirena.org.uk>
 References: <5b607cc4.1c69fb81.6c1d6.6534@mx.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3175613517232453340=="
+Content-Type: multipart/mixed; boundary="===============6365005439617038189=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <5b607cc4.1c69fb81.6c1d6.6534@mx.google.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
@@ -17,95 +17,62 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Ludovic Barre <ludovic.barre@st.com>
-Cc: kernel-build-reports@lists.linaro.org, khilman@baylibre.com, linux-mmc@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-next.vger.kernel.org
 
 
---===============3175613517232453340==
+--===============6365005439617038189==
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gKijDXBCEH69PxaN"
+	protocol="application/pgp-signature"; boundary="Li7ckgedzMh1NgdW"
 Content-Disposition: inline
 
 
---gKijDXBCEH69PxaN
+--Li7ckgedzMh1NgdW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 On Tue, Jul 31, 2018 at 08:14:12AM -0700, kernelci.org bot wrote:
 
-Today's -next fails to boot on a variety of Qualcomm 32 bit platforms:
+Today's -next fails to boot on db820c:
 
->     multi_v7_defconfig:
->         qcom-apq8064-cm-qs600:
->             lab-baylibre-seattle: new failure (last pass: next-20180730)
->         qcom-apq8064-ifc6410:
->             lab-baylibre-seattle: new failure (last pass: next-20180730)
->=20
->     qcom_defconfig:
->         qcom-apq8064-cm-qs600:
->             lab-baylibre-seattle: new failure (last pass: next-20180730)
+> arm64:
 
-The logs are all somewhat similar, for example:
+>     defconfig:
+>         apq8096-db820c:
+>             lab-bjorn: new failure (last pass: next-20180730)
 
-   https://storage.kernelci.org/next/master/next-20180731/arm/multi_v7_defc=
-onfig/lab-baylibre-seattle/boot-qcom-apq8064-cm-qs600.html
+There's nothing immediately obvious as the boot failure cause in the
+logs, the last output is a failure to load the ath10k_pci firmware:
 
-detects a DMA problem during MMCI initialization:
+04:02:53.750283  [    4.503980] ath10k_pci 0000:01:00.0: Failed to find firmware-N.bin (N between 2 and 6) from ath10k/QCA6174/hw3.0: -2
+04:02:53.756384  [    4.504010] ath10k_pci 0000:01:00.0: could not fetch firmware files (-2)
+04:02:53.760522  [    4.513736] ath10k_pci 0000:01:00.0: could not probe fw (-2)
 
-[    2.237566] mmci-pl18x 121c0000.sdcc: mmc2: PL180 manf 51 rev0 at 0x121c=
-0000 irq 32,0 (pio)
-[    2.244790] mmci-pl18x 121c0000.sdcc: DMA channels RX dma2chan1, TX dma2=
-chan2
-[    2.271722] mmci-pl18x 12400000.sdcc: error during DMA transfer!
-[    2.271757] mmci-pl18x 12400000.sdcc: buggy DMA detected. Taking evasive=
- action.
-[    2.276798] ------------[ cut here ]------------
-[    2.284185] WARNING: CPU: 0 PID: 0 at ../include/linux/dma-mapping.h:551=
- bam_free_chan+0x2d8/0x2e0
-[    2.288772] Modules linked in:
-[    2.297534] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.18.0-rc7-next-20=
-180731 #1
+but I'm not sure that's the actual cause.  More details, including the
+full boot log, here:
 
-then panics:
+   https://kernelci.org/boot/id/5b6042b559b514136096babf/
 
-[    2.513796] ------------[ cut here ]------------
-[    2.518367] kernel BUG at ../mm/vmalloc.c:1608!
-[    2.522968] Internal error: Oops - BUG: 0 [#1] SMP ARM
-
-trying to release the DMA channel.  I've not done any bisection or
-anything but I do note 8bb2299d2d0b5cc (mmc: mmci: Add and implement a
-->dma_setup() callback for qcom dml) and some related commits in the MMC
-tree.
-
-More details for each of the failed boots at:
-
-  https://kernelci.org/boot/id/5b6054f559b5144b9396baa9/
-  https://kernelci.org/boot/id/5b60551259b5144abb96bab6/
-  https://kernelci.org/boot/id/5b6054e259b5144b1e96bab2/
-
-including full logs, details of the build and so on.
-
---gKijDXBCEH69PxaN
+--Li7ckgedzMh1NgdW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltgiP8ACgkQJNaLcl1U
-h9D2GQf/a6b1VF7LuVwtXj8TF0zF4ZYBg+iI4bWY0djl1iD7Xx87fqsQ1rmQrzy6
-pyBgKCZcb66v514+Qj4FKLkO9D9iFxFM4FNJjvXFchlxiL4fO/4cyeRjpgXMwmww
-/4AUgAxTO7Za2xKZ4ysk5BVQ2845oEYn01Gxc1IyC0m8gXuv3rSOSKBCBWFc+WEC
-4+e2QFecVsi7whSMrGLuWdPACXpK4NjBh9ScA/HbWAjT/Gl8XNmZtvyYnp0DcrJY
-2kyBGreEemiE8voSLDmYyMerSCsuqbn+FLwH1tGTn2v7mDd0xExEatQtNWuVwC1X
-KiToDsKyf9zMi12kL29DIAN/uCdW6w==
-=K646
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltgiiEACgkQJNaLcl1U
+h9DOSQf/S9K/55ETQVj8ByDTgV5aoYyr8QVj/wqrYeC06ihuLC+qXILWKmnub/F/
++GJbKqTAnnKwpqxQSA6KpOTK969P7DWdDlvYzxTDCy6ui8rXejlge4cgQ9+Gwv7C
+MBEf/FYqQFXcLiJuqFRw2EDSccfJIOTrjTYB7Qd53SGMYUr+MrOQzlZAcSzUrvX5
+oQRJZbofFFd4mlihm+1zB4mLmj6KTTa4/WiQj4ppD5oGv0CDWIGQEHV+fpfVyLR5
+tRb5Fbar06ogYSLhhmsLdkf2Nisg7AdQSJKSioJHlszYJx68q5PcRzyh0WfF7x0A
+5cLfR9CMWa+BDKcbO15cd2Wc2HT+iw==
+=aPRB
 -----END PGP SIGNATURE-----
 
---gKijDXBCEH69PxaN--
+--Li7ckgedzMh1NgdW--
 
 
---===============3175613517232453340==
+--===============6365005439617038189==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -116,4 +83,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============3175613517232453340==--
+--===============6365005439617038189==--
