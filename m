@@ -1,95 +1,38 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jul 31
-Date: Tue, 31 Jul 2018 07:44:04 -0700
-Message-ID: <20180731144404.GA27893@roeck-us.net>
-References: <20180731182252.17831c15@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 31 Jul 2018 08:59:57 -0600
+Message-ID: <847d1024-7e9d-65e2-356e-6fc3ffbece1e@kernel.dk>
+References: <20180731130700.3ff50dce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180731182252.17831c15@canb.auug.org.au>
+In-Reply-To: <20180731130700.3ff50dce@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Max Gurtovoy <maxg@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 31, 2018 at 06:22:52PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 7/30/18 9:07 PM, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> Changes since 20180730:
+> After merging the block tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 > 
-> The block tree gained a build failure so I used the version from
-> next-20180730.
+> drivers/scsi/sd.o: In function `sd_done':
+> sd.c:(.text+0x1050): undefined reference to `t10_pi_complete'
 > 
-> The kvms390 tree gained a conflict against the kvm-arm tree.
+> Presuably caused by commit
 > 
-> The staging tree still had its build failure due to an interaction with
-> the vfs tree for which I disabled CONFIG_EROFS_FS.
+>   10c41ddd6132 ("block: move dif_prepare/dif_complete functions to block layer")
 > 
-> The mux tree gained a conflict against the battery tree.
+> # CONFIG_BLK_DEV_INTEGRITY is not set
+> CONFIG_BLK_DEV_SD=y
 > 
-> The pinctrl tree gained a conflict the devicetree tree.
-> 
-> The kspp tree still had its build failure so I have added a supplied
-> patch.
-> 
-> Non-merge commits (relative to Linus' tree): 9850
->  8993 files changed, 412971 insertions(+), 175848 deletions(-)
-> 
+> I have used the block tree from next-20180730 for today.
 
-In addition to some build failures, I see a large number of boot stalls
-with this image. Various architectures are affected (i386, x86_64, mips,
-some powerpc). Bisect is inconclusive due to a spurious build failure
-in mm code. For those interested, logs are available at
-http://kerneltests.org/builders/.
+Thanks, I fixed it up just now, next one should be fine again.
 
-Guenter
-
----
-Build results:
-	total: 134 pass: 128 fail: 6
-Failed builds: 
-	alpha:allmodconfig 
-	arm64:allmodconfig 
-	parisc:allmodconfig 
-	sparc32:allmodconfig 
-	unicore32:defconfig 
-	unicore32:allnoconfig 
-Qemu test results:
-	total: 182 pass: 147 fail: 35
-Failed tests: 
-	mips:malta_defconfig:nosmp 
-	mips:malta_defconfig:smp 
-	mips64:malta_defconfig:nosmp 
-	mips64:malta_defconfig:smp 
-	mipsel:24Kf:malta_defconfig:nosmp:initrd 
-	mipsel:24Kf:malta_defconfig:smp:initrd 
-	mipsel:24Kf:malta_defconfig:smp:rootfs 
-	mipsel64:malta_defconfig:nosmp:rootfs 
-	mipsel64:malta_defconfig:smp:initrd 
-	mipsel64:malta_defconfig:smp:rootfs 
-	mipsel64:fuloong2e_defconfig:fulong2e:rootfs 
-	powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:initrd 
-	powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:rootfs 
-	i386:Broadwell:q35:defconfig:smp:rootfs 
-	i386:Skylake-Client:q35:defconfig:smp:rootfs 
-	i386:SandyBridge:q35:defconfig:smp:rootfs 
-	i386:Haswell:pc:defconfig:smp:rootfs 
-	i386:Nehalem:q35:defconfig:smp:rootfs 
-	i386:phenom:pc:defconfig:smp:rootfs 
-	i386:Opteron_G5:q35:defconfig:smp:initrd 
-	i386:Westmere:q35:defconfig:smp:initrd 
-	i386:core2duo:q35:defconfig:nosmp:rootfs 
-	i386:Conroe:pc:defconfig:nosmp:rootfs 
-	i386:Opteron_G1:pc:defconfig:nosmp:initrd 
-	i386:n270:q35:defconfig:nosmp:rootfs 
-	x86_64:q35:Broadwell-noTSX:defconfig:smp:sata:rootfs 
-	x86_64:q35:IvyBridge:defconfig:smp:nvme:rootfs 
-	x86_64:q35:Nehalem:defconfig:smp:nvme:rootfs 
-	x86_64:pc:phenom:defconfig:smp:sata:rootfs 
-	x86_64:q35:Opteron_G1:defconfig:smp:scsi[DC395]:rootfs
-	x86_64:q35:Opteron_G5:defconfig:smp:initrd 
-	x86_64:q35:EPYC-IBPB:defconfig:smp:usbdisk:rootfs 
-	x86_64:q35:Skylake-Client:defconfig:smp:initrd 
-	x86_64:q35:Skylake-Server:defconfig:smp:usbdisk:rootfs 
-	x86_64:q35:Opteron_G3:defconfig:smp:initrd
+-- 
+Jens Axboe
