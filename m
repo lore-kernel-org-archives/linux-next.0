@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mux tree with the battery tree
-Date: Tue, 31 Jul 2018 15:20:04 +1000
-Message-ID: <20180731152004.7a5a4c54@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with the devicetree
+ tree
+Date: Tue, 31 Jul 2018 15:42:43 +1000
+Message-ID: <20180731154243.203068c5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XkWjOn12ORf2gl=uLwowV4O"; protocol="application/pgp-signature"
+ boundary="Sig_/2n_oiD8D16eSY/rV4f/cylq"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, Sebastian Reichel <sre@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mircea Caprioru <mircea.caprioru@analog.com>, Stefan Popa <stefan.popa@analog.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robherring2@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/XkWjOn12ORf2gl=uLwowV4O
+--Sig_/2n_oiD8D16eSY/rV4f/cylq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mux tree got a conflict in:
+Today's linux-next merge of the pinctrl tree got a conflict in:
 
-  MAINTAINERS
+  Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
 
 between commit:
 
-  fe8e81b7e899 ("adp5061: New driver for ADP5061 I2C battery charger")
+  791d3ef2e111 ("dt-bindings: remove 'interrupt-parent' from bindings")
 
-from the battery tree and commit:
+from the devicetree tree and commit:
 
-  703160ff3e50 ("dt-bindings: mux: add adi,adgs1408")
+  de1d08b22974 ("dt-bindings: pinctrl: add syscfg mask parameter")
 
-from the mux tree.
+from the pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,45 +43,44 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index db24b8939ed4,eaa2b55a0e9b..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -829,13 -810,12 +829,19 @@@ L:	linux-media@vger.kernel.or
-  S:	Maintained
-  F:	drivers/media/i2c/ad9389b*
+diff --cc Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+index a8bb36b4f9fd,046a3de026d4..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+@@@ -37,9 -37,12 +37,10 @@@ Required properties
  =20
-+ ANALOG DEVICES INC ADGS1408 DRIVER
-+ M:	Mircea Caprioru <mircea.caprioru@analog.com>
-+ S:	Supported
-+ F:	drivers/mux/adgs1408.c
-+ F:	Documentation/devicetree/bindings/mux/adgs1408.txt
-+=20
- +ANALOG DEVICES INC ADP5061 DRIVER
- +M:	Stefan Popa <stefan.popa@analog.com>
- +L:	linux-pm@vger.kernel.org
- +W:	http://ez.analog.com/community/linux-device-drivers
- +S:	Supported
- +F:	drivers/power/supply/adp5061.c
- +
-  ANALOG DEVICES INC ADV7180 DRIVER
-  M:	Lars-Peter Clausen <lars@metafoo.de>
-  L:	linux-media@vger.kernel.org
+  Optional properties:
+   - reset:	  : Reference to the reset controller
+-  - st,syscfg: Should be phandle/offset pair. The phandle to the syscon no=
+de
+-    which includes IRQ mux selection register, and the offset of the IRQ m=
+ux
+-    selection register.
+ - - interrupt-parent: phandle of the interrupt parent to which the external
+ -   GPIO interrupts are forwarded to.
++  - st,syscfg: Should be phandle/offset/mask.
++ 	-The phandle to the syscon node which includes IRQ mux selection registe=
+r.
++ 	-The offset of the IRQ mux selection register
++ 	-The field mask of IRQ mux, needed if different of 0xf.
+   - gpio-ranges: Define a dedicated mapping between a pin-controller and
+     a gpio controller. Format is <&phandle a b c> with:
+  	-(phandle): phandle of pin-controller.
 
---Sig_/XkWjOn12ORf2gl=uLwowV4O
+--Sig_/2n_oiD8D16eSY/rV4f/cylq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltf8YQACgkQAVBC80lX
-0GwzHwf/XlO57ooBPlEwN+mUSM0f6hO8gQgIuwHTCg5GQcHqOKSEGQetSYNAzFx6
-anXChgsDPEfZezcZZyPefeWqm/E7QHxGmfRCocf3JSGcfGx+j/9BHV0Bys2lyT/I
-3KPvge+hU9pqtaAdq8SuN0M7WD62IFFpRC3yjh/4KA6RZePxhdCoVHuU1IEycuVU
-BPpk1mOgF1afBg+iUJMEyKaYYQ9wu4+cofujRllZD/M5CfPFDNlneyklSqj33eAr
-UrmqyoMmnQtLixatZ4FFbqGfF671p1S9NqXICQQBR1pg9oJc6Xc1UPBIm1t/Av+3
-uK4yxRl3DRoNB84N9F+gUMfREpcGTg==
-=VY3a
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltf9tMACgkQAVBC80lX
+0Gy3qggAmTga7himmgQEmBYbj7JanhYTvlGJoJR4xePb0gWwOWLq4WZLeXRwtWkk
+et/P6vqqpiDwbaReYYkxbMKMCFBRQefRTHq9c3W/pgsMX5GzUHl935kmywQPs7xf
+rSm0dhMvqucS0FYPMMkUaswfk/JHJvLWyAcZpoJ9MHoNj8xfpst9wRhLjR/hVU0U
+cvO748FKhreiQa6YOPpviHdjpmHjzbTQbqDQ0ZGTrxILv6up8POQvNCI8pKGDDLM
+rKB231C/qz+SQSvFYuq2AAfkVxKSOyZ20CBSfYW3BpkoC+NenSAVrS60sMhlhloV
+BN7XpsABC4XOq0U3rer1gUkjsdZF1w==
+=7UXy
 -----END PGP SIGNATURE-----
 
---Sig_/XkWjOn12ORf2gl=uLwowV4O--
+--Sig_/2n_oiD8D16eSY/rV4f/cylq--
