@@ -1,55 +1,95 @@
-From: Anna Schumaker <schumaker.anna@gmail.com>
-Subject: Re: linux-next: build warning after merge of the nfs-anna tree
-Date: Tue, 31 Jul 2018 09:46:52 -0400
-Message-ID: <35966b8f-43c9-ed1c-215e-f26a0fc1395b@gmail.com>
-References: <20180730185200.0d836ca7@canb.auug.org.au>
- <1533027885.3710.2.camel@redhat.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jul 31
+Date: Tue, 31 Jul 2018 07:44:04 -0700
+Message-ID: <20180731144404.GA27893@roeck-us.net>
+References: <20180731182252.17831c15@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1533027885.3710.2.camel@redhat.com>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <20180731182252.17831c15@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Wysochanski <dwysocha@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi David,
+On Tue, Jul 31, 2018 at 06:22:52PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180730:
+> 
+> The block tree gained a build failure so I used the version from
+> next-20180730.
+> 
+> The kvms390 tree gained a conflict against the kvm-arm tree.
+> 
+> The staging tree still had its build failure due to an interaction with
+> the vfs tree for which I disabled CONFIG_EROFS_FS.
+> 
+> The mux tree gained a conflict against the battery tree.
+> 
+> The pinctrl tree gained a conflict the devicetree tree.
+> 
+> The kspp tree still had its build failure so I have added a supplied
+> patch.
+> 
+> Non-merge commits (relative to Linus' tree): 9850
+>  8993 files changed, 412971 insertions(+), 175848 deletions(-)
+> 
 
-On 07/31/2018 05:04 AM, David Wysochanski wrote:
-> On Mon, 2018-07-30 at 18:52 +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the nfs-anna tree, today's linux-next build (powerpc
->> ppc44x_defconfig, sparc defconfig) produced this warning:
->>
->> net/sunrpc/stats.c: In function 'rpc_clnt_show_stats':
->> /home/sfr/next/next/net/sunrpc/stats.c:258:32: warning: excess elements in struct initializer
->>    struct rpc_iostats stats = { 0 };
->>         
-> 
-> Apologies I did not see this before submission.
-> 
-> The below fixup compiles without warning for me on ppc64le.
-> 
->    struct rpc_iostats stats = {};
+In addition to some build failures, I see a large number of boot stalls
+with this image. Various architectures are affected (i386, x86_64, mips,
+some powerpc). Bisect is inconclusive due to a spurious build failure
+in mm code. For those interested, logs are available at
+http://kerneltests.org/builders/.
 
-Can you resend the patch with that change, please?
+Guenter
 
-Thanks,
-Anna
-
-> 
-> 
->>                         ^
->>
->> Introduced by commit
->>
->>   c3b588a2d5be ("sunrpc: Change rpc_print_iostats to rpc_clnt_show_stats and handle rpc_clnt clones")
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+---
+Build results:
+	total: 134 pass: 128 fail: 6
+Failed builds: 
+	alpha:allmodconfig 
+	arm64:allmodconfig 
+	parisc:allmodconfig 
+	sparc32:allmodconfig 
+	unicore32:defconfig 
+	unicore32:allnoconfig 
+Qemu test results:
+	total: 182 pass: 147 fail: 35
+Failed tests: 
+	mips:malta_defconfig:nosmp 
+	mips:malta_defconfig:smp 
+	mips64:malta_defconfig:nosmp 
+	mips64:malta_defconfig:smp 
+	mipsel:24Kf:malta_defconfig:nosmp:initrd 
+	mipsel:24Kf:malta_defconfig:smp:initrd 
+	mipsel:24Kf:malta_defconfig:smp:rootfs 
+	mipsel64:malta_defconfig:nosmp:rootfs 
+	mipsel64:malta_defconfig:smp:initrd 
+	mipsel64:malta_defconfig:smp:rootfs 
+	mipsel64:fuloong2e_defconfig:fulong2e:rootfs 
+	powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:initrd 
+	powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:rootfs 
+	i386:Broadwell:q35:defconfig:smp:rootfs 
+	i386:Skylake-Client:q35:defconfig:smp:rootfs 
+	i386:SandyBridge:q35:defconfig:smp:rootfs 
+	i386:Haswell:pc:defconfig:smp:rootfs 
+	i386:Nehalem:q35:defconfig:smp:rootfs 
+	i386:phenom:pc:defconfig:smp:rootfs 
+	i386:Opteron_G5:q35:defconfig:smp:initrd 
+	i386:Westmere:q35:defconfig:smp:initrd 
+	i386:core2duo:q35:defconfig:nosmp:rootfs 
+	i386:Conroe:pc:defconfig:nosmp:rootfs 
+	i386:Opteron_G1:pc:defconfig:nosmp:initrd 
+	i386:n270:q35:defconfig:nosmp:rootfs 
+	x86_64:q35:Broadwell-noTSX:defconfig:smp:sata:rootfs 
+	x86_64:q35:IvyBridge:defconfig:smp:nvme:rootfs 
+	x86_64:q35:Nehalem:defconfig:smp:nvme:rootfs 
+	x86_64:pc:phenom:defconfig:smp:sata:rootfs 
+	x86_64:q35:Opteron_G1:defconfig:smp:scsi[DC395]:rootfs
+	x86_64:q35:Opteron_G5:defconfig:smp:initrd 
+	x86_64:q35:EPYC-IBPB:defconfig:smp:usbdisk:rootfs 
+	x86_64:q35:Skylake-Client:defconfig:smp:initrd 
+	x86_64:q35:Skylake-Server:defconfig:smp:usbdisk:rootfs 
+	x86_64:q35:Opteron_G3:defconfig:smp:initrd
