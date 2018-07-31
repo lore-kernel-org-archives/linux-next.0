@@ -1,16 +1,16 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: next/master boot: 171 boots: 6 failed, 162 passed with 3 offline
- (next-20180724)
-Date: Tue, 31 Jul 2018 18:00:32 +0100
-Message-ID: <bb89388b-db7e-a59f-6fd1-4e88b602054c@arm.com>
-References: <5b5757ee.1c69fb81.411a5.52e2@mx.google.com>
- <20180725161151.GA340@sirena.org.uk> <20180731155246.GG5719@sirena.org.uk>
+From: Niklas Cassel <niklas.cassel@linaro.org>
+Subject: Re: next/master boot: 179 boots: 11 failed, 167 passed with 1
+ offline (next-20180731)
+Date: Tue, 31 Jul 2018 21:50:37 +0200
+Message-ID: <20180731195037.GA6737@centauri.lan>
+References: <5b607cc4.1c69fb81.6c1d6.6534@mx.google.com>
+ <20180731161114.GI5719@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180731155246.GG5719@sirena.org.uk>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <20180731161114.GI5719@sirena.org.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,58 +20,45 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Kevin Hilman <khilman@kernel.org>, clabbe@baylibre.com
-Cc: linux-next@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+To: Mark Brown <broonie@kernel.org>
+Cc: kernel-build-reports@lists.linaro.org, linux-arm-msm@vger.kernel.org, David Brown <david.brown@linaro.org>, linux-next@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On 31/07/18 16:52, Mark Brown wrote:
-> On Wed, Jul 25, 2018 at 05:11:51PM +0100, Mark Brown wrote:
->> On Tue, Jul 24, 2018 at 09:46:38AM -0700, kernelci.org bot wrote:
+On Tue, Jul 31, 2018 at 05:11:14PM +0100, Mark Brown wrote:
+> On Tue, Jul 31, 2018 at 08:14:12AM -0700, kernelci.org bot wrote:
 > 
->> For a little while now the RPi B has been failing to boot using the
->> bcm2835 defconfig in -next:
+> Today's -next fails to boot on db820c:
 > 
-> ...
+> > arm64:
 > 
->> It's working fine on arm64, whatever's going on appears to be specific
->> to this config (it's not getting booted with any other 32 bit configs).
->> Full info and boot logs for one of the boards here:
+> >     defconfig:
+> >         apq8096-db820c:
+> >             lab-bjorn: new failure (last pass: next-20180730)
 > 
->>     https://kernelci.org/boot/id/5b58416759b514139596baae/
+> There's nothing immediately obvious as the boot failure cause in the
+> logs, the last output is a failure to load the ath10k_pci firmware:
 > 
->> it looks like it hangs somewhere shortly after or during initializing
->> MMC so never makes it to the console, the tail of the failing logs looks
->> like:
+> 04:02:53.750283  [    4.503980] ath10k_pci 0000:01:00.0: Failed to find firmware-N.bin (N between 2 and 6) from ath10k/QCA6174/hw3.0: -2
+> 04:02:53.756384  [    4.504010] ath10k_pci 0000:01:00.0: could not fetch firmware files (-2)
+> 04:02:53.760522  [    4.513736] ath10k_pci 0000:01:00.0: could not probe fw (-2)
 > 
-> This went away for a day or two but it looks like it's back again I'm
-> afraid:
+> but I'm not sure that's the actual cause.  More details, including the
+> full boot log, here:
+> 
+>    https://kernelci.org/boot/id/5b6042b559b514136096babf/
 
-FWIW, it looks like that blip was due to me completely breaking DMA API 
-functionality for DT devices in next-20180727. Funny that that actually 
-"helped" in this case (unlike all the others...), but it definitely 
-reinforces Stefan's observation.
+I tried booting today's -next on db820c, using arm64 defconfig,
+and it booted correctly:
 
-Robin.
+I also tried removing the ath10k firmware from my initrd, but it still booted
+correctly.
 
-> 
->      https://kernelci.org/boot/id/5b604cd259b514364696baaa/
-> 
->>
->> | 09:18:36.332120  [    1.459801] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
->> | 09:18:36.345711  [    1.467585] mmcblk0: mmc0:59b4 USD   7.51 GiB
->> | 09:18:36.346169  [    1.474834]  mmcblk0: p1
->> | 09:18:36.410184  [    1.539600] random: fast init done
->> | 09:18:36.458065  [    1.578056] mmc1: new high speed SDIO card at address 0001
->> | 09:20:39.745370  ShellCommand command timed out.: Sending # in case of corruption. Connection timeout 00:04:10, retry in 00:02:05
->> | 09:20:39.846848  #
->>
->> but like I say the same -next boots with arm64 defconfig.
-> 
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+# cat /proc/version
+Linux version 4.18.0-rc7-next-20180731-00001-g47055e3ba913 (nks@centauri) (gcc version 7.2.1 20171011 (Linaro GCC 7.2-2017.11)) #9 SMP PREEMPT Tue Jul 31 21:34:43 CEST 2018
+
+I guess it could be a bug that does not trigger on every boot,
+or it could be a problem in the kernelci infrastructure.
+
+
+Kind regards,
+Niklas
