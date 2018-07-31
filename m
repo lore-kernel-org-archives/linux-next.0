@@ -1,56 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Tue, 31 Jul 2018 13:07:00 +1000
-Message-ID: <20180731130700.3ff50dce@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvms390 tree with the kvm-arm tree
+Date: Tue, 31 Jul 2018 14:23:39 +1000
+Message-ID: <20180731142339.19b52ce0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.jhLpF1cCZWW_8sMHa+0.c+"; protocol="application/pgp-signature"
+ boundary="Sig_/nEZ6t2b+ZEPlWeO82bQubcz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Max Gurtovoy <maxg@mellanox.com>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cohuck@redhat.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>, Janosch Frank <frankja@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.jhLpF1cCZWW_8sMHa+0.c+
+--Sig_/nEZ6t2b+ZEPlWeO82bQubcz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-After merging the block tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the kvms390 tree got a conflict in:
 
-drivers/scsi/sd.o: In function `sd_done':
-sd.c:(.text+0x1050): undefined reference to `t10_pi_complete'
+  include/uapi/linux/kvm.h
 
-Presuably caused by commit
+between commit:
 
-  10c41ddd6132 ("block: move dif_prepare/dif_complete functions to block la=
-yer")
+  be26b3a73413 ("arm64: KVM: export the capability to set guest SError synd=
+rome")
 
-# CONFIG_BLK_DEV_INTEGRITY is not set
-CONFIG_BLK_DEV_SD=3Dy
+from the kvm-arm tree and commit:
 
-I have used the block tree from next-20180730 for today.
+  a449938297e5 ("KVM: s390: Add huge page enablement control")
+
+from the kvms390 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/.jhLpF1cCZWW_8sMHa+0.c+
+diff --cc include/uapi/linux/kvm.h
+index a7d9bc4e4068,b955b986b341..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -949,7 -949,7 +949,8 @@@ struct kvm_ppc_resize_hpt=20
+  #define KVM_CAP_GET_MSR_FEATURES 153
+  #define KVM_CAP_HYPERV_EVENTFD 154
+  #define KVM_CAP_HYPERV_TLBFLUSH 155
+ -#define KVM_CAP_S390_HPAGE_1M 156
+ +#define KVM_CAP_ARM_INJECT_SERROR_ESR 156
+++#define KVM_CAP_S390_HPAGE_1M 157
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Sig_/nEZ6t2b+ZEPlWeO82bQubcz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltf0lQACgkQAVBC80lX
-0Gwzpwf/X1pEYcETqY2fL0QFgQAhpmOPUON7wZpj6z13jGvyYZxnBNtcRbO27xzC
-VQDdXosoalPiBbV9eEaAVZ+AH939rXbdiNExxswEaGki6Www3oPhu2JfaulgMZv9
-Lw1Y1/RplTLqKLWo9RkyNwc1CoSL0ajP8+uRLwdVxpvNxa38wpWsb5Ejxo+omZfc
-riXmy82x9mSyS7D4FadRugMJTQiUixNgvy490PGvuZuDvzs88LYsF4D0vo2KXtin
-ZKBErWxcj9ewsUO5L/gXv8HCgBaEkpyJWLXwfXKAV8oUd9HypjEXQNEUKOWX8YT2
-JVDWxh4F/RU0FpZV8VMHRvkTZmLRlg==
-=7edz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltf5EsACgkQAVBC80lX
+0GxisAf6AtkO+NzX7TVrH3tcMfNfJH5uUQ+76ApOnE6kER19CTw8qBLvYZnFXksT
+66Pr/p7yLlvTnabRx9e4lF9IdHzK2KmdnCxglE+mBmPMoLsGVQvIV1E64cNzk2oe
+0vDIAD6Y1MO0i8jkOI1oVHoCcJyZXTVFQepRY1+sLz0mvwtqT0U++w+FEkCkiYS2
+Fc3KSf1Q1TpzOJL/MXlybC+IYaPPEiMW1JBeSHMezjJ16yXeN8R8KzDoOt7HVHlt
+xNr3YJXESvOnxp4PI0QluBj2xZ5cj/SW4JqEyyEAkZP1tQNYmlyV6yL1uQhvP8tw
+qhdqmqVEYAzc8zNzpPod8ePRVgIhIw==
+=j+MJ
 -----END PGP SIGNATURE-----
 
---Sig_/.jhLpF1cCZWW_8sMHa+0.c+--
+--Sig_/nEZ6t2b+ZEPlWeO82bQubcz--
