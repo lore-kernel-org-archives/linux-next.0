@@ -1,52 +1,46 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: next/master boot: 179 boots: 11 failed, 167 passed with 1
- offline (next-20180731)
-Date: Wed, 1 Aug 2018 13:50:27 -0700
-Message-ID: <20180801205027.GC24465@builder>
-References: <5b607cc4.1c69fb81.6c1d6.6534@mx.google.com>
- <20180731161114.GI5719@sirena.org.uk>
- <20180731195037.GA6737@centauri.lan>
- <20180801093102.GB5509@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the ext4 tree
+Date: Thu, 2 Aug 2018 07:37:38 +1000
+Message-ID: <20180802073738.3f722d97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180801093102.GB5509@sirena.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: David Brown <david.brown@linaro.org>, kernel-build-reports@lists.linaro.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, linux-next@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fP0=OBTeynjnLUfFERJpo73"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed 01 Aug 02:31 PDT 2018, Mark Brown wrote:
+--Sig_/fP0=OBTeynjnLUfFERJpo73
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Jul 31, 2018 at 09:50:37PM +0200, Niklas Cassel wrote:
-> 
-> > I guess it could be a bug that does not trigger on every boot,
-> > or it could be a problem in the kernelci infrastructure.
-> 
-> Infrastructure bugs *tend* to manifest differently to this FWIW, though
-> it can never be excluded.
+Hi Ted,
 
-No, that's not an infrastructure issue.
+Commit
 
-The board did warn about not finding the ath10k firmware, which is
-always does, so that's not the issue - in itself. Then nothing happened
-for 266 seconds, so my lab decided to terminate the agony.
+  b48917a8e229 ("ext4: reset error code in ext4_find_entry in fallback")
 
-So this is either an issue with the stability of next-20180731 or with
-the specific board.
+is missing a Signed-off-by from its committer.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-PS. Today's next did boot successfully on the board.
+--Sig_/fP0=OBTeynjnLUfFERJpo73
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Regards,
-Bjorn
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiKCIACgkQAVBC80lX
+0GxrLAgAiPhg8YZ8XgjZGzLKKAH5Timr5UkewQP/3XgQgx+1j32r8afmTEckfGKW
+ErdSJLQHQ9VENEAMS6noHs317ZOuFNb7gj4hWYxfVzHDte5rtp+uwCaSKsDRk02K
+waq2i9Ctu9EQQqP0dBaBMMgFT6AejWk50i9By+ELmbld+poudRh5exSEBUMUnIAk
+uVdv8Jh+cnR3jeXk5syjHSuGEB0XsVaZl+3uhSYV/vL3urJupDyun9w+PEkMamOJ
+QiRlL426cN17NUHIRupDSl6elToW3EyU1L6V1BG9r4ggw3ULFBSzdeZ1pqNFSQcF
+F3W2CbMsWMvtxx6QmJ9bfJuP48+ETQ==
+=xuLx
+-----END PGP SIGNATURE-----
+
+--Sig_/fP0=OBTeynjnLUfFERJpo73--
