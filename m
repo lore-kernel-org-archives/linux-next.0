@@ -1,61 +1,113 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: next/master boot: 171 boots: 6 failed, 162 passed with 3
- offline (next-20180724)
-Date: Tue, 31 Jul 2018 23:35:09 +0200 (CEST)
-Message-ID: <1380807549.9923.1533072909710@email.1und1.de>
-References: <5b5757ee.1c69fb81.411a5.52e2@mx.google.com>
- <20180725161151.GA340@sirena.org.uk> <20180731155246.GG5719@sirena.org.uk>
- <bb89388b-db7e-a59f-6fd1-4e88b602054c@arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with the pci-current tree
+Date: Wed, 1 Aug 2018 10:42:27 +1000
+Message-ID: <20180801104227.7e52b06d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <bb89388b-db7e-a59f-6fd1-4e88b602054c@arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Eric Anholt <eric@anholt.net>, Kevin Hilman <khilman@kernel.org>, Robin Murphy <robin.murphy@arm.com>, clabbe@baylibre.com, Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/29FLhPHXSNImZfmVC35++5m"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hari Vyas <hari.vyas@broadcom.com>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/29FLhPHXSNImZfmVC35++5m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Robin Murphy <robin.murphy@arm.com> hat am 31. Juli 2018 um 19:00 geschrieben:
-> 
-> 
-> On 31/07/18 16:52, Mark Brown wrote:
-> > On Wed, Jul 25, 2018 at 05:11:51PM +0100, Mark Brown wrote:
-> >> On Tue, Jul 24, 2018 at 09:46:38AM -0700, kernelci.org bot wrote:
-> > 
-> >> For a little while now the RPi B has been failing to boot using the
-> >> bcm2835 defconfig in -next:
-> > 
-> > ...
-> > 
-> >> It's working fine on arm64, whatever's going on appears to be specific
-> >> to this config (it's not getting booted with any other 32 bit configs).
-> >> Full info and boot logs for one of the boards here:
-> > 
-> >>     https://kernelci.org/boot/id/5b58416759b514139596baae/
-> > 
-> >> it looks like it hangs somewhere shortly after or during initializing
-> >> MMC so never makes it to the console, the tail of the failing logs looks
-> >> like:
-> > 
-> > This went away for a day or two but it looks like it's back again I'm
-> > afraid:
-> 
-> FWIW, it looks like that blip was due to me completely breaking DMA API 
-> functionality for DT devices in next-20180727. Funny that that actually 
-> "helped" in this case (unlike all the others...), but it definitely 
-> reinforces Stefan's observation.
-> 
-> Robin.
-> 
+Hi Bjorn,
 
-Sorry, still not much time this week. All i can say that next-20180731 is broken, but dma-mapping/for-next is not.
+Today's linux-next merge of the pci tree got a conflict in:
+
+  drivers/pci/pci.h
+
+between commit:
+
+  44bda4b7d26e ("PCI: Fix is_added/is_busmaster race condition")
+
+from the pci-current tree and commit:
+
+  1e4511604dfa ("PCI/AER: Expose internal API for obtaining AER information=
+")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/pci.h
+index 08817253c8a2,ba078145bfaa..000000000000
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@@ -301,16 -306,34 +307,44 @@@ static inline bool pci_dev_is_disconnec
+  	return test_bit(PCI_DEV_DISCONNECTED, &dev->priv_flags);
+  }
+ =20
+ +static inline void pci_dev_assign_added(struct pci_dev *dev, bool added)
+ +{
+ +	assign_bit(PCI_DEV_ADDED, &dev->priv_flags, added);
+ +}
+ +
+ +static inline bool pci_dev_is_added(const struct pci_dev *dev)
+ +{
+ +	return test_bit(PCI_DEV_ADDED, &dev->priv_flags);
+ +}
+ +
++ #ifdef CONFIG_PCIEAER
++ #include <linux/aer.h>
++=20
++ #define AER_MAX_MULTI_ERR_DEVICES	5	/* Not likely to have more */
++=20
++ struct aer_err_info {
++ 	struct pci_dev *dev[AER_MAX_MULTI_ERR_DEVICES];
++ 	int error_dev_num;
++=20
++ 	unsigned int id:16;
++=20
++ 	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
++ 	unsigned int __pad1:5;
++ 	unsigned int multi_error_valid:1;
++=20
++ 	unsigned int first_error:5;
++ 	unsigned int __pad2:2;
++ 	unsigned int tlp_header_valid:1;
++=20
++ 	unsigned int status;		/* COR/UNCOR Error Status */
++ 	unsigned int mask;		/* COR/UNCOR Error Mask */
++ 	struct aer_header_log_regs tlp;	/* TLP Header */
++ };
++=20
++ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *i=
+nfo);
++ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
++ #endif	/* CONFIG_PCIEAER */
++=20
+  #ifdef CONFIG_PCI_ATS
+  void pci_restore_ats_state(struct pci_dev *dev);
+  #else
+
+--Sig_/29FLhPHXSNImZfmVC35++5m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlthAfMACgkQAVBC80lX
+0GxaAwf40DMgIHhrN88na26PGrtfmuK6MUDvUNx50N/GLFGDnyN+4IcF5cn9uKpA
+K1xWUGQLM5xR9aHeeQJEwJgE8UhzSDOpGYPJOJPkeiLCN40ieuPIX4dMFmPwwf1d
+bhQMg01065InQexBrvLNUlGG7Fijvwwv5o4mHH5OMpzSY0t7oWz3K3/BxTesNpmJ
+K+SKJEmAerbd8jkFKesU7OD8fQKrUsWrF9Ti3wrKxinWYMD0D3/NWssYTrYcNyCI
+s4fB85+0xlll0s0ZtJwFPVd0YHhGl+2IpeCoZ8VpIbDJFhOO70PxgFw5Y+pp5Rmh
+scnQz8hiJlzTEhb+QMmscJPu3SqC
+=KNlr
+-----END PGP SIGNATURE-----
+
+--Sig_/29FLhPHXSNImZfmVC35++5m--
