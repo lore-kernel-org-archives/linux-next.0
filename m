@@ -1,46 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the ext4 tree
-Date: Thu, 2 Aug 2018 07:37:38 +1000
-Message-ID: <20180802073738.3f722d97@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Aug 1
+Date: Wed, 1 Aug 2018 15:48:13 -0700
+Message-ID: <20180801224813.GA13074@roeck-us.net>
+References: <20180801175852.36549130@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fP0=OBTeynjnLUfFERJpo73"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180801175852.36549130@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fP0=OBTeynjnLUfFERJpo73
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 01, 2018 at 05:58:52PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180731:
+> 
+> The pci tree gained a conflict against the pci-current tree.
+> 
+> The net-next tree gained a conflict against the bpf tree.
+> 
+> The block tree lost its build failure.
+> 
+> The staging tree still had its build failure due to an interaction with
+> the vfs tree for which I disabled CONFIG_EROFS_FS.
+> 
+> The kspp tree lost its build failure.
+> 
+> Non-merge commits (relative to Linus' tree): 10070
+>  9137 files changed, 417605 insertions(+), 179996 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-Hi Ted,
+The widespread kernel hang issues are still seen. I managed
+to bisect it after working around the transient build failures.
+Bisect log is attached below. Unfortunately, it doesn't help much.
+The culprit is reported as:
 
-Commit
+2d542828c5e9 Merge remote-tracking branch 'scsi/for-next'
 
-  b48917a8e229 ("ext4: reset error code in ext4_find_entry in fallback")
+The preceding merge,
 
-is missing a Signed-off-by from its committer.
+453f1d821165 Merge remote-tracking branch 'cgroup/for-next'
 
---=20
-Cheers,
-Stephen Rothwell
+checks out fine, as does the tip of scsi-next (commit 103c7b7e0184,
+"Merge branch 'misc' into for-next"). No idea how to proceed.
 
---Sig_/fP0=OBTeynjnLUfFERJpo73
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Guenter
 
------BEGIN PGP SIGNATURE-----
+---
+bisect (mips:malta_defconfig and i386):
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiKCIACgkQAVBC80lX
-0GxrLAgAiPhg8YZ8XgjZGzLKKAH5Timr5UkewQP/3XgQgx+1j32r8afmTEckfGKW
-ErdSJLQHQ9VENEAMS6noHs317ZOuFNb7gj4hWYxfVzHDte5rtp+uwCaSKsDRk02K
-waq2i9Ctu9EQQqP0dBaBMMgFT6AejWk50i9By+ELmbld+poudRh5exSEBUMUnIAk
-uVdv8Jh+cnR3jeXk5syjHSuGEB0XsVaZl+3uhSYV/vL3urJupDyun9w+PEkMamOJ
-QiRlL426cN17NUHIRupDSl6elToW3EyU1L6V1BG9r4ggw3ULFBSzdeZ1pqNFSQcF
-F3W2CbMsWMvtxx6QmJ9bfJuP48+ETQ==
-=xuLx
------END PGP SIGNATURE-----
-
---Sig_/fP0=OBTeynjnLUfFERJpo73--
+# bad: [d9bd94c0bcaa42d9cace337590718afd22c47bcc] Add linux-next specific files for 20180801
+# good: [acb1872577b346bd15ab3a3f8dff780d6cca4b70] Linux 4.18-rc7
+git bisect start 'HEAD' 'v4.18-rc7'
+# good: [f7952a1210bce43e88d69f371c6226aed481f307] Merge remote-tracking branch 'spi-nor/spi-nor/next'
+git bisect good f7952a1210bce43e88d69f371c6226aed481f307
+# good: [fa3bb608cd0d41a02583a7ceb3d162c4dee7e0e4] Merge remote-tracking branch 'spi/for-next'
+git bisect good fa3bb608cd0d41a02583a7ceb3d162c4dee7e0e4
+# good: [39c5cce976449c934b60e31cec9cea6986531b94] Merge remote-tracking branch 'char-misc/char-misc-next'
+git bisect good 39c5cce976449c934b60e31cec9cea6986531b94
+# good: [453f1d8211658b75542f4581759f022420bdaea8] Merge remote-tracking branch 'cgroup/for-next'
+git bisect good 453f1d8211658b75542f4581759f022420bdaea8
+# bad: [f11e9f9af170533e660c5deddccc4c494784c1fa] Merge remote-tracking branch 'nvdimm/libnvdimm-for-next'
+git bisect bad f11e9f9af170533e660c5deddccc4c494784c1fa
+# bad: [d8a758324b2e012cdba05b82ecbda6b84905f6ec] Merge remote-tracking branch 'rpmsg/for-next'
+git bisect bad d8a758324b2e012cdba05b82ecbda6b84905f6ec
+# good: [97fe222524f8fdbcc528b44d160d1df71d96af86] scsi: arcmsr: Fix error of resuming from hibernation for adapter type E
+git bisect good 97fe222524f8fdbcc528b44d160d1df71d96af86
+# bad: [2d542828c5e94490480b2900f8a0cb7a8c46afb0] Merge remote-tracking branch 'scsi/for-next'
+git bisect bad 2d542828c5e94490480b2900f8a0cb7a8c46afb0
+# good: [cc74e31d4147f26ead6ea06e4649d63a14edc0fe] scsi: lpfc: remove null check on nvmebuf
+git bisect good cc74e31d4147f26ead6ea06e4649d63a14edc0fe
+# good: [dc335a995527fb1ee9ec5649162b22cd1ce728ee] scsi: tcmu: unmap if dev is configured
+git bisect good dc335a995527fb1ee9ec5649162b22cd1ce728ee
+# good: [d92f5db64445ac4e2ce9a2cb7e6c929a5f4e712b] Merge branch 'misc' into for-next
+git bisect good d92f5db64445ac4e2ce9a2cb7e6c929a5f4e712b
+# good: [0e0d75267107e6a557ea9314d55bcff05a6ede44] scsi: tcmu: use u64 for dev_size
+git bisect good 0e0d75267107e6a557ea9314d55bcff05a6ede44
+# good: [c8a75afbf72ee4c16dad5339f55f62095879f207] Revert "scsi: target/iscsi: Reduce number of __iscsit_free_cmd() callers"
+git bisect good c8a75afbf72ee4c16dad5339f55f62095879f207
+# good: [103c7b7e01849d3c5bc998168ccd4df2c443d24b] Merge branch 'misc' into for-next
+git bisect good 103c7b7e01849d3c5bc998168ccd4df2c443d24b
+# first bad commit: [2d542828c5e94490480b2900f8a0cb7a8c46afb0] Merge remote-tracking branch 'scsi/for-next'
