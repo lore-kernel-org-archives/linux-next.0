@@ -1,104 +1,74 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Wed, 1 Aug 2018 17:09:13 +0800
-Message-ID: <7152b6ba-9ad6-4a9c-3b13-2d5310266ccd@huawei.com>
-References: <20180730161622.3837cb15@canb.auug.org.au>
- <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next/master boot: 179 boots: 11 failed, 167 passed with 1
+ offline (next-20180731)
+Date: Wed, 1 Aug 2018 10:31:02 +0100
+Message-ID: <20180801093102.GB5509@sirena.org.uk>
+References: <5b607cc4.1c69fb81.6c1d6.6534@mx.google.com>
+ <20180731161114.GI5719@sirena.org.uk>
+ <20180731195037.GA6737@centauri.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Gao Xiang <gaoxiang25@huawei.com>, Greg KH <greg@kroah.com>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Miao Xie <miaoxie@huawei.com>
+Content-Type: multipart/mixed; boundary="===============5445021089124919195=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180731195037.GA6737@centauri.lan>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: kernel-build-reports@lists.linaro.org, linux-arm-msm@vger.kernel.org, David Brown <david.brown@linaro.org>, linux-next@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
 
-On 2018/7/30 14:31, Gao Xiang wrote:
-> Hi Stephen,
-> 
-> On 2018/7/30 14:16, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> After merging the staging tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/staging/erofs/super.c: In function 'erofs_read_super':
->> drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
->>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
->>                  ^~~~~~~~~
->>                  IS_RDONLY
->> drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
->>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
->>                              ^~~~~~~~~~
->>                              S_NOATIME
->> drivers/staging/erofs/super.c: In function 'erofs_mount':
->> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
->>    &priv, erofs_fill_super);
->>           ^~~~~~~~~~~~~~~~
->> In file included from include/linux/buffer_head.h:12:0,
->>                  from drivers/staging/erofs/super.c:14:
->> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
->>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
->>                        ^~~~~~~~~~
->> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
->>   return mount_bdev(fs_type, flags, dev_name,
->>          ^~~~~~~~~~
->> In file included from include/linux/buffer_head.h:12:0,
->>                  from drivers/staging/erofs/super.c:14:
->> include/linux/fs.h:2151:23: note: declared here
->>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
->>                        ^~~~~~~~~~
->> drivers/staging/erofs/super.c: At top level:
->> drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->>   .mount          = erofs_mount,
->>                     ^~~~~~~~~~~
->> drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
->> drivers/staging/erofs/super.c: In function 'erofs_remount':
->> drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
->>   *flags |= MS_RDONLY;
->>             ^~~~~~~~~
->>             IS_RDONLY
->> drivers/staging/erofs/super.c: At top level:
->> drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->>   .remount_fs = erofs_remount,
->>                 ^~~~~~~~~~~~~
->>
->> Caused by various commits creating erofs in the staging tree interacting
->> with various commits redoing the mount infrastructure in the vfs tree.
->>
->> I have disabed CONFIG_EROFS_FS for now:
+--===============5445021089124919195==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+Content-Disposition: inline
 
-Xiang has submitted several patches as below to fix compiling error on -next
-tree, could you consider to merge those temporary fixes into -next after merging
-staging-next's updates, and reenable CONFIG_EROFS_FS for further integrity
-compiling and test?
 
-staging: erofs: fix superblock/inode flags (MS_RDONLY -> SB_RDONLY, S_NOATIME)
-https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-staging: erofs: remove RADIX_TREE_EXCEPTIONAL_{ENTRY, SHIFT}
-https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000283.html
+On Tue, Jul 31, 2018 at 09:50:37PM +0200, Niklas Cassel wrote:
 
-staging: erofs: update .mount and .remount_sb
-https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000285.html
+> I guess it could be a bug that does not trigger on every boot,
+> or it could be a problem in the kernelci infrastructure.
 
-BTW, for this condition that erofs was not covered by some common vfs stuff
-changes in other one's tree, who should take care of those missing fixes during
-coming next merge window?
+Infrastructure bugs *tend* to manifest differently to this FWIW, though
+it can never be excluded.
 
-Thanks,
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> I will fix them as soon as possible, and test it with the latest linux-next code.
-> It seems caused by some vfs changes.
-> 
-> Thanks,
-> Gao Xiang
-> 
-> .
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlthfdUACgkQJNaLcl1U
+h9AnYQgAhGKxeexWBE+yqBUWnCqrVsLVYqZEQIce0Rwt4hpJdm/HAedNdJP2G/qM
+kFf457xXaRqa7+Ub+fPo98hZtFeODGbg/iKa2987nja7GDNrvHob2OClrrBAvYB4
+jNgb7i14fXhll3YlPIKGEYy2aCVzGZlw6kTnaLdHAu4+tAx6Qboe/a0BTkUusksv
+rNKR0Eh5qtDA2ob0KCMh8nMFJgXwCEBZhHJaoRj5XzlbprACVDjwtSE3zEYsdD7q
+p+CPqdtT5sQeffHolXFKQH1/rdAG5UOhg+0c2MjIDA2pP4t/bVWFl91cbdYNyyO6
+HJ5REgVbylEM2Id+regTXyPRt2M7Mw==
+=xxhS
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
+
+
+--===============5445021089124919195==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5445021089124919195==--
