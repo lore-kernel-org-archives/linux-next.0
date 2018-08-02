@@ -1,106 +1,71 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Wed, 1 Aug 2018 17:20:18 -0700
-Message-ID: <c2f47956-c93d-d699-6046-c88990b6961f@roeck-us.net>
-References: <20180801175852.36549130@canb.auug.org.au>
- <20180801224813.GA13074@roeck-us.net>
- <1533163965.3158.1.camel@HansenPartnership.com>
- <20180801234727.GA3762@roeck-us.net>
- <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
- <1533168205.3158.12.camel@HansenPartnership.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the btrfs-kdave tree
+Date: Thu, 2 Aug 2018 10:31:35 +1000
+Message-ID: <20180802103135.2e620406@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vh.0A_YFaE02YjdQCvIbXix"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1533168205.3158.12.camel@HansenPartnership.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Ming Lei <tom.leiming@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, David Sterba <dsterba@suse.cz>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 08/01/2018 05:03 PM, James Bottomley wrote:
-> On Thu, 2018-08-02 at 07:57 +0800, Ming Lei wrote:
->> On Thu, Aug 2, 2018 at 7:47 AM, Guenter Roeck <linux@roeck-us.net>
->> wrote:
->>> On Wed, Aug 01, 2018 at 03:52:45PM -0700, James Bottomley wrote:
->>>> On Wed, 2018-08-01 at 15:48 -0700, Guenter Roeck wrote:
->>>>> On Wed, Aug 01, 2018 at 05:58:52PM +1000, Stephen Rothwell
->>>>> wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Changes since 20180731:
->>>>>>
->>>>>> The pci tree gained a conflict against the pci-current tree.
->>>>>>
->>>>>> The net-next tree gained a conflict against the bpf tree.
->>>>>>
->>>>>> The block tree lost its build failure.
->>>>>>
->>>>>> The staging tree still had its build failure due to an
->>>>>> interaction
->>>>>> with
->>>>>> the vfs tree for which I disabled CONFIG_EROFS_FS.
->>>>>>
->>>>>> The kspp tree lost its build failure.
->>>>>>
->>>>>> Non-merge commits (relative to Linus' tree): 10070
->>>>>>   9137 files changed, 417605 insertions(+), 179996 deletions(-
->>>>>> )
->>>>>>
->>>>>> -----------------------------------------------------------
->>>>>> ------
->>>>>> -----------
->>>>>>
->>>>>
->>>>> The widespread kernel hang issues are still seen. I managed
->>>>> to bisect it after working around the transient build failures.
->>>>> Bisect log is attached below. Unfortunately, it doesn't help
->>>>> much.
->>>>> The culprit is reported as:
->>>>>
->>>>> 2d542828c5e9 Merge remote-tracking branch 'scsi/for-next'
->>>>>
->>>>> The preceding merge,
->>>>>
->>>>> 453f1d821165 Merge remote-tracking branch 'cgroup/for-next'
->>>>>
->>>>> checks out fine, as does the tip of scsi-next (commit
->>>>> 103c7b7e0184,
->>>>> "Merge branch 'misc' into for-next"). No idea how to proceed.
->>>>
->>>> This sounds like you may have a problem with this patch:
->>>>
->>>>      commit d5038a13eca72fb216c07eb717169092e92284f1
->>>>       Author: Johannes Thumshirn <jthumshirn@suse.de>
->>>>       Date:   Wed Jul 4 10:53:56 2018 +0200
->>>>
->>>>           scsi: core: switch to scsi-mq by default
->>>>
->>>> To verify, boot with the additional kernel parameter
->>>>
->>>> scsi_mod.use_blk_mq=0
->>>>
->>>> Which will reverse the effect of the above patch.
->>>>
->>>
->>> Yes, that fixes the problem.
->>
->> That may not the root cause, given this issue is only started to
->> see from next-20180731, but d5038a13eca7 (scsi: core: switch to
->> scsi-mq by default)
->> has been in -next for quite a while.
->>
->> Seems something new causes this issue.
-> 
-> Read my other email about how to find this.
-> 
-> https://marc.info/?l=linux-scsi&m=153316446223676
-> 
-> Now that we've confirmed the issue, Gunter, could you attempt to bisect
-> it as that email describes?
-> 
+--Sig_/vh.0A_YFaE02YjdQCvIbXix
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Already working on it.
+Hi all,
 
-Guenter
+Today's linux-next merge of the vfs tree got conflicts in:
+
+  fs/btrfs/inode.c
+  fs/btrfs/tree-log.c
+
+Commits
+
+  8e5d411c91c1 ("btrfs: simplify btrfs_iget()")
+  cfac83868124 ("btrfs: lift make_bad_inode() into btrfs_iget()")
+  efa119590db3 ("btrfs: IS_ERR(p) && PTR_ERR(p) =3D=3D n is a weird way to =
+spell p =3D=3D ERR_PTR(n)")
+  353dd669cc08 ("btrfs: btrfs_iget() never returns an is_bad_inode() inode.=
+")
+
+from the vfs tree are duplicated as commits
+
+  5ee149473042 ("btrfs: simplify btrfs_iget")
+  083a7dddaecc ("btrfs: lift make_bad_inode into btrfs_iget")
+  8bca6b1de61e ("btrfs: simplify IS_ERR/PTR_ERR checks")
+  7ffab8b69edc ("btrfs: btrfs_iget never returns an is_bad_inode inode")
+
+in the btrfs-kdave tree :-( (except 5ee149473042 has an extra comment
+and efa119590db3 has na extra space)
+
+I fixed it up (the obvious way) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vh.0A_YFaE02YjdQCvIbXix
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiUOcACgkQAVBC80lX
+0GwyFQf+P0LMf4GYJpGP0tDHwZW5k1HeDEsRzRr2umwyMHXCWytrGRVtd+6T1cvC
+Mkj8BlxD26P59GErSZzLNEbumEoEbjko0r2Ev672suIA2lMWH4M96w1dTi0zYdr4
+GEwcLQl73RaGhpjIpxQ5yaR0y2Y7i+53oTXISObM2W5AcSp1J2JlyM4OjfkYX+aP
+9xzmiYyDfC4ag3MDl3Xj3xtLdDTsG0n5y0Mh5thLQlGXaoslxESh+FO7q75qijS3
+lZKPMw6UDpSkxUYNQhRG9VTbhyRjbWUyRsUN7c4XehBurL+mj1g1Kl4abrIw9Oe7
+Ncnnelgc5j3hyTgQrdkNzA5QjXz1EA==
+=PnE8
+-----END PGP SIGNATURE-----
+
+--Sig_/vh.0A_YFaE02YjdQCvIbXix--
