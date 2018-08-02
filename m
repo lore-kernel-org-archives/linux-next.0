@@ -1,51 +1,89 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Wed, 1 Aug 2018 18:19:00 -0700
-Message-ID: <83936bed-e783-191f-c308-8f8470a0dbf3@roeck-us.net>
-References: <20180801175852.36549130@canb.auug.org.au>
- <20180801224813.GA13074@roeck-us.net>
- <1533163965.3158.1.camel@HansenPartnership.com>
- <1533164454.3158.3.camel@HansenPartnership.com>
- <20180802100505.56e663cb@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvms390 tree with the kvm-arm
+ tree
+Date: Thu, 2 Aug 2018 11:19:16 +1000
+Message-ID: <20180802111916.7435c0ac@canb.auug.org.au>
+References: <20180731142339.19b52ce0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sowLDvZxFpDyyG4yo/_Zpig"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180802100505.56e663cb@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <20180731142339.19b52ce0@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cohuck@redhat.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>, Janosch Frank <frankja@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On 08/01/2018 05:05 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 01 Aug 2018 16:00:54 -0700 James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
->>
->> So what seems to be happening to cause this is that there's a patch
->> somewhere between the merge base of my scsi-next series and the next
->> tree and the patch just before scsi-next was actually merged that
->> actually causes a boot failure with blk-mq enabled.  Could you try to
->> find this patch?  I think the way to do it is to try to bisect this
->> range of linux-next using the command line
->>
->> scsi_mod.use_blk_mq=1
->>
->> Which forces block mq to be the default and seeing where the first boot
->> failure is (you don't need my scsi-next tree merged to do this because
->> all the offending patch does is flip the default state of the above
->> flag).
-> 
-> So this means using v4.8-rc1 as the first good commit and 453f1d821165
-> ("Merge remote-tracking branch 'cgroup/for-next'") as the first bad
-> (assuming that this latter fails to boot with "scsi_mod.use_blk_mq=1").
-> 
+--Sig_/sowLDvZxFpDyyG4yo/_Zpig
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Puzzled. Same results. 453f1d821165 works with both scsi_mod.use_blk_mq=0
-and scsi_mod.use_blk_mq=1. next-20180801 works with scsi_mod.use_blk_mq=0
-and fails with scsi_mod.use_blk_mq=1. Bisect still points to the same commit
-(which just changes the default) as culprit. I know that doesn't make sense.
-I'll need to think about it.
+Hi all,
 
-Guenter
+On Tue, 31 Jul 2018 14:23:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the kvms390 tree got a conflict in:
+>=20
+>   include/uapi/linux/kvm.h
+>=20
+> between commit:
+>=20
+>   be26b3a73413 ("arm64: KVM: export the capability to set guest SError sy=
+ndrome")
+>=20
+> from the kvm-arm tree and commit:
+>=20
+>   a449938297e5 ("KVM: s390: Add huge page enablement control")
+>=20
+> from the kvms390 tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc include/uapi/linux/kvm.h
+> index a7d9bc4e4068,b955b986b341..000000000000
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@@ -949,7 -949,7 +949,8 @@@ struct kvm_ppc_resize_hpt=20
+>   #define KVM_CAP_GET_MSR_FEATURES 153
+>   #define KVM_CAP_HYPERV_EVENTFD 154
+>   #define KVM_CAP_HYPERV_TLBFLUSH 155
+>  -#define KVM_CAP_S390_HPAGE_1M 156
+>  +#define KVM_CAP_ARM_INJECT_SERROR_ESR 156
+> ++#define KVM_CAP_S390_HPAGE_1M 157
+>  =20
+>   #ifdef KVM_CAP_IRQ_ROUTING
+>  =20
+
+This is now a conflict between the s390 and kvm-arm trees.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sowLDvZxFpDyyG4yo/_Zpig
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiXBQACgkQAVBC80lX
+0Gz4Ggf6AvUpu7vkp1HitNDKgycCHY7tEkbPKS76UsQl5wOW23tuKFLmHNMCskyL
+/PkalVu/UGgiF5vFG0gtj5zT24xRIFmU+mVYBbPOFSKomJ4mA2HZNELwpJjASPoL
+lNq7jG2Vbm3YldX3MwefMwG3FFN1dfihy/WE1KCPenugSPt/9pM8PAJT4rActifT
+I1illgcSBxP8hVQDOVvfjMfn8Rzl7AqRayeyI+izxgxRJ85GcU2p/NF9VawIiR3Q
+e7DENwy7isbzW8zTlloibMhmohoXtCP7Ud2SOD1ebRflXZ/1YA/nI0XGNvz10/FE
+ZAOn2gbTlvIWeU5v5BWDki1SoncmNw==
+=Rc+G
+-----END PGP SIGNATURE-----
+
+--Sig_/sowLDvZxFpDyyG4yo/_Zpig--
