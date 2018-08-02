@@ -1,37 +1,83 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Thu, 2 Aug 2018 15:06:23 +0200
-Message-ID: <20180802130623.45m5yaqaotwx2pgw@linux-x5ow.site>
-References: <20180801224813.GA13074@roeck-us.net>
- <1533163965.3158.1.camel@HansenPartnership.com>
- <20180801234727.GA3762@roeck-us.net>
- <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
- <1533168205.3158.12.camel@HansenPartnership.com>
- <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
- <e3e32fd801cb1270cddec6fc1ea3dabad4473b64.camel@wdc.com>
- <93cbb876-3a25-482a-a5b4-6e13d42ee535@roeck-us.net>
- <20180802125141.jyb2zz75jgrzibaq@linux-x5ow.site>
- <b1616769-b1d7-97c7-b197-9dc3d0f74a7b@roeck-us.net>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: manual merge of the kvms390 tree with the kvm-arm
+ tree
+Date: Thu, 2 Aug 2018 15:18:57 +0200
+Message-ID: <632a8205-4344-3f6d-9216-ea623a32392a@redhat.com>
+References: <20180731142339.19b52ce0@canb.auug.org.au>
+ <20180802111916.7435c0ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b1616769-b1d7-97c7-b197-9dc3d0f74a7b@roeck-us.net>
+In-Reply-To: <20180802111916.7435c0ac@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "tom.leiming@gmail.com" <tom.leiming@gmail.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cohuck@redhat.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>, Janosch Frank <frankja@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 02, 2018 at 06:00:19AM -0700, Guenter Roeck wrote:
-> Per my logs, next-20180730 is the first bad, next-20180727 is the last good.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j
+Content-Type: multipart/mixed; boundary="lYqxN6va8umhfdnZStraIvC2g8M3shP7Y";
+ protected-headers="v1"
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Christian Borntraeger <borntraeger@de.ibm.com>,
+ Cornelia Huck <cohuck@redhat.com>, Christoffer Dall <cdall@cs.columbia.edu>,
+ Marc Zyngier <marc.zyngier@arm.com>,
+ Martin Schwidefsky <schwidefsky@de.ibm.com>,
+ Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+ KVM <kvm@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>,
+ Janosch Frank <frankja@linux.ibm.com>
+Message-ID: <632a8205-4344-3f6d-9216-ea623a32392a@redhat.com>
+Subject: Re: linux-next: manual merge of the kvms390 tree with the kvm-arm
+ tree
+References: <20180731142339.19b52ce0@canb.auug.org.au>
+ <20180802111916.7435c0ac@canb.auug.org.au>
+In-Reply-To: <20180802111916.7435c0ac@canb.auug.org.au>
 
-OK, so my bisecting is correct (a bit too much but still).
+--lYqxN6va8umhfdnZStraIvC2g8M3shP7Y
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+On 02/08/2018 03:19, Stephen Rothwell wrote:
+>>  -#define KVM_CAP_S390_HPAGE_1M 156
+>>  +#define KVM_CAP_ARM_INJECT_SERROR_ESR 156
+>> ++#define KVM_CAP_S390_HPAGE_1M 157
+>>  =20
+>>   #ifdef KVM_CAP_IRQ_ROUTING
+>>  =20
+> This is now a conflict between the s390 and kvm-arm trees.
+
+This will shortly move to the KVM tree.  The ARM capability will have to
+be bumped again since x86 "won" number 157.
+
+Thanks,
+
+Paolo
+
+
+--lYqxN6va8umhfdnZStraIvC2g8M3shP7Y--
+
+--0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltjBMEACgkQv/vSX3jH
+roP7Vgf+IBRqk3arxbU3ofr+qITSFzxxnJpC7y3+Jl19lJxfL3HOdKzyZuGyQg7T
+6U/7zvQCUHCEvt4k7hmTbWpaHL1dV5o53Y88JetSz9UECTOuQwLwDoaBAPtCwYh1
+aQyzLAj/FPTeLnrJ737W1edNGM95H5huPZO6VroPG7peJE0vb1Os2s32qlUiTDsB
+h8s2hl6hW71rtkCl36pGZmuaHa/fQirFHhufuUXJaIuF4WZEh1O2Uu2hk/Epp/XC
+JVyt6O4Fto329RHqwH+CE0Bw0wDrIiifX7yq2nBSeSdqnV4k1A9kDaKDVRSgyJA/
+9aJI8nfp1Wqrp7NGDLuWGQ4KrgSEhA==
+=U5X5
+-----END PGP SIGNATURE-----
+
+--0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j--
