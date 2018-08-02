@@ -1,111 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the jc_docs tree with the ext4 tree
-Date: Thu, 2 Aug 2018 11:15:12 +1000
-Message-ID: <20180802111512.3a467ff5@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Aug 1
+Date: Wed, 1 Aug 2018 18:19:00 -0700
+Message-ID: <83936bed-e783-191f-c308-8f8470a0dbf3@roeck-us.net>
+References: <20180801175852.36549130@canb.auug.org.au>
+ <20180801224813.GA13074@roeck-us.net>
+ <1533163965.3158.1.camel@HansenPartnership.com>
+ <1533164454.3158.3.camel@HansenPartnership.com>
+ <20180802100505.56e663cb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7=12L=sr.Fv+AsRsDlGk3uz"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180802100505.56e663cb@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Theodore Ts'o <tytso@mit.edu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Federico Vaga <federico.vaga@vaga.pv.it>, "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/7=12L=sr.Fv+AsRsDlGk3uz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 08/01/2018 05:05 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Wed, 01 Aug 2018 16:00:54 -0700 James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+>>
+>> So what seems to be happening to cause this is that there's a patch
+>> somewhere between the merge base of my scsi-next series and the next
+>> tree and the patch just before scsi-next was actually merged that
+>> actually causes a boot failure with blk-mq enabled.  Could you try to
+>> find this patch?  I think the way to do it is to try to bisect this
+>> range of linux-next using the command line
+>>
+>> scsi_mod.use_blk_mq=1
+>>
+>> Which forces block mq to be the default and seeing where the first boot
+>> failure is (you don't need my scsi-next tree merged to do this because
+>> all the offending patch does is flip the default state of the above
+>> flag).
+> 
+> So this means using v4.8-rc1 as the first good commit and 453f1d821165
+> ("Merge remote-tracking branch 'cgroup/for-next'") as the first bad
+> (assuming that this latter fails to boot with "scsi_mod.use_blk_mq=1").
+> 
 
-Hi all,
+Puzzled. Same results. 453f1d821165 works with both scsi_mod.use_blk_mq=0
+and scsi_mod.use_blk_mq=1. next-20180801 works with scsi_mod.use_blk_mq=0
+and fails with scsi_mod.use_blk_mq=1. Bisect still points to the same commit
+(which just changes the default) as culprit. I know that doesn't make sense.
+I'll need to think about it.
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
-
-  Documentation/index.rst
-
-between commit:
-
-  6684874af063 ("docs: create filesystem internal section")
-
-from the ext4 tree and commit:
-
-  85c32d9c6f3e ("doc: move away translations from top-level index")
-
-from the jc_docs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/index.rst
-index f95ba981f8cd,5d310d960f82..000000000000
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@@ -102,40 -104,13 +104,24 @@@ implementation
- =20
-     sh/index
- =20
- +Filesystem Documentation
- +------------------------
- +
- +The documentation in this section are provided by specific filesystem
- +subprojects.
- +
- +.. toctree::
- +   :maxdepth: 2
- +
- +   filesystems/ext4/index
- +
-- Korean translations
-- -------------------
--=20
-- .. toctree::
--    :maxdepth: 1
--=20
--    translations/ko_KR/index
--=20
-- Chinese translations
-- --------------------
-+ Translations
-+ ------------
- =20
-  .. toctree::
--    :maxdepth: 1
--=20
--    translations/zh_CN/index
--=20
-- Japanese translations
-- ---------------------
--=20
-- .. toctree::
--    :maxdepth: 1
-+    :maxdepth: 2
- =20
--    translations/ja_JP/index
-+    translations/index
- =20
-  Indices and tables
-  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
---Sig_/7=12L=sr.Fv+AsRsDlGk3uz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiWyAACgkQAVBC80lX
-0GxhKAgAmxX4uTddswsJeFVLG4euFxLC2EbdjLawn7+ZFazDNrneLbOVuW2zq6+I
-Ww525gMYrZImk1JxllMUw2JcSwSEiUNvkoqSPk1ZSbEbvhu1AT7XPNDs00+tiMrc
-UXnss5tnDAy9czB2eZBdzmLxdOc98Q4QMNoDdTf+9sG25jDwInfFWeT+uitSHyvN
-kx+h9DDKSYm/W2ydLzXgLPslvauKtOkrwpsvzGzI/aW17oUXP1X5ZJWozWOxaUt/
-A6jP+U/RlAHe0reKHC0WmS/pugWoKBEtxmAMlulILxVm9PpmDef7okqqAdrNlfCl
-c/6J/1AW6+C37KmX+xlmKA0YpvkmCQ==
-=oAag
------END PGP SIGNATURE-----
-
---Sig_/7=12L=sr.Fv+AsRsDlGk3uz--
+Guenter
