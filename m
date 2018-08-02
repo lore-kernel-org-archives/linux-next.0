@@ -1,47 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the btrfs-kdave tree
-Date: Thu, 2 Aug 2018 10:31:35 +1000
-Message-ID: <20180802103135.2e620406@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with the ext4 tree
+Date: Thu, 2 Aug 2018 11:15:12 +1000
+Message-ID: <20180802111512.3a467ff5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vh.0A_YFaE02YjdQCvIbXix"; protocol="application/pgp-signature"
+ boundary="Sig_/7=12L=sr.Fv+AsRsDlGk3uz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Federico Vaga <federico.vaga@vaga.pv.it>, "Darrick J. Wong" <darrick.wong@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vh.0A_YFaE02YjdQCvIbXix
+--Sig_/7=12L=sr.Fv+AsRsDlGk3uz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs tree got conflicts in:
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-  fs/btrfs/inode.c
-  fs/btrfs/tree-log.c
+  Documentation/index.rst
 
-Commits
+between commit:
 
-  8e5d411c91c1 ("btrfs: simplify btrfs_iget()")
-  cfac83868124 ("btrfs: lift make_bad_inode() into btrfs_iget()")
-  efa119590db3 ("btrfs: IS_ERR(p) && PTR_ERR(p) =3D=3D n is a weird way to =
-spell p =3D=3D ERR_PTR(n)")
-  353dd669cc08 ("btrfs: btrfs_iget() never returns an is_bad_inode() inode.=
-")
+  6684874af063 ("docs: create filesystem internal section")
 
-from the vfs tree are duplicated as commits
+from the ext4 tree and commit:
 
-  5ee149473042 ("btrfs: simplify btrfs_iget")
-  083a7dddaecc ("btrfs: lift make_bad_inode into btrfs_iget")
-  8bca6b1de61e ("btrfs: simplify IS_ERR/PTR_ERR checks")
-  7ffab8b69edc ("btrfs: btrfs_iget never returns an is_bad_inode inode")
+  85c32d9c6f3e ("doc: move away translations from top-level index")
 
-in the btrfs-kdave tree :-( (except 5ee149473042 has an extra comment
-and efa119590db3 has na extra space)
+from the jc_docs tree.
 
-I fixed it up (the obvious way) and can carry the fix as necessary. This
+I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
@@ -52,20 +42,70 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/vh.0A_YFaE02YjdQCvIbXix
+diff --cc Documentation/index.rst
+index f95ba981f8cd,5d310d960f82..000000000000
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@@ -102,40 -104,13 +104,24 @@@ implementation
+ =20
+     sh/index
+ =20
+ +Filesystem Documentation
+ +------------------------
+ +
+ +The documentation in this section are provided by specific filesystem
+ +subprojects.
+ +
+ +.. toctree::
+ +   :maxdepth: 2
+ +
+ +   filesystems/ext4/index
+ +
+- Korean translations
+- -------------------
+-=20
+- .. toctree::
+-    :maxdepth: 1
+-=20
+-    translations/ko_KR/index
+-=20
+- Chinese translations
+- --------------------
++ Translations
++ ------------
+ =20
+  .. toctree::
+-    :maxdepth: 1
+-=20
+-    translations/zh_CN/index
+-=20
+- Japanese translations
+- ---------------------
+-=20
+- .. toctree::
+-    :maxdepth: 1
++    :maxdepth: 2
+ =20
+-    translations/ja_JP/index
++    translations/index
+ =20
+  Indices and tables
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+--Sig_/7=12L=sr.Fv+AsRsDlGk3uz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiUOcACgkQAVBC80lX
-0GwyFQf+P0LMf4GYJpGP0tDHwZW5k1HeDEsRzRr2umwyMHXCWytrGRVtd+6T1cvC
-Mkj8BlxD26P59GErSZzLNEbumEoEbjko0r2Ev672suIA2lMWH4M96w1dTi0zYdr4
-GEwcLQl73RaGhpjIpxQ5yaR0y2Y7i+53oTXISObM2W5AcSp1J2JlyM4OjfkYX+aP
-9xzmiYyDfC4ag3MDl3Xj3xtLdDTsG0n5y0Mh5thLQlGXaoslxESh+FO7q75qijS3
-lZKPMw6UDpSkxUYNQhRG9VTbhyRjbWUyRsUN7c4XehBurL+mj1g1Kl4abrIw9Oe7
-Ncnnelgc5j3hyTgQrdkNzA5QjXz1EA==
-=PnE8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiWyAACgkQAVBC80lX
+0GxhKAgAmxX4uTddswsJeFVLG4euFxLC2EbdjLawn7+ZFazDNrneLbOVuW2zq6+I
+Ww525gMYrZImk1JxllMUw2JcSwSEiUNvkoqSPk1ZSbEbvhu1AT7XPNDs00+tiMrc
+UXnss5tnDAy9czB2eZBdzmLxdOc98Q4QMNoDdTf+9sG25jDwInfFWeT+uitSHyvN
+kx+h9DDKSYm/W2ydLzXgLPslvauKtOkrwpsvzGzI/aW17oUXP1X5ZJWozWOxaUt/
+A6jP+U/RlAHe0reKHC0WmS/pugWoKBEtxmAMlulILxVm9PpmDef7okqqAdrNlfCl
+c/6J/1AW6+C37KmX+xlmKA0YpvkmCQ==
+=oAag
 -----END PGP SIGNATURE-----
 
---Sig_/vh.0A_YFaE02YjdQCvIbXix--
+--Sig_/7=12L=sr.Fv+AsRsDlGk3uz--
