@@ -1,36 +1,78 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: Tree for Aug 2 (netfilter: tproxy)
-Date: Thu, 2 Aug 2018 21:12:28 +0200
-Message-ID: <20180802191228.v4wblizz7v2qxxxy@salvia>
-References: <20180802193111.346fdde9@canb.auug.org.au>
- <0185f82e-4bf5-6c6c-a131-ba2c0197c9a0@infradead.org>
- <20180802190557.sha6wer6gkdgrd6i@sch.bme.hu>
- <20180802191011.ibm2lknbzwm7zjoc@sch.bme.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dma-mapping tree with the kbuild
+ tree
+Date: Fri, 3 Aug 2018 08:08:56 +1000
+Message-ID: <20180803080856.3de8af38@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KdiQulIne4Pn_L2DfqYs/rp"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180802191011.ibm2lknbzwm7zjoc@sch.bme.hu>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?iso-8859-1?Q?M=E1t=E9?= Eckl <ecklm94@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+To: Christoph Hellwig <hch@lst.de>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 02, 2018 at 09:10:11PM +0200, Máté Eckl wrote:
-> On Thu, Aug 02, 2018 at 09:05:57PM +0200, Máté Eckl wrote:
-> > Hi Randy,
-> > 
-> > Thanks for reporting!
-> > 
-> > Please find the patch attached.
-> 
-> Sorry I made an error in the commit message... See the fix below.
+--Sig_/KdiQulIne4Pn_L2DfqYs/rp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please, resubmit using git-send-mail so we make sure patchwork catches
-this patch.
+Hi all,
 
-Cc'ing Randy when sending this to nf-devel, who has reported this,
-that should sufficient unless he or Stephen say otherwise.
+Today's linux-next merge of the dma-mapping tree got a conflict in:
 
-Thanks.
+  arch/nios2/Kconfig
+
+between commit:
+
+  17c46a6aff5c ("kconfig: remove duplicate SWAP symbol defintions")
+
+from the kbuild tree and commit:
+
+  25622e045a6a ("nios2: use generic dma_noncoherent_ops")
+
+from the dma-mapping tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/nios2/Kconfig
+index cbe1844b0657,92035042cf62..000000000000
+--- a/arch/nios2/Kconfig
++++ b/arch/nios2/Kconfig
+@@@ -1,7 -1,9 +1,10 @@@
+  # SPDX-License-Identifier: GPL-2.0
+  config NIOS2
+  	def_bool y
+ +	select ARCH_NO_SWAP
++ 	select ARCH_HAS_SYNC_DMA_FOR_CPU
++ 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
++ 	select DMA_NONCOHERENT_OPS
+  	select TIMER_OF
+  	select GENERIC_ATOMIC64
+  	select GENERIC_CLOCKEVENTS
+
+--Sig_/KdiQulIne4Pn_L2DfqYs/rp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltjgPgACgkQAVBC80lX
+0Gy8WggAhFquIbZt/hEAiTF0o9HpH7W9ZHaUeY/rvPfHaDWHKXNOK4im992vZdCV
+elVV9FpwMJTKB2aUtQ1TpxXHzvBzGlJTaep51C6Rzfs+xmkOpU87gh+y8b8oi9ai
+AvPnIBOv39HjEYLxWHDov3zFBvOgmuA/+5KzKPuO+ma7b/FhIM9F2kRpi5T6O6RK
+W5PdOdb1MY1YOrnQRCnIRLm3K2LZs/XaiO5rgPPlPVxFybMa7aGXuzvM0/IXjAU9
+5iqpnzBGgHT0jQ2MFBiDw5y2XhQp/YnzIl3qkjMMwWjfUYf2oDblk9yZOuQODAs8
+Ks2bdzBZzQu5pspZOEbEe3jcwaBYEQ==
+=WFwa
+-----END PGP SIGNATURE-----
+
+--Sig_/KdiQulIne4Pn_L2DfqYs/rp--
