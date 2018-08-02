@@ -1,77 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the rdma tree
-Date: Thu, 2 Aug 2018 12:05:03 +1000
-Message-ID: <20180802120503.7b7e116f@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Thu, 2 Aug 2018 14:06:30 +1000
+Message-ID: <20180802140630.7618b9d1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fsXgdrzl56NJq_q07LgxuFO"; protocol="application/pgp-signature"
+ boundary="Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>, Bart Van Assche <bart.vanassche@wdc.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rohit kumar <rohitkr@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fsXgdrzl56NJq_q07LgxuFO
+--Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  net/rds/ib_send.c
+WARNING: unmet direct dependencies detected for SND_SOC_QDSP6
+  Depends on [n]: SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC [=3Dm] && Q=
+COM_APR [=3Dn] && HAS_DMA [=3Dy]
+  Selected by [m]:
+  - SND_SOC_SDM845 [=3Dm] && SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC =
+[=3Dm]
 
-between commit:
+Introduced by commit
 
-  d34ac5cd3a73 ("RDMA, core and ULPs: Declare ib_post_send() and ib_post_re=
-cv() arguments const")
-
-from the rdma tree and commit:
-
-  87f70132b08e ("rds: remove redundant variable 'rds_ibdev'")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  6b1687bf76ef ("ASoC: qcom: add sdm845 sound card support")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/rds/ib_send.c
-index 8ac80c1b051e,c8dd3125d398..000000000000
---- a/net/rds/ib_send.c
-+++ b/net/rds/ib_send.c
-@@@ -758,8 -758,7 +758,7 @@@ int rds_ib_xmit_atomic(struct rds_conne
-  {
-  	struct rds_ib_connection *ic =3D conn->c_transport_data;
-  	struct rds_ib_send_work *send =3D NULL;
- -	struct ib_send_wr *failed_wr;
- +	const struct ib_send_wr *failed_wr;
-- 	struct rds_ib_device *rds_ibdev;
-  	u32 pos;
-  	u32 work_alloc;
-  	int ret;
-
---Sig_/fsXgdrzl56NJq_q07LgxuFO
+--Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiZs8ACgkQAVBC80lX
-0GzfcggAl3p9lIPkl54CfgTX65bIKbypibZIn0hBprPcjZfcbuZhmCpFcXuL4ZC8
-3m2N111XId66ttxwttmVdF2SEzhy0PfNiQsWMwa4rlS5nIlze0Sn00XQ9bD6A2xC
-6RYSgRs8D7yKyiglaIr2OVZrc/LnaOT+Ft8VzDf7SfVpZX+OGm0Vpp5UQYbotbe+
-uuiIN/mneecMulHfuC3p4MP8tsirQnWo3HhMeC2UGSPaosw3W8AZO4+AFmobfOyl
-xB4hBwsbt/nl+bH7J98z3jpOVH1brhqpkY1plKV1AZ+yXyb7K3e1A0u4aRtbGspA
-HFCChy+ry31mrjHiRV3IGMS4DgWbsQ==
-=UJDA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltig0YACgkQAVBC80lX
+0Gwr2Qf/YzcvpELTqK+2twSOMiBXWDwoVM1JdWi6sUFm99u31dwPVzTm0dZLm8t5
+lLkx0lJ88XYDvi/cIEOTgrG2SZuouBNQaNEkCGJOy1g/QALZu+t4KKWCkt3e8UiJ
+S2TvfdTmFUmhOA+23SrBnUixIlWQvVrBS+vQZKVS/6zr5SJAYammtQEAo4ntlTCU
+mqYyKGf+G/JMo5kmZzSKtUIVgM+9odQxzxBiDuKjMplaHsLWGEeM8fj1LbHUWAtv
+v5aeNZeEoFzO4WOau16DAi/HAgAaVAN4MyRNsG4xcyZ7KekMtOezvbfAvmZHDwR0
+kfgu0rNsDJcmAucm9b0hnCH8xNJbIQ==
+=R9UE
 -----END PGP SIGNATURE-----
 
---Sig_/fsXgdrzl56NJq_q07LgxuFO--
+--Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ--
