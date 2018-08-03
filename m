@@ -1,40 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the wireless-drivers-next tree
-Date: Fri, 03 Aug 2018 12:09:59 +0300
-Message-ID: <874lgb7r4o.fsf@kamboji.qca.qualcomm.com>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Subject: Re: linux-next: build failure after merge of the
+ wireless-drivers-next tree
+Date: Fri, 3 Aug 2018 11:11:41 +0200
+Message-ID: <20180803091140.GA10284@redhat.com>
 References: <20180803182942.4de98df2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180803182942.4de98df2@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 3 Aug 2018 18:29:42 +1000")
+Content-Disposition: inline
+In-Reply-To: <20180803182942.4de98df2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi
 
+On Fri, Aug 03, 2018 at 06:29:42PM +1000, Stephen Rothwell wrote:
 > After merging the wireless-drivers-next tree, today's linux-next build
 > (powerpc allyesconfig) failed like this:
->
-> ld: drivers/net/wireless/mediatek/mt76/mt76x0/trace.o:(__tracepoints+0x0): multiple definition of `__tracepoint_set_shared_key'; drivers/net/wireless/mediatek/mt7601u/trace.o:(__tracepoints+0x0): first defined here
+[snip]
+> diff --git a/drivers/net/wireless/mediatek/mt76/Kconfig b/drivers/net/wireless/mediatek/mt76/Kconfig
+> index 850611ad347a..ad56b3ed2be2 100644
+> --- a/drivers/net/wireless/mediatek/mt76/Kconfig
+> +++ b/drivers/net/wireless/mediatek/mt76/Kconfig
+> @@ -13,6 +13,7 @@ config MT76x0U
+>  	tristate "MediaTek MT76x0U (USB) support"
+>  	depends on MAC80211
+>  	depends on USB
+> +	depends on BROKEN
+Would be better to limit driver to be build as module.
+Hopefully that will fix the issue. I'll post patch in a moment.
 
-[...]
-
-> Caused by commit
->
->   7b4859026ccd ("mt76x0: core files")
->
-> and following ones.
->
-> I have just marked that driver broken for now:
-
-Thanks Stephen for the report. Odd that kbuild bot didn't catch this, I
-did have these patches in my pending branch for several days.
-
-Stanislaw, could you please send a fix for this ASAP? I can't submit a
-pull request to Dave until this is fixed.
-
--- 
-Kalle Valo
+Thanks
+Stanislaw
