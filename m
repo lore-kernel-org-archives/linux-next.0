@@ -1,37 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Thu, 02 Aug 2018 19:44:26 -0700 (PDT)
-Message-ID: <20180802.194426.2272443689594696355.davem@davemloft.net>
-References: <20180803121430.25899c83@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build failure after merge of the pstore tree
+Date: Thu, 2 Aug 2018 19:56:27 -0700
+Message-ID: <CAGXu5jKr_M1zxirDJjbE5fzzhQyXeNWaAkGUK13RDKTBANTbPQ@mail.gmail.com>
+References: <20180803110002.5942ff15@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180803121430.25899c83@canb.auug.org.au>
+In-Reply-To: <20180803110002.5942ff15@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geliang Tang <geliangtang@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 3 Aug 2018 12:14:30 +1000
-
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (perf) failed
-> like this:
-> 
-> In file included from btf.c:10:0:
- ...
+On Thu, Aug 2, 2018 at 6:00 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Kees,
+>
+> After merging the pstore tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> fs/pstore/platform.o: In function `zbufsize_zstd':
+> platform.c:(.text+0x172): undefined reference to `ZSTD_compressBound'
+>
 > Caused by commit
-> 
->   89b1698c93a9 ("Merge ra.kernel.org:/pub/scm/linux/kernel/git/davem/net")
-> 
-> Some of the lines in tools/lib/bpf/btf.[ch] were duplicated (they existed
-> on both sides of the merge).
-> 
-> I have used the net-next tree from next-20180802 for today.
+>
+>   48ed452ca6ad ("pstore: add zstd compression support")
 
-My bad, I am working on fixing this now.
+Yikes. I have no idea how this slipped through. allmodconfig builds
+are my standard sanity-check but I clearly made some kind of error in
+my scripting.
 
-Thanks.
+I'll get it fixed. Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
