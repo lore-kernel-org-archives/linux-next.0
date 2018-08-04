@@ -1,91 +1,85 @@
-From: Johannes Thumshirn <jth@kernel.org>
-Subject: Re: linux-next: Tree for Aug 3 (watchdog/menz69_wdt.c)
-Date: Fri, 3 Aug 2018 18:40:24 +0200
-Message-ID: <20180803164024.tfujwvz2s6ekvjpv@linux-x5ow.site>
-References: <20180803192942.6975df0c@canb.auug.org.au>
- <9d17144d-6f19-781f-8abc-1ee1c6f840bd@infradead.org>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: Re: linux-next: manual merge of the powerpc tree with the m68k
+ tree
+Date: Sat, 4 Aug 2018 22:25:37 +1000 (AEST)
+Message-ID: <alpine.LNX.2.21.1808042209030.9@nippy.intranet>
+References: <20180802092708.10e1a71d@canb.auug.org.au> <20180802094154.6d88f03c@canb.auug.org.au> <CAMuHMdXTW8iSA+HnnDNzoNkMwUchLY1J6YBYCBCfGRT5UatBqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9d17144d-6f19-781f-8abc-1ee1c6f840bd@infradead.org>
+In-Reply-To: <CAMuHMdXTW8iSA+HnnDNzoNkMwUchLY1J6YBYCBCfGRT5UatBqg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 03, 2018 at 08:39:48AM -0700, Randy Dunlap wrote:
-> On 08/03/2018 02:29 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20180802:
-> > 
+On Thu, 2 Aug 2018, Geert Uytterhoeven wrote:
+
+> Hi Stephen,
 > 
-> Hi,
+> On Thu, Aug 2, 2018 at 1:42 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > [forgot the conflict resolution ...]
+> >
+> > On Thu, 2 Aug 2018 09:27:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Today's linux-next merge of the powerpc tree got a conflict in:
+> > >
+> > >   arch/m68k/mac/misc.c
+> > >
+> > > between commit:
+> > >
+> > >   5b9bfb8ec467 ("m68k: mac: Use time64_t in RTC handling")
+> > >
+> > > from the m68k tree and commit:
+> > >
+> > >   ebd722275f9c ("macintosh/via-pmu: Replace via-pmu68k driver with via-pmu driver")
+> > >
+> > > from the powerpc tree.
+> > >
+> > > I fixed it up (see below) and can carry the fix as necessary. This 
+> > > is now fixed as far as linux-next is concerned, but any non trivial 
+> > > conflicts should be mentioned to your upstream maintainer when your 
+> > > tree is submitted for merging.  You may also want to consider 
+> > > cooperating with the maintainer of the conflicting tree to minimise 
+> > > any particularly complex conflicts.
 > 
-> On i386 randconfig with COMPILE_TEST=y and MCB not enabled, I see:
+> Ah, now I remember Finn said he was going to rebase his series once the 
+> time64_t patch has entered my tree...
 > 
-> drivers/watchdog/menz69_wdt.o: In function `men_z069_remove':
-> menz69_wdt.c:(.text+0xa6): undefined reference to `mcb_release_mem'
-> drivers/watchdog/menz69_wdt.o: In function `men_z069_probe':
-> menz69_wdt.c:(.text+0xdb): undefined reference to `mcb_request_mem'
-> menz69_wdt.c:(.text+0x14a): undefined reference to `mcb_release_mem'
-> drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_init':
-> menz69_wdt.c:(.init.text+0x15): undefined reference to `__mcb_register_driver'
-> drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_exit':
-> menz69_wdt.c:(.exit.text+0x9): undefined reference to `mcb_unregister_driver'
+
+The conflict I was worried about was avoided when I dropped v3 patch 10/12 
+("macintosh: Use common code to access RTC"). I'll rework that patch after 
+all the PMU and RTC work makes its way into Linus' tree.
+
+> > --- a/arch/m68k/mac/misc.c
+> > +++ b/arch/m68k/mac/misc.c
+> > @@@ -90,11 -85,11 +90,11 @@@ static void cuda_write_pram(int offset
+> >   }
+> >   #endif /* CONFIG_ADB_CUDA */
+> >
+> > - #ifdef CONFIG_ADB_PMU68K
+> > + #ifdef CONFIG_ADB_PMU
+> >  -static long pmu_read_time(void)
+> >  +static time64_t pmu_read_time(void)
+> >   {
+> >         struct adb_request req;
+> >  -      long time;
+> >  +      time64_t time;
+> >
+> >         if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+> >                 return 0;
 > 
+> Thanks, looks good to me!
 > 
-> The Kconfig for MENZ069_WATCHDOG says:
-> config MENZ069_WATCHDOG
-> 	tristate "MEN 16Z069 Watchdog"
-> 	depends on MCB || COMPILE_TEST
-> 	select WATCHDOG_CORE
-> 
-> Looks to me like the driver really depends on MCB, unless someone wants
-> to add stubs in <linux/mcb.h>.
 
-*doh* looks like a copy & paste error. Wim can you fold that one in
-(or stage to your tree)?
+Looks good to me, too.
 
->From ae045015849cd15fd180e20f44d364e7a37c39c6 Mon Sep 17 00:00:00 2001
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Fri, 3 Aug 2018 18:35:17 +0200
-Subject: [PATCH] watchdog: fix dependencies  of menz69_wdt.o
-
-Currently menz69_wdt.ko has a dependency on MCB or COMPILE_TEST. But
-it actually needs symbols exported by MCB so the || COMPILE_TEST is
-wrong.
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
----
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index df55d65bbb1c..5ea8909a41f9 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -163,7 +163,7 @@ config MENF21BMC_WATCHDOG
- 
- config MENZ069_WATCHDOG
- 	tristate "MEN 16Z069 Watchdog"
--	depends on MCB || COMPILE_TEST
-+	depends on MCB
- 	select WATCHDOG_CORE
- 	help
- 	  Say Y here to include support for the MEN 16Z069 Watchdog.
--- 
-2.16.4
-
-
+Thanks.
 
 -- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> 
