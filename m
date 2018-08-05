@@ -1,46 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the risc-v tree
-Date: Mon, 6 Aug 2018 07:37:05 +1000
-Message-ID: <20180806073705.27b861bb@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the block tree
+Date: Mon, 6 Aug 2018 07:51:12 +1000
+Message-ID: <20180806075112.6253d2da@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/D5wJEV1V=GcgNH.3P=XMxzz"; protocol="application/pgp-signature"
+ boundary="Sig_/D.puO.VvdkJLSP1ml3ymr7j"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Jens Axboe <axboe@kernel.dk>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/D5wJEV1V=GcgNH.3P=XMxzz
+--Sig_/D.puO.VvdkJLSP1ml3ymr7j
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Palmer,
+Hi Jens,
 
 Commit
 
-  bce17edfe6af ("fixup: ".  " in PLIC docs")
+  290a40cb336c ("nvme: don't enable AEN if not supported")
 
-is missing a Signed-off-by from its author and committer.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/D5wJEV1V=GcgNH.3P=XMxzz
+--Sig_/D.puO.VvdkJLSP1ml3ymr7j
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltnbgEACgkQAVBC80lX
-0GxDyQf/YIYv4JHRrEunH7UIcdPqdJhMK+FWmyydoZnt9AAe2OU3dliG4lLJsuo9
-PHQ1dwfC7ossI8J4U+a3dJUGBo5ycvN6crW5VaFyjBHFjy23TYz1JrbzO6cnSv7g
-Ilgx7cb9ZN1HAHvotThrieaCdLRAz/ZGPONl0WuzmumNipZmOiKsKY8j5l58Inkq
-8fQV/eKIJpw2la9Y+wFLV+yPqN54CVGP6fLssITlLF1lk1BcYBsQkjZTOezcm3aQ
-GLmMhdquWBrhf4/dMHL3CfMhQE2cJ+J/fFDGAK+MaCd1xIn6eEIf9gmyYGnTvoJb
-oLxxKddan+83k7I8LfitPlQOFNJKhQ==
-=DnCM
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltncVAACgkQAVBC80lX
+0Gw6OggAnXe2ilTZg/3wNzjCkOfX+SL/UmP6Cl5I2X4ZgOryCtV4tGjTAh/+jMDa
+MjyIMd1wlfohGTplgytUCfz6g4y/Vj6Lps8DAieR37UwF32nAO03XKoC815eWeDq
+GuIlnA84YON9sGWRKxt+KvIgm3z0IVyRT2uDAdNQtgs6dBR/ar1VXuQaoWd2kUAC
+/hKvzTW5Cds7qTrnlpta5ew7jNh5cic1gT2xRAM+xAJm1oIrTi0dUSZiE15zox3H
+8Yv9rWFrO19Xbg/XuWmLgc4AesrcGKI5QFATPmM182hVi8WKVlqDGPQItzn4BJ2G
+Dj+s04YjZRFskWL8TZLnqlfO7icgHQ==
+=E6DV
 -----END PGP SIGNATURE-----
 
---Sig_/D5wJEV1V=GcgNH.3P=XMxzz--
+--Sig_/D.puO.VvdkJLSP1ml3ymr7j--
