@@ -1,46 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the block tree
-Date: Mon, 6 Aug 2018 07:51:12 +1000
-Message-ID: <20180806075112.6253d2da@canb.auug.org.au>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+Date: Mon, 6 Aug 2018 09:30:15 +1000
+Message-ID: <20180806093015.6099ef5c@canb.auug.org.au>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+        <20180620102904.GC112168@atomide.com>
+        <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+        <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+        <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+        <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+        <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
+        <20180702093243.GO112168@atomide.com>
+        <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/D.puO.VvdkJLSP1ml3ymr7j"; protocol="application/pgp-signature"
+ boundary="Sig_/0YK+L5KAgQs0umX0hv0jfjt"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Samuel Morris <samorris@lexmark.com>, Tejun Heo <tj@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>, Naresh Kamboju <naresh.kamboju@linaro.org>, linux-omap@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org, Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/D.puO.VvdkJLSP1ml3ymr7j
+--Sig_/0YK+L5KAgQs0umX0hv0jfjt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Samuel,
 
-Commit
+On Mon, 2 Jul 2018 09:31:56 -0400 Samuel Morris <samorris@lexmark.com> wrot=
+e:
+>
+> On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:
+> > Hi,
+> >
+> > * Roger Quadros <rogerq@ti.com> [180621 14:56]: =20
+> >> On 21/06/18 17:31, Samuel Morris wrote: =20
+> >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote=
+: =20
+> >> >> +Rafael
+> >> >>
+> >> >> On 20/06/18 18:30, Samuel Morris wrote: =20
+> >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wro=
+te: =20
+> >> >>>> Tony,
+> >> >>>>
+> >> >>>> On 20/06/18 13:29, Tony Lindgren wrote: =20
+> >> >>>>> Hi,
+> >> >>>>>
+> >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]: =20
+> >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle boa=
+rd x15. =20
+> >> >>>>>
+> >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow=
+ disabling of
+> >> >>>>> hotplug to save power").
+> >> >>>>>
+> >> >>>>> Reverting the patch makes things work again. Any ideas what
+> >> >>>>> might be going wrong here? Things clearly idle but then there
+> >> >>>>> seems to be some register access with clocks disabled. =20
+> >
+> > So this issue is still happening as of next-20180702. Can you guys
+> > please revert the commit above while working on a better solution? =20
+>=20
+> That's fine with me. I'm not very familiar with the process here, does
+> this require anything on my end? And would that require the
+> accompanying patch to be reverted: "ata: ahci: rpm_put port on
+> port_stop to match rpm_get in port_start"? There shouldn't be any
+> problem leaving that one in, but I just want to know before submitting
+> my next patch set.
 
-  290a40cb336c ("nvme: don't enable AEN if not supported")
-
-is missing a Signed-off-by from its committer.
+I am still reverting that commit from linux-next myself.  Has this
+issue been fixed some other way, or is it still ongoing?
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/D.puO.VvdkJLSP1ml3ymr7j
+--Sig_/0YK+L5KAgQs0umX0hv0jfjt
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltncVAACgkQAVBC80lX
-0Gw6OggAnXe2ilTZg/3wNzjCkOfX+SL/UmP6Cl5I2X4ZgOryCtV4tGjTAh/+jMDa
-MjyIMd1wlfohGTplgytUCfz6g4y/Vj6Lps8DAieR37UwF32nAO03XKoC815eWeDq
-GuIlnA84YON9sGWRKxt+KvIgm3z0IVyRT2uDAdNQtgs6dBR/ar1VXuQaoWd2kUAC
-/hKvzTW5Cds7qTrnlpta5ew7jNh5cic1gT2xRAM+xAJm1oIrTi0dUSZiE15zox3H
-8Yv9rWFrO19Xbg/XuWmLgc4AesrcGKI5QFATPmM182hVi8WKVlqDGPQItzn4BJ2G
-Dj+s04YjZRFskWL8TZLnqlfO7icgHQ==
-=E6DV
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltniIcACgkQAVBC80lX
+0Gy+uwgAjx18AusCZRh5RpDhTpXN2yvL7JAiPuWJVdZAb/EYFEAB/EP+oaNaKSla
+xnFifSNuzIY//X39E3Rim6NMUdWSA9F6CqRGQMhOgFKtXQPzCytDuhVCQ7YYirYw
+V5jYFmZLH0ZCgnP2fLX792gjBdIFUi/MYyLv8LVf2nM29dDX0+WqKqfIZn8BopEU
+M5HYs5p2aD90gtyQtzWuz1y3zRyLYsBgY4HFdj+4ZAnuCfBFMFmBWCfHuZgqjSd+
+ClFk7KI6Pf0hICdxn9yFF7mwgg6d2u/bebaqFhAr8re0RXiBZLEgs32opSpyeUig
+0vyso/SsPqx1XvhU/j+6sWyceMeUdQ==
+=37UH
 -----END PGP SIGNATURE-----
 
---Sig_/D.puO.VvdkJLSP1ml3ymr7j--
+--Sig_/0YK+L5KAgQs0umX0hv0jfjt--
