@@ -1,85 +1,46 @@
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: Re: linux-next: manual merge of the powerpc tree with the m68k
- tree
-Date: Sat, 4 Aug 2018 22:25:37 +1000 (AEST)
-Message-ID: <alpine.LNX.2.21.1808042209030.9@nippy.intranet>
-References: <20180802092708.10e1a71d@canb.auug.org.au> <20180802094154.6d88f03c@canb.auug.org.au> <CAMuHMdXTW8iSA+HnnDNzoNkMwUchLY1J6YBYCBCfGRT5UatBqg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the risc-v tree
+Date: Mon, 6 Aug 2018 07:37:05 +1000
+Message-ID: <20180806073705.27b861bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/D5wJEV1V=GcgNH.3P=XMxzz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXTW8iSA+HnnDNzoNkMwUchLY1J6YBYCBCfGRT5UatBqg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2 Aug 2018, Geert Uytterhoeven wrote:
+--Sig_/D5wJEV1V=GcgNH.3P=XMxzz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Stephen,
-> 
-> On Thu, Aug 2, 2018 at 1:42 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > [forgot the conflict resolution ...]
-> >
-> > On Thu, 2 Aug 2018 09:27:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Today's linux-next merge of the powerpc tree got a conflict in:
-> > >
-> > >   arch/m68k/mac/misc.c
-> > >
-> > > between commit:
-> > >
-> > >   5b9bfb8ec467 ("m68k: mac: Use time64_t in RTC handling")
-> > >
-> > > from the m68k tree and commit:
-> > >
-> > >   ebd722275f9c ("macintosh/via-pmu: Replace via-pmu68k driver with via-pmu driver")
-> > >
-> > > from the powerpc tree.
-> > >
-> > > I fixed it up (see below) and can carry the fix as necessary. This 
-> > > is now fixed as far as linux-next is concerned, but any non trivial 
-> > > conflicts should be mentioned to your upstream maintainer when your 
-> > > tree is submitted for merging.  You may also want to consider 
-> > > cooperating with the maintainer of the conflicting tree to minimise 
-> > > any particularly complex conflicts.
-> 
-> Ah, now I remember Finn said he was going to rebase his series once the 
-> time64_t patch has entered my tree...
-> 
+Hi Palmer,
 
-The conflict I was worried about was avoided when I dropped v3 patch 10/12 
-("macintosh: Use common code to access RTC"). I'll rework that patch after 
-all the PMU and RTC work makes its way into Linus' tree.
+Commit
 
-> > --- a/arch/m68k/mac/misc.c
-> > +++ b/arch/m68k/mac/misc.c
-> > @@@ -90,11 -85,11 +90,11 @@@ static void cuda_write_pram(int offset
-> >   }
-> >   #endif /* CONFIG_ADB_CUDA */
-> >
-> > - #ifdef CONFIG_ADB_PMU68K
-> > + #ifdef CONFIG_ADB_PMU
-> >  -static long pmu_read_time(void)
-> >  +static time64_t pmu_read_time(void)
-> >   {
-> >         struct adb_request req;
-> >  -      long time;
-> >  +      time64_t time;
-> >
-> >         if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
-> >                 return 0;
-> 
-> Thanks, looks good to me!
-> 
+  bce17edfe6af ("fixup: ".  " in PLIC docs")
 
-Looks good to me, too.
+is missing a Signed-off-by from its author and committer.
 
-Thanks.
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
+--Sig_/D5wJEV1V=GcgNH.3P=XMxzz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltnbgEACgkQAVBC80lX
+0GxDyQf/YIYv4JHRrEunH7UIcdPqdJhMK+FWmyydoZnt9AAe2OU3dliG4lLJsuo9
+PHQ1dwfC7ossI8J4U+a3dJUGBo5ycvN6crW5VaFyjBHFjy23TYz1JrbzO6cnSv7g
+Ilgx7cb9ZN1HAHvotThrieaCdLRAz/ZGPONl0WuzmumNipZmOiKsKY8j5l58Inkq
+8fQV/eKIJpw2la9Y+wFLV+yPqN54CVGP6fLssITlLF1lk1BcYBsQkjZTOezcm3aQ
+GLmMhdquWBrhf4/dMHL3CfMhQE2cJ+J/fFDGAK+MaCd1xIn6eEIf9gmyYGnTvoJb
+oLxxKddan+83k7I8LfitPlQOFNJKhQ==
+=DnCM
+-----END PGP SIGNATURE-----
+
+--Sig_/D5wJEV1V=GcgNH.3P=XMxzz--
