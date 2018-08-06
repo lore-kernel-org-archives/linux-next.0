@@ -1,46 +1,47 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: manual merge of the tip tree with the rdma tree
-Date: Mon, 6 Aug 2018 13:45:26 -0600
-Message-ID: <20180806194526.GL5007@mellanox.com>
-References: <20180806145331.68538a0b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the rockchip tree
+Date: Tue, 7 Aug 2018 07:29:16 +1000
+Message-ID: <20180807072902.62d6b279@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/tQV/fNnu=Mcsis61IyIitaq"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180806145331.68538a0b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Aug 06, 2018 at 02:53:31PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   drivers/infiniband/core/rdma_core.c
-> 
-> between commit:
-> 
->   9867f5c6695f ("IB/uverbs: Convert 'bool exclusive' into an enum")
-> 
-> from the rdma tree and commit:
-> 
->   bfc18e389c7a ("atomics/treewide: Rename __atomic_add_unless() => atomic_fetch_add_unless()")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+--Sig_/tQV/fNnu=Mcsis61IyIitaq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Gaaagh that is a big conflict
+Hi Heiko,
 
-I was going to do this next cycle.. But I'll try to push a commit
-consolidating this crazy use of __atomic_add_unless into one function
-so this conflict should become easier to handle.
+Commit
 
-Jason
+  508fc689cfe5 ("clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks i=
+n rk3399")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/tQV/fNnu=Mcsis61IyIitaq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltovawACgkQAVBC80lX
+0GxXvQgAnn3sfNVdb1ypRybYqoFjl4sQVB0oeTvsyIP4FW1Xg8Yygqh0ekhKskiQ
+Cg1ugOljH7DWLBIYJyalcaRnLq+8fhAGW2XtQ5aVXhQn1gzNFJOMCVtpM18uyzkr
+zVvoFsybIWHV69KAIi0zqfdHQ9HWkWnNV2tIqQC1MnbTXliFmVlRsv/TKJFUtUFA
+FKoBpjY57fD6eixtdSN1goKhRk3vBmBa1BSFaKhkWVvrnMKNhQmucj7DYDyvXe2F
+4XDr+n7oVZ6njvb7qkS4lqMEa1G2Z0/2scx4GcDoP7WqztD8Io10yYGDFuFljqYA
+IlrNSjZ/8sdWTUKhV645HZu9dEBsdQ==
+=NtdB
+-----END PGP SIGNATURE-----
+
+--Sig_/tQV/fNnu=Mcsis61IyIitaq--
