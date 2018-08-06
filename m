@@ -1,95 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Mon, 6 Aug 2018 22:24:01 +1000
-Message-ID: <20180806222401.3d68fb28@canb.auug.org.au>
-References: <20180806103738.794c479d@canb.auug.org.au>
+From: Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: linux-next: Tree for Aug 3 (watchdog/menz69_wdt.c)
+Date: Mon, 6 Aug 2018 17:14:09 +0200
+Message-ID: <20180806151409.GA12969@www.linux-watchdog.org>
+References: <20180803192942.6975df0c@canb.auug.org.au>
+ <9d17144d-6f19-781f-8abc-1ee1c6f840bd@infradead.org>
+ <20180803164024.tfujwvz2s6ekvjpv@linux-x5ow.site>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6CvfW03m=a17=DIJ+O5sm=X"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806103738.794c479d@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180803164024.tfujwvz2s6ekvjpv@linux-x5ow.site>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6CvfW03m=a17=DIJ+O5sm=X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Johannes,
 
-Hi all,
+> On Fri, Aug 03, 2018 at 08:39:48AM -0700, Randy Dunlap wrote:
+> > On 08/03/2018 02:29 AM, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20180802:
+> > > 
+> > 
+> > Hi,
+> > 
+> > On i386 randconfig with COMPILE_TEST=y and MCB not enabled, I see:
+> > 
+> > drivers/watchdog/menz69_wdt.o: In function `men_z069_remove':
+> > menz69_wdt.c:(.text+0xa6): undefined reference to `mcb_release_mem'
+> > drivers/watchdog/menz69_wdt.o: In function `men_z069_probe':
+> > menz69_wdt.c:(.text+0xdb): undefined reference to `mcb_request_mem'
+> > menz69_wdt.c:(.text+0x14a): undefined reference to `mcb_release_mem'
+> > drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_init':
+> > menz69_wdt.c:(.init.text+0x15): undefined reference to `__mcb_register_driver'
+> > drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_exit':
+> > menz69_wdt.c:(.exit.text+0x9): undefined reference to `mcb_unregister_driver'
+> > 
+> > 
+> > The Kconfig for MENZ069_WATCHDOG says:
+> > config MENZ069_WATCHDOG
+> > 	tristate "MEN 16Z069 Watchdog"
+> > 	depends on MCB || COMPILE_TEST
+> > 	select WATCHDOG_CORE
+> > 
+> > Looks to me like the driver really depends on MCB, unless someone wants
+> > to add stubs in <linux/mcb.h>.
+> 
+> *doh* looks like a copy & paste error. Wim can you fold that one in
+> (or stage to your tree)?
 
-On Mon, 6 Aug 2018 10:37:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->=20
-> samples/statx/test-fsinfo.c:26:10: fatal error: linux/fsinfo.h: No such f=
-ile or directory
->  #include <linux/fsinfo.h>
->           ^~~~~~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   90b413cb970a ("vfs: syscall: Add fsinfo() to query filesystem informati=
-on")
->=20
-> I guess that headers_install (or whatever its called) has not bee run
-> before the sample code is built.
->=20
-> I have applied the following patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 6 Aug 2018 10:29:34 +1000
-> Subject: [PATCH] vfs: don;t build new sample programs yet
->=20
-> It seems that headers_install is not done before the samples
-> are build so some needed include files are not in the right place.
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Added in my tree.
+
+Kind regards,
+Wim.
+
+> >From ae045015849cd15fd180e20f44d364e7a37c39c6 Mon Sep 17 00:00:00 2001
+> From: Johannes Thumshirn <jthumshirn@suse.de>
+> Date: Fri, 3 Aug 2018 18:35:17 +0200
+> Subject: [PATCH] watchdog: fix dependencies  of menz69_wdt.o
+> 
+> Currently menz69_wdt.ko has a dependency on MCB or COMPILE_TEST. But
+> it actually needs symbols exported by MCB so the || COMPILE_TEST is
+> wrong.
+> 
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
 > ---
->  samples/statx/Makefile | 2 +-
+>  drivers/watchdog/Kconfig | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/samples/statx/Makefile b/samples/statx/Makefile
-> index 05b4d30cdd3c..0b4d01822eca 100644
-> --- a/samples/statx/Makefile
-> +++ b/samples/statx/Makefile
-> @@ -1,5 +1,5 @@
->  # List of programs to build
-> -hostprogs-$(CONFIG_SAMPLE_STATX) :=3D test-statx test-fsinfo test-fs-que=
-ry
-> +hostprogs-$(CONFIG_SAMPLE_STATX) :=3D test-statx
-> =20
->  # Tell kbuild to always build the programs
->  always :=3D $(hostprogs-y)
-
-It turns out that commit
-
-  ba5214f7f40c ("vfs: Implement parameter value retrieval with fsinfo()")
-
-removed the "depends on BROKEN" from CONFIG_SAMPLE_STATX and that
-breaks other builds (at least allyesconfig on s390).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6CvfW03m=a17=DIJ+O5sm=X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltoPeEACgkQAVBC80lX
-0GyGAgf9EiqWVhztm844gNppUc8FLnXknFhVw/yLSl3+rmvmlxiYtmdJn88PZS32
-qJrkMafsYYV8mFWRYmR7lLBj3ROVMhzsqbjKgbS9O1eJiXGDte9jVMs0MvT4yvN7
-L60fd5wXhp8iRS+bCnO7p9cZiW1qnIzjrJwDh+3E6vyx8HZueDUFKcVZzZuqNX/S
-oGhXan+dZO1tyK/W9j7AZb8At6fs83Z9eGi1APScVrLVhBg1QevRoBs1GMdjCOxU
-vC3kyvhx15d+18G882Q1XS9wjXvlelYg/EinehEWWLd0WQAHHcxI8RkrlsfMzEbi
-nBtx39YZ09yHFudmtPkGgksHk1/V6A==
-=RHQW
------END PGP SIGNATURE-----
-
---Sig_/6CvfW03m=a17=DIJ+O5sm=X--
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index df55d65bbb1c..5ea8909a41f9 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -163,7 +163,7 @@ config MENF21BMC_WATCHDOG
+>  
+>  config MENZ069_WATCHDOG
+>  	tristate "MEN 16Z069 Watchdog"
+> -	depends on MCB || COMPILE_TEST
+> +	depends on MCB
+>  	select WATCHDOG_CORE
+>  	help
+>  	  Say Y here to include support for the MEN 16Z069 Watchdog.
+> -- 
+> 2.16.4
+> 
+> 
+> 
+> -- 
+> Johannes Thumshirn                                          Storage
+> jthumshirn@suse.de                                +49 911 74053 689
+> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
+> Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
