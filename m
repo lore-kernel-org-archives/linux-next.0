@@ -1,52 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Mon, 6 Aug 2018 12:10:26 +1000
-Message-ID: <20180806121026.7c4b956b@canb.auug.org.au>
+Subject: linux-next: please clean up the ipvs-next tree
+Date: Mon, 6 Aug 2018 12:49:28 +1000
+Message-ID: <20180806124928.43db0f44@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nUutFw4bxDjgRFO=yUac+tY"; protocol="application/pgp-signature"
+ boundary="Sig_/=Xi+6Of27sVPWJluIZD4Iz1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yangbo Lu <yangbo.lu@nxp.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/nUutFw4bxDjgRFO=yUac+tY
+--Sig_/=Xi+6Of27sVPWJluIZD4Iz1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Simon,
 
-After merging the net-next tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-drivers/ptp/ptp_qoriq.o: In function `qoriq_ptp_probe':
-ptp_qoriq.c:(.text+0xd0c): undefined reference to `__aeabi_uldivmod'
-
-Caused by commit
-
-  91305f281262 ("ptp_qoriq: support automatic configuration for ptp timer")
-
-I just reverted that commit for today.
+The ipvs-next tree appears to contain a set of patches that have been
+merged into the net-next tree as different commits (some of them
+slightly different). This is just causing conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/nUutFw4bxDjgRFO=yUac+tY
+--Sig_/=Xi+6Of27sVPWJluIZD4Iz1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltnrhIACgkQAVBC80lX
-0GzTgAf/U0HdKmV+qnw8Yf3Xuwx/7jubhhVRj/4gRBcp62G4pPEcTFfjHbHPqjsa
-Vm4MDhzPsqlw+ldhBlxMQGfC8V+2bHfpNbk41HjdnBTXbwM9B3ZcLRNvJnI8ZTiW
-2TqALUNnqF4aEpODQFaOQLTlenipWuWC00XuBPL9o1dewc70HP8hTaNeA7/Xh/T7
-lRp4gUsQN+1F1ZjW62nHm+3BuwkeRebzWCBZi7lD58n87DDmjHm0tLXeUMVzJyQx
-OWmgBk1xdzysEALE7+peT4S4/CjuFZQYmVqvm26Ysq8qcaGbAaeqb6zopu2cbNPr
-0DsyCZWnZSwlAcxuAaEZxXAMusD8KQ==
-=yMFq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltntzgACgkQAVBC80lX
+0GyLfQf/dOcTGpBeBZvfq0XaqiTGDlJtHilHghE+JKOddWVoz988bWlc0LNJg2kQ
+h2lKrtFJaOJfw18o5JcLnJa6SBZStmC/T2sxtMIlVxv4ydvc3kuWXXzT/edEOoxB
+h/0eGbkwAXWfGBWilElt5bM/AnA2oOaQESSYWMYxRqn87z8CBGahgHKOPTjzkqWq
+r1eaGaKCOv0swWO/qz/ISAPr2Z/8kyf/OpRipjK9oifG7xwBf3eyCzmepnIEEnZQ
+CAbRhtl22YnMS1YVYlouReff0EyCJ6F661NJyrzsQo7yKSi18mneuwCKPc1dkwaR
+Vq/X4TNc4pCzx2HyWVGcYm3ciScU0Q==
+=jhmU
 -----END PGP SIGNATURE-----
 
---Sig_/nUutFw4bxDjgRFO=yUac+tY--
+--Sig_/=Xi+6Of27sVPWJluIZD4Iz1--
