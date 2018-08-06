@@ -1,85 +1,46 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Rebasing kvm/next (was Re: linux-next: manual merge of the kvm tree
- with Linus' tree)
-Date: Mon, 6 Aug 2018 17:55:29 +0200
-Message-ID: <af02fe54-5110-8ceb-e741-675562de8c0d@redhat.com>
-References: <20180806152100.05589155@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+Date: Mon, 6 Aug 2018 10:24:24 -0700
+Message-ID: <20180806172424.GC410235@devbig004.ftw2.facebook.com>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+ <20180620102904.GC112168@atomide.com>
+ <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+ <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+ <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+ <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+ <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
+ <20180702093243.GO112168@atomide.com>
+ <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+ <20180806093015.6099ef5c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806152100.05589155@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180806093015.6099ef5c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Morris <samorris@lexmark.com>, Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>, Naresh Kamboju <naresh.kamboju@linaro.org>, linux-omap@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org, Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF
-Content-Type: multipart/mixed; boundary="LzmXr2K5HassvVHW5Dbu9DWLwhZoYLXzi";
- protected-headers="v1"
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
- <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <af02fe54-5110-8ceb-e741-675562de8c0d@redhat.com>
-Subject: Rebasing kvm/next (was Re: linux-next: manual merge of the kvm tree
- with Linus' tree)
-References: <20180806152100.05589155@canb.auug.org.au>
-In-Reply-To: <20180806152100.05589155@canb.auug.org.au>
+Hello,
 
---LzmXr2K5HassvVHW5Dbu9DWLwhZoYLXzi
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 06, 2018 at 09:30:15AM +1000, Stephen Rothwell wrote:
+> > > So this issue is still happening as of next-20180702. Can you guys
+> > > please revert the commit above while working on a better solution?  
+> > 
+> > That's fine with me. I'm not very familiar with the process here, does
+> > this require anything on my end? And would that require the
+> > accompanying patch to be reverted: "ata: ahci: rpm_put port on
+> > port_stop to match rpm_get in port_start"? There shouldn't be any
+> > problem leaving that one in, but I just want to know before submitting
+> > my next patch set.
+> 
+> I am still reverting that commit from linux-next myself.  Has this
+> issue been fixed some other way, or is it still ongoing?
 
-On 06/08/2018 07:21, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the kvm tree got a conflict in:
->=20
->   arch/x86/kvm/vmx.c
->=20
-> between a series of commits in Linus' tree and a series of commits in
-> the kvm tree.
->=20
-> I have no idea how to fix all this up, so I just dropped all the change=
-s
-> from Linus' tree (all those commits only touched this file).  Please do=
+Hasn't been resolved yet.  Reverting from libata/for-4.19.
 
-> this merge your self or provide me (and Linus) with the necessary
-> resolution.
+Thanks.
 
-The conflicts are indeed very nasty, so I'm going to rebase the top of
-kvm/next and insert a merge from Linus's tree (4.18-rc6 to be precise).
-
-The reason is that some changes were split between 4.18 and 4.19, and
-therefore there are conflicts between bugfixes and new development.
-They should have been handled by merging kvm/master into kvm/next, but
-it's too late for that.
-
-Paolo
-
-
---LzmXr2K5HassvVHW5Dbu9DWLwhZoYLXzi--
-
---hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltob3EACgkQv/vSX3jH
-roO1gAf/aMSyoNZzfJw2SlR0wFmJ7QtxYDQLvNKrUKNoxCLLUCpFQ9Rtb0JbCGNj
-cIkmxW6eGWu+VJH2397l1MNKtVvzHTe+D0W46E0/NgYURKlLjuydyqmIaNf+tQKs
-tkiF+OWwsPVkQkuiOmgSvR3lyURlr7/1J3BBDIOyTNMoGW8OKE3jwAYHR8Awatpc
-VCXFtGVaYMt8pM6jKYAKi3oLqSyCkjd0xxWAxHsIF10s/iptlh+UEM2+y1abcjmu
-XDNos9yz4VA/DIlV4+FcUi0fRM7AZXnIngvkYclirNHoq6HA8TxcBU8xvHYt4DCp
-NgT6vYUarAf8O1Nb79wpT/XwRzHf+w==
-=vAny
------END PGP SIGNATURE-----
-
---hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF--
+-- 
+tejun
