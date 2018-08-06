@@ -1,99 +1,85 @@
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: linux-next: Tree for Aug 3 (watchdog/menz69_wdt.c)
-Date: Mon, 6 Aug 2018 17:14:09 +0200
-Message-ID: <20180806151409.GA12969@www.linux-watchdog.org>
-References: <20180803192942.6975df0c@canb.auug.org.au>
- <9d17144d-6f19-781f-8abc-1ee1c6f840bd@infradead.org>
- <20180803164024.tfujwvz2s6ekvjpv@linux-x5ow.site>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Rebasing kvm/next (was Re: linux-next: manual merge of the kvm tree
+ with Linus' tree)
+Date: Mon, 6 Aug 2018 17:55:29 +0200
+Message-ID: <af02fe54-5110-8ceb-e741-675562de8c0d@redhat.com>
+References: <20180806152100.05589155@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180803164024.tfujwvz2s6ekvjpv@linux-x5ow.site>
+In-Reply-To: <20180806152100.05589155@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Johannes,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF
+Content-Type: multipart/mixed; boundary="LzmXr2K5HassvVHW5Dbu9DWLwhZoYLXzi";
+ protected-headers="v1"
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
+ <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <af02fe54-5110-8ceb-e741-675562de8c0d@redhat.com>
+Subject: Rebasing kvm/next (was Re: linux-next: manual merge of the kvm tree
+ with Linus' tree)
+References: <20180806152100.05589155@canb.auug.org.au>
+In-Reply-To: <20180806152100.05589155@canb.auug.org.au>
 
-> On Fri, Aug 03, 2018 at 08:39:48AM -0700, Randy Dunlap wrote:
-> > On 08/03/2018 02:29 AM, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20180802:
-> > > 
-> > 
-> > Hi,
-> > 
-> > On i386 randconfig with COMPILE_TEST=y and MCB not enabled, I see:
-> > 
-> > drivers/watchdog/menz69_wdt.o: In function `men_z069_remove':
-> > menz69_wdt.c:(.text+0xa6): undefined reference to `mcb_release_mem'
-> > drivers/watchdog/menz69_wdt.o: In function `men_z069_probe':
-> > menz69_wdt.c:(.text+0xdb): undefined reference to `mcb_request_mem'
-> > menz69_wdt.c:(.text+0x14a): undefined reference to `mcb_release_mem'
-> > drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_init':
-> > menz69_wdt.c:(.init.text+0x15): undefined reference to `__mcb_register_driver'
-> > drivers/watchdog/menz69_wdt.o: In function `men_z069_driver_exit':
-> > menz69_wdt.c:(.exit.text+0x9): undefined reference to `mcb_unregister_driver'
-> > 
-> > 
-> > The Kconfig for MENZ069_WATCHDOG says:
-> > config MENZ069_WATCHDOG
-> > 	tristate "MEN 16Z069 Watchdog"
-> > 	depends on MCB || COMPILE_TEST
-> > 	select WATCHDOG_CORE
-> > 
-> > Looks to me like the driver really depends on MCB, unless someone wants
-> > to add stubs in <linux/mcb.h>.
-> 
-> *doh* looks like a copy & paste error. Wim can you fold that one in
-> (or stage to your tree)?
+--LzmXr2K5HassvVHW5Dbu9DWLwhZoYLXzi
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Added in my tree.
+On 06/08/2018 07:21, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the kvm tree got a conflict in:
+>=20
+>   arch/x86/kvm/vmx.c
+>=20
+> between a series of commits in Linus' tree and a series of commits in
+> the kvm tree.
+>=20
+> I have no idea how to fix all this up, so I just dropped all the change=
+s
+> from Linus' tree (all those commits only touched this file).  Please do=
 
-Kind regards,
-Wim.
+> this merge your self or provide me (and Linus) with the necessary
+> resolution.
 
-> >From ae045015849cd15fd180e20f44d364e7a37c39c6 Mon Sep 17 00:00:00 2001
-> From: Johannes Thumshirn <jthumshirn@suse.de>
-> Date: Fri, 3 Aug 2018 18:35:17 +0200
-> Subject: [PATCH] watchdog: fix dependencies  of menz69_wdt.o
-> 
-> Currently menz69_wdt.ko has a dependency on MCB or COMPILE_TEST. But
-> it actually needs symbols exported by MCB so the || COMPILE_TEST is
-> wrong.
-> 
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
->  drivers/watchdog/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index df55d65bbb1c..5ea8909a41f9 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -163,7 +163,7 @@ config MENF21BMC_WATCHDOG
->  
->  config MENZ069_WATCHDOG
->  	tristate "MEN 16Z069 Watchdog"
-> -	depends on MCB || COMPILE_TEST
-> +	depends on MCB
->  	select WATCHDOG_CORE
->  	help
->  	  Say Y here to include support for the MEN 16Z069 Watchdog.
-> -- 
-> 2.16.4
-> 
-> 
-> 
-> -- 
-> Johannes Thumshirn                                          Storage
-> jthumshirn@suse.de                                +49 911 74053 689
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
-> Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+The conflicts are indeed very nasty, so I'm going to rebase the top of
+kvm/next and insert a merge from Linus's tree (4.18-rc6 to be precise).
+
+The reason is that some changes were split between 4.18 and 4.19, and
+therefore there are conflicts between bugfixes and new development.
+They should have been handled by merging kvm/master into kvm/next, but
+it's too late for that.
+
+Paolo
+
+
+--LzmXr2K5HassvVHW5Dbu9DWLwhZoYLXzi--
+
+--hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltob3EACgkQv/vSX3jH
+roO1gAf/aMSyoNZzfJw2SlR0wFmJ7QtxYDQLvNKrUKNoxCLLUCpFQ9Rtb0JbCGNj
+cIkmxW6eGWu+VJH2397l1MNKtVvzHTe+D0W46E0/NgYURKlLjuydyqmIaNf+tQKs
+tkiF+OWwsPVkQkuiOmgSvR3lyURlr7/1J3BBDIOyTNMoGW8OKE3jwAYHR8Awatpc
+VCXFtGVaYMt8pM6jKYAKi3oLqSyCkjd0xxWAxHsIF10s/iptlh+UEM2+y1abcjmu
+XDNos9yz4VA/DIlV4+FcUi0fRM7AZXnIngvkYclirNHoq6HA8TxcBU8xvHYt4DCp
+NgT6vYUarAf8O1Nb79wpT/XwRzHf+w==
+=vAny
+-----END PGP SIGNATURE-----
+
+--hO5thKs5m9SJlwBzlwtTQkM3rnJt5LaKF--
