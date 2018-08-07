@@ -1,113 +1,119 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Tue, 7 Aug 2018 11:20:21 +0900
-Message-ID: <CAK7LNATFjpxxVje=5vUF88kQVYJxaYzZbPwDzqkC6hKwgscpuw@mail.gmail.com>
-References: <20180806103738.794c479d@canb.auug.org.au> <20180806222401.3d68fb28@canb.auug.org.au>
- <20180807105955.06c70fc8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the netfilter
+ tree
+Date: Tue, 7 Aug 2018 12:49:32 +1000
+Message-ID: <20180807124932.73422224@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5oHuR.sWIpxOyl4ZQBWjMrI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807105955.06c70fc8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Michal Marek <michal.lkml@markovi.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@linaro.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matteo Croce <mcroce@redhat.com>, Julian Anastasov <ja@ssi.bg>
 List-Id: linux-next.vger.kernel.org
 
-2018-08-07 9:59 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> On Mon, 6 Aug 2018 22:24:01 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> On Mon, 6 Aug 2018 10:37:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >
->> > After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
->> > failed like this:
->> >
->> > samples/statx/test-fsinfo.c:26:10: fatal error: linux/fsinfo.h: No such file or directory
->> >  #include <linux/fsinfo.h>
->> >           ^~~~~~~~~~~~~~~~
->> >
->> > Caused by commit
->> >
->> >   90b413cb970a ("vfs: syscall: Add fsinfo() to query filesystem information")
->> >
->> > I guess that headers_install (or whatever its called) has not bee run
->> > before the sample code is built.
->> >
->> > I have applied the following patch for today:
->> >
->> > From: Stephen Rothwell <sfr@canb.auug.org.au>
->> > Date: Mon, 6 Aug 2018 10:29:34 +1000
->> > Subject: [PATCH] vfs: don;t build new sample programs yet
->> >
->> > It seems that headers_install is not done before the samples
->> > are build so some needed include files are not in the right place.
->> >
->> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> > ---
->> >  samples/statx/Makefile | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/samples/statx/Makefile b/samples/statx/Makefile
->> > index 05b4d30cdd3c..0b4d01822eca 100644
->> > --- a/samples/statx/Makefile
->> > +++ b/samples/statx/Makefile
->> > @@ -1,5 +1,5 @@
->> >  # List of programs to build
->> > -hostprogs-$(CONFIG_SAMPLE_STATX) := test-statx test-fsinfo test-fs-query
->> > +hostprogs-$(CONFIG_SAMPLE_STATX) := test-statx
->> >
->> >  # Tell kbuild to always build the programs
->> >  always := $(hostprogs-y)
->>
->> It turns out that commit
->>
->>   ba5214f7f40c ("vfs: Implement parameter value retrieval with fsinfo()")
->>
->> removed the "depends on BROKEN" from CONFIG_SAMPLE_STATX and that
->> breaks other builds (at least allyesconfig on s390).
->
-> I have added the following suggested patch (I am sorry I can't
-> find/remember who pointed me to this patch) for today (I guess that it
-> should be merged via the vfs tree as that is what is causing the build
-> failures ... in which case a real patch should be supplied with
-> appropriate SOB line).  This seems to fix the current problem.
->
-> From: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Date: Tue, 7 Aug 2018 10:33:43 +1000
-> Subject: [PATCH] Try to get the headers installed before we build the samples
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Makefile b/Makefile
-> index 9e71826f67d7..d224d94c14be 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1023,6 +1023,7 @@ endif
->  # Build samples along the rest of the kernel
->  ifdef CONFIG_SAMPLES
->  vmlinux-dirs += samples
-> +samples: headers_install
->  endif
->
->  # The actual objects are generated when descending,
-> --
+--Sig_/5oHuR.sWIpxOyl4ZQBWjMrI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-OK, I will queue this up to my tree.
+Today's linux-next merge of the net-next tree got a conflict in:
 
+  net/netfilter/ipvs/ip_vs_conn.c
 
-I suggested this in the discussion:
-https://patchwork.kernel.org/patch/10552353/
+between commit:
 
-I did not get response, though.
+  16e98cec49a4 ("ipvs: don't show negative times in ip_vs_conn")
 
+from the netfilter tree and commit:
 
+  ec1b28ca9674 ("ipvs: provide just conn to ip_vs_state_name")
 
+from the net-next tree.
 
--- 
-Best Regards
-Masahiro Yamada
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/netfilter/ipvs/ip_vs_conn.c
+index 615286dcf4c0,0edc62910ebf..000000000000
+--- a/net/netfilter/ipvs/ip_vs_conn.c
++++ b/net/netfilter/ipvs/ip_vs_conn.c
+@@@ -1107,10 -1122,8 +1122,10 @@@ static int ip_vs_conn_seq_show(struct s
+  				&cp->caddr.in6, ntohs(cp->cport),
+  				&cp->vaddr.in6, ntohs(cp->vport),
+  				dbuf, ntohs(cp->dport),
+- 				ip_vs_state_name(cp->protocol, cp->state),
++ 				ip_vs_state_name(cp),
+ -				(cp->timer.expires-jiffies)/HZ, pe_data);
+ +				jiffies_delta_to_msecs(cp->timer.expires -
+ +						       jiffies) / 1000,
+ +				pe_data);
+  		else
+  #endif
+  			seq_printf(seq,
+@@@ -1120,10 -1133,8 +1135,10 @@@
+  				ntohl(cp->caddr.ip), ntohs(cp->cport),
+  				ntohl(cp->vaddr.ip), ntohs(cp->vport),
+  				dbuf, ntohs(cp->dport),
+- 				ip_vs_state_name(cp->protocol, cp->state),
++ 				ip_vs_state_name(cp),
+ -				(cp->timer.expires-jiffies)/HZ, pe_data);
+ +				jiffies_delta_to_msecs(cp->timer.expires -
+ +						       jiffies) / 1000,
+ +				pe_data);
+  	}
+  	return 0;
+  }
+@@@ -1173,10 -1184,9 +1188,10 @@@ static int ip_vs_conn_sync_seq_show(str
+  				&cp->caddr.in6, ntohs(cp->cport),
+  				&cp->vaddr.in6, ntohs(cp->vport),
+  				dbuf, ntohs(cp->dport),
+- 				ip_vs_state_name(cp->protocol, cp->state),
++ 				ip_vs_state_name(cp),
+  				ip_vs_origin_name(cp->flags),
+ -				(cp->timer.expires-jiffies)/HZ);
+ +				jiffies_delta_to_msecs(cp->timer.expires -
+ +						       jiffies) / 1000);
+  		else
+  #endif
+  			seq_printf(seq,
+@@@ -1186,10 -1196,9 +1201,10 @@@
+  				ntohl(cp->caddr.ip), ntohs(cp->cport),
+  				ntohl(cp->vaddr.ip), ntohs(cp->vport),
+  				dbuf, ntohs(cp->dport),
+- 				ip_vs_state_name(cp->protocol, cp->state),
++ 				ip_vs_state_name(cp),
+  				ip_vs_origin_name(cp->flags),
+ -				(cp->timer.expires-jiffies)/HZ);
+ +				jiffies_delta_to_msecs(cp->timer.expires -
+ +						       jiffies) / 1000);
+  	}
+  	return 0;
+  }
+
+--Sig_/5oHuR.sWIpxOyl4ZQBWjMrI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltpCLwACgkQAVBC80lX
+0GxyAQf+NVGK9Cmolhg6Gv6zrJRV/cCYPTo4/aigQUpVa/0YkaABbnb0oRtwUw7v
+06uT4YcyVZH6OncGq7z54Ee1JrkpkH/jTVqpogSuHTZOls9NIlXRV2u8+BzNE+In
+3Jx2YiWniH37bCt8nCXnf8GzAKNxfG+uLQyfSgfUyWjPtY6kzr9KfP1T03Pmx7iN
+hdmo9ffjqnO1GByGvjeE6sBXFA8lUibR1citQj9ix8hi5fzgcAwQCKX27qVINv7z
+9BiNQytzZPIz52SWIHEaJBmsnrl3FAuWyfc4xlbnCLaE0DcOJjvxh/6M/2BnkN/T
+TRE/J9t7SmAVyySR6VK34XZaOyBO0w==
+=OpEJ
+-----END PGP SIGNATURE-----
+
+--Sig_/5oHuR.sWIpxOyl4ZQBWjMrI--
