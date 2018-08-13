@@ -1,58 +1,115 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: next-20180810: Traceback observed at at arch/x86/mm/pageattr.c:1211
- __cpa_process_fault
-Date: Sat, 11 Aug 2018 14:23:38 -0700
-Message-ID: <18c3e11c-10a3-e404-3ca7-3bf1ef8cb96b@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the block
+ tree
+Date: Mon, 13 Aug 2018 17:51:59 +1000
+Message-ID: <20180813175159.36ac9d4b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3xpNZz+aZJ.spS6dSKHENiH"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86 <x86@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Coly Li <colyli@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+--Sig_/3xpNZz+aZJ.spS6dSKHENiH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I noticed the following spurious traceback in next-20180810 when booting an i386 image in qemu.
+Hi all,
 
-[    0.000000] ------------[ cut here ]------------
-[    0.000000] CPA: called for zero pte. vaddr = cffe0000 cpa->vaddr = cffe0000
-[    0.000000] WARNING: CPU: 0 PID: 0 at arch/x86/mm/pageattr.c:1211 __cpa_process_fault+0x327/0x350
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc8-next-20180810 #1
-[    0.000000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.org 04/01/2014
-[    0.000000] EIP: __cpa_process_fault+0x327/0x350
-[    0.000000] Code: 10 c1 e0 0c 03 45 e0 89 45 f0 8b 45 d0 85 c0 75 28 8b 75 d4 e9 12 ff ff ff 8b 07 ff 30 ff 75 e0 68 c0 fc a7 cf e8 99 a1 00 00 <0f> 0b bb f2 ff ff ff 83 c4 0c e9 1c fe ff ff 8b 45 e0 8d b0 00 00
-[    0.000000] EAX: 00000040 EBX: 0000ffdf ECX: cfba6a3c EDX: cfba6a3c
-[    0.000000] ESI: cffe0000 EDI: cfb81f20 EBP: cfb81e6c ESP: cfb81e30
-[    0.000000] DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00200096
-[    0.000000] CR0: 80050033 CR2: ffda3000 CR3: 0fd10000 CR4: 00000690
-[    0.000000] Call Trace:
-[    0.000000]  __change_page_attr_set_clr+0x2e3/0x790
-[    0.000000]  ? serial_putc+0x26/0x40
-[    0.000000]  ? uart_console_write+0x48/0x60
-[    0.000000]  ? 0xcf000000
-[    0.000000]  ? 0xcf000000
-[    0.000000]  ? 0xcf000000
-[    0.000000]  change_page_attr_set_clr+0x109/0x3a0
-[    0.000000]  set_memory_nonglobal+0x1e/0x20
-[    0.000000]  pti_init+0xc7/0xdd
-[    0.000000]  start_kernel+0x1ca/0x3c0
-[    0.000000]  i386_start_kernel+0x94/0x98
-[    0.000000]  startup_32_smp+0x164/0x168
-[    0.000000] ---[ end trace 638bf57ca2d37b0e ]---
+Today's linux-next merge of the akpm-current tree got conflicts in:
 
-I have seen this only once; I did not see it when repeating the test.
+  drivers/md/bcache/Kconfig
+  drivers/md/bcache/util.h
 
-Qemu command line:
+between commits:
 
-qemu-system-i386 -kernel arch/x86/boot/bzImage -M pc -cpu Conroe \
-	-no-reboot -m 256 -drive file=rootfs.ext2,if=ide,format=raw \
-	--append 'earlycon=uart8250,io,0x3f8,9600n8 root=/dev/sda rw mem=256M vga=0 uvesafb.mode_option=640x480-32 oprofile.timer=1 console=ttyS0 console=tty'
-	-nographic
+  bc81b47e828a ("bcache: prefer 'help' in Kconfig")
+  fc2d5988b597 ("bcache: add identifier names to arguments of function defi=
+nitions")
 
-Configuration is i386:defconfig+CONFIG_SMP=n.
+from the block tree and commit:
 
-Guenter
+  fbb43f40e27b ("bcache: use routines from lib/crc64.c for CRC64 calculatio=
+n")
+
+from the akpm-current tree.
+
+I fixed it up (see below, and the latter removed some fo the lines changed
+by fc2d5988b597) and can carry the fix as necessary. This is now fixed
+as far as linux-next is concerned, but any non trivial conflicts should
+be mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/md/bcache/Kconfig
+index 817b9fba50db,af247298409a..000000000000
+--- a/drivers/md/bcache/Kconfig
++++ b/drivers/md/bcache/Kconfig
+@@@ -1,7 -1,8 +1,8 @@@
+ =20
+  config BCACHE
+  	tristate "Block device as cache"
++ 	select CRC64
+ -	---help---
+ +	help
+  	Allows a block device to be used as cache for other devices; uses
+  	a btree for indexing and the layout is optimized for SSDs.
+ =20
+diff --cc drivers/md/bcache/util.h
+index 4e0ed19e32d3,a1579e28049f..000000000000
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@@ -543,11 -543,26 +544,27 @@@ dup:								=09
+  #define RB_PREV(ptr, member)						\
+  	container_of_or_null(rb_prev(&(ptr)->member), typeof(*ptr), member)
+ =20
++ static inline uint64_t bch_crc64(const void *p, size_t len)
++ {
++ 	uint64_t crc =3D 0xffffffffffffffffULL;
++=20
++ 	crc =3D crc64_be(crc, p, len);
++ 	return crc ^ 0xffffffffffffffffULL;
++ }
++=20
++ static inline uint64_t bch_crc64_update(uint64_t crc,
++ 					const void *p,
++ 					size_t len)
++ {
++ 	crc =3D crc64_be(crc, p, len);
++ 	return crc;
++ }
++=20
+  /* Does linear interpolation between powers of two */
+ -static inline unsigned fract_exp_two(unsigned x, unsigned fract_bits)
+ +static inline unsigned int fract_exp_two(unsigned int x,
+ +					 unsigned int fract_bits)
+  {
+ -	unsigned fract =3D x & ~(~0 << fract_bits);
+ +	unsigned int fract =3D x & ~(~0 << fract_bits);
+ =20
+  	x >>=3D fract_bits;
+  	x   =3D 1 << x;
+
+--Sig_/3xpNZz+aZJ.spS6dSKHENiH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltxOJ8ACgkQAVBC80lX
+0GzhLgf/YwenefNkdfPupRsyfFi1WWskIrr6txGnLQEVD0xJtox55DEvrVAMg/15
+6q/7i4N6pQyUzOPPTXw2XZnIM9Df5s41AD7YxtFVJA+mjhD0dChMFTxjHvnunwmP
+rTSu85uOianwSS2niES/UVGFyselHdxseZvMPKVi5efGU9Edv3fH1DFf8wVTla7H
+UjpjG1FaDRkQjjPApZRwWOGwt2WjJDwGJGNFcJn2l0T8WtZs+8a7Md6l+y9ZRgTA
+4FP0U5mGUaGEPHcdbv37/W0RzwiRKo1nW6qzPKpwWrCpfSjUIUYxqGAsOUf7LcT8
+1Woo0S39vIT5WCLGgBVohtM6mr+/7g==
+=kJRt
+-----END PGP SIGNATURE-----
+
+--Sig_/3xpNZz+aZJ.spS6dSKHENiH--
