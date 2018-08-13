@@ -1,115 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the block
- tree
-Date: Mon, 13 Aug 2018 17:51:59 +1000
-Message-ID: <20180813175159.36ac9d4b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 13 Aug 2018 18:22:18 +1000
+Message-ID: <20180813182218.595fe0bc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3xpNZz+aZJ.spS6dSKHENiH"; protocol="application/pgp-signature"
+ boundary="Sig_/i8v81v0_6pKOT5ElPwG24Y9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Coly Li <colyli@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsO8cmc=?= Billeter <j@bitron.ch>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3xpNZz+aZJ.spS6dSKHENiH
+--Sig_/i8v81v0_6pKOT5ElPwG24Y9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the akpm-current tree got conflicts in:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  drivers/md/bcache/Kconfig
-  drivers/md/bcache/util.h
+kernel/exit.c: In function 'reparent_leader':
+kernel/exit.c:640:3: error: too few arguments to function 'group_send_sig_i=
+nfo'
+   group_send_sig_info(p->signal->pdeath_signal_proc,
+   ^~~~~~~~~~~~~~~~~~~
+In file included from include/linux/sched/signal.h:6:0,
+                 from include/linux/sched/cputime.h:5,
+                 from kernel/exit.c:14:
+include/linux/signal.h:262:12: note: declared here
+ extern int group_send_sig_info(int sig, struct siginfo *info,
+            ^~~~~~~~~~~~~~~~~~~
 
-between commits:
+Caused by commit
 
-  bc81b47e828a ("bcache: prefer 'help' in Kconfig")
-  fc2d5988b597 ("bcache: add identifier names to arguments of function defi=
-nitions")
+  b04bd4d0117c ("prctl: add PR_[GS]ET_PDEATHSIG_PROC")
 
-from the block tree and commit:
+interacting with commit
 
-  fbb43f40e27b ("bcache: use routines from lib/crc64.c for CRC64 calculatio=
-n")
+  0102498083d5 ("signal: Pass pid type into group_send_sig_info")
 
-from the akpm-current tree.
+from the uerns tree.
 
-I fixed it up (see below, and the latter removed some fo the lines changed
-by fc2d5988b597) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I have applied the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 13 Aug 2018 18:07:07 +1000
+Subject: [PATCH] merge fix up for "signal: Pass pid type into
+ group_send_sig_info"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/exit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 7b72bed283d4..066c66448258 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -638,7 +638,7 @@ static void reparent_leader(struct task_struct *father,=
+ struct task_struct *p,
+=20
+ 	if (p->signal->pdeath_signal_proc)
+ 		group_send_sig_info(p->signal->pdeath_signal_proc,
+-				    SEND_SIG_NOINFO, p);
++				    SEND_SIG_NOINFO, p, PIDTYPE_TGID);
+=20
+ 	/* We don't want people slaying init. */
+ 	p->exit_signal =3D SIGCHLD;
+--=20
+2.18.0
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/md/bcache/Kconfig
-index 817b9fba50db,af247298409a..000000000000
---- a/drivers/md/bcache/Kconfig
-+++ b/drivers/md/bcache/Kconfig
-@@@ -1,7 -1,8 +1,8 @@@
- =20
-  config BCACHE
-  	tristate "Block device as cache"
-+ 	select CRC64
- -	---help---
- +	help
-  	Allows a block device to be used as cache for other devices; uses
-  	a btree for indexing and the layout is optimized for SSDs.
- =20
-diff --cc drivers/md/bcache/util.h
-index 4e0ed19e32d3,a1579e28049f..000000000000
---- a/drivers/md/bcache/util.h
-+++ b/drivers/md/bcache/util.h
-@@@ -543,11 -543,26 +544,27 @@@ dup:								=09
-  #define RB_PREV(ptr, member)						\
-  	container_of_or_null(rb_prev(&(ptr)->member), typeof(*ptr), member)
- =20
-+ static inline uint64_t bch_crc64(const void *p, size_t len)
-+ {
-+ 	uint64_t crc =3D 0xffffffffffffffffULL;
-+=20
-+ 	crc =3D crc64_be(crc, p, len);
-+ 	return crc ^ 0xffffffffffffffffULL;
-+ }
-+=20
-+ static inline uint64_t bch_crc64_update(uint64_t crc,
-+ 					const void *p,
-+ 					size_t len)
-+ {
-+ 	crc =3D crc64_be(crc, p, len);
-+ 	return crc;
-+ }
-+=20
-  /* Does linear interpolation between powers of two */
- -static inline unsigned fract_exp_two(unsigned x, unsigned fract_bits)
- +static inline unsigned int fract_exp_two(unsigned int x,
- +					 unsigned int fract_bits)
-  {
- -	unsigned fract =3D x & ~(~0 << fract_bits);
- +	unsigned int fract =3D x & ~(~0 << fract_bits);
- =20
-  	x >>=3D fract_bits;
-  	x   =3D 1 << x;
-
---Sig_/3xpNZz+aZJ.spS6dSKHENiH
+--Sig_/i8v81v0_6pKOT5ElPwG24Y9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltxOJ8ACgkQAVBC80lX
-0GzhLgf/YwenefNkdfPupRsyfFi1WWskIrr6txGnLQEVD0xJtox55DEvrVAMg/15
-6q/7i4N6pQyUzOPPTXw2XZnIM9Df5s41AD7YxtFVJA+mjhD0dChMFTxjHvnunwmP
-rTSu85uOianwSS2niES/UVGFyselHdxseZvMPKVi5efGU9Edv3fH1DFf8wVTla7H
-UjpjG1FaDRkQjjPApZRwWOGwt2WjJDwGJGNFcJn2l0T8WtZs+8a7Md6l+y9ZRgTA
-4FP0U5mGUaGEPHcdbv37/W0RzwiRKo1nW6qzPKpwWrCpfSjUIUYxqGAsOUf7LcT8
-1Woo0S39vIT5WCLGgBVohtM6mr+/7g==
-=kJRt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltxP7oACgkQAVBC80lX
+0GzdwQf9EmRTqtPBceXGFGX3rfkOvFom64t3bUMsLuP/zhBdpD51TLCa1mjg6h/b
+S6+aVAOihJlbxGygtbIeR6lU+S3+5gYkDy29mXji8KWD1cspYr8FhW1q7SQ5n8kK
+s8LvQEZE2IXJFyxNkejhGYmDIuKY/y/JVK3rSKkb3D6YZ6F2U1UW2kpRMr7IMhHu
+fnXZfRBdTTFiEKPhFEk4kS3MxLEWAnVonWdkeP4dd8q9qP0S0+5oRCpddwlBwodp
+jnn+dWsXxt3BucWzdyMG8fTEqKXVrJICSeABIRrtdPngV/AEhdygQ8rMTDmLgU0I
+AtAJnJ+zxs2+zVwdeN6Nlw0VWGAeXg==
+=L4bW
 -----END PGP SIGNATURE-----
 
---Sig_/3xpNZz+aZJ.spS6dSKHENiH--
+--Sig_/i8v81v0_6pKOT5ElPwG24Y9--
