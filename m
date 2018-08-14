@@ -1,43 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
-Date: Wed, 15 Aug 2018 09:26:25 +1000
-Message-ID: <20180815092625.1ab4109d@canb.auug.org.au>
-References: <20180806144736.4fbe1e51@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the dma-mapping tree with the
+ kbuild tree
+Date: Wed, 15 Aug 2018 09:27:53 +1000
+Message-ID: <20180815092753.5a14f14f@canb.auug.org.au>
+References: <20180803080856.3de8af38@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Sx7AvN6uXHHlExj_ZxsOT3g"; protocol="application/pgp-signature"
+ boundary="Sig_/fBpBRoyY02p_TT22tjA22Fa"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806144736.4fbe1e51@canb.auug.org.au>
+In-Reply-To: <20180803080856.3de8af38@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Palmer Dabbelt <palmer@sifive.com>, Christoph Hellwig <hch@lst.de>
+Cc: Christoph Hellwig <hch@lst.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Sx7AvN6uXHHlExj_ZxsOT3g
+--Sig_/fBpBRoyY02p_TT22tjA22Fa
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 6 Aug 2018 14:47:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+On Fri, 3 Aug 2018 08:08:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
 >
-> Today's linux-next merge of the tip tree got conflicts in:
+> Today's linux-next merge of the dma-mapping tree got a conflict in:
 >=20
->   arch/arm64/Kconfig
->   arch/openrisc/Kconfig
+>   arch/nios2/Kconfig
 >=20
 > between commit:
 >=20
->   1572497cb0e6 ("kconfig: include common Kconfig files from top-level Kco=
-nfig")
+>   17c46a6aff5c ("kconfig: remove duplicate SWAP symbol defintions")
 >=20
-> from the kbuild tree and commits:
+> from the kbuild tree and commit:
 >=20
->   78ae2e1cd845 ("arm64: Use the new GENERIC_IRQ_MULTI_HANDLER")
->   c5ca4560de0f ("openrisc: Use the new GENERIC_IRQ_MULTI_HANDLER")
+>   25622e045a6a ("nios2: use generic dma_noncoherent_ops")
 >=20
-> from the tip tree.
+> from the dma-mapping tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -50,40 +48,21 @@ nfig")
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc arch/arm64/Kconfig
-> index a3de6ad666d4,3d1011957823..000000000000
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@@ -278,9 -265,10 +279,6 @@@ config ARCH_SUPPORTS_UPROBE
->   config ARCH_PROC_KCORE_TEXT
+> diff --cc arch/nios2/Kconfig
+> index cbe1844b0657,92035042cf62..000000000000
+> --- a/arch/nios2/Kconfig
+> +++ b/arch/nios2/Kconfig
+> @@@ -1,7 -1,9 +1,10 @@@
+>   # SPDX-License-Identifier: GPL-2.0
+>   config NIOS2
 >   	def_bool y
->  =20
-> - config MULTI_IRQ_HANDLER
-> - 	def_bool y
->  -source "init/Kconfig"
->  -
->  -source "kernel/Kconfig.freezer"
-> --
->   source "arch/arm64/Kconfig.platforms"
->  =20
->   menu "Bus support"
-> diff --cc arch/openrisc/Kconfig
-> index fee9d91a66e6,dfb6a79ba7ff..000000000000
-> --- a/arch/openrisc/Kconfig
-> +++ b/arch/openrisc/Kconfig
-> @@@ -71,9 -69,10 +71,6 @@@ config STACKTRACE_SUPPOR
->   config LOCKDEP_SUPPORT
->   	def_bool  y
->  =20
-> - config MULTI_IRQ_HANDLER
-> - 	def_bool y
->  -source "init/Kconfig"
->  -
->  -source "kernel/Kconfig.freezer"
-> --
->   menu "Processor type and features"
->  =20
->   choice
+>  +	select ARCH_NO_SWAP
+> + 	select ARCH_HAS_SYNC_DMA_FOR_CPU
+> + 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> + 	select DMA_NONCOHERENT_OPS
+>   	select TIMER_OF
+>   	select GENERIC_ATOMIC64
+>   	select GENERIC_CLOCKEVENTS
 
 This is now a conflict between Linus' tree and the kbuild tree.
 
@@ -91,20 +70,20 @@ This is now a conflict between Linus' tree and the kbuild tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/Sx7AvN6uXHHlExj_ZxsOT3g
+--Sig_/fBpBRoyY02p_TT22tjA22Fa
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzZSEACgkQAVBC80lX
-0GzY4Af9HAwRUFzDMQdV+ZCtuXNmW+PUqsqm5TxM+uKleg6M8ZpQyR8MIMkd2zhL
-ZxdSKWwewLWUXaJKG8cNW3Qno2aitUhILJXU6flUsTft2ovGwvWVZ8S5XkD+rhiS
-kc2k9UJQWXgDYc1RS5AB7H2Qm6jcEpAHqcmFSFvQvxhsdq59lhJlpciLP4Fd2Wd/
-xe7oL6IxHaTUDBsx/ZSuvNqaoqQF2JvPdZAEoSVSm4vnWo21drgtH+5c4GpC+UcA
-7UHWMAXSfw9vpOiC0oqHnUwjgp3ZaNv824gBYf8rVWngGPj3y5TrMg6DhEE1aCPa
-x/SaP/OQBTuH7sBxLMgz6yMaYEMc1g==
-=EqXl
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzZXkACgkQAVBC80lX
+0GzGbAf/YMGZ6XVviuobSbRD/J84SoMxRBAuKbshB5RxVpe56GUwsP2SJplPtKGU
+nRVXr3f3Hv/4ZbDlC1lAM4kTveBFPJWSNzs7qJDG+oBTgi3DyFl9ffSTI+tYCq2/
+n/bF5BadHWXXPWzsqnsjMFDTX5U4mR+AWEGh1tO9VSjEGYyT7XDEhtkhTx6r3VMb
+TtNewmgRQILaYOxd7eQVSxPY4bPQr50hOqQfMgCcr5KEniUMwUwdDs41hIohIb14
+sX8BeG3Nfu5X45ygg7/NN+NmqQCoZunccr8aBz/Bn/5qE2hwfFo/QeJjqF56MMIT
+fsfph5ZCEVH9aDnVjSEwB/Vk+x3LKg==
+=diiZ
 -----END PGP SIGNATURE-----
 
---Sig_/Sx7AvN6uXHHlExj_ZxsOT3g--
+--Sig_/fBpBRoyY02p_TT22tjA22Fa--
