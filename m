@@ -1,41 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the dma-mapping tree with the
- kbuild tree
-Date: Wed, 15 Aug 2018 09:27:53 +1000
-Message-ID: <20180815092753.5a14f14f@canb.auug.org.au>
-References: <20180803080856.3de8af38@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the mips tree with the kbuild tree
+Date: Wed, 15 Aug 2018 09:31:59 +1000
+Message-ID: <20180815093159.55c5588f@canb.auug.org.au>
+References: <20180803092100.7d0fda13@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fBpBRoyY02p_TT22tjA22Fa"; protocol="application/pgp-signature"
+ boundary="Sig_/e9yn65TKcxkhbAzjCqKKUgT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180803080856.3de8af38@canb.auug.org.au>
+In-Reply-To: <20180803092100.7d0fda13@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Christoph Hellwig <hch@lst.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Burton <paul.burton@mips.com>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fBpBRoyY02p_TT22tjA22Fa
+--Sig_/e9yn65TKcxkhbAzjCqKKUgT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 3 Aug 2018 08:08:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+On Fri, 3 Aug 2018 09:21:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
 >
-> Today's linux-next merge of the dma-mapping tree got a conflict in:
+> Today's linux-next merge of the mips tree got a conflict in:
 >=20
->   arch/nios2/Kconfig
+>   arch/mips/Kconfig
 >=20
 > between commit:
 >=20
->   17c46a6aff5c ("kconfig: remove duplicate SWAP symbol defintions")
+>   1572497cb0e6 ("kconfig: include common Kconfig files from top-level Kco=
+nfig")
 >=20
 > from the kbuild tree and commit:
 >=20
->   25622e045a6a ("nios2: use generic dma_noncoherent_ops")
+>   6c359eb1dcdb ("MIPS: Allow auto-dection of ARCH_PFN_OFFSET & PHYS_OFFSE=
+T")
 >=20
-> from the dma-mapping tree.
+> from the mips tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,26 +44,26 @@ rote:
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc arch/nios2/Kconfig
-> index cbe1844b0657,92035042cf62..000000000000
-> --- a/arch/nios2/Kconfig
-> +++ b/arch/nios2/Kconfig
-> @@@ -1,7 -1,9 +1,10 @@@
->   # SPDX-License-Identifier: GPL-2.0
->   config NIOS2
->   	def_bool y
->  +	select ARCH_NO_SWAP
-> + 	select ARCH_HAS_SYNC_DMA_FOR_CPU
-> + 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> + 	select DMA_NONCOHERENT_OPS
->   	select TIMER_OF
->   	select GENERIC_ATOMIC64
->   	select GENERIC_CLOCKEVENTS
+
+> fdd83c534b114febc41ec115449cb25f421e1719
+> diff --cc arch/mips/Kconfig
+> index 06a633eb9777,642a56e2a1ea..2af13b162e5e
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@@ -2990,6 -2988,13 +2984,9 @@@ config PGTABLE_LEVEL
+>   	default 3 if 64BIT && !PAGE_SIZE_64KB
+>   	default 2
+>  =20
+> + config MIPS_AUTO_PFN_OFFSET
+> + 	bool
+> +=20
+>  -source "init/Kconfig"
+>  -
+>  -source "kernel/Kconfig.freezer"
+>  -
+>   menu "Bus options (PCI, PCMCIA, EISA, ISA, TC)"
+>  =20
+>   config HW_HAS_EISA
 
 This is now a conflict between Linus' tree and the kbuild tree.
 
@@ -70,20 +71,20 @@ This is now a conflict between Linus' tree and the kbuild tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/fBpBRoyY02p_TT22tjA22Fa
+--Sig_/e9yn65TKcxkhbAzjCqKKUgT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzZXkACgkQAVBC80lX
-0GzGbAf/YMGZ6XVviuobSbRD/J84SoMxRBAuKbshB5RxVpe56GUwsP2SJplPtKGU
-nRVXr3f3Hv/4ZbDlC1lAM4kTveBFPJWSNzs7qJDG+oBTgi3DyFl9ffSTI+tYCq2/
-n/bF5BadHWXXPWzsqnsjMFDTX5U4mR+AWEGh1tO9VSjEGYyT7XDEhtkhTx6r3VMb
-TtNewmgRQILaYOxd7eQVSxPY4bPQr50hOqQfMgCcr5KEniUMwUwdDs41hIohIb14
-sX8BeG3Nfu5X45ygg7/NN+NmqQCoZunccr8aBz/Bn/5qE2hwfFo/QeJjqF56MMIT
-fsfph5ZCEVH9aDnVjSEwB/Vk+x3LKg==
-=diiZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzZm8ACgkQAVBC80lX
+0GxOrQf5AaoxVW/CLFq46GzKU5iTB4rd4ATgqLU/dDhcfhYVY1YK6tG/bVyiX/Gg
+Rt+32HH5/qeeqqtzIbbb0d2aBcwQICjb5WYm3ju61oDi8h2PSYfj8bfr3EUHymdn
+XyLhjcAce/mTSCASW22v6DKnt3l0B9dabaT9mFMm6SXWAQkvyuXvkUBNegfwhhVl
+PHyuMafgjlE2o979dH0fV8XxAcdpvqFcsB9ucIyBWAeb25yB+u9oIt/8YWhSHQVb
+q8q1Zs2iOG/MQ5uqh4AMo9MstSt1YODbssT7gNOVPjgJrJoU9Y6US0Yt6VF0sQ/P
+7wF1m5vp8SqeO9uVjU+Plu53OEOoPQ==
+=DgsD
 -----END PGP SIGNATURE-----
 
---Sig_/fBpBRoyY02p_TT22tjA22Fa--
+--Sig_/e9yn65TKcxkhbAzjCqKKUgT--
