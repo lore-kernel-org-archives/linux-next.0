@@ -1,75 +1,115 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with the net-next
- tree
-Date: Wed, 15 Aug 2018 13:12:46 +1000
-Message-ID: <20180815131246.67214bdf@canb.auug.org.au>
-References: <20180730132253.33633f56@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the devicetree tree with the
+ net-next tree
+Date: Wed, 15 Aug 2018 13:14:02 +1000
+Message-ID: <20180815131402.271492d4@canb.auug.org.au>
+References: <20180730143645.7bcd563b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5o8nAnh_Uqd79A_ANVWGtV_"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180730132253.33633f56@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+ boundary="Sig_/eRuCqZV7WcAk3=1A0PnXURk"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20180730143645.7bcd563b@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Rob Herring <robherring2@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anssi Hannula <anssi.hannula@bitwise.fi>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5o8nAnh_Uqd79A_ANVWGtV_
+--Sig_/eRuCqZV7WcAk3=1A0PnXURk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 30 Jul 2018 13:22:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Mon, 30 Jul 2018 14:37:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> Today's linux-next merge of the crypto tree got conflicts in:
+> Today's linux-next merge of the devicetree tree got a conflict in:
 >=20
->   drivers/net/ethernet/freescale/fec_main.c
->   drivers/net/ethernet/freescale/fs_enet/mac-fec.c
+>   Documentation/devicetree/bindings/net/can/xilinx_can.txt
 >=20
-> between commits:
+> between commit:
 >=20
->   16f6e9835bcd ("net: ethernet: freescale: Use generic CRC32 implementati=
-on")
->   d805f6a86829 ("net: ethernet: fs-enet: Use generic CRC32 implementation=
+>   7cb0f17f5252 ("dt-bindings: can: xilinx_can: add Xilinx CAN FD bindings=
 ")
 >=20
 > from the net-next tree and commit:
 >=20
->   5d258b48efbd ("net: ethernet: Use existing define with polynomial")
+>   791d3ef2e111 ("dt-bindings: remove 'interrupt-parent' from bindings")
 >=20
-> from the crypto tree.
+> from the devicetree tree.
 >=20
-> I fixed it up (I used the net-next tree versions (but kept the rmeoval
-> of the CRC32_POLY and FEC_CRC_POLY defines) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc Documentation/devicetree/bindings/net/can/xilinx_can.txt
+> index ae5c07e96ad5,9264d2f6a89d..000000000000
+> --- a/Documentation/devicetree/bindings/net/can/xilinx_can.txt
+> +++ b/Documentation/devicetree/bindings/net/can/xilinx_can.txt
+> @@@ -2,26 -2,19 +2,25 @@@ Xilinx Axi CAN/Zynq CANPS controller De
+>   ---------------------------------------------------------
+>  =20
+>   Required properties:
+>  -- compatible		: Should be "xlnx,zynq-can-1.0" for Zynq CAN
+>  -			  controllers and "xlnx,axi-can-1.00.a" for Axi CAN
+>  -			  controllers.
+>  -- reg			: Physical base address and size of the Axi CAN/Zynq
+>  -			  CANPS registers map.
+>  +- compatible		: Should be:
+>  +			  - "xlnx,zynq-can-1.0" for Zynq CAN controllers
+>  +			  - "xlnx,axi-can-1.00.a" for Axi CAN controllers
+>  +			  - "xlnx,canfd-1.0" for CAN FD controllers
+>  +- reg			: Physical base address and size of the controller
+>  +			  registers map.
+>   - interrupts		: Property with a value describing the interrupt
+>   			  number.
+> - - interrupt-parent	: Must be core interrupt controller
+>  -- clock-names		: List of input clock names - "can_clk", "pclk"
+>  -			  (For CANPS), "can_clk" , "s_axi_aclk"(For AXI CAN)
+>  +- clock-names		: List of input clock names
+>  +			  - "can_clk", "pclk" (For CANPS),
+>  +			  - "can_clk", "s_axi_aclk" (For AXI CAN and CAN FD).
+>   			  (See clock bindings for details).
+>   - clocks		: Clock phandles (see clock bindings for details).
+>  -- tx-fifo-depth		: Can Tx fifo depth.
+>  -- rx-fifo-depth		: Can Rx fifo depth.
+>  +- tx-fifo-depth		: Can Tx fifo depth (Zynq, Axi CAN).
+>  +- rx-fifo-depth		: Can Rx fifo depth (Zynq, Axi CAN, CAN FD in
+>  +                          sequential Rx mode).
+>  +- tx-mailbox-count	: Can Tx mailbox buffer count (CAN FD).
+>  +- rx-mailbox-count	: Can Rx mailbox buffer count (CAN FD in mailbox Rx
+>  +			  mode).
+>  =20
+>  =20
+>   Example:
 
-This is now a conflict between the crypto-current tree and the net-next
-tree.
+This is now a conflict between Linus' tree and the net-next tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/5o8nAnh_Uqd79A_ANVWGtV_
+--Sig_/eRuCqZV7WcAk3=1A0PnXURk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzmi4ACgkQAVBC80lX
-0GxORQf4xlZJYAR0z3mo8Vs/gRo6knlmBG5iT9REqwMU5anuxA2VrDU6OST2/C5f
-PMP1Kc5aBf5jyw3stH6ggP1uSP+YUBKR8V0fAY8iBTSbdprhWWI4oOCnyo1F6QPp
-V14BSULMMEUaVsLmddio82NUhWQjNPg0YIs4LSUmrsKBTD19LeZZBGeK9O3R1Uht
-VoDCf2fSsj+bIpj8KCZiTLhMWesJtbpDO7nauEw1rLHIdSzVray6isgRcRcrk4DU
-Q+wl1t8iymPt5+X7UV1KJJV4idh1EMa3C4cL1xnWQm58+VGG8WG92HmqFfmeySq9
-4a/lcKJholUVLzOwKSVRY5U//xyG
-=xFcW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzmnoACgkQAVBC80lX
+0GwsfAf/QBzY8MOdmPMAIi1qVMd2lEB4oHaLJedfvRyg713C/dLjcgrOgcCPQkZZ
+7iCVfNpM1fSzd0lgqKznd3UaCvYGLw+wMo1FvEiXu9LFdyyTTt40ZyH8uVSyS/k6
+qeKdtItoKAEtrrN4A9qzbeAevNWu4MeVIPgRajcl/dJt9lQpqAl/IgCR4r0+tAQh
+Z7OPmuCebxjkScS6geZ7mCaOhD7uM0fM+HwHrNgygtXRRAg0Abk3CKXN7yn8Dize
+nRwR2lwGp/Ls7w+FAwHvvdTlftxNBXlzW7dLVS9LsGx79/eLloXiFB6BOUgTsAqJ
+FZHOhSKvVCmDx4k+t+eQfkrMCASgrg==
+=pSFu
 -----END PGP SIGNATURE-----
 
---Sig_/5o8nAnh_Uqd79A_ANVWGtV_--
+--Sig_/eRuCqZV7WcAk3=1A0PnXURk--
