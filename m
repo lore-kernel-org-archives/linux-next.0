@@ -1,42 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- kbuild tree
-Date: Thu, 16 Aug 2018 09:55:30 +1000
-Message-ID: <20180816095530.5b3c9ecb@canb.auug.org.au>
-References: <20180803183653.4d394bcf@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kspp tree with the kbuild tree
+Date: Thu, 16 Aug 2018 09:56:28 +1000
+Message-ID: <20180816095628.686cba3a@canb.auug.org.au>
+References: <20180803173020.6ec4014b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WhVJZ.73GqrZNRLQbxG=4.T"; protocol="application/pgp-signature"
+ boundary="Sig_/A=wnYojCbZVTeGc27ID+O6Z"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180803183653.4d394bcf@canb.auug.org.au>
+In-Reply-To: <20180803173020.6ec4014b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Christoph Hellwig <hch@lst.de>
+To: Kees Cook <keescook@google.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WhVJZ.73GqrZNRLQbxG=4.T
+--Sig_/A=wnYojCbZVTeGc27ID+O6Z
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 3 Aug 2018 18:36:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+On Fri, 3 Aug 2018 17:30:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
 >
-> Today's linux-next merge of the akpm-current tree got a conflict in:
+> Today's linux-next merge of the kspp tree got a conflict in:
 >=20
->   lib/Kconfig.debug
+>   arch/Kconfig
 >=20
 > between commit:
 >=20
->   06ec64b84c35 ("Kconfig: consolidate the "Kernel hacking" menu")
+>   22471e1313f2 ("kconfig: use a menu in arch/Kconfig to reduce clutter")
 >=20
 > from the kbuild tree and commit:
 >=20
->   bbd89226bb66 ("fs/buffer.c: add debug print for __getblk_gfp() stall pr=
-oblem")
+>   45332b1bdfdc ("gcc-plugins: split out Kconfig entries to scripts/gcc-pl=
+ugins/Kconfig")
 >=20
-> from the akpm-current tree.
+> from the kspp tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -49,69 +48,38 @@ oblem")
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc lib/Kconfig.debug
-> index 46f755a60872,01ec99f1cf2e..000000000000
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@@ -1729,10 -1713,9 +1727,9 @@@ config KPROBES_SANITY_TES
->   	bool "Kprobes sanity tests"
->   	depends on DEBUG_KERNEL
->   	depends on KPROBES
-> - 	default n
->   	help
->   	  This option provides for testing basic kprobes functionality on
->  -	  boot. A sample kprobe, jprobe and kretprobe are inserted and
->  +	  boot. Samples of kprobe and kretprobe are inserted and
->   	  verified for functionality.
+> diff --cc arch/Kconfig
+> index 6cf1b17a8df2,43f315b84c8f..000000000000
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@@ -984,4 -836,4 +847,6 @@@ config REFCOUNT_FUL
 >  =20
->   	  Say N if you are unsure.
-> @@@ -1851,12 -1820,8 +1844,11 @@@ config TEST_HAS
->   	  This is intended to help people writing architecture-specific
->   	  optimized versions.  If unsure, say N.
+>   source "kernel/gcov/Kconfig"
 >  =20
->  +config TEST_IDA
->  +	tristate "Perform selftest on IDA functions"
->  +
->   config TEST_PARMAN
->   	tristate "Perform selftest on priority array manager"
-> - 	default n
->   	depends on PARMAN
->   	help
->   	  Enable this option to test priority array manager on boot
-> @@@ -2062,6 -2018,8 +2045,12 @@@ config IO_STRICT_DEVME
->  =20
->   	  If in doubt, say Y.
->  =20
-> + config DEBUG_AID_FOR_SYZBOT
-> +        bool "Additional debug code for syzbot"
-> +        default n
-> +        help
-> +          This option is intended for testing by syzbot.
+> + source "scripts/gcc-plugins/Kconfig"
 > ++
->  +source "arch/$(SRCARCH)/Kconfig.debug"
->  +
->  +endmenu # Kernel hacking
+>  +endmenu
 
-This is now a conflict between Linus' tree and the akpm-current tree.
+This is now a conflict between Linus' tree and the kspp tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/WhVJZ.73GqrZNRLQbxG=4.T
+--Sig_/A=wnYojCbZVTeGc27ID+O6Z
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0vXIACgkQAVBC80lX
-0GxqSwgAmOSJNo/nYCfFHZbZr7ytCrplrCElefErP1QoQ3j+2Xc41Hs76EqbW+OL
-bTB4zIphHd1B297WS0qjUpE/ZaBHESJl8+d8qDUn9/BrVfQSwGUtV49ZU6MlyhBD
-8Lw2Ev597TwxDqw1w6Ay7BKDi9sfXfiIhO5POwr/a20cuTWXhnDLat3a4ZTYKmLg
-XS9VQ/jwtAnCXu3VEjejg7NrU7aBOaVAvkRn2yErZ4jpLiLzQ0h5ZpItBrj5AiRf
-l/ZVMt8G8ZlR1bC5V7ByMYV4j24NQzexX3EWniU9qSWVFzKwPHtmSMAm+Hfm7kkV
-5vJrEGyApqDCWglIsxQGITZ6JZnNIg==
-=qcvH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0vawACgkQAVBC80lX
+0Gx3IggAlbLsi8+1ZYrdn3zGhq2NR0DV1BsbfqtUiB6NrzzDSlerpUei8Toc+lDJ
++h45As2mcjQtIMsmabx/UkmFNji03FpyXJz4Flr4F7UYpueYBxThL+R3S9CyHyFt
+Nylpk8Tskg/JuPyuFDepfWOKM6yX2yMI8bEZVwy68JKWZYdBZNcFJp9Ouki03rie
+OSfJ4hjtsdrkw0rDoOVW3MJNCHMu7RhKOjiAsZ/ua9H4oEtIiBa6Cg9O10Crk6Fg
+xa97yhtMZGJvLcsMOxcsj8AWzoNBLSbfwfKjcsyCFJoIcD+UR7ONM7meq0N1Cdeq
+qhMDtG6m02posVE2DIdcfX1u+dPQzg==
+=lEyr
 -----END PGP SIGNATURE-----
 
---Sig_/WhVJZ.73GqrZNRLQbxG=4.T--
+--Sig_/A=wnYojCbZVTeGc27ID+O6Z--
