@@ -1,159 +1,119 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net-next tree with the rdma
- tree
-Date: Thu, 16 Aug 2018 09:41:22 +1000
-Message-ID: <20180816094122.5db6dc79@canb.auug.org.au>
-References: <20180702102106.4ac2bd17@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ net-next tree
+Date: Thu, 16 Aug 2018 09:42:54 +1000
+Message-ID: <20180816094254.6e0bd68c@canb.auug.org.au>
+References: <20180723151224.69a73892@canb.auug.org.au>
+        <20180723062046.GA2577@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q5y.8tMXijdBNzeQesp0aZW"; protocol="application/pgp-signature"
+ boundary="Sig_/bh9Se7w29RaC.i6IXyvTQXF"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702102106.4ac2bd17@canb.auug.org.au>
+In-Reply-To: <20180723062046.GA2577@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Parav Pandit <parav@mellanox.com>
+To: Greg KH <greg@kroah.com>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rajat Jain <rajatja@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/q5y.8tMXijdBNzeQesp0aZW
+--Sig_/bh9Se7w29RaC.i6IXyvTQXF
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 2 Jul 2018 10:21:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Mon, 23 Jul 2018 08:20:46 +0200 Greg KH <greg@kroah.com> wrote:
 >
-> Today's linux-next merge of the net-next tree got a conflict in:
+> On Mon, Jul 23, 2018 at 03:12:24PM +1000, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the driver-core tree got a conflict in:
+> >=20
+> >   fs/sysfs/group.c
+> >=20
+> > between commit:
+> >=20
+> >   5f81880d5204 ("sysfs, kobject: allow creating kobject belonging to ar=
+bitrary users")
+> >=20
+> > from the net-next tree and commit:
+> >=20
+> >   c855cf2759d2 ("sysfs: Fix internal_create_group() for named group upd=
+ates")
+> >=20
+> > from the driver-core tree.
+> >=20
+> > I fixed it up (I think - see below) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.
+> >=20
+> > --=20
+> > Cheers,
+> > Stephen Rothwell
+> >=20
+> > diff --cc fs/sysfs/group.c
+> > index c7a716c4acc9,38240410f831..000000000000
+> > --- a/fs/sysfs/group.c
+> > +++ b/fs/sysfs/group.c
+> > @@@ -122,15 -118,23 +122,24 @@@ static int internal_create_group(struc
+> >   			kobj->name, grp->name ?: "");
+> >   		return -EINVAL;
+> >   	}
+> >  +	kobject_get_ownership(kobj, &uid, &gid);
+> >   	if (grp->name) {
+> > - 		kn =3D kernfs_create_dir_ns(kobj->sd, grp->name,
+> > - 					  S_IRWXU | S_IRUGO | S_IXUGO,
+> > - 					  uid, gid, kobj, NULL);
+> > - 		if (IS_ERR(kn)) {
+> > - 			if (PTR_ERR(kn) =3D=3D -EEXIST)
+> > - 				sysfs_warn_dup(kobj->sd, grp->name);
+> > - 			return PTR_ERR(kn);
+> > + 		if (update) {
+> > + 			kn =3D kernfs_find_and_get(kobj->sd, grp->name);
+> > + 			if (!kn) {
+> > + 				pr_warn("Can't update unknown attr grp name: %s/%s\n",
+> > + 					kobj->name, grp->name);
+> > + 				return -EINVAL;
+> > + 			}
+> > + 		} else {
+> >  -			kn =3D kernfs_create_dir(kobj->sd, grp->name,
+> >  -					       S_IRWXU | S_IRUGO | S_IXUGO,
+> >  -					       kobj);
+> > ++			kn =3D kernfs_create_dir_ns(kobj->sd, grp->name,
+> > ++						  S_IRWXU | S_IRUGO | S_IXUGO,
+> > ++						  uid, gid, kobj, NULL);
+> > + 			if (IS_ERR(kn)) {
+> > + 				if (PTR_ERR(kn) =3D=3D -EEXIST)
+> > + 					sysfs_warn_dup(kobj->sd, grp->name);
+> > + 				return PTR_ERR(kn);
+> > + 			}
+> >   		}
+> >   	} else
+> >   		kn =3D kobj->sd; =20
 >=20
->   net/smc/smc_ib.c
 >=20
-> between commit:
->=20
->   ddb457c6993b ("net/smc: Replace ib_query_gid with rdma_get_gid_attr")
->=20
-> from the rdma tree and commit:
->=20
->   be6a3f38ff2a ("net/smc: determine port attributes independent from pnet=
- table")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc net/smc/smc_ib.c
-> index 74f29f814ec1,36de2fd76170..000000000000
-> --- a/net/smc/smc_ib.c
-> +++ b/net/smc/smc_ib.c
-> @@@ -144,6 -143,62 +144,66 @@@ out
->   	return rc;
->   }
->  =20
-> + static int smc_ib_fill_gid_and_mac(struct smc_ib_device *smcibdev, u8 i=
-bport)
-> + {
->  -	struct ib_gid_attr gattr;
->  -	int rc;
->  -
->  -	rc =3D ib_query_gid(smcibdev->ibdev, ibport, 0,
->  -			  &smcibdev->gid[ibport - 1], &gattr);
->  -	if (rc || !gattr.ndev)
->  -		return -ENODEV;
-> ++	const struct ib_gid_attr *gattr;
-> ++	int rc =3D 0;
-> +=20
->  -	memcpy(smcibdev->mac[ibport - 1], gattr.ndev->dev_addr, ETH_ALEN);
->  -	dev_put(gattr.ndev);
->  -	return 0;
-> ++	gattr =3D rdma_get_gid_attr(smcibdev->ibdev, ibport, 0);
-> ++	if (IS_ERR(gattr))
-> ++		return PTR_ERR(gattr);
-> ++	if (!gattr->ndev) {
-> ++		rc =3D -ENODEV;
-> ++		goto done;
-> ++	}
-> ++	smcibdev->gid[ibport - 1] =3D gattr->gid;
-> ++	memcpy(smcibdev->mac[ibport - 1], gattr->ndev->dev_addr, ETH_ALEN);
-> ++done:
-> ++	rdma_put_gid_attr(gattr);
-> ++	return rc;
-> + }
-> +=20
-> + /* Create an identifier unique for this instance of SMC-R.
-> +  * The MAC-address of the first active registered IB device
-> +  * plus a random 2-byte number is used to create this identifier.
-> +  * This name is delivered to the peer during connection initialization.
-> +  */
-> + static inline void smc_ib_define_local_systemid(struct smc_ib_device *s=
-mcibdev,
-> + 						u8 ibport)
-> + {
-> + 	memcpy(&local_systemid[2], &smcibdev->mac[ibport - 1],
-> + 	       sizeof(smcibdev->mac[ibport - 1]));
-> + 	get_random_bytes(&local_systemid[0], 2);
-> + }
-> +=20
-> + bool smc_ib_port_active(struct smc_ib_device *smcibdev, u8 ibport)
-> + {
-> + 	return smcibdev->pattr[ibport - 1].state =3D=3D IB_PORT_ACTIVE;
-> + }
-> +=20
-> + static int smc_ib_remember_port_attr(struct smc_ib_device *smcibdev, u8=
- ibport)
-> + {
-> + 	int rc;
-> +=20
-> + 	memset(&smcibdev->pattr[ibport - 1], 0,
-> + 	       sizeof(smcibdev->pattr[ibport - 1]));
-> + 	rc =3D ib_query_port(smcibdev->ibdev, ibport,
-> + 			   &smcibdev->pattr[ibport - 1]);
-> + 	if (rc)
-> + 		goto out;
-> + 	/* the SMC protocol requires specification of the RoCE MAC address */
-> + 	rc =3D smc_ib_fill_gid_and_mac(smcibdev, ibport);
-> + 	if (rc)
-> + 		goto out;
-> + 	if (!strncmp(local_systemid, SMC_LOCAL_SYSTEMID_RESET,
-> + 		     sizeof(local_systemid)) &&
-> + 	    smc_ib_port_active(smcibdev, ibport))
-> + 		/* create unique system identifier */
-> + 		smc_ib_define_local_systemid(smcibdev, ibport);
-> + out:
-> + 	return rc;
-> + }
-> +=20
->   /* process context wrapper for might_sleep smc_ib_remember_port_attr */
->   static void smc_ib_port_event_work(struct work_struct *work)
->   {
+> I think this is correct.  Rajat, can you verify it please?
 
-This is now a conflict between Linus' tree and the rdma tree.
-
+This is now a conflict between Linus' tree and the driver-core tree.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/q5y.8tMXijdBNzeQesp0aZW
+--Sig_/bh9Se7w29RaC.i6IXyvTQXF
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0uiIACgkQAVBC80lX
-0GxrsAf/WYpGh9nOZoybrY2Q54eit8JEsojF5K9BV25Z/HswXe11KYLpHMeDWYXu
-WY+TpOTQUFSQIjujOs02zR99s4I6y/cNNz8p28tfl1Nzy/pzuBIqnhzjOr0oEW0A
-PfKeP78uBNDoXREhl0XTdU8So2BmAbgBaLf0OUZJzZjnB5I05+N30lVYGtaEGmb7
-807LYa4ZnddS9laa/CvET75h+RyNvY0rdeIO8CUbD7uectAU7LCn+ZSBMO7TKPDt
-CtEjws5rG/lNt/mhlX0xAYm8YU/MPZnL25xVh57kR0I60Wmzwf/iIwH4r5mWgrdj
-j7SxgcxBUdhbWKRJpcMEFopwtqVWIQ==
-=XUla
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0un4ACgkQAVBC80lX
+0GyHMgf/a2VZOQWc1+FZ6tJHxodPJcLTFq3WaG66u4m+NUQScbi70y6AcxiGfFs2
+2PWaVGWrnAbkNv8eX/ZVygPJG7OwKKj6aZuf9EkM7poW1Kod3PHt+ouju2CbSUbA
+bjvQu0+J7nSppnOF/qcp48Ywnhywy6/Y0IFss9PuOdP2l+TfE28+FzYaputLY9UL
+0IPREiCY7dUrL5tfWpCI40M0n51oTM0/6JmWWSo4uEOFoBJZLV1hEzV29DpQPi+0
+IMPBehBI3CLwWYyQ90b/7KLFA3e7Z0nxusmVne+tIm009VwtK1btBPRpjhjO5evY
+yL/jFPoDFQnxP3DhDRSATeyK8muRKg==
+=sRWr
 -----END PGP SIGNATURE-----
 
---Sig_/q5y.8tMXijdBNzeQesp0aZW--
+--Sig_/bh9Se7w29RaC.i6IXyvTQXF--
