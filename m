@@ -1,42 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the block tree with the rdma tree
-Date: Wed, 15 Aug 2018 11:45:39 +1000
-Message-ID: <20180815114539.34e066e1@canb.auug.org.au>
-References: <20180726135804.0257047e@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the rdma tree
+Date: Wed, 15 Aug 2018 11:51:30 +1000
+Message-ID: <20180815115130.03dbbbce@canb.auug.org.au>
+References: <20180806145331.68538a0b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uGvrInghv6l22HbdGxyUkCh"; protocol="application/pgp-signature"
+ boundary="Sig_/zOcmKmKGd1wbzSdKd=XJ8pm"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180726135804.0257047e@canb.auug.org.au>
+In-Reply-To: <20180806145331.68538a0b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>, Max Gurtovoy <maxg@mellanox.com>, Christoph Hellwig <hch@lst.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/uGvrInghv6l22HbdGxyUkCh
+--Sig_/zOcmKmKGd1wbzSdKd=XJ8pm
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 26 Jul 2018 13:58:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Mon, 6 Aug 2018 14:53:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> Today's linux-next merge of the block tree got a conflict in:
+> Today's linux-next merge of the tip tree got a conflict in:
 >=20
->   drivers/nvme/target/rdma.c
+>   drivers/infiniband/core/rdma_core.c
 >=20
 > between commit:
 >=20
->   23f96d1f15a7 ("nvmet-rdma: Simplify ib_post_(send|recv|srq_recv)() call=
-s")
->   202093848cac ("nvmet-rdma: add an error flow for post_recv failures")
+>   9867f5c6695f ("IB/uverbs: Convert 'bool exclusive' into an enum")
 >=20
-> from the rdma tree and commits:
+> from the rdma tree and commit:
 >=20
->   2fc464e2162c ("nvmet-rdma: add unlikely check in the fast path")
+>   bfc18e389c7a ("atomics/treewide: Rename __atomic_add_unless() =3D> atom=
+ic_fetch_add_unless()")
 >=20
-> from the block tree.
+> from the tip tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -49,48 +48,235 @@ s")
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc drivers/nvme/target/rdma.c
-> index 1a642e214a4c,e7f43d1e1779..000000000000
-> --- a/drivers/nvme/target/rdma.c
-> +++ b/drivers/nvme/target/rdma.c
-> @@@ -382,13 -435,22 +435,21 @@@ static void nvmet_rdma_free_rsps(struc
->   static int nvmet_rdma_post_recv(struct nvmet_rdma_device *ndev,
->   		struct nvmet_rdma_cmd *cmd)
->   {
->  -	struct ib_recv_wr *bad_wr;
-> + 	int ret;
-> +=20
->   	ib_dma_sync_single_for_device(ndev->device,
->   		cmd->sge[0].addr, cmd->sge[0].length,
->   		DMA_FROM_DEVICE);
+> diff --cc drivers/infiniband/core/rdma_core.c
+> index 4235b9ddc2ad,475910ffbcb6..000000000000
+> --- a/drivers/infiniband/core/rdma_core.c
+> +++ b/drivers/infiniband/core/rdma_core.c
+> @@@ -122,206 -120,19 +122,206 @@@ static int uverbs_try_lock_object(struc
+>   	 * concurrently, setting the counter to zero is enough for releasing
+>   	 * this lock.
+>   	 */
+>  -	if (!exclusive)
+>  +	switch (mode) {
+>  +	case UVERBS_LOOKUP_READ:
+> - 		return __atomic_add_unless(&uobj->usecnt, 1, -1) =3D=3D -1 ?
+> + 		return atomic_fetch_add_unless(&uobj->usecnt, 1, -1) =3D=3D -1 ?
+>   			-EBUSY : 0;
+>  +	case UVERBS_LOOKUP_WRITE:
+>  +		/* lock is exclusive */
+>  +		return atomic_cmpxchg(&uobj->usecnt, 0, -1) =3D=3D 0 ? 0 : -EBUSY;
+>  +	case UVERBS_LOOKUP_DESTROY:
+>  +		return 0;
+>  +	}
+>  +	return 0;
+>  +}
+>  +
+>  +static void assert_uverbs_usecnt(struct ib_uobject *uobj,
+>  +				 enum rdma_lookup_mode mode)
+>  +{
+>  +#ifdef CONFIG_LOCKDEP
+>  +	switch (mode) {
+>  +	case UVERBS_LOOKUP_READ:
+>  +		WARN_ON(atomic_read(&uobj->usecnt) <=3D 0);
+>  +		break;
+>  +	case UVERBS_LOOKUP_WRITE:
+>  +		WARN_ON(atomic_read(&uobj->usecnt) !=3D -1);
+>  +		break;
+>  +	case UVERBS_LOOKUP_DESTROY:
+>  +		break;
+>  +	}
+>  +#endif
+>  +}
+>  +
+>  +/*
+>  + * This must be called with the hw_destroy_rwsem locked for read or wri=
+te,
+>  + * also the uobject itself must be locked for write.
+>  + *
+>  + * Upon return the HW object is guaranteed to be destroyed.
+>  + *
+>  + * For RDMA_REMOVE_ABORT, the hw_destroy_rwsem is not required to be he=
+ld,
+>  + * however the type's allocat_commit function cannot have been called a=
+nd the
+>  + * uobject cannot be on the uobjects_lists
+>  + *
+>  + * For RDMA_REMOVE_DESTROY the caller shold be holding a kref (eg via
+>  + * rdma_lookup_get_uobject) and the object is left in a state where the=
+ caller
+>  + * needs to call rdma_lookup_put_uobject.
+>  + *
+>  + * For all other destroy modes this function internally unlocks the uob=
+ject
+>  + * and consumes the kref on the uobj.
+>  + */
+>  +static int uverbs_destroy_uobject(struct ib_uobject *uobj,
+>  +				  enum rdma_remove_reason reason)
+>  +{
+>  +	struct ib_uverbs_file *ufile =3D uobj->ufile;
+>  +	unsigned long flags;
+>  +	int ret;
+>  +
+>  +	lockdep_assert_held(&ufile->hw_destroy_rwsem);
+>  +	assert_uverbs_usecnt(uobj, UVERBS_LOOKUP_WRITE);
+>  +
+>  +	if (uobj->object) {
+>  +		ret =3D uobj->type->type_class->destroy_hw(uobj, reason);
+>  +		if (ret) {
+>  +			if (ib_is_destroy_retryable(ret, reason, uobj))
+>  +				return ret;
+>  +
+>  +			/* Nothing to be done, dangle the memory and move on */
+>  +			WARN(true,
+>  +			     "ib_uverbs: failed to remove uobject id %d, driver err=3D%d",
+>  +			     uobj->id, ret);
+>  +		}
+>  +
+>  +		uobj->object =3D NULL;
+>  +	}
+>  +
+>  +	if (reason =3D=3D RDMA_REMOVE_ABORT) {
+>  +		WARN_ON(!list_empty(&uobj->list));
+>  +		WARN_ON(!uobj->context);
+>  +		uobj->type->type_class->alloc_abort(uobj);
+>  +	}
+>  +
+>  +	uobj->context =3D NULL;
+>  +
+>  +	/*
+>  +	 * For DESTROY the usecnt is held write locked, the caller is expected
+>  +	 * to put it unlock and put the object when done with it. Only DESTROY
+>  +	 * can remove the IDR handle.
+>  +	 */
+>  +	if (reason !=3D RDMA_REMOVE_DESTROY)
+>  +		atomic_set(&uobj->usecnt, 0);
+>  +	else
+>  +		uobj->type->type_class->remove_handle(uobj);
+>  +
+>  +	if (!list_empty(&uobj->list)) {
+>  +		spin_lock_irqsave(&ufile->uobjects_lock, flags);
+>  +		list_del_init(&uobj->list);
+>  +		spin_unlock_irqrestore(&ufile->uobjects_lock, flags);
+>  +
+>  +		/*
+>  +		 * Pairs with the get in rdma_alloc_commit_uobject(), could
+>  +		 * destroy uobj.
+>  +		 */
+>  +		uverbs_uobject_put(uobj);
+>  +	}
 >  =20
->   	if (ndev->srq)
-> - 		return ib_post_srq_recv(ndev->srq, &cmd->wr, NULL);
-> - 	return ib_post_recv(cmd->queue->cm_id->qp, &cmd->wr, NULL);
->  -		ret =3D ib_post_srq_recv(ndev->srq, &cmd->wr, &bad_wr);
-> ++		ret =3D ib_post_srq_recv(ndev->srq, &cmd->wr, NULL);
-> + 	else
->  -		ret =3D ib_post_recv(cmd->queue->cm_id->qp, &cmd->wr, &bad_wr);
-> ++		ret =3D ib_post_recv(cmd->queue->cm_id->qp, &cmd->wr, NULL);
-> +=20
-> + 	if (unlikely(ret))
-> + 		pr_err("post_recv cmd failed\n");
-> +=20
-> + 	return ret;
+>  -	/* lock is either WRITE or DESTROY - should be exclusive */
+>  -	return atomic_cmpxchg(&uobj->usecnt, 0, -1) =3D=3D 0 ? 0 : -EBUSY;
+>  +	/*
+>  +	 * When aborting the stack kref remains owned by the core code, and is
+>  +	 * not transferred into the type. Pairs with the get in alloc_uobj
+>  +	 */
+>  +	if (reason =3D=3D RDMA_REMOVE_ABORT)
+>  +		uverbs_uobject_put(uobj);
+>  +
+>  +	return 0;
 >   }
 >  =20
->   static void nvmet_rdma_process_wr_wait_list(struct nvmet_rdma_queue *qu=
-eue)
-> @@@ -491,7 -553,7 +552,7 @@@ static void nvmet_rdma_queue_response(s
->   		rsp->send_sge.addr, rsp->send_sge.length,
->   		DMA_TO_DEVICE);
+>  -static struct ib_uobject *alloc_uobj(struct ib_ucontext *context,
+>  +/*
+>  + * This calls uverbs_destroy_uobject() using the RDMA_REMOVE_DESTROY
+>  + * sequence. It should only be used from command callbacks. On success =
+the
+>  + * caller must pair this with rdma_lookup_put_uobject(LOOKUP_WRITE). Th=
+is
+>  + * version requires the caller to have already obtained an
+>  + * LOOKUP_DESTROY uobject kref.
+>  + */
+>  +int uobj_destroy(struct ib_uobject *uobj)
+>  +{
+>  +	struct ib_uverbs_file *ufile =3D uobj->ufile;
+>  +	int ret;
+>  +
+>  +	down_read(&ufile->hw_destroy_rwsem);
+>  +
+>  +	ret =3D uverbs_try_lock_object(uobj, UVERBS_LOOKUP_WRITE);
+>  +	if (ret)
+>  +		goto out_unlock;
+>  +
+>  +	ret =3D uverbs_destroy_uobject(uobj, RDMA_REMOVE_DESTROY);
+>  +	if (ret) {
+>  +		atomic_set(&uobj->usecnt, 0);
+>  +		goto out_unlock;
+>  +	}
+>  +
+>  +out_unlock:
+>  +	up_read(&ufile->hw_destroy_rwsem);
+>  +	return ret;
+>  +}
+>  +
+>  +/*
+>  + * uobj_get_destroy destroys the HW object and returns a handle to the =
+uobj
+>  + * with a NULL object pointer. The caller must pair this with
+>  + * uverbs_put_destroy.
+>  + */
+>  +struct ib_uobject *__uobj_get_destroy(const struct uverbs_obj_type *typ=
+e,
+>  +				      u32 id, struct ib_uverbs_file *ufile)
+>  +{
+>  +	struct ib_uobject *uobj;
+>  +	int ret;
+>  +
+>  +	uobj =3D rdma_lookup_get_uobject(type, ufile, id, UVERBS_LOOKUP_DESTRO=
+Y);
+>  +	if (IS_ERR(uobj))
+>  +		return uobj;
+>  +
+>  +	ret =3D uobj_destroy(uobj);
+>  +	if (ret) {
+>  +		rdma_lookup_put_uobject(uobj, UVERBS_LOOKUP_DESTROY);
+>  +		return ERR_PTR(ret);
+>  +	}
+>  +
+>  +	return uobj;
+>  +}
+>  +
+>  +/*
+>  + * Does both uobj_get_destroy() and uobj_put_destroy().  Returns succes=
+s_res
+>  + * on success (negative errno on failure). For use by callers that do n=
+ot need
+>  + * the uobj.
+>  + */
+>  +int __uobj_perform_destroy(const struct uverbs_obj_type *type, u32 id,
+>  +			   struct ib_uverbs_file *ufile, int success_res)
+>  +{
+>  +	struct ib_uobject *uobj;
+>  +
+>  +	uobj =3D __uobj_get_destroy(type, id, ufile);
+>  +	if (IS_ERR(uobj))
+>  +		return PTR_ERR(uobj);
+>  +
+>  +	/*
+>  +	 * FIXME: After destroy this is not safe. We no longer hold the rwsem
+>  +	 * so disassociation could have completed and unloaded the module that
+>  +	 * backs the uobj->type pointer.
+>  +	 */
+>  +	rdma_lookup_put_uobject(uobj, UVERBS_LOOKUP_WRITE);
+>  +	return success_res;
+>  +}
+>  +
+>  +/* alloc_uobj must be undone by uverbs_destroy_uobject() */
+>  +static struct ib_uobject *alloc_uobj(struct ib_uverbs_file *ufile,
+>   				     const struct uverbs_obj_type *type)
+>   {
+>  -	struct ib_uobject *uobj =3D kzalloc(type->obj_size, GFP_KERNEL);
+>  +	struct ib_uobject *uobj;
+>  +	struct ib_ucontext *ucontext;
+>  +
+>  +	ucontext =3D ib_uverbs_get_ucontext(ufile);
+>  +	if (IS_ERR(ucontext))
+>  +		return ERR_CAST(ucontext);
 >  =20
-> - 	if (ib_post_send(cm_id->qp, first_wr, NULL)) {
->  -	if (unlikely(ib_post_send(cm_id->qp, first_wr, &bad_wr))) {
-> ++	if (unlikely(ib_post_send(cm_id->qp, first_wr, NULL))) {
->   		pr_err("sending cmd response failed\n");
->   		nvmet_rdma_release_rsp(rsp);
->   	}
+>  +	uobj =3D kzalloc(type->obj_size, GFP_KERNEL);
+>   	if (!uobj)
+>   		return ERR_PTR(-ENOMEM);
+>   	/*
 
 This is now a conflict between Linus' tree and the rdma tree.
 
@@ -98,20 +284,20 @@ This is now a conflict between Linus' tree and the rdma tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/uGvrInghv6l22HbdGxyUkCh
+--Sig_/zOcmKmKGd1wbzSdKd=XJ8pm
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzhcMACgkQAVBC80lX
-0Gz5Twf/WTBitw/e7LzZv6VSBRZGzjVM1u6Z9lkiDtilGfxLVlZVb/TYCQ40liZ+
-CmffmEIVejwXqC3SRQpByXBVUfELeXNJlHHBK6gWXt7uo63NSkqbCHY04fUM1I3n
-cAoExhVg6Qggxf4xJ2Qs0hKxIam6Ms7RRqIGACcI93pGO9YbPvYy8To9EdBsx1x0
-FTQpPOKvlkU9p0MZCZ6lYt1zCGiJcEsYsdVf7cGrRYI0gFdqsfVhVH00SxMrsLKd
-+rJr1D5Ev7x04kg/7grU0qVZn0e5+pLFytIKvRCDSIBNYxj1S2RPorb+y7fVU8oH
-8qK6xWqDBCMzp27ukRri+kU/ZeUgoQ==
-=WcCg
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzhyIACgkQAVBC80lX
+0Gyg+Af+Lv18Y1xa+/ba6R2Kw8jzz62Ym3xr0x45z0tt2pC3khexKtuQBxLosWGA
+Oo8KGdWvVil8vo0S6TSQ7Dh+zewYtSB3NEye7NQ9AFNAyBJwwSmiUwyvZo/mkNgj
+KU6KdBHx3ANADrATnIuJK56RHJkOvtbD4KuczffiP3VZGLpLYMwuFp3mONEYrU1w
+lu3IOkzjDxrzzJyBK3f8OInH6iUyoMAshu/Is7zE/pAfu/bH9LLBFn2Mu3UYsnqY
+5vD76/GYHnRgdAHwS34+UrXeCyRBWR2cpP052j4DdlnOtCCIOrJ3NFRpq0ykcrFR
+4ydAAPxjEjkgcEjRQlMdFloFNQqvJg==
+=ocjY
 -----END PGP SIGNATURE-----
 
---Sig_/uGvrInghv6l22HbdGxyUkCh--
+--Sig_/zOcmKmKGd1wbzSdKd=XJ8pm--
