@@ -1,115 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the devicetree tree with the
- net-next tree
-Date: Wed, 15 Aug 2018 13:14:02 +1000
-Message-ID: <20180815131402.271492d4@canb.auug.org.au>
-References: <20180730143645.7bcd563b@canb.auug.org.au>
+Subject: linux-next: manual merge of the ftrace tree with Linus' tree
+Date: Wed, 15 Aug 2018 14:04:16 +1000
+Message-ID: <20180815140416.200fd873@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eRuCqZV7WcAk3=1A0PnXURk"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180730143645.7bcd563b@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Rob Herring <robherring2@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anssi Hannula <anssi.hannula@bitwise.fi>
+ boundary="Sig_/gVAgX7Kb+mYpBsve7JXvxyX"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tobias Tefke <tobias.tefke@gmail.com>, Ingo Molnar <mingo@kernel.org>, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/eRuCqZV7WcAk3=1A0PnXURk
+--Sig_/gVAgX7Kb+mYpBsve7JXvxyX
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Steven,
 
-On Mon, 30 Jul 2018 14:37:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the devicetree tree got a conflict in:
->=20
->   Documentation/devicetree/bindings/net/can/xilinx_can.txt
->=20
-> between commit:
->=20
->   7cb0f17f5252 ("dt-bindings: can: xilinx_can: add Xilinx CAN FD bindings=
-")
->=20
-> from the net-next tree and commit:
->=20
->   791d3ef2e111 ("dt-bindings: remove 'interrupt-parent' from bindings")
->=20
-> from the devicetree tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc Documentation/devicetree/bindings/net/can/xilinx_can.txt
-> index ae5c07e96ad5,9264d2f6a89d..000000000000
-> --- a/Documentation/devicetree/bindings/net/can/xilinx_can.txt
-> +++ b/Documentation/devicetree/bindings/net/can/xilinx_can.txt
-> @@@ -2,26 -2,19 +2,25 @@@ Xilinx Axi CAN/Zynq CANPS controller De
->   ---------------------------------------------------------
->  =20
->   Required properties:
->  -- compatible		: Should be "xlnx,zynq-can-1.0" for Zynq CAN
->  -			  controllers and "xlnx,axi-can-1.00.a" for Axi CAN
->  -			  controllers.
->  -- reg			: Physical base address and size of the Axi CAN/Zynq
->  -			  CANPS registers map.
->  +- compatible		: Should be:
->  +			  - "xlnx,zynq-can-1.0" for Zynq CAN controllers
->  +			  - "xlnx,axi-can-1.00.a" for Axi CAN controllers
->  +			  - "xlnx,canfd-1.0" for CAN FD controllers
->  +- reg			: Physical base address and size of the controller
->  +			  registers map.
->   - interrupts		: Property with a value describing the interrupt
->   			  number.
-> - - interrupt-parent	: Must be core interrupt controller
->  -- clock-names		: List of input clock names - "can_clk", "pclk"
->  -			  (For CANPS), "can_clk" , "s_axi_aclk"(For AXI CAN)
->  +- clock-names		: List of input clock names
->  +			  - "can_clk", "pclk" (For CANPS),
->  +			  - "can_clk", "s_axi_aclk" (For AXI CAN and CAN FD).
->   			  (See clock bindings for details).
->   - clocks		: Clock phandles (see clock bindings for details).
->  -- tx-fifo-depth		: Can Tx fifo depth.
->  -- rx-fifo-depth		: Can Rx fifo depth.
->  +- tx-fifo-depth		: Can Tx fifo depth (Zynq, Axi CAN).
->  +- rx-fifo-depth		: Can Rx fifo depth (Zynq, Axi CAN, CAN FD in
->  +                          sequential Rx mode).
->  +- tx-mailbox-count	: Can Tx mailbox buffer count (CAN FD).
->  +- rx-mailbox-count	: Can Rx mailbox buffer count (CAN FD in mailbox Rx
->  +			  mode).
->  =20
->  =20
->   Example:
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-This is now a conflict between Linus' tree and the net-next tree.
+  kernel/events/uprobes.c
+
+between commit:
+
+  788faab70d5a ("perf, tools: Use correct articles in comments")
+
+from Linus' tree and commit:
+
+  38e967ae1e60 ("Uprobes: Simplify uprobe_register() body")
+
+from the ftrace tree.
+
+I fixed it up (the latter moved the uprobe_unregister function - see
+below) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/eRuCqZV7WcAk3=1A0PnXURk
+diff --cc kernel/events/uprobes.c
+index aed1ba569954,c0418ba52ba8..000000000000
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@@ -860,7 -856,28 +856,28 @@@ __uprobe_unregister(struct uprobe *upro
+  }
+ =20
+  /*
+-  * uprobe_register - register a probe
+ - * uprobe_unregister - unregister a already registered probe.
+++ * uprobe_unregister - unregister an already registered probe.
++  * @inode: the file in which the probe has to be removed.
++  * @offset: offset from the start of the file.
++  * @uc: identify which probe if multiple probes are colocated.
++  */
++ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_=
+consumer *uc)
++ {
++ 	struct uprobe *uprobe;
++=20
++ 	uprobe =3D find_uprobe(inode, offset);
++ 	if (WARN_ON(!uprobe))
++ 		return;
++=20
++ 	down_write(&uprobe->register_rwsem);
++ 	__uprobe_unregister(uprobe, uc);
++ 	up_write(&uprobe->register_rwsem);
++ 	put_uprobe(uprobe);
++ }
++ EXPORT_SYMBOL_GPL(uprobe_unregister);
++=20
++ /*
++  * __uprobe_register - register a probe
+   * @inode: the file in which the probe has to be placed.
+   * @offset: offset from the start of the file.
+   * @uc: information on howto handle the probe..
+
+--Sig_/gVAgX7Kb+mYpBsve7JXvxyX
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzmnoACgkQAVBC80lX
-0GwsfAf/QBzY8MOdmPMAIi1qVMd2lEB4oHaLJedfvRyg713C/dLjcgrOgcCPQkZZ
-7iCVfNpM1fSzd0lgqKznd3UaCvYGLw+wMo1FvEiXu9LFdyyTTt40ZyH8uVSyS/k6
-qeKdtItoKAEtrrN4A9qzbeAevNWu4MeVIPgRajcl/dJt9lQpqAl/IgCR4r0+tAQh
-Z7OPmuCebxjkScS6geZ7mCaOhD7uM0fM+HwHrNgygtXRRAg0Abk3CKXN7yn8Dize
-nRwR2lwGp/Ls7w+FAwHvvdTlftxNBXlzW7dLVS9LsGx79/eLloXiFB6BOUgTsAqJ
-FZHOhSKvVCmDx4k+t+eQfkrMCASgrg==
-=pSFu
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltzpkAACgkQAVBC80lX
+0GxxRgf/Q7J755A4ifHF3e6c0oHwsvlSzs2wB+Sv8jTCeCq57rt2DF6kivlWbsm1
+TS3O6MRrB1DGv25VMk6xg4/Wxg5c2qWMX/GZbCNrVFv9zyRcdr3jOocaDypDXNRN
+OXk7MpvNUwIu/tZK90tOp4DvnL3yq4R3VFXAlCdqE2vQeIV7FxAa4IfcPqw6L2Ei
+Sby0JZNe/E0V7hEKF8HEtgNfreiG97XxjOH/RD15HEHSkhWyVXuktbfFBupRA7Y0
+vWvrD3zQ0WfxP8eKohDP1Q1XDoDSPotEW0yDrUcZqsnlPPZrBQTLYBMstHmRRiNr
+GtqbKy59SaPPt1AMC2WzfT51BOoixg==
+=RkdF
 -----END PGP SIGNATURE-----
 
---Sig_/eRuCqZV7WcAk3=1A0PnXURk--
+--Sig_/gVAgX7Kb+mYpBsve7JXvxyX--
