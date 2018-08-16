@@ -1,42 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64
+Subject: Re: linux-next: manual merge of the mfd tree with the drm-intel
  tree
-Date: Thu, 16 Aug 2018 10:15:15 +1000
-Message-ID: <20180816101515.24d0b49f@canb.auug.org.au>
-References: <20180723144641.62b2b226@canb.auug.org.au>
+Date: Thu, 16 Aug 2018 12:12:56 +1000
+Message-ID: <20180816121256.0435930e@canb.auug.org.au>
+References: <20180726151006.345e8397@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_drNc1zMIutlJWBHBs63jx2"; protocol="application/pgp-signature"
+ boundary="Sig_/ex_lo=vQHCdeSqjX49RZ7=."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180723144641.62b2b226@canb.auug.org.au>
+In-Reply-To: <20180726151006.345e8397@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Paulo Zanoni <paulo.r.zanoni@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_drNc1zMIutlJWBHBs63jx2
+--Sig_/ex_lo=vQHCdeSqjX49RZ7=.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 23 Jul 2018 14:46:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Thu, 26 Jul 2018 15:10:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
+> Today's linux-next merge of the mfd tree got a conflict in:
 >=20
->   arch/arm64/include/asm/cpucaps.h
+>   drivers/gpu/drm/i915/intel_display.h
 >=20
 > between commit:
 >=20
->   314d53d29798 ("arm64: Handle mismatched cache type")
+>   6075546f57f8 ("drm/i915/icl: store the port type for TC ports")
 >=20
-> from the arm64 tree and commit:
+> from the drm-intel tree and commit:
 >=20
->   e48d53a91f6e ("arm64: KVM: Add support for Stage-2 control of memory ty=
-pes and cacheability")
+>   9c229127aee2 ("drm/i915: hdmi: add CEC notifier to intel_hdmi")
 >=20
-> from the kvm-arm tree.
+> from the mfd tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -49,44 +48,80 @@ pes and cacheability")
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc arch/arm64/include/asm/cpucaps.h
-> index be3bf3d08916,ed84d6536830..000000000000
-> --- a/arch/arm64/include/asm/cpucaps.h
-> +++ b/arch/arm64/include/asm/cpucaps.h
-> @@@ -49,8 -49,8 +49,9 @@@
->   #define ARM64_HAS_CACHE_DIC			28
->   #define ARM64_HW_DBM				29
->   #define ARM64_SSBD				30
->  -#define ARM64_HAS_STAGE2_FWB			31
->  +#define ARM64_MISMATCHED_CACHE_TYPE		31
-> ++#define ARM64_HAS_STAGE2_FWB			32
+> diff --cc drivers/gpu/drm/i915/intel_display.h
+> index 0a79a46d5805,1f176a71e081..000000000000
+> --- a/drivers/gpu/drm/i915/intel_display.h
+> +++ b/drivers/gpu/drm/i915/intel_display.h
+> @@@ -126,24 -126,30 +126,48 @@@ enum port=20
 >  =20
-> --#define ARM64_NCAPS				32
-> ++#define ARM64_NCAPS				33
+>   #define port_name(p) ((p) + 'A')
 >  =20
->   #endif /* __ASM_CPUCAPS_H */
+> + /*
+> +  * Ports identifier referenced from other drivers.
+> +  * Expected to remain stable over time
+> +  */
+> + static inline const char *port_identifier(enum port port)
+> + {
+> + 	switch (port) {
+> + 	case PORT_A:
+> + 		return "Port A";
+> + 	case PORT_B:
+> + 		return "Port B";
+> + 	case PORT_C:
+> + 		return "Port C";
+> + 	case PORT_D:
+> + 		return "Port D";
+> + 	case PORT_E:
+> + 		return "Port E";
+> + 	case PORT_F:
+> + 		return "Port F";
+> + 	default:
+> + 		return "<invalid>";
+> + 	}
+> + }
+> +=20
+>  +enum tc_port {
+>  +	PORT_TC_NONE =3D -1,
+>  +
+>  +	PORT_TC1 =3D 0,
+>  +	PORT_TC2,
+>  +	PORT_TC3,
+>  +	PORT_TC4,
+>  +
+>  +	I915_MAX_TC_PORTS
+>  +};
+>  +
+>  +enum tc_port_type {
+>  +	TC_PORT_UNKNOWN =3D 0,
+>  +	TC_PORT_TYPEC,
+>  +	TC_PORT_TBT,
+>  +	TC_PORT_LEGACY,
+>  +};
+>  +
+>   enum dpio_channel {
+>   	DPIO_CH0,
+>   	DPIO_CH1
 
-This is now a conflict between Linus' tree and the kvm-arm tree (and
-presumably soon the kvm tree).
+This is now a conflict between Linus' tree and the mfd tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/_drNc1zMIutlJWBHBs63jx2
+--Sig_/ex_lo=vQHCdeSqjX49RZ7=.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt0whMACgkQAVBC80lX
-0GywpAf/Xr+5TKHad/aBC+S0xL1NjioQRkIccxPgha+z3hOACtzgnsqCwCkLOHLw
-vq6ZtVwhzvCRhy0ra6jmKEgb+8RnvlkKtRxTNU67mj8oKMfaSofWqz50o0qKlUlQ
-QllYc9Fn/jkuSrKyW2ZiSdEYLuLyXcim1KdURSiw7hwzDfMdfjcx2kcG2UeYOXu6
-EcghEchmbMqnNhh7DeK3cx0JE9uWXLpVuUuyb1ojvFgSx6XN7CYgkJkNVz8QI7/y
-OFd2JXYyjq4KyQ5j6Q0KhQcWYrhRDHh1CUY/NJ62ur69fmjA/WnxZQh+lMlCRIdw
-20NbnJZ6zHdcqx4RoMWWDW51X7nI/A==
-=rVg/
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt03agACgkQAVBC80lX
+0Gx6KAf9Gkj+UMsAWDisxNjEYdpuUiNb6jRkRKhhQLbFJhLrhVCTrXZPdO8RAu/a
+IeWxHtIY1NtTdJzklsFAmZs5f0WrGEbwsAeM+O26fk/JH9+c+pBoZKyB1FIxF2Qo
+EeEBeY9V81YXpg7YAaRyH3Wp7ZOF8doZ2un5hFWMFcrO8/i//uIqK3HRIuZF4Dw2
+mjVPH+pOt9x3ZioQBl6aQag4C4fmvYaePUQYa6Qs2zXUByX/7kb4Dkk1ONZZM3uu
+roF6nw6ucFFXbiYxIFbNLILoa+2Q3SUH3GWTbugmAfgjFGimj09o3jotvXC0s4Ob
+N+5ROcveDzQlIsQVXkKaoLJ8iS13yA==
+=x9sD
 -----END PGP SIGNATURE-----
 
---Sig_/_drNc1zMIutlJWBHBs63jx2--
+--Sig_/ex_lo=vQHCdeSqjX49RZ7=.--
