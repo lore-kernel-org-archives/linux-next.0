@@ -1,54 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Tue, 21 Aug 2018 18:30:12 +1000
-Message-ID: <20180821183012.3b9bc4f3@canb.auug.org.au>
-References: <20180817103913.52544928@canb.auug.org.au>
-        <CAMuHMdUQcoMxb=0_i1PYyymUpQ1VBOub+EgDbRJWmrq8_xJ-uQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the
+ drm-intel tree
+Date: Tue, 21 Aug 2018 18:33:12 +1000
+Message-ID: <20180821183312.690df265@canb.auug.org.au>
+References: <20180726151006.345e8397@canb.auug.org.au>
+ <20180816121256.0435930e@canb.auug.org.au>
+ <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o/rc/HqUFPGy6qX3Oe14Lpm"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdUQcoMxb=0_i1PYyymUpQ1VBOub+EgDbRJWmrq8_xJ-uQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0469418141=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, rf@opensource.cirrus.com, Linus <torvalds@linux-foundation.org>
+Cc: paulo.r.zanoni@intel.com, Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, rodrigo.vivi@intel.com, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/o/rc/HqUFPGy6qX3Oe14Lpm
+--===============0469418141==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/mN/pLNHOeUnbSuu_2uXBwAG"; protocol="application/pgp-signature"
+
+--Sig_/mN/pLNHOeUnbSuu_2uXBwAG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Geert,
 
-On Tue, 21 Aug 2018 10:08:54 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
+On Tue, 21 Aug 2018 10:27:48 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
 > wrote:
->
-> To obey sorting rules, the CIRRUS LOGIC entry should be before the CLANG
-> entry.
-> Upon closer look, it should be inserted before the CISCO entries, too (in
-> the mfd tree).
+>=20
+> FTR, it's not this one, but the similar one reported on Jul 19, which doe=
+s not
+> add the tc_port_type enum.
 
-Thanks for noticing.  Unfortunately it is badly ordered in Linus' tree
-now as well.  Feel like sending him a patch?
+Right, sorry about that.  Linus has now merged the mfd tree so things
+are probably done now.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/o/rc/HqUFPGy6qX3Oe14Lpm
+--Sig_/mN/pLNHOeUnbSuu_2uXBwAG
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7zZQACgkQAVBC80lX
-0GyJPAf+I6h00MmuBtxb47tUmnuVKLFuXkD7XfSse+Q4s7hxqynqPtJaNWgS1vXT
-SIAqUFdLO2e2PjlMFlxaOci8wQUk5+oOaC5QqBkI1HdSRHNVqtzdMuKpXJqB+xfY
-PL+f66ygrpLNJEdUKEvIfOfLf7ykFtAZT6gzunxGuHQJ63lAWJUsVzV6X5uR5P2h
-jUvLy/LYCRcT4o6Em0LfR3n4HNeL57fWHyCqarq/TgZguOvePictRJvL87L0cBzd
-QYwOLin3Gv9GwanIYwYMNezAMepgBUzvH2W+SM7G9PnPJ7b3IrFb24g6X0igT/+I
-Ntm0+9OOAOGcIvHjuB7+x3KJ7Pp2dA==
-=9pJG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7zkgACgkQAVBC80lX
+0GwumggAmMYtZ3+bsBuQAv5rMt7IvUeVl7q1oyOShdcVYns81DVI+DPRGTqedocx
+e3A8bkMNXOpD6Lj4aOCoxWSxBuLnxBw+bWZyUTmYvnpi6HqU+htsNWaikvTpU8TL
+wSzdJ3X3n5AJKv/C+ndtLT/Ie0F9vIfELBuYzE1DKs0YvFAhqZsXahkJbN5di0NN
+RUy52qBjTJj1UIjMs0gaCo+/WFI7Eb6cr/GOjufPi2x+9zgbl29jOsU96c4pbxyM
+tA/UcsCWd2ns1dKT6BnRM4SpbvdUcEGnalE1HSc7KszpLyIgcNAO0KXsYwd3yQds
+Ao6gDzSgovN3B+bky87Ah9ynfy+J+g==
+=pvwd
 -----END PGP SIGNATURE-----
 
---Sig_/o/rc/HqUFPGy6qX3Oe14Lpm--
+--Sig_/mN/pLNHOeUnbSuu_2uXBwAG--
+
+--===============0469418141==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--===============0469418141==--
