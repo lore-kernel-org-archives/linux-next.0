@@ -1,29 +1,29 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Tue, 21 Aug 2018 10:08:54 +0200
-Message-ID: <CAMuHMdUQcoMxb=0_i1PYyymUpQ1VBOub+EgDbRJWmrq8_xJ-uQ@mail.gmail.com>
-References: <20180817103913.52544928@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the mfd tree with the sound tree
+Date: Tue, 21 Aug 2018 10:11:41 +0200
+Message-ID: <CAMuHMdVs-3CWF23_qik6euae6tQasp-zM4tSgx-pp02xPnyEeA@mail.gmail.com>
+References: <20180720134219.680ae314@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180817103913.52544928@canb.auug.org.au>
+In-Reply-To: <20180720134219.680ae314@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, rf@opensource.cirrus.com
+Cc: Lee Jones <lee.jones@linaro.org>, Takashi Iwai <tiwai@suse.de>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 17, 2018 at 2:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Jul 20, 2018 at 5:42 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Today's linux-next merge of the mfd tree got a conflict in:
 >
->   MAINTAINERS
+>   drivers/gpu/drm/i915/Kconfig
 >
 > between commit:
 >
->   16b7db4c8150 ("MAINTAINERS: Add .clang-format entry")
+>   a57942bfdd61 ("ALSA: hda: Make audio component support more generic")
 >
-> from Linus' tree and commit:
+> from the sound tree and commit:
 >
->   97c2b5cba204 ("mfd: madera: Add register definitions for Cirrus Logic Madera codecs")
+>   9c229127aee2 ("drm/i915: hdmi: add CEC notifier to intel_hdmi")
 >
 > from the mfd tree.
 >
@@ -38,45 +38,22 @@ On Fri, Aug 17, 2018 at 2:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Cheers,
 > Stephen Rothwell
 >
-> diff --cc MAINTAINERS
-> index 041b111596bc,2c1c6aef7d74..000000000000
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@@ -3557,11 -3513,23 +3557,27 @@@ M:   Christian Benvenuti <benve@cisco.com
->   S:    Supported
->   F:    drivers/infiniband/hw/usnic/
->
->  +CLANG-FORMAT FILE
->  +M:    Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->  +S:    Maintained
->  +F:    .clang-format
->  +
-> + CIRRUS LOGIC MADERA CODEC DRIVERS
+> diff --cc drivers/gpu/drm/i915/Kconfig
+> index 5c607f2c707b,2d65d567d5d1..000000000000
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@@ -23,7 -23,7 +23,8 @@@ config DRM_I91
+>         select SYNC_FILE
+>         select IOSF_MBI
+>         select CRC32
+>  +      select SND_HDA_I915 if SND_HDA_CORE
+> +       select CEC_CORE if CEC_NOTIFIER
+>         help
+>           Choose this option if you have a system that has "Intel Graphics
+>           Media Accelerator" or "HD Graphics" integrated graphics,
 
-To obey sorting rules, the CIRRUS LOGIC entry should be before the CLANG
-entry.
-Upon closer look, it should be inserted before the CISCO entries, too (in
-the mfd tree).
-
-> + M:    Charles Keepax <ckeepax@opensource.cirrus.com>
-> + M:    Richard Fitzgerald <rf@opensource.cirrus.com>
-> + L:    alsa-devel@alsa-project.org (moderated for non-subscribers)
-> + L:    patches@opensource.cirrus.com
-> + T:    git https://github.com/CirrusLogic/linux-drivers.git
-> + W:    https://github.com/CirrusLogic/linux-drivers/wiki
-> + S:    Supported
-> + F:    Documentation/devicetree/bindings/mfd/madera.txt
-> + F:    Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
-> + F:    include/linux/mfd/madera/*
-> + F:    drivers/gpio/gpio-madera*
-> + F:    drivers/mfd/madera*
-> + F:    drivers/mfd/cs47l*
-> + F:    drivers/pinctrl/cirrus/*
-> +
->   CLEANCACHE API
->   M:    Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
->   L:    linux-kernel@vger.kernel.org
-
+Anyone who cares about alphabetically sorting the (long) list of selects,
+reducing the potential for conflicts?
 
 Gr{oetje,eeting}s,
 
