@@ -1,78 +1,54 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the
- drm-intel tree
-Date: Tue, 21 Aug 2018 10:27:48 +0200
-Message-ID: <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
-References: <20180726151006.345e8397@canb.auug.org.au>
- <20180816121256.0435930e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Tue, 21 Aug 2018 18:30:12 +1000
+Message-ID: <20180821183012.3b9bc4f3@canb.auug.org.au>
+References: <20180817103913.52544928@canb.auug.org.au>
+        <CAMuHMdUQcoMxb=0_i1PYyymUpQ1VBOub+EgDbRJWmrq8_xJ-uQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20180816121256.0435930e@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: paulo.r.zanoni@intel.com, Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, rodrigo.vivi@intel.com, Lee Jones <lee.jones@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/o/rc/HqUFPGy6qX3Oe14Lpm"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUQcoMxb=0_i1PYyymUpQ1VBOub+EgDbRJWmrq8_xJ-uQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, rf@opensource.cirrus.com, Linus <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gVGh1LCBBdWcgMTYsIDIwMTggYXQgODowNSBQTSBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
-Yi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gT24gVGh1LCAyNiBKdWwgMjAxOCAxNToxMDowNiArMTAw
-MCBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gPiBUb2Rh
-eSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIG1mZCB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+
-ID4KPiA+ICAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5oCj4gPgo+ID4gYmV0
-d2VlbiBjb21taXQ6Cj4gPgo+ID4gICA2MDc1NTQ2ZjU3ZjggKCJkcm0vaTkxNS9pY2w6IHN0b3Jl
-IHRoZSBwb3J0IHR5cGUgZm9yIFRDIHBvcnRzIikKPiA+Cj4gPiBmcm9tIHRoZSBkcm0taW50ZWwg
-dHJlZSBhbmQgY29tbWl0Ogo+ID4KPiA+ICAgOWMyMjkxMjdhZWUyICgiZHJtL2k5MTU6IGhkbWk6
-IGFkZCBDRUMgbm90aWZpZXIgdG8gaW50ZWxfaGRtaSIpCj4gPgo+ID4gZnJvbSB0aGUgbWZkIHRy
-ZWUuCj4gPgo+ID4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBm
-aXggYXMgbmVjZXNzYXJ5LiBUaGlzCj4gPiBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5l
-eHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCj4gPiBjb25mbGljdHMgc2hvdWxk
-IGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5b3VyIHRyZWUK
-PiA+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNp
-ZGVyIGNvb3BlcmF0aW5nCj4gPiB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGlu
-ZyB0cmVlIHRvIG1pbmltaXNlIGFueSBwYXJ0aWN1bGFybHkKPiA+IGNvbXBsZXggY29uZmxpY3Rz
-Lgo+ID4KPiA+IC0tCj4gPiBDaGVlcnMsCj4gPiBTdGVwaGVuIFJvdGh3ZWxsCj4gPgo+ID4gZGlm
-ZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuaAo+ID4gaW5kZXggMGE3
-OWE0NmQ1ODA1LDFmMTc2YTcxZTA4MS4uMDAwMDAwMDAwMDAwCj4gPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vaTkxNS9pbnRlbF9kaXNwbGF5LmgKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1
-L2ludGVsX2Rpc3BsYXkuaAo+ID4gQEBAIC0xMjYsMjQgLTEyNiwzMCArMTI2LDQ4IEBAQCBlbnVt
-IHBvcnQKPiA+Cj4gPiAgICNkZWZpbmUgcG9ydF9uYW1lKHApICgocCkgKyAnQScpCj4gPgo+ID4g
-KyAvKgo+ID4gKyAgKiBQb3J0cyBpZGVudGlmaWVyIHJlZmVyZW5jZWQgZnJvbSBvdGhlciBkcml2
-ZXJzLgo+ID4gKyAgKiBFeHBlY3RlZCB0byByZW1haW4gc3RhYmxlIG92ZXIgdGltZQo+ID4gKyAg
-Ki8KPiA+ICsgc3RhdGljIGlubGluZSBjb25zdCBjaGFyICpwb3J0X2lkZW50aWZpZXIoZW51bSBw
-b3J0IHBvcnQpCj4gPiArIHsKPiA+ICsgICAgIHN3aXRjaCAocG9ydCkgewo+ID4gKyAgICAgY2Fz
-ZSBQT1JUX0E6Cj4gPiArICAgICAgICAgICAgIHJldHVybiAiUG9ydCBBIjsKPiA+ICsgICAgIGNh
-c2UgUE9SVF9COgo+ID4gKyAgICAgICAgICAgICByZXR1cm4gIlBvcnQgQiI7Cj4gPiArICAgICBj
-YXNlIFBPUlRfQzoKPiA+ICsgICAgICAgICAgICAgcmV0dXJuICJQb3J0IEMiOwo+ID4gKyAgICAg
-Y2FzZSBQT1JUX0Q6Cj4gPiArICAgICAgICAgICAgIHJldHVybiAiUG9ydCBEIjsKPiA+ICsgICAg
-IGNhc2UgUE9SVF9FOgo+ID4gKyAgICAgICAgICAgICByZXR1cm4gIlBvcnQgRSI7Cj4gPiArICAg
-ICBjYXNlIFBPUlRfRjoKPiA+ICsgICAgICAgICAgICAgcmV0dXJuICJQb3J0IEYiOwo+ID4gKyAg
-ICAgZGVmYXVsdDoKPiA+ICsgICAgICAgICAgICAgcmV0dXJuICI8aW52YWxpZD4iOwo+ID4gKyAg
-ICAgfQo+ID4gKyB9Cj4gPiArCj4gPiAgK2VudW0gdGNfcG9ydCB7Cj4gPiAgKyAgICBQT1JUX1RD
-X05PTkUgPSAtMSwKPiA+ICArCj4gPiAgKyAgICBQT1JUX1RDMSA9IDAsCj4gPiAgKyAgICBQT1JU
-X1RDMiwKPiA+ICArICAgIFBPUlRfVEMzLAo+ID4gICsgICAgUE9SVF9UQzQsCj4gPiAgKwo+ID4g
-ICsgICAgSTkxNV9NQVhfVENfUE9SVFMKPiA+ICArfTsKPiA+ICArCj4gPiAgK2VudW0gdGNfcG9y
-dF90eXBlIHsKPiA+ICArICAgIFRDX1BPUlRfVU5LTk9XTiA9IDAsCj4gPiAgKyAgICBUQ19QT1JU
-X1RZUEVDLAo+ID4gICsgICAgVENfUE9SVF9UQlQsCj4gPiAgKyAgICBUQ19QT1JUX0xFR0FDWSwK
-PiA+ICArfTsKPiA+ICArCj4gPiAgIGVudW0gZHBpb19jaGFubmVsIHsKPiA+ICAgICAgIERQSU9f
-Q0gwLAo+ID4gICAgICAgRFBJT19DSDEKPgo+IFRoaXMgaXMgbm93IGEgY29uZmxpY3QgYmV0d2Vl
-biBMaW51cycgdHJlZSBhbmQgdGhlIG1mZCB0cmVlLgoKRlRSLCBpdCdzIG5vdCB0aGlzIG9uZSwg
-YnV0IHRoZSBzaW1pbGFyIG9uZSByZXBvcnRlZCBvbiBKdWwgMTksIHdoaWNoIGRvZXMgbm90CmFk
-ZCB0aGUgdGNfcG9ydF90eXBlIGVudW0uCgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAg
-ICAgICAgICAgICAgIEdlZXJ0CgotLSAKR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90
-cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZwoKSW4gcGVyc29u
-YWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBo
-YWNrZXIuIEJ1dAp3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInBy
-b2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuCiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vaW50ZWwtZ2Z4Cg==
+--Sig_/o/rc/HqUFPGy6qX3Oe14Lpm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Geert,
+
+On Tue, 21 Aug 2018 10:08:54 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
+>
+> To obey sorting rules, the CIRRUS LOGIC entry should be before the CLANG
+> entry.
+> Upon closer look, it should be inserted before the CISCO entries, too (in
+> the mfd tree).
+
+Thanks for noticing.  Unfortunately it is badly ordered in Linus' tree
+now as well.  Feel like sending him a patch?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/o/rc/HqUFPGy6qX3Oe14Lpm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7zZQACgkQAVBC80lX
+0GyJPAf+I6h00MmuBtxb47tUmnuVKLFuXkD7XfSse+Q4s7hxqynqPtJaNWgS1vXT
+SIAqUFdLO2e2PjlMFlxaOci8wQUk5+oOaC5QqBkI1HdSRHNVqtzdMuKpXJqB+xfY
+PL+f66ygrpLNJEdUKEvIfOfLf7ykFtAZT6gzunxGuHQJ63lAWJUsVzV6X5uR5P2h
+jUvLy/LYCRcT4o6Em0LfR3n4HNeL57fWHyCqarq/TgZguOvePictRJvL87L0cBzd
+QYwOLin3Gv9GwanIYwYMNezAMepgBUzvH2W+SM7G9PnPJ7b3IrFb24g6X0igT/+I
+Ntm0+9OOAOGcIvHjuB7+x3KJ7Pp2dA==
+=9pJG
+-----END PGP SIGNATURE-----
+
+--Sig_/o/rc/HqUFPGy6qX3Oe14Lpm--
