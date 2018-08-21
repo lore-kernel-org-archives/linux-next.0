@@ -1,78 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the mfd tree with the
- drm-intel tree
-Date: Tue, 21 Aug 2018 18:33:12 +1000
-Message-ID: <20180821183312.690df265@canb.auug.org.au>
-References: <20180726151006.345e8397@canb.auug.org.au>
- <20180816121256.0435930e@canb.auug.org.au>
- <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
+Subject: linux-next: build warning after merge of the net tree
+Date: Wed, 22 Aug 2018 08:04:49 +1000
+Message-ID: <20180822080449.5887e244@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0469418141=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: paulo.r.zanoni@intel.com, Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, rodrigo.vivi@intel.com, Lee Jones <lee.jones@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/u73I2CAj_0XHU31A_03DG_W"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0469418141==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mN/pLNHOeUnbSuu_2uXBwAG"; protocol="application/pgp-signature"
-
---Sig_/mN/pLNHOeUnbSuu_2uXBwAG
+--Sig_/u73I2CAj_0XHU31A_03DG_W
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi all,
 
-On Tue, 21 Aug 2018 10:27:48 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
->=20
-> FTR, it's not this one, but the similar one reported on Jul 19, which doe=
-s not
-> add the tc_port_type enum.
+After merging the net tree, today's linux-next build (KCONFIG_NAME)
+produced this warning:
 
-Right, sorry about that.  Linus has now merged the mfd tree so things
-are probably done now.
+drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c: In function 'tc_fill_actio=
+ns':
+drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:64:6: warning: unused varia=
+ble 'i' [-Wunused-variable]
+  int i;
+      ^
+
+Introduced by commit
+
+  244cd96adb5f ("net_sched: remove list_head from tc_action")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/mN/pLNHOeUnbSuu_2uXBwAG
+--Sig_/u73I2CAj_0XHU31A_03DG_W
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7zkgACgkQAVBC80lX
-0GwumggAmMYtZ3+bsBuQAv5rMt7IvUeVl7q1oyOShdcVYns81DVI+DPRGTqedocx
-e3A8bkMNXOpD6Lj4aOCoxWSxBuLnxBw+bWZyUTmYvnpi6HqU+htsNWaikvTpU8TL
-wSzdJ3X3n5AJKv/C+ndtLT/Ie0F9vIfELBuYzE1DKs0YvFAhqZsXahkJbN5di0NN
-RUy52qBjTJj1UIjMs0gaCo+/WFI7Eb6cr/GOjufPi2x+9zgbl29jOsU96c4pbxyM
-tA/UcsCWd2ns1dKT6BnRM4SpbvdUcEGnalE1HSc7KszpLyIgcNAO0KXsYwd3yQds
-Ao6gDzSgovN3B+bky87Ah9ynfy+J+g==
-=pvwd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt8jIEACgkQAVBC80lX
+0Gy9rggAmgoFDJxS7tbYirshdBLQulKP16+xv8mZTJ6WJgM59HmkaodNsvjYgQfj
+lJ7derYeOUQHMglKON+nNzMKWcSC1r8GGW/LudBY2CI7jr6V7C1o+FTtHUB80n8O
+dY0i4lFu/R/K6/bYFiDBdl825Obr08JP8bZkdQDOE/zcSEgSxios51CTMjv4e79/
+f7h/gmiW4p5obZNkqTIP3YXQrj5r2NEQQwN4G9OQW1lqjG1gwLJSB7f+1uaFEFsP
+uiTvukh257mgGHDl1u3Z7C4lYigzMHwzgnc+ButCJrzoR6SOZ5J/9oqTwxdhfDr/
+3z5XakXJ47ssLtHX/PdmmrJQN5neww==
+=3oaR
 -----END PGP SIGNATURE-----
 
---Sig_/mN/pLNHOeUnbSuu_2uXBwAG--
-
---===============0469418141==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
-
---===============0469418141==--
+--Sig_/u73I2CAj_0XHU31A_03DG_W--
