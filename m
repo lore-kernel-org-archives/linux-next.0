@@ -1,49 +1,67 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Mon, 20 Aug 2018 12:52:50 -0700
-Message-ID: <20180820125250.85db3bcb0052e1007a86358f@linux-foundation.org>
-References: <20180820143222.5aaa69d9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xarray tree with the nvdimm tree
+Date: Tue, 21 Aug 2018 11:49:24 +1000
+Message-ID: <20180821114924.0133d568@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YYriHAKQDnmippWqdOewGUj"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180820143222.5aaa69d9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, James Morse <james.morse@arm.com>, Omar Sandoval <osandov@fb.com>
+To: Matthew Wilcox <willy@infradead.org>, Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 20 Aug 2018 14:32:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/YYriHAKQDnmippWqdOewGUj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the akpm-current tree got conflicts in:
-> 
->   fs/proc/kcore.c
->   include/linux/kcore.h
-> 
-> between commit:
-> 
->   6855dc41b246 ("x86: Add entry trampolines to kcore")
-> 
-> from the tip tree and commits:
-> 
->   4eb27c275abf ("fs/proc/kcore.c: use __pa_symbol() for KCORE_TEXT list entries")
->   ea551910d3f4 ("proc/kcore: clean up ELF header generation")
->   537412a2958f ("proc/kcore: don't grab lock for kclist_add()")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi Matthew,
 
-Yup.
+Today's linux-next merge of the xarray tree got a conflict in:
 
-What's happening here?  A two month old patch turns up in linux-next in the
-middle of the merge window, in the "perf/urgent" branch.  That's a strange
-branch for a June 6 patch!
+  mm/memory-failure.c
 
-Is it intended that this material be merged into 4.19-rc1?
+between commit:
+
+  6100e34b2526 ("mm, memory_failure: Teach memory_failure() about dev_pagem=
+ap pages")
+
+from the nvdimm tree and commit:
+
+  0c2b437d7e2b ("mm, memory_failure: Teach memory_failure() about dev_pagem=
+ap pages")
+
+from the xarray tree.
+
+I fixed it up (the former looks like an updated version (after Linus'
+"review", so I used that version) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+I guess the xarray tree needs to be rebased on the changes in the
+nvdimm tree.  :-(
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YYriHAKQDnmippWqdOewGUj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7b6QACgkQAVBC80lX
+0GwrPQf9GHnKNn9uuagOUzpUZWyAEOty6hY7/m2HCmZEYLDL5hMf87KkR5UYORLp
+xesgfVLG35bsksbNtr2WP085sFvWJvwQIW4lVo+TB6D4thUK6M2ywGYTEprFUk15
+Xp7S7VtyCw+qE1OVuOE7wHoYBM4i0PzHEkaE9Vm9TPh4uEiX+jzuPcAumJ+k+1e/
+XZ4P1v4ZXTbgZYkTLDhI1rcTkG2IDxmHEPT7y2SE6EQXd1Gk/g4uXlzt/4gMeajT
+62yyfqqeDWWvKXVCzox6etpKi6cVXt8Bt87yu3hjzKF6yF45mPcCVsXW8LeX35OO
+N9dXuD+DuSTLKqnllclQdkyxHHH2JQ==
+=oUTT
+-----END PGP SIGNATURE-----
+
+--Sig_/YYriHAKQDnmippWqdOewGUj--
