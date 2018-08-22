@@ -1,54 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net tree
-Date: Wed, 22 Aug 2018 08:04:49 +1000
-Message-ID: <20180822080449.5887e244@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the mips
+ tree
+Date: Wed, 22 Aug 2018 12:02:18 +1000
+Message-ID: <20180822120218.44cecef5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u73I2CAj_0XHU31A_03DG_W"; protocol="application/pgp-signature"
+ boundary="Sig_/lSM8G+AX3PUCj_QUMvAERIk"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Paul Burton <paul.burton@mips.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/u73I2CAj_0XHU31A_03DG_W
+--Sig_/lSM8G+AX3PUCj_QUMvAERIk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the net tree, today's linux-next build (KCONFIG_NAME)
-produced this warning:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c: In function 'tc_fill_actio=
-ns':
-drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:64:6: warning: unused varia=
-ble 'i' [-Wunused-variable]
-  int i;
-      ^
+  arch/Kconfig
 
-Introduced by commit
+between commit:
 
-  244cd96adb5f ("net_sched: remove list_head from tc_action")
+  04f264d3a8b0 ("compiler.h: Allow arch-specific asm/compiler.h")
+
+from the mips tree and commit:
+
+  7358e371b0ef ("arch: enable relative relocations for arm64, power and x86=
+")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/u73I2CAj_0XHU31A_03DG_W
+diff --cc arch/Kconfig
+index 526a57457594,4426e9687d89..000000000000
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@@ -848,14 -841,16 +848,24 @@@ config REFCOUNT_FUL
+  	  against various use-after-free conditions that can be used in
+  	  security flaw exploits.
+ =20
+ +config HAVE_ARCH_COMPILER_H
+ +	bool
+ +	help
+ +	  An architecture can select this if it provides an
+ +	  asm/compiler.h header that should be included after
+ +	  linux/compiler-*.h in order to override macro definitions that those
+ +	  headers generally provide.
+ +
++ config HAVE_ARCH_PREL32_RELOCATIONS
++ 	bool
++ 	help
++ 	  May be selected by an architecture if it supports place-relative
++ 	  32-bit relocations, both in the toolchain and in the module loader,
++ 	  in which case relative references can be used in special sections
++ 	  for PCI fixup, initcalls etc which are only half the size on 64 bit
++ 	  architectures, and don't require runtime relocation on relocatable
++ 	  kernels.
++=20
+  source "kernel/gcov/Kconfig"
+ =20
+  source "scripts/gcc-plugins/Kconfig"
+
+--Sig_/lSM8G+AX3PUCj_QUMvAERIk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt8jIEACgkQAVBC80lX
-0Gy9rggAmgoFDJxS7tbYirshdBLQulKP16+xv8mZTJ6WJgM59HmkaodNsvjYgQfj
-lJ7derYeOUQHMglKON+nNzMKWcSC1r8GGW/LudBY2CI7jr6V7C1o+FTtHUB80n8O
-dY0i4lFu/R/K6/bYFiDBdl825Obr08JP8bZkdQDOE/zcSEgSxios51CTMjv4e79/
-f7h/gmiW4p5obZNkqTIP3YXQrj5r2NEQQwN4G9OQW1lqjG1gwLJSB7f+1uaFEFsP
-uiTvukh257mgGHDl1u3Z7C4lYigzMHwzgnc+ButCJrzoR6SOZ5J/9oqTwxdhfDr/
-3z5XakXJ47ssLtHX/PdmmrJQN5neww==
-=3oaR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt8xCoACgkQAVBC80lX
+0Gw61gf/eIO4X3jfg8EVTDUf/Y0wSQ7iI9LAqnfsIVF/97Uv6LFdwMJyy3VDW69b
+Od8rZYaX360ZAfpr3PvY2iysGF4oh9A93h59nvAuIGcWAor1H7jvAuWu7dCJ4sF6
+d3geWuWdr2TRa8niJa4iSwqnHjr/Q5Vs5eaaYIC6z6LDFemBV840bB3E+Ifcv/ZD
+UNlSr7fIwWC0Sd6lFSGdSo3zzeBXuouQnsIDmEBZQibTZY2wuOrQB3cOKqI+dE/F
+VnYZ1CYe2oEQXoovjRyVjcjv89CNcb5m9lXiQvCG1bCEy1TwRJGjFDrtylt19ANW
+a369BfYYINUV8AXr+GLtou1neLBpDg==
+=xHax
 -----END PGP SIGNATURE-----
 
---Sig_/u73I2CAj_0XHU31A_03DG_W--
+--Sig_/lSM8G+AX3PUCj_QUMvAERIk--
