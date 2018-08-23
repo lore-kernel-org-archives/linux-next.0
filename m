@@ -1,36 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with Linus' tree
-Date: Fri, 24 Aug 2018 08:37:05 +1000
-Message-ID: <20180824083705.3c88e3ff@canb.auug.org.au>
+Subject: linux-next: manual merge of the nios2 tree with Linus' tree
+Date: Fri, 24 Aug 2018 09:18:43 +1000
+Message-ID: <20180824091843.66cdda06@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.ir.1uaE6CUGpUgHVaVzhX+"; protocol="application/pgp-signature"
+ boundary="Sig_/_KbKSOVp9_kkKS2PDDeqRyk"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Burton <paul.burton@mips.com>, Nick Desaulniers <ndesaulniers@google.com>
+To: Ley Foon Tan <lftan@altera.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Masahiro Yamada <yamada.masahiro@socionext.com>, Tobias Klauser <tklauser@distanz.ch>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.ir.1uaE6CUGpUgHVaVzhX+
+--Sig_/_KbKSOVp9_kkKS2PDDeqRyk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mips tree got a conflict in:
+Today's linux-next merge of the nios2 tree got a conflict in:
 
-  include/linux/compiler_types.h
+  arch/nios2/Kconfig.debug
 
 between commit:
 
-  815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually excl=
-usive")
+  06ec64b84c35 ("Kconfig: consolidate the "Kernel hacking" menu")
 
 from Linus' tree and commit:
 
-  04f264d3a8b0 ("compiler.h: Allow arch-specific asm/compiler.h")
+  93bdd8902339 ("nios2: kconfig: remove duplicate DEBUG_STACK_USAGE symbol =
+defintions")
 
-from the mips tree.
+from the nios2 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,85 +43,42 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/compiler_types.h
-index 90479a0f3986,4be464a07612..000000000000
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@@ -54,20 -54,44 +54,32 @@@ extern void __chk_io_ptr(const volatil
+diff --cc arch/nios2/Kconfig.debug
+index 7a49f0d28d14,2ee8d5144c15..000000000000
+--- a/arch/nios2/Kconfig.debug
++++ b/arch/nios2/Kconfig.debug
+@@@ -3,15 -4,8 +3,6 @@@
+  config TRACE_IRQFLAGS_SUPPORT
+  	def_bool y
  =20
-  #ifdef __KERNEL__
- =20
- -#ifdef __GNUC__
- -#include <linux/compiler-gcc.h>
- -#endif
- -
- -#if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
- -#define notrace __attribute__((hotpatch(0,0)))
- -#else
- -#define notrace __attribute__((no_instrument_function))
- -#endif
- -
- -/* Intel compiler defines __GNUC__. So we will overwrite implementations
- - * coming from above header files here
- - */
- -#ifdef __INTEL_COMPILER
- -# include <linux/compiler-intel.h>
- -#endif
- -
- -/* Clang compiler defines __GNUC__. So we will overwrite implementations
- - * coming from above header files here
- - */
- +/* Compiler specific macros. */
-  #ifdef __clang__
-  #include <linux/compiler-clang.h>
- +#elif defined(__INTEL_COMPILER)
- +#include <linux/compiler-intel.h>
- +#elif defined(__GNUC__)
- +/* The above compilers also define __GNUC__, so order is important here. =
-*/
- +#include <linux/compiler-gcc.h>
- +#else
- +#error "Unknown compiler"
-  #endif
- =20
-+ /*
-+  * Some architectures need to provide custom definitions of macros provid=
-ed
-+  * by linux/compiler-*.h, and can do so using asm/compiler.h. We include =
-that
-+  * conditionally rather than using an asm-generic wrapper in order to avo=
-id
-+  * build failures if any C compilation, which will include this file via =
-an
-+  * -include argument in c_flags, occurs prior to the asm-generic wrappers=
- being
-+  * generated.
-+  */
-+ #ifdef CONFIG_HAVE_ARCH_COMPILER_H
-+ #include <asm/compiler.h>
-+ #endif
-+=20
-  /*
- - * Generic compiler-dependent macros required for kernel
- + * Generic compiler-independent macros required for kernel
-   * build go below this comment. Actual compiler/compiler version
-   * specific implementations come from the above header files
-   */
+- config DEBUG_STACK_USAGE
+- 	bool "Enable stack utilization instrumentation"
+- 	depends on DEBUG_KERNEL
+- 	help
+- 	  Enables the display of the minimum amount of free stack which each
+- 	  task has ever had available in the sysrq-T and sysrq-P debug output.
+-=20
+- 	  This option will slow down process creation somewhat.
+ -source "lib/Kconfig.debug"
+--
+  config EARLY_PRINTK
+  	bool "Activate early kernel debugging"
+  	default y
 
---Sig_/.ir.1uaE6CUGpUgHVaVzhX+
+--Sig_/_KbKSOVp9_kkKS2PDDeqRyk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt/NxEACgkQAVBC80lX
-0Gyk0QgAlBS17g8mECivuUMvkRpTBZIeCbqkeT3Cd2D6Hb70OFTA0dTFcNRpugPs
-W6P8lpmYmBjpFBy865lDheeCsDyftDQmobKOhKgWQDUeXP8DU+5JACVsEACuDh5X
-Xz3UWz2uNJz8kDBnzDxq9LIsAPFJILJYN2REUxO+ettWu2/M3GUyykHx0hzw8MxG
-+okOlxP+nebfNsSJ1JbgndKJsyMcKBuwH1GMKXSV/Oy6KQEKVI30yi/sqQyDzYAI
-sTtUKJa/O02c8YtiX/vzXoHkUWvqadBLr17dlo35WGWeMfEtEu+X4KKkh4i4+7HI
-/X2PNrvFAvqmbikGMFuGuzyi8VIWmw==
-=TS9U
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt/QNMACgkQAVBC80lX
+0GwR3Af/Z73aj1F3RnLQ6vxwDrB0eXpi1o7J+37TyO+3l/S3f8m2S5kDAco8hGiS
+g5Tdw63Flwp/ke/Q3Pyhs2R6yydJtYVwO+AYmcqFfL78naIY+9kW7BASKiMwJy11
+4H2LyIxHPDXSR6XOwnhhDfU/EfwA6nr+c0fauATzQbdiIZbSlxj1+8nyNBxNnhKq
+mdmixnCYa1cIoSyet1io0O6kDS52U4SWLUWGs/WO+WqvJJ1a6T4l/127PDph6V3g
+fEdibY0SHo++58DgKs3KyUZik0krz/bpJAO6r5go9lVa0fxgcky6z8/aGDBabvs3
+7o4mXmQ9bq6F5f4J22gq9jP5DdUZew==
+=oGDQ
 -----END PGP SIGNATURE-----
 
---Sig_/.ir.1uaE6CUGpUgHVaVzhX+--
+--Sig_/_KbKSOVp9_kkKS2PDDeqRyk--
