@@ -1,84 +1,156 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nios2 tree with Linus' tree
-Date: Fri, 24 Aug 2018 09:18:43 +1000
-Message-ID: <20180824091843.66cdda06@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_KbKSOVp9_kkKS2PDDeqRyk"; protocol="application/pgp-signature"
+From: akpm@linux-foundation.org
+Subject: mmotm 2018-08-23-17-26 uploaded
+Date: Thu, 23 Aug 2018 17:27:31 -0700
+Message-ID: <20180824002731.XMNCl%akpm@linux-foundation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ley Foon Tan <lftan@altera.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Masahiro Yamada <yamada.masahiro@socionext.com>, Tobias Klauser <tklauser@distanz.ch>
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_KbKSOVp9_kkKS2PDDeqRyk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The mm-of-the-moment snapshot 2018-08-23-17-26 has been uploaded to
 
-Hi all,
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Today's linux-next merge of the nios2 tree got a conflict in:
+mmotm-readme.txt says
 
-  arch/nios2/Kconfig.debug
+README for mm-of-the-moment:
 
-between commit:
+http://www.ozlabs.org/~akpm/mmotm/
 
-  06ec64b84c35 ("Kconfig: consolidate the "Kernel hacking" menu")
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-from Linus' tree and commit:
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-  93bdd8902339 ("nios2: kconfig: remove duplicate DEBUG_STACK_USAGE symbol =
-defintions")
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-from the nios2 tree.
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
---=20
-Cheers,
-Stephen Rothwell
 
-diff --cc arch/nios2/Kconfig.debug
-index 7a49f0d28d14,2ee8d5144c15..000000000000
---- a/arch/nios2/Kconfig.debug
-+++ b/arch/nios2/Kconfig.debug
-@@@ -3,15 -4,8 +3,6 @@@
-  config TRACE_IRQFLAGS_SUPPORT
-  	def_bool y
- =20
-- config DEBUG_STACK_USAGE
-- 	bool "Enable stack utilization instrumentation"
-- 	depends on DEBUG_KERNEL
-- 	help
-- 	  Enables the display of the minimum amount of free stack which each
-- 	  task has ever had available in the sysrq-T and sysrq-P debug output.
--=20
-- 	  This option will slow down process creation somewhat.
- -source "lib/Kconfig.debug"
---
-  config EARLY_PRINTK
-  	bool "Activate early kernel debugging"
-  	default y
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
---Sig_/_KbKSOVp9_kkKS2PDDeqRyk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
------BEGIN PGP SIGNATURE-----
+To develop on top of mmotm git:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt/QNMACgkQAVBC80lX
-0GwR3Af/Z73aj1F3RnLQ6vxwDrB0eXpi1o7J+37TyO+3l/S3f8m2S5kDAco8hGiS
-g5Tdw63Flwp/ke/Q3Pyhs2R6yydJtYVwO+AYmcqFfL78naIY+9kW7BASKiMwJy11
-4H2LyIxHPDXSR6XOwnhhDfU/EfwA6nr+c0fauATzQbdiIZbSlxj1+8nyNBxNnhKq
-mdmixnCYa1cIoSyet1io0O6kDS52U4SWLUWGs/WO+WqvJJ1a6T4l/127PDph6V3g
-fEdibY0SHo++58DgKs3KyUZik0krz/bpJAO6r5go9lVa0fxgcky6z8/aGDBabvs3
-7o4mXmQ9bq6F5f4J22gq9jP5DdUZew==
-=oGDQ
------END PGP SIGNATURE-----
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
 
---Sig_/_KbKSOVp9_kkKS2PDDeqRyk--
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.18:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* hfsplus-fix-null-dereference-in-hfsplus_lookup.patch
+* hfsplus-prevent-crash-on-exit-from-failed-search.patch
+* hfs-prevent-crash-on-exit-from-failed-search.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
+* mm-fix-race-on-soft-offlining-free-huge-pages.patch
+* mm-soft-offline-close-the-race-against-page-allocation.patch
+* hwtracing-intel_th-change-return-type-to-vm_fault_t.patch
+* fs-afs-adding-new-return-type-vm_fault_t.patch
+* treewide-correct-differenciate-and-instanciate-typos.patch
+* vmcore-hide-vmcoredd_mmap_dumps-for-nommu-builds.patch
+* mm-util-make-strndup_user-description-a-kernel-doc-comment.patch
+* mm-util-add-kernel-doc-for-kvfree.patch
+* docs-core-api-kill-trailing-whitespace-in-kernel-apirst.patch
+* docs-core-api-move-strmemdup-to-string-manipulation.patch
+* docs-core-api-split-memory-management-api-to-a-separate-file.patch
+* docs-mm-make-gfp-flags-descriptions-usable-as-kernel-doc.patch
+* docs-core-api-mm-api-add-section-about-gfp-flags.patch
+* gpu-drm-gma500-change-return-type-to-vm_fault_t.patch
+* treewide-convert-iso_8859-1-text-comments-to-utf-8.patch
+* s390-ebcdic-convert-comments-to-utf-8.patch
+* lib-fonts-convert-comments-to-utf-8.patch
+* mm-change-return-type-int-to-vm_fault_t-for-fault-handlers.patch
+* mm-memcontrol-print-proper-oom-header-when-no-eligible-victim-left.patch
+* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
+* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
+* mm-oom-fix-missing-tlb_finish_mmu-in-__oom_reap_task_mm.patch
+* mm-respect-arch_dup_mmap-return-value.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
+* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
+* ocfs2-dlmglue-clean-up-timestamp-handling.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+  mm.patch
+* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
+* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix-fix.patch
+* mm-memblock-introduce-memblock_search_pfn_regions.patch
+* mm-memblock-introduce-memblock_search_pfn_regions-fix.patch
+* mm-memblock-introduce-pfn_valid_region.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
+* z3fold-fix-wrong-handling-of-headless-pages.patch
+* mm-adjust-max-read-count-in-generic_file_buffered_read.patch
+* mm-make-memmap_init-a-proper-function.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* bfs-add-sanity-check-at-bfs_fill_super.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
