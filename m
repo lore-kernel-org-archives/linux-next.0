@@ -1,156 +1,125 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2018-08-23-17-26 uploaded
-Date: Thu, 23 Aug 2018 17:27:31 -0700
-Message-ID: <20180824002731.XMNCl%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings from the build of Linus' tree
+Date: Fri, 24 Aug 2018 13:32:06 +1000
+Message-ID: <20180824133206.4218c2e5@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7Ue9y/.D5eOIfpLFvTcLwGl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Masami Hiramatsu <mhiramat@kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-08-23-17-26 has been uploaded to
+--Sig_/7Ue9y/.D5eOIfpLFvTcLwGl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Hi all,
 
-mmotm-readme.txt says
+After merging the origin tree, today's linux-next build (powerpc
+allyesconfig) produced these warnings:
 
-README for mm-of-the-moment:
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_selftes=
+t_dynamic.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_kprobe_=
+selftest.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_clock.o=
+' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/ftrace.o' bei=
+ng placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/ring_buffer.o=
+' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/ring_buffer_b=
+enchmark.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace.o' bein=
+g placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_output.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_seq.o' =
+being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_stat.o'=
+ being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_printk.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/tracing_map.o=
+' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_sched_s=
+witch.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_functio=
+ns.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_preempt=
+irq.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_irqsoff=
+.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_sched_w=
+akeup.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_hwlat.o=
+' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_nop.o' =
+being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_stack.o=
+' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_functio=
+ns_graph.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/blktrace.o' b=
+eing placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_export.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_syscall=
+s.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_event_p=
+erf.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events_=
+filter.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events_=
+trigger.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events_=
+hist.o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/bpf_trace.o' =
+being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_kprobe.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/power-traces.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/rpm-traces.o'=
+ being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_kdb.o' =
+being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_probe.o=
+' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_uprobe.=
+o' being placed in section `.data..LPBX1'
+ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_benchma=
+rk.o' being placed in section `.data..LPBX1'
 
-http://www.ozlabs.org/~akpm/mmotm/
+Maybe introduced by commit
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+  6b7dca401cb1 ("tracing: Allow gcov profiling on only ftrace subsystem")
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+I am guessing, but that is the only new thing that affects all of
+kernel/trace ...
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+--=20
+Cheers,
+Stephen Rothwell
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+--Sig_/7Ue9y/.D5eOIfpLFvTcLwGl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt/fDYACgkQAVBC80lX
+0GwN+wf+JQfeOPEEnz3/HVDDIEqBUwD3sEcnxHShGOIn5duTYJOYN6ed2ZvzE92g
+SD3OUvfL1S0rVRKv71JCFpvoU/QBXTLrDtVcU/W/bTq/Rdsllo0zJJ4gzqs8CRKV
+rWKWAWrqm4IDXDt6jUQjl2YyIWgJhpXc59rTsCEIq03quXUYvcAOhLxqb5336F66
+1lN7/QjWXmfFyHC65MdBt/zVse0fJmrXM00tj1UYdF6hAljzWqZTO52dRIQlmObu
+VpL/6sSIJJUdhmdh43hxDQuSOCJtKp1m/MGM5nlgxUcFZiorY0AjNKXF0rO8EPM8
+8lo6Jv9gH9Z/9vNMht9R5oQ29127MA==
+=oHvC
+-----END PGP SIGNATURE-----
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.18:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* hfsplus-fix-null-dereference-in-hfsplus_lookup.patch
-* hfsplus-prevent-crash-on-exit-from-failed-search.patch
-* hfs-prevent-crash-on-exit-from-failed-search.patch
-* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
-* mm-fix-race-on-soft-offlining-free-huge-pages.patch
-* mm-soft-offline-close-the-race-against-page-allocation.patch
-* hwtracing-intel_th-change-return-type-to-vm_fault_t.patch
-* fs-afs-adding-new-return-type-vm_fault_t.patch
-* treewide-correct-differenciate-and-instanciate-typos.patch
-* vmcore-hide-vmcoredd_mmap_dumps-for-nommu-builds.patch
-* mm-util-make-strndup_user-description-a-kernel-doc-comment.patch
-* mm-util-add-kernel-doc-for-kvfree.patch
-* docs-core-api-kill-trailing-whitespace-in-kernel-apirst.patch
-* docs-core-api-move-strmemdup-to-string-manipulation.patch
-* docs-core-api-split-memory-management-api-to-a-separate-file.patch
-* docs-mm-make-gfp-flags-descriptions-usable-as-kernel-doc.patch
-* docs-core-api-mm-api-add-section-about-gfp-flags.patch
-* gpu-drm-gma500-change-return-type-to-vm_fault_t.patch
-* treewide-convert-iso_8859-1-text-comments-to-utf-8.patch
-* s390-ebcdic-convert-comments-to-utf-8.patch
-* lib-fonts-convert-comments-to-utf-8.patch
-* mm-change-return-type-int-to-vm_fault_t-for-fault-handlers.patch
-* mm-memcontrol-print-proper-oom-header-when-no-eligible-victim-left.patch
-* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
-* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
-* mm-oom-fix-missing-tlb_finish_mmu-in-__oom_reap_task_mm.patch
-* mm-respect-arch_dup_mmap-return-value.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* ocfs2-dlmglue-clean-up-timestamp-handling.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-  mm.patch
-* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
-* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix-fix.patch
-* mm-memblock-introduce-memblock_search_pfn_regions.patch
-* mm-memblock-introduce-memblock_search_pfn_regions-fix.patch
-* mm-memblock-introduce-pfn_valid_region.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
-* z3fold-fix-wrong-handling-of-headless-pages.patch
-* mm-adjust-max-read-count-in-generic_file_buffered_read.patch
-* mm-make-memmap_init-a-proper-function.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+--Sig_/7Ue9y/.D5eOIfpLFvTcLwGl--
