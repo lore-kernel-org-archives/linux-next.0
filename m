@@ -1,50 +1,63 @@
 From: Masami Hiramatsu <mhiramat@kernel.org>
 Subject: Re: linux-next: build warnings from the build of Linus' tree
-Date: Sat, 25 Aug 2018 10:51:27 +0900
-Message-ID: <20180825105127.7d178290162a186a7c768c60@kernel.org>
+Date: Sun, 26 Aug 2018 03:53:23 +0900
+Message-ID: <20180826035323.254463c8b183e6912c5b9a13@kernel.org>
 References: <20180824133206.4218c2e5@canb.auug.org.au>
         <20180824172053.20fa197294f51496dcec5605@kernel.org>
-        <20180824204756.e787765461975cd1e27502dc@kernel.org>
-        <20180824224211.2934d7c0@canb.auug.org.au>
+        <CAK8P3a0LXxq8tgsz9YL3hT47dB6nKeBdip3gFA5w0dgRGDwCMQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180824224211.2934d7c0@canb.auug.org.au>
+In-Reply-To: <CAK8P3a0LXxq8tgsz9YL3hT47dB6nKeBdip3gFA5w0dgRGDwCMQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 24 Aug 2018 22:42:11 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Arnd,
 
-> Hi Masami,
-> 
-> On Fri, 24 Aug 2018 20:47:56 +0900 Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Fri, 24 Aug 2018 14:46:16 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
+
+> On Fri, Aug 24, 2018 at 10:23 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > >
-> > gcc-7.3.0 cross build ld shows below warnings.
-> > 
-> >   MODPOST vmlinux.o
-> > /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> >   KSYM    .tmp_kallsyms1.o
-> > /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> >   KSYM    .tmp_kallsyms2.o
-> > /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> >   KSYM    .tmp_kallsyms3.o
-> >   LD      vmlinux
-> > /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
+> > On Fri, 24 Aug 2018 13:32:06 +1000
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > > Hi all,
+> > >
+> > > After merging the origin tree, today's linux-next build (powerpc
+> > > allyesconfig) produced these warnings:
+> > >
+> > > Maybe introduced by commit
+> > >
+> > >   6b7dca401cb1 ("tracing: Allow gcov profiling on only ftrace subsystem")
+> > >
+> > > I am guessing, but that is the only new thing that affects all of
+> > > kernel/trace ...
+> >
+> > Yes, I agree. But I just followed Documentation/dev-tools/gcov.rst
+> > to enable profiling in kernel/trace. Hmm, doesn't ppc64 support
+> > GCOV_PROFILE?  (But as far as I can see, ARCH_HAS_GCOV_PROFILE_ALL
+> > is enabled in arch/powerpc/Kconfig)
+> >
+> > Anyway, I'll try to reproduce it.
 > 
-> I reported those a while ago when I started using the native Debian gcc
-> on my Powerpc build box.
-> 
-> > But it seems another warning, and I couldn't see your warnings. Could you tell me your gcc version?
-> 
-> Currently, it is the Debian gcc 8.2.0, ld 2.31.1.
+> Thje same commit causes a link failure on ARM with a randconfig
+> kernel (see https://pastebin.com/KspjpyKG for the .config):
 
-Hmm, so I guess it might be related to newer gcc (8?). I need to check it on x86-64 too.
+OK, I confirmed that this happened with both gcc-7.3.0 and gcc-8.1.0
+with your config.
+I also confirmed that CONFIG_GCOV_PROFILE_ALL causes same issue.
+(Note that CONFIG_GCOV_PROFILE_ALL depends on !CONFIG_COMPILE_TEST,
+ so allyesconfig disables it always)
 
-Thank you,
+Hmm, now gcov kernel itself might have a problem on arm and 
+powerpc(on gcc-8)?
+
+Thanks,
+
 
 -- 
 Masami Hiramatsu <mhiramat@kernel.org>
