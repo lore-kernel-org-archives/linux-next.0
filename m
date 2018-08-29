@@ -1,68 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Wed, 29 Aug 2018 07:45:23 +1000
-Message-ID: <20180829074523.13dfcc82@canb.auug.org.au>
-References: <20180817103913.52544928@canb.auug.org.au>
-        <CAMuHMdUQcoMxb=0_i1PYyymUpQ1VBOub+EgDbRJWmrq8_xJ-uQ@mail.gmail.com>
-        <20180821183012.3b9bc4f3@canb.auug.org.au>
-        <CAMuHMdU2dK10m2c2b3w6+-6KDr-L5MejJbvo6Y2urj1j-TA7+w@mail.gmail.com>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Wed, 29 Aug 2018 10:33:49 +1000
+Message-ID: <20180829103349.5cd15637@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O5Rz7Ta5+p2YlxFQ1M6zJbU"; protocol="application/pgp-signature"
+ boundary="Sig_/pQ3QTpRms9=VG/v/JUkchY/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU2dK10m2c2b3w6+-6KDr-L5MejJbvo6Y2urj1j-TA7+w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, rf@opensource.cirrus.com, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lanqing Liu <lanqing.liu@spreadtrum.com>, Baolin Wang <baolin.wang@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/O5Rz7Ta5+p2YlxFQ1M6zJbU
+--Sig_/pQ3QTpRms9=VG/v/JUkchY/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Mark,
 
-On Tue, 28 Aug 2018 15:34:38 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
->
-> On Tue, Aug 21, 2018 at 10:31 AM Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > On Tue, 21 Aug 2018 10:08:54 +0200 Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote: =20
-> > > To obey sorting rules, the CIRRUS LOGIC entry should be before the CL=
-ANG
-> > > entry.
-> > > Upon closer look, it should be inserted before the CISCO entries, too=
- (in
-> > > the mfd tree). =20
-> >
-> > Thanks for noticing.  Unfortunately it is badly ordered in Linus' tree
-> > now as well.  Feel like sending him a patch? =20
->=20
-> Your wish is my command; sent.
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-:-)
+In file included from include/linux/clk.h:16,
+                 from drivers/spi/spi-sprd.c:4:
+drivers/spi/spi-sprd.c: In function 'sprd_spi_init_hw':
+drivers/spi/spi-sprd.c:462:29: error: 'struct spi_transfer' has no member n=
+amed 'word_delay'
+  word_delay =3D clamp_t(u16, t->word_delay, SPRD_SPI_MIN_DELAY_CYCLE,
+                             ^~
 
-Thanks.
+(and many more)
+
+Caused by commit
+
+  e7d973a31c24 ("spi: sprd: Add SPI driver for Spreadtrum SC9860")
+
+I have used the spi tree from next-20180828 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/O5Rz7Ta5+p2YlxFQ1M6zJbU
+--Sig_/pQ3QTpRms9=VG/v/JUkchY/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluFwnMACgkQAVBC80lX
-0GzuQAf+KKfiWsSwj/G6A8DDlOuyqtguGEFEJnkPB0ILpqGIxXTu2nos+wBK+VOH
-Uri6KHje1gvPfi1vVzradc56tAvgsENprAh9ftHiEBiCnfpym8hAhxNe5DqunNiE
-UlC+9tRxMME96xZtLOyfa0mubfmti/g4GMVrQFNxBRHghuIvUTq2KvukXKP9KkpX
-rey/3KjSWzMiaAvGsaIk93b0bNBgIkKh1MmOoMvWQKNb38JYi0FpRXSG8bKzC7Aa
-5CzoVwoDqmDEqa9m1lndY8/p9gAa5qy1iu5VfRy2rEBvsZKbPjLXiJVCQkD2/dUX
-8gk9JyI2eZV1KrcuRrPaaxxvJLifkw==
-=0Wbt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluF6e0ACgkQAVBC80lX
+0Gzlegf9F88lNWfvLVrksn1IoiSVJPujlArPrfxSgYMGO5M4Blt3lJCQVFPLVX5R
+5uclJdRyCqPPFp02bZcNJvnPp9Sbn2fOvRKbxrfVGhinbXq07pEMrspgm655f5fO
+4TTnPJTcDtP4drScF8kIqqHSEH0APFO6RR3dCSKgO4bFTfBeyzimN3Dte0tl5Gon
+uwyAhNLu4ARRLoTB7Xhftuwtgm1StDXycNZxS3LCz2Gj8DIMfWng68cj9j2V1xru
+dQX6Rm/O+cG4Ng34o3uUaHSQ+t75Au0V/TlBBkrU7Lx/z/+4wxqMC6GALtXI74A4
+J5XZpq+y0/o2OU0vhQzYddUZXhCJkg==
+=O8ab
 -----END PGP SIGNATURE-----
 
---Sig_/O5Rz7Ta5+p2YlxFQ1M6zJbU--
+--Sig_/pQ3QTpRms9=VG/v/JUkchY/--
