@@ -1,49 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the bpf-next tree
-Date: Sat, 1 Sep 2018 05:07:51 +1000
-Message-ID: <20180901050751.3714fc63@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F9cPL1urc81lZiOWy+5JsAQ"; protocol="application/pgp-signature"
+From: Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH net-next] net: nixge: Fix Kconfig warning with OF_MDIO
+Date: Fri, 31 Aug 2018 13:30:54 -0700
+Message-ID: <20180831203054.12132-1-mdf@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, moritz.fischer@ettus.com, linux-next@vger.kernel.org, Moritz Fischer <mdf@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/F9cPL1urc81lZiOWy+5JsAQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fix Kconfig warning with OF_MDIO where OF_MDIO was
+selected unconditionally instead of only when
+OF is actually enabled.
 
-Hi all,
+Fixes 7e8d5755be0e ("net: nixge: Add support for 64-bit platforms")
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/net/ethernet/ni/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Commits
-
-  0f93c3995c93 ("bpf: add TCP_SAVE_SYN/TCP_SAVED_SYN sample program")
-  9452048c7940 ("bpf: add TCP_SAVE_SYN/TCP_SAVED_SYN options for bpf_(set|g=
-et)sockopt")
-  175eba5962b4 ("xdp: remove redundant variable 'headroom'")
-
-are missing a Signed-off-by from their committers.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/F9cPL1urc81lZiOWy+5JsAQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluJkgcACgkQAVBC80lX
-0GzncwgAhyqs4LlNWeLLMxSbNv6XTZZ+ls3ne/1g5cSze2vthwLoibDerx6QJfDw
-9ljAbM3gWVKMduW1wzllNooLNB2CtUaFMXQHOahj0UxqCqsCMUcW2AhuK3iazts+
-A7VvybUqqN1ilkumK6QQjdp0zyBm/KClco2meD+IOYENKTcsTD6AkDHTF6C/hM2J
-9vLV8uNkPVuwjxRcDJn649jGeJFk9xbKjb08BqTKo1iKU/+8Thn4WxBLqzR5oKlI
-GBAVp8bqYB8+cJEqj5+20ysleGrHT6qlSVBuwIKOaWQEIMjXQMcuGt0/r+x9CpGl
-O1UqqBZzrW+k7TinsNTUgwgXfddJKw==
-=RWQq
------END PGP SIGNATURE-----
-
---Sig_/F9cPL1urc81lZiOWy+5JsAQ--
+diff --git a/drivers/net/ethernet/ni/Kconfig b/drivers/net/ethernet/ni/Kconfig
+index 04e315704f71..c73978474c4b 100644
+--- a/drivers/net/ethernet/ni/Kconfig
++++ b/drivers/net/ethernet/ni/Kconfig
+@@ -20,7 +20,7 @@ config NI_XGE_MANAGEMENT_ENET
+ 	tristate "National Instruments XGE management enet support"
+ 	depends on HAS_IOMEM && HAS_DMA
+ 	select PHYLIB
+-	select OF_MDIO
++	select OF_MDIO if OF
+ 	help
+ 	  Simple LAN device for debug or management purposes. Can
+ 	  support either 10G or 1G PHYs via SFP+ ports.
+-- 
+2.18.0
