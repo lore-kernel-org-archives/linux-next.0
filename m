@@ -1,29 +1,27 @@
-From: Corey Minyard <minyard@acm.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the ipmi tree
-Date: Thu, 30 Aug 2018 19:50:06 -0500
-Message-ID: <b5bb57c8-52fa-180f-37a7-5f6a35fc0140@acm.org>
-References: <20180831073725.2cf9081d@canb.auug.org.au>
-Reply-To: minyard@acm.org
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: disabling -Wstringop-truncation
+Date: Thu, 30 Aug 2018 18:17:01 -0700
+Message-ID: <CA+55aFyApn2d+bv_3LGwXKnLpj2zdX6HYw_9cYZoNUVPi-Bu_g@mail.gmail.com>
+References: <20180831080714.4f94fba9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180831073725.2cf9081d@canb.auug.org.au>
-Content-Language: en-GB
+In-Reply-To: <20180831080714.4f94fba9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Corey Minyard <cminyard@mvista.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 08/30/2018 04:37 PM, Stephen Rothwell wrote:
-> Hi Corey,
+On Thu, Aug 30, 2018 at 3:07 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Commit
->
->    6320fd2c65b5 ("ipmi: fix return value of ipmi_set_my_LUN")
->
-> is missing a Signed-off-by from its committer.
->
-Thanks, got it.
+> I am now mainly using gcc v8.2 for my builds and -Wstringop-truncation
+> causes so many warnings that I am sure to miss others, so I have
+> applied the below to my fixes tree until the noise reduces.
 
--corey
+Applied.
+
+If people want the warning with W=xyz, then this is still the correct
+patch, and we should add a line to re-enable it in
+scripts/Makefile.extrawarn.
+
+             Linus
