@@ -1,36 +1,28 @@
-From: Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH net-next] net: nixge: Fix Kconfig warning with OF_MDIO
-Date: Fri, 31 Aug 2018 13:30:54 -0700
-Message-ID: <20180831203054.12132-1-mdf@kernel.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: Signed-off-by missing for commit in the bpf-next tree
+Date: Sat, 1 Sep 2018 02:06:00 +0200
+Message-ID: <5bfa0d9e-bbe3-5a63-0857-8129a9053628@iogearbox.net>
+References: <20180901050751.3714fc63@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180901050751.3714fc63@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, moritz.fischer@ettus.com, linux-next@vger.kernel.org, Moritz Fischer <mdf@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Fix Kconfig warning with OF_MDIO where OF_MDIO was
-selected unconditionally instead of only when
-OF is actually enabled.
+On 08/31/2018 09:07 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   0f93c3995c93 ("bpf: add TCP_SAVE_SYN/TCP_SAVED_SYN sample program")
+>   9452048c7940 ("bpf: add TCP_SAVE_SYN/TCP_SAVED_SYN options for bpf_(set|get)sockopt")
+>   175eba5962b4 ("xdp: remove redundant variable 'headroom'")
+> 
+> are missing a Signed-off-by from their committers.
 
-Fixes 7e8d5755be0e ("net: nixge: Add support for 64-bit platforms")
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
- drivers/net/ethernet/ni/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ni/Kconfig b/drivers/net/ethernet/ni/Kconfig
-index 04e315704f71..c73978474c4b 100644
---- a/drivers/net/ethernet/ni/Kconfig
-+++ b/drivers/net/ethernet/ni/Kconfig
-@@ -20,7 +20,7 @@ config NI_XGE_MANAGEMENT_ENET
- 	tristate "National Instruments XGE management enet support"
- 	depends on HAS_IOMEM && HAS_DMA
- 	select PHYLIB
--	select OF_MDIO
-+	select OF_MDIO if OF
- 	help
- 	  Simple LAN device for debug or management purposes. Can
- 	  support either 10G or 1G PHYs via SFP+ ports.
--- 
-2.18.0
+Fixed up, thanks!
