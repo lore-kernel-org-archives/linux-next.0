@@ -1,58 +1,47 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH] ARM: linker script: GCOV kernel may refers data in __exit
-Date: Sat,  1 Sep 2018 21:38:13 +0900
-Message-ID: <153580549235.10130.1495077983569784123.stgit@devbox>
-References: <20180901185017.0a81bc3e61f5d021664f13f3@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the net-next tree
+Date: Mon, 3 Sep 2018 07:40:43 +1000
+Message-ID: <20180903074043.65038277@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RvFjk9o6Y5EqMMaNUVGJsO4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180901185017.0a81bc3e61f5d021664f13f3@kernel.org>
-In-Reply-To: <20180901185017.0a81bc3e61f5d021664f13f3@kernel.org>
-References: <20180901185017.0a81bc3e61f5d021664f13f3@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vakul Garg <vakul.garg@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-GCOV kernel embeds counters in the kernel for each line
-and a part of that embed in __exit text. So we need to
-keep the __exit text if CONFIG_GCOV_KERNEL=y.
+--Sig_/RvFjk9o6Y5EqMMaNUVGJsO4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Without this patch, if we discards __exit text (e.g.
-disables CONFIG_GENERIC_BUG, CONFIG_JUMP_LABEL and
-CONFIG_SMP_ON_UP) but enables CONFIG_GCOV_PROFILE_FTRACE,
-ld will error like below on ARM.
+Hi all,
 
-`.text.exit' referenced in section `.ARM.exidx.text.exit' of
-kernel/trace/trace_clock.o: defined in discarded section `.text.exit'
-of kernel/trace/trace_clock.o
+Commit
 
-To fix this issue, we keep __exit when CONFIG_GCOV_KERNEL=y.
+  c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across mul=
+tiple records")
 
-The reason why not depending CONFIG_GCOV_PROFILE_X, is
-that the Documentation/dev-tools/gcov.rst says that the
-developer can enable gcov profile on a file or a directory
-by customizing Makefile, and that will only depend on
-CONFIG_GCOV_KERNEL.
+is missing a Signed-off-by from its author.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/kernel/vmlinux.lds.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/arch/arm/kernel/vmlinux.lds.h b/arch/arm/kernel/vmlinux.lds.h
-index ae5fdff18406..baaacee9f5ce 100644
---- a/arch/arm/kernel/vmlinux.lds.h
-+++ b/arch/arm/kernel/vmlinux.lds.h
-@@ -9,7 +9,8 @@
- #endif
- 
- #if (defined(CONFIG_SMP_ON_UP) && !defined(CONFIG_DEBUG_SPINLOCK)) || \
--	defined(CONFIG_GENERIC_BUG) || defined(CONFIG_JUMP_LABEL)
-+	defined(CONFIG_GENERIC_BUG) || defined(CONFIG_JUMP_LABEL) || \
-+	defined(CONFIG_GCOV_KERNEL)
- #define ARM_EXIT_KEEP(x)	x
- #define ARM_EXIT_DISCARD(x)
- #else
+--Sig_/RvFjk9o6Y5EqMMaNUVGJsO4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluMWNsACgkQAVBC80lX
+0GzY0wgAjEQ9SimnqiEx5Lt/BkKO51jqjUljiwoaU7u6CcpkX6YHSjsWCG9ORyv/
+wGR/INMsZaL4yW1i181CUdXzkagOeXqcEy9ln3mWAWB4kQOe50dIm0eOSq6Rw9/+
+NuyDJDXWsaB/J/wGRnTgjyHLjvPCW+AeNfrHCLu//s2jA7y0/WbxXvfrRnL2thGx
+UrntHdVf+A2CMTvQzFVkevEEyhmUB6k1H3q89xKIBqdZKD/wvx9I7e2cZP3DrJlJ
+UYMRwDw761Kl7AzNZeXJgsFVdltnWHyBMV09kFsozKw8eloFSiTV2HKSi33e5GL8
+GG0/tiFiTNHcbiVHeo7wPnTIcUhlJg==
+=AYBW
+-----END PGP SIGNATURE-----
+
+--Sig_/RvFjk9o6Y5EqMMaNUVGJsO4--
