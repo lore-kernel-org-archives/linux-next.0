@@ -1,47 +1,27 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net-next tree
-Date: Mon, 3 Sep 2018 07:40:43 +1000
-Message-ID: <20180903074043.65038277@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next] net: nixge: Fix Kconfig warning with OF_MDIO
+Date: Sun, 02 Sep 2018 16:10:40 -0700 (PDT)
+Message-ID: <20180902.161040.1009330568454902368.davem@davemloft.net>
+References: <20180831203054.12132-1-mdf@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RvFjk9o6Y5EqMMaNUVGJsO4"; protocol="application/pgp-signature"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180831203054.12132-1-mdf@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vakul Garg <vakul.garg@nxp.com>
+To: mdf@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, moritz.fischer@ettus.com, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/RvFjk9o6Y5EqMMaNUVGJsO4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Moritz Fischer <mdf@kernel.org>
+Date: Fri, 31 Aug 2018 13:30:54 -0700
 
-Hi all,
+> Fix Kconfig warning with OF_MDIO where OF_MDIO was
+> selected unconditionally instead of only when
+> OF is actually enabled.
+> 
+> Fixes 7e8d5755be0e ("net: nixge: Add support for 64-bit platforms")
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
 
-Commit
-
-  c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across mul=
-tiple records")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/RvFjk9o6Y5EqMMaNUVGJsO4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluMWNsACgkQAVBC80lX
-0GzY0wgAjEQ9SimnqiEx5Lt/BkKO51jqjUljiwoaU7u6CcpkX6YHSjsWCG9ORyv/
-wGR/INMsZaL4yW1i181CUdXzkagOeXqcEy9ln3mWAWB4kQOe50dIm0eOSq6Rw9/+
-NuyDJDXWsaB/J/wGRnTgjyHLjvPCW+AeNfrHCLu//s2jA7y0/WbxXvfrRnL2thGx
-UrntHdVf+A2CMTvQzFVkevEEyhmUB6k1H3q89xKIBqdZKD/wvx9I7e2cZP3DrJlJ
-UYMRwDw761Kl7AzNZeXJgsFVdltnWHyBMV09kFsozKw8eloFSiTV2HKSi33e5GL8
-GG0/tiFiTNHcbiVHeo7wPnTIcUhlJg==
-=AYBW
------END PGP SIGNATURE-----
-
---Sig_/RvFjk9o6Y5EqMMaNUVGJsO4--
+Applied, thanks.
