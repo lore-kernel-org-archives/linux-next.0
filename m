@@ -1,69 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the net-next
- tree
-Date: Mon, 3 Sep 2018 15:21:25 +1000
-Message-ID: <20180903152125.57233880@canb.auug.org.au>
-References: <20180903074043.65038277@canb.auug.org.au>
-        <DB7PR04MB4252FC3E1B9B2A56C5B81B268B0C0@DB7PR04MB4252.eurprd04.prod.outlook.com>
+Subject: linux-next: manual merge of the dmi tree with Linus' tree
+Date: Tue, 4 Sep 2018 09:19:50 +1000
+Message-ID: <20180904091950.2e49b1a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qvKqqEPnL=cGsqyjTfk94jc"; protocol="application/pgp-signature"
+ boundary="Sig_/.XsCb+VdQ3kODON9R5lYliI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <DB7PR04MB4252FC3E1B9B2A56C5B81B268B0C0@DB7PR04MB4252.eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vakul Garg <vakul.garg@nxp.com>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kai Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/qvKqqEPnL=cGsqyjTfk94jc
+--Sig_/.XsCb+VdQ3kODON9R5lYliI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vakul,
+Hi all,
 
-On Mon, 3 Sep 2018 05:08:08 +0000 Vakul Garg <vakul.garg@nxp.com> wrote:
->
-> > -----Original Message-----
-> > Commit
-> >=20
-> >   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across
-> > multiple records")
-> >=20
-> > is missing a Signed-off-by from its author.
->=20
-> It is my fault to miss adding signoff.
+Today's linux-next merge of the dmi tree got a conflict in:
 
-See section 11 of Documentation/process/submitting-patches.rst.
+  drivers/acpi/bus.c
 
-> I am sorry about that.
+between commit:
 
-It happens ...
+  ae976358cd7b ("Revert "ACPI / bus: Parse tables as term_list for Dell XPS=
+ 9570 and Precision M5530"")
 
-> Please advise if I need to do something to fix it.
+from Linus' tree and commit:
 
-Dave's tree does not rebase, so nothing can be done about this case.  I
-guess you should just remember to add a Signed-off-by line in the
-future.  Also, Dave should probably check before publishing to his tree.
+  767b174cad46 ("ACPI / bus: Only call dmi_check_system on X86")
 
-That being said, I have not seen many like this in Dave's tree.
+from the dmi tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/qvKqqEPnL=cGsqyjTfk94jc
+diff --cc drivers/acpi/bus.c
+index 292088fcc624,0ac3ad75309c..000000000000
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@@ -1033,11 -1056,15 +1029,16 @@@ void __init acpi_early_init(void
+ =20
+  	acpi_permanent_mmap =3D true;
+ =20
++ #ifdef CONFIG_X86
+  	/*
+ -	 * Check machine-specific quirks
+ +	 * If the machine falls into the DMI check table,
+ +	 * DSDT will be copied to memory
++ 	 * Note that calling dmi_check_system here on other architectures
++ 	 * would not be OK because only x86 intializes dmi early enough.
++ 	 * Thankfully only x86 systems need such quirks for now.
+  	 */
+ -	dmi_check_system(acpi_quirks_dmi_table);
+ +	dmi_check_system(dsdt_dmi_table);
++ #endif
+ =20
+  	status =3D acpi_reallocate_root_table();
+  	if (ACPI_FAILURE(status)) {
+
+--Sig_/.XsCb+VdQ3kODON9R5lYliI
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluMxNUACgkQAVBC80lX
-0GwVrQf/bejc7HG5fCIylZNrnuUrdzEwh82AinM+BoZKuSrr8CdmnbChf0QoAQii
-JtQDGqoVXbUW9qEFeAgJcNsqMlgXl6CZmZJ9ZFNKPrmxRefCxttGhP9vR27tA+0N
-FBIGkdsG+s4sZXbfiuk9EHbC/2k8CtIy9wsg825cOvkdS8g1WhcbuR3NBA/67Ra0
-HTgFLWY5VvyEHZHm6DVlXXYM89MGr0D5fwGxVV9vDf8iUxK/HjIw/00EGKc/JJX7
-Wsl6WcRVOkyT8oZZ5HdKar8wmMLt9iZ5RaOwPwhy8nuSw3hJgPmhW24UfntT11BY
-U7orGF5t6ofEwLczBtNjibyg6zAtBQ==
-=biop
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluNwZYACgkQAVBC80lX
+0Gxe8Qf/elrm2pW26rZ9GHjMoleWgw+C+rshSJjPgTbK7+N7POlsX9ooNZ2djaMP
+uECuSCNZLwyTX6rKKrIRMeNf5r8proNB+6yPAIYEEEHYUqTt7ygZ9dsiRrZcFswy
+3LdosjzMlMDWAf5+Ga2JO55dz9GKbmBCycwG1tX9G+M38Cts6YNC8Cxl+KFgxuRV
+et9JSsYsRx4dFFVxIRuCMAKfafeQ6f9jPHGcDKyovQ38Ld5lTwc9tV/bcKxH+3Y4
+pEuiT4vcJW8U6G7Omga8MgnGWItyDyG5YA0BMJK6xKCDzQZggSqDeVZyRjPUDGrK
+IwrA2u+6dYzoL8vOkFDVhQuEuuWzhQ==
+=rbOe
 -----END PGP SIGNATURE-----
 
---Sig_/qvKqqEPnL=cGsqyjTfk94jc--
+--Sig_/.XsCb+VdQ3kODON9R5lYliI--
