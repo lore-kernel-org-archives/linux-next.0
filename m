@@ -1,45 +1,57 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: linux-next: manual merge of the dmi tree with Linus' tree
-Date: Tue, 4 Sep 2018 14:51:52 +0200
-Message-ID: <20180904145152.5dae4343@endymion>
-References: <20180904091950.2e49b1a5@canb.auug.org.au>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: linux-next: error when fetching the bcm2835 tree
+Date: Tue, 04 Sep 2018 10:41:22 -0700
+Message-ID: <87wos1gny5.fsf@anholt.net>
+References: <20180828074200.440fb5ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180904091950.2e49b1a5@canb.auug.org.au>
+In-Reply-To: <20180828074200.440fb5ca@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kai Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--=-=-=
+Content-Type: text/plain
 
-On Tue, 4 Sep 2018 09:19:50 +1000, Stephen Rothwell wrote:
-> Today's linux-next merge of the dmi tree got a conflict in:
-> 
->   drivers/acpi/bus.c
-> 
-> between commit:
-> 
->   ae976358cd7b ("Revert "ACPI / bus: Parse tables as term_list for Dell XPS 9570 and Precision M5530"")
-> 
-> from Linus' tree and commit:
-> 
->   767b174cad46 ("ACPI / bus: Only call dmi_check_system on X86")
-> 
-> from the dmi tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Thanks for the heads up. I have rebased my dmi tree on top of 4.19-rc2,
-and this solves the conflict.
+> [ Unknown signature status ]
+> Hi Eric,
+>
+> Fetching the bcm2835 tree (git://github.com/anholt/linux.git#for-next)
+> produces this error:
+>
+> fatal: Couldn't find remote ref refs/heads/for-next
 
--- 
-Jean Delvare
-SUSE L3 Support
+I'd passed responsibility for the git tree off to Stefan while I'm
+mostly-unavailable due to new baby.  Maybe Stefan had deleted the branch
+for a bit?
+
+Stefan -- the for-next branch is what linux-next pulls in, and I was
+regenerating it whenever I pushed -next branches.  You can find one set
+of scripts for helping generate a for-next branch at
+git://git.kernel.org/pub/scm/linux/kernel/git/tegra/maint-scripts.git
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAluOw8IACgkQtdYpNtH8
+nuifUA/+KUqbSmr1eyohjjAxRZeeNQwscCYbHxCGp2g2oplwt+73/zTEEHyf7Z8b
++UgcHhCbjh8jakNJe3jRPRbjgAH6Xq8gomq9Ow3TYoeAxm6JVNEtxWm10kSPAYle
+l29E2GG7iKM529TGYsOVG2AgDFm8GnSrh4JfgP1cfXGuAu03W3Li3vmQuJPVKmGq
+1knwZRYhSbFdOUA7d9H4/6xxuopTKM2iO3JZea12kfJTNK91KTWRbLyzIGjzeHSk
+INNWlIb0HISDDNUdt7OH72tlTGIDtUxYrM1+T5kcoZH3lsPeYCFR/0EsINwiLDTO
+it/7vnDJNsZ/krsHdAr9BugFyx4Q1oFFViJPwLgmr6bFAq9qoTs3jGllZCQ5CwZk
+bBkJ/iOyFMc9Jj4y8j8SL98hvjZjYXD9aBvx5um9SQH44GmKCFf6FNBdl5VgV7x5
+ZP7YOlW0+V+Y51/1K6gEHSuw9xOhe686mYpbRtymzMoRYBIux/Q+wxddGSuNNt1z
+iy9Pw5BVb7nUtLypxBOIg4pyTuU/gauBV/YqNOlW+vd0HLM9556WN0c9PdAFC0ib
+GRebzpmBExj2rt/V1RFV/6OnHk+uUCLfE47puD91y787iIi6SoQf9YQvHKxofrhV
+gXcLWVE9lBfn/fDL/l35xPW+zs5IxuJ8lJcueZQ9bHgFOkG92QM=
+=8Gz9
+-----END PGP SIGNATURE-----
+--=-=-=--
