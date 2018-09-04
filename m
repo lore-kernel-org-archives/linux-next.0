@@ -1,39 +1,45 @@
-From: John Whitmore <johnfwhitmore@gmail.com>
-Subject: Re: linux-next: build warning after merge of the staging tree
-Date: Tue, 4 Sep 2018 10:04:07 +0100
-Message-ID: <20180904090406.GB29158@xux707-tw>
-References: <20180903120617.34f4f8cd@canb.auug.org.au>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: linux-next: manual merge of the dmi tree with Linus' tree
+Date: Tue, 4 Sep 2018 14:51:52 +0200
+Message-ID: <20180904145152.5dae4343@endymion>
+References: <20180904091950.2e49b1a5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180903120617.34f4f8cd@canb.auug.org.au>
+In-Reply-To: <20180904091950.2e49b1a5@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kai Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 03, 2018 at 12:06:17PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the staging tree, today's linux-next build (powerpc
-> allyesconfig) produced this warning:
-> 
-> WARNING: drivers/staging/rtl8192u/r8192u_usb: 'dot11d_init' exported twice. Previous export was in drivers/staging/rtl8192e/rtllib.ko
-> 
-> Introduced by commit
-> 
->   c01f06b7506f ("staging:rtl8192u: Rename Dot11d_Init - Style")
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Hi Stephen,
 
-Aragh, sorry my bad, and a newbie mistake. I now know to do more of a
-check for exported symbols. If it had occured to me I'd not have touched
-it.
+On Tue, 4 Sep 2018 09:19:50 +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the dmi tree got a conflict in:
+> 
+>   drivers/acpi/bus.c
+> 
+> between commit:
+> 
+>   ae976358cd7b ("Revert "ACPI / bus: Parse tables as term_list for Dell XPS 9570 and Precision M5530"")
+> 
+> from Linus' tree and commit:
+> 
+>   767b174cad46 ("ACPI / bus: Only call dmi_check_system on X86")
+> 
+> from the dmi tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-I'm not sure what the procedure is, having written my first bug, but I'll
-submit a patch to revert that change.
+Thanks for the heads up. I have rebased my dmi tree on top of 4.19-rc2,
+and this solves the conflict.
 
-jwhitmore
+-- 
+Jean Delvare
+SUSE L3 Support
