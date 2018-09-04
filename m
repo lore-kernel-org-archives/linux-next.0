@@ -1,216 +1,68 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2018-09-04-16-03 uploaded
-Date: Tue, 04 Sep 2018 16:04:01 -0700
-Message-ID: <20180904230401.QR8dL%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: error when fetching the bcm2835 tree
+Date: Wed, 5 Sep 2018 09:55:03 +1000
+Message-ID: <20180905095503.5f6feba1@canb.auug.org.au>
+References: <20180828074200.440fb5ca@canb.auug.org.au>
+        <87wos1gny5.fsf@anholt.net>
+        <1892655944.623.1536091635278@email.1und1.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ywZIngKFPKOvy0bg_pVSFo="; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1892655944.623.1536091635278@email.1und1.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Eric Anholt <eric@anholt.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-09-04-16-03 has been uploaded to
+--Sig_/ywZIngKFPKOvy0bg_pVSFo=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Hi Stefan,
 
-mmotm-readme.txt says
+On Tue, 4 Sep 2018 22:07:15 +0200 (CEST) Stefan Wahren <stefan.wahren@i2se.=
+com> wrote:
+>
+> > Eric Anholt <eric@anholt.net> hat am 4. September 2018 um 19:41 geschri=
+eben:
+> >=20
+> > Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> >  =20
+> > > Fetching the bcm2835 tree (git://github.com/anholt/linux.git#for-next)
+> > > produces this error:
+> > >
+> > > fatal: Couldn't find remote ref refs/heads/for-next =20
+> >=20
+> > I'd passed responsibility for the git tree off to Stefan while I'm
+> > mostly-unavailable due to new baby.  Maybe Stefan had deleted the branch
+> > for a bit? =20
+>=20
+> sorry for that. I deleted the branch and i manually setup the new one lat=
+er.
+>=20
+> I hope, everything is fine now?
 
-README for mm-of-the-moment:
+Yes, all good.
 
-http://www.ozlabs.org/~akpm/mmotm/
+--=20
+Cheers,
+Stephen Rothwell
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+--Sig_/ywZIngKFPKOvy0bg_pVSFo=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+-----BEGIN PGP SIGNATURE-----
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluPG1cACgkQAVBC80lX
+0GwCZAf/cDti0PMzT0f40Zo9Y3cJDurFkMfUf3ct7q10uRwbibnebZYVyyemqjI7
+7fUKxDIgc7052j4qfFV2GiaR7w06YbLyFn7dIAEjJTsKs75YI5oxCC8qWcB/qoll
+9OlfXcppwXwAIflnnWaAHyVJZjoOXDliLdO8CKTy7kZrRa/lISnUa9gB7TqrzGvm
+mnjbq2X1QTT+plRL2vx+8vKObasG8TvdRsVFaHEmEss1wwPd30wmfYV9th90ehwd
+B1CAHHAnjyZCweHc2+4DVn3DqSktOiXyZaY+uPCHYLgqVd0mOCIHjQR3aqY0HK7I
+tHVkQuWfmjfodctkL6k3wTI2lRd4ig==
+=hDzP
+-----END PGP SIGNATURE-----
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.19-rc2:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-memcontrol-print-proper-oom-header-when-no-eligible-victim-left.patch
-* mm-oom-fix-missing-tlb_finish_mmu-in-__oom_reap_task_mm.patch
-* mm-respect-arch_dup_mmap-return-value.patch
-* kmemleak-always-register-debugfs-file.patch
-* tools-vm-slabinfoc-fix-sign-compare-warning.patch
-* tools-vm-page-typesc-fix-defined-but-not-used-warning.patch
-* mm-utilc-improve-kvfree-kerneldoc.patch
-* mm-hugetlb-filter-out-hugetlb-pages-if-hugepage-migration-is-not-supported.patch
-* ipc-shm-properly-return-eidrm-in-shm_lock.patch
-* checkpatch-add-optional-static-const-to-blank-line-declarations-test.patch
-* memory_hotplug-fix-kernel_panic-on-offline-page-processing.patch
-* uapi-linux-keyctlh-dont-use-c-reserved-keyword-as-a-struct-member-name.patch
-* mm-fix-bug_on-in-vmf_insert_pfn_pud-from-vm_mixedmap-removal.patch
-* checkpatch-add-__ro_after_init-to-known-attribute.patch
-* lib-fix-three-typos-in-kconfig-help-text.patch
-* device-dax-convert-variable-to-vm_fault_t-type.patch
-* nilfs2-convert-to-spdx-license-tags.patch
-* proc-kcore-fix-invalid-memory-access-in-multi-page-read-optimization.patch
-* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
-* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
-* fix-crash-on-ocfs2_duplicate_clusters_by_page.patch
-* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5.patch
-* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5-checkpatch-fixes.patch
-* fork-report-pid-exhaustion-correctly.patch
-* mm-disable-deferred-struct-page-for-32-bit-arches.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* ocfs2-dlmglue-clean-up-timestamp-handling.patch
-* fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
-* ocfs2-fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
-* fix-clusters-leak-in-ocfs2_defrag_extent.patch
-* fix-clusters-leak-in-ocfs2_defrag_extent-fix.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* fs-iomap-change-return-type-to-vm_fault_t.patch
-* fs-convert-return-type-int-to-vm_fault_t.patch
-* fs-convert-return-type-int-to-vm_fault_t-v2.patch
-  mm.patch
-* mm-slubc-switch-to-bitmap_zalloc.patch
-* mm-rework-memcg-kernel-stack-accounting.patch
-* mm-drain-memcg-stocks-on-css-offlining.patch
-* mm-dont-miss-the-last-page-because-of-round-off-error.patch
-* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry.patch
-* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry-fix.patch
-* xen-gntdev-fix-up-blockable-calls-to-mn_invl_range_start.patch
-* mm-mmu_notifier-be-explicit-about-range-invalition-non-blocking-mode.patch
-* revert-mm-mmu_notifier-annotate-mmu-notifiers-with-blockable-invalidate-callbacks.patch
-* kmemleak-add-module-param-to-print-warnings-to-dmesg.patch
-* swap-use-__try_to_reclaim_swap-in-free_swap_and_cache.patch
-* swap-call-free_swap_slot-in-__swap_entry_free.patch
-* swap-clear-si-swap_map-in-swap_free_cluster.patch
-* mm-page_alloc-clean-up-check_for_memory.patch
-* mm-conveted-to-use-vm_fault_t.patch
-* mm-remove-vm_insert_mixed.patch
-* mm-introduce-vmf_insert_pfn_prot.patch
-* x86-convert-vdso-to-use-vm_fault_t.patch
-* mm-make-vm_insert_pfn_prot-static.patch
-* mm-remove-references-to-vm_insert_pfn.patch
-* mm-remove-vm_insert_pfn.patch
-* mm-inline-vm_insert_pfn_prot-into-caller.patch
-* mm-convert-__vm_insert_mixed-to-vm_fault_t.patch
-* mm-convert-insert_pfn-to-vm_fault_t.patch
-* cramfs-convert-to-use-vmf_insert_mixed-v2.patch
-* mm-cow-dont-bother-write-protectig-already-write-protected-huge-pages.patch
-* mm-cow-optimise-pte-dirty-accessed-bits-handling-in-fork.patch
-* mm-optimise-pte-dirty-accessed-bit-setting-by-demand-based-pte-insertion.patch
-* hexagon-switch-to-no_bootmem.patch
-* of-ignore-sub-page-memory-regions.patch
-* nios2-use-generic-early_init_dt_add_memory_arch.patch
-* nios2-switch-to-no_bootmem.patch
-* um-setup_physmem-stop-using-global-variables.patch
-* um-switch-to-no_bootmem.patch
-* unicore32-switch-to-no_bootmem.patch
-* alpha-switch-to-no_bootmem.patch
-* userfaultfd-allow-get_mempolicympol_f_nodempol_f_addr-to-trigger-userfaults.patch
-* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
-* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix-fix.patch
-* mm-memblock-introduce-memblock_search_pfn_regions.patch
-* mm-memblock-introduce-memblock_search_pfn_regions-fix.patch
-* mm-memblock-introduce-pfn_valid_region.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
-* z3fold-fix-wrong-handling-of-headless-pages.patch
-* mm-make-memmap_init-a-proper-function.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* lib-bitmapc-remove-wrong-documentation.patch
-* linux-bitmaph-handle-constant-zero-size-bitmaps-correctly.patch
-* linux-bitmaph-remove-redundant-uses-of-small_const_nbits.patch
-* linux-bitmaph-fix-type-of-nbits-in-bitmap_shift_right.patch
-* linux-bitmaph-relax-comment-on-compile-time-constant-nbits.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix-fix.patch
-* lib-bitmapc-simplify-bitmap_print_to_pagebuf.patch
-* lib-parserc-switch-match_strdup-over-to-use-kmemdup_nul.patch
-* lib-parserc-switch-match_u64int-over-to-use-match_strdup.patch
-* checkpatch-remove-gcc_binary_constant-warning.patch
-* init-do_mountsc-add-root=partlabel=name-support.patch
-* hfsplus-prevent-btree-data-loss-on-root-split.patch
-* hfsplus-fix-bug-on-bnode-parent-update.patch
-* hfsplus-prevent-btree-data-loss-on-enospc.patch
-* hfs-prevent-btree-data-loss-on-root-split.patch
-* hfs-fix-bug-on-bnode-parent-update.patch
-* hfs-prevent-btree-data-loss-on-enospc.patch
-* reiserfs-propagate-errors-from-fill_with_dentries-properly.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-  linux-next.patch
-* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+--Sig_/ywZIngKFPKOvy0bg_pVSFo=--
