@@ -1,12 +1,12 @@
-From: Greg KH <greg@kroah.com>
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH] mfd: at91-usart: fix missing mod_devicetable.h
-Date: Tue, 11 Sep 2018 11:02:11 +0200
-Message-ID: <20180911090211.GA25358@kroah.com>
+Date: Tue, 11 Sep 2018 10:36:53 +0100
+Message-ID: <20180911093653.GF4185@dell>
 References: <20180911125857.5e5c34f4@canb.auug.org.au>
  <20180911084448.17878-1-nicolas.ferre@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
 In-Reply-To: <20180911084448.17878-1-nicolas.ferre@microchip.com>
@@ -20,27 +20,35 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: sfr@canb.auug.org.au, Radu Pirea <radu_nicolae.pirea@upb.ro>, linux-next@vger.kernel.org, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
+Cc: greg@kroah.com, Radu Pirea <radu_nicolae.pirea@upb.ro>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sfr@canb.auug.org.au
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 11, 2018 at 10:44:48AM +0200, Nicolas Ferre wrote:
-> Following the inclusion of the patch ac3167257b9f ("headers:
-> separate linux/mod_devicetable.h from linux/platform_device.h"), there is a
-> build issue:
-> 
-> drivers/mfd/at91-usart.c:51:34: error: array type has incomplete element type
-> 'struct of_device_id'
->   static const struct of_device_id at91_usart_mode_of_match[] = {
-> 
-> Before this patch, the definition was reached by its inclusion of
-> linux/mfd/core.h.
-> 
-> The build issue is solved by simply adding the mod_devicetable.h in this
-> driver.
-> 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Radu Pirea <radu_nicolae.pirea@upb.ro>
-
-You forgot a "reported-by" :(
-
-I'll go add it...
+T24gVHVlLCAxMSBTZXAgMjAxOCwgTmljb2xhcyBGZXJyZSB3cm90ZToKCj4gRm9sbG93aW5nIHRo
+ZSBpbmNsdXNpb24gb2YgdGhlIHBhdGNoIGFjMzE2NzI1N2I5ZiAoImhlYWRlcnM6Cj4gc2VwYXJh
+dGUgbGludXgvbW9kX2RldmljZXRhYmxlLmggZnJvbSBsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaCIp
+LCB0aGVyZSBpcyBhCj4gYnVpbGQgaXNzdWU6Cj4gCj4gZHJpdmVycy9tZmQvYXQ5MS11c2FydC5j
+OjUxOjM0OiBlcnJvcjogYXJyYXkgdHlwZSBoYXMgaW5jb21wbGV0ZSBlbGVtZW50IHR5cGUKPiAn
+c3RydWN0IG9mX2RldmljZV9pZCcKPiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lk
+IGF0OTFfdXNhcnRfbW9kZV9vZl9tYXRjaFtdID0gewo+IAo+IEJlZm9yZSB0aGlzIHBhdGNoLCB0
+aGUgZGVmaW5pdGlvbiB3YXMgcmVhY2hlZCBieSBpdHMgaW5jbHVzaW9uIG9mCj4gbGludXgvbWZk
+L2NvcmUuaC4KPiAKPiBUaGUgYnVpbGQgaXNzdWUgaXMgc29sdmVkIGJ5IHNpbXBseSBhZGRpbmcg
+dGhlIG1vZF9kZXZpY2V0YWJsZS5oIGluIHRoaXMKPiBkcml2ZXIuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogTmljb2xhcyBGZXJyZSA8bmljb2xhcy5mZXJyZUBtaWNyb2NoaXAuY29tPgo+IENjOiBSYWR1
+IFBpcmVhIDxyYWR1X25pY29sYWUucGlyZWFAdXBiLnJvPgo+IC0tLQo+ICBkcml2ZXJzL21mZC9h
+dDkxLXVzYXJ0LmMgfCAxICsKPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4gCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL2F0OTEtdXNhcnQuYyBiL2RyaXZlcnMvbWZkL2F0OTEt
+dXNhcnQuYwo+IGluZGV4IGE0Yjk5MjljMTU2Zi4uYWQ3NDNiOGNhNmJlIDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvbWZkL2F0OTEtdXNhcnQuYwo+ICsrKyBiL2RyaXZlcnMvbWZkL2F0OTEtdXNhcnQu
+Ywo+IEBAIC0xMSw2ICsxMSw3IEBACj4gICNpbmNsdWRlIDxkdC1iaW5kaW5ncy9tZmQvYXQ5MS11
+c2FydC5oPgo+ICAKPiAgI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgo+ICsjaW5jbHVkZSA8bGlu
+dXgvbW9kX2RldmljZXRhYmxlLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9tZmQvY29yZS5oPgo+ICAj
+aW5jbHVkZSA8bGludXgvcHJvcGVydHkuaD4KClNpbmNlIHRoaXMgZHJpdmVyIGlzIHVzaW5nIERl
+dmljZSBUcmVlLCBpdCBpcyBtb3JlIGNvcnJlY3QgdG8gc2ltcGx5CmFkZCA8bGludXgvb2YuaD4s
+IHVubGVzcyBvZiBjb3Vyc2Ugd2UgYXJlIGFsc28gZ29pbmcgdG8gcmVtb3ZlCjxsaW51eC9tb2Rf
+ZGV2aWNldGFibGUuaD4gZnJvbSA8bGludXgvb2YuaD4uCgotLSAKTGVlIEpvbmVzIFvmnY7nkLzm
+lq9dCkxpbmFybyBTZXJ2aWNlcyBUZWNobmljYWwgTGVhZApMaW5hcm8ub3JnIOKUgiBPcGVuIHNv
+dXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0
+dGVyIHwgQmxvZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
+bmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
+bGludXgtYXJtLWtlcm5lbAo=
