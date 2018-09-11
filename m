@@ -1,19 +1,21 @@
-From: Greg KH <greg@kroah.com>
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Tue, 11 Sep 2018 10:23:24 +0200
-Message-ID: <20180911082324.GC17267@kroah.com>
+Date: Tue, 11 Sep 2018 09:25:34 +0100
+Message-ID: <20180911082534.GA4185@dell>
 References: <20180911125857.5e5c34f4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20180911125857.5e5c34f4@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Radu Pirea <radu.pirea@microchip.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Radu Pirea <radu.pirea@microchip.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 11, 2018 at 12:58:57PM +1000, Stephen Rothwell wrote:
+On Tue, 11 Sep 2018, Stephen Rothwell wrote:
+
 > Hi Greg,
 > 
 > After merging the tty tree, today's linux-next build (arm
@@ -39,13 +41,13 @@ On Tue, Sep 11, 2018 at 12:58:57PM +1000, Stephen Rothwell wrote:
 >   7d3aa342cef7 ("mfd: at91-usart: Add MFD driver for USART")
 > 
 > Forgot to include <linux/mod_devicetable.h>?
-> 
-> I used the version of the tty tree from next-20180910 for today.
 
-Very odd, I just pulled in the "Immutable" branch from Lee here.
+Looks like a missing Device Tree header <linux/of.h>.
 
-Lee, is there something I am missing to get this to build properly?
+Will chase this today and follow up with another PR.
 
-thanks,
-
-greg k-h
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
