@@ -1,46 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
-Date: Wed, 12 Sep 2018 05:34:51 +1000
-Message-ID: <20180912053451.0d937c38@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20180911 build: 1 failures 15 warnings (next-20180911)
+Date: Tue, 11 Sep 2018 21:10:27 +0100
+Message-ID: <20180911201027.GI10123@sirena.org.uk>
+References: <E1fzodE-000398-4K@optimist>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Y9m_PcRO0DOxR=OJNDB63sK"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============1282694697=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <E1fzodE-000398-4K@optimist>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jonathan Liu <net147@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, dri-devel@lists.freedesktop.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Y9m_PcRO0DOxR=OJNDB63sK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+--===============1282694697==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6lCXDTVICvIQMz0h"
+Content-Disposition: inline
 
-Commit
 
-  422e91cc48f8 ("media: i2c: mt9v111: Fix v4l2-ctrl error handling")
+--6lCXDTVICvIQMz0h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-is missing a Signed-off-by from its committer.
+On Tue, Sep 11, 2018 at 08:47:28PM +0100, Build bot for Mark Brown wrote:
 
---=20
-Cheers,
-Stephen Rothwell
+Today's -next fails to build an arm64 defconfig due to:
 
---Sig_/Y9m_PcRO0DOxR=OJNDB63sK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 	arm64-defconfig
+> ERROR: "sun8i_tcon_top_de_config" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_set_hdmi_src" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+
+DRM_SUN4I unconditionally uses these symbols which are only defined when
+DRM_SUN8I_TOP is enabled, not sure what the exact cause is but there's a
+few recent patches to that driver from Jonathan and Chen-Yu so CCing for
+that.  I've been missing arm64 builds for a little while so this
+could've been there before today.
+
+--6lCXDTVICvIQMz0h
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluYGNsACgkQAVBC80lX
-0GzJIgf/UhEhW68HrTGhsF/X4lOQlzYeJUdf4Z1iynmSqbRR/q+/1sOgCtZ9UhGa
-cQ2Q512+iFl1OvgZKOwqJt5t6Aifh/hJIZJzZch3nZcZWdXKxeH8MUaGocU4Xo/x
-EARIdZ0CKdTSasf8xWIfQfNcSoJwM6x63fX2J02L/QPVNvS2AFNmu5a14SThrxnb
-AcXlktAcWdrvoRcPGXrue37GWdvbvuDijfLk8hIHddJMf6VS0vueMqU3qW0fWrHs
-XZsQczHAGLHFpTk5yx3J0mPV9NSNvsUka+RxlOZHwtaWo8OYfVGAxR/LCqpEu7ey
-x9Joo7t0j7Pv47s6mWN8RsblFvRJCQ==
-=m/St
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluYITMACgkQJNaLcl1U
+h9DTiwf6AvdgOYWTkjlU36OPFQVXO68sfEKo+g0EoNmXxLpG7KcdTaGDx+MkZfUB
+2D80alaYzjkmUN8U4CX+kqX/NIi7z6i2/gSUDJch1GPGbaE7X+TbUTF+90tef5VT
+iu+dLdRNvz+RZDsq3WzkT5CXy+SdMWt82P0Mu6Hf8H5WCJUnIfjwmMxwZ1sjzFlG
+jVOevU9XvPZmT3Ix+f/2QopDW0JCDiokzWGU7yATfS563bN5Hj3CM5CXRH3TqRJ6
+JnJHs0vTxrqE+iKjnlc4gaUJCAMWciehiC1c5e2wYpyJaggqgfkYj+bC+dm5OpZM
+YevqpAO0DWJjjkjdMKMOWBL4vZ0gRw==
+=q1/u
 -----END PGP SIGNATURE-----
 
---Sig_/Y9m_PcRO0DOxR=OJNDB63sK--
+--6lCXDTVICvIQMz0h--
+
+--===============1282694697==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1282694697==--
