@@ -1,43 +1,31 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] usb: core: remove flags variable in __usb_hcd_giveback_urb()
-Date: Tue, 11 Sep 2018 09:37:12 +0200
-Message-ID: <20180911073712.d3uvighcpg23dhlf@linutronix.de>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warning after merge of the usb tree
+Date: Tue, 11 Sep 2018 10:12:51 +0200
+Message-ID: <20180911081251.GC8963@kroah.com>
 References: <20180911124743.558e33dc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20180911124743.558e33dc@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-In commit ed194d1367698 ("usb: core: remove local_irq_save() around
-->complete() handler") I removed the only user of the flags variable and
-forgot to remove the variable, leading to warning because it is unused
-now.
-Remove the unused variable.
+On Tue, Sep 11, 2018 at 12:47:43PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the usb tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> drivers/usb/core/hcd.c: In function '__usb_hcd_giveback_urb':
+> drivers/usb/core/hcd.c:1741:16: warning: unused variable 'flags' [-Wunused-variable]
+>   unsigned long flags;
+>                 ^~~~~
+> 
+> Introduced by commit
+> 
+>   ed194d136769 ("usb: core: remove local_irq_save() around ->complete() handler")
 
-Fixes: ed194d1367698 ("usb: core: remove local_irq_save() around
-       ->complete() handler")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/usb/core/hcd.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index f985d2303095c..487025d31d44c 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1738,7 +1738,6 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	struct usb_hcd *hcd = bus_to_hcd(urb->dev->bus);
- 	struct usb_anchor *anchor = urb->anchor;
- 	int status = urb->unlinked;
--	unsigned long flags;
- 
- 	urb->hcpriv = NULL;
- 	if (unlikely((urb->transfer_flags & URB_SHORT_NOT_OK) &&
--- 
-2.19.0.rc2
+Ugh, sorry I missed this :(
