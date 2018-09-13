@@ -1,53 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the slave-dma tree
-Date: Thu, 13 Sep 2018 12:22:18 +1000
-Message-ID: <20180913122218.0fb31482@canb.auug.org.au>
+Subject: Re: mmotm 2018-09-12-16-40 uploaded (psi)
+Date: Thu, 13 Sep 2018 13:20:12 +1000
+Message-ID: <20180913132012.1506f0da@canb.auug.org.au>
+References: <20180912234039.Xa5RS%akpm@linux-foundation.org>
+        <a9bef471-ac93-2983-618b-ffee65f01e0b@infradead.org>
+        <20180913014222.GA2370@cmpxchg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/a=1Z73gZHiu.ccaUFaLIjJi"; protocol="application/pgp-signature"
+ boundary="Sig_/A0EZjjD/ORosSL0xF1vKrbv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180913014222.GA2370@cmpxchg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Angelo Dureghello <angelo@sysam.it>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/a=1Z73gZHiu.ccaUFaLIjJi
+--Sig_/A0EZjjD/ORosSL0xF1vKrbv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Johannes,
 
-After merging the slave-dma tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Wed, 12 Sep 2018 21:42:22 -0400 Johannes Weiner <hannes@cmpxchg.org> wro=
+te:
+>
+> Thanks for the report.
+>=20
+> On Wed, Sep 12, 2018 at 05:45:08PM -0700, Randy Dunlap wrote:
+> > Multiple build errors when CONFIG_SMP is not set: (this is on i386 fwiw)
+> >=20
+> > in the psi (pressure) patches, I guess:
+> >=20
+> > In file included from ../kernel/sched/sched.h:1367:0,
+> >                  from ../kernel/sched/core.c:8:
+> > ../kernel/sched/stats.h: In function 'psi_task_tick':
+> > ../kernel/sched/stats.h:135:33: error: 'struct rq' has no member named =
+'cpu'
+> >    psi_memstall_tick(rq->curr, rq->cpu); =20
+>=20
+> This needs to use the SMP/UP config-aware accessor.
+>=20
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>=20
+> diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+> index 2e07d8f59b3e..4904c4677000 100644
+> --- a/kernel/sched/stats.h
+> +++ b/kernel/sched/stats.h
+> @@ -132,7 +132,7 @@ static inline void psi_task_tick(struct rq *rq)
+>  		return;
+> =20
+>  	if (unlikely(rq->curr->flags & PF_MEMSTALL))
+> -		psi_memstall_tick(rq->curr, rq->cpu);
+> +		psi_memstall_tick(rq->curr, cpu_of(rq));
+>  }
+>  #else /* CONFIG_PSI */
+>  static inline void psi_enqueue(struct task_struct *p, bool wakeup) {}
 
-drivers/dma/mcf-edma.c: In function 'mcf_edma_filter_fn':
-drivers/dma/mcf-edma.c:296:33: warning: cast from pointer to integer of dif=
-ferent size [-Wpointer-to-int-cast]
-   return (mcf_chan->slave_id =3D=3D (u32)param);
-                                 ^
-
-Introduced by commit
-
-  e7a3ff92eaf1 ("dmaengine: fsl-edma: add ColdFire mcf5441x edma support")
+I will add this to linux-next today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/a=1Z73gZHiu.ccaUFaLIjJi
+--Sig_/A0EZjjD/ORosSL0xF1vKrbv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluZydoACgkQAVBC80lX
-0GzSsQgAiwnMSowK8AeznNkbyzk1Jeph5SLBYN67OIx5H0569+2MC13a2PPIPEHx
-B+9ey3N1bhEhHOtz92RAGK3dtmnL14jw2sgAb1fOWkhlb/XsxPmXIX9bWj9HLB1S
-+HIkuLX9BT23mSUvkXN7fFLbiUDpZiocElhoCOl/moqyxdWMDH3nwcLjBE9xMdbR
-87E4XqaLAwkq+jIM2jhBuCDDVzY0skMMfPV1v0i3UaLcigBCevotcMOr/gQ+lMGl
-4phvnpslKgtwpJQxXWAIv8HcYE8sjfDzPNY24wOOer0dKiAGs6uQJTRcJKLtrqlk
-moCEETtgLIGjkMfggpQDCjEoZJqKyw==
-=Cwva
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluZ12wACgkQAVBC80lX
+0GyQDgf/R2XVV++XEvoRc1HlT8r5XB6DziGyJq2s5SGzvzF4nqVChOYkL7aEBpxZ
+qr5DVdFGqZigJ0eT8SWLGhNoYFyg9QOBIk3t4JNlDENfWIyQl6LPAPMo0AmtHKDK
+mkJfpt9pk2Gn4s64xvtjHuW9fmBP+DIP5GxDhAa7/K3LRFZO92FnG961/yauZBXy
+PWg90KvKpkbhPIV0xbr40WiY7JDC7hdPoLIBofdmLgMI5rijwcdD2lTIUoF3hPW6
+NQ/0eoUv8wml4XcedidUV0jSuDC+ohfifD1n8OH4xUvJTYpgiH0pGhERrrm+msBF
+AAJU5BRC8YDJNnwJQyg3Qj0+bZs4qw==
+=Fhk5
 -----END PGP SIGNATURE-----
 
---Sig_/a=1Z73gZHiu.ccaUFaLIjJi--
+--Sig_/A0EZjjD/ORosSL0xF1vKrbv--
