@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 13 (drivers/media/platform/imx-pxp)
-Date: Thu, 13 Sep 2018 10:14:16 -0700
-Message-ID: <d0604bdf-b8a5-a828-f28e-023e05c767be@infradead.org>
+Subject: Re: linux-next: Tree for Sep 13 (dm-thin-pool)
+Date: Thu, 13 Sep 2018 10:28:55 -0700
+Message-ID: <258e14a1-0dbc-74ff-23a5-cd676fdf4579@infradead.org>
 References: <20180913152753.60866288@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
@@ -11,7 +11,7 @@ In-Reply-To: <20180913152753.60866288@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-media <linux-media@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Thornber <dm-devel@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
 On 9/12/18 10:27 PM, Stephen Rothwell wrote:
@@ -22,26 +22,10 @@ On 9/12/18 10:27 PM, Stephen Rothwell wrote:
 > Changes since 20180912:
 > 
 
-on i386 or x86_64:
+on i386:
 
-../drivers/media/platform/imx-pxp.c:988:1: error: unknown type name 'irqreturn_t'
- static irqreturn_t pxp_irq_handler(int irq, void *dev_id)
- ^
-../drivers/media/platform/imx-pxp.c: In function 'pxp_irq_handler':
-../drivers/media/platform/imx-pxp.c:1012:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-  return IRQ_HANDLED;
-         ^
-../drivers/media/platform/imx-pxp.c:1012:9: note: each undeclared identifier is reported only once for each function it appears in
-../drivers/media/platform/imx-pxp.c: In function 'pxp_probe':
-../drivers/media/platform/imx-pxp.c:1660:2: error: implicit declaration of function 'devm_request_threaded_irq' [-Werror=implicit-function-declaration]
-  ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, pxp_irq_handler,
-  ^
-../drivers/media/platform/imx-pxp.c:1661:4: error: 'IRQF_ONESHOT' undeclared (first use in this function)
-    IRQF_ONESHOT, dev_name(&pdev->dev), dev);
-    ^
+ERROR: "__udivdi3" [drivers/md/dm-thin-pool.ko] undefined!
 
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
 
 -- 
 ~Randy
