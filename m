@@ -1,43 +1,47 @@
-From: Angelo Dureghello <angelo@sysam.it>
-Subject: Re: linux-next: build warning after merge of the slave-dma tree
-Date: Thu, 13 Sep 2018 09:17:38 +0200
-Message-ID: <20180913071738.GA11013@jerusalem>
-References: <20180913122218.0fb31482@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 13 (drivers/media/platform/imx-pxp)
+Date: Thu, 13 Sep 2018 10:14:16 -0700
+Message-ID: <d0604bdf-b8a5-a828-f28e-023e05c767be@infradead.org>
+References: <20180913152753.60866288@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180913122218.0fb31482@canb.auug.org.au>
+In-Reply-To: <20180913152753.60866288@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vinod Koul <vkoul@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-media <linux-media@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-sorry, there was no build-test robot warning anymore about it.
-Will fix it in a patch in short.
-
-
-On Thu, Sep 13, 2018 at 12:22:18PM +1000, Stephen Rothwell wrote:
-> Hi Vinod,
+On 9/12/18 10:27 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the slave-dma tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> News: there will be no linux-next releases on Friday or Monday.
 > 
-> drivers/dma/mcf-edma.c: In function 'mcf_edma_filter_fn':
-> drivers/dma/mcf-edma.c:296:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->    return (mcf_chan->slave_id == (u32)param);
->                                  ^
-> 
-> Introduced by commit
-> 
->   e7a3ff92eaf1 ("dmaengine: fsl-edma: add ColdFire mcf5441x edma support")
+> Changes since 20180912:
 > 
 
-Regards,
-Angelo
+on i386 or x86_64:
 
-> -- 
-> Cheers,
-> Stephen Rothwell
+../drivers/media/platform/imx-pxp.c:988:1: error: unknown type name 'irqreturn_t'
+ static irqreturn_t pxp_irq_handler(int irq, void *dev_id)
+ ^
+../drivers/media/platform/imx-pxp.c: In function 'pxp_irq_handler':
+../drivers/media/platform/imx-pxp.c:1012:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+  return IRQ_HANDLED;
+         ^
+../drivers/media/platform/imx-pxp.c:1012:9: note: each undeclared identifier is reported only once for each function it appears in
+../drivers/media/platform/imx-pxp.c: In function 'pxp_probe':
+../drivers/media/platform/imx-pxp.c:1660:2: error: implicit declaration of function 'devm_request_threaded_irq' [-Werror=implicit-function-declaration]
+  ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, pxp_irq_handler,
+  ^
+../drivers/media/platform/imx-pxp.c:1661:4: error: 'IRQF_ONESHOT' undeclared (first use in this function)
+    IRQF_ONESHOT, dev_name(&pdev->dev), dev);
+    ^
+
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+
+-- 
+~Randy
