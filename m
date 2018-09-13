@@ -1,49 +1,53 @@
-From: Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: mmotm 2018-09-12-16-40 uploaded (psi)
-Date: Wed, 12 Sep 2018 21:42:22 -0400
-Message-ID: <20180913014222.GA2370@cmpxchg.org>
-References: <20180912234039.Xa5RS%akpm@linux-foundation.org>
- <a9bef471-ac93-2983-618b-ffee65f01e0b@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the slave-dma tree
+Date: Thu, 13 Sep 2018 12:22:18 +1000
+Message-ID: <20180913122218.0fb31482@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/a=1Z73gZHiu.ccaUFaLIjJi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <a9bef471-ac93-2983-618b-ffee65f01e0b@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Angelo Dureghello <angelo@sysam.it>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+--Sig_/a=1Z73gZHiu.ccaUFaLIjJi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the report.
+Hi Vinod,
 
-On Wed, Sep 12, 2018 at 05:45:08PM -0700, Randy Dunlap wrote:
-> Multiple build errors when CONFIG_SMP is not set: (this is on i386 fwiw)
-> 
-> in the psi (pressure) patches, I guess:
-> 
-> In file included from ../kernel/sched/sched.h:1367:0,
->                  from ../kernel/sched/core.c:8:
-> ../kernel/sched/stats.h: In function 'psi_task_tick':
-> ../kernel/sched/stats.h:135:33: error: 'struct rq' has no member named 'cpu'
->    psi_memstall_tick(rq->curr, rq->cpu);
+After merging the slave-dma tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-This needs to use the SMP/UP config-aware accessor.
+drivers/dma/mcf-edma.c: In function 'mcf_edma_filter_fn':
+drivers/dma/mcf-edma.c:296:33: warning: cast from pointer to integer of dif=
+ferent size [-Wpointer-to-int-cast]
+   return (mcf_chan->slave_id =3D=3D (u32)param);
+                                 ^
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
+Introduced by commit
 
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 2e07d8f59b3e..4904c4677000 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -132,7 +132,7 @@ static inline void psi_task_tick(struct rq *rq)
- 		return;
- 
- 	if (unlikely(rq->curr->flags & PF_MEMSTALL))
--		psi_memstall_tick(rq->curr, rq->cpu);
-+		psi_memstall_tick(rq->curr, cpu_of(rq));
- }
- #else /* CONFIG_PSI */
- static inline void psi_enqueue(struct task_struct *p, bool wakeup) {}
+  e7a3ff92eaf1 ("dmaengine: fsl-edma: add ColdFire mcf5441x edma support")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/a=1Z73gZHiu.ccaUFaLIjJi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluZydoACgkQAVBC80lX
+0GzSsQgAiwnMSowK8AeznNkbyzk1Jeph5SLBYN67OIx5H0569+2MC13a2PPIPEHx
+B+9ey3N1bhEhHOtz92RAGK3dtmnL14jw2sgAb1fOWkhlb/XsxPmXIX9bWj9HLB1S
++HIkuLX9BT23mSUvkXN7fFLbiUDpZiocElhoCOl/moqyxdWMDH3nwcLjBE9xMdbR
+87E4XqaLAwkq+jIM2jhBuCDDVzY0skMMfPV1v0i3UaLcigBCevotcMOr/gQ+lMGl
+4phvnpslKgtwpJQxXWAIv8HcYE8sjfDzPNY24wOOer0dKiAGs6uQJTRcJKLtrqlk
+moCEETtgLIGjkMfggpQDCjEoZJqKyw==
+=Cwva
+-----END PGP SIGNATURE-----
+
+--Sig_/a=1Z73gZHiu.ccaUFaLIjJi--
