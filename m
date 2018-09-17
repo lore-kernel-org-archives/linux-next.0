@@ -1,71 +1,47 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: Tree for Sep 13 (dm-thin-pool)
-Date: Thu, 13 Sep 2018 21:14:48 -0400
-Message-ID: <20180914011448.GA7110@redhat.com>
-References: <20180913152753.60866288@canb.auug.org.au>
-	<258e14a1-0dbc-74ff-23a5-cd676fdf4579@infradead.org>
-	<20180913185147.GA5647@redhat.com>
-	<6572c1a5-3db0-af6d-30cc-f9f7c0dc604c@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: changes in the maintainership of the percpu tree
+Date: Mon, 17 Sep 2018 21:03:39 +1000
+Message-ID: <20180917210339.21ebb029@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <6572c1a5-3db0-af6d-30cc-f9f7c0dc604c@infradead.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Joe Thornber <dm-devel@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hbDnUY_be7uUy8fVd41.Hxr"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dennis Zhou <dennis@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 13 2018 at  8:45pm -0400,
-Randy Dunlap <rdunlap@infradead.org> wrote:
+--Sig_/hbDnUY_be7uUy8fVd41.Hxr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 9/13/18 11:51 AM, Mike Snitzer wrote:
-> > On Thu, Sep 13 2018 at  1:28pm -0400,
-> > Randy Dunlap <rdunlap@infradead.org> wrote:
-> > 
-> >> On 9/12/18 10:27 PM, Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> News: there will be no linux-next releases on Friday or Monday.
-> >>>
-> >>> Changes since 20180912:
-> >>>
-> >>
-> >> on i386:
-> >>
-> >> ERROR: "__udivdi3" [drivers/md/dm-thin-pool.ko] undefined!
-> > 
-> > Well, as I pointed out in reply that nobody will see to the buildbots:
-> > 
-> > There is something off in this report... I cannot reproduce.  It is
-> > almost like the warning was generated when building an older version of
-> > this change, but then reported against the latest commit.
-> > 
-> > I switched to sector_div() specifically because of the undefined
-> > __udivdi3 error.
-> > 
-> > So I'm ignoring this given I cannot reproduce when using 'make ARCH=i386'
-> 
-> > gcc --version
-> gcc (SUSE Linux) 4.8.5
-> 
-> # CONFIG_LBDAF is not set
-> 
-> Perhaps you could try to reproduce it with the attached randconfig file.
+Hi Tejun,
 
-Ah, yeap.. sector_div() is only viable for use with sector_t.
-dm_block_t is typedef'd to uint64_t -- so that explains it.
+I noticed commit
 
-Need to use div_u64() instead.
+  1194c4154662 ("MAINTAINERS: Make Dennis the percpu tree maintainer")
 
-Thanks,
-Mike
+Just wondering if this means any changes to the tree/branch I should
+fetch or the contacts I should use for the percpu tree in linux-next.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hbDnUY_be7uUy8fVd41.Hxr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlufigsACgkQAVBC80lX
+0GyRgwf8DoCHOHSabdoBgj1BroUdrOWCYvM+CNd/3pSJ/x64a0qvbZ0JgUGU5B2z
+JOr7+mwYy67HZCQqoio69iEoDvPO+fVu+Tg995epFRuXj6EKp11bGLml/8QvPVQP
+jfIZ6biv8oG5MN1GkhV2gMo506h8HSdK50lfmmOdCWLjhg5lSS+NI6QSYyzJCxcn
+yYJUNErY4H7iOArecRe1CdD1rRv8DptQ1R/mviOsSYKJhgI7w9tBLcovYXnlxfN1
+gi+3rqPGWrWwwDLOB1wbQsRhPmHqU5C3HM6p6GaORYOxaexTG32waoTr3ty1BNQD
+MqpouHk6/JwN/dIOPn/5GppXi0rgMQ==
+=6q5K
+-----END PGP SIGNATURE-----
+
+--Sig_/hbDnUY_be7uUy8fVd41.Hxr--
