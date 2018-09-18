@@ -1,36 +1,52 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Tue, 18 Sep 2018 23:17:21 +0100
-Message-ID: <15925.1537309041@warthog.procyon.org.uk>
-References: <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the input-current tree
+Date: Wed, 19 Sep 2018 08:25:00 +1000
+Message-ID: <20180919082500.74401754@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xRaItE2eXFCUdrRJ.vQJFjz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180919073826.02370812@canb.auug.org.au>
-Content-ID: <15924.1537309041.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/xRaItE2eXFCUdrRJ.vQJFjz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > After merging the vfs tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > samples/vfs/test-fsinfo.c: In function 'fsinfo':
-> > samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use in this function); did you mean 'fsinfo'?
+Hi Dmitry,
 
-I think the problem is that I haven't allocated system call numbers for any
-arches other than x86 - even the x86 syscall numbers are provisional until the
-patchset is taken upstream.  I'm not sure of the best way to deal with this -
-make the samples dependent on the X86 arch?
+After merging the input-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> > samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
-> >   printf("\tmax file size: %llx\n", f->max_file_size);
+ERROR: "mem_sleep_current" [drivers/input/serio/i8042.ko] undefined!
 
-Sigh.  On powerpc __u64 is unsigned long, but on x86_64 it's unsigned long
-long.  Is it possible to shift all arches to use unsigned long long for __u64?
+Caused by commit
 
-David
+  1685830e59d4 ("Input: i8042 - enable keyboard wakeups by default when s2i=
+dle is used")
+
+I have used the version of input-current from next-20180918 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xRaItE2eXFCUdrRJ.vQJFjz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluhezwACgkQAVBC80lX
+0Gy9IQf+LCFuj/N2zs1WCqHj0SfLR2b11CueYF3Q2r3o8x3sEf+D+cfmqxWTfNWZ
+z2M0mQQTChh+PDvKzSotSFyvGlgMTff0OUj56aYimUjWsH5UGgRmJ+q5Yo+arRqm
+l32ODxs1ivoWaw+Ja5QlV+A6Cri5ZZt4HySfDVZJdUfRObGCNfLNJTAn2Zcgc3tR
++I9ybvg/gXp3or6aGvN0c9ZH4NSEE5dlrkPmSTRdIkotm+5P9+oU4MOn8+twrwox
+Wq/xD+BGSu4UozipeqgvYKsQh34SJI1C6fv9VY9Ati0ZQVKqzZP/qJTXV7NDkx7P
+ih0dN92qf/BOs5Buq+1mKwQPeE9r7A==
+=Jqy3
+-----END PGP SIGNATURE-----
+
+--Sig_/xRaItE2eXFCUdrRJ.vQJFjz--
