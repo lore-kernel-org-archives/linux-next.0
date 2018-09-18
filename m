@@ -1,177 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
 Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Wed, 19 Sep 2018 07:38:26 +1000
-Message-ID: <20180919073826.02370812@canb.auug.org.au>
-References: <20180910133525.28c5dd20@canb.auug.org.au>
+Date: Tue, 18 Sep 2018 23:17:21 +0100
+Message-ID: <15925.1537309041@warthog.procyon.org.uk>
+References: <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/N2dAEWL+q=FnKfk_MZKhVWN"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180910133525.28c5dd20@canb.auug.org.au>
+In-Reply-To: <20180919073826.02370812@canb.auug.org.au>
+Content-ID: <15924.1537309041.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/N2dAEWL+q=FnKfk_MZKhVWN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi David, Al,
+> > After merging the vfs tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > samples/vfs/test-fsinfo.c: In function 'fsinfo':
+> > samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use in this function); did you mean 'fsinfo'?
 
-On Mon, 10 Sep 2018 13:35:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the vfs tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> samples/vfs/test-fsinfo.c: In function 'fsinfo':
-> samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first u=
-se in this function); did you mean 'fsinfo'?
->   return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
->                  ^~~~~~~~~~~
->                  fsinfo
-> samples/vfs/test-fsinfo.c:37:17: note: each undeclared identifier is repo=
-rted only once for each function it appears in
-> samples/vfs/test-fsinfo.c: In function 'dump_attr_LIMITS':
-> samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax file size: %llx\n", f->max_file_size);
->                            ~~~^     ~~~~~~~~~~~~~~~~
->                            %lx
-> samples/vfs/test-fsinfo.c:181:32: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax ids      : u=3D%llx g=3D%llx p=3D%llx\n",
->                              ~~~^
->                              %lx
->          f->max_uid, f->max_gid, f->max_projid);
->          ~~~~~~~~~~
-> samples/vfs/test-fsinfo.c:181:39: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 3 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax ids      : u=3D%llx g=3D%llx p=3D%llx\n",
->                                     ~~~^
->                                     %lx
->          f->max_uid, f->max_gid, f->max_projid);
->                      ~~~~~~~~~~
-> samples/vfs/test-fsinfo.c:181:46: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 4 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax ids      : u=3D%llx g=3D%llx p=3D%llx\n",
->                                            ~~~^
->                                            %lx
->          f->max_uid, f->max_gid, f->max_projid);
->                                  ~~~~~~~~~~~~~
-> samples/vfs/test-fsinfo.c: In function 'dump_attr_SUPPORTS':
-> samples/vfs/test-fsinfo.c:197:24: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tstx_attr=3D%llx\n", f->stx_attributes);
->                      ~~~^     ~~~~~~~~~~~~~~~~~
->                      %lx
-> samples/vfs/test-fsmount.c: In function 'fsopen':
-> samples/vfs/test-fsmount.c:63:17: error: '__NR_fsopen' undeclared (first =
-use in this function); did you mean 'fsopen'?
->   return syscall(__NR_fsopen, fs_name, flags);
->                  ^~~~~~~~~~~
->                  fsopen
-> samples/vfs/test-fsmount.c:63:17: note: each undeclared identifier is rep=
-orted only once for each function it appears in
-> samples/vfs/test-fsmount.c: In function 'fsmount':
-> samples/vfs/test-fsmount.c:68:17: error: '__NR_fsmount' undeclared (first=
- use in this function); did you mean 'fsmount'?
->   return syscall(__NR_fsmount, fsfd, flags, ms_flags);
->                  ^~~~~~~~~~~~
->                  fsmount
-> samples/vfs/test-fsmount.c: In function 'fsconfig':
-> samples/vfs/test-fsmount.c:74:17: error: '__NR_fsconfig' undeclared (firs=
-t use in this function); did you mean 'fsconfig'?
->   return syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
->                  ^~~~~~~~~~~~~
->                  fsconfig
-> samples/vfs/test-fsmount.c: In function 'move_mount':
-> samples/vfs/test-fsmount.c:81:17: error: '__NR_move_mount' undeclared (fi=
-rst use in this function); did you mean 'move_mount'?
->   return syscall(__NR_move_mount,
->                  ^~~~~~~~~~~~~~~
->                  move_mount
-> samples/vfs/test-fs-query.c: In function 'fsopen':
-> samples/vfs/test-fs-query.c:32:17: error: '__NR_fsopen' undeclared (first=
- use in this function); did you mean 'fsopen'?
->   return syscall(__NR_fsopen, fs_name, flags);
->                  ^~~~~~~~~~~
->                  fsopen
-> samples/vfs/test-fs-query.c:32:17: note: each undeclared identifier is re=
-ported only once for each function it appears in
-> samples/vfs/test-fs-query.c: In function 'fsinfo':
-> samples/vfs/test-fs-query.c:38:17: error: '__NR_fsinfo' undeclared (first=
- use in this function); did you mean 'fsinfo'?
->   return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
->                  ^~~~~~~~~~~
->                  fsinfo
-> samples/vfs/test-statx.c: In function 'dump_statx':
-> samples/vfs/test-statx.c:160:29: warning: format '%llx' expects argument =
-of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lon=
-g unsigned int'} [-Wformat=3D]
->    printf("Attributes: %016llx (", stx->stx_attributes);
->                        ~~~~~~^     ~~~~~~~~~~~~~~~~~~~
->                        %016lx
->=20
-> Caused by commits
->=20
->   2615362dc9ce ("vfs: Add a sample program for the new mount API")
->   e9078278ec11 ("vfs: syscall: Add fsinfo() to query filesystem informati=
-on")
->=20
-> The directory name has changed, but the errors persist!
->=20
-> I have applied this patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 10 Sep 2018 13:19:20 +1000
-> Subject: [PATCH] disable building the VFS sample programs
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  samples/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index 0431af2589ac..c8823d9d97db 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -148,6 +148,7 @@ config SAMPLE_VFIO_MDEV_MBOCHS
-> =20
->  config SAMPLE_VFS
->  	bool "Build example programs that use new VFS system calls"
-> +	depends on BROKEN
->  	help
->  	  Build example userspace programs that use new VFS system calls such
->  	  as mount API and statx()
+I think the problem is that I haven't allocated system call numbers for any
+arches other than x86 - even the x86 syscall numbers are provisional until the
+patchset is taken upstream.  I'm not sure of the best way to deal with this -
+make the samples dependent on the X86 arch?
 
-Can we have a permanent solution to this, please ... I am still
-applying the above patch.
+> > samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
+> >   printf("\tmax file size: %llx\n", f->max_file_size);
 
---=20
-Cheers,
-Stephen Rothwell
+Sigh.  On powerpc __u64 is unsigned long, but on x86_64 it's unsigned long
+long.  Is it possible to shift all arches to use unsigned long long for __u64?
 
---Sig_/N2dAEWL+q=FnKfk_MZKhVWN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluhcFIACgkQAVBC80lX
-0GxRCAf/aueiwnWn3/QrPw/G59/wUecwFdvTEiB8QEQpqt5jZyWCtC4GkV8teyzJ
-CkL7EAc0k6JhqZaw5b1SeVCvXnqn64WC6sC8ptRoLFO4Cm7/Q6xHiVMVsvoISJsO
-ooqnuU/hXxsluZZMTj3nudUjzJoKMYdNUJ2qKUtMOwrTCUs10SkI6bZYJPc+oYn1
-NJFLP+2TyTZUa3F8Sj9HOKsQRBj20oONVItiqTiSb13co1oXfQw6YNEiqJ3xwElw
-OMe0AbeIDiw545eQFMDTiqQE8v1tsuOknhTQ1hUq+BiJvyhgyDVm9Ds5CsSoTqQD
-t4+dffB+XUUVRKH6wMU6zr/FU1N0oA==
-=kXV8
------END PGP SIGNATURE-----
-
---Sig_/N2dAEWL+q=FnKfk_MZKhVWN--
+David
