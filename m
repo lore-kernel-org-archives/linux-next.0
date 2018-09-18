@@ -1,52 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the input-current tree
-Date: Wed, 19 Sep 2018 08:25:00 +1000
-Message-ID: <20180919082500.74401754@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: build failure after merge of the input-current tree
+Date: Tue, 18 Sep 2018 15:32:03 -0700
+Message-ID: <CAKdAkRR8NH8FxfRVsB2DCiyh7QVZLisqZgd1ZgHCnGpUO6KP-g@mail.gmail.com>
+References: <20180919082500.74401754@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xRaItE2eXFCUdrRJ.vQJFjz"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180919082500.74401754@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Drake <drake@endlessm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-next <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xRaItE2eXFCUdrRJ.vQJFjz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 18, 2018 at 3:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Dmitry,
+>
+> After merging the input-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "mem_sleep_current" [drivers/input/serio/i8042.ko] undefined!
+>
+> Caused by commit
+>
+>   1685830e59d4 ("Input: i8042 - enable keyboard wakeups by default when s2idle is used")
+>
+> I have used the version of input-current from next-20180918 for today.
 
-Hi Dmitry,
+Ugh, sorry, I dropped that patch from my tree for now.
 
-After merging the input-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Daniel, Rafael, I guess we can't make pm_suspend_via_s2idle() static
+inline, but instead move it into kernel/power/suspend.c and make it
+EXPORT_SYMBOL().
 
-ERROR: "mem_sleep_current" [drivers/input/serio/i8042.ko] undefined!
+Thanks.
 
-Caused by commit
-
-  1685830e59d4 ("Input: i8042 - enable keyboard wakeups by default when s2i=
-dle is used")
-
-I have used the version of input-current from next-20180918 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xRaItE2eXFCUdrRJ.vQJFjz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluhezwACgkQAVBC80lX
-0Gy9IQf+LCFuj/N2zs1WCqHj0SfLR2b11CueYF3Q2r3o8x3sEf+D+cfmqxWTfNWZ
-z2M0mQQTChh+PDvKzSotSFyvGlgMTff0OUj56aYimUjWsH5UGgRmJ+q5Yo+arRqm
-l32ODxs1ivoWaw+Ja5QlV+A6Cri5ZZt4HySfDVZJdUfRObGCNfLNJTAn2Zcgc3tR
-+I9ybvg/gXp3or6aGvN0c9ZH4NSEE5dlrkPmSTRdIkotm+5P9+oU4MOn8+twrwox
-Wq/xD+BGSu4UozipeqgvYKsQh34SJI1C6fv9VY9Ati0ZQVKqzZP/qJTXV7NDkx7P
-ih0dN92qf/BOs5Buq+1mKwQPeE9r7A==
-=Jqy3
------END PGP SIGNATURE-----
-
---Sig_/xRaItE2eXFCUdrRJ.vQJFjz--
+-- 
+Dmitry
