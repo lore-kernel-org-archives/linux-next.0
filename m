@@ -1,34 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the at91 tree
-Date: Tue, 18 Sep 2018 09:30:21 +0200
-Message-ID: <20180918073020.GB4067@kroah.com>
-References: <20180918131238.2838bedd@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 18 Sep 2018 10:44:06 +0200
+Message-ID: <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
+References: <20180918101107.74d8689a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180918131238.2838bedd@canb.auug.org.au>
+In-Reply-To: <20180918101107.74d8689a@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marcus Folkesson <marcus.folkesson@gmail.com>, Kent Gustavsson <kent@minoris.se>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vakul Garg <vakul.garg@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 18, 2018 at 01:12:38PM +1000, Stephen Rothwell wrote:
+On 09/18/2018 02:11 AM, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the staging tree got a conflict in:
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
->   MAINTAINERS
+>   tools/testing/selftests/net/tls.c
 > 
 > between commit:
 > 
->   5ae2f1f30197 ("MAINTAINERS: move former ATMEL entries to proper MICROCHIP locatioat91n")
+>   50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
 > 
-> from the at91 tree and commit:
+> from the net tree and commit:
 > 
->   010de20412fc ("MAINTAINERS: Add entry for mcp3911 ADC driver")
+>   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across multiple records")
 > 
-> from the staging tree.
+> from the net-next tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -37,6 +38,9 @@ On Tue, Sep 18, 2018 at 01:12:38PM +1000, Stephen Rothwell wrote:
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 
-Looks good to me.
+The test from 50c6b58a814d supersedes the one from c2ad647c6442 so the
+recv_peek_large_buf_mult_recs could be removed; latter was also not working
+correctly due to this bug.
 
-greg k-h
+Thanks,
+Daniel
