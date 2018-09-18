@@ -1,218 +1,196 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 18 Sep 2018 12:15:32 +0200
-Message-ID: <d5eee0d9-c270-3ce7-5fcd-5f94b713dc3b@iogearbox.net>
+From: Vakul Garg <vakul.garg@nxp.com>
+Subject: RE: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 18 Sep 2018 10:17:03 +0000
+Message-ID: <DB7PR04MB425225AD548F3A3040250EF48B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
 References: <20180918101107.74d8689a@canb.auug.org.au>
  <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
  <DB7PR04MB42522B223D4E04F5DA519A8B8B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
  <236589cd-b55d-1ceb-f236-36f9135f794e@iogearbox.net>
  <DB7PR04MB4252D31B8E79B789CC507D248B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
  <5959dad0-dd02-1c3d-2487-13a69f8c507b@iogearbox.net>
+ <d5eee0d9-c270-3ce7-5fcd-5f94b713dc3b@iogearbox.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5959dad0-dd02-1c3d-2487-13a69f8c507b@iogearbox.net>
+In-Reply-To: <d5eee0d9-c270-3ce7-5fcd-5f94b713dc3b@iogearbox.net>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vakul Garg <vakul.garg@nxp.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, davejwatson@fb.com, doronrk@fb.com
+To: Daniel Borkmann <daniel@iogearbox.net>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "davejwatson@fb.com" <davejwatson@fb.com>, "doronrk@fb.com" <doronrk@fb.com>
 List-Id: linux-next.vger.kernel.org
 
-On 09/18/2018 11:53 AM, Daniel Borkmann wrote:
-> On 09/18/2018 11:32 AM, Vakul Garg wrote:
->>> -----Original Message-----
->>> From: Daniel Borkmann <daniel@iogearbox.net>
->>> Sent: Tuesday, September 18, 2018 2:57 PM
->>> To: Vakul Garg <vakul.garg@nxp.com>; Stephen Rothwell
->>> <sfr@canb.auug.org.au>; David Miller <davem@davemloft.net>;
->>> Networking <netdev@vger.kernel.org>
->>> Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel
->>> Mailing List <linux-kernel@vger.kernel.org>
->>> Subject: Re: linux-next: manual merge of the net-next tree with the net tree
->>>
->>> On 09/18/2018 11:10 AM, Vakul Garg wrote:
->>>>> -----Original Message-----
->>>>> From: Daniel Borkmann <daniel@iogearbox.net>
->>>>> Sent: Tuesday, September 18, 2018 2:14 PM
->>>>> To: Stephen Rothwell <sfr@canb.auug.org.au>; David Miller
->>>>> <davem@davemloft.net>; Networking <netdev@vger.kernel.org>
->>>>> Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>; Linux
->>>>> Kernel Mailing List <linux-kernel@vger.kernel.org>; Vakul Garg
->>>>> <vakul.garg@nxp.com>
->>>>> Subject: Re: linux-next: manual merge of the net-next tree with the
->>>>> net tree
->>>>>
->>>>> On 09/18/2018 02:11 AM, Stephen Rothwell wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Today's linux-next merge of the net-next tree got a conflict in:
->>>>>>
->>>>>>   tools/testing/selftests/net/tls.c
->>>>>>
->>>>>> between commit:
->>>>>>
->>>>>>   50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
->>>>>>
->>>>>> from the net tree and commit:
->>>>>>
->>>>>>   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning
->>>>>> across multiple records")
->>>>>>
->>>>>> from the net-next tree.
->>>>>>
->>>>>> I fixed it up (see below) and can carry the fix as necessary. This
->>>>>> is now fixed as far as linux-next is concerned, but any non trivial
->>>>>> conflicts should be mentioned to your upstream maintainer when your
->>>>>> tree is submitted for merging.  You may also want to consider
->>>>>> cooperating with the maintainer of the conflicting tree to minimise
->>>>>> any particularly complex conflicts.
->>>>>
->>>>> The test from 50c6b58a814d supersedes the one from c2ad647c6442 so
->>>>> the recv_peek_large_buf_mult_recs could be removed; latter was also
->>>>> not working correctly due to this bug.
->>>>
->>>> Why remove recv_peek_large_buf_mult_recs if its correct?
->>>> Why not the newly added one which achieves the same thing?
->>>
->>> Hmm, not quite, on net-next kernel, the recv_peek_large_buf_mult_recs fails
->>> every time I invoke the tls test suite:
->>>
->>> # ./tls
->>> [==========] Running 28 tests from 2 test cases.
->>> [ RUN      ] tls.sendfile
->>> [       OK ] tls.sendfile
->>> [ RUN      ] tls.send_then_sendfile
->>> [       OK ] tls.send_then_sendfile
->>> [ RUN      ] tls.recv_max
->>> [       OK ] tls.recv_max
->>> [ RUN      ] tls.recv_small
->>> [       OK ] tls.recv_small
->>> [ RUN      ] tls.msg_more
->>> [       OK ] tls.msg_more
->>> [ RUN      ] tls.sendmsg_single
->>> [       OK ] tls.sendmsg_single
->>> [ RUN      ] tls.sendmsg_large
->>> [       OK ] tls.sendmsg_large
->>> [ RUN      ] tls.sendmsg_multiple
->>> [       OK ] tls.sendmsg_multiple
->>> [ RUN      ] tls.sendmsg_multiple_stress
->>> [       OK ] tls.sendmsg_multiple_stress
->>> [ RUN      ] tls.splice_from_pipe
->>> [       OK ] tls.splice_from_pipe
->>> [ RUN      ] tls.splice_from_pipe2
->>> [       OK ] tls.splice_from_pipe2
->>> [ RUN      ] tls.send_and_splice
->>> [       OK ] tls.send_and_splice
->>> [ RUN      ] tls.splice_to_pipe
->>> [       OK ] tls.splice_to_pipe
->>> [ RUN      ] tls.recvmsg_single
->>> [       OK ] tls.recvmsg_single
->>> [ RUN      ] tls.recvmsg_single_max
->>> [       OK ] tls.recvmsg_single_max
->>> [ RUN      ] tls.recvmsg_multiple
->>> [       OK ] tls.recvmsg_multiple
->>> [ RUN      ] tls.single_send_multiple_recv
->>> [       OK ] tls.single_send_multiple_recv
->>> [ RUN      ] tls.multiple_send_single_recv
->>> [       OK ] tls.multiple_send_single_recv
->>> [ RUN      ] tls.recv_partial
->>> [       OK ] tls.recv_partial
->>> [ RUN      ] tls.recv_nonblock
->>> [       OK ] tls.recv_nonblock
->>> [ RUN      ] tls.recv_peek
->>> [       OK ] tls.recv_peek
->>> [ RUN      ] tls.recv_peek_multiple
->>> [       OK ] tls.recv_peek_multiple
->>> [ RUN      ] tls.recv_peek_large_buf_mult_recs
->>> tls.c:524:tls.recv_peek_large_buf_mult_recs:Expected memcmp(test_str,
->>> buf, len) (18446744073709551595) == 0 (0)
->>> tls.recv_peek_large_buf_mult_recs: Test failed at step #8
->>> [     FAIL ] tls.recv_peek_large_buf_mult_recs
->>> [ RUN      ] tls.pollin
->>> [       OK ] tls.pollin
->>> [ RUN      ] tls.poll_wait
->>> [       OK ] tls.poll_wait
->>> [ RUN      ] tls.blocking
->>> [       OK ] tls.blocking
->>> [ RUN      ] tls.nonblocking
->>> [       OK ] tls.nonblocking
->>> [ RUN      ] tls.control_msg
->>> [       OK ] tls.control_msg
->>> [==========] 27 / 28 tests passed.
->>> [  FAILED  ]
->>>
->>> Here's what the recvfrom() with MSG_PEEK sees:
->>>
->>> [pid  2602] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3 [pid  2602]
->>> socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 4 [pid  2602] bind(4,
->>> {sa_family=AF_INET, sin_port=htons(0), sin_addr=inet_addr("0.0.0.0")}, 16) =
->>> 0
->>> [pid  2602] listen(4, 10)               = 0
->>> [pid  2602] getsockname(4, {sa_family=AF_INET, sin_port=htons(41483),
->>> sin_addr=inet_addr("0.0.0.0")}, [16]) = 0 [pid  2602] connect(3,
->>> {sa_family=AF_INET, sin_port=htons(41483), sin_addr=inet_addr("0.0.0.0")},
->>> 16) = 0 [pid  2602] setsockopt(3, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4)
->>> = 0 [pid  2602] setsockopt(3, 0x11a /* SOL_?? */, 1,
->>> "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
->>> 40) = 0 [pid  2602] accept(4, {sa_family=AF_INET, sin_port=htons(46290),
->>> sin_addr=inet_addr("127.0.0.1")}, [16]) = 5 [pid  2602] setsockopt(5,
->>> SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0 [pid  2602] setsockopt(5,
->>> 0x11a /* SOL_?? */, 2,
->>> "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
->>> 40) = 0
->>> [pid  2602] close(4)                    = 0
->>> [pid  2602] sendto(3, "test_read_peek", 14, 0, NULL, 0) = 14 [pid  2602]
->>> sendto(3, "_mult_recs\0", 11, 0, NULL, 0) = 11 [pid  2602] recvfrom(5,
->>> "test_read_peektest_read_peektest"..., 64, MSG_PEEK, NULL, NULL) = 64
->>> [pid  2602] write(2, "tls.c:526:tls.recv_peek_large_bu"...,
->>> 112tls.c:526:tls.recv_peek_large_buf_mult_recs:Expected memcmp(test_str,
->>> buf, len) (18446744073709551595) == 0 (0)
->>> ) = 112
->>> [pid  2602] close(3)                    = 0
->>> [pid  2602] close(5)                    = 0
->>> [pid  2602] exit_group(8)               = ?
->>>
->>> Reason for the "test_read_peektest_read_peektest[...]" is because
->>> MSG_PEEK cannot call tls_sw_advance_skb(), since the skb is sitting there
->>> that needs to be consumed for non-MSG_PEEK case, and only then we can
->>> advance it.
->>
->> I general, my plan was to modify the tls_sw_recvmsg() to trigger as many 
->> decryption as possible as required by requested user space PEEK size.
->> This would have required creating a pending list of decrypted records in tls_tx context.
-> 
-> Right, had been thinking the same though for a fix in -net it would have been
-> way too intrusive, hence the 50c6b58a814d ("tls: fix currently broken MSG_PEEK
-> behavior") to avoid looping the same record which is clearly a bug. Wondering
-> if DaveW's original rationale was to avoid accumulating too many records in the
-> kernel since we would need to unpause strparser and keep processing the deeper
-> we peek.
-> 
->>> Could you elaborate on where you ever had this test succeeding? With nxp
->>> accelerator?
->>  
->> I never had this test succeeding. I pointed the problem to Dave Watson sometime
->> back (found during code reading). 
->>
->> To make sure that this bug does not slip out, I simply submitted a test case to keep
->> reminding ourselves that we need to fix it sometime.
-> 
-> Ok, I think usually tests assert current kernel behavior to make sure any changes
-> coming in don't accidentally break expectations from applications as opposed to
-> future tests that still need fixing, but I guess I'm fine either way how to resolve
-> the conflict; leaving it up to DaveM. Thanks for clarifying!
-
-By the way, full commit message from c2ad647c6442 said:
-
-  selftests/tls: Add test for recv(PEEK) spanning across multiple records
-
-  Added test case to receive multiple records with a single recvmsg()
-  operation with a MSG_PEEK set.
-
->From reading it, the expectation would normally be that the test case would
-succeed for the author, I think in future such things definitely need to be
-better clarified in the commit log to avoid confusion for others.
-
-Thanks,
-Daniel
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGFuaWVsIEJvcmttYW5u
+IDxkYW5pZWxAaW9nZWFyYm94Lm5ldD4NCj4gU2VudDogVHVlc2RheSwgU2VwdGVtYmVyIDE4LCAy
+MDE4IDM6NDYgUE0NCj4gVG86IFZha3VsIEdhcmcgPHZha3VsLmdhcmdAbnhwLmNvbT47IFN0ZXBo
+ZW4gUm90aHdlbGwNCj4gPHNmckBjYW5iLmF1dWcub3JnLmF1PjsgRGF2aWQgTWlsbGVyIDxkYXZl
+bUBkYXZlbWxvZnQubmV0PjsNCj4gTmV0d29ya2luZyA8bmV0ZGV2QHZnZXIua2VybmVsLm9yZz4N
+Cj4gQ2M6IExpbnV4LU5leHQgTWFpbGluZyBMaXN0IDxsaW51eC1uZXh0QHZnZXIua2VybmVsLm9y
+Zz47IExpbnV4IEtlcm5lbA0KPiBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc+OyBkYXZlandhdHNvbkBmYi5jb207DQo+IGRvcm9ucmtAZmIuY29tDQo+IFN1YmplY3Q6
+IFJlOiBsaW51eC1uZXh0OiBtYW51YWwgbWVyZ2Ugb2YgdGhlIG5ldC1uZXh0IHRyZWUgd2l0aCB0
+aGUgbmV0IHRyZWUNCj4gDQo+IE9uIDA5LzE4LzIwMTggMTE6NTMgQU0sIERhbmllbCBCb3JrbWFu
+biB3cm90ZToNCj4gPiBPbiAwOS8xOC8yMDE4IDExOjMyIEFNLCBWYWt1bCBHYXJnIHdyb3RlOg0K
+PiA+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4+IEZyb206IERhbmllbCBCb3Jr
+bWFubiA8ZGFuaWVsQGlvZ2VhcmJveC5uZXQ+DQo+ID4+PiBTZW50OiBUdWVzZGF5LCBTZXB0ZW1i
+ZXIgMTgsIDIwMTggMjo1NyBQTQ0KPiA+Pj4gVG86IFZha3VsIEdhcmcgPHZha3VsLmdhcmdAbnhw
+LmNvbT47IFN0ZXBoZW4gUm90aHdlbGwNCj4gPj4+IDxzZnJAY2FuYi5hdXVnLm9yZy5hdT47IERh
+dmlkIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47DQo+ID4+PiBOZXR3b3JraW5nIDxuZXRk
+ZXZAdmdlci5rZXJuZWwub3JnPg0KPiA+Pj4gQ2M6IExpbnV4LU5leHQgTWFpbGluZyBMaXN0IDxs
+aW51eC1uZXh0QHZnZXIua2VybmVsLm9yZz47IExpbnV4DQo+ID4+PiBLZXJuZWwgTWFpbGluZyBM
+aXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPg0KPiA+Pj4gU3ViamVjdDogUmU6IGxp
+bnV4LW5leHQ6IG1hbnVhbCBtZXJnZSBvZiB0aGUgbmV0LW5leHQgdHJlZSB3aXRoIHRoZQ0KPiA+
+Pj4gbmV0IHRyZWUNCj4gPj4+DQo+ID4+PiBPbiAwOS8xOC8yMDE4IDExOjEwIEFNLCBWYWt1bCBH
+YXJnIHdyb3RlOg0KPiA+Pj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+Pj4+PiBG
+cm9tOiBEYW5pZWwgQm9ya21hbm4gPGRhbmllbEBpb2dlYXJib3gubmV0Pg0KPiA+Pj4+PiBTZW50
+OiBUdWVzZGF5LCBTZXB0ZW1iZXIgMTgsIDIwMTggMjoxNCBQTQ0KPiA+Pj4+PiBUbzogU3RlcGhl
+biBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+OyBEYXZpZCBNaWxsZXINCj4gPj4+Pj4g
+PGRhdmVtQGRhdmVtbG9mdC5uZXQ+OyBOZXR3b3JraW5nIDxuZXRkZXZAdmdlci5rZXJuZWwub3Jn
+Pg0KPiA+Pj4+PiBDYzogTGludXgtTmV4dCBNYWlsaW5nIExpc3QgPGxpbnV4LW5leHRAdmdlci5r
+ZXJuZWwub3JnPjsgTGludXgNCj4gPj4+Pj4gS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgta2Vy
+bmVsQHZnZXIua2VybmVsLm9yZz47IFZha3VsIEdhcmcNCj4gPj4+Pj4gPHZha3VsLmdhcmdAbnhw
+LmNvbT4NCj4gPj4+Pj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6IG1hbnVhbCBtZXJnZSBvZiB0
+aGUgbmV0LW5leHQgdHJlZSB3aXRoDQo+ID4+Pj4+IHRoZSBuZXQgdHJlZQ0KPiA+Pj4+Pg0KPiA+
+Pj4+PiBPbiAwOS8xOC8yMDE4IDAyOjExIEFNLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3RlOg0KPiA+
+Pj4+Pj4gSGkgYWxsLA0KPiA+Pj4+Pj4NCj4gPj4+Pj4+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJn
+ZSBvZiB0aGUgbmV0LW5leHQgdHJlZSBnb3QgYSBjb25mbGljdCBpbjoNCj4gPj4+Pj4+DQo+ID4+
+Pj4+PiAgIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL25ldC90bHMuYw0KPiA+Pj4+Pj4NCj4gPj4+
+Pj4+IGJldHdlZW4gY29tbWl0Og0KPiA+Pj4+Pj4NCj4gPj4+Pj4+ICAgNTBjNmI1OGE4MTRkICgi
+dGxzOiBmaXggY3VycmVudGx5IGJyb2tlbiBNU0dfUEVFSyBiZWhhdmlvciIpDQo+ID4+Pj4+Pg0K
+PiA+Pj4+Pj4gZnJvbSB0aGUgbmV0IHRyZWUgYW5kIGNvbW1pdDoNCj4gPj4+Pj4+DQo+ID4+Pj4+
+PiAgIGMyYWQ2NDdjNjQ0MiAoInNlbGZ0ZXN0cy90bHM6IEFkZCB0ZXN0IGZvciByZWN2KFBFRUsp
+IHNwYW5uaW5nDQo+ID4+Pj4+PiBhY3Jvc3MgbXVsdGlwbGUgcmVjb3JkcyIpDQo+ID4+Pj4+Pg0K
+PiA+Pj4+Pj4gZnJvbSB0aGUgbmV0LW5leHQgdHJlZS4NCj4gPj4+Pj4+DQo+ID4+Pj4+PiBJIGZp
+eGVkIGl0IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3Nhcnku
+DQo+ID4+Pj4+PiBUaGlzIGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25j
+ZXJuZWQsIGJ1dCBhbnkgbm9uDQo+ID4+Pj4+PiB0cml2aWFsIGNvbmZsaWN0cyBzaG91bGQgYmUg
+bWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lcg0KPiA+Pj4+Pj4gd2hlbiB5b3Vy
+IHRyZWUgaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdhbnQgdG8NCj4g
+Pj4+Pj4+IGNvbnNpZGVyIGNvb3BlcmF0aW5nIHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNv
+bmZsaWN0aW5nIHRyZWUNCj4gPj4+Pj4+IHRvIG1pbmltaXNlIGFueSBwYXJ0aWN1bGFybHkgY29t
+cGxleCBjb25mbGljdHMuDQo+ID4+Pj4+DQo+ID4+Pj4+IFRoZSB0ZXN0IGZyb20gNTBjNmI1OGE4
+MTRkIHN1cGVyc2VkZXMgdGhlIG9uZSBmcm9tIGMyYWQ2NDdjNjQ0Mg0KPiBzbw0KPiA+Pj4+PiB0
+aGUgcmVjdl9wZWVrX2xhcmdlX2J1Zl9tdWx0X3JlY3MgY291bGQgYmUgcmVtb3ZlZDsgbGF0dGVy
+IHdhcw0KPiA+Pj4+PiBhbHNvIG5vdCB3b3JraW5nIGNvcnJlY3RseSBkdWUgdG8gdGhpcyBidWcu
+DQo+ID4+Pj4NCj4gPj4+PiBXaHkgcmVtb3ZlIHJlY3ZfcGVla19sYXJnZV9idWZfbXVsdF9yZWNz
+IGlmIGl0cyBjb3JyZWN0Pw0KPiA+Pj4+IFdoeSBub3QgdGhlIG5ld2x5IGFkZGVkIG9uZSB3aGlj
+aCBhY2hpZXZlcyB0aGUgc2FtZSB0aGluZz8NCj4gPj4+DQo+ID4+PiBIbW0sIG5vdCBxdWl0ZSwg
+b24gbmV0LW5leHQga2VybmVsLCB0aGUNCj4gPj4+IHJlY3ZfcGVla19sYXJnZV9idWZfbXVsdF9y
+ZWNzIGZhaWxzIGV2ZXJ5IHRpbWUgSSBpbnZva2UgdGhlIHRscyB0ZXN0DQo+IHN1aXRlOg0KPiA+
+Pj4NCj4gPj4+ICMgLi90bHMNCj4gPj4+IFs9PT09PT09PT09XSBSdW5uaW5nIDI4IHRlc3RzIGZy
+b20gMiB0ZXN0IGNhc2VzLg0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5zZW5kZmlsZQ0KPiA+Pj4g
+WyAgICAgICBPSyBdIHRscy5zZW5kZmlsZQ0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5zZW5kX3Ro
+ZW5fc2VuZGZpbGUNCj4gPj4+IFsgICAgICAgT0sgXSB0bHMuc2VuZF90aGVuX3NlbmRmaWxlDQo+
+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnJlY3ZfbWF4DQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLnJl
+Y3ZfbWF4DQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnJlY3Zfc21hbGwNCj4gPj4+IFsgICAgICAg
+T0sgXSB0bHMucmVjdl9zbWFsbA0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5tc2dfbW9yZQ0KPiA+
+Pj4gWyAgICAgICBPSyBdIHRscy5tc2dfbW9yZQ0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5zZW5k
+bXNnX3NpbmdsZQ0KPiA+Pj4gWyAgICAgICBPSyBdIHRscy5zZW5kbXNnX3NpbmdsZQ0KPiA+Pj4g
+WyBSVU4gICAgICBdIHRscy5zZW5kbXNnX2xhcmdlDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLnNl
+bmRtc2dfbGFyZ2UNCj4gPj4+IFsgUlVOICAgICAgXSB0bHMuc2VuZG1zZ19tdWx0aXBsZQ0KPiA+
+Pj4gWyAgICAgICBPSyBdIHRscy5zZW5kbXNnX211bHRpcGxlDQo+ID4+PiBbIFJVTiAgICAgIF0g
+dGxzLnNlbmRtc2dfbXVsdGlwbGVfc3RyZXNzDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLnNlbmRt
+c2dfbXVsdGlwbGVfc3RyZXNzDQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnNwbGljZV9mcm9tX3Bp
+cGUNCj4gPj4+IFsgICAgICAgT0sgXSB0bHMuc3BsaWNlX2Zyb21fcGlwZQ0KPiA+Pj4gWyBSVU4g
+ICAgICBdIHRscy5zcGxpY2VfZnJvbV9waXBlMg0KPiA+Pj4gWyAgICAgICBPSyBdIHRscy5zcGxp
+Y2VfZnJvbV9waXBlMg0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5zZW5kX2FuZF9zcGxpY2UNCj4g
+Pj4+IFsgICAgICAgT0sgXSB0bHMuc2VuZF9hbmRfc3BsaWNlDQo+ID4+PiBbIFJVTiAgICAgIF0g
+dGxzLnNwbGljZV90b19waXBlDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLnNwbGljZV90b19waXBl
+DQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnJlY3Ztc2dfc2luZ2xlDQo+ID4+PiBbICAgICAgIE9L
+IF0gdGxzLnJlY3Ztc2dfc2luZ2xlDQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnJlY3Ztc2dfc2lu
+Z2xlX21heA0KPiA+Pj4gWyAgICAgICBPSyBdIHRscy5yZWN2bXNnX3NpbmdsZV9tYXgNCj4gPj4+
+IFsgUlVOICAgICAgXSB0bHMucmVjdm1zZ19tdWx0aXBsZQ0KPiA+Pj4gWyAgICAgICBPSyBdIHRs
+cy5yZWN2bXNnX211bHRpcGxlDQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnNpbmdsZV9zZW5kX211
+bHRpcGxlX3JlY3YNCj4gPj4+IFsgICAgICAgT0sgXSB0bHMuc2luZ2xlX3NlbmRfbXVsdGlwbGVf
+cmVjdg0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5tdWx0aXBsZV9zZW5kX3NpbmdsZV9yZWN2DQo+
+ID4+PiBbICAgICAgIE9LIF0gdGxzLm11bHRpcGxlX3NlbmRfc2luZ2xlX3JlY3YNCj4gPj4+IFsg
+UlVOICAgICAgXSB0bHMucmVjdl9wYXJ0aWFsDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLnJlY3Zf
+cGFydGlhbA0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5yZWN2X25vbmJsb2NrDQo+ID4+PiBbICAg
+ICAgIE9LIF0gdGxzLnJlY3Zfbm9uYmxvY2sNCj4gPj4+IFsgUlVOICAgICAgXSB0bHMucmVjdl9w
+ZWVrDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLnJlY3ZfcGVlaw0KPiA+Pj4gWyBSVU4gICAgICBd
+IHRscy5yZWN2X3BlZWtfbXVsdGlwbGUNCj4gPj4+IFsgICAgICAgT0sgXSB0bHMucmVjdl9wZWVr
+X211bHRpcGxlDQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLnJlY3ZfcGVla19sYXJnZV9idWZfbXVs
+dF9yZWNzDQo+ID4+PiB0bHMuYzo1MjQ6dGxzLnJlY3ZfcGVla19sYXJnZV9idWZfbXVsdF9yZWNz
+OkV4cGVjdGVkDQo+ID4+PiBtZW1jbXAodGVzdF9zdHIsIGJ1ZiwgbGVuKSAoMTg0NDY3NDQwNzM3
+MDk1NTE1OTUpID09IDAgKDApDQo+ID4+PiB0bHMucmVjdl9wZWVrX2xhcmdlX2J1Zl9tdWx0X3Jl
+Y3M6IFRlc3QgZmFpbGVkIGF0IHN0ZXAgIzgNCj4gPj4+IFsgICAgIEZBSUwgXSB0bHMucmVjdl9w
+ZWVrX2xhcmdlX2J1Zl9tdWx0X3JlY3MNCj4gPj4+IFsgUlVOICAgICAgXSB0bHMucG9sbGluDQo+
+ID4+PiBbICAgICAgIE9LIF0gdGxzLnBvbGxpbg0KPiA+Pj4gWyBSVU4gICAgICBdIHRscy5wb2xs
+X3dhaXQNCj4gPj4+IFsgICAgICAgT0sgXSB0bHMucG9sbF93YWl0DQo+ID4+PiBbIFJVTiAgICAg
+IF0gdGxzLmJsb2NraW5nDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLmJsb2NraW5nDQo+ID4+PiBb
+IFJVTiAgICAgIF0gdGxzLm5vbmJsb2NraW5nDQo+ID4+PiBbICAgICAgIE9LIF0gdGxzLm5vbmJs
+b2NraW5nDQo+ID4+PiBbIFJVTiAgICAgIF0gdGxzLmNvbnRyb2xfbXNnDQo+ID4+PiBbICAgICAg
+IE9LIF0gdGxzLmNvbnRyb2xfbXNnDQo+ID4+PiBbPT09PT09PT09PV0gMjcgLyAyOCB0ZXN0cyBw
+YXNzZWQuDQo+ID4+PiBbICBGQUlMRUQgIF0NCj4gPj4+DQo+ID4+PiBIZXJlJ3Mgd2hhdCB0aGUg
+cmVjdmZyb20oKSB3aXRoIE1TR19QRUVLIHNlZXM6DQo+ID4+Pg0KPiA+Pj4gW3BpZCAgMjYwMl0g
+c29ja2V0KEFGX0lORVQsIFNPQ0tfU1RSRUFNLCBJUFBST1RPX0lQKSA9IDMgW3BpZCAgMjYwMl0N
+Cj4gPj4+IHNvY2tldChBRl9JTkVULCBTT0NLX1NUUkVBTSwgSVBQUk9UT19JUCkgPSA0IFtwaWQg
+IDI2MDJdIGJpbmQoNCwNCj4gPj4+IHtzYV9mYW1pbHk9QUZfSU5FVCwgc2luX3BvcnQ9aHRvbnMo
+MCksDQo+ID4+PiBzaW5fYWRkcj1pbmV0X2FkZHIoIjAuMC4wLjAiKX0sIDE2KSA9DQo+ID4+PiAw
+DQo+ID4+PiBbcGlkICAyNjAyXSBsaXN0ZW4oNCwgMTApICAgICAgICAgICAgICAgPSAwDQo+ID4+
+PiBbcGlkICAyNjAyXSBnZXRzb2NrbmFtZSg0LCB7c2FfZmFtaWx5PUFGX0lORVQsDQo+ID4+PiBz
+aW5fcG9ydD1odG9ucyg0MTQ4MyksIHNpbl9hZGRyPWluZXRfYWRkcigiMC4wLjAuMCIpfSwgWzE2
+XSkgPSAwDQo+ID4+PiBbcGlkICAyNjAyXSBjb25uZWN0KDMsIHtzYV9mYW1pbHk9QUZfSU5FVCwg
+c2luX3BvcnQ9aHRvbnMoNDE0ODMpLA0KPiA+Pj4gc2luX2FkZHI9aW5ldF9hZGRyKCIwLjAuMC4w
+Iil9LA0KPiA+Pj4gMTYpID0gMCBbcGlkICAyNjAyXSBzZXRzb2Nrb3B0KDMsIFNPTF9UQ1AsIDB4
+MWYgLyogVENQXz8/PyAqLywNCj4gPj4+IFs3NTY0NDA0XSwgNCkgPSAwIFtwaWQgIDI2MDJdIHNl
+dHNvY2tvcHQoMywgMHgxMWEgLyogU09MXz8/ICovLCAxLA0KPiA+Pj4NCj4gIlwzXDAwMzNcMFww
+XDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwIi4N
+Cj4gPj4+IC4uLA0KPiA+Pj4gNDApID0gMCBbcGlkICAyNjAyXSBhY2NlcHQoNCwge3NhX2ZhbWls
+eT1BRl9JTkVULA0KPiA+Pj4gc2luX3BvcnQ9aHRvbnMoNDYyOTApLCBzaW5fYWRkcj1pbmV0X2Fk
+ZHIoIjEyNy4wLjAuMSIpfSwgWzE2XSkgPSA1DQo+ID4+PiBbcGlkICAyNjAyXSBzZXRzb2Nrb3B0
+KDUsIFNPTF9UQ1AsIDB4MWYgLyogVENQXz8/PyAqLywgWzc1NjQ0MDRdLCA0KQ0KPiA+Pj4gPSAw
+IFtwaWQgIDI2MDJdIHNldHNvY2tvcHQoNSwgMHgxMWEgLyogU09MXz8/ICovLCAyLA0KPiA+Pj4N
+Cj4gIlwzXDAwMzNcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFww
+XDBcMFwwXDBcMFwwIi4NCj4gPj4+IC4uLA0KPiA+Pj4gNDApID0gMA0KPiA+Pj4gW3BpZCAgMjYw
+Ml0gY2xvc2UoNCkgICAgICAgICAgICAgICAgICAgID0gMA0KPiA+Pj4gW3BpZCAgMjYwMl0gc2Vu
+ZHRvKDMsICJ0ZXN0X3JlYWRfcGVlayIsIDE0LCAwLCBOVUxMLCAwKSA9IDE0IFtwaWQNCj4gPj4+
+IDI2MDJdIHNlbmR0bygzLCAiX211bHRfcmVjc1wwIiwgMTEsIDAsIE5VTEwsIDApID0gMTEgW3Bp
+ZCAgMjYwMl0NCj4gPj4+IHJlY3Zmcm9tKDUsICJ0ZXN0X3JlYWRfcGVla3Rlc3RfcmVhZF9wZWVr
+dGVzdCIuLi4sIDY0LCBNU0dfUEVFSywNCj4gPj4+IE5VTEwsIE5VTEwpID0gNjQgW3BpZCAgMjYw
+Ml0gd3JpdGUoMiwNCj4gPj4+ICJ0bHMuYzo1MjY6dGxzLnJlY3ZfcGVla19sYXJnZV9idSIuLi4s
+DQo+ID4+PiAxMTJ0bHMuYzo1MjY6dGxzLnJlY3ZfcGVla19sYXJnZV9idWZfbXVsdF9yZWNzOkV4
+cGVjdGVkDQo+ID4+PiBtZW1jbXAodGVzdF9zdHIsIGJ1ZiwgbGVuKSAoMTg0NDY3NDQwNzM3MDk1
+NTE1OTUpID09IDAgKDApDQo+ID4+PiApID0gMTEyDQo+ID4+PiBbcGlkICAyNjAyXSBjbG9zZSgz
+KSAgICAgICAgICAgICAgICAgICAgPSAwDQo+ID4+PiBbcGlkICAyNjAyXSBjbG9zZSg1KSAgICAg
+ICAgICAgICAgICAgICAgPSAwDQo+ID4+PiBbcGlkICAyNjAyXSBleGl0X2dyb3VwKDgpICAgICAg
+ICAgICAgICAgPSA/DQo+ID4+Pg0KPiA+Pj4gUmVhc29uIGZvciB0aGUgInRlc3RfcmVhZF9wZWVr
+dGVzdF9yZWFkX3BlZWt0ZXN0Wy4uLl0iIGlzIGJlY2F1c2UNCj4gPj4+IE1TR19QRUVLIGNhbm5v
+dCBjYWxsIHRsc19zd19hZHZhbmNlX3NrYigpLCBzaW5jZSB0aGUgc2tiIGlzIHNpdHRpbmcNCj4g
+Pj4+IHRoZXJlIHRoYXQgbmVlZHMgdG8gYmUgY29uc3VtZWQgZm9yIG5vbi1NU0dfUEVFSyBjYXNl
+LCBhbmQgb25seSB0aGVuDQo+ID4+PiB3ZSBjYW4gYWR2YW5jZSBpdC4NCj4gPj4NCj4gPj4gSSBn
+ZW5lcmFsLCBteSBwbGFuIHdhcyB0byBtb2RpZnkgdGhlIHRsc19zd19yZWN2bXNnKCkgdG8gdHJp
+Z2dlciBhcw0KPiA+PiBtYW55IGRlY3J5cHRpb24gYXMgcG9zc2libGUgYXMgcmVxdWlyZWQgYnkg
+cmVxdWVzdGVkIHVzZXIgc3BhY2UgUEVFSw0KPiBzaXplLg0KPiA+PiBUaGlzIHdvdWxkIGhhdmUg
+cmVxdWlyZWQgY3JlYXRpbmcgYSBwZW5kaW5nIGxpc3Qgb2YgZGVjcnlwdGVkIHJlY29yZHMgaW4N
+Cj4gdGxzX3R4IGNvbnRleHQuDQo+ID4NCj4gPiBSaWdodCwgaGFkIGJlZW4gdGhpbmtpbmcgdGhl
+IHNhbWUgdGhvdWdoIGZvciBhIGZpeCBpbiAtbmV0IGl0IHdvdWxkDQo+ID4gaGF2ZSBiZWVuIHdh
+eSB0b28gaW50cnVzaXZlLCBoZW5jZSB0aGUgNTBjNmI1OGE4MTRkICgidGxzOiBmaXgNCj4gPiBj
+dXJyZW50bHkgYnJva2VuIE1TR19QRUVLDQo+ID4gYmVoYXZpb3IiKSB0byBhdm9pZCBsb29waW5n
+IHRoZSBzYW1lIHJlY29yZCB3aGljaCBpcyBjbGVhcmx5IGEgYnVnLg0KPiA+IFdvbmRlcmluZyBp
+ZiBEYXZlVydzIG9yaWdpbmFsIHJhdGlvbmFsZSB3YXMgdG8gYXZvaWQgYWNjdW11bGF0aW5nIHRv
+bw0KPiA+IG1hbnkgcmVjb3JkcyBpbiB0aGUga2VybmVsIHNpbmNlIHdlIHdvdWxkIG5lZWQgdG8g
+dW5wYXVzZSBzdHJwYXJzZXINCj4gPiBhbmQga2VlcCBwcm9jZXNzaW5nIHRoZSBkZWVwZXIgd2Ug
+cGVlay4NCj4gPg0KPiA+Pj4gQ291bGQgeW91IGVsYWJvcmF0ZSBvbiB3aGVyZSB5b3UgZXZlciBo
+YWQgdGhpcyB0ZXN0IHN1Y2NlZWRpbmc/IFdpdGgNCj4gPj4+IG54cCBhY2NlbGVyYXRvcj8NCj4g
+Pj4NCj4gPj4gSSBuZXZlciBoYWQgdGhpcyB0ZXN0IHN1Y2NlZWRpbmcuIEkgcG9pbnRlZCB0aGUg
+cHJvYmxlbSB0byBEYXZlDQo+ID4+IFdhdHNvbiBzb21ldGltZSBiYWNrIChmb3VuZCBkdXJpbmcg
+Y29kZSByZWFkaW5nKS4NCj4gPj4NCj4gPj4gVG8gbWFrZSBzdXJlIHRoYXQgdGhpcyBidWcgZG9l
+cyBub3Qgc2xpcCBvdXQsIEkgc2ltcGx5IHN1Ym1pdHRlZCBhDQo+ID4+IHRlc3QgY2FzZSB0byBr
+ZWVwIHJlbWluZGluZyBvdXJzZWx2ZXMgdGhhdCB3ZSBuZWVkIHRvIGZpeCBpdCBzb21ldGltZS4N
+Cj4gPg0KPiA+IE9rLCBJIHRoaW5rIHVzdWFsbHkgdGVzdHMgYXNzZXJ0IGN1cnJlbnQga2VybmVs
+IGJlaGF2aW9yIHRvIG1ha2Ugc3VyZQ0KPiA+IGFueSBjaGFuZ2VzIGNvbWluZyBpbiBkb24ndCBh
+Y2NpZGVudGFsbHkgYnJlYWsgZXhwZWN0YXRpb25zIGZyb20NCj4gPiBhcHBsaWNhdGlvbnMgYXMg
+b3Bwb3NlZCB0byBmdXR1cmUgdGVzdHMgdGhhdCBzdGlsbCBuZWVkIGZpeGluZywgYnV0IEkNCj4g
+PiBndWVzcyBJJ20gZmluZSBlaXRoZXIgd2F5IGhvdyB0byByZXNvbHZlIHRoZSBjb25mbGljdDsg
+bGVhdmluZyBpdCB1cCB0bw0KPiBEYXZlTS4gVGhhbmtzIGZvciBjbGFyaWZ5aW5nIQ0KPiANCj4g
+QnkgdGhlIHdheSwgZnVsbCBjb21taXQgbWVzc2FnZSBmcm9tIGMyYWQ2NDdjNjQ0MiBzYWlkOg0K
+PiANCj4gICBzZWxmdGVzdHMvdGxzOiBBZGQgdGVzdCBmb3IgcmVjdihQRUVLKSBzcGFubmluZyBh
+Y3Jvc3MgbXVsdGlwbGUgcmVjb3Jkcw0KPiANCj4gICBBZGRlZCB0ZXN0IGNhc2UgdG8gcmVjZWl2
+ZSBtdWx0aXBsZSByZWNvcmRzIHdpdGggYSBzaW5nbGUgcmVjdm1zZygpDQo+ICAgb3BlcmF0aW9u
+IHdpdGggYSBNU0dfUEVFSyBzZXQuDQo+IA0KPiBGcm9tIHJlYWRpbmcgaXQsIHRoZSBleHBlY3Rh
+dGlvbiB3b3VsZCBub3JtYWxseSBiZSB0aGF0IHRoZSB0ZXN0IGNhc2Ugd291bGQNCj4gc3VjY2Vl
+ZCBmb3IgdGhlIGF1dGhvciwgSSB0aGluayBpbiBmdXR1cmUgc3VjaCB0aGluZ3MgZGVmaW5pdGVs
+eSBuZWVkIHRvIGJlDQo+IGJldHRlciBjbGFyaWZpZWQgaW4gdGhlIGNvbW1pdCBsb2cgdG8gYXZv
+aWQgY29uZnVzaW9uIGZvciBvdGhlcnMuDQo+IA0KDQpHb3QgaXQuIA0KVGhhbmtzIGZvciB0aGUg
+Z3VpZGFuY2UuDQogDQoNCj4gVGhhbmtzLA0KPiBEYW5pZWwNCg==
