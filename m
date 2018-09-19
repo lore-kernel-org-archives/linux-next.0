@@ -1,70 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Wed, 19 Sep 2018 16:31:02 +1000
-Message-ID: <20180919163102.1a0adefb@canb.auug.org.au>
-References: <20180919094847.2103082b@canb.auug.org.au>
-        <20180919073826.02370812@canb.auug.org.au>
-        <20180910133525.28c5dd20@canb.auug.org.au>
-        <15925.1537309041@warthog.procyon.org.uk>
-        <3565.1537336860@warthog.procyon.org.uk>
+Date: Wed, 19 Sep 2018 09:17:03 +0200
+Message-ID: <CAMuHMdUyazZR1MhUm6ekFHJ3HPtVEBhejsyAvNVEtfuGVvDrNA@mail.gmail.com>
+References: <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au>
+ <15925.1537309041@warthog.procyon.org.uk> <20180919094847.2103082b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZJ0kv3G641rgu3qYMev8HnC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3565.1537336860@warthog.procyon.org.uk>
+In-Reply-To: <20180919094847.2103082b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ZJ0kv3G641rgu3qYMev8HnC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi David,
-
-On Wed, 19 Sep 2018 07:01:00 +0100 David Howells <dhowells@redhat.com> wrot=
-e:
+On Wed, Sep 19, 2018 at 1:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Tue, 18 Sep 2018 23:17:21 +0100 David Howells <dhowells@redhat.com> wrote:
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > After merging the vfs tree, today's linux-next build (powerpc
+> > > > allyesconfig) failed like this:
+> > > >
+> > > > samples/vfs/test-fsinfo.c: In function 'fsinfo':
+> > > > samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use in this function); did you mean 'fsinfo'?
+> >
+> > I think the problem is that I haven't allocated system call numbers for any
+> > arches other than x86 - even the x86 syscall numbers are provisional until the
+> > patchset is taken upstream.  I'm not sure of the best way to deal with this -
+> > make the samples dependent on the X86 arch?
 >
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > > I think the problem is that I haven't allocated system call numbers f=
-or
-> > > any arches other than x86 - even the x86 syscall numbers are provisio=
-nal
-> > > until the patchset is taken upstream.  I'm not sure of the best way to
-> > > deal with this - make the samples dependent on the X86 arch? =20
-> >=20
-> > But the sample programs are built with HOSTCC, so you can't depend on
-> > ARCH (since I, for one, am cross compiling).  Maybe SUBARCH.  Better
-> > would be to use either Kconfig's shell primitive or some make magic to
-> > figure out if the syscall number define's are defined. =20
->=20
-> I meant put the dependency in the Kconfig.
+> But the sample programs are built with HOSTCC, so you can't depend on
+> ARCH (since I, for one, am cross compiling).  Maybe SUBARCH.  Better
+> would be to use either Kconfig's shell primitive or some make magic to
+> figure out if the syscall number define's are defined.
+>
+> > > > samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
+> > > >   printf("\tmax file size: %llx\n", f->max_file_size);
+> >
+> > Sigh.  On powerpc __u64 is unsigned long, but on x86_64 it's unsigned long
+> > long.  Is it possible to shift all arches to use unsigned long long for __u64?
+>
+> I doubt it - that would probably cause more warnings in the arch code.
 
-Yeah, sure.  Kconfig now has the ability for that dependency to be the
-result of an external program "$(shell ....)", so you could have a
-script or program that checked to see if the syscall numbers are
-defined and then have the Kconfig symbol(s) for the tests depend on that.
+In kernelspace, it's unsigned long long on all architectures.
+In userspace, it may still be unsigned long on early 64-bit architectures.
 
---=20
-Cheers,
-Stephen Rothwell
+> Instead, just explicitly cast it to unsigned long long.
 
---Sig_/ZJ0kv3G641rgu3qYMev8HnC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Or use C99's PRIx64?
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluh7SYACgkQAVBC80lX
-0GxYPgf/bF74y30ZUjwdoFuUqy4+blmM+81kFJkuEtiNT+PQRFDjrzAxZvIGAJX+
-EVNSHZAl6Wfy39W0gCGA6K0GB3YWaNYqlZXjxLPlb28Z910dCjxl44z+cDQ/0qTx
-eooBlAH0z80gFw3MZqPErWf40rV0e0AuILJ6QE7o3qc7+tw6jP+3CiKJshuZFvm4
-RQG54g7Zxva8Nc9180iq68ag8PtYK6f8PzHeCruLU4sDgj/hMeHUcl/EdrCJFf45
-MLxBb5B+kdMUqoh3ByBp2L6GlmWhiNjH4X1veIqUL+CXlJbKyKVseAgBFutnJkbw
-9vgLxBtjLIS4vcMYSNbw0Zi3Uk1PHQ==
-=qN9e
------END PGP SIGNATURE-----
+                        Geert
 
---Sig_/ZJ0kv3G641rgu3qYMev8HnC--
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
