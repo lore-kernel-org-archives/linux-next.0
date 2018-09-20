@@ -1,13 +1,13 @@
 From: akpm@linux-foundation.org
-Subject: mmotm 2018-09-20-12-10 uploaded
-Date: Thu, 20 Sep 2018 12:10:47 -0700
-Message-ID: <20180920191047.N7-CCe4vS%akpm@linux-foundation.org>
+Subject: mmotm 2018-09-20-14-08 uploaded
+Date: Thu, 20 Sep 2018 14:09:27 -0700
+Message-ID: <20180920210927.GpGW7d9QD%akpm@linux-foundation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-09-20-12-10 has been uploaded to
+The mm-of-the-moment snapshot 2018-09-20-14-08 has been uploaded to
 
    http://www.ozlabs.org/~akpm/mmotm/
 
