@@ -1,44 +1,52 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build failure after merge of the input-current tree
-Date: Thu, 20 Sep 2018 10:02:24 +0200
-Message-ID: <2643253.QO5Q8yoTPK@aspire.rjw.lan>
-References: <20180919082500.74401754@canb.auug.org.au> <CAKdAkRR8NH8FxfRVsB2DCiyh7QVZLisqZgd1ZgHCnGpUO6KP-g@mail.gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: Tree for Sep 20
+Date: Thu, 20 Sep 2018 20:37:37 +1000
+Message-ID: <87d0t8jvym.fsf@concordia.ellerman.id.au>
+References: <20180920151243.5524c6ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKdAkRR8NH8FxfRVsB2DCiyh7QVZLisqZgd1ZgHCnGpUO6KP-g@mail.gmail.com>
+In-Reply-To: <20180920151243.5524c6ca@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Daniel Drake <drake@endlessm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, robh@kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday, September 19, 2018 12:32:03 AM CEST Dmitry Torokhov wrote:
-> On Tue, Sep 18, 2018 at 3:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi Dmitry,
-> >
-> > After merging the input-current tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > ERROR: "mem_sleep_current" [drivers/input/serio/i8042.ko] undefined!
-> >
-> > Caused by commit
-> >
-> >   1685830e59d4 ("Input: i8042 - enable keyboard wakeups by default when s2idle is used")
-> >
-> > I have used the version of input-current from next-20180918 for today.
-> 
-> Ugh, sorry, I dropped that patch from my tree for now.
-> 
-> Daniel, Rafael, I guess we can't make pm_suspend_via_s2idle() static
-> inline, but instead move it into kernel/power/suspend.c and make it
-> EXPORT_SYMBOL().
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Either that, or mem_sleep_current would need to be exported.  Sorry for
-missing that.
+> Hi all,
+>
+> Changes since 20180919:
+>
+> Dropped trees: xarray, ida (temporarily)
+>
+> The input-current tree lost its build failure.
+>
+> I still disabled building some samples in the vfs tree.
+>
+> Non-merge commits (relative to Linus' tree): 4279
+>  4792 files changed, 166265 insertions(+), 93138 deletions(-)
 
-Daniel, I prefer the wrapper to be a regular function in suspend.c.
+Oodles of:
 
-Thanks,
-Rafael
+  # < make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-  allnoconfig
+  # make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-  
+  /bin/sh: 1: pkg-config: not found
+  make[3]: pkg-config: Command not found
+  /kisskb/src/scripts/dtc/yamltree.c:23:10: fatal error: yaml.h: No such file or directory
+   #include <yaml.h>
+            ^~~~~~~~
+  compilation terminated.
+  make[3]: *** [scripts/Makefile.host:107: scripts/dtc/yamltree.o] Error 1
+  make[3]: *** Waiting for unfinished jobs....
+  make[2]: *** [/kisskb/src/scripts/Makefile.build:536: scripts/dtc] Error 2
+  make[2]: *** Waiting for unfinished jobs....
+  make[1]: *** [/kisskb/src/Makefile:1067: scripts] Error 2
+  make: *** [Makefile:146: sub-make] Error 2
+
+http://kisskb.ellerman.id.au/kisskb/head/a0cb0cabe4bbeacf5ed9e81a41abcbae47ba925a/
+
+
+I guess we've got a yaml dependency now?
+
+cheers
