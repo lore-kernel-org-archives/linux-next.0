@@ -1,53 +1,27 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: Tree for Sep 20
-Date: Thu, 20 Sep 2018 07:02:30 -0700
-Message-ID: <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
-References: <20180920151243.5524c6ca@canb.auug.org.au> <87d0t8jvym.fsf@concordia.ellerman.id.au>
- <20180920210711.4561abee@canb.auug.org.au> <20180920211755.1fabd744@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Thu, 20 Sep 2018 17:20:58 +0100
+Message-ID: <31225.1537460458@warthog.procyon.org.uk>
+References: <875zz0jvfs.fsf@concordia.ellerman.id.au> <20180919094847.2103082b@canb.auug.org.au> <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au> <15925.1537309041@warthog.procyon.org.uk> <3565.1537336860@warthog.procyon.org.uk> <20180919163102.1a0adefb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180920211755.1fabd744@canb.auug.org.au>
+In-Reply-To: <875zz0jvfs.fsf@concordia.ellerman.id.au>
+Content-ID: <31224.1537460458.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 20, 2018 at 4:18 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Michael,
->
-> On Thu, 20 Sep 2018 21:10:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
-> > >
-> > > Oodles of:
-> > >
-> > >   # < make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-  allnoconfig
-> > >   # make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-
-> > >   /bin/sh: 1: pkg-config: not found
->       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> > don't have it installed on my build machine either ...  do we have
-> > pkg-config installed in the build images?
->
-> Duh! ;-)
->
-> According to the commit message we gained a kconfig dependency on
-> pkg-config in 4.18.  I wonder what else depends on it.
->
-> Ah:
->
-> "pkg-config
-> ----------
->
-> The build system, as of 4.18, requires pkg-config to check for installed
-> kconfig tools and to determine flags settings for use in
-> 'make {g,x}config'.  Previously pkg-config was being used but not
-> verified or documented."
+Michael Ellerman <mpe@ellerman.id.au> wrote:
 
-Looks like until a recent commit, this also included nconfig and
-menuconfig, but those were dropped after some complaints. I'll rework
-this to make things work with pkg-config.
+> I realise these are in samples rather than selftests, but what most of
+> the selftests do is just #define the syscall number if it's not defined,
+> so that you're not dependent on getting the headers.
 
-Rob
+The reason I don't want to do that is that syscall numbers aren't consistent
+across arches - they aren't even consistent within arches.
+
+I've made the VFS samples contingent on X86 in Kconfig for the moment.
+
+David
