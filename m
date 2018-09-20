@@ -1,86 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Sep 20
-Date: Thu, 20 Sep 2018 21:10:08 +1000
-Message-ID: <20180920210711.4561abee@canb.auug.org.au>
+Date: Thu, 20 Sep 2018 21:17:55 +1000
+Message-ID: <20180920211755.1fabd744@canb.auug.org.au>
 References: <20180920151243.5524c6ca@canb.auug.org.au>
         <87d0t8jvym.fsf@concordia.ellerman.id.au>
+        <20180920210711.4561abee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fqB1TWcNoApRYmxO2qH.b0N"; protocol="application/pgp-signature"
+ boundary="Sig_/t4YctscrJcChV89uUiJm.9M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87d0t8jvym.fsf@concordia.ellerman.id.au>
+In-Reply-To: <20180920210711.4561abee@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Michael Ellerman <mpe@ellerman.id.au>, robh@kernel.org
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fqB1TWcNoApRYmxO2qH.b0N
+--Sig_/t4YctscrJcChV89uUiJm.9M
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Michael,
 
-On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
-ote:
+On Thu, 20 Sep 2018 21:10:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Oodles of:
->=20
->   # < make -s -j 48 ARCH=3Darm64 O=3D/kisskb/build/linux-next_arm64-allno=
+> On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> =
+wrote:
+> >
+> > Oodles of:
+> >=20
+> >   # < make -s -j 48 ARCH=3Darm64 O=3D/kisskb/build/linux-next_arm64-all=
+noconfig_arm64 CROSS_COMPILE=3D/opt/cross/kisskb/br-aarch64-glibc-2016.08-6=
+13-ge98b4dd/bin/aarch64-linux-  allnoconfig
+> >   # make -s -j 48 ARCH=3Darm64 O=3D/kisskb/build/linux-next_arm64-allno=
 config_arm64 CROSS_COMPILE=3D/opt/cross/kisskb/br-aarch64-glibc-2016.08-613=
--ge98b4dd/bin/aarch64-linux-  allnoconfig
->   # make -s -j 48 ARCH=3Darm64 O=3D/kisskb/build/linux-next_arm64-allnoco=
-nfig_arm64 CROSS_COMPILE=3D/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-g=
-e98b4dd/bin/aarch64-linux- =20
->   /bin/sh: 1: pkg-config: not found
->   make[3]: pkg-config: Command not found
->   /kisskb/src/scripts/dtc/yamltree.c:23:10: fatal error: yaml.h: No such =
-file or directory
->    #include <yaml.h>
->             ^~~~~~~~
->   compilation terminated.
->   make[3]: *** [scripts/Makefile.host:107: scripts/dtc/yamltree.o] Error 1
->   make[3]: *** Waiting for unfinished jobs....
->   make[2]: *** [/kisskb/src/scripts/Makefile.build:536: scripts/dtc] Erro=
-r 2
->   make[2]: *** Waiting for unfinished jobs....
->   make[1]: *** [/kisskb/src/Makefile:1067: scripts] Error 2
->   make: *** [Makefile:146: sub-make] Error 2
->=20
-> http://kisskb.ellerman.id.au/kisskb/head/a0cb0cabe4bbeacf5ed9e81a41abcbae=
-47ba925a/
->=20
->=20
-> I guess we've got a yaml dependency now?
+-ge98b4dd/bin/aarch64-linux- =20
+> >   /bin/sh: 1: pkg-config: not found
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        =20
+> don't have it installed on my build machine either ...  do we have
+> pkg-config installed in the build images?
 
-Yeah, but it is tested for and worked for my builds during the day (I
-don't have it installed on my build machine either ...  do we have
-pkg-config installed in the build images?
+Duh! ;-)
 
-Anyway, it is (presuambly) caused by commit
+According to the commit message we gained a kconfig dependency on
+pkg-config in 4.18.  I wonder what else depends on it.
 
-  52786e7517a2 ("scripts/dtc: Update to upstream version v1.4.7-14-gc86da84=
-d30e4")
+Ah:
 
-from the devicetree tree.
+"pkg-config
+----------
 
+The build system, as of 4.18, requires pkg-config to check for installed
+kconfig tools and to determine flags settings for use in
+'make {g,x}config'.  Previously pkg-config was being used but not
+verified or documented."
+
+(from Documentation/process/changes.rst)
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/fqB1TWcNoApRYmxO2qH.b0N
+--Sig_/t4YctscrJcChV89uUiJm.9M
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlujgBAACgkQAVBC80lX
-0Gw1qQf/e+2+cE7SAGP2TO0AitY5bEECuk7I8gjnytxwcD/+nRVoXrH8dU/wSS9l
-iAdgsoi2uYefca4+h8IOgzgrIbhfRcBR6mFJ0jgzH0bSyXgoxQXYUquY/xhiznIe
-0l2xXEoOF7I1YHWWssMLvAtmWqFIjiWn3gNBDP9eC6ULRUFl8wG+RErqfDGYlS4d
-FlEp5N1vtQ2tmLboM45zToUocjsXxPhat8mprbThnSuLfGgQBHNefD5L5x/qA4sy
-2TIxQwnA0AHqKjZFCE2pwdmVgLStJkppxKkhu7zLbjp5twYR4SMMbKHIxdDu4lGC
-9A4VuClZI0atGcM44tCDlERo77omaw==
-=brwp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlujgeMACgkQAVBC80lX
+0Gx2CAf/cJ0bt7I8hkCnLqIjschCrkFdf3Ik5nYOiE9027qSwJ2qTJ98WnUxYfNW
+vqOObZ6swKIcSBaZB1SqmBcj8sR49ElZuWEm1/lzVX851Tr/yS78gbJ7arNrTbHt
+ngcF/tirn5jKElFlz8Mbox19HojNClhdom8h5SAoMJLkRdZFd+YUOZ2K3fLBxNci
+Ivr59zyr8FwBAI38ZtSRlrFUUhrskcdEyvSqajSUsojKh11MJz7u2wRTLcuyIyMs
+JaxVXYGyHF1bvnFG9JixnSacS0ZzDzz7lYOLGKB4YuWICuhrps1MnUHv/2rNAXZ3
+6UD7zVOoTqPKAUFk87GMcqEjra824Q==
+=6ctV
 -----END PGP SIGNATURE-----
 
---Sig_/fqB1TWcNoApRYmxO2qH.b0N--
+--Sig_/t4YctscrJcChV89uUiJm.9M--
