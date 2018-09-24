@@ -1,47 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the mali-dp tree
-Date: Sat, 22 Sep 2018 08:58:34 +1000
-Message-ID: <20180922085834.5442f585@canb.auug.org.au>
+Subject: linux-next: manual merge of the bpf-next tree with Linus' tree
+Date: Mon, 24 Sep 2018 10:19:56 +1000
+Message-ID: <20180924101956.4024470e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=kIZRny5NQJ0IGq9ray2uO0"; protocol="application/pgp-signature"
+ boundary="Sig_/BenR638O_rk0vljbXVo+1Yz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, Yonghong Song <yhs@fb.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=kIZRny5NQJ0IGq9ray2uO0
+--Sig_/BenR638O_rk0vljbXVo+1Yz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Liviu,
+Hi all,
 
-Commit
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-  fd75f5726f65 ("drm/mali-dp: Implement plane alpha and pixel blend on mali=
-dp")
+  tools/lib/bpf/Build
 
-is missing a Signed-off-by from its committer.
+between commit:
+
+  6d41907c630d ("tools lib bpf: Provide wrapper for strerror_r to build in =
+!_GNU_SOURCE systems")
+
+from Linus' tree and commit:
+
+  f7010770fbac ("tools/bpf: move bpf/lib netlink related functions into a n=
+ew file")
+
+from the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/=kIZRny5NQJ0IGq9ray2uO0
+diff --cc tools/lib/bpf/Build
+index 6eb9bacd1948,512b2c0ba0d2..000000000000
+--- a/tools/lib/bpf/Build
++++ b/tools/lib/bpf/Build
+@@@ -1,1 -1,1 +1,1 @@@
+- libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_errno.o str_error.o
+ -libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_errno.o netlink.o
+++libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_errno.o str_error.o ne=
+tlink.o
+
+--Sig_/BenR638O_rk0vljbXVo+1Yz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluld5oACgkQAVBC80lX
-0Gw7RggAo+4xGqn7rqmOK7HLwQzxQQvOxmBfN56oWTDyXNl++JIQxh0/r2+o4vjN
-b40FEMq92HQ+vSimTuOkeZevr1/WHbBUZ/GJcGUsdpTBOVhL190QhjA1Qlbcn0jS
-sdFzKpp4pBMfmsU6T93KDPIn2YIwYY5sMIIfGxK71l3Q584GLn65R2cfMD0IJWxx
-2YK68EeNlMPx2MtfdsPT42z0Dyj3tdC3TuBA695b7QtBwPccZogny8BVdJ0XvYiT
-BGoMmv5b5X5MIk8kmK7d5H2dZHs/7mmIhrvH7CnoXe5fff2IxinyWXXEHI77GPQP
-DtvMRTl/aFHy0ahC+nokgSxgJ2r4fg==
-=xY7E
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluoLawACgkQAVBC80lX
+0Gzotwf/V7CQ726XCmE/S04vLxUcCAFZ2c3EQdq7Gv9VxUftcpSObjCYXHUpHsBE
+yuRaP+x/x4x46zWHILRmJtRC8bBiyDd9pT/2SvFSed+mZ3rk1oGneqe5VdnsINXr
+xEXgWB20DhjJCdmT6diwO+2gI791JnxCUVB/STlivEJfDAWAlPOfxi7YjDPoCeJ/
++wQqpbb/n//zK/u/rM3afIJSEy9kvfBfTIdiI/1PF9tUWc5IA0rbwVGI1CNDH1dq
+JJhhYAC8CMi+854ukLCqNUSEYsN//VClHQRAZT/kGHzJV5GlW9FlaRzCWQypVb0e
+W2hj4eZAQp0XoAtmjk+wUaEsxYsu9w==
+=ODdk
 -----END PGP SIGNATURE-----
 
---Sig_/=kIZRny5NQJ0IGq9ray2uO0--
+--Sig_/BenR638O_rk0vljbXVo+1Yz--
