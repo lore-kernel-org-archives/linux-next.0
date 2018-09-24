@@ -1,53 +1,77 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for Sep 20
-Date: Mon, 24 Sep 2018 13:43:09 +1000
-Message-ID: <871s9j7e7m.fsf@concordia.ellerman.id.au>
-References: <20180920151243.5524c6ca@canb.auug.org.au> <87d0t8jvym.fsf@concordia.ellerman.id.au> <20180920210711.4561abee@canb.auug.org.au> <20180920211755.1fabd744@canb.auug.org.au> <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arm64
+ tree
+Date: Mon, 24 Sep 2018 14:38:53 +1000
+Message-ID: <20180924143853.0f6cc235@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H9NPypStBoDAPCLASOe0of0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jia He <jia.he@hxt-semitech.com>, James Morse <james.morse@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
-> On Thu, Sep 20, 2018 at 4:18 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> On Thu, 20 Sep 2018 21:10:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->> > > Oodles of:
->> > >
->> > >   # < make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-  allnoconfig
->> > >   # make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-
->> > >   /bin/sh: 1: pkg-config: not found
->>       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>
->> > don't have it installed on my build machine either ...  do we have
->> > pkg-config installed in the build images?
->>
->> Duh! ;-)
->>
->> According to the commit message we gained a kconfig dependency on
->> pkg-config in 4.18.  I wonder what else depends on it.
->>
->> Ah:
->>
->> "pkg-config
->> ----------
->>
->> The build system, as of 4.18, requires pkg-config to check for installed
->> kconfig tools and to determine flags settings for use in
->> 'make {g,x}config'.  Previously pkg-config was being used but not
->> verified or documented."
->
-> Looks like until a recent commit, this also included nconfig and
-> menuconfig, but those were dropped after some complaints. I'll rework
-> this to make things work with pkg-config.
+--Sig_/H9NPypStBoDAPCLASOe0of0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-OK thanks.
+Hi all,
 
-I'll install pkg-config in the kisskb builders anyway, so in future at
-least that part will work.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-cheers
+  arch/arm64/Kconfig
+
+between commit:
+
+  8a695a587333 ("arm64: Kconfig: Remove ARCH_HAS_HOLES_MEMORYMODEL")
+
+from the arm64 tree and commit:
+
+  e1405baa7db1 ("arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/Kconfig
+index da5e6f085561,f8a618a292f4..000000000000
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@@ -785,7 -786,8 +785,8 @@@ config ARCH_FLATMEM_ENABL
+  	def_bool !NUMA
+ =20
+  config HAVE_ARCH_PFN_VALID
+ -	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
+ +	def_bool y
++ 	select HAVE_MEMBLOCK_PFN_VALID
+ =20
+  config HW_PERF_EVENTS
+  	def_bool y
+
+--Sig_/H9NPypStBoDAPCLASOe0of0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluoal0ACgkQAVBC80lX
+0GzA2gf+JPxzWjqtncHmMA8RMrcz6djQDW3CzrEtkwWtrnFuxYL9Lx9Yr4or6PuU
+g7URYczAKCv70UvrMvEFWnIcWUQBBwUvwEfYxxBspuk8pq7YUaf4Awxolp0RxJFm
+RoS2MHeLuAgRvqCJaQdzwCs9AzHom9Y8ZF0r06uFxbm0w3by9+aPwbvtagZ/vnDG
+DDstnRphjNnxxqrCEPJB1zf0/SbaIEMOl08JsFwakBudTAv50EXc7dQS+vMNQGy9
+1ojHaVGeqieiVfSWRr9tFK+a9aisRvbGxiRaHMeph54VvbzqeD9Shfm6bnP4UDbS
+9oPNA8wZqoEoRaC79WNbvD3Thv0vwg==
+=tlOH
+-----END PGP SIGNATURE-----
+
+--Sig_/H9NPypStBoDAPCLASOe0of0--
