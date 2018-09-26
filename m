@@ -1,77 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfio tree with the vfs tree
-Date: Wed, 26 Sep 2018 12:27:31 +1000
-Message-ID: <20180926122621.6645ba87@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Wed, 26 Sep 2018 15:00:51 +1000
+Message-ID: <20180926150051.6ee97aae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/j/ywt3.ERSA/8xN+VGNKMNg"; protocol="application/pgp-signature"
+ boundary="Sig_/+jzMUBKjnSCp_/9ZfBA4qFi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alex Williamson <alex.williamson@redhat.com>, Al Viro <aviro@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/j/ywt3.ERSA/8xN+VGNKMNg
+--Sig_/+jzMUBKjnSCp_/9ZfBA4qFi
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+Hi Bjorn,
 
-Today's linux-next merge of the vfio tree got a conflict in:
+After merging the pci tree, today's linux-next build (powerpc allnoconfig)
+failed like this:
 
-  drivers/vfio/Kconfig
+ld: drivers/pci/pci.o: in function `pci_bus_error_reset':
+pci.c:(.text+0x5fba): undefined reference to `pci_slot_mutex'
+ld: pci.c:(.text+0x5fc2): undefined reference to `pci_slot_mutex'
 
-between commit:
+Caused by commit
 
-  f57d445eb317 ("Make anon_inodes unconditional")
+  131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
 
-from the vfs tree and commit:
+I have applied the following hack for today (there is probably a better
+way):
 
-  cf3f98c7f466 ("drivers/vfio: Allow type-1 IOMMU instantiation with all AR=
-M/ARM64 IOMMUs")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 26 Sep 2018 14:55:37 +1000
+Subject: [PATCH] pci: move pci_slot_mutex so it is available where needed
 
-from the vfio tree.
+Fixes: 131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pci/pci.c  | 2 ++
+ drivers/pci/slot.c | 1 -
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 8c1e99a637d8..1fa67db6b21e 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5190,6 +5190,8 @@ static int pci_bus_reset(struct pci_bus *bus, int pro=
+be)
+ 	return ret;
+ }
+=20
++DEFINE_MUTEX(pci_slot_mutex);
++
+ /**
+  * pci_bus_error_reset - reset the bridge's subordinate bus
+  * @bridge: The parent device that connects to the bus to reset
+diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+index 3da03fcc6fbf..c46d5e1ff536 100644
+--- a/drivers/pci/slot.c
++++ b/drivers/pci/slot.c
+@@ -14,7 +14,6 @@
+=20
+ struct kset *pci_slots_kset;
+ EXPORT_SYMBOL_GPL(pci_slots_kset);
+-DEFINE_MUTEX(pci_slot_mutex);
+=20
+ static ssize_t pci_slot_attr_show(struct kobject *kobj,
+ 					struct attribute *attr, char *buf)
+--=20
+2.18.0
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/vfio/Kconfig
-index 9aa91e736023,9de5ed38da83..000000000000
---- a/drivers/vfio/Kconfig
-+++ b/drivers/vfio/Kconfig
-@@@ -21,7 -21,8 +21,7 @@@ config VFIO_VIRQF
-  menuconfig VFIO
-  	tristate "VFIO Non-Privileged userspace driver framework"
-  	depends on IOMMU_API
-- 	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM_SMMU || ARM_SMMU_V3)
-+ 	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM || ARM64)
- -	select ANON_INODES
-  	help
-  	  VFIO provides a framework for secure userspace device drivers.
-  	  See Documentation/vfio.txt for more details.
-
---Sig_/j/ywt3.ERSA/8xN+VGNKMNg
+--Sig_/+jzMUBKjnSCp_/9ZfBA4qFi
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluq7pMACgkQAVBC80lX
-0GzHVQf9FCA7dM8faXLz7zOdEbwIawWqow2S5Lfc1GvGM3WBTxn5x/yVzOiyxN0m
-azp02wt4w5K6FjXHlZwCxtipuiuo6QVFMcWi7RmQtSY7nKpfmipOxMKi0HP78aIj
-7HI3Q9C40sL7Dn7wVgyf/uOTOwvWgodwcAsQKSUzJEappw6JzyRQ4F6sI1xtL3Rb
-+XUwvXEFJanRvEhDdcGTCG0hHjtxagfZaC0K6VgkLxQDD/9pcKr2g9+i6WFtfJE8
-SffO4ffc05LEN5ME9vIyyWT/vNe9KRceGW9/dyZAVey7LEKYjeNz8F5k/Ra2k37O
-Nm71wgSymIV4CL/Mbzyr43k4i2tPBw==
-=l2wW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlurEoMACgkQAVBC80lX
+0GyJSwf/UtataI4stNRabjHRqCTU/sMvp+cj4DxIMeXYBTg6XKybASEomglGqKUk
+EbzeuymNPpg7fbmCFlxQm9AdGDUKVAe5JC7BwLPbkdVGqAId82xzmXAenLn1bTBu
+CUXoUBrGVmRNFW9sRa4tYife4lEuQfriNQavme/1JOGLUnwNZrqZbLvT/G5VR6z2
+56D2CZt72GcEPCsZ1m9AXPY4XzXaQgWON+7Vd5LFf3mvuI/wHsXXsTv1S6OGCM3f
+0JwAEKu41aVIqq6RPwmSCkXVnWL8w/X3oqHk/ld6aHkCSu4IRH6l669a/x8OLpKU
+CHI1soIBdaYJCp3PnA7lwkxKF0W1jA==
+=j3Zq
 -----END PGP SIGNATURE-----
 
---Sig_/j/ywt3.ERSA/8xN+VGNKMNg--
+--Sig_/+jzMUBKjnSCp_/9ZfBA4qFi--
