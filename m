@@ -1,68 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Thu, 27 Sep 2018 07:27:05 +1000
-Message-ID: <20180927072705.3cbafb12@canb.auug.org.au>
-References: <20180926150051.6ee97aae@canb.auug.org.au>
-        <20180926142540.GB14407@localhost.localdomain>
-        <20180926145820.GA14688@localhost.localdomain>
-        <CAErSpo6CAMrNafXPcdkYRgZsNtBj+zOdWoAKqG2r5h-jDCaVJQ@mail.gmail.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: nfs+tcp boot failures on linuxnext-20180924 from switch tcp_clock_ns
+ to CLOCK_TAI
+Date: Thu, 27 Sep 2018 01:15:37 +0000
+Message-ID: <30e76d01dd08c2d9127072ad28c5a99afc5daabf.camel@nxp.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4d_gddnm/a.Qnb+xh7/HVda"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo6CAMrNafXPcdkYRgZsNtBj+zOdWoAKqG2r5h-jDCaVJQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Keith Busch <keith.busch@intel.com>, linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Language: en-US
+Content-ID: <6DB2FAE00880BC40839F0F886B543003@eurprd04.prod.outlook.com>
+Sender: netdev-owner@vger.kernel.org
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4d_gddnm/a.Qnb+xh7/HVda
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Bjorn,
-
-On Wed, 26 Sep 2018 14:48:10 -0500 Bjorn Helgaas <bhelgaas@google.com> wrot=
-e:
->
-> On Wed, Sep 26, 2018 at 9:56 AM Keith Busch <keith.busch@intel.com> wrote:
-> >
-> > On Wed, Sep 26, 2018 at 08:25:40AM -0600, Keith Busch wrote: =20
-> > >
-> > > Thanks for the notice. Does this mean you don't have CONFIG_SYSFS? I
-> > > must admit I missed that connection for building slot.c.
-
-Yes, it was an "allnoconfig" powerpc build.
-
-> > There's unfortunately second bug here when there are no slots, which
-> > would be the case without CONFIG_SYSFS: the slot list is empty, and the
-> > function just returned success, but it should have gone to the default
-> > secondary bus reset behavior in that case. I'll send a patch shortly. =
-=20
->=20
-> I folded in Keith's patch for this, so you should be able to drop your
-> workaround, Stephen.
-
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4d_gddnm/a.Qnb+xh7/HVda
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlur+akACgkQAVBC80lX
-0GyYOQf9ERGOjpU5wBwCa/QlTrqDzTz71BIA1GWH2SDWFqtChG69h8yPQPSoOFVo
-KZ6EFvt+Ix4mQV1HYn8Hl19qMrnbCBQF9PPKjkpaHd5jEhZI95+6wdgVzcjihIK6
-ILTIPGTXNqvG1tkiHJkyV8HGzjG/Tywzzs86zaGHGXmBKEvi8NEWgYNAYZQY1hAi
-I7opCoN00EfX0JJrYB6RwJNbKw5y2qRgHZDtYz2Iv5+/PMS4Y+pVDU35MMjSDkwF
-0JSkMLbPAIy9f9iGhDPTM9DWAx4e1LN3+VwO1oFJWBIkqxVNlnbC2AGxYYIr/3xO
-5Ila8BeM+frVgnFOCRiMj8jv61xATg==
-=xfXF
------END PGP SIGNATURE-----
-
---Sig_/4d_gddnm/a.Qnb+xh7/HVda--
+SGVsbG8sDQogDQpJdCBzZWVtcyB0aGF0IGFmdGVyIGNvbW1pdCA3MmIwMDk0ZjkxODIgKCJ0Y3A6
+IHN3aXRjaCB0Y3BfY2xvY2tfbnMoKSB0bw0KQ0xPQ0tfVEFJIGJhc2UiKSBzb21lIHN5c3RlbXMg
+dGhhdCB1c2UgbmZzIG92ZXIgdGNwIGZhaWwgdG8gYm9vdC4gVGhlDQpsYXN0IGxpbmUgcHJpbnRl
+ZCBpbiB0aGUgbG9nIGlzIGZyb20gc3lzdGVtZDoNCiANClsgICAgNy4yMzI1NzldIHN5c3RlbWRb
+MV06IFN5c3RlbSB0aW1lIGJlZm9yZSBidWlsZCB0aW1lLCBhZHZhbmNpbmcgY2xvY2suDQogDQpT
+dXBlcmZpY2lhbGx5IGl0IGxvb2tzIGxpa2UgdmVyeSBsYXJnZSBjbG9jayBkaXNjb250aW51aXRp
+ZXMgbm93IGJyZWFrDQpUQ1AuIE1heWJlIGJvb3R0aW1lIGNvdWxkIGF2b2lkIHN1Y2ggaXNzdWVz
+Pw0KIA0KSSBkaWRuJ3QgZmluZCBzaW1pbGFyIHJlcG9ydHMgYW55d2hlcmUgZWxzZS4gVGhlIG1h
+Y2hpbmVzIEnigJltIHNlZWluZw0KdGhpcyBhcmUgYWxsIDMyYml0IGFybSBpbXggKHRoaXMgc2hv
+dWxkbuKAmXQgbWF0dGVyKSBhbmQgaXQgc2VlbXMgdGhlaXINClJUQyBpc27igJl0IHByb3Blcmx5
+IHNldHVwIHNvIHRoZXkgYm9vdCB3aXRoIHJlYWx0aW1lIHNldCB0byB1bml4IHplcm8sDQp0aGVu
+IGEgfjUwIHllYXJzIGp1bXAgaGFwcGVucyB3aGVuIHN5c3RlbWQgc3RhcnRzIHVwLiBUaGlzIGlz
+IHRoZQ0KbGlrZWx5IHRyaWdnZXIgZm9yIHRoaXMgaXNzdWUuDQogDQotLQ0KUmVnYXJkcywNCkxl
+b25hcmQNCg==
