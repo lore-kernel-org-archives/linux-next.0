@@ -1,49 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: commits in the cisco tree
-Date: Tue, 2 Oct 2018 04:12:31 +1000
-Message-ID: <20181002041231.01ce209b@canb.auug.org.au>
-References: <20180930112419.6f880e46@canb.auug.org.au>
-        <20181001144257.GA13523@fifo99.com>
+Subject: linux-next: build warning after merge of the dma-mapping tree
+Date: Tue, 2 Oct 2018 08:35:17 +1000
+Message-ID: <20181002083517.1807848f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jl1j3_uG+4GvEw7VEYYHbVU"; protocol="application/pgp-signature"
+ boundary="Sig_/yz89m_hRQyoF9ou0R1hxWk1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181001144257.GA13523@fifo99.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dwalker@fifo99.com
+To: Christoph Hellwig <hch@lst.de>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jl1j3_uG+4GvEw7VEYYHbVU
+--Sig_/yz89m_hRQyoF9ou0R1hxWk1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi Christoph,
 
-On Mon, 1 Oct 2018 07:42:57 -0700 dwalker@fifo99.com wrote:
->
-> Is this just an alert , or are you not merging for these reasons ?
+After merging the dma-mapping tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-Just an alert.
+drivers/base/platform.c:1182:12: warning: 'dma_default_get_required_mask' d=
+efined but not used [-Wunused-function]
+ static u64 dma_default_get_required_mask(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  dma_default_get_required_mask ("dma-mapping: make the get_required_mask m=
+ethod available unconditionally")
+
+It is only used in the case ARCH_HAS_DMA_GET_REQUIRED_MASK is not defined.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/jl1j3_uG+4GvEw7VEYYHbVU
+--Sig_/yz89m_hRQyoF9ou0R1hxWk1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluyY48ACgkQAVBC80lX
-0Gz4Sgf9G+j8mhtM5y9n9zCX/CujBV1hVbLHg7WcmK81EbNIRr+IHpc8YVcU9pwi
-kNzhaaOHbM8gNl00/4p3HrIFqQ4mgfgUY96bUF0QfQRanU2VcA+jH3M8bJYHyg1w
-sHhiVpFM6sfypjLuNfJH0Np+SlTe5e3wj6hIr8J8H+mkYCvh3GigBBBhKEFmrwQX
-mFjDUJxjt1tP6pAzg1McL0rKfPcslJFngF+HqFnh2U7ySPsLuz710r4+4u2I3t2V
-6P8hbtZNYVeGBMUt1IsRB8AS6xQI0FZtua9SfAIrptZy3pr163ILy8OWm6Rc7Onk
-b81Oh89e24QLLJ+6y+vsbhmUSWxRwQ==
-=NtTp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluyoSUACgkQAVBC80lX
+0GyNFAgApnKu/WiOJ9KOcgKaqN7lGP7creL9JROP8x03SX/3svrY6QEZJn0tR/4a
+jVNROcwpP/tE1/jhrv0CobT85SuUxLETbCHkC+5BYTMXiOcOyskkBbwyjXSbSRA5
+nw2nhuJGvNOj6spWJhmN9TEQK7wqLSUPLc5820Oy/pWE52KubbhDRgF8h+RvZAsd
+rXERQVL2m0jSykEhxS23JKA9p0OkoR0AJZ9iZjFHwviXh5GNFMrroeaTXemoIwnz
+CnPMaP7L3j04SEv5FuX6DjSTROEly6PeocTlWuAeK1mJVgkGUBa7RZJ42AV2XSjX
+ENhcxPyM3YjrKYtW2rF7b99yQHH5HQ==
+=fO6V
 -----END PGP SIGNATURE-----
 
---Sig_/jl1j3_uG+4GvEw7VEYYHbVU--
+--Sig_/yz89m_hRQyoF9ou0R1hxWk1--
