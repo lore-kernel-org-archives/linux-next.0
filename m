@@ -1,55 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the dma-mapping tree
-Date: Tue, 2 Oct 2018 08:35:17 +1000
-Message-ID: <20181002083517.1807848f@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the net-next tree
+Date: Tue, 2 Oct 2018 09:34:36 +1000
+Message-ID: <20181002093436.0e43f32b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yz89m_hRQyoF9ou0R1hxWk1"; protocol="application/pgp-signature"
+ boundary="Sig_/Tj./WHNVTNeDWzK3s0eS0p1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Gavi Teitz <gavi@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/yz89m_hRQyoF9ou0R1hxWk1
+--Sig_/Tj./WHNVTNeDWzK3s0eS0p1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+Hi all,
 
-After merging the dma-mapping tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Commit
 
-drivers/base/platform.c:1182:12: warning: 'dma_default_get_required_mask' d=
-efined but not used [-Wunused-function]
- static u64 dma_default_get_required_mask(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  f128f138cc40 ("net/mlx5e: Add ethtool control of ring params to VF repres=
+entors")
 
-Introduced by commit
-
-  dma_default_get_required_mask ("dma-mapping: make the get_required_mask m=
-ethod available unconditionally")
-
-It is only used in the case ARCH_HAS_DMA_GET_REQUIRED_MASK is not defined.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/yz89m_hRQyoF9ou0R1hxWk1
+--Sig_/Tj./WHNVTNeDWzK3s0eS0p1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluyoSUACgkQAVBC80lX
-0GyNFAgApnKu/WiOJ9KOcgKaqN7lGP7creL9JROP8x03SX/3svrY6QEZJn0tR/4a
-jVNROcwpP/tE1/jhrv0CobT85SuUxLETbCHkC+5BYTMXiOcOyskkBbwyjXSbSRA5
-nw2nhuJGvNOj6spWJhmN9TEQK7wqLSUPLc5820Oy/pWE52KubbhDRgF8h+RvZAsd
-rXERQVL2m0jSykEhxS23JKA9p0OkoR0AJZ9iZjFHwviXh5GNFMrroeaTXemoIwnz
-CnPMaP7L3j04SEv5FuX6DjSTROEly6PeocTlWuAeK1mJVgkGUBa7RZJ42AV2XSjX
-ENhcxPyM3YjrKYtW2rF7b99yQHH5HQ==
-=fO6V
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluyrwwACgkQAVBC80lX
+0GyZ8QgAll81pWHUYHSxW4tN2nSoWJJQC58ray2ufKjjg7htOwTffolUzGYF9hJW
+LrYm5e0okCCg15VP1wAxmY2NXBXCs3onCcAqPXLJrp86a1VRpBH4Vlxp+K7FPFq2
+C6oscdNctYi/7uebk7Yp/gUc4WgyiODOvXu1u9AhvmHTz1r9p2CY8ws2QucnS4aZ
+tDxXwVCooYwt0wjUagI6iFeMHEF1mGXujEmTNsGH1ds8wtE71Ldugf4PI1cT9OWS
+z+RCua5cFQlT46ZfvlvhU8iNp6Ght8E5DFw8kwuLXSETkFjp5K8+HukNZI6fyvHN
+4YhFwA2uW8HsduUYUbQ/yCEdBDaJ/g==
+=2vY8
 -----END PGP SIGNATURE-----
 
---Sig_/yz89m_hRQyoF9ou0R1hxWk1--
+--Sig_/Tj./WHNVTNeDWzK3s0eS0p1--
