@@ -1,61 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xarray tree with Linus' tree
-Date: Tue, 2 Oct 2018 16:39:34 +1000
-Message-ID: <20181002163934.32aeee62@canb.auug.org.au>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: linux-next: build warning after merge of the regulator tree
+Date: Tue, 2 Oct 2018 09:43:17 +0300
+Message-ID: <20181002064317.GD9389@localhost.localdomain>
+References: <20181002130748.61e33ad1@canb.auug.org.au>
+ <20181002061644.GC9389@localhost.localdomain>
+ <20181002162551.29b8c977@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vw9bzuR363NXV3RCgNa3_ua"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181002162551.29b8c977@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vw9bzuR363NXV3RCgNa3_ua
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Stephen, Mark & All,
 
-Hi Matthew,
+On Tue, Oct 02, 2018 at 04:25:51PM +1000, Stephen Rothwell wrote:
+> On Tue, 2 Oct 2018 09:16:44 +0300 Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> wrote:
+> >
+> > On Tue, Oct 02, 2018 at 01:07:48PM +1000, Stephen Rothwell wrote:
+> > > After merging the regulator tree, today's linux-next build (x86_64
+> > > allmodconfig) produced this warning:
+> > > 
+> > > drivers/mfd/rohm-bd718x7.c: In function 'bd718xx_i2c_probe':
+> > > drivers/mfd/rohm-bd718x7.c:101:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+> > >   bd718xx->chip_type = (unsigned int)  
+> > 
+> > I am pretty sure the last patch version corrected this to
+> > +       bd71837->chip_type = (unsigned int)(uintptr_t)
+> > +                               of_device_get_match_data(&i2c->dev);
+> > 
+> > is it possible one of the earlier versions has accidentally been
+> > applied? Should I create patch on top of the last regulator tree or what
+> > is the simplest way fix this?
+> 
+> Sorry, this came from commit
+> 
+>   dd2be639f4a9 ("regulator/mfd: bd718xx: rename bd71837/bd71847 common instances")
+> 
+> which is later than the commit I noted.  In this later commit, this happens:
+> 
+> -	bd71837->chip_irq = i2c->irq;
+> -	bd71837->chip_type = (unsigned int)(uintptr_t)
+> +	bd718xx->chip_irq = i2c->irq;
+> +	bd718xx->chip_type = (unsigned int)
+>  				of_device_get_match_data(&i2c->dev);
 
-Today's linux-next merge of the xarray tree got a conflict in:
+Right. So looks like I am still the guilty one then. I've overwritten
+the fix in this rename patch which followed the corrected initial
+support patch. I guess sending incremental patch with fix to regulator
+tree is correct way to go, right? I'll prepare one against Mark's branch
+"origin/topic/bd718xx". Mark, please let me know if you want me to send
+it or if I should do it on top of some other branch.
 
-  fs/dax.c
-
-between commit:
-
-  f52afc93cd01 ("dax: Fix deadlock in dax_lock_mapping_entry()")
-
-from Linus' tree and commit:
-
-  a31521132da6 ("dax: Convert dax_lock_mapping_entry to XArray")
-
-from the xarray tree.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vw9bzuR363NXV3RCgNa3_ua
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzEqYACgkQAVBC80lX
-0Gy1owf7BJ3gob7WbtYou4hmlpB0yfKArPQ1QJonX0fV4550sz59XJ209qpSodo+
-++DdNXeUjFsrgPdkHjDKCdOw3GP78UVCbXXPrueHWe8VmrfQuo+UMLHEPnXwFLQL
-fnDCNLQUhRweh037pXLIihU8xAmVxiyyaBys48EV04/CnWMqCafzP4hTeMurKUvT
-HyxWDjEy82jfuSfYkluFJkwzyqPFnB97GPXCUnFqIy5TUkn+VwuPwTH85PhVVJmU
-cYuRKWdTzDUC2exQjqte2EHmgTMDRN8EzgTmv/n7nO0ycnI1sXeT/4YhIC+kVERr
-xlSPo9Ce6QELPP8O1Rz+3cKw3uyFNg==
-=ReJk
------END PGP SIGNATURE-----
-
---Sig_/vw9bzuR363NXV3RCgNa3_ua--
+Br,
+	Matti Vaittinen
