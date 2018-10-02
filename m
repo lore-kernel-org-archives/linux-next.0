@@ -1,54 +1,55 @@
-From: Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-Date: Tue, 2 Oct 2018 14:16:27 -0700
-Message-ID: <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
- <20181003071059.02b3fd6f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the arm-soc tree
+Date: Wed, 3 Oct 2018 07:21:40 +1000
+Message-ID: <20181003072140.7c18d772@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/R05i2mNEGINKxz7p1lx0qkT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181003071059.02b3fd6f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, adilger.kernel@dilger.ca, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, rostedt@goodmis.org, mchehab+samsung@kernel.org, olof@lxom.net, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>, sandipan@linux.vnet.ibm.com, Andrey Konovalov <andreyknvl@google.com>, David Woodhouse <dwmw2@infradead.org>, Will Deacon <will.deacon@arm.com>, Philippe Ombredanne <pombredanne@nexb.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 2, 2018 at 2:11 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Miguel,
->
-> On Tue, 2 Oct 2018 15:47:12 +0200 Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > The Compiler Attributes series has been stable for 10+ days. To
-> > increase testing before 4.20, I would to request it being picked up
-> > for -next.
-> >
-> > The changes w.r.t. v5 in the LKML:
-> >
-> >   - Rebased on top of next-20180928, which required removing
->
-> Unfortunately, trees/branches included in linux-next must be based on
-> something stable (usually Linus' tree, but it could be another
-> tree/branch that is included in linux-next that does not rebase).
-> Linux-next itself rebases every day, so snything based on it would drag
-> in a previous version of all the other trees :-(
+--Sig_/R05i2mNEGINKxz7p1lx0qkT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think of this like a branch that's force pushed to.  Can't base
-other branches or trees off of it cause it's always moving/force
-rewriting history.
+Hi all,
 
->
-> > aligned_largest, which was removed by 9503cd9cbaba
-> > ("include/linux/compiler*.h: add version detection to
-> > asm_volatile_goto").
->
-> That commit is from Andrew's patch series which also rebases (usually
-> at least every week), so you cannot depend on it.
+Commits
 
-Miguel, you should be able to drop that patch from your set then,
-since Andrew's -mm tree flows into this -next tree as well, IIUC.
-We'll take up that patch from there.
+  6eeb4180d4b9 ("ARM: dts: sunxi: h3-h5: Add Bananapi M2+ v1.2 device trees=
+")
+  80c21c8c8b8d ("arm64: dts: allwinner: h5: Add device tree for Bananapi M2=
+ Plus H5")
+  aa8fee415f46 ("ARM: dts: sun8i: h3: Split out non-SoC-specific parts of B=
+ananapi M2 Plus")
+  db9fd9d13e30 ("ARM: dts: sun8i: h3: bpi-m2-plus: Fix address for external=
+ RGMII Ethernet PHY")
+  6c700289a3e8 ("ARM: dts: sun8i: h3-h5: ir register size should be the who=
+le memory block")
 
--- 
-Thanks,
-~Nick Desaulniers
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/R05i2mNEGINKxz7p1lx0qkT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluz4WQACgkQAVBC80lX
+0GxCTAgAozD5f4v6SR6WyCl1blW3dv0OqFGVM0454VPbZpb5a88fuvavZFL7LJ4c
+Ya4xOM/a3oAZD7JpO9J5qX0oZ1lAQ1yz/VPVZna6EuQSDl6BPeqW0unJlVTidtuu
++C6ze2HtrYdEOCwZvQrsUe6CUVRcYqOSRdnwnaivzPI2kD95UTOgW24344Rd7xu8
++CHIsEChOAhMGUjenEC7bSmbKISD5T5s7duysWw5tcnZ1wq/lF3xHtkSSbHNwX8V
+y6S1hI0Pl9B4LbrMvD03W9vGNfCh+A4RBOtZrsH7cDgEBQGcEXNCGpo9hbJ8RBf+
+7iQEUmf1V1WQBj2ScSkwqwkIW8NnhQ==
+=Sj+p
+-----END PGP SIGNATURE-----
+
+--Sig_/R05i2mNEGINKxz7p1lx0qkT--
