@@ -1,89 +1,36 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: linux-next: occassional build errors
-Date: Wed, 3 Oct 2018 13:31:54 +0900
-Message-ID: <CAK7LNARD6qxX1fz4XF7yj2vWZurayhtksQnGfHBEUtCTNLmGYw@mail.gmail.com>
-References: <20181003135038.24438d97@canb.auug.org.au>
+From: Joe Stringer <joe@wand.net.nz>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Date: Tue, 2 Oct 2018 22:29:12 -0700
+Message-ID: <CAOftzPhjR55RurO-waNe_idrPuCY-SUCj7V0cx=HY482wv57rw@mail.gmail.com>
+References: <20181003131848.4f76db59@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181003135038.24438d97@canb.auug.org.au>
+In-Reply-To: <20181003131848.4f76db59@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: daniel@iogearbox.net, ast@kernel.org, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Joe Stringer <joe@wand.net.nz>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On Wed, Oct 3, 2018 at 12:51 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 2 Oct 2018 at 20:19, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Hi Masahiro,
+> Hi all,
 >
-> I don't know if that has anything to changes in the kbuild system, but
-> since Tuesday, I have been getting random build errors that go away after
-> I remove the object directory and build again.
-
-
-I have no idea.
-
-Is it fine if you use kbuild tree from the last week?
-
-
-I added 4 kbuild patches this week, but they look irrelevant.
-
-masahiro@pug:~/ref/linux-next$ git log  --oneline
-next-20180928..next-20181002  | grep kbuild
-4712eca8 Merge remote-tracking branch 'kbuild/for-next'
-ae5c311 Merge remote-tracking branch 'kbuild-current/fixes'
-7163c4d Merge branch 'kbuild' into for-next
-7c59867 kbuild: simplify command line creation in scripts/mkmakefile
-23d86e8 kbuild: do not pass $(objtree) to scripts/mkmakefile
-166011a kbuild: remove user ID check in scripts/mkmakefile
-e4db0f7 kbuild: remove VERSION and PATCHLEVEL from $(objtree)/Makefile
-
-
-
->  The latest example is this:
+> After merging the bpf-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >
-> include/linux/kconfig.h: file not recognized: file format not recognized
-> make[2]: *** [scripts/Makefile.build:492: crypto/crypto_user.o] Error 1
-> make[1]: *** [Makefile:1057: crypto] Error 2
-> make: *** [Makefile:152: sub-make] Error 2
-> Command exited with non-zero status 2
+> x86_64-linux-gnu-ld: net/core/filter.o: in function `sk_lookup':
+> (.text+0x19219): undefined reference to `__udp6_lib_lookup'
 >
-> It is always complaining about a .h file ...
+> Caused by commit
 >
-> Makefile:152 is the MAKE lien below:
+>   6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
 >
-> # Invoke a second make in the output directory, passing relevant variables
-> sub-make:
->         $(Q)$(MAKE) -C $(KBUILD_OUTPUT) KBUILD_SRC=$(CURDIR) \
->         -f $(CURDIR)/Makefile $(filter-out _all sub-make,$(MAKECMDGOALS))
+> I assume that __udp6_lib_lookup ended up in the IPv6 module.
 >
-> Makefile:1057 is the MAKE line below:
->
-> PHONY += $(vmlinux-dirs)
-> $(vmlinux-dirs): prepare scripts
->         $(Q)$(MAKE) $(build)=$@ need-builtin=1
->
-> scripts/Makefile.build:492 is the if_changed line below:
->
-> $(multi-used-m): FORCE
->         $(call if_changed,link_multi-m)
->         @{ echo $(@:.o=.ko); echo $(filter-out FORCE,$^); \
->            $(cmd_undef_syms); } > $(MODVERDIR)/$(@F:.o=.mod)
-> $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
->
-> Not sure what else I can tell you.
->
+> I used the bpf-next tree from next-20181002 for today.
 
+My mistake, will send out a fix shortly.
 
-Does this happen only when building a module?
-
-Can you provide a procedure
-to reproduce this?
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Cheers,
+Joe
