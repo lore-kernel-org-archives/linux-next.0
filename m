@@ -1,142 +1,342 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-Date: Wed, 3 Oct 2018 11:33:03 -0400
-Message-ID: <20181003153303.GC2835@thunk.org>
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
- <20181003071059.02b3fd6f@canb.auug.org.au>
- <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
- <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
- <20181002232454.GB2483@thunk.org>
- <CANiq72=cRpqnB3BxLsmj-rMdUGJK+pac1SRppoRgsON69ErfQg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: akpm@linux-foundation.org
+Subject: mmotm 2018-10-03-14-04 uploaded
+Date: Wed, 03 Oct 2018 14:05:22 -0700
+Message-ID: <20181003210522.f__73%akpm@linux-foundation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CANiq72=cRpqnB3BxLsmj-rMdUGJK+pac1SRppoRgsON69ErfQg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Olof Johansson <olof@lxom.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, David Miller <davem@davemloft.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>, Sandipan Das <sandipan@linux.vnet.ibm.com>
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 03, 2018 at 01:54:05PM +0200, Miguel Ojeda wrote:
-> 
-> Exactly. And for this case, I simply assumed Stephen wanted a clean
-> series to apply on top of the latest next-* tag (same way we base
-> stuff on top of -rc*s). Note that this is *not* really a "tree"
-> collecting changes/development, it is a patch series, i.e. what is
-> important is only the range-diff.
-> 
-> What has surprised me is that -next does not allow for range-diffs
-> (patches/commits/...) to be inside -next, maybe applied after all the
-> normal merges of trees. I simply assumed it did, given what I could
-> find about -next (which does not seem to be documented properly, by
-> the way).
+The mm-of-the-moment snapshot 2018-10-03-14-04 has been uploaded to
 
-Part of the reason why I wrote my long message was because the -next
-tree usage has been mostly by convention.  Better documentation would
-be a good thing; I think the main reason why we don't have it is that
-historically, the people who submit direct pull requests to Linus
-already know how things work.  Obviously that's not a great
-assumption, but in fact there are a large number of things about what
-is needed to be a subsystem maintainer which needs to be documented,
-and the linux-next tree is just one part of it.  (And perhaps not even
-the biggest part.)
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Historically there was one source of changes into the linux-next tree
-which was done as quilt-style patch series, and that was Andrew
-Morton's mmotm tree.  Part of the problem is that it's a lot more work
-to consume a patch series, and so these days while Andrew still uses a
-patch series, he exports a git tree[1] which is what I believe Stephen
-and Linus use.  (For that matter, I use a patch series[2] as well, but
-the public interface is the ext4.git tree on git.kernel.org.)
+mmotm-readme.txt says
 
-[1] https://www.ozlabs.org/~akpm/mmotm/mmotm-readme.txt
-[2] https://ext4.wiki.kernel.org/index.php/Ext4_patchsets
+README for mm-of-the-moment:
 
-> While this is a simple conflict, I don't really agree with release
-> maintainers having to fix conflicts on the fly (even if it is a single
-> trivial line), but that is an orthogonal discussion...
+http://www.ozlabs.org/~akpm/mmotm/
 
-Sure; there are some srtong reasons for it, but we can save that for
-the Maintainer's Handbook discussion.  I will say that this is
-something where attempts to avoid Linus needing to fix conflicts on
-the fly, such as a rebase right before a PULL request, violates
-Linus's rules which has in the past resulted in him expressing a
-"strong" correction e-mail to Maintainers since it was assumed that
-they really should have known better.  Linus has said he doesn't want
-to yell at Maintainers, so we can support him by getting the
-Maintainer's Handbook out there.  :-)
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-> Alright, I am not sure how to answer this without sounding
-> "aggressive" and maybe I misunderstood something you tried to point
-> out, so I apologize in advance. There are several points here:
-> 
->   * The merge conflict isn't related to this (but let's assume it was,
-> since you pointed this out as an example -- I guess; although I am not
-> sure why).
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-I thought I was clear that I used it as an example, but my apologies
-if that didn't come across.
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
->     - Changes should include everything related to them (as far as
-> possible, i.e. extreme examples aside). Adding __nonstring and not
-> removing the ext4 part would simply be leaving undone work (which has
-> to be done sooner or later). To be honest, it could have even been
-> done in the same commit and I would say it is logically OK (even if
-> not great).
-> ...
->
-> You seem to argue that it is better to avoid merge conflicts rather
-> than doing a proper series. Well, I think we should really try to
-> avoid conflicts pushing down the """quality""" of
-> patches/commits/series.
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-And I think this is where the disagreement lies, which is why I
-bothered to send my long missive in the first place.  From my point of
-view, and I suspect many maintainers share this, avoiding merge
-conflicts is way important than making sure everything is "done" in a
-single patch series.  There have been plenty of changes where cleanup
-is done latter, and/or where preparatory patches are done in one
-release, and the big change happens in the next release, 3 months
-later.
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
-That's because some of the alternatives, such as basing your git tree
-on an unstable head branch, such as linux-next, or a last minute
-rebase which means that the actual patches that which gets the pull
-rebase hasn't been tested or soaked in linux-next, are far worse
-because it can lead to lower quality git trees getting merged during
-the merge window.
 
-There is a tension here between maximizing the "quality" of a patch
-series, and maximizing the "quality" of the git trees that feed into
-the merge window.  Or perhaps the better way of saying this is
-minimizing the risk of bad changes getting integreted during the merge
-window.  Some technical debt which gets cleaned up in the next release
-is in my view a very low price to pay in order to minimize risk.
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-Part of this is because I've had to waste time debugging changes made
-to the ext4 sources which came in via someone else's git tree that
-were "obviously correct" or "trivial changes" --- but they weren't.
-Most of the time they get caught as part of linux-next testing, but
-not always.  So sometimes the interests of one subsystem maintainer
-can end up conflicting with the interests of the patch series author,
-or the interests of another subsystem maintainer.  And that's why we
-have some of these "cultural understandings", many of which we clearly
-need to document.
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-(And yes, in this case I didn't object to the cleanup being in your
-patch series; normally I don't care, unless it actually break things.
-I was just trying to make the point from my perspective, nothing
-*required* that the change be in your git tree, and if it *was*
-causing the problem, I had gone out of my way to make sure to make it
-easy for you to drop the change; and from my perspective I was doing
-you --- and me :-) --- a favor when I added the outer #ifndef, which I
-had done with full consideration, specifically for this reason.  Even
-if the definition was different, my definition *had* been fully tested
-with over a 27+ VM hours of regression testing, and if it turned out
-that they were different, cleaning that up three months from now in
-the next release is just *fine* as far as I'm concerned.)
+To develop on top of mmotm git:
 
-Cheers,
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
 
-						- Ted
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.19-rc6:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
+* mm-migration-fix-migration-of-huge-pmd-shared-pages-v7.patch
+* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
+* fix-crash-on-ocfs2_duplicate_clusters_by_page.patch
+* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5.patch
+* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5-checkpatch-fixes.patch
+* mm-thp-fix-mlocking-thp-page-with-migration-enabled.patch
+* mm-gup_benchmark-fix-unsigned-comparison-to-zero-in-__gup_benchmark_ioctl.patch
+* ipc-shm-use-err_cast-for-shm_lock-error-return.patch
+* mm-migrate-split-only-transparent-huge-pages-when-allocation-fails.patch
+* mm-thp-relax-__gfp_thisnode-for-madv_hugepage-mappings.patch
+* mm-thp-always-specify-disabled-vmas-as-nh-in-smaps.patch
+* mm-hugetlb-add-mmap-encodings-for-32mb-and-512mb-page-sizes.patch
+* proc-restrict-kernel-stack-dumps-to-root.patch
+* mm-vmstat-fix-outdated-vmstat_text.patch
+* mm-vmstat-skip-nr_tlb_remote_flush-properly.patch
+* mm-fix-int-overflow-in-callers-of-do_shrink_slab.patch
+* ocfs2-fix-locking-for-res-tracking-and-dlm-tracking_list.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* linkageh-align-weak-symbols.patch
+* arm64-lib-use-c-string-functions-with-kasan-enabled.patch
+* lib-test_kasan-add-tests-for-several-string-memory-api-functions.patch
+* scripts-tags-add-declare_hashtable.patch
+* ocfs2-fix-a-gcc-compiled-warning.patch
+* ocfs2-dlm-remove-unnecessary-parentheses.patch
+* ocfs2-remove-unused-pointer-eb.patch
+* ocfs2-fix-unneeded-null-check.patch
+* fs-ocfs2-dlm-fix-a-sleep-in-atomic-context-bug-in-dlm_print_one_mle.patch
+* ocfs2-remove-set-but-not-used-variable-rb.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
+* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
+* ocfs2-dlmglue-clean-up-timestamp-handling.patch
+* fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
+* ocfs2-fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
+* fix-clusters-leak-in-ocfs2_defrag_extent.patch
+* fix-clusters-leak-in-ocfs2_defrag_extent-fix.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* vfs-allow-dedupe-of-user-owned-read-only-files.patch
+* vfs-dedupe-should-return-eperm-if-permission-is-not-granted.patch
+* fs-iomap-change-return-type-to-vm_fault_t.patch
+* xtensa-use-generic-vgah.patch
+  mm.patch
+* mm-slubc-switch-to-bitmap_zalloc.patch
+* mm-slub-remove-useless-condition-in-deactivate_slab.patch
+* mm-dont-warn-about-large-allocations-for-slab.patch
+* slub-extend-slub-debug-to-handle-multiple-slabs.patch
+* mm-rework-memcg-kernel-stack-accounting.patch
+* mm-drain-memcg-stocks-on-css-offlining.patch
+* mm-dont-miss-the-last-page-because-of-round-off-error.patch
+* mm-dont-miss-the-last-page-because-of-round-off-error-fix.patch
+* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry.patch
+* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry-fix.patch
+* mm-mmu_notifier-be-explicit-about-range-invalition-non-blocking-mode.patch
+* revert-mm-mmu_notifier-annotate-mmu-notifiers-with-blockable-invalidate-callbacks.patch
+* kmemleak-add-module-param-to-print-warnings-to-dmesg.patch
+* swap-use-__try_to_reclaim_swap-in-free_swap_and_cache.patch
+* swap-call-free_swap_slot-in-__swap_entry_free.patch
+* swap-clear-si-swap_map-in-swap_free_cluster.patch
+* mm-page_alloc-clean-up-check_for_memory.patch
+* mm-conveted-to-use-vm_fault_t.patch
+* cramfs-convert-to-use-vmf_insert_mixed-v2.patch
+* mm-remove-vm_insert_mixed.patch
+* mm-introduce-vmf_insert_pfn_prot.patch
+* x86-convert-vdso-to-use-vm_fault_t.patch
+* mm-make-vm_insert_pfn_prot-static.patch
+* mm-remove-references-to-vm_insert_pfn.patch
+* mm-remove-vm_insert_pfn.patch
+* mm-inline-vm_insert_pfn_prot-into-caller.patch
+* mm-convert-__vm_insert_mixed-to-vm_fault_t.patch
+* mm-convert-insert_pfn-to-vm_fault_t.patch
+* hexagon-switch-to-no_bootmem.patch
+* of-ignore-sub-page-memory-regions.patch
+* nios2-use-generic-early_init_dt_add_memory_arch.patch
+* nios2-switch-to-no_bootmem.patch
+* um-setup_physmem-stop-using-global-variables.patch
+* um-switch-to-no_bootmem.patch
+* unicore32-switch-to-no_bootmem.patch
+* alpha-switch-to-no_bootmem.patch
+* userfaultfd-allow-get_mempolicympol_f_nodempol_f_addr-to-trigger-userfaults.patch
+* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
+* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
+* mm-slab-combine-kmalloc_caches-and-kmalloc_dma_caches.patch
+* mm-slab-slub-introduce-kmalloc-reclaimable-caches.patch
+* dcache-allocate-external-names-from-reclaimable-kmalloc-caches.patch
+* mm-rename-and-change-semantics-of-nr_indirectly_reclaimable_bytes.patch
+* mm-proc-add-kreclaimable-to-proc-meminfo.patch
+* mm-slab-shorten-kmalloc-cache-names-for-large-sizes.patch
+* mm-workingset-dont-drop-refault-information-prematurely.patch
+* mm-workingset-tell-cache-transitions-from-workingset-thrashing.patch
+* delayacct-track-delays-from-thrashing-cache-pages.patch
+* sched-loadavg-consolidate-load_int-load_frac-calc_load.patch
+* sched-loadavg-consolidate-load_int-load_frac-calc_load-fix.patch
+* sched-loadavg-consolidate-load_int-load_frac-calc_load-fix-fix.patch
+* sched-loadavg-make-calc_load_n-public.patch
+* sched-schedh-make-rq-locking-and-clock-functions-available-in-statsh.patch
+* sched-introduce-this_rq_lock_irq.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix-2.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix-3.patch
+* psi-pressure-stall-information-for-cpu-memory-and-io-fix-4.patch
+* psi-cgroup-support.patch
+* mm-page_alloc-drop-should_suppress_show_mem.patch
+* mm-swap-remove-duplicated-include-from-swapc.patch
+* mm-use-match_string-helper-to-simplify-the-code.patch
+* kvfree-fix-misleading-comment.patch
+* mm-vmalloc-improve-vfree-kerneldoc.patch
+* vfree-kvfree-add-debug-might-sleeps.patch
+* vfree-kvfree-add-debug-might-sleeps-fix.patch
+* mm-mmap-zap-pages-with-read-mmap_sem-in-munmap.patch
+* mm-unmap-vm_hugetlb-mappings-with-optimized-path.patch
+* mm-unmap-vm_pfnmap-mappings-with-optimized-path.patch
+* mm-filemapc-use-existing-variable.patch
+* mm-memory_hotplug-spare-unnecessary-calls-to-node_set_state.patch
+* mm-memory_hotplug-tidy-up-node_states_clear_node.patch
+* mm-memory_hotplug-simplify-node_states_check_changes_online.patch
+* mm-memory_hotplug-simplify-node_states_check_changes_online-v2.patch
+* mm-memory_hotplug-clean-up-node_states_check_changes_offline.patch
+* mm-memory_hotplug-clean-up-node_states_check_changes_offline-v2.patch
+* memcg-remove-memcg_kmem_skip_account.patch
+* mm-provide-kernel-parameter-to-allow-disabling-page-init-poisoning.patch
+* mm-create-non-atomic-version-of-setpagereserved-for-init-use.patch
+* mm-defer-zone_device-page-initialization-to-the-point-where-we-init-pgmap.patch
+* mm-thp-consolidate-thp-gfp-handling-into-alloc_hugepage_direct_gfpmask.patch
+* mm-remove-unnecessary-local-variable-addr-in-__get_user_pages_fast.patch
+* hugetlb-harmonize-hugetlbh-arch-specific-defines-with-pgtableh.patch
+* hugetlb-introduce-generic-version-of-hugetlb_free_pgd_range.patch
+* hugetlb-introduce-generic-version-of-set_huge_pte_at.patch
+* hugetlb-introduce-generic-version-of-huge_ptep_get_and_clear.patch
+* hugetlb-introduce-generic-version-of-huge_ptep_clear_flush.patch
+* hugetlb-introduce-generic-version-of-huge_pte_none.patch
+* hugetlb-introduce-generic-version-of-huge_pte_wrprotect.patch
+* hugetlb-introduce-generic-version-of-prepare_hugepage_range.patch
+* hugetlb-introduce-generic-version-of-huge_ptep_set_wrprotect.patch
+* hugetlb-introduce-generic-version-of-huge_ptep_set_access_flags.patch
+* hugetlb-introduce-generic-version-of-huge_ptep_get.patch
+* mm-filemapc-use-vmf_error.patch
+* mm-mremap-downgrade-mmap_sem-to-read-when-shrinking.patch
+* mm-mremap-downgrade-mmap_sem-to-read-when-shrinking-fix.patch
+* mm-brk-downgrade-mmap_sem-to-read-when-shrinking.patch
+* mm-brk-downgrade-mmap_sem-to-read-when-shrinking-fix.patch
+* mm-dax-add-comment-for-pfn_special.patch
+* mm-recheck-page-table-entry-with-page-table-lock-held.patch
+* mm-vmstat-assert-that-vmstat_text-is-in-sync-with-stat_items_size.patch
+* userfaultfd-selftest-cleanup-help-messages.patch
+* userfaultfd-selftest-generalize-read-and-poll.patch
+* userfaultfd-selftest-recycle-lock-threads-first.patch
+* zsmalloc-fix-fall-through-annotation.patch
+* z3fold-fix-wrong-handling-of-headless-pages.patch
+* mm-make-memmap_init-a-proper-function.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* fs-proc-vmcorec-convert-to-use-vmf_error.patch
+* include-linux-compilerh-add-version-detection-to-asm_volatile_goto.patch
+* treewide-remove-current_text_addr.patch
+* error-injection-remove-meaningless-null-pointer-check-before-debugfs_remove_recursive.patch
+* lib-bitmapc-remove-wrong-documentation.patch
+* linux-bitmaph-handle-constant-zero-size-bitmaps-correctly.patch
+* linux-bitmaph-remove-redundant-uses-of-small_const_nbits.patch
+* linux-bitmaph-fix-type-of-nbits-in-bitmap_shift_right.patch
+* linux-bitmaph-relax-comment-on-compile-time-constant-nbits.patch
+* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf.patch
+* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix.patch
+* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix-fix.patch
+* lib-bitmapc-simplify-bitmap_print_to_pagebuf.patch
+* lib-parserc-switch-match_strdup-over-to-use-kmemdup_nul.patch
+* lib-parserc-switch-match_u64int-over-to-use-match_strdup.patch
+* lib-parserc-switch-match_number-over-to-use-match_strdup.patch
+* zlib-remove-fall-through-warnings.patch
+* lib-sg_pool-remove-unnecessary-null-check-when-free-the-object.patch
+* checkpatch-remove-gcc_binary_constant-warning.patch
+* init-do_mountsc-add-root=partlabel=name-support.patch
+* hfsplus-prevent-btree-data-loss-on-root-split.patch
+* hfsplus-fix-bug-on-bnode-parent-update.patch
+* hfs-prevent-btree-data-loss-on-root-split.patch
+* hfs-fix-bug-on-bnode-parent-update.patch
+* hfsplus-prevent-btree-data-loss-on-enospc.patch
+* hfs-prevent-btree-data-loss-on-enospc.patch
+* reiserfs-propagate-errors-from-fill_with_dentries-properly.patch
+* reiserfs-remove-workaround-code-for-gcc-3x.patch
+* fat-expand-a-slightly-out-of-date-comment.patch
+* kernel-kexec_file-remove-some-duplicated-include-file.patch
+* bfs-add-sanity-check-at-bfs_fill_super.patch
+* ipc-ipcmni-limit-check-for-msgmni-and-shmmni.patch
+* ipc-ipcmni-limit-check-for-semmni.patch
+* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m.patch
+* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m-checkpatch-fixes.patch
+* ipc-conserve-sequence-numbers-in-extended-ipcmni-mode.patch
+* lib-lz4-update-lz4-decompressor-module.patch
+  linux-next.patch
+  linux-next-rejects.patch
+* percpu-cleanup-per_cpu_def_attributes-macro.patch
+* mm-remove-config_no_bootmem.patch
+* mm-remove-config_no_bootmem-fix.patch
+* mm-remove-config_have_memblock.patch
+* mm-remove-config_have_memblock-fix.patch
+* mm-remove-config_have_memblock-fix-2.patch
+* mm-remove-config_have_memblock-fix-3.patch
+* mm-remove-bootmem-allocator-implementation.patch
+* mm-nobootmem-remove-dead-code.patch
+* memblock-rename-memblock_alloc_nid_try_nid-to-memblock_phys_alloc.patch
+* memblock-remove-_virt-from-apis-returning-virtual-address.patch
+* memblock-replace-alloc_bootmem_align-with-memblock_alloc.patch
+* memblock-replace-alloc_bootmem_low-with-memblock_alloc_low.patch
+* memblock-replace-__alloc_bootmem_node_nopanic-with-memblock_alloc_try_nid_nopanic.patch
+* memblock-replace-alloc_bootmem_pages_nopanic-with-memblock_alloc_nopanic.patch
+* memblock-replace-alloc_bootmem_low-with-memblock_alloc_low-2.patch
+* memblock-replace-__alloc_bootmem_nopanic-with-memblock_alloc_from_nopanic.patch
+* memblock-add-align-parameter-to-memblock_alloc_node.patch
+* memblock-replace-alloc_bootmem_pages_node-with-memblock_alloc_node.patch
+* memblock-replace-__alloc_bootmem_node-with-appropriate-memblock_-api.patch
+* memblock-replace-alloc_bootmem_node-with-memblock_alloc_node.patch
+* memblock-replace-alloc_bootmem_low_pages-with-memblock_alloc_low.patch
+* memblock-replace-alloc_bootmem_pages-with-memblock_alloc.patch
+* memblock-replace-__alloc_bootmem-with-memblock_alloc_from.patch
+* memblock-replace-alloc_bootmem-with-memblock_alloc.patch
+* mm-nobootmem-remove-bootmem-allocation-apis.patch
+* memblock-replace-free_bootmem_node-with-memblock_free.patch
+* memblock-replace-free_bootmem_late-with-memblock_free_late.patch
+* memblock-rename-free_all_bootmem-to-memblock_free_all.patch
+* memblock-rename-__free_pages_bootmem-to-memblock_free_pages.patch
+* mm-remove-nobootmem.patch
+* memblock-replace-bootmem_alloc_-with-memblock-variants.patch
+* mm-remove-include-linux-bootmemh.patch
+* mm-remove-include-linux-bootmemh-fix.patch
+* docs-boot-time-mm-remove-bootmem-documentation.patch
+* android-binder-replace-vm_insert_page-with-vmf_insert_page.patch
+* mm-memory_hotplug-make-remove_memory-take-the-device_hotplug_lock.patch
+* mm-memory_hotplug-make-add_memory-take-the-device_hotplug_lock.patch
+* mm-memory_hotplug-fix-online-offline_pages-called-wo-mem_hotplug_lock.patch
+* powerpc-powernv-hold-device_hotplug_lock-when-calling-device_online.patch
+* powerpc-powernv-hold-device_hotplug_lock-when-calling-memtrace_offline_pages.patch
+* powerpc-powernv-hold-device_hotplug_lock-when-calling-memtrace_offline_pages-v3.patch
+* memory-hotplugtxt-add-some-details-about-locking-internals.patch
+* mm-fix-warning-in-insert_pfn.patch
+* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
