@@ -1,34 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Thu, 4 Oct 2018 14:07:37 +1000
-Message-ID: <20181004140737.214df900@canb.auug.org.au>
+Date: Thu, 4 Oct 2018 14:22:38 +1000
+Message-ID: <20181004142238.06c80b6a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/03S_PquRkNovGEDg+fb2OkM"; protocol="application/pgp-signature"
+ boundary="Sig_/NtYu5eHvLWP/5WmU_hBgeT."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Vladimir Murzin <vladimir.murzin@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/03S_PquRkNovGEDg+fb2OkM
+--Sig_/NtYu5eHvLWP/5WmU_hBgeT.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the kvm-arm tree got conflicts in:
 
-  arch/arm64/include/asm/cpufeature.h
+  arch/arm/include/asm/kvm_mmu.h
+  arch/arm64/include/asm/kvm_arm.h
+  arch/arm64/include/asm/kvm_mmu.h
 
 between commit:
 
-  520ad98871a0 ("arm64/cpufeatures: Factorize emulate_mrs()")
+  ab510027dc4d ("arm64: KVM: Enable Common Not Private translations")
 
 from the arm64 tree and commit:
 
-  ce00e3cb4fb4 ("arm64: Add a helper for PARange to physical shift conversi=
-on")
+  0f62f0e95be2 ("kvm: arm64: Set a limit on the IPA size")
+  595583306434 ("kvm: arm64: Dynamic configuration of VTTBR mask")
 
 from the kvm-arm tree.
 
@@ -43,54 +45,241 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/include/asm/cpufeature.h
-index 6db48d90ad63,072cc1c970c2..000000000000
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@@ -536,7 -530,26 +536,28 @@@ void arm64_set_ssbd_mitigation(bool sta
-  static inline void arm64_set_ssbd_mitigation(bool state) {}
+diff --cc arch/arm/include/asm/kvm_mmu.h
+index 847f01fa429d,5ad1a54f98dc..000000000000
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@@ -355,11 -358,8 +358,13 @@@ static inline int hyp_map_aux_data(void
+ =20
+  #define kvm_phys_to_vttbr(addr)		(addr)
+ =20
+ +static inline bool kvm_cpu_has_cnp(void)
+ +{
+ +	return false;
+ +}
+ +
++ static inline void kvm_set_ipa_limit(void) {}
++=20
+  #endif	/* !__ASSEMBLY__ */
+ =20
+  #endif /* __ARM_KVM_MMU_H__ */
+diff --cc arch/arm64/include/asm/kvm_arm.h
+index b476bc46f0ab,6e324d1f1231..000000000000
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@@ -145,38 -143,127 +143,128 @@@
+  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
+  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
+ =20
+- #ifdef CONFIG_ARM64_64K_PAGES
+  /*
+-  * Stage2 translation configuration:
+-  * 64kB pages (TG0 =3D 1)
+-  * 2 level page tables (SL =3D 1)
++  * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
++  * Interestingly, it depends on the page size.
++  * See D.10.2.121, VTCR_EL2, in ARM DDI 0487C.a
++  *
++  *	-----------------------------------------
++  *	| Entry level		|  4K  | 16K/64K |
++  *	------------------------------------------
++  *	| Level: 0		|  2   |   -     |
++  *	------------------------------------------
++  *	| Level: 1		|  1   |   2     |
++  *	------------------------------------------
++  *	| Level: 2		|  0   |   1     |
++  *	------------------------------------------
++  *	| Level: 3		|  -   |   0     |
++  *	------------------------------------------
++  *
++  * The table roughly translates to :
++  *
++  *	SL0(PAGE_SIZE, Entry_level) =3D TGRAN_SL0_BASE - Entry_Level
++  *
++  * Where TGRAN_SL0_BASE is a magic number depending on the page size:
++  * 	TGRAN_SL0_BASE(4K) =3D 2
++  *	TGRAN_SL0_BASE(16K) =3D 3
++  *	TGRAN_SL0_BASE(64K) =3D 3
++  * provided we take care of ruling out the unsupported cases and
++  * Entry_Level =3D 4 - Number_of_levels.
++  *
+   */
+- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
+- #define VTTBR_X_TGRAN_MAGIC		38
++ #ifdef CONFIG_ARM64_64K_PAGES
++=20
++ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_64K
++ #define VTCR_EL2_TGRAN_SL0_BASE		3UL
++=20
+  #elif defined(CONFIG_ARM64_16K_PAGES)
+- /*
+-  * Stage2 translation configuration:
+-  * 16kB pages (TG0 =3D 2)
+-  * 2 level page tables (SL =3D 1)
+-  */
+- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
+- #define VTTBR_X_TGRAN_MAGIC		42
++=20
++ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_16K
++ #define VTCR_EL2_TGRAN_SL0_BASE		3UL
++=20
+  #else	/* 4K */
+- /*
+-  * Stage2 translation configuration:
+-  * 4kB pages (TG0 =3D 0)
+-  * 3 level page tables (SL =3D 1)
+-  */
+- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
+- #define VTTBR_X_TGRAN_MAGIC		37
++=20
++ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_4K
++ #define VTCR_EL2_TGRAN_SL0_BASE		2UL
++=20
   #endif
  =20
-+ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+- #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+- #define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
++ #define VTCR_EL2_LVLS_TO_SL0(levels)	\
++ 	((VTCR_EL2_TGRAN_SL0_BASE - (4 - (levels))) << VTCR_EL2_SL0_SHIFT)
++ #define VTCR_EL2_SL0_TO_LVLS(sl0)	\
++ 	((sl0) + 4 - VTCR_EL2_TGRAN_SL0_BASE)
++ #define VTCR_EL2_LVLS(vtcr)		\
++ 	VTCR_EL2_SL0_TO_LVLS(((vtcr) & VTCR_EL2_SL0_MASK) >> VTCR_EL2_SL0_SHIFT)
++=20
++ #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
++ #define VTCR_EL2_IPA(vtcr)		(64 - ((vtcr) & VTCR_EL2_T0SZ_MASK))
++=20
++ /*
++  * ARM VMSAv8-64 defines an algorithm for finding the translation table
++  * descriptors in section D4.2.8 in ARM DDI 0487C.a.
++  *
++  * The algorithm defines the expectations on the translation table
++  * addresses for each level, based on PAGE_SIZE, entry level
++  * and the translation table size (T0SZ). The variable "x" in the
++  * algorithm determines the alignment of a table base address at a given
++  * level and thus determines the alignment of VTTBR:BADDR for stage2
++  * page table entry level.
++  * Since the number of bits resolved at the entry level could vary
++  * depending on the T0SZ, the value of "x" is defined based on a
++  * Magic constant for a given PAGE_SIZE and Entry Level. The
++  * intermediate levels must be always aligned to the PAGE_SIZE (i.e,
++  * x =3D PAGE_SHIFT).
++  *
++  * The value of "x" for entry level is calculated as :
++  *    x =3D Magic_N - T0SZ
++  *
++  * where Magic_N is an integer depending on the page size and the entry
++  * level of the page table as below:
++  *
++  *	--------------------------------------------
++  *	| Entry level		|  4K    16K   64K |
++  *	--------------------------------------------
++  *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
++  *	--------------------------------------------
++  *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
++  *	--------------------------------------------
++  *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
++  *	--------------------------------------------
++  *	| Level: 3 (1 level)	| -    | 53  | 51  |
++  *	--------------------------------------------
++  *
++  * We have a magic formula for the Magic_N below:
++  *
++  *  Magic_N(PAGE_SIZE, Level) =3D 64 - ((PAGE_SHIFT - 3) * Number_of_leve=
+ls)
++  *
++  * where Number_of_levels =3D (4 - Level). We are only interested in the
++  * value for Entry_Level for the stage2 page table.
++  *
++  * So, given that T0SZ =3D (64 - IPA_SHIFT), we can compute 'x' as follow=
+s:
++  *
++  *	x =3D (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
++  *	  =3D IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
++  *
++  * Here is one way to explain the Magic Formula:
++  *
++  *  x =3D log2(Size_of_Entry_Level_Table)
++  *
++  * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
++  * PAGE_SHIFT bits in the PTE, we have :
++  *
++  *  Bits_Entry_level =3D IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_S=
+HIFT)
++  *		     =3D IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
++  *  where n =3D number of levels, and since each pointer is 8bytes, we ha=
+ve:
++  *
++  *  x =3D Bits_Entry_Level + 3
++  *    =3D IPA_SHIFT - (PAGE_SHIFT - 3) * n
++  *
++  * The only constraint here is that, we have to find the number of page t=
+able
++  * levels for a given IPA size (which we do, see stage2_pt_levels())
++  */
++ #define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
+ =20
+ +#define VTTBR_CNP_BIT     (UL(1))
+- #define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) <=
+< VTTBR_X)
+  #define VTTBR_VMID_SHIFT  (UL(48))
+  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SH=
+IFT)
+ =20
+diff --cc arch/arm64/include/asm/kvm_mmu.h
+index 64337afbf124,77b1af9e64db..000000000000
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@@ -517,10 -519,29 +519,34 @@@ static inline int hyp_map_aux_data(void
+ =20
+  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+ =20
+ +static inline bool kvm_cpu_has_cnp(void)
+ +{
+ +	return system_supports_cnp();
+ +}
+ +
++ /*
++  * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
++  * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
++  * 52bit IPS.
++  */
++ static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
 + {
-+ 	switch (parange) {
-+ 	case 0: return 32;
-+ 	case 1: return 36;
-+ 	case 2: return 40;
-+ 	case 3: return 42;
-+ 	case 4: return 44;
-+ 	case 5: return 48;
-+ 	case 6: return 52;
-+ 	/*
-+ 	 * A future PE could use a value unknown to the kernel.
-+ 	 * However, by the "D10.1.4 Principles of the ID scheme
-+ 	 * for fields in ID registers", ARM DDI 0487C.a, any new
-+ 	 * value is guaranteed to be higher than what we know already.
-+ 	 * As a safe limit, we return the limit supported by the kernel.
-+ 	 */
-+ 	default: return CONFIG_ARM64_PA_BITS;
-+ 	}
++ 	int x =3D ARM64_VTTBR_X(ipa_shift, levels);
++=20
++ 	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
 + }
-++
- +extern int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
++=20
++ static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
++ {
++ 	unsigned int x =3D arm64_vttbr_x(ipa_shift, levels);
++=20
++ 	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
++ }
++=20
++ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
++ {
++ 	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
++ }
++=20
   #endif /* __ASSEMBLY__ */
- =20
-  #endif
+  #endif /* __ARM64_KVM_MMU_H__ */
 
---Sig_/03S_PquRkNovGEDg+fb2OkM
+--Sig_/NtYu5eHvLWP/5WmU_hBgeT.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1kgkACgkQAVBC80lX
-0GzllggAmWJr0gflzWrLVWaiyAcMDH6B86g4XbTMbvDb+UaM0hQbQBKwG5QeIHAv
-YL3X4tFXLzMpNKBHIbBe6n6ETsxayeg7j6WDl8pWklL1EGx6YkcloERLFBF/171C
-JPiFUshd+M217RWxw53D3YBq1uHE+I57gYaRvPJGGsTEuH2wdlesAuqhqXNBKP8s
-oRE0j696SA59bYFdgNkdjTEgDuSRH9xgs7q0PRXwzeSYO2I1FpWud2r9RBU8P7j9
-DQxCkgK7zwUKBU4G5kiyyTJtCKUoSRwl4LLYTVGEl+jT1wQAGtEhKhqrprW3od5L
-Ew4rH24gX08hfentzAxsr6T6qsBaDQ==
-=oYES
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1lY4ACgkQAVBC80lX
+0GwcEAgAnYmbTVHVNSmDE3sv7WpiRGG/qD1WLa++KIQrVLnGj8H39hrn5ydN+3H/
+iLw0HaUVwsrQ7pwCrbJ+twZJxMQS8TN9OB7XibJ0VUfdXoeTyq/B1JiT0fra4G7s
+XPzkEbdMHIk2Qyv3Af21qNH7UB4UGOseUvaCLv2GMv3/mgxCGI/uJexv0FSbMQcY
+GVTvx4y1FvA5Vr34sR1yaQRyciIwzCtNp7g5VumTCn8zYqKeXMRHPosHju5suGO8
+pby+TS/W0crLOxWEh+LU9vKLY4SAsvGgO/+HpsRHKIuTUK3+EjpQgNN1umEWaw3C
+P5XoCsly/dcBQbaVlb1jWwoNIT+i5g==
+=PYgO
 -----END PGP SIGNATURE-----
 
---Sig_/03S_PquRkNovGEDg+fb2OkM--
+--Sig_/NtYu5eHvLWP/5WmU_hBgeT.--
