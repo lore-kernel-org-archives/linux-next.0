@@ -1,285 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Thu, 4 Oct 2018 14:22:38 +1000
-Message-ID: <20181004142238.06c80b6a@canb.auug.org.au>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
+Date: Thu, 4 Oct 2018 01:01:40 -0400
+Message-ID: <20181004050140.GC646@thunk.org>
+References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
+ <20181003071059.02b3fd6f@canb.auug.org.au>
+ <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
+ <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
+ <20181002232454.GB2483@thunk.org>
+ <CANiq72=cRpqnB3BxLsmj-rMdUGJK+pac1SRppoRgsON69ErfQg@mail.gmail.com>
+ <20181003153303.GC2835@thunk.org>
+ <CANiq72=Jq8HZ1=CsSvV4GenG+F6z3vRFmiB7Joct5VKdUFo8pA@mail.gmail.com>
+ <CANiq72nMu6NXg1Ovn49qJ=FP_S4_LQJSwPuS+Q_zofhOEbVZng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NtYu5eHvLWP/5WmU_hBgeT."; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CANiq72nMu6NXg1Ovn49qJ=FP_S4_LQJSwPuS+Q_zofhOEbVZng@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Vladimir Murzin <vladimir.murzin@arm.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Olof Johansson <olof@lxom.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, David Miller <davem@davemloft.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>, Sandipan Das <sandipan@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/NtYu5eHvLWP/5WmU_hBgeT.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 03, 2018 at 11:41:08PM +0200, Miguel Ojeda wrote:
+> 
+> I forgot to mention that if the definitions were different, it could
+> have caused a problem, because your definition wouldn't apply, so your
+> 27+ hours of testing wouldn't have mattered :-P Without the #ifndef,
+> we would have at least got a redefinition warning about it.
 
-Hi all,
+In this case, yes.  Again, I emphasize that I was using the ext4.h
+cleanup as an *example*.  The point I was trying to make was that your
+change did *not* do a full set of deep ext4 regression tests because
+the your change didn't go through the ext4.git tree.  I have seen
+cases where "simple mechanical changes" were anything but, and while
+the kernel *compiled* it resulted in the file system not working.
+(And in the worst case, it resulted actual data loss or file system
+corruption.)
 
-Today's linux-next merge of the kvm-arm tree got conflicts in:
+My test scripts are public, and in fact I've gone out of my way to
+make them easy for other people to run them, with documentation[1][2],
+slide sets[3], etc.  But the vast majority of people who submit
+patches to ext4.git don't bother --- and as far as I know *no one* who
+sends ext4 changes via other git trees *ever* bothered.  (And, for one
+recent patchset where the ext4 developer spent a lot of time using
+kvm-xfstests before submission, accepting that set of changes was easy
+and was a joy.  I'm a big believe in tests.)
 
-  arch/arm/include/asm/kvm_mmu.h
-  arch/arm64/include/asm/kvm_arm.h
-  arch/arm64/include/asm/kvm_mmu.h
+[1] https://github.com/tytso/xfstests-bld/blob/master/Documentation/gce-xfstests.md
+[2] https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
+[3] https://thunk.org/gce-xfstests
 
-between commit:
+As far as what you want to do, there are solutions, but they require a
+radically different way of developing.  For example, inside Google,
+for the non-public sources (e.g., excluding Android, Chrome OS, etc.)
+there is a single source tree, with thousands of projects.  They use
+common set of C++ utility libraries/classes, and there is a
+standardized build system (bazel[4]), and a standardized way of
+writing tests.  More importantly, there is a fully automated
+continuous testing system which will automatically trigger and run the
+appropriate tests --- at the moment when the patch is submitted into
+the Google's custom code review system --- and the results of the test
+are automatically submitted as comments in the code review system, so
+the automated testing is integrated into the code review.  For changes
+that affected all or substantially all projects, it's possible to run
+tests across the entire source tree using automated, centralized
+resources, and even then it can take a significantlly non-trivial (as
+in days) of calendar time running on many systems in parallel.
 
-  ab510027dc4d ("arm64: KVM: Enable Common Not Private translations")
+[4] https://bazel.build/
 
-from the arm64 tree and commit:
+So if you are willing to completely standardize your testing
+infrastructure and devote utterly lavish amounts of automated testing
+which is deeply integrated into a standardized, non-email code review
+system, the challenge you have identified *has* been solved.  But
+trust me when I say that it is a very non-trivial thing to do, and it
+requires a lot of very strict code development practices that are
+imposed on all Google C++ developers working in the common tree (which
+is probably 90%+ of the SWE's inside Google).  I'm not at all
+convinced that it could be adopted or imposed on the kernel
+development process.  In fact, I'm quite confident it could not be.
 
-  0f62f0e95be2 ("kvm: arm64: Set a limit on the IPA size")
-  595583306434 ("kvm: arm64: Dynamic configuration of VTTBR mask")
+I actually think the Linux Kernel's approach of carefully segregating
+how code and headers to avoid merge conflicts (and worse, semantic
+conflicts that may git merge and build succesfully, but then blow up
+in subtle ways leading to user data loss) is actually a pretty good
+way of doing things.  It works 99.99% of the the commits.  True, it
+wasn't optimal for the changes you were trying to make; but your
+experience is the exception, not the rule.
 
-from the kvm-arm tree.
+The risk here is that it's very easy to engineer changes in processes
+for corner cases, and which make things much worse (either taking more
+time, or more effort, or being less reliable) for the common case.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
 Cheers,
-Stephen Rothwell
 
-diff --cc arch/arm/include/asm/kvm_mmu.h
-index 847f01fa429d,5ad1a54f98dc..000000000000
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@@ -355,11 -358,8 +358,13 @@@ static inline int hyp_map_aux_data(void
- =20
-  #define kvm_phys_to_vttbr(addr)		(addr)
- =20
- +static inline bool kvm_cpu_has_cnp(void)
- +{
- +	return false;
- +}
- +
-+ static inline void kvm_set_ipa_limit(void) {}
-+=20
-  #endif	/* !__ASSEMBLY__ */
- =20
-  #endif /* __ARM_KVM_MMU_H__ */
-diff --cc arch/arm64/include/asm/kvm_arm.h
-index b476bc46f0ab,6e324d1f1231..000000000000
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@@ -145,38 -143,127 +143,128 @@@
-  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
-  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
- =20
-- #ifdef CONFIG_ARM64_64K_PAGES
-  /*
--  * Stage2 translation configuration:
--  * 64kB pages (TG0 =3D 1)
--  * 2 level page tables (SL =3D 1)
-+  * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
-+  * Interestingly, it depends on the page size.
-+  * See D.10.2.121, VTCR_EL2, in ARM DDI 0487C.a
-+  *
-+  *	-----------------------------------------
-+  *	| Entry level		|  4K  | 16K/64K |
-+  *	------------------------------------------
-+  *	| Level: 0		|  2   |   -     |
-+  *	------------------------------------------
-+  *	| Level: 1		|  1   |   2     |
-+  *	------------------------------------------
-+  *	| Level: 2		|  0   |   1     |
-+  *	------------------------------------------
-+  *	| Level: 3		|  -   |   0     |
-+  *	------------------------------------------
-+  *
-+  * The table roughly translates to :
-+  *
-+  *	SL0(PAGE_SIZE, Entry_level) =3D TGRAN_SL0_BASE - Entry_Level
-+  *
-+  * Where TGRAN_SL0_BASE is a magic number depending on the page size:
-+  * 	TGRAN_SL0_BASE(4K) =3D 2
-+  *	TGRAN_SL0_BASE(16K) =3D 3
-+  *	TGRAN_SL0_BASE(64K) =3D 3
-+  * provided we take care of ruling out the unsupported cases and
-+  * Entry_Level =3D 4 - Number_of_levels.
-+  *
-   */
-- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
-- #define VTTBR_X_TGRAN_MAGIC		38
-+ #ifdef CONFIG_ARM64_64K_PAGES
-+=20
-+ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_64K
-+ #define VTCR_EL2_TGRAN_SL0_BASE		3UL
-+=20
-  #elif defined(CONFIG_ARM64_16K_PAGES)
-- /*
--  * Stage2 translation configuration:
--  * 16kB pages (TG0 =3D 2)
--  * 2 level page tables (SL =3D 1)
--  */
-- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
-- #define VTTBR_X_TGRAN_MAGIC		42
-+=20
-+ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_16K
-+ #define VTCR_EL2_TGRAN_SL0_BASE		3UL
-+=20
-  #else	/* 4K */
-- /*
--  * Stage2 translation configuration:
--  * 4kB pages (TG0 =3D 0)
--  * 3 level page tables (SL =3D 1)
--  */
-- #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
-- #define VTTBR_X_TGRAN_MAGIC		37
-+=20
-+ #define VTCR_EL2_TGRAN			VTCR_EL2_TG0_4K
-+ #define VTCR_EL2_TGRAN_SL0_BASE		2UL
-+=20
-  #endif
- =20
-- #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
-- #define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
-+ #define VTCR_EL2_LVLS_TO_SL0(levels)	\
-+ 	((VTCR_EL2_TGRAN_SL0_BASE - (4 - (levels))) << VTCR_EL2_SL0_SHIFT)
-+ #define VTCR_EL2_SL0_TO_LVLS(sl0)	\
-+ 	((sl0) + 4 - VTCR_EL2_TGRAN_SL0_BASE)
-+ #define VTCR_EL2_LVLS(vtcr)		\
-+ 	VTCR_EL2_SL0_TO_LVLS(((vtcr) & VTCR_EL2_SL0_MASK) >> VTCR_EL2_SL0_SHIFT)
-+=20
-+ #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
-+ #define VTCR_EL2_IPA(vtcr)		(64 - ((vtcr) & VTCR_EL2_T0SZ_MASK))
-+=20
-+ /*
-+  * ARM VMSAv8-64 defines an algorithm for finding the translation table
-+  * descriptors in section D4.2.8 in ARM DDI 0487C.a.
-+  *
-+  * The algorithm defines the expectations on the translation table
-+  * addresses for each level, based on PAGE_SIZE, entry level
-+  * and the translation table size (T0SZ). The variable "x" in the
-+  * algorithm determines the alignment of a table base address at a given
-+  * level and thus determines the alignment of VTTBR:BADDR for stage2
-+  * page table entry level.
-+  * Since the number of bits resolved at the entry level could vary
-+  * depending on the T0SZ, the value of "x" is defined based on a
-+  * Magic constant for a given PAGE_SIZE and Entry Level. The
-+  * intermediate levels must be always aligned to the PAGE_SIZE (i.e,
-+  * x =3D PAGE_SHIFT).
-+  *
-+  * The value of "x" for entry level is calculated as :
-+  *    x =3D Magic_N - T0SZ
-+  *
-+  * where Magic_N is an integer depending on the page size and the entry
-+  * level of the page table as below:
-+  *
-+  *	--------------------------------------------
-+  *	| Entry level		|  4K    16K   64K |
-+  *	--------------------------------------------
-+  *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
-+  *	--------------------------------------------
-+  *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
-+  *	--------------------------------------------
-+  *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
-+  *	--------------------------------------------
-+  *	| Level: 3 (1 level)	| -    | 53  | 51  |
-+  *	--------------------------------------------
-+  *
-+  * We have a magic formula for the Magic_N below:
-+  *
-+  *  Magic_N(PAGE_SIZE, Level) =3D 64 - ((PAGE_SHIFT - 3) * Number_of_leve=
-ls)
-+  *
-+  * where Number_of_levels =3D (4 - Level). We are only interested in the
-+  * value for Entry_Level for the stage2 page table.
-+  *
-+  * So, given that T0SZ =3D (64 - IPA_SHIFT), we can compute 'x' as follow=
-s:
-+  *
-+  *	x =3D (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
-+  *	  =3D IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
-+  *
-+  * Here is one way to explain the Magic Formula:
-+  *
-+  *  x =3D log2(Size_of_Entry_Level_Table)
-+  *
-+  * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
-+  * PAGE_SHIFT bits in the PTE, we have :
-+  *
-+  *  Bits_Entry_level =3D IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_S=
-HIFT)
-+  *		     =3D IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
-+  *  where n =3D number of levels, and since each pointer is 8bytes, we ha=
-ve:
-+  *
-+  *  x =3D Bits_Entry_Level + 3
-+  *    =3D IPA_SHIFT - (PAGE_SHIFT - 3) * n
-+  *
-+  * The only constraint here is that, we have to find the number of page t=
-able
-+  * levels for a given IPA size (which we do, see stage2_pt_levels())
-+  */
-+ #define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
- =20
- +#define VTTBR_CNP_BIT     (UL(1))
-- #define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) <=
-< VTTBR_X)
-  #define VTTBR_VMID_SHIFT  (UL(48))
-  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SH=
-IFT)
- =20
-diff --cc arch/arm64/include/asm/kvm_mmu.h
-index 64337afbf124,77b1af9e64db..000000000000
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@@ -517,10 -519,29 +519,34 @@@ static inline int hyp_map_aux_data(void
- =20
-  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
- =20
- +static inline bool kvm_cpu_has_cnp(void)
- +{
- +	return system_supports_cnp();
- +}
- +
-+ /*
-+  * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
-+  * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
-+  * 52bit IPS.
-+  */
-+ static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
-+ {
-+ 	int x =3D ARM64_VTTBR_X(ipa_shift, levels);
-+=20
-+ 	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
-+ }
-+=20
-+ static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
-+ {
-+ 	unsigned int x =3D arm64_vttbr_x(ipa_shift, levels);
-+=20
-+ 	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
-+ }
-+=20
-+ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
-+ {
-+ 	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
-+ }
-+=20
-  #endif /* __ASSEMBLY__ */
-  #endif /* __ARM64_KVM_MMU_H__ */
-
---Sig_/NtYu5eHvLWP/5WmU_hBgeT.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1lY4ACgkQAVBC80lX
-0GwcEAgAnYmbTVHVNSmDE3sv7WpiRGG/qD1WLa++KIQrVLnGj8H39hrn5ydN+3H/
-iLw0HaUVwsrQ7pwCrbJ+twZJxMQS8TN9OB7XibJ0VUfdXoeTyq/B1JiT0fra4G7s
-XPzkEbdMHIk2Qyv3Af21qNH7UB4UGOseUvaCLv2GMv3/mgxCGI/uJexv0FSbMQcY
-GVTvx4y1FvA5Vr34sR1yaQRyciIwzCtNp7g5VumTCn8zYqKeXMRHPosHju5suGO8
-pby+TS/W0crLOxWEh+LU9vKLY4SAsvGgO/+HpsRHKIuTUK3+EjpQgNN1umEWaw3C
-P5XoCsly/dcBQbaVlb1jWwoNIT+i5g==
-=PYgO
------END PGP SIGNATURE-----
-
---Sig_/NtYu5eHvLWP/5WmU_hBgeT.--
+					- Ted
