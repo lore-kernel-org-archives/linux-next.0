@@ -1,69 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: occassional build errors
-Date: Thu, 4 Oct 2018 13:41:41 +1000
-Message-ID: <20181004134141.1840d8ea@canb.auug.org.au>
-References: <20181003135038.24438d97@canb.auug.org.au>
-        <CAK7LNARD6qxX1fz4XF7yj2vWZurayhtksQnGfHBEUtCTNLmGYw@mail.gmail.com>
-        <20181003165534.4bc87bbe@canb.auug.org.au>
-        <20181004103937.5601c02a@canb.auug.org.au>
-        <20181004115653.6a97e131@canb.auug.org.au>
-        <CAK7LNAQsvtyU_2Lm4gPSU=q9KeAwjPCfQiwUeOjw=JjUpks_Pw@mail.gmail.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Thu, 4 Oct 2018 14:07:37 +1000
+Message-ID: <20181004140737.214df900@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xbCOWcAoriy8X5JP_b__m7K"; protocol="application/pgp-signature"
+ boundary="Sig_/03S_PquRkNovGEDg+fb2OkM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNAQsvtyU_2Lm4gPSU=q9KeAwjPCfQiwUeOjw=JjUpks_Pw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Anshuman Khandual <anshuman.khandual@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xbCOWcAoriy8X5JP_b__m7K
+--Sig_/03S_PquRkNovGEDg+fb2OkM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Masahiro,
+Hi all,
 
-On Thu, 4 Oct 2018 12:09:54 +0900 Masahiro Yamada <yamada.masahiro@socionex=
-t.com> wrote:
->
-> OK, confirmed.
->=20
->=20
-> This is a regression of
->=20
-> commit bb5de5d28f730eeec0aa1ced51a6f11327cd1201
-> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Date:   Thu Sep 13 17:20:41 2018 +0900
->=20
->     kbuild: remove unneeded link_multi_deps
->=20
->=20
->=20
-> I will fix like follows for tomorrow's linux-next.  Thanks!
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-I am glad that there was a good reason :-)
+  arch/arm64/include/asm/cpufeature.h
 
-Thanks.
+between commit:
+
+  520ad98871a0 ("arm64/cpufeatures: Factorize emulate_mrs()")
+
+from the arm64 tree and commit:
+
+  ce00e3cb4fb4 ("arm64: Add a helper for PARange to physical shift conversi=
+on")
+
+from the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/xbCOWcAoriy8X5JP_b__m7K
+diff --cc arch/arm64/include/asm/cpufeature.h
+index 6db48d90ad63,072cc1c970c2..000000000000
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@@ -536,7 -530,26 +536,28 @@@ void arm64_set_ssbd_mitigation(bool sta
+  static inline void arm64_set_ssbd_mitigation(bool state) {}
+  #endif
+ =20
++ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
++ {
++ 	switch (parange) {
++ 	case 0: return 32;
++ 	case 1: return 36;
++ 	case 2: return 40;
++ 	case 3: return 42;
++ 	case 4: return 44;
++ 	case 5: return 48;
++ 	case 6: return 52;
++ 	/*
++ 	 * A future PE could use a value unknown to the kernel.
++ 	 * However, by the "D10.1.4 Principles of the ID scheme
++ 	 * for fields in ID registers", ARM DDI 0487C.a, any new
++ 	 * value is guaranteed to be higher than what we know already.
++ 	 * As a safe limit, we return the limit supported by the kernel.
++ 	 */
++ 	default: return CONFIG_ARM64_PA_BITS;
++ 	}
++ }
+++
+ +extern int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+  #endif /* __ASSEMBLY__ */
+ =20
+  #endif
+
+--Sig_/03S_PquRkNovGEDg+fb2OkM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1i/UACgkQAVBC80lX
-0Gy8yAf/fzfpewbLuZLZ5hY3AVnwEEdWvsSj4rothZ5xcCwjNu8QDkPrAvqCaMv3
-NYXbu3QHlKgWMPbGqWweinA6TmyM4IPd/rWVg5sFk79QibPx3UgQRxgIbx02YHI5
-cJ0riKrAbG8o0X/yWzIxvf4DeTC8dkgYlC0YJb4lTPO52YYjsOuhBYNlo7Y/PXp5
-QTQAhfxSiE+c1RlJ135gFX41EAqycsNJhXSiR8c/n04hGvkoRRMYsmTONPEmtSuD
-9Ja8XnPJhD0uroxKnU7UuM/fH2YccTndS98gPHhycHITgHUK58yN6KR8daiyEmyO
-iP3hnV5/tGqAlRoWC67NxWTU/d90/w==
-=v26Y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1kgkACgkQAVBC80lX
+0GzllggAmWJr0gflzWrLVWaiyAcMDH6B86g4XbTMbvDb+UaM0hQbQBKwG5QeIHAv
+YL3X4tFXLzMpNKBHIbBe6n6ETsxayeg7j6WDl8pWklL1EGx6YkcloERLFBF/171C
+JPiFUshd+M217RWxw53D3YBq1uHE+I57gYaRvPJGGsTEuH2wdlesAuqhqXNBKP8s
+oRE0j696SA59bYFdgNkdjTEgDuSRH9xgs7q0PRXwzeSYO2I1FpWud2r9RBU8P7j9
+DQxCkgK7zwUKBU4G5kiyyTJtCKUoSRwl4LLYTVGEl+jT1wQAGtEhKhqrprW3od5L
+Ew4rH24gX08hfentzAxsr6T6qsBaDQ==
+=oYES
 -----END PGP SIGNATURE-----
 
---Sig_/xbCOWcAoriy8X5JP_b__m7K--
+--Sig_/03S_PquRkNovGEDg+fb2OkM--
