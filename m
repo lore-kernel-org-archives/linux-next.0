@@ -1,62 +1,45 @@
-From: Vinod <vkoul@kernel.org>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Thu, 4 Oct 2018 11:43:12 +0530
-Message-ID: <20181004061312.GC2372@vkoul-mobl>
-References: <20181004154438.64f9d8c2@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the userns tree with the y2038 tree
+Date: Thu, 04 Oct 2018 09:14:26 +0200
+Message-ID: <87efd6mbe5.fsf@xmission.com>
+References: <20181004161107.77a010e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181004154438.64f9d8c2@canb.auug.org.au>
+In-Reply-To: <20181004161107.77a010e9@canb.auug.org.au> (Stephen Rothwell's
+        message of "Thu, 4 Oct 2018 16:11:07 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Angelo Dureghello <angelo@sysam.it>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-On 04-10-18, 15:44, Stephen Rothwell wrote:
-> Hi Vinod,
-> 
-> After merging the slave-dma tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/dma/fsl-edma.c:67: warning: "EDMA_SEEI_SEEI" redefined
->  #define EDMA_SEEI_SEEI(x) ((x) & 0x1F)
-> 
-> In file included from drivers/dma/fsl-edma.c:25:
-> drivers/dma/fsl-edma-common.h:21: note: this is the location of the previous definition
->  #define EDMA_SEEI_SEEI(x) ((x) & GENMASK(4, 0))
-> 
->  ...
-> 
-> drivers/dma/fsl-edma.c:115:6: error: nested redefinition of 'enum fsl_edma_pm_state'
->  enum fsl_edma_pm_state {
->       ^~~~~~~~~~~~~~~~~
-> drivers/dma/fsl-edma.c:115:6: error: redeclaration of 'enum fsl_edma_pm_state'
-> In file included from drivers/dma/fsl-edma.c:25:
-> drivers/dma/fsl-edma-common.h:63:6: note: originally defined here
->  enum fsl_edma_pm_state {
->       ^~~~~~~~~~~~~~~~~
-> 
-> and so on ...
-> 
-> Caused by commit
-> 
->   101d256a45ed ("Merge branch 'testing/dirn_remove' into next")
-> 
-> which reintroduced a whole lot of stuff into drivers/dma/fsl-edma.c that
-> had been modev out in commit
-> 
->   9d831528a656 ("dmaengine: fsl-edma: extract common fsl-edma code (no changes in behavior intended)")
+> Hi Eric,
+>
+> Today's linux-next merge of the userns tree got a conflict in:
+>
+>   kernel/signal.c
+>
+> between commit:
+>
+>   49c39f8464a9 ("y2038: signal: Change rt_sigtimedwait to use __kernel_timespec")
+>
+> from the y2038 tree and commit:
+>
+>   ae7795bc6187 ("signal: Distinguish between kernel_siginfo and siginfo")
+>
+> from the userns tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-I got a merge conflict but for include, so looks like merge went bad.
-I will redo it and push
+Thank you.
 
-> I used the slave-dma tree from next-20181003 for today.
+This is good to know about.
 
-Thanks for updating
-
-Best Regards,
--- 
-~Vinod
+Eric
