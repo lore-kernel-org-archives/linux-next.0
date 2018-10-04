@@ -1,159 +1,132 @@
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-Date: Thu, 4 Oct 2018 11:06:46 +0200
-Message-ID: <CANiq72nTAF6SyM+mgMG-DT=nOLz5DyEjfHKgq5uJLwufBNWViA@mail.gmail.com>
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
- <20181003071059.02b3fd6f@canb.auug.org.au> <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
- <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
- <20181002232454.GB2483@thunk.org> <CANiq72=cRpqnB3BxLsmj-rMdUGJK+pac1SRppoRgsON69ErfQg@mail.gmail.com>
- <20181003153303.GC2835@thunk.org> <CANiq72=Jq8HZ1=CsSvV4GenG+F6z3vRFmiB7Joct5VKdUFo8pA@mail.gmail.com>
- <CANiq72nMu6NXg1Ovn49qJ=FP_S4_LQJSwPuS+Q_zofhOEbVZng@mail.gmail.com> <20181004050140.GC646@thunk.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Oct 4
+Date: Thu, 4 Oct 2018 06:46:44 -0700
+Message-ID: <20181004134644.GA9130@roeck-us.net>
+References: <20181004183449.36bcc93b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181004050140.GC646@thunk.org>
+Content-Disposition: inline
+In-Reply-To: <20181004183449.36bcc93b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ted Ts'o <tytso@mit.edu>, Nick Desaulniers <ndesaulniers@google.com>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Olof Johansson <olof@lxom.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, David Miller <davem@davemloft.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>, Sandipan
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Ted,
+On Thu, Oct 04, 2018 at 06:34:49PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20181003:
+> 
+> The bpf-next tree still had its build failure so I used the version
+> from next-20181002.
+> 
+> The kvm-arm tree gained conflicts against the arm64 tree.
+> 
+> The tty tree gained a build failure so I used the version from
+> next-20181003.
+> 
+> The slave-dma tree gained a build failure so I used the version from
+> next-20181003.
+> 
+> The userns tree gained a conflict against the y2038 tree.
+> 
+> Non-merge commits (relative to Linus' tree): 8120
+>  7864 files changed, 365604 insertions(+), 168933 deletions(-)
+> 
 
-On Thu, Oct 4, 2018 at 7:02 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> In this case, yes.  Again, I emphasize that I was using the ext4.h
-> cleanup as an *example*.  The point I was trying to make was that your
-> change did *not* do a full set of deep ext4 regression tests because
-> the your change didn't go through the ext4.git tree.  I have seen
+Time for a status report.
 
-Because it shouldn't matter from which tree they come from to get the
-tests run. *That* is the problem: effectively we have independent
-projects in the kernel. If you tell me that my change did not run the
-ext4 tests (even if I Cc'd you or maybe some ML, etc.), it means there
-is something wrong.
+Build results:
+	total: 135 pass: 121 fail: 14
+Failed builds: 
+	arm:allmodconfig 
+	i386:allyesconfig 
+	i386:allmodconfig 
+	m68k:defconfig 
+	m68k:allmodconfig 
+	m68k:sun3_defconfig 
+	mips:allmodconfig 
+	parisc:allmodconfig 
+	powerpc:ppc6xx_defconfig 
+	s390:defconfig 
+	s390:allmodconfig 
+	s390:allnoconfig 
+	sparc32:allmodconfig 
+	xtensa:allmodconfig 
+Qemu test results:
+	total: 318 pass: 249 fail: 69
+Failed tests: 
+	m68k:q800:m68040:mac_defconfig:initrd 
+	m68k:q800:m68040:mac_defconfig:rootfs 
+	mips:malta_defconfig:smp:usb-xhci:rootfs 
+	mips:malta_defconfig:smp:usb-uas-xhci:rootfs 
+	mips:malta_defconfig:smp:scsi[53C810]:rootfs 
+	mips:malta_defconfig:smp:scsi[53C895A]:rootfs 
+	mips:malta_defconfig:smp:scsi[DC395]:rootfs 
+	mips:malta_defconfig:smp:scsi[AM53C974]:rootfs 
+	mips:malta_defconfig:smp:scsi[MEGASAS]:rootfs 
+	mips:malta_defconfig:smp:scsi[MEGASAS2]:rootfs 
+	mips:malta_defconfig:smp:scsi[FUSION]:rootfs 
+	mips64:malta_defconfig:smp:usb-xhci:rootfs 
+	mips64:malta_defconfig:smp:usb-uas-xhci:rootfs 
+	mips64:malta_defconfig:smp:scsi[53C810]:rootfs 
+	mips64:malta_defconfig:smp:scsi[DC395]:rootfs 
+	mips64:malta_defconfig:smp:scsi[AM53C974]:rootfs 
+	mips64:malta_defconfig:smp:scsi[MEGASAS]:rootfs 
+	mips64:malta_defconfig:smp:scsi[MEGASAS2]:rootfs 
+	mips64:malta_defconfig:smp:scsi[FUSION]:rootfs 
+	mipsel:24Kf:malta_defconfig:smp:usb-xhci:rootfs 
+	mipsel:24Kc:malta_defconfig:smp:usb-uas-xhci:rootfs 
+	mipsel:34Kf:malta_defconfig:smp:scsi[53C810]:rootfs 
+	mipsel:74Kf:malta_defconfig:smp:scsi[53C895A]:rootfs 
+	mipsel:M14Kc:malta_defconfig:smp:scsi[DC395]:rootfs 
+	mipsel:24Kf:malta_defconfig:smp:scsi[AM53C974]:rootfs 
+	mipsel:24Kf:malta_defconfig:smp:scsi[MEGASAS]:rootfs 
+	mipsel:24Kf:malta_defconfig:smp:scsi[MEGASAS2]:rootfs 
+	mipsel:24Kf:malta_defconfig:smp:scsi[FUSION]:rootfs 
+	mipsel64:64r6el_defconfig:boston:rootfs 
+	parisc:defconfig:smp:nvme:rootfs 
+	parisc:defconfig:smp:scsi:rootfs 
+	parisc:defconfig:smp:scsi[53C895A]:rootfs 
+	parisc:defconfig:smp:scsi[DC395]:rootfs 
+	parisc:defconfig:smp:scsi[AM53C974]:rootfs 
+	parisc:defconfig:nosmp:usb-xhci:rootfs 
+	parisc:defconfig:nosmp:usb-uas-xhci:rootfs 
+	parisc:defconfig:nosmp:nvme:rootfs 
+	s390:defconfig:initrd 
+	s390:defconfig:virtio-blk-ccw:rootfs 
+	s390:defconfig:scsi[virtio-ccw]:rootfs 
+	sh:rts7751r2dplus_defconfig:nvme:rootfs 
+	sh:rts7751r2dplus_defconfig:usb-xhci:rootfs 
+	sh:rts7751r2dplus_defconfig:usb-uas-xhci:rootfs 
+	sh:rts7751r2dplus_defconfig:scsi[53C810]:rootfs 
+	sh:rts7751r2dplus_defconfig:scsi[53C895A]:rootfs 
+	sh:rts7751r2dplus_defconfig:scsi[FUSION]:rootfs 
+	i386:q35:Broadwell:defconfig:smp:ata:rootfs 
+	i386:q35:IvyBridge:defconfig:smp2:efi32:nvme:rootfs 
+	i386:q35:Conroe:defconfig:smp4:scsi[DC395]:rootfs 
+	i386:q35:Nehalem:defconfig:smp6:scsi[AM53C974]:rootfs 
+	i386:q35:Westmere-IBRS:defconfig:smp:efi32:scsi[53C810]:rootfs 
+	i386:q35:Skylake-Server:defconfig:smp2:scsi[53C895A]:rootfs 
+	i386:pc:EPYC:defconfig:smp:efi32:scsi[MEGASAS]:rootfs 
+	i386:q35:EPYC-IBPB:defconfig:smp:scsi[MEGASAS2]:rootfs 
+	i386:q35:Opteron_G5:defconfig:smp:efi32:scsi[FUSION]:rootfs 
+	i386:q35:Opteron_G4:defconfig:nosmp:efi32:ata:rootfs 
+	i386:q35:n270:defconfig:nosmp:ata:rootfs 
+	i386:q35:pentium3:defconfig:pae:nosmp:nvme:rootfs 
+	x86_64:q35:Broadwell-noTSX:defconfig:smp:mem256:ata:rootfs 
+	x86_64:q35:IvyBridge:defconfig:smp2:efi:mem512:nvme:rootfs 
+	x86_64:q35:Conroe:defconfig:smp4:efi32:mem256:scsi[DC395]:rootfs 
+	x86_64:q35:Nehalem:defconfig:smp:mem512:scsi[AM53C974]:rootfs 
+	x86_64:q35:Westmere-IBRS:defconfig:smp2:efi:mem1G:scsi[53C810]:rootfs 
+	x86_64:q35:Skylake-Server:defconfig:smp4:efi32:mem2G:scsi[53C895A]:rootfs
+	x86_64:pc:EPYC:defconfig:smp:mem4G:scsi[FUSION]:rootfs 
+	x86_64:q35:EPYC-IBPB:defconfig:smp2:efi:mem8G:scsi[MEGASAS]:rootfs 
+	x86_64:q35:Opteron_G5:defconfig:smp4:efi32:mem256:scsi[MEGASAS2]:rootfs
+	x86_64:q35:Opteron_G4:defconfig:nosmp:efi:mem512:ata:rootfs 
+	x86_64:q35:Haswell-noTSX-IBRS:defconfig:nosmp:efi32:mem2G:ata:rootfs
 
-> cases where "simple mechanical changes" were anything but, and while
-> the kernel *compiled* it resulted in the file system not working.
-> (And in the worst case, it resulted actual data loss or file system
-> corruption.)
+Details are available at https://kerneltests.org/builders.
 
-Yes, I have also experienced one-liners breaking entire projects.
-Ideally, any change should be assumed to break everything unless
-proved otherwise, and I agree with having as much testing as possible
--- see above for the actual problem here.
-
-> My test scripts are public, and in fact I've gone out of my way to
-> make them easy for other people to run them, with documentation[1][2],
-> slide sets[3], etc.  But the vast majority of people who submit
-> patches to ext4.git don't bother --- and as far as I know *no one* who
-> sends ext4 changes via other git trees *ever* bothered.  (And, for one
-> recent patchset where the ext4 developer spent a lot of time using
-> kvm-xfstests before submission, accepting that set of changes was easy
-> and was a joy.  I'm a big believe in tests.)
-
-I believe you -- but actually I would *expect* that. Nobody runs them
-because nobody has either the time, the expertise, or feels the need
-to do so. It is not a matter of "being easy to run". It is simply that
-people won't do it unless you force them to (and if you force them,
-you will lose some contributions).
-
-The solution is not providing slides, documentation, or making it
-fool-proof. The solution, in my view, is avoiding people having to do
-the tests. Currently, I thought we do that in the kernel by Cc'ing
-whoever is a maintainer of the code and letting that person do
-whatever is required for those changes. Of course, you can automate
-this in many fancy ways as many projects/companies have done (and as
-you describe for Google).
-
-However...
-
-> So if you are willing to completely standardize your testing
-> infrastructure and devote utterly lavish amounts of automated testing
-
-...I don't agree. I don't think this follows from the above
-discussion. While release management and testing are topics that go
-together (pretty much always), they are two different, independent
-problems. I am talking here about the need for some "software" to do
-the release management (i.e. merging many trees, doing integration,
-etc.), not the testing side of it (which can change irrespective of
-the release management side; e.g. may have different triggers, may
-have different requirements, may use different systems to help, etc.).
-
-Actually, it is fairly easy to prove: Pick Documentation/ and imagine
-it was only plain text files without processing required (as in the
-old days). For that "project", you don't need any testing whatsoever,
-but you still need to do release integration. For ext4, you may want
-to use your testing scripts. For drivers/foo/bar.c, maybe the only way
-of testing is plugging the hardware and seeing that it works. So,
-different projects, different testing mechanisms; but same release
-integration at the end of the day.
-
-> which is deeply integrated into a standardized, non-email code review
-> system, the challenge you have identified *has* been solved.  But
-
-Of course it has been "solved". All projects with hundreds of
-contributors/subprojects/... have to deal with the same issues, and
-they have to keep moving forward at the end of the day. The point is
-not how Google, or CERN, or anybody else does it. The point is that
-there should be a better way to handle this which makes kernel
-development better.
-
-I explained the issue we faced at CERN years ago simply because it was
-very similar to this (merging given tags of different trees,
-basically). I am not sure how/if your Google example is relevant here,
-since it is a completely custom system, it is very different to what
-the kernel does, etc. I understand you are trying to say "this is no
-news, there are other ways of solving it, it is solved at Google"; but
-with my "example" I was not trying to say "we solved it at CERN" or
-trying to say I am a "guru"; I was simply stating that it seems there
-could be a project coming out of this to solve this space *in the
-context of the kernel workflow*.
-
-> trust me when I say that it is a very non-trivial thing to do, and it
-> requires a lot of very strict code development practices that are
-> imposed on all Google C++ developers working in the common tree (which
-> is probably 90%+ of the SWE's inside Google).  I'm not at all
-> convinced that it could be adopted or imposed on the kernel
-> development process.  In fact, I'm quite confident it could not be.
-
-This paragraph seems to follow from the fact that you connect
-heavily-automated testing with release integration. I don't
-necessarily agree with that as explained above, so I think I could cut
-here this part of the discussion, but anyway, here it goes: coding
-development practices are not completely tied to release integration.
-Same as testing: i.e. you *can* do release integration (and heavy
-testing) without strict coding development guidelines. We actually do
-that at the kernel nowadays (and we did it at CERN too).
-
->
-> I actually think the Linux Kernel's approach of carefully segregating
-> how code and headers to avoid merge conflicts (and worse, semantic
-> conflicts that may git merge and build succesfully, but then blow up
-
-Not sure how the kernel is preventing semantic conflicts (in different
-ways than other projects, I mean). What do you mean?
-
-> in subtle ways leading to user data loss) is actually a pretty good
-> way of doing things.  It works 99.99% of the the commits.  True, it
-
-I would say many commits are local enough that it is not really a
-problem. The issue is non-local commits, and I am not that confident
-it works for 99.99% of those.
-
-> wasn't optimal for the changes you were trying to make; but your
-> experience is the exception, not the rule.
-
-Sure, but regardless of how well it works, the fact is that Stephen is
-managing some custom (and AFAIK, ad hoc) scripts. That usually means
-there is something that may be factorized out.
-
->
-> The risk here is that it's very easy to engineer changes in processes
-> for corner cases, and which make things much worse (either taking more
-> time, or more effort, or being less reliable) for the common case.
-
-Agreed, but changes are not necessarily bad, i.e. they are not
-guaranteed to be worse than the previous state. Actually, I would
-argue we could reach a better state of the art for *all*
-commits/cases, not only corner ones.
-
-Cheers,
-Miguel
+Guenter
