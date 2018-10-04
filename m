@@ -1,97 +1,201 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-Date: Thu, 4 Oct 2018 01:01:40 -0400
-Message-ID: <20181004050140.GC646@thunk.org>
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
- <20181003071059.02b3fd6f@canb.auug.org.au>
- <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
- <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
- <20181002232454.GB2483@thunk.org>
- <CANiq72=cRpqnB3BxLsmj-rMdUGJK+pac1SRppoRgsON69ErfQg@mail.gmail.com>
- <20181003153303.GC2835@thunk.org>
- <CANiq72=Jq8HZ1=CsSvV4GenG+F6z3vRFmiB7Joct5VKdUFo8pA@mail.gmail.com>
- <CANiq72nMu6NXg1Ovn49qJ=FP_S4_LQJSwPuS+Q_zofhOEbVZng@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Thu, 4 Oct 2018 15:19:08 +1000
+Message-ID: <20181004151501.280d8282@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CPcBv77g2c0ccP.LnFwiQsO"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CANiq72nMu6NXg1Ovn49qJ=FP_S4_LQJSwPuS+Q_zofhOEbVZng@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Olof Johansson <olof@lxom.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>, David Miller <davem@davemloft.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>, Sandipan Das <sandipan@linux.vnet.ibm.com>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Sakoman <steve@sakoman.com>, Andreas Steinmetz <ast@domdv.de>, Eric Gallimore <egallimore@ucsd.edu>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 03, 2018 at 11:41:08PM +0200, Miguel Ojeda wrote:
-> 
-> I forgot to mention that if the definitions were different, it could
-> have caused a problem, because your definition wouldn't apply, so your
-> 27+ hours of testing wouldn't have mattered :-P Without the #ifndef,
-> we would have at least got a redefinition warning about it.
+--Sig_/CPcBv77g2c0ccP.LnFwiQsO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In this case, yes.  Again, I emphasize that I was using the ext4.h
-cleanup as an *example*.  The point I was trying to make was that your
-change did *not* do a full set of deep ext4 regression tests because
-the your change didn't go through the ext4.git tree.  I have seen
-cases where "simple mechanical changes" were anything but, and while
-the kernel *compiled* it resulted in the file system not working.
-(And in the worst case, it resulted actual data loss or file system
-corruption.)
+Hi all,
 
-My test scripts are public, and in fact I've gone out of my way to
-make them easy for other people to run them, with documentation[1][2],
-slide sets[3], etc.  But the vast majority of people who submit
-patches to ext4.git don't bother --- and as far as I know *no one* who
-sends ext4 changes via other git trees *ever* bothered.  (And, for one
-recent patchset where the ext4 developer spent a lot of time using
-kvm-xfstests before submission, accepting that set of changes was easy
-and was a joy.  I'm a big believe in tests.)
+After merging the tty tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-[1] https://github.com/tytso/xfstests-bld/blob/master/Documentation/gce-xfstests.md
-[2] https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
-[3] https://thunk.org/gce-xfstests
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_rx_enable':
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:138:2: note: in expansion of macro 'rx_enabled'
+  rx_enabled(port) =3D 1;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_rx_disable':
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:153:2: note: in expansion of macro 'rx_enabled'
+  rx_enabled(port) =3D 0;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_stop_tx':
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:165:7: note: in expansion of macro 'tx_enabled'
+  if (!tx_enabled(port))
+       ^~~~~~~~~~
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:185:2: note: in expansion of macro 'tx_enabled'
+  tx_enabled(port) =3D 0;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_start_tx':
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:343:7: note: in expansion of macro 'tx_enabled'
+  if (!tx_enabled(port)) {
+       ^~~~~~~~~~
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:347:3: note: in expansion of macro 'tx_enabled'
+   tx_enabled(port) =3D 1;
+   ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_stop_rx':
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:392:6: note: in expansion of macro 'rx_enabled'
+  if (rx_enabled(port)) {
+      ^~~~~~~~~~
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:399:3: note: in expansion of macro 'rx_enabled'
+   rx_enabled(port) =3D 0;
+   ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_rx_drain_fifo':
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:621:8: note: in expansion of macro 'rx_enabled'
+    if (rx_enabled(port)) {
+        ^~~~~~~~~~
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:623:6: note: in expansion of macro 'rx_enabled'
+      rx_enabled(port) =3D 0;
+      ^~~~~~~~~~
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:631:6: note: in expansion of macro 'rx_enabled'
+      rx_enabled(port) =3D 1;
+      ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_shutdown':
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:981:3: note: in expansion of macro 'tx_enabled'
+   tx_enabled(port) =3D 0;
+   ^~~~~~~~~~
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:990:3: note: in expansion of macro 'rx_enabled'
+   rx_enabled(port) =3D 0;
+   ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_startup':
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:1015:2: note: in expansion of macro 'rx_enable=
+d'
+  rx_enabled(port) =3D 1;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:1029:2: note: in expansion of macro 'tx_enable=
+d'
+  tx_enabled(port) =3D 1;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c64xx_serial_startup':
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:1080:2: note: in expansion of macro 'rx_enable=
+d'
+  rx_enabled(port) =3D 1;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:1082:2: note: in expansion of macro 'tx_enable=
+d'
+  tx_enabled(port) =3D 0;
+  ^~~~~~~~~~
+drivers/tty/serial/samsung.c: In function 's3c24xx_serial_resume_noirq':
+drivers/tty/serial/samsung.c:86:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define tx_enabled(port) ((port)->unused[0])
+                                         ^
+drivers/tty/serial/samsung.c:1966:8: note: in expansion of macro 'tx_enable=
+d'
+    if (tx_enabled(port))
+        ^~~~~~~~~~
+drivers/tty/serial/samsung.c:87:41: error: subscripted value is neither arr=
+ay nor pointer nor vector
+ #define rx_enabled(port) ((port)->unused[1])
+                                         ^
+drivers/tty/serial/samsung.c:1968:8: note: in expansion of macro 'rx_enable=
+d'
+    if (rx_enabled(port))
+        ^~~~~~~~~~
 
-As far as what you want to do, there are solutions, but they require a
-radically different way of developing.  For example, inside Google,
-for the non-public sources (e.g., excluding Android, Chrome OS, etc.)
-there is a single source tree, with thousands of projects.  They use
-common set of C++ utility libraries/classes, and there is a
-standardized build system (bazel[4]), and a standardized way of
-writing tests.  More importantly, there is a fully automated
-continuous testing system which will automatically trigger and run the
-appropriate tests --- at the moment when the patch is submitted into
-the Google's custom code review system --- and the results of the test
-are automatically submitted as comments in the code review system, so
-the automated testing is integrated into the code review.  For changes
-that affected all or substantially all projects, it's possible to run
-tests across the entire source tree using automated, centralized
-resources, and even then it can take a significantlly non-trivial (as
-in days) of calendar time running on many systems in parallel.
+Caused by commit
 
-[4] https://bazel.build/
+  c550f01c810f ("serial:serial_core: Allow use of CTS for PPS line discipli=
+ne")
 
-So if you are willing to completely standardize your testing
-infrastructure and devote utterly lavish amounts of automated testing
-which is deeply integrated into a standardized, non-email code review
-system, the challenge you have identified *has* been solved.  But
-trust me when I say that it is a very non-trivial thing to do, and it
-requires a lot of very strict code development practices that are
-imposed on all Google C++ developers working in the common tree (which
-is probably 90%+ of the SWE's inside Google).  I'm not at all
-convinced that it could be adopted or imposed on the kernel
-development process.  In fact, I'm quite confident it could not be.
+Looks like a suprise from some "interesting" previous development.
 
-I actually think the Linux Kernel's approach of carefully segregating
-how code and headers to avoid merge conflicts (and worse, semantic
-conflicts that may git merge and build succesfully, but then blow up
-in subtle ways leading to user data loss) is actually a pretty good
-way of doing things.  It works 99.99% of the the commits.  True, it
-wasn't optimal for the changes you were trying to make; but your
-experience is the exception, not the rule.
-
-The risk here is that it's very easy to engineer changes in processes
-for corner cases, and which make things much worse (either taking more
-time, or more effort, or being less reliable) for the common case.
-
+I have used the tty tree from next-20181003 for today.
+--=20
 Cheers,
+Stephen Rothwell
 
-					- Ted
+--Sig_/CPcBv77g2c0ccP.LnFwiQsO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1oswACgkQAVBC80lX
+0GzIsAf/YANxSqKdX4JozQDID2JC/cQzYBu7YCtNVFA5nK0ZGuUlMNqai0LpWew7
+brtp/xBJiEfHsBceWVl2zHQjqOMBRjbr6O1och5DWotwmF8YEmkWh/jEHRsGaJBR
+jMJdbgNjGrijlkGn41/dMMoOfcMXdjH4Hl2JYuytKfOTArzLeiz+I9aDqmD4MNn+
+2RRosjOtIkVB+F0/kmpvhNyx4Ql7j3T4bl8CnY4TvdjCxV9NU+Zo5Q6lsXi6vR7a
+oA8bJZpas0J82lp01cn04kfwcrTkFjFsHe9fReKBdk2eYCoGyQjQw1yA1ks9BXWx
+zqhcHKj8Z7w4tZDidER/SIo4GI0v+w==
+=8Mqa
+-----END PGP SIGNATURE-----
+
+--Sig_/CPcBv77g2c0ccP.LnFwiQsO--
