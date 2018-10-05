@@ -1,73 +1,120 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: linux-next: Tree for Oct 4
-Date: Fri, 5 Oct 2018 15:39:05 +1000
-Message-ID: <20181005153905.126a005e@canb.auug.org.au>
-References: <20181004183449.36bcc93b@canb.auug.org.au>
-	<20181004134644.GA9130@roeck-us.net>
-	<CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
-	<20181005094445.4d0b68bc@canb.auug.org.au>
-	<01c4a73c-7901-2fbb-8f87-95ff21dc5126@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ btrfs-kdave tree
+Date: Fri, 5 Oct 2018 15:47:21 +1000
+Message-ID: <20181005154721.4bfde639@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7172063334786996210=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <01c4a73c-7901-2fbb-8f87-95ff21dc5126-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus PPC <linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:INTEL IOMMU (VT-d)" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexander Duyck <alexander.h.duyck-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, David Sterba <dsterba@suse.cz>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Omar Sandoval <osandov@fb.com>, Huang Ying <ying.huang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---===============7172063334786996210==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WI7YS39RX_FlyJjOQWG/6Eg"; protocol="application/pgp-signature"
-
---Sig_/WI7YS39RX_FlyJjOQWG/6Eg
+--Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi all,
 
-On Thu, 4 Oct 2018 18:33:02 -0700 Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
->
-> Most of the boot failures are hopefully fixed with
-> https://lore.kernel.org/patchwork/patch/995254/
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-I have added that commit to linux-next today.
+  include/linux/swap.h
+
+between commit:
+
+  0f83d16b8f1f ("mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS")
+
+from the btrfs-kdave tree and commit:
+
+  26833300651e ("mm, swap: fix race between swapoff and some swap operation=
+s")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/WI7YS39RX_FlyJjOQWG/6Eg
+diff --cc include/linux/swap.h
+index 4fff094dbd53,f32f94639b13..000000000000
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@@ -167,14 -167,14 +167,15 @@@ enum=20
+  	SWP_SOLIDSTATE	=3D (1 << 4),	/* blkdev seeks are cheap */
+  	SWP_CONTINUED	=3D (1 << 5),	/* swap_map has count continuation */
+  	SWP_BLKDEV	=3D (1 << 6),	/* its a block device */
+ -	SWP_FILE	=3D (1 << 7),	/* set after swap_activate success */
+ -	SWP_AREA_DISCARD =3D (1 << 8),	/* single-time swap area discards */
+ -	SWP_PAGE_DISCARD =3D (1 << 9),	/* freed swap page-cluster discards */
+ -	SWP_STABLE_WRITES =3D (1 << 10),	/* no overwrite PG_writeback pages */
+ -	SWP_SYNCHRONOUS_IO =3D (1 << 11),	/* synchronous IO is efficient */
+ -	SWP_VALID	=3D (1 << 12),	/* swap is valid to be operated on? */
+ +	SWP_ACTIVATED	=3D (1 << 7),	/* set after swap_activate success */
+ +	SWP_FS		=3D (1 << 8),	/* swap file goes through fs */
+ +	SWP_AREA_DISCARD =3D (1 << 9),	/* single-time swap area discards */
+ +	SWP_PAGE_DISCARD =3D (1 << 10),	/* freed swap page-cluster discards */
+ +	SWP_STABLE_WRITES =3D (1 << 11),	/* no overwrite PG_writeback pages */
+ +	SWP_SYNCHRONOUS_IO =3D (1 << 12),	/* synchronous IO is efficient */
+++	SWP_VALID	=3D (1 << 13),	/* swap is valid to be operated on? */
+  					/* add others here before... */
+--	SWP_SCANNING	=3D (1 << 13),	/* refcount in scan_swap_map */
+++	SWP_SCANNING	=3D (1 << 14),	/* refcount in scan_swap_map */
+  };
+ =20
+  #define SWAP_CLUSTER_MAX 32UL
+@@@ -297,15 -297,20 +298,15 @@@ struct vma_swap_readahead=20
+ =20
+  /* linux/mm/workingset.c */
+  void *workingset_eviction(struct address_space *mapping, struct page *pag=
+e);
+- bool workingset_refault(void *shadow);
++ void workingset_refault(struct page *page, void *shadow);
+  void workingset_activation(struct page *page);
+ =20
+ -/* Do not use directly, use workingset_lookup_update */
+ -void workingset_update_node(struct radix_tree_node *node);
+ -
+ -/* Returns workingset_update_node() if the mapping has shadow entries. */
+ -#define workingset_lookup_update(mapping)				\
+ -({									\
+ -	radix_tree_update_node_t __helper =3D workingset_update_node;	\
+ -	if (dax_mapping(mapping) || shmem_mapping(mapping))		\
+ -		__helper =3D NULL;					\
+ -	__helper;							\
+ -})
+ +/* Only track the nodes of mappings with shadow entries */
+ +void workingset_update_node(struct xa_node *node);
+ +#define mapping_set_update(xas, mapping) do {				\
+ +	if (!dax_mapping(mapping) && !shmem_mapping(mapping))		\
+ +		xas_set_update(xas, workingset_update_node);		\
+ +} while (0)
+ =20
+  /* linux/mm/page_alloc.c */
+  extern unsigned long totalram_pages;
+
+--Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2+PkACgkQAVBC80lX
-0GxQzAgApaFroQMOF/b1oY8XdG0dDLNLqqOUPOKS294M4YJFl+hqZzB7UYdIYX1Y
-PMZG8dwYDTQZuwvs3RVTsazCV3tWCvNgjk1VhvkUITwHQMmecDauMXwMr+chePgs
-lsjwmnU+e6KojE7M4XdEFKeVhLxdK0LKmeBF6Nv5hYFvverfxl4ABRz4u7m1nxhg
-ra4lUBWYjk7j/vbcKkMDU5PHhEZgfa/CQmDmR1idbv4Ceb1Z/EOo+G9v+fkgRZDk
-PRH5B57R5x4ibDKbzWXwwtF2fbC1RYmGtkjioOTRQBk9avjxcpOgjn98oCNlHCUG
-gd95XlVy2O22aLaUrl300VeJ/d7mpA==
-=S9O9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2+ukACgkQAVBC80lX
+0Gy9SAf/TRcZunFAOZ6z1fjHrLXEvd2qhdJuSLN1RNhCIi3TpRRqbRLxpDZoT4X2
+Ts1zm85ww2X0Eggz1S4PfsBLIau64FTL74HnHGUxvKU/PHo6PxlqWQmV+klgjdAV
+oRzbe5zshUEWLNvOwmPCsjv2cU53GTmF68JA0PG8/4lJvVlU29pIfEoIdb8BHJBo
+IY9QPxJHHvAg7rnfMSTMOkigHP8e20QkcQOEoBd2nj5Otp0w7kCtnRf6E4tjkN2k
+xLgWhVv9fHx0DrK/FgRTcC6Nlhsa2RPuTPLhVxW3oRufPnZ9FpnSpFt9T96jvjQV
+6pSvHktLBZpvojJQLH4AuxCmFVG8uA==
+=SEmn
 -----END PGP SIGNATURE-----
 
---Sig_/WI7YS39RX_FlyJjOQWG/6Eg--
-
---===============7172063334786996210==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7172063334786996210==--
+--Sig_/9MuZ1CGvPDQ=JH1fxbzSw/i--
