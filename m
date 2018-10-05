@@ -1,57 +1,53 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 4
-Date: Thu, 4 Oct 2018 18:33:02 -0700
-Message-ID: <01c4a73c-7901-2fbb-8f87-95ff21dc5126@roeck-us.net>
-References: <20181004183449.36bcc93b@canb.auug.org.au>
- <20181004134644.GA9130@roeck-us.net>
- <CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
- <20181005094445.4d0b68bc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-msm tree
+Date: Fri, 5 Oct 2018 11:37:38 +1000
+Message-ID: <20181005113738.2b7e4e1d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Oz9kFV2PSTN=zeTbT2o+FQo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181005094445.4d0b68bc@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, Arnd Bergmann <arnd@arndb.de>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sharat Masetty <smasetty@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
-On 10/04/2018 04:44 PM, Stephen Rothwell wrote:
-> Hi Geert,
-> 
-> On Thu, 4 Oct 2018 16:21:42 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->>
->> On Thu, Oct 4, 2018 at 3:47 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>> Time for a status report.
->>>
->>> Build results:
->>>          total: 135 pass: 121 fail: 14
->>> Failed builds:
->>>          arm:allmodconfig
->>>          i386:allyesconfig
->>>          i386:allmodconfig
->>>          m68k:defconfig
->>>          m68k:allmodconfig
->>>          m68k:sun3_defconfig
->>>          mips:allmodconfig
->>>          parisc:allmodconfig
->>>          powerpc:ppc6xx_defconfig
->>>          s390:defconfig
->>>          s390:allmodconfig
->>>          s390:allnoconfig
->>>          sparc32:allmodconfig
->>>          xtensa:allmodconfig
->>
->> Most (all?) 32-bit builds are broken due to commit 571ed1fd2390f74e
->> ("SUNRPC: Replace krb5_seq_lock with a lockless scheme"), presumably fixed
->> by Arnd's "SUNRPC: use cmpxchg64() in gss_seq_send64_fetch_and_inc"
->> (https://lore.kernel.org/patchwork/patch/994909/).
-> 
-> I have added that patch to the nfs tree merge in linux-next today.
-> 
+--Sig_/Oz9kFV2PSTN=zeTbT2o+FQo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Most of the boot failures are hopefully fixed with
-https://lore.kernel.org/patchwork/patch/995254/
+Hi Rob,
 
-Guenter
+After merging the drm-msm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+arm-linux-gnueabi-ld: drivers/gpu/drm/msm/adreno/a6xx_gpu.o: in function `a=
+6xx_gpu_busy':
+a6xx_gpu.c:(.text+0x70): undefined reference to `__aeabi_uldivmod'
+
+Caused by commit
+
+  a2c3c0a54d4c ("drm/msm/a6xx: Add devfreq support for a6xx")
+
+I have used the drm-msm tree from next-20181004 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Oz9kFV2PSTN=zeTbT2o+FQo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2wGIACgkQAVBC80lX
+0Gxidgf+Ppqa+xCk9sv5wXIDA+911gYtrofBmnT5373qGExkr4Bwip1FDBXh0vTp
+6Wx9POoVrR2OZoBhlWHKKyN7uLdMfpEEMncw+zh1rnZJehRey3b6O/0FM3PLkFxf
+BEYGpp2X7+MbKVQM6w2OXcWMxYoJKMEdAV/+g/61kwOj3cu5K3P6E/QzNR+KJgOm
+58nrml7s/Yu7arwYh8hteTRvpzb53fDx/htmvpREFCEjK/xn559r/BYN3ZYoKhvz
+UO5tEqwR0/Sb3K/9udguObknzZwiE0zjfPV1nOQSZAW4zhMRIricXTRAG4S+6xtW
+XxRHKqYF9iR3ArN1jUoBoavG9o6Hpg==
+=tWOy
+-----END PGP SIGNATURE-----
+
+--Sig_/Oz9kFV2PSTN=zeTbT2o+FQo--
