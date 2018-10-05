@@ -1,69 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the crypto tree
-Date: Fri, 5 Oct 2018 15:31:07 +1000
-Message-ID: <20181005153107.26147ecc@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: linux-next: Tree for Oct 4
+Date: Fri, 5 Oct 2018 15:39:05 +1000
+Message-ID: <20181005153905.126a005e@canb.auug.org.au>
+References: <20181004183449.36bcc93b@canb.auug.org.au>
+	<20181004134644.GA9130@roeck-us.net>
+	<CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
+	<20181005094445.4d0b68bc@canb.auug.org.au>
+	<01c4a73c-7901-2fbb-8f87-95ff21dc5126@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zOMbtx6=kRGT5fGq.h/g2LE"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Srikanth Jampala <Jampala.Srikanth@cavium.com>
+Content-Type: multipart/mixed; boundary="===============7172063334786996210=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <01c4a73c-7901-2fbb-8f87-95ff21dc5126-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus PPC <linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:INTEL IOMMU (VT-d)" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexander Duyck <alexander.h.duyck-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/zOMbtx6=kRGT5fGq.h/g2LE
+--===============7172063334786996210==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WI7YS39RX_FlyJjOQWG/6Eg"; protocol="application/pgp-signature"
+
+--Sig_/WI7YS39RX_FlyJjOQWG/6Eg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Guenter,
 
-After merging the crypto tree, today's linux-next build (powerpc
-allyesconfig) produced this warning:
+On Thu, 4 Oct 2018 18:33:02 -0700 Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
+>
+> Most of the boot failures are hopefully fixed with
+> https://lore.kernel.org/patchwork/patch/995254/
 
-drivers/crypto/cavium/nitrox/nitrox_debugfs.c: In function 'stats_show':
-drivers/crypto/cavium/nitrox/nitrox_debugfs.c:62:30: warning: format '%lld'=
- expects argument of type 'long long int', but argument 3 has type 'long in=
-t' [-Wformat=3D]
-  seq_printf(s, "  Posted: %lld\n", atomic64_read(&ndev->stats.posted));
-                           ~~~^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                           %ld
-drivers/crypto/cavium/nitrox/nitrox_debugfs.c:63:33: warning: format '%lld'=
- expects argument of type 'long long int', but argument 3 has type 'long in=
-t' [-Wformat=3D]
-  seq_printf(s, "  Completed: %lld\n",
-                              ~~~^
-                              %ld
-      atomic64_read(&ndev->stats.completed));
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/crypto/cavium/nitrox/nitrox_debugfs.c:65:31: warning: format '%lld'=
- expects argument of type 'long long int', but argument 3 has type 'long in=
-t' [-Wformat=3D]
-  seq_printf(s, "  Dropped: %lld\n", atomic64_read(&ndev->stats.dropped));
-                            ~~~^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                            %ld
-
-Introduced by commit
-
-  2a8780be9c26 ("crypto: cavium/nitrox - updated debugfs information.")
+I have added that commit to linux-next today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/zOMbtx6=kRGT5fGq.h/g2LE
+--Sig_/WI7YS39RX_FlyJjOQWG/6Eg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu29xsACgkQAVBC80lX
-0GyBXQgAjrNHLQb795frCbMCZPl/DIeMXdlp9w04Unb65LGRbRmgJFfnNFpdohIn
-QZbzC8BsqWjJXtmZHxu1VU3IweaMDBUkPuZQTFKo0iN9aGg0lVrwIcqmZC9G+1EX
-1LO9fUhAeyQn26J1IA4n1fq0XZgqnRl3JuzBFXfOoLQebQKkgCbIgZ3njDSnmsK6
-JB2ebvDJkdzg0yGRPGy7sNKvBgKpX6fCq4bN6gOoO4LoE65b9SfElcrHtVeDugym
-D7TTOqnKSQn68IVagDC/BZLmbBHCt472auTTEVI948XhzaoW0dp/LGkclMp6MwT+
-2N/bWTvoGCLkJogZh+/a/fOVsRo+ZQ==
-=TvXe
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2+PkACgkQAVBC80lX
+0GxQzAgApaFroQMOF/b1oY8XdG0dDLNLqqOUPOKS294M4YJFl+hqZzB7UYdIYX1Y
+PMZG8dwYDTQZuwvs3RVTsazCV3tWCvNgjk1VhvkUITwHQMmecDauMXwMr+chePgs
+lsjwmnU+e6KojE7M4XdEFKeVhLxdK0LKmeBF6Nv5hYFvverfxl4ABRz4u7m1nxhg
+ra4lUBWYjk7j/vbcKkMDU5PHhEZgfa/CQmDmR1idbv4Ceb1Z/EOo+G9v+fkgRZDk
+PRH5B57R5x4ibDKbzWXwwtF2fbC1RYmGtkjioOTRQBk9avjxcpOgjn98oCNlHCUG
+gd95XlVy2O22aLaUrl300VeJ/d7mpA==
+=S9O9
 -----END PGP SIGNATURE-----
 
---Sig_/zOMbtx6=kRGT5fGq.h/g2LE--
+--Sig_/WI7YS39RX_FlyJjOQWG/6Eg--
+
+--===============7172063334786996210==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7172063334786996210==--
