@@ -1,58 +1,89 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 5 Oct 2018 22:46:06 +1000
-Message-ID: <20181005224606.2372fece@canb.auug.org.au>
-References: <20181005161406.73ef8727@canb.auug.org.au>
-        <87d0sok3dm.fsf@concordia.ellerman.id.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Oct 5
+Date: Fri, 5 Oct 2018 06:48:54 -0700
+Message-ID: <20181005134854.GA17709@roeck-us.net>
+References: <20181005163943.3f8d4f32@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Vss.RuVkbVq2Ytp_cX61Awd"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87d0sok3dm.fsf@concordia.ellerman.id.au>
+Content-Disposition: inline
+In-Reply-To: <20181005163943.3f8d4f32@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christophe Leroy <christophe.leroy@c-s.fr>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Vss.RuVkbVq2Ytp_cX61Awd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 05, 2018 at 04:39:43PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20181004:
+> 
+> I added a supplied patch to the dma-mapping tree to fix overnight boot
+> problems.
+> 
+> I added a supplied patch to the nfs tree to fix an overnight build
+> problem.
+> 
+> The nfsd tree gained a build failure due to an interaction with the nfs
+> tree for which I applied a merge fix patch. And another build failure
+> so I used the version from next-20181004.
+> 
+> The bpf-next tree lost its build failure.
+> 
+> The drm-msm tree gained a build failure, so I used the version from
+> next-20181004.
+> 
+> The tty tree lost its build failure.
+> 
+> The slave-dma tree lost its build failure.
+> 
+> The akpm-current tree gained a conflict against the btrfs-kdave tree.
+> 
+> The akpm tree gained a build failure due to an interaction with the
+> powerpc tree for which I added a merge fix patch.
+> 
+> Non-merge commits (relative to Linus' tree): 8415
+>  8136 files changed, 377585 insertions(+), 173429 deletions(-)
+> 
 
-Hi Michael,
+Build results:
+	total: 135 pass: 129 fail: 6
+Failed builds: 
+	mips:allmodconfig 
+	powerpc:ppc6xx_defconfig
+	s390:defconfig 
+	s390:allmodconfig 
+	s390:allnoconfig 
+	sparc32:allmodconfig 
+Qemu test results:
+	total: 318 pass: 315 fail: 3
+Failed tests: 
+	s390:defconfig:initrd 
+	s390:defconfig:virtio-blk-ccw:rootfs 
+	s390:defconfig:scsi[virtio-ccw]:rootfs
 
-On Fri, 05 Oct 2018 22:02:45 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
-ote:
->
-> Ah fudge, what are the chances we add a new include of bootmem.h just as
-> Mike's removing bootmem.
+---
+mips:allmodconfig, powerpc:ppc6xx_defconfig;
 
-In my experience, it was almost certain ... almost every API removal
-conflicts with new added uses.  :-)
+net/sunrpc/auth_gss/gss_krb5_seal.c: In function 'gss_seq_send64_fetch_and_inc':
+net/sunrpc/auth_gss/gss_krb5_seal.c:144:3: error:
+	implicit declaration of function 'cmpxchg64'
 
-> I could just apply that to my tree. memblock.h is where early_memtest() is
-> actually defined anyway.
+---
+s390:
 
-However min_low_pfn and max_low_pfn are defined in bootmem.h until
-after it is removed.
+s390-linux-ld:./arch/s390/kernel/vmlinux.lds:41: syntax error
 
---=20
-Cheers,
-Stephen Rothwell
+qemu tests also affected. Fixed with:
 
---Sig_/Vss.RuVkbVq2Ytp_cX61Awd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+https://lore.kernel.org/patchwork/patch/993576/
 
------BEGIN PGP SIGNATURE-----
+---
+sparc32:allmodconfig:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu3XQ4ACgkQAVBC80lX
-0GyI1Af/b457Gsh24moiyWRAUs9XuZnTCmO7kcIrjxJ2cDnqUnfYWL5Kewvzc+Pu
-fs/MYPLiKZ80JOW6oVoCmmVjr1sRZbxcVHJNPmWk73KLIomsfHuYMPBU4u1secC6
-kq8yXGA6AqdYkxOWOsnt36Z6V/WYb/vjr+m5h07AqfCkoNh4BxSx9DR3sX3qZDzo
-U7VS7sY1LZ7t7J5TklQuoRbXkPfgZT3IXuQIjIJuYKtIPPoB8LwNrg9ZIIgo/d5u
-nonuhc8IZjZvo8QSojKjJL9VG5VGI+g8+YXi8XIP5VeGClIDLiKNCF3shEC3LHbb
-zglQqbL6n/aTPDOPuuYLcNWDWy2O3w==
-=UriJ
------END PGP SIGNATURE-----
+Various "relocation truncated to fit" errors. Also seen in mainline.
+It is probably time to drop the build.
 
---Sig_/Vss.RuVkbVq2Ytp_cX61Awd--
+---
+
+Guenter
