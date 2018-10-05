@@ -1,43 +1,51 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: Tree for Oct 5 (net/core/filter.c)
-Date: Fri, 5 Oct 2018 17:51:54 +0200
-Message-ID: <e5a04d2f-df44-4616-5621-23d7738353d6@iogearbox.net>
-References: <20181005163943.3f8d4f32@canb.auug.org.au>
- <51ea61d3-032b-f316-4a61-b63ab208d8d4@infradead.org>
+From: Omar Sandoval <osandov@osandov.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ btrfs-kdave tree
+Date: Fri, 5 Oct 2018 11:29:22 -0700
+Message-ID: <20181005182922.GJ25437@vader>
+References: <20181005154721.4bfde639@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <51ea61d3-032b-f316-4a61-b63ab208d8d4@infradead.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20181005154721.4bfde639@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, joe@wand.net.nz
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Sterba <dsterba@suse.cz>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Omar Sandoval <osandov@fb.com>, Huang Ying <ying.huang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-[ +Joe ]
+On Fri, Oct 05, 2018 at 03:47:21PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+> 
+>   include/linux/swap.h
+> 
+> between commit:
+> 
+>   0f83d16b8f1f ("mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS")
+> 
+> from the btrfs-kdave tree and commit:
+> 
+>   26833300651e ("mm, swap: fix race between swapoff and some swap operations")
+> 
+> from the akpm-current tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-On 10/05/2018 05:42 PM, Randy Dunlap wrote:
-> On 10/4/18 11:39 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20181004:
->>
-> 
-> on i386 or x86_64:
-> 
-> net/core/filter.o: In function `bpf_sk_release':
-> filter.c:(.text+0x3c5c): undefined reference to `sock_gen_put'
-> net/core/filter.o: In function `sk_lookup':
-> filter.c:(.text+0x79a5): undefined reference to `tcp_hashinfo'
-> filter.c:(.text+0x79bc): undefined reference to `__inet_lookup_established'
-> filter.c:(.text+0x79eb): undefined reference to `tcp_hashinfo'
-> filter.c:(.text+0x79f3): undefined reference to `__inet_lookup_listener'
-> filter.c:(.text+0x7a14): undefined reference to `udp_table'
-> filter.c:(.text+0x7a26): undefined reference to `__udp4_lib_lookup'
-> 
-> 
-> Full randconfig file is attached.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> 
+Thanks, Stephen, that looks good.
+
+This reminds that Dave suggested that we chould route the two mm patches
+in my series through Andrew's mm tree for 4.20 and get the Btrfs bits in
+for 4.21. Would that make things harder for linux-next? If not, I can
+resend "mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS" and "mm:
+export add_swap_extent()" rebased on mmotm.
