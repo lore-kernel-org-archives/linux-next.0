@@ -1,89 +1,47 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 5
-Date: Fri, 5 Oct 2018 06:48:54 -0700
-Message-ID: <20181005134854.GA17709@roeck-us.net>
-References: <20181005163943.3f8d4f32@canb.auug.org.au>
+From: Alexander Duyck <alexander.h.duyck-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: linux-next: Tree for Oct 4
+Date: Fri, 5 Oct 2018 07:27:29 -0700
+Message-ID: <72f64b32-20f0-0e9a-a8f6-3e0845abb586@linux.intel.com>
+References: <20181004183449.36bcc93b@canb.auug.org.au>
+	<20181004134644.GA9130@roeck-us.net>
+	<CAMuHMdXfhbFi8HYtqd6BeACyG64_eQvoiSQ7DMpyOmdXEXPymg@mail.gmail.com>
+	<20181005094445.4d0b68bc@canb.auug.org.au>
+	<01c4a73c-7901-2fbb-8f87-95ff21dc5126@roeck-us.net>
+	<20181005153905.126a005e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181005163943.3f8d4f32@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20181005153905.126a005e-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus PPC <linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:INTEL IOMMU (VT-d)" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Oct 05, 2018 at 04:39:43PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 10/4/2018 10:39 PM, Stephen Rothwell wrote:
+> Hi Guenter,
 > 
-> Changes since 20181004:
+> On Thu, 4 Oct 2018 18:33:02 -0700 Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
+>>
+>> Most of the boot failures are hopefully fixed with
+>> https://lore.kernel.org/patchwork/patch/995254/
 > 
-> I added a supplied patch to the dma-mapping tree to fix overnight boot
-> problems.
-> 
-> I added a supplied patch to the nfs tree to fix an overnight build
-> problem.
-> 
-> The nfsd tree gained a build failure due to an interaction with the nfs
-> tree for which I applied a merge fix patch. And another build failure
-> so I used the version from next-20181004.
-> 
-> The bpf-next tree lost its build failure.
-> 
-> The drm-msm tree gained a build failure, so I used the version from
-> next-20181004.
-> 
-> The tty tree lost its build failure.
-> 
-> The slave-dma tree lost its build failure.
-> 
-> The akpm-current tree gained a conflict against the btrfs-kdave tree.
-> 
-> The akpm tree gained a build failure due to an interaction with the
-> powerpc tree for which I added a merge fix patch.
-> 
-> Non-merge commits (relative to Linus' tree): 8415
->  8136 files changed, 377585 insertions(+), 173429 deletions(-)
+> I have added that commit to linux-next today.
 > 
 
-Build results:
-	total: 135 pass: 129 fail: 6
-Failed builds: 
-	mips:allmodconfig 
-	powerpc:ppc6xx_defconfig
-	s390:defconfig 
-	s390:allmodconfig 
-	s390:allnoconfig 
-	sparc32:allmodconfig 
-Qemu test results:
-	total: 318 pass: 315 fail: 3
-Failed tests: 
-	s390:defconfig:initrd 
-	s390:defconfig:virtio-blk-ccw:rootfs 
-	s390:defconfig:scsi[virtio-ccw]:rootfs
+After getting over that I ended up running into an issues with a NULL 
+pointer dereference updating static keys/jump labels that was fixed by:
+https://lore.kernel.org/patchwork/patch/993864/
 
----
-mips:allmodconfig, powerpc:ppc6xx_defconfig;
+Thanks.
 
-net/sunrpc/auth_gss/gss_krb5_seal.c: In function 'gss_seq_send64_fetch_and_inc':
-net/sunrpc/auth_gss/gss_krb5_seal.c:144:3: error:
-	implicit declaration of function 'cmpxchg64'
-
----
-s390:
-
-s390-linux-ld:./arch/s390/kernel/vmlinux.lds:41: syntax error
-
-qemu tests also affected. Fixed with:
-
-https://lore.kernel.org/patchwork/patch/993576/
-
----
-sparc32:allmodconfig:
-
-Various "relocation truncated to fit" errors. Also seen in mainline.
-It is probably time to drop the build.
-
----
-
-Guenter
+- Alex
