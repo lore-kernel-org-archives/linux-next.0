@@ -1,106 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the nfsd tree
-Date: Fri, 5 Oct 2018 09:54:37 +1000
-Message-ID: <20181005095420.184c2619@canb.auug.org.au>
+Date: Fri, 5 Oct 2018 10:01:33 +1000
+Message-ID: <20181005100133.755de185@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S8UFiK7fsrvx3VuTVLrq.2/"; protocol="application/pgp-signature"
+ boundary="Sig_/jxa2=ZjHkFTVspsf9xwGDb_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trondmy@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Trond Myklebust <trondmy@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/S8UFiK7fsrvx3VuTVLrq.2/
+--Sig_/jxa2=ZjHkFTVspsf9xwGDb_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the nfsd tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the nfsd tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-net/sunrpc/xprtrdma/svc_rdma_backchannel.c: In function 'svc_rdma_handle_bc=
-_reply':
-net/sunrpc/xprtrdma/svc_rdma_backchannel.c:67:21: error: 'struct rpc_xprt' =
-has no member named 'recv_lock'; did you mean 'reserve_lock'?
-  spin_unlock(&xprt->recv_lock);
-                     ^~~~~~~~~
-                     reserve_lock
-net/sunrpc/xprtrdma/svc_rdma_backchannel.c:79:19: error: 'struct rpc_xprt' =
-has no member named 'recv_lock'; did you mean 'reserve_lock'?
-  spin_lock(&xprt->recv_lock);
-                   ^~~~~~~~~
-                   reserve_lock
+fs/nfs/dns_resolve.c: In function 'nfs_dns_ent_put':
+fs/nfs/dns_resolve.c:119:11: error: passing argument 1 of 'call_rcu_sched' =
+from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
+  call_rcu(item, nfs_dns_ent_free_rcu);
+           ^~~~
+In file included from include/linux/srcu.h:33,
+                 from include/linux/notifier.h:16,
+                 from include/linux/memory_hotplug.h:7,
+                 from include/linux/mmzone.h:758,
+                 from include/linux/gfp.h:6,
+                 from include/linux/umh.h:4,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from fs/nfs/dns_resolve.c:36:
+include/linux/rcupdate.h:59:38: note: expected 'struct callback_head *' but=
+ argument is of type 'struct nfs_dns_ent *'
+ void call_rcu_sched(struct rcu_head *head, rcu_callback_t func);
+                     ~~~~~~~~~~~~~~~~~^~~~
 
 Caused by commit
 
-  cf4f6fd48dac ("svcrdma: Remove ->release_rqst call in bc reply handler")
+  fd497f1e40d9 ("NFS: Lockless DNS lookups")
 
-interacting with commit
-
-  75c84151a9dc ("SUNRPC: Rename xprt->recv_lock to xprt->queue_lock")
-
-from the nfs tree.
-
-I have added the following merge fix patch for today:
-
-=46rom b249a74ca8c4f992e2530f95218ea4f2ed72e0b9 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 5 Oct 2018 09:51:30 +1000
-Subject: [PATCH] svcrdma: fix up for recv_lock rename
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/sunrpc/xprtrdma/svc_rdma_backchannel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrd=
-ma/svc_rdma_backchannel.c
-index 19e34a6aa583..2d176a48543a 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-@@ -64,7 +64,7 @@ int svc_rdma_handle_bc_reply(struct rpc_xprt *xprt, __be3=
-2 *rdma_resp,
- 		goto out_unlock;
- 	memcpy(dst->iov_base, p, len);
- 	xprt_pin_rqst(req);
--	spin_unlock(&xprt->recv_lock);
-+	spin_unlock(&xprt->queue_lock);
-=20
- 	credits =3D be32_to_cpup(rdma_resp + 2);
- 	if (credits =3D=3D 0)
-@@ -76,7 +76,7 @@ int svc_rdma_handle_bc_reply(struct rpc_xprt *xprt, __be3=
-2 *rdma_resp,
- 	xprt->cwnd =3D credits << RPC_CWNDSHIFT;
- 	spin_unlock_bh(&xprt->transport_lock);
-=20
--	spin_lock(&xprt->recv_lock);
-+	spin_lock(&xprt->queue_lock);
- 	ret =3D 0;
- 	xprt_complete_rqst(req->rq_task, rcvbuf->len);
- 	xprt_unpin_rqst(req);
---=20
-2.18.0
+I have used the nfsd tree from next-20181004 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/S8UFiK7fsrvx3VuTVLrq.2/
+--Sig_/jxa2=ZjHkFTVspsf9xwGDb_
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2qD0ACgkQAVBC80lX
-0Gxj2wgAik9JkgSUekw14i6iTUdXDMUXdvWxnIcDn2r7rJjCkljvjMI+waXTZfwU
-0lvtyij6eFnbd0Zke1Uf82Th4d9+OpLEza8/Ntgizk3Kwl94FXkIv4T/K28trf3a
-hpIzA/hu5hUS9XiZjlKnJo3wAsKs3qAaDxpEOl3FlzdumJAAoBn66dU2iZXe5soJ
-vlctNGQVAvR3eJMjh2W072BMBhfPbJzLod4rz0vENopq3E8DvycTN+bapA2IAcLN
-Svfm6hNP8Ns7Y8Ll4t+3UOt7Q9yJlhMAYs9WvKQNSXp4HOw18ulZ1el+UPoaeDNf
-F0GFDwRnKf8XUudYyRWVhfmuj4Xrxw==
-=KsQQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu2qd0ACgkQAVBC80lX
+0Gx9oAgAkdjhijF3k9BvB4j8hdCTr3SaSvIphdH95W1zmsBTayyUkKwrmQbG5sba
+rva9iMUifWqiAZ4/xBOnx9tCNqP5qGWXDyknqOdFVBE4sqwZT4IvqN6F/6iE7aNX
+yBgf7hVzqWhlTdIh0kAMiLSi1KQrEiVtDBVq0Qv+bj61yWwqcuG7GmUwVZ0pILWg
+UK/qBoro7cMt+nA8AGFUERwi7WLD97kcbwPC0GWyj3/fxc79F4yvRw/R4QAIvx+L
+EvVsBm8tF0ta4Qln7+GfHhOgcGuiElqGu8hhtENdzYwtrMn8dKSMpJ7ELd79P31r
+FjUOsefz2MhMVeQ2mCS+XrrvWqY0dw==
+=kaZY
 -----END PGP SIGNATURE-----
 
---Sig_/S8UFiK7fsrvx3VuTVLrq.2/--
+--Sig_/jxa2=ZjHkFTVspsf9xwGDb_--
