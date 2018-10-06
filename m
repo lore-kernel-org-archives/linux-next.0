@@ -1,51 +1,47 @@
-From: Omar Sandoval <osandov@osandov.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- btrfs-kdave tree
-Date: Fri, 5 Oct 2018 11:29:22 -0700
-Message-ID: <20181005182922.GJ25437@vader>
-References: <20181005154721.4bfde639@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the integrity tree
+Date: Sat, 6 Oct 2018 11:58:38 +1000
+Message-ID: <20181006115838.62f7712b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/r9E7lvhtk3xj1/LMAf2fyb5"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181005154721.4bfde639@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Sterba <dsterba@suse.cz>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Omar Sandoval <osandov@fb.com>, Huang Ying <ying.huang@intel.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Oct 05, 2018 at 03:47:21PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the akpm-current tree got a conflict in:
-> 
->   include/linux/swap.h
-> 
-> between commit:
-> 
->   0f83d16b8f1f ("mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS")
-> 
-> from the btrfs-kdave tree and commit:
-> 
->   26833300651e ("mm, swap: fix race between swapoff and some swap operations")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+--Sig_/r9E7lvhtk3xj1/LMAf2fyb5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, Stephen, that looks good.
+Hi all,
 
-This reminds that Dave suggested that we chould route the two mm patches
-in my series through Andrew's mm tree for 4.20 and get the Btrfs bits in
-for 4.21. Would that make things harder for linux-next? If not, I can
-resend "mm: split SWP_FILE into SWP_ACTIVATED and SWP_FS" and "mm:
-export add_swap_extent()" rebased on mmotm.
+Commit
+
+  3dcee2d9c069 ("ima: fix showing large 'violations' or 'runtime_measuremen=
+ts_count'")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/r9E7lvhtk3xj1/LMAf2fyb5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu4Fs4ACgkQAVBC80lX
+0GwgsAf+JwtcC+WFAqzE2yqJB0O703IR8Iyz9QGT0JMWQm2ZsDj+vXAs3Nor/aOE
+zW5iRv59LhMP5+UFqH/mpQ+BL2GH1hD0xc+/UWKIv82srZDj3lxL6VuFpe1Z1OOS
+swfoxGffqxw664rcXL4cVsCjn+CEyK8HipiV/4rCVIuF6XP9vHz3dbdL1JDnbWk+
+f5HgxChREDnsOTrqHFsXhdJde/ihbhaZmE5Exrjv+Pa69QyGpgDbG26nl/BC/Vng
+feGybouwO0NHmYYx5gP1r0bOwllAdHzw0ZVOnJrWVWy78NMruHBFOX48LEeMjr9P
+AbxXv4v+r32OUdHmQKG6Faes9WMWBg==
+=X+mI
+-----END PGP SIGNATURE-----
+
+--Sig_/r9E7lvhtk3xj1/LMAf2fyb5--
