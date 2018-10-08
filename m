@@ -1,46 +1,85 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: linux-next: build warning after merge of the nand tree
-Date: Mon, 8 Oct 2018 09:53:34 +0200
-Message-ID: <20181008095334.6850f033@xps13>
-References: <20181008113842.4bfc8cf9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 8 Oct 2018 19:03:41 +1100
+Message-ID: <20181008190341.5e396491@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TSb.kuN_b+qfmosvMOwws=y"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008113842.4bfc8cf9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Borislav Petkov <bp@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/TSb.kuN_b+qfmosvMOwws=y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote on Mon, 8 Oct 2018
-11:38:42 +1100:
+Hi all,
 
-> Hi Boris,
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Boris is still there but I'm in charge of the NAND tree these days (and
-the one to blame too for this one :) ).
+arch/x86/mm/kaslr.c:26:10: fatal error: linux/bootmem.h: No such file or di=
+rectory
+ #include <linux/bootmem.h>
+          ^~~~~~~~~~~~~~~~~
 
-> 
-> After merging the nand tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/mtd/nand/raw/nand_toshiba.c: In function 'toshiba_nand_read_page_benand':
-> drivers/mtd/nand/raw/nand_toshiba.c:54:19: warning: unused variable 'mtd' [-Wunused-variable]
->   struct mtd_info *mtd = nand_to_mtd(chip);
->                    ^~~
-> drivers/mtd/nand/raw/nand_toshiba.c: In function 'toshiba_nand_read_subpage_benand':
-> drivers/mtd/nand/raw/nand_toshiba.c:68:19: warning: unused variable 'mtd' [-Wunused-variable]
->   struct mtd_info *mtd = nand_to_mtd(chip);
->                    ^~~
-> 
-> Introduced by commit
-> 
->   fe8b76ec9886 ("mtd: rawnand: toshiba: Pass a single nand_chip object to the status helper")
+Caused by patch
 
-Thanks for the warning, I'll correct it for tomorrow.
+  "mm: remove include/linux/bootmem.h"
 
-Kind regards,
-Miquèl
+interacting with commit
+
+  3a387c6d96e6 ("x86/kaslr, ACPI/NUMA: Fix KASLR build error")
+
+from the tip tree.
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Oct 2018 18:57:00 +1100
+Subject: [PATCH] x86/kaslr, ACPI/NUMA: fix for linux/bootmem.h removal
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/mm/kaslr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index b3471388288d..ad80bdc690c1 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -23,7 +23,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/random.h>
+-#include <linux/bootmem.h>
++#include <linux/memblock.h>
+=20
+ #include <asm/pgalloc.h>
+ #include <asm/pgtable.h>
+--=20
+2.18.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TSb.kuN_b+qfmosvMOwws=y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu7D10ACgkQAVBC80lX
+0Gxs1wgAhN0k56uPNNqElIsc/tF2wGbnr4EqUSzFmRVck/kvGqtiuC8dcek7kh57
+DcVxoVG6DZa7wpD6slEldACbSwS1xU82M0D6z2pppnHYqlHRq0cGfpAjzBkSVgmw
+QFYiS3dyldFKlckrDi/U2g+30j5WKIF2lpDMJZxzZSr/UwppUJeIOfoKrrv58qcA
+5Te52Bh/DHnnOahUZGSs/m15mbG+EUUSXiBNx1JYz2aEY0/jZI9rrt3ih9NEabsF
+GsVLiRo59CBghIBqt1UIL9JS6lbepvoj5FRf0roBxQnYNqhu4/1tjrG8G+uOXpqc
+4ga1W8vmuWVMncKsq8xBBSCUVAxlfw==
+=2pwn
+-----END PGP SIGNATURE-----
+
+--Sig_/TSb.kuN_b+qfmosvMOwws=y--
