@@ -1,56 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the nand tree
-Date: Mon, 8 Oct 2018 22:06:32 +1100
-Message-ID: <20181008220632.6b361e3d@canb.auug.org.au>
-References: <20181008113842.4bfc8cf9@canb.auug.org.au>
-        <20181008095334.6850f033@xps13>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: manual merge of the akpm tree with the jc_docs tree
+Date: Mon, 8 Oct 2018 08:32:28 -0600
+Message-ID: <20181008083228.33ec7c1d@lwn.net>
+References: <20181008183840.70ebfe94@canb.auug.org.au>
+        <20181008081315.GB6772@rapoport-lnx>
+        <6ab76538-b836-3b22-cb29-102c613091cf@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CbdThYiL=mqJa5l+YT9eZdt"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008095334.6850f033@xps13>
+In-Reply-To: <6ab76538-b836-3b22-cb29-102c613091cf@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CbdThYiL=mqJa5l+YT9eZdt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 8 Oct 2018 10:38:29 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-Hi Miquel,
+> > I can do the renaming and add the patch
+> > 
+> >   "memory-hotplug.txt: add some details about locking internals"
+> > 
+> > on top of the jc_docs tree.
+> > 
+> > Does it sound Ok?
+> >   
+> 
+> Fine with me.
 
-On Mon, 8 Oct 2018 09:53:34 +0200 Miquel Raynal <miquel.raynal@bootlin.com>=
- wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote on Mon, 8 Oct 2018
-> 11:38:42 +1100:
->=20
-> > Hi Boris, =20
->=20
-> Boris is still there but I'm in charge of the NAND tree these days (and
-> the one to blame too for this one :) ).
+Works for me too.
 
-I'll add you as a contact for this tree.
+Andrew, what is your preference for mm docs patches going forward?  It
+seems we should try to focus them on one tree or the other.  My preference
+would be to keep carrying them to avoid conflicts elsewhere, but I can
+certainly direct them youward if you'd rather they went that way.
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks,
 
---Sig_/CbdThYiL=mqJa5l+YT9eZdt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu7OjgACgkQAVBC80lX
-0GyNSwf/QLV3RAZ9feCWTXv+Q81A8o9wbFAzI7JjzuxzbA3Dc1TzdTtCWl/lvZyA
-rEDHrJBxjYHrTNK8mBDTdsiIsPiTSBng5kptOnyP2VZZoCcFsiaeEebeUwitGMBr
-GpmUHFxxDxwMPrF4Lr7i5Toy0UAIzaynj2tLh5bQmzb3Ic8P00bHcGWz39QZtmO4
-rqoW9ihZoNTeKpzgMqdIA+R3d0mP8vr31wb0GYfR1vjoMZfTCKPL09h+XRwNPPsT
-0+0yhwl0/4fPFYZx79yW2VQskMdQue0Zd9fBRPfu5y15LIgdS2bKcPW3FAUhUzjA
-O2XHLU1Mqz1FiHufhIoYd1M4SlCMGA==
-=6Oa9
------END PGP SIGNATURE-----
-
---Sig_/CbdThYiL=mqJa5l+YT9eZdt--
+jon
