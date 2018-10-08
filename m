@@ -1,14 +1,14 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
+From: Borislav Petkov <bp@suse.de>
 Subject: Re: next-20181008 build: 2 failures 22 warnings (next-20181008)
-Date: Mon, 8 Oct 2018 16:30:06 -0500
-Message-ID: <20181008213006.GP120535@bhelgaas-glaptop.roam.corp.google.com>
-References: <E1g9cV0-0008Sg-4U@optimist> <20181008212021.GB4440@sirena.org.uk>
+Date: Mon, 8 Oct 2018 23:30:18 +0200
+Message-ID: <20181008213018.GL6490@zn.tnic>
+References: <E1g9cV0-0008Sg-4U@optimist> <20181008211109.GA4440@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20181008212021.GB4440@sirena.org.uk>
+In-Reply-To: <20181008211109.GA4440@sirena.org.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,19 +19,37 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Mark Brown <broonie@kernel.org>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, linux-pci@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 08, 2018 at 10:20:21PM +0100, Mark Brown wrote:
-> On Mon, Oct 08, 2018 at 09:51:30PM +0100, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build an arm allmodconfig caused by:
-> 
-> > 	arm-allmodconfig
-> > ../drivers/pci/pcie/aer_inject.c:444:6: error: 'struct pt_regs' has no member named 'ip'
-> 
-> introduced in e3fbcc7c4b130(PCI/AER: Covertly inject errors with ftrace
-> hooks).  This field is not present on arm.
-
-I dropped e3fbcc7c4b130 and related patches already, so this should be gone
-in my current "next" branch (18b4baa4d9fc).
+T24gTW9uLCBPY3QgMDgsIDIwMTggYXQgMTA6MTE6MDlQTSArMDEwMCwgTWFyayBCcm93biB3cm90
+ZToKPiBjYXVzZWQgYnkgM2EzODdjNmQ5NmU2OSAoeDg2L2thc2xyLCBBQ1BJL05VTUE6IEZpeCBL
+QVNMUiBidWlsZCBlcnJvcikKPiB3aGljaCBhZGRzIHRoZSBpbmNsdXNpb24gdW5jb25kaXRpb25h
+bGx5LgoKVGhpcyBzaG91bGQgZml4IGl0OgoKLS0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9rYXNs
+ci5oIHwgMiAtLQogZHJpdmVycy9hY3BpL251bWEuYyAgICAgICAgICB8IDQgKysrLQogMiBmaWxl
+cyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+YXJjaC94ODYvaW5jbHVkZS9hc20va2FzbHIuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL2thc2xy
+LmgKaW5kZXggOTVlZjNmYzAxZDEyLi5kYjdiYTJmZWI5NDcgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2
+L2luY2x1ZGUvYXNtL2thc2xyLmgKKysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20va2FzbHIuaApA
+QCAtNiwxMCArNiw4IEBAIHVuc2lnbmVkIGxvbmcga2FzbHJfZ2V0X3JhbmRvbV9sb25nKGNvbnN0
+IGNoYXIgKnB1cnBvc2UpOwogCiAjaWZkZWYgQ09ORklHX1JBTkRPTUlaRV9NRU1PUlkKIHZvaWQg
+a2VybmVsX3JhbmRvbWl6ZV9tZW1vcnkodm9pZCk7Ci12b2lkIGthc2xyX2NoZWNrX3BhZGRpbmco
+dm9pZCk7CiAjZWxzZQogc3RhdGljIGlubGluZSB2b2lkIGtlcm5lbF9yYW5kb21pemVfbWVtb3J5
+KHZvaWQpIHsgfQotc3RhdGljIGlubGluZSB2b2lkIGthc2xyX2NoZWNrX3BhZGRpbmcodm9pZCkg
+eyB9CiAjZW5kaWYgLyogQ09ORklHX1JBTkRPTUlaRV9NRU1PUlkgKi8KIAogI2VuZGlmCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL2FjcGkvbnVtYS5jIGIvZHJpdmVycy9hY3BpL251bWEuYwppbmRleCA0
+NDA4ZTM3NjAwZWYuLmJhNjIwMDRmNGQ4NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9hY3BpL251bWEu
+YworKysgYi9kcml2ZXJzL2FjcGkvbnVtYS5jCkBAIC0zMiw3ICszMiw2IEBACiAjaW5jbHVkZSA8
+bGludXgvbnVtYS5oPgogI2luY2x1ZGUgPGxpbnV4L25vZGVtYXNrLmg+CiAjaW5jbHVkZSA8bGlu
+dXgvdG9wb2xvZ3kuaD4KLSNpbmNsdWRlIDxhc20va2FzbHIuaD4KIAogc3RhdGljIG5vZGVtYXNr
+X3Qgbm9kZXNfZm91bmRfbWFwID0gTk9ERV9NQVNLX05PTkU7CiAKQEAgLTQzMyw2ICs0MzIsOSBA
+QCBhY3BpX3RhYmxlX3BhcnNlX3NyYXQoZW51bSBhY3BpX3NyYXRfdHlwZSBpZCwKIAkJCQkJICAg
+IGhhbmRsZXIsIG1heF9lbnRyaWVzKTsKIH0KIAorLyogVG8gYmUgb3ZlcnJpZGRlbiBieSBhcmNo
+aXRlY3R1cmVzICovCit2b2lkIF9faW5pdCBfX3dlYWsga2FzbHJfY2hlY2tfcGFkZGluZyh2b2lk
+KSB7IH0KKwogaW50IF9faW5pdCBhY3BpX251bWFfaW5pdCh2b2lkKQogewogCWludCBjbnQgPSAw
+OwotLSAKMi4xOS4wLjI3MS5nZmU4MzIxZWMwNTdmCgoKLS0gClJlZ2FyZHMvR3J1c3MsCiAgICBC
+b3Jpcy4KClNVU0UgTGludXggR21iSCwgR0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwgSmFuZSBTbWl0
+aGFyZCwgR3JhaGFtIE5vcnRvbiwgSFJCIDIxMjg0IChBRyBOw7xybmJlcmcpCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
+aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
+c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
