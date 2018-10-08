@@ -1,36 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drivers-x86 tree with the tip tree
-Date: Mon, 8 Oct 2018 14:48:38 +1100
-Message-ID: <20181008144838.60d8ad83@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Date: Mon, 8 Oct 2018 15:47:43 +1100
+Message-ID: <20181008154743.156e63be@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M7VLhcGUxPcnz2GqlmFUqhf"; protocol="application/pgp-signature"
+ boundary="Sig_/nNaefXIMJ/AX9S.B1DBgi_D"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Steve Longerbeam <slongerbeam@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/M7VLhcGUxPcnz2GqlmFUqhf
+--Sig_/nNaefXIMJ/AX9S.B1DBgi_D
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  drivers/platform/x86/intel_mid_powerbtn.c
+  drivers/staging/media/imx/imx-media-dev.c
 
 between commit:
 
-  f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
+  b803cd359833 ("media: staging/imx: Switch to v4l2_async_notifier_add_*_su=
+bdev")
 
-from the tip tree and commit:
+from the v4l-dvb tree and commit:
 
-  a8b60e484f3d ("platform/x86: intel_mid_powerbtn: Get rid of custom ICPU()=
- macro")
+  f93861c2d611 ("staging: Convert to using %pOFn instead of device_node.nam=
+e")
 
-from the drivers-x86 tree.
+from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,42 +44,109 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/platform/x86/intel_mid_powerbtn.c
-index 5ad44204a9c3,a8c0fbb7f799..000000000000
---- a/drivers/platform/x86/intel_mid_powerbtn.c
-+++ b/drivers/platform/x86/intel_mid_powerbtn.c
-@@@ -121,12 -112,9 +112,9 @@@ static const struct mid_pb_ddata mrfld_
-  	.setup	=3D mrfld_setup,
-  };
+diff --cc drivers/staging/media/imx/imx-media-dev.c
+index 481840195071,3f48f5ceb6ea..000000000000
+--- a/drivers/staging/media/imx/imx-media-dev.c
++++ b/drivers/staging/media/imx/imx-media-dev.c
+@@@ -47,34 -80,52 +47,43 @@@ int imx_media_add_async_subdev(struct i
+  	struct imx_media_async_subdev *imxasd;
+  	struct v4l2_async_subdev *asd;
+  	const char *devname =3D NULL;
+ -	int ret =3D 0;
+ -
+ -	mutex_lock(&imxmd->mutex);
+ +	int ret;
  =20
-- #define ICPU(model, ddata)	\
-- 	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (kernel_ulong_t)&ddata }
--=20
-  static const struct x86_cpu_id mid_pb_cpu_ids[] =3D {
-- 	ICPU(INTEL_FAM6_ATOM_SALTWELL_MID,		mfld_ddata),
-- 	ICPU(INTEL_FAM6_ATOM_SILVERMONT_MID,	mrfld_ddata),
- -	INTEL_CPU_FAM6(ATOM_PENWELL,		mfld_ddata),
- -	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		mrfld_ddata),
-++	INTEL_CPU_FAM6(ATOM_SALTWELL_MID,	mfld_ddata),
-++	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	mrfld_ddata),
-  	{}
-  };
+ -	if (pdev)
+ +	if (fwnode) {
+ +		asd =3D v4l2_async_notifier_add_fwnode_subdev(
+ +			&imxmd->notifier, fwnode, sizeof(*imxasd));
+ +	} else {
+  		devname =3D dev_name(&pdev->dev);
+ -
+ -	/* return -EEXIST if this asd already added */
+ -	if (find_async_subdev(imxmd, fwnode, devname)) {
+ -		if (np)
+ -			dev_dbg(imxmd->md.dev, "%s: already added %pOFn\n",
+ -			__func__, np);
+ -		else
+ -			dev_dbg(imxmd->md.dev, "%s: already added %s\n",
+ -			__func__, devname);
+ -		ret =3D -EEXIST;
+ -		goto out;
+ +		asd =3D v4l2_async_notifier_add_devname_subdev(
+ +			&imxmd->notifier, devname, sizeof(*imxasd));
+  	}
  =20
+ -	imxasd =3D devm_kzalloc(imxmd->md.dev, sizeof(*imxasd), GFP_KERNEL);
+ -	if (!imxasd) {
+ -		ret =3D -ENOMEM;
+ -		goto out;
+ +	if (IS_ERR(asd)) {
+ +		ret =3D PTR_ERR(asd);
+- 		if (ret =3D=3D -EEXIST)
+- 			dev_dbg(imxmd->md.dev, "%s: already added %s\n",
+- 				__func__, np ? np->name : devname);
+++		if (ret =3D=3D -EEXIST) {
+++			if (np)
+++				dev_dbg(imxmd->md.dev, "%s: already added %pOFn\n",
+++				__func__, np);
+++			else
+++				dev_dbg(imxmd->md.dev, "%s: already added %s\n",
+++				__func__, devname);
+++		}
+ +		return ret;
+  	}
+ -	asd =3D &imxasd->asd;
+ =20
+ -	if (fwnode) {
+ -		asd->match_type =3D V4L2_ASYNC_MATCH_FWNODE;
+ -		asd->match.fwnode =3D fwnode;
+ +	imxasd =3D to_imx_media_asd(asd);
+ +
+ +	if (devname)
+ +		imxasd->pdev =3D pdev;
+ +
+- 	dev_dbg(imxmd->md.dev, "%s: added %s, match type %s\n",
+- 		__func__, np ? np->name : devname, np ? "FWNODE" : "DEVNAME");
+++	if (fwnode)
++ 		dev_dbg(imxmd->md.dev, "%s: added %pOFn, match type FWNODE\n",
++ 			__func__, np);
+ -	} else {
+ -		asd->match_type =3D V4L2_ASYNC_MATCH_DEVNAME;
+ -		asd->match.device_name =3D devname;
+ -		imxasd->pdev =3D pdev;
+++	else
++ 		dev_dbg(imxmd->md.dev, "%s: added %s, match type DEVNAME\n",
++ 			__func__, devname);
+ -	}
+ -
+ -	list_add_tail(&imxasd->list, &imxmd->asd_list);
+ -
+ -	imxmd->subdev_notifier.num_subdevs++;
+ =20
+ -out:
+ -	mutex_unlock(&imxmd->mutex);
+ -	return ret;
+ +	return 0;
+  }
+ =20
+  /*
 
---Sig_/M7VLhcGUxPcnz2GqlmFUqhf
+--Sig_/nNaefXIMJ/AX9S.B1DBgi_D
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu605YACgkQAVBC80lX
-0Gy/ywf+JPsYvBPso7IaaUdSTrQmYtjcFcCJVpPZJKuqG9JLGQzOUhbGzDb9eoNi
-RaXTmLFVfKZk/P6WoXMEpHTl3hegI7Yd2JXTrbjLR49nOly/fDuF5lsb9hQS0FYX
-ZLTYd6Gjo4r6NvTsvui+dBib1cYrXzIyEIBSeqrbig0IMsBN/0BU6igPQtmJGwFc
-9r17zCiU6qfUPhmckRQMp9NWretboihD4qIKVgU4sIaTOi3M10K4ueJbrcv2UZw6
-Jc+yNGWHu5PhomlTeSox7n01DczYM5N6jZTAP4Ual8bTlv6SSp8zsZ5yuV1Pdmik
-EnqUpWPvAGm8lJCqM9GaGB5du1c1nw==
-=lCkY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu64W8ACgkQAVBC80lX
+0GxKJggAgJr2EtNxfcR22lRYhjeorG8FlKHyJ7dopiWh4atRkL+0VwDQ1Bctr3do
+sTf51G/Laajcj4c/T7S4yymV96ishnzt1jvmdK72RnVEhq6Rm+G58RK2iSA1skJg
+crJkuafgrTrg/VS5iawFe1EhgeTdxym7UumqVh7dbeGraMhfoTG8xRcqSwFrOOG0
+Wf0LPPBbRM6uKgat0JpAgNs3u/kFsBHHIS6mnhsZHCItax2CQvFKq9IsM9o1kZ8H
+fihX1iSZNEr3NUk66j8p3Xe7NA/teN1lHEiQkilg5XycY+TwoZU+7FjNXUXVksNo
+RpYpMmYotjkut2wkYhShCvHUHawg8A==
+=NfEr
 -----END PGP SIGNATURE-----
 
---Sig_/M7VLhcGUxPcnz2GqlmFUqhf--
+--Sig_/nNaefXIMJ/AX9S.B1DBgi_D--
