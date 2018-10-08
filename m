@@ -1,14 +1,13 @@
-From: Borislav Petkov <bp@suse.de>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20181008 build: 2 failures 22 warnings (next-20181008)
-Date: Mon, 8 Oct 2018 23:30:18 +0200
-Message-ID: <20181008213018.GL6490@zn.tnic>
-References: <E1g9cV0-0008Sg-4U@optimist> <20181008211109.GA4440@sirena.org.uk>
+Date: Mon, 8 Oct 2018 23:35:55 +0100
+Message-ID: <20181008223555.GC4440@sirena.org.uk>
+References: <E1g9cV0-0008Sg-4U@optimist> <20181008212021.GB4440@sirena.org.uk>
+ <20181008213006.GP120535@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============5011841797251374886=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20181008211109.GA4440@sirena.org.uk>
+In-Reply-To: <20181008213006.GP120535@bhelgaas-glaptop.roam.corp.google.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,38 +17,59 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, linux-pci@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-T24gTW9uLCBPY3QgMDgsIDIwMTggYXQgMTA6MTE6MDlQTSArMDEwMCwgTWFyayBCcm93biB3cm90
-ZToKPiBjYXVzZWQgYnkgM2EzODdjNmQ5NmU2OSAoeDg2L2thc2xyLCBBQ1BJL05VTUE6IEZpeCBL
-QVNMUiBidWlsZCBlcnJvcikKPiB3aGljaCBhZGRzIHRoZSBpbmNsdXNpb24gdW5jb25kaXRpb25h
-bGx5LgoKVGhpcyBzaG91bGQgZml4IGl0OgoKLS0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9rYXNs
-ci5oIHwgMiAtLQogZHJpdmVycy9hY3BpL251bWEuYyAgICAgICAgICB8IDQgKysrLQogMiBmaWxl
-cyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-YXJjaC94ODYvaW5jbHVkZS9hc20va2FzbHIuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL2thc2xy
-LmgKaW5kZXggOTVlZjNmYzAxZDEyLi5kYjdiYTJmZWI5NDcgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2
-L2luY2x1ZGUvYXNtL2thc2xyLmgKKysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20va2FzbHIuaApA
-QCAtNiwxMCArNiw4IEBAIHVuc2lnbmVkIGxvbmcga2FzbHJfZ2V0X3JhbmRvbV9sb25nKGNvbnN0
-IGNoYXIgKnB1cnBvc2UpOwogCiAjaWZkZWYgQ09ORklHX1JBTkRPTUlaRV9NRU1PUlkKIHZvaWQg
-a2VybmVsX3JhbmRvbWl6ZV9tZW1vcnkodm9pZCk7Ci12b2lkIGthc2xyX2NoZWNrX3BhZGRpbmco
-dm9pZCk7CiAjZWxzZQogc3RhdGljIGlubGluZSB2b2lkIGtlcm5lbF9yYW5kb21pemVfbWVtb3J5
-KHZvaWQpIHsgfQotc3RhdGljIGlubGluZSB2b2lkIGthc2xyX2NoZWNrX3BhZGRpbmcodm9pZCkg
-eyB9CiAjZW5kaWYgLyogQ09ORklHX1JBTkRPTUlaRV9NRU1PUlkgKi8KIAogI2VuZGlmCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2FjcGkvbnVtYS5jIGIvZHJpdmVycy9hY3BpL251bWEuYwppbmRleCA0
-NDA4ZTM3NjAwZWYuLmJhNjIwMDRmNGQ4NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9hY3BpL251bWEu
-YworKysgYi9kcml2ZXJzL2FjcGkvbnVtYS5jCkBAIC0zMiw3ICszMiw2IEBACiAjaW5jbHVkZSA8
-bGludXgvbnVtYS5oPgogI2luY2x1ZGUgPGxpbnV4L25vZGVtYXNrLmg+CiAjaW5jbHVkZSA8bGlu
-dXgvdG9wb2xvZ3kuaD4KLSNpbmNsdWRlIDxhc20va2FzbHIuaD4KIAogc3RhdGljIG5vZGVtYXNr
-X3Qgbm9kZXNfZm91bmRfbWFwID0gTk9ERV9NQVNLX05PTkU7CiAKQEAgLTQzMyw2ICs0MzIsOSBA
-QCBhY3BpX3RhYmxlX3BhcnNlX3NyYXQoZW51bSBhY3BpX3NyYXRfdHlwZSBpZCwKIAkJCQkJICAg
-IGhhbmRsZXIsIG1heF9lbnRyaWVzKTsKIH0KIAorLyogVG8gYmUgb3ZlcnJpZGRlbiBieSBhcmNo
-aXRlY3R1cmVzICovCit2b2lkIF9faW5pdCBfX3dlYWsga2FzbHJfY2hlY2tfcGFkZGluZyh2b2lk
-KSB7IH0KKwogaW50IF9faW5pdCBhY3BpX251bWFfaW5pdCh2b2lkKQogewogCWludCBjbnQgPSAw
-OwotLSAKMi4xOS4wLjI3MS5nZmU4MzIxZWMwNTdmCgoKLS0gClJlZ2FyZHMvR3J1c3MsCiAgICBC
-b3Jpcy4KClNVU0UgTGludXggR21iSCwgR0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwgSmFuZSBTbWl0
-aGFyZCwgR3JhaGFtIE5vcnRvbiwgSFJCIDIxMjg0IChBRyBOw7xybmJlcmcpCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
-aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
-c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+
+--===============5011841797251374886==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+Content-Disposition: inline
+
+
+--9Ek0hoCL9XbhcSqy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Oct 08, 2018 at 04:30:06PM -0500, Bjorn Helgaas wrote:
+> On Mon, Oct 08, 2018 at 10:20:21PM +0100, Mark Brown wrote:
+
+> > introduced in e3fbcc7c4b130(PCI/AER: Covertly inject errors with ftrace
+> > hooks).  This field is not present on arm.
+
+> I dropped e3fbcc7c4b130 and related patches already, so this should be gone
+> in my current "next" branch (18b4baa4d9fc).
+
+Great, thanks!
+
+--9Ek0hoCL9XbhcSqy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu728oACgkQJNaLcl1U
+h9AZKgf/XrttVoBik3Ae3xV3ITN2e/UhUOlxb95c666bag+2PI4WGvOF+roDvFUh
+pa9yUWVjqaymcEp8dMuHcfea2miQWzbuQhfnijfRjzWA8DCvz5R2W5TJBPAuSk22
+KzcF9sp+1tonxJK8M9mwz4I5/Gd5QPvH5txYvNGRdwLZClrayyhLfpyAhf4l1ZfO
+Z/hM7BNR86IOOCQsjbhM3Kn+du4fsg6tigszMep0CuYzERBQaia5Syg+spYfDw1u
+95ESxmwkA4OFBi9TU/DajKPqVlTLf+vmrHv+cNpXaQyTIc/slVpncy4Dr+j0AFWn
+BaNGTV6sESBZjBaFsovP9IYqiPKt0Q==
+=pUMI
+-----END PGP SIGNATURE-----
+
+--9Ek0hoCL9XbhcSqy--
+
+
+--===============5011841797251374886==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5011841797251374886==--
