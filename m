@@ -1,47 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
-Date: Tue, 9 Oct 2018 07:54:17 +1100
-Message-ID: <20181009075417.5bdfa00a@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20181008 build: 2 failures 22 warnings (next-20181008)
+Date: Mon, 8 Oct 2018 22:11:09 +0100
+Message-ID: <20181008211109.GA4440@sirena.org.uk>
+References: <E1g9cV0-0008Sg-4U@optimist>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u5TFqKa4.yTS2H6ptK9qICs"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============5285607044292413706=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1g9cV0-0008Sg-4U@optimist>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Borislav Petkov <bp@suse.de>, Peter Zijlstra <peterz@infradead.org>
+Cc: linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/u5TFqKa4.yTS2H6ptK9qICs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--===============5285607044292413706==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
 
-Commit
 
-  b7f5a2cd27b7 ("GFS2: Flush the GFS2 delete workqueue before stopping the =
-kernel threads")
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-is missing a Signed-off-by from its committer.
+On Mon, Oct 08, 2018 at 09:51:30PM +0100, Build bot for Mark Brown wrote:
 
---=20
-Cheers,
-Stephen Rothwell
+Today's -next fails to build an arm64 defconfig due to:
 
---Sig_/u5TFqKa4.yTS2H6ptK9qICs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 	arm64-defconfig
+> ../drivers/acpi/numa.c:34:23: fatal error: asm/kaslr.h: No such file or directory
+
+caused by 3a387c6d96e69 (x86/kaslr, ACPI/NUMA: Fix KASLR build error)
+which adds the inclusion unconditionally.
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu7w/kACgkQAVBC80lX
-0GylUQf+MB1IxXhH15CfriKBO3rzN0ZywjOgr8Vl0qD4e0xVQ+ItP9Dg5fISvl/s
-jaFbw9xywLOsu+PsoxQX8LEI4KZHkNnCxDZk/Hu2YXjoCHrG+Mrmc9OAzv2+g6Ju
-gVTjyyZFz8fBvrJfuCDEEZOVDBlYc7zCfgnQa7iFem1UAfy6T+spqeGJtsH8RqhW
-u8mdkrawuhCjdVjXb7tnk5A5nPL6tdaduvDa/wtsScUjXx+43EU8fqj5CdBOfwbS
-s7Qo/yND6ImSOag5ExNT8poAg/2wJFUM195ml512YV3KZ64GWFSKFMBoA5czLQpL
-/fVgUNrwbCLfXSqGKXLU5GOL29pvEg==
-=o/QI
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu7x+oACgkQJNaLcl1U
+h9CCyggAgNzS9q9fAmEsAkOxIFIdDuP50qrbyj+MnLeaRHi8jKimYSKataeHWEy4
+r88yUO7qVuISHPW5CZ3d/h6N8o8CEb3oX79goyDVug6vLHvmo07q2ueQy7oh4LqA
+It67ZbKWC5ws2Xo24CzLg8EuQu+q/7gNALywZImefTvIFbvbveQyZ9cxqq/wOIAI
+/O+KgQzn2YwElvV5uSUGEUch6+Ma3vYQ1YxlqUqObGB33AfgLw/sB1j3PpLV2d95
+XiqA345snuh1jiOHfXOtk00lEDdLffXm6inDTHqibgmOMbWkcUcYE9BO8aiWqCi7
+SIvI4vgd/g+MTkWVdCq/lsUmzq4LNg==
+=jPZ+
 -----END PGP SIGNATURE-----
 
---Sig_/u5TFqKa4.yTS2H6ptK9qICs--
+--vkogqOf2sHV7VnPd--
+
+
+--===============5285607044292413706==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5285607044292413706==--
