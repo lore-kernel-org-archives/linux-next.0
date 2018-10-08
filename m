@@ -1,85 +1,198 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Mon, 8 Oct 2018 19:03:41 +1100
-Message-ID: <20181008190341.5e396491@canb.auug.org.au>
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the jc_docs tree
+Date: Mon, 8 Oct 2018 11:13:16 +0300
+Message-ID: <20181008081315.GB6772@rapoport-lnx>
+References: <20181008183840.70ebfe94@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TSb.kuN_b+qfmosvMOwws=y"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181008183840.70ebfe94@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Borislav Petkov <bp@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Hildenbrand <david@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/TSb.kuN_b+qfmosvMOwws=y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 08, 2018 at 06:38:40PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the akpm tree got conflicts in:
+> 
+>   Documentation/memory-hotplug.txt
+>   Documentation/admin-guide/mm/memory-hotplug.rst
+> 
+> between commits:
+> 
+>   6bf53999a3a2 ("docs: move memory hotplug description into admin-guide/mm")
+>   98cee6742c80 ("docs/vm: split memory hotplug notifier description to Documentation/core-api")
+> 
+> from the jc_docs tree and patch:
+> 
+>   "memory-hotplug.txt: add some details about locking internals"
+> 
+> from the akpm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Hi all,
+Somehow I've managed to miss the patches from David :(
 
-After merging the akpm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+I should have called the new
+Documentation/core-api/memory-hotplug-notifier.rst memory-hotplug.rst and
+then the details about locking would fit there just fine.
 
-arch/x86/mm/kaslr.c:26:10: fatal error: linux/bootmem.h: No such file or di=
-rectory
- #include <linux/bootmem.h>
-          ^~~~~~~~~~~~~~~~~
+I can do the renaming and add the patch
 
-Caused by patch
+  "memory-hotplug.txt: add some details about locking internals"
 
-  "mm: remove include/linux/bootmem.h"
+on top of the jc_docs tree.
 
-interacting with commit
+Does it sound Ok?
 
-  3a387c6d96e6 ("x86/kaslr, ACPI/NUMA: Fix KASLR build error")
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc Documentation/admin-guide/mm/memory-hotplug.rst
+> index 0b9c83effaa4,ce4faa5530fa..000000000000
+> --- a/Documentation/admin-guide/mm/memory-hotplug.rst
+> +++ b/Documentation/admin-guide/mm/memory-hotplug.rst
+> @@@ -413,6 -413,128 +413,46 @@@ Need more implementation yet...
+>    - Notification completion of remove works by OS to firmware.
+>    - Guard from remove if not yet.
+>   
+>  -Memory hotplug event notifier
+>  -=============================
+>  -
+>  -Hotplugging events are sent to a notification queue.
+>  -
+>  -There are six types of notification defined in include/linux/memory.h:
+>  -
+>  -MEM_GOING_ONLINE
+>  -  Generated before new memory becomes available in order to be able to
+>  -  prepare subsystems to handle memory. The page allocator is still unable
+>  -  to allocate from the new memory.
+>  -
+>  -MEM_CANCEL_ONLINE
+>  -  Generated if MEMORY_GOING_ONLINE fails.
+>  -
+>  -MEM_ONLINE
+>  -  Generated when memory has successfully brought online. The callback may
+>  -  allocate pages from the new memory.
+>  -
+>  -MEM_GOING_OFFLINE
+>  -  Generated to begin the process of offlining memory. Allocations are no
+>  -  longer possible from the memory but some of the memory to be offlined
+>  -  is still in use. The callback can be used to free memory known to a
+>  -  subsystem from the indicated memory block.
+>  -
+>  -MEM_CANCEL_OFFLINE
+>  -  Generated if MEMORY_GOING_OFFLINE fails. Memory is available again from
+>  -  the memory block that we attempted to offline.
+>  -
+>  -MEM_OFFLINE
+>  -  Generated after offlining memory is complete.
+>  -
+>  -A callback routine can be registered by calling::
+>  -
+>  -  hotplug_memory_notifier(callback_func, priority)
+>  -
+>  -Callback functions with higher values of priority are called before callback
+>  -functions with lower values.
+>  -
+>  -A callback function must have the following prototype::
+>  -
+>  -  int callback_func(
+>  -    struct notifier_block *self, unsigned long action, void *arg);
+>  -
+>  -The first argument of the callback function (self) is a pointer to the block
+>  -of the notifier chain that points to the callback function itself.
+>  -The second argument (action) is one of the event types described above.
+>  -The third argument (arg) passes a pointer of struct memory_notify::
+>  -
+>  -	struct memory_notify {
+>  -		unsigned long start_pfn;
+>  -		unsigned long nr_pages;
+>  -		int status_change_nid_normal;
+>  -		int status_change_nid_high;
+>  -		int status_change_nid;
+>  -	}
+>  -
+>  -- start_pfn is start_pfn of online/offline memory.
+>  -- nr_pages is # of pages of online/offline memory.
+>  -- status_change_nid_normal is set node id when N_NORMAL_MEMORY of nodemask
+>  -  is (will be) set/clear, if this is -1, then nodemask status is not changed.
+>  -- status_change_nid_high is set node id when N_HIGH_MEMORY of nodemask
+>  -  is (will be) set/clear, if this is -1, then nodemask status is not changed.
+>  -- status_change_nid is set node id when N_MEMORY of nodemask is (will be)
+>  -  set/clear. It means a new(memoryless) node gets new memory by online and a
+>  -  node loses all memory. If this is -1, then nodemask status is not changed.
+>  -
+>  -  If status_changed_nid* >= 0, callback should create/discard structures for the
+>  -  node if necessary.
+>  -
+>  -The callback routine shall return one of the values
+>  -NOTIFY_DONE, NOTIFY_OK, NOTIFY_BAD, NOTIFY_STOP
+>  -defined in include/linux/notifier.h
+>  -
+>  -NOTIFY_DONE and NOTIFY_OK have no effect on the further processing.
+>  -
+>  -NOTIFY_BAD is used as response to the MEM_GOING_ONLINE, MEM_GOING_OFFLINE,
+>  -MEM_ONLINE, or MEM_OFFLINE action to cancel hotplugging. It stops
+>  -further processing of the notification queue.
+>  -
+>  -NOTIFY_STOP stops further processing of the notification queue.
+>  -
+> + 
+> + Locking Internals
+> + =================
+> + 
+> + When adding/removing memory that uses memory block devices (i.e. ordinary RAM),
+> + the device_hotplug_lock should be held to:
+> + 
+> + - synchronize against online/offline requests (e.g. via sysfs). This way, memory
+> +   block devices can only be accessed (.online/.state attributes) by user
+> +   space once memory has been fully added. And when removing memory, we
+> +   know nobody is in critical sections.
+> + - synchronize against CPU hotplug and similar (e.g. relevant for ACPI and PPC)
+> + 
+> + Especially, there is a possible lock inversion that is avoided using
+> + device_hotplug_lock when adding memory and user space tries to online that
+> + memory faster than expected:
+> + 
+> + - device_online() will first take the device_lock(), followed by
+> +   mem_hotplug_lock
+> + - add_memory_resource() will first take the mem_hotplug_lock, followed by
+> +   the device_lock() (while creating the devices, during bus_add_device()).
+> + 
+> + As the device is visible to user space before taking the device_lock(), this
+> + can result in a lock inversion.
+> + 
+> + onlining/offlining of memory should be done via device_online()/
+> + device_offline() - to make sure it is properly synchronized to actions
+> + via sysfs. Holding device_hotplug_lock is advised (to e.g. protect online_type)
+> + 
+> + When adding/removing/onlining/offlining memory or adding/removing
+> + heterogeneous/device memory, we should always hold the mem_hotplug_lock in
+> + write mode to serialise memory hotplug (e.g. access to global/zone
+> + variables).
+> + 
+> + In addition, mem_hotplug_lock (in contrast to device_hotplug_lock) in read
+> + mode allows for a quite efficient get_online_mems/put_online_mems
+> + implementation, so code accessing memory can protect from that memory
+> + vanishing.
+> + 
+> + 
+>   Future Work
+>   ===========
+>   
 
-from the tip tree.
 
-I have added the following patch for today:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 8 Oct 2018 18:57:00 +1100
-Subject: [PATCH] x86/kaslr, ACPI/NUMA: fix for linux/bootmem.h removal
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/mm/kaslr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index b3471388288d..ad80bdc690c1 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -23,7 +23,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/random.h>
--#include <linux/bootmem.h>
-+#include <linux/memblock.h>
-=20
- #include <asm/pgalloc.h>
- #include <asm/pgtable.h>
---=20
-2.18.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TSb.kuN_b+qfmosvMOwws=y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu7D10ACgkQAVBC80lX
-0Gxs1wgAhN0k56uPNNqElIsc/tF2wGbnr4EqUSzFmRVck/kvGqtiuC8dcek7kh57
-DcVxoVG6DZa7wpD6slEldACbSwS1xU82M0D6z2pppnHYqlHRq0cGfpAjzBkSVgmw
-QFYiS3dyldFKlckrDi/U2g+30j5WKIF2lpDMJZxzZSr/UwppUJeIOfoKrrv58qcA
-5Te52Bh/DHnnOahUZGSs/m15mbG+EUUSXiBNx1JYz2aEY0/jZI9rrt3ih9NEabsF
-GsVLiRo59CBghIBqt1UIL9JS6lbepvoj5FRf0roBxQnYNqhu4/1tjrG8G+uOXpqc
-4ga1W8vmuWVMncKsq8xBBSCUVAxlfw==
-=2pwn
------END PGP SIGNATURE-----
-
---Sig_/TSb.kuN_b+qfmosvMOwws=y--
+-- 
+Sincerely yours,
+Mike.
