@@ -1,75 +1,100 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20181008 build: 2 failures 22 warnings (next-20181008)
-Date: Mon, 8 Oct 2018 23:35:55 +0100
-Message-ID: <20181008223555.GC4440@sirena.org.uk>
-References: <E1g9cV0-0008Sg-4U@optimist> <20181008212021.GB4440@sirena.org.uk>
- <20181008213006.GP120535@bhelgaas-glaptop.roam.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s390 tree with the
+ compiler-attributes tree
+Date: Tue, 9 Oct 2018 10:13:16 +1100
+Message-ID: <20181009101316.61ab0868@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5011841797251374886=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181008213006.GP120535@bhelgaas-glaptop.roam.corp.google.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, linux-pci@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/OZ40gKq.MaOLhvnMPRBW3dI"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vasily Gorbik <gor@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/OZ40gKq.MaOLhvnMPRBW3dI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---===============5011841797251374886==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
-Content-Disposition: inline
+Hi all,
 
+Today's linux-next merge of the s390 tree got a conflict in:
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  include/linux/compiler-gcc.h
 
-On Mon, Oct 08, 2018 at 04:30:06PM -0500, Bjorn Helgaas wrote:
-> On Mon, Oct 08, 2018 at 10:20:21PM +0100, Mark Brown wrote:
+between commits:
 
-> > introduced in e3fbcc7c4b130(PCI/AER: Covertly inject errors with ftrace
-> > hooks).  This field is not present on arm.
+  5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores synt=
+ax")
+  a3f8a30f3f00 ("Compiler Attributes: use feature checks instead of version=
+ checks")
 
-> I dropped e3fbcc7c4b130 and related patches already, so this should be gone
-> in my current "next" branch (18b4baa4d9fc).
+from the compiler-attributes tree and commit:
 
-Great, thanks!
+  65bdf3bbf56e ("compiler: introduce __no_sanitize_address_or_inline")
 
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
+from the s390 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This is
+now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your
+tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/compiler-gcc.h
+index cfac027e1625,997ade08a79d..000000000000
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@@ -147,7 -201,27 +147,14 @@@
+  #define KASAN_ABI_VERSION 3
+  #endif
+ =20
+ -#if GCC_VERSION >=3D 40902
+ -/*
+ - * Tell the compiler that address safety instrumentation (KASAN)
+ - * should not be applied to that function.
+ - * Conflicts with inlining: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=
+=3D67368
+ - */
+ -#define __no_sanitize_address __attribute__((no_sanitize_address))
+ -#ifdef CONFIG_KASAN
+++#if (GCC_VERSION >=3D 40902) && defined(CONFIG_KASAN)
++ #define __no_sanitize_address_or_inline					\
++ 	__no_sanitize_address __maybe_unused notrace
++ #else
++ #define __no_sanitize_address_or_inline inline
++ #endif
+ -#endif
++=20
+  #if GCC_VERSION >=3D 50100
+ -/*
+ - * Mark structures as requiring designated initializers.
+ - * https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
+ - */
+ -#define __designated_init __attribute__((designated_init))
+  #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
+  #endif
+ =20
+
+--Sig_/OZ40gKq.MaOLhvnMPRBW3dI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu728oACgkQJNaLcl1U
-h9AZKgf/XrttVoBik3Ae3xV3ITN2e/UhUOlxb95c666bag+2PI4WGvOF+roDvFUh
-pa9yUWVjqaymcEp8dMuHcfea2miQWzbuQhfnijfRjzWA8DCvz5R2W5TJBPAuSk22
-KzcF9sp+1tonxJK8M9mwz4I5/Gd5QPvH5txYvNGRdwLZClrayyhLfpyAhf4l1ZfO
-Z/hM7BNR86IOOCQsjbhM3Kn+du4fsg6tigszMep0CuYzERBQaia5Syg+spYfDw1u
-95ESxmwkA4OFBi9TU/DajKPqVlTLf+vmrHv+cNpXaQyTIc/slVpncy4Dr+j0AFWn
-BaNGTV6sESBZjBaFsovP9IYqiPKt0Q==
-=pUMI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu75IwACgkQAVBC80lX
+0GwUcAf9ElqlYEEQKHZtVoRq3hNCyhODoYcgeCLW91emNWo6OKgXIzz02TxfqvXQ
+RyvqB02vRGwVd8ju6M/3bhAC1sJHb964x/kE9N7JdvmBhMy5N1Qm8PqmKG83Bzix
++zU1JX6PfWfSxLg3ADzOIzaiw/n+1Zi0O8n2O+tP/PUPa+wQwhM7+PBapEVPhDch
+MYL+YanQvDBqkSpvRYq9rsRKawO2ikr6IK/Td9n03PNGWHT1up//elO9dhg+cb51
+sJz2z6dVMSrEd5L5UbS/QM1ug+iusZyXwKMTMUFReEHFIwTQ0XynarTxAv2Dan1j
+3smBx+d1Q1dmcFQke2xmkFFc1O0zfA==
+=9TYY
 -----END PGP SIGNATURE-----
 
---9Ek0hoCL9XbhcSqy--
-
-
---===============5011841797251374886==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5011841797251374886==--
+--Sig_/OZ40gKq.MaOLhvnMPRBW3dI--
