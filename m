@@ -1,7 +1,7 @@
-From: Greg KH <gregkh@linux-foundation.org>
+From: Peter Oberparleiter <oberpar@linux.ibm.com>
 Subject: Re: linux-next: build warnings from the build of Linus' tree
-Date: Thu, 11 Oct 2018 12:37:50 +0200
-Message-ID: <20181011103750.GA29735@kroah.com>
+Date: Thu, 11 Oct 2018 13:09:53 +0200
+Message-ID: <c885947f-2f66-745f-f8c9-1b3dd8162989@linux.ibm.com>
 References: <20180824172053.20fa197294f51496dcec5605@kernel.org>
  <20180824204756.e787765461975cd1e27502dc@kernel.org>
  <20180824224211.2934d7c0@canb.auug.org.au>
@@ -11,43 +11,46 @@ References: <20180824172053.20fa197294f51496dcec5605@kernel.org>
  <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
  <20181011114809.5590ecb3@canb.auug.org.au>
  <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
- <20181011205849.6f6645fa@canb.auug.org.au>
+ <20181011205849.6f6645fa@canb.auug.org.au> <20181011103750.GA29735@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181011205849.6f6645fa@canb.auug.org.au>
+In-Reply-To: <20181011103750.GA29735@kroah.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Peter Oberparleiter <oberpar@linux.ibm.com>, arnd@arndb.de, Masami Hiramatsu <mhiramat@kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+To: Greg KH <gregkh@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: arnd@arndb.de, Masami Hiramatsu <mhiramat@kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 11, 2018 at 08:58:49PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On 11.10.2018 12:37, Greg KH wrote:
+> On Thu, Oct 11, 2018 at 08:58:49PM +1100, Stephen Rothwell wrote:
+>> On Thu, 11 Oct 2018 09:44:36 +0200 Peter Oberparleiter <oberpar@linux.ibm.com> wrote:
+>>> On 11.10.2018 02:48, Stephen Rothwell wrote:
+>>>> OK, I have been carrying this "quick fix" patch in linux-next since
+>>>> September 7.  Is anyone going to pick this up and send it to
+>>>> Greg/Linus, please?  
+>>>
+>>> Sorry about that - I posted a modified fix at
+>>>
+>>>   https://lkml.org/lkml/2018/9/13/367
+>>>
+>>> but didn't get a response. I guess I should have reposted sooner. But
+>>> before I do that:
+>>>
+>>> Arnd: Is this something that you can pick up or should I include someone
+>>> else?
+>>
+>> It would be nice if it could go in before the v4.19 release because the
+>> commit that exposed the warnings went into v4.19-rc1.
 > 
-> On Thu, 11 Oct 2018 09:44:36 +0200 Peter Oberparleiter <oberpar@linux.ibm.com> wrote:
-> >
-> > On 11.10.2018 02:48, Stephen Rothwell wrote:
-> > > OK, I have been carrying this "quick fix" patch in linux-next since
-> > > September 7.  Is anyone going to pick this up and send it to
-> > > Greg/Linus, please?  
-> > 
-> > Sorry about that - I posted a modified fix at
-> > 
-> >   https://lkml.org/lkml/2018/9/13/367
-> > 
-> > but didn't get a response. I guess I should have reposted sooner. But
-> > before I do that:
-> > 
-> > Arnd: Is this something that you can pick up or should I include someone
-> > else?
-> 
-> It would be nice if it could go in before the v4.19 release because the
-> commit that exposed the warnings went into v4.19-rc1.
+> I agree.  If someone could at least review/ack it, that would be great.
+> What tree does this normally go through?
 
-I agree.  If someone could at least review/ack it, that would be great.
-What tree does this normally go through?
+gcov-kernel related changes are usually picked up by Andrew Morton (on
+cc now). In this case I wasn't sure who best to address since its mostly
+asm-generic/linker script changes.
 
-thanks,
-
-greg k-h
+-- 
+Peter Oberparleiter
+Linux on Z Development - IBM Germany
