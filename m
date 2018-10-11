@@ -1,69 +1,72 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm-ppc tree with the kvm-arm
- tree
-Date: Thu, 11 Oct 2018 10:58:23 +0200
-Message-ID: <044aa41c-d42d-0bab-b9e8-0a14f018e084@redhat.com>
-References: <20181010132224.3bee4dfd@canb.auug.org.au>
- <20181011130623.59a160f5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings from the build of Linus' tree
+Date: Thu, 11 Oct 2018 20:58:49 +1100
+Message-ID: <20181011205849.6f6645fa@canb.auug.org.au>
+References: <20180824133206.4218c2e5@canb.auug.org.au>
+        <20180824172053.20fa197294f51496dcec5605@kernel.org>
+        <20180824204756.e787765461975cd1e27502dc@kernel.org>
+        <20180824224211.2934d7c0@canb.auug.org.au>
+        <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org>
+        <20180828072333.36af4d5d@canb.auug.org.au>
+        <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
+        <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
+        <20181011114809.5590ecb3@canb.auug.org.au>
+        <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EGgn+pDjhFAk.Ev/HHXFnOE"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181011130623.59a160f5@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Mackerras <paulus@ozlabs.org>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc: arnd@arndb.de, Masami Hiramatsu <mhiramat@kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, gregkh@linux-foundation.org, Linus <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On 11/10/2018 04:06, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 10 Oct 2018 13:22:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the kvm-ppc tree got a conflict in:
->>
->>   include/uapi/linux/kvm.h
->>
->> between commit:
->>
->>   233a7cb23531 ("kvm: arm64: Allow tuning the physical address size for VM")
->>
->> from the kvm-arm tree and commit:
->>
->>   aa069a996951 ("KVM: PPC: Book3S HV: Add a VM capability to enable nested virtualization")
->>
->> from the kvm-ppc tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->>
->> -- 
->> Cheers,
->> Stephen Rothwell
->>
->> diff --cc include/uapi/linux/kvm.h
->> index 95aa73ca65dc,7f2ff3a76995..000000000000
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@@ -962,7 -954,7 +963,8 @@@ struct kvm_ppc_resize_hpt 
->>   #define KVM_CAP_NESTED_STATE 157
->>   #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
->>   #define KVM_CAP_MSR_PLATFORM_INFO 159
->>  -#define KVM_CAP_PPC_NESTED_HV 160
->>  +#define KVM_CAP_ARM_VM_IPA_SIZE 160 /* returns maximum IPA bits for a VM */
->> ++#define KVM_CAP_PPC_NESTED_HV 161
->>   
->>   #ifdef KVM_CAP_IRQ_ROUTING
->>   
-> 
-> This is now a conflict between the kvm tree and the kvm-arm tree.
+--Sig_/EGgn+pDjhFAk.Ev/HHXFnOE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Indeed, and ARM will be bumped to 161 (whoever comes first to the kvm
-tree wins).
+Hi all,
 
-Paolo
+On Thu, 11 Oct 2018 09:44:36 +0200 Peter Oberparleiter <oberpar@linux.ibm.c=
+om> wrote:
+>
+> On 11.10.2018 02:48, Stephen Rothwell wrote:
+> > OK, I have been carrying this "quick fix" patch in linux-next since
+> > September 7.  Is anyone going to pick this up and send it to
+> > Greg/Linus, please? =20
+>=20
+> Sorry about that - I posted a modified fix at
+>=20
+>   https://lkml.org/lkml/2018/9/13/367
+>=20
+> but didn't get a response. I guess I should have reposted sooner. But
+> before I do that:
+>=20
+> Arnd: Is this something that you can pick up or should I include someone
+> else?
+
+It would be nice if it could go in before the v4.19 release because the
+commit that exposed the warnings went into v4.19-rc1.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EGgn+pDjhFAk.Ev/HHXFnOE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu/HtkACgkQAVBC80lX
+0GyTegf+Ig7CBxbIa5giF6HtY4eEjmfP3pXGwhrQC7NLDPbPGx3uEheT+/X1L3P8
+56v+bEZMpO7c1hISVSIy8y8b3LlH2+iCCn8FQauDIE71kxGZRy6Cz01shzs0UziK
+Ya9afDxHS0RwaBrXnN93ds42V6GR3Vxkvc+SAhv+8+Rx48HJYJB9HS40lNVtMYB3
++svQ83T5YbK0NrOs5M/ilKJvXBoynHbj1Q6Efb+VmO0/d4dnYtL4dLjs+f9rXn6j
+DZCzN/fN4mf2ivMt32OsM8/VizxubiwZUzc3wBzDT2x8r2z1vUYj7NdDREdCOOMW
+8oJ04A4E8l1CbdM4pq+M4+cueH8vwA==
+=Z44O
+-----END PGP SIGNATURE-----
+
+--Sig_/EGgn+pDjhFAk.Ev/HHXFnOE--
