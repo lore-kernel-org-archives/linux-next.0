@@ -1,29 +1,57 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with the
- mac80211-next tree
-Date: Thu, 11 Oct 2018 20:49:17 +0800
-Message-ID: <20181011124917.iekto52aeg3ouccx@gondor.apana.org.au>
-References: <20181011111329.253f0689@canb.auug.org.au>
- <1539252537.3687.209.camel@sipsolutions.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Oct 11
+Date: Thu, 11 Oct 2018 06:27:16 -0700
+Message-ID: <20181011132716.GA18892@roeck-us.net>
+References: <20181011162343.17787168@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1539252537.3687.209.camel@sipsolutions.net>
+In-Reply-To: <20181011162343.17787168@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 11, 2018 at 12:08:57PM +0200, Johannes Berg wrote:
->
-> Herbert, maybe you can drop the patch from the crypto tree since my
-> change also removes the VLA usage?
+On Thu, Oct 11, 2018 at 04:23:43PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20181010:
+> 
+> The crypto tree gained conflicts against the mac80211-next tree.
+> 
+> Non-merge commits (relative to Linus' tree): 9625
+>  9096 files changed, 465434 insertions(+), 197078 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-Sorry but it's too late now.
+Build results:
+	total: 135 pass: 123 fail: 12
+Failed builds: 
+	alpha:allmodconfig 
+	arm64:allmodconfig 
+	m68k:defconfig 
+	m68k:allmodconfig 
+	mips:allmodconfig 
+	parisc:allmodconfig 
+	powerpc:allmodconfig 
+	powerpc:ppc6xx_defconfig 
+	riscv:defconfig 
+	s390:allmodconfig 
+	sparc64:allmodconfig 
+	xtensa:allmodconfig 
+Qemu test results:
+	total: 318 pass: 277 fail: 41
+Failed tests: 
+	arm:palmetto-bmc:aspeed_g4_defconfig:aspeed-bmc-opp-palmetto 
+	arm:romulus-bmc:aspeed_g5_defconfig:aspeed-bmc-opp-romulus 
+	...
+	[39 more]
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+In addition to yesterday's failures, the above two qemu tests crash
+silently, ie without console log. That means they crash before the
+console is activated and I have not figured out how to get earlycon
+to work.
+
+Guenter
