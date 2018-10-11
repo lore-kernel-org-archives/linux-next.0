@@ -1,91 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL] A couple of warning fixes
-Date: Fri, 12 Oct 2018 09:12:46 +1100
-Message-ID: <20181012091246.05e8d4ef@canb.auug.org.au>
-References: <20180824172053.20fa197294f51496dcec5605@kernel.org>
-        <20180824204756.e787765461975cd1e27502dc@kernel.org>
-        <20180824224211.2934d7c0@canb.auug.org.au>
-        <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org>
-        <20180828072333.36af4d5d@canb.auug.org.au>
-        <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
-        <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
-        <20181011114809.5590ecb3@canb.auug.org.au>
-        <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
-        <20181011205849.6f6645fa@canb.auug.org.au>
-        <20181011103750.GA29735@kroah.com>
-        <CAK8P3a3DTbcSgOEqt-zAsX9DpVSOmS6apYXXkRHK2FKc5mvW2Q@mail.gmail.com>
+Subject: Re: next-20181008 build: 2 failures 22 warnings (next-20181008)
+Date: Fri, 12 Oct 2018 10:37:58 +1100
+Message-ID: <20181012103758.51c7befa@canb.auug.org.au>
+References: <E1g9cV0-0008Sg-4U@optimist> <20181008211109.GA4440@sirena.org.uk>
+ <20181008213018.GL6490@zn.tnic>
+ <20181010152704.337ee630@canb.auug.org.au>
+ <20181010043358.GA5924@zn.tnic>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ctpuL9E/W36PAbp7PSlxH9+"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a3DTbcSgOEqt-zAsX9DpVSOmS6apYXXkRHK2FKc5mvW2Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Peter Oberparleiter <oberpar@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+Content-Type: multipart/mixed; boundary="===============1860299239751766978=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181010043358.GA5924@zn.tnic>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Borislav Petkov <bp@suse.de>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ctpuL9E/W36PAbp7PSlxH9+
+--===============1860299239751766978==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p7y5g6AhHWs++1gOW_J.Z11"; protocol="application/pgp-signature"
+
+--Sig_/p7y5g6AhHWs++1gOW_J.Z11
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Boris,
 
-[Hopefully you and others don't mind fetching these from me directly.]
-[My first pull request, let me know if I did something wrong.]
+On Wed, 10 Oct 2018 06:33:59 +0200 Borislav Petkov <bp@suse.de> wrote:
+>
+> On Wed, Oct 10, 2018 at 03:27:04PM +1100, Stephen Rothwell wrote:
+> > I have added that to linux-next today (pending this or something else
+> > turning up in the tip tree). =20
+>=20
+> I have queued a fixed version in the meantime:
+>=20
+> https://git.kernel.org/tip/9d94e8b1d4f94a3c4cee5ad11a1be460cd070839
 
-The following changes since commit 0778a9f2dd924c3af41971ba40eec44793aea531:
-
-  Merge branch 'for-4.19-fixes' of git://git.kernel.org/pub/scm/linux/kerne=
-l/git/tj/cgroup (2018-10-11 19:24:01 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/sfr/next-fixes.git tags/nex=
-t-fixes-20181012
-
-for you to fetch changes up to 52c8ee5bad8f33d02c567f6609f43d69303fc48d:
-
-  vmlinux.lds.h: Fix linker warnings about orphan .LPBX sections (2018-10-1=
-2 08:55:29 +1100)
-
-----------------------------------------------------------------
-Two fixes from Peter Oberparleiter <oberpar@linux.ibm.com>:
-
-Commit
-
-  6b7dca401cb1 ("tracing: Allow gcov profiling on only ftrace subsystem")
-
-uncovered linker problems when using gcov kernel profiling on some
-architectures. These problems were likely introduced earlier, and are
-possibly related to compiler changes.
-
-----------------------------------------------------------------
-Peter Oberparleiter (2):
-      vmlinux.lds.h: Fix incomplete .text.exit discards
-      vmlinux.lds.h: Fix linker warnings about orphan .LPBX sections
-
- arch/arm/kernel/vmlinux.lds.h     | 2 ++
- include/asm-generic/vmlinux.lds.h | 6 +++---
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
+OK, I will use that until it turns up in the tip auto-latest branch.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ctpuL9E/W36PAbp7PSlxH9+
+--Sig_/p7y5g6AhHWs++1gOW_J.Z11
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu/yt4ACgkQAVBC80lX
-0GwGoAf+PY8Ml6XVU/yR/op0MHvnQExzUlKzKnsI29NFY0HlDhyfKZX4b+xgd+/J
-opYztMYtOgPl8cT9UwSo63Q1eMJ6Lrx5VCSPZ3mwIRAGv6FxkFzZGPNt8nFUX5zl
-ZhmIzQiwSZSnKI64Glqwv3UI+FSFSwlqB7V6lYqI3jLkha4rabJ0AVD/qip3qlzU
-Sfy5zu8sBghhBKuCJFxBN/y+us08/eF5ziFtMVw40Z+gHhKSg6gP+ZoxCPDPI2ey
-DEHiOlvR5t2T2+GLg5pzqVGw9KUH9f93UL7p1bqGHWuOMSCHt+JeYQs3kgqdT3gZ
-lSm/rlIdOba2fwnulGy19goB9FYzaQ==
-=W+zP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu/3tYACgkQAVBC80lX
+0GxMhAf/Ycd9J/YtqoDRSW8nmfB25Zl+d/zN2Kv93fYiqqHHhkwYDcY/2Mi4byNP
+osiMsSNl0H4G6C2l+MX+MB/evh6VgPXyFb/7RDyZRAVKT8OkwyyDzpK0/P4QkFlL
+d/YUigm4lppWbxDQ4ojHtQmcR1F3PUTReK+gZSmJRQVwj3EvuwR83Y1HPMkKRVKe
+Cq2iVMfEw8CN85+2D/pvjwofHntBHn9B3p0rtOw93QvlkcD1eeEKd3wy5X1VdjcW
+bJ0aYeXk3G3VLfW/KLNaZ+KW9vKpwaKi1qE2ZrIds2fNEDzLsIrRCoLLtVzZTXQr
+4muoCrlKUEQGNyIgflMman7mk/wrQA==
+=O7be
 -----END PGP SIGNATURE-----
 
---Sig_/ctpuL9E/W36PAbp7PSlxH9+--
+--Sig_/p7y5g6AhHWs++1gOW_J.Z11--
+
+
+--===============1860299239751766978==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1860299239751766978==--
