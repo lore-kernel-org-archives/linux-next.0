@@ -1,56 +1,29 @@
-From: Peter Oberparleiter <oberpar@linux.ibm.com>
-Subject: Re: linux-next: build warnings from the build of Linus' tree
-Date: Thu, 11 Oct 2018 13:09:53 +0200
-Message-ID: <c885947f-2f66-745f-f8c9-1b3dd8162989@linux.ibm.com>
-References: <20180824172053.20fa197294f51496dcec5605@kernel.org>
- <20180824204756.e787765461975cd1e27502dc@kernel.org>
- <20180824224211.2934d7c0@canb.auug.org.au>
- <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org>
- <20180828072333.36af4d5d@canb.auug.org.au>
- <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
- <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
- <20181011114809.5590ecb3@canb.auug.org.au>
- <d5b166d6-461c-f382-e3d2-8993b845bd5a@linux.ibm.com>
- <20181011205849.6f6645fa@canb.auug.org.au> <20181011103750.GA29735@kroah.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the
+ mac80211-next tree
+Date: Thu, 11 Oct 2018 20:49:17 +0800
+Message-ID: <20181011124917.iekto52aeg3ouccx@gondor.apana.org.au>
+References: <20181011111329.253f0689@canb.auug.org.au>
+ <1539252537.3687.209.camel@sipsolutions.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181011103750.GA29735@kroah.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1539252537.3687.209.camel@sipsolutions.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: arnd@arndb.de, Masami Hiramatsu <mhiramat@kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-On 11.10.2018 12:37, Greg KH wrote:
-> On Thu, Oct 11, 2018 at 08:58:49PM +1100, Stephen Rothwell wrote:
->> On Thu, 11 Oct 2018 09:44:36 +0200 Peter Oberparleiter <oberpar@linux.ibm.com> wrote:
->>> On 11.10.2018 02:48, Stephen Rothwell wrote:
->>>> OK, I have been carrying this "quick fix" patch in linux-next since
->>>> September 7.  Is anyone going to pick this up and send it to
->>>> Greg/Linus, please?  
->>>
->>> Sorry about that - I posted a modified fix at
->>>
->>>   https://lkml.org/lkml/2018/9/13/367
->>>
->>> but didn't get a response. I guess I should have reposted sooner. But
->>> before I do that:
->>>
->>> Arnd: Is this something that you can pick up or should I include someone
->>> else?
->>
->> It would be nice if it could go in before the v4.19 release because the
->> commit that exposed the warnings went into v4.19-rc1.
-> 
-> I agree.  If someone could at least review/ack it, that would be great.
-> What tree does this normally go through?
+On Thu, Oct 11, 2018 at 12:08:57PM +0200, Johannes Berg wrote:
+>
+> Herbert, maybe you can drop the patch from the crypto tree since my
+> change also removes the VLA usage?
 
-gcov-kernel related changes are usually picked up by Andrew Morton (on
-cc now). In this case I wasn't sure who best to address since its mostly
-asm-generic/linker script changes.
+Sorry but it's too late now.
 
+Cheers,
 -- 
-Peter Oberparleiter
-Linux on Z Development - IBM Germany
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
