@@ -1,52 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the scsi-mkp tree
-Date: Fri, 12 Oct 2018 16:10:51 +1100
-Message-ID: <20181012161051.34223689@canb.auug.org.au>
+Subject: linux-next: manual merge of the xarray tree with the nnvdimm-fixes
+ tree
+Date: Fri, 12 Oct 2018 16:54:54 +1100
+Message-ID: <20181012165454.06e718a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KHqK1_6L2xiani+aCG0g2.z"; protocol="application/pgp-signature"
+ boundary="Sig_/ucItC2GgZun5DunlZq4arx."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Avri Altman <avri.altman@wdc.com>
+To: Matthew Wilcox <willy@infradead.org>, Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/KHqK1_6L2xiani+aCG0g2.z
+--Sig_/ucItC2GgZun5DunlZq4arx.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the scsi-mkp tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the xarray tree got a conflict in:
 
-./usr/include/scsi/scsi_bsg_ufs.h:45: found __[us]{8,16,32,64} type without=
- #include <linux/types.h>
+  fs/dax.c
 
-Introduced by commits
+between commit:
 
-  a851b2bd3632 ("scsi: uapi: ufs: Make utp_upiu_req visible to user space")
-  e77044c5a842 ("scsi: ufs-bsg: Add support for uic commands in ufs_bsg_req=
-uest()")
+  d7782145e1ad ("filesystem-dax: Fix dax_layout_busy_page() livelock")
+
+from the nvdimm-fixes tree and commit:
+
+  0995344c1493 ("dax: Convert dax_layout_busy_page to XArray")
+
+from the xarray tree.
+
+I fixed it up (I just used the latter - please let me know if more id
+needed) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/KHqK1_6L2xiani+aCG0g2.z
+--Sig_/ucItC2GgZun5DunlZq4arx.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvALNsACgkQAVBC80lX
-0GyV9Qf8CC42pjmBm+cWGHaPt+OS1yyHafI3aO6UrYXaueLBkNk186OZhGBf32Kd
-FQQoVB7u22VNtlRlopYofiVdygR/s8QesHDm8ZWUsouPO2RIUoTRHvj7s/2qG/PI
-QDpg0Xxmp1xY9QtrSXTAg31KqcFXwr86EjogWDHKm/8pmH/O/GcyFWwIsdhT6oWt
-ViDpyXd1wFS6tj7xfqiIz4yidD6zNnIdMgpJkKIQOq/HnJsVzRy9o8eiZjzgIFIl
-XC1bzLB0HhCZ9VukSmc2BgogbBQxUsR24JwxhVc0zotSFSvaGZrIW3K+M2cSW7M/
-QhE9o8jwmwEgWk5+jCZ4L9QF6xkOtQ==
-=F+6U
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvANy4ACgkQAVBC80lX
+0GwwoQgAn2jVpohp1PLdSxczHpJOFMr7hOCuRPkWcg/SqgKD6MTEJ+bulMUaF54y
+iHdxfPUhlfrCJHwUhwdHphbUPyXdWvwJ3qGmU2esCvqPPlNUzDNujA/MfeLiUYz6
+BwilCBytI/gk2Q9Jdv41/aTjyK5QWFpUJ8r/vjAvC5IWLVWH5RZ5GlA4X1scdTO3
+hfKwVpMUWxVBut+MTRDSz4qXoBuh4ju5eeh8Xdhnab5xObMa7cnNlAxkd9T5nPoK
+KZR+33pzK1C+WT/fZWNy6rWQSPRX/nbQIuqZOm7tQyBKHERIcw9I2hDlYGzn1g/d
+B/hlTI77fFWWO3vnKu0jowdnRpBCFw==
+=NeuP
 -----END PGP SIGNATURE-----
 
---Sig_/KHqK1_6L2xiani+aCG0g2.z--
+--Sig_/ucItC2GgZun5DunlZq4arx.--
