@@ -1,56 +1,46 @@
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Subject: Re: [BUG][linux-next][ppc] kernel panic - not syncing:
- stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
-Date: Fri, 12 Oct 2018 10:08:39 +0200
-Message-ID: <eef38553-779a-c7f5-500f-145dbf4b6a49@c-s.fr>
-References: <1539330331.17569.32.camel@abdul.in.ibm.com>
- <1539330499.17569.33.camel@abdul.in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the tty tree
+Date: Fri, 12 Oct 2018 19:15:09 +1100
+Message-ID: <20181012191509.4ad4e5a9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.o_89X+80RiejlPgVmd8k_+"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539330499.17569.33.camel@abdul.in.ibm.com>
-Content-Language: fr
 Sender: linux-kernel-owner@vger.kernel.org
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, npiggin <npiggin@gmail.com>, linux-next <linux-next@vger.kernel.org>, manvanth <manvanth@linux.vnet.ibm.com>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/.o_89X+80RiejlPgVmd8k_+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Greg,
 
-Le 12/10/2018 à 09:48, Abdul Haleem a écrit :
-> On Fri, 2018-10-12 at 13:15 +0530, Abdul Haleem wrote:
->> Greeting's
->>
->> Today's linux-next fails to boot on powerpc bare-metal with this error
->>
->> POWER8 performance monitor hardware support registered
->> rcu: Hierarchical SRCU implementation.
->> smp: Bringing up secondary CPUs ...
->> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __schedule+0x978/0xa80
->> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc7-next-20181010-autotest-autotest #1
->> Call Trace:
->> [c000001fed5b3bf0] [c000000000a0ef3c] dump_stack+0xb0/0xf4 (unreliable)
->> [c000001fed5b3c30] [c0000000000f9d68] panic+0x140/0x308
->> [c000001fed5b3cc0] [c0000000000f9844] __stack_chk_fail+0x24/0x30
->> [c000001fed5b3d20] [c000000000a2c3a8] __schedule+0x978/0xa80
->> [c000001fed5b3e00] [c000000000a2c9b4] schedule_idle+0x34/0x60
->> [c000001fed5b3e30] [c00000000013d344] do_idle+0x224/0x3d0
->> [c000001fed5b3ec0] [c00000000013d6e0] cpu_startup_entry+0x30/0x50
->> [c000001fed5b3ef0] [c000000000047f34] start_secondary+0x4d4/0x520
->> [c000001fed5b3f90] [c00000000000b370] start_secondary_prolog+0x10/0x14
->> Rebooting in 10 seconds..
->>
->> Machine: Power 8 bare-metal
->> kernel version: 4.19.0-rc7-next-20181010
->> gcc version: 4.8.5 20150623
->> config attach
-> 
-> Attaching the kernel config file
-> 
+Commit
 
-# Linux/powerpc 4.11.0-rc4 Kernel Configuration
+  c9a8e5fce009 ("tty: wipe buffer.")
 
-This is not the correct config file. Can you send the .config ?
+is missing a Signed-off-by from its author.
 
-Christophe
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.o_89X+80RiejlPgVmd8k_+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvAWA0ACgkQAVBC80lX
+0GwVUwf8CAUU2stLCwaehsQ8naRlBmV1py4fAiK19iXGo4BdXie24FgjrLBIAIHL
+SBXdIJYbQ7L71/OL6rEAcanw2HvLTR6l32cIGT+GnKZ0Ewnf/smmVt9M/YSd74MX
+La/t/Mc3pF/mHn+dhtJ+IpVxFfRyhwDfj4TrgK/bAnZ4tbkt7frMcHysfj3bvrcz
+GMEM5ncLEiyFavw8jzNq7XoGSI7x2vawKKIsun7DurdfkFvqknhsctniHcL6S8En
+mvgf45uIjaTsGzn26LPaDcT4ZFo80dA1K+X7AqZbzPeN0cKr4Rqc7l6EbE3ujQUq
+AETtNgRd5z6zsc/91BXSFLvP6o+aLQ==
+=6CUf
+-----END PGP SIGNATURE-----
+
+--Sig_/.o_89X+80RiejlPgVmd8k_+--
