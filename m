@@ -1,7 +1,7 @@
 From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: linux-next: Tree for Oct 15
-Date: Mon, 15 Oct 2018 15:28:22 -0700
-Message-ID: <20181015222822.GA31706@roeck-us.net>
+Date: Mon, 15 Oct 2018 15:34:24 -0700
+Message-ID: <20181015223424.GA31977@roeck-us.net>
 References: <20181015192546.15faf3a1@canb.auug.org.au>
  <20181015182637.GA16445@roeck-us.net>
  <20181016071240.3f62816d@canb.auug.org.au>
@@ -100,16 +100,16 @@ On Mon, Oct 15, 2018 at 05:13:08PM -0500, Rob Herring wrote:
 > QEMU emulator version 2.11.1(Debian 1:2.11+dfsg-1ubuntu7.5)
 > 
 
-This works for me:
+Update: Works for me with
+	QEMU emulator version 2.11.93 (Debian 1:2.12~rc3+dfsg-1)
+with the following command line.
 
 qemu-system-sparc -M SS-4 -kernel arch/sparc/boot/zImage -no-reboot \
 	-drive file=hda.sqf,if=scsi,format=raw \
 	-append 'root=/dev/sda rw init=/sbin/init.sh panic=1 console=ttyS0' \
 	-nographic -monitor none
 
-arch/sparc/boot/image works as well.
-
-This is with qemu 2.5 (from Ubuntu 16.04). I'll try with 2.11 tonight.
-My current private version is based on qemu 3.0.
+I have to enable DEVTMPFS and SQUASHFS for my root file system to work,
+but otherwise it is sparc32_defconfig.
 
 Guenter
