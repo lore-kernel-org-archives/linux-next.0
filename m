@@ -1,70 +1,78 @@
-From: Rob Herring <robherring2@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: linux-next: Tree for Oct 15
-Date: Mon, 15 Oct 2018 15:35:12 -0500
-Message-ID: <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
-References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
+Date: Mon, 15 Oct 2018 14:18:15 -0700
+Message-ID: <20181015211815.GA24993@roeck-us.net>
+References: <20181015192546.15faf3a1@canb.auug.org.au>
+ <20181015182637.GA16445@roeck-us.net>
  <20181016071240.3f62816d@canb.auug.org.au>
+ <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181016071240.3f62816d@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Guenter,
->
-> [Just cc'ing the PPC and devicetree folks]
->
-> On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+On Mon, Oct 15, 2018 at 03:35:12PM -0500, Rob Herring wrote:
+> On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > Hi Guenter,
+> >
+> > [Just cc'ing the PPC and devicetree folks]
+> >
+> > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
 > > >
-> > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
-> >
-> > Same here. Interestingly, this only affects little endian pseries
-> > boots; big endian works fine. I'll try to bisect later.
-> >
-> > ALl ppc qemu tests (including big endian pseries) also generate a warning.
-> >
-> > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
-> > Modules linked in:
-> > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
-> > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
-> > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
-> > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
-> > IRQMASK: 1
-> > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
-> > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
-> > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
-> > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
-> > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
-> > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
-> > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > Call Trace:
-> > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
-> > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
-> > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
-> > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
-> > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
-> >
-> >
-> > sparc images crash, starting with next-20181009. Bisect with
-> > next-201810112 points to the merge of devicetree/for-next, though
-> > devicetree/for-next itself does not have the problem (bisect log
-> > attached below). The crash is in devicetree code.
-> >
-> > Crash logs:
-> > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
-> > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
+> > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > > >
+> > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> > >
+> > > Same here. Interestingly, this only affects little endian pseries
+> > > boots; big endian works fine. I'll try to bisect later.
+> > >
+> > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
+> > >
+> > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
+> > > Modules linked in:
+> > > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
+> > > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
+> > > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
+> > > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
+> > > IRQMASK: 1
+> > > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
+> > > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
+> > > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
+> > > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
+> > > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
+> > > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
+> > > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > Call Trace:
+> > > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
+> > > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
+> > > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
+> > > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
+> > > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
+> > >
+> > >
+> > > sparc images crash, starting with next-20181009. Bisect with
+> > > next-201810112 points to the merge of devicetree/for-next, though
+> > > devicetree/for-next itself does not have the problem (bisect log
+> > > attached below). The crash is in devicetree code.
+> > >
+> > > Crash logs:
+> > > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
+> > > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
+> 
+> The sparc crash appears to be related to changes I made. Looking into it.
+> 
 
-The sparc crash appears to be related to changes I made. Looking into it.
+Let me know if you need me to test anything or do some debugging.
 
-Rob
+Thanks,
+Guenter
