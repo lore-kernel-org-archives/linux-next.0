@@ -1,107 +1,76 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: linux-next: Tree for Oct 15
-Date: Mon, 15 Oct 2018 17:52:51 -0500
-Message-ID: <CAL_JsqKLJeTp6-Rjdf=yS1_QWPmHWzW639rxijRRo2TPG4W++Q@mail.gmail.com>
-References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
- <20181016071240.3f62816d@canb.auug.org.au> <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
- <20181015211815.GA24993@roeck-us.net> <CAL_JsqKXS0rmmwHgLRDy+6k=GYRt-nFJHJD1A+CkFCDEAEAKvg@mail.gmail.com>
- <20181015221053.GA19822@roeck-us.net> <CAL_JsqLSBE9FFB7=o5bDJ1hxfNP6mAPJ-qXyEVHfY+xwfgDuWw@mail.gmail.com>
- <20181015223424.GA31977@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with the pci tree
+Date: Tue, 16 Oct 2018 09:56:12 +1100
+Message-ID: <20181016095612.36b5e7bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/h/26W0fuzPBTdFRLUBNkVJm"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015223424.GA31977@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Randy Dunlap <rdunlap@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 15, 2018 at 5:34 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Mon, Oct 15, 2018 at 05:13:08PM -0500, Rob Herring wrote:
-> > On Mon, Oct 15, 2018 at 5:10 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > >
-> > > On Mon, Oct 15, 2018 at 04:48:27PM -0500, Rob Herring wrote:
-> > > > On Mon, Oct 15, 2018 at 4:18 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > >
-> > > > > On Mon, Oct 15, 2018 at 03:35:12PM -0500, Rob Herring wrote:
-> > > > > > On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > > > >
-> > > > > > > Hi Guenter,
-> > > > > > >
-> > > > > > > [Just cc'ing the PPC and devicetree folks]
-> > > > > > >
-> > > > > > > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
-> > > > > > > > >
-> > > > > > > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
-> > > > > > > >
-> > > > > > > > Same here. Interestingly, this only affects little endian pseries
-> > > > > > > > boots; big endian works fine. I'll try to bisect later.
-> > > > > > > >
-> > > > > > > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
-> > > > > > > >
-> > > > > > > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
-> > > > > > > > Modules linked in:
-> > > > > > > > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
-> > > > > > > > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
-> > > > > > > > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
-> > > > > > > > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
-> > > > > > > > IRQMASK: 1
-> > > > > > > > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
-> > > > > > > > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
-> > > > > > > > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
-> > > > > > > > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
-> > > > > > > > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > > > > > > > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > > > > > > > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > > > > > > > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
-> > > > > > > > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
-> > > > > > > > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > > > > > > > Call Trace:
-> > > > > > > > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
-> > > > > > > > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
-> > > > > > > > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
-> > > > > > > > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
-> > > > > > > > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
-> > > > > > > > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > sparc images crash, starting with next-20181009. Bisect with
-> > > > > > > > next-201810112 points to the merge of devicetree/for-next, though
-> > > > > > > > devicetree/for-next itself does not have the problem (bisect log
-> > > > > > > > attached below). The crash is in devicetree code.
-> > > > > > > >
-> > > > > > > > Crash logs:
-> > > > > > > > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
-> > > > > > > > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
-> > > > > >
-> > > > > > The sparc crash appears to be related to changes I made. Looking into it.
-> > > > > >
-> > > > >
-> > > > > Let me know if you need me to test anything or do some debugging.
-> > > >
-> > > > Well, I'm not having any luck getting sparc qemu to work. Here's what
-> > > > I'm trying with a sparc32_defconfig kernel:
-> > > >
-> > > > $ qemu-system-sparc -kernel .build-sparc/vmlinux -M SS-4 -nographic -m
-> > > > 256 -no-reboot
-> > > > rom: requested regions overlap (rom phdr #0: .build-sparc/vmlinux.
-> > > > free=0x000000000000057a, addr=0x0000000000000000)
-> > > > qemu-system-sparc: rom check and register reset failed
-> > > >
-> > >
-> > > What is your qemu version ?
-> >
-> > 2.11 from ubuntu 18.04:
-> > QEMU emulator version 2.11.1(Debian 1:2.11+dfsg-1ubuntu7.5)
-> >
->
-> Update: Works for me with
->         QEMU emulator version 2.11.93 (Debian 1:2.12~rc3+dfsg-1)
+--Sig_/h/26W0fuzPBTdFRLUBNkVJm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Seems to be some regression in 2.11.1. It works fine with my own build
-with 3.0 based.
+Hi Jonathan,
 
-Rob
+Today's linux-next merge of the jc_docs tree got a conflict in:
+
+  Documentation/driver-api/index.rst
+
+between commit:
+
+  7618a41f1a25 ("docs-rst: Add a new directory for PCI documentation")
+
+from the pci tree and commit:
+
+  ea2ae0ecc9ad ("FireWire: add a Documentation driver-api chapter")
+
+from the jc_docs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/driver-api/index.rst
+index e9e7d24169cf,1f0cdba2b2bf..000000000000
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@@ -29,7 -29,8 +29,8 @@@ available subsections can be seen below
+     iio/index
+     input
+     usb/index
++    firewire
+ -   pci
+ +   pci/index
+     spi
+     i2c
+     hsi
+
+--Sig_/h/26W0fuzPBTdFRLUBNkVJm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFGwwACgkQAVBC80lX
+0GxWYwf+N+0E8MBZaAMYtf2UIoUGlDW28VykzexxXw8mQSt+CkJzZAotCJzPPNa8
+k/IPFiG2tkSVS2olPJ742reoGxx8VDzyu2vSyPanOrjG3v92HTdI8GmwAr1zFHwd
+rsFQnPM5t7qGU+2V2AakPICZrAe5Hzvd7RWX0EDwYil+U/woENAQ5srsHrfdPFlu
+3UmBTNnnVWqsRHVh32nH1b+ew5OArj78+S6HyPnAe4MWl2jliDjIJr1f39XPLJXc
+V/kt5Yof20nYm7B4RdX2TwscSdTLPAdn7scp/d35MHrMVm34WF3hqjYgaMkSaaA8
+G1pdFKd70StStt0xz1gZ0Co+aHJJzw==
+=vqYC
+-----END PGP SIGNATURE-----
+
+--Sig_/h/26W0fuzPBTdFRLUBNkVJm--
