@@ -1,79 +1,91 @@
-From: Guenter Roeck <linux@roeck-us.net>
+From: Rob Herring <robherring2@gmail.com>
 Subject: Re: linux-next: Tree for Oct 15
-Date: Mon, 15 Oct 2018 14:35:59 -0700
-Message-ID: <20181015213559.GA7976@roeck-us.net>
-References: <20181015192546.15faf3a1@canb.auug.org.au>
- <20181015193914.GA9881@roeck-us.net>
- <20181016073359.3fa7bb32@canb.auug.org.au>
+Date: Mon, 15 Oct 2018 16:48:27 -0500
+Message-ID: <CAL_JsqKXS0rmmwHgLRDy+6k=GYRt-nFJHJD1A+CkFCDEAEAKvg@mail.gmail.com>
+References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
+ <20181016071240.3f62816d@canb.auug.org.au> <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
+ <20181015211815.GA24993@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181016073359.3fa7bb32@canb.auug.org.au>
+In-Reply-To: <20181015211815.GA24993@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 16, 2018 at 07:33:59AM +1100, Stephen Rothwell wrote:
-> Hi Guenter,
-> 
-> [Again, just cc'ing the PPC folks]
-> 
-> On Mon, 15 Oct 2018 12:39:14 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+On Mon, Oct 15, 2018 at 4:18 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Mon, Oct 15, 2018 at 03:35:12PM -0500, Rob Herring wrote:
+> > On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Hi Guenter,
+> > >
+> > > [Just cc'ing the PPC and devicetree folks]
+> > >
+> > > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> > > >
+> > > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > > > >
+> > > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> > > >
+> > > > Same here. Interestingly, this only affects little endian pseries
+> > > > boots; big endian works fine. I'll try to bisect later.
+> > > >
+> > > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
+> > > >
+> > > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
+> > > > Modules linked in:
+> > > > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
+> > > > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
+> > > > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
+> > > > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
+> > > > IRQMASK: 1
+> > > > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
+> > > > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
+> > > > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
+> > > > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
+> > > > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
+> > > > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
+> > > > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > > Call Trace:
+> > > > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
+> > > > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
+> > > > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
+> > > > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
+> > > > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
+> > > >
+> > > >
+> > > > sparc images crash, starting with next-20181009. Bisect with
+> > > > next-201810112 points to the merge of devicetree/for-next, though
+> > > > devicetree/for-next itself does not have the problem (bisect log
+> > > > attached below). The crash is in devicetree code.
+> > > >
+> > > > Crash logs:
+> > > > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
+> > > > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
 > >
-> > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20181012:
-> > > 
-> > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
-> > >   
-> > 
-> > Bisect log:
-> > 
-> > # bad: [774ea0551a2966c8fc29a6f675c3e28c5c6fa586] Add linux-next specific files for 20181012
-> > # good: [0238df646e6224016a45505d2c111a24669ebe21] Linux 4.19-rc7
-> > git bisect start 'HEAD' 'v4.19-rc7'
-> > # good: [dfbf78faefa3c26d94208398e62bf25ea798e7f2] Merge remote-tracking branch 'spi-nor/spi-nor/next'
-> > git bisect good dfbf78faefa3c26d94208398e62bf25ea798e7f2
-> > # good: [3f296bb430327676912966c56d2f078f74e6b4ab] Merge remote-tracking branch 'tip/auto-latest'
-> > git bisect good 3f296bb430327676912966c56d2f078f74e6b4ab
-> > # good: [056ff0c45d1780f7bac1b54bd4160647efc500ad] Merge remote-tracking branch 'staging/staging-next'
-> > git bisect good 056ff0c45d1780f7bac1b54bd4160647efc500ad
-> > # good: [d7946b50c21a7d88af6c8e88d976ba3dfca651cc] Merge remote-tracking branch 'pinctrl/for-next'
-> > git bisect good d7946b50c21a7d88af6c8e88d976ba3dfca651cc
-> > # good: [72b5ca3121d5352fbb8fe3e1abaa86748205c0cb] Merge remote-tracking branch 'xarray/xarray'
-> > git bisect good 72b5ca3121d5352fbb8fe3e1abaa86748205c0cb
-> > # good: [e3895cf23a25da6dea2c8e986d4f6c24fafe5448] hugetlb: introduce generic version of prepare_hugepage_range
-> > git bisect good e3895cf23a25da6dea2c8e986d4f6c24fafe5448
-> > # good: [627f8833ac26e66d4b50676a0251499474bb4ee4] reiserfs: propagate errors from fill_with_dentries() properly
-> > git bisect good 627f8833ac26e66d4b50676a0251499474bb4ee4
-> > # good: [e38910adf47ba1d0b5a5a573cc26bde1ec533147] memblock: replace alloc_bootmem_pages_node with memblock_alloc_node
-> > git bisect good e38910adf47ba1d0b5a5a573cc26bde1ec533147
-> > # bad: [f89bdd2c52666d9da4bf4ef3a97a7188586ba0fb] dma-direct: fix up for the removal of linux/bootmem.h
-> > git bisect bad f89bdd2c52666d9da4bf4ef3a97a7188586ba0fb
-> > # good: [3108d998dfc36eb7f6b7f2917fc561258f742094] mm: nobootmem: remove bootmem allocation APIs
-> > git bisect good 3108d998dfc36eb7f6b7f2917fc561258f742094
-> > # good: [1f94dacb1d0ed0d1068b89ad867a198d3eca7bf2] memblock: rename __free_pages_bootmem to memblock_free_pages
-> > git bisect good 1f94dacb1d0ed0d1068b89ad867a198d3eca7bf2
-> > # good: [c3954ade0c1b499ae587f3edb813876216212836] memblock: replace BOOTMEM_ALLOC_* with MEMBLOCK variants
-> > git bisect good c3954ade0c1b499ae587f3edb813876216212836
-> > # bad: [cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6] mm: remove include/linux/bootmem.h
-> > git bisect bad cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6
-> > # first bad commit: [cde1c7f7e92aef241f1c1a09a4d1f1f06fd565b6] mm: remove include/linux/bootmem.h
-> > 
-> > Reverting this patch together with its fix-up "powerpc: fix up for removal of
-> > linux/bootmem.h" fixes the problem. This also fixes the traceback seen with all
-> > other ppc64 images.
-> > 
-> > Guenter
-> 
-> Thanks for this ... though a strange result as those patches were in
-> next-20181012 as well, so I wonder what else changed.
-> 
-Quite simple - the bisect is wrong. For some reason I started with
-next-20181012 (which was fine), not 20181015 (which is broken).
-Repeating it now. Sorry for the confusion.
+> > The sparc crash appears to be related to changes I made. Looking into it.
+> >
+>
+> Let me know if you need me to test anything or do some debugging.
 
-Guenter
+Well, I'm not having any luck getting sparc qemu to work. Here's what
+I'm trying with a sparc32_defconfig kernel:
+
+$ qemu-system-sparc -kernel .build-sparc/vmlinux -M SS-4 -nographic -m
+256 -no-reboot
+rom: requested regions overlap (rom phdr #0: .build-sparc/vmlinux.
+free=0x000000000000057a, addr=0x0000000000000000)
+qemu-system-sparc: rom check and register reset failed
+
+Using zImage or image file didn't work any better.
+
+Then I tried sticking the kernel in a disk image, but that didn't get
+much farther.
+
+Rob
