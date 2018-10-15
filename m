@@ -1,76 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the jc_docs tree with the pci tree
-Date: Tue, 16 Oct 2018 09:56:12 +1100
-Message-ID: <20181016095612.36b5e7bb@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the netfilter-next tree
+Date: Tue, 16 Oct 2018 10:41:25 +1100
+Message-ID: <20181016104125.2a299bc5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/h/26W0fuzPBTdFRLUBNkVJm"; protocol="application/pgp-signature"
+ boundary="Sig_/Pz9NZM4HjnQuGcakoiEtXrk"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Randy Dunlap <rdunlap@infradead.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/h/26W0fuzPBTdFRLUBNkVJm
+--Sig_/Pz9NZM4HjnQuGcakoiEtXrk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+Hi all,
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+After merging the netfilter-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  Documentation/driver-api/index.rst
+net/ipv4/netfilter/ipt_ECN.c: In function 'set_ect_tcp':
+net/ipv4/netfilter/ipt_ECN.c:58:28: error: 'IPT_ECN_OP_SET_ECE' undeclared =
+(first use in this function); did you mean 'IPT_ECN_OP_MATCH_ECE'?
+  if ((!(einfo->operation & IPT_ECN_OP_SET_ECE) ||
+                            ^~~~~~~~~~~~~~~~~~
+                            IPT_ECN_OP_MATCH_ECE
+net/ipv4/netfilter/ipt_ECN.c:58:28: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+net/ipv4/netfilter/ipt_ECN.c:60:28: error: 'IPT_ECN_OP_SET_CWR' undeclared =
+(first use in this function); did you mean 'IPT_ECN_OP_MATCH_CWR'?
+      (!(einfo->operation & IPT_ECN_OP_SET_CWR) ||
+                            ^~~~~~~~~~~~~~~~~~
+                            IPT_ECN_OP_MATCH_CWR
+net/ipv4/netfilter/ipt_ECN.c: In function 'ecn_tg':
+net/ipv4/netfilter/ipt_ECN.c:84:25: error: 'IPT_ECN_OP_SET_IP' undeclared (=
+first use in this function); did you mean 'IPT_ECN_OP_MATCH_IP'?
+  if (einfo->operation & IPT_ECN_OP_SET_IP)
+                         ^~~~~~~~~~~~~~~~~
+                         IPT_ECN_OP_MATCH_IP
+net/ipv4/netfilter/ipt_ECN.c:88:26: error: 'IPT_ECN_OP_SET_ECE' undeclared =
+(first use in this function); did you mean 'IPT_ECN_OP_MATCH_ECE'?
+  if (einfo->operation & (IPT_ECN_OP_SET_ECE | IPT_ECN_OP_SET_CWR) &&
+                          ^~~~~~~~~~~~~~~~~~
+                          IPT_ECN_OP_MATCH_ECE
+net/ipv4/netfilter/ipt_ECN.c:88:47: error: 'IPT_ECN_OP_SET_CWR' undeclared =
+(first use in this function); did you mean 'IPT_ECN_OP_MATCH_CWR'?
+  if (einfo->operation & (IPT_ECN_OP_SET_ECE | IPT_ECN_OP_SET_CWR) &&
+                                               ^~~~~~~~~~~~~~~~~~
+                                               IPT_ECN_OP_MATCH_CWR
+net/ipv4/netfilter/ipt_ECN.c: In function 'ecn_tg_check':
+net/ipv4/netfilter/ipt_ECN.c:101:25: error: 'IPT_ECN_OP_MASK' undeclared (f=
+irst use in this function); did you mean 'IPT_ECN_IP_MASK'?
+  if (einfo->operation & IPT_ECN_OP_MASK)
+                         ^~~~~~~~~~~~~~~
+                         IPT_ECN_IP_MASK
+net/ipv4/netfilter/ipt_ECN.c:107:27: error: 'IPT_ECN_OP_SET_ECE' undeclared=
+ (first use in this function); did you mean 'IPT_ECN_OP_MATCH_ECE'?
+  if ((einfo->operation & (IPT_ECN_OP_SET_ECE|IPT_ECN_OP_SET_CWR)) &&
+                           ^~~~~~~~~~~~~~~~~~
+                           IPT_ECN_OP_MATCH_ECE
+net/ipv4/netfilter/ipt_ECN.c:107:46: error: 'IPT_ECN_OP_SET_CWR' undeclared=
+ (first use in this function); did you mean 'IPT_ECN_OP_MATCH_CWR'?
+  if ((einfo->operation & (IPT_ECN_OP_SET_ECE|IPT_ECN_OP_SET_CWR)) &&
+                                              ^~~~~~~~~~~~~~~~~~
+                                              IPT_ECN_OP_MATCH_CWR
 
-between commit:
+Caused by commit
 
-  7618a41f1a25 ("docs-rst: Add a new directory for PCI documentation")
+  25038aaf0cbf ("UAPI: netfilter: Fix symbol collision issues [ver #2]")
 
-from the pci tree and commit:
-
-  ea2ae0ecc9ad ("FireWire: add a Documentation driver-api chapter")
-
-from the jc_docs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I used the netfilter-next tree from next-20181015 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc Documentation/driver-api/index.rst
-index e9e7d24169cf,1f0cdba2b2bf..000000000000
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@@ -29,7 -29,8 +29,8 @@@ available subsections can be seen below
-     iio/index
-     input
-     usb/index
-+    firewire
- -   pci
- +   pci/index
-     spi
-     i2c
-     hsi
-
---Sig_/h/26W0fuzPBTdFRLUBNkVJm
+--Sig_/Pz9NZM4HjnQuGcakoiEtXrk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFGwwACgkQAVBC80lX
-0GxWYwf+N+0E8MBZaAMYtf2UIoUGlDW28VykzexxXw8mQSt+CkJzZAotCJzPPNa8
-k/IPFiG2tkSVS2olPJ742reoGxx8VDzyu2vSyPanOrjG3v92HTdI8GmwAr1zFHwd
-rsFQnPM5t7qGU+2V2AakPICZrAe5Hzvd7RWX0EDwYil+U/woENAQ5srsHrfdPFlu
-3UmBTNnnVWqsRHVh32nH1b+ew5OArj78+S6HyPnAe4MWl2jliDjIJr1f39XPLJXc
-V/kt5Yof20nYm7B4RdX2TwscSdTLPAdn7scp/d35MHrMVm34WF3hqjYgaMkSaaA8
-G1pdFKd70StStt0xz1gZ0Co+aHJJzw==
-=vqYC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFJaUACgkQAVBC80lX
+0GwDEggAn6sCOZxM6kIdtWt1DY1v8e8/G0KXE+ar4SjwcYytEGHzy/H+D2r2lqfB
+JdJen4sKIaEjTdnWomqkNdxTA05dhrkbOH73TV6Vy9TEjGQ/N6il5036cyxhLJ1E
+y/SfunckvN5paFyzqC7wyRGcKAAepXWaZLf3ZdYU97PwogTU42aUGPER9Vowd0PX
+xYWCgBuMs1qOJ9ogvyxXs2DplMXbmTrYZhCTNnWB1EuSfmIeURmroHHM01otId7V
+wz5jCy5OHupkdWaa9pLvkWb4N5dqV6wplgWuDmDbtrSkrw87DHCsotFFV+9ocRbi
+OBbD3vw7cSmeO4PYvGdaIv3efTkTAg==
+=Xf9r
 -----END PGP SIGNATURE-----
 
---Sig_/h/26W0fuzPBTdFRLUBNkVJm--
+--Sig_/Pz9NZM4HjnQuGcakoiEtXrk--
