@@ -1,29 +1,29 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: linux-next: Signed-off-by missing for commit in the fuse tree
-Date: Tue, 16 Oct 2018 10:20:10 +0200
-Message-ID: <CAJfpegtZF3evQnaA+LWvD8-1fqQrAkn3qbcBOzO5w1PYh0EA8g@mail.gmail.com>
-References: <20181016054723.4dfb83f6@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: qemu boot failures with today's linux-next
+Date: Tue, 16 Oct 2018 20:36:59 +1100
+Message-ID: <87pnwakzb8.fsf@concordia.ellerman.id.au>
+References: <20181015191859.2f600de5@canb.auug.org.au> <87murfz8dl.fsf@concordia.ellerman.id.au> <20181016105240.70369b98@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181016054723.4dfb83f6@canb.auug.org.au>
+In-Reply-To: <20181016105240.70369b98@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Schatzberg <dschatzberg@fb.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 15, 2018 at 8:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Miklos,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>> > Booting Linux via __start() @ 0x0000000000400000 ...
+>> 
+>> If you git Ctrl-a-c you should get the qemu prompt. Then you can run
+>> 'info registers' to print the regs and maybe see where it's stuck.
+>> 
+>> And/or build with EARLY_DEBUG_LPAR to get early console output.
 >
-> Commit
+> That gave one more line:
 >
->   5571f1e65486 ("fuse: enable caching of symlinks")
->
-> is missing a Signed-off-by from its author.
+> [    0.000000] printk: bootconsole [udbg0] enabled
 
-Dan,
+Yeah I tried it too, it must have crashed *really* early :)
 
-Maybe you mistakenly left off the SOB tag?  Can I add it for you?
-
-Thanks,
-Miklos
+cheers
