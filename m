@@ -1,76 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the pci tree
-Date: Tue, 16 Oct 2018 11:33:27 +1100
-Message-ID: <20181016113327.02ea2317@canb.auug.org.au>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: linux-next: Tree for Oct 15
+Date: Mon, 15 Oct 2018 20:00:24 -0500
+Message-ID: <CAL_Jsq+t2ZXhtzN0KnnU1jn+JZE3Spfgm8jT60jx8j8gEEKjFQ@mail.gmail.com>
+References: <20181015192546.15faf3a1@canb.auug.org.au> <20181015182637.GA16445@roeck-us.net>
+ <20181016071240.3f62816d@canb.auug.org.au> <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_Jsq+DAEEa6i9xb-9MMSxu-znc9tZLZwFRADqE+kcxQYXrTg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Bart Van Assche <bvanassche@acm.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
++davem
 
-Hi Jens,
+On Mon, Oct 15, 2018 at 3:35 PM Rob Herring <robherring2@gmail.com> wrote:
+>
+> On Mon, Oct 15, 2018 at 3:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi Guenter,
+> >
+> > [Just cc'ing the PPC and devicetree folks]
+> >
+> > On Mon, 15 Oct 2018 11:26:37 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> > >
+> > > On Mon, Oct 15, 2018 at 07:25:46PM +1100, Stephen Rothwell wrote:
+> > > >
+> > > > My qemu boots of a powerpc pseries_le_defconfig kernel failed today.
+> > >
+> > > Same here. Interestingly, this only affects little endian pseries
+> > > boots; big endian works fine. I'll try to bisect later.
+> > >
+> > > ALl ppc qemu tests (including big endian pseries) also generate a warning.
+> > >
+> > > WARNING: CPU: 0 PID: 0 at mm/memblock.c:1301 .memblock_alloc_range_nid+0x20/0x68
+> > > Modules linked in:
+> > > CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc7-next-20181015 #1
+> > > NIP:  c000000000f99198 LR: c000000000f99490 CTR: c000000000bb8364
+> > > REGS: c000000001217a78 TRAP: 0700   Not tainted  (4.19.0-rc7-next-20181015)
+> > > MSR:  0000000080021000 <CE,ME>  CR: 24000422  XER: 20000000
+> > > IRQMASK: 1
+> > > GPR00: c000000000f99490 c000000001217d00 c00000000121a500 00000000000000c0
+> > > GPR04: 0000000000000000 0000000000000000 0000000000000000 ffffffffffffffff
+> > > GPR08: 0000000000000000 00000000000000c0 0000000000000018 00000000000000b7
+> > > GPR12: 0000000000000040 c000000000fe7840 0000000000000000 0000000000000000
+> > > GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > GPR28: c000000000000304 c000000001262088 00000000000000c0 c000000000fea500
+> > > NIP [c000000000f99198] .memblock_alloc_range_nid+0x20/0x68
+> > > LR [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > Call Trace:
+> > > [c000000001217d00] [c000000002a00000] 0xc000000002a00000 (unreliable)
+> > > [c000000001217d80] [c000000000f99490] .memblock_alloc_base+0x18/0x48
+> > > [c000000001217df0] [c000000000f7a274] .allocate_paca_ptrs+0x3c/0x74
+> > > [c000000001217e70] [c000000000f78bf0] .early_init_devtree+0x288/0x320
+> > > [c000000001217f10] [c000000000f79b6c] .early_setup+0x80/0x130
+> > > [c000000001217f90] [c000000000000528] start_here_multiplatform+0x68/0x80
+> > >
+> > >
+> > > sparc images crash, starting with next-20181009. Bisect with
+> > > next-201810112 points to the merge of devicetree/for-next, though
+> > > devicetree/for-next itself does not have the problem (bisect log
+> > > attached below). The crash is in devicetree code.
+> > >
+> > > Crash logs:
+> > > https://kerneltests.org/builders/qemu-sparc64-next/builds/981/steps/qemubuildcommand_1/logs/stdio
+> > > https://kerneltests.org/builders/qemu-sparc-next/builds/975/steps/qemubuildcommand_1/logs/stdio
+>
+> The sparc crash appears to be related to changes I made. Looking into it.
 
-Today's linux-next merge of the block tree got a conflict in:
+The problem is a combination of commit 0b9871a3a8cc ("sparc: Convert
+to using %pOFn instead of device_node.name") and commit 6d0a70a284be
+("vsprintf: print OF node name using full_name"). The Sparc functions
+in prom_*.c can't use %pOFn to ultimately construct full_name as %pOFn
+is derived from full_name. Reverting the former commit gets QEMU
+booting again.
 
-  include/linux/blkdev.h
+David, Can you revert commit 0b9871a3a8cc. I'll have to find another approach.
 
-between commit:
-
-  113ff970ccda ("block: Add PCI P2P flag for request queue")
-
-from the pci tree and commit:
-
-  cd84a62e0078 ("block, scsi: Change the preempt-only flag into a counter")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/blkdev.h
-index c32f7171899b,61207560e826..000000000000
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@@ -698,8 -704,6 +704,7 @@@ struct request_queue=20
-  #define QUEUE_FLAG_REGISTERED  26	/* queue has been registered to a disk =
-*/
-  #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
-  #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
-- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
- +#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports PCI p2p requests */
- =20
-  #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
-  				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-
---Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFMdcACgkQAVBC80lX
-0GwX2wf+Kg7aFS1kLmO+eHIz+PR8MNT+eVwcUjn3pFzcGqFYbCKUVUlzz5h/4u5Y
-LKWQjCLv6hOeRbB4RMGs7i6Lo6n8t4yf0NXl6s0lXYA4RBJzusJf2i99QuhgCc/6
-EhPABu6zq28Eg3eABXu3GerE+3pCiLmhBtHjx/m1RLsHjpMkSgnn4dRSBPQVbhBZ
-LRFt1uC3FXmbUlcQC06iSK6G7svyu4Ny09StJRmgv+Cu5XXEamhk8U5SrnLg0VvD
-MII3BHUsm3tV+/cL+sVm8CYSHOjpu8sPvHZBhBvvSiGyyMHzgD8eLRBh/7Fj9ww8
-m+YJ1YoM5F69+ub4uB9XmriziBnssA==
-=5WY/
------END PGP SIGNATURE-----
-
---Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2--
+Rob
