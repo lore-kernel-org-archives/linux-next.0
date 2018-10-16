@@ -1,23 +1,29 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: build failure after merge of the netfilter-next tree
-Date: Tue, 16 Oct 2018 10:02:32 +0200
-Message-ID: <20181016080232.qaz7pfi6p4ir7bof@salvia>
-References: <20181016104125.2a299bc5@canb.auug.org.au>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: linux-next: Signed-off-by missing for commit in the fuse tree
+Date: Tue, 16 Oct 2018 10:20:10 +0200
+Message-ID: <CAJfpegtZF3evQnaA+LWvD8-1fqQrAkn3qbcBOzO5w1PYh0EA8g@mail.gmail.com>
+References: <20181016054723.4dfb83f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181016104125.2a299bc5@canb.auug.org.au>
+In-Reply-To: <20181016054723.4dfb83f6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Dan Schatzberg <dschatzberg@fb.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 16, 2018 at 10:41:25AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the netfilter-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+On Mon, Oct 15, 2018 at 8:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Miklos,
+>
+> Commit
+>
+>   5571f1e65486 ("fuse: enable caching of symlinks")
+>
+> is missing a Signed-off-by from its author.
 
-Thanks for reporting, I'll keep back this patch by now.
+Dan,
+
+Maybe you mistakenly left off the SOB tag?  Can I add it for you?
+
+Thanks,
+Miklos
