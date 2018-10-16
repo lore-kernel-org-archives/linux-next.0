@@ -1,55 +1,75 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [BUG -next 20181008] list corruption with "mm/slub: remove
- useless condition in deactivate_slab"
-Date: Tue, 16 Oct 2018 09:36:29 +0200
-Message-ID: <20181016073629.GA3194@osiris>
-References: <20181009063500.GB3555@osiris>
- <CAFgQCTsnWRyN--dS0oVCzPykkt33M=9so2sv2a3+iu-kCdpV7A@mail.gmail.com>
- <CAFgQCTtQ2+bu44top5Fy=7KWRVrpFLnsRGupksK1ixR9oFZs+g@mail.gmail.com>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 16 Oct 2018 09:46:45 +0200
+Message-ID: <20181016074645.GA41162@gmail.com>
+References: <20181008190341.5e396491@canb.auug.org.au>
+ <20181015181445.19448cbc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFgQCTtQ2+bu44top5Fy=7KWRVrpFLnsRGupksK1ixR9oFZs+g@mail.gmail.com>
 Content-Disposition: inline
+In-Reply-To: <20181015181445.19448cbc@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pingfan Liu <kernelfans@gmail.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Borislav Petkov <bp@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:29:28PM +0800, Pingfan Liu wrote:
-> > I think it is caused by the uinon page->lru and page->next. It can be fixed by:
-> > diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-> > index 3a1a1db..4aa0fb5 100644
-> > --- a/include/linux/slub_def.h
-> > +++ b/include/linux/slub_def.h
-> > @@ -56,6 +56,7 @@ struct kmem_cache_cpu {
-> >  #define slub_set_percpu_partial(c, p)          \
-> >  ({                                             \
-> >         slub_percpu_partial(c) = (p)->next;     \
-> > +       p->next = NULL; \
-> >  })
+
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
+> 
+> On Mon, 8 Oct 2018 19:03:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > I will do some test and post the fix.
-> >
-> Please ignore the above comment. And after re-check the code, I am
-> sure that all callers of deactivate_slab(), pass c->page, which means
-> that page should not be on any list. But your test result "list_add
-> double add: new=000003d1029ecc08,
-> prev=000000008ff846d0,next=000003d1029ecc08"  indicates that
-> page(new) is already on a list. I think that maybe something else is
-> wrong which is covered.
-> I can not reproduce this bug on x86. Could you share your config and
-> cmdline? Any do you turn on any debug option of slub?
+> > After merging the akpm tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > arch/x86/mm/kaslr.c:26:10: fatal error: linux/bootmem.h: No such file or directory
+> >  #include <linux/bootmem.h>
+> >           ^~~~~~~~~~~~~~~~~
+> > 
+> > Caused by patch
+> > 
+> >   "mm: remove include/linux/bootmem.h"
+> > 
+> > interacting with commit
+> > 
+> >   3a387c6d96e6 ("x86/kaslr, ACPI/NUMA: Fix KASLR build error")
+> > 
+> > from the tip tree.
+> > 
+> > I have added the following patch for today:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 8 Oct 2018 18:57:00 +1100
+> > Subject: [PATCH] x86/kaslr, ACPI/NUMA: fix for linux/bootmem.h removal
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  arch/x86/mm/kaslr.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> > index b3471388288d..ad80bdc690c1 100644
+> > --- a/arch/x86/mm/kaslr.c
+> > +++ b/arch/x86/mm/kaslr.c
+> > @@ -23,7 +23,7 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/init.h>
+> >  #include <linux/random.h>
+> > -#include <linux/bootmem.h>
+> > +#include <linux/memblock.h>
+> >  
+> >  #include <asm/pgalloc.h>
+> >  #include <asm/pgtable.h>
+> > -- 
+> 
+> So the above tip tree patch no longer exists, so this one is also no
+> longer needed and I have removed it from the akpm tree today.
 
-You can re-create the config with "make ARCH=s390 debug_defconfig".
+Yeah, we are reworking this series in WIP.x86/boot, it probably won't 
+make v4.20 so I removed it from -next.
 
-Not sure which machine I used to reproduce this but most likely it was
-a machine with these command line options:
+Thanks,
 
-dasd=e12d root=/dev/dasda1 userprocess_debug numa_debug sched_debug
-ignore_loglevel sclp_con_drop=1 sclp_con_pages=32 audit=0
-crashkernel=128M ignore_rlimit_data
-
-You can ignore the dasd and sclp* command line options. These are
-s390 specific. The rest should be available on any architecture.
+	Ingo
