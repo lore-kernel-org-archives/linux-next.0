@@ -1,100 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Tue, 16 Oct 2018 11:17:12 +1100
-Message-ID: <20181016111712.33f9dc2e@canb.auug.org.au>
-References: <20181003103222.6e1655cd@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the pci tree
+Date: Tue, 16 Oct 2018 11:33:27 +1100
+Message-ID: <20181016113327.02ea2317@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TEftn5M8Uq_Tz9EbmG0X=IY"; protocol="application/pgp-signature"
+ boundary="Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181003103222.6e1655cd@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Daniel Rosenberg <drosen@google.com>
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Bart Van Assche <bvanassche@acm.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/TEftn5M8Uq_Tz9EbmG0X=IY
+--Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jens,
 
-On Wed, 3 Oct 2018 10:32:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->=20
-> /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_remount':
-> /home/sfr/next/next/fs/f2fs/super.c:1589:16: error: 'MS_RDONLY' undeclare=
-d (first use in this function); did you mean 'IS_RDONLY'?
->   if ((*flags & MS_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
->                 ^~~~~~~~~
->                 IS_RDONLY
->=20
-> Caused by commit
->=20
->   dcf8001d292b ("vfs: Suppress MS_* flag defs within the kernel unless ex=
-plicitly enabled")
->=20
-> interacting with commit
->=20
->   f80f781514ef ("f2fs: checkpoint disabling")
->=20
-> from the f2fs tree.
->=20
-> I have added the following merge fix patch for today.  If it is correct,
-> I assume that it could be applied to f2fs tree as the the other uses of
-> MS_RDONLY have already been changed to SB_RDONLY.  (There is another
-> use of MS_READONLY in this function that is already cleaned up in the
-> vfs tree commit.)
+Today's linux-next merge of the block tree got a conflict in:
 
-Can this be applied to the f2fs tree?
+  include/linux/blkdev.h
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 3 Oct 2018 10:27:04 +1000
-> Subject: [PATCH] f2fs: update for MS_* flags mostly going away
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/f2fs/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 6ed77589ff2b..b612a9e4a35e 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1586,7 +1586,7 @@ static int f2fs_remount(struct super_block *sb, int=
- *flags,
->  		goto restore_opts;
->  	}
-> =20
-> -	if ((*flags & MS_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
-> +	if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
->  		err =3D -EINVAL;
->  		f2fs_msg(sbi->sb, KERN_WARNING,
->  			"disabling checkpoint not compatible with read-only");
-> --=20
-> 2.18.0
+between commit:
+
+  113ff970ccda ("block: Add PCI P2P flag for request queue")
+
+from the pci tree and commit:
+
+  cd84a62e0078 ("block, scsi: Change the preempt-only flag into a counter")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/TEftn5M8Uq_Tz9EbmG0X=IY
+diff --cc include/linux/blkdev.h
+index c32f7171899b,61207560e826..000000000000
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@@ -698,8 -704,6 +704,7 @@@ struct request_queue=20
+  #define QUEUE_FLAG_REGISTERED  26	/* queue has been registered to a disk =
+*/
+  #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
+  #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
+- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
+ +#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports PCI p2p requests */
+ =20
+  #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+  				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
+
+--Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFLggACgkQAVBC80lX
-0Gxr+Af6Am+7E3UDorrVdHgRGn5Mcozhp9qQyCdFhV419sCG6JEQ+DvsX87CdmAq
-ZDr1MDKgt+Lt5jRafZgd1FDesgnGIH9mTB6d8cpl1snjjBMpX4D2lcvNN9/04nHQ
-EtZhsU7+XrA3hlR/DqnQmeIhyWSQNitbftDZFTJTrw5YsXXZ7rwjX3eGbyXQxzs/
-LblvZNuOjod2UDSXsojup5k+9Ur+nXPVmudEf5U0VDsJDklb/43kD8A+3VaR3oGi
-H7bOCul3xDAR8mKYZYRmKP+Iu+cMyMmcKp88H4iexZSjWyd451tX5724y3RTIMwB
-+3koLMQpRUKnavchWDwpCr0JL+gCig==
-=yFj7
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvFMdcACgkQAVBC80lX
+0GwX2wf+Kg7aFS1kLmO+eHIz+PR8MNT+eVwcUjn3pFzcGqFYbCKUVUlzz5h/4u5Y
+LKWQjCLv6hOeRbB4RMGs7i6Lo6n8t4yf0NXl6s0lXYA4RBJzusJf2i99QuhgCc/6
+EhPABu6zq28Eg3eABXu3GerE+3pCiLmhBtHjx/m1RLsHjpMkSgnn4dRSBPQVbhBZ
+LRFt1uC3FXmbUlcQC06iSK6G7svyu4Ny09StJRmgv+Cu5XXEamhk8U5SrnLg0VvD
+MII3BHUsm3tV+/cL+sVm8CYSHOjpu8sPvHZBhBvvSiGyyMHzgD8eLRBh/7Fj9ww8
+m+YJ1YoM5F69+ub4uB9XmriziBnssA==
+=5WY/
 -----END PGP SIGNATURE-----
 
---Sig_/TEftn5M8Uq_Tz9EbmG0X=IY--
+--Sig_/F4bvzE/Gpdg7RSm4r2g.Yk2--
