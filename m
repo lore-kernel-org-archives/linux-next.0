@@ -1,87 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the drm tree
-Date: Wed, 17 Oct 2018 14:22:57 +1100
-Message-ID: <20181017142257.5002799b@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the drm tree
+Date: Wed, 17 Oct 2018 07:01:12 +0200
+Message-ID: <20181017050112.GA22447@kroah.com>
+References: <20181017142257.5002799b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u6tzD0qr8bKobG/tey.t=0x"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gerd Hoffmann <kraxel@redhat.com>, Dan Williams <dan.j.williams@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20181017142257.5002799b@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Gerd Hoffmann <kraxel@redhat.com>, Dan Williams <dan.j.williams@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/u6tzD0qr8bKobG/tey.t=0x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the char-misc tree got a conflict in:
-
-  MAINTAINERS
-
-between commit:
-
-  fbb0de795078 ("Add udmabuf misc device")
-
-from the drm tree and commit:
-
-  9793c1fd1775 ("MAINTAINERS: Clarify UIO vs UIOVEC maintainer")
-
-from the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 7d70a6c5eeee,a38c13c7da9a..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -15594,14 -15365,12 +15595,20 @@@ F:	arch/x86/um
-  F:	fs/hostfs/
-  F:	fs/hppfs/
- =20
-+ USERSPACE COPYIN/COPYOUT (UIOVEC)
-+ M:	Alexander Viro <viro@zeniv.linux.org.uk>
-+ S:	Maintained
-+ F:	lib/iov_iter.c
-+ F:	include/linux/uio.h
-+=20
- +USERSPACE DMA BUFFER DRIVER
- +M:	Gerd Hoffmann <kraxel@redhat.com>
- +S:	Maintained
- +L:	dri-devel@lists.freedesktop.org
- +F:	drivers/dma-buf/udmabuf.c
- +F:	include/uapi/linux/udmabuf.h
- +T:	git git://anongit.freedesktop.org/drm/drm-misc
- +
-  USERSPACE I/O (UIO)
-  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-  S:	Maintained
-
---Sig_/u6tzD0qr8bKobG/tey.t=0x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvGqxEACgkQAVBC80lX
-0Gw6iQf/cDYDE0VokyqOGGwFDaVpEMwzmWcDAm/nI3Df0a43ROCRebxEFJkBCE/X
-XR9ERvs44oXOBvMIC3MVYBXkZJVb5jhjgcXQtNoUPjVpEwQiL5rIQhZ8JQDQC7lO
-7BLGYi08A92x0r+kBd4gB+IxbczbuMeONVhBivfEprDlmxXB3xeykAkDb2I98V7m
-706r1WuhI1p6TkgGzKOS6g68JVXBNpGFc9Y8kkeY3hFO+hbKijvdmdoVenqULSYW
-u0ErCgxjSqntIu1s6mzltEvjTh4FV75PJZ1rtOriDGY3mcXzli2uicehIAvDxkND
-rWwFKXt0AGW/4/h1PMP1HE3gXjE5DQ==
-=bMUP
------END PGP SIGNATURE-----
-
---Sig_/u6tzD0qr8bKobG/tey.t=0x--
+T24gV2VkLCBPY3QgMTcsIDIwMTggYXQgMDI6MjI6NTdQTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBj
+aGFyLW1pc2MgdHJlZSBnb3QgYSBjb25mbGljdCBpbjoKPiAKPiAgIE1BSU5UQUlORVJTCj4gCj4g
+YmV0d2VlbiBjb21taXQ6Cj4gCj4gICBmYmIwZGU3OTUwNzggKCJBZGQgdWRtYWJ1ZiBtaXNjIGRl
+dmljZSIpCj4gCj4gZnJvbSB0aGUgZHJtIHRyZWUgYW5kIGNvbW1pdDoKPiAKPiAgIDk3OTNjMWZk
+MTc3NSAoIk1BSU5UQUlORVJTOiBDbGFyaWZ5IFVJTyB2cyBVSU9WRUMgbWFpbnRhaW5lciIpCj4g
+Cj4gZnJvbSB0aGUgY2hhci1taXNjIHRyZWUuCj4gCj4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93
+KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5LgoKTG9va3MgZ29vZCB0byBtZSwg
+dGhhbmtzLgoKZ3JlZyBrLWgKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
