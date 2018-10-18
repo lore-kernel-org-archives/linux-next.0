@@ -1,98 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Thu, 18 Oct 2018 13:37:31 +1100
-Message-ID: <20181018133731.12efd882@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the kvm tree
+Date: Thu, 18 Oct 2018 13:46:27 +1100
+Message-ID: <20181018134627.15bbcea9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BPbrHQzprApBsXaeGGEniYO"; protocol="application/pgp-signature"
+ boundary="Sig_/iAIPVQb_jJjqO91tszIqSfC"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>, Lan Tianyu <Tianyu.Lan@microsoft.com>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Peng Hao <peng.hao2@zte.com.cn>, Jim Mattson <jmattson@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BPbrHQzprApBsXaeGGEniYO
+--Sig_/iAIPVQb_jJjqO91tszIqSfC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-  arch/x86/kvm/vmx.c
+  include/uapi/linux/kvm.h
 
-between commit:
+between commits:
 
-  5f8bb004bca4 ("KVM: vmx: hyper-v: don't pass EPT configuration info to vm=
-x_hv_remote_flush_tlb()")
+  214ff83d4473 ("KVM: x86: hyperv: implement PV IPI send hypercalls")
+  0804c849f1df ("kvm/x86 : add coalesced pio support")
+  57b119da3594 ("KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability")
+  c4f55198c7c2 ("kvm: x86: Introduce KVM_CAP_EXCEPTION_PAYLOAD")
 
-from Linus' tree and commit:
+from the kvm tree and commit:
 
-  a5c214dad198 ("KVM/VMX: Change hv flush logic when ept tables are mismatc=
-hed.")
+  233a7cb23531 ("kvm: arm64: Allow tuning the physical address size for VM")
 
-from the kvm tree.
+from the kvm-arm tree.
 
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/x86/kvm/vmx.c
-index e665aa7167cf,abeeb45d1c33..000000000000
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@@ -1567,19 -1577,15 +1577,19 @@@ static int vmx_hv_remote_flush_tlb(stru
-  	if (to_kvm_vmx(kvm)->ept_pointers_match =3D=3D EPT_POINTERS_CHECK)
-  		check_ept_pointer_match(kvm);
+diff --cc include/uapi/linux/kvm.h
+index cb6d44e1fe02,95aa73ca65dc..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -960,11 -962,7 +969,12 @@@ struct kvm_ppc_resize_hpt=20
+  #define KVM_CAP_NESTED_STATE 157
+  #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+  #define KVM_CAP_MSR_PLATFORM_INFO 159
+ -#define KVM_CAP_ARM_VM_IPA_SIZE 160 /* returns maximum IPA bits for a VM =
+*/
+ +#define KVM_CAP_PPC_NESTED_HV 160
+ +#define KVM_CAP_HYPERV_SEND_IPI 161
+ +#define KVM_CAP_COALESCED_PIO 162
+ +#define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 163
+ +#define KVM_CAP_EXCEPTION_PAYLOAD 164
+++#define KVM_CAP_ARM_VM_IPA_SIZE 165 /* returns maximum IPA bits for a VM =
+*/
  =20
-- 	if (to_kvm_vmx(kvm)->ept_pointers_match !=3D EPT_POINTERS_MATCH) {
-- 		ret =3D -ENOTSUPP;
-- 		goto out;
-- 	}
--=20
- +	/*
- +	 * FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE hypercall needs the address of the
- +	 * base of EPT PML4 table, strip off EPT configuration information.
- +	 */
-- 	ret =3D hyperv_flush_guest_mapping(
-- 			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
-+ 	if (to_kvm_vmx(kvm)->ept_pointers_match !=3D EPT_POINTERS_MATCH) {
-+ 		kvm_for_each_vcpu(i, vcpu, kvm)
-+ 			ret |=3D hyperv_flush_guest_mapping(
- -				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer);
-++				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer & PAGE_MASK);
-+ 	} else {
-+ 		ret =3D hyperv_flush_guest_mapping(
- -				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
-++				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
-+ 	}
+  #ifdef KVM_CAP_IRQ_ROUTING
  =20
-- out:
-  	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
-  	return ret;
-  }
 
---Sig_/BPbrHQzprApBsXaeGGEniYO
+--Sig_/iAIPVQb_jJjqO91tszIqSfC
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvH8esACgkQAVBC80lX
-0GzUtwf/f9l6eGjmKQRJnv2Pc+dW+IpNvGQTiBE0Ivxw1iCx4kymjPPts7cm1aFs
-QQJ69xAt46AO4dpmSLBl/lcD5DznlSsvMQ8D6ir5QicoVQ8dcZuDUnbKFHRdWsCq
-FNTISeP6OgWL6KCgMVWQVOcdhHNEPk3sDVBFkj1sTn4DJvyWsBs55DZDtHwf5Fc4
-SdzMBimAgY7JxzFGSRuLFy9ikInDvw0VAoeU81ONXoYE2cUu6I4UhOCdAEOBgXEJ
-jOqOzJyuRnChPC3C0qULnDtRBIMfcaG4xwniaK8dcEcdRN4FYhrbdvO8+E7SRcBH
-t1d2iFFR/DO9JBSdfu2iQ8+6hXrqSw==
-=Oy8l
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvH9AMACgkQAVBC80lX
+0GxVmAgApLdNQ8MhS+ddZSSSxLiNSbXCfXdHnPSUGJYLIjXjdtpKsvg+QzaQlEXP
+HqqLuJ/kWa+cw0FXmyos9xXVJMg1K1ObRwq+ya0J0dLy1BiSTMAIrpA/RibppuWt
+mI58WmgqD7kjNdgMZ+Adk6sz3CyT69iC1zQnCIUBZ6/FJYMBZcRKf0CV4jX4ctCe
+Sv2+6UqQ1IYx5YjXmxnvj02EmO5fIbgF4l5r3Tu5FcBuP74AvFFVBumWY9Rftggj
+oicAoXspn+2d06wO0txIfyCUkTaKyJCQ4d2ywlAsjy5SV3VMQO/XEHpgKnb3jDy7
+TXGmXYLTf1KXtRwSfoSRuQcm1RdMgQ==
+=gk0p
 -----END PGP SIGNATURE-----
 
---Sig_/BPbrHQzprApBsXaeGGEniYO--
+--Sig_/iAIPVQb_jJjqO91tszIqSfC--
