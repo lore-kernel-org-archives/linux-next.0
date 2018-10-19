@@ -1,58 +1,51 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warning after merge of the scsi tree
-Date: Thu, 18 Oct 2018 21:54:03 -0700
-Message-ID: <1539924843.18970.35.camel@HansenPartnership.com>
+Date: Fri, 19 Oct 2018 15:58:02 +1100
+Message-ID: <20181019155802.0b75dd69@canb.auug.org.au>
 References: <20181019155034.2cf7f864@canb.auug.org.au>
+        <1539924843.18970.35.camel@HansenPartnership.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-t6+FJjiqLsyK2mQ5G4Ul"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pop22MGTLMa4b4IQHSGox+R"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181019155034.2cf7f864@canb.auug.org.au>
+In-Reply-To: <1539924843.18970.35.camel@HansenPartnership.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-
---=-t6+FJjiqLsyK2mQ5G4Ul
-Content-Type: text/plain; charset="UTF-8"
+--Sig_/pop22MGTLMa4b4IQHSGox+R
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2018-10-19 at 15:50 +1100, Stephen Rothwell wrote:
-> Hi James,
->=20
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
->=20
-> drivers/scsi/lpfc/lpfc_debugfs.c: In function
-> 'lpfc_debugfs_nodelist_open':
-> drivers/scsi/lpfc/lpfc_debugfs.c:706:17: warning: 'nrport' may be
-> used uninitialized in this function [-Wmaybe-uninitialized]
->    switch (nrport->port_state) {
->            ~~~~~~^~~~~~~~~~~~
-> drivers/scsi/lpfc/lpfc_debugfs.c:553:30: note: 'nrport' was declared
-> here
->   struct nvme_fc_remote_port *nrport;
->                               ^~~~~~
->=20
-> I am not sure where this has come from :-(
+Hi James,
 
-It's the merge commit ... it was obviously the wrong choice; I'll fix
-it.
+On Thu, 18 Oct 2018 21:54:03 -0700 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> It's the merge commit ... it was obviously the wrong choice; I'll fix
+> it.
 
-James
+OK, thanks.
 
---=-t6+FJjiqLsyK2mQ5G4Ul
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pop22MGTLMa4b4IQHSGox+R
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCW8ljawAKCRDnQslM7pis
-hY0SAQC+UTjH/MHC0MlO40CsXZOqqa57+sxS9ALQaJ1uU72HaQD8DvXRaqc85GQf
-3efCPD1vS0dideELBA/zVCBOgSSvmwk=
-=bgKI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJZFoACgkQAVBC80lX
+0GzdsAgAlzNWpVObA2JYzjWB0EbpGrWDhNHfzRGfWlIu6iinrIUuwj8EAimemt7K
+RBjL6Y6Dgc6umD0GC5lddlYuKGEWDdRTedJCUf2c0JYWp9Cz3GaWNdR/AtcW7W5Z
+jWOmlrBAjVrCGPmXgX1Yv4qdDDLAxyTaERe+B/T7SJinH8oSbIJZ5i+HZS77W8Wm
+ZnvSEKbx+MgWD2kQ+UYxf3oV9zF0QUngZIM5cR7OJXi+HFDxxVTz37Qe5XT+6vww
+nfnrRkU1ZYL/B7cnJ9FTZwTNfHaxS77Uu2f2OVb5tMvu8j/KSf3ptc3skLWWbZ2w
+8djzBC1HxpbJiYOCDADxZG5t5MtehQ==
+=/juR
 -----END PGP SIGNATURE-----
 
---=-t6+FJjiqLsyK2mQ5G4Ul--
+--Sig_/pop22MGTLMa4b4IQHSGox+R--
