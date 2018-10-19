@@ -1,48 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the net-next tree
-Date: Fri, 19 Oct 2018 18:30:33 +1100
-Message-ID: <20181019183033.4fc5b93b@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Oct 19
+Date: Fri, 19 Oct 2018 09:41:00 -0700
+Message-ID: <20181019164100.GA5319@roeck-us.net>
+References: <20181019181653.198552cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eNdFC5miAgY4ao7/5OsbdG0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181019181653.198552cd@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/eNdFC5miAgY4ao7/5OsbdG0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 19, 2018 at 06:16:53PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> News: I will not be doing linux-next releases next week.  Unfortunately
+> this will probably be the first week of the merge window. :-(
+> 
+> Changes since 20181018:
+> 
+> The net-next tree gained a conflict against the net tree and a build
+> failure due to an interaction with the rdma tree for which I applied a
+> merge fix patch.
+> 
+> The kvm tree gained a conflict against the tip tree.
+> 
+> Non-merge commits (relative to Linus' tree): 11382
+>  10233 files changed, 562372 insertions(+), 243395 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-Hi all,
+Build results:
+	total: 135 pass: 125 fail: 10
+Failed builds: 
+	arm:allmodconfig 
+	i386:allyesconfig 
+	i386:allmodconfig 
+	mips:allmodconfig 
+	parisc:allmodconfig 
+	powerpc:ppc6xx_defconfig
+	s390:allmodconfig 
+	sh:dreamcast_defconfig 
+	sparc64:allmodconfig 
+	xtensa:allmodconfig 
+Qemu test results:
+	total: 318 pass: 318 fail: 0
 
-Commits
+---
+arm:allmodconfig, i386:allmodconfig, i386:allyesconfig, parisc:allmodconfig
 
-  2a4c42980250 ("net/mlx5: Remove counter from idr after removing it from l=
-ist")
-  fd3307130344 ("net/mlx5: Take fs_counters dellist before addlist")
+ERROR: "__aeabi_uldivmod" [drivers/scsi/myrs.ko] undefined!
+(and similar)
 
-are missing a Signed-off-by from their committer.
+mips:allmodconfig, powerpc:ppc6xx_defconfig:
 
---=20
-Cheers,
-Stephen Rothwell
+net/sunrpc/auth_gss/gss_krb5_seal.c: In function 'gss_seq_send64_fetch_and_inc':
+net/sunrpc/auth_gss/gss_krb5_seal.c:145:3: error: implicit declaration of function 'cmpxchg64'
 
---Sig_/eNdFC5miAgY4ao7/5OsbdG0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+s390:allmodconfig, sparc64:allmodconfig:
 
------BEGIN PGP SIGNATURE-----
+ERROR: "__node_distance" [drivers/nvme/host/nvme-core.ko] undefined!
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJiBkACgkQAVBC80lX
-0GxrGgf+KxxtNI1r0JqcSV79x+dGvOfLzyuFyRLHb1ebY6EZo+idarlc4Py60TAa
-LQQRlJQGCc5MeLCVWUfuegtpG56O/sWsnXnk8297rP1t7unyhnxAWs7wIzu1w8Oa
-rHmlU6+2WgEVBZ6Uthv3SzSs9h+htbQGBSL8QbmmcmD2pKp3IJ9C5NR7mDNk/SIt
-Ehgfb1Iv875qGrDNGPZjOx9uLf+7axmDIam+4ll3/FhKHvMiptwTProCQBxkV3rD
-1T7odgvH+x82u2PFKrZpgN3dtx+UhUQvTOhTOP47aWwaVGdh1r0nsDCZI3sV/733
-rNmVrSrKLm3Sk7Nisq62X6sw0KN28Q==
-=JgKI
------END PGP SIGNATURE-----
+sh:dreamcast_defconfig:
 
---Sig_/eNdFC5miAgY4ao7/5OsbdG0--
+drivers/cdrom/gdrom.c: In function 'probe_gdrom':
+drivers/cdrom/gdrom.c:797:3: error: 'rc' undeclared
+
+xtensa:allmodconfig:
+
+drivers/net/ethernet/amazon/ena/ena_com.h: In function ‘ena_com_get_next_bounce_buffer’:
+build/drivers/net/ethernet/amazon/ena/ena_com.h:1104:2: error: implicit declaration of function ‘prefetchw’
+
+Guenter
