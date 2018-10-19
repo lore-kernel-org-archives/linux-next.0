@@ -1,54 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the scsi tree
-Date: Fri, 19 Oct 2018 15:50:34 +1100
-Message-ID: <20181019155034.2cf7f864@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Thu, 18 Oct 2018 21:54:03 -0700
+Message-ID: <1539924843.18970.35.camel@HansenPartnership.com>
+References: <20181019155034.2cf7f864@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YhnTqcejkmKsHIn==Lt+2KQ"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-t6+FJjiqLsyK2mQ5G4Ul"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181019155034.2cf7f864@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YhnTqcejkmKsHIn==Lt+2KQ
-Content-Type: text/plain; charset=US-ASCII
+
+--=-t6+FJjiqLsyK2mQ5G4Ul
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+On Fri, 2018-10-19 at 15:50 +1100, Stephen Rothwell wrote:
+> Hi James,
+>=20
+> After merging the scsi tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>=20
+> drivers/scsi/lpfc/lpfc_debugfs.c: In function
+> 'lpfc_debugfs_nodelist_open':
+> drivers/scsi/lpfc/lpfc_debugfs.c:706:17: warning: 'nrport' may be
+> used uninitialized in this function [-Wmaybe-uninitialized]
+>    switch (nrport->port_state) {
+>            ~~~~~~^~~~~~~~~~~~
+> drivers/scsi/lpfc/lpfc_debugfs.c:553:30: note: 'nrport' was declared
+> here
+>   struct nvme_fc_remote_port *nrport;
+>                               ^~~~~~
+>=20
+> I am not sure where this has come from :-(
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+It's the merge commit ... it was obviously the wrong choice; I'll fix
+it.
 
-drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_nodelist_open':
-drivers/scsi/lpfc/lpfc_debugfs.c:706:17: warning: 'nrport' may be used unin=
-itialized in this function [-Wmaybe-uninitialized]
-   switch (nrport->port_state) {
-           ~~~~~~^~~~~~~~~~~~
-drivers/scsi/lpfc/lpfc_debugfs.c:553:30: note: 'nrport' was declared here
-  struct nvme_fc_remote_port *nrport;
-                              ^~~~~~
+James
 
-I am not sure where this has come from :-(
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YhnTqcejkmKsHIn==Lt+2KQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--=-t6+FJjiqLsyK2mQ5G4Ul
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJYpoACgkQAVBC80lX
-0GzAzAf/Q29BgDltr7uqPOkiypn8fnVrlkvwvHw06lO8/CXLrrLKiFIWxrzHyaTW
-d46aWRHrGiu00wwhI2juf3K9w4H+yGXYGCxS8g2/GdMhoTSJucYSPzx69w81pKL1
-//6Grth0xYldeHNhbIQyE0kan/5ffanJgi9OqnITaSYyTrw3Nv9Vj13Moaaqwm31
-Z2r7UFiivKt2ArBNRFF637PVCO7FRNK5gVg1erJAqQLvi3SFGw9UAeRTzA8WWQlE
-kD24vV3+B16t+ci9PewtLQFh8Qrc08DNta8nwmWejIdzFs1mejtz4gdtJ/Ww2Y7E
-G6BP9hlwJPQ3VaBzCagHgB/7adrX/A==
-=o9z7
+iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCW8ljawAKCRDnQslM7pis
+hY0SAQC+UTjH/MHC0MlO40CsXZOqqa57+sxS9ALQaJ1uU72HaQD8DvXRaqc85GQf
+3efCPD1vS0dideELBA/zVCBOgSSvmwk=
+=bgKI
 -----END PGP SIGNATURE-----
 
---Sig_/YhnTqcejkmKsHIn==Lt+2KQ--
+--=-t6+FJjiqLsyK2mQ5G4Ul--
