@@ -1,26 +1,62 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Sun, 28 Oct 2018 15:45:16 -0700
-Message-ID: <CAHk-=wi475eRvUDctiWdBWsEB7UYgr8OrpPzrd=xkevUpTSCuA@mail.gmail.com>
-References: <20181029093532.38a3888e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Mon, 29 Oct 2018 10:08:31 +1100
+Message-ID: <20181029100831.73b12672@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=_L/wC4xwxrC/ekk9rJ.mvS"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181029093532.38a3888e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, liuhangbin@gmail.com, David Miller <davem@davemloft.net>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Niklas Cassel <niklas.cassel@linaro.org>, Andy Gross <andy.gross@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Oct 28, 2018 at 3:35 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the origin tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+--Sig_/=_L/wC4xwxrC/ekk9rJ.mvS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-linux-next is back! Wheee..
+Hi all,
 
->   5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
+Today's linux-next merge of the arm-soc tree got a conflict in:
 
-David?
+  drivers/soc/qcom/Kconfig
 
-                 Linus
+between commit:
+
+  a978a5b8d83f ("net/kconfig: Make QCOM_QMI_HELPERS available when COMPILE_=
+TEST")
+
+from Linus' tree and commit:
+
+  ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
+
+from the arm-soc tree.
+
+I fixed it up (I just used the version in Linus' tree) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=_L/wC4xwxrC/ekk9rJ.mvS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWQW8ACgkQAVBC80lX
+0GycAQf/bAeaq8482QIDfTMaSVUId/AcgetXEXQqiqek1NffGeh3s13ZLo9vlH4/
+Fg8iZ6JBLNfqam4H4T8n2tE9aaY/GSFsge2+NfaQaJR6T3k4SIh4CHuTWUR/p16B
+oOveCZMlTk80IGuCBLSJwmiVj/fyIqXNV7/rXysTOj2xO4JqFt5wXIUD/KyeI6gL
+8RL4atS+OcRSktfDnj6jyOw0ast4ubJ6OxzH22tFTpHSadSLakjoEj4++KnxpAGg
+rlLGEXvLGw6WCFgDf/WrSAhSCjiWRImWkLzjFQxLR+CPkLFX0Xtgy6XB+ICK6S12
+6lTPuvOcPPOyAvA2aWMwDD40ibfK7w==
+=LPtz
+-----END PGP SIGNATURE-----
+
+--Sig_/=_L/wC4xwxrC/ekk9rJ.mvS--
