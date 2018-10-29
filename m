@@ -1,71 +1,67 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Mon, 29 Oct 2018 08:02:27 -0700
-Message-ID: <20181029150227.GA56754@atomide.com>
-References: <20181029101401.5687153e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the compiler-attributes tree with the
+ kbuild tree
+Date: Tue, 30 Oct 2018 10:46:37 +1100
+Message-ID: <20181030104637.382c26d0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Txj/sLcRG0RPm7X.OikBPYu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181029101401.5687153e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [181028 23:14]:
-> Hi all,
-> 
-> Today's linux-next merge of the arm-soc tree got a conflict in:
-> 
->   include/linux/platform_data/gpio-omap.h
-> 
-> between commit:
-> 
->   b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm instead")
-> 
-> from Linus' tree and commit:
-> 
->   26683316c92a ("ARM: OMAP1: ams-delta-fiq: Use <linux/platform_data/gpio-omap.h>")
-> 
-> from the arm-soc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+--Sig_/Txj/sLcRG0RPm7X.OikBPYu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks it probably makes sense to merge in the immutable gpio branch
-also into arm-soc tree that Linus Walleij has set up earlier. That's the
-ib-omap branch at commit 5284521a290e ("gpio: omap: Get rid of
-pm_runtime_irq_safe()").
+Hi Miguel,
 
-Regards,
+Today's linux-next merge of the compiler-attributes tree got a conflict
+in:
 
-Tony
+  include/linux/compiler-gcc.h
 
-> diff --cc include/linux/platform_data/gpio-omap.h
-> index 8485c6a9a383,ed071f76b642..000000000000
-> --- a/include/linux/platform_data/gpio-omap.h
-> +++ b/include/linux/platform_data/gpio-omap.h
-> @@@ -205,4 -206,18 +208,6 @@@ struct omap_gpio_platform_data 
->   	int (*get_context_loss_count)(struct device *dev);
->   };
->   
->  -#if IS_BUILTIN(CONFIG_GPIO_OMAP)
->  -extern void omap2_gpio_prepare_for_idle(int off_mode);
->  -extern void omap2_gpio_resume_after_idle(void);
->  -#else
->  -static inline void omap2_gpio_prepare_for_idle(int off_mode)
->  -{
->  -}
->  -
->  -static inline void omap2_gpio_resume_after_idle(void)
->  -{
->  -}
->  -#endif
-> + #endif /* __ASSEMBLER__ */
-> + 
->   #endif
+between commit:
+
+  94c7dfd01652 ("kernel hacking: support building kernel with -Og optimizat=
+ion level")
+
+from the kbuild tree and commits:
+
+  5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores synt=
+ax")
+  989bd5000f36 ("Compiler Attributes: remove unneeded sparse (__CHECKER__) =
+tests")
+
+from the compiler-attributes tree.
+
+I fixed it up (the latter just removed the __CHECKER__ check, so I did
+that) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Txj/sLcRG0RPm7X.OikBPYu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvXm90ACgkQAVBC80lX
+0Gxg+QgAkApuu6p1esEjyjkjj9LGWA0Oo087fTpH+Qw++H9X7RvQrDKprReHh8w9
+Ni/lPsH1+eAh2bP+PYnIBb7yV5Q5VN3nKWZ6OxLzK+T7PJ0ygnQZCguEz7ROhwu1
+IO111AFqzyewfhn3FQAcJTAvOS4iV8QMc2dr3/SoJ0Aolg9LwNe9gQW8B6FhwCn6
+Qg7jSgaLdh3rhbqpc/cVfyV29oPDWhKd7JlTTxDasgaQ3MwBDbCGUSTdLofH6BDJ
+/wnZazZzjWx45osg+mx/eM7YN8ohAGKsfMYcsFnuFM8mriVfdTHuhOglA5d5N36x
+8D1QhmKOlQa2R9STztLu88Wrm1nqmQ==
+=u3gb
+-----END PGP SIGNATURE-----
+
+--Sig_/Txj/sLcRG0RPm7X.OikBPYu--
