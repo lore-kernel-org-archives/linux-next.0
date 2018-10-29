@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with Linus' tree
-Date: Mon, 29 Oct 2018 13:01:24 +1100
-Message-ID: <20181029130124.290346e9@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the i2c tree
+Date: Mon, 29 Oct 2018 13:09:25 +1100
+Message-ID: <20181029130925.60ea7830@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/X_/swfdki+BZTJ8afk_lQqW"; protocol="application/pgp-signature"
+ boundary="Sig_/Yi5UDAd5LU=QdOHo+ui7Syk"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/X_/swfdki+BZTJ8afk_lQqW
+--Sig_/Yi5UDAd5LU=QdOHo+ui7Syk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Rafael,
 
-Today's linux-next merge of the pm tree got a conflict in:
+Today's linux-next merge of the pm tree got conflicts in:
 
-  drivers/cpuidle/governors/menu.c
+  drivers/i2c/busses/i2c-designware-baytrail.c
+  drivers/i2c/busses/i2c-designware-core.h
 
 between commit:
 
-  8508cf3ffad4 ("sched: loadavg: consolidate LOAD_INT, LOAD_FRAC, CALC_LOAD=
-")
+  9cbeeca05049 ("i2c: designware: Remove Cherry Trail PMIC I2C bus pm_disab=
+led workaround")
 
-from Linus' tree and commit:
+from the i2c tree and commit:
 
-  a7fe5190c03f ("cpuidle: menu: Remove get_loadavg() from the performance m=
-ultiplier")
+  8afb46804dfa ("i2c: designware: Cleanup bus lock handling")
 
 from the pm tree.
 
@@ -44,41 +44,78 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/cpuidle/governors/menu.c
-index 71979605246e,76df4f947f07..000000000000
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@@ -130,11 -130,10 +130,6 @@@ struct menu_device=20
-  	int		interval_ptr;
-  };
+diff --cc drivers/i2c/busses/i2c-designware-baytrail.c
+index 9ca1feaba98f,971b5cde7a93..000000000000
+--- a/drivers/i2c/busses/i2c-designware-baytrail.c
++++ b/drivers/i2c/busses/i2c-designware-baytrail.c
+@@@ -162,18 -36,9 +36,9 @@@ int i2c_dw_probe_lock_support(struct dw
+  		return -EPROBE_DEFER;
  =20
-- static inline int get_loadavg(unsigned long load)
+  	dev_info(dev->dev, "I2C bus managed by PUNIT\n");
+- 	dev->acquire_lock =3D baytrail_i2c_acquire;
+- 	dev->release_lock =3D baytrail_i2c_release;
++ 	dev->acquire_lock =3D iosf_mbi_block_punit_i2c_access;
++ 	dev->release_lock =3D iosf_mbi_unblock_punit_i2c_access;
+ -	dev->pm_disabled =3D true;
+ +	dev->shared_with_punit =3D true;
+ =20
+- 	pm_qos_add_request(&dev->pm_qos, PM_QOS_CPU_DMA_LATENCY,
+- 			   PM_QOS_DEFAULT_VALUE);
+-=20
+  	return 0;
+  }
+-=20
+- void i2c_dw_remove_lock_support(struct dw_i2c_dev *dev)
 - {
-- 	return LOAD_INT(load) * 10 + LOAD_FRAC(load) / 10;
+- 	if (dev->acquire_lock)
+- 		pm_qos_remove_request(&dev->pm_qos);
 - }
- -
- -#define LOAD_INT(x) ((x) >> FSHIFT)
- -#define LOAD_FRAC(x) LOAD_INT(((x) & (FIXED_1-1)) * 100)
---
-  static inline int which_bucket(unsigned int duration, unsigned long nr_io=
-waiters)
-  {
-  	int bucket =3D 0;
+diff --cc drivers/i2c/busses/i2c-designware-core.h
+index 9ec8394f4787,152bf56d8404..000000000000
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@@ -209,10 -208,9 +208,9 @@@
+   * @fp_lcnt: fast plus LCNT value
+   * @hs_hcnt: high speed HCNT value
+   * @hs_lcnt: high speed LCNT value
+-  * @pm_qos: pm_qos_request used while holding a hardware lock on the bus
+   * @acquire_lock: function to acquire a hardware lock on the bus
+   * @release_lock: function to release a hardware lock on the bus
+ - * @pm_disabled: true if power-management should be disabled for this i2c=
+-bus
+ + * @shared_with_punit: true if this bus is shared with the SoCs PUNIT
+   * @disable: function to disable the controller
+   * @disable_int: function to disable all interrupts
+   * @init: function to initialize the I2C hardware
+@@@ -263,10 -260,9 +261,9 @@@ struct dw_i2c_dev=20
+  	u16			fp_lcnt;
+  	u16			hs_hcnt;
+  	u16			hs_lcnt;
+- 	struct pm_qos_request	pm_qos;
+- 	int			(*acquire_lock)(struct dw_i2c_dev *dev);
+- 	void			(*release_lock)(struct dw_i2c_dev *dev);
++ 	int			(*acquire_lock)(void);
++ 	void			(*release_lock)(void);
+ -	bool			pm_disabled;
+ +	bool			shared_with_punit;
+  	void			(*disable)(struct dw_i2c_dev *dev);
+  	void			(*disable_int)(struct dw_i2c_dev *dev);
+  	int			(*init)(struct dw_i2c_dev *dev);
 
---Sig_/X_/swfdki+BZTJ8afk_lQqW
+--Sig_/Yi5UDAd5LU=QdOHo+ui7Syk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWafQACgkQAVBC80lX
-0Gz/ygf9F78MzY9YDkx3+GE4g9YtmmyWE+ngodELWEa9NqzFSdczjjuBdXWw7jXV
-93YDuYQF6jljE+p/dSnyfL+V5NQ77TQBDXscUp76iaFqqBAaCnpEX+amZH8WN85C
-LtT43ieMnpS9UL/kQOCnvW8/BGFEaD4/fNSjmEkyDyZ7c9Qake6ZiV4Ig7lqnHPJ
-tDWEu13AGEg/I4Oi3Rp4AzgVG+0D8pt+DYKk1XLbqQ+qGXlg/yYm4oGDpxmKZFcr
-StBRamwapag9OCBlt6Ml7hWT2Hf3auDOmG1cRg6jTQJj9+nMb4jqpfhjfD/vXgHf
-JkzWmCw+k1I8WKp8ryrJOKMWRYgGgg==
-=MBnX
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWa9UACgkQAVBC80lX
+0GzqbAf+K5guPngSpCLhyvZXPt3dSdtogNVF36+anUCLFVUTpr/vzkhOIpnRr4Sx
+BSKuC4LsQTzbYMSZ6/sWilsoghByhW5Sck+PdVgrtsEVe+nkcpQw/ppQip4OEbPF
+kIN8MrnG4VG+0Bb2Pec4RtBtoXgq5XUQJuO2CCoLNGPBwKjmdlNDc1UZlFhRdHH8
+j6BD/QuKoxhJYupS00/5B2Rq+38QxhRJry5ii8j+Dz6crAvIEbF/hFdhPU8j7Wah
+7SmrKMGPsFXvNFRT/slRjvq0SlIRtQzGIx4URTN+sGaKJwDZzjhXG3tvqgN5idb6
+RXLv/sYh/8+I9oJ2qMNZTlq8YMkV6g==
+=TbQX
 -----END PGP SIGNATURE-----
 
---Sig_/X_/swfdki+BZTJ8afk_lQqW--
+--Sig_/Yi5UDAd5LU=QdOHo+ui7Syk--
