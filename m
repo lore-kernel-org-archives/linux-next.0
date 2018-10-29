@@ -1,53 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Mon, 29 Oct 2018 21:29:52 +1100
-Message-ID: <20181029212952.2d0641fb@canb.auug.org.au>
-References: <20181029200620.75f71e94@canb.auug.org.au>
-        <20180910133525.28c5dd20@canb.auug.org.au>
-        <20181029153334.7c8d16cc@canb.auug.org.au>
-        <5183.1540804880@warthog.procyon.org.uk>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Mon, 29 Oct 2018 08:02:27 -0700
+Message-ID: <20181029150227.GA56754@atomide.com>
+References: <20181029101401.5687153e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KhcNM3A2bKsRes/np1wT8XW"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5183.1540804880@warthog.procyon.org.uk>
+Content-Disposition: inline
+In-Reply-To: <20181029101401.5687153e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/KhcNM3A2bKsRes/np1wT8XW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+* Stephen Rothwell <sfr@canb.auug.org.au> [181028 23:14]:
+> Hi all,
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in:
+> 
+>   include/linux/platform_data/gpio-omap.h
+> 
+> between commit:
+> 
+>   b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm instead")
+> 
+> from Linus' tree and commit:
+> 
+>   26683316c92a ("ARM: OMAP1: ams-delta-fiq: Use <linux/platform_data/gpio-omap.h>")
+> 
+> from the arm-soc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Hi David,
+Thanks it probably makes sense to merge in the immutable gpio branch
+also into arm-soc tree that Linus Walleij has set up earlier. That's the
+ib-omap branch at commit 5284521a290e ("gpio: omap: Get rid of
+pm_runtime_irq_safe()").
 
-On Mon, 29 Oct 2018 09:21:20 +0000 David Howells <dhowells@redhat.com> wrot=
-e:
->
-> I think these changes should cover them all.
+Regards,
 
-Yep, that fixes the build for me, thanks.
+Tony
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/KhcNM3A2bKsRes/np1wT8XW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvW4SAACgkQAVBC80lX
-0GySjAf+KkLkvzFyqH9eEg6RjjqHE5mW/UNqRpBjM7H8tJGaxT7xlvFF0r6XpKbP
-fUOdQ/4/8CV4lfH48k++MyMtKh5risumjjTjzz4xZBFflXih/R1EzptuDP59agrw
-+5PtvBp+mgS4fxRgI1esNeOSa+Zu24PrvePaNgM65BnzrkFDSv7UBdrK/IpUTs58
-UAvc2uw8eOwmrdmpi54UYyTpQJdQOrYvTJyk0fH61MytuAITH3zp+fnEMutvmW1X
-WuKFiMrThEQvwM9uWQ2G0C22T/WDk3HIgNbkYjyg4fftccdRmoZ0QIXhe7kcU7dG
-MYKkvoiQuhXw/zKrkquE5NkCkJ341w==
-=Vt2o
------END PGP SIGNATURE-----
-
---Sig_/KhcNM3A2bKsRes/np1wT8XW--
+> diff --cc include/linux/platform_data/gpio-omap.h
+> index 8485c6a9a383,ed071f76b642..000000000000
+> --- a/include/linux/platform_data/gpio-omap.h
+> +++ b/include/linux/platform_data/gpio-omap.h
+> @@@ -205,4 -206,18 +208,6 @@@ struct omap_gpio_platform_data 
+>   	int (*get_context_loss_count)(struct device *dev);
+>   };
+>   
+>  -#if IS_BUILTIN(CONFIG_GPIO_OMAP)
+>  -extern void omap2_gpio_prepare_for_idle(int off_mode);
+>  -extern void omap2_gpio_resume_after_idle(void);
+>  -#else
+>  -static inline void omap2_gpio_prepare_for_idle(int off_mode)
+>  -{
+>  -}
+>  -
+>  -static inline void omap2_gpio_resume_after_idle(void)
+>  -{
+>  -}
+>  -#endif
+> + #endif /* __ASSEMBLER__ */
+> + 
+>   #endif
