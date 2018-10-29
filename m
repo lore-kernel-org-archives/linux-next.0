@@ -1,68 +1,53 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: manual merge of the drivers-x86 tree with Linus' tree
-Date: Mon, 29 Oct 2018 11:34:56 +0200
-Message-ID: <CAHp75Vfcsq_+vE8fH2EsPnEnyPbf6DqYE0m=oJH0_bHHV=y_EQ@mail.gmail.com>
-References: <20181029142907.54af8715@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Mon, 29 Oct 2018 21:29:52 +1100
+Message-ID: <20181029212952.2d0641fb@canb.auug.org.au>
+References: <20181029200620.75f71e94@canb.auug.org.au>
+        <20180910133525.28c5dd20@canb.auug.org.au>
+        <20181029153334.7c8d16cc@canb.auug.org.au>
+        <5183.1540804880@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KhcNM3A2bKsRes/np1wT8XW"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181029142907.54af8715@canb.auug.org.au>
+In-Reply-To: <5183.1540804880@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Darren Hart <dvhart@infradead.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 29, 2018 at 5:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the drivers-x86 tree got a conflict in:
->
->   drivers/platform/x86/intel_telemetry_debugfs.c
->
-> between commit:
->
->   f2c4db1bd807 ("x86/cpu: Sanitize FAM6_ATOM naming")
->
-> from Linus' tree and commit:
->
->   1a7938a632ce ("platform/x86: intel_telemetry: Get rid of custom macro")
->
-> from the drivers-x86 tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+--Sig_/KhcNM3A2bKsRes/np1wT8XW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
-This looks correct to me.
+Hi David,
 
+On Mon, 29 Oct 2018 09:21:20 +0000 David Howells <dhowells@redhat.com> wrot=
+e:
 >
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/platform/x86/intel_telemetry_debugfs.c
-> index cee08f236292,30988e31c713..000000000000
-> --- a/drivers/platform/x86/intel_telemetry_debugfs.c
-> +++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-> @@@ -319,8 -308,8 +308,8 @@@ static struct telemetry_debugfs_conf te
->   };
->
->   static const struct x86_cpu_id telemetry_debugfs_cpu_ids[] = {
-> -       TELEM_DEBUGFS_CPU(INTEL_FAM6_ATOM_GOLDMONT, telem_apl_debugfs_conf),
-> -       TELEM_DEBUGFS_CPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS, telem_apl_debugfs_conf),
-> +       INTEL_CPU_FAM6(ATOM_GOLDMONT, telem_apl_debugfs_conf),
->  -      INTEL_CPU_FAM6(ATOM_GEMINI_LAKE, telem_apl_debugfs_conf),
-> ++      INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS, telem_apl_debugfs_conf),
->         {}
->   };
->
+> I think these changes should cover them all.
 
+Yep, that fixes the build for me, thanks.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KhcNM3A2bKsRes/np1wT8XW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvW4SAACgkQAVBC80lX
+0GySjAf+KkLkvzFyqH9eEg6RjjqHE5mW/UNqRpBjM7H8tJGaxT7xlvFF0r6XpKbP
+fUOdQ/4/8CV4lfH48k++MyMtKh5risumjjTjzz4xZBFflXih/R1EzptuDP59agrw
++5PtvBp+mgS4fxRgI1esNeOSa+Zu24PrvePaNgM65BnzrkFDSv7UBdrK/IpUTs58
+UAvc2uw8eOwmrdmpi54UYyTpQJdQOrYvTJyk0fH61MytuAITH3zp+fnEMutvmW1X
+WuKFiMrThEQvwM9uWQ2G0C22T/WDk3HIgNbkYjyg4fftccdRmoZ0QIXhe7kcU7dG
+MYKkvoiQuhXw/zKrkquE5NkCkJ341w==
+=Vt2o
+-----END PGP SIGNATURE-----
+
+--Sig_/KhcNM3A2bKsRes/np1wT8XW--
