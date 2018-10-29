@@ -1,36 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Mon, 29 Oct 2018 10:14:01 +1100
-Message-ID: <20181029101401.5687153e@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ceph tree
+Date: Mon, 29 Oct 2018 12:16:39 +1100
+Message-ID: <20181029121639.738ab89c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/d9nsqprRH15JcB7tgCezAl2"; protocol="application/pgp-signature"
+ boundary="Sig_/4LK0Sc4kxDH7alXOXPPpFP_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Sage Weil <sage@newdream.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/d9nsqprRH15JcB7tgCezAl2
+--Sig_/4LK0Sc4kxDH7alXOXPPpFP_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-  include/linux/platform_data/gpio-omap.h
+  fs/ceph/file.c
 
 between commit:
 
-  b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm instead")
+  fce7a9744bdf ("ceph: refactor ceph_sync_read()")
 
-from Linus' tree and commit:
+from the ceph tree and commit:
 
-  26683316c92a ("ARM: OMAP1: ams-delta-fiq: Use <linux/platform_data/gpio-o=
-map.h>")
+  00e23707442a ("iov_iter: Use accessor function")
 
-from the arm-soc tree.
+from the vfs tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,44 +42,166 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/platform_data/gpio-omap.h
-index 8485c6a9a383,ed071f76b642..000000000000
---- a/include/linux/platform_data/gpio-omap.h
-+++ b/include/linux/platform_data/gpio-omap.h
-@@@ -205,4 -206,18 +208,6 @@@ struct omap_gpio_platform_data=20
-  	int (*get_context_loss_count)(struct device *dev);
-  };
+diff --cc fs/ceph/file.c
+index f788496fafcc,5dd433aa9b23..000000000000
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@@ -594,103 -658,48 +594,103 @@@ static ssize_t ceph_sync_read(struct ki
+  	if (ret < 0)
+  		return ret;
  =20
- -#if IS_BUILTIN(CONFIG_GPIO_OMAP)
- -extern void omap2_gpio_prepare_for_idle(int off_mode);
- -extern void omap2_gpio_resume_after_idle(void);
- -#else
- -static inline void omap2_gpio_prepare_for_idle(int off_mode)
- -{
- -}
+ -	if (unlikely(iov_iter_is_pipe(to))) {
+ +	ret =3D 0;
+ +	while ((len =3D iov_iter_count(to)) > 0) {
+ +		struct ceph_osd_request *req;
+ +		struct page **pages;
+ +		int num_pages;
+  		size_t page_off;
+ -		ret =3D iov_iter_get_pages_alloc(to, &pages, len,
+ -					       &page_off);
+ -		if (ret <=3D 0)
+ -			return -ENOMEM;
+ -		num_pages =3D DIV_ROUND_UP(ret + page_off, PAGE_SIZE);
+ +		u64 i_size;
+ +		bool more;
+ +
+ +		req =3D ceph_osdc_new_request(osdc, &ci->i_layout,
+ +					ci->i_vino, off, &len, 0, 1,
+ +					CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
+ +					NULL, ci->i_truncate_seq,
+ +					ci->i_truncate_size, false);
+ +		if (IS_ERR(req)) {
+ +			ret =3D PTR_ERR(req);
+ +			break;
+ +		}
+ +
+ +		more =3D len < iov_iter_count(to);
+ =20
+- 		if (unlikely(to->type & ITER_PIPE)) {
+ -		ret =3D striped_read(inode, off, ret, pages, num_pages,
+ -				   page_off, checkeof);
+ -		if (ret > 0) {
+ -			iov_iter_advance(to, ret);
+ -			off +=3D ret;
+++		if (unlikely(iov_iter_is_pipe(to))) {
+ +			ret =3D iov_iter_get_pages_alloc(to, &pages, len,
+ +						       &page_off);
+ +			if (ret <=3D 0) {
+ +				ceph_osdc_put_request(req);
+ +				ret =3D -ENOMEM;
+ +				break;
+ +			}
+ +			num_pages =3D DIV_ROUND_UP(ret + page_off, PAGE_SIZE);
+ +			if (ret < len) {
+ +				len =3D ret;
+ +				osd_req_op_extent_update(req, 0, len);
+ +				more =3D false;
+ +			}
+  		} else {
+ -			iov_iter_advance(to, 0);
+ +			num_pages =3D calc_pages_for(off, len);
+ +			page_off =3D off & ~PAGE_MASK;
+ +			pages =3D ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+ +			if (IS_ERR(pages)) {
+ +				ceph_osdc_put_request(req);
+ +				ret =3D PTR_ERR(pages);
+ +				break;
+ +			}
+  		}
+ -		ceph_put_page_vector(pages, num_pages, false);
+ -	} else {
+ -		num_pages =3D calc_pages_for(off, len);
+ -		pages =3D ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+ -		if (IS_ERR(pages))
+ -			return PTR_ERR(pages);
  -
- -static inline void omap2_gpio_resume_after_idle(void)
- -{
- -}
- -#endif
-+ #endif /* __ASSEMBLER__ */
-+=20
-  #endif
+ -		ret =3D striped_read(inode, off, len, pages, num_pages,
+ -				   (off & ~PAGE_MASK), checkeof);
+ -		if (ret > 0) {
+ -			int l, k =3D 0;
+ -			size_t left =3D ret;
+ -
+ -			while (left) {
+ -				size_t page_off =3D off & ~PAGE_MASK;
+ -				size_t copy =3D min_t(size_t, left,
+ -						    PAGE_SIZE - page_off);
+ -				l =3D copy_page_to_iter(pages[k++], page_off,
+ -						      copy, to);
+ -				off +=3D l;
+ -				left -=3D l;
+ -				if (l < copy)
+ +
+ +		osd_req_op_extent_osd_data_pages(req, 0, pages, len, page_off,
+ +						 false, false);
+ +		ret =3D ceph_osdc_start_request(osdc, req, false);
+ +		if (!ret)
+ +			ret =3D ceph_osdc_wait_request(osdc, req);
+ +		ceph_osdc_put_request(req);
+ +
+ +		i_size =3D i_size_read(inode);
+ +		dout("sync_read %llu~%llu got %zd i_size %llu%s\n",
+ +		     off, len, ret, i_size, (more ? " MORE" : ""));
+ +
+ +		if (ret =3D=3D -ENOENT)
+ +			ret =3D 0;
+ +		if (ret >=3D 0 && ret < len && (off + ret < i_size)) {
+ +			int zlen =3D min(len - ret, i_size - off - ret);
+ +			int zoff =3D page_off + ret;
+ +			dout("sync_read zero gap %llu~%llu\n",
+ +                             off + ret, off + ret + zlen);
+ +			ceph_zero_page_vector_range(zoff, zlen, pages);
+ +			ret +=3D zlen;
+ +		}
+ +
+- 		if (unlikely(to->type & ITER_PIPE)) {
+++		if (unlikely(iov_iter_is_pipe(to))) {
+ +			if (ret > 0) {
+ +				iov_iter_advance(to, ret);
+ +				off +=3D ret;
+ +			} else {
+ +				iov_iter_advance(to, 0);
+ +			}
+ +			ceph_put_page_vector(pages, num_pages, false);
+ +		} else {
+ +			int idx =3D 0;
+ +			size_t left =3D ret > 0 ? ret : 0;
+ +			while (left > 0) {
+ +				size_t len, copied;
+ +				page_off =3D off & ~PAGE_MASK;
+ +				len =3D min_t(size_t, left, PAGE_SIZE - page_off);
+ +				copied =3D copy_page_to_iter(pages[idx++],
+ +							   page_off, len, to);
+ +				off +=3D copied;
+ +				left -=3D copied;
+ +				if (copied < len) {
+ +					ret =3D -EFAULT;
+  					break;
+ +				}
+  			}
+ +			ceph_release_page_vector(pages, num_pages);
+  		}
+ -		ceph_release_page_vector(pages, num_pages);
+ +
+ +		if (ret <=3D 0 || off >=3D i_size || !more)
+ +			break;
+  	}
+ =20
+  	if (off > iocb->ki_pos) {
 
---Sig_/d9nsqprRH15JcB7tgCezAl2
+--Sig_/4LK0Sc4kxDH7alXOXPPpFP_
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWQrkACgkQAVBC80lX
-0Gx+3wf+JWhRFq0AfMargiT/sYDUVLQj/oHH2GezYMG/YNaQ51kzFdZVoghK5RSu
-vscPIRjTO8KepO4KyV+WXAff2EyaJshEL+tX821be/XLiVoNewqkXKLlW7A+zV67
-ZjIJeD5ZNACNNBPPJJ8d/SG7yGyYIuoJMGE5SyGCkKALGyzoHXusPh+HacBHWbpU
-OZRYXlaRXl1hJL72UYj4ERqxDtMk5hUyyQd/C0WwGuxY/OzbsqQIM/P2YB8POTrR
-ytvwCWEspxgrKdWgdGVG/6haTMXax3iZrdgMPm/GYWWu1AwZA+KEmilo4OQ9PrKQ
-PrEGM5eqeQhEPQZuH6Q93FIr5YaZ8A==
-=fs1j
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWX3cACgkQAVBC80lX
+0GzSDAgAggmOC9bz+ffXKkALC+f5kNx0MXl0IlnkXM7vC+QE5ucoLna4Zy3Kmc8a
+SuQuDE1lF7y95e1tWvMQT0N3eSsRYHuNB+4wLpyaD5DlD+A0fUbNszWOyEebaIwH
+TGTTd4i2hkUoqfqnqtnnQdfTWHEyAMFBFMW+c/L4qsXpPYvCC0pxzsNtRnoeyiJN
+Gdg2iL/nCyTVdPCFG7qhiOjoEHjnMplX3X6p51rJxFK8gTgJBGt9FOstuxp+ahCG
+xtwdjB4pZ2BLQLfbTGgOcmXPoBeVMls4HcgxX1EURMQtRNqu/F0I1GdmSY5g8D1x
+o7K0KfbbKOn4AevJH4qKoyMB4FwJlA==
+=U/Hs
 -----END PGP SIGNATURE-----
 
---Sig_/d9nsqprRH15JcB7tgCezAl2--
+--Sig_/4LK0Sc4kxDH7alXOXPPpFP_--
