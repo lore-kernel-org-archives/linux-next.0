@@ -1,58 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the compiler-attributes tree with
- the kbuild tree
-Date: Wed, 31 Oct 2018 03:02:29 +1100
-Message-ID: <20181031030229.725abfe2@canb.auug.org.au>
-References: <20181030104637.382c26d0@canb.auug.org.au>
-        <20181030104941.4fef7dad@canb.auug.org.au>
-        <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
+Subject: linux-next: Signed-off-by missing for commit in the tpmdd tree
+Date: Wed, 31 Oct 2018 09:16:42 +1100
+Message-ID: <20181031091642.6ca5943b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vIAPEUP4/SKJQ3GhL8KG7X="; protocol="application/pgp-signature"
+ boundary="Sig_/8CfVbeCpjDUR08IAju7CjnS"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, changbin.du@gmail.com
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vIAPEUP4/SKJQ3GhL8KG7X=
+--Sig_/8CfVbeCpjDUR08IAju7CjnS
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Miguel,
+Hi Jarkko,
 
-On Tue, 30 Oct 2018 12:21:52 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
-l.com> wrote:
->
-> From a quick look, it seems we want:
->=20
-> #ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-> #define __compiletime_warning(message) __attribute__((__warning__(message=
-)))
-> #define __compiletime_error(message) __attribute__((__error__(message)))
-> #endif
+Commit
 
-Thanks, I will use that resolution.
+  e22bf023c141 ("tpm: tpm_ibmvtpm: fix kdoc warnings")
+
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/vIAPEUP4/SKJQ3GhL8KG7X=
+--Sig_/8CfVbeCpjDUR08IAju7CjnS
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvYgJUACgkQAVBC80lX
-0Gx3JAf/eVJt0/EOhXwgRqYifJrD+FC89QhfNKyFYuAqmLBxUk7rHOnybQdOU3qi
-R41el3/EYubyTXzvxNkLQlO91nWE9QgZ42M+DpWsoETl+5fvC9aJdGDTVVHUKMdL
-mo4OPmRUQEwNEHUptzSQIMp4QIvCid7XDrYEFNwi8v6bs9lU31TTWcelZcJm4Slv
-CK+B/tQov9Qz3tfWwl0Evnqnc5uq1sB+IcQOoJj2C6TYzVRh/0LqqjcvOc25TdVJ
-X8KLY6/5rXHA4p2e7o1s+jSmYBI9exFSfRyMYZYsG0dLfKQGeQ8Pn8iuc8j2hFXa
-/YldAe85E09Hs7+s+NTjf1nmOtNEcQ==
-=7XJ2
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvY2EoACgkQAVBC80lX
+0GxRWwf/be5yxQEl/iIMEHioE1S8jE85hSNxpWBjXD+oxN6edbYPtwCH3kyrfvCO
+XET/Q10IRGl4FjuYPcIgP2iTF4iHU4dZjem/lA0rnlI16H+YZnmKPGRhqwC9CR/3
+7lQIo8q3/LV5kjxJ6YGEhhvgUB/r1AcRUN08wtrs2gRXM/sYqrH6ch45kCS9CYtS
+RdBerqgIAu5AK1yn/1FMBuqJvboVwj7zes0MHVnCs8mP8KDGy0YkuRkvWDDFsjR0
+JqW55LRwbmTs9W3TjicWwmL5hPAcTNh7F5fI4JG4F0P1yljypnBiGOUMuqhKxA9q
+tkpgP1dsyhEUMSaYots2nUsw4r/BgQ==
+=wegT
 -----END PGP SIGNATURE-----
 
---Sig_/vIAPEUP4/SKJQ3GhL8KG7X=--
+--Sig_/8CfVbeCpjDUR08IAju7CjnS--
