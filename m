@@ -1,85 +1,100 @@
-From: Hans de Goede <hdegoede@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 Subject: Re: linux-next: Tree for Oct 31 (vboxguest)
-Date: Wed, 31 Oct 2018 17:50:47 +0100
-Message-ID: <560c85c8-1ee2-31b0-3148-a08f56a25a2e@redhat.com>
+Date: Wed, 31 Oct 2018 12:06:58 -0700
+Message-ID: <dab59782-26d4-9b7e-2537-a1d8e578b2d9@infradead.org>
 References: <20181031145907.1ee2e866@canb.auug.org.au>
  <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
+ <560c85c8-1ee2-31b0-3148-a08f56a25a2e@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
+In-Reply-To: <560c85c8-1ee2-31b0-3148-a08f56a25a2e@redhat.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On 31-10-18 16:51, Randy Dunlap wrote:
-> On 10/30/18 8:59 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Please do not add any v4.21/v5.1 code to your linux-next included trees
->> until after the merge window closes.
->>
->> Changes since 20181030:
->>
-> 
-> 
-> on i386:
-> 
-> ld: drivers/virt/vboxguest/vboxguest_core.o: in function `vbg_ioctl_hgcm_call':
-> vboxguest_core.c:(.text+0x212b): undefined reference to `vbg_hgcm_call32'
-
-Are you perhaps using weird compiler options?
-
-This call should be optimized out on i386 (and we rely on calls being
-removed be dead code elimination to avoid #ifdefs in various places,
-iow this is a normal thing to rely on) :
-
-First we have:
-
-	bool f32bit = false;
-
-...
-
-         switch (req_no_size) {
-#ifdef CONFIG_COMPAT
-         case VBG_IOCTL_HGCM_CALL_32(0):
-                 f32bit = true;
-                 /* Fall through */
-#endif
-         case VBG_IOCTL_HGCM_CALL(0):
-                 return vbg_ioctl_hgcm_call(gdev, session, f32bit, data);
-	}
-
-And then we also have:
-
-static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
-                                struct vbg_session *session, bool f32bit,
-                                struct vbg_ioctl_hgcm_call *call)
-{
-	...
-
-         if (f32bit)
-                 ret = vbg_hgcm_call32(gdev, client_id,
-                                       call->function, call->timeout_ms,
-                                       VBG_IOCTL_HGCM_CALL_PARMS32(call),
-                                       call->parm_count, &call->hdr.rc);
-         else
-                 ret = vbg_hgcm_call(gdev, client_id,
-                                     call->function, call->timeout_ms,
-                                     VBG_IOCTL_HGCM_CALL_PARMS(call),
-                                     call->parm_count, &call->hdr.rc);
-}
-
-So on i386 CONFIG_COMPAT is never set, this f32bit is a 0 const
-and the compiler removes the if branch of the if ... else ...
-
-This has been upstream like this since 4.16 without any problems sofar.
-
-Regards,
-
-Hans
+T24gMTAvMzEvMTggOTo1MCBBTSwgSGFucyBkZSBHb2VkZSB3cm90ZToNCj4gSGksDQo+IA0K
+PiBPbiAzMS0xMC0xOCAxNjo1MSwgUmFuZHkgRHVubGFwIHdyb3RlOg0KPj4gT24gMTAvMzAv
+MTggODo1OSBQTSwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToNCj4+PiBIaSBhbGwsDQo+Pj4N
+Cj4+PiBQbGVhc2UgZG8gbm90IGFkZCBhbnkgdjQuMjEvdjUuMSBjb2RlIHRvIHlvdXIgbGlu
+dXgtbmV4dCBpbmNsdWRlZCB0cmVlcw0KPj4+IHVudGlsIGFmdGVyIHRoZSBtZXJnZSB3aW5k
+b3cgY2xvc2VzLg0KPj4+DQo+Pj4gQ2hhbmdlcyBzaW5jZSAyMDE4MTAzMDoNCj4+Pg0KPj4N
+Cj4+DQo+PiBvbiBpMzg2Og0KPj4NCj4+IGxkOiBkcml2ZXJzL3ZpcnQvdmJveGd1ZXN0L3Zi
+b3hndWVzdF9jb3JlLm86IGluIGZ1bmN0aW9uIGB2YmdfaW9jdGxfaGdjbV9jYWxsJzoNCj4+
+IHZib3hndWVzdF9jb3JlLmM6KC50ZXh0KzB4MjEyYik6IHVuZGVmaW5lZCByZWZlcmVuY2Ug
+dG8gYHZiZ19oZ2NtX2NhbGwzMicNCj4gDQo+IEFyZSB5b3UgcGVyaGFwcyB1c2luZyB3ZWly
+ZCBjb21waWxlciBvcHRpb25zPw0KDQpOb3BlLCBqdXN0IHdoYXRldmVyIGtidWlsZCBnaXZl
+cyBtZS4NCg0KSSBjb3VsZCBzdXNwZWN0IGdjYyB2NC44LjUsIGFsdGhvdWdoIEkgaGF2ZSBi
+ZWVuIHVzaW5nIGl0IGZvciBxdWl0ZQ0KYXdoaWxlIG5vdy4NCg0KPiBUaGlzIGNhbGwgc2hv
+dWxkIGJlIG9wdGltaXplZCBvdXQgb24gaTM4NiAoYW5kIHdlIHJlbHkgb24gY2FsbHMgYmVp
+bmcNCj4gcmVtb3ZlZCBiZSBkZWFkIGNvZGUgZWxpbWluYXRpb24gdG8gYXZvaWQgI2lmZGVm
+cyBpbiB2YXJpb3VzIHBsYWNlcywNCj4gaW93IHRoaXMgaXMgYSBub3JtYWwgdGhpbmcgdG8g
+cmVseSBvbikgOg0KPiANCj4gRmlyc3Qgd2UgaGF2ZToNCj4gDQo+IKCgoKBib29sIGYzMmJp
+dCA9IGZhbHNlOw0KPiANCj4gLi4uDQo+IA0KPiCgoKCgoKCgIHN3aXRjaCAocmVxX25vX3Np
+emUpIHsNCj4gI2lmZGVmIENPTkZJR19DT01QQVQNCj4goKCgoKCgoCBjYXNlIFZCR19JT0NU
+TF9IR0NNX0NBTExfMzIoMCk6DQo+IKCgoKCgoKCgoKCgoKCgoCBmMzJiaXQgPSB0cnVlOw0K
+PiCgoKCgoKCgoKCgoKCgoKAgLyogRmFsbCB0aHJvdWdoICovDQo+ICNlbmRpZg0KPiCgoKCg
+oKCgIGNhc2UgVkJHX0lPQ1RMX0hHQ01fQ0FMTCgwKToNCj4goKCgoKCgoKCgoKCgoKCgIHJl
+dHVybiB2YmdfaW9jdGxfaGdjbV9jYWxsKGdkZXYsIHNlc3Npb24sIGYzMmJpdCwgZGF0YSk7
+DQo+IKCgoKB9DQo+IA0KPiBBbmQgdGhlbiB3ZSBhbHNvIGhhdmU6DQo+IA0KPiBzdGF0aWMg
+aW50IHZiZ19pb2N0bF9oZ2NtX2NhbGwoc3RydWN0IHZiZ19kZXYgKmdkZXYsDQo+IKCgoKCg
+oKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoCBzdHJ1Y3QgdmJnX3Nlc3Npb24gKnNlc3Npb24s
+IGJvb2wgZjMyYml0LA0KPiCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKAgc3RydWN0
+IHZiZ19pb2N0bF9oZ2NtX2NhbGwgKmNhbGwpDQo+IHsNCj4goKCgoC4uLg0KPiANCj4goKCg
+oKCgoCBpZiAoZjMyYml0KQ0KPiCgoKCgoKCgoKCgoKCgoKAgcmV0ID0gdmJnX2hnY21fY2Fs
+bDMyKGdkZXYsIGNsaWVudF9pZCwNCj4goKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCg
+oKCgoKCgoCBjYWxsLT5mdW5jdGlvbiwgY2FsbC0+dGltZW91dF9tcywNCj4goKCgoKCgoKCg
+oKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoCBWQkdfSU9DVExfSEdDTV9DQUxMX1BBUk1T
+MzIoY2FsbCksDQo+IKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKAgY2Fs
+bC0+cGFybV9jb3VudCwgJmNhbGwtPmhkci5yYyk7DQo+IKCgoKCgoKAgZWxzZQ0KPiCgoKCg
+oKCgoKCgoKCgoKAgcmV0ID0gdmJnX2hnY21fY2FsbChnZGV2LCBjbGllbnRfaWQsDQo+IKCg
+oKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgIGNhbGwtPmZ1bmN0aW9uLCBjYWxs
+LT50aW1lb3V0X21zLA0KPiCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoCBW
+QkdfSU9DVExfSEdDTV9DQUxMX1BBUk1TKGNhbGwpLA0KPiCgoKCgoKCgoKCgoKCgoKCgoKCg
+oKCgoKCgoKCgoKCgoKCgoCBjYWxsLT5wYXJtX2NvdW50LCAmY2FsbC0+aGRyLnJjKTsNCj4g
+fQ0KPiANCj4gU28gb24gaTM4NiBDT05GSUdfQ09NUEFUIGlzIG5ldmVyIHNldCwgdGhpcyBm
+MzJiaXQgaXMgYSAwIGNvbnN0DQo+IGFuZCB0aGUgY29tcGlsZXIgcmVtb3ZlcyB0aGUgaWYg
+YnJhbmNoIG9mIHRoZSBpZiAuLi4gZWxzZSAuLi4NCj4gDQo+IFRoaXMgaGFzIGJlZW4gdXBz
+dHJlYW0gbGlrZSB0aGlzIHNpbmNlIDQuMTYgd2l0aG91dCBhbnkgcHJvYmxlbXMgc29mYXIu
+DQoNClRoYXQncyBuaWNlLg0KDQpIZXJlJ3Mgd2hhdCBidWlsZGluZyB3aXRoIFY9MSB0ZWxs
+cyBtZSBmb3IgdmJveGd1ZXN0X2NvcmUuYzoNCg0KICBnY2MgLVdwLC1NRCxkcml2ZXJzL3Zp
+cnQvdmJveGd1ZXN0Ly52Ym94Z3Vlc3RfY29yZS5vLmQgIC1ub3N0ZGluYyAtaXN5c3RlbSAv
+dXNyL2xpYjY0L2djYy94ODZfNjQtc3VzZS1saW51eC80LjgvaW5jbHVkZSAtSS4uL2FyY2gv
+eDg2L2luY2x1ZGUgLUkuL2FyY2gveDg2L2luY2x1ZGUvZ2VuZXJhdGVkICAtSS4uL2luY2x1
+ZGUgLUkuL2luY2x1ZGUgLUkuLi9hcmNoL3g4Ni9pbmNsdWRlL3VhcGkgLUkuL2FyY2gveDg2
+L2luY2x1ZGUvZ2VuZXJhdGVkL3VhcGkgLUkuLi9pbmNsdWRlL3VhcGkgLUkuL2luY2x1ZGUv
+Z2VuZXJhdGVkL3VhcGkgLWluY2x1ZGUgLi4vaW5jbHVkZS9saW51eC9rY29uZmlnLmggLWlu
+Y2x1ZGUgLi4vaW5jbHVkZS9saW51eC9jb21waWxlcl90eXBlcy5oICAtSS4uL2RyaXZlcnMv
+dmlydC92Ym94Z3Vlc3QgLUlkcml2ZXJzL3ZpcnQvdmJveGd1ZXN0IC1EX19LRVJORUxfXyAt
+V2FsbCAtV3VuZGVmIC1Xc3RyaWN0LXByb3RvdHlwZXMgLVduby10cmlncmFwaHMgLWZuby1z
+dHJpY3QtYWxpYXNpbmcgLWZuby1jb21tb24gLWZzaG9ydC13Y2hhciAtV2Vycm9yLWltcGxp
+Y2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uIC1Xbm8tZm9ybWF0LXNlY3VyaXR5IC1zdGQ9Z251
+ODkgLWZuby1QSUUgLURDQ19IQVZFX0FTTV9HT1RPIC1tbm8tc3NlIC1tbm8tbW14IC1tbm8t
+c3NlMiAtbW5vLTNkbm93IC1tbm8tYXZ4IC1tMzIgLW1zb2Z0LWZsb2F0IC1tcmVncGFybT0z
+IC1mcmVnLXN0cnVjdC1yZXR1cm4gLWZuby1waWMgLW1wcmVmZXJyZWQtc3RhY2stYm91bmRh
+cnk9MiAtbWFyY2g9aTU4NiAtV2EsLW10dW5lPWdlbmVyaWMzMiAtZmZyZWVzdGFuZGluZyAt
+bWFjY3VtdWxhdGUtb3V0Z29pbmctYXJncyAtRENPTkZJR19BU19DRkk9MSAtRENPTkZJR19B
+U19DRklfU0lHTkFMX0ZSQU1FPTEgLURDT05GSUdfQVNfQ0ZJX1NFQ1RJT05TPTEgLURDT05G
+SUdfQVNfU1NTRTM9MSAtRENPTkZJR19BU19BVlg9MSAtRENPTkZJR19BU19BVlgyPTEgLURD
+T05GSUdfQVNfQVZYNTEyPTEgLURDT05GSUdfQVNfU0hBMV9OST0xIC1EQ09ORklHX0FTX1NI
+QTI1Nl9OST0xIC1waXBlIC1Xbm8tc2lnbi1jb21wYXJlIC1mbm8tYXN5bmNocm9ub3VzLXVu
+d2luZC10YWJsZXMgLVdhLGFyY2gveDg2L2tlcm5lbC9tYWNyb3MucyAtV2EsLSAtZm5vLWRl
+bGV0ZS1udWxsLXBvaW50ZXItY2hlY2tzIC1PZyAtV25vLW1heWJlLXVuaW5pdGlhbGl6ZWQg
+LVduby1tYXliZS11bmluaXRpYWxpemVkIC0tcGFyYW09YWxsb3ctc3RvcmUtZGF0YS1yYWNl
+cz0wIC1mbm8tcmVvcmRlci1ibG9ja3MgLWZuby1pcGEtY3AtY2xvbmUgLWZuby1wYXJ0aWFs
+LWlubGluaW5nIC1XZnJhbWUtbGFyZ2VyLXRoYW49MTAyNCAtZm5vLXN0YWNrLXByb3RlY3Rv
+ciAtV25vLXVudXNlZC1idXQtc2V0LXZhcmlhYmxlIC1mbm8tb21pdC1mcmFtZS1wb2ludGVy
+IC1mbm8tb3B0aW1pemUtc2libGluZy1jYWxscyAtZm5vLXZhci10cmFja2luZy1hc3NpZ25t
+ZW50cyAtZm5vLWlubGluZS1mdW5jdGlvbnMgLWZuby1pbmxpbmUtc21hbGwtZnVuY3Rpb25z
+IC1mbm8taW5saW5lLWZ1bmN0aW9ucy1jYWxsZWQtb25jZSAtcGcgLWZuby1pbmxpbmUtZnVu
+Y3Rpb25zLWNhbGxlZC1vbmNlIC1XZGVjbGFyYXRpb24tYWZ0ZXItc3RhdGVtZW50IC1Xdmxh
+IC1Xbm8tcG9pbnRlci1zaWduIC1mbm8tc3RyaWN0LW92ZXJmbG93IC1mbm8tbWVyZ2UtYWxs
+LWNvbnN0YW50cyAtZm1lcmdlLWNvbnN0YW50cyAtZm5vLXN0YWNrLWNoZWNrIC1mY29uc2Vy
+dmUtc3RhY2sgLVdlcnJvcj1pbXBsaWNpdC1pbnQgLVdlcnJvcj1zdHJpY3QtcHJvdG90eXBl
+cyAgICAtREtCVUlMRF9CQVNFTkFNRT0nInZib3hndWVzdF9jb3JlIicgLURLQlVJTERfTU9E
+TkFNRT0nInZib3hndWVzdCInIC1jIC1vIGRyaXZlcnMvdmlydC92Ym94Z3Vlc3QvLnRtcF92
+Ym94Z3Vlc3RfY29yZS5vIC4uL2RyaXZlcnMvdmlydC92Ym94Z3Vlc3QvdmJveGd1ZXN0X2Nv
+cmUuYw0KDQoNCnRoYW5rcy4NCi0tIA0KflJhbmR5DQo=
