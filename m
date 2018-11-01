@@ -1,123 +1,161 @@
-From: Changbin Du <changbin.du@gmail.com>
-Subject: Re: linux-next: Tree for Oct 31 (vboxguest)
-Date: Thu, 1 Nov 2018 14:29:48 +0000
-Message-ID: <20181101142946.u5luuctqav6fec6k@mail.google.com>
-References: <20181031145907.1ee2e866@canb.auug.org.au>
- <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
- <CAK8P3a3aygFrD3PyZ8P==JzeYamE-x--MWCL54xzXDE_8u_R6Q@mail.gmail.com>
- <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+From: Eial Czerwacki <eial@scalemp.com>
+Subject: Re: [PATCH] x86/build: Build VSMP support only if selected
+Date: Thu, 1 Nov 2018 17:09:50 +0200
+Message-ID: <3c75860d-e3d7-8c28-6120-f6056200f941@scalemp.com>
+References: <20181030230905.xHZmM%akpm@linux-foundation.org>
+ <9e14d183-55a4-8299-7a18-0404e50bf004@infradead.org>
+ <alpine.DEB.2.21.1811011032190.1642@nanos.tec.linutronix.de>
+ <SN6PR15MB2366D7688B41535AF0A331F9C3CE0@SN6PR15MB2366.namprd15.prod.outlook.com>
+ <a8f2ac8e-45dc-1c12-e888-6ad880b1306f@scalemp.com>
+ <054cd800-5124-f897-0069-aba49f8eb654@suse.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+In-Reply-To: <054cd800-5124-f897-0069-aba49f8eb654@suse.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Changbin Du <changbin.du@gmail.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Randy Dunlap <rdunlap@infradead.org>, "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>, Andrew Morton <akpm@linux-foundation.org>, "broonie@kernel.org" <broonie@kernel.org>, "mhocko@suse.cz" <mhocko@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>, X86 ML <x86@kernel.org>, 'Oren Twaig' <oren@scalemp.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Nov 01, 2018 at 12:32:48PM +0900, Masahiro Yamada wrote:
-> Hi Arnd,
+Greetings,
+
+On 11/01/2018 03:45 PM, Juergen Gross wrote:
+> On 01/11/2018 14:10, Eial Czerwacki wrote:
+>> Greetings,
+>>
+>> On 11/01/2018 12:39 PM, Shai Fultheim (Shai@ScaleMP.com) wrote:
+>>> On 01/11/18 11:37, Thomas Gleixner wrote:
+>>>
+>>>> VSMP support is built even if CONFIG_X86_VSMP is not set. This leads to a build
+>>>> breakage when CONFIG_PCI is disabled as well.
+>>>>
+>>>> Build VSMP code only when selected.
+>>>
+>>> This patch disables detect_vsmp_box() on systems without CONFIG_X86_VSMP, due to
+>>> the recent 6da63eb241a05b0e676d68975e793c0521387141.  This is significant
+>>> regression that will affect significant number of deployments.
+>>>
+>>> We will reply shortly with an updated patch that fix the dependency on pv_irq_ops,
+>>> and revert to CONFIG_PARAVIRT, with proper protection for CONFIG_PCI.
+>>>
+>>
+>> here is the proper patch which fixes the issue on hand:
+>> From ebff534f8cfa55d7c3ab798c44abe879f3fbe2b8 Mon Sep 17 00:00:00 2001
+>> From: Eial Czerwacki <eial@scalemp.com>
+>> Date: Thu, 1 Nov 2018 15:08:32 +0200
+>> Subject: [PATCH] x86/build: Build VSMP support only if CONFIG_PCI is
+>> selected
+>>
+>> vsmp dependency of pv_irq_ops removed some years ago, so now let's clean
+>> it up from vsmp_64.c.
+>>
+>> In short, "cap & ctl & (1 << 4)" was always returning 0, as such we can
+>> remove all the PARAVIRT/PARAVIRT_XXL code handling that.
+>>
+>> However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
+>>
+>> Signed-off-by: Eial Czerwacki <eial@scalemp.com>
+>> Acked-by: Shai Fultheim <shai@scalemp.com>
+>> ---
+>>  arch/x86/Kconfig          |  1 -
+>>  arch/x86/kernel/vsmp_64.c | 80
+>> +++--------------------------------------------
+>>  2 files changed, 5 insertions(+), 76 deletions(-)
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index c51c989..4b187ca 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -524,7 +524,6 @@ config X86_VSMP
+>>         bool "ScaleMP vSMP"
+>>         select HYPERVISOR_GUEST
+>>         select PARAVIRT
 > 
+> Do you really still need PARAVIRT and HYPERVISOR_GUEST?
+> Maybe you want IRQ_REMAP instead?
 > 
-> On Thu, Nov 1, 2018 at 6:42 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On 10/31/18, Randy Dunlap <rdunlap@infradead.org> wrote:
-> > > On 10/30/18 8:59 PM, Stephen Rothwell wrote:
-> > >> Hi all,
-> > >>
-> > >> Please do not add any v4.21/v5.1 code to your linux-next included trees
-> > >> until after the merge window closes.
-> > >>
-> > >> Changes since 20181030:
-> > >>
-> > >
-> > >
-> > > on i386:
-> > >
-> > > ld: drivers/virt/vboxguest/vboxguest_core.o: in function
-> > > `vbg_ioctl_hgcm_call':
-> > > vboxguest_core.c:(.text+0x212b): undefined reference to `vbg_hgcm_call32'
-> > >
-> > >
-> > > Full randconfig file is attached.
-> > >
-> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> >
-> > I ran into the same thing, and lots of others like it; they all go back to
-> > the -Og compiler option introduced in commit 94c7dfd01652 ("kernel
-> > hacking: support building kernel with -Og optimization level").
-> >
-> >
-> > I have patches for most of these, but I'd prefer if we could leave
-> > that patch out of 4.20 for now, and have it in linux-next for merging
-> > into the next merge window, to give us more time to fix up all the
-> > regressions. This particular instance is fixed by the patch below.
+Better performance is achieved with PARAVIRTed kernel.   Hence we keep
+them both in.
+
+>> -       select PARAVIRT_XXL
+>>         depends on X86_64 && PCI
+>>         depends on X86_EXTENDED_PLATFORM
+>>         depends on SMP
+>> diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
+>> index 1eae5af..c6d2b76 100644
+>> --- a/arch/x86/kernel/vsmp_64.c
+>> +++ b/arch/x86/kernel/vsmp_64.c
+>> @@ -26,64 +26,7 @@
+>>
+>>  #define TOPOLOGY_REGISTER_OFFSET 0x10
+>>
+>> -#if defined CONFIG_PCI && defined CONFIG_PARAVIRT_XXL
+>> -/*
+>> - * Interrupt control on vSMPowered systems:
+>> - * ~AC is a shadow of IF.  If IF is 'on' AC should be 'off'
+>> - * and vice versa.
+>> - */
+>> -
+>> -asmlinkage __visible unsigned long vsmp_save_fl(void)
+>> -{
+>> -       unsigned long flags = native_save_fl();
+>> -
+>> -       if (!(flags & X86_EFLAGS_IF) || (flags & X86_EFLAGS_AC))
+>> -               flags &= ~X86_EFLAGS_IF;
+>> -       return flags;
+>> -}
+>> -PV_CALLEE_SAVE_REGS_THUNK(vsmp_save_fl);
+>> -
+>> -__visible void vsmp_restore_fl(unsigned long flags)
+>> -{
+>> -       if (flags & X86_EFLAGS_IF)
+>> -               flags &= ~X86_EFLAGS_AC;
+>> -       else
+>> -               flags |= X86_EFLAGS_AC;
+>> -       native_restore_fl(flags);
+>> -}
+>> -PV_CALLEE_SAVE_REGS_THUNK(vsmp_restore_fl);
+>> -
+>> -asmlinkage __visible void vsmp_irq_disable(void)
+>> -{
+>> -       unsigned long flags = native_save_fl();
+>> -
+>> -       native_restore_fl((flags & ~X86_EFLAGS_IF) | X86_EFLAGS_AC);
+>> -}
+>> -PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_disable);
+>> -
+>> -asmlinkage __visible void vsmp_irq_enable(void)
+>> -{
+>> -       unsigned long flags = native_save_fl();
+>> -
+>> -       native_restore_fl((flags | X86_EFLAGS_IF) & (~X86_EFLAGS_AC));
+>> -}
+>> -PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
+>> -
+>> -static unsigned __init vsmp_patch(u8 type, void *ibuf,
+>> -                                 unsigned long addr, unsigned len)
+>> -{
+>> -       switch (type) {
+>> -       case PARAVIRT_PATCH(irq.irq_enable):
+>> -       case PARAVIRT_PATCH(irq.irq_disable):
+>> -       case PARAVIRT_PATCH(irq.save_fl):
+>> -       case PARAVIRT_PATCH(irq.restore_fl):
+>> -               return paravirt_patch_default(type, ibuf, addr, len);
+>> -       default:
+>> -               return native_patch(type, ibuf, addr, len);
+>> -       }
+>> -
+>> -}
+>> -
+>> +#if defined CONFIG_PCI
+>>  static void __init set_vsmp_pv_ops(void)
 > 
-> 
-> Hmm, I was considering the -Og support for the current MW,
-> but it might be better to postpone it for 4.21-rc1...
-> 
-> 
-> 
-> > Other symptoms caused by the change are tons of 'section mismatch'
-> > warnings for functions that are no longer automatically inlined, and
-> > sprintf format string overflow warnings when gcc fails to propagate
-> > an upper bound on an integer argument that is printed into a fixed
-> > length string.
-> >
-> >      Arnd
-> > ---
-> > From 8172e650c6797b9cc64c6f7b1c9e5433156290cc Mon Sep 17 00:00:00 2001
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > Date: Wed, 31 Oct 2018 16:24:35 +0100
-> > Subject: [PATCH] vbox: fix link error with 'gcc -Og'
-> >
-> > With the new CONFIG_CC_OPTIMIZE_FOR_DEBUGGING option, we get a link
-> > error in the vboxguest driver, when that fails to optimize out the
-> > call to the compat handler:
-> >
-> > drivers/virt/vboxguest/vboxguest_core.o: In function `vbg_ioctl_hgcm_call':
-> > vboxguest_core.c:(.text+0x1f6e): undefined reference to `vbg_hgcm_call32'
-> >
-> > Another compile-time check documents better what we want and avoids
-> > the error.
-> >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > diff --git a/drivers/virt/vboxguest/vboxguest_core.c
-> > b/drivers/virt/vboxguest/vboxguest_core.c
-> > index 3093655c7b92..1475ed5ffcde 100644
-> > --- a/drivers/virt/vboxguest/vboxguest_core.c
-> > +++ b/drivers/virt/vboxguest/vboxguest_core.c
-> > @@ -1312,7 +1312,7 @@ static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
-> >                 return -EINVAL;
-> >         }
-> >
-> > -       if (f32bit)
-> > +       if (IS_ENABLED(CONFIG_COMPAT) && f32bit)
-> >                 ret = vbg_hgcm_call32(gdev, client_id,
-> >                                       call->function, call->timeout_ms,
-> >                                       VBG_IOCTL_HGCM_CALL_PARMS32(call),
-> 
-> Right, but adding the CONFIG_COMPAT guard to both the caller and the callee
-> looks a bit redundant...
-> 
-> 
-> I think most cases causing this kind of problem
-> rely on the assumption that 'static' functions are inlined.
-> 
-> We can force the compiler to do so
-> by replacing 'static' with 'static __always_inline'
-> 
-Declaring it as normal 'inline' is enough. The inline functions are
-still inlined by gcc. Thanks.
+> Wouldn't be a rename of the function be appropriate now?
+you are correct, I'll fix and resend the patch.
 
 > 
-> -- 
-> Best Regards
-> Masahiro Yamada
-
--- 
-Thanks,
-Changbin Du
+> 
+> Juergen
+> 
