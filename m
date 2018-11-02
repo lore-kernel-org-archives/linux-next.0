@@ -1,80 +1,99 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Nov 2 (compiler-gcc.h)
-Date: Fri, 2 Nov 2018 08:56:17 -0700
-Message-ID: <20227164-2ef3-d684-bf4e-fb69ac828789@infradead.org>
-References: <20181102143018.09feb051@canb.auug.org.au>
- <CANiq72m65bQZefAoFF5dTUB-rPzm4vofZFnDn0nYBG3MsGrjZg@mail.gmail.com>
- <20181103002218.3bd015b3@canb.auug.org.au>
- <CANiq72=kHErmujzMgM4akXeoWkSR0Q3VLd-6Mwiaj5mGan8yZw@mail.gmail.com>
+From: Changbin Du <changbin.du@gmail.com>
+Subject: Re: linux-next: Tree for Oct 31 (vboxguest)
+Date: Fri, 2 Nov 2018 23:59:14 +0000
+Message-ID: <20181102235214.uow7crqa5qxnuzxr@mail.google.com>
+References: <20181031145907.1ee2e866@canb.auug.org.au>
+ <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
+ <CAK8P3a3aygFrD3PyZ8P==JzeYamE-x--MWCL54xzXDE_8u_R6Q@mail.gmail.com>
+ <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+ <20181101142946.u5luuctqav6fec6k@mail.google.com>
+ <CAK7LNAQbBG=KV5Q8o5-JiNCswuse94jECoqT+T+UEY7bLCRPNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANiq72=kHErmujzMgM4akXeoWkSR0Q3VLd-6Mwiaj5mGan8yZw@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQbBG=KV5Q8o5-JiNCswuse94jECoqT+T+UEY7bLCRPNw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Changbin Du <changbin.du@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On 11/2/18 6:57 AM, Miguel Ojeda wrote:
-> On Fri, Nov 2, 2018 at 2:22 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Its always OK (and actually useful) to move your branch head up to
->> where Linus merged it (this is usually a fast forward anyway) since
->> that doesn't add any new code to linux-next to conflict with code that
->> is still pending to be merged by Linus.
->>
->> Also, adding bug fixes is always fine.
->>
->> I just want to avoid getting conflicts in linux-next between code
->> that Linus will merge during this merge window and new code destined
->> for the next merge window.
+Hi Yamada,
+>On Fri, Nov 02, 2018 at 05:25:00PM +0900, Masahiro Yamada wrote:
+>[...]
+> > > >
+> > > > diff --git a/drivers/virt/vboxguest/vboxguest_core.c
+> > > > b/drivers/virt/vboxguest/vboxguest_core.c
+> > > > index 3093655c7b92..1475ed5ffcde 100644
+> > > > --- a/drivers/virt/vboxguest/vboxguest_core.c
+> > > > +++ b/drivers/virt/vboxguest/vboxguest_core.c
+> > > > @@ -1312,7 +1312,7 @@ static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
+> > > >                 return -EINVAL;
+> > > >         }
+> > > >
+> > > > -       if (f32bit)
+> > > > +       if (IS_ENABLED(CONFIG_COMPAT) && f32bit)
+> > > >                 ret = vbg_hgcm_call32(gdev, client_id,
+> > > >                                       call->function, call->timeout_ms,
+> > > >                                       VBG_IOCTL_HGCM_CALL_PARMS32(call),
+> > >
+> > > Right, but adding the CONFIG_COMPAT guard to both the caller and the callee
+> > > looks a bit redundant...
+> > >
+> > >
+> > > I think most cases causing this kind of problem
+> > > rely on the assumption that 'static' functions are inlined.
+> > >
+> > > We can force the compiler to do so
+> > > by replacing 'static' with 'static __always_inline'
+> > >
+> > Declaring it as normal 'inline' is enough. The inline functions are
+> > still inlined by gcc. Thanks.
 > 
-> Thanks Stephen! I assumed as much, but I doubted due to the warning
-> (and I wanted to avoid giving you an unexpected surprise tomorrow).
 > 
-> Cheers,
-> Miguel
+> How about clang?
 > 
+> For clang, -Og might be equivalent to -O1 at this moment, but I am not sure.
+> 
+> In my understanding, Clang does not inline functions marked with 'static inline'
+> for -Og (or -O1) optimization level.
+> 
+> Theoretically, 'inline' keyword is a just hint for the compiler, after all.
+> 
+I only verified it with GCC. But on my machine, clang does not work since it
+lacks 'asm-goto' feature. Is clang linux completed?
 
-Hi,
+changbin@acer:~/Desktop/work/linux$ make HOSTCC=clang CC=clang
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/zconf.tab.o
+  HOSTLD  scripts/kconfig/conf
+scripts/kconfig/conf  --syncconfig Kconfig
+Compiler lacks asm-goto support.
+arch/x86/Makefile:308: recipe for target 'checkbin' failed
+make: *** [checkbin] Error 1
+changbin@acer:~/Desktop/work/linux$ clang -v
+clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+Found candidate GCC installation: /usr/bin/../lib/gcc/i686-linux-gnu/8
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/7
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/7.3.0
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/8
+Found candidate GCC installation: /usr/lib/gcc/i686-linux-gnu/8
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7.3.0
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/8
+Selected GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/7.3.0
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
 
-on i386 or x86_64, with gcc (SUSE Linux) 4.8.5, I am seeing this problem:
-
-In file included from <command-line>:0:0:
-../include/linux/compiler-gcc.h:75:45: internal compiler error: in function_and_variable_visibility, at ipa.c:825
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-                                             ^
-./../include/linux/compiler_types.h:53:23: note: in definition of macro ‘___PASTE’
- #define ___PASTE(a,b) a##b
-                       ^
-../include/linux/compiler-gcc.h:75:29: note: in expansion of macro ‘__PASTE’
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-                             ^
-./../include/linux/compiler_types.h:54:22: note: in expansion of macro ‘___PASTE’
- #define __PASTE(a,b) ___PASTE(a,b)
-                      ^
-../include/linux/compiler-gcc.h:75:37: note: in expansion of macro ‘__PASTE’
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-                                     ^
-../include/linux/moduleparam.h:28:10: note: in expansion of macro ‘__UNIQUE_ID’
-   struct __UNIQUE_ID(name) {}
-          ^
-../include/linux/module.h:161:32: note: in expansion of macro ‘__MODULE_INFO’
- #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
-                                ^
-../include/linux/module.h:199:34: note: in expansion of macro ‘MODULE_INFO’
- #define MODULE_LICENSE(_license) MODULE_INFO(license, _license)
-                                  ^
-../drivers/media/usb/dvb-usb/pctv452e.c:1102:1: note: in expansion of macro ‘MODULE_LICENSE’
- MODULE_LICENSE("GPL");
- ^
-Please submit a full bug report,
-with preprocessed source if appropriate.
-See <http://bugs.opensuse.org/> for instructions.
-../scripts/Makefile.build:293: recipe for target 'drivers/media/usb/dvb-usb/pctv452e.o' failed
-
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
 -- 
-~Randy
+Thanks,
+Changbin Du
