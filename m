@@ -1,36 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for Nov 5 (net/ipv6/af_inet6)
-Date: Mon, 05 Nov 2018 10:12:09 -0800 (PST)
-Message-ID: <20181105.101209.563084010777423448.davem@davemloft.net>
-References: <20181105165109.410358fd@canb.auug.org.au>
-        <2ad190b3-0b0d-972b-2a6e-16abf4a81c5b@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the xtensa tree
+Date: Tue, 6 Nov 2018 10:08:56 +1100
+Message-ID: <20181106100856.0c9bdf3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8ip2TZ7k0p9UtH711kLDPvP"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2ad190b3-0b0d-972b-2a6e-16abf4a81c5b@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rdunlap@infradead.org
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 0xeffeff@gmail.com
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Mon, 5 Nov 2018 08:21:28 -0800
+--Sig_/8ip2TZ7k0p9UtH711kLDPvP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 11/4/18 9:51 PM, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Changes since 20181102:
->> 
->> Non-merge commits (relative to Linus' tree): 418
-> 
-> on i386 or x86_64:
-> 
-> ld: net/ipv6/af_inet6.o: in function `inet6_init':
-> af_inet6.c:(.init.text+0x285): undefined reference to `ipv6_anycast_init'
-> ld: af_inet6.c:(.init.text+0x376): undefined reference to `ipv6_anycast_cleanup'
-> 
-> 
-> Full randconfig file is attached (for i386).
+Hi Max,
 
-Jeff, please fix this.
+Commit
+
+  12e90ddd8dbf ("Revert "xtensa: xtfpga: implement platform DMA address hel=
+pers"")
+
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits too.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8ip2TZ7k0p9UtH711kLDPvP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvgzYgACgkQAVBC80lX
+0GwH/Af8DQfoy1kPx9obxVKiyfCXo5OmtnKOf6v0Xt1c+Tyn6JlkqOTgsqRbChoK
+Z0IE1jMYBkVVA7U5jVRoP0ajGorVAA3g95p6c4YLQ4tk7eoh+vjpMIyDxsJv20Ck
+uLWd/2uGv8Cl9vBOjAw/w591V5qGtCFf+xcDvwgi/65ZQyDnq8lxxeDFqWuTxopZ
+agnesdK5k4/Rs1Cywfua1SdcIybdCSCVvE4oDaDI26xsDNk4JXz9tfySfOa1OSdy
+7CyY52XOC2Zgat1czmwwLvZjdWTD3JF6bHpBxSygEHKvFLEwZkuRk/24+IVlWIRt
+MwSBAy95Fzq9Zj1u/ZSfiBZxabmoOA==
+=y9iF
+-----END PGP SIGNATURE-----
+
+--Sig_/8ip2TZ7k0p9UtH711kLDPvP--
