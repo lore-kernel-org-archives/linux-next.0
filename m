@@ -1,44 +1,48 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: build warning after merge of the gpio tree
-Date: Tue, 6 Nov 2018 08:24:30 +0100
-Message-ID: <20181106072430.vub6xjvyof2agj3h@pengutronix.de>
-References: <20181106121502.00efbd07@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the scsi-fixes tree
+Date: Wed, 7 Nov 2018 06:48:34 +1100
+Message-ID: <20181107064834.734f322f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/L7rKo.3z7X+WuKycZom69CC"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181106121502.00efbd07@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
+--Sig_/L7rKo.3z7X+WuKycZom69CC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 06, 2018 at 12:15:02PM +1100, Stephen Rothwell wrote:
-> After merging the gpio tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/gpio/gpiolib.c:1514:12: warning: 'devm_gpio_chip_match' defined but not used [-Wunused-function]
->  static int devm_gpio_chip_match(struct device *dev, void *res, void *data)
->             ^~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   48207d7595d2 ("gpio: drop devm_gpiochip_remove()")
+Hi Martin,
 
-I noticed this, too, but didn't tell immediately because I thought I'd
-have to resent this patch and then forgot as you applied yourself.
+Commit
 
-Sorry for that, the obvious resolution is to drop
-devm_gpio_chip_match(). Feel free to squash that into 48207d7595d2. If
-your branch is already stable I can provide a patch for that.
+  85ee0a7b2d53 ("Revert "scsi: ufs: Disable blk-mq for now"")
 
-Thanks
-Uwe
+is missing a Signed-off-by from its author and committer.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Reverts are commits, too.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/L7rKo.3z7X+WuKycZom69CC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvh8BIACgkQAVBC80lX
+0Gzhuwf9H46VNyS60Wd2VFmlxnzGhYl/mtT8UxKlvJ3IdGjkj713SXFI2x/WAJzl
+DrrSFjcdlsMOiGFlRhIDTeDBNBjvyDLkQKSM0J3ChO+cHJlyBjGC+hAA6hoZEoCi
+kisEeJh3ta9uNCs5zOVn5AVY12wooaYS8yEtsql14gWqL0JfEF2fCUsC6dDHGheO
+1KTx3slW+edkOdsDD6jSVln8hUUpan6WmAd8O9qIaR1UdOTN+yAGEaxg3bvC2Qh4
+cJwX/mKAxvDdT7cDGBvg7sPCtergEgWj8gD4MWLO2cyei5bzLIWv6C1EvtJVBfSl
+5TeVfrY7AROsTvw40QGpSS8I7ypz2w==
+=iZGb
+-----END PGP SIGNATURE-----
+
+--Sig_/L7rKo.3z7X+WuKycZom69CC--
