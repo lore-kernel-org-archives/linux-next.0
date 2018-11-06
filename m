@@ -1,63 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the xtensa tree
-Date: Tue, 6 Nov 2018 10:19:41 +1100
-Message-ID: <20181106101941.458c46f8@canb.auug.org.au>
-References: <20181106100856.0c9bdf3a@canb.auug.org.au>
-        <CAMo8BfLfkk864aRwy0jG9Tq5CizyDax85Sq6+5=3N0wrA_Cg5w@mail.gmail.com>
+Subject: linux-next: manual merge of the drm-msm tree with the drm-misc tree
+Date: Tue, 6 Nov 2018 11:08:57 +1100
+Message-ID: <20181106110857.0b38fa37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gk8UFKR49FldlWIkYZpK2dP"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMo8BfLfkk864aRwy0jG9Tq5CizyDax85Sq6+5=3N0wrA_Cg5w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============0669431702=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mamta Shukla <mamtashukla555@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/gk8UFKR49FldlWIkYZpK2dP
+--===============0669431702==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/yahXGyYDgNmkEuAQJp.Ra5m"; protocol="application/pgp-signature"
+
+--Sig_/yahXGyYDgNmkEuAQJp.Ra5m
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Max,
+Hi all,
 
-On Mon, 5 Nov 2018 15:14:44 -0800 Max Filippov <jcmvbkbc@gmail.com> wrote:
->
-> On Mon, Nov 5, 2018 at 3:09 PM Stephen Rothwell <sfr@canb.auug.org.au> wr=
-ote:
-> > Commit
-> >
-> >   12e90ddd8dbf ("Revert "xtensa: xtfpga: implement platform DMA address=
- helpers"")
-> >
-> > is missing a Signed-off-by from its author and committer.
-> >
-> > Reverts are commits too. =20
->=20
-> Thanks for catching that. Should I rewrite that branch fixing up that com=
-mit?
+Today's linux-next merge of the drm-msm tree got a conflict in:
 
-There is nothing else you can do.  The only reason not to is if you
-strictly do not rebase your branch (or there has been lots of other
-activity - which there is not in this case).
+  drivers/gpu/drm/msm/hdmi/hdmi.c
+
+between commit:
+
+  f384d7d514d1 ("drm: Convert to using %pOFn instead of device_node.name")
+
+from the drm-misc tree and commit:
+
+  bdc309778907 ("drm: msm: Use DRM_DEV_* instead of dev_*")
+
+from the drm-msm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/gk8UFKR49FldlWIkYZpK2dP
+diff --cc drivers/gpu/drm/msm/hdmi/hdmi.c
+index 23670907a29d,74ffc2412f68..000000000000
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@@ -579,7 -585,7 +585,7 @@@ static int msm_hdmi_bind(struct device=20
+  	hdmi_cfg =3D (struct hdmi_platform_config *)
+  			of_device_get_match_data(dev);
+  	if (!hdmi_cfg) {
+- 		dev_err(dev, "unknown hdmi_cfg: %pOFn\n", of_node);
+ -		DRM_DEV_ERROR(dev, "unknown hdmi_cfg: %s\n", of_node->name);
+++		DRM_DEV_ERROR(dev, "unknown hdmi_cfg: %pOFn\n", of_node);
+  		return -ENXIO;
+  	}
+ =20
+
+--Sig_/yahXGyYDgNmkEuAQJp.Ra5m
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvg0A0ACgkQAVBC80lX
-0GzGuwf/e2WEiT7htd3FFPfPcxhlIVJdHeJGOJGD/I/0UNg06Bg4ly66x3CKqnQ7
-BcXCDUDv4IHd1Ll1qCyopc3gE85T4dUgcbnuNTeXs+wu8nm7woJNdF0TJKn3WnNg
-YDUjZUh2B5GAhD7u2zSSDrIegYKfW7C5CHegeIlHGppOdc0RFcPemwqoVWndyejf
-GUkAmfy0awMF7y4vXHEs8GdmelCI/zVtKueBXyvGCkwAfbuwMvSEyEEEfXM0cLTN
-TSDz4RFSvjLsimQbB4wPXTnItI7la93LhBcYgKysEcQn8nDez9YPtOutO1WsfNqI
-V8Jd57b5PnPsdxEGoz5MVl/4t+byCA==
-=gh6J
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvg25kACgkQAVBC80lX
+0GxAMggAiJZdK93sVWWlZu9dKtT/eyjoG3cIWDN+q+EogqUKPM1gvKjGZeOrn6zZ
+Eqzles2wqAtHDUwAi85T8GdLByPgGeYQSdjg/4ioLxzzVUIMC8XOr5B/ZH3/C5oT
+9Ml9tykS/jd5rDdsxnDqFPX8MA6EsF7I/1zncZjKcs0g8t5+LV+1y7UuvPiAnYHJ
+rPaa5eK8Lsy5nYNgOp/RctM2vF3cvGgucmjQgMCGjBKHwukud6mKp48hrbKJ0Fem
+zy2JqGn/eayjEaXgB/LQ5B4/MoS42QKm51PF1H46cbfE1Hog3Efx3sHAWr4V7L1H
+KVmWr/oU/4oAahW5s96/bdh+fzfO+w==
+=Ryr9
 -----END PGP SIGNATURE-----
 
---Sig_/gk8UFKR49FldlWIkYZpK2dP--
+--Sig_/yahXGyYDgNmkEuAQJp.Ra5m--
+
+--===============0669431702==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0669431702==--
