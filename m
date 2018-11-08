@@ -1,70 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the staging tree
-Date: Thu, 8 Nov 2018 13:33:07 +1100
-Message-ID: <20181108133307.5cca74cb@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the block tree
+Date: Thu, 8 Nov 2018 14:31:09 +1100
+Message-ID: <20181108143109.7dcc0a3b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SlwN=.sg9eZoil28NjwGF1V"; protocol="application/pgp-signature"
+ boundary="Sig_/8Rf2OoNeWgxex_6+iw=vZGy"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ioannis Valasakis <code@wizofe.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hannes Reinecke <hare@suse.com>, Ming Lei <ming.lei@redhat.com>, Omar Sandoval <osandov@fb.com>, David Miller <davem@davemloft.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/SlwN=.sg9eZoil28NjwGF1V
+--Sig_/8Rf2OoNeWgxex_6+iw=vZGy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Jens,
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the block tree, today's linux-next build (sparc64 defconfig)
+produced this warning:
 
-In file included from include/linux/printk.h:336,
-                 from include/linux/kernel.h:14,
-                 from include/linux/clk.h:16,
-                 from drivers/staging/media/tegra-vde/tegra-vde.c:12:
-drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_i=
-ram_tables':
-drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%d' exp=
-ects argument of type 'int', but argument 6 has type 'long unsigned int' [-=
-Wformat=3D]
-     "\tFrame %d: frame_num =3D %d B_frame =3D %d\n",
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic=
-_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^~~
-include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
-  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-                       ^~~~~~~
-drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of ma=
-cro 'dev_dbg'
-    dev_dbg(vde->miscdev.parent,
-    ^~~~~~~
+/home/sfr/next/next/drivers/block/sunvdc.c: In function 'init_queue':
+/home/sfr/next/next/drivers/block/sunvdc.c:788:6: warning: unused variable =
+'ret' [-Wunused-variable]
+  int ret;
+      ^~~
 
 Introduced by commit
 
-  42e764d05712 ("staging: tegravde: replace bit assignment with macro")
+  fa182a1fa97d ("sunvdc: convert to blk-mq")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/SlwN=.sg9eZoil28NjwGF1V
+--Sig_/8Rf2OoNeWgxex_6+iw=vZGy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvjoGMACgkQAVBC80lX
-0GzFTQf/fxQQacT0/1z3/WM1XuEtJhPZJDlZaevKTlvX+a6MimCcKeJJtRsq3I1H
-s2ywSVuErjhGP1xVmHsohNcbGzXH/MUzypje13RBFHNcZ8vPC0N6BGywl9E0V1P6
-nNnBruWQoUrX1bNafEzw2+++1W8YbkVmwTNY4skt6LZnkZaNNW/UWdObjf+MYNUz
-rqimDqcRNGLnEpLFyg+M9/VXhRaKf5OLYliScxgZX0d39weO9Su4V+sk4FdyXKcl
-DojTaX1/Lckgg+0dgNocX4hbl2jEhPGcGRM9KZkIqpHGVJ1A9KYhUFReSU90mmob
-n55UjTtdv1cBR5FcraZmlIhtP8m1tQ==
-=MIAK
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvjrf0ACgkQAVBC80lX
+0GwPJgf6AlcFUIap8e6QJGIdYVB0phr2I82HOPXyCtRnDI8+00UHIjuWgapa/OCi
+am8sTv6Wt/OeswvbmkTvpCVf1pL7Zl7zb1lV0t7RrtP0k6LFrReepD/8RG/Hp8cq
+AobM+9+qSh2CIuehHQzuXHBbsxxN3+KgF04FoSyV4PdUkL90n7uk+6O/5CmjT3Zl
+dDOGHZ8XKVfl78MmN7dhq/wyYYi71k0mCKUGkiLqeoEx0MjDp7mabsk1Ome8X2So
+rWIp52jE362THoqF0jKQnmEdR9sAsrDFfpyTZ70mwoDNGHfkLUraw/K8BfwHpqco
+0RP1YJNs6x151E+1Gs9qq1yXcqsYRA==
+=5y6+
 -----END PGP SIGNATURE-----
 
---Sig_/SlwN=.sg9eZoil28NjwGF1V--
+--Sig_/8Rf2OoNeWgxex_6+iw=vZGy--
