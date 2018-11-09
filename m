@@ -1,623 +1,4466 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for Nov 9
-Date: Fri, 9 Nov 2018 14:04:13 +1100
-Message-ID: <20181109140413.044e5895@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Nov 9 (net/ipv4/af_inet)
+Date: Fri, 9 Nov 2018 08:25:37 -0800
+Message-ID: <499e91d0-7349-641f-9826-7535713176f8@infradead.org>
+References: <20181109140413.044e5895@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mqfXZG9G0IVO2s131f7.8w2"; protocol="application/pgp-signature"
+Content-Type: multipart/mixed;
+ boundary="------------5615838609226D466C57A787"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181109140413.044e5895@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/mqfXZG9G0IVO2s131f7.8w2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------5615838609226D466C57A787
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On 11/8/18 7:04 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20181108:
+> 
+> The tip tree still had its build failure for which I applied a fix patch.
+> 
 
-Changes since 20181108:
+on i386 or x86_64:
 
-The tip tree still had its build failure for which I applied a fix patch.
+ld: net/ipv4/af_inet.o: in function `inet_init':
+af_inet.c:(.init.text+0x497): undefined reference to `raw_init'
 
-Non-merge commits (relative to Linus' tree): 1966
- 2112 files changed, 84671 insertions(+), 86429 deletions(-)
 
-----------------------------------------------------------------------------
+Full randconfig file is attached.
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+-- 
+~Randy
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-multi_v7_defconfig for arm and a native build of tools/perf. After
-the final fixups (if any), I do an x86_64 modules_install followed by
-builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-and sparc64 defconfig. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+--------------5615838609226D466C57A787
+Content-Type: text/plain; charset=UTF-8;
+ name="config-r2600"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="config-r2600"
 
-Below is a summary of the state of the merge.
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux/x86_64 4.20.0-rc1 Kernel Configuration
+#
 
-I am currently merging 296 trees (counting Linus' and 67 trees of bug
-fix patches pending for the current merge release).
+#
+# Compiler: gcc (SUSE Linux) 4.8.5
+#
+CONFIG_CC_IS_GCC=y
+CONFIG_GCC_VERSION=40805
+CONFIG_CLANG_VERSION=0
+CONFIG_IRQ_WORK=y
+CONFIG_BUILDTIME_EXTABLE_SORT=y
+CONFIG_THREAD_INFO_IN_TASK=y
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
+#
+# General setup
+#
+CONFIG_BROKEN_ON_SMP=y
+CONFIG_INIT_ENV_ARG_LIMIT=32
+CONFIG_COMPILE_TEST=y
+CONFIG_LOCALVERSION=""
+CONFIG_BUILD_SALT=""
+CONFIG_HAVE_KERNEL_GZIP=y
+CONFIG_HAVE_KERNEL_BZIP2=y
+CONFIG_HAVE_KERNEL_LZMA=y
+CONFIG_HAVE_KERNEL_XZ=y
+CONFIG_HAVE_KERNEL_LZO=y
+CONFIG_HAVE_KERNEL_LZ4=y
+# CONFIG_KERNEL_GZIP is not set
+# CONFIG_KERNEL_BZIP2 is not set
+# CONFIG_KERNEL_LZMA is not set
+CONFIG_KERNEL_XZ=y
+# CONFIG_KERNEL_LZO is not set
+# CONFIG_KERNEL_LZ4 is not set
+CONFIG_DEFAULT_HOSTNAME="(none)"
+# CONFIG_SWAP is not set
+CONFIG_SYSVIPC=y
+CONFIG_POSIX_MQUEUE=y
+# CONFIG_CROSS_MEMORY_ATTACH is not set
+CONFIG_USELIB=y
+CONFIG_AUDIT=y
+CONFIG_HAVE_ARCH_AUDITSYSCALL=y
+CONFIG_AUDITSYSCALL=y
+CONFIG_AUDIT_WATCH=y
+CONFIG_AUDIT_TREE=y
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+#
+# IRQ subsystem
+#
+CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_GENERIC_IRQ_SHOW=y
+CONFIG_IRQ_DOMAIN=y
+CONFIG_IRQ_SIM=y
+CONFIG_IRQ_DOMAIN_HIERARCHY=y
+CONFIG_GENERIC_IRQ_MATRIX_ALLOCATOR=y
+CONFIG_GENERIC_IRQ_RESERVATION_MODE=y
+CONFIG_IRQ_FORCED_THREADING=y
+CONFIG_SPARSE_IRQ=y
+# CONFIG_GENERIC_IRQ_DEBUGFS is not set
+CONFIG_CLOCKSOURCE_WATCHDOG=y
+CONFIG_ARCH_CLOCKSOURCE_DATA=y
+CONFIG_ARCH_CLOCKSOURCE_INIT=y
+CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE=y
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_GENERIC_CLOCKEVENTS=y
+CONFIG_GENERIC_CLOCKEVENTS_BROADCAST=y
+CONFIG_GENERIC_CLOCKEVENTS_MIN_ADJUST=y
+CONFIG_GENERIC_CMOS_UPDATE=y
 
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
+#
+# Timers subsystem
+#
+CONFIG_TICK_ONESHOT=y
+CONFIG_NO_HZ_COMMON=y
+# CONFIG_HZ_PERIODIC is not set
+CONFIG_NO_HZ_IDLE=y
+CONFIG_NO_HZ=y
+CONFIG_HIGH_RES_TIMERS=y
+# CONFIG_PREEMPT_NONE is not set
+# CONFIG_PREEMPT_VOLUNTARY is not set
+CONFIG_PREEMPT=y
+CONFIG_PREEMPT_COUNT=y
 
---=20
-Cheers,
-Stephen Rothwell
+#
+# CPU/Task time and stats accounting
+#
+CONFIG_VIRT_CPU_ACCOUNTING=y
+# CONFIG_TICK_CPU_ACCOUNTING is not set
+CONFIG_VIRT_CPU_ACCOUNTING_GEN=y
+CONFIG_IRQ_TIME_ACCOUNTING=y
+# CONFIG_PSI is not set
+CONFIG_CPU_ISOLATION=y
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master (b00d209241ff Merge tag 'compiler-attributes-for-linu=
-s-v4.20-rc2' of https://github.com/ojeda/linux)
-Merging fixes/master (7c6c54b505b8 Merge branch 'i2c/for-next' of git://git=
-.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
-Merging kbuild-current/fixes (02826a6ba301 kbuild: deb-pkg: fix bindeb-pkg =
-breakage when O=3D is used)
-Merging arc-current/for-curr (d94cf77e44d5 ARC: [plat-hsdk] Enable DW APB G=
-PIO support)
-Merging arm-current/fixes (e46daee53bb5 ARM: 8806/1: kprobes: Fix false pos=
-itive with FORTIFY_SOURCE)
-Merging arm64-fixes/for-next/fixes (24cc61d8cb5a arm64: memblock: don't per=
-mit memblock resizing until linear mapping is up)
-Merging m68k-current/for-linus (58c116fb7dc6 m68k/sun3: Remove is_medusa an=
-d m68k_pgtable_cachemode)
-Merging powerpc-fixes/fixes (28c5bcf74fa0 KVM: PPC: Move and undef TRACE_IN=
-CLUDE_PATH/FILE)
-Merging sparc/master (1f2b5b8e2df4 sparc64: Wire up compat getpeername and =
-getsockname.)
-Merging fscrypt-current/for-stable (ae64f9bd1d36 Linux 4.15-rc2)
-Merging net/master (b25ddb00bc1b qlcnic: remove assumption that vlan_tci !=
-=3D 0)
-Merging bpf/master (ea53abfab960 bonding/802.3ad: fix link_failure_count tr=
-acking)
-Merging ipsec/master (ca92e173ab34 xfrm: Fix bucket count reported to users=
-pace)
-Merging netfilter/master (a422757e8c32 Merge git://git.kernel.org/pub/scm/l=
-inux/kernel/git/pablo/nf)
-Merging ipvs/master (feb9f55c33e5 netfilter: nft_dynset: allow dynamic upda=
-tes of non-anonymous set)
-Merging wireless-drivers/master (b374e8686fc3 mt76: fix building without CO=
-NFIG_LEDS_CLASS)
-Merging mac80211/master (8d0be26c781a mac80211_hwsim: fix module init error=
- paths for netlink)
-Merging rdma-fixes/for-rc (651022382c7f Linux 4.20-rc1)
-Merging sound-current/for-linus (5e93a125f521 ALSA: hda - Fix incorrect cle=
-arance of thinkpad_acpi hooks)
-Merging sound-asoc-fixes/for-linus (bbb59292538e Merge branch 'asoc-4.20' i=
-nto asoc-linus)
-Merging regmap-fixes/for-linus (35a7f35ad1b1 Linux 4.19-rc8)
-Merging regulator-fixes/for-linus (a8f436453ab6 Merge branch 'regulator-4.2=
-0' into regulator-linus)
-Merging spi-fixes/for-linus (40e5c5fa4d1b Merge branch 'spi-4.20' into spi-=
-linus)
-Merging pci-current/for-linus (651022382c7f Linux 4.20-rc1)
-Merging driver-core.current/driver-core-linus (651022382c7f Linux 4.20-rc1)
-Merging tty.current/tty-linus (d0ffb805b729 arch/alpha, termios: implement =
-BOTHER, IBSHIFT and termios2)
-Merging usb.current/usb-linus (f6501f491990 USB: misc: appledisplay: add 20=
-" Apple Cinema Display)
-Merging usb-gadget-fixes/fixes (d9707490077b usb: dwc2: Fix call location o=
-f dwc2_check_core_endianness)
-Merging usb-serial-fixes/usb-linus (0238df646e62 Linux 4.19-rc7)
-Merging usb-chipidea-fixes/ci-for-usb-stable (a930d8bd94d8 usb: chipidea: A=
-lways build ULPI code)
-Merging phy/fixes (651022382c7f Linux 4.20-rc1)
-Merging staging.current/staging-linus (c948c6915b62 staging: rtl8723bs: Fix=
- incorrect sense of ether_addr_equal)
-Merging char-misc.current/char-misc-linus (943126417891 slimbus: ngd: remov=
-e unnecessary check)
-Merging soundwire-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging input-current/for-linus (cacd9759eea2 Merge branch 'next' into for-=
-linus)
-Merging crypto-current/master (a1c6fd4308d3 crypto: chelsio - Update ntx qu=
-eue received from cxgb4)
-Merging ide/master (df2def49c57b Merge tag 'acpi-4.19-rc1-2' of git://git.k=
-ernel.org/pub/scm/linux/kernel/git/rafael/linux-pm)
-Merging vfio-fixes/for-linus (0e714d27786c vfio/pci: Fix potential Spectre =
-v1)
-Merging kselftest-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging modules-fixes/modules-linus (be71eda5383f module: Fix display of wr=
-ong module .text address)
-Merging slave-dma-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging backlight-fixes/for-backlight-fixes (ce397d215ccd Linux 4.18-rc1)
-Merging mtd-fixes/master (98ee3fc7ef83 mtd: nand: Fix nanddev_pos_next_page=
-() kernel-doc header)
-Merging nand-fixes/nand/fixes (ee02f73e04c0 mtd: nand: atmel: Fix EDO mode =
-check)
-Merging spi-nor-fixes/spi-nor/fixes (7928b2cbe55b Linux 4.16-rc1)
-Merging mfd-fixes/for-mfd-fixes (10492ee8ed91 mfd: omap-usb-host: Fix dts p=
-robe of children)
-Merging v4l-dvb-fixes/fixes (df18bfd35bbf media: v4l: fix uapi mpeg slice p=
-arams definition)
-Merging reset-fixes/reset/fixes (26fce0557fa6 reset: imx7: Fix always writi=
-ng bits as 0)
-Merging mips-fixes/mips-fixes (d01501f85249 MIPS: Fix `dma_alloc_coherent' =
-returning a non-coherent allocation)
-Merging at91-fixes/at91-fixes (651022382c7f Linux 4.20-rc1)
-Merging omap-fixes/fixes (91e43395820b Merge branch 'fixes-dts' into omap-f=
-or-v4.20/fixes)
-Merging kvm-fixes/master (5f8bb004bca4 KVM: vmx: hyper-v: don't pass EPT co=
-nfiguration info to vmx_hv_remote_flush_tlb())
-Merging kvms390-fixes/master (40ebdb8e59df KVM: s390: Make huge pages unava=
-ilable in ucontrol VMs)
-Merging hwmon-fixes/hwmon (e3e61f01d755 hwmon: (ibmpowernv) Remove bogus __=
-init annotations)
-Merging nvdimm-fixes/libnvdimm-fixes (4628a64591e6 mm: Preserve _PAGE_DEVMA=
-P across mprotect() calls)
-Merging btrfs-fixes/next-fixes (1e4ffceb3ef1 Merge branch 'misc-4.20' into =
-next-fixes)
-Merging vfs-fixes/fixes (3df629d873f8 gfs2_meta: ->mount() can get NULL dev=
-_name)
-Merging dma-mapping-fixes/for-linus (f62717551b2b arm64: fix warnings witho=
-ut CONFIG_IOMMU_DMA)
-Merging i3c-fixes/master (651022382c7f Linux 4.20-rc1)
-Merging drivers-x86-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging samsung-krzk-fixes/fixes (5b394b2ddf03 Linux 4.19-rc1)
-Merging pinctrl-samsung-fixes/pinctrl-fixes (5b394b2ddf03 Linux 4.19-rc1)
-Merging devicetree-fixes/dt/linus (89c38422e072 of, numa: Validate some dis=
-tance map rules)
-Merging scsi-fixes/fixes (f635e48e866e scsi: qla2xxx: Initialize port speed=
- to avoid setting lower speed)
-Merging drm-fixes/drm-fixes (d08f44b18ccb Merge tag 'exynos-drm-fixes-for-v=
-4.20-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exyn=
-os into drm-fixes)
-Merging drm-intel-fixes/for-linux-next-fixes (214782da8fe8 Merge tag 'gvt-f=
-ixes-2018-11-07' of https://github.com/intel/gvt-linux into drm-intel-fixes)
-Merging mmc-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging rtc-fixes/rtc-fixes (9bde0afb7a90 rtc: pcf2127: fix a kmemleak caus=
-ed in pcf2127_i2c_gather_write)
-Merging drm-misc-fixes/for-linux-next-fixes (cf3d02a185ed drm: Fix htmldocs=
- warnings in drm_fourcc.c)
-Merging kbuild/for-next (a4219aff51b8 kernel hacking: support building kern=
-el with -Og optimization level)
-Merging compiler-attributes/compiler-attributes (24efee412c75 Compiler Attr=
-ibutes: improve explanation of header)
-Merging leaks/leaks-next (9f84a0f7f1a6 leaking_addresses: check if file nam=
-e contains address)
-Merging uuid/for-next (c0020756315e efi: switch to use new generic UUID API)
-Merging dma-mapping/for-next (886643b76632 arm64: use the generic swiotlb_d=
-ma_ops)
-Merging asm-generic/master (a71e7c44ffb7 io: change writeX_relaxed() to rem=
-ove barriers)
-Merging arc/for-next (4fbd8d194f06 Linux 4.15-rc1)
-Merging arm/for-next (b1bca433720f Merge branches 'fixes', 'misc' and 'spec=
-tre' into for-next)
-Merging arm-perf/for-next/perf (5b394b2ddf03 Linux 4.19-rc1)
-Merging arm-soc/for-next (0a7210f9304c Merge branch 'fixes' into for-next)
-Merging actions/for-next (fb9c1c1deb5e Merge branch 'v4.20/drivers+s900-sps=
-' into next)
-Merging alpine/alpine/for-next (7928b2cbe55b Linux 4.16-rc1)
-Merging amlogic/for-next (6456dc61314e Merge branch 'v4.20/drivers' into tm=
-p/aml-rebuild)
-Merging aspeed/for-next (3368e06e2a91 ARM: dts: aspeed: Adding Facebook Tio=
-gaPass BMC)
-Merging at91/at91-next (651022382c7f Linux 4.20-rc1)
-Merging bcm2835/for-next (a4c701c5cf86 Merge branch 'bcm2835-soc-next' into=
- for-next)
-Merging imx-mxs/for-next (d52afa81dfba Merge branch 'imx/defconfig' into fo=
-r-next)
-Merging keystone/next (a74cab3c7dcb Merge branch 'for_4.20/drivers-soc' int=
-o next)
-Merging mediatek/for-next (42ac5fee3a13 Merge branch 'v4.19-next/soc' into =
-for-next)
-Merging mvebu/for-next (0f8a14a7cb8c Merge branch 'mvebu/dt64' into mvebu/f=
-or-next)
-Merging omap/for-next (91e43395820b Merge branch 'fixes-dts' into omap-for-=
-v4.20/fixes)
-Merging reset/reset/next (79ae4910fe00 ARC: HSDK: improve reset driver)
-Merging qcom/for-next (6252f3298861 Merge tag 'qcom-arm64-defconfig-for-4.2=
-0' into 4.20-tagged)
-Merging realtek/for-next (2b6286eb7ab8 Merge branch 'v4.15/dt64' into next)
-Merging renesas/next (ad56b90bbb99 Merge branches 'arm-dt-for-v4.21' and 'a=
-rm64-dt-for-v4.21' into next)
-Merging rockchip/for-next (a4b41c9496ca Merge branch 'v4.21-armsoc/drivers'=
- into for-next)
-Merging samsung/for-next (bebc6082da0a Linux 4.14)
-Merging samsung-krzk/for-next (d7a88a82dc0a Merge branch 'next/soc64' into =
-for-next)
-Merging sunxi/sunxi/for-next (4b1d4fba9e26 Merge branch 'sunxi/dt64-for-4.2=
-1' into sunxi/for-next)
-Merging tegra/for-next (22fed951fe3b Merge branch for-4.20/arm64/dt into fo=
-r-next)
-CONFLICT (content): Merge conflict in drivers/firmware/tegra/bpmp.c
-Merging arm64/for-next/core (966866892cf8 arm64: kprobe: make page to RO mo=
-de when allocate it)
-Merging clk/clk-next (b35638d9223f Merge branch 'clk-qoriq-t1023' into clk-=
-next)
-Merging clk-samsung/for-next (651022382c7f Linux 4.20-rc1)
-Merging c6x/for-linux-next (8adcc59974b8 Merge branch 'work.misc' of git://=
-git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
-Merging csky/linux-next (252050365823 dt-bindings: timer: gx6605s SOC timer)
-Merging h8300/h8300-next (4bdf61ccbe76 h8300: fix IRQ no)
-Merging ia64/next (f84cb541f67c ia64: generate uapi header and system call =
-table files)
-Merging m68k/for-next (58c116fb7dc6 m68k/sun3: Remove is_medusa and m68k_pg=
-table_cachemode)
-Merging m68knommu/for-next (651022382c7f Linux 4.20-rc1)
-Merging microblaze/next (68a385c6c750 microblaze: Typo s/use use/use/)
-Merging mips/mips-next (52d6d05575c3 MIPS: DEC: Add 64-bit DECstation defco=
-nfig)
-Merging nds32/next (3fb688b03d0c nds32: support hardware prefetcher)
-Merging nios2/for-next (c7c09dc187f0 nios2: kconfig: remove duplicate DEBUG=
-_STACK_USAGE symbol defintions)
-Merging openrisc/for-next (5600779ea5f3 openrisc: use generic dma_noncohere=
-nt_ops)
-Merging parisc-hd/for-next (86d4d068df57 parisc: Revert "Release spinlocks =
-using ordered store")
-Merging powerpc/next (651022382c7f Linux 4.20-rc1)
-Merging fsl/next (b6ae3550c8e2 powerpc/8xx: add missing header in 8xx_mmu.c)
-Merging risc-v-pjw/for-next (467e050e9760 Merge branch 'i2c/for-current' of=
- git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
-Merging risc-v/for-next (1e00610f3839 automerging branch "kernel.org-palmer=
--linux/next-revert_udivmoddi4" into "for-next")
-Merging sifive/for-next (467e050e9760 Merge branch 'i2c/for-current' of git=
-://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
-Merging s390/features (0bb2ae1b26e1 s390/perf: Change CPUM_CF return code i=
-n event init function)
-Merging sparc-next/master (345671ea0f92 Merge branch 'akpm' (patches from A=
-ndrew))
-Merging sh/for-next (ac21fc2dcb40 sh: switch to NO_BOOTMEM)
-Merging uml/linux-next (917e2fd2c53e um: Make line/tty semantics use true w=
-rite IRQ)
-Merging xtensa/xtensa-for-next (11418596b31f Merge branch 'xtensa-fixes' in=
-to xtensa-for-next)
-Merging fscrypt/master (e1cc40e5d42a fscrypt: log the crypto algorithm impl=
-ementations)
-Merging befs/for-next (55d945e2e4aa fs: befs: btree: Fixed some coding stan=
-dard issues)
-Merging btrfs/next (29dcea88779c Linux 4.17)
-Merging btrfs-kdave/for-next (e18b78fa9833 Merge branch 'for-next-next-v4.2=
-0-20181106' into for-next-20181106)
-Merging ceph/master (23c625ce3065 libceph: assume argonaut on the server si=
-de)
-Merging cifs/for-next (247f1ac72f7e cifs: update internal module version nu=
-mber)
-Merging configfs/for-next (cc57c07343bd configfs: fix registered group remo=
-val)
-Merging ecryptfs/next (5dcea554d5ce eCryptfs: fix a couple type promotion b=
-ugs)
-Merging ext3/for_next (2c67b8573da7 Pull EVENT_ON_CHILD fsnotify fix from A=
-mir.)
-Merging ext4/dev (53692ec074d0 ext4: fix buffer leak in ext4_expand_extra_i=
-size_ea() on error path)
-Merging f2fs/dev (78130819695f f2fs: fix to keep project quota consistent)
-Merging fuse/for-next (5571f1e65486 fuse: enable caching of symlinks)
-Merging jfs/jfs-next (a83722f45c5b jfs: fix spelling mistake, EACCESS -> EA=
-CCES)
-Merging nfs/linux-next (8697930f00dc NFSv4: Ensure that the state manager e=
-xits the loop on SIGKILL)
-Merging nfs-anna/linux-next (9f0c5124f4a8 NFS: Don't open code clearing of =
-delegation state)
-Merging nfsd/nfsd-next (2ab42ae2621d nfsd4: forbid all renames during grace=
- period)
-Merging orangefs/for-next (22fc9db296fc orangefs: no need to check for serv=
-ice_operation returns > 0)
-Merging overlayfs/overlayfs-next (d47748e5ae5a ovl: automatically enable re=
-direct_dir on metacopy=3Don)
-Merging ubifs/linux-next (001260910c46 ubifs: auth: add CONFIG_KEYS depende=
-ncy)
-Merging v9fs/9p-next (fb488fc1f2b4 9p/trans_fd: put worker reqs on destroy)
-Merging xfs/for-next (837514f7a4ca xfs: fix overflow in xfs_attr3_leaf_veri=
-fy)
-Merging file-locks/locks-next (fadb8da540b7 VFS: locks: remove unnecessary =
-white space.)
-Merging vfs/for-next (d708e87ca399 Merge branch 'work.mount' into for-next)
-CONFLICT (content): Merge conflict in fs/proc/inode.c
-CONFLICT (content): Merge conflict in fs/f2fs/super.c
-CONFLICT (content): Merge conflict in fs/compat_ioctl.c
-CONFLICT (content): Merge conflict in drivers/vfio/Kconfig
-CONFLICT (content): Merge conflict in drivers/infiniband/Kconfig
-CONFLICT (content): Merge conflict in arch/sparc/kernel/setup_64.c
-Merging vfs-miklos/next (0eb8af4916a5 vfs: use helper for calling f_op->fsy=
-nc())
-Merging printk/for-next (a61eee132f1e Merge branch 'for-4.20-vsprintf-hash-=
-fixes' into for-next)
-Merging pci/next (651022382c7f Linux 4.20-rc1)
-Merging pstore/for-next/pstore (1227daa43bce pstore/ram: Clarify resource r=
-eservation labels)
-Merging hid/for-next (0aef342184e3 Merge branch 'for-4.19/fixes' into for-n=
-ext)
-Merging i2c/i2c/for-next (012ebc3b7801 MAINTAINERS: add maintainer for IMX =
-LPI2C driver)
-Merging i3c/i3c/next (fa499ad95707 dt-bindings: i3c: Document Cadence I3C m=
-aster bindings)
-Merging dmi/master (57361846b52b Linux 4.19-rc2)
-Merging hwmon-staging/hwmon-next (175acd4a6930 hwmon: (adt7475) document ma=
-pping of sysfs entries to inputs)
-Merging jc_docs/docs-next (2a1e03ca33be doc: tracing: Fix a number of typos)
-Merging v4l-dvb/master (fbe57dde7126 media: ov7740: constify structures sto=
-red in fields of v4l2_subdev_ops structure)
-Merging v4l-dvb-next/master (357b50f3ccc8 drm: amd: dc: don't use FP math w=
-hen Kcov is enabled)
-Merging fbdev/fbdev-for-next (217188d9f985 video: fbdev: remove redundant '=
-default n' from Kconfig-s)
-Merging pm/linux-next (193255e3f4da Merge branch 'pm-cpuidle' into linux-ne=
-xt)
-Merging cpupower/cpupower (dbc4ca339c8d tools cpupower: Override CFLAGS ass=
-ignments)
-Merging idle/next (8a5776a5f498 Linux 4.14-rc4)
-Merging opp/opp/linux-next (534245cc69c2 OPP: Remove of_dev_pm_opp_find_req=
-uired_opp())
-Merging thermal/next (c2b59d279dbb thermal: core: using power_efficient_wq =
-for thermal worker)
-Merging thermal-soc/next (760eea43f8c6 thermal: da9062/61: Prevent hardware=
- access during system suspend)
-Merging ieee1394/for-next (188775181bc0 firewire-ohci: work around oversize=
-d DMA reads on JMicron controllers)
-Merging dlm/next (216f0efd19b9 dlm: Don't swamp the CPU with callbacks queu=
-ed during recovery)
-Merging swiotlb/linux-next (da689221f952 xen/blkfront: avoid NULL blkfront_=
-info dereference on device removal)
-Merging rdma/for-next (8c9959689b20 IB/rxe: make rxe_unregister_device void)
-Merging net-next/master (5867b3301405 Merge branch '1GbE' of git://git.kern=
-el.org/pub/scm/linux/kernel/git/jkirsher/next-queue)
-Merging bpf-next/master (bce6a14996f9 bpf_load: add map name to load_maps e=
-rror message)
-Merging ipsec-next/master (8d4b6bce2559 xfrm: use complete IPv6 addresses f=
-or hash)
-Merging mlx5-next/mlx5-next (99b77fef3c6c net/mlx5: Fix XRC SRQ umem valid =
-bits)
-Merging netfilter-next/master (44adbac8f721 Merge branch 'work.tty-ioctl' o=
-f git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
-Merging nfc-next/master (1f008cfec5d5 NFC: fdp: Fix unused variable warning=
-s)
-Merging ipvs-next/master (26a1ccc6c117 bpf: test: fix spelling mistake "REU=
-SEEPORT" -> "REUSEPORT")
-Merging wireless-drivers-next/master (7d129adff3af rtlwifi: rtl8192de: Fix =
-misleading REG_MCUFWDL information)
-Merging bluetooth/master (cea0604d3f94 sfc: add missing NVRAM partition typ=
-es for EF10)
-Merging mac80211-next/master (4b42745211af Merge tag 'armsoc-soc' of git://=
-git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc)
-Merging gfs2/for-next (368dd116e519 gfs2: Clean up gfs2_is_{ordered,writeba=
-ck})
-Merging mtd/mtd/next (d24dbd7541ff mtd: maps: Get rid of the latch-addr-fla=
-sh driver)
-Merging nand/nand/next (647ad49ca672 staging: Remove the mt29f_spinand driv=
-er)
-Merging spi-nor/spi-nor/next (41fe242979e4 mtd: spi-nor: fsl-quadspi: fix r=
-ead error for flash size larger than 16MB)
-Merging crypto/master (a1c6fd4308d3 crypto: chelsio - Update ntx queue rece=
-ived from cxgb4)
-Merging drm/drm-next (651022382c7f Linux 4.20-rc1)
-Merging drm-panel/drm/panel/for-next (e4bac408b084 drm/panel: simple: Add s=
-upport for Winstar WF35LTIACD)
-Merging drm-intel/for-linux-next (5fc2805b3e88 drm/i915: Set MI_INVALIDATE_=
-BSD for all video-decode engines)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_display.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_reg.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_irq.c
-Merging drm-tegra/drm/tegra/for-next (5ac93f81096a drm/tegra: Detach device=
-s from IOMMU DMA domain on arm32)
-Merging drm-misc/for-linux-next (783195ec1cad drm/syncobj: disable the time=
-line UAPI for now v2)
-Merging drm-msm/msm-next (fa81b1ad6976 drm/msm: dpu: Don't set legacy plane=
-->crtc pointer)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/msm/hdmi/hdmi.c
-Merging hdlcd/for-upstream/hdlcd (d664b851eb2b drm/arm/hdlcd: Reject atomic=
- commits that disable only the plane)
-Merging mali-dp/for-upstream/mali-dp (fd99bd8b805c drm: malidp: Add the siz=
-e of the superblocks when calculating total size for AFBC buffers)
-Merging sunxi-drm/sunxi-drm/for-next (7dafb83edd32 Merge branches 'sunxi/dr=
-m-fixes-for-4.13' and 'sunxi/drm-for-4.14' into sunxi-drm/for-next)
-Merging imx-drm/imx-drm/next (6cec571b70ec drm/imx: ipuv3-plane: add functi=
-on to query atomic update status)
-Merging etnaviv/etnaviv/next (99e294492ef9 drm/etnaviv: Replace drm_dev_unr=
-ef with drm_dev_put)
-Merging kconfig/for-next (bebc6082da0a Linux 4.14)
-Merging regmap/for-next (031aef723a7d Merge remote-tracking branches 'regma=
-p/topic/noinc' and 'regmap/topic/single-rw' into regmap-next)
-Merging sound/for-next (ad43d528a7ac ALSA: usb-audio: Define registers for =
-CM6206)
-Merging sound-asoc/for-next (f5c7e747f674 Merge branch 'asoc-4.21' into aso=
-c-next)
-Merging modules/modules-next (e84cd7ee630e modsign: use all trusted keys to=
- verify module signature)
-Merging input/next (f39f8688888a Input: synaptics - avoid using uninitializ=
-ed variable when probing)
-Merging block/for-next (ab11fe5af104 blk-mq-tag: document tag iteration hel=
-per return value)
-CONFLICT (content): Merge conflict in drivers/scsi/ufs/ufshcd.c
-Merging lightnvm/for-next (1c6286f26301 lightnvm: fix some error code in pb=
-lk-init.c)
-Merging device-mapper/for-next (629553bb4fdb dm mpath: only flush workqueue=
- when needed)
-Merging pcmcia/pcmcia-next (95691e3eddc4 pcmcia: Implement CLKRUN protocol =
-disabling for Ricoh bridges)
-Merging mmc/next (a15874957b40 dt-bindings: mmc: fsl-imx-esdhc: add imx8qxp=
- compatible string)
-Merging kgdb/kgdb-next (3bd67b37e350 kdb: print real address of pointers in=
-stead of hashed addresses)
-Merging md/for-next (c4e37c153f77 md: remove set but not used variable 'bi_=
-rdev')
-Merging mfd/for-mfd-next (6eb357844373 mfd: cros_ec: Avoid unneeded interna=
-l declaration warning)
-Merging backlight/for-backlight-next (e1c9f2eaa0fb backlight: Remove ld9040=
- driver)
-Merging battery/for-next (651022382c7f Linux 4.20-rc1)
-Merging regulator/for-next (0157cfe56482 Merge remote-tracking branch 'regu=
-lator/topic/coupled' into regulator-next)
-Merging security/next-testing (3bd5c4efee1c Merge tag 'loadpin-security-nex=
-t' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-=
-testing)
-Merging apparmor/apparmor-next (5f21585384a4 Merge tag 'for-linus-20181102'=
- of git://git.kernel.dk/linux-block)
-Merging integrity/next-integrity (34bccd61b139 MAINTAINERS: add Jarkko as m=
-aintainer for trusted keys)
-Merging keys/keys-next (1e684d3820d8 pkcs7: Set the module licence to preve=
-nt tainting)
-Merging selinux/next (5df275cd4cf5 selinux: policydb - fix byte order and a=
-lignment issues)
-Merging tpmdd/next (cfafe7fa5eb2 tpm: tpm_ibmvtpm: fix kdoc warnings)
-Merging watchdog/master (cd6ba41c192d watchdog: ts4800: release syscon devi=
-ce node in ts4800_wdt_probe())
-Merging iommu/next (40240b19692e Merge branches 'iommu/fixes', 'arm/renesas=
-', 'arm/mediatek' and 'core' into next)
-Merging dwmw2-iommu/master (d8a5b80568a9 Linux 4.15)
-Merging vfio/next (104c7405a64d vfio: add edid support to mbochs sample dri=
-ver)
-Merging trivial/for-next (75a24b822d38 kfifo: fix inaccurate comment)
-Merging audit/next (ea956d8be91e audit: print empty EXECVE args)
-Merging devicetree/for-next (689fe687f31e of/pdt: Remove unused of_pdt_buil=
-d_more function ptr)
-Merging mailbox/mailbox-for-next (9f0a0a381c5d mailbox: mediatek: Add check=
- for possible failure of kzalloc)
-Merging spi/for-next (d38ece035758 Merge remote-tracking branches 'spi/topi=
-c/3wire-gpio' and 'spi/topic/mtd' into spi-next)
-Merging tip/auto-latest (11b080f48a8a Merge branch 'x86/urgent')
-Applying: fix for "locking/atomics: Check generated headers are up-to-date"
-Merging clockevents/clockevents/next (6bd9549d8a7d clocksource/drivers/arc_=
-timer: Add comments about locking while read GFRC)
-Merging edac/linux_next (345fb0a9a634 Merge tag 'edac_for_4.11' of git://gi=
-t.kernel.org/pub/scm/linux/kernel/git/bp/bp)
-Merging edac-amd/for-next (24c9d423e86b EDAC, skx: Fix randconfig builds in=
- a better way)
-Merging irqchip/irq/irqchip-next (2130b789b3ef irqchip/gic: Unify GIC prior=
-ity definitions)
-Merging ftrace/for-next (a2acce536921 tracing: Have stack tracer trace full=
- stack)
-Merging rcu/rcu/next (c7c3d4aba12c MAINTAINERS:  Add Joel Fernandes as RCU =
-reviewer)
-Merging kvm/linux-next (22a7cdcae6a4 KVM/nVMX: Do not validate that posted_=
-intr_desc_addr is page aligned)
-Merging kvm-arm/next (e4e11cc0f81e KVM: arm64: Safety check PSTATE when ent=
-ering guest and handle IL)
-Merging kvm-mips/next (dc44abd6aad2 KVM: MIPS/Emulate: Properly implement T=
-LBR for T&E)
-Merging kvm-ppc/kvm-ppc-next (651022382c7f Linux 4.20-rc1)
-Merging kvms390/next (ed3054a30258 Merge branch 'apv11' of git://git.kernel=
-.org/pub/scm/linux/kernel/git/kvms390/linux into kernelorgnext)
-Merging xen-tip/linux-next (6cc4a0863c97 xen-blkfront: fix kernel panic wit=
-h negotiate_mq error path)
-Merging percpu/for-next (ad19ef010db1 Merge branch 'for-4.19-fixes' into fo=
-r-next)
-Merging workqueues/for-next (87915adc3f0a workqueue: re-add lockdep depende=
-ncies for flushing)
-Merging drivers-x86/for-next (71b12beaf12f platform/x86: asus-nb-wmi: Drop =
-mapping of 0x33 and 0x34 scan codes)
-Merging chrome-platform/for-next (bc3f4b5c60db platform/chrome: chromeos_tb=
-mc - Remove unneeded const)
-Merging hsi/for-next (5b394b2ddf03 Linux 4.19-rc1)
-Merging leds/for-next (eabf06ed6169 Fix pattern handling optimalization)
-Merging ipmi/for-next (99d18a3da861 ipmi: clean an indentation issue, remov=
-e extraneous space)
-Merging driver-core/driver-core-next (651022382c7f Linux 4.20-rc1)
-Merging usb/usb-next (157c0f2f641a usb: typec: tcpm: charge current handlin=
-g for sink during hard reset)
-Merging usb-gadget/next (3b766f453557 USB: net2280: Remove ->disconnect() c=
-allback from net2280_pullup())
-Merging usb-serial/usb-next (17c42e34997a USB: serial: cypress_m8: remove s=
-et but not used variable 'iflag')
-Merging usb-chipidea-next/ci-for-usb-next (59739131e0ca usb: chipidea: Fix =
-otg event handler)
-Merging phy-next/next (651022382c7f Linux 4.20-rc1)
-Merging tty/tty-next (651022382c7f Linux 4.20-rc1)
-Merging char-misc/char-misc-next (651022382c7f Linux 4.20-rc1)
-Merging extcon/extcon-next (2e464ff0a9b1 extcon: int3496: Convert to use SP=
-DX identifier)
-Merging soundwire/next (651022382c7f Linux 4.20-rc1)
-Merging staging/staging-next (c4da110919c9 staging: rtlwifi: Add spaces for=
- comments)
-Merging mux/for-next (a1ad5ff63944 Merge branch 'i2c-mux/for-next' into for=
--next)
-Merging icc/icc-next (23ba90b47dfc interconnect: fix build error without DE=
-BUGFS)
-Merging slave-dma/next (651022382c7f Linux 4.20-rc1)
-Merging cgroup/for-next (5cf8114d6e90 cpuset: Expose cpuset.cpus.subpartiti=
-ons with cgroup_debug)
-Merging scsi/for-next (444ba58a35e4 Merge branch 'misc' into for-next)
-Merging scsi-mkp/for-next (371a6c328ad4 scsi: pmcraid: use generic DMA API)
-Merging target-updates/for-next (1c130ae00b76 iscsi-target: make sure to wa=
-ke up sleeping login worker)
-Merging target-bva/for-next (60cc43fc8884 Linux 4.17-rc1)
-Merging vhost/linux-next (79f800b2e769 MAINTAINERS: remove reference to bog=
-us vsock file)
-Merging rpmsg/for-next (9099a252d44c Merge branches 'hwspinlock-next', 'rpm=
-sg-next' and 'rproc-next' into for-next)
-Merging gpio/for-next (f06db74ce447 Merge branch 'devel' into for-next)
-Merging pinctrl/for-next (b533adfdb2f6 Merge branch 'devel' into for-next)
-Merging pinctrl-samsung/for-next (5b394b2ddf03 Linux 4.19-rc1)
-Merging pwm/for-next (2153bbc12f77 pwm: lpss: Only set update bit if we are=
- actually changing the settings)
-Merging userns/for-next (9c8e0a1b6835 mount: Prevent MNT_DETACH from discon=
-necting locked mounts)
-Merging ktest/for-next (6cd110a91f52 ktest: Take submenu into account for g=
-rub2 menus)
-Merging random/dev (05cbbb6f9ed5 drivers/char/random.c: make primary_crng s=
-tatic)
-Merging aio/master (2a8a98673c13 fs: aio: fix the increment of aio-nr and c=
-ounting against aio-max-nr)
-Merging kselftest/next (e55c884ea5c6 media: rc: self test for IR encoders a=
-nd decoders)
-Merging y2038/y2038 (67314ec7b025 RISC-V: Request newstat syscalls)
-Merging livepatching/for-next (c72a7f515329 Merge branch 'for-4.18/upstream=
-' into for-next)
-Merging coresight/next (24a3858f031e coresight: tmc: Fix bad register addre=
-ss for CLAIM)
-Merging rtc/rtc-next (3822d1bb0df1 rtc: sc27xx: Always read normal alarm wh=
-en registering RTC device)
-Merging nvdimm/libnvdimm-for-next (594861215c83 acpi, nfit: Further restric=
-t userspace ARS start requests)
-Merging at24/at24/for-next (9a9e295e7c5c eeprom: at24: fix unexpected timeo=
-ut under high load)
-Merging ntb/ntb-next (651022382c7f Linux 4.20-rc1)
-Merging kspp/for-next/kspp (ec9b3877c2fd Merge branch 'for-next/array_size'=
- into for-next/kspp)
-Merging init_task/init_task (e1e871aff3de Expand INIT_STRUCT_PID and remove)
-Merging cisco/for-next (ff6401301656 Merge branch 'for-powerpc' into for-ne=
-xt)
-CONFLICT (content): Merge conflict in arch/x86/kernel/setup.c
-Merging fsi/master (15e2a7218c27 fsi: sbefifo: Bump max command length)
-Merging siox/siox/next (1e4b044d2251 Linux 4.18-rc4)
-Merging slimbus/for-next (3651f0177f22 slimbus: qcom-ctrl: simplify getting=
- .driver_data)
-Merging nvmem/for-next (668f51ae2fd2 nvmem: core: fix regression in of_nvme=
-m_cell_get())
-Merging xarray/xarray (8f3f4351bac3 XArray: Correct some 64-bit assumptions)
-Merging akpm-current/current (3b2dca79c671 ipc: conserve sequence numbers i=
-n extended IPCMNI mode)
-CONFLICT (content): Merge conflict in include/linux/compiler-gcc.h
-$ git checkout -b akpm remotes/origin/akpm/master
-Applying: vfs: replace current_kernel_time64 with ktime equivalent
-Applying: drivers/media/platform/sti/delta/delta-ipc.c: fix read buffer ove=
-rflow
-Merging akpm/master (e61d6b8e969e drivers/media/platform/sti/delta/delta-ip=
-c.c: fix read buffer overflow)
+#
+# RCU Subsystem
+#
+CONFIG_PREEMPT_RCU=y
+CONFIG_RCU_EXPERT=y
+CONFIG_SRCU=y
+CONFIG_TREE_SRCU=y
+CONFIG_TASKS_RCU=y
+CONFIG_RCU_STALL_COMMON=y
+CONFIG_RCU_NEED_SEGCBLIST=y
+CONFIG_CONTEXT_TRACKING=y
+# CONFIG_CONTEXT_TRACKING_FORCE is not set
+CONFIG_RCU_FANOUT=64
+CONFIG_RCU_FANOUT_LEAF=16
+# CONFIG_RCU_BOOST is not set
+# CONFIG_RCU_NOCB_CPU is not set
+CONFIG_BUILD_BIN2C=y
+CONFIG_IKCONFIG=y
+CONFIG_LOG_BUF_SHIFT=17
+CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=13
+CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
+CONFIG_ARCH_SUPPORTS_NUMA_BALANCING=y
+CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH=y
+CONFIG_ARCH_SUPPORTS_INT128=y
+CONFIG_CGROUPS=y
+# CONFIG_MEMCG is not set
+# CONFIG_BLK_CGROUP is not set
+CONFIG_CGROUP_SCHED=y
+CONFIG_FAIR_GROUP_SCHED=y
+# CONFIG_CFS_BANDWIDTH is not set
+# CONFIG_RT_GROUP_SCHED is not set
+# CONFIG_CGROUP_PIDS is not set
+CONFIG_CGROUP_RDMA=y
+# CONFIG_CGROUP_FREEZER is not set
+# CONFIG_CGROUP_HUGETLB is not set
+# CONFIG_CGROUP_DEVICE is not set
+CONFIG_CGROUP_CPUACCT=y
+CONFIG_CGROUP_PERF=y
+CONFIG_CGROUP_BPF=y
+# CONFIG_CGROUP_DEBUG is not set
+CONFIG_SOCK_CGROUP_DATA=y
+# CONFIG_CHECKPOINT_RESTORE is not set
+CONFIG_SCHED_AUTOGROUP=y
+# CONFIG_SYSFS_DEPRECATED is not set
+CONFIG_RELAY=y
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_INITRAMFS_SOURCE=""
+# CONFIG_RD_GZIP is not set
+CONFIG_RD_BZIP2=y
+# CONFIG_RD_LZMA is not set
+# CONFIG_RD_XZ is not set
+CONFIG_RD_LZO=y
+CONFIG_RD_LZ4=y
+# CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+CONFIG_CC_OPTIMIZE_FOR_DEBUGGING=y
+CONFIG_SYSCTL_EXCEPTION_TRACE=y
+CONFIG_HAVE_PCSPKR_PLATFORM=y
+CONFIG_BPF=y
+CONFIG_EXPERT=y
+# CONFIG_MULTIUSER is not set
+CONFIG_SGETMASK_SYSCALL=y
+# CONFIG_SYSFS_SYSCALL is not set
+# CONFIG_FHANDLE is not set
+# CONFIG_POSIX_TIMERS is not set
+CONFIG_PRINTK=y
+CONFIG_PRINTK_NMI=y
+# CONFIG_BUG is not set
+# CONFIG_ELF_CORE is not set
+# CONFIG_PCSPKR_PLATFORM is not set
+CONFIG_BASE_FULL=y
+# CONFIG_FUTEX is not set
+# CONFIG_EPOLL is not set
+# CONFIG_SIGNALFD is not set
+CONFIG_TIMERFD=y
+# CONFIG_EVENTFD is not set
+# CONFIG_SHMEM is not set
+# CONFIG_AIO is not set
+CONFIG_ADVISE_SYSCALLS=y
+# CONFIG_MEMBARRIER is not set
+CONFIG_KALLSYMS=y
+CONFIG_KALLSYMS_ALL=y
+CONFIG_KALLSYMS_BASE_RELATIVE=y
+CONFIG_BPF_SYSCALL=y
+CONFIG_USERFAULTFD=y
+CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE=y
+# CONFIG_RSEQ is not set
+# CONFIG_EMBEDDED is not set
+CONFIG_HAVE_PERF_EVENTS=y
+CONFIG_PC104=y
 
---Sig_/mqfXZG9G0IVO2s131f7.8w2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+#
+# Kernel Performance Events And Counters
+#
+CONFIG_PERF_EVENTS=y
+# CONFIG_DEBUG_PERF_USE_VMALLOC is not set
+CONFIG_VM_EVENT_COUNTERS=y
+# CONFIG_COMPAT_BRK is not set
+# CONFIG_SLAB is not set
+# CONFIG_SLUB is not set
+CONFIG_SLOB=y
+CONFIG_SLAB_MERGE_DEFAULT=y
+# CONFIG_PROFILING is not set
+CONFIG_TRACEPOINTS=y
+CONFIG_GENERIC_CMDLINE=y
+CONFIG_CMDLINE_BOOL=y
+CONFIG_CMDLINE_APPEND=""
+CONFIG_CMDLINE_PREPEND=""
+# CONFIG_CMDLINE_OVERRIDE is not set
+CONFIG_64BIT=y
+CONFIG_X86_64=y
+CONFIG_X86=y
+CONFIG_INSTRUCTION_DECODER=y
+CONFIG_OUTPUT_FORMAT="elf64-x86-64"
+CONFIG_ARCH_DEFCONFIG="arch/x86/configs/x86_64_defconfig"
+CONFIG_LOCKDEP_SUPPORT=y
+CONFIG_STACKTRACE_SUPPORT=y
+CONFIG_MMU=y
+CONFIG_ARCH_MMAP_RND_BITS_MIN=28
+CONFIG_ARCH_MMAP_RND_BITS_MAX=32
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MIN=8
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX=16
+CONFIG_GENERIC_ISA_DMA=y
+CONFIG_GENERIC_HWEIGHT=y
+CONFIG_ARCH_MAY_HAVE_PC_FDC=y
+CONFIG_RWSEM_XCHGADD_ALGORITHM=y
+CONFIG_GENERIC_CALIBRATE_DELAY=y
+CONFIG_ARCH_HAS_CPU_RELAX=y
+CONFIG_ARCH_HAS_CACHE_LINE_SIZE=y
+CONFIG_ARCH_HAS_FILTER_PGPROT=y
+CONFIG_HAVE_SETUP_PER_CPU_AREA=y
+CONFIG_NEED_PER_CPU_EMBED_FIRST_CHUNK=y
+CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK=y
+CONFIG_ARCH_HIBERNATION_POSSIBLE=y
+CONFIG_ARCH_SUSPEND_POSSIBLE=y
+CONFIG_ARCH_WANT_HUGE_PMD_SHARE=y
+CONFIG_ARCH_WANT_GENERAL_HUGETLB=y
+CONFIG_ZONE_DMA32=y
+CONFIG_AUDIT_ARCH=y
+CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING=y
+CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
+CONFIG_ARCH_SUPPORTS_UPROBES=y
+CONFIG_FIX_EARLYCON_MEM=y
+CONFIG_DYNAMIC_PHYSICAL_MASK=y
+CONFIG_PGTABLE_LEVELS=4
+CONFIG_CC_HAS_SANE_STACKPROTECTOR=y
 
------BEGIN PGP SIGNATURE-----
+#
+# Processor type and features
+#
+CONFIG_ZONE_DMA=y
+# CONFIG_SMP is not set
+CONFIG_X86_FEATURE_NAMES=y
+CONFIG_X86_X2APIC=y
+CONFIG_X86_MPPARSE=y
+CONFIG_GOLDFISH=y
+# CONFIG_RETPOLINE is not set
+# CONFIG_X86_EXTENDED_PLATFORM is not set
+CONFIG_X86_SUPPORTS_MEMORY_FAILURE=y
+# CONFIG_SCHED_OMIT_FRAME_POINTER is not set
+CONFIG_HYPERVISOR_GUEST=y
+CONFIG_PARAVIRT=y
+# CONFIG_PARAVIRT_DEBUG is not set
+# CONFIG_XEN is not set
+CONFIG_KVM_GUEST=y
+CONFIG_KVM_DEBUG_FS=y
+CONFIG_PARAVIRT_TIME_ACCOUNTING=y
+CONFIG_PARAVIRT_CLOCK=y
+# CONFIG_MK8 is not set
+# CONFIG_MPSC is not set
+# CONFIG_MCORE2 is not set
+# CONFIG_MATOM is not set
+CONFIG_GENERIC_CPU=y
+CONFIG_X86_INTERNODE_CACHE_SHIFT=6
+CONFIG_X86_L1_CACHE_SHIFT=6
+CONFIG_X86_TSC=y
+CONFIG_X86_CMPXCHG64=y
+CONFIG_X86_CMOV=y
+CONFIG_X86_MINIMUM_CPU_FAMILY=64
+CONFIG_X86_DEBUGCTLMSR=y
+CONFIG_PROCESSOR_SELECT=y
+# CONFIG_CPU_SUP_INTEL is not set
+CONFIG_CPU_SUP_AMD=y
+# CONFIG_CPU_SUP_HYGON is not set
+CONFIG_CPU_SUP_CENTAUR=y
+CONFIG_HPET_TIMER=y
+CONFIG_DMI=y
+CONFIG_NR_CPUS_RANGE_BEGIN=1
+CONFIG_NR_CPUS_RANGE_END=1
+CONFIG_NR_CPUS_DEFAULT=1
+CONFIG_NR_CPUS=1
+CONFIG_UP_LATE_INIT=y
+CONFIG_X86_LOCAL_APIC=y
+CONFIG_X86_IO_APIC=y
+CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+CONFIG_X86_MCE=y
+CONFIG_X86_MCELOG_LEGACY=y
+# CONFIG_X86_MCE_INTEL is not set
+CONFIG_X86_MCE_INJECT=y
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvk+S4ACgkQAVBC80lX
-0GwCcAf/RxnZyJd3TQYZxQXpT/NEia1TwWL56BYZEBjAbhjnSm4yEZSvPdFk5yzk
-nWW4eaNElX6Uj0tE6Mfn+wldn9HUKLzcP0ox4JerMBuPz344Mqo7Au5ntPFkGYsJ
-Ru9vFYlCkoUqWfvIR2AdixwPSX7bnCtrRwHrHeRsdNaW4JooMyl9j5iMXxNUFH76
-lpc1FExWbwaxXpRJQUbOMhhWiVSV+Nv3gbLkg22NxYZ8PgaOaek5y4RN784YvJqt
-63vkysLl6ly973ghNb8I6KF0v5hDTU7FHO5f1XTLTvmk1dgx8QgiMpuelLiK4v7V
-z89KT5kQ7XdHbmMQJBuGhmzAbMJEGw==
-=qDGU
------END PGP SIGNATURE-----
+#
+# Performance monitoring
+#
+CONFIG_PERF_EVENTS_AMD_POWER=y
+CONFIG_X86_16BIT=y
+CONFIG_X86_ESPFIX64=y
+# CONFIG_X86_VSYSCALL_EMULATION is not set
+CONFIG_I8K=y
+# CONFIG_MICROCODE is not set
+CONFIG_X86_MSR=y
+# CONFIG_X86_CPUID is not set
+# CONFIG_X86_5LEVEL is not set
+# CONFIG_X86_CPA_STATISTICS is not set
+CONFIG_ARCH_HAS_MEM_ENCRYPT=y
+CONFIG_AMD_MEM_ENCRYPT=y
+CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT=y
+CONFIG_ARCH_USE_MEMREMAP_PROT=y
+CONFIG_ARCH_SPARSEMEM_ENABLE=y
+CONFIG_ARCH_SPARSEMEM_DEFAULT=y
+CONFIG_ARCH_SELECT_MEMORY_MODEL=y
+CONFIG_ILLEGAL_POINTER_VALUE=0xdead000000000000
+CONFIG_X86_CHECK_BIOS_CORRUPTION=y
+# CONFIG_X86_BOOTPARAM_MEMORY_CORRUPTION_CHECK is not set
+CONFIG_X86_RESERVE_LOW=64
+CONFIG_MTRR=y
+CONFIG_MTRR_SANITIZER=y
+CONFIG_MTRR_SANITIZER_ENABLE_DEFAULT=0
+CONFIG_MTRR_SANITIZER_SPARE_REG_NR_DEFAULT=1
+# CONFIG_X86_PAT is not set
+# CONFIG_ARCH_RANDOM is not set
+CONFIG_X86_SMAP=y
+# CONFIG_SECCOMP is not set
+# CONFIG_HZ_100 is not set
+# CONFIG_HZ_250 is not set
+CONFIG_HZ_300=y
+# CONFIG_HZ_1000 is not set
+CONFIG_HZ=300
+CONFIG_SCHED_HRTICK=y
+CONFIG_KEXEC=y
+CONFIG_KEXEC_FILE=y
+CONFIG_ARCH_HAS_KEXEC_PURGATORY=y
+CONFIG_KEXEC_VERIFY_SIG=y
+# CONFIG_CRASH_DUMP is not set
+CONFIG_PHYSICAL_START=0x1000000
+CONFIG_RELOCATABLE=y
+CONFIG_RANDOMIZE_BASE=y
+CONFIG_X86_NEED_RELOCS=y
+CONFIG_PHYSICAL_ALIGN=0x200000
+# CONFIG_RANDOMIZE_MEMORY is not set
+# CONFIG_LEGACY_VSYSCALL_EMULATE is not set
+CONFIG_LEGACY_VSYSCALL_NONE=y
+CONFIG_MODIFY_LDT_SYSCALL=y
+CONFIG_HAVE_LIVEPATCH=y
+CONFIG_ARCH_HAS_ADD_PAGES=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
+CONFIG_ARCH_ENABLE_SPLIT_PMD_PTLOCK=y
+CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION=y
 
---Sig_/mqfXZG9G0IVO2s131f7.8w2--
+#
+# Power management and ACPI options
+#
+# CONFIG_SUSPEND is not set
+# CONFIG_PM is not set
+CONFIG_ARCH_SUPPORTS_ACPI=y
+CONFIG_SFI=y
+
+#
+# CPU Frequency scaling
+#
+# CONFIG_CPU_FREQ is not set
+
+#
+# CPU Idle
+#
+# CONFIG_CPU_IDLE is not set
+
+#
+# Bus options (PCI etc.)
+#
+# CONFIG_PCI is not set
+CONFIG_PCI_LOCKLESS_CONFIG=y
+
+#
+# PCI Endpoint
+#
+CONFIG_PCI_ENDPOINT=y
+CONFIG_PCI_ENDPOINT_CONFIGFS=y
+CONFIG_PCI_EPF_TEST=y
+CONFIG_ISA_BUS=y
+CONFIG_ISA_DMA_API=y
+CONFIG_PCCARD=y
+CONFIG_PCMCIA=y
+CONFIG_PCMCIA_LOAD_CIS=y
+
+#
+# PC-card bridges
+#
+CONFIG_X86_SYSFB=y
+
+#
+# Binary Emulations
+#
+# CONFIG_IA32_EMULATION is not set
+# CONFIG_X86_X32 is not set
+CONFIG_X86_DEV_DMA_OPS=y
+CONFIG_HAVE_GENERIC_GUP=y
+
+#
+# Firmware Drivers
+#
+CONFIG_EDD=y
+# CONFIG_EDD_OFF is not set
+# CONFIG_FIRMWARE_MEMMAP is not set
+# CONFIG_DMIID is not set
+# CONFIG_DMI_SYSFS is not set
+CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK=y
+CONFIG_FW_CFG_SYSFS=y
+CONFIG_FW_CFG_SYSFS_CMDLINE=y
+CONFIG_GOOGLE_FIRMWARE=y
+
+#
+# Tegra firmware driver
+#
+CONFIG_HAVE_KVM=y
+CONFIG_VIRTUALIZATION=y
+# CONFIG_VHOST_CROSS_ENDIAN_LEGACY is not set
+
+#
+# General architecture-dependent options
+#
+CONFIG_CRASH_CORE=y
+CONFIG_KEXEC_CORE=y
+CONFIG_HAVE_OPROFILE=y
+CONFIG_OPROFILE_NMI_TIMER=y
+CONFIG_JUMP_LABEL=y
+# CONFIG_STATIC_KEYS_SELFTEST is not set
+CONFIG_UPROBES=y
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
+CONFIG_ARCH_USE_BUILTIN_BSWAP=y
+CONFIG_HAVE_IOREMAP_PROT=y
+CONFIG_HAVE_KPROBES=y
+CONFIG_HAVE_KRETPROBES=y
+CONFIG_HAVE_OPTPROBES=y
+CONFIG_HAVE_KPROBES_ON_FTRACE=y
+CONFIG_HAVE_FUNCTION_ERROR_INJECTION=y
+CONFIG_HAVE_NMI=y
+CONFIG_HAVE_ARCH_TRACEHOOK=y
+CONFIG_HAVE_DMA_CONTIGUOUS=y
+CONFIG_GENERIC_SMP_IDLE_THREAD=y
+CONFIG_ARCH_HAS_FORTIFY_SOURCE=y
+CONFIG_ARCH_HAS_SET_MEMORY=y
+CONFIG_HAVE_ARCH_THREAD_STRUCT_WHITELIST=y
+CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT=y
+CONFIG_HAVE_REGS_AND_STACK_ACCESS_API=y
+CONFIG_HAVE_RSEQ=y
+CONFIG_HAVE_FUNCTION_ARG_ACCESS_API=y
+CONFIG_HAVE_HW_BREAKPOINT=y
+CONFIG_HAVE_MIXED_BREAKPOINTS_REGS=y
+CONFIG_HAVE_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_PERF_EVENTS_NMI=y
+CONFIG_HAVE_HARDLOCKUP_DETECTOR_PERF=y
+CONFIG_HAVE_PERF_REGS=y
+CONFIG_HAVE_PERF_USER_STACK_DUMP=y
+CONFIG_HAVE_ARCH_JUMP_LABEL=y
+CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y
+CONFIG_HAVE_RCU_TABLE_FREE=y
+CONFIG_HAVE_RCU_TABLE_INVALIDATE=y
+CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
+CONFIG_HAVE_CMPXCHG_LOCAL=y
+CONFIG_HAVE_CMPXCHG_DOUBLE=y
+CONFIG_HAVE_ARCH_SECCOMP_FILTER=y
+CONFIG_HAVE_ARCH_STACKLEAK=y
+CONFIG_HAVE_STACKPROTECTOR=y
+CONFIG_CC_HAS_STACKPROTECTOR_NONE=y
+# CONFIG_STACKPROTECTOR is not set
+CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES=y
+CONFIG_HAVE_CONTEXT_TRACKING=y
+CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y
+CONFIG_HAVE_IRQ_TIME_ACCOUNTING=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD=y
+CONFIG_HAVE_ARCH_HUGE_VMAP=y
+CONFIG_HAVE_ARCH_SOFT_DIRTY=y
+CONFIG_HAVE_MOD_ARCH_SPECIFIC=y
+CONFIG_MODULES_USE_ELF_RELA=y
+CONFIG_HAVE_IRQ_EXIT_ON_IRQ_STACK=y
+CONFIG_ARCH_HAS_ELF_RANDOMIZE=y
+CONFIG_HAVE_ARCH_MMAP_RND_BITS=y
+CONFIG_HAVE_EXIT_THREAD=y
+CONFIG_ARCH_MMAP_RND_BITS=28
+CONFIG_HAVE_COPY_THREAD_TLS=y
+CONFIG_HAVE_STACK_VALIDATION=y
+CONFIG_HAVE_RELIABLE_STACKTRACE=y
+CONFIG_ISA_BUS_API=y
+CONFIG_HAVE_ARCH_VMAP_STACK=y
+CONFIG_VMAP_STACK=y
+CONFIG_ARCH_HAS_STRICT_KERNEL_RWX=y
+CONFIG_STRICT_KERNEL_RWX=y
+CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
+CONFIG_ARCH_HAS_REFCOUNT=y
+CONFIG_REFCOUNT_FULL=y
+CONFIG_HAVE_ARCH_PREL32_RELOCATIONS=y
+
+#
+# GCOV-based kernel profiling
+#
+# CONFIG_GCOV_KERNEL is not set
+CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+CONFIG_PLUGIN_HOSTCC=""
+CONFIG_HAVE_GCC_PLUGINS=y
+CONFIG_RT_MUTEXES=y
+CONFIG_BASE_SMALL=0
+# CONFIG_MODULES is not set
+CONFIG_MODULES_TREE_LOOKUP=y
+CONFIG_BLOCK=y
+CONFIG_BLK_SCSI_REQUEST=y
+CONFIG_BLK_DEV_BSG=y
+CONFIG_BLK_DEV_BSGLIB=y
+CONFIG_BLK_DEV_INTEGRITY=y
+CONFIG_BLK_DEV_ZONED=y
+# CONFIG_BLK_CMDLINE_PARSER is not set
+CONFIG_BLK_WBT=y
+CONFIG_BLK_WBT_MQ=y
+# CONFIG_BLK_DEBUG_FS is not set
+# CONFIG_BLK_SED_OPAL is not set
+
+#
+# Partition Types
+#
+# CONFIG_PARTITION_ADVANCED is not set
+CONFIG_AMIGA_PARTITION=y
+CONFIG_MSDOS_PARTITION=y
+CONFIG_EFI_PARTITION=y
+CONFIG_BLK_MQ_VIRTIO=y
+
+#
+# IO Schedulers
+#
+CONFIG_MQ_IOSCHED_DEADLINE=y
+# CONFIG_MQ_IOSCHED_KYBER is not set
+CONFIG_IOSCHED_BFQ=y
+CONFIG_UNINLINE_SPIN_UNLOCK=y
+CONFIG_ARCH_SUPPORTS_ATOMIC_RMW=y
+CONFIG_ARCH_USE_QUEUED_SPINLOCKS=y
+CONFIG_ARCH_USE_QUEUED_RWLOCKS=y
+CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE=y
+CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y
+
+#
+# Executable file formats
+#
+# CONFIG_BINFMT_ELF is not set
+# CONFIG_BINFMT_SCRIPT is not set
+# CONFIG_BINFMT_MISC is not set
+CONFIG_COREDUMP=y
+
+#
+# Memory Management options
+#
+CONFIG_SELECT_MEMORY_MODEL=y
+CONFIG_SPARSEMEM_MANUAL=y
+CONFIG_SPARSEMEM=y
+CONFIG_HAVE_MEMORY_PRESENT=y
+CONFIG_SPARSEMEM_EXTREME=y
+CONFIG_SPARSEMEM_VMEMMAP_ENABLE=y
+CONFIG_SPARSEMEM_VMEMMAP=y
+CONFIG_HAVE_MEMBLOCK_NODE_MAP=y
+CONFIG_ARCH_DISCARD_MEMBLOCK=y
+CONFIG_MEMORY_ISOLATION=y
+# CONFIG_MEMORY_HOTPLUG is not set
+CONFIG_SPLIT_PTLOCK_CPUS=4
+CONFIG_MEMORY_BALLOON=y
+# CONFIG_BALLOON_COMPACTION is not set
+CONFIG_COMPACTION=y
+CONFIG_MIGRATION=y
+CONFIG_PHYS_ADDR_T_64BIT=y
+CONFIG_BOUNCE=y
+CONFIG_VIRT_TO_BUS=y
+CONFIG_KSM=y
+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
+CONFIG_ARCH_SUPPORTS_MEMORY_FAILURE=y
+CONFIG_MEMORY_FAILURE=y
+# CONFIG_TRANSPARENT_HUGEPAGE is not set
+CONFIG_ARCH_WANTS_THP_SWAP=y
+CONFIG_NEED_PER_CPU_KM=y
+# CONFIG_CLEANCACHE is not set
+# CONFIG_CMA is not set
+# CONFIG_ZPOOL is not set
+CONFIG_ZBUD=y
+# CONFIG_ZSMALLOC is not set
+CONFIG_GENERIC_EARLY_IOREMAP=y
+CONFIG_IDLE_PAGE_TRACKING=y
+CONFIG_ARCH_HAS_ZONE_DEVICE=y
+CONFIG_FRAME_VECTOR=y
+# CONFIG_PERCPU_STATS is not set
+CONFIG_GUP_BENCHMARK=y
+CONFIG_ARCH_HAS_PTE_SPECIAL=y
+CONFIG_NET=y
+
+#
+# Networking options
+#
+CONFIG_PACKET=y
+# CONFIG_PACKET_DIAG is not set
+CONFIG_UNIX=y
+CONFIG_UNIX_DIAG=y
+CONFIG_TLS=y
+CONFIG_TLS_DEVICE=y
+CONFIG_XFRM=y
+CONFIG_XFRM_OFFLOAD=y
+CONFIG_XFRM_ALGO=y
+CONFIG_XFRM_USER=y
+# CONFIG_XFRM_INTERFACE is not set
+CONFIG_XFRM_SUB_POLICY=y
+CONFIG_XFRM_MIGRATE=y
+CONFIG_XFRM_IPCOMP=y
+# CONFIG_NET_KEY is not set
+# CONFIG_XDP_SOCKETS is not set
+CONFIG_INET=y
+# CONFIG_IP_MULTICAST is not set
+CONFIG_IP_ADVANCED_ROUTER=y
+# CONFIG_IP_FIB_TRIE_STATS is not set
+# CONFIG_IP_MULTIPLE_TABLES is not set
+CONFIG_IP_ROUTE_MULTIPATH=y
+# CONFIG_IP_ROUTE_VERBOSE is not set
+CONFIG_IP_PNP=y
+# CONFIG_IP_PNP_DHCP is not set
+# CONFIG_IP_PNP_BOOTP is not set
+CONFIG_IP_PNP_RARP=y
+CONFIG_NET_IPIP=y
+CONFIG_NET_IPGRE_DEMUX=y
+CONFIG_NET_IP_TUNNEL=y
+CONFIG_NET_IPGRE=y
+# CONFIG_SYN_COOKIES is not set
+CONFIG_NET_UDP_TUNNEL=y
+CONFIG_NET_FOU=y
+CONFIG_NET_FOU_IP_TUNNELS=y
+# CONFIG_INET_AH is not set
+CONFIG_INET_ESP=y
+CONFIG_INET_ESP_OFFLOAD=y
+# CONFIG_INET_IPCOMP is not set
+CONFIG_INET_TUNNEL=y
+CONFIG_INET_XFRM_MODE_TRANSPORT=y
+# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+# CONFIG_INET_XFRM_MODE_BEET is not set
+CONFIG_INET_DIAG=y
+CONFIG_INET_TCP_DIAG=y
+CONFIG_INET_UDP_DIAG=y
+CONFIG_INET_RAW_DIAG=y
+# CONFIG_INET_DIAG_DESTROY is not set
+CONFIG_TCP_CONG_ADVANCED=y
+# CONFIG_TCP_CONG_BIC is not set
+# CONFIG_TCP_CONG_CUBIC is not set
+CONFIG_TCP_CONG_WESTWOOD=y
+CONFIG_TCP_CONG_HTCP=y
+# CONFIG_TCP_CONG_HSTCP is not set
+# CONFIG_TCP_CONG_HYBLA is not set
+# CONFIG_TCP_CONG_VEGAS is not set
+# CONFIG_TCP_CONG_NV is not set
+# CONFIG_TCP_CONG_SCALABLE is not set
+# CONFIG_TCP_CONG_LP is not set
+CONFIG_TCP_CONG_VENO=y
+# CONFIG_TCP_CONG_YEAH is not set
+CONFIG_TCP_CONG_ILLINOIS=y
+CONFIG_TCP_CONG_DCTCP=y
+CONFIG_TCP_CONG_CDG=y
+CONFIG_TCP_CONG_BBR=y
+CONFIG_DEFAULT_HTCP=y
+# CONFIG_DEFAULT_VENO is not set
+# CONFIG_DEFAULT_WESTWOOD is not set
+# CONFIG_DEFAULT_DCTCP is not set
+# CONFIG_DEFAULT_CDG is not set
+# CONFIG_DEFAULT_BBR is not set
+# CONFIG_DEFAULT_RENO is not set
+CONFIG_DEFAULT_TCP_CONG="htcp"
+CONFIG_TCP_MD5SIG=y
+CONFIG_IPV6=y
+# CONFIG_IPV6_ROUTER_PREF is not set
+# CONFIG_IPV6_OPTIMISTIC_DAD is not set
+CONFIG_INET6_AH=y
+CONFIG_INET6_ESP=y
+CONFIG_INET6_ESP_OFFLOAD=y
+CONFIG_INET6_IPCOMP=y
+CONFIG_IPV6_MIP6=y
+CONFIG_INET6_XFRM_TUNNEL=y
+CONFIG_INET6_TUNNEL=y
+# CONFIG_INET6_XFRM_MODE_TRANSPORT is not set
+CONFIG_INET6_XFRM_MODE_TUNNEL=y
+# CONFIG_INET6_XFRM_MODE_BEET is not set
+# CONFIG_INET6_XFRM_MODE_ROUTEOPTIMIZATION is not set
+CONFIG_IPV6_VTI=y
+CONFIG_IPV6_SIT=y
+# CONFIG_IPV6_SIT_6RD is not set
+CONFIG_IPV6_NDISC_NODETYPE=y
+CONFIG_IPV6_TUNNEL=y
+CONFIG_IPV6_GRE=y
+CONFIG_IPV6_FOU=y
+CONFIG_IPV6_FOU_TUNNEL=y
+CONFIG_IPV6_MULTIPLE_TABLES=y
+CONFIG_IPV6_SUBTREES=y
+# CONFIG_IPV6_MROUTE is not set
+CONFIG_IPV6_SEG6_LWTUNNEL=y
+CONFIG_IPV6_SEG6_HMAC=y
+CONFIG_IPV6_SEG6_BPF=y
+# CONFIG_NETWORK_SECMARK is not set
+CONFIG_NET_PTP_CLASSIFY=y
+CONFIG_NETWORK_PHY_TIMESTAMPING=y
+# CONFIG_NETFILTER is not set
+CONFIG_BPFILTER=y
+# CONFIG_BPFILTER_UMH is not set
+CONFIG_IP_DCCP=y
+CONFIG_INET_DCCP_DIAG=y
+
+#
+# DCCP CCIDs Configuration
+#
+CONFIG_IP_DCCP_CCID2_DEBUG=y
+# CONFIG_IP_DCCP_CCID3 is not set
+
+#
+# DCCP Kernel Hacking
+#
+CONFIG_IP_DCCP_DEBUG=y
+CONFIG_IP_SCTP=y
+CONFIG_SCTP_DEFAULT_COOKIE_HMAC_MD5=y
+# CONFIG_SCTP_DEFAULT_COOKIE_HMAC_SHA1 is not set
+# CONFIG_SCTP_DEFAULT_COOKIE_HMAC_NONE is not set
+CONFIG_SCTP_COOKIE_HMAC_MD5=y
+# CONFIG_SCTP_COOKIE_HMAC_SHA1 is not set
+CONFIG_INET_SCTP_DIAG=y
+CONFIG_RDS=y
+# CONFIG_RDS_TCP is not set
+CONFIG_RDS_DEBUG=y
+CONFIG_TIPC=y
+# CONFIG_TIPC_MEDIA_UDP is not set
+CONFIG_TIPC_DIAG=y
+# CONFIG_ATM is not set
+CONFIG_L2TP=y
+CONFIG_L2TP_DEBUGFS=y
+CONFIG_L2TP_V3=y
+CONFIG_L2TP_IP=y
+# CONFIG_L2TP_ETH is not set
+CONFIG_STP=y
+CONFIG_BRIDGE=y
+# CONFIG_BRIDGE_IGMP_SNOOPING is not set
+CONFIG_HAVE_NET_DSA=y
+# CONFIG_NET_DSA is not set
+# CONFIG_VLAN_8021Q is not set
+# CONFIG_DECNET is not set
+CONFIG_LLC=y
+CONFIG_LLC2=y
+CONFIG_ATALK=y
+# CONFIG_DEV_APPLETALK is not set
+# CONFIG_X25 is not set
+CONFIG_LAPB=y
+CONFIG_PHONET=y
+CONFIG_6LOWPAN=y
+# CONFIG_6LOWPAN_DEBUGFS is not set
+CONFIG_6LOWPAN_NHC=y
+CONFIG_6LOWPAN_NHC_DEST=y
+# CONFIG_6LOWPAN_NHC_FRAGMENT is not set
+# CONFIG_6LOWPAN_NHC_HOP is not set
+CONFIG_6LOWPAN_NHC_IPV6=y
+CONFIG_6LOWPAN_NHC_MOBILITY=y
+CONFIG_6LOWPAN_NHC_ROUTING=y
+CONFIG_6LOWPAN_NHC_UDP=y
+CONFIG_6LOWPAN_GHC_EXT_HDR_HOP=y
+CONFIG_6LOWPAN_GHC_UDP=y
+# CONFIG_6LOWPAN_GHC_ICMPV6 is not set
+CONFIG_6LOWPAN_GHC_EXT_HDR_DEST=y
+CONFIG_6LOWPAN_GHC_EXT_HDR_FRAG=y
+# CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE is not set
+CONFIG_IEEE802154=y
+# CONFIG_IEEE802154_NL802154_EXPERIMENTAL is not set
+CONFIG_IEEE802154_SOCKET=y
+CONFIG_IEEE802154_6LOWPAN=y
+# CONFIG_MAC802154 is not set
+# CONFIG_NET_SCHED is not set
+# CONFIG_DCB is not set
+CONFIG_DNS_RESOLVER=y
+CONFIG_BATMAN_ADV=y
+CONFIG_BATMAN_ADV_BATMAN_V=y
+# CONFIG_BATMAN_ADV_BLA is not set
+# CONFIG_BATMAN_ADV_DAT is not set
+CONFIG_BATMAN_ADV_NC=y
+# CONFIG_BATMAN_ADV_MCAST is not set
+# CONFIG_BATMAN_ADV_DEBUGFS is not set
+CONFIG_BATMAN_ADV_TRACING=y
+CONFIG_OPENVSWITCH=y
+# CONFIG_OPENVSWITCH_GRE is not set
+# CONFIG_OPENVSWITCH_VXLAN is not set
+CONFIG_OPENVSWITCH_GENEVE=y
+CONFIG_VSOCKETS=y
+CONFIG_VSOCKETS_DIAG=y
+CONFIG_VIRTIO_VSOCKETS=y
+CONFIG_VIRTIO_VSOCKETS_COMMON=y
+CONFIG_NETLINK_DIAG=y
+CONFIG_MPLS=y
+CONFIG_NET_MPLS_GSO=y
+CONFIG_MPLS_ROUTING=y
+# CONFIG_MPLS_IPTUNNEL is not set
+CONFIG_NET_NSH=y
+CONFIG_HSR=y
+CONFIG_NET_SWITCHDEV=y
+# CONFIG_NET_L3_MASTER_DEV is not set
+CONFIG_QRTR=y
+CONFIG_QRTR_SMD=y
+# CONFIG_QRTR_TUN is not set
+# CONFIG_NET_NCSI is not set
+# CONFIG_CGROUP_NET_PRIO is not set
+CONFIG_CGROUP_NET_CLASSID=y
+CONFIG_NET_RX_BUSY_POLL=y
+CONFIG_BQL=y
+# CONFIG_BPF_STREAM_PARSER is not set
+
+#
+# Network testing
+#
+# CONFIG_NET_DROP_MONITOR is not set
+CONFIG_HAMRADIO=y
+
+#
+# Packet Radio protocols
+#
+CONFIG_AX25=y
+CONFIG_AX25_DAMA_SLAVE=y
+# CONFIG_NETROM is not set
+# CONFIG_ROSE is not set
+
+#
+# AX.25 network device drivers
+#
+CONFIG_MKISS=y
+CONFIG_6PACK=y
+CONFIG_BPQETHER=y
+CONFIG_BAYCOM_SER_FDX=y
+CONFIG_BAYCOM_SER_HDX=y
+CONFIG_BAYCOM_PAR=y
+# CONFIG_YAM is not set
+# CONFIG_CAN is not set
+# CONFIG_BT is not set
+# CONFIG_AF_RXRPC is not set
+CONFIG_AF_KCM=y
+CONFIG_STREAM_PARSER=y
+CONFIG_FIB_RULES=y
+# CONFIG_WIRELESS is not set
+CONFIG_WIMAX=y
+CONFIG_WIMAX_DEBUG_LEVEL=8
+# CONFIG_RFKILL is not set
+CONFIG_NET_9P=y
+CONFIG_NET_9P_VIRTIO=y
+CONFIG_NET_9P_DEBUG=y
+CONFIG_CAIF=y
+# CONFIG_CAIF_DEBUG is not set
+# CONFIG_CAIF_NETDEV is not set
+CONFIG_CAIF_USB=y
+# CONFIG_CEPH_LIB is not set
+CONFIG_NFC=y
+CONFIG_NFC_DIGITAL=y
+CONFIG_NFC_NCI=y
+CONFIG_NFC_NCI_SPI=y
+# CONFIG_NFC_NCI_UART is not set
+# CONFIG_NFC_HCI is not set
+
+#
+# Near Field Communication (NFC) devices
+#
+# CONFIG_NFC_TRF7970A is not set
+CONFIG_NFC_SIM=y
+# CONFIG_NFC_FDP is not set
+CONFIG_NFC_PN533=y
+CONFIG_NFC_PN533_I2C=y
+CONFIG_NFC_ST_NCI=y
+# CONFIG_NFC_ST_NCI_I2C is not set
+CONFIG_NFC_ST_NCI_SPI=y
+CONFIG_NFC_NXP_NCI=y
+CONFIG_NFC_NXP_NCI_I2C=y
+CONFIG_NFC_S3FWRN5=y
+CONFIG_NFC_S3FWRN5_I2C=y
+CONFIG_NFC_ST95HF=y
+# CONFIG_PSAMPLE is not set
+CONFIG_NET_IFE=y
+CONFIG_LWTUNNEL=y
+CONFIG_LWTUNNEL_BPF=y
+CONFIG_DST_CACHE=y
+CONFIG_GRO_CELLS=y
+CONFIG_SOCK_VALIDATE_XMIT=y
+CONFIG_NET_SOCK_MSG=y
+CONFIG_NET_DEVLINK=y
+CONFIG_MAY_USE_DEVLINK=y
+CONFIG_FAILOVER=y
+CONFIG_HAVE_EBPF_JIT=y
+
+#
+# Device Drivers
+#
+
+#
+# Generic Driver Options
+#
+# CONFIG_UEVENT_HELPER is not set
+# CONFIG_DEVTMPFS is not set
+CONFIG_STANDALONE=y
+CONFIG_PREVENT_FIRMWARE_BUILD=y
+
+#
+# Firmware loader
+#
+CONFIG_FW_LOADER=y
+CONFIG_EXTRA_FIRMWARE=""
+CONFIG_FW_LOADER_USER_HELPER=y
+CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+CONFIG_WANT_DEV_COREDUMP=y
+# CONFIG_ALLOW_DEV_COREDUMP is not set
+CONFIG_DEBUG_DRIVER=y
+CONFIG_DEBUG_DEVRES=y
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y
+CONFIG_GENERIC_CPU_AUTOPROBE=y
+CONFIG_GENERIC_CPU_VULNERABILITIES=y
+CONFIG_SOC_BUS=y
+CONFIG_REGMAP=y
+CONFIG_REGMAP_I2C=y
+CONFIG_REGMAP_SPI=y
+CONFIG_REGMAP_W1=y
+CONFIG_REGMAP_MMIO=y
+CONFIG_REGMAP_IRQ=y
+CONFIG_REGMAP_SCCB=y
+CONFIG_DMA_SHARED_BUFFER=y
+# CONFIG_DMA_FENCE_TRACE is not set
+
+#
+# Bus devices
+#
+CONFIG_QCOM_EBI2=y
+CONFIG_CONNECTOR=y
+CONFIG_PROC_EVENTS=y
+CONFIG_GNSS=y
+# CONFIG_GNSS_SIRF_SERIAL is not set
+# CONFIG_GNSS_UBX_SERIAL is not set
+# CONFIG_MTD is not set
+# CONFIG_OF is not set
+CONFIG_ARCH_MIGHT_HAVE_PC_PARPORT=y
+CONFIG_PARPORT=y
+CONFIG_PARPORT_PC=y
+CONFIG_PARPORT_PC_FIFO=y
+# CONFIG_PARPORT_PC_SUPERIO is not set
+# CONFIG_PARPORT_PC_PCMCIA is not set
+CONFIG_PARPORT_AX88796=y
+CONFIG_PARPORT_1284=y
+CONFIG_PARPORT_NOT_PC=y
+# CONFIG_BLK_DEV is not set
+
+#
+# NVME Support
+#
+CONFIG_NVME_CORE=y
+# CONFIG_NVME_MULTIPATH is not set
+CONFIG_NVME_FABRICS=y
+CONFIG_NVME_FC=y
+CONFIG_NVME_TARGET=y
+CONFIG_NVME_TARGET_LOOP=y
+CONFIG_NVME_TARGET_FC=y
+CONFIG_NVME_TARGET_FCLOOP=y
+
+#
+# Misc devices
+#
+CONFIG_SENSORS_LIS3LV02D=y
+# CONFIG_AD525X_DPOT is not set
+CONFIG_DUMMY_IRQ=y
+CONFIG_ICS932S401=y
+# CONFIG_ATMEL_SSC is not set
+CONFIG_ENCLOSURE_SERVICES=y
+CONFIG_QCOM_COINCELL=y
+CONFIG_APDS9802ALS=y
+# CONFIG_ISL29003 is not set
+CONFIG_ISL29020=y
+# CONFIG_SENSORS_TSL2550 is not set
+# CONFIG_SENSORS_BH1770 is not set
+CONFIG_SENSORS_APDS990X=y
+CONFIG_HMC6352=y
+CONFIG_DS1682=y
+CONFIG_USB_SWITCH_FSA9480=y
+CONFIG_LATTICE_ECP3_CONFIG=y
+CONFIG_SRAM=y
+CONFIG_ASPEED_LPC_CTRL=y
+CONFIG_ASPEED_LPC_SNOOP=y
+CONFIG_C2PORT=y
+# CONFIG_C2PORT_DURAMAR_2150 is not set
+
+#
+# EEPROM support
+#
+# CONFIG_EEPROM_AT24 is not set
+CONFIG_EEPROM_AT25=y
+CONFIG_EEPROM_LEGACY=y
+# CONFIG_EEPROM_MAX6875 is not set
+# CONFIG_EEPROM_93CX6 is not set
+CONFIG_EEPROM_93XX46=y
+CONFIG_EEPROM_IDT_89HPESX=y
+# CONFIG_EEPROM_EE1004 is not set
+
+#
+# Texas Instruments shared transport line discipline
+#
+# CONFIG_TI_ST is not set
+# CONFIG_SENSORS_LIS3_SPI is not set
+CONFIG_SENSORS_LIS3_I2C=y
+# CONFIG_ALTERA_STAPL is not set
+
+#
+# Intel MIC & related support
+#
+
+#
+# Intel MIC Bus Driver
+#
+
+#
+# SCIF Bus Driver
+#
+
+#
+# VOP Bus Driver
+#
+
+#
+# Intel MIC Host Driver
+#
+
+#
+# Intel MIC Card Driver
+#
+
+#
+# SCIF Driver
+#
+
+#
+# Intel MIC Coprocessor State Management (COSM) Drivers
+#
+
+#
+# VOP Driver
+#
+CONFIG_VHOST_RING=y
+CONFIG_ECHO=y
+CONFIG_HAVE_IDE=y
+# CONFIG_IDE is not set
+
+#
+# SCSI device support
+#
+CONFIG_SCSI_MOD=y
+CONFIG_RAID_ATTRS=y
+CONFIG_SCSI=y
+CONFIG_SCSI_DMA=y
+CONFIG_SCSI_NETLINK=y
+
+#
+# SCSI support type (disk, tape, CD-ROM)
+#
+CONFIG_BLK_DEV_SD=y
+CONFIG_CHR_DEV_ST=y
+CONFIG_CHR_DEV_OSST=y
+CONFIG_CHR_DEV_SG=y
+# CONFIG_CHR_DEV_SCH is not set
+CONFIG_SCSI_ENCLOSURE=y
+# CONFIG_SCSI_CONSTANTS is not set
+# CONFIG_SCSI_LOGGING is not set
+# CONFIG_SCSI_SCAN_ASYNC is not set
+
+#
+# SCSI Transports
+#
+# CONFIG_SCSI_SPI_ATTRS is not set
+CONFIG_SCSI_FC_ATTRS=y
+# CONFIG_SCSI_ISCSI_ATTRS is not set
+CONFIG_SCSI_SAS_ATTRS=y
+# CONFIG_SCSI_SAS_LIBSAS is not set
+CONFIG_SCSI_SRP_ATTRS=y
+CONFIG_SCSI_LOWLEVEL=y
+# CONFIG_ISCSI_TCP is not set
+# CONFIG_ISCSI_BOOT_SYSFS is not set
+# CONFIG_SCSI_HISI_SAS is not set
+CONFIG_SCSI_UFSHCD=y
+CONFIG_SCSI_UFSHCD_PLATFORM=y
+CONFIG_SCSI_UFS_DWC_TC_PLATFORM=y
+CONFIG_SCSI_UFS_HISI=y
+# CONFIG_SCSI_UFS_BSG is not set
+# CONFIG_LIBFC is not set
+CONFIG_SCSI_PPA=y
+# CONFIG_SCSI_IMM is not set
+CONFIG_SCSI_IZIP_EPP16=y
+CONFIG_SCSI_IZIP_SLOW_CTR=y
+CONFIG_SCSI_DEBUG=y
+# CONFIG_SCSI_VIRTIO is not set
+# CONFIG_SCSI_LOWLEVEL_PCMCIA is not set
+# CONFIG_SCSI_DH is not set
+CONFIG_SCSI_OSD_INITIATOR=y
+CONFIG_SCSI_OSD_ULD=y
+CONFIG_SCSI_OSD_DPRINT_SENSE=1
+# CONFIG_SCSI_OSD_DEBUG is not set
+CONFIG_ATA=y
+# CONFIG_ATA_VERBOSE_ERROR is not set
+# CONFIG_SATA_PMP is not set
+
+#
+# Controllers with non-SFF native interface
+#
+CONFIG_SATA_AHCI_PLATFORM=y
+# CONFIG_AHCI_IMX is not set
+CONFIG_SATA_GEMINI=y
+CONFIG_ATA_SFF=y
+
+#
+# SFF controllers with custom DMA interface
+#
+CONFIG_ATA_BMDMA=y
+
+#
+# SATA SFF controllers with BMDMA
+#
+CONFIG_SATA_HIGHBANK=y
+CONFIG_SATA_MV=y
+CONFIG_SATA_RCAR=y
+
+#
+# PATA SFF controllers with BMDMA
+#
+
+#
+# PIO-only SFF controllers
+#
+# CONFIG_PATA_PCMCIA is not set
+# CONFIG_PATA_PLATFORM is not set
+
+#
+# Generic fallback / legacy drivers
+#
+CONFIG_MD=y
+CONFIG_BLK_DEV_MD=y
+# CONFIG_MD_AUTODETECT is not set
+CONFIG_MD_LINEAR=y
+CONFIG_MD_RAID0=y
+# CONFIG_MD_RAID1 is not set
+# CONFIG_MD_RAID10 is not set
+# CONFIG_MD_RAID456 is not set
+# CONFIG_MD_MULTIPATH is not set
+CONFIG_MD_FAULTY=y
+# CONFIG_MD_CLUSTER is not set
+CONFIG_BCACHE=y
+CONFIG_BCACHE_DEBUG=y
+CONFIG_BCACHE_CLOSURES_DEBUG=y
+# CONFIG_BLK_DEV_DM is not set
+CONFIG_TARGET_CORE=y
+CONFIG_TCM_IBLOCK=y
+# CONFIG_TCM_FILEIO is not set
+# CONFIG_TCM_PSCSI is not set
+# CONFIG_LOOPBACK_TARGET is not set
+# CONFIG_ISCSI_TARGET is not set
+# CONFIG_SBP_TARGET is not set
+
+#
+# IEEE 1394 (FireWire) support
+#
+CONFIG_FIREWIRE=y
+CONFIG_FIREWIRE_SBP2=y
+# CONFIG_FIREWIRE_NET is not set
+# CONFIG_MACINTOSH_DRIVERS is not set
+CONFIG_NETDEVICES=y
+CONFIG_MII=y
+CONFIG_NET_CORE=y
+# CONFIG_BONDING is not set
+CONFIG_DUMMY=y
+CONFIG_EQUALIZER=y
+CONFIG_NET_TEAM=y
+CONFIG_NET_TEAM_MODE_BROADCAST=y
+CONFIG_NET_TEAM_MODE_ROUNDROBIN=y
+CONFIG_NET_TEAM_MODE_RANDOM=y
+# CONFIG_NET_TEAM_MODE_ACTIVEBACKUP is not set
+# CONFIG_NET_TEAM_MODE_LOADBALANCE is not set
+# CONFIG_MACVLAN is not set
+CONFIG_VXLAN=y
+CONFIG_GENEVE=y
+CONFIG_GTP=y
+CONFIG_MACSEC=y
+CONFIG_NETCONSOLE=y
+# CONFIG_NETCONSOLE_DYNAMIC is not set
+CONFIG_NETPOLL=y
+CONFIG_NET_POLL_CONTROLLER=y
+# CONFIG_TUN is not set
+# CONFIG_TUN_VNET_CROSS_LE is not set
+# CONFIG_VETH is not set
+CONFIG_VIRTIO_NET=y
+# CONFIG_NLMON is not set
+CONFIG_ARCNET=y
+CONFIG_ARCNET_1201=y
+CONFIG_ARCNET_1051=y
+CONFIG_ARCNET_RAW=y
+CONFIG_ARCNET_CAP=y
+# CONFIG_ARCNET_COM90xx is not set
+# CONFIG_ARCNET_COM90xxIO is not set
+CONFIG_ARCNET_RIM_I=y
+CONFIG_ARCNET_COM20020=y
+# CONFIG_ARCNET_COM20020_CS is not set
+
+#
+# CAIF transport drivers
+#
+CONFIG_CAIF_TTY=y
+CONFIG_CAIF_SPI_SLAVE=y
+# CONFIG_CAIF_SPI_SYNC is not set
+CONFIG_CAIF_HSI=y
+CONFIG_CAIF_VIRTIO=y
+
+#
+# Distributed Switch Architecture drivers
+#
+CONFIG_ETHERNET=y
+# CONFIG_NET_VENDOR_3COM is not set
+# CONFIG_NET_VENDOR_ALACRITECH is not set
+CONFIG_ALTERA_TSE=y
+# CONFIG_NET_VENDOR_AMAZON is not set
+CONFIG_NET_VENDOR_AMD=y
+CONFIG_PCMCIA_NMCLAN=y
+# CONFIG_NET_XGENE is not set
+CONFIG_NET_XGENE_V2=y
+CONFIG_NET_VENDOR_AQUANTIA=y
+# CONFIG_NET_VENDOR_ARC is not set
+CONFIG_NET_VENDOR_AURORA=y
+CONFIG_AURORA_NB8800=y
+# CONFIG_NET_VENDOR_BROADCOM is not set
+CONFIG_NET_VENDOR_CADENCE=y
+# CONFIG_MACB is not set
+CONFIG_NET_CALXEDA_XGMAC=y
+CONFIG_NET_VENDOR_CAVIUM=y
+# CONFIG_NET_VENDOR_CORTINA is not set
+# CONFIG_DNET is not set
+# CONFIG_NET_VENDOR_EZCHIP is not set
+CONFIG_NET_VENDOR_FARADAY=y
+CONFIG_NET_VENDOR_FREESCALE=y
+# CONFIG_FEC is not set
+CONFIG_FSL_FMAN=y
+CONFIG_FSL_PQ_MDIO=y
+CONFIG_GIANFAR=y
+# CONFIG_NET_VENDOR_FUJITSU is not set
+# CONFIG_NET_VENDOR_HUAWEI is not set
+# CONFIG_NET_VENDOR_INTEL is not set
+# CONFIG_NET_VENDOR_MARVELL is not set
+CONFIG_NET_VENDOR_MELLANOX=y
+CONFIG_MLXSW_CORE=y
+# CONFIG_MLXSW_CORE_HWMON is not set
+# CONFIG_MLXSW_CORE_THERMAL is not set
+CONFIG_MLXSW_I2C=y
+CONFIG_MLXSW_MINIMAL=y
+CONFIG_MLXFW=y
+# CONFIG_NET_VENDOR_MICREL is not set
+CONFIG_NET_VENDOR_MICROCHIP=y
+CONFIG_ENC28J60=y
+CONFIG_ENC28J60_WRITEVERIFY=y
+CONFIG_ENCX24J600=y
+# CONFIG_NET_VENDOR_MICROSEMI is not set
+CONFIG_NET_VENDOR_NATSEMI=y
+# CONFIG_NET_VENDOR_NETRONOME is not set
+CONFIG_NET_VENDOR_NI=y
+CONFIG_NI_XGE_MANAGEMENT_ENET=y
+CONFIG_NET_VENDOR_8390=y
+CONFIG_PCMCIA_AXNET=y
+CONFIG_AX88796=y
+# CONFIG_AX88796_93CX6 is not set
+CONFIG_PCMCIA_PCNET=y
+# CONFIG_ETHOC is not set
+# CONFIG_NET_VENDOR_QUALCOMM is not set
+CONFIG_NET_VENDOR_REALTEK=y
+CONFIG_ATP=y
+# CONFIG_NET_VENDOR_RENESAS is not set
+# CONFIG_NET_VENDOR_ROCKER is not set
+# CONFIG_NET_VENDOR_SAMSUNG is not set
+CONFIG_NET_VENDOR_SEEQ=y
+# CONFIG_NET_VENDOR_SOLARFLARE is not set
+CONFIG_NET_VENDOR_SMSC=y
+# CONFIG_PCMCIA_SMC91C92 is not set
+CONFIG_SMSC911X=y
+# CONFIG_NET_VENDOR_SOCIONEXT is not set
+CONFIG_NET_VENDOR_STMICRO=y
+# CONFIG_STMMAC_ETH is not set
+# CONFIG_NET_VENDOR_SYNOPSYS is not set
+# CONFIG_NET_VENDOR_VIA is not set
+# CONFIG_NET_VENDOR_WIZNET is not set
+# CONFIG_NET_VENDOR_XIRCOM is not set
+CONFIG_MDIO_DEVICE=y
+CONFIG_MDIO_BUS=y
+CONFIG_MDIO_BCM_UNIMAC=y
+CONFIG_MDIO_BITBANG=y
+CONFIG_MDIO_GPIO=y
+CONFIG_MDIO_MOXART=y
+CONFIG_MDIO_MSCC_MIIM=y
+# CONFIG_MDIO_SUN4I is not set
+CONFIG_MDIO_XGENE=y
+CONFIG_PHYLIB=y
+CONFIG_SWPHY=y
+
+#
+# MII PHY device drivers
+#
+CONFIG_AMD_PHY=y
+CONFIG_AQUANTIA_PHY=y
+CONFIG_ASIX_PHY=y
+CONFIG_AT803X_PHY=y
+# CONFIG_BCM63XX_PHY is not set
+CONFIG_BCM7XXX_PHY=y
+CONFIG_BCM87XX_PHY=y
+CONFIG_BCM_NET_PHYLIB=y
+CONFIG_BROADCOM_PHY=y
+CONFIG_CICADA_PHY=y
+CONFIG_CORTINA_PHY=y
+# CONFIG_DAVICOM_PHY is not set
+CONFIG_DP83822_PHY=y
+# CONFIG_DP83TC811_PHY is not set
+CONFIG_DP83848_PHY=y
+# CONFIG_DP83867_PHY is not set
+CONFIG_FIXED_PHY=y
+# CONFIG_ICPLUS_PHY is not set
+# CONFIG_INTEL_XWAY_PHY is not set
+# CONFIG_LSI_ET1011C_PHY is not set
+CONFIG_LXT_PHY=y
+# CONFIG_MARVELL_PHY is not set
+CONFIG_MARVELL_10G_PHY=y
+# CONFIG_MESON_GXL_PHY is not set
+CONFIG_MICREL_PHY=y
+# CONFIG_MICROCHIP_PHY is not set
+# CONFIG_MICROCHIP_T1_PHY is not set
+CONFIG_MICROSEMI_PHY=y
+# CONFIG_NATIONAL_PHY is not set
+# CONFIG_QSEMI_PHY is not set
+# CONFIG_REALTEK_PHY is not set
+CONFIG_RENESAS_PHY=y
+CONFIG_ROCKCHIP_PHY=y
+CONFIG_SMSC_PHY=y
+CONFIG_STE10XP=y
+# CONFIG_TERANETICS_PHY is not set
+CONFIG_VITESSE_PHY=y
+# CONFIG_XILINX_GMII2RGMII is not set
+CONFIG_MICREL_KS8995MA=y
+CONFIG_PLIP=y
+CONFIG_PPP=y
+# CONFIG_PPP_BSDCOMP is not set
+# CONFIG_PPP_DEFLATE is not set
+# CONFIG_PPP_FILTER is not set
+# CONFIG_PPP_MPPE is not set
+CONFIG_PPP_MULTILINK=y
+CONFIG_PPPOE=y
+CONFIG_PPTP=y
+# CONFIG_PPPOL2TP is not set
+# CONFIG_PPP_ASYNC is not set
+# CONFIG_PPP_SYNC_TTY is not set
+# CONFIG_SLIP is not set
+CONFIG_SLHC=y
+
+#
+# Host-side USB support is needed for USB Network Adapter support
+#
+# CONFIG_WLAN is not set
+
+#
+# WiMAX Wireless Broadband devices
+#
+
+#
+# Enable USB support to see WiMAX USB drivers
+#
+# CONFIG_WAN is not set
+# CONFIG_IEEE802154_DRIVERS is not set
+# CONFIG_NETDEVSIM is not set
+CONFIG_NET_FAILOVER=y
+CONFIG_ISDN=y
+CONFIG_ISDN_I4L=y
+# CONFIG_ISDN_PPP is not set
+# CONFIG_ISDN_AUDIO is not set
+
+#
+# ISDN feature submodules
+#
+# CONFIG_ISDN_DRV_LOOP is not set
+# CONFIG_ISDN_DIVERSION is not set
+
+#
+# ISDN4Linux hardware drivers
+#
+
+#
+# Passive cards
+#
+# CONFIG_ISDN_DRV_HISAX is not set
+CONFIG_ISDN_CAPI=y
+CONFIG_CAPI_TRACE=y
+CONFIG_ISDN_CAPI_CAPI20=y
+CONFIG_ISDN_CAPI_MIDDLEWARE=y
+CONFIG_ISDN_CAPI_CAPIDRV=y
+# CONFIG_ISDN_CAPI_CAPIDRV_VERBOSE is not set
+
+#
+# CAPI hardware drivers
+#
+CONFIG_CAPI_AVM=y
+CONFIG_ISDN_DRV_AVMB1_B1PCMCIA=y
+# CONFIG_ISDN_DRV_AVMB1_AVM_CS is not set
+# CONFIG_ISDN_DRV_GIGASET is not set
+# CONFIG_MISDN is not set
+# CONFIG_NVM is not set
+
+#
+# Input device support
+#
+CONFIG_INPUT=y
+# CONFIG_INPUT_LEDS is not set
+CONFIG_INPUT_FF_MEMLESS=y
+CONFIG_INPUT_POLLDEV=y
+CONFIG_INPUT_SPARSEKMAP=y
+CONFIG_INPUT_MATRIXKMAP=y
+
+#
+# Userland interfaces
+#
+CONFIG_INPUT_MOUSEDEV=y
+# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
+CONFIG_INPUT_JOYDEV=y
+CONFIG_INPUT_EVDEV=y
+CONFIG_INPUT_EVBUG=y
+
+#
+# Input Device Drivers
+#
+CONFIG_INPUT_KEYBOARD=y
+# CONFIG_KEYBOARD_ADP5520 is not set
+CONFIG_KEYBOARD_ADP5588=y
+CONFIG_KEYBOARD_ADP5589=y
+# CONFIG_KEYBOARD_ATKBD is not set
+# CONFIG_KEYBOARD_QT1070 is not set
+CONFIG_KEYBOARD_QT2160=y
+CONFIG_KEYBOARD_DLINK_DIR685=y
+CONFIG_KEYBOARD_LKKBD=y
+# CONFIG_KEYBOARD_GPIO is not set
+# CONFIG_KEYBOARD_GPIO_POLLED is not set
+# CONFIG_KEYBOARD_TCA6416 is not set
+CONFIG_KEYBOARD_TCA8418=y
+CONFIG_KEYBOARD_MATRIX=y
+CONFIG_KEYBOARD_LM8323=y
+CONFIG_KEYBOARD_LM8333=y
+# CONFIG_KEYBOARD_MAX7359 is not set
+CONFIG_KEYBOARD_MCS=y
+CONFIG_KEYBOARD_MPR121=y
+CONFIG_KEYBOARD_NEWTON=y
+# CONFIG_KEYBOARD_OPENCORES is not set
+# CONFIG_KEYBOARD_PMIC8XXX is not set
+# CONFIG_KEYBOARD_GOLDFISH_EVENTS is not set
+# CONFIG_KEYBOARD_STOWAWAY is not set
+# CONFIG_KEYBOARD_ST_KEYSCAN is not set
+CONFIG_KEYBOARD_SUNKBD=y
+CONFIG_KEYBOARD_SH_KEYSC=y
+CONFIG_KEYBOARD_TM2_TOUCHKEY=y
+CONFIG_KEYBOARD_XTKBD=y
+CONFIG_KEYBOARD_CROS_EC=y
+# CONFIG_KEYBOARD_MTK_PMIC is not set
+# CONFIG_INPUT_MOUSE is not set
+# CONFIG_INPUT_JOYSTICK is not set
+CONFIG_INPUT_TABLET=y
+CONFIG_TABLET_SERIAL_WACOM4=y
+# CONFIG_INPUT_TOUCHSCREEN is not set
+# CONFIG_INPUT_MISC is not set
+# CONFIG_RMI4_CORE is not set
+
+#
+# Hardware I/O ports
+#
+CONFIG_SERIO=y
+CONFIG_ARCH_MIGHT_HAVE_PC_SERIO=y
+CONFIG_SERIO_I8042=y
+CONFIG_SERIO_SERPORT=y
+CONFIG_SERIO_CT82C710=y
+CONFIG_SERIO_PARKBD=y
+CONFIG_SERIO_LIBPS2=y
+CONFIG_SERIO_RAW=y
+CONFIG_SERIO_ALTERA_PS2=y
+# CONFIG_SERIO_PS2MULT is not set
+CONFIG_SERIO_ARC_PS2=y
+CONFIG_SERIO_OLPC_APSP=y
+# CONFIG_SERIO_SUN4I_PS2 is not set
+CONFIG_SERIO_GPIO_PS2=y
+# CONFIG_USERIO is not set
+CONFIG_GAMEPORT=y
+CONFIG_GAMEPORT_NS558=y
+CONFIG_GAMEPORT_L4=y
+
+#
+# Character devices
+#
+CONFIG_TTY=y
+# CONFIG_VT is not set
+# CONFIG_UNIX98_PTYS is not set
+# CONFIG_LEGACY_PTYS is not set
+CONFIG_SERIAL_NONSTANDARD=y
+CONFIG_N_HDLC=y
+CONFIG_N_GSM=y
+# CONFIG_TRACE_SINK is not set
+# CONFIG_GOLDFISH_TTY is not set
+# CONFIG_DEVMEM is not set
+CONFIG_DEVKMEM=y
+
+#
+# Serial drivers
+#
+CONFIG_SERIAL_EARLYCON=y
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_DEPRECATED_OPTIONS=y
+# CONFIG_SERIAL_8250_FINTEK is not set
+# CONFIG_SERIAL_8250_CONSOLE is not set
+# CONFIG_SERIAL_8250_CS is not set
+CONFIG_SERIAL_8250_NR_UARTS=4
+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
+CONFIG_SERIAL_8250_EXTENDED=y
+# CONFIG_SERIAL_8250_MANY_PORTS is not set
+CONFIG_SERIAL_8250_SHARE_IRQ=y
+# CONFIG_SERIAL_8250_DETECT_IRQ is not set
+CONFIG_SERIAL_8250_RSA=y
+# CONFIG_SERIAL_8250_BCM2835AUX is not set
+# CONFIG_SERIAL_8250_DW is not set
+# CONFIG_SERIAL_8250_RT288X is not set
+# CONFIG_SERIAL_8250_UNIPHIER is not set
+
+#
+# Non-8250 serial port support
+#
+CONFIG_SERIAL_ATMEL=y
+# CONFIG_SERIAL_ATMEL_CONSOLE is not set
+CONFIG_SERIAL_ATMEL_PDC=y
+CONFIG_SERIAL_ATMEL_TTYAT=y
+CONFIG_SERIAL_CLPS711X=y
+CONFIG_SERIAL_CLPS711X_CONSOLE=y
+# CONFIG_SERIAL_MAX3100 is not set
+CONFIG_SERIAL_MAX310X=y
+# CONFIG_SERIAL_IMX is not set
+# CONFIG_SERIAL_UARTLITE is not set
+CONFIG_SERIAL_SH_SCI=y
+CONFIG_SERIAL_SH_SCI_NR_UARTS=2
+CONFIG_SERIAL_SH_SCI_CONSOLE=y
+CONFIG_SERIAL_SH_SCI_EARLYCON=y
+CONFIG_SERIAL_CORE=y
+CONFIG_SERIAL_CORE_CONSOLE=y
+# CONFIG_SERIAL_SCCNXP is not set
+# CONFIG_SERIAL_SC16IS7XX is not set
+CONFIG_SERIAL_TIMBERDALE=y
+CONFIG_SERIAL_BCM63XX=y
+# CONFIG_SERIAL_BCM63XX_CONSOLE is not set
+# CONFIG_SERIAL_ALTERA_JTAGUART is not set
+CONFIG_SERIAL_ALTERA_UART=y
+CONFIG_SERIAL_ALTERA_UART_MAXPORTS=4
+CONFIG_SERIAL_ALTERA_UART_BAUDRATE=115200
+# CONFIG_SERIAL_ALTERA_UART_CONSOLE is not set
+CONFIG_SERIAL_IFX6X60=y
+CONFIG_SERIAL_MXS_AUART=y
+# CONFIG_SERIAL_MXS_AUART_CONSOLE is not set
+CONFIG_SERIAL_MPS2_UART_CONSOLE=y
+CONFIG_SERIAL_MPS2_UART=y
+CONFIG_SERIAL_ARC=y
+CONFIG_SERIAL_ARC_CONSOLE=y
+CONFIG_SERIAL_ARC_NR_PORTS=1
+# CONFIG_SERIAL_FSL_LPUART is not set
+# CONFIG_SERIAL_ST_ASC is not set
+CONFIG_SERIAL_STM32=y
+# CONFIG_SERIAL_STM32_CONSOLE is not set
+# CONFIG_SERIAL_MVEBU_UART is not set
+CONFIG_SERIAL_OWL=y
+# CONFIG_SERIAL_OWL_CONSOLE is not set
+CONFIG_SERIAL_MCTRL_GPIO=y
+CONFIG_SERIAL_DEV_BUS=y
+# CONFIG_SERIAL_DEV_CTRL_TTYPORT is not set
+# CONFIG_TTY_PRINTK is not set
+CONFIG_PRINTER=y
+CONFIG_LP_CONSOLE=y
+CONFIG_PPDEV=y
+CONFIG_HVC_DRIVER=y
+CONFIG_VIRTIO_CONSOLE=y
+# CONFIG_IPMI_HANDLER is not set
+CONFIG_IPMI_KCS_BMC=y
+# CONFIG_ASPEED_KCS_IPMI_BMC is not set
+CONFIG_NPCM7XX_KCS_IPMI_BMC=y
+# CONFIG_ASPEED_BT_IPMI_BMC is not set
+CONFIG_HW_RANDOM=y
+# CONFIG_HW_RANDOM_TIMERIOMEM is not set
+CONFIG_HW_RANDOM_VIA=y
+# CONFIG_HW_RANDOM_VIRTIO is not set
+# CONFIG_HW_RANDOM_STM32 is not set
+CONFIG_HW_RANDOM_MESON=y
+CONFIG_HW_RANDOM_MTK=y
+# CONFIG_HW_RANDOM_EXYNOS is not set
+CONFIG_NVRAM=y
+CONFIG_R3964=y
+
+#
+# PCMCIA character devices
+#
+# CONFIG_SYNCLINK_CS is not set
+CONFIG_CARDMAN_4000=y
+# CONFIG_CARDMAN_4040 is not set
+CONFIG_SCR24X=y
+CONFIG_IPWIRELESS=y
+CONFIG_MWAVE=y
+CONFIG_RAW_DRIVER=y
+CONFIG_MAX_RAW_DEVS=256
+CONFIG_HANGCHECK_TIMER=y
+# CONFIG_TCG_TPM is not set
+CONFIG_TELCLOCK=y
+CONFIG_RANDOM_TRUST_CPU=y
+
+#
+# I2C support
+#
+CONFIG_I2C=y
+CONFIG_I2C_BOARDINFO=y
+CONFIG_I2C_COMPAT=y
+CONFIG_I2C_CHARDEV=y
+CONFIG_I2C_MUX=y
+
+#
+# Multiplexer I2C Chip support
+#
+# CONFIG_I2C_ARB_GPIO_CHALLENGE is not set
+CONFIG_I2C_MUX_GPIO=y
+CONFIG_I2C_MUX_GPMUX=y
+# CONFIG_I2C_MUX_LTC4306 is not set
+CONFIG_I2C_MUX_PCA9541=y
+CONFIG_I2C_MUX_PCA954x=y
+# CONFIG_I2C_MUX_PINCTRL is not set
+# CONFIG_I2C_MUX_REG is not set
+# CONFIG_I2C_MUX_MLXCPLD is not set
+CONFIG_I2C_HELPER_AUTO=y
+CONFIG_I2C_SMBUS=y
+CONFIG_I2C_ALGOBIT=y
+CONFIG_I2C_ALGOPCA=y
+
+#
+# I2C Hardware Bus support
+#
+# CONFIG_I2C_HIX5HD2 is not set
+
+#
+# I2C system bus drivers (mostly embedded / system-on-chip)
+#
+CONFIG_I2C_ASPEED=y
+# CONFIG_I2C_AXXIA is not set
+# CONFIG_I2C_BCM_IPROC is not set
+# CONFIG_I2C_BRCMSTB is not set
+CONFIG_I2C_CBUS_GPIO=y
+CONFIG_I2C_DESIGNWARE_CORE=y
+CONFIG_I2C_DESIGNWARE_PLATFORM=y
+CONFIG_I2C_DESIGNWARE_SLAVE=y
+# CONFIG_I2C_EFM32 is not set
+CONFIG_I2C_GPIO=y
+CONFIG_I2C_GPIO_FAULT_INJECTOR=y
+CONFIG_I2C_IMG=y
+CONFIG_I2C_IMX_LPI2C=y
+# CONFIG_I2C_JZ4780 is not set
+CONFIG_I2C_MESON=y
+CONFIG_I2C_MT65XX=y
+CONFIG_I2C_OCORES=y
+# CONFIG_I2C_OWL is not set
+CONFIG_I2C_PCA_PLATFORM=y
+CONFIG_I2C_RIIC=y
+# CONFIG_I2C_SH_MOBILE is not set
+CONFIG_I2C_SIMTEC=y
+CONFIG_I2C_STM32F4=y
+CONFIG_I2C_STM32F7=y
+CONFIG_I2C_SYNQUACER=y
+# CONFIG_I2C_UNIPHIER is not set
+# CONFIG_I2C_UNIPHIER_F is not set
+CONFIG_I2C_VERSATILE=y
+CONFIG_I2C_XILINX=y
+CONFIG_I2C_XLP9XX=y
+# CONFIG_I2C_RCAR is not set
+
+#
+# External I2C/SMBus adapter drivers
+#
+# CONFIG_I2C_PARPORT is not set
+CONFIG_I2C_PARPORT_LIGHT=y
+CONFIG_I2C_TAOS_EVM=y
+
+#
+# Other I2C/SMBus bus drivers
+#
+# CONFIG_I2C_MLXCPLD is not set
+CONFIG_I2C_CROS_EC_TUNNEL=y
+CONFIG_I2C_SLAVE=y
+CONFIG_I2C_SLAVE_EEPROM=y
+CONFIG_I2C_DEBUG_CORE=y
+CONFIG_I2C_DEBUG_ALGO=y
+# CONFIG_I2C_DEBUG_BUS is not set
+CONFIG_I3C=y
+CONFIG_CDNS_I3C_MASTER=y
+CONFIG_SPI=y
+CONFIG_SPI_DEBUG=y
+CONFIG_SPI_MASTER=y
+# CONFIG_SPI_MEM is not set
+
+#
+# SPI Master Controller Drivers
+#
+CONFIG_SPI_ALTERA=y
+# CONFIG_SPI_ARMADA_3700 is not set
+CONFIG_SPI_ATMEL=y
+CONFIG_SPI_AT91_USART=y
+CONFIG_SPI_AXI_SPI_ENGINE=y
+# CONFIG_SPI_BCM2835 is not set
+# CONFIG_SPI_BCM2835AUX is not set
+CONFIG_SPI_BCM63XX=y
+CONFIG_SPI_BCM63XX_HSSPI=y
+CONFIG_SPI_BCM_QSPI=y
+CONFIG_SPI_BITBANG=y
+# CONFIG_SPI_BUTTERFLY is not set
+CONFIG_SPI_CADENCE=y
+# CONFIG_SPI_CLPS711X is not set
+CONFIG_SPI_DESIGNWARE=y
+# CONFIG_SPI_DW_MMIO is not set
+# CONFIG_SPI_EP93XX is not set
+CONFIG_SPI_FSL_LPSPI=y
+# CONFIG_SPI_GPIO is not set
+# CONFIG_SPI_IMG_SPFI is not set
+CONFIG_SPI_IMX=y
+# CONFIG_SPI_LM70_LLP is not set
+CONFIG_SPI_LP8841_RTC=y
+# CONFIG_SPI_FSL_DSPI is not set
+CONFIG_SPI_MESON_SPICC=y
+# CONFIG_SPI_MESON_SPIFC is not set
+# CONFIG_SPI_MT65XX is not set
+# CONFIG_SPI_LANTIQ_SSC is not set
+CONFIG_SPI_OC_TINY=y
+CONFIG_SPI_OMAP24XX=y
+CONFIG_SPI_TI_QSPI=y
+# CONFIG_SPI_OMAP_100K is not set
+CONFIG_SPI_ORION=y
+CONFIG_SPI_PIC32=y
+CONFIG_SPI_PIC32_SQI=y
+CONFIG_SPI_ROCKCHIP=y
+CONFIG_SPI_RSPI=y
+CONFIG_SPI_S3C64XX=y
+CONFIG_SPI_SC18IS602=y
+CONFIG_SPI_SH=y
+CONFIG_SPI_SH_HSPI=y
+# CONFIG_SPI_SLAVE_MT27XX is not set
+CONFIG_SPI_SPRD=y
+# CONFIG_SPI_SPRD_ADI is not set
+CONFIG_SPI_STM32=y
+CONFIG_SPI_ST_SSC4=y
+CONFIG_SPI_SUN4I=y
+CONFIG_SPI_MXIC=y
+CONFIG_SPI_TXX9=y
+# CONFIG_SPI_XCOMM is not set
+CONFIG_SPI_XILINX=y
+# CONFIG_SPI_XLP is not set
+CONFIG_SPI_XTENSA_XTFPGA=y
+CONFIG_SPI_ZYNQMP_GQSPI=y
+
+#
+# SPI Protocol Masters
+#
+CONFIG_SPI_SPIDEV=y
+# CONFIG_SPI_TLE62X0 is not set
+CONFIG_SPI_SLAVE=y
+CONFIG_SPI_SLAVE_TIME=y
+# CONFIG_SPI_SLAVE_SYSTEM_CONTROL is not set
+# CONFIG_SPMI is not set
+CONFIG_HSI=y
+CONFIG_HSI_BOARDINFO=y
+
+#
+# HSI controllers
+#
+
+#
+# HSI clients
+#
+CONFIG_HSI_CHAR=y
+CONFIG_PPS=y
+# CONFIG_PPS_DEBUG is not set
+
+#
+# PPS clients support
+#
+CONFIG_PPS_CLIENT_KTIMER=y
+# CONFIG_PPS_CLIENT_LDISC is not set
+CONFIG_PPS_CLIENT_PARPORT=y
+CONFIG_PPS_CLIENT_GPIO=y
+
+#
+# PPS generators support
+#
+
+#
+# PTP clock support
+#
+CONFIG_PTP_1588_CLOCK_PCH=y
+CONFIG_PINCTRL=y
+CONFIG_PINMUX=y
+CONFIG_PINCONF=y
+CONFIG_GENERIC_PINCONF=y
+# CONFIG_DEBUG_PINCTRL is not set
+CONFIG_PINCTRL_AMD=y
+CONFIG_PINCTRL_MCP23S08=y
+# CONFIG_PINCTRL_SX150X is not set
+CONFIG_PINCTRL_PXA=y
+CONFIG_PINCTRL_PXA25X=y
+# CONFIG_PINCTRL_PXA27X is not set
+
+#
+# MediaTek pinctrl drivers
+#
+# CONFIG_EINT_MTK is not set
+CONFIG_PINCTRL_MADERA=y
+CONFIG_PINCTRL_CS47L35=y
+CONFIG_PINCTRL_CS47L85=y
+CONFIG_GPIOLIB=y
+CONFIG_GPIOLIB_FASTPATH_LIMIT=512
+CONFIG_GPIOLIB_IRQCHIP=y
+CONFIG_DEBUG_GPIO=y
+CONFIG_GPIO_SYSFS=y
+CONFIG_GPIO_GENERIC=y
+CONFIG_GPIO_MAX730X=y
+
+#
+# Memory mapped GPIO drivers
+#
+CONFIG_GPIO_ATH79=y
+CONFIG_GPIO_CLPS711X=y
+# CONFIG_GPIO_DWAPB is not set
+CONFIG_GPIO_GENERIC_PLATFORM=y
+CONFIG_GPIO_IOP=y
+CONFIG_GPIO_MB86S7X=y
+CONFIG_GPIO_MOCKUP=y
+CONFIG_GPIO_MPC8XXX=y
+CONFIG_GPIO_RCAR=y
+CONFIG_GPIO_SIOX=y
+# CONFIG_GPIO_ZX is not set
+
+#
+# Port-mapped I/O GPIO drivers
+#
+CONFIG_GPIO_104_DIO_48E=y
+CONFIG_GPIO_104_IDIO_16=y
+# CONFIG_GPIO_104_IDI_48 is not set
+CONFIG_GPIO_F7188X=y
+CONFIG_GPIO_GPIO_MM=y
+# CONFIG_GPIO_IT87 is not set
+CONFIG_GPIO_SCH311X=y
+CONFIG_GPIO_TS5500=y
+CONFIG_GPIO_WINBOND=y
+CONFIG_GPIO_WS16C48=y
+
+#
+# I2C GPIO expanders
+#
+CONFIG_GPIO_ADP5588=y
+# CONFIG_GPIO_ADP5588_IRQ is not set
+CONFIG_GPIO_MAX7300=y
+CONFIG_GPIO_MAX732X=y
+# CONFIG_GPIO_MAX732X_IRQ is not set
+# CONFIG_GPIO_PCA953X is not set
+CONFIG_GPIO_PCF857X=y
+# CONFIG_GPIO_TPIC2810 is not set
+CONFIG_GPIO_TS4900=y
+
+#
+# MFD GPIO expanders
+#
+CONFIG_GPIO_ADP5520=y
+CONFIG_GPIO_ARIZONA=y
+CONFIG_GPIO_BD9571MWV=y
+# CONFIG_GPIO_DA9055 is not set
+CONFIG_GPIO_LP3943=y
+# CONFIG_GPIO_LP873X is not set
+CONFIG_GPIO_MADERA=y
+CONFIG_GPIO_MAX77620=y
+# CONFIG_GPIO_RC5T583 is not set
+# CONFIG_GPIO_TPS6586X is not set
+CONFIG_GPIO_TPS65910=y
+# CONFIG_GPIO_TPS65912 is not set
+CONFIG_GPIO_WM831X=y
+CONFIG_GPIO_WM8350=y
+CONFIG_GPIO_WM8994=y
+
+#
+# SPI GPIO expanders
+#
+# CONFIG_GPIO_MAX3191X is not set
+# CONFIG_GPIO_MAX7301 is not set
+CONFIG_GPIO_MC33880=y
+CONFIG_GPIO_PISOSR=y
+CONFIG_GPIO_XRA1403=y
+CONFIG_W1=y
+# CONFIG_W1_CON is not set
+
+#
+# 1-wire Bus Masters
+#
+CONFIG_W1_MASTER_DS2482=y
+CONFIG_W1_MASTER_MXC=y
+CONFIG_W1_MASTER_DS1WM=y
+CONFIG_W1_MASTER_GPIO=y
+
+#
+# 1-wire Slaves
+#
+# CONFIG_W1_SLAVE_THERM is not set
+CONFIG_W1_SLAVE_SMEM=y
+CONFIG_W1_SLAVE_DS2405=y
+CONFIG_W1_SLAVE_DS2408=y
+# CONFIG_W1_SLAVE_DS2408_READBACK is not set
+CONFIG_W1_SLAVE_DS2413=y
+CONFIG_W1_SLAVE_DS2406=y
+# CONFIG_W1_SLAVE_DS2423 is not set
+CONFIG_W1_SLAVE_DS2805=y
+CONFIG_W1_SLAVE_DS2431=y
+# CONFIG_W1_SLAVE_DS2433 is not set
+CONFIG_W1_SLAVE_DS2438=y
+CONFIG_W1_SLAVE_DS2780=y
+CONFIG_W1_SLAVE_DS2781=y
+# CONFIG_W1_SLAVE_DS28E04 is not set
+CONFIG_W1_SLAVE_DS28E17=y
+CONFIG_POWER_AVS=y
+CONFIG_POWER_RESET=y
+CONFIG_POWER_RESET_BRCMKONA=y
+# CONFIG_POWER_RESET_BRCMSTB is not set
+CONFIG_POWER_RESET_OCELOT_RESET=y
+# CONFIG_POWER_RESET_RESTART is not set
+CONFIG_POWER_RESET_KEYSTONE=y
+CONFIG_POWER_RESET_RMOBILE=y
+# CONFIG_POWER_RESET_ZX is not set
+CONFIG_POWER_RESET_SC27XX=y
+CONFIG_POWER_SUPPLY=y
+CONFIG_POWER_SUPPLY_DEBUG=y
+CONFIG_PDA_POWER=y
+CONFIG_WM831X_BACKUP=y
+CONFIG_WM831X_POWER=y
+# CONFIG_WM8350_POWER is not set
+CONFIG_TEST_POWER=y
+CONFIG_CHARGER_ADP5061=y
+CONFIG_BATTERY_ACT8945A=y
+CONFIG_BATTERY_DS2760=y
+# CONFIG_BATTERY_DS2780 is not set
+CONFIG_BATTERY_DS2781=y
+CONFIG_BATTERY_DS2782=y
+# CONFIG_BATTERY_SBS is not set
+# CONFIG_CHARGER_SBS is not set
+CONFIG_MANAGER_SBS=y
+# CONFIG_BATTERY_BQ27XXX is not set
+CONFIG_BATTERY_DA9030=y
+# CONFIG_BATTERY_MAX17040 is not set
+CONFIG_BATTERY_MAX17042=y
+CONFIG_BATTERY_MAX1721X=y
+CONFIG_CHARGER_PCF50633=y
+# CONFIG_CHARGER_MAX8903 is not set
+CONFIG_CHARGER_LP8727=y
+CONFIG_CHARGER_GPIO=y
+CONFIG_CHARGER_MANAGER=y
+# CONFIG_CHARGER_LTC3651 is not set
+CONFIG_CHARGER_MAX14577=y
+# CONFIG_CHARGER_BQ2415X is not set
+# CONFIG_CHARGER_BQ24190 is not set
+# CONFIG_CHARGER_BQ24257 is not set
+# CONFIG_CHARGER_BQ24735 is not set
+CONFIG_CHARGER_BQ25890=y
+CONFIG_CHARGER_SMB347=y
+CONFIG_BATTERY_GAUGE_LTC2941=y
+CONFIG_BATTERY_GOLDFISH=y
+CONFIG_CHARGER_RT9455=y
+CONFIG_CHARGER_CROS_USBPD=y
+# CONFIG_CHARGER_SC2731 is not set
+CONFIG_HWMON=y
+CONFIG_HWMON_VID=y
+# CONFIG_HWMON_DEBUG_CHIP is not set
+
+#
+# Native drivers
+#
+CONFIG_SENSORS_ABITUGURU=y
+CONFIG_SENSORS_ABITUGURU3=y
+CONFIG_SENSORS_AD7314=y
+CONFIG_SENSORS_AD7414=y
+CONFIG_SENSORS_AD7418=y
+CONFIG_SENSORS_ADM1021=y
+# CONFIG_SENSORS_ADM1025 is not set
+# CONFIG_SENSORS_ADM1026 is not set
+# CONFIG_SENSORS_ADM1029 is not set
+CONFIG_SENSORS_ADM1031=y
+CONFIG_SENSORS_ADM9240=y
+CONFIG_SENSORS_ADT7X10=y
+CONFIG_SENSORS_ADT7310=y
+CONFIG_SENSORS_ADT7410=y
+CONFIG_SENSORS_ADT7411=y
+CONFIG_SENSORS_ADT7462=y
+CONFIG_SENSORS_ADT7470=y
+# CONFIG_SENSORS_ADT7475 is not set
+# CONFIG_SENSORS_ASC7621 is not set
+CONFIG_SENSORS_APPLESMC=y
+CONFIG_SENSORS_ASB100=y
+CONFIG_SENSORS_ASPEED=y
+CONFIG_SENSORS_ATXP1=y
+CONFIG_SENSORS_DS620=y
+# CONFIG_SENSORS_DS1621 is not set
+CONFIG_SENSORS_DELL_SMM=y
+CONFIG_SENSORS_DA9055=y
+CONFIG_SENSORS_F71805F=y
+CONFIG_SENSORS_F71882FG=y
+CONFIG_SENSORS_F75375S=y
+CONFIG_SENSORS_MC13783_ADC=y
+CONFIG_SENSORS_FSCHMD=y
+CONFIG_SENSORS_FTSTEUTATES=y
+CONFIG_SENSORS_GL518SM=y
+CONFIG_SENSORS_GL520SM=y
+CONFIG_SENSORS_G760A=y
+CONFIG_SENSORS_G762=y
+# CONFIG_SENSORS_HIH6130 is not set
+CONFIG_SENSORS_CORETEMP=y
+CONFIG_SENSORS_IT87=y
+CONFIG_SENSORS_JC42=y
+CONFIG_SENSORS_POWR1220=y
+CONFIG_SENSORS_LINEAGE=y
+CONFIG_SENSORS_LTC2945=y
+CONFIG_SENSORS_LTC2990=y
+CONFIG_SENSORS_LTC4151=y
+CONFIG_SENSORS_LTC4215=y
+# CONFIG_SENSORS_LTC4222 is not set
+# CONFIG_SENSORS_LTC4245 is not set
+CONFIG_SENSORS_LTC4260=y
+CONFIG_SENSORS_LTC4261=y
+CONFIG_SENSORS_MAX1111=y
+CONFIG_SENSORS_MAX16065=y
+CONFIG_SENSORS_MAX1619=y
+CONFIG_SENSORS_MAX1668=y
+CONFIG_SENSORS_MAX197=y
+CONFIG_SENSORS_MAX31722=y
+CONFIG_SENSORS_MAX6621=y
+CONFIG_SENSORS_MAX6639=y
+CONFIG_SENSORS_MAX6642=y
+CONFIG_SENSORS_MAX6650=y
+# CONFIG_SENSORS_MAX6697 is not set
+# CONFIG_SENSORS_MAX31790 is not set
+CONFIG_SENSORS_MCP3021=y
+CONFIG_SENSORS_MLXREG_FAN=y
+CONFIG_SENSORS_TC654=y
+CONFIG_SENSORS_ADCXX=y
+CONFIG_SENSORS_LM63=y
+CONFIG_SENSORS_LM70=y
+CONFIG_SENSORS_LM73=y
+# CONFIG_SENSORS_LM75 is not set
+CONFIG_SENSORS_LM77=y
+CONFIG_SENSORS_LM78=y
+CONFIG_SENSORS_LM80=y
+# CONFIG_SENSORS_LM83 is not set
+CONFIG_SENSORS_LM85=y
+# CONFIG_SENSORS_LM87 is not set
+# CONFIG_SENSORS_LM90 is not set
+CONFIG_SENSORS_LM92=y
+CONFIG_SENSORS_LM93=y
+CONFIG_SENSORS_LM95234=y
+CONFIG_SENSORS_LM95241=y
+CONFIG_SENSORS_LM95245=y
+# CONFIG_SENSORS_PC87360 is not set
+CONFIG_SENSORS_PC87427=y
+CONFIG_SENSORS_NTC_THERMISTOR=y
+# CONFIG_SENSORS_NCT6683 is not set
+CONFIG_SENSORS_NCT6775=y
+CONFIG_SENSORS_NCT7802=y
+CONFIG_SENSORS_NCT7904=y
+CONFIG_SENSORS_NPCM7XX=y
+# CONFIG_SENSORS_PCF8591 is not set
+CONFIG_PMBUS=y
+# CONFIG_SENSORS_PMBUS is not set
+# CONFIG_SENSORS_ADM1275 is not set
+CONFIG_SENSORS_IBM_CFFPS=y
+CONFIG_SENSORS_IR35221=y
+CONFIG_SENSORS_LM25066=y
+CONFIG_SENSORS_LTC2978=y
+# CONFIG_SENSORS_LTC2978_REGULATOR is not set
+# CONFIG_SENSORS_LTC3815 is not set
+# CONFIG_SENSORS_MAX16064 is not set
+# CONFIG_SENSORS_MAX20751 is not set
+CONFIG_SENSORS_MAX31785=y
+CONFIG_SENSORS_MAX34440=y
+CONFIG_SENSORS_MAX8688=y
+CONFIG_SENSORS_TPS40422=y
+# CONFIG_SENSORS_TPS53679 is not set
+CONFIG_SENSORS_UCD9000=y
+CONFIG_SENSORS_UCD9200=y
+CONFIG_SENSORS_ZL6100=y
+# CONFIG_SENSORS_PWM_FAN is not set
+CONFIG_SENSORS_RASPBERRYPI_HWMON=y
+CONFIG_SENSORS_SHT15=y
+CONFIG_SENSORS_SHT21=y
+CONFIG_SENSORS_SHT3x=y
+CONFIG_SENSORS_SHTC1=y
+CONFIG_SENSORS_DME1737=y
+# CONFIG_SENSORS_EMC1403 is not set
+CONFIG_SENSORS_EMC2103=y
+# CONFIG_SENSORS_EMC6W201 is not set
+CONFIG_SENSORS_SMSC47M1=y
+# CONFIG_SENSORS_SMSC47M192 is not set
+# CONFIG_SENSORS_SMSC47B397 is not set
+CONFIG_SENSORS_SCH56XX_COMMON=y
+# CONFIG_SENSORS_SCH5627 is not set
+CONFIG_SENSORS_SCH5636=y
+# CONFIG_SENSORS_STTS751 is not set
+CONFIG_SENSORS_SMM665=y
+# CONFIG_SENSORS_ADC128D818 is not set
+# CONFIG_SENSORS_ADS1015 is not set
+CONFIG_SENSORS_ADS7828=y
+# CONFIG_SENSORS_ADS7871 is not set
+CONFIG_SENSORS_AMC6821=y
+# CONFIG_SENSORS_INA209 is not set
+CONFIG_SENSORS_INA2XX=y
+# CONFIG_SENSORS_INA3221 is not set
+CONFIG_SENSORS_TC74=y
+# CONFIG_SENSORS_THMC50 is not set
+CONFIG_SENSORS_TMP102=y
+CONFIG_SENSORS_TMP103=y
+CONFIG_SENSORS_TMP108=y
+# CONFIG_SENSORS_TMP401 is not set
+CONFIG_SENSORS_TMP421=y
+CONFIG_SENSORS_VIA_CPUTEMP=y
+CONFIG_SENSORS_VT1211=y
+CONFIG_SENSORS_W83773G=y
+CONFIG_SENSORS_W83781D=y
+CONFIG_SENSORS_W83791D=y
+# CONFIG_SENSORS_W83792D is not set
+CONFIG_SENSORS_W83793=y
+# CONFIG_SENSORS_W83795 is not set
+CONFIG_SENSORS_W83L785TS=y
+CONFIG_SENSORS_W83L786NG=y
+CONFIG_SENSORS_W83627HF=y
+CONFIG_SENSORS_W83627EHF=y
+CONFIG_SENSORS_WM831X=y
+CONFIG_SENSORS_WM8350=y
+CONFIG_THERMAL=y
+# CONFIG_THERMAL_STATISTICS is not set
+CONFIG_THERMAL_EMERGENCY_POWEROFF_DELAY_MS=0
+CONFIG_THERMAL_HWMON=y
+CONFIG_THERMAL_WRITABLE_TRIPS=y
+# CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE is not set
+CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE=y
+# CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE is not set
+# CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR is not set
+CONFIG_THERMAL_GOV_FAIR_SHARE=y
+# CONFIG_THERMAL_GOV_STEP_WISE is not set
+CONFIG_THERMAL_GOV_BANG_BANG=y
+CONFIG_THERMAL_GOV_USER_SPACE=y
+CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+# CONFIG_DEVFREQ_THERMAL is not set
+CONFIG_THERMAL_EMULATION=y
+CONFIG_RCAR_THERMAL=y
+
+#
+# ACPI INT340X thermal drivers
+#
+
+#
+# Broadcom thermal drivers
+#
+# CONFIG_BRCMSTB_THERMAL is not set
+CONFIG_BCM_NS_THERMAL=y
+
+#
+# Texas Instruments thermal drivers
+#
+# CONFIG_TI_SOC_THERMAL is not set
+
+#
+# Samsung thermal drivers
+#
+CONFIG_TANGO_THERMAL=y
+
+#
+# Qualcomm thermal drivers
+#
+# CONFIG_QCOM_TSENS is not set
+# CONFIG_ZX2967_THERMAL is not set
+CONFIG_WATCHDOG=y
+CONFIG_WATCHDOG_CORE=y
+CONFIG_WATCHDOG_NOWAYOUT=y
+# CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED is not set
+CONFIG_WATCHDOG_SYSFS=y
+
+#
+# Watchdog Device Drivers
+#
+# CONFIG_SOFT_WATCHDOG is not set
+# CONFIG_DA9052_WATCHDOG is not set
+CONFIG_DA9055_WATCHDOG=y
+CONFIG_DA9063_WATCHDOG=y
+# CONFIG_DA9062_WATCHDOG is not set
+# CONFIG_MENF21BMC_WATCHDOG is not set
+CONFIG_TANGOX_WATCHDOG=y
+# CONFIG_WM831X_WATCHDOG is not set
+CONFIG_WM8350_WATCHDOG=y
+CONFIG_XILINX_WATCHDOG=y
+CONFIG_ZIIRAVE_WATCHDOG=y
+CONFIG_RAVE_SP_WATCHDOG=y
+CONFIG_ARMADA_37XX_WATCHDOG=y
+CONFIG_AT91RM9200_WATCHDOG=y
+# CONFIG_AT91SAM9X_WATCHDOG is not set
+CONFIG_SAMA5D4_WATCHDOG=y
+CONFIG_CADENCE_WATCHDOG=y
+# CONFIG_FTWDT010_WATCHDOG is not set
+# CONFIG_S3C2410_WATCHDOG is not set
+# CONFIG_DW_WATCHDOG is not set
+CONFIG_EP93XX_WATCHDOG=y
+CONFIG_OMAP_WATCHDOG=y
+CONFIG_DAVINCI_WATCHDOG=y
+CONFIG_RN5T618_WATCHDOG=y
+CONFIG_SUNXI_WATCHDOG=y
+# CONFIG_NPCM7XX_WATCHDOG is not set
+# CONFIG_STMP3XXX_RTC_WATCHDOG is not set
+CONFIG_NUC900_WATCHDOG=y
+CONFIG_TS72XX_WATCHDOG=y
+CONFIG_MAX63XX_WATCHDOG=y
+CONFIG_MAX77620_WATCHDOG=y
+# CONFIG_IMX2_WDT is not set
+CONFIG_MOXART_WDT=y
+CONFIG_SIRFSOC_WATCHDOG=y
+# CONFIG_TEGRA_WATCHDOG is not set
+CONFIG_QCOM_WDT=y
+# CONFIG_MESON_GXBB_WATCHDOG is not set
+# CONFIG_MESON_WATCHDOG is not set
+CONFIG_MEDIATEK_WATCHDOG=y
+CONFIG_DIGICOLOR_WATCHDOG=y
+# CONFIG_LPC18XX_WATCHDOG is not set
+CONFIG_ATLAS7_WATCHDOG=y
+# CONFIG_RENESAS_WDT is not set
+CONFIG_RENESAS_RZAWDT=y
+CONFIG_ASPEED_WATCHDOG=y
+# CONFIG_SPRD_WATCHDOG is not set
+CONFIG_ACQUIRE_WDT=y
+CONFIG_ADVANTECH_WDT=y
+CONFIG_EBC_C384_WDT=y
+CONFIG_F71808E_WDT=y
+CONFIG_SC520_WDT=y
+# CONFIG_SBC_FITPC2_WATCHDOG is not set
+CONFIG_EUROTECH_WDT=y
+CONFIG_IB700_WDT=y
+CONFIG_IBMASR=y
+CONFIG_WAFER_WDT=y
+CONFIG_IT8712F_WDT=y
+# CONFIG_IT87_WDT is not set
+CONFIG_SC1200_WDT=y
+CONFIG_PC87413_WDT=y
+# CONFIG_60XX_WDT is not set
+CONFIG_CPU5_WDT=y
+CONFIG_SMSC_SCH311X_WDT=y
+CONFIG_SMSC37B787_WDT=y
+CONFIG_W83627HF_WDT=y
+CONFIG_W83877F_WDT=y
+CONFIG_W83977F_WDT=y
+CONFIG_MACHZ_WDT=y
+# CONFIG_SBC_EPX_C3_WATCHDOG is not set
+CONFIG_BCM47XX_WDT=y
+# CONFIG_BCM_KONA_WDT is not set
+CONFIG_BCM_KONA_WDT_DEBUG=y
+CONFIG_BCM7038_WDT=y
+CONFIG_IMGPDC_WDT=y
+CONFIG_MPC5200_WDT=y
+CONFIG_MV64X60_WDT=y
+# CONFIG_MEN_A21_WDT is not set
+CONFIG_UML_WATCHDOG=y
+
+#
+# Watchdog Pretimeout Governors
+#
+# CONFIG_WATCHDOG_PRETIMEOUT_GOV is not set
+CONFIG_SSB_POSSIBLE=y
+CONFIG_SSB=y
+CONFIG_SSB_PCMCIAHOST_POSSIBLE=y
+# CONFIG_SSB_PCMCIAHOST is not set
+CONFIG_SSB_SDIOHOST_POSSIBLE=y
+# CONFIG_SSB_SDIOHOST is not set
+# CONFIG_SSB_DRIVER_GPIO is not set
+CONFIG_BCMA_POSSIBLE=y
+CONFIG_BCMA=y
+CONFIG_BCMA_HOST_SOC=y
+CONFIG_BCMA_DRIVER_MIPS=y
+CONFIG_BCMA_PFLASH=y
+# CONFIG_BCMA_SFLASH is not set
+CONFIG_BCMA_NFLASH=y
+CONFIG_BCMA_DRIVER_GMAC_CMN=y
+# CONFIG_BCMA_DRIVER_GPIO is not set
+# CONFIG_BCMA_DEBUG is not set
+
+#
+# Multifunction device drivers
+#
+CONFIG_MFD_CORE=y
+CONFIG_MFD_SUN4I_GPADC=y
+# CONFIG_MFD_AS3711 is not set
+CONFIG_PMIC_ADP5520=y
+CONFIG_MFD_AAT2870_CORE=y
+CONFIG_MFD_AT91_USART=y
+CONFIG_MFD_BCM590XX=y
+CONFIG_MFD_BD9571MWV=y
+# CONFIG_MFD_AXP20X_I2C is not set
+CONFIG_MFD_CROS_EC=y
+# CONFIG_MFD_CROS_EC_CHARDEV is not set
+CONFIG_MFD_MADERA=y
+# CONFIG_MFD_MADERA_I2C is not set
+CONFIG_MFD_MADERA_SPI=y
+CONFIG_MFD_CS47L35=y
+CONFIG_MFD_CS47L85=y
+# CONFIG_MFD_CS47L90 is not set
+CONFIG_PMIC_DA903X=y
+# CONFIG_MFD_DA9052_SPI is not set
+# CONFIG_MFD_DA9052_I2C is not set
+CONFIG_MFD_DA9055=y
+CONFIG_MFD_DA9062=y
+CONFIG_MFD_DA9063=y
+# CONFIG_MFD_DA9150 is not set
+# CONFIG_MFD_EXYNOS_LPASS is not set
+CONFIG_MFD_MC13XXX=y
+CONFIG_MFD_MC13XXX_SPI=y
+CONFIG_MFD_MC13XXX_I2C=y
+CONFIG_MFD_MXS_LRADC=y
+# CONFIG_MFD_MX25_TSADC is not set
+CONFIG_HTC_PASIC3=y
+# CONFIG_HTC_I2CPLD is not set
+# CONFIG_MFD_KEMPLD is not set
+# CONFIG_MFD_88PM800 is not set
+# CONFIG_MFD_88PM805 is not set
+# CONFIG_MFD_88PM860X is not set
+CONFIG_MFD_MAX14577=y
+CONFIG_MFD_MAX77620=y
+CONFIG_MFD_MAX77686=y
+# CONFIG_MFD_MAX77693 is not set
+CONFIG_MFD_MAX77843=y
+CONFIG_MFD_MAX8907=y
+# CONFIG_MFD_MAX8925 is not set
+# CONFIG_MFD_MAX8997 is not set
+CONFIG_MFD_MAX8998=y
+CONFIG_MFD_MT6397=y
+# CONFIG_MFD_MENF21BMC is not set
+# CONFIG_EZX_PCAP is not set
+CONFIG_MFD_CPCAP=y
+# CONFIG_MFD_RETU is not set
+CONFIG_MFD_PCF50633=y
+CONFIG_PCF50633_ADC=y
+# CONFIG_PCF50633_GPIO is not set
+CONFIG_MFD_PM8XXX=y
+# CONFIG_MFD_RT5033 is not set
+CONFIG_MFD_RC5T583=y
+# CONFIG_MFD_SEC_CORE is not set
+CONFIG_MFD_SI476X_CORE=y
+CONFIG_MFD_SM501=y
+# CONFIG_MFD_SM501_GPIO is not set
+CONFIG_MFD_SKY81452=y
+# CONFIG_MFD_SMSC is not set
+# CONFIG_MFD_SC27XX_PMIC is not set
+# CONFIG_ABX500_CORE is not set
+CONFIG_MFD_SYSCON=y
+CONFIG_MFD_TI_AM335X_TSCADC=y
+CONFIG_MFD_LP3943=y
+CONFIG_MFD_LP8788=y
+CONFIG_MFD_TI_LMU=y
+# CONFIG_MFD_PALMAS is not set
+CONFIG_TPS6105X=y
+# CONFIG_TPS65010 is not set
+# CONFIG_TPS6507X is not set
+# CONFIG_MFD_TPS65086 is not set
+# CONFIG_MFD_TPS65090 is not set
+CONFIG_MFD_TI_LP873X=y
+CONFIG_MFD_TPS6586X=y
+CONFIG_MFD_TPS65910=y
+CONFIG_MFD_TPS65912=y
+# CONFIG_MFD_TPS65912_I2C is not set
+CONFIG_MFD_TPS65912_SPI=y
+# CONFIG_MFD_TPS80031 is not set
+# CONFIG_TWL4030_CORE is not set
+# CONFIG_TWL6040_CORE is not set
+CONFIG_MFD_WL1273_CORE=y
+CONFIG_MFD_LM3533=y
+CONFIG_MFD_ARIZONA=y
+CONFIG_MFD_ARIZONA_I2C=y
+CONFIG_MFD_ARIZONA_SPI=y
+CONFIG_MFD_CS47L24=y
+CONFIG_MFD_WM5102=y
+# CONFIG_MFD_WM5110 is not set
+# CONFIG_MFD_WM8997 is not set
+CONFIG_MFD_WM8998=y
+CONFIG_MFD_WM8400=y
+CONFIG_MFD_WM831X=y
+# CONFIG_MFD_WM831X_I2C is not set
+CONFIG_MFD_WM831X_SPI=y
+CONFIG_MFD_WM8350=y
+CONFIG_MFD_WM8350_I2C=y
+CONFIG_MFD_WM8994=y
+CONFIG_MFD_STW481X=y
+# CONFIG_MFD_STM32_LPTIMER is not set
+CONFIG_MFD_STM32_TIMERS=y
+CONFIG_RAVE_SP_CORE=y
+CONFIG_REGULATOR=y
+# CONFIG_REGULATOR_DEBUG is not set
+CONFIG_REGULATOR_FIXED_VOLTAGE=y
+CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
+# CONFIG_REGULATOR_USERSPACE_CONSUMER is not set
+CONFIG_REGULATOR_88PG86X=y
+# CONFIG_REGULATOR_ACT8865 is not set
+CONFIG_REGULATOR_AD5398=y
+# CONFIG_REGULATOR_ANATOP is not set
+# CONFIG_REGULATOR_AAT2870 is not set
+# CONFIG_REGULATOR_BCM590XX is not set
+CONFIG_REGULATOR_BD9571MWV=y
+CONFIG_REGULATOR_CPCAP=y
+CONFIG_REGULATOR_DA903X=y
+CONFIG_REGULATOR_DA9055=y
+CONFIG_REGULATOR_DA9062=y
+CONFIG_REGULATOR_DA9063=y
+CONFIG_REGULATOR_DA9210=y
+# CONFIG_REGULATOR_DA9211 is not set
+CONFIG_REGULATOR_FAN53555=y
+CONFIG_REGULATOR_GPIO=y
+CONFIG_REGULATOR_ISL9305=y
+CONFIG_REGULATOR_ISL6271A=y
+CONFIG_REGULATOR_LM363X=y
+CONFIG_REGULATOR_LP3971=y
+# CONFIG_REGULATOR_LP3972 is not set
+CONFIG_REGULATOR_LP872X=y
+# CONFIG_REGULATOR_LP8755 is not set
+# CONFIG_REGULATOR_LP8788 is not set
+# CONFIG_REGULATOR_LTC3589 is not set
+# CONFIG_REGULATOR_LTC3676 is not set
+CONFIG_REGULATOR_MAX14577=y
+CONFIG_REGULATOR_MAX1586=y
+# CONFIG_REGULATOR_MAX77620 is not set
+CONFIG_REGULATOR_MAX8649=y
+# CONFIG_REGULATOR_MAX8660 is not set
+CONFIG_REGULATOR_MAX8907=y
+# CONFIG_REGULATOR_MAX8952 is not set
+# CONFIG_REGULATOR_MAX8998 is not set
+CONFIG_REGULATOR_MAX77686=y
+CONFIG_REGULATOR_MAX77693=y
+# CONFIG_REGULATOR_MAX77802 is not set
+CONFIG_REGULATOR_MC13XXX_CORE=y
+CONFIG_REGULATOR_MC13783=y
+CONFIG_REGULATOR_MC13892=y
+CONFIG_REGULATOR_MT6311=y
+CONFIG_REGULATOR_MT6323=y
+CONFIG_REGULATOR_MT6397=y
+CONFIG_REGULATOR_PBIAS=y
+CONFIG_REGULATOR_PCF50633=y
+# CONFIG_REGULATOR_PFUZE100 is not set
+# CONFIG_REGULATOR_PV88060 is not set
+CONFIG_REGULATOR_PV88080=y
+# CONFIG_REGULATOR_PV88090 is not set
+# CONFIG_REGULATOR_QCOM_RPMH is not set
+CONFIG_REGULATOR_QCOM_SPMI=y
+CONFIG_REGULATOR_RC5T583=y
+CONFIG_REGULATOR_SC2731=y
+CONFIG_REGULATOR_SKY81452=y
+CONFIG_REGULATOR_STM32_VREFBUF=y
+CONFIG_REGULATOR_STW481X_VMMC=y
+CONFIG_REGULATOR_SY8106A=y
+# CONFIG_REGULATOR_TPS51632 is not set
+# CONFIG_REGULATOR_TPS6105X is not set
+CONFIG_REGULATOR_TPS62360=y
+CONFIG_REGULATOR_TPS65023=y
+CONFIG_REGULATOR_TPS6507X=y
+# CONFIG_REGULATOR_TPS65132 is not set
+CONFIG_REGULATOR_TPS6524X=y
+CONFIG_REGULATOR_TPS6586X=y
+# CONFIG_REGULATOR_TPS65910 is not set
+# CONFIG_REGULATOR_TPS65912 is not set
+# CONFIG_REGULATOR_WM831X is not set
+CONFIG_REGULATOR_WM8350=y
+CONFIG_REGULATOR_WM8400=y
+CONFIG_REGULATOR_WM8994=y
+CONFIG_CEC_CORE=y
+CONFIG_CEC_NOTIFIER=y
+CONFIG_RC_CORE=y
+CONFIG_RC_MAP=y
+# CONFIG_LIRC is not set
+# CONFIG_RC_DECODERS is not set
+CONFIG_RC_DEVICES=y
+# CONFIG_IR_ENE is not set
+CONFIG_IR_HIX5HD2=y
+CONFIG_IR_ITE_CIR=y
+CONFIG_IR_FINTEK=y
+# CONFIG_IR_MESON is not set
+CONFIG_IR_MTK=y
+# CONFIG_IR_NUVOTON is not set
+CONFIG_IR_WINBOND_CIR=y
+CONFIG_IR_RX51=y
+# CONFIG_IR_IMG is not set
+CONFIG_RC_LOOPBACK=y
+CONFIG_IR_GPIO_CIR=y
+# CONFIG_RC_ST is not set
+CONFIG_IR_SUNXI=y
+CONFIG_IR_SERIAL=y
+# CONFIG_IR_SERIAL_TRANSMITTER is not set
+CONFIG_IR_SIR=y
+# CONFIG_IR_TANGO is not set
+CONFIG_IR_ZX=y
+CONFIG_MEDIA_SUPPORT=y
+
+#
+# Multimedia core support
+#
+CONFIG_MEDIA_CAMERA_SUPPORT=y
+# CONFIG_MEDIA_ANALOG_TV_SUPPORT is not set
+CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y
+CONFIG_MEDIA_RADIO_SUPPORT=y
+# CONFIG_MEDIA_SDR_SUPPORT is not set
+# CONFIG_MEDIA_CEC_SUPPORT is not set
+# CONFIG_MEDIA_CEC_RC is not set
+# CONFIG_MEDIA_CONTROLLER is not set
+CONFIG_VIDEO_DEV=y
+CONFIG_VIDEO_V4L2=y
+# CONFIG_VIDEO_ADV_DEBUG is not set
+CONFIG_VIDEO_FIXED_MINOR_RANGES=y
+CONFIG_V4L2_MEM2MEM_DEV=y
+CONFIG_V4L2_FWNODE=y
+CONFIG_VIDEOBUF_GEN=y
+CONFIG_VIDEOBUF_DMA_CONTIG=y
+CONFIG_DVB_CORE=y
+# CONFIG_DVB_MMAP is not set
+# CONFIG_DVB_NET is not set
+CONFIG_DVB_MAX_ADAPTERS=16
+CONFIG_DVB_DYNAMIC_MINORS=y
+# CONFIG_DVB_DEMUX_SECTION_LOSS_LOG is not set
+# CONFIG_DVB_ULE_DEBUG is not set
+
+#
+# Media drivers
+#
+CONFIG_V4L_PLATFORM_DRIVERS=y
+# CONFIG_VIDEO_MMP_CAMERA is not set
+CONFIG_VIDEO_CADENCE=y
+# CONFIG_VIDEO_DAVINCI_VPIF_DISPLAY is not set
+# CONFIG_VIDEO_DAVINCI_VPIF_CAPTURE is not set
+CONFIG_VIDEO_DM6446_CCDC=y
+CONFIG_VIDEO_DM355_CCDC=y
+CONFIG_VIDEO_DM365_ISIF=y
+CONFIG_VIDEO_DAVINCI_VPBE_DISPLAY=y
+CONFIG_VIDEO_OMAP2_VOUT_VRFB=y
+CONFIG_VIDEO_OMAP2_VOUT=y
+# CONFIG_VIDEO_SH_VOU is not set
+CONFIG_VIDEO_VIU=y
+CONFIG_VIDEO_PXA27x=y
+# CONFIG_VIDEO_RENESAS_CEU is not set
+CONFIG_SOC_CAMERA=y
+CONFIG_SOC_CAMERA_PLATFORM=y
+CONFIG_V4L_MEM2MEM_DRIVERS=y
+CONFIG_VIDEO_CODA=y
+CONFIG_VIDEO_IMX_VDOA=y
+CONFIG_VIDEO_IMX_PXP=y
+# CONFIG_VIDEO_MEDIATEK_JPEG is not set
+CONFIG_VIDEO_MEDIATEK_VPU=y
+CONFIG_VIDEO_MEDIATEK_MDP=y
+# CONFIG_VIDEO_MEDIATEK_VCODEC is not set
+# CONFIG_VIDEO_MEM2MEM_DEINTERLACE is not set
+# CONFIG_VIDEO_SAMSUNG_S5P_G2D is not set
+CONFIG_VIDEO_SAMSUNG_S5P_JPEG=y
+CONFIG_VIDEO_SAMSUNG_S5P_MFC=y
+CONFIG_VIDEO_MX2_EMMAPRP=y
+CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=y
+CONFIG_VIDEO_STI_BDISP=y
+CONFIG_VIDEO_STI_HVA=y
+CONFIG_VIDEO_STI_HVA_DEBUGFS=y
+# CONFIG_VIDEO_STI_DELTA is not set
+CONFIG_VIDEO_SH_VEU=y
+# CONFIG_VIDEO_RENESAS_FDP1 is not set
+CONFIG_VIDEO_RENESAS_JPU=y
+# CONFIG_VIDEO_ROCKCHIP_RGA is not set
+CONFIG_VIDEO_TI_VPE=y
+# CONFIG_VIDEO_TI_VPE_DEBUG is not set
+CONFIG_VIDEO_QCOM_VENUS=y
+CONFIG_VIDEO_TI_VPDMA=y
+CONFIG_VIDEO_TI_SC=y
+CONFIG_VIDEO_TI_CSC=y
+# CONFIG_V4L_TEST_DRIVERS is not set
+CONFIG_DVB_PLATFORM_DRIVERS=y
+CONFIG_DVB_C8SECTPFE=y
+
+#
+# Supported MMC/SDIO adapters
+#
+CONFIG_SMS_SDIO_DRV=y
+# CONFIG_RADIO_ADAPTERS is not set
+
+#
+# Supported FireWire (IEEE 1394) Adapters
+#
+# CONFIG_DVB_FIREDTV is not set
+CONFIG_MEDIA_COMMON_OPTIONS=y
+
+#
+# common driver options
+#
+CONFIG_VIDEOBUF2_CORE=y
+CONFIG_VIDEOBUF2_V4L2=y
+CONFIG_VIDEOBUF2_MEMOPS=y
+CONFIG_VIDEOBUF2_DMA_CONTIG=y
+CONFIG_VIDEOBUF2_VMALLOC=y
+CONFIG_VIDEOBUF2_DMA_SG=y
+CONFIG_SMS_SIANO_MDTV=y
+CONFIG_SMS_SIANO_RC=y
+
+#
+# Media ancillary drivers (tuners, sensors, i2c, spi, frontends)
+#
+CONFIG_MEDIA_SUBDRV_AUTOSELECT=y
+CONFIG_VIDEO_IR_I2C=y
+
+#
+# I2C Encoders, decoders, sensors and other helper chips
+#
+
+#
+# Audio decoders, processors and mixers
+#
+# CONFIG_VIDEO_TVAUDIO is not set
+# CONFIG_VIDEO_TDA7432 is not set
+CONFIG_VIDEO_TDA9840=y
+CONFIG_VIDEO_TEA6415C=y
+CONFIG_VIDEO_TEA6420=y
+# CONFIG_VIDEO_MSP3400 is not set
+CONFIG_VIDEO_CS3308=y
+CONFIG_VIDEO_CS5345=y
+CONFIG_VIDEO_CS53L32A=y
+CONFIG_VIDEO_TLV320AIC23B=y
+CONFIG_VIDEO_UDA1342=y
+# CONFIG_VIDEO_WM8775 is not set
+# CONFIG_VIDEO_WM8739 is not set
+CONFIG_VIDEO_VP27SMPX=y
+CONFIG_VIDEO_SONY_BTF_MPX=y
+
+#
+# RDS decoders
+#
+# CONFIG_VIDEO_SAA6588 is not set
+
+#
+# Video decoders
+#
+CONFIG_VIDEO_ADV7183=y
+# CONFIG_VIDEO_BT819 is not set
+# CONFIG_VIDEO_BT856 is not set
+CONFIG_VIDEO_BT866=y
+CONFIG_VIDEO_KS0127=y
+CONFIG_VIDEO_ML86V7667=y
+# CONFIG_VIDEO_SAA7110 is not set
+CONFIG_VIDEO_SAA711X=y
+# CONFIG_VIDEO_TVP514X is not set
+CONFIG_VIDEO_TVP5150=y
+# CONFIG_VIDEO_TVP7002 is not set
+CONFIG_VIDEO_TW2804=y
+# CONFIG_VIDEO_TW9903 is not set
+CONFIG_VIDEO_TW9906=y
+CONFIG_VIDEO_TW9910=y
+CONFIG_VIDEO_VPX3220=y
+
+#
+# Video and audio decoders
+#
+CONFIG_VIDEO_SAA717X=y
+CONFIG_VIDEO_CX25840=y
+
+#
+# Video encoders
+#
+CONFIG_VIDEO_SAA7127=y
+CONFIG_VIDEO_SAA7185=y
+# CONFIG_VIDEO_ADV7170 is not set
+CONFIG_VIDEO_ADV7175=y
+CONFIG_VIDEO_ADV7343=y
+CONFIG_VIDEO_ADV7393=y
+# CONFIG_VIDEO_AK881X is not set
+CONFIG_VIDEO_THS8200=y
+
+#
+# Camera sensor devices
+#
+CONFIG_VIDEO_OV2640=y
+CONFIG_VIDEO_OV2659=y
+# CONFIG_VIDEO_OV6650 is not set
+CONFIG_VIDEO_OV5695=y
+CONFIG_VIDEO_OV772X=y
+CONFIG_VIDEO_OV7640=y
+CONFIG_VIDEO_OV7670=y
+CONFIG_VIDEO_OV7740=y
+# CONFIG_VIDEO_VS6624 is not set
+CONFIG_VIDEO_MT9M111=y
+CONFIG_VIDEO_MT9T112=y
+CONFIG_VIDEO_MT9V011=y
+CONFIG_VIDEO_MT9V111=y
+CONFIG_VIDEO_SR030PC30=y
+# CONFIG_VIDEO_RJ54N1 is not set
+
+#
+# Flash devices
+#
+
+#
+# Video improvement chips
+#
+CONFIG_VIDEO_UPD64031A=y
+CONFIG_VIDEO_UPD64083=y
+
+#
+# Audio/Video compression chips
+#
+CONFIG_VIDEO_SAA6752HS=y
+
+#
+# SDR tuner chips
+#
+
+#
+# Miscellaneous helper chips
+#
+CONFIG_VIDEO_THS7303=y
+CONFIG_VIDEO_M52790=y
+# CONFIG_VIDEO_I2C is not set
+
+#
+# Sensors used on soc_camera driver
+#
+
+#
+# soc_camera sensor drivers
+#
+# CONFIG_SOC_CAMERA_MT9M001 is not set
+CONFIG_SOC_CAMERA_MT9M111=y
+CONFIG_SOC_CAMERA_MT9T112=y
+# CONFIG_SOC_CAMERA_MT9V022 is not set
+# CONFIG_SOC_CAMERA_OV5642 is not set
+# CONFIG_SOC_CAMERA_OV772X is not set
+CONFIG_SOC_CAMERA_OV9640=y
+CONFIG_SOC_CAMERA_OV9740=y
+CONFIG_SOC_CAMERA_RJ54N1=y
+CONFIG_SOC_CAMERA_TW9910=y
+
+#
+# SPI helper chips
+#
+
+#
+# Media SPI Adapters
+#
+# CONFIG_CXD2880_SPI_DRV is not set
+CONFIG_MEDIA_TUNER=y
+
+#
+# Customize TV tuners
+#
+CONFIG_MEDIA_TUNER_SIMPLE=y
+# CONFIG_MEDIA_TUNER_TDA18250 is not set
+CONFIG_MEDIA_TUNER_TDA8290=y
+CONFIG_MEDIA_TUNER_TDA827X=y
+CONFIG_MEDIA_TUNER_TDA18271=y
+CONFIG_MEDIA_TUNER_TDA9887=y
+CONFIG_MEDIA_TUNER_TEA5761=y
+CONFIG_MEDIA_TUNER_TEA5767=y
+# CONFIG_MEDIA_TUNER_MSI001 is not set
+CONFIG_MEDIA_TUNER_MT20XX=y
+# CONFIG_MEDIA_TUNER_MT2060 is not set
+# CONFIG_MEDIA_TUNER_MT2063 is not set
+# CONFIG_MEDIA_TUNER_MT2266 is not set
+CONFIG_MEDIA_TUNER_MT2131=y
+CONFIG_MEDIA_TUNER_QT1010=y
+CONFIG_MEDIA_TUNER_XC2028=y
+CONFIG_MEDIA_TUNER_XC5000=y
+CONFIG_MEDIA_TUNER_XC4000=y
+CONFIG_MEDIA_TUNER_MXL5005S=y
+# CONFIG_MEDIA_TUNER_MXL5007T is not set
+CONFIG_MEDIA_TUNER_MC44S803=y
+CONFIG_MEDIA_TUNER_MAX2165=y
+CONFIG_MEDIA_TUNER_TDA18218=y
+# CONFIG_MEDIA_TUNER_FC0011 is not set
+# CONFIG_MEDIA_TUNER_FC0012 is not set
+# CONFIG_MEDIA_TUNER_FC0013 is not set
+CONFIG_MEDIA_TUNER_TDA18212=y
+# CONFIG_MEDIA_TUNER_E4000 is not set
+CONFIG_MEDIA_TUNER_FC2580=y
+# CONFIG_MEDIA_TUNER_M88RS6000T is not set
+# CONFIG_MEDIA_TUNER_TUA9001 is not set
+CONFIG_MEDIA_TUNER_SI2157=y
+CONFIG_MEDIA_TUNER_IT913X=y
+CONFIG_MEDIA_TUNER_R820T=y
+CONFIG_MEDIA_TUNER_MXL301RF=y
+CONFIG_MEDIA_TUNER_QM1D1C0042=y
+CONFIG_MEDIA_TUNER_QM1D1B0004=y
+
+#
+# Customise DVB Frontends
+#
+
+#
+# Multistandard (satellite) frontends
+#
+CONFIG_DVB_STB0899=y
+CONFIG_DVB_STB6100=y
+CONFIG_DVB_STV090x=y
+CONFIG_DVB_STV0910=y
+CONFIG_DVB_STV6110x=y
+# CONFIG_DVB_STV6111 is not set
+CONFIG_DVB_MXL5XX=y
+# CONFIG_DVB_M88DS3103 is not set
+
+#
+# Multistandard (cable + terrestrial) frontends
+#
+CONFIG_DVB_DRXK=y
+CONFIG_DVB_TDA18271C2DD=y
+CONFIG_DVB_SI2165=y
+CONFIG_DVB_MN88472=y
+CONFIG_DVB_MN88473=y
+
+#
+# DVB-S (satellite) frontends
+#
+CONFIG_DVB_CX24110=y
+CONFIG_DVB_CX24123=y
+# CONFIG_DVB_MT312 is not set
+# CONFIG_DVB_ZL10036 is not set
+# CONFIG_DVB_ZL10039 is not set
+CONFIG_DVB_S5H1420=y
+CONFIG_DVB_STV0288=y
+CONFIG_DVB_STB6000=y
+CONFIG_DVB_STV0299=y
+CONFIG_DVB_STV6110=y
+CONFIG_DVB_STV0900=y
+# CONFIG_DVB_TDA8083 is not set
+CONFIG_DVB_TDA10086=y
+CONFIG_DVB_TDA8261=y
+CONFIG_DVB_VES1X93=y
+# CONFIG_DVB_TUNER_ITD1000 is not set
+CONFIG_DVB_TUNER_CX24113=y
+CONFIG_DVB_TDA826X=y
+# CONFIG_DVB_TUA6100 is not set
+CONFIG_DVB_CX24116=y
+# CONFIG_DVB_CX24117 is not set
+CONFIG_DVB_CX24120=y
+# CONFIG_DVB_SI21XX is not set
+CONFIG_DVB_TS2020=y
+CONFIG_DVB_DS3000=y
+# CONFIG_DVB_MB86A16 is not set
+# CONFIG_DVB_TDA10071 is not set
+
+#
+# DVB-T (terrestrial) frontends
+#
+# CONFIG_DVB_SP8870 is not set
+CONFIG_DVB_SP887X=y
+# CONFIG_DVB_CX22700 is not set
+CONFIG_DVB_CX22702=y
+# CONFIG_DVB_S5H1432 is not set
+CONFIG_DVB_DRXD=y
+CONFIG_DVB_L64781=y
+# CONFIG_DVB_TDA1004X is not set
+CONFIG_DVB_NXT6000=y
+CONFIG_DVB_MT352=y
+CONFIG_DVB_ZL10353=y
+CONFIG_DVB_DIB3000MB=y
+CONFIG_DVB_DIB3000MC=y
+CONFIG_DVB_DIB7000M=y
+CONFIG_DVB_DIB7000P=y
+CONFIG_DVB_DIB9000=y
+CONFIG_DVB_TDA10048=y
+CONFIG_DVB_AF9013=y
+CONFIG_DVB_EC100=y
+CONFIG_DVB_STV0367=y
+CONFIG_DVB_CXD2820R=y
+CONFIG_DVB_CXD2841ER=y
+CONFIG_DVB_RTL2830=y
+CONFIG_DVB_RTL2832=y
+CONFIG_DVB_SI2168=y
+CONFIG_DVB_ZD1301_DEMOD=y
+CONFIG_DVB_CXD2880=y
+
+#
+# DVB-C (cable) frontends
+#
+CONFIG_DVB_VES1820=y
+# CONFIG_DVB_TDA10021 is not set
+CONFIG_DVB_TDA10023=y
+CONFIG_DVB_STV0297=y
+
+#
+# ATSC (North American/Korean Terrestrial/Cable DTV) frontends
+#
+CONFIG_DVB_NXT200X=y
+CONFIG_DVB_OR51211=y
+# CONFIG_DVB_OR51132 is not set
+# CONFIG_DVB_BCM3510 is not set
+CONFIG_DVB_LGDT330X=y
+CONFIG_DVB_LGDT3305=y
+CONFIG_DVB_LGDT3306A=y
+CONFIG_DVB_LG2160=y
+# CONFIG_DVB_S5H1409 is not set
+# CONFIG_DVB_AU8522_DTV is not set
+# CONFIG_DVB_AU8522_V4L is not set
+CONFIG_DVB_S5H1411=y
+
+#
+# ISDB-T (terrestrial) frontends
+#
+CONFIG_DVB_S921=y
+# CONFIG_DVB_DIB8000 is not set
+CONFIG_DVB_MB86A20S=y
+
+#
+# ISDB-S (satellite) & ISDB-T (terrestrial) frontends
+#
+# CONFIG_DVB_TC90522 is not set
+CONFIG_DVB_MN88443X=y
+
+#
+# Digital terrestrial only tuners/PLL
+#
+CONFIG_DVB_PLL=y
+# CONFIG_DVB_TUNER_DIB0070 is not set
+CONFIG_DVB_TUNER_DIB0090=y
+
+#
+# SEC control devices for DVB-S
+#
+CONFIG_DVB_DRX39XYJ=y
+# CONFIG_DVB_LNBH25 is not set
+# CONFIG_DVB_LNBH29 is not set
+CONFIG_DVB_LNBP21=y
+# CONFIG_DVB_LNBP22 is not set
+CONFIG_DVB_ISL6405=y
+CONFIG_DVB_ISL6421=y
+CONFIG_DVB_ISL6423=y
+# CONFIG_DVB_A8293 is not set
+CONFIG_DVB_LGS8GL5=y
+CONFIG_DVB_LGS8GXX=y
+# CONFIG_DVB_ATBM8830 is not set
+# CONFIG_DVB_TDA665x is not set
+CONFIG_DVB_IX2505V=y
+CONFIG_DVB_M88RS2000=y
+# CONFIG_DVB_AF9033 is not set
+CONFIG_DVB_HORUS3A=y
+CONFIG_DVB_ASCOT2E=y
+CONFIG_DVB_HELENE=y
+
+#
+# Common Interface (EN50221) controller drivers
+#
+CONFIG_DVB_CXD2099=y
+# CONFIG_DVB_SP2 is not set
+
+#
+# Tools to develop new frontends
+#
+CONFIG_DVB_DUMMY_FE=y
+
+#
+# Graphics support
+#
+# CONFIG_IMX_IPUV3_CORE is not set
+CONFIG_DRM=y
+# CONFIG_DRM_DP_AUX_CHARDEV is not set
+# CONFIG_DRM_DEBUG_MM is not set
+CONFIG_DRM_DEBUG_SELFTEST=y
+CONFIG_DRM_KMS_HELPER=y
+CONFIG_DRM_KMS_FB_HELPER=y
+# CONFIG_DRM_FBDEV_EMULATION is not set
+# CONFIG_DRM_LOAD_EDID_FIRMWARE is not set
+# CONFIG_DRM_DP_CEC is not set
+CONFIG_DRM_TTM=y
+CONFIG_DRM_GEM_CMA_HELPER=y
+CONFIG_DRM_KMS_CMA_HELPER=y
+CONFIG_DRM_VM=y
+
+#
+# I2C encoder or helper chips
+#
+CONFIG_DRM_I2C_CH7006=y
+CONFIG_DRM_I2C_SIL164=y
+# CONFIG_DRM_I2C_NXP_TDA998X is not set
+CONFIG_DRM_I2C_NXP_TDA9950=y
+
+#
+# ACP (Audio CoProcessor) Configuration
+#
+
+#
+# AMD Library routines
+#
+CONFIG_DRM_VGEM=y
+CONFIG_DRM_VKMS=y
+CONFIG_DRM_VIRTIO_GPU=y
+CONFIG_DRM_PANEL=y
+
+#
+# Display Panels
+#
+CONFIG_DRM_BRIDGE=y
+CONFIG_DRM_PANEL_BRIDGE=y
+
+#
+# Display Interface Bridges
+#
+CONFIG_DRM_ANALOGIX_ANX78XX=y
+CONFIG_DRM_TINYDRM=y
+CONFIG_TINYDRM_MIPI_DBI=y
+CONFIG_TINYDRM_HX8357D=y
+# CONFIG_TINYDRM_ILI9225 is not set
+CONFIG_TINYDRM_ILI9341=y
+CONFIG_TINYDRM_MI0283QT=y
+# CONFIG_TINYDRM_REPAPER is not set
+# CONFIG_TINYDRM_ST7586 is not set
+CONFIG_TINYDRM_ST7735R=y
+CONFIG_DRM_LEGACY=y
+CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=y
+CONFIG_DRM_LIB_RANDOM=y
+
+#
+# Frame buffer Devices
+#
+CONFIG_FB_CMDLINE=y
+CONFIG_FB_NOTIFY=y
+CONFIG_FB=y
+CONFIG_FIRMWARE_EDID=y
+CONFIG_FB_CFB_FILLRECT=y
+CONFIG_FB_CFB_COPYAREA=y
+CONFIG_FB_CFB_IMAGEBLIT=y
+CONFIG_FB_SYS_FILLRECT=y
+CONFIG_FB_SYS_COPYAREA=y
+CONFIG_FB_SYS_IMAGEBLIT=y
+CONFIG_FB_FOREIGN_ENDIAN=y
+# CONFIG_FB_BOTH_ENDIAN is not set
+CONFIG_FB_BIG_ENDIAN=y
+# CONFIG_FB_LITTLE_ENDIAN is not set
+CONFIG_FB_SYS_FOPS=y
+CONFIG_FB_DEFERRED_IO=y
+CONFIG_FB_MODE_HELPERS=y
+CONFIG_FB_TILEBLITTING=y
+
+#
+# Frame buffer hardware drivers
+#
+CONFIG_FB_CLPS711X=y
+CONFIG_FB_ARC=y
+# CONFIG_FB_VGA16 is not set
+# CONFIG_FB_UVESA is not set
+# CONFIG_FB_VESA is not set
+# CONFIG_FB_N411 is not set
+CONFIG_FB_HGA=y
+CONFIG_FB_OPENCORES=y
+CONFIG_FB_S1D13XXX=y
+CONFIG_FB_TMIO=y
+CONFIG_FB_TMIO_ACCELL=y
+CONFIG_FB_SM501=y
+CONFIG_FB_IBM_GXT4500=y
+# CONFIG_FB_GOLDFISH is not set
+CONFIG_FB_VIRTUAL=y
+# CONFIG_FB_METRONOME is not set
+CONFIG_FB_BROADSHEET=y
+# CONFIG_FB_SIMPLE is not set
+CONFIG_BACKLIGHT_LCD_SUPPORT=y
+CONFIG_LCD_CLASS_DEVICE=y
+CONFIG_LCD_L4F00242T03=y
+CONFIG_LCD_LMS283GF05=y
+CONFIG_LCD_LTV350QV=y
+CONFIG_LCD_ILI922X=y
+CONFIG_LCD_ILI9320=y
+CONFIG_LCD_TDO24M=y
+CONFIG_LCD_VGG2432A4=y
+# CONFIG_LCD_PLATFORM is not set
+# CONFIG_LCD_AMS369FG06 is not set
+CONFIG_LCD_LMS501KF03=y
+CONFIG_LCD_HX8357=y
+CONFIG_LCD_OTM3225A=y
+CONFIG_BACKLIGHT_CLASS_DEVICE=y
+CONFIG_BACKLIGHT_GENERIC=y
+CONFIG_BACKLIGHT_LM3533=y
+CONFIG_BACKLIGHT_DA903X=y
+# CONFIG_BACKLIGHT_PM8941_WLED is not set
+CONFIG_BACKLIGHT_SAHARA=y
+CONFIG_BACKLIGHT_WM831X=y
+CONFIG_BACKLIGHT_ADP5520=y
+CONFIG_BACKLIGHT_ADP8860=y
+CONFIG_BACKLIGHT_ADP8870=y
+# CONFIG_BACKLIGHT_PCF50633 is not set
+CONFIG_BACKLIGHT_AAT2870=y
+# CONFIG_BACKLIGHT_LM3639 is not set
+CONFIG_BACKLIGHT_SKY81452=y
+# CONFIG_BACKLIGHT_GPIO is not set
+# CONFIG_BACKLIGHT_LV5207LP is not set
+# CONFIG_BACKLIGHT_BD6107 is not set
+CONFIG_BACKLIGHT_ARCXCNN=y
+# CONFIG_BACKLIGHT_RAVE_SP is not set
+CONFIG_VIDEOMODE_HELPERS=y
+CONFIG_HDMI=y
+CONFIG_LOGO=y
+# CONFIG_LOGO_LINUX_MONO is not set
+CONFIG_LOGO_LINUX_VGA16=y
+# CONFIG_LOGO_LINUX_CLUT224 is not set
+# CONFIG_SOUND is not set
+
+#
+# HID support
+#
+CONFIG_HID=y
+CONFIG_HID_BATTERY_STRENGTH=y
+CONFIG_HIDRAW=y
+CONFIG_UHID=y
+CONFIG_HID_GENERIC=y
+
+#
+# Special HID drivers
+#
+CONFIG_HID_A4TECH=y
+CONFIG_HID_ACRUX=y
+# CONFIG_HID_ACRUX_FF is not set
+CONFIG_HID_APPLE=y
+CONFIG_HID_ASUS=y
+CONFIG_HID_AUREAL=y
+CONFIG_HID_BELKIN=y
+CONFIG_HID_CHERRY=y
+CONFIG_HID_CHICONY=y
+# CONFIG_HID_COUGAR is not set
+CONFIG_HID_CMEDIA=y
+CONFIG_HID_CYPRESS=y
+# CONFIG_HID_DRAGONRISE is not set
+# CONFIG_HID_EMS_FF is not set
+CONFIG_HID_ELECOM=y
+CONFIG_HID_EZKEY=y
+CONFIG_HID_GEMBIRD=y
+CONFIG_HID_GFRM=y
+CONFIG_HID_KEYTOUCH=y
+CONFIG_HID_KYE=y
+CONFIG_HID_WALTOP=y
+CONFIG_HID_GYRATION=y
+CONFIG_HID_ICADE=y
+CONFIG_HID_ITE=y
+# CONFIG_HID_JABRA is not set
+# CONFIG_HID_TWINHAN is not set
+CONFIG_HID_KENSINGTON=y
+CONFIG_HID_LCPOWER=y
+CONFIG_HID_LED=y
+CONFIG_HID_LENOVO=y
+CONFIG_HID_LOGITECH=y
+CONFIG_HID_LOGITECH_DJ=y
+CONFIG_HID_LOGITECH_HIDPP=y
+CONFIG_LOGITECH_FF=y
+CONFIG_LOGIRUMBLEPAD2_FF=y
+# CONFIG_LOGIG940_FF is not set
+# CONFIG_LOGIWHEELS_FF is not set
+CONFIG_HID_MAGICMOUSE=y
+# CONFIG_HID_MAYFLASH is not set
+CONFIG_HID_REDRAGON=y
+# CONFIG_HID_MICROSOFT is not set
+CONFIG_HID_MONTEREY=y
+CONFIG_HID_MULTITOUCH=y
+CONFIG_HID_NTI=y
+CONFIG_HID_ORTEK=y
+CONFIG_HID_PANTHERLORD=y
+# CONFIG_PANTHERLORD_FF is not set
+CONFIG_HID_PETALYNX=y
+# CONFIG_HID_PICOLCD is not set
+CONFIG_HID_PLANTRONICS=y
+# CONFIG_HID_PRIMAX is not set
+# CONFIG_HID_SAITEK is not set
+CONFIG_HID_SAMSUNG=y
+CONFIG_HID_SPEEDLINK=y
+CONFIG_HID_STEAM=y
+# CONFIG_HID_STEELSERIES is not set
+# CONFIG_HID_SUNPLUS is not set
+# CONFIG_HID_RMI is not set
+CONFIG_HID_GREENASIA=y
+CONFIG_GREENASIA_FF=y
+CONFIG_HID_SMARTJOYPLUS=y
+# CONFIG_SMARTJOYPLUS_FF is not set
+# CONFIG_HID_TIVO is not set
+CONFIG_HID_TOPSEED=y
+CONFIG_HID_THINGM=y
+# CONFIG_HID_THRUSTMASTER is not set
+CONFIG_HID_UDRAW_PS3=y
+CONFIG_HID_WIIMOTE=y
+# CONFIG_HID_XINMO is not set
+# CONFIG_HID_ZEROPLUS is not set
+CONFIG_HID_ZYDACRON=y
+CONFIG_HID_SENSOR_HUB=y
+# CONFIG_HID_SENSOR_CUSTOM_SENSOR is not set
+# CONFIG_HID_ALPS is not set
+
+#
+# I2C HID support
+#
+# CONFIG_I2C_HID is not set
+CONFIG_USB_OHCI_LITTLE_ENDIAN=y
+# CONFIG_USB_SUPPORT is not set
+CONFIG_UWB=y
+CONFIG_MMC=y
+CONFIG_MMC_BLOCK=y
+CONFIG_MMC_BLOCK_MINORS=8
+CONFIG_SDIO_UART=y
+CONFIG_MMC_TEST=y
+
+#
+# MMC/SD/SDIO Host Controller Drivers
+#
+# CONFIG_MMC_DEBUG is not set
+# CONFIG_MMC_SDHCI is not set
+CONFIG_MMC_OMAP_HS=y
+CONFIG_MMC_WBSD=y
+# CONFIG_MMC_GOLDFISH is not set
+CONFIG_MMC_SPI=y
+# CONFIG_MMC_SDHI is not set
+# CONFIG_MMC_DW is not set
+# CONFIG_MMC_SH_MMCIF is not set
+# CONFIG_MMC_USDHI6ROL0 is not set
+# CONFIG_MMC_CQHCI is not set
+# CONFIG_MMC_BCM2835 is not set
+# CONFIG_MMC_MTK is not set
+CONFIG_MEMSTICK=y
+# CONFIG_MEMSTICK_DEBUG is not set
+
+#
+# MemoryStick drivers
+#
+CONFIG_MEMSTICK_UNSAFE_RESUME=y
+CONFIG_MSPRO_BLOCK=y
+# CONFIG_MS_BLOCK is not set
+
+#
+# MemoryStick Host Controller Drivers
+#
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+CONFIG_LEDS_CLASS_FLASH=y
+CONFIG_LEDS_BRIGHTNESS_HW_CHANGED=y
+
+#
+# LED drivers
+#
+CONFIG_LEDS_APU=y
+CONFIG_LEDS_AS3645A=y
+CONFIG_LEDS_LM3530=y
+# CONFIG_LEDS_LM3533 is not set
+CONFIG_LEDS_LM3642=y
+CONFIG_LEDS_LM3601X=y
+# CONFIG_LEDS_MT6323 is not set
+# CONFIG_LEDS_PCA9532 is not set
+CONFIG_LEDS_GPIO=y
+CONFIG_LEDS_LP3944=y
+CONFIG_LEDS_LP3952=y
+CONFIG_LEDS_LP55XX_COMMON=y
+# CONFIG_LEDS_LP5521 is not set
+CONFIG_LEDS_LP5523=y
+CONFIG_LEDS_LP5562=y
+CONFIG_LEDS_LP8501=y
+CONFIG_LEDS_LP8788=y
+# CONFIG_LEDS_CLEVO_MAIL is not set
+CONFIG_LEDS_PCA955X=y
+# CONFIG_LEDS_PCA955X_GPIO is not set
+CONFIG_LEDS_PCA963X=y
+CONFIG_LEDS_WM831X_STATUS=y
+CONFIG_LEDS_WM8350=y
+CONFIG_LEDS_DA903X=y
+CONFIG_LEDS_DAC124S085=y
+CONFIG_LEDS_REGULATOR=y
+# CONFIG_LEDS_BD2802 is not set
+CONFIG_LEDS_LT3593=y
+# CONFIG_LEDS_ADP5520 is not set
+CONFIG_LEDS_MC13783=y
+# CONFIG_LEDS_TCA6507 is not set
+CONFIG_LEDS_TLC591XX=y
+# CONFIG_LEDS_LM355x is not set
+CONFIG_LEDS_OT200=y
+
+#
+# LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)
+#
+CONFIG_LEDS_BLINKM=y
+CONFIG_LEDS_PM8058=y
+CONFIG_LEDS_MLXCPLD=y
+CONFIG_LEDS_MLXREG=y
+CONFIG_LEDS_USER=y
+
+#
+# LED Triggers
+#
+# CONFIG_LEDS_TRIGGERS is not set
+CONFIG_ACCESSIBILITY=y
+# CONFIG_INFINIBAND is not set
+CONFIG_EDAC_ATOMIC_SCRUB=y
+CONFIG_EDAC_SUPPORT=y
+# CONFIG_EDAC is not set
+CONFIG_RTC_LIB=y
+CONFIG_RTC_MC146818_LIB=y
+# CONFIG_RTC_CLASS is not set
+# CONFIG_DMADEVICES is not set
+
+#
+# DMABUF options
+#
+CONFIG_SYNC_FILE=y
+CONFIG_SW_SYNC=y
+# CONFIG_UDMABUF is not set
+# CONFIG_AUXDISPLAY is not set
+CONFIG_PANEL=y
+CONFIG_PANEL_PARPORT=0
+CONFIG_PANEL_PROFILE=5
+# CONFIG_PANEL_CHANGE_MESSAGE is not set
+CONFIG_CHARLCD=y
+# CONFIG_UIO is not set
+CONFIG_VFIO_IOMMU_TYPE1=y
+CONFIG_VFIO=y
+CONFIG_VFIO_NOIOMMU=y
+# CONFIG_VFIO_MDEV is not set
+CONFIG_VIRT_DRIVERS=y
+CONFIG_VIRTIO=y
+CONFIG_VIRTIO_MENU=y
+CONFIG_VIRTIO_BALLOON=y
+# CONFIG_VIRTIO_INPUT is not set
+# CONFIG_VIRTIO_MMIO is not set
+
+#
+# Microsoft Hyper-V guest support
+#
+CONFIG_STAGING=y
+CONFIG_COMEDI=y
+# CONFIG_COMEDI_DEBUG is not set
+CONFIG_COMEDI_DEFAULT_BUF_SIZE_KB=2048
+CONFIG_COMEDI_DEFAULT_BUF_MAXSIZE_KB=20480
+CONFIG_COMEDI_MISC_DRIVERS=y
+CONFIG_COMEDI_BOND=y
+CONFIG_COMEDI_TEST=y
+CONFIG_COMEDI_PARPORT=y
+CONFIG_COMEDI_SSV_DNP=y
+# CONFIG_COMEDI_ISA_DRIVERS is not set
+# CONFIG_COMEDI_PCMCIA_DRIVERS is not set
+# CONFIG_COMEDI_8255_SA is not set
+CONFIG_COMEDI_KCOMEDILIB=y
+
+#
+# Speakup console speech
+#
+CONFIG_STAGING_MEDIA=y
+CONFIG_SOC_CAMERA_IMX074=y
+# CONFIG_SOC_CAMERA_MT9T031 is not set
+CONFIG_VIDEO_SUNXI=y
+# CONFIG_TEGRA_VDE is not set
+
+#
+# Android
+#
+CONFIG_ION=y
+CONFIG_ION_SYSTEM_HEAP=y
+# CONFIG_ION_CARVEOUT_HEAP is not set
+# CONFIG_ION_CHUNK_HEAP is not set
+# CONFIG_FIREWIRE_SERIAL is not set
+CONFIG_GOLDFISH_AUDIO=y
+# CONFIG_GS_FPGABOOT is not set
+# CONFIG_UNISYSSPAR is not set
+# CONFIG_FB_TFT is not set
+# CONFIG_MOST is not set
+# CONFIG_GREYBUS is not set
+CONFIG_PI433=y
+CONFIG_MTK_MMC=y
+CONFIG_MTK_AEE_KDUMP=y
+CONFIG_MTK_MMC_CD_POLL=y
+
+#
+# Gasket devices
+#
+# CONFIG_XIL_AXIS_FIFO is not set
+# CONFIG_EROFS_FS is not set
+# CONFIG_X86_PLATFORM_DEVICES is not set
+CONFIG_GOLDFISH_PIPE=y
+CONFIG_CHROME_PLATFORMS=y
+CONFIG_CHROMEOS_LAPTOP=y
+# CONFIG_CHROMEOS_PSTORE is not set
+CONFIG_CROS_EC_I2C=y
+CONFIG_CROS_EC_SPI=y
+CONFIG_CROS_EC_PROTO=y
+CONFIG_MELLANOX_PLATFORM=y
+CONFIG_MLXREG_HOTPLUG=y
+# CONFIG_MLXREG_IO is not set
+# CONFIG_HWSPINLOCK is not set
+
+#
+# Clock Source drivers
+#
+CONFIG_TIMER_OF=y
+CONFIG_TIMER_PROBE=y
+CONFIG_CLKEVT_I8253=y
+CONFIG_CLKBLD_I8253=y
+CONFIG_CLKSRC_MMIO=y
+# CONFIG_BCM2835_TIMER is not set
+# CONFIG_BCM_KONA_TIMER is not set
+# CONFIG_DIGICOLOR_TIMER is not set
+CONFIG_DW_APB_TIMER=y
+CONFIG_FTTMR010_TIMER=y
+CONFIG_MESON6_TIMER=y
+CONFIG_OWL_TIMER=y
+CONFIG_SUN4I_TIMER=y
+CONFIG_VT8500_TIMER=y
+CONFIG_NPCM7XX_TIMER=y
+# CONFIG_ASM9260_TIMER is not set
+CONFIG_CLKSRC_DBX500_PRCMU=y
+CONFIG_CLPS711X_TIMER=y
+CONFIG_ATLAS7_TIMER=y
+# CONFIG_MXS_TIMER is not set
+CONFIG_PRIMA2_TIMER=y
+# CONFIG_NSPIRE_TIMER is not set
+CONFIG_INTEGRATOR_AP_TIMER=y
+# CONFIG_CLKSRC_DBX500_PRCMU_SCHED_CLOCK is not set
+# CONFIG_CLKSRC_PISTACHIO is not set
+CONFIG_ARC_TIMERS=y
+CONFIG_ARC_TIMERS_64BIT=y
+# CONFIG_ARMV7M_SYSTICK is not set
+CONFIG_ATMEL_ST=y
+# CONFIG_CLKSRC_SAMSUNG_PWM is not set
+# CONFIG_FSL_FTM_TIMER is not set
+CONFIG_OXNAS_RPS_TIMER=y
+# CONFIG_MTK_TIMER is not set
+CONFIG_SPRD_TIMER=y
+CONFIG_SH_TIMER_CMT=y
+# CONFIG_SH_TIMER_MTU2 is not set
+CONFIG_RENESAS_OSTM=y
+# CONFIG_SH_TIMER_TMU is not set
+CONFIG_EM_TIMER_STI=y
+# CONFIG_CLKSRC_PXA is not set
+CONFIG_H8300_TMR8=y
+CONFIG_H8300_TMR16=y
+# CONFIG_H8300_TPU is not set
+# CONFIG_CLKSRC_ST_LPC is not set
+# CONFIG_ATCPIT100_TIMER is not set
+# CONFIG_MAILBOX is not set
+CONFIG_IOMMU_API=y
+CONFIG_IOMMU_SUPPORT=y
+
+#
+# Generic IOMMU Pagetable Support
+#
+CONFIG_IOMMU_IO_PGTABLE=y
+CONFIG_IOMMU_IO_PGTABLE_LPAE=y
+# CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST is not set
+# CONFIG_IOMMU_IO_PGTABLE_ARMV7S is not set
+# CONFIG_IOMMU_DEBUGFS is not set
+# CONFIG_IOMMU_DEFAULT_PASSTHROUGH is not set
+CONFIG_QCOM_IOMMU=y
+
+#
+# Remoteproc drivers
+#
+CONFIG_REMOTEPROC=y
+
+#
+# Rpmsg drivers
+#
+CONFIG_RPMSG=y
+CONFIG_RPMSG_CHAR=y
+CONFIG_RPMSG_VIRTIO=y
+# CONFIG_SOUNDWIRE is not set
+
+#
+# SOC (System On Chip) specific Drivers
+#
+
+#
+# Amlogic SoC drivers
+#
+CONFIG_MESON_CANVAS=y
+# CONFIG_MESON_GX_SOCINFO is not set
+CONFIG_MESON_MX_SOCINFO=y
+CONFIG_AT91_SOC_ID=y
+
+#
+# Broadcom SoC drivers
+#
+# CONFIG_SOC_BRCMSTB is not set
+
+#
+# NXP/Freescale QorIQ SoC drivers
+#
+
+#
+# i.MX SoC drivers
+#
+
+#
+# MediaTek SoC drivers
+#
+# CONFIG_MTK_INFRACFG is not set
+# CONFIG_MTK_SCPSYS is not set
+
+#
+# Qualcomm SoC drivers
+#
+# CONFIG_QCOM_GENI_SE is not set
+CONFIG_QCOM_GSBI=y
+CONFIG_QCOM_LLCC=y
+CONFIG_QCOM_SDM845_LLCC=y
+CONFIG_QCOM_RPMH=y
+# CONFIG_QCOM_SMD_RPM is not set
+# CONFIG_QCOM_WCNSS_CTRL is not set
+CONFIG_QCOM_APR=y
+# CONFIG_SOC_RENESAS is not set
+CONFIG_ROCKCHIP_GRF=y
+# CONFIG_SOC_SAMSUNG is not set
+CONFIG_SOC_TI=y
+# CONFIG_UX500_SOC_ID is not set
+
+#
+# Xilinx SoC drivers
+#
+# CONFIG_XILINX_VCU is not set
+# CONFIG_SOC_ZTE is not set
+CONFIG_PM_DEVFREQ=y
+
+#
+# DEVFREQ Governors
+#
+CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
+# CONFIG_DEVFREQ_GOV_PERFORMANCE is not set
+CONFIG_DEVFREQ_GOV_POWERSAVE=y
+CONFIG_DEVFREQ_GOV_USERSPACE=y
+CONFIG_DEVFREQ_GOV_PASSIVE=y
+
+#
+# DEVFREQ Drivers
+#
+# CONFIG_ARM_EXYNOS_BUS_DEVFREQ is not set
+# CONFIG_PM_DEVFREQ_EVENT is not set
+CONFIG_EXTCON=y
+
+#
+# Extcon Device Drivers
+#
+CONFIG_EXTCON_GPIO=y
+CONFIG_EXTCON_MAX14577=y
+CONFIG_EXTCON_MAX3355=y
+CONFIG_EXTCON_MAX77843=y
+CONFIG_EXTCON_QCOM_SPMI_MISC=y
+# CONFIG_EXTCON_RT8973A is not set
+CONFIG_EXTCON_SM5502=y
+CONFIG_EXTCON_USB_GPIO=y
+CONFIG_EXTCON_USBC_CROS_EC=y
+# CONFIG_MEMORY is not set
+# CONFIG_IIO is not set
+# CONFIG_PWM is not set
+
+#
+# IRQ chip support
+#
+CONFIG_ARM_GIC_MAX_NR=1
+CONFIG_TS4800_IRQ=y
+CONFIG_IRQ_UNIPHIER_AIDET=y
+CONFIG_IPACK_BUS=y
+CONFIG_SERIAL_IPOCTAL=y
+# CONFIG_RESET_CONTROLLER is not set
+# CONFIG_FMC is not set
+
+#
+# PHY Subsystem
+#
+CONFIG_GENERIC_PHY=y
+CONFIG_BCM_KONA_USB2_PHY=y
+# CONFIG_PHY_HI6220_USB is not set
+# CONFIG_PHY_HISTB_COMBPHY is not set
+CONFIG_PHY_HISI_INNO_USB2=y
+# CONFIG_PHY_PXA_28NM_HSIC is not set
+# CONFIG_PHY_PXA_28NM_USB2 is not set
+CONFIG_PHY_RALINK_USB=y
+CONFIG_PHY_RCAR_GEN3_USB3=y
+CONFIG_PHY_ROCKCHIP_PCIE=y
+CONFIG_PHY_EXYNOS_MIPI_VIDEO=y
+# CONFIG_PHY_ST_SPEAR1310_MIPHY is not set
+CONFIG_PHY_ST_SPEAR1340_MIPHY=y
+CONFIG_PHY_STM32_USBPHYC=y
+CONFIG_OMAP_CONTROL_PHY=y
+CONFIG_POWERCAP=y
+# CONFIG_MCB is not set
+
+#
+# Performance monitor support
+#
+CONFIG_RAS=y
+CONFIG_RAS_CEC=y
+
+#
+# Android
+#
+CONFIG_ANDROID=y
+CONFIG_ANDROID_BINDER_IPC=y
+CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder"
+CONFIG_ANDROID_BINDER_IPC_SELFTEST=y
+CONFIG_DAX=y
+CONFIG_NVMEM=y
+CONFIG_NVMEM_IMX_IIM=y
+# CONFIG_NVMEM_IMX_OCOTP is not set
+CONFIG_NVMEM_LPC18XX_EEPROM=y
+# CONFIG_NVMEM_LPC18XX_OTP is not set
+# CONFIG_NVMEM_MXS_OCOTP is not set
+CONFIG_MTK_EFUSE=y
+CONFIG_QCOM_QFPROM=y
+CONFIG_ROCKCHIP_EFUSE=y
+CONFIG_NVMEM_BCM_OCOTP=y
+CONFIG_UNIPHIER_EFUSE=y
+CONFIG_NVMEM_VF610_OCOTP=y
+CONFIG_MESON_MX_EFUSE=y
+CONFIG_NVMEM_SNVS_LPGPR=y
+CONFIG_RAVE_SP_EEPROM=y
+CONFIG_SC27XX_EFUSE=y
+
+#
+# HW tracing support
+#
+CONFIG_STM=y
+# CONFIG_STM_PROTO_BASIC is not set
+CONFIG_STM_PROTO_SYS_T=y
+CONFIG_STM_DUMMY=y
+# CONFIG_STM_SOURCE_CONSOLE is not set
+CONFIG_STM_SOURCE_HEARTBEAT=y
+# CONFIG_STM_SOURCE_FTRACE is not set
+CONFIG_INTEL_TH=y
+# CONFIG_INTEL_TH_GTH is not set
+CONFIG_INTEL_TH_STH=y
+# CONFIG_INTEL_TH_MSU is not set
+# CONFIG_INTEL_TH_PTI is not set
+# CONFIG_INTEL_TH_DEBUG is not set
+CONFIG_FPGA=y
+CONFIG_FPGA_MGR_SOCFPGA=y
+CONFIG_FPGA_MGR_SOCFPGA_A10=y
+CONFIG_ALTERA_PR_IP_CORE=y
+# CONFIG_FPGA_MGR_ALTERA_PS_SPI is not set
+CONFIG_FPGA_MGR_ZYNQ_FPGA=y
+CONFIG_FPGA_MGR_XILINX_SPI=y
+# CONFIG_FPGA_MGR_MACHXO2_SPI is not set
+CONFIG_FPGA_BRIDGE=y
+CONFIG_XILINX_PR_DECOUPLER=y
+CONFIG_FPGA_REGION=y
+CONFIG_FPGA_DFL=y
+# CONFIG_FPGA_DFL_FME is not set
+CONFIG_FPGA_DFL_AFU=y
+# CONFIG_TEE is not set
+CONFIG_MULTIPLEXER=y
+
+#
+# Multiplexer drivers
+#
+# CONFIG_MUX_ADG792A is not set
+# CONFIG_MUX_ADGS1408 is not set
+CONFIG_MUX_GPIO=y
+CONFIG_MUX_MMIO=y
+CONFIG_PM_OPP=y
+CONFIG_SIOX=y
+CONFIG_SIOX_BUS_GPIO=y
+CONFIG_SLIMBUS=y
+CONFIG_SLIM_QCOM_CTRL=y
+# CONFIG_INTERCONNECT is not set
+
+#
+# File systems
+#
+CONFIG_DCACHE_WORD_ACCESS=y
+# CONFIG_VALIDATE_FS_PARSER is not set
+CONFIG_FS_IOMAP=y
+# CONFIG_EXT2_FS is not set
+CONFIG_EXT3_FS=y
+CONFIG_EXT3_FS_POSIX_ACL=y
+CONFIG_EXT3_FS_SECURITY=y
+CONFIG_EXT4_FS=y
+# CONFIG_EXT4_USE_FOR_EXT2 is not set
+CONFIG_EXT4_FS_POSIX_ACL=y
+CONFIG_EXT4_FS_SECURITY=y
+CONFIG_EXT4_ENCRYPTION=y
+CONFIG_EXT4_FS_ENCRYPTION=y
+# CONFIG_EXT4_DEBUG is not set
+CONFIG_JBD2=y
+# CONFIG_JBD2_DEBUG is not set
+CONFIG_FS_MBCACHE=y
+# CONFIG_REISERFS_FS is not set
+CONFIG_JFS_FS=y
+CONFIG_JFS_POSIX_ACL=y
+# CONFIG_JFS_SECURITY is not set
+CONFIG_JFS_DEBUG=y
+CONFIG_JFS_STATISTICS=y
+# CONFIG_XFS_FS is not set
+CONFIG_GFS2_FS=y
+CONFIG_GFS2_FS_LOCKING_DLM=y
+# CONFIG_OCFS2_FS is not set
+# CONFIG_BTRFS_FS is not set
+CONFIG_NILFS2_FS=y
+CONFIG_F2FS_FS=y
+CONFIG_F2FS_STAT_FS=y
+# CONFIG_F2FS_FS_XATTR is not set
+# CONFIG_F2FS_CHECK_FS is not set
+CONFIG_F2FS_IO_TRACE=y
+# CONFIG_F2FS_FAULT_INJECTION is not set
+CONFIG_FS_DAX=y
+CONFIG_FS_POSIX_ACL=y
+CONFIG_EXPORTFS=y
+# CONFIG_EXPORTFS_BLOCK_OPS is not set
+# CONFIG_FILE_LOCKING is not set
+CONFIG_FS_ENCRYPTION=y
+CONFIG_FSNOTIFY=y
+# CONFIG_DNOTIFY is not set
+CONFIG_INOTIFY_USER=y
+# CONFIG_FANOTIFY is not set
+CONFIG_QUOTA=y
+# CONFIG_QUOTA_NETLINK_INTERFACE is not set
+# CONFIG_PRINT_QUOTA_WARNING is not set
+# CONFIG_QUOTA_DEBUG is not set
+CONFIG_QUOTA_TREE=y
+# CONFIG_QFMT_V1 is not set
+CONFIG_QFMT_V2=y
+CONFIG_QUOTACTL=y
+CONFIG_AUTOFS4_FS=y
+CONFIG_AUTOFS_FS=y
+CONFIG_FUSE_FS=y
+CONFIG_CUSE=y
+CONFIG_OVERLAY_FS=y
+CONFIG_OVERLAY_FS_REDIRECT_DIR=y
+CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y
+# CONFIG_OVERLAY_FS_INDEX is not set
+# CONFIG_OVERLAY_FS_XINO_AUTO is not set
+# CONFIG_OVERLAY_FS_METACOPY is not set
+
+#
+# Caches
+#
+# CONFIG_FSCACHE is not set
+
+#
+# CD-ROM/DVD Filesystems
+#
+CONFIG_ISO9660_FS=y
+CONFIG_JOLIET=y
+# CONFIG_ZISOFS is not set
+# CONFIG_UDF_FS is not set
+
+#
+# DOS/FAT/NT Filesystems
+#
+CONFIG_FAT_FS=y
+# CONFIG_MSDOS_FS is not set
+CONFIG_VFAT_FS=y
+CONFIG_FAT_DEFAULT_CODEPAGE=437
+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
+CONFIG_FAT_DEFAULT_UTF8=y
+CONFIG_NTFS_FS=y
+CONFIG_NTFS_DEBUG=y
+# CONFIG_NTFS_RW is not set
+
+#
+# Pseudo filesystems
+#
+# CONFIG_PROC_FS is not set
+CONFIG_PROC_CHILDREN=y
+CONFIG_KERNFS=y
+CONFIG_SYSFS=y
+CONFIG_HUGETLBFS=y
+CONFIG_HUGETLB_PAGE=y
+CONFIG_MEMFD_CREATE=y
+CONFIG_ARCH_HAS_GIGANTIC_PAGE=y
+CONFIG_CONFIGFS_FS=y
+CONFIG_MISC_FILESYSTEMS=y
+# CONFIG_ORANGEFS_FS is not set
+# CONFIG_ADFS_FS is not set
+CONFIG_AFFS_FS=y
+CONFIG_ECRYPT_FS=y
+# CONFIG_ECRYPT_FS_MESSAGING is not set
+# CONFIG_HFS_FS is not set
+CONFIG_HFSPLUS_FS=y
+CONFIG_BEFS_FS=y
+CONFIG_BEFS_DEBUG=y
+# CONFIG_BFS_FS is not set
+CONFIG_EFS_FS=y
+CONFIG_CRAMFS=y
+CONFIG_CRAMFS_BLOCKDEV=y
+CONFIG_SQUASHFS=y
+CONFIG_SQUASHFS_FILE_CACHE=y
+# CONFIG_SQUASHFS_FILE_DIRECT is not set
+CONFIG_SQUASHFS_DECOMP_SINGLE=y
+# CONFIG_SQUASHFS_DECOMP_MULTI is not set
+# CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU is not set
+CONFIG_SQUASHFS_XATTR=y
+# CONFIG_SQUASHFS_ZLIB is not set
+CONFIG_SQUASHFS_LZ4=y
+CONFIG_SQUASHFS_LZO=y
+# CONFIG_SQUASHFS_XZ is not set
+# CONFIG_SQUASHFS_ZSTD is not set
+# CONFIG_SQUASHFS_4K_DEVBLK_SIZE is not set
+CONFIG_SQUASHFS_EMBEDDED=y
+CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE=3
+# CONFIG_VXFS_FS is not set
+# CONFIG_MINIX_FS is not set
+# CONFIG_OMFS_FS is not set
+# CONFIG_HPFS_FS is not set
+CONFIG_QNX4FS_FS=y
+# CONFIG_QNX6FS_FS is not set
+CONFIG_ROMFS_FS=y
+CONFIG_ROMFS_BACKED_BY_BLOCK=y
+CONFIG_ROMFS_ON_BLOCK=y
+CONFIG_PSTORE=y
+CONFIG_PSTORE_DEFLATE_COMPRESS=y
+CONFIG_PSTORE_LZO_COMPRESS=y
+CONFIG_PSTORE_LZ4_COMPRESS=y
+CONFIG_PSTORE_LZ4HC_COMPRESS=y
+# CONFIG_PSTORE_842_COMPRESS is not set
+# CONFIG_PSTORE_ZSTD_COMPRESS is not set
+CONFIG_PSTORE_COMPRESS=y
+CONFIG_PSTORE_DEFLATE_COMPRESS_DEFAULT=y
+# CONFIG_PSTORE_LZO_COMPRESS_DEFAULT is not set
+# CONFIG_PSTORE_LZ4_COMPRESS_DEFAULT is not set
+# CONFIG_PSTORE_LZ4HC_COMPRESS_DEFAULT is not set
+CONFIG_PSTORE_COMPRESS_DEFAULT="deflate"
+CONFIG_PSTORE_CONSOLE=y
+CONFIG_PSTORE_PMSG=y
+# CONFIG_PSTORE_FTRACE is not set
+# CONFIG_PSTORE_RAM is not set
+CONFIG_SYSV_FS=y
+CONFIG_UFS_FS=y
+# CONFIG_UFS_FS_WRITE is not set
+CONFIG_UFS_DEBUG=y
+CONFIG_EXOFS_FS=y
+CONFIG_EXOFS_DEBUG=y
+CONFIG_ORE=y
+# CONFIG_NETWORK_FILESYSTEMS is not set
+CONFIG_NLS=y
+CONFIG_NLS_DEFAULT="iso8859-1"
+CONFIG_NLS_CODEPAGE_437=y
+CONFIG_NLS_CODEPAGE_737=y
+CONFIG_NLS_CODEPAGE_775=y
+CONFIG_NLS_CODEPAGE_850=y
+CONFIG_NLS_CODEPAGE_852=y
+# CONFIG_NLS_CODEPAGE_855 is not set
+CONFIG_NLS_CODEPAGE_857=y
+# CONFIG_NLS_CODEPAGE_860 is not set
+CONFIG_NLS_CODEPAGE_861=y
+CONFIG_NLS_CODEPAGE_862=y
+CONFIG_NLS_CODEPAGE_863=y
+# CONFIG_NLS_CODEPAGE_864 is not set
+CONFIG_NLS_CODEPAGE_865=y
+CONFIG_NLS_CODEPAGE_866=y
+CONFIG_NLS_CODEPAGE_869=y
+# CONFIG_NLS_CODEPAGE_936 is not set
+CONFIG_NLS_CODEPAGE_950=y
+# CONFIG_NLS_CODEPAGE_932 is not set
+# CONFIG_NLS_CODEPAGE_949 is not set
+CONFIG_NLS_CODEPAGE_874=y
+CONFIG_NLS_ISO8859_8=y
+CONFIG_NLS_CODEPAGE_1250=y
+CONFIG_NLS_CODEPAGE_1251=y
+# CONFIG_NLS_ASCII is not set
+CONFIG_NLS_ISO8859_1=y
+CONFIG_NLS_ISO8859_2=y
+# CONFIG_NLS_ISO8859_3 is not set
+CONFIG_NLS_ISO8859_4=y
+CONFIG_NLS_ISO8859_5=y
+# CONFIG_NLS_ISO8859_6 is not set
+CONFIG_NLS_ISO8859_7=y
+# CONFIG_NLS_ISO8859_9 is not set
+# CONFIG_NLS_ISO8859_13 is not set
+# CONFIG_NLS_ISO8859_14 is not set
+CONFIG_NLS_ISO8859_15=y
+CONFIG_NLS_KOI8_R=y
+CONFIG_NLS_KOI8_U=y
+CONFIG_NLS_MAC_ROMAN=y
+CONFIG_NLS_MAC_CELTIC=y
+# CONFIG_NLS_MAC_CENTEURO is not set
+CONFIG_NLS_MAC_CROATIAN=y
+CONFIG_NLS_MAC_CYRILLIC=y
+CONFIG_NLS_MAC_GAELIC=y
+# CONFIG_NLS_MAC_GREEK is not set
+# CONFIG_NLS_MAC_ICELAND is not set
+CONFIG_NLS_MAC_INUIT=y
+# CONFIG_NLS_MAC_ROMANIAN is not set
+CONFIG_NLS_MAC_TURKISH=y
+CONFIG_NLS_UTF8=y
+CONFIG_DLM=y
+CONFIG_DLM_DEBUG=y
+
+#
+# Security options
+#
+CONFIG_KEYS=y
+CONFIG_PERSISTENT_KEYRINGS=y
+CONFIG_ENCRYPTED_KEYS=y
+CONFIG_KEY_DH_OPERATIONS=y
+CONFIG_SECURITY_DMESG_RESTRICT=y
+CONFIG_SECURITYFS=y
+CONFIG_PAGE_TABLE_ISOLATION=y
+# CONFIG_FORTIFY_SOURCE is not set
+# CONFIG_STATIC_USERMODEHELPER is not set
+CONFIG_DEFAULT_SECURITY_DAC=y
+CONFIG_DEFAULT_SECURITY=""
+CONFIG_XOR_BLOCKS=y
+CONFIG_ASYNC_CORE=y
+CONFIG_ASYNC_XOR=y
+CONFIG_ASYNC_PQ=y
+CONFIG_CRYPTO=y
+
+#
+# Crypto core or helper
+#
+CONFIG_CRYPTO_ALGAPI=y
+CONFIG_CRYPTO_ALGAPI2=y
+CONFIG_CRYPTO_AEAD=y
+CONFIG_CRYPTO_AEAD2=y
+CONFIG_CRYPTO_BLKCIPHER=y
+CONFIG_CRYPTO_BLKCIPHER2=y
+CONFIG_CRYPTO_HASH=y
+CONFIG_CRYPTO_HASH2=y
+CONFIG_CRYPTO_RNG=y
+CONFIG_CRYPTO_RNG2=y
+CONFIG_CRYPTO_RNG_DEFAULT=y
+CONFIG_CRYPTO_AKCIPHER2=y
+CONFIG_CRYPTO_KPP2=y
+CONFIG_CRYPTO_KPP=y
+CONFIG_CRYPTO_ACOMP2=y
+# CONFIG_CRYPTO_RSA is not set
+CONFIG_CRYPTO_DH=y
+CONFIG_CRYPTO_ECDH=y
+CONFIG_CRYPTO_MANAGER=y
+CONFIG_CRYPTO_MANAGER2=y
+# CONFIG_CRYPTO_USER is not set
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y
+CONFIG_CRYPTO_GF128MUL=y
+CONFIG_CRYPTO_NULL=y
+CONFIG_CRYPTO_NULL2=y
+CONFIG_CRYPTO_WORKQUEUE=y
+CONFIG_CRYPTO_CRYPTD=y
+CONFIG_CRYPTO_AUTHENC=y
+CONFIG_CRYPTO_SIMD=y
+CONFIG_CRYPTO_GLUE_HELPER_X86=y
+
+#
+# Authenticated Encryption with Associated Data
+#
+CONFIG_CRYPTO_CCM=y
+CONFIG_CRYPTO_GCM=y
+# CONFIG_CRYPTO_CHACHA20POLY1305 is not set
+# CONFIG_CRYPTO_AEGIS128 is not set
+CONFIG_CRYPTO_AEGIS128L=y
+CONFIG_CRYPTO_AEGIS256=y
+CONFIG_CRYPTO_AEGIS128_AESNI_SSE2=y
+CONFIG_CRYPTO_AEGIS128L_AESNI_SSE2=y
+CONFIG_CRYPTO_AEGIS256_AESNI_SSE2=y
+# CONFIG_CRYPTO_MORUS640 is not set
+# CONFIG_CRYPTO_MORUS640_SSE2 is not set
+# CONFIG_CRYPTO_MORUS1280 is not set
+CONFIG_CRYPTO_MORUS1280_GLUE=y
+CONFIG_CRYPTO_MORUS1280_SSE2=y
+# CONFIG_CRYPTO_MORUS1280_AVX2 is not set
+CONFIG_CRYPTO_SEQIV=y
+CONFIG_CRYPTO_ECHAINIV=y
+
+#
+# Block modes
+#
+CONFIG_CRYPTO_CBC=y
+CONFIG_CRYPTO_CFB=y
+CONFIG_CRYPTO_CTR=y
+CONFIG_CRYPTO_CTS=y
+CONFIG_CRYPTO_ECB=y
+CONFIG_CRYPTO_LRW=y
+CONFIG_CRYPTO_OFB=y
+CONFIG_CRYPTO_PCBC=y
+CONFIG_CRYPTO_XTS=y
+# CONFIG_CRYPTO_KEYWRAP is not set
+
+#
+# Hash modes
+#
+CONFIG_CRYPTO_CMAC=y
+CONFIG_CRYPTO_HMAC=y
+# CONFIG_CRYPTO_XCBC is not set
+CONFIG_CRYPTO_VMAC=y
+
+#
+# Digest
+#
+CONFIG_CRYPTO_CRC32C=y
+CONFIG_CRYPTO_CRC32C_INTEL=y
+CONFIG_CRYPTO_CRC32=y
+CONFIG_CRYPTO_CRC32_PCLMUL=y
+CONFIG_CRYPTO_CRCT10DIF=y
+CONFIG_CRYPTO_CRCT10DIF_PCLMUL=y
+CONFIG_CRYPTO_GHASH=y
+CONFIG_CRYPTO_POLY1305=y
+# CONFIG_CRYPTO_POLY1305_X86_64 is not set
+CONFIG_CRYPTO_MD4=y
+CONFIG_CRYPTO_MD5=y
+CONFIG_CRYPTO_MICHAEL_MIC=y
+# CONFIG_CRYPTO_RMD128 is not set
+CONFIG_CRYPTO_RMD160=y
+CONFIG_CRYPTO_RMD256=y
+CONFIG_CRYPTO_RMD320=y
+CONFIG_CRYPTO_SHA1=y
+CONFIG_CRYPTO_SHA1_SSSE3=y
+# CONFIG_CRYPTO_SHA256_SSSE3 is not set
+# CONFIG_CRYPTO_SHA512_SSSE3 is not set
+CONFIG_CRYPTO_SHA256=y
+# CONFIG_CRYPTO_SHA512 is not set
+CONFIG_CRYPTO_SHA3=y
+CONFIG_CRYPTO_SM3=y
+# CONFIG_CRYPTO_TGR192 is not set
+# CONFIG_CRYPTO_WP512 is not set
+# CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL is not set
+
+#
+# Ciphers
+#
+CONFIG_CRYPTO_AES=y
+CONFIG_CRYPTO_AES_TI=y
+# CONFIG_CRYPTO_AES_X86_64 is not set
+# CONFIG_CRYPTO_AES_NI_INTEL is not set
+CONFIG_CRYPTO_ANUBIS=y
+CONFIG_CRYPTO_ARC4=y
+# CONFIG_CRYPTO_BLOWFISH is not set
+CONFIG_CRYPTO_BLOWFISH_COMMON=y
+CONFIG_CRYPTO_BLOWFISH_X86_64=y
+CONFIG_CRYPTO_CAMELLIA=y
+CONFIG_CRYPTO_CAMELLIA_X86_64=y
+CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64=y
+CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64=y
+CONFIG_CRYPTO_CAST_COMMON=y
+CONFIG_CRYPTO_CAST5=y
+# CONFIG_CRYPTO_CAST5_AVX_X86_64 is not set
+CONFIG_CRYPTO_CAST6=y
+CONFIG_CRYPTO_CAST6_AVX_X86_64=y
+CONFIG_CRYPTO_DES=y
+CONFIG_CRYPTO_DES3_EDE_X86_64=y
+# CONFIG_CRYPTO_FCRYPT is not set
+CONFIG_CRYPTO_KHAZAD=y
+CONFIG_CRYPTO_SALSA20=y
+CONFIG_CRYPTO_CHACHA20=y
+CONFIG_CRYPTO_CHACHA20_X86_64=y
+CONFIG_CRYPTO_SEED=y
+CONFIG_CRYPTO_SERPENT=y
+CONFIG_CRYPTO_SERPENT_SSE2_X86_64=y
+CONFIG_CRYPTO_SERPENT_AVX_X86_64=y
+# CONFIG_CRYPTO_SERPENT_AVX2_X86_64 is not set
+# CONFIG_CRYPTO_SM4 is not set
+CONFIG_CRYPTO_TEA=y
+# CONFIG_CRYPTO_TWOFISH is not set
+CONFIG_CRYPTO_TWOFISH_COMMON=y
+CONFIG_CRYPTO_TWOFISH_X86_64=y
+CONFIG_CRYPTO_TWOFISH_X86_64_3WAY=y
+CONFIG_CRYPTO_TWOFISH_AVX_X86_64=y
+
+#
+# Compression
+#
+CONFIG_CRYPTO_DEFLATE=y
+CONFIG_CRYPTO_LZO=y
+CONFIG_CRYPTO_842=y
+CONFIG_CRYPTO_LZ4=y
+CONFIG_CRYPTO_LZ4HC=y
+CONFIG_CRYPTO_ZSTD=y
+
+#
+# Random Number Generation
+#
+CONFIG_CRYPTO_ANSI_CPRNG=y
+CONFIG_CRYPTO_DRBG_MENU=y
+CONFIG_CRYPTO_DRBG_HMAC=y
+# CONFIG_CRYPTO_DRBG_HASH is not set
+CONFIG_CRYPTO_DRBG_CTR=y
+CONFIG_CRYPTO_DRBG=y
+CONFIG_CRYPTO_JITTERENTROPY=y
+CONFIG_CRYPTO_USER_API=y
+CONFIG_CRYPTO_USER_API_HASH=y
+# CONFIG_CRYPTO_USER_API_SKCIPHER is not set
+CONFIG_CRYPTO_USER_API_RNG=y
+# CONFIG_CRYPTO_USER_API_AEAD is not set
+# CONFIG_CRYPTO_STATS is not set
+# CONFIG_CRYPTO_HW is not set
+CONFIG_ASYMMETRIC_KEY_TYPE=y
+# CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE is not set
+
+#
+# Certificates for signature checking
+#
+# CONFIG_SYSTEM_TRUSTED_KEYRING is not set
+# CONFIG_SYSTEM_BLACKLIST_KEYRING is not set
+CONFIG_BINARY_PRINTF=y
+
+#
+# Library routines
+#
+CONFIG_RAID6_PQ=y
+CONFIG_BITREVERSE=y
+CONFIG_RATIONAL=y
+CONFIG_GENERIC_STRNCPY_FROM_USER=y
+CONFIG_GENERIC_STRNLEN_USER=y
+CONFIG_GENERIC_NET_UTILS=y
+CONFIG_GENERIC_FIND_FIRST_BIT=y
+CONFIG_GENERIC_PCI_IOMAP=y
+CONFIG_GENERIC_IOMAP=y
+CONFIG_STMP_DEVICE=y
+CONFIG_ARCH_USE_CMPXCHG_LOCKREF=y
+CONFIG_ARCH_HAS_FAST_MULTIPLIER=y
+CONFIG_CRC_CCITT=y
+CONFIG_CRC16=y
+CONFIG_CRC_T10DIF=y
+CONFIG_CRC_ITU_T=y
+CONFIG_CRC32=y
+# CONFIG_CRC32_SELFTEST is not set
+# CONFIG_CRC32_SLICEBY8 is not set
+# CONFIG_CRC32_SLICEBY4 is not set
+# CONFIG_CRC32_SARWATE is not set
+CONFIG_CRC32_BIT=y
+CONFIG_CRC64=y
+CONFIG_CRC4=y
+CONFIG_CRC7=y
+CONFIG_LIBCRC32C=y
+CONFIG_CRC8=y
+CONFIG_XXHASH=y
+CONFIG_RANDOM32_SELFTEST=y
+CONFIG_842_COMPRESS=y
+CONFIG_842_DECOMPRESS=y
+CONFIG_ZLIB_INFLATE=y
+CONFIG_ZLIB_DEFLATE=y
+CONFIG_LZO_COMPRESS=y
+CONFIG_LZO_DECOMPRESS=y
+CONFIG_LZ4_COMPRESS=y
+CONFIG_LZ4HC_COMPRESS=y
+CONFIG_LZ4_DECOMPRESS=y
+CONFIG_ZSTD_COMPRESS=y
+CONFIG_ZSTD_DECOMPRESS=y
+CONFIG_XZ_DEC=y
+# CONFIG_XZ_DEC_X86 is not set
+# CONFIG_XZ_DEC_POWERPC is not set
+# CONFIG_XZ_DEC_IA64 is not set
+# CONFIG_XZ_DEC_ARM is not set
+# CONFIG_XZ_DEC_ARMTHUMB is not set
+# CONFIG_XZ_DEC_SPARC is not set
+# CONFIG_XZ_DEC_TEST is not set
+CONFIG_DECOMPRESS_BZIP2=y
+CONFIG_DECOMPRESS_LZO=y
+CONFIG_DECOMPRESS_LZ4=y
+CONFIG_GENERIC_ALLOCATOR=y
+CONFIG_INTERVAL_TREE=y
+CONFIG_ASSOCIATIVE_ARRAY=y
+CONFIG_HAS_IOMEM=y
+CONFIG_HAS_IOPORT_MAP=y
+CONFIG_HAS_DMA=y
+CONFIG_NEED_SG_DMA_LENGTH=y
+CONFIG_NEED_DMA_MAP_STATE=y
+CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+CONFIG_DMA_DIRECT_OPS=y
+CONFIG_SWIOTLB=y
+CONFIG_SGL_ALLOC=y
+CONFIG_DQL=y
+CONFIG_GLOB=y
+# CONFIG_GLOB_SELFTEST is not set
+CONFIG_NLATTR=y
+CONFIG_CLZ_TAB=y
+CONFIG_CORDIC=y
+# CONFIG_DDR is not set
+CONFIG_IRQ_POLL=y
+CONFIG_MPILIB=y
+CONFIG_SG_SPLIT=y
+CONFIG_SG_POOL=y
+CONFIG_ARCH_HAS_SG_CHAIN=y
+CONFIG_ARCH_HAS_PMEM_API=y
+CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
+CONFIG_ARCH_HAS_UACCESS_MCSAFE=y
+CONFIG_STACKDEPOT=y
+CONFIG_SBITMAP=y
+# CONFIG_PARMAN is not set
+CONFIG_PRIME_NUMBERS=y
+CONFIG_STRING_SELFTEST=y
+
+#
+# Kernel hacking
+#
+
+#
+# printk and dmesg options
+#
+# CONFIG_PRINTK_TIME is not set
+CONFIG_CONSOLE_LOGLEVEL_DEFAULT=7
+CONFIG_CONSOLE_LOGLEVEL_QUIET=4
+CONFIG_MESSAGE_LOGLEVEL_DEFAULT=4
+CONFIG_BOOT_PRINTK_DELAY=y
+# CONFIG_DYNAMIC_DEBUG is not set
+
+#
+# Compile-time checks and compiler options
+#
+CONFIG_NO_AUTO_INLINE=y
+# CONFIG_ENABLE_MUST_CHECK is not set
+CONFIG_FRAME_WARN=2048
+# CONFIG_STRIP_ASM_SYMS is not set
+# CONFIG_READABLE_ASM is not set
+# CONFIG_UNUSED_SYMBOLS is not set
+CONFIG_PAGE_OWNER=y
+CONFIG_DEBUG_FS=y
+# CONFIG_HEADERS_CHECK is not set
+# CONFIG_DEBUG_SECTION_MISMATCH is not set
+CONFIG_SECTION_MISMATCH_WARN_ONLY=y
+CONFIG_STACK_VALIDATION=y
+# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
+CONFIG_MAGIC_SYSRQ=y
+CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x1
+CONFIG_MAGIC_SYSRQ_SERIAL=y
+CONFIG_DEBUG_KERNEL=y
+
+#
+# Memory Debugging
+#
+CONFIG_PAGE_EXTENSION=y
+CONFIG_DEBUG_PAGEALLOC=y
+# CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT is not set
+# CONFIG_PAGE_POISONING is not set
+# CONFIG_DEBUG_PAGE_REF is not set
+# CONFIG_DEBUG_RODATA_TEST is not set
+# CONFIG_DEBUG_OBJECTS is not set
+CONFIG_HAVE_DEBUG_KMEMLEAK=y
+CONFIG_DEBUG_KMEMLEAK=y
+CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=400
+CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF=y
+CONFIG_DEBUG_STACK_USAGE=y
+CONFIG_DEBUG_VM=y
+# CONFIG_DEBUG_VM_VMACACHE is not set
+# CONFIG_DEBUG_VM_RB is not set
+# CONFIG_DEBUG_VM_PGFLAGS is not set
+CONFIG_ARCH_HAS_DEBUG_VIRTUAL=y
+# CONFIG_DEBUG_VIRTUAL is not set
+# CONFIG_DEBUG_MEMORY_INIT is not set
+CONFIG_HAVE_DEBUG_STACKOVERFLOW=y
+# CONFIG_DEBUG_STACKOVERFLOW is not set
+CONFIG_HAVE_ARCH_KASAN=y
+CONFIG_ARCH_HAS_KCOV=y
+# CONFIG_DEBUG_SHIRQ is not set
+
+#
+# Debug Lockups and Hangs
+#
+CONFIG_LOCKUP_DETECTOR=y
+CONFIG_SOFTLOCKUP_DETECTOR=y
+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=1
+CONFIG_HARDLOCKUP_CHECK_TIMESTAMP=y
+# CONFIG_HARDLOCKUP_DETECTOR is not set
+CONFIG_DETECT_HUNG_TASK=y
+CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=120
+# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
+CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE=0
+CONFIG_WQ_WATCHDOG=y
+# CONFIG_PANIC_ON_OOPS is not set
+CONFIG_PANIC_ON_OOPS_VALUE=0
+CONFIG_PANIC_TIMEOUT=0
+# CONFIG_SCHED_STACK_END_CHECK is not set
+CONFIG_DEBUG_TIMEKEEPING=y
+# CONFIG_DEBUG_PREEMPT is not set
+
+#
+# Lock Debugging (spinlocks, mutexes, etc...)
+#
+CONFIG_LOCK_DEBUGGING_SUPPORT=y
+# CONFIG_PROVE_LOCKING is not set
+CONFIG_LOCK_STAT=y
+CONFIG_DEBUG_RT_MUTEXES=y
+CONFIG_DEBUG_SPINLOCK=y
+CONFIG_DEBUG_MUTEXES=y
+# CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
+CONFIG_DEBUG_LOCK_ALLOC=y
+CONFIG_LOCKDEP=y
+# CONFIG_DEBUG_LOCKDEP is not set
+CONFIG_DEBUG_ATOMIC_SLEEP=y
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+# CONFIG_LOCK_TORTURE_TEST is not set
+CONFIG_WW_MUTEX_SELFTEST=y
+CONFIG_STACKTRACE=y
+# CONFIG_WARN_ALL_UNSEEDED_RANDOM is not set
+CONFIG_DEBUG_KOBJECT=y
+CONFIG_DEBUG_LIST=y
+CONFIG_DEBUG_PI_LIST=y
+CONFIG_DEBUG_SG=y
+CONFIG_DEBUG_NOTIFIERS=y
+# CONFIG_DEBUG_CREDENTIALS is not set
+
+#
+# RCU Debugging
+#
+CONFIG_TORTURE_TEST=y
+# CONFIG_RCU_PERF_TEST is not set
+CONFIG_RCU_TORTURE_TEST=y
+CONFIG_RCU_CPU_STALL_TIMEOUT=21
+CONFIG_RCU_TRACE=y
+# CONFIG_RCU_EQS_DEBUG is not set
+CONFIG_DEBUG_WQ_FORCE_RR_CPU=y
+# CONFIG_DEBUG_BLOCK_EXT_DEVT is not set
+CONFIG_NOTIFIER_ERROR_INJECTION=y
+CONFIG_NETDEV_NOTIFIER_ERROR_INJECT=y
+CONFIG_FAULT_INJECTION=y
+# CONFIG_FAIL_PAGE_ALLOC is not set
+CONFIG_FAIL_MAKE_REQUEST=y
+CONFIG_FAIL_IO_TIMEOUT=y
+# CONFIG_FAULT_INJECTION_DEBUG_FS is not set
+CONFIG_USER_STACKTRACE_SUPPORT=y
+CONFIG_NOP_TRACER=y
+CONFIG_HAVE_FUNCTION_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y
+CONFIG_HAVE_DYNAMIC_FTRACE=y
+CONFIG_HAVE_DYNAMIC_FTRACE_WITH_REGS=y
+CONFIG_HAVE_FTRACE_MCOUNT_RECORD=y
+CONFIG_HAVE_SYSCALL_TRACEPOINTS=y
+CONFIG_HAVE_FENTRY=y
+CONFIG_HAVE_C_RECORDMCOUNT=y
+CONFIG_TRACER_MAX_TRACE=y
+CONFIG_TRACE_CLOCK=y
+CONFIG_RING_BUFFER=y
+CONFIG_EVENT_TRACING=y
+CONFIG_CONTEXT_SWITCH_TRACER=y
+CONFIG_RING_BUFFER_ALLOW_SWAP=y
+CONFIG_PREEMPTIRQ_TRACEPOINTS=y
+CONFIG_TRACING=y
+CONFIG_GENERIC_TRACER=y
+CONFIG_TRACING_SUPPORT=y
+CONFIG_FTRACE=y
+CONFIG_FUNCTION_TRACER=y
+CONFIG_FUNCTION_GRAPH_TRACER=y
+CONFIG_TRACE_PREEMPT_TOGGLE=y
+# CONFIG_PREEMPTIRQ_EVENTS is not set
+# CONFIG_IRQSOFF_TRACER is not set
+CONFIG_PREEMPT_TRACER=y
+CONFIG_SCHED_TRACER=y
+# CONFIG_HWLAT_TRACER is not set
+CONFIG_FTRACE_SYSCALLS=y
+CONFIG_TRACER_SNAPSHOT=y
+CONFIG_TRACER_SNAPSHOT_PER_CPU_SWAP=y
+CONFIG_TRACE_BRANCH_PROFILING=y
+# CONFIG_BRANCH_PROFILE_NONE is not set
+CONFIG_PROFILE_ANNOTATED_BRANCHES=y
+# CONFIG_PROFILE_ALL_BRANCHES is not set
+CONFIG_TRACING_BRANCHES=y
+CONFIG_BRANCH_TRACER=y
+CONFIG_STACK_TRACER=y
+# CONFIG_BLK_DEV_IO_TRACE is not set
+CONFIG_UPROBE_EVENTS=y
+CONFIG_BPF_EVENTS=y
+CONFIG_PROBE_EVENTS=y
+CONFIG_DYNAMIC_FTRACE=y
+CONFIG_DYNAMIC_FTRACE_WITH_REGS=y
+# CONFIG_FUNCTION_PROFILER is not set
+CONFIG_FTRACE_MCOUNT_RECORD=y
+# CONFIG_FTRACE_STARTUP_TEST is not set
+# CONFIG_HIST_TRIGGERS is not set
+CONFIG_TRACEPOINT_BENCHMARK=y
+# CONFIG_RING_BUFFER_BENCHMARK is not set
+# CONFIG_RING_BUFFER_STARTUP_TEST is not set
+# CONFIG_TRACE_EVAL_MAP_FILE is not set
+CONFIG_TRACING_EVENTS_GPIO=y
+CONFIG_DMA_API_DEBUG=y
+# CONFIG_DMA_API_DEBUG_SG is not set
+CONFIG_RUNTIME_TESTING_MENU=y
+CONFIG_LKDTM=y
+# CONFIG_TEST_LIST_SORT is not set
+CONFIG_TEST_SORT=y
+CONFIG_BACKTRACE_SELF_TEST=y
+# CONFIG_RBTREE_TEST is not set
+CONFIG_INTERVAL_TREE_TEST=y
+# CONFIG_ATOMIC64_SELFTEST is not set
+# CONFIG_TEST_HEXDUMP is not set
+CONFIG_TEST_STRING_HELPERS=y
+CONFIG_TEST_KSTRTOX=y
+CONFIG_TEST_PRINTF=y
+CONFIG_TEST_BITMAP=y
+CONFIG_TEST_BITFIELD=y
+CONFIG_TEST_UUID=y
+# CONFIG_TEST_XARRAY is not set
+CONFIG_TEST_OVERFLOW=y
+CONFIG_TEST_RHASHTABLE=y
+CONFIG_TEST_HASH=y
+CONFIG_TEST_IDA=y
+CONFIG_FIND_BIT_BENCHMARK=y
+CONFIG_TEST_FIRMWARE=y
+CONFIG_TEST_UDELAY=y
+CONFIG_TEST_MEMCAT_P=y
+# CONFIG_MEMTEST is not set
+# CONFIG_BUG_ON_DATA_CORRUPTION is not set
+# CONFIG_SAMPLES is not set
+CONFIG_HAVE_ARCH_KGDB=y
+# CONFIG_KGDB is not set
+CONFIG_ARCH_HAS_UBSAN_SANITIZE_ALL=y
+# CONFIG_UBSAN is not set
+CONFIG_ARCH_HAS_DEVMEM_IS_ALLOWED=y
+CONFIG_DEBUG_AID_FOR_SYZBOT=y
+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
+CONFIG_X86_VERBOSE_BOOTUP=y
+# CONFIG_EARLY_PRINTK is not set
+CONFIG_X86_PTDUMP_CORE=y
+CONFIG_X86_PTDUMP=y
+CONFIG_DEBUG_WX=y
+CONFIG_DOUBLEFAULT=y
+CONFIG_DEBUG_TLBFLUSH=y
+CONFIG_HAVE_MMIOTRACE_SUPPORT=y
+CONFIG_IO_DELAY_TYPE_0X80=0
+CONFIG_IO_DELAY_TYPE_0XED=1
+CONFIG_IO_DELAY_TYPE_UDELAY=2
+CONFIG_IO_DELAY_TYPE_NONE=3
+# CONFIG_IO_DELAY_0X80 is not set
+# CONFIG_IO_DELAY_0XED is not set
+CONFIG_IO_DELAY_UDELAY=y
+# CONFIG_IO_DELAY_NONE is not set
+CONFIG_DEFAULT_IO_DELAY_TYPE=2
+# CONFIG_DEBUG_BOOT_PARAMS is not set
+CONFIG_CPA_DEBUG=y
+# CONFIG_OPTIMIZE_INLINING is not set
+# CONFIG_DEBUG_ENTRY is not set
+CONFIG_DEBUG_NMI_SELFTEST=y
+CONFIG_X86_DEBUG_FPU=y
+CONFIG_UNWINDER_ORC=y
+# CONFIG_UNWINDER_FRAME_POINTER is not set
+
+--------------5615838609226D466C57A787--
