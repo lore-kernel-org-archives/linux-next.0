@@ -1,46 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the nios2 tree
-Date: Mon, 12 Nov 2018 22:42:32 +1100
-Message-ID: <20181112224232.1da23521@canb.auug.org.au>
+Subject: linux-next: manual merge of the kbuild tree with the kbuild-current
+ tree
+Date: Tue, 13 Nov 2018 09:30:50 +1100
+Message-ID: <20181113093050.6785eec5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IkrFuo+obyu/jLPlPTRvP+7"; protocol="application/pgp-signature"
+ boundary="Sig_/Z.WKk4aE08LlmMrFOkFR+GV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ley Foon Tan <lftan@altera.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/IkrFuo+obyu/jLPlPTRvP+7
+--Sig_/Z.WKk4aE08LlmMrFOkFR+GV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ley,
+Hi all,
 
-Commit
+Today's linux-next merge of the kbuild tree got a conflict in:
 
-  a070f18a62df ("nios2: TLBMISC writes do not require PID bits to be set")
+  init/Kconfig
 
-is missing a Signed-off-by from its committer.
+between commit:
+
+  f9af851aa8e7 ("kernel hacking: support building kernel with -Og optimizat=
+ion level")
+
+from the kbuild-current tree and commit:
+
+  a4219aff51b8 ("kernel hacking: support building kernel with -Og optimizat=
+ion level")
+
+from the kbuild tree.
+
+I fixed it up (I used the kbuild-current tree version) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/IkrFuo+obyu/jLPlPTRvP+7
+--Sig_/Z.WKk4aE08LlmMrFOkFR+GV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvpZygACgkQAVBC80lX
-0Gy8uAf7BIMmvmdz6+2iB7WA44FJFKpd74yUcYV3NiLIJQO9hFRNQJxBDSXRQbMH
-3tTAU4Xd/duPLvRsG29hqMBDAivLNIuCj6oCpOyNh+TZEr2UNbZMnl0iV/yM9vxi
-m+k7J2oIFDW/6ZVgKQ4y3qIeu8hvRDhrTvZFjjNp81IJPat3qdUY58+mQ65SW89K
-LsKmeAyptFfFnkit65hPr2oK0svn90qadQ5/CDtls3o9PyJQT0WATrKm9nUzwvyl
-H5ZSXAITu4dePZAHwT8q2Oh9v7KQ1KKctxA/foere3NSdoHpa5SQfxalN44m115c
-TSUpXhNyygi5VGmF7D/GX8SSnNxsjA==
-=FjR9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvp/xoACgkQAVBC80lX
+0GwrrQf/ZZFknZNh1+SpQvjKmllbRqc549c4i9odUL5r/bfu+tJOFYf++KksxeaA
+oMION/jNRZKqfrL+Epmna+VRYf5bAA0biH3GvJnJpBHH322jn7fsFdLY5ndInXqS
+rxiIl8fbvDQUAQe6GbnU5emXA3147OydgcL28ng2NG9BaqCjc2SNLOPjWvDGLAez
+n4NzUIWbBOETfmtwH2PLAV43JrgYY4XiX2KNB7D/O3cljLL1assWYKDV7q/jFT0h
+Qo2sh2q7ACofMsESLcCTuZW6qmgMW1QYl5C8Jm3/qEnwsYpjl5orh6gv7OuD4RLj
+8yLF21Hu3jtSG3Jo79+rxYqyn6U9wA==
+=XOFO
 -----END PGP SIGNATURE-----
 
---Sig_/IkrFuo+obyu/jLPlPTRvP+7--
+--Sig_/Z.WKk4aE08LlmMrFOkFR+GV--
