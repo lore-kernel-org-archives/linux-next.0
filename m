@@ -1,61 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the qcom tree
-Date: Fri, 16 Nov 2018 10:10:59 +1100
-Message-ID: <20181116101059.18ad3fc9@canb.auug.org.au>
+Subject: linux-next: manual merge of the xtensa tree with Linus' tree
+Date: Fri, 16 Nov 2018 10:39:58 +1100
+Message-ID: <20181116103958.585d9cff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bsffGIR900KQxJ3cNoyrhDu"; protocol="application/pgp-signature"
+ boundary="Sig_/Trk7nOsBO23/NTtD1yhr.jD"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <agross@codeaurora.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Boyd <swboyd@chromium.org>
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Firoz Khan <firoz.khan@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/bsffGIR900KQxJ3cNoyrhDu
+--Sig_/Trk7nOsBO23/NTtD1yhr.jD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the qcom tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Today's linux-next merge of the xtensa tree got a conflict in:
 
-drivers/gpu/drm/msm/adreno/a6xx_gmu.c: In function 'a6xx_gmu_rpmh_arc_votes=
-_init.constprop':
-drivers/gpu/drm/msm/adreno/a6xx_gmu.c:943:12: warning: 'pri_count' is used =
-uninitialized in this function [-Wuninitialized]
-  pri_count >>=3D 1;
-            ^~~
-drivers/gpu/drm/msm/adreno/a6xx_gmu.c:948:12: warning: 'sec_count' may be u=
-sed uninitialized in this function [-Wmaybe-uninitialized]
-  sec_count >>=3D 1;
-            ^~~
+  arch/xtensa/Makefile
 
-Introduced by commit
+between commit:
 
-  ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_dat=
-a()")
+  37c8a5fafa3b ("kbuild: consolidate Devicetree dtb build rules")
 
-# CONFIG_QCOM_COMMAND_DB is not set
+from Linus' tree (it precedes v4.20-rc1) and commit:
+
+  7c17225f2059 ("xtensa: generate uapi header and syscall table header file=
+s")
+
+from the xtensa tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/bsffGIR900KQxJ3cNoyrhDu
+diff --cc arch/xtensa/Makefile
+index be060dfb1cc3,1e7b179eb6fe..000000000000
+--- a/arch/xtensa/Makefile
++++ b/arch/xtensa/Makefile
+@@@ -90,6 -93,15 +90,9 @@@ boot		:=3D arch/xtensa/boo
+  all Image zImage uImage: vmlinux
+  	$(Q)$(MAKE) $(build)=3D$(boot) $@
+ =20
+ -%.dtb:
+ -	$(Q)$(MAKE) $(build)=3D$(boot)/dts $(boot)/dts/$@
+ -
+ -dtbs: scripts
+ -	$(Q)$(MAKE) $(build)=3D$(boot)/dts
+ -
++ archheaders:
++ 	$(Q)$(MAKE) $(build)=3Darch/xtensa/kernel/syscalls all
++=20
+  define archhelp
+    @echo '* Image       - Kernel ELF image with reset vector'
+    @echo '* zImage      - Compressed kernel image (arch/xtensa/boot/images=
+/zImage.*)'
+
+--Sig_/Trk7nOsBO23/NTtD1yhr.jD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvt/QMACgkQAVBC80lX
-0GxxhggAnPhUNs7OcqjzTZydgZBYXnFl0Z3A0tXvL9OLBSVXO6fqOd2By92mQsUS
-OZSnivl81SfuHV8Ko4Rv8MOqW6dixtt2Z63Qmr4nDipppZLgILo66Svt+E/+LPkX
-m5CycaQdSpJUgtY8W22YWLUF02G7alOns7skhEIGzwYvv+iEiHHrQw80kuDm0/6T
-/E4UaPGPkcCL9bSsnYmSjVKQB2P3tsYhlRGYuA58QyUdB6L8+F1f64oRmaQMiVwH
-2GfJpnRF0nW+El634YX5MsFekNfjxvyP107vQz5LcLxoezvYlP7g9OBrysWGW6Yl
-IQL2cKJO0lg0fd4916MVwwdXV1POnA==
-=sBkX
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvuA84ACgkQAVBC80lX
+0GzSbwgAhq+d/fQsHqp5xB4g2FCHgHUHEPEUMFV11ZT6hH+nF5N2Fowo/T0NTDUI
+jchYAFEojOUWbEoomhPJuPfnrSpcvybb5VWE7ObcMKEQDb5v6Rzuj1PUaHhrlqLr
+wN7ZgKE7Bu8VDOvH9AowYyzg9cQ6IsuQJ9iZUhZ9/YLNT0/QvqLrShAb/wLRmkfq
++wFSyVNKKEkg/2JzUa/z/NfFURR5h2Mwp1KUThdeajJwq8Q5FrCscMNZBVXBO2pg
+QH3UHAXDNzk6LfpaiFD55gq2S/EJfLlyALaN8fqEGawyyJVsaqAUxvYIx3yYGT1A
+56qwUQ59KT30nbVTLX9tuHdUgWdpaw==
+=VzFR
 -----END PGP SIGNATURE-----
 
---Sig_/bsffGIR900KQxJ3cNoyrhDu--
+--Sig_/Trk7nOsBO23/NTtD1yhr.jD--
