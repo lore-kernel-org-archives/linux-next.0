@@ -1,52 +1,59 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: pending-fixes build: 1 failures 5 warnings
- (v4.20-rc2-261-g59a9ebee0952)
-Date: Thu, 15 Nov 2018 11:11:47 -0800
-Message-ID: <20181115191147.GK2089@sirena.org.uk>
-References: <E1gNL0I-0001Co-1g@optimist>
+Subject: Re: linux-next: build warning after merge of the spi tree
+Date: Thu, 15 Nov 2018 11:26:31 -0800
+Message-ID: <20181115192631.GN2089@sirena.org.uk>
+References: <20181114131844.57c4cdc7@canb.auug.org.au>
+ <CAP6Zq1gp+hmNkvk8D2uv8FUqTXE4+ZMPhMB7A7vLMaM6swHy4g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fVx4YFaxe8of50Zh"
-Return-path: <netdev-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="Is40wmw6z7H9MUbF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <E1gNL0I-0001Co-1g@optimist>
-Sender: netdev-owner@vger.kernel.org
-To: Michal Kalderon <michal.kalderon@cavium.com>, Denis Bolotin <denis.bolotin@cavium.com>, "David S. Miller" <davem@davemloft.net>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org
+In-Reply-To: <CAP6Zq1gp+hmNkvk8D2uv8FUqTXE4+ZMPhMB7A7vLMaM6swHy4g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
---fVx4YFaxe8of50Zh
+--Is40wmw6z7H9MUbF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 15, 2018 at 05:00:30PM +0000, Build bot for Mark Brown wrote:
+On Thu, Nov 15, 2018 at 05:56:19PM +0200, Tomer Maimon wrote:
+> Hi Mark and Stephen,
+>=20
+> I saw the warning from the kbuilt, in this matter the ioread() function
+> will call every time (and the val parameter will used) because rsize can =
+be
+> 1 or 2.
+>=20
+> rsize =3D min(bytes_per_word(priv->bits_per_word), priv->rx_bytes);
+> bytes_per_word(priv->bits_per_word)function return 1 or 2.
+> npcm_pspi_recv()function will called only if parameter priv->rx_bytes is
+> not 0.
+>=20
+> please let me know if you think that I still need to modify the npcm_pspi=
+_recv
+> to fix kbuilt warning.
 
-Today's pending-fixes branch fails to build an arm allmodconfig due to:
+Please, it's going to create noise for people working on the kernel if
+they get a spurious warning.
 
-> 	arm-allmodconfig
-> ../drivers/net/ethernet/qlogic/qed/qed_rdma.h:186:79: error: expected ';' before '}' token
-> ../drivers/net/ethernet/qlogic/qed/qed_rdma.h:186:79: error: expected ';' before '}' token
-> ../drivers/net/ethernet/qlogic/qed/qed_rdma.h:186:79: error: expected ';' before '}' token
-> ../drivers/net/ethernet/qlogic/qed/qed_rdma.h:186:79: error: expected ';' before '}' token
-> ../drivers/net/ethernet/qlogic/qed/qed_rdma.h:186:79: error: expected ';' before '}' token
-
-caused by 291d57f67d2449737 (qed: Fix rdma_info structure allocation) -
-there's a simple typo in the !QED_RDMA stubs that were added.
-
---fVx4YFaxe8of50Zh
+--Is40wmw6z7H9MUbF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvtxPIACgkQJNaLcl1U
-h9BbpQf+NXMh9WP8ablVGBqvRhk0G1W+iyB4W0nVd1RbFpAllrKs96WBe3QfRX6j
-CVaG2AP4m1gwQrPw0LsaYmjl26zGnvKBZvfNwrHErqP0ppau6Jg4uFDcw/EqL/en
-vpH+4c9a8+dAcP6pTV10pKMigoQHfJKXbuuZvt29GRvJI+pDzZxiFVHzl+8svizp
-qYTDA9XFjApQ8j7sIIxOVy5Xh7yklK73NB0fE4KArGEGS75lYkVXNHFOlplBTsTi
-uLFPsxXwf9JNVnrxDpcgeTDpMeb9WFqA+6H0rtrePdyfNQNOsHA3vUtmMcpMAAG8
-xI2LUYaNik6dFf1nSuX5oRWFnqK7ZA==
-=zll/
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvtyGYACgkQJNaLcl1U
+h9B2Ugf+KfiAeQh/AfrlCM6c7MGPjhJIFE5rf1lfbyZUZjyvPW7X6Y8uERPTR8E+
+D/bM4oAtrredlxKjH0qXnHU/EIa5CQBBcg6B32dBMHoRCNJxkbf2Vkhnbyybo4h0
+a+NnBAnMSq3JbzuCmiQApamTKzfL11Ap9ZD4A/k0R02s41aYEF2tnPo8fuKBrzxu
+Q2K2a02vfOgHFgldYUp1l+v6BN1amRvJI0ILnR2FxlUAs3ditlKZcsSdWE1f3GHa
+TpoSvi8f94+SfY2HJkgaENHxpsI9J/qO+sRDYaJg/qG7kDUzCXjdkz4DEQY4+xPb
+CBzAqM9YXOQWm1N9B0Be2XB1UeBp6A==
+=v4i6
 -----END PGP SIGNATURE-----
 
---fVx4YFaxe8of50Zh--
+--Is40wmw6z7H9MUbF--
