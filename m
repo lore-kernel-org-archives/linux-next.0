@@ -1,48 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
-Date: Fri, 16 Nov 2018 09:19:57 +1100
-Message-ID: <20181116091957.4880b95d@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the qcom tree
+Date: Fri, 16 Nov 2018 10:10:59 +1100
+Message-ID: <20181116101059.18ad3fc9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8LQH=6XtSCEUE2wh11.Vgxb"; protocol="application/pgp-signature"
+ boundary="Sig_/bsffGIR900KQxJ3cNoyrhDu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>
+To: Andy Gross <agross@codeaurora.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Boyd <swboyd@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8LQH=6XtSCEUE2wh11.Vgxb
+--Sig_/bsffGIR900KQxJ3cNoyrhDu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commits
+After merging the qcom tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  25b76c531970 ("gfs2: add a helper function to get_log_header that can be =
-used elsewhere")
-  14e81158a6d6 ("gfs2: add more timing info to journal recovery process")
+drivers/gpu/drm/msm/adreno/a6xx_gmu.c: In function 'a6xx_gmu_rpmh_arc_votes=
+_init.constprop':
+drivers/gpu/drm/msm/adreno/a6xx_gmu.c:943:12: warning: 'pri_count' is used =
+uninitialized in this function [-Wuninitialized]
+  pri_count >>=3D 1;
+            ^~~
+drivers/gpu/drm/msm/adreno/a6xx_gmu.c:948:12: warning: 'sec_count' may be u=
+sed uninitialized in this function [-Wmaybe-uninitialized]
+  sec_count >>=3D 1;
+            ^~~
 
-are missing a Signed-off-by from their committer.
+Introduced by commit
+
+  ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_dat=
+a()")
+
+# CONFIG_QCOM_COMMAND_DB is not set
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/8LQH=6XtSCEUE2wh11.Vgxb
+--Sig_/bsffGIR900KQxJ3cNoyrhDu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvt8Q0ACgkQAVBC80lX
-0GxOQgf/Rz/ccyhOt2dbNTkB9YhJZKvBXuS5XayI6v1DLTUl4szAIcyzNmyjJwhu
-Z+FMEDOa4wJGaI2MuSTI2oFewlQhlWyhH+xgDdXppdJlz7DwHvyHckSbBIitEnpC
-EYo6KKNNq6IqhalmwZDzD/B0D6s6EiDTftCcKk73YcyYe9DG2pcV+wb+SCfE4nCa
-bDI+weIBBu8gIqmZEH4HnaD3azKlaLyLr9hsvWK2vrU9/bKkQ2+Yc7B+zKuE6NZa
-RFKTixAdzyG6Bm0WDePww8nOah7nwTaMoe+SNBRbtRPy2GdiHKQXKzVO4x/zqhlQ
-kB7s9TjEZa8Wl1NNXPNUKv4v7FUuLQ==
-=EpR8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvt/QMACgkQAVBC80lX
+0GxxhggAnPhUNs7OcqjzTZydgZBYXnFl0Z3A0tXvL9OLBSVXO6fqOd2By92mQsUS
+OZSnivl81SfuHV8Ko4Rv8MOqW6dixtt2Z63Qmr4nDipppZLgILo66Svt+E/+LPkX
+m5CycaQdSpJUgtY8W22YWLUF02G7alOns7skhEIGzwYvv+iEiHHrQw80kuDm0/6T
+/E4UaPGPkcCL9bSsnYmSjVKQB2P3tsYhlRGYuA58QyUdB6L8+F1f64oRmaQMiVwH
+2GfJpnRF0nW+El634YX5MsFekNfjxvyP107vQz5LcLxoezvYlP7g9OBrysWGW6Yl
+IQL2cKJO0lg0fd4916MVwwdXV1POnA==
+=sBkX
 -----END PGP SIGNATURE-----
 
---Sig_/8LQH=6XtSCEUE2wh11.Vgxb--
+--Sig_/bsffGIR900KQxJ3cNoyrhDu--
