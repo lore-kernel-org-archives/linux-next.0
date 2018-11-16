@@ -1,36 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xtensa tree with Linus' tree
-Date: Fri, 16 Nov 2018 10:39:58 +1100
-Message-ID: <20181116103958.585d9cff@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Fri, 16 Nov 2018 13:19:19 +1100
+Message-ID: <20181116131919.781539f7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Trk7nOsBO23/NTtD1yhr.jD"; protocol="application/pgp-signature"
+ boundary="Sig_/P0jZk+bujMBoCzwAog_dq=1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Firoz Khan <firoz.khan@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Trk7nOsBO23/NTtD1yhr.jD
+--Sig_/P0jZk+bujMBoCzwAog_dq=1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the xtensa tree got a conflict in:
+Today's linux-next merge of the block tree got a conflict in:
 
-  arch/xtensa/Makefile
+  block/blk.h
 
 between commit:
 
-  37c8a5fafa3b ("kbuild: consolidate Devicetree dtb build rules")
+  1adfc5e4136f ("block: make sure discard bio is aligned with logical block=
+ size")
 
-from Linus' tree (it precedes v4.20-rc1) and commit:
+from Linus' tree (precedes v4.20-rc2) and commit:
 
-  7c17225f2059 ("xtensa: generate uapi header and syscall table header file=
-s")
+  079076b3416e ("block: remove deadline __deadline manipulation helpers")
 
-from the xtensa tree.
+from the block tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,42 +43,61 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/xtensa/Makefile
-index be060dfb1cc3,1e7b179eb6fe..000000000000
---- a/arch/xtensa/Makefile
-+++ b/arch/xtensa/Makefile
-@@@ -90,6 -93,15 +90,9 @@@ boot		:=3D arch/xtensa/boo
-  all Image zImage uImage: vmlinux
-  	$(Q)$(MAKE) $(build)=3D$(boot) $@
+diff --cc block/blk.h
+index 0089fefdf771,027a0ccc175e..000000000000
+--- a/block/blk.h
++++ b/block/blk.h
+@@@ -380,31 -233,6 +233,16 @@@ static inline void req_set_nomerge(stru
+  		q->last_merge =3D NULL;
+  }
  =20
- -%.dtb:
- -	$(Q)$(MAKE) $(build)=3D$(boot)/dts $(boot)/dts/$@
- -
- -dtbs: scripts
- -	$(Q)$(MAKE) $(build)=3D$(boot)/dts
- -
-+ archheaders:
-+ 	$(Q)$(MAKE) $(build)=3Darch/xtensa/kernel/syscalls all
-+=20
-  define archhelp
-    @echo '* Image       - Kernel ELF image with reset vector'
-    @echo '* zImage      - Compressed kernel image (arch/xtensa/boot/images=
-/zImage.*)'
+- /*
+-  * Steal a bit from this field for legacy IO path atomic IO marking. Note=
+ that
+-  * setting the deadline clears the bottom bit, potentially clearing the
+-  * completed bit. The user has to be OK with this (current ones are fine).
+-  */
+- static inline void blk_rq_set_deadline(struct request *rq, unsigned long =
+time)
+- {
+- 	rq->__deadline =3D time & ~0x1UL;
+- }
+-=20
+- static inline unsigned long blk_rq_deadline(struct request *rq)
+- {
+- 	return rq->__deadline & ~0x1UL;
+- }
+-=20
+ +/*
+ + * The max size one bio can handle is UINT_MAX becasue bvec_iter.bi_size
+ + * is defined as 'unsigned int', meantime it has to aligned to with logic=
+al
+ + * block size which is the minimum accepted unit by hardware.
+ + */
+ +static inline unsigned int bio_allowed_max_sectors(struct request_queue *=
+q)
+ +{
+ +	return round_down(UINT_MAX, queue_logical_block_size(q)) >> 9;
+ +}
+ +
+  /*
+   * Internal io_context interface
+   */
 
---Sig_/Trk7nOsBO23/NTtD1yhr.jD
+--Sig_/P0jZk+bujMBoCzwAog_dq=1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvuA84ACgkQAVBC80lX
-0GzSbwgAhq+d/fQsHqp5xB4g2FCHgHUHEPEUMFV11ZT6hH+nF5N2Fowo/T0NTDUI
-jchYAFEojOUWbEoomhPJuPfnrSpcvybb5VWE7ObcMKEQDb5v6Rzuj1PUaHhrlqLr
-wN7ZgKE7Bu8VDOvH9AowYyzg9cQ6IsuQJ9iZUhZ9/YLNT0/QvqLrShAb/wLRmkfq
-+wFSyVNKKEkg/2JzUa/z/NfFURR5h2Mwp1KUThdeajJwq8Q5FrCscMNZBVXBO2pg
-QH3UHAXDNzk6LfpaiFD55gq2S/EJfLlyALaN8fqEGawyyJVsaqAUxvYIx3yYGT1A
-56qwUQ59KT30nbVTLX9tuHdUgWdpaw==
-=VzFR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvuKScACgkQAVBC80lX
+0GxPlgf/RSEU1vJNGDBzP8W+mpeAWfiVVw16Ff30KnIKVhn/lFviqB2Xfy90fJKy
+mdkQ2fL5SdH0k/VJ62D+hHEzuXBH6hsbp0+aKZ9vIh9kdp0JmQ/gflMP4w3wygEp
+MtkCGCTJIwLpgJ4rt9lMDFbwHsyYzwGWEf8qws2hqA/7doJnJSB7Nmm8XA571alp
+e0tOeyEAsVIoVtae2ACcgrQoC1dvdxZ2xtGD1lIaMTz3OIafOw/14QXiG3+zUNLs
+OqrF4DJpTCuMLet6i1pccgxz96bHsor74KMwwmyVaR7YUyT+CGv5BS5CV+18d1ea
+VHrybvPjBxp6Hpazanbq+RAL0eWzCg==
+=OyZ0
 -----END PGP SIGNATURE-----
 
---Sig_/Trk7nOsBO23/NTtD1yhr.jD--
+--Sig_/P0jZk+bujMBoCzwAog_dq=1--
