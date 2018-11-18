@@ -1,111 +1,67 @@
-From: Alan Modra <amodra@gmail.com>
-Subject: Re: linux-next: build warnings from Linus' tree
-Date: Sun, 18 Nov 2018 21:52:44 +1030
-Message-ID: <20181118112244.GD21617@bubble.grove.modra.org>
-References: <20180612081413.323d85b8@canb.auug.org.au>
- <CACPK8XeDHt46rUJWQ1n=4fRWioogs9K0Z8dkxUa=E2ShfQ1Vdg@mail.gmail.com>
- <87k1lgufiw.fsf@concordia.ellerman.id.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: removal of old trees
+Date: Mon, 19 Nov 2018 03:42:31 +1100
+Message-ID: <20181119034231.3ee05626@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ksCgbxZwbbya07w.KC9/rSl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <87k1lgufiw.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Joel Stanley <joel@jms.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 14, 2018 at 09:20:23PM +1100, Michael Ellerman wrote:
-> Joel Stanley <joel@jms.id.au> writes:
-> > Hello Alan,
-> >
-> > On Tue, 12 Jun 2018 at 07:44, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> >> Building Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-> >> produced these warning:
-> >>
-> >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> >>
-> >> This may just be because I have started building using the native Debian
-> >> gcc for the powerpc builds ...
-> >
-> > Do you know why we started creating these?
-> 
-> It's controlled by the ld option --hash-style, which AFAICS still
-> defaults to sysv (generating .hash).
-> 
-> But it seems gcc can be configured to have a different default, and at
-> least my native ppc64le toolchains are passing gnu, eg:
-> 
->  /usr/lib/gcc/powerpc64le-linux-gnu/6/collect2 -plugin
->  /usr/lib/gcc/powerpc64le-linux-gnu/6/liblto_plugin.so
->  -plugin-opt=/usr/lib/gcc/powerpc64le-linux-gnu/6/lto-wrapper
->  -plugin-opt=-fresolution=/tmp/ccw1U2fF.res
->  -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s
->  -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc
->  -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr
->  -V -shared -m elf64lppc
->  --hash-style=gnu
->  ^^^^^^^^^^^^^^^^
-> 
-> So that's presumably why we're seeing it, some GCCs are configured to
-> use it.
-> 
-> > If it's intentional, should we be putting including them in the same
-> > way as .hash sections?
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/kernel/vmlinux.lds.S#n282
-> >
-> >   .hash : AT(ADDR(.hash) - LOAD_OFFSET) { *(.hash) }
-> 
-> That would presumably work.
-> 
-> My question though is do we even need it?
-> 
-> >From what I can see for it to be useful you need the section as well as
-> an entry in the dynamic section pointing at it, and we don't have a
-> dynamic section at all:
-> 
->   $ readelf -S vmlinux | grep gnu.hash
->     [ 4] .gnu.hash         GNU_HASH         c000000000dbbdb0  00dcbdb0
->   $ readelf -d vmlinux
->   
->   There is no dynamic section in this file.
-> 
-> Compare to the vdso:
-> 
-> $ readelf -d arch/powerpc/kernel/vdso64/vdso64.so
-> 
-> Dynamic section at offset 0x868 contains 12 entries:
->   Tag        Type                         Name/Value
->  0x000000000000000e (SONAME)             Library soname: [linux-vdso64.so.1]
->  0x0000000000000004 (HASH)               0x120
->  0x000000006ffffef5 (GNU_HASH)           0x170
->  0x0000000000000005 (STRTAB)             0x320
->  0x0000000000000006 (SYMTAB)             0x1d0
->  0x000000000000000a (STRSZ)              269 (bytes)
->  0x000000000000000b (SYMENT)             24 (bytes)
->  0x0000000070000003 (PPC64_OPT)          0x0
->  0x000000006ffffffc (VERDEF)             0x450
->  0x000000006ffffffd (VERDEFNUM)          2
->  0x000000006ffffff0 (VERSYM)             0x42e
->  0x0000000000000000 (NULL)               0x0
-> 
-> 
-> So can't we just discard .gnu.hash? And in fact do we need .hash either?
-> 
-> Actually arm64 discards the latter, and parisc discards both.
-> 
-> Would still be good to hear from Alan or someone else who knows anything
-> about toolchain stuff, ie. not me :)
+--Sig_/ksCgbxZwbbya07w.KC9/rSl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-.gnu.hash, like .hash, is used by glibc ld.so for dynamic symbol
-lookup.  I imagine you don't need either section in a kernel, so
-discarding both sounds reasonable.  Likely you could discard .interp
-and .dynstr too, and .dynsym when !CONFIG_PPC32.
+Hi all,
 
--- 
-Alan Modra
-Australia Development Lab, IBM
+[This message is Bcc'd to the contacts of affected trees]
+
+The following trees have not been updated for more than a year, so I am
+removing them from linux-next.  If you want any of them reinstated,
+please just send me an email.
+
+Tree		URL
+----		---
+aio		git://git.kvack.org/~bcrl/aio-next.git#master
+drm-panel	git://anongit.freedesktop.org/tegra/linux.git#drm/panel/for-next
+edac		git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git#=
+linux_next
+idle		git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git#next
+keys		git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#k=
+eys-next
+kvm-mips	git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/kvm-mips.git#=
+next
+lightnvm	git://github.com/OpenChannelSSD/linux.git#for-next
+nand-fixes	git://git.infradead.org/linux-mtd.git#nand/fixes
+realtek		git://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-realt=
+ek.git#for-next
+sunxi-drm	git://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git#s=
+unxi-drm/for-next
+uuid		git://git.infradead.org/users/hch/uuid.git#for-next
+vfs-miklos	git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#n=
+ext
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ksCgbxZwbbya07w.KC9/rSl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvxlncACgkQAVBC80lX
+0GzPbwf/XTgjZpYZpXE+bVHouZ+ijQxZO7XgYpvc09Y8RfG88kksX8pcfTTkYB6l
+7aNRXEhKoWTPgWeN/I88Sk0JzA+dDXETVEcR4rDNS173kl5Eiol4KSBfqP/OfU7L
+YECHetKLIQS806plc7hUWVVJnyTNfEFlgE5m73YZTx/75SaRtX4YjBJPqzg5Hf7s
+c8EEK3QBvMBWaQt3NWxI504v4onBq35VQs0uvyKiQ4zBZvf+KW6cyhPm6ihYMVT2
+nz9SoAdwPfAp3FaXu9ThCzroNsfn6wWRj/DRdZQBCV/MXWzx3uP5nxkUdkf/DX3/
+bDDlv7Qy43GM44FNBLlIAJlb/5lUsw==
+=/T7X
+-----END PGP SIGNATURE-----
+
+--Sig_/ksCgbxZwbbya07w.KC9/rSl--
