@@ -1,42 +1,22 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the drm tree
-Date: Tue, 20 Nov 2018 09:54:47 +0100
-Message-ID: <20181120085447.GB19171@kroah.com>
-References: <20181120131616.139a4c8f@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
+Date: Tue, 20 Nov 2018 09:17:15 -0800 (PST)
+Message-ID: <20181120.091715.960440705045872524.davem@davemloft.net>
+References: <20181120161546.1098b346@canb.auug.org.au>
+        <CADvbK_fBH5zL6H+j3vZPT3BuG5m0_tDKJ=YUzEe5PeMCz4y9pQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181120131616.139a4c8f@canb.auug.org.au>
+In-Reply-To: <CADvbK_fBH5zL6H+j3vZPT3BuG5m0_tDKJ=YUzEe5PeMCz4y9pQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Hans de Goede <hdegoede@redhat.com>
+To: lucien.xin@gmail.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 20, 2018 at 01:16:16PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->   drivers/staging/vboxvideo/vbox_ttm.c
-> 
-> between commits:
-> 
->   a64f784bb14a ("drm/ttm: initialize globals during device init (v2)")
-> 
-> from the drm tree and commit:
-> 
->   cd76c287a52f ("staging: vboxvideo: Cleanup the comments")
-> 
-> from the staging tree.
-> 
-> I fixed it up (the former removed the comments updated by the latter) and
-> can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+From: Xin Long <lucien.xin@gmail.com>
+Date: Tue, 20 Nov 2018 17:25:30 +0900
 
-Fix seems sane to me, thanks.
+> Do I need to do something for this one now?
 
-greg k-h
+No, there is nothing you can do about it :-)
