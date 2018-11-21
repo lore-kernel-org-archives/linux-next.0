@@ -1,47 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net tree
-Date: Wed, 21 Nov 2018 16:04:50 +1100
-Message-ID: <20181121160450.2219ff48@canb.auug.org.au>
+From: Leon Romanovsky <leon@kernel.org>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
+Date: Wed, 21 Nov 2018 09:16:27 +0200
+Message-ID: <20181121071627.GA7276@mtr-leonro.mtl.com>
+References: <20181121110432.64a379f7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3zwyDAAUwvx0DrHVnHqGqpn"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181121110432.64a379f7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3zwyDAAUwvx0DrHVnHqGqpn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit
+On Wed, Nov 21, 2018 at 11:04:32AM +1100, Stephen Rothwell wrote:
+> Hi Leon,
+>
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>
+>   drivers/infiniband/hw/mlx5/main.c
+>
+> between commit:
+>
+>   9afc97c29b03 ("mlx5: remove support for ib_get_vector_affinity")
+>
+> from the rdma tree and commit:
+>
+>   f2f3df550139 ("net/mlx5: EQ, Privatize eq_table and friends")
+>
+> from the mlx5-next tree.
+>
+> I fixed it up (the former removed some of the code modified by the latter)
+> and can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
+>
 
-  f2cbd4852820 ("net/sched: act_police: fix race condition on state variabl=
-es")
+Thanks Stephen,
 
-is missing a Signed-off-by from its committer.
+You are absolutely right, the removal is correct.
 
---=20
-Cheers,
-Stephen Rothwell
+>
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
---Sig_/3zwyDAAUwvx0DrHVnHqGqpn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+
+
+--AqsLC8rIMeq19msA
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv053IACgkQAVBC80lX
-0GzNYwf/XyWo7trJfwQOvs6VV4q3XyIAZz5S08nWO/VOkU0HV/8pwJVqo+M50eqz
-OxF3X1SNoO0kOAPF78T6+RvUblBAZF8C29qMKJ3/9iKZYE9VWuW3c91oStaEOerC
-2y6CMoTLHqdJpeNetTG/MFZGOUGzMwJ8BkZjGMQv0lFIwkUDPrQY29K4tKBqVl9D
-eyNvHRU0uOuDMaBHgnZeaQkZAAYOc3wdKKXGkX3jOxMAhwY8vN4ImcawxFJI6Osl
-JvhADXcJFjeJRqBXVYUzajBUH1mx42r91FMubMLEo4Wc0X6yhXAzy2mEgimzUasz
-VU32i6o6tbevAIkUQeKhKqFq0RY/3g==
-=vo2Y
+iQIcBAEBAgAGBQJb9QZLAAoJEORje4g2clinzt0P/RLWoZPvwtl5H2/YEPjCiDCu
+K62avmczxvSU67MW5FTE7Ks/0nE9yd+WIWYIydqWxg3dXMbYn8N0vlaN385i20kW
+8DLrOsjILysS81fUHK8wZCc553oUKp+qpwMTY4ly/3JvMo3vofe1VTMUQsAJ160A
+vAFU9vyFea4YfhYnL9bHwNuXjsJLye4zy8Vp8r3tiHfuYk2HNX8R8oniNo9hyy8u
+75oZNegT15fIRqG8zucv+qcyFmuzvNX2LrN3econSKnnE12feqrO7aSTU0nuactO
+WNzRjJjwIazkoOufp/pFYAL+7gvlaQKt+abHA7wlmXuKNF5E/Yk4pndWdtzuCjdK
+3IDoyS9HWGvG1MY/v/wzOTDChOImH8Z8pXlSzMhx0FNcTavn3ELkSXfwlFOFiTpe
+i7JojUWY3wLdRuQMa81Spwwr7qhSmu9A8kOGomPUoagRLmDhNrb421Pj+KeBcHgK
+Jlot/hsdOThFHZB7eFT3Jt1qix+RlqzP0qo0wxFy/196LfHpZemx1hanCXmRjQbz
+kzA3+5ZGe3fREAMf2T1+sW9fiiwh7MJ0ofXIJaMH7hIR/qo2ckH7xDyIrg9cLACd
+aTB3ehdywdgWXmLYXi/g9QsS+NiKai7uox44QSCOajFh1937bgwIQ6IIFurBZjdL
+gnvjr9Av3DtZDrG0l7Wq
+=MGL3
 -----END PGP SIGNATURE-----
 
---Sig_/3zwyDAAUwvx0DrHVnHqGqpn--
+--AqsLC8rIMeq19msA--
