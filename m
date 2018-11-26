@@ -1,96 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with the kbuild tree
-Date: Mon, 26 Nov 2018 10:17:12 +1100
-Message-ID: <20181126101712.18480f3c@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the btrfs-kdave tree
+Date: Mon, 26 Nov 2018 11:06:29 +1100
+Message-ID: <20181126110629.45969c51@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/haoNfPR7z4iR+0uQ+I69930"; protocol="application/pgp-signature"
+ boundary="Sig_/NY1.eIclTa7R63+zM52V_6P"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Maksym Kokhan <maksym.kokhan@globallogic.com>, Paul Burton <paul.burton@mips.com>, Andrii Bordunov <andrew.bordunov@gmail.com>
+To: David Sterba <dsterba@suse.cz>, Kees Cook <keescook@google.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/haoNfPR7z4iR+0uQ+I69930
+--Sig_/NY1.eIclTa7R63+zM52V_6P
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi David,
 
-Today's linux-next merge of the mips tree got a conflict in:
+After merging the btrfs-kdave tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-  arch/mips/Kconfig
+In file included from include/linux/string.h:6,
+                 from arch/powerpc/include/asm/paca.h:19,
+                 from arch/powerpc/include/asm/current.h:16,
+                 from include/linux/sched.h:12,
+                 from fs/btrfs/volumes.c:6:
+fs/btrfs/volumes.h: In function 'btrfs_op':
+include/linux/compiler.h:77:22: warning: this statement may fall through [-=
+Wimplicit-fallthrough=3D]
+ # define unlikely(x) __builtin_expect(!!(x), 0)
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+include/asm-generic/bug.h:72:2: note: in expansion of macro 'unlikely'
+  unlikely(__ret_warn_on);    \
+  ^~~~~~~~
+fs/btrfs/volumes.h:395:3: note: in expansion of macro 'WARN_ON_ONCE'
+   WARN_ON_ONCE(1);
+   ^~~~~~~~~~~~
+In file included from fs/btrfs/volumes.c:22:
+fs/btrfs/volumes.h:396:2: note: here
+  case REQ_OP_READ:
+  ^~~~
 
-between commit:
+Introduced by commit
 
-  eb01d42a7778 ("PCI: consolidate PCI config entry in drivers/pci")
+  cf8cddd38bab3 ("btrfs: don't abuse REQ_OP_* flags for btrfs_map_block")
 
-from the kbuild tree and commit:
+exposed by my new use of -Wimplicit-fallthrough
 
-  47bf2b031754 ("mips: sort list of configs for Malta")
-
-from the mips tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I am not sure why this has only turned up now (as opposed to earlier
+today).
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/mips/Kconfig
-index f4df8007fddb,e49b5a0c8585..000000000000
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@@ -495,22 -498,23 +499,23 @@@ config MIPS_MALT
-  	select BOOT_RAW
-  	select BUILTIN_DTB
-  	select CEVT_R4K
-- 	select CSRC_R4K
-  	select CLKSRC_MIPS_GIC
-  	select COMMON_CLK
-+ 	select CSRC_R4K
-  	select DMA_MAYBE_COHERENT
-  	select GENERIC_ISA_DMA
-- 	select HAVE_PCSPKR_PLATFORM
-- 	select IRQ_MIPS_CPU
-- 	select MIPS_GIC
- +	select HAVE_PCI
-+ 	select HAVE_PCSPKR_PLATFORM
- -	select HW_HAS_PCI
-  	select I8253
-  	select I8259
-+ 	select IRQ_MIPS_CPU
-+ 	select LIBFDT
-  	select MIPS_BONITO64
-  	select MIPS_CPU_SCACHE
-+ 	select MIPS_GIC
-  	select MIPS_L1_CACHE_SHIFT_6
-- 	select PCI_GT64XXX_PCI0
-  	select MIPS_MSC
-+ 	select PCI_GT64XXX_PCI0
-  	select SMP_UP if SMP
-  	select SWAP_IO_SPACE
-  	select SYS_HAS_CPU_MIPS32_R1
-
---Sig_/haoNfPR7z4iR+0uQ+I69930
+--Sig_/NY1.eIclTa7R63+zM52V_6P
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7LXgACgkQAVBC80lX
-0Gx9qAf/VdPY8ZIFm2DSMjT8ZIuZH2fvsoLAj2FNtLrzeifRSbsmyWXkb+XPgDHG
-TmxynpaExAtR2cFIz4WkDUD/cSJVZndqatDkDUMpcfefVPitmPi+g8g8K+14W/2t
-WWVTjjnAnut1p7JcoEQl9L2ruLClN4XiNz2Wohla4smUD6xB+JnTsSlOwHDOTfbd
-Gkut5b7TGjl6R10ynXqqt9q9eOJ03KlWf69e6S+FveH/DDryrJvBLY+xcj0kK9X+
-O1J0bwM/mwAgtYuGxw9RNyS9ixhuF5nma01g/u9ph+DlUC8xSlWY+aTjEJAG67pB
-jypymu2v6YqyS6B1+s0JX7whW1iWbA==
-=84d5
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7OQUACgkQAVBC80lX
+0GxrKQgAnO359KtN/3xmOk8Bo3Qx881zdG8xFgAMpV44xOEF/eOdV6nmgs+Bx6K4
+ogWVSzdOM/xLIbeglvpTCUeiiU+H8eB2VJU9xIaXRroxXvgWp6SZp3V6PPoDS0I5
+b2H/ZHzkQbIgJLK/WoneqJSZanSW0iChijeoHCn7W+HB2tK1EUowKsZz4D6sBL1l
++mMDZgqXkwLit4OwCtqsiAuRp9NgR5g3Llr9l2l70RoxyBvD/rtSILkt4WKtZQpz
+CRNe1RigFsxmSxC1xgv+m6/+z5AenqSCfmOJ0i1u0O72/KAkLUFPhMgzaQv2vUNt
+A98AC1wEv4GWROuw+bERZ7MswY6BKw==
+=wpGx
 -----END PGP SIGNATURE-----
 
---Sig_/haoNfPR7z4iR+0uQ+I69930--
+--Sig_/NY1.eIclTa7R63+zM52V_6P--
