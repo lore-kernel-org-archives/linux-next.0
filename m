@@ -1,63 +1,166 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the etnaviv tree with the drm-misc tree
-Date: Mon, 26 Nov 2018 13:58:06 +1100
-Message-ID: <20181126135806.22f4ce78@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the vfs tree
+Date: Mon, 26 Nov 2018 15:39:25 +1100
+Message-ID: <20181126153925.3ab6b337@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AwU8QGKYH6YqgLMvrOcdeEz"; protocol="application/pgp-signature"
+ boundary="Sig_/3BX=4/RIDil5BdQBMqHiwwS"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Ramos <greenfoo@gluegarage.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Zimmermann <tzimmermann@suse.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Babu Moger <Babu.Moger@amd.com>, Borislav Petkov <bp@suse.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/AwU8QGKYH6YqgLMvrOcdeEz
+--Sig_/3BX=4/RIDil5BdQBMqHiwwS
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lucas,
+Hi all,
 
-Today's linux-next merge of the etnaviv tree got a conflict in:
+Today's linux-next merge of the tip tree got a conflict in:
 
-  drivers/gpu/drm/etnaviv/etnaviv_drv.c
+  arch/x86/kernel/cpu/resctrl/rdtgroup.c
 
 between commit:
 
-  808bad32ea42 ("drm: replace "drm_dev_unref" function with "drm_dev_put"")
+  16ec1a5d58ea ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
+(where the file is arch/x86/kernel/cpu/intel_rdt_rdtgroup.c)
 
-from the drm-misc tree and commit:
+from the vfs tree and commit:
 
-  99e294492ef9 ("drm/etnaviv: Replace drm_dev_unref with drm_dev_put")
+  580ebb66cbb3 ("x86/resctrl: Add vendor check for the MBA software control=
+ler")
 
-from the etnaviv tree.
+from the tip tree.
 
-I fixed it up (I used the latter which also renamed a label
-appropriatedly) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
-
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/AwU8QGKYH6YqgLMvrOcdeEz
+diff --cc arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 37c0ccb50823,61b102dd51a5..000000000000
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@@ -2032,88 -2065,8 +2032,91 @@@ out
+  	rdt_last_cmd_clear();
+  	mutex_unlock(&rdtgroup_mutex);
+  	cpus_read_unlock();
+ +	return ret;
+ +}
+ +
+ +enum rdt_param {
+ +	Opt_cdp,
+ +	Opt_cdpl2,
+ +	Opt_mba_mpbs,
+ +	nr__rdt_params
+ +};
+ =20
+ -	return dentry;
+ +static const struct fs_parameter_spec rdt_param_specs[nr__rdt_params] =3D=
+ {
+ +	[Opt_cdp]	=3D { fs_param_is_flag },
+ +	[Opt_cdpl2]	=3D { fs_param_is_flag },
+ +	[Opt_mba_mpbs]	=3D { fs_param_is_flag },
+ +};
+ +
+ +static const char *const rdt_param_keys[nr__rdt_params] =3D {
+ +	[Opt_cdp]	=3D "cdp",
+ +	[Opt_cdpl2]	=3D "cdpl2",
+ +	[Opt_mba_mpbs]	=3D "mba_mbps",
+ +};
+ +
+ +static const struct fs_parameter_description rdt_fs_parameters =3D {
+ +	.name		=3D "rdt",
+ +	.nr_params	=3D nr__rdt_params,
+ +	.keys		=3D rdt_param_keys,
+ +	.specs		=3D rdt_param_specs,
+ +	.no_source	=3D true,
+ +};
+ +
+ +static int rdt_parse_param(struct fs_context *fc, struct fs_parameter *pa=
+ram)
+ +{
+ +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
+ +	struct fs_parse_result result;
+ +	int opt;
+ +
+ +	opt =3D fs_parse(fc, &rdt_fs_parameters, param, &result);
+ +	if (opt < 0)
+ +		return opt;
+ +
+ +	switch (opt) {
+ +	case Opt_cdp:
+ +		ctx->enable_cdpl3 =3D true;
+ +		return 0;
+ +	case Opt_cdpl2:
+ +		ctx->enable_cdpl2 =3D true;
+ +		return 0;
+ +	case Opt_mba_mpbs:
+- 		ctx->enable_mba_mbps =3D true;
+- 		return 0;
+++		if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL) {
+++			ctx->enable_mba_mbps =3D true;
+++			return 0;
+++		}
+++		break;
+ +	}
+ +
+ +	return -EINVAL;
+ +}
+ +
+ +static void rdt_fs_context_free(struct fs_context *fc)
+ +{
+ +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
+ +
+ +	kernfs_free_fs_context(fc);
+ +	kfree(ctx);
+ +}
+ +
+ +static const struct fs_context_operations rdt_fs_context_ops =3D {
+ +	.free		=3D rdt_fs_context_free,
+ +	.parse_param	=3D rdt_parse_param,
+ +	.get_tree	=3D rdt_get_tree,
+ +};
+ +
+ +static int rdt_init_fs_context(struct fs_context *fc, struct dentry *refe=
+rence)
+ +{
+ +	struct rdt_fs_context *ctx;
+ +
+ +	ctx =3D kzalloc(sizeof(struct rdt_fs_context), GFP_KERNEL);
+ +	if (!ctx)
+ +		return -ENOMEM;
+ +
+ +	ctx->kfc.root =3D rdt_root;
+ +	ctx->kfc.magic =3D RDTGROUP_SUPER_MAGIC;
+ +	fc->fs_private =3D &ctx->kfc;
+ +	fc->ops =3D &rdt_fs_context_ops;
+ +	return 0;
+  }
+ =20
+  static int reset_all_ctrls(struct rdt_resource *r)
+
+--Sig_/3BX=4/RIDil5BdQBMqHiwwS
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7YT4ACgkQAVBC80lX
-0GxNVQgAln0putbeCP7FR646d1MrjqPMR88/dTMrBbu6gRrRVDwLucOfAlHi00U2
-xjvwP/VXuL7qI9Xr4erdSTohXKjQIZXY8rG8qeEqM2AR0O6M8jYMllUW130H0Gyr
-tJ0F3N3JWKQBLZ87NAOYxGEys83WDzhbN+oGeN8UviDc+hFItlOu69uZedbvMxte
-3ZmApoWDEp9HWVdQLHXkcJgrEKnZZOMKUvFuP8Xu5+uPEm35h2BJCJQ6gMGfmx3m
-25BPa0AXhppySVksPLTRB+BBXLcrffjljbiQLvW2s6WHcDIADHb4G2Q0nAfL7eU2
-vNBjUrjkhlLpBkGIYlr92Y9B9XemBw==
-=4Ent
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7eP0ACgkQAVBC80lX
+0GwLnAf+NcpW5uzfZwQwU+wzNDzQ7xS2g83eds5fNEXheWwkX2dYegLPDLOpS5V2
+pk6GZ9UvAzlVfl5LG3UNHpI2A33wSyYL1Fg3JBGgQ0FE6/coAACoGtpvd2Lm7qLy
+8zEYVN3YKTOXO9erKgwm//fLhExMIsHgjD5rKs1Bsh1VqW2/plzc3mL/AfRjMzSf
+a9qvTv1vSUmgMHu7jxaWC8ZnpUb4sqztb7S22/LKUIF++4NZTBV1DSVCNaaQEFj2
+/I/QhOXfG95C8BFUA6qXwagcv74DZ1LUlqYQw7MRX0xKlQhxW3DTAMU/W9ZglAIM
+t6PSFi8oht0/d4tvahbsjIKpkBj0yg==
+=dyMm
 -----END PGP SIGNATURE-----
 
---Sig_/AwU8QGKYH6YqgLMvrOcdeEz--
+--Sig_/3BX=4/RIDil5BdQBMqHiwwS--
