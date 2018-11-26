@@ -1,60 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the cifs tree
-Date: Mon, 26 Nov 2018 11:52:47 +1100
-Message-ID: <20181126115247.53cbf7be@canb.auug.org.au>
-References: <20181126111415.5cf17f39@canb.auug.org.au>
-        <CAH2r5mvtFzp=nYK+J92vh9y4tsNLT3rD4a2+mB9LMyWcFN-EHA@mail.gmail.com>
+Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes
+ tree
+Date: Mon, 26 Nov 2018 13:37:15 +1100
+Message-ID: <20181126133715.378e8d9d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/914m7+LezhCz7kA/2bBuqhG"; protocol="application/pgp-signature"
+ boundary="Sig_/qs_cfbgb3z0ReS7cdl193FF"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAH2r5mvtFzp=nYK+J92vh9y4tsNLT3rD4a2+mB9LMyWcFN-EHA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steve French <smfrench@gmail.com>
-Cc: Sachin Prabhu <sprabhu@redhat.com>, CIFS <linux-cifs@vger.kernel.org>, keescook@google.com, Linux-Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Lyude Paul <lyude@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/914m7+LezhCz7kA/2bBuqhG
+--Sig_/qs_cfbgb3z0ReS7cdl193FF
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steve,
+Hi all,
 
-On Sun, 25 Nov 2018 18:31:40 -0600 Steve French <smfrench@gmail.com> wrote:
->
-> Both of those cases are intentional fallthroughs and there are
-> existing comments in the code noting the reasons for them to
-> fallthrough
->=20
-> (also can see the reasoning for these in the commits which introduced
-> them from Sachin c369c9a4a7c82) and dde2356c84662)
+Today's linux-next merge of the drm tree got a conflict in:
 
-I am not questioning that :-)
+  drivers/gpu/drm/meson/meson_crtc.c
 
-The gcc warning can be turned off by adding a /* fall through */
-comment at the point the fall through happens.  Kees and others are
-working on the several hundred other places that need annotating.
+between commit:
 
-This one just popped up.
+  47ebfb6ed13e ("drm/meson: Fixes for drm_crtc_vblank_on/off support")
+
+from the drm-misc-fixes tree and commit:
+
+  f9a2348196d1 ("drm/meson: Support Overlay plane for video rendering")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/914m7+LezhCz7kA/2bBuqhG
+diff --cc drivers/gpu/drm/meson/meson_crtc.c
+index 191b314f9e9e,d78168f979db..000000000000
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@@ -126,8 -115,8 +131,10 @@@ static void meson_crtc_atomic_disable(s
+  	struct meson_crtc *meson_crtc =3D to_meson_crtc(crtc);
+  	struct meson_drm *priv =3D meson_crtc->priv;
+ =20
++ 	DRM_DEBUG_DRIVER("\n");
++=20
+ +	drm_crtc_vblank_off(crtc);
+ +
+  	priv->viu.osd1_enabled =3D false;
+  	priv->viu.osd1_commit =3D false;
+ =20
+
+--Sig_/qs_cfbgb3z0ReS7cdl193FF
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7Q98ACgkQAVBC80lX
-0GxJXwf/YbJmvqG4cflEZDjeqL/qziZ5xfP7S3vWetuFVBU+fYrAGVxeKhRHmb2F
-6fk3UNhtanCj895jn4xW7JhyKJ3PBkrtwJRcYtnfGR1TwhXvLX/wwGOFi1PqfUKe
-1tdBF29iXUoKik8lqMGUpJFCDpTSems77gMSuvz1I3B5/rMMueXqdLBaQpGROm1q
-/OrNs0yJ89EKiIrGNLH/ii6c5Fx2z66/P6fkx2rO0fACbgJy1V3UimaStofutHJw
-8WyLjhiYzUBnuEnLB8GbBJCIz8iFUw6UnfrZgdXsjpIwxNhPd3t/38oScK+FzWm9
-9eaTlVopq0D91mJbp5BVElIsdjC6aQ==
-=p9lr
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7XFsACgkQAVBC80lX
+0GzMpQgAmcb2ySHlYwpuRYY+SvS3NKyD66j4nX/WTs/MdCbjJET4e5CNiWegBxwm
++pj7s6p8L9ux54xj+yDJMoNd1nZyblPOPuRtTlDV+/TNEsB5J6OBG7LvSbHZNmvm
+VNtCep5DTT4+kFIkj5Mk6kg8KTQEr6Suhv9dTniUOxvvvdwMSt6KyZuiPdsxOp2t
+vVPvC8s7jRwvoV2LcL8TXMFulDObpv3NcmSs3q/Bboop1gtT9/QTNFwzOtqKTv6y
+cd1Q/MWRHBITB4RupHm32iCASH9qGvvrYkDGjvmMBBZb87/qGr9/G2c/smFP9Jdf
+OLFJzLKHXy08L5E+fP0ywXCA3CESxg==
+=jSpn
 -----END PGP SIGNATURE-----
 
---Sig_/914m7+LezhCz7kA/2bBuqhG--
+--Sig_/qs_cfbgb3z0ReS7cdl193FF--
