@@ -1,44 +1,53 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: linux-next: build warnings after merge of the cifs tree
-Date: Sun, 25 Nov 2018 21:48:10 -0800
-Message-ID: <CAGXu5jJDbUZBmbx1ODS72WJKfcv20aMZczq=k4p4OhG8SV0roQ@mail.gmail.com>
-References: <20181126111415.5cf17f39@canb.auug.org.au> <CAH2r5mvtFzp=nYK+J92vh9y4tsNLT3rD4a2+mB9LMyWcFN-EHA@mail.gmail.com>
- <20181126115247.53cbf7be@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the slave-dma tree
+Date: Mon, 26 Nov 2018 16:59:03 +1100
+Message-ID: <20181126165903.33b1d872@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ksmqb21AMh4WREzYD+BsDzZ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181126115247.53cbf7be@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: smfrench@gmail.com, sprabhu@redhat.com, linux-cifs@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Nov 25, 2018 at 4:52 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Steve,
->
-> On Sun, 25 Nov 2018 18:31:40 -0600 Steve French <smfrench@gmail.com> wrote:
-> >
-> > Both of those cases are intentional fallthroughs and there are
-> > existing comments in the code noting the reasons for them to
-> > fallthrough
-> >
-> > (also can see the reasoning for these in the commits which introduced
-> > them from Sachin c369c9a4a7c82) and dde2356c84662)
->
-> I am not questioning that :-)
->
-> The gcc warning can be turned off by adding a /* fall through */
-> comment at the point the fall through happens.  Kees and others are
-> working on the several hundred other places that need annotating.
+--Sig_/Ksmqb21AMh4WREzYD+BsDzZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Right. The goal is to avoid adding any _new_ cases of this. :)
+Hi Vinod,
 
-> This one just popped up.
+After merging the slave-dma tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-It's already working! :) Thanks Stephen!
+drivers/dma/coh901318.c: In function 'coh901318_config':
+drivers/dma/coh901318.c:1805:16: warning: unused variable 'flags' [-Wunused=
+-variable]
+  unsigned long flags;
+                ^~~~~
 
--Kees
+Introduced by commit
 
--- 
-Kees Cook
+  627469e4445b ("dmaengine: coh901318: Fix a double-lock bug")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ksmqb21AMh4WREzYD+BsDzZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7i6cACgkQAVBC80lX
+0Gw0tQf8Csjahcy+/StWF7NgyoZVKwUbq0BQDqz4+Hqa16/eJU8E/1N6EyqiFeWt
+jzmZskqG75+4uhAWlB3WGmKYr+1XT06VxXPtYo2ryvcjgFR2IE9YWJmn2WR6Wxvy
+I9muX7t7gaYX3IzuWFGdb94GA7B54xo2I9tX3lYGmZ6d/GaUF3rIiIo9yFzHIzFq
+yHWsAfcp0fZcQJI2n5Y6Uh+/m+bJwUxMiqTZi73Pqb4aESiYWbJTJV/RRdzMsjKO
+SjJvofKxNoozsbbaU01HOcKxm/joXP2Ah6INhjD+sgY7fqFwbRunqSgAaV2+AeGg
+cWINGha+Rk20N3e7BQX80067MJ5N3g==
+=aFRh
+-----END PGP SIGNATURE-----
+
+--Sig_/Ksmqb21AMh4WREzYD+BsDzZ--
