@@ -1,73 +1,62 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: linux-next: build warning after merge of the f2fs tree
-Date: Mon, 26 Nov 2018 16:36:36 -0600
-Message-ID: <37611a15-da14-1796-5f4c-1278d46a4329@embeddedor.com>
-References: <20181126111933.1b0fb324@canb.auug.org.au>
- <20181126215924.GA55960@jaegeuk-macbookpro.roam.corp.google.com>
- <20181127091747.4830d123@canb.auug.org.au>
- <20181126222257.GB55960@jaegeuk-macbookpro.roam.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the selinux tree with the vfs tree
+Date: Tue, 27 Nov 2018 11:52:46 +1100
+Message-ID: <20181127115246.00967523@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AwPieLJlQ0s7/md85VE7dS3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181126222257.GB55960@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kees Cook <keescook@google.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/AwPieLJlQ0s7/md85VE7dS3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Paul,
 
-On 11/26/18 4:22 PM, Jaegeuk Kim wrote:
-> On 11/27, Stephen Rothwell wrote:
-[..]
-> 
-> Oh, thanks~
-> Is this okay?
-> 
+Today's linux-next merge of the selinux tree got a conflict in:
 
-Yep. This fix the warning. :)
+  security/selinux/hooks.c
 
-Thanks, Jaegeuk
---
-Gustavo
+between commit:
 
->  From 79e24f1509e5b6a07069be9cc8163969da78c57a Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Mon, 26 Nov 2018 14:20:32 -0800
-> Subject: [PATCH] f2fs: avoid build warn of fall_through
-> 
-> After merging the f2fs tree, today's linux-next build
->   (x86_64_allmodconfig) produced this warning:
-> 
->   In file included from fs/f2fs/dir.c:11:
->   fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
->   fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->      if (set)
->         ^
->   fs/f2fs/f2fs.h:2390:2: note: here
->     case FI_DATA_EXIST:
->     ^~~~
-> 
->   Exposed by my use of -Wimplicit-fallthrough
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->   fs/f2fs/f2fs.h | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 26ad1de8641c..b3fe6803d4c6 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2387,6 +2387,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
->   	case FI_NEW_INODE:
->   		if (set)
->   			return;
-> +		/* fall through */
->   	case FI_DATA_EXIST:
->   	case FI_INLINE_DOTS:
->   	case FI_PIN_FILE:
-> 
+  0472421f47a9 ("vfs: Remove unused code after filesystem context changes")
+
+from the vfs tree and commit:
+
+  2cbdcb882f97 ("selinux: always allow mounting submounts")
+
+from the selinux tree.
+
+I fixed it up (the former removed the function updated by the latter -
+I am not sure if there are further changes necessary) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AwPieLJlQ0s7/md85VE7dS3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv8lV4ACgkQAVBC80lX
+0GzmNQf+PYsp3VMenibDZWFRGsjP4FClRFLbTGQ3KZ79glrpDgl7fjWyB3HyGCmV
+ezN9j1a+/Bz5oagt8/c29qxQq7s1EG36+GcRff4SsY8fisanxpvBM4FyLQR39078
+iiX5W605TX6aIxR2gg8K1WKlJc6xhmCWQuLvdPGlZIQWto17GXDciJEwKuQ0rlr+
+cuMVCYJ6n4hNTsibhs9DwZt4dQS0uKv+gDrag34Cca0Wp4aOE1Ad2t3mEnWPzLFN
+EmQVcSTCzC373RyDsUEpUtxpe8o7GsGqdTvf2rv8tyQ6RSiyKdkRpMo//JmL4b7W
+a2u9i00KGbTDZzkCtdqVVMIkO0A3bA==
+=3cUg
+-----END PGP SIGNATURE-----
+
+--Sig_/AwPieLJlQ0s7/md85VE7dS3--
