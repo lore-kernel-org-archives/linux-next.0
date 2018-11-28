@@ -1,17 +1,17 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Nov 27 (net/ipv4/af_inet.c)
-Date: Tue, 27 Nov 2018 19:47:28 -0800
-Message-ID: <f43a02d1-db24-369f-90df-8f7326144195@infradead.org>
+Subject: Re: linux-next: Tree for Nov 27 (scsi/aha1542)
+Date: Tue, 27 Nov 2018 20:14:58 -0800
+Message-ID: <ef9090cf-e86a-7fd0-dfa9-6810eaaf7e65@infradead.org>
 References: <20181127152539.55426063@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181127152539.55426063@canb.auug.org.au>
 Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 On 11/26/18 8:25 PM, Stephen Rothwell wrote:
@@ -20,13 +20,11 @@ On 11/26/18 8:25 PM, Stephen Rothwell wrote:
 > Changes since 20181126:
 > 
 
-as reported for linux-next-20181109:
-(see https://lore.kernel.org/lkml/499e91d0-7349-641f-9826-7535713176f8@infradead.org/)
+on i386:
 
-when CONFIG_PROC_FS is not enabled:
+ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
 
-ld: net/ipv4/af_inet.o: in function `inet_init':
-af_inet.c:(.init.text+0x42d): undefined reference to `raw_init'
+somewhere in aha1542_interrupt() according to objdump.
 
 
 -- 
