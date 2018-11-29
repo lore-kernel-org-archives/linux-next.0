@@ -1,53 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the clk tree
-Date: Fri, 30 Nov 2018 09:03:25 +1100
-Message-ID: <20181130090325.7526140e@canb.auug.org.au>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+Date: Thu, 29 Nov 2018 17:23:24 -0500
+Message-ID: <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
+References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au> <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5w=Bnuv=9s_CopRFLzS.c2B"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lucas Stach <l.stach@pengutronix.de>, Abel Vesa <abel.vesa@nxp.com>
+To: omosnace@redhat.com
+Cc: sfr@canb.auug.org.au, viro@zeniv.linux.org.uk, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dhowells@redhat.com, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5w=Bnuv=9s_CopRFLzS.c2B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 29, 2018 at 5:07 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> On Wed, Nov 28, 2018 at 10:52 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > Hi Ondrej,
+> > >
+> > > On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > >
+> > > > Hm... seems that there was some massive overhaul in the VFS code right
+> > > > at the wrong moment... There are new hooks for mounting now and the
+> > >
+> > > The mount changes have been in linux-next since before the last
+> > > release ...
+> > >
+> > > > code that our commit changes is now here:
+> > > >
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
+> > > >
+> > > > It seems that the logic is still the same, just now our patch (or the
+> > > > VFS one) needs to be updated to change the above line as such
+> > > > (untested pseudo-patch):
+> > > >
+> > > > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
+> > > > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
+> > >
+> > > OK, so from tomorrow I will use that merge resolution.  Someone needs
+> > > to remember to tell Linus about this when the latter of the vfs and
+> > > selinux trees reach him.
+> >
+> > I will, or at least I'll do my best to remember; since we only have a
+> > few more week until the merge window I like my odds.  FWIW, I
+> > typically do a test merge on top of Linus' tree before sending the
+> > SELinux PR just to verify that everything is relatively clean and
+> > there are no surprises.
+> >
+> > Ondrej, please work with David Howells to ensure that submounts are
+> > handled correctly in his mount rework.
+>
+> OK, I will verify that the SELinux submount fix rebased on top of
+> vfs/work.mount in the way I suggested above passes the same testing
+> (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
+> kernels (vfs/work.mount with and without the fix) to test. Let me know
+> if there is anything more to do.
 
-Hi all,
+Thanks.
 
-After merging the clk tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+The big thing is just making sure that we don't regress on the fix in
+selinux/next if/when David's mount rework hits Linus' tree.
 
-arm-linux-gnueabi-ld: drivers/clk/imx/clk-frac-pll.o: in function `clk_pll_=
-round_rate':
-clk-frac-pll.c:(.text+0x50): undefined reference to `__aeabi_uldivmod'
-
-Caused by commit
-
-  9fd680d0fafd ("clk: imx: add fractional PLL output clock")
-
-I have used the clk tree from next-20181129 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5w=Bnuv=9s_CopRFLzS.c2B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAYi0ACgkQAVBC80lX
-0GzI8gf9HFn6FEGZpfjlEjDmk9VAO8pqSde850yQIoTNZYdOj0DPUgaGiAPHVccR
-0uU7I5yWMiBfuCpp3OWesfMiDjhb98Wj8sxqbqHljjY8M7kWSn6BHwIYStQuyuyO
-DUzHuxPtxRfGEFtcbj2ApZU/2Up8Hec1uEVNLs0JTo5I0Wm89QRG4v22Vm794oau
-/rsZNfhGj+0W+mPGvBYZLTvq2V3kxrzxmV1POoTpqbH8MS/uxJoEUj1ZuVD7WjBL
-/sFM4UusrMlausFGC0qU+nia1EFvfHIrETFqamzfCoHvDfJPPyKeLyNmmn2z8ciZ
-lph8ZRTAwmm1tol495g2vOqZLgzEnw==
-=5mU8
------END PGP SIGNATURE-----
-
---Sig_/5w=Bnuv=9s_CopRFLzS.c2B--
+-- 
+paul moore
+www.paul-moore.com
