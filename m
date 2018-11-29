@@ -1,55 +1,44 @@
-From: Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx: Use do_div in SCCG due to 64-bit divisor
-Date: Thu, 29 Nov 2018 23:50:22 +0000
-Message-ID: <1543535413-1256-1-git-send-email-abel.vesa@nxp.com>
-References: <20181130090325.7526140e@canb.auug.org.au>
+From: Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+Date: Thu, 29 Nov 2018 23:51:30 +0000
+Message-ID: <20181129235130.GI2217@ZenIV.linux.org.uk>
+References: <20181127115246.00967523@canb.auug.org.au>
+ <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au>
+ <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
+ <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181130090325.7526140e@canb.auug.org.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Abel Vesa <abelvesa@linux.com>, dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: omosnace@redhat.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dhowells@redhat.com, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On arm32, a division with a 64-bit divisor has to be done through
-do_div() function otherwise there is a link failure like:
+On Thu, Nov 29, 2018 at 05:23:24PM -0500, Paul Moore wrote:
 
-drivers/clk/imx/clk-frac-pll.o: In function `clk_pll_round_rate':
-clk-frac-pll.c:(.text+0x54): undefined reference to `__aeabi_uldivmod'
-make: *** [Makefile:1040: vmlinux] Error 1
+> > OK, I will verify that the SELinux submount fix rebased on top of
+> > vfs/work.mount in the way I suggested above passes the same testing
+> > (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
+> > kernels (vfs/work.mount with and without the fix) to test. Let me know
+> > if there is anything more to do.
+> 
+> Thanks.
+> 
+> The big thing is just making sure that we don't regress on the fix in
+> selinux/next if/when David's mount rework hits Linus' tree.
 
-Fixes: 9fd680d0fafd ("clk: imx: add fractional PLL output clock")
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/clk/imx/clk-frac-pll.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+FWIW, the whole thing is getting massaged/reordered/etc. and I would
+like some input from you guys at some point - assuming that I recover
+the ability to talk about LSM without obscenities...
 
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.=
-c
-index 9872620..8b13df9 100644
---- a/drivers/clk/imx/clk-frac-pll.c
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -116,12 +116,13 @@ static long clk_pll_round_rate(struct clk_hw *hw, uns=
-igned long rate,
- 			       unsigned long *prate)
- {
- 	u64 parent_rate =3D *prate;
--	u32 divff, divfi;
--	u64 temp64;
-+	u64 divff, divfi;
-+	u64 temp64 =3D rate;
-=20
- 	parent_rate *=3D 8;
- 	rate *=3D 2;
--	divfi =3D rate / parent_rate;
-+	do_div(temp64, parent_rate);
-+	divfi =3D temp64;
- 	temp64 =3D rate - divfi * parent_rate;
- 	temp64 *=3D PLL_FRAC_DENOM;
- 	do_div(temp64, parent_rate);
---=20
-2.7.4
+Question: what *should* happen if we try to cross into a submount and find
+that the thing on the other side is already mounted elsewhere, with incompatible
+LSM options?  Ditto for referrals, with an extra twist - what if we are given
+3 alternatives, the first two already mounted elsewhere with incompatible
+options, the third one not mounted anywhere yet?
+
+Incidentally, should smack have ->sb_clone_mnt_opts()?
