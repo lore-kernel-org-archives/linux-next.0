@@ -1,63 +1,60 @@
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Thu, 29 Nov 2018 11:07:21 +0100
-Message-ID: <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
-References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au> <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: linux-next: build warning after merge of the qcom tree
+Date: Thu, 29 Nov 2018 08:30:48 -0800
+Message-ID: <154350904879.88331.1156146258217230705@swboyd.mtv.corp.google.com>
+References: <20181116101059.18ad3fc9@canb.auug.org.au>
+ <20181129082540.4ceafca6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+In-Reply-To: <20181129082540.4ceafca6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Andy Gross <agross@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 28, 2018 at 10:52 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Ondrej,
-> >
-> > On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > Hm... seems that there was some massive overhaul in the VFS code right
-> > > at the wrong moment... There are new hooks for mounting now and the
-> >
-> > The mount changes have been in linux-next since before the last
-> > release ...
-> >
-> > > code that our commit changes is now here:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
-> > >
-> > > It seems that the logic is still the same, just now our patch (or the
-> > > VFS one) needs to be updated to change the above line as such
-> > > (untested pseudo-patch):
-> > >
-> > > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-> > > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
-> >
-> > OK, so from tomorrow I will use that merge resolution.  Someone needs
-> > to remember to tell Linus about this when the latter of the vfs and
-> > selinux trees reach him.
->
-> I will, or at least I'll do my best to remember; since we only have a
-> few more week until the merge window I like my odds.  FWIW, I
-> typically do a test merge on top of Linus' tree before sending the
-> SELinux PR just to verify that everything is relatively clean and
-> there are no surprises.
->
-> Ondrej, please work with David Howells to ensure that submounts are
-> handled correctly in his mount rework.
+Quoting Stephen Rothwell (2018-11-28 13:25:40)
+> Hi all,
+> =
 
-OK, I will verify that the SELinux submount fix rebased on top of
-vfs/work.mount in the way I suggested above passes the same testing
-(seliinux-testsuite + NFS crossmnt reproducer). I am now building two
-kernels (vfs/work.mount with and without the fix) to test. Let me know
-if there is anything more to do.
+> On Fri, 16 Nov 2018 10:10:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Hi all,
+> > =
 
-Thanks,
+> > After merging the qcom tree, today's linux-next build (arm
+> > multi_v7_defconfig) produced this warning:
+> > =
 
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+> > drivers/gpu/drm/msm/adreno/a6xx_gmu.c: In function 'a6xx_gmu_rpmh_arc_v=
+otes_init.constprop':
+> > drivers/gpu/drm/msm/adreno/a6xx_gmu.c:943:12: warning: 'pri_count' is u=
+sed uninitialized in this function [-Wuninitialized]
+> >   pri_count >>=3D 1;
+> >             ^~~
+> > drivers/gpu/drm/msm/adreno/a6xx_gmu.c:948:12: warning: 'sec_count' may =
+be used uninitialized in this function [-Wmaybe-uninitialized]
+> >   sec_count >>=3D 1;
+> >             ^~~
+> > =
+
+> > Introduced by commit
+> > =
+
+> >   ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux=
+_data()")
+> > =
+
+> > # CONFIG_QCOM_COMMAND_DB is not set
+> =
+
+> I am still getting these warnings.
+> =
+
+
+Andy's email isn't at codeaurora.org anymore. Not sure if that matters
+but he may be missing this.
+
+Either way, thanks for the report. Fix coming shortly.
