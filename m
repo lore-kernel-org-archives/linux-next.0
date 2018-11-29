@@ -1,53 +1,67 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Wed, 28 Nov 2018 16:52:35 -0500
-Message-ID: <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
-References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Thu, 29 Nov 2018 11:24:28 +1100
+Message-ID: <20181129112428.45287471@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/98MDSry6jDRHt9Ep1W=uTQv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181127225013.133adc7d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au, omosnace@redhat.com
-Cc: viro@zeniv.linux.org.uk, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dhowells@redhat.com, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, Kees Cook <keescook@google.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Ondrej,
->
-> On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > Hm... seems that there was some massive overhaul in the VFS code right
-> > at the wrong moment... There are new hooks for mounting now and the
->
-> The mount changes have been in linux-next since before the last
-> release ...
->
-> > code that our commit changes is now here:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
-> >
-> > It seems that the logic is still the same, just now our patch (or the
-> > VFS one) needs to be updated to change the above line as such
-> > (untested pseudo-patch):
-> >
-> > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-> > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
->
-> OK, so from tomorrow I will use that merge resolution.  Someone needs
-> to remember to tell Linus about this when the latter of the vfs and
-> selinux trees reach him.
+--Sig_/98MDSry6jDRHt9Ep1W=uTQv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I will, or at least I'll do my best to remember; since we only have a
-few more week until the merge window I like my odds.  FWIW, I
-typically do a test merge on top of Linus' tree before sending the
-SELinux PR just to verify that everything is relatively clean and
-there are no surprises.
+Hi all,
 
-Ondrej, please work with David Howells to ensure that submounts are
-handled correctly in his mount rework.
+After merging the net-next tree, today's linux-next build
+(x86_64_allmodconfig) produced this warning:
 
--- 
-paul moore
-www.paul-moore.com
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c: In function 'run_xdp':
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:324:3: warning: this state=
+ment may fall through [-Wimplicit-fallthrough=3D]
+   bpf_warn_invalid_xdp_action(xdp_act);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:325:2: note: here
+  case XDP_ABORTED:
+  ^~~~
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:326:3: warning: this state=
+ment may fall through [-Wimplicit-fallthrough=3D]
+   trace_xdp_exception(priv->net_dev, xdp_prog, xdp_act);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:327:2: note: here
+  case XDP_DROP:
+  ^~~~
+
+Introduced by commit
+
+  7e273a8ebdd3 ("dpaa2-eth: Add basic XDP support")
+
+This due to my use of -Wimplicit-fallthrough.  This is new code.  The
+warning can be suppressed by adding a comment like /* fall through */
+at the appropriate places to indicate that the fallthrough is intended.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/98MDSry6jDRHt9Ep1W=uTQv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv/MbwACgkQAVBC80lX
+0Gxf2Qf/YWrIZvqMmkjx8UMwGPfDXUI/bw5l7GEJy03urzZJWem+77ggWgl70r0E
+AL6O4xHPzcv/TAEz+zqb3mae18N/k9uZudqIBQggxi/oPmQTZSQj7mIw0y3mEhRZ
+pOG0v1r3d4P5S7rvi6WTrwNnbzKYWFxIUFyIRCMNyrSB7Sk7DnjCjGwtyXctG2V8
+ZqsJKh6EaCpKVUEfCbxry8VOLN/JRjAOydkGWwAifvNsFcTqG8N+uinoZSd2mn/C
+N+lPshmqYmUJvCETKcABdLEcBY6IVQdoCRYgXO894VGxdlROBWPYGcVsnKteauRG
+3BuPWJbwz9C+IzUobaDc5S9LPA5BpQ==
+=+fzU
+-----END PGP SIGNATURE-----
+
+--Sig_/98MDSry6jDRHt9Ep1W=uTQv--
