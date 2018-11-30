@@ -1,54 +1,73 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Thu, 29 Nov 2018 16:57:20 -0800
-Message-ID: <84796ec6-2603-7957-b159-e4c8b1e7362c@schaufler-ca.com>
-References: <20181127115246.00967523@canb.auug.org.au>
- <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au>
- <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
- <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
- <20181129235130.GI2217@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the wireless-drivers-next
+ tree
+Date: Fri, 30 Nov 2018 12:05:55 +1100
+Message-ID: <20181130120555.1d35eb6b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5vQDyDlwVdeiPE8VRGqP7X8"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181129235130.GI2217@ZenIV.linux.org.uk>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>
-Cc: omosnace@redhat.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dhowells@redhat.com, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, LSM <linux-security-module@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sara Sharon <sara.sharon@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Kees Cook <keescook@google.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-next.vger.kernel.org
 
-On 11/29/2018 3:51 PM, Al Viro wrote:
+--Sig_/5vQDyDlwVdeiPE8VRGqP7X8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've added linux-security-module to the CC list.
+Hi all,
 
-> On Thu, Nov 29, 2018 at 05:23:24PM -0500, Paul Moore wrote:
->
->>> OK, I will verify that the SELinux submount fix rebased on top of
->>> vfs/work.mount in the way I suggested above passes the same testing
->>> (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
->>> kernels (vfs/work.mount with and without the fix) to test. Let me know
->>> if there is anything more to do.
->> Thanks.
->>
->> The big thing is just making sure that we don't regress on the fix in
->> selinux/next if/when David's mount rework hits Linus' tree.
-> FWIW, the whole thing is getting massaged/reordered/etc. and I would
-> like some input from you guys at some point - assuming that I recover
-> the ability to talk about LSM without obscenities...
->
-> Question: what *should* happen if we try to cross into a submount and find
-> that the thing on the other side is already mounted elsewhere, with incompatible
-> LSM options?  Ditto for referrals, with an extra twist - what if we are given
-> 3 alternatives, the first two already mounted elsewhere with incompatible
-> options, the third one not mounted anywhere yet?
+After merging the wireless-drivers-next tree, today's linux-next build
+(x86_64 allmodconfig) produced these warnings:
 
-I fear that the safe answer and the containers answer are likely
-to differ. The safe answer has to be to refuse the mount.
+drivers/net/wireless/intel/iwlwifi/iwl-drv.c: In function 'iwl_parse_tlv_fi=
+rmware':
+drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1098:7: warning: this statemen=
+t may fall through [-Wimplicit-fallthrough=3D]
+    if (iwlwifi_mod_params.enable_ini)
+       ^
+drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1100:3: note: here
+   default:
+   ^~~~~~~
+drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c: In function 'iwl_parse_fw=
+_dbg_tlv':
+drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:203:4: warning: this state=
+ment may fall through [-Wimplicit-fallthrough=3D]
+    iwl_fw_dbg_copy_tlv(trans, tlv, true);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:204:3: note: here
+   default:
+   ^~~~~~~
 
-> Incidentally, should smack have ->sb_clone_mnt_opts()?
+Introduced by commit
 
-Probably, but I could never figure out what it was for,
-and haven't identified a problem with not using it.
+  f14cda6f3b31 ("iwlwifi: trans: parse and store debug ini TLVs")
+
+These are noted because I use -Wimplict-fallthrough
+
+The warnings can be suppressed by adding a comment like
+	/* fall through */
+at the appropriate place to indicate that the fallthough is intended.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5vQDyDlwVdeiPE8VRGqP7X8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAjPMACgkQAVBC80lX
+0GxD9gf/akxcHvNuNbGQK28xcmepUq9REkgKWl0+BRhByx0rlxak17GwBFxMa/qJ
+sOZWsoIz9hItnKmDKVbk/uQX2TTVLV5i1iqNXx6YCwVdnMsosqYZmunWuFJr0WEm
+yFgF2O5B/oqKDiT5YprCX9eFSO7TfG0Z8vxfof9F0HycIFSJzQYCC4nkiKH8dgYU
+5nWxZK6gsTU4gDBGUjXE+QqQ5oi8Stn9Ldnfv8YIsJElyE7tndYhvyWZOpOgpKm/
+6ACdrSPNsy3mn1j1L7ONR/x7ZmdHFo2qN+FFBANzxAerxCgRO7TFxiDJOs1WLkbS
+iRstiLQCvXigJNShoInjdgSgHgjIcA==
+=cF0/
+-----END PGP SIGNATURE-----
+
+--Sig_/5vQDyDlwVdeiPE8VRGqP7X8--
