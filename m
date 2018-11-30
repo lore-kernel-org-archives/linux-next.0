@@ -1,54 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm tree
-Date: Fri, 30 Nov 2018 16:40:30 +1100
-Message-ID: <20181130164030.3dbeb8b4@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the
+ wireless-drivers-next tree
+Date: Fri, 30 Nov 2018 16:50:06 +1100
+Message-ID: <20181130165006.60b2545f@canb.auug.org.au>
+References: <20181130120555.1d35eb6b@canb.auug.org.au>
+        <87lg5b5glw.fsf@kamboji.qca.qualcomm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yiQl9OK0_w+H=ql+FP9TfeD"; protocol="application/pgp-signature"
+ boundary="Sig_/a2CF3TbSIR18W7Y1n.ytmZo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <87lg5b5glw.fsf@kamboji.qca.qualcomm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Rodgman <dave.rodgman@arm.com>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Wireless <linux-wireless@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sara Sharon <sara.sharon@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Kees Cook <keescook@google.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/yiQl9OK0_w+H=ql+FP9TfeD
+--Sig_/a2CF3TbSIR18W7Y1n.ytmZo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Kalle,
 
-After merging the akpm tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+On Fri, 30 Nov 2018 06:33:47 +0200 Kalle Valo <kvalo@codeaurora.org> wrote:
+>
+> I take it that -Wimplict-fallthrough is not enabled by default yet? So
+> Dave and Linus won't see these warnings?
 
-lib/lzo/lzo1x_compress.c: In function 'lzo1x_1_do_compress':
-lib/lzo/lzo1x_compress.c:239:14: warning: 'm_pos' may be used uninitialized=
- in this function [-Wmaybe-uninitialized]
-   m_off =3D ip - m_pos;
-           ~~~^~~~~~~
-Probably introduced by patch
+Correct.
 
-  "lib/lzo: implement run-length encoding"
-or
-  "lib/lzo: separate lzo-rle from lzo"
+> What I'm planning is to send a pull request to Dave today and fix these
+> warnings in the next pull request. Does that sound good?
+
+That sounds fine.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/yiQl9OK0_w+H=ql+FP9TfeD
+--Sig_/a2CF3TbSIR18W7Y1n.ytmZo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAzU4ACgkQAVBC80lX
-0Gz3gAf/eue7DBYUc3dJFaInC25gKclZKgmetu5lVK+oKZBhXeglywuahWGUxgID
-y1Fe2yBq8UXeWD3nWm9wt6JC1cy4V4mlNszJ2OPlncFCCVzo7J09Oiu19k+vpaEQ
-lxwWIxel0hxxulehpbDjyBExcR/NY9jH4KO2iDLC1RfRep//hj5ULF9aAAS0uroo
-jKCDYnJUM4R92bw//gX+8EvGrlRmQq0BA4A3dEWIgzb4DpU9IgfKarNxssbfsPRa
-PDVYM91Fwn07DbNWplhHU+qCZ1c0xIRaNSq0X4OefyHsiW0u4TedID1ZVrwA88rt
-4T5VHyCyzatz7kQyVX3w7ciw8pr7wg==
-=iur9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAz44ACgkQAVBC80lX
+0GxIrwf/ZJtOZXL8kuiqTAcbsE005hRgfxjx74aCXNPTTa6ksvWFQowSRbySeLk0
+aMLbO4eHn2KKeLwmimkZcRuE1/AzcLXsXLZktCeuqw+EDl9VN5S1OdS1Px5s3uba
+EP/vMo70ltzWVMC5y5EI4wnhIVd3MMA9Corw6g0aLsX6ID+yULrKuyp5VPbqMLo8
+sUXgHHKCkAtES976YJ7xuJuAe9plaR84fahVkDWjfeZ6PVYM/3njUxs8ty+YiZ+8
+0tEaNU9QRHNGNVlyl3PBXyWLHz6PBBeyK5onC7CkoB6b2sE/9gg0S1dS9GZfbEGH
+JwwABrV+rqOFmaUhwHA7FS/r/d2OuQ==
+=82gj
 -----END PGP SIGNATURE-----
 
---Sig_/yiQl9OK0_w+H=ql+FP9TfeD--
+--Sig_/a2CF3TbSIR18W7Y1n.ytmZo--
