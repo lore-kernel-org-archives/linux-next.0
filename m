@@ -1,34 +1,92 @@
 From: Ondrej Mosnacek <omosnace@redhat.com>
 Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Fri, 30 Nov 2018 16:17:33 +0100
-Message-ID: <CAFqZXNvGwH4rjdTUsiDjScxV5bkPq=gHs4w3TF-cPMBcun1U_A@mail.gmail.com>
+Date: Sat, 1 Dec 2018 22:32:17 +0100
+Message-ID: <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
 References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <11581.1543590618@warthog.procyon.org.uk>
+ <20181127225013.133adc7d@canb.auug.org.au> <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <11581.1543590618@warthog.procyon.org.uk>
+In-Reply-To: <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Howells <dhowells@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Nov 30, 2018 at 4:10 PM David Howells <dhowells@redhat.com> wrote:
-> Ondrej Mosnacek <omosnace@redhat.com> wrote:
+On Thu, Nov 29, 2018 at 11:07 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Wed, Nov 28, 2018 at 10:52 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > Hi Ondrej,
+> > >
+> > > On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > >
+> > > > Hm... seems that there was some massive overhaul in the VFS code right
+> > > > at the wrong moment... There are new hooks for mounting now and the
+> > >
+> > > The mount changes have been in linux-next since before the last
+> > > release ...
+> > >
+> > > > code that our commit changes is now here:
+> > > >
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
+> > > >
+> > > > It seems that the logic is still the same, just now our patch (or the
+> > > > VFS one) needs to be updated to change the above line as such
+> > > > (untested pseudo-patch):
+> > > >
+> > > > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
+> > > > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
+> > >
+> > > OK, so from tomorrow I will use that merge resolution.  Someone needs
+> > > to remember to tell Linus about this when the latter of the vfs and
+> > > selinux trees reach him.
+> >
+> > I will, or at least I'll do my best to remember; since we only have a
+> > few more week until the merge window I like my odds.  FWIW, I
+> > typically do a test merge on top of Linus' tree before sending the
+> > SELinux PR just to verify that everything is relatively clean and
+> > there are no surprises.
+> >
+> > Ondrej, please work with David Howells to ensure that submounts are
+> > handled correctly in his mount rework.
 >
-> > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-> > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
->
-> It's not a bitmask, so you can't do that.  You'd need to do:
->
->         if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT ||
->             fc->purpose == FS_CONTEXT_FOR_SUBMOUNT)
->
-> or use a switch.
+> OK, I will verify that the SELinux submount fix rebased on top of
+> vfs/work.mount in the way I suggested above passes the same testing
+> (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
+> kernels (vfs/work.mount with and without the fix) to test. Let me know
+> if there is anything more to do.
 
-Damn, you're right... I should have noticed that there is '==' instead of '&' :/
+I tested the proposed patch ([1]; fixed as per correction from David
+Howells) applied on top of patches v4.19-rc3..vfs/work.mount applied
+on top of the 4.19.5-300 Fedora 29 kernel.
 
-Thanks,
+However, the submount test was still failing, so I looked again at the
+list of the possible 'purpose' values and it turns out the value used
+by NFS et al. is actually FS_CONTEXT_FOR_ROOT_MOUNT (it is actually
+documented nicely in Documentation/filesystems/mount_api.txt). So I'll
+need to build a new test kernel with updated patch ([2]) and retest...
+
+BTW, the vfs/work.mount changes alone seem to cause some overlay test
+failures (I didn't test a clean 4.19.5 so it may be due to some stable
+patch as well):
+
+Test Summary Report
+-------------------
+overlay/test              (Wstat: 3072 Tests: 119 Failed: 12)
+ Failed tests:  66, 74, 76-77, 79, 87, 95, 103, 108, 110-111
+               117
+ Non-zero exit status: 12
+
+The failing tests are all in the context mount section, but I don't
+think this is (directly) related to [3] because there are much more
+tests failing and the kernel I was testing didn't include the
+problematic OverlayFS patch. Perhaps the VFS patches somehow broke the
+parsing of the context= mount option?
+
+[1] https://gitlab.com/omos/linux-public/commit/fe5478717ddde92e3ea599e14051ad57522fdf47
+[2] https://gitlab.com/omos/linux-public/commit/f5c58adc7babd62e4bfe8cda799459d263dc5186
+[3] https://github.com/SELinuxProject/selinux-kernel/issues/43
 
 --
 Ondrej Mosnacek <omosnace at redhat dot com>
