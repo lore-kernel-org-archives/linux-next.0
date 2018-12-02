@@ -1,116 +1,46 @@
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Sun, 2 Dec 2018 10:13:33 +0100
-Message-ID: <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
-References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au> <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com> <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the drm-msm tree
+Date: Sun, 2 Dec 2018 22:17:33 +1100
+Message-ID: <20181202221733.34f7ddcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6niei6bi3HC8sM3rAX0O6IQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Rob Clark <robdclark@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Dec 1, 2018 at 10:32 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Thu, Nov 29, 2018 at 11:07 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > On Wed, Nov 28, 2018 at 10:52 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > Hi Ondrej,
-> > > >
-> > > > On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > > >
-> > > > > Hm... seems that there was some massive overhaul in the VFS code right
-> > > > > at the wrong moment... There are new hooks for mounting now and the
-> > > >
-> > > > The mount changes have been in linux-next since before the last
-> > > > release ...
-> > > >
-> > > > > code that our commit changes is now here:
-> > > > >
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
-> > > > >
-> > > > > It seems that the logic is still the same, just now our patch (or the
-> > > > > VFS one) needs to be updated to change the above line as such
-> > > > > (untested pseudo-patch):
-> > > > >
-> > > > > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-> > > > > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
-> > > >
-> > > > OK, so from tomorrow I will use that merge resolution.  Someone needs
-> > > > to remember to tell Linus about this when the latter of the vfs and
-> > > > selinux trees reach him.
-> > >
-> > > I will, or at least I'll do my best to remember; since we only have a
-> > > few more week until the merge window I like my odds.  FWIW, I
-> > > typically do a test merge on top of Linus' tree before sending the
-> > > SELinux PR just to verify that everything is relatively clean and
-> > > there are no surprises.
-> > >
-> > > Ondrej, please work with David Howells to ensure that submounts are
-> > > handled correctly in his mount rework.
-> >
-> > OK, I will verify that the SELinux submount fix rebased on top of
-> > vfs/work.mount in the way I suggested above passes the same testing
-> > (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
-> > kernels (vfs/work.mount with and without the fix) to test. Let me know
-> > if there is anything more to do.
->
-> I tested the proposed patch ([1]; fixed as per correction from David
-> Howells) applied on top of patches v4.19-rc3..vfs/work.mount applied
-> on top of the 4.19.5-300 Fedora 29 kernel.
->
-> However, the submount test was still failing, so I looked again at the
-> list of the possible 'purpose' values and it turns out the value used
-> by NFS et al. is actually FS_CONTEXT_FOR_ROOT_MOUNT (it is actually
-> documented nicely in Documentation/filesystems/mount_api.txt). So I'll
-> need to build a new test kernel with updated patch ([2]) and retest...
+--Sig_/6niei6bi3HC8sM3rAX0O6IQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Unfortunately, even with FS_CONTEXT_FOR_ROOT_MOUNT the submount test
-is still failing. (Actually, re-reading the description for
-FS_CONTEXT_FOR_ROOT_MOUNT it seems it is not actually related to
-submounts, although we should probably still skip the check for it,
-too.) I will need to dig deeper into this on Monday...
+Hi Rob,
 
-FWIW, the generated AVC denial is still the same so it must be failing
-the check in that particular hook (the FILESYSTEM__MOUNT permission is
-checked only in that single place):
+Commit
 
-type=AVC msg=audit(02.12.2018 01:55:03.626:604) : avc:  denied  {
-mount } for  pid=4036 comm=cat name=/ dev="0:48" ino=2
-scontext=unconfined_u:unconfined_r:test_readnfs_t:s0-s0:c0.c1023
-tcontext=system_u:object_r:nfs_t:s0 tclass=filesystem permissive=0
+  a288ee6eb8d0 ("drm/msm: validate display and event threads")
 
->
-> BTW, the vfs/work.mount changes alone seem to cause some overlay test
-> failures (I didn't test a clean 4.19.5 so it may be due to some stable
-> patch as well):
->
-> Test Summary Report
-> -------------------
-> overlay/test              (Wstat: 3072 Tests: 119 Failed: 12)
->  Failed tests:  66, 74, 76-77, 79, 87, 95, 103, 108, 110-111
->                117
->  Non-zero exit status: 12
->
-> The failing tests are all in the context mount section, but I don't
-> think this is (directly) related to [3] because there are much more
-> tests failing and the kernel I was testing didn't include the
-> problematic OverlayFS patch. Perhaps the VFS patches somehow broke the
-> parsing of the context= mount option?
->
-> [1] https://gitlab.com/omos/linux-public/commit/fe5478717ddde92e3ea599e14051ad57522fdf47
-> [2] https://gitlab.com/omos/linux-public/commit/f5c58adc7babd62e4bfe8cda799459d263dc5186
-> [3] https://github.com/SELinuxProject/selinux-kernel/issues/43
->
-> --
-> Ondrej Mosnacek <omosnace at redhat dot com>
-> Associate Software Engineer, Security Technologies
-> Red Hat, Inc.
+is missing a Signed-off-by from its committer.
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6niei6bi3HC8sM3rAX0O6IQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwDv00ACgkQAVBC80lX
+0Gww0Af/XYLO8GZfq6KIVVMb6kGUORh576YbNXwlwk+lSiYIXXNUjVLk7gN2xAMW
+K75ZaaA4I1pQ2hRsjBDRPUMu5QHlGRbQB3ZIS+anXjvR5EpqumowyF7Y4zWy2SS/
+m9tlJmoht5w0aOFtp7U1OXpMU9+HOWfmnvQ/1NZ23YMtgnFhXEZKwBbWAwklkjAG
+xlcQpyPAdNjcc8gUlDJP6/BGYpG3tytvKSUJmROPyiuYiHq81in3SszUH23vB8L2
+/wmbElg2nR11mvhQ3UqvC0UJJ1hKYpDD2JihmOjXTB0duM/kxcVEW2P+lstKuq4G
+mxXI97GmpG5tTZDJSGWNHYjNK/rwJw==
+=SuLx
+-----END PGP SIGNATURE-----
+
+--Sig_/6niei6bi3HC8sM3rAX0O6IQ--
