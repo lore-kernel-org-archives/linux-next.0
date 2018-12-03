@@ -1,41 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the reset tree with the arm-soc tree
-Date: Mon, 3 Dec 2018 09:26:26 +1100
-Message-ID: <20181203092626.7f1ab2f5@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the fscrypt tree
+Date: Mon, 3 Dec 2018 11:23:45 +1100
+Message-ID: <20181203112345.6c9a786a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6+JRWsYlHtqSZBx10FeT+8L"; protocol="application/pgp-signature"
+ boundary="Sig_/Q._oDp0b403T/oqY4d.1U0j"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgUMOp?= =?UTF-8?B?cm9u?= <peron.clem@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6+JRWsYlHtqSZBx10FeT+8L
+--Sig_/Q._oDp0b403T/oqY4d.1U0j
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Philipp,
+Hi all,
 
-Today's linux-next merge of the reset tree got a conflict in:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-  arch/arm/mach-socfpga/socfpga.c
+  include/linux/fs.h
 
 between commit:
 
-  8f6f8c77fc4d ("reset: socfpga: add an early reset driver for SoCFPGA")
+  a2bd7d2fc32c ("fs-verity: add setup code, UAPI, and Kconfig")
 
-from the arm-soc tree and commit:
+from the fscrypt tree and commit:
 
-  48e2bab90d8e ("ARM: socfpga: Clean unused functions")
+  37744f3d21f8 ("vfs: Implement a filesystem superblock creation/configurat=
+ion context")
+  d5ab33dfd7bc ("vfs: syscall: Add fsinfo() to query filesystem information=
+")
 
-from the reset tree.
-
-Note that it is generally a bad idea to declare extern functions in c
-files ... the declaration should be in some header file that is included
-by the files containing the definition and usage.  That would
-have also removed the need for the forward declaration in
-drivers/reset/reset-socfpga.c.
+from the vfs tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -48,36 +45,38 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/mach-socfpga/socfpga.c
-index 5fb6f79059a8,cc64576c102b..000000000000
---- a/arch/arm/mach-socfpga/socfpga.c
-+++ b/arch/arm/mach-socfpga/socfpga.c
-@@@ -32,7 -32,9 +32,9 @@@ void __iomem *rst_manager_base_addr
-  void __iomem *sdr_ctl_base_addr;
-  unsigned long socfpga_cpu1start_addr;
+diff --cc include/linux/fs.h
+index d7bf524a0517,aae0aec1adb4..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -62,8 -61,10 +62,12 @@@ struct workqueue_struct
+  struct iov_iter;
+  struct fscrypt_info;
+  struct fscrypt_operations;
+ +struct fsverity_info;
+ +struct fsverity_operations;
++ struct fs_context;
++ struct fs_parameter_description;
++ struct fsinfo_kparams;
++ enum fsinfo_attribute;
  =20
-+ extern void __init socfpga_reset_init(void);
-+=20
- -void __init socfpga_sysmgr_init(void)
- +static void __init socfpga_sysmgr_init(void)
-  {
-  	struct device_node *np;
- =20
+  extern void __init inode_init(void);
+  extern void __init inode_init_early(void);
 
---Sig_/6+JRWsYlHtqSZBx10FeT+8L
+--Sig_/Q._oDp0b403T/oqY4d.1U0j
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEXBIACgkQAVBC80lX
-0GwlFwf/ZvuY4YXQnBH4c26EhsKjK5qLAR1or+i2kALicm5U3PfoIbwJHkq6wmL+
-BzutVSJYd+a1LMVdbOV3ayY4bu4In5GuSmsKC35vBqGF9TY8ORZde1hZalIcsG5A
-AMQEr7bbhnTWC+L0RFx6lE3NLShh4VzGLAXlT7sxTzlR7sEUYMexIhFFpPQSgMII
-neYawUX2PROpF/+9BbVMKhxIDS0Lgsm8Y6ujiTbeCqoHGrobTnY5R0lTBUV8NL18
-hOYUGrSPO38E3t8aC1K6jwHFGb1fWJ1cc4HK1Vn/H92HEuP12boqZjbClNfMOMek
-bbcxbNO75piJCDp+O5ndgyzKKKD3og==
-=F0UW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEd5EACgkQAVBC80lX
+0GzUYQf+JTTe3SpIyGyM3DJH59W/CzMXmFtMyUiTsBwmu8aeS/94BxXX7yFbHjNu
+g41M2VoWm0MrNCmrai7uVo5LEp07xUCf6OwizLvdU8Lwdtu/208VqvRARgsJFCRD
+JzOvp80BOqIZbGzr43jCZzq/BdlX3kPcVGm/VFjXvxA2PRyKbGSSyyfZAT9R2fAk
+NL4l6R+/qvKHbgFvVMRJNOlhCe/zAYMYJFj2GS8O2hAW3RVFTtB4KEN47ZnUwVjX
+v57v2nf9mNwCDYdCcAn+eVZfS0wjgOsICgeUoRkIBiymz5hi0wq8wzsqRovvp9E6
+ch9bUs8ajz7bqH273qk+vPA2CLrTog==
+=PX9N
 -----END PGP SIGNATURE-----
 
---Sig_/6+JRWsYlHtqSZBx10FeT+8L--
+--Sig_/Q._oDp0b403T/oqY4d.1U0j--
