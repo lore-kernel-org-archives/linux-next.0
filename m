@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 3 Dec 2018 12:50:41 +1100
-Message-ID: <20181203125041.43c7cc9e@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the bpf tree
+Date: Mon, 3 Dec 2018 13:03:12 +1100
+Message-ID: <20181203130312.687d560d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Um9+JVZzR5Tzltt1Un+xbg2"; protocol="application/pgp-signature"
+ boundary="Sig_/y.u.TdzF9tv3osKnhYSq8=L"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Hurley <john.hurley@netronome.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Stringer <joe@wand.net.nz>, Nitin Hande <nitin.hande@gmail.com>, Vlad Dumitrescu <vladum@google.com>, Lorenz Bauer <lmb@cloudflare.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Um9+JVZzR5Tzltt1Un+xbg2
+--Sig_/y.u.TdzF9tv3osKnhYSq8=L
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,15 +19,20 @@ Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/net/ethernet/netronome/nfp/flower/offload.c
+  include/uapi/linux/bpf.h
+  tools/include/uapi/linux/bpf.h
 
 between commits:
 
-  b5f0cf083400 ("nfp: flower: prevent offload if rhashtable insert fails")
+  b7df9ada9a77 ("bpf: fix pointer offsets in context for 32 bit")
+  d74286d2c25a ("bpf: Improve socket lookup reuseport documentation")
 
-from the net tree and commit:
+from the bpf tree and commits:
 
-  7885b4fc8d8e ("nfp: flower: allow non repr netdev offload")
+  c8123ead13a5 ("bpf: Extend the sk_lookup() helper to XDP hookpoint.")
+  608114e441ad ("tools: sync linux/bpf.h")
+  f11216b24219 ("bpf: add skb->tstamp r/w access from tc clsact and cg skb =
+progs")
 
 from the net-next tree.
 
@@ -42,44 +47,49 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/netronome/nfp/flower/offload.c
-index 2f49eb75f3cc,545d94168874..000000000000
---- a/drivers/net/ethernet/netronome/nfp/flower/offload.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/offload.c
-@@@ -480,14 -469,10 +464,15 @@@ nfp_flower_add_offload(struct nfp_app *
-  	err =3D rhashtable_insert_fast(&priv->flow_table, &flow_pay->fl_node,
-  				     nfp_flower_table_params);
-  	if (err)
- -		goto err_destroy_flow;
- +		goto err_release_metadata;
- +
-- 	err =3D nfp_flower_xmit_flow(netdev, flow_pay,
-++	err =3D nfp_flower_xmit_flow(app, flow_pay,
- +				   NFP_FLOWER_CMSG_TYPE_FLOW_ADD);
- +	if (err)
- +		goto err_remove_rhash;
+diff --cc include/uapi/linux/bpf.h
+index 72c453a8bf50,597afdbc1ab9..000000000000
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@@ -2473,7 -2481,8 +2494,8 @@@ struct __sk_buff=20
+  	/* ... here. */
  =20
-- 	port->tc_offload_cnt++;
-+ 	if (port)
-+ 		port->tc_offload_cnt++;
+  	__u32 data_meta;
+ -	struct bpf_flow_keys *flow_keys;
+ +	__bpf_md_ptr(struct bpf_flow_keys *, flow_keys);
++ 	__u64 tstamp;
+  };
  =20
-  	/* Deallocate flow payload when flower rule has been destroyed. */
-  	kfree(key_layer);
+  struct bpf_tunnel_key {
+diff --cc tools/include/uapi/linux/bpf.h
+index 72c453a8bf50,597afdbc1ab9..000000000000
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@@ -2473,7 -2481,8 +2494,8 @@@ struct __sk_buff=20
+  	/* ... here. */
+ =20
+  	__u32 data_meta;
+ -	struct bpf_flow_keys *flow_keys;
+ +	__bpf_md_ptr(struct bpf_flow_keys *, flow_keys);
++ 	__u64 tstamp;
+  };
+ =20
+  struct bpf_tunnel_key {
 
---Sig_/Um9+JVZzR5Tzltt1Un+xbg2
+--Sig_/y.u.TdzF9tv3osKnhYSq8=L
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEi/EACgkQAVBC80lX
-0GzCTQf/WWTJ7sL324fQtSAMk+FGpwXtFSOstSYA4eMAvcel3lFL2+33p/+a35VJ
-LCYN7dLwbrudXvk40RJiButA1Kjg894lN3/kixodznHyiuUNf951ASuLXWYpu0Sz
-FbbRJaYt60IqdWTIviJM8Q33wPndSY5btFnyutQ2p/NVpUB6h8PI66j08HVRgjDI
-nBA2218DbXEoWY15AcxPxRX9ypaW34+aGZEBRm/pwkxO7XmcIfngU6q/Ec8cmkio
-VllA/ApYr+Xx02UTLwMZzQBB2dB6HHTeozgzrcZ2R85793dfCya0Jchk6y+atg2j
-S9UogUv9g2yzk9HWUnDgN/wzNBpJFA==
-=4/vs
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEjuAACgkQAVBC80lX
+0Gzmsgf/QLhwS2EGNugxz+/PMVyr4jmNVjekgM9mG8X8gdxm/ZItN7jIdnfqwkvz
+JxB3ZlBd3H8LXtaFvLLANcgjweJzozJYdfH25FKPOznrXGO+m/coqkKmYerxFeaZ
+j+/9h5psMh9ZQ/KNTCaC55YmR8hGWRAFizRAxmRUPqkrNdTjn5BUsUck32si5lmA
+Cx5+3YTSbCHGDkoJwHERBkfxTz8ugPwuFlIFA32wfUrFd4MJqA0X/c4IwEQBVbj2
+AhaQoZuK6k0dk2a37e+fBdCfaImQzWAxZer+cPqd+jfsuRC1znjheg55+Ewii9Ck
+Uv8SfjVnaWUIb8PttkT9WQ4uNodcwA==
+=n4+G
 -----END PGP SIGNATURE-----
 
---Sig_/Um9+JVZzR5Tzltt1Un+xbg2--
+--Sig_/y.u.TdzF9tv3osKnhYSq8=L--
