@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net-next tree with the bpf tree
-Date: Mon, 3 Dec 2018 13:03:12 +1100
-Message-ID: <20181203130312.687d560d@canb.auug.org.au>
+Date: Mon, 3 Dec 2018 13:16:29 +1100
+Message-ID: <20181203131629.085324b8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/y.u.TdzF9tv3osKnhYSq8=L"; protocol="application/pgp-signature"
+ boundary="Sig_/rUAHhD.nx_6ZwCaAp=zUziE"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Stringer <joe@wand.net.nz>, Nitin Hande <nitin.hande@gmail.com>, Vlad Dumitrescu <vladum@google.com>, Lorenz Bauer <lmb@cloudflare.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Stringer <joe@wand.net.nz>, Nitin Hande <nitin.hande@gmail.com>, Vlad Dumitrescu <vladum@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/y.u.TdzF9tv3osKnhYSq8=L
+--Sig_/rUAHhD.nx_6ZwCaAp=zUziE
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,18 +19,16 @@ Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in:
 
-  include/uapi/linux/bpf.h
-  tools/include/uapi/linux/bpf.h
+  net/core/filter.c
 
 between commits:
 
   b7df9ada9a77 ("bpf: fix pointer offsets in context for 32 bit")
-  d74286d2c25a ("bpf: Improve socket lookup reuseport documentation")
+  f71c6143c203 ("bpf: Support sk lookup in netns with id 0")
 
 from the bpf tree and commits:
 
   c8123ead13a5 ("bpf: Extend the sk_lookup() helper to XDP hookpoint.")
-  608114e441ad ("tools: sync linux/bpf.h")
   f11216b24219 ("bpf: add skb->tstamp r/w access from tc clsact and cg skb =
 progs")
 
@@ -47,49 +45,111 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/uapi/linux/bpf.h
-index 72c453a8bf50,597afdbc1ab9..000000000000
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@@ -2473,7 -2481,8 +2494,8 @@@ struct __sk_buff=20
-  	/* ... here. */
+diff --cc net/core/filter.c
+index 8d2c629501e2,bd0df75dc7b6..000000000000
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@@ -4887,26 -5067,26 +5067,27 @@@ __bpf_sk_lookup(struct sk_buff *skb, st
+  	struct sock *sk =3D NULL;
+  	u8 family =3D AF_UNSPEC;
+  	struct net *net;
++ 	int sdif;
  =20
-  	__u32 data_meta;
- -	struct bpf_flow_keys *flow_keys;
- +	__bpf_md_ptr(struct bpf_flow_keys *, flow_keys);
-+ 	__u64 tstamp;
-  };
+  	family =3D len =3D=3D sizeof(tuple->ipv4) ? AF_INET : AF_INET6;
+ -	if (unlikely(family =3D=3D AF_UNSPEC || netns_id > U32_MAX || flags))
+ +	if (unlikely(family =3D=3D AF_UNSPEC || flags ||
+ +		     !((s32)netns_id < 0 || netns_id <=3D S32_MAX)))
+  		goto out;
  =20
-  struct bpf_tunnel_key {
-diff --cc tools/include/uapi/linux/bpf.h
-index 72c453a8bf50,597afdbc1ab9..000000000000
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@@ -2473,7 -2481,8 +2494,8 @@@ struct __sk_buff=20
-  	/* ... here. */
+- 	if (skb->dev)
+- 		caller_net =3D dev_net(skb->dev);
++ 	if (family =3D=3D AF_INET)
++ 		sdif =3D inet_sdif(skb);
+  	else
+- 		caller_net =3D sock_net(skb->sk);
++ 		sdif =3D inet6_sdif(skb);
++=20
+ -	if (netns_id) {
+ +	if ((s32)netns_id < 0) {
+ +		net =3D caller_net;
+- 		sk =3D sk_lookup(net, tuple, skb, family, proto);
+++		sk =3D sk_lookup(net, tuple, ifindex, sdif, family, proto);
+ +	} else {
+  		net =3D get_net_ns_by_id(caller_net, netns_id);
+  		if (unlikely(!net))
+  			goto out;
+- 		sk =3D sk_lookup(net, tuple, skb, family, proto);
++ 		sk =3D sk_lookup(net, tuple, ifindex, sdif, family, proto);
+  		put_net(net);
+ -	} else {
+ -		net =3D caller_net;
+ -		sk =3D sk_lookup(net, tuple, ifindex, sdif, family, proto);
+  	}
  =20
-  	__u32 data_meta;
- -	struct bpf_flow_keys *flow_keys;
- +	__bpf_md_ptr(struct bpf_flow_keys *, flow_keys);
-+ 	__u64 tstamp;
-  };
+  	if (sk)
+@@@ -5436,10 -5737,14 +5738,14 @@@ static bool bpf_skb_is_valid_access(in
+  		if (size !=3D size_default)
+  			return false;
+  		break;
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ -		if (size !=3D sizeof(struct bpf_flow_keys *))
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+ +		if (size !=3D sizeof(__u64))
+  			return false;
+  		break;
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
++ 		if (size !=3D sizeof(__u64))
++ 			return false;
++ 		break;
+  	default:
+  		/* Only narrow read access allowed for now. */
+  		if (type =3D=3D BPF_WRITE) {
+@@@ -5465,8 -5770,9 +5771,9 @@@ static bool sk_filter_is_valid_access(i
+  	case bpf_ctx_range(struct __sk_buff, data):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+  	case bpf_ctx_range(struct __sk_buff, data_end):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+  	case bpf_ctx_range_till(struct __sk_buff, family, local_port):
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
+  		return false;
+  	}
  =20
-  struct bpf_tunnel_key {
+@@@ -5531,7 -5841,8 +5842,8 @@@ static bool lwt_is_valid_access(int off
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range_till(struct __sk_buff, family, local_port):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
+  		return false;
+  	}
+ =20
+@@@ -5959,7 -6271,8 +6272,8 @@@ static bool sk_skb_is_valid_access(int=20
+  	switch (off) {
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
+  		return false;
+  	}
+ =20
 
---Sig_/y.u.TdzF9tv3osKnhYSq8=L
+--Sig_/rUAHhD.nx_6ZwCaAp=zUziE
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEjuAACgkQAVBC80lX
-0Gzmsgf/QLhwS2EGNugxz+/PMVyr4jmNVjekgM9mG8X8gdxm/ZItN7jIdnfqwkvz
-JxB3ZlBd3H8LXtaFvLLANcgjweJzozJYdfH25FKPOznrXGO+m/coqkKmYerxFeaZ
-j+/9h5psMh9ZQ/KNTCaC55YmR8hGWRAFizRAxmRUPqkrNdTjn5BUsUck32si5lmA
-Cx5+3YTSbCHGDkoJwHERBkfxTz8ugPwuFlIFA32wfUrFd4MJqA0X/c4IwEQBVbj2
-AhaQoZuK6k0dk2a37e+fBdCfaImQzWAxZer+cPqd+jfsuRC1znjheg55+Ewii9Ck
-Uv8SfjVnaWUIb8PttkT9WQ4uNodcwA==
-=n4+G
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEkf0ACgkQAVBC80lX
+0Gwetwf/dvafRB9udNV2+nbY1Yb6i+nLj5jP7+08CHrP3TX2V8rlTDaeBxtGU+J9
+h/KLMtJq9e+G4mkHiBIFBnsXXaUWFvLMZKiCbAf2t0kT/rl1VY8+FZA9uOD/VAdw
+JQypiFZRWWsyBKL9FH0A7KHMGImRJ+qXSEQ5n3FGkyrdJx+Z0Ggy5Fg6jF8Eft/H
+Bryi2aaoNwcIceTA1qthPHxKf9d+xji1YS6QAItlMGLH6y3ESq+dP9YmC9IGpiRG
+vEPK1JGkJ7Nm5NNUskLrSUrJ0m5JSleEKRRv2MLoVezDsA71WLlf9dSxi9H5PYvW
+J1vJG2kxgawoX3X57mqB+p8/naX+EA==
+=Y1aZ
 -----END PGP SIGNATURE-----
 
---Sig_/y.u.TdzF9tv3osKnhYSq8=L--
+--Sig_/rUAHhD.nx_6ZwCaAp=zUziE--
