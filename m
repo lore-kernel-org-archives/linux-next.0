@@ -1,139 +1,49 @@
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Mon, 3 Dec 2018 11:12:59 +0100
-Message-ID: <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com>
-References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au> <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
- <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com> <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Mon, 3 Dec 2018 16:07:03 +0530
+Message-ID: <7ddea267-9a62-ae47-03d1-b33b8f1a36d6@arm.com>
+References: <20181203180037.0a54279b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
+In-Reply-To: <20181203180037.0a54279b@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Dec 2, 2018 at 10:13 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Sat, Dec 1, 2018 at 10:32 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > On Thu, Nov 29, 2018 at 11:07 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > On Wed, Nov 28, 2018 at 10:52 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > > Hi Ondrej,
-> > > > >
-> > > > > On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > > > >
-> > > > > > Hm... seems that there was some massive overhaul in the VFS code right
-> > > > > > at the wrong moment... There are new hooks for mounting now and the
-> > > > >
-> > > > > The mount changes have been in linux-next since before the last
-> > > > > release ...
-> > > > >
-> > > > > > code that our commit changes is now here:
-> > > > > >
-> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
-> > > > > >
-> > > > > > It seems that the logic is still the same, just now our patch (or the
-> > > > > > VFS one) needs to be updated to change the above line as such
-> > > > > > (untested pseudo-patch):
-> > > > > >
-> > > > > > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-> > > > > > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
-> > > > >
-> > > > > OK, so from tomorrow I will use that merge resolution.  Someone needs
-> > > > > to remember to tell Linus about this when the latter of the vfs and
-> > > > > selinux trees reach him.
-> > > >
-> > > > I will, or at least I'll do my best to remember; since we only have a
-> > > > few more week until the merge window I like my odds.  FWIW, I
-> > > > typically do a test merge on top of Linus' tree before sending the
-> > > > SELinux PR just to verify that everything is relatively clean and
-> > > > there are no surprises.
-> > > >
-> > > > Ondrej, please work with David Howells to ensure that submounts are
-> > > > handled correctly in his mount rework.
-> > >
-> > > OK, I will verify that the SELinux submount fix rebased on top of
-> > > vfs/work.mount in the way I suggested above passes the same testing
-> > > (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
-> > > kernels (vfs/work.mount with and without the fix) to test. Let me know
-> > > if there is anything more to do.
-> >
-> > I tested the proposed patch ([1]; fixed as per correction from David
-> > Howells) applied on top of patches v4.19-rc3..vfs/work.mount applied
-> > on top of the 4.19.5-300 Fedora 29 kernel.
-> >
-> > However, the submount test was still failing, so I looked again at the
-> > list of the possible 'purpose' values and it turns out the value used
-> > by NFS et al. is actually FS_CONTEXT_FOR_ROOT_MOUNT (it is actually
-> > documented nicely in Documentation/filesystems/mount_api.txt). So I'll
-> > need to build a new test kernel with updated patch ([2]) and retest...
->
-> Unfortunately, even with FS_CONTEXT_FOR_ROOT_MOUNT the submount test
-> is still failing. (Actually, re-reading the description for
-> FS_CONTEXT_FOR_ROOT_MOUNT it seems it is not actually related to
-> submounts, although we should probably still skip the check for it,
-> too.) I will need to dig deeper into this on Monday...
 
-I think I figured out what's the problem. NFS still creates the
-submount via the old vfs_submount() call, which calls
-vfs_kern_mount(), which creates an fs_context with
-FS_CONTEXT_FOR_USER_MOUNT because FS_CONTEXT_FOR_SUBMOUNT needs the
-mountpoint dentry reference and there is currently no way to pass that
-to vfs_kern_mount(). This is further complicated by the fact that
-vfs_submount() accepts only a const reference to the mountpoint, while
-vfs_new_fs_context() expects a non-const one...
 
-I think all users of the old vfs_submount call should be converted to
-the new API before the VFS changes are merged into mainline, otherwise
-they will break the SELinux submount fix. We could work around it in
-the SELinux hook by checking the fc->sb_flags[_mask] for SB_SUBMOUNT,
-but I guess that would be a hack.
+On 12/03/2018 12:30 PM, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm tree, today's linux-next build (powerpc_le perf)
+> failed like this:
+> 
+> bench/numa.c:37:10: fatal error: linux/numa.h: No such file or directory
+>  #include <linux/numa.h>
+>           ^~~~~~~~~~~~~~
+> 
+> Caused by patches
+> 
+>   "mm: replace all open encodings for NUMA_NO_NODE"
+>   "mm-replace-all-open-encodings-for-numa_no_node-fix"
+> 
+> For linux/numa.h to be generally availble to the tools builds, it must
+> be copied into tools/include/linux ...
+> 
+> I have done that copy for today:
+> 
+> From 6dabc11d5513510d0ec0a6b0a4aa8b9051b71516 Mon Sep 17 00:00:00 2001
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 3 Dec 2018 17:57:27 +1100
+> Subject: [PATCH] linux/numa.h is now needed for the perf build
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
->
-> FWIW, the generated AVC denial is still the same so it must be failing
-> the check in that particular hook (the FILESYSTEM__MOUNT permission is
-> checked only in that single place):
->
-> type=AVC msg=audit(02.12.2018 01:55:03.626:604) : avc:  denied  {
-> mount } for  pid=4036 comm=cat name=/ dev="0:48" ino=2
-> scontext=unconfined_u:unconfined_r:test_readnfs_t:s0-s0:c0.c1023
-> tcontext=system_u:object_r:nfs_t:s0 tclass=filesystem permissive=0
->
-> >
-> > BTW, the vfs/work.mount changes alone seem to cause some overlay test
-> > failures (I didn't test a clean 4.19.5 so it may be due to some stable
-> > patch as well):
-> >
-> > Test Summary Report
-> > -------------------
-> > overlay/test              (Wstat: 3072 Tests: 119 Failed: 12)
-> >  Failed tests:  66, 74, 76-77, 79, 87, 95, 103, 108, 110-111
-> >                117
-> >  Non-zero exit status: 12
-> >
-> > The failing tests are all in the context mount section, but I don't
-> > think this is (directly) related to [3] because there are much more
-> > tests failing and the kernel I was testing didn't include the
-> > problematic OverlayFS patch. Perhaps the VFS patches somehow broke the
-> > parsing of the context= mount option?
-> >
-> > [1] https://gitlab.com/omos/linux-public/commit/fe5478717ddde92e3ea599e14051ad57522fdf47
-> > [2] https://gitlab.com/omos/linux-public/commit/f5c58adc7babd62e4bfe8cda799459d263dc5186
-> > [3] https://github.com/SELinuxProject/selinux-kernel/issues/43
-> >
-> > --
-> > Ondrej Mosnacek <omosnace at redhat dot com>
-> > Associate Software Engineer, Security Technologies
-> > Red Hat, Inc.
->
-> --
-> Ondrej Mosnacek <omosnace at redhat dot com>
-> Associate Software Engineer, Security Technologies
-> Red Hat, Inc.
+Makes sense. Thanks Stephen for taking care of this build failure
+more than once.
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
