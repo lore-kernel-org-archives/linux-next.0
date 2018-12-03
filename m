@@ -1,46 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: error when trying to fetch the mediatek tree
-Date: Tue, 4 Dec 2018 07:40:58 +1100
-Message-ID: <20181204074058.3bd8e572@canb.auug.org.au>
+From: Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+Date: Mon, 3 Dec 2018 21:56:39 +0000
+Message-ID: <20181203215639.GV2217@ZenIV.linux.org.uk>
+References: <20181127115246.00967523@canb.auug.org.au>
+ <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au>
+ <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
+ <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
+ <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
+ <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ezLLCIWa3MfzDzcqZ4afkKy"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ezLLCIWa3MfzDzcqZ4afkKy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 03, 2018 at 11:12:59AM +0100, Ondrej Mosnacek wrote:
 
-Hi Matthias,
+> I think I figured out what's the problem. NFS still creates the
+> submount via the old vfs_submount() call, which calls
+> vfs_kern_mount(), which creates an fs_context with
+> FS_CONTEXT_FOR_USER_MOUNT because FS_CONTEXT_FOR_SUBMOUNT needs the
+> mountpoint dentry reference and there is currently no way to pass that
+> to vfs_kern_mount(). This is further complicated by the fact that
+> vfs_submount() accepts only a const reference to the mountpoint, while
+> vfs_new_fs_context() expects a non-const one...
+> 
+> I think all users of the old vfs_submount call should be converted to
+> the new API before the VFS changes are merged into mainline, otherwise
+> they will break the SELinux submount fix. We could work around it in
+> the SELinux hook by checking the fc->sb_flags[_mask] for SB_SUBMOUNT,
+> but I guess that would be a hack.
 
-Fetching the mediatek tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux.git
-branch for-next) produces this error:
+Could you take a look at vfs.git#Q28?  There's still a massive reshuffling
+going on, so there will be more branches; this one is the latest at the
+moment.
 
-fatal: Couldn't find remote ref refs/heads/for-next
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ezLLCIWa3MfzDzcqZ4afkKy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwFlNoACgkQAVBC80lX
-0Gx0vgf/QuTnptJy9m6Wj46wIWpZLF2Au7OtS0cVRi7AsfKdu+6/GdEBeDqiFQlE
-1ekWrHXW4u5LDgtSOTPYzPTQWWdGJyFAO24PAxyZOcpd57epY2+8z0IlatFBJc+Q
-LrOELk9FGE+PgQufplT2YOKURN2nstDnnuj7JIrGk9kwUGJ7eUSxuLybseXKvilt
-LsL849dQZENSMtUDhAa69qS2JihfoX/shoIXdhmXitULoWw1xmWomcEa2nqSVxQj
-BNK4/3OeK7+ldJPQKRzaeQMOvUkbM6Je78PBsZPQ5WraozwWPOjpGmGImMZ8HrrT
-boHtzs66JQnVJEwV587gxca1dGxkrQ==
-=H+Iz
------END PGP SIGNATURE-----
-
---Sig_/ezLLCIWa3MfzDzcqZ4afkKy--
+I really hate the situation around sb_clone_mnt_opts/sb_set_mnt_opts and
+I'm none too fond of the way fs_context_validate is done, so there will
+be quite a bit of LSM tweaking.  If we are doing that, let's do it
+right...
