@@ -1,38 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the fscrypt tree
-Date: Mon, 3 Dec 2018 11:23:45 +1100
-Message-ID: <20181203112345.6c9a786a@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 3 Dec 2018 12:50:41 +1100
+Message-ID: <20181203125041.43c7cc9e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Q._oDp0b403T/oqY4d.1U0j"; protocol="application/pgp-signature"
+ boundary="Sig_/Um9+JVZzR5Tzltt1Un+xbg2"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@google.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Hurley <john.hurley@netronome.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Q._oDp0b403T/oqY4d.1U0j
+--Sig_/Um9+JVZzR5Tzltt1Un+xbg2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  include/linux/fs.h
+  drivers/net/ethernet/netronome/nfp/flower/offload.c
 
-between commit:
+between commits:
 
-  a2bd7d2fc32c ("fs-verity: add setup code, UAPI, and Kconfig")
+  b5f0cf083400 ("nfp: flower: prevent offload if rhashtable insert fails")
 
-from the fscrypt tree and commit:
+from the net tree and commit:
 
-  37744f3d21f8 ("vfs: Implement a filesystem superblock creation/configurat=
-ion context")
-  d5ab33dfd7bc ("vfs: syscall: Add fsinfo() to query filesystem information=
-")
+  7885b4fc8d8e ("nfp: flower: allow non repr netdev offload")
 
-from the vfs tree.
+from the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -45,38 +42,44 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/fs.h
-index d7bf524a0517,aae0aec1adb4..000000000000
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -62,8 -61,10 +62,12 @@@ struct workqueue_struct
-  struct iov_iter;
-  struct fscrypt_info;
-  struct fscrypt_operations;
- +struct fsverity_info;
- +struct fsverity_operations;
-+ struct fs_context;
-+ struct fs_parameter_description;
-+ struct fsinfo_kparams;
-+ enum fsinfo_attribute;
+diff --cc drivers/net/ethernet/netronome/nfp/flower/offload.c
+index 2f49eb75f3cc,545d94168874..000000000000
+--- a/drivers/net/ethernet/netronome/nfp/flower/offload.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/offload.c
+@@@ -480,14 -469,10 +464,15 @@@ nfp_flower_add_offload(struct nfp_app *
+  	err =3D rhashtable_insert_fast(&priv->flow_table, &flow_pay->fl_node,
+  				     nfp_flower_table_params);
+  	if (err)
+ -		goto err_destroy_flow;
+ +		goto err_release_metadata;
+ +
+- 	err =3D nfp_flower_xmit_flow(netdev, flow_pay,
+++	err =3D nfp_flower_xmit_flow(app, flow_pay,
+ +				   NFP_FLOWER_CMSG_TYPE_FLOW_ADD);
+ +	if (err)
+ +		goto err_remove_rhash;
  =20
-  extern void __init inode_init(void);
-  extern void __init inode_init_early(void);
+- 	port->tc_offload_cnt++;
++ 	if (port)
++ 		port->tc_offload_cnt++;
+ =20
+  	/* Deallocate flow payload when flower rule has been destroyed. */
+  	kfree(key_layer);
 
---Sig_/Q._oDp0b403T/oqY4d.1U0j
+--Sig_/Um9+JVZzR5Tzltt1Un+xbg2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEd5EACgkQAVBC80lX
-0GzUYQf+JTTe3SpIyGyM3DJH59W/CzMXmFtMyUiTsBwmu8aeS/94BxXX7yFbHjNu
-g41M2VoWm0MrNCmrai7uVo5LEp07xUCf6OwizLvdU8Lwdtu/208VqvRARgsJFCRD
-JzOvp80BOqIZbGzr43jCZzq/BdlX3kPcVGm/VFjXvxA2PRyKbGSSyyfZAT9R2fAk
-NL4l6R+/qvKHbgFvVMRJNOlhCe/zAYMYJFj2GS8O2hAW3RVFTtB4KEN47ZnUwVjX
-v57v2nf9mNwCDYdCcAn+eVZfS0wjgOsICgeUoRkIBiymz5hi0wq8wzsqRovvp9E6
-ch9bUs8ajz7bqH273qk+vPA2CLrTog==
-=PX9N
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEi/EACgkQAVBC80lX
+0GzCTQf/WWTJ7sL324fQtSAMk+FGpwXtFSOstSYA4eMAvcel3lFL2+33p/+a35VJ
+LCYN7dLwbrudXvk40RJiButA1Kjg894lN3/kixodznHyiuUNf951ASuLXWYpu0Sz
+FbbRJaYt60IqdWTIviJM8Q33wPndSY5btFnyutQ2p/NVpUB6h8PI66j08HVRgjDI
+nBA2218DbXEoWY15AcxPxRX9ypaW34+aGZEBRm/pwkxO7XmcIfngU6q/Ec8cmkio
+VllA/ApYr+Xx02UTLwMZzQBB2dB6HHTeozgzrcZ2R85793dfCya0Jchk6y+atg2j
+S9UogUv9g2yzk9HWUnDgN/wzNBpJFA==
+=4/vs
 -----END PGP SIGNATURE-----
 
---Sig_/Q._oDp0b403T/oqY4d.1U0j--
+--Sig_/Um9+JVZzR5Tzltt1Un+xbg2--
