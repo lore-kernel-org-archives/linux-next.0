@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Date: Tue, 4 Dec 2018 12:05:29 +1100
-Message-ID: <20181204120529.222e65c7@canb.auug.org.au>
+Date: Tue, 4 Dec 2018 12:09:36 +1100
+Message-ID: <20181204120936.77cd82a9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0qiwlbuaXAD=8/ujjDA16IF"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+ boundary="Sig_/YsoqOWuYK7+7TM6wmY5NxYd"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Quentin Monnet <quentin.monnet@netronome.com>, Joe Stringer <joe@wand.net.nz>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petar Penkov <ppenkov@google.com>, Vlad Dumitrescu <vladum@google.com>, Willem de Bruijn <willemb@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/0qiwlbuaXAD=8/ujjDA16IF
+--Sig_/YsoqOWuYK7+7TM6wmY5NxYd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got conflicts in:
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-  include/uapi/linux/bpf.h
+  net/core/filter.c
 
 between commit:
 
-  d74286d2c25a ("bpf: Improve socket lookup reuseport documentation")
+  b7df9ada9a77 ("bpf: fix pointer offsets in context for 32 bit")
 
 from the bpf tree and commit:
 
-  90b1023f68c7 ("bpf: fix documentation for eBPF helpers")
+  e3da08d05700 ("bpf: allow BPF read access to qdisc pkt_len")
 
 from the bpf-next tree.
 
@@ -42,80 +42,69 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/uapi/linux/bpf.h
-index ec8b40ff386e,572eb2d42768..000000000000
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@@ -2209,11 -2210,11 +2212,11 @@@ union bpf_attr=20
-   *		This helper is available only if the kernel was compiled with
-   *		**CONFIG_NET** configuration option.
-   *	Return
--  *		Pointer to *struct bpf_sock*, or NULL in case of failure.
--  *		For sockets with reuseport option, the *struct bpf_sock*
--  *		result is from reuse->socks[] using the hash of the tuple.
-+  *		A pointer to *struct bpf_sock*, or **NULL** in case of failure.
- - *		For sockets with reuseport option, **struct bpf_sock**
-++ *		For sockets with reuseport option, the **struct bpf_sock**
-+  *		return is from **reuse->socks**\ [] using hash of the packet.
-   *
- - * struct bpf_sock *bpf_sk_lookup_udp(void *ctx, struct bpf_sock_tuple *t=
-uple, u32 tuple_size, u32 netns, u64 flags)
- + * struct bpf_sock *bpf_sk_lookup_udp(void *ctx, struct bpf_sock_tuple *t=
-uple, u32 tuple_size, u64 netns, u64 flags)
-   *	Description
-   *		Look for UDP socket matching *tuple*, optionally in a child
-   *		network namespace *netns*. The return value must be checked,
-@@@ -2245,14 -2244,15 +2248,16 @@@
-   *		This helper is available only if the kernel was compiled with
-   *		**CONFIG_NET** configuration option.
-   *	Return
--  *		Pointer to *struct bpf_sock*, or NULL in case of failure.
--  *		For sockets with reuseport option, the *struct bpf_sock*
--  *		result is from reuse->socks[] using the hash of the tuple.
-+  *		A pointer to **struct bpf_sock**, or **NULL** in case of
- - *		failure. For sockets with reuseport option, **struct bpf_sock**
- - *		return is from **reuse->socks**\ [] using hash of the packet.
-++ *		failure. For sockets with reuseport option, the
-++ *		**struct bpf_sock** return is from **reuse->socks**\ []
-++ *		using hash of the packet.
-   *
--  * int bpf_sk_release(struct bpf_sock *sk)
-+  * int bpf_sk_release(struct bpf_sock *sock)
-   *	Description
--  *		Release the reference held by *sock*. *sock* must be a non-NULL
--  *		pointer that was returned from bpf_sk_lookup_xxx\ ().
-+  *		Release the reference held by *sock*. *sock* must be a
-+  *		non-**NULL** pointer that was returned from
-+  *		**bpf_sk_lookup_xxx**\ ().
-   *	Return
-   *		0 on success, or a negative error in case of failure.
-   *
-@@@ -2494,8 -2495,9 +2509,9 @@@ struct __sk_buff=20
-  	/* ... here. */
+diff --cc net/core/filter.c
+index 8659b40172d1,3d54af4c363d..000000000000
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@@ -5771,9 -5770,10 +5771,10 @@@ static bool sk_filter_is_valid_access(i
+  	case bpf_ctx_range(struct __sk_buff, data):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+  	case bpf_ctx_range(struct __sk_buff, data_end):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+  	case bpf_ctx_range_till(struct __sk_buff, family, local_port):
+  	case bpf_ctx_range(struct __sk_buff, tstamp):
++ 	case bpf_ctx_range(struct __sk_buff, wire_len):
+  		return false;
+  	}
  =20
-  	__u32 data_meta;
- -	struct bpf_flow_keys *flow_keys;
- +	__bpf_md_ptr(struct bpf_flow_keys *, flow_keys);
-  	__u64 tstamp;
-+ 	__u32 wire_len;
-  };
+@@@ -5797,7 -5797,8 +5798,8 @@@ static bool cg_skb_is_valid_access(int=20
+  	switch (off) {
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
++ 	case bpf_ctx_range(struct __sk_buff, wire_len):
+  		return false;
+  	case bpf_ctx_range(struct __sk_buff, data):
+  	case bpf_ctx_range(struct __sk_buff, data_end):
+@@@ -5842,8 -5843,9 +5844,9 @@@ static bool lwt_is_valid_access(int off
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range_till(struct __sk_buff, family, local_port):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+  	case bpf_ctx_range(struct __sk_buff, tstamp):
++ 	case bpf_ctx_range(struct __sk_buff, wire_len):
+  		return false;
+  	}
  =20
-  struct bpf_tunnel_key {
+@@@ -6272,8 -6274,9 +6275,9 @@@ static bool sk_skb_is_valid_access(int=20
+  	switch (off) {
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+  	case bpf_ctx_range(struct __sk_buff, tstamp):
++ 	case bpf_ctx_range(struct __sk_buff, wire_len):
+  		return false;
+  	}
+ =20
 
---Sig_/0qiwlbuaXAD=8/ujjDA16IF
+--Sig_/YsoqOWuYK7+7TM6wmY5NxYd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwF0tkACgkQAVBC80lX
-0Gy1Twf/XiYWV15vq6amV99G6gvuypSEAWDCrJ9MWQQ4Pm40S+S4LNdcHOcgEc3r
-Z0HCVcfxFVuvW3WUBvH+o6f0VKoiPUqXvQZpB7je6XfJdHzNQa4JdPbkBhtrTWu5
-+OIOvi+L/GrzemVkJZholLvmaIW0hztC3p5ycLScpp7cpRN3IqJ3uypMI/wMWcjr
-hiOGL1ZtpItmQF9vB/cxntTheUbkk3OtmmeppHKk+P/GFbm/652QFdOp0oDKszmR
-BewEvHQu6AMSg1okNSBV+kgTu6RcEPgLO3M0d98EGOOJy8eI+PZhykzfw4SyCwFg
-HoZqKacm81NON1+cihJyHDyINB0bYA==
-=ybMQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwF09AACgkQAVBC80lX
+0Gw7VAf/TZBXWKB28iHf01HrmCgOku/46/yDzrzXHdYPIYdpkmYWVZ+DZcCXJ/Pv
+qsZ2/vF0AZf6KTLDHR2ok/f8XP8x2VYXnNdo1dYrBA+rXFi9D8p9QffpgixHOG5j
+S2p7c8elUVs0R5auolNLfemJfe6tNM0oX3ReUtFE8hDoGHESCaAjmgEGEiKjzGnb
+scqRcyRew0e07PPIR/JvitvDn5AkgpOoUYGEG82tbRTq6yOG9N7YvQnvUIU/vuBi
+2EuVZeBDB0UyaaCoqNx6VWQy1E1XFLEWcuobt+8hzb6mrqbO1k1fj+AFkeMf8Hmv
+uZ97OPvVO2JS/oyd9KTjZAfGWMPnbw==
+=QIj7
 -----END PGP SIGNATURE-----
 
---Sig_/0qiwlbuaXAD=8/ujjDA16IF--
+--Sig_/YsoqOWuYK7+7TM6wmY5NxYd--
