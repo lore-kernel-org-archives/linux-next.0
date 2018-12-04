@@ -1,49 +1,66 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Date: Tue, 4 Dec 2018 01:52:54 +0000
-Message-ID: <20181204015247.GR12288@mellanox.com>
-References: <20181204114731.48b18bfc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Date: Tue, 4 Dec 2018 15:35:13 +1100
+Message-ID: <20181204153513.1e799336@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/F2a2ZLdv1BQwUDiogvsvK2o"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181204114731.48b18bfc@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <3C9D767E85910C4FAE523A23D712CC7D@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Guy Levi(SW)" <guyle@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dexuan Cui <decui@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 04, 2018 at 11:47:31AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> ERROR: "mlx5_get_send_wqe" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefi=
-ned!
->=20
-> Caused by commit
->=20
->   34f4c9554d8b ("IB/mlx5: Use fragmented QP's buffer for in-kernel users"=
-)
->=20
-> mlx5_get_send_wqe() is still used in drivers/infiniband/hw/mlx5/cq.c
-> and declared in drivers/infiniband/hw/mlx5/mlx5_ib.h ...
->=20
-> I have used the version of the rdma tree from next-20181203 for today.
+--Sig_/F2a2ZLdv1BQwUDiogvsvK2o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Huh. So apparently every compiler that tested this patch (0-day, mine,
-the submitters) optimized this call away because is_atomic_response()
-always returns 0: meaning mlx5_get_atomic_laddr is never callable and
-can be deleted entirely, including the call to mlx5_get_send_wqe.
+Hi all,
 
-Not sure what compiler setup will hit this, but it is clearly wrong
-code..
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-Guy/Leon, please send a fixup.. Maybe just delete all this
-handle_atomics stuff?
+  drivers/hv/channel_mgmt.c
 
-Thanks,
-Jason
+between commit:
+
+  37c2578c0c40 ("Drivers: hv: vmbus: Offload the handling of channels to tw=
+o workqueues")
+
+from the char-misc.current tree and commit:
+
+  4d3c5c69191f ("Drivers: hv: vmbus: Remove the useless API vmbus_get_outgo=
+ing_channel()")
+
+from the char-misc tree.
+
+I fixed it up (I used the former version where they conflicted) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/F2a2ZLdv1BQwUDiogvsvK2o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwGBAEACgkQAVBC80lX
+0GyNTwf+Lms5sKywsYFNlg0hXRdSPdBjsz4pfJzqbzjUdzg2DpqkwurYBKTgfYvb
+LmRTBu3Oeb6dL8K3kuM+wGPvbakkug2JFhE0vf3e7uMlPqTEdPBIZ/+37n9A0ikk
+P8L9sgneUo05K0VWq+/Xd22AnP0Nk+Ly6m5vZFnmlS3hpurJ+gnw+9LulGNRtM2C
+kg4ItWUw1dcPt4MFJwrD1fufIZ+aQ/5blDq+nruiChzFLwy6mhUBH8aeZYV/NdGf
+0Cf19ddVX64gwkVb3bv4XtpT1jCf8c1oJ92U2BWPKeHM8k1OIgEfbiXcpe2eBGDp
+aJjd7Iqr9OM6hJD+p+ht/eVgMswp+w==
+=KXbh
+-----END PGP SIGNATURE-----
+
+--Sig_/F2a2ZLdv1BQwUDiogvsvK2o--
