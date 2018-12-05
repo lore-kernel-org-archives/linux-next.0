@@ -1,26 +1,35 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Add Thunderbolt tree to linux-next
-Date: Wed, 5 Dec 2018 13:37:36 +0200
-Message-ID: <20181205113736.GM2469@lahna.fi.intel.com>
+From: "Guy Levi(SW)" <guyle@mellanox.com>
+Subject: RE: linux-next: build failure after merge of the rdma tree
+Date: Wed, 5 Dec 2018 12:25:57 +0000
+Message-ID: <AM0PR05MB533192C82AA04E89004251A1C7A80@AM0PR05MB5331.eurprd05.prod.outlook.com>
+References: <20181204114731.48b18bfc@canb.auug.org.au>
+ <20181204015247.GR12288@mellanox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20181204015247.GR12288@mellanox.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Noever <andreas.noever@gmail.com>, Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <YehezkelShB@gmail.com>, Lukas Wunner <lukas@wunner.de>
+To: Jason Gunthorpe <jgg@mellanox.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Majd Dibbiny <majd@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+>=20
+> Huh. So apparently every compiler that tested this patch (0-day, mine,
+> the submitters) optimized this call away because is_atomic_response()
+> always returns 0: meaning mlx5_get_atomic_laddr is never callable and
+> can be deleted entirely, including the call to mlx5_get_send_wqe.
+>=20
+> Not sure what compiler setup will hit this, but it is clearly wrong
+> code..
 
-I maintain the Thunderbolt tree that gets merged to mainline via Greg's
-char-misc tree. I would like to get the tree included in linux-next to
-get wider coverage before it hits Greg's tree.
+Flag -o0  ?
 
-Can you please include branches 'fixes' and 'next' from:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
-    
-in linux-next?
-
-Thanks!
+>=20
+> Guy/Leon, please send a fixup.. Maybe just delete all this
+> handle_atomics stuff?
+>=20
+> Thanks,
+> Jason
