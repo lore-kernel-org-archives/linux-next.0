@@ -1,35 +1,81 @@
-From: "Guy Levi(SW)" <guyle@mellanox.com>
-Subject: RE: linux-next: build failure after merge of the rdma tree
-Date: Wed, 5 Dec 2018 12:25:57 +0000
-Message-ID: <AM0PR05MB533192C82AA04E89004251A1C7A80@AM0PR05MB5331.eurprd05.prod.outlook.com>
-References: <20181204114731.48b18bfc@canb.auug.org.au>
- <20181204015247.GR12288@mellanox.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+Date: Wed, 5 Dec 2018 16:16:01 +0000
+Message-ID: <20181205161601.GW2217@ZenIV.linux.org.uk>
+References: <20181127115246.00967523@canb.auug.org.au>
+ <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au>
+ <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
+ <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
+ <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
+ <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com>
+ <20181203215639.GV2217@ZenIV.linux.org.uk>
+ <CAFqZXNvSOzyhnTUxF2mP4BTFMVQ8H1uh-Yyn2fH2K=4yRDX-tQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181204015247.GR12288@mellanox.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAFqZXNvSOzyhnTUxF2mP4BTFMVQ8H1uh-Yyn2fH2K=4yRDX-tQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jason Gunthorpe <jgg@mellanox.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Majd Dibbiny <majd@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
->=20
-> Huh. So apparently every compiler that tested this patch (0-day, mine,
-> the submitters) optimized this call away because is_atomic_response()
-> always returns 0: meaning mlx5_get_atomic_laddr is never callable and
-> can be deleted entirely, including the call to mlx5_get_send_wqe.
->=20
-> Not sure what compiler setup will hit this, but it is clearly wrong
-> code..
+On Wed, Dec 05, 2018 at 10:37:56AM +0100, Ondrej Mosnacek wrote:
 
-Flag -o0  ?
+> I just tested the Q28 branch rebased onto a recent Fedora rawhide
+> kernel (4.20.0-0.rc5.git0.1) and that code seems to be working fine.
+> The submount test failed with Q28 and succeeds with Q28+fix, as
+> expected. Also, the overlay tests failures are gone now (except for
+> the 4 known failures from GH issue #43, since I had to rebase onto
+> 4.20-rcX).
+> 
+> This is the commit that I used as the SELinux submount fix:
+> https://gitlab.com/omos/linux-public/commit/47922f9c70a83008388b836c285f94c40da1af2b
 
+FWIW, I'm none too happy about the fix.  Observations:
+	* sb_get_tree (and sb_kern_mount past the "LSM: lift parsing
+LSM options into the caller of ->sb_kern_mount()" in this series)
+is equivalent to sb_set_mnt_opts() + (for userland mounts) an selinux-only
+MAC check.  IOW, application of options (for LSMs that have those
+in the first place) + actual "are we permitted to mount that?" check.
+	* the second part should be done only for userland mounts -
+not automounting, not kernel-internal ones, etc.
+	* a very common pattern is "vfs_get_tree, vfs_create_mount if we
+hadn't failed that, then unconditional put_fs_context".  So much that it
+clearly deserves a helper - too much boilerplate as it is.
+	* look at the callers of vfs_get_tree():
+1) afs_mntpt_do_automount(): submount, helper fodder.  No MAC.
+2) nfs_do_submount(): submount, standalone, but caller will very shortly follow
+with the rest of the helper.  No MAC.
+3) btrfs_mount_root(): helper fodder, cloned context, probably no point
+in the actual MAC - we are in ->get_tree(), the caller will decide if
+it wants to bother.
+4) do_nfs4_mount(): NFS counterpart of the above.
+5) mount_one_hugetlbfs(): kernel-internal, helper fodder, no MAC.
+6) pid_ns_prepare_proc(): kernel-internal, helper fodder, no MAC.
+7) mq_create_mount(): kernel-internal, helper fodder, no MAC.
 
->=20
-> Guy/Leon, please send a fixup.. Maybe just delete all this
-> handle_atomics stuff?
->=20
-> Thanks,
-> Jason
+8) do_new_mount(): almost a helper fodder, wants MAC (mount(2) guts)
+9) fsopen(2): standalone, wants MAC (it's mount(2)-equivalent)
+10) vfs_kern_mount(): that's a bit more complicated.  It is, again,
+a helper fodder.  The need of MAC depends upon the caller, in theory.
+Callers:
+	simple_pin_fs() - kernel-internal, no MAC
+	init_mount_tree() - no MAC, that's the absolute root and that, by
+definition, is much too early in the boot (before initramfs, etc.) for
+any LSM shite to be applicable.  In any case, it's done by the kernel.
+	kern_mount() - kernel-internal, no MAC
+	cpuset_get_tree() - part of ->get_tree(), caller will decide if they
+want the damn MAC.
+	vfs_submount() - automounts, presumably no MAC.
+
+Conclusion: fuck the MAC in vfs_get_tree().  Let's just lift it into
+do_new_mount()/fsopen().  The only thing we really need there is to
+keep ->s_umount held (exclusive) until after the MAC.  So let vfs_get_tree()
+return with fc->root->d_sb->s_umount locked and have mount_create_mount()
+(which is _always_ preceded by successful vfs_get_tree()), unlock the
+sucker.  In vfs_get_tree() we need to do sb_set_mnt_opts(), with the
+rest of it (selinux-only) called by do_new_mount()/fsopen(2).  All there
+is to it...
