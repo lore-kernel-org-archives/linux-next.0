@@ -1,49 +1,122 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Dec 6
-Date: Thu, 6 Dec 2018 20:32:01 +1100
-Message-ID: <20181206203201.5ff81349@canb.auug.org.au>
-References: <20181206191851.374f4352@canb.auug.org.au>
+From: Andrey Konovalov <andreyknvl@google.com>
+Subject: Re: mmotm 2018-11-29-13-37 uploaded (kasan)
+Date: Thu, 6 Dec 2018 11:11:10 +0100
+Message-ID: <CAAeHK+yn0_JwBwnruVNFTKL5pdnja-NmmoN2kCVt6DC4JS5=qQ@mail.gmail.com>
+References: <20181129213822.EbBH1%akpm@linux-foundation.org> <d24875f4-f73f-3ec9-55ee-94367f797451@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2IsjG1oleTxSkH5ZTxD3PN4"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181206191851.374f4352@canb.auug.org.au>
+In-Reply-To: <d24875f4-f73f-3ec9-55ee-94367f797451@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org, Michal Hocko <mhocko@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2IsjG1oleTxSkH5ZTxD3PN4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Thu, 6 Dec 2018 19:18:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Fri, Nov 30, 2018 at 1:32 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> New trees: thunderbolt, thunderbolt-next
+> On 11/29/18 1:38 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2018-11-29-13-37 has been uploaded to
+> >
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > mmotm-readme.txt says
+> >
+> > README for mm-of-the-moment:
+> >
+> > http://www.ozlabs.org/~akpm/mmotm/
+>
+> Lots of kasan build errors on x86_64.
+>
+> > * kasan-mm-change-hooks-signatures.patch
+> > * kasan-slub-handle-pointer-tags-in-early_kmem_cache_node_alloc.patch
+> > * kasan-move-common-generic-and-tag-based-code-to-commonc.patch
+> > * kasan-rename-source-files-to-reflect-the-new-naming-scheme.patch
+> > * kasan-add-config_kasan_generic-and-config_kasan_sw_tags.patch
+> > * kasan-arm64-adjust-shadow-size-for-tag-based-mode.patch
+> > * kasan-rename-kasan_zero_page-to-kasan_early_shadow_page.patch
+> > * kasan-initialize-shadow-to-0xff-for-tag-based-mode.patch
+> > * arm64-move-untagged_addr-macro-from-uaccessh-to-memoryh.patch
+> > * kasan-add-tag-related-helper-functions.patch
+> > * kasan-arm64-untag-address-in-_virt_addr_is_linear.patch
+> > * kasan-preassign-tags-to-objects-with-ctors-or-slab_typesafe_by_rcu.patch
+> > * kasan-arm64-fix-up-fault-handling-logic.patch
+> > * kasan-arm64-enable-top-byte-ignore-for-the-kernel.patch
+> > * kasan-mm-perform-untagged-pointers-comparison-in-krealloc.patch
+> > * kasan-split-out-generic_reportc-from-reportc.patch
+> > * kasan-add-bug-reporting-routines-for-tag-based-mode.patch
+> > * mm-move-obj_to_index-to-include-linux-slab_defh.patch
+> > * kasan-add-hooks-implementation-for-tag-based-mode.patch
+> > * kasan-arm64-add-brk-handler-for-inline-instrumentation.patch
+> > * kasan-mm-arm64-tag-non-slab-memory-allocated-via-pagealloc.patch
+> > * kasan-add-__must_check-annotations-to-kasan-hooks.patch
+> > * kasan-arm64-select-have_arch_kasan_sw_tags.patch
+> > * kasan-update-documentation.patch
+> > * kasan-add-spdx-license-identifier-mark-to-source-files.patch
+>
+> The simplest error is:
+> ../mm/kasan/common.c:574:17: error: 'KASAN_SHADOW_INIT' undeclared (first use in this function)
+>
+> when neither KASAN_GENERIC nor KASAN_SW_TAGS is set (enabled).
 
-Actually thunderbolt-fixes ...
+Will fix in v13, thanks!
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2IsjG1oleTxSkH5ZTxD3PN4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwI7JEACgkQAVBC80lX
-0GwG/wgAgyGY2VFGab19Ihuwv7eO2T/WDa/60WwrHPUZ5QJ9XCPj6xpL0vntdcFs
-AmG8In1/6ma+1ghJC5B0lYP9iZ2QQzLn6el6vx4I0fAr/FD2g2+Yi0j3+13yyjfg
-K/LK2jpywOQ3kxxJWaVn5LcTEKscj9By5hXPU0MZjFs9agSVf+ESQzQByl5yIuN5
-cpr3Cas3hAtOOX2/N42h99qPQI31qD+TkxR+QDZJ7Hnrz9VoKbDsOOWJ/eIRIlBa
-tYa3odeZGcGu5ULPxop3zwCrIpVBPTP9bupEqvyl7f5sef4f/OeTOBj2GuswTcOA
-Jn+siO/FmfIR2COBCAK8EbOlCBF2gA==
-=rdV+
------END PGP SIGNATURE-----
-
---Sig_/2IsjG1oleTxSkH5ZTxD3PN4--
+>
+> There there are a slew of these:
+>
+> ../mm/kasan/common.c: In function 'filter_irq_stacks':
+> ../mm/kasan/common.c:53:12: error: dereferencing pointer to incomplete type
+>   if (!trace->nr_entries)
+>             ^
+> ../mm/kasan/common.c:55:23: error: dereferencing pointer to incomplete type
+>   for (i = 0; i < trace->nr_entries; i++)
+>                        ^
+> ../mm/kasan/common.c:56:29: error: dereferencing pointer to incomplete type
+>    if (in_irqentry_text(trace->entries[i])) {
+>                              ^
+> ../mm/kasan/common.c:58:9: error: dereferencing pointer to incomplete type
+>     trace->nr_entries = i + 1;
+>          ^
+> ../mm/kasan/common.c: In function 'save_stack':
+> ../mm/kasan/common.c:66:9: error: variable 'trace' has initializer but incomplete type
+>   struct stack_trace trace = {
+>          ^
+> ../mm/kasan/common.c:67:3: error: unknown field 'nr_entries' specified in initializer
+>    .nr_entries = 0,
+>    ^
+> ../mm/kasan/common.c:67:3: warning: excess elements in struct initializer [enabled by default]
+> ../mm/kasan/common.c:67:3: warning: (near initialization for 'trace') [enabled by default]
+> ../mm/kasan/common.c:68:3: error: unknown field 'entries' specified in initializer
+>    .entries = entries,
+>    ^
+> ../mm/kasan/common.c:68:3: warning: excess elements in struct initializer [enabled by default]
+> ../mm/kasan/common.c:68:3: warning: (near initialization for 'trace') [enabled by default]
+> ../mm/kasan/common.c:69:3: error: unknown field 'max_entries' specified in initializer
+>    .max_entries = KASAN_STACK_DEPTH,
+>    ^
+> ../mm/kasan/common.c:69:3: warning: excess elements in struct initializer [enabled by default]
+> ../mm/kasan/common.c:69:3: warning: (near initialization for 'trace') [enabled by default]
+> ../mm/kasan/common.c:70:3: error: unknown field 'skip' specified in initializer
+>    .skip = 0
+>    ^
+> ../mm/kasan/common.c:71:2: warning: excess elements in struct initializer [enabled by default]
+>   };
+>   ^
+> ../mm/kasan/common.c:71:2: warning: (near initialization for 'trace') [enabled by default]
+> ../mm/kasan/common.c:66:21: error: storage size of 'trace' isn't known
+>   struct stack_trace trace = {
+>                      ^
+> ../mm/kasan/common.c:66:21: warning: unused variable 'trace' [-Wunused-variable]
+> ../mm/kasan/common.c: In function 'kasan_module_alloc':
+> ../mm/kasan/common.c:574:17: error: 'KASAN_SHADOW_INIT' undeclared (first use in this function)
+>    __memset(ret, KASAN_SHADOW_INIT, shadow_size);
+>                  ^
+> ../mm/kasan/common.c:574:17: note: each undeclared identifier is reported only once for each function it appears in
+> ../mm/kasan/common.c: In function 'save_stack':
+> ../mm/kasan/common.c:80:1: warning: control reaches end of non-void function [-Wreturn-type]
+>  }
+>  ^
+> ../scripts/Makefile.build:285: recipe for target 'mm/kasan/common.o' failed
+>
+>
+> --
+> ~Randy
