@@ -1,17 +1,17 @@
 From: Rafael Aquini <aquini-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [-next] rename of VM_NR_PDFLUSH_THREADS breaks strace compilation
-Date: Fri, 7 Dec 2018 07:51:29 -0500
-Message-ID: <20181207125128.GA15157@xps>
+Date: Fri, 7 Dec 2018 07:17:18 -0500
+Message-ID: <20181207121717.GA13748@xps>
 References: <20181207075807.GA9030@osiris> <20181207105312.GA11365@xps>
  <20181207110146.GD9030@osiris> <20181207111600.GB11365@xps>
- <20181207115412.GA15336@kroah.com> <20181207121717.GA13748@xps>
+ <20181207115412.GA15336@kroah.com>
 Reply-To: strace development discussions <strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20181207121717.GA13748@xps>
+In-Reply-To: <20181207115412.GA15336-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 List-Unsubscribe: <https://lists.strace.io/mailman/options/strace-devel>,
  <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.strace.io/pipermail/strace-devel/>
@@ -25,106 +25,72 @@ To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 Cc: William Kucharski <william.kucharski-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Carstens <heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org, "Dmitry V. Levin" <ldv-u2l5PoMzF/Vg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 07, 2018 at 07:17:17AM -0500, Rafael Aquini wrote:
-> On Fri, Dec 07, 2018 at 12:54:12PM +0100, Greg Kroah-Hartman wrote:
-> > On Fri, Dec 07, 2018 at 06:16:01AM -0500, Rafael Aquini wrote:
-> > > On Fri, Dec 07, 2018 at 12:01:46PM +0100, Heiko Carstens wrote:
-> > > > On Fri, Dec 07, 2018 at 05:53:13AM -0500, Rafael Aquini wrote:
-> > > > > On Fri, Dec 07, 2018 at 08:58:07AM +0100, Heiko Carstens wrote:
-> > > > > > Hi Rafael,
-> > > > > > 
-> > > > > > your patch 77cab92a2cb1 ("sysctl: clean up nr_pdflush_threads
-> > > > > > leftover") in linux-next breaks strace compilation if used with kernel
-> > > > > > headers from linux-next.
-> > > > > > -       VM_NR_PDFLUSH_THREADS=15, /* nr_pdflush_threads */
-> > > > > > +       VM_UNUSED15=15,         /* was: int: nr_pdflush_threads */
-> > > > > The nr_pdflush_threads (VM_NR_PDFLUSH_THREADS) tunable has been obsolete since 2.6.32
-> > > > > and it was, excepting by the bit in the referred patch, completely removed on 4.15.
+On Fri, Dec 07, 2018 at 12:54:12PM +0100, Greg Kroah-Hartman wrote:
+> On Fri, Dec 07, 2018 at 06:16:01AM -0500, Rafael Aquini wrote:
+> > On Fri, Dec 07, 2018 at 12:01:46PM +0100, Heiko Carstens wrote:
+> > > On Fri, Dec 07, 2018 at 05:53:13AM -0500, Rafael Aquini wrote:
+> > > > On Fri, Dec 07, 2018 at 08:58:07AM +0100, Heiko Carstens wrote:
+> > > > > Hi Rafael,
 > > > > > 
-> > > > > I think you just need to patch strace source with the following hunk, in
-> > > > > order to reflect the removal. Would you mind checking it?
-> > > > > 
-> > > > > diff --git a/xlat/sysctl_vm.in b/xlat/sysctl_vm.in
-> > > > > index 3c2b4739..30784c2a 100644
-> > > > > --- a/xlat/sysctl_vm.in
-> > > > > +++ b/xlat/sysctl_vm.in
-> > > > > @@ -5,7 +5,6 @@ VM_DIRTY_BACKGROUND
-> > > > >  VM_DIRTY_RATIO
-> > > > >  VM_DIRTY_WB_CS
-> > > > >  VM_DIRTY_EXPIRE_CS
-> > > > > -VM_NR_PDFLUSH_THREADS
-> > > > >  VM_OVERCOMMIT_RATIO
-> > > > >  VM_PAGEBUF
-> > > > >  VM_HUGETLB_PAGES
+> > > > > your patch 77cab92a2cb1 ("sysctl: clean up nr_pdflush_threads
+> > > > > leftover") in linux-next breaks strace compilation if used with kernel
+> > > > > headers from linux-next.
+> > > > > -       VM_NR_PDFLUSH_THREADS=15, /* nr_pdflush_threads */
+> > > > > +       VM_UNUSED15=15,         /* was: int: nr_pdflush_threads */
+> > > > The nr_pdflush_threads (VM_NR_PDFLUSH_THREADS) tunable has been obsolete since 2.6.32
+> > > > and it was, excepting by the bit in the referred patch, completely removed on 4.15.
 > > > > 
-> > > > I'll leave that up to Dmitry to decide what to do here. At least it
-> > > > won't be possible to compile old strace versions with new kernel
-> > > > headers if the kernel change gets merged upstream.
-> > > >
+> > > > I think you just need to patch strace source with the following hunk, in
+> > > > order to reflect the removal. Would you mind checking it?
+> > > > 
+> > > > diff --git a/xlat/sysctl_vm.in b/xlat/sysctl_vm.in
+> > > > index 3c2b4739..30784c2a 100644
+> > > > --- a/xlat/sysctl_vm.in
+> > > > +++ b/xlat/sysctl_vm.in
+> > > > @@ -5,7 +5,6 @@ VM_DIRTY_BACKGROUND
+> > > >  VM_DIRTY_RATIO
+> > > >  VM_DIRTY_WB_CS
+> > > >  VM_DIRTY_EXPIRE_CS
+> > > > -VM_NR_PDFLUSH_THREADS
+> > > >  VM_OVERCOMMIT_RATIO
+> > > >  VM_PAGEBUF
+> > > >  VM_HUGETLB_PAGES
 > > > 
-> > > It escapes me why strace bootstrap needs to tabulate these sysctl_vm, as no one 
-> > > of these defs are referenced in the rest of the code, let alone 
-> > > /proc/sys/vm/nr_pdflush_threads that means nothing since per-BDI flusher threads
-> > > were introduced almost 10 years ago.
+> > > I'll leave that up to Dmitry to decide what to do here. At least it
+> > > won't be possible to compile old strace versions with new kernel
+> > > headers if the kernel change gets merged upstream.
+> > >
 > > 
-> > This isn't ok, we shouldn't break userspace, I'll go revert this patch.
-> >
-> > Rafael, feel free to resend but just add a comment that says it is
-> > obsolete or something.
-> > 
+> > It escapes me why strace bootstrap needs to tabulate these sysctl_vm, as no one 
+> > of these defs are referenced in the rest of the code, let alone 
+> > /proc/sys/vm/nr_pdflush_threads that means nothing since per-BDI flusher threads
+> > were introduced almost 10 years ago.
 > 
-> This is more like autotools insanity on the app buildscripts part than proper
-> userspace breakage. Linux sysctl man page brings a nice note on why one
-> should not rely on the syscall:
-> 
-> NOTES
->        Glibc does not provide a wrapper for this system call; call it using syscall(2).
->        Or rather...  don't call it: use of this system call has long been
->        discouraged, and it is so unloved that it is likely to disappear in a 
->        future kernel version.  Since Linux 2.6.24, uses of this system call result in
->        warnings in the kernel log.  Remove it from your programs now; use the /proc/sys interface instead.
-> 
->        This system call is available only if the kernel was configured with the CONFIG_SYSCTL_SYSCALL option.
-> 
-> 
-> also worth to note that CONFIG_SYSCTL_SYSCALL defaults to N
+> This isn't ok, we shouldn't break userspace, I'll go revert this patch.
 >
+> Rafael, feel free to resend but just add a comment that says it is
+> obsolete or something.
+> 
 
-Here's a little bit of history to add to the rationale on why the
-revert, in this case, does not seem to be the correct path:
+This is more like autotools insanity on the app buildscripts part than proper
+userspace breakage. Linux sysctl man page brings a nice note on why one
+should not rely on the syscall:
 
-Initially, upstream commit:
+NOTES
+       Glibc does not provide a wrapper for this system call; call it using syscall(2).
+       Or rather...  don't call it: use of this system call has long been
+       discouraged, and it is so unloved that it is likely to disappear in a 
+       future kernel version.  Since Linux 2.6.24, uses of this system call result in
+       warnings in the kernel log.  Remove it from your programs now; use the /proc/sys interface instead.
 
-commit 3965c9ae47d64aadf6f13b6fcd37767b83c0689a
-Author: Wanpeng Li <liwp-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Date:   Tue Jul 31 16:41:52 2012 -0700
-
-    mm: prepare for removal of obsolete /proc/sys/vm/nr_pdflush_threads
-
-
-effectively removed nr_pdflush_threads storage space, ceased exporting
-VM_NR_PDFLUSH_THREADS to struct bin_table bin_vm_table[] and replaced
-the procname handler with a deprecation note to dmesg.
-
-
-
-then, the following upstream commit completely removed the entry from procfs:
-
-commit b35bd0d9f8a8ea17aae40893e18274d191a2d2c5
-Author: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>
-Date:   Sat Sep 30 23:39:05 2017 -0600
-
-    sysctl: remove /proc/sys/vm/nr_pdflush_threads
+       This system call is available only if the kernel was configured with the CONFIG_SYSCTL_SYSCALL option.
 
 
-Only bit missing is the cleanup proposed with this patch. If we cannot
-clean up something rigthfully deprecated and removed from so long, then
-we're certainly dead in the water.
-
-This will be my last email on the matter, I promise!
+also worth to note that CONFIG_SYSCTL_SYSCALL defaults to N
 
 Cheers,
--- Rafael
+
+-- Rafael 
 -- 
 Strace-devel mailing list
 Strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org
