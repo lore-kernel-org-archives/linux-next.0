@@ -1,44 +1,43 @@
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: linux-next: build failure after merge of the thermal tree
-Date: Fri, 7 Dec 2018 12:27:50 +0530
-Message-ID: <CAHLCerMsVE1Rm1sP1aBvXf7eAYr3Jzk=cNda+wMRUHnv+zf27g@mail.gmail.com>
-References: <20181207122456.754129f4@canb.auug.org.au>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: manual merge of the jc_docs tree with the fscrypt
+ tree
+Date: Fri, 7 Dec 2018 00:08:28 -0700
+Message-ID: <20181207000828.3dead855@lwn.net>
+References: <20181207115340.2465a854@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181207122456.754129f4@canb.auug.org.au>
+In-Reply-To: <20181207115340.2465a854@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen, Rui,
+On Fri, 7 Dec 2018 11:53:40 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Fri, Dec 7, 2018 at 6:55 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Zhang,
->
-> After merging the thermal tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/thermal/qcom/qcom-spmi-temp-alarm.c:26:10: fatal error: thermal_core.h: No such file or directory
->  #include "thermal_core.h"
->           ^~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   150a4fe8c335 ("drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir")
+> Today's linux-next merge of the jc_docs tree got a conflict in:
+> 
+>   Documentation/filesystems/index.rst
+> 
+> between commit:
+> 
+>   1b71a6809f96 ("fs-verity: add a documentation file")
+> 
+> from the fscrypt tree and commit:
+> 
+>   7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to resturctured text")
+> 
+> from the jc_docs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Apologies for the build error. My scripts failed to enable the config
-and test it correctly. There was bug on where the .config file ended
-up. I've fixed it and sent v4 of the patches. Please consider applying
-them instead.
+That fix is as good as any, thanks.
 
-Regards,
-Amit
-
-> I have used the thermal tree from next-20181206 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+jon
