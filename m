@@ -1,86 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Date: Fri, 7 Dec 2018 13:38:50 +1100
-Message-ID: <20181207133850.4eb17ff9@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+Date: Fri, 7 Dec 2018 13:41:08 +1100
+Message-ID: <20181207134108.0abc681a@canb.auug.org.au>
+References: <20181204114731.48b18bfc@canb.auug.org.au>
+        <20181204015247.GR12288@mellanox.com>
+        <20181204094256.GX6462@mtr-leonro.mtl.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1697798338=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Roman Li <Roman.Li@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gcP/NiGqojFUI51DhDFM8j0"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181204094256.GX6462@mtr-leonro.mtl.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Leon Romanovsky <leonro@mellanox.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>, Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Guy Levi(SW)" <guyle@mellanox.com>, Majd Dibbiny <majd@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---===============1697798338==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/i7zUcvo/4Wa+SUB/TjYDXiC"; protocol="application/pgp-signature"
-
---Sig_/i7zUcvo/4Wa+SUB/TjYDXiC
+--Sig_/gcP/NiGqojFUI51DhDFM8j0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+On Tue, 4 Dec 2018 09:42:59 +0000 Leon Romanovsky <leonro@mellanox.com> wro=
+te:
+>
+> On Tue, Dec 04, 2018 at 01:52:54AM +0000, Jason Gunthorpe wrote:
+> > On Tue, Dec 04, 2018 at 11:47:31AM +1100, Stephen Rothwell wrote: =20
+> > >
+> > > After merging the rdma tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > ERROR: "mlx5_get_send_wqe" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] un=
+defined!
+> > >
+> > > Caused by commit
+> > >
+> > >   34f4c9554d8b ("IB/mlx5: Use fragmented QP's buffer for in-kernel us=
+ers")
+> > >
+> > > mlx5_get_send_wqe() is still used in drivers/infiniband/hw/mlx5/cq.c
+> > > and declared in drivers/infiniband/hw/mlx5/mlx5_ib.h ...
+> > >
+> > > I have used the version of the rdma tree from next-20181203 for today=
+. =20
+> >
+> > Huh. So apparently every compiler that tested this patch (0-day, mine,
+> > the submitters) optimized this call away because is_atomic_response()
+> > always returns 0: meaning mlx5_get_atomic_laddr is never callable and
+> > can be deleted entirely, including the call to mlx5_get_send_wqe.
+> >
+> > Not sure what compiler setup will hit this, but it is clearly wrong
+> > code..
+> >
+> > Guy/Leon, please send a fixup.. Maybe just delete all this
+> > handle_atomics stuff? =20
+>=20
+> I deleted it and will wait for the results of regression prior to send th=
+e patch.
 
-  drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-
-between commit:
-
-  c6888879fd55 ("drm/amd/display: Fix 6x4K displays light-up on Vega20 (v2)=
-")
-
-from the drm-fixes tree and commit:
-
-  24f7dd7ea98d ("drm/amd/display: move pplib/smu notification to dccg block=
-")
-
-from the drm tree.
-
-I fixed it up (I am not sure how to fix this up, so I just dropped the
-drm-fixes change) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I am still getting this error.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/i7zUcvo/4Wa+SUB/TjYDXiC
+--Sig_/gcP/NiGqojFUI51DhDFM8j0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJ3ToACgkQAVBC80lX
-0GwNjQgAnwWb1OlQkcjjG/UeKM6qgrydyFJCPsuRyWPyJYZEvE9CHrnOQfIJzuEV
-GwjJHhM93oiwUlPHvrkO7UTcJc0z09hkoXPUK0X/2L0oqkx7m0KGllJIh4yF2ynK
-lR3eKbkHKXo5zQcX9Jr6hMM0ONWevAdC3bGpss/9DFAGemG36hBYESyxpaxu9ICP
-OTUaE48yHahKpNnmZdUslnC/z7GHMb8PrmHAAoy2q97ZkA3Wke/PnQiyQs2GH5Jw
-HJwCezabEEBRo/9u//iRtwV7Jwule4tFVfhdNu/QKRmd6W0cqBTlIqVvuoHVsYdQ
-K3CrHjyw83TZZgC1BDgzvv02NZUcUg==
-=EfWq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJ3cQACgkQAVBC80lX
+0GyItAf9FvphDCI5EvBs04a8UQkDV4gtTtTtrXDrKPrI92z34gRHAOlAtiCIRQXY
+K6S85AYP95aN/ocOjR+DAb1tk9oOWAiMI3xUL/RFauxWF+q0yMXO0JhDyRMXsCPK
+GOhrxGzKC1dl2WWuaNxapRg92W5Q4U2EXWXRepFT/ZJH+nmH0MESEGLjEzYDXSxt
+485XWOLNESYR/9y6hxlWsmaCi9qit4e0bzrne8aLmyjHh+8sWJaLbVbSSLzdvqaS
+15DienmVveQePTcpHazrw3U8aBTJ5+ABwYBBGjl0WnVutEyFHhdhMuitGElLchoZ
++emd3VHSObcBWNM0rNTU8ayZNjx/sQ==
+=b4Ih
 -----END PGP SIGNATURE-----
 
---Sig_/i7zUcvo/4Wa+SUB/TjYDXiC--
-
---===============1697798338==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1697798338==--
+--Sig_/gcP/NiGqojFUI51DhDFM8j0--
