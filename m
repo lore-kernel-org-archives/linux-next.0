@@ -1,92 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the jc_docs tree with the fscrypt tree
-Date: Fri, 7 Dec 2018 11:53:40 +1100
-Message-ID: <20181207115340.2465a854@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the thermal tree
+Date: Fri, 7 Dec 2018 12:24:56 +1100
+Message-ID: <20181207122456.754129f4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CEPcu3FO.paRPuD/SljvRJQ"; protocol="application/pgp-signature"
+ boundary="Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CEPcu3FO.paRPuD/SljvRJQ
+--Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Zhang,
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+After merging the thermal tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  Documentation/filesystems/index.rst
+drivers/thermal/qcom/qcom-spmi-temp-alarm.c:26:10: fatal error: thermal_cor=
+e.h: No such file or directory
+ #include "thermal_core.h"
+          ^~~~~~~~~~~~~~~~
 
-between commit:
+Caused by commit
 
-  1b71a6809f96 ("fs-verity: add a documentation file")
+  150a4fe8c335 ("drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom =
+subdir")
 
-from the fscrypt tree and commit:
-
-  7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to restur=
-ctured text")
-
-from the jc_docs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the thermal tree from next-20181206 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc Documentation/filesystems/index.rst
-index 818390c32be6,ba921bdd5b06..000000000000
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@@ -360,13 -360,13 +360,24 @@@ encryption of files and directories
- =20
-      fscrypt
- =20
- +Verity API
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- +
- +A library which filesystems can hook into to support transparent
- +authentication of read-only files.
- +
- +.. toctree::
- +    :maxdepth: 2
- +
- +    fsverity
-++
-+ Pathname lookup
-+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+=20
-+ Pathname lookup in Linux is a complex beast; the document linked below
-+ provides a comprehensive summary for those looking for the details.
-+=20
-+ .. toctree::
-+    :maxdepth: 2
-+=20
-+    path-lookup.rst
-
---Sig_/CEPcu3FO.paRPuD/SljvRJQ
+--Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJxJQACgkQAVBC80lX
-0GzszQf/YlYmIDVssO51Wa23m+eBSQb4K3ioft83i1KeNuVzYK4KPa4dYKWFQ2jG
-FSLkpr1Ae9cqCggR381K/L/ufDavlEnK7QZlsWX/PbLRzeiHMrxCUwkAeOwDEf4r
-12B4SZLghQ80m5yIdJUh1MToeDLfRVhlv2nBdFL0iTIaYlc2hBuc+sJoKMUxm0mU
-cY9s3By5/JNHIrS0ftB/PKNKFXGToACjvENw/L8xLbVS04Q1MmiI18EGWB3l1Q4S
-AqVWPfBz3qrsQa70lSIjzQ13OpilV775JsegvQKOcOWBT3DlMd1qk+16hNySUbcS
-Y1b0uuLi6kJMwR4cde71W3j3rLMS8Q==
-=V6dG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJy+kACgkQAVBC80lX
+0GztcQf9EiqRHgGUILOxNzg2TOm00zRwcrmUh61igBlzOUbuk7Znf/Pljh1PCE3f
+M8/XHNDEJG11heNv+rMhS71hrWsOCys5kvE8bJh9xDLb4omn3S8YWZSpGlcHtiph
+o2HLPV+Jd1VxeCQH4p5mmZzCR6+PGk80o2I5eesBRvB2X7+2d3d1ysIsXYLo+ChG
+YE2p2uLoqoe+dpdjyRPy1l7nrNjuZ6RoLS1x91VaZh5H3sO1Ugfdd3NLSxZSUb1c
+mQEFUsmJ2gS47LJka56BG0RcaGyYJAbYdVlpG+UOq98ovh+dDGksG+rectcuBdMn
+Y5UahXD1fVO24PRBaw2cRfZPzUVrRg==
+=h+Wu
 -----END PGP SIGNATURE-----
 
---Sig_/CEPcu3FO.paRPuD/SljvRJQ--
+--Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ--
