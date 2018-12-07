@@ -1,55 +1,116 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the thermal tree
-Date: Fri, 7 Dec 2018 12:24:56 +1100
-Message-ID: <20181207122456.754129f4@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 7 Dec 2018 12:39:26 +1100
+Message-ID: <20181207123926.0f82b9e5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ"; protocol="application/pgp-signature"
+ boundary="Sig_/g+AEpj1my40rM4hE6m5k1.V"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ
+--Sig_/g+AEpj1my40rM4hE6m5k1.V
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+Hi all,
 
-After merging the thermal tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-drivers/thermal/qcom/qcom-spmi-temp-alarm.c:26:10: fatal error: thermal_cor=
-e.h: No such file or directory
- #include "thermal_core.h"
-          ^~~~~~~~~~~~~~~~
+  net/dsa/master.c
 
-Caused by commit
+between commit:
 
-  150a4fe8c335 ("drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom =
-subdir")
+  a3d7e01da060 ("net: dsa: Fix tagging attribute location")
 
-I have used the thermal tree from next-20181206 for today.
+from the net tree and commit:
+
+  dc0fe7d47f9f ("net: dsa: Set the master device's MTU to account for DSA o=
+verheads")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ
+diff --cc net/dsa/master.c
+index 5e8c9bef78bd,42f525bc68e2..000000000000
+--- a/net/dsa/master.c
++++ b/net/dsa/master.c
+@@@ -158,31 -158,24 +158,47 @@@ static void dsa_master_ethtool_teardown
+  	cpu_dp->orig_ethtool_ops =3D NULL;
+  }
+ =20
+ +static ssize_t tagging_show(struct device *d, struct device_attribute *at=
+tr,
+ +			    char *buf)
+ +{
+ +	struct net_device *dev =3D to_net_dev(d);
+ +	struct dsa_port *cpu_dp =3D dev->dsa_ptr;
+ +
+ +	return sprintf(buf, "%s\n",
+ +		       dsa_tag_protocol_to_str(cpu_dp->tag_ops));
+ +}
+ +static DEVICE_ATTR_RO(tagging);
+ +
+ +static struct attribute *dsa_slave_attrs[] =3D {
+ +	&dev_attr_tagging.attr,
+ +	NULL
+ +};
+ +
+ +static const struct attribute_group dsa_group =3D {
+ +	.name	=3D "dsa",
+ +	.attrs	=3D dsa_slave_attrs,
+ +};
+ +
++ void dsa_master_set_mtu(struct net_device *dev, struct dsa_port *cpu_dp)
++ {
++ 	unsigned int mtu =3D ETH_DATA_LEN + cpu_dp->tag_ops->overhead;
++ 	int err;
++=20
++ 	rtnl_lock();
++ 	if (mtu <=3D dev->max_mtu) {
++ 		err =3D dev_set_mtu(dev, mtu);
++ 		if (err)
++ 			netdev_dbg(dev, "Unable to set MTU to include for DSA overheads\n");
++ 	}
++ 	rtnl_unlock();
++ }
++=20
+  int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
+  {
+ +	int ret;
+ +
++ 	dsa_master_set_mtu(dev,  cpu_dp);
++=20
+  	/* If we use a tagging format that doesn't have an ethertype
+  	 * field, make sure that all packets from this point on get
+  	 * sent to the tag format's receive function.
+
+--Sig_/g+AEpj1my40rM4hE6m5k1.V
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJy+kACgkQAVBC80lX
-0GztcQf9EiqRHgGUILOxNzg2TOm00zRwcrmUh61igBlzOUbuk7Znf/Pljh1PCE3f
-M8/XHNDEJG11heNv+rMhS71hrWsOCys5kvE8bJh9xDLb4omn3S8YWZSpGlcHtiph
-o2HLPV+Jd1VxeCQH4p5mmZzCR6+PGk80o2I5eesBRvB2X7+2d3d1ysIsXYLo+ChG
-YE2p2uLoqoe+dpdjyRPy1l7nrNjuZ6RoLS1x91VaZh5H3sO1Ugfdd3NLSxZSUb1c
-mQEFUsmJ2gS47LJka56BG0RcaGyYJAbYdVlpG+UOq98ovh+dDGksG+rectcuBdMn
-Y5UahXD1fVO24PRBaw2cRfZPzUVrRg==
-=h+Wu
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJz04ACgkQAVBC80lX
+0GwtLwgAnR3stvtENL8oloWFqae8YsHD8QIXx+0L6Zxu/lCNGz61IBfqfCVo9bMg
+AOg5lWEpSM7Nd6rqFYdMcL3uAgsCUq0OGpz0iqYs5D4aNhEfE2DEJIu+aQI+rg2t
+PInfToMrVI2bD3fVbMoDblUyknkOoVdtn47855Z/Ak5Uz3iyjNAFD5+QwdARxqr1
+cVbV3abF8b3sGM/4iNX4Ddo8HgNmU/e0tGjYPpz9K+XFxP8vPs62t7gTNtr7QKbj
+g6zmRuzvXqa1xnwiUV+T0vK5TzGjbiHMZUxMqokZcWP0MZ365tq60wNzILFDjK64
+hTkGMHlDXAPVQEG1k03Qh5ahEVEWQw==
+=6QWn
 -----END PGP SIGNATURE-----
 
---Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ--
+--Sig_/g+AEpj1my40rM4hE6m5k1.V--
