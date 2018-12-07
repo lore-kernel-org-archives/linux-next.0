@@ -1,59 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad merge in the y2038 tree
-Date: Fri, 7 Dec 2018 10:07:29 +1100
-Message-ID: <20181207100729.0ed0fc7a@canb.auug.org.au>
-References: <20181207071147.3b41fb5c@canb.auug.org.au>
-        <CAK8P3a1U9y7rHq9GUd-BrY4=aLLyBYZLm8X0JcKU6j2_sYCCmQ@mail.gmail.com>
+Subject: linux-next: manual merge of the jc_docs tree with the fscrypt tree
+Date: Fri, 7 Dec 2018 11:53:40 +1100
+Message-ID: <20181207115340.2465a854@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2n92d5lkldTSpZBmyTD0Sgi"; protocol="application/pgp-signature"
+ boundary="Sig_/CEPcu3FO.paRPuD/SljvRJQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a1U9y7rHq9GUd-BrY4=aLLyBYZLm8X0JcKU6j2_sYCCmQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2n92d5lkldTSpZBmyTD0Sgi
+--Sig_/CEPcu3FO.paRPuD/SljvRJQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi all,
 
-On Thu, 6 Dec 2018 23:09:01 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Dec 6, 2018 at 9:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wr=
-ote:
-> >
-> > The y2038 tree contains a merge of next-20181206.  I cannot use a tree
-> > that includes a version of linux-next.  I assume that this was just a
-> > test merge, so please remove it. =20
->=20
-> Fixed now, I had pushed the wrong branch after I had done the test build =
-to
-> make sure that it wouldn't conflict with anything in yesterday's linux-ne=
-xt.
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-I figured something like that.  Thanks.
+  Documentation/filesystems/index.rst
+
+between commit:
+
+  1b71a6809f96 ("fs-verity: add a documentation file")
+
+from the fscrypt tree and commit:
+
+  7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to restur=
+ctured text")
+
+from the jc_docs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/2n92d5lkldTSpZBmyTD0Sgi
+diff --cc Documentation/filesystems/index.rst
+index 818390c32be6,ba921bdd5b06..000000000000
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@@ -360,13 -360,13 +360,24 @@@ encryption of files and directories
+ =20
+      fscrypt
+ =20
+ +Verity API
+ +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ +
+ +A library which filesystems can hook into to support transparent
+ +authentication of read-only files.
+ +
+ +.. toctree::
+ +    :maxdepth: 2
+ +
+ +    fsverity
+++
++ Pathname lookup
++ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++=20
++ Pathname lookup in Linux is a complex beast; the document linked below
++ provides a comprehensive summary for those looking for the details.
++=20
++ .. toctree::
++    :maxdepth: 2
++=20
++    path-lookup.rst
+
+--Sig_/CEPcu3FO.paRPuD/SljvRJQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJq7EACgkQAVBC80lX
-0GyW+wgAoNLe/mgbo5DZpSjEUo1sPipkaP0RI+ROZgxzRYaZ05vNCy6hWtmsIFdg
-cBuiNlXbg3DwHWnylTr63CU8nZRrZ5ySys8CaQUcXaKa1IsIh2qRg0uo+1zlzJlk
-l9Mu8QzL9WMAayWWYCZcypNGRHOPjMF56tmKyXIVm7J77hwLUn4bcp+2MWnT/S0H
-ciMFqiPykjOcBVB5C2nIGYrBsN3rLCFZjSwCVJEoR9ye2/xAqhpV9tnmH96jjvbL
-eQ6vrZCt1uxur5Wn65DIyUMNnOiZJjhe3OGibLcOHK/g6nwrGcmhdaN7ivYodvfg
-OlR8W6wHSSidQUAeVn7DHbwfQ/v0sg==
-=jo/D
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJxJQACgkQAVBC80lX
+0GzszQf/YlYmIDVssO51Wa23m+eBSQb4K3ioft83i1KeNuVzYK4KPa4dYKWFQ2jG
+FSLkpr1Ae9cqCggR381K/L/ufDavlEnK7QZlsWX/PbLRzeiHMrxCUwkAeOwDEf4r
+12B4SZLghQ80m5yIdJUh1MToeDLfRVhlv2nBdFL0iTIaYlc2hBuc+sJoKMUxm0mU
+cY9s3By5/JNHIrS0ftB/PKNKFXGToACjvENw/L8xLbVS04Q1MmiI18EGWB3l1Q4S
+AqVWPfBz3qrsQa70lSIjzQ13OpilV775JsegvQKOcOWBT3DlMd1qk+16hNySUbcS
+Y1b0uuLi6kJMwR4cde71W3j3rLMS8Q==
+=V6dG
 -----END PGP SIGNATURE-----
 
---Sig_/2n92d5lkldTSpZBmyTD0Sgi--
+--Sig_/CEPcu3FO.paRPuD/SljvRJQ--
