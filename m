@@ -1,116 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 7 Dec 2018 12:39:26 +1100
-Message-ID: <20181207123926.0f82b9e5@canb.auug.org.au>
+From: Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ powerpc tree
+Date: Thu, 6 Dec 2018 17:40:57 -0800
+Message-ID: <20181207014057.GA214249@google.com>
+References: <20181206174417.45fe3e7a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/g+AEpj1my40rM4hE6m5k1.V"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181206174417.45fe3e7a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christophe Leroy <christophe.leroy@c-s.fr>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/g+AEpj1my40rM4hE6m5k1.V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 06, 2018 at 05:44:17PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm-current tree got conflicts in:
+> 
+>   arch/powerpc/include/asm/book3s/32/pgalloc.h
+>   arch/powerpc/include/asm/nohash/32/pgalloc.h
+>   arch/powerpc/mm/pgtable-book3s64.c
+> 
+> between commits:
+> 
+>   a95d133c8643 ("powerpc/mm: Move pte_fragment_alloc() to a common location")
+>   32ea4c149990 ("powerpc/mm: Extend pte_fragment functionality to PPC32")
+> 
+> from the powerpc tree and commit:
+> 
+>   913c2d755b39 ("mm: treewide: remove unused address argument from pte_alloc functions")
+> 
+> from the akpm-current tree.
+> 
+> I fixed it up (see below, plus the extra merge fix patch) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-Hi all,
+The conflict resolution looks good to me.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-  net/dsa/master.c
+thanks,
 
-between commit:
-
-  a3d7e01da060 ("net: dsa: Fix tagging attribute location")
-
-from the net tree and commit:
-
-  dc0fe7d47f9f ("net: dsa: Set the master device's MTU to account for DSA o=
-verheads")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/dsa/master.c
-index 5e8c9bef78bd,42f525bc68e2..000000000000
---- a/net/dsa/master.c
-+++ b/net/dsa/master.c
-@@@ -158,31 -158,24 +158,47 @@@ static void dsa_master_ethtool_teardown
-  	cpu_dp->orig_ethtool_ops =3D NULL;
-  }
- =20
- +static ssize_t tagging_show(struct device *d, struct device_attribute *at=
-tr,
- +			    char *buf)
- +{
- +	struct net_device *dev =3D to_net_dev(d);
- +	struct dsa_port *cpu_dp =3D dev->dsa_ptr;
- +
- +	return sprintf(buf, "%s\n",
- +		       dsa_tag_protocol_to_str(cpu_dp->tag_ops));
- +}
- +static DEVICE_ATTR_RO(tagging);
- +
- +static struct attribute *dsa_slave_attrs[] =3D {
- +	&dev_attr_tagging.attr,
- +	NULL
- +};
- +
- +static const struct attribute_group dsa_group =3D {
- +	.name	=3D "dsa",
- +	.attrs	=3D dsa_slave_attrs,
- +};
- +
-+ void dsa_master_set_mtu(struct net_device *dev, struct dsa_port *cpu_dp)
-+ {
-+ 	unsigned int mtu =3D ETH_DATA_LEN + cpu_dp->tag_ops->overhead;
-+ 	int err;
-+=20
-+ 	rtnl_lock();
-+ 	if (mtu <=3D dev->max_mtu) {
-+ 		err =3D dev_set_mtu(dev, mtu);
-+ 		if (err)
-+ 			netdev_dbg(dev, "Unable to set MTU to include for DSA overheads\n");
-+ 	}
-+ 	rtnl_unlock();
-+ }
-+=20
-  int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
-  {
- +	int ret;
- +
-+ 	dsa_master_set_mtu(dev,  cpu_dp);
-+=20
-  	/* If we use a tagging format that doesn't have an ethertype
-  	 * field, make sure that all packets from this point on get
-  	 * sent to the tag format's receive function.
-
---Sig_/g+AEpj1my40rM4hE6m5k1.V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJz04ACgkQAVBC80lX
-0GwtLwgAnR3stvtENL8oloWFqae8YsHD8QIXx+0L6Zxu/lCNGz61IBfqfCVo9bMg
-AOg5lWEpSM7Nd6rqFYdMcL3uAgsCUq0OGpz0iqYs5D4aNhEfE2DEJIu+aQI+rg2t
-PInfToMrVI2bD3fVbMoDblUyknkOoVdtn47855Z/Ak5Uz3iyjNAFD5+QwdARxqr1
-cVbV3abF8b3sGM/4iNX4Ddo8HgNmU/e0tGjYPpz9K+XFxP8vPs62t7gTNtr7QKbj
-g6zmRuzvXqa1xnwiUV+T0vK5TzGjbiHMZUxMqokZcWP0MZ365tq60wNzILFDjK64
-hTkGMHlDXAPVQEG1k03Qh5ahEVEWQw==
-=6QWn
------END PGP SIGNATURE-----
-
---Sig_/g+AEpj1my40rM4hE6m5k1.V--
+ - Joel
