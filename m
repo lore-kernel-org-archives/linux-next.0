@@ -1,49 +1,71 @@
-From: "Koenig, Christian" <Christian.Koenig@amd.com>
-Subject: Re: linux-next: build failure after merge of the
- drm-misc tree
-Date: Fri, 7 Dec 2018 12:37:19 +0000
-Message-ID: <43146de0-7401-b174-b96a-c8362e0b65f1@amd.com>
-References: <20181206133219.38831da4@canb.auug.org.au>
+From: Rafael Aquini <aquini-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [-next] rename of VM_NR_PDFLUSH_THREADS breaks strace compilation
+Date: Fri, 7 Dec 2018 06:16:01 -0500
+Message-ID: <20181207111600.GB11365@xps>
+References: <20181207075807.GA9030@osiris> <20181207105312.GA11365@xps>
+ <20181207110146.GD9030@osiris>
+Reply-To: strace development discussions <strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20181206133219.38831da4@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <5A23EAAF7AF7DF48AF8F2000352C0EFB@namprd12.prod.outlook.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20181207110146.GD9030@osiris>
+List-Unsubscribe: <https://lists.strace.io/mailman/options/strace-devel>,
+ <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.strace.io/pipermail/strace-devel/>
+List-Post: <mailto:strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
+List-Help: <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.strace.io/mailman/listinfo/strace-devel>,
+ <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=subscribe>
+Errors-To: strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org
+Sender: "Strace-devel" <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
+To: Heiko Carstens <heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Dmitry V. Levin" <ldv-u2l5PoMzF/Vg9hUCZPvPmw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org, William Kucharski <william.kucharski-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-SGkgU3RlcGhlbiwKCnllYWgsIHRoYXQgaXMgYSBrbm93biBwcm9ibGVtLiBJIG1pc3NlZCB0aGUg
-Y2hhbmdlIGR1cmluZyByZWJhc2Ugb2YgdGhlIApyZXZlcnQuCgpQbGVhc2Ugc2VlIHBhdGNoICIy
-MzEyZjk4NDI4NTQgZHJtL3YzZDogZml4IGJyb2tlbiBidWlsZCIgd2hpY2ggaXMgCmFscmVhZHkg
-aW4gZHJtLW1pc2MtbmV4dCBhbmQgZml4ZXMgdGhlIGlzc3VlLgoKQ2hyaXN0aWFuLgoKQW0gMDYu
-MTIuMTggdW0gMDM6MzIgc2NocmllYiBTdGVwaGVuIFJvdGh3ZWxsOgo+IEhpIGFsbCwKPgo+IEFm
-dGVyIG1lcmdpbmcgdGhlIGRybS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAo
-eDg2XzY0Cj4gYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+Cj4gZHJpdmVycy9ncHUv
-ZHJtL3YzZC92M2RfZ2VtLmM6IEluIGZ1bmN0aW9uICd2M2Rfc3VibWl0X3RmdV9pb2N0bCc6Cj4g
-ZHJpdmVycy9ncHUvZHJtL3YzZC92M2RfZ2VtLmM6NzE5OjM6IGVycm9yOiB0b28gbWFueSBhcmd1
-bWVudHMgdG8gZnVuY3Rpb24gJ2RybV9zeW5jb2JqX3JlcGxhY2VfZmVuY2UnCj4gICAgIGRybV9z
-eW5jb2JqX3JlcGxhY2VfZmVuY2Uoc3luY19vdXQsIDAsIHNjaGVkX2RvbmVfZmVuY2UpOwo+ICAg
-ICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+Cj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZl
-cnMvZ3B1L2RybS92M2QvdjNkX2dlbS5jOjU6Cj4gaW5jbHVkZS9kcm0vZHJtX3N5bmNvYmouaDox
-MzQ6Njogbm90ZTogZGVjbGFyZWQgaGVyZQo+ICAgdm9pZCBkcm1fc3luY29ial9yZXBsYWNlX2Zl
-bmNlKHN0cnVjdCBkcm1fc3luY29iaiAqc3luY29iaiwKPiAgICAgICAgXn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fgo+Cj4gQ2F1c2VkIGJ5IGNvbW1pdAo+Cj4gICAgMGIyNThlZDFhMjE5ICgiZHJt
-OiByZXZlcnQgImV4cGFuZCByZXBsYWNlX2ZlbmNlIHRvIHN1cHBvcnQgdGltZWxpbmUgcG9pbnQg
-djIiIikKPgo+IGludGVyYWN0aW5nIHdpdGggY29tbWl0Cj4KPiAgICAxNTg0ZjE2Y2E5NmUgKCJk
-cm0vdjNkOiBBZGQgc3VwcG9ydCBmb3Igc3VibWl0dGluZyBqb2JzIHRvIHRoZSBURlUiKQo+Cj4g
-SSBoYXZlIHVzZWQgdGhlIGRybS1taXNjIHRyZWUgZnJvbSBuZXh0LTIwMTgxMjA1IGZvciB0b2Rh
-eS4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50
-ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+On Fri, Dec 07, 2018 at 12:01:46PM +0100, Heiko Carstens wrote:
+> On Fri, Dec 07, 2018 at 05:53:13AM -0500, Rafael Aquini wrote:
+> > On Fri, Dec 07, 2018 at 08:58:07AM +0100, Heiko Carstens wrote:
+> > > Hi Rafael,
+> > > 
+> > > your patch 77cab92a2cb1 ("sysctl: clean up nr_pdflush_threads
+> > > leftover") in linux-next breaks strace compilation if used with kernel
+> > > headers from linux-next.
+> > > -       VM_NR_PDFLUSH_THREADS=15, /* nr_pdflush_threads */
+> > > +       VM_UNUSED15=15,         /* was: int: nr_pdflush_threads */
+> > The nr_pdflush_threads (VM_NR_PDFLUSH_THREADS) tunable has been obsolete since 2.6.32
+> > and it was, excepting by the bit in the referred patch, completely removed on 4.15.
+> > 
+> > I think you just need to patch strace source with the following hunk, in
+> > order to reflect the removal. Would you mind checking it?
+> > 
+> > diff --git a/xlat/sysctl_vm.in b/xlat/sysctl_vm.in
+> > index 3c2b4739..30784c2a 100644
+> > --- a/xlat/sysctl_vm.in
+> > +++ b/xlat/sysctl_vm.in
+> > @@ -5,7 +5,6 @@ VM_DIRTY_BACKGROUND
+> >  VM_DIRTY_RATIO
+> >  VM_DIRTY_WB_CS
+> >  VM_DIRTY_EXPIRE_CS
+> > -VM_NR_PDFLUSH_THREADS
+> >  VM_OVERCOMMIT_RATIO
+> >  VM_PAGEBUF
+> >  VM_HUGETLB_PAGES
+> 
+> I'll leave that up to Dmitry to decide what to do here. At least it
+> won't be possible to compile old strace versions with new kernel
+> headers if the kernel change gets merged upstream.
+>
+
+It escapes me why strace bootstrap needs to tabulate these sysctl_vm, as no one 
+of these defs are referenced in the rest of the code, let alone 
+/proc/sys/vm/nr_pdflush_threads that means nothing since per-BDI flusher threads
+were introduced almost 10 years ago.
+
+Cheers,
+-- Rafael
+-- 
+Strace-devel mailing list
+Strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org
+https://lists.strace.io/mailman/listinfo/strace-devel
