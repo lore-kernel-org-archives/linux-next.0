@@ -1,43 +1,47 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: manual merge of the jc_docs tree with the fscrypt
- tree
-Date: Fri, 7 Dec 2018 00:08:28 -0700
-Message-ID: <20181207000828.3dead855@lwn.net>
-References: <20181207115340.2465a854@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>
+Subject: [-next] rename of VM_NR_PDFLUSH_THREADS breaks strace compilation
+Date: Fri, 7 Dec 2018 08:58:07 +0100
+Message-ID: <20181207075807.GA9030@osiris>
+Reply-To: strace development discussions <strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181207115340.2465a854@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Theodore Ts'o <tytso@mit.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
+Content-Disposition: inline
+List-Unsubscribe: <https://lists.strace.io/mailman/options/strace-devel>,
+ <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.strace.io/pipermail/strace-devel/>
+List-Post: <mailto:strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
+List-Help: <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.strace.io/mailman/listinfo/strace-devel>,
+ <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=subscribe>
+Errors-To: strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org
+Sender: "Strace-devel" <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
+To: Rafael Aquini <aquini-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Dmitry V. Levin" <ldv-u2l5PoMzF/Vg9hUCZPvPmw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org, William Kucharski <william.kucharski-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 7 Dec 2018 11:53:40 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Today's linux-next merge of the jc_docs tree got a conflict in:
-> 
->   Documentation/filesystems/index.rst
-> 
-> between commit:
-> 
->   1b71a6809f96 ("fs-verity: add a documentation file")
-> 
-> from the fscrypt tree and commit:
-> 
->   7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to resturctured text")
-> 
-> from the jc_docs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-That fix is as good as any, thanks.
-
-jon
+SGkgUmFmYWVsLAoKeW91ciBwYXRjaCA3N2NhYjkyYTJjYjEgKCJzeXNjdGw6IGNsZWFuIHVwIG5y
+X3BkZmx1c2hfdGhyZWFkcwpsZWZ0b3ZlciIpIGluIGxpbnV4LW5leHQgYnJlYWtzIHN0cmFjZSBj
+b21waWxhdGlvbiBpZiB1c2VkIHdpdGgga2VybmVsCmhlYWRlcnMgZnJvbSBsaW51eC1uZXh0LgoK
+VGhpczoKCi0tLSBhL2luY2x1ZGUvdWFwaS9saW51eC9zeXNjdGwuaAorKysgYi9pbmNsdWRlL3Vh
+cGkvbGludXgvc3lzY3RsLmgKWy4uLl0KLSAgICAgICBWTV9OUl9QREZMVVNIX1RIUkVBRFM9MTUs
+IC8qIG5yX3BkZmx1c2hfdGhyZWFkcyAqLworICAgICAgIFZNX1VOVVNFRDE1PTE1LCAgICAgICAg
+IC8qIHdhczogaW50OiBucl9wZGZsdXNoX3RocmVhZHMgKi8KCmNhdXNlcyB0aGlzIHdoZW4gdHJ5
+aW5nIHRvIGJ1aWxkIHN0cmFjZToKCisgLi9ib290c3RyYXAKY29uZmlndXJlLmFjOjU0OiBpbnN0
+YWxsaW5nICcuL2NvbXBpbGUnCmNvbmZpZ3VyZS5hYzo0NzogaW5zdGFsbGluZyAnLi9jb25maWcu
+Z3Vlc3MnCmNvbmZpZ3VyZS5hYzo0NzogaW5zdGFsbGluZyAnLi9jb25maWcuc3ViJwpjb25maWd1
+cmUuYWM6NDU6IGluc3RhbGxpbmcgJy4vaW5zdGFsbC1zaCcKY29uZmlndXJlLmFjOjQ1OiBpbnN0
+YWxsaW5nICcuL21pc3NpbmcnCk1ha2VmaWxlLmFtOiBpbnN0YWxsaW5nICcuL2RlcGNvbXAnCk1h
+a2VmaWxlLmFtOjk3NTogd2FybmluZzogdmFyaWFibGUgJ2lvY3Rsc29ydF9MREZMQUdTJyBpcyBk
+ZWZpbmVkIGJ1dCBubyBwcm9ncmFtIG9yCk1ha2VmaWxlLmFtOjk3NTogbGlicmFyeSBoYXMgJ2lv
+Y3Rsc29ydCcgYXMgY2Fub25pY2FsIG5hbWUgKHBvc3NpYmxlIHR5cG8pCnBhcmFsbGVsLXRlc3Rz
+OiBpbnN0YWxsaW5nICcuL3Rlc3QtZHJpdmVyJworIC4vY29uZmlndXJlCisrIG5wcm9jCisgbWFr
+ZSAtaiAxMApJbiBmaWxlIGluY2x1ZGVkIGZyb20gZGVmcy5oOjMwOCwKZnJvbSBzeXNjdGwuYzoz
+MToKeGxhdC9zeXNjdGxfdm0uaDoyMzo3OiBlcnJvcjog4oCYVk1fTlJfUERGTFVTSF9USFJFQURT
+4oCZIHVuZGVjbGFyZWQgaGVyZSAobm90IGluIGEgZnVuY3Rpb24pClhMQVQoVk1fTlJfUERGTFVT
+SF9USFJFQURTKSwKXn5+fn5+fn5+fn5+fn5+fn5+fn5+CnhsYXQuaDo0OTozNTogbm90ZTogaW4g
+ZGVmaW5pdGlvbiBvZiBtYWNybyDigJhYTEFU4oCZCiMgZGVmaW5lIFhMQVQodmFsKSAgIHsgKHVu
+c2lnbmVkKSh2YWwpLCAjdmFsIH0KXn5+CgotLSAKU3RyYWNlLWRldmVsIG1haWxpbmcgbGlzdApT
+dHJhY2UtZGV2ZWxAbGlzdHMuc3RyYWNlLmlvCmh0dHBzOi8vbGlzdHMuc3RyYWNlLmlvL21haWxt
+YW4vbGlzdGluZm8vc3RyYWNlLWRldmVsCg==
