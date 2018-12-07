@@ -1,15 +1,17 @@
 From: Rafael Aquini <aquini-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [-next] rename of VM_NR_PDFLUSH_THREADS breaks strace compilation
-Date: Fri, 7 Dec 2018 05:53:13 -0500
-Message-ID: <20181207105312.GA11365@xps>
-References: <20181207075807.GA9030@osiris>
+Date: Fri, 7 Dec 2018 07:51:29 -0500
+Message-ID: <20181207125128.GA15157@xps>
+References: <20181207075807.GA9030@osiris> <20181207105312.GA11365@xps>
+ <20181207110146.GD9030@osiris> <20181207111600.GB11365@xps>
+ <20181207115412.GA15336@kroah.com> <20181207121717.GA13748@xps>
 Reply-To: strace development discussions <strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20181207075807.GA9030@osiris>
+In-Reply-To: <20181207121717.GA13748@xps>
 List-Unsubscribe: <https://lists.strace.io/mailman/options/strace-devel>,
  <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.strace.io/pipermail/strace-devel/>
@@ -19,44 +21,111 @@ List-Subscribe: <https://lists.strace.io/mailman/listinfo/strace-devel>,
  <mailto:strace-devel-request-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org?subject=subscribe>
 Errors-To: strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org
 Sender: "Strace-devel" <strace-devel-bounces-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org>
-To: Heiko Carstens <heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Dmitry V. Levin" <ldv-u2l5PoMzF/Vg9hUCZPvPmw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org, William Kucharski <william.kucharski-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: William Kucharski <william.kucharski-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Carstens <heiko.carstens-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org, "Dmitry V. Levin" <ldv-u2l5PoMzF/Vg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gRnJpLCBEZWMgMDcsIDIwMTggYXQgMDg6NTg6MDdBTSArMDEwMCwgSGVpa28gQ2Fyc3RlbnMg
-d3JvdGU6Cj4gSGkgUmFmYWVsLAo+IAo+IHlvdXIgcGF0Y2ggNzdjYWI5MmEyY2IxICgic3lzY3Rs
-OiBjbGVhbiB1cCBucl9wZGZsdXNoX3RocmVhZHMKPiBsZWZ0b3ZlciIpIGluIGxpbnV4LW5leHQg
-YnJlYWtzIHN0cmFjZSBjb21waWxhdGlvbiBpZiB1c2VkIHdpdGgga2VybmVsCj4gaGVhZGVycyBm
-cm9tIGxpbnV4LW5leHQuCj4gCj4gVGhpczoKPiAKPiAtLS0gYS9pbmNsdWRlL3VhcGkvbGludXgv
-c3lzY3RsLmgKPiArKysgYi9pbmNsdWRlL3VhcGkvbGludXgvc3lzY3RsLmgKPiBbLi4uXQo+IC0g
-ICAgICAgVk1fTlJfUERGTFVTSF9USFJFQURTPTE1LCAvKiBucl9wZGZsdXNoX3RocmVhZHMgKi8K
-PiArICAgICAgIFZNX1VOVVNFRDE1PTE1LCAgICAgICAgIC8qIHdhczogaW50OiBucl9wZGZsdXNo
-X3RocmVhZHMgKi8KPiAKPiBjYXVzZXMgdGhpcyB3aGVuIHRyeWluZyB0byBidWlsZCBzdHJhY2U6
-Cj4gCj4gKyAuL2Jvb3RzdHJhcAo+IGNvbmZpZ3VyZS5hYzo1NDogaW5zdGFsbGluZyAnLi9jb21w
-aWxlJwo+IGNvbmZpZ3VyZS5hYzo0NzogaW5zdGFsbGluZyAnLi9jb25maWcuZ3Vlc3MnCj4gY29u
-ZmlndXJlLmFjOjQ3OiBpbnN0YWxsaW5nICcuL2NvbmZpZy5zdWInCj4gY29uZmlndXJlLmFjOjQ1
-OiBpbnN0YWxsaW5nICcuL2luc3RhbGwtc2gnCj4gY29uZmlndXJlLmFjOjQ1OiBpbnN0YWxsaW5n
-ICcuL21pc3NpbmcnCj4gTWFrZWZpbGUuYW06IGluc3RhbGxpbmcgJy4vZGVwY29tcCcKPiBNYWtl
-ZmlsZS5hbTo5NzU6IHdhcm5pbmc6IHZhcmlhYmxlICdpb2N0bHNvcnRfTERGTEFHUycgaXMgZGVm
-aW5lZCBidXQgbm8gcHJvZ3JhbSBvcgo+IE1ha2VmaWxlLmFtOjk3NTogbGlicmFyeSBoYXMgJ2lv
-Y3Rsc29ydCcgYXMgY2Fub25pY2FsIG5hbWUgKHBvc3NpYmxlIHR5cG8pCj4gcGFyYWxsZWwtdGVz
-dHM6IGluc3RhbGxpbmcgJy4vdGVzdC1kcml2ZXInCj4gKyAuL2NvbmZpZ3VyZQo+ICsrIG5wcm9j
-Cj4gKyBtYWtlIC1qIDEwCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRlZnMuaDozMDgsCj4gZnJv
-bSBzeXNjdGwuYzozMToKPiB4bGF0L3N5c2N0bF92bS5oOjIzOjc6IGVycm9yOiDigJhWTV9OUl9Q
-REZMVVNIX1RIUkVBRFPigJkgdW5kZWNsYXJlZCBoZXJlIChub3QgaW4gYSBmdW5jdGlvbikKPiBY
-TEFUKFZNX05SX1BERkxVU0hfVEhSRUFEUyksCj4gXn5+fn5+fn5+fn5+fn5+fn5+fn5+Cj4geGxh
-dC5oOjQ5OjM1OiBub3RlOiBpbiBkZWZpbml0aW9uIG9mIG1hY3JvIOKAmFhMQVTigJkKPiAjIGRl
-ZmluZSBYTEFUKHZhbCkgICB7ICh1bnNpZ25lZCkodmFsKSwgI3ZhbCB9Cj4gXn5+Cj4KCgpUaGUg
-bnJfcGRmbHVzaF90aHJlYWRzIChWTV9OUl9QREZMVVNIX1RIUkVBRFMpIHR1bmFibGUgaGFzIGJl
-ZW4gb2Jzb2xldGUgc2luY2UgMi42LjMyCmFuZCBpdCB3YXMsIGV4Y2VwdGluZyBieSB0aGUgYml0
-IGluIHRoZSByZWZlcnJlZCBwYXRjaCwgY29tcGxldGVseSByZW1vdmVkIG9uIDQuMTUuCgpJIHRo
-aW5rIHlvdSBqdXN0IG5lZWQgdG8gcGF0Y2ggc3RyYWNlIHNvdXJjZSB3aXRoIHRoZSBmb2xsb3dp
-bmcgaHVuaywgaW4Kb3JkZXIgdG8gcmVmbGVjdCB0aGUgcmVtb3ZhbC4gV291bGQgeW91IG1pbmQg
-Y2hlY2tpbmcgaXQ/CgpkaWZmIC0tZ2l0IGEveGxhdC9zeXNjdGxfdm0uaW4gYi94bGF0L3N5c2N0
-bF92bS5pbgppbmRleCAzYzJiNDczOS4uMzA3ODRjMmEgMTAwNjQ0Ci0tLSBhL3hsYXQvc3lzY3Rs
-X3ZtLmluCisrKyBiL3hsYXQvc3lzY3RsX3ZtLmluCkBAIC01LDcgKzUsNiBAQCBWTV9ESVJUWV9C
-QUNLR1JPVU5ECiBWTV9ESVJUWV9SQVRJTwogVk1fRElSVFlfV0JfQ1MKIFZNX0RJUlRZX0VYUElS
-RV9DUwotVk1fTlJfUERGTFVTSF9USFJFQURTCiBWTV9PVkVSQ09NTUlUX1JBVElPCiBWTV9QQUdF
-QlVGCiBWTV9IVUdFVExCX1BBR0VTCgoKCi0tIApTdHJhY2UtZGV2ZWwgbWFpbGluZyBsaXN0ClN0
-cmFjZS1kZXZlbEBsaXN0cy5zdHJhY2UuaW8KaHR0cHM6Ly9saXN0cy5zdHJhY2UuaW8vbWFpbG1h
-bi9saXN0aW5mby9zdHJhY2UtZGV2ZWwK
+On Fri, Dec 07, 2018 at 07:17:17AM -0500, Rafael Aquini wrote:
+> On Fri, Dec 07, 2018 at 12:54:12PM +0100, Greg Kroah-Hartman wrote:
+> > On Fri, Dec 07, 2018 at 06:16:01AM -0500, Rafael Aquini wrote:
+> > > On Fri, Dec 07, 2018 at 12:01:46PM +0100, Heiko Carstens wrote:
+> > > > On Fri, Dec 07, 2018 at 05:53:13AM -0500, Rafael Aquini wrote:
+> > > > > On Fri, Dec 07, 2018 at 08:58:07AM +0100, Heiko Carstens wrote:
+> > > > > > Hi Rafael,
+> > > > > > 
+> > > > > > your patch 77cab92a2cb1 ("sysctl: clean up nr_pdflush_threads
+> > > > > > leftover") in linux-next breaks strace compilation if used with kernel
+> > > > > > headers from linux-next.
+> > > > > > -       VM_NR_PDFLUSH_THREADS=15, /* nr_pdflush_threads */
+> > > > > > +       VM_UNUSED15=15,         /* was: int: nr_pdflush_threads */
+> > > > > The nr_pdflush_threads (VM_NR_PDFLUSH_THREADS) tunable has been obsolete since 2.6.32
+> > > > > and it was, excepting by the bit in the referred patch, completely removed on 4.15.
+> > > > > 
+> > > > > I think you just need to patch strace source with the following hunk, in
+> > > > > order to reflect the removal. Would you mind checking it?
+> > > > > 
+> > > > > diff --git a/xlat/sysctl_vm.in b/xlat/sysctl_vm.in
+> > > > > index 3c2b4739..30784c2a 100644
+> > > > > --- a/xlat/sysctl_vm.in
+> > > > > +++ b/xlat/sysctl_vm.in
+> > > > > @@ -5,7 +5,6 @@ VM_DIRTY_BACKGROUND
+> > > > >  VM_DIRTY_RATIO
+> > > > >  VM_DIRTY_WB_CS
+> > > > >  VM_DIRTY_EXPIRE_CS
+> > > > > -VM_NR_PDFLUSH_THREADS
+> > > > >  VM_OVERCOMMIT_RATIO
+> > > > >  VM_PAGEBUF
+> > > > >  VM_HUGETLB_PAGES
+> > > > 
+> > > > I'll leave that up to Dmitry to decide what to do here. At least it
+> > > > won't be possible to compile old strace versions with new kernel
+> > > > headers if the kernel change gets merged upstream.
+> > > >
+> > > 
+> > > It escapes me why strace bootstrap needs to tabulate these sysctl_vm, as no one 
+> > > of these defs are referenced in the rest of the code, let alone 
+> > > /proc/sys/vm/nr_pdflush_threads that means nothing since per-BDI flusher threads
+> > > were introduced almost 10 years ago.
+> > 
+> > This isn't ok, we shouldn't break userspace, I'll go revert this patch.
+> >
+> > Rafael, feel free to resend but just add a comment that says it is
+> > obsolete or something.
+> > 
+> 
+> This is more like autotools insanity on the app buildscripts part than proper
+> userspace breakage. Linux sysctl man page brings a nice note on why one
+> should not rely on the syscall:
+> 
+> NOTES
+>        Glibc does not provide a wrapper for this system call; call it using syscall(2).
+>        Or rather...  don't call it: use of this system call has long been
+>        discouraged, and it is so unloved that it is likely to disappear in a 
+>        future kernel version.  Since Linux 2.6.24, uses of this system call result in
+>        warnings in the kernel log.  Remove it from your programs now; use the /proc/sys interface instead.
+> 
+>        This system call is available only if the kernel was configured with the CONFIG_SYSCTL_SYSCALL option.
+> 
+> 
+> also worth to note that CONFIG_SYSCTL_SYSCALL defaults to N
+>
+
+Here's a little bit of history to add to the rationale on why the
+revert, in this case, does not seem to be the correct path:
+
+Initially, upstream commit:
+
+commit 3965c9ae47d64aadf6f13b6fcd37767b83c0689a
+Author: Wanpeng Li <liwp-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Date:   Tue Jul 31 16:41:52 2012 -0700
+
+    mm: prepare for removal of obsolete /proc/sys/vm/nr_pdflush_threads
+
+
+effectively removed nr_pdflush_threads storage space, ceased exporting
+VM_NR_PDFLUSH_THREADS to struct bin_table bin_vm_table[] and replaced
+the procname handler with a deprecation note to dmesg.
+
+
+
+then, the following upstream commit completely removed the entry from procfs:
+
+commit b35bd0d9f8a8ea17aae40893e18274d191a2d2c5
+Author: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>
+Date:   Sat Sep 30 23:39:05 2017 -0600
+
+    sysctl: remove /proc/sys/vm/nr_pdflush_threads
+
+
+Only bit missing is the cleanup proposed with this patch. If we cannot
+clean up something rigthfully deprecated and removed from so long, then
+we're certainly dead in the water.
+
+This will be my last email on the matter, I promise!
+
+Cheers,
+-- Rafael
+-- 
+Strace-devel mailing list
+Strace-devel-3+4lAyCyj6AWlMsSdNXQLw@public.gmane.org
+https://lists.strace.io/mailman/listinfo/strace-devel
