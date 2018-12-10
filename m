@@ -1,39 +1,175 @@
-From: Or Gerlitz <gerlitz.or@gmail.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 10 Dec 2018 13:38:54 +0200
-Message-ID: <CAJ3xEMhyNMpiBVb6Q+RkxyxgacUMXnBs7-7f0OvuzXK1-TJvqQ@mail.gmail.com>
-References: <20181210123633.4a0e4409@canb.auug.org.au>
+From: Andrey Konovalov <andreyknvl@google.com>
+Subject: Re: [PATCH v13 08/25] kasan: initialize shadow to 0xff for tag-based mode
+Date: Mon, 10 Dec 2018 13:12:23 +0100
+Message-ID: <CAAeHK+wWRG6kp7mn-bNpYQ5cV8ygbXKnwS9f0mDCAnwiTqEoMg@mail.gmail.com>
+References: <cover.1544099024.git.andreyknvl@google.com> <5cc1b789aad7c99cf4f3ec5b328b147ad53edb40.1544099024.git.andreyknvl@google.com>
+ <CAP=VYLo-o8vpGrpM_+0jdvxLC9uxw+F7_OtsSfRyq24HR1dDwA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181210123633.4a0e4409@canb.auug.org.au>
+In-Reply-To: <CAP=VYLo-o8vpGrpM_+0jdvxLC9uxw+F7_OtsSfRyq24HR1dDwA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Linux Netdev List <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Amritha Nambiar <amritha.nambiar@intel.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paul Blakey <paulb@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
+To: paul.gortmaker@windriver.com
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Christoph Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Rutland <mark.rutland@arm.com>, Nick Desaulniers <ndesaulniers@google.com>, Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <dave.martin@arm.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, "Eric W . Biederman" <ebiederm@xmission.com>, Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Greg Kroah-Hartman <gregkh@linu>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 10, 2018 at 3:38 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Dec 10, 2018 at 2:35 AM Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 >
-> Hi all,
+> On Thu, Dec 6, 2018 at 7:25 AM Andrey Konovalov <andreyknvl@google.com> w=
+rote:
+>>
+>> A tag-based KASAN shadow memory cell contains a memory tag, that
+>> corresponds to the tag in the top byte of the pointer, that points to th=
+at
+>> memory. The native top byte value of kernel pointers is 0xff, so with
+>> tag-based KASAN we need to initialize shadow memory to 0xff.
+>>
+>> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>> ---
+>>  arch/arm64/mm/kasan_init.c | 15 +++++++++++++--
+>>  include/linux/kasan.h      |  8 ++++++++
 >
-> Today's linux-next merge of the net-next tree got a conflict in:
 >
->   net/sched/cls_flower.c
+> The version of this in  linux-next breaks arm64 allmodconfig for me:
 >
-> between commit:
->
->   35cc3cefc4de ("net/sched: cls_flower: Reject duplicated rules also under skip_sw")
->
-> from the net tree and commit:
->
->   5c72299fba9d ("net: sched: cls_flower: Classify packets using port ranges")
->
-> from the net-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
+> mm/kasan/common.c: In function =E2=80=98kasan_module_alloc=E2=80=99:
+> mm/kasan/common.c:481:17: error: =E2=80=98KASAN_SHADOW_INIT=E2=80=99 unde=
+clared (first use in this function)
+>    __memset(ret, KASAN_SHADOW_INIT, shadow_size);
+>                  ^
+> mm/kasan/common.c:481:17: note: each undeclared identifier is reported on=
+ly once for each function it appears in
+> make[3]: *** [mm/kasan/common.o] Error 1
+> make[3]: *** Waiting for unfinished jobs....
+> make[2]: *** [mm/kasan] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [mm/] Error 2
+> make: *** [sub-make] Error 2
 
-[..]
+Hi Paul,
 
-The fix LGTM, thanks for addressing this.
+This is my bad, this should be fixed in v13 of this patchset, which is
+in mm right now but not in linux-next yet as it seems.
 
-Or.
+Thanks!
+
+>
+> An automated git bisect-run points at this:
+>
+> 5c36287813721999e79ac76f637f1ba7e5054402 is the first bad commit
+> commit 5c36287813721999e79ac76f637f1ba7e5054402
+> Author: Andrey Konovalov <andreyknvl@google.com>
+> Date:   Wed Dec 5 11:13:21 2018 +1100
+>
+>     kasan: initialize shadow to 0xff for tag-based mode
+>
+> A quick look at the commit makes me think that the case where the
+> "# CONFIG_KASAN_GENERIC is not set" has not been handled.
+>
+> I'm using an older gcc 4.8.3 - only used for build testing.
+>
+> Paul.
+> --
+>
+>>  mm/kasan/common.c          |  3 ++-
+>>  3 files changed, 23 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+>> index 4ebc19422931..7a4a0904cac8 100644
+>> --- a/arch/arm64/mm/kasan_init.c
+>> +++ b/arch/arm64/mm/kasan_init.c
+>> @@ -43,6 +43,15 @@ static phys_addr_t __init kasan_alloc_zeroed_page(int=
+ node)
+>>         return __pa(p);
+>>  }
+>>
+>> +static phys_addr_t __init kasan_alloc_raw_page(int node)
+>> +{
+>> +       void *p =3D memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
+>> +                                               __pa(MAX_DMA_ADDRESS),
+>> +                                               MEMBLOCK_ALLOC_ACCESSIBL=
+E,
+>> +                                               node);
+>> +       return __pa(p);
+>> +}
+>> +
+>>  static pte_t *__init kasan_pte_offset(pmd_t *pmdp, unsigned long addr, =
+int node,
+>>                                       bool early)
+>>  {
+>> @@ -92,7 +101,9 @@ static void __init kasan_pte_populate(pmd_t *pmdp, un=
+signed long addr,
+>>         do {
+>>                 phys_addr_t page_phys =3D early ?
+>>                                 __pa_symbol(kasan_early_shadow_page)
+>> -                                       : kasan_alloc_zeroed_page(node);
+>> +                                       : kasan_alloc_raw_page(node);
+>> +               if (!early)
+>> +                       memset(__va(page_phys), KASAN_SHADOW_INIT, PAGE_=
+SIZE);
+>>                 next =3D addr + PAGE_SIZE;
+>>                 set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KER=
+NEL));
+>>         } while (ptep++, addr =3D next, addr !=3D end && pte_none(READ_O=
+NCE(*ptep)));
+>> @@ -239,7 +250,7 @@ void __init kasan_init(void)
+>>                         pfn_pte(sym_to_pfn(kasan_early_shadow_page),
+>>                                 PAGE_KERNEL_RO));
+>>
+>> -       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+>> +       memset(kasan_early_shadow_page, KASAN_SHADOW_INIT, PAGE_SIZE);
+>>         cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+>>
+>>         /* At this point kasan is fully initialized. Enable error messag=
+es */
+>> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+>> index ec22d548d0d7..c56af24bd3e7 100644
+>> --- a/include/linux/kasan.h
+>> +++ b/include/linux/kasan.h
+>> @@ -153,6 +153,8 @@ static inline size_t kasan_metadata_size(struct kmem=
+_cache *cache) { return 0; }
+>>
+>>  #ifdef CONFIG_KASAN_GENERIC
+>>
+>> +#define KASAN_SHADOW_INIT 0
+>> +
+>>  void kasan_cache_shrink(struct kmem_cache *cache);
+>>  void kasan_cache_shutdown(struct kmem_cache *cache);
+>>
+>> @@ -163,4 +165,10 @@ static inline void kasan_cache_shutdown(struct kmem=
+_cache *cache) {}
+>>
+>>  #endif /* CONFIG_KASAN_GENERIC */
+>>
+>> +#ifdef CONFIG_KASAN_SW_TAGS
+>> +
+>> +#define KASAN_SHADOW_INIT 0xFF
+>> +
+>> +#endif /* CONFIG_KASAN_SW_TAGS */
+>> +
+>>  #endif /* LINUX_KASAN_H */
+>> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+>> index 5f68c93734ba..7134e75447ff 100644
+>> --- a/mm/kasan/common.c
+>> +++ b/mm/kasan/common.c
+>> @@ -473,11 +473,12 @@ int kasan_module_alloc(void *addr, size_t size)
+>>
+>>         ret =3D __vmalloc_node_range(shadow_size, 1, shadow_start,
+>>                         shadow_start + shadow_size,
+>> -                       GFP_KERNEL | __GFP_ZERO,
+>> +                       GFP_KERNEL,
+>>                         PAGE_KERNEL, VM_NO_GUARD, NUMA_NO_NODE,
+>>                         __builtin_return_address(0));
+>>
+>>         if (ret) {
+>> +               __memset(ret, KASAN_SHADOW_INIT, shadow_size);
+>>                 find_vm_area(addr)->flags |=3D VM_KASAN;
+>>                 kmemleak_ignore(ret);
+>>                 return 0;
+>> --
+>> 2.20.0.rc1.387.gf8505762e3-goog
+>>
