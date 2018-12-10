@@ -1,28 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-Date: Sun, 09 Dec 2018 16:31:52 -0800 (PST)
-Message-ID: <20181209.163152.1641648923109797638.davem@davemloft.net>
-References: <011f5be3-4bc1-2e64-0ddf-b43b8dbc4dcd@gmail.com>
-        <20181209214907.GC21186@lunn.ch>
-        <20181209232722.GA4425@bistromath.localdomain>
+From: Changbin Du <changbin.du@gmail.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+Date: Mon, 10 Dec 2018 00:43:50 +0000
+Message-ID: <20181210004349.ba2ujbontjaw4pdx@mail.google.com>
+References: <20181204114731.48b18bfc@canb.auug.org.au>
+ <20181204015247.GR12288@mellanox.com>
+ <AM0PR05MB533192C82AA04E89004251A1C7A80@AM0PR05MB5331.eurprd05.prod.outlook.com>
+ <20181206095815.6e814057@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181209232722.GA4425@bistromath.localdomain>
+Content-Disposition: inline
+In-Reply-To: <20181206095815.6e814057@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sd@queasysnail.net
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, f.fainelli@gmail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Guy Levi(SW)" <guyle@mellanox.com>, Jason Gunthorpe <jgg@mellanox.com>, Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Majd Dibbiny <majd@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>, Changbin Du <changbin.du@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Sabrina Dubroca <sd@queasysnail.net>
-Date: Mon, 10 Dec 2018 00:27:22 +0100
+On Thu, Dec 06, 2018 at 09:58:15AM +1100, Stephen Rothwell wrote:
+> Hi Guy,
+> 
+> On Wed, 5 Dec 2018 12:25:57 +0000 "Guy Levi(SW)" <guyle@mellanox.com> wrote:
+> >
+> > > 
+> > > Huh. So apparently every compiler that tested this patch (0-day, mine,
+> > > the submitters) optimized this call away because is_atomic_response()
+> > > always returns 0: meaning mlx5_get_atomic_laddr is never callable and
+> > > can be deleted entirely, including the call to mlx5_get_send_wqe.
+> > > 
+> > > Not sure what compiler setup will hit this, but it is clearly wrong
+> > > code..  
+> > 
+> > Flag -o0  ?
+> 
+> No, but the kbuild tree contains a change that allows turning off of
+> gcc's autoinlining and the CONFIG option guarding that gets turned on
+> for allmodconfig builds among others.
+>
+Let me turn it off to pass allmodconfig build. it is a pure debug
+option.
 
-> Maybe Stephen's script to detect those missing sign-offs could be run
-> as a commit/apply hook by David? This happens regularly, sometimes
-> dropping more than just a sign-off.
+> Masahiro, should CONFIG_NO_AUTO_INLINE maybe need to be off unless
+> explicitly enabled (like CONFIG_DEBUG_INFO and others)?
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Yeah, that would probably be a good idea, maybe something even on the
-git.kernel.org side that won't let me push if I'm sending commits that
-have this problem.
+
+
+-- 
+Thanks,
+Changbin Du
