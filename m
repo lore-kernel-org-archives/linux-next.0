@@ -1,52 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rcu tree with the crypto tree
-Date: Mon, 10 Dec 2018 16:10:39 +1100
-Message-ID: <20181210161039.655e399f@canb.auug.org.au>
-References: <20181210154744.3b35b1c7@canb.auug.org.au>
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: linux-next: manual merge of the device-mapper tree with the
+ block tree
+Date: Mon, 10 Dec 2018 00:13:39 -0500
+Message-ID: <20181210051338.GA2737@redhat.com>
+References: <20181210144322.11a94d25@canb.auug.org.au>
+ <1993882e-8af3-9e64-da82-195d0089d5e3@kernel.dk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nfiuJUWvVjLqp4leHGpU983"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181210154744.3b35b1c7@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <1993882e-8af3-9e64-da82-195d0089d5e3@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alasdair G Kergon <agk@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/nfiuJUWvVjLqp4leHGpU983
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Dec 09 2018 at 10:55pm -0500,
+Jens Axboe <axboe@kernel.dk> wrote:
 
-Hi all,
+> On 12/9/18 8:43 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > It appears that there are a series of shared patches between the block
+> > and device-mapper trees that are not the same commits.  I assume that the
+> > block tree has been rebased, while the device mapper tree that was based
+> > (or includes) part of the block tree has not bee rebased (yet).
+> 
+> Yep that's my fault, due to a stupid mistake I had to rebase the
+> block tree. Didn't realize that Mike's tree was based on it. Mike,
+> would it be a big issue for you to rebase the dm tree?
 
-On Mon, 10 Dec 2018 15:47:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> I fixed it up (I used the crypto tree version of the changes) and can
-
-This turned out to be the correct thing to do since my email to Paulo
-Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com> (when forwarded to <pfsmori=
-go@linux.ibm.com>) bounced.   ;-)
-=20
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/nfiuJUWvVjLqp4leHGpU983
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwN9U8ACgkQAVBC80lX
-0Gz6/gf8Dv8XLbp9lbdRTdqoMllJOziRClhlOW2tR+A51YCMeoE/wVbxdmEBqodL
-yC7HMp2ukKQDDmhBWeLy9ns/laGmp87CpzBOpYSsN9aMExe20Atw8tNZv7u1hW80
-gpvBfwjn2BO0ZbTFJCzYCkSa//KOB/wvdTgBy7U1vgEo5ftLe9Kr/QMZL+Pv3xJN
-q2Rzl5Nt0d5nyrjk1OXkv16fRK3ityl72oPQM492+otiLH0XvIM8hIoayzPX3vj6
-U5/E/DcnRd4W5sNSg5MyKoetWji3sYQFBtEYvEUzZ0IJGYTzUsVUy5uk19GowX+G
-zt6K73lyBjb/fdI0K5cyxp8cMoEXnQ==
-=Jm3/
------END PGP SIGNATURE-----
-
---Sig_/nfiuJUWvVjLqp4leHGpU983--
+No problem, just did it and pushed to linux-dm.git's for-next.
+(I was already anticipating rebasing dm's for-next again once the
+bio-based percpu in_flight was merged into linux-block, hopefully we can
+get that to land)
