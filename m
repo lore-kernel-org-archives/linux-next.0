@@ -1,31 +1,62 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the device-mapper tree with the block
- tree
-Date: Sun, 9 Dec 2018 20:55:51 -0700
-Message-ID: <1993882e-8af3-9e64-da82-195d0089d5e3@kernel.dk>
-References: <20181210144322.11a94d25@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the crypto tree
+Date: Mon, 10 Dec 2018 15:47:44 +1100
+Message-ID: <20181210154744.3b35b1c7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Sp=m+yLKQPSA2bvAXElh/JG"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181210144322.11a94d25@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On 12/9/18 8:43 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> It appears that there are a series of shared patches between the block
-> and device-mapper trees that are not the same commits.  I assume that the
-> block tree has been rebased, while the device mapper tree that was based
-> (or includes) part of the block tree has not bee rebased (yet).
+--Sig_/Sp=m+yLKQPSA2bvAXElh/JG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yep that's my fault, due to a stupid mistake I had to rebase the
-block tree. Didn't realize that Mike's tree was based on it. Mike,
-would it be a big issue for you to rebase the dm tree?
+Hi all,
 
--- 
-Jens Axboe
+Today's linux-next merge of the rcu tree got a conflict in:
+
+  MAINTAINERS
+
+between commit:
+
+  c97e4df573f2 ("MAINTAINERS: change NX/VMX maintainers")
+
+from the crypto tree and commit:
+
+  1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm=
+.com")
+
+from the rcu tree.
+
+I fixed it up (I used the crypto tree version of teh changes) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Sp=m+yLKQPSA2bvAXElh/JG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwN7/AACgkQAVBC80lX
+0Gz51AgAoaYhnPYoNsLPgwkdHBZERlcgjqF2QIkgo9VQxnU3ac9nw3MWnR1TQTAh
+foU9VWFyqnpcsUb/AKp7rKYV8ldQ5L9Zp/VrZ/lcocSO5/k0fvjp2Pf/HyKtqqfi
+PTBqBN95vmH3R2o9vf2k3LfigAN9Ty1QpNdWLnKbiJRHuoMFrMD3vEUfyNkbHgTH
+Oek65avHoVtn2wKpmy+MnmG4G7wLRbcJZ+SA/VdyGFW3NyKzFDW+E9+PhMWY3gh4
+fHceBt0nmSfXwaTHb+mDNp/PrHyIsVD9cD/YyNSBfrRRt49HzOHBpALDXh2tMBCU
+PZvzTOqzrsezk3XfwwxpNuLCj+zOXg==
+=zZNT
+-----END PGP SIGNATURE-----
+
+--Sig_/Sp=m+yLKQPSA2bvAXElh/JG--
