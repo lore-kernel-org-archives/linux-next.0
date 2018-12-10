@@ -1,54 +1,45 @@
 From: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with the net-next tree
-Date: Mon, 10 Dec 2018 11:21:17 -0800
-Message-ID: <20181210192117.GY4170@linux.ibm.com>
-References: <20181207154707.35322397@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the rcu tree with the crypto tree
+Date: Mon, 10 Dec 2018 11:29:30 -0800
+Message-ID: <20181210192930.GZ4170@linux.ibm.com>
+References: <20181210154744.3b35b1c7@canb.auug.org.au>
 Reply-To: paulmck@linux.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181207154707.35322397@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
+In-Reply-To: <20181210154744.3b35b1c7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>, mingo@kernel.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, mingo@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 07, 2018 at 03:47:07PM +1100, Stephen Rothwell wrote:
+On Mon, Dec 10, 2018 at 03:47:44PM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the rcu tree got conflicts in:
+> Today's linux-next merge of the rcu tree got a conflict in:
 > 
->   net/bridge/br_mdb.c
->   net/bridge/br_multicast.c
+>   MAINTAINERS
 > 
-> between commits:
+> between commit:
 > 
->   19e3a9c90c53 ("net: bridge: convert multicast to generic rhashtable")
->   4329596cb10d ("net: bridge: multicast: use non-bh rcu flavor")
+>   c97e4df573f2 ("MAINTAINERS: change NX/VMX maintainers")
 > 
-> from the net-next tree and commit:
+> from the crypto tree and commit:
 > 
->   1a56f7d53b5c ("net/bridge: Replace call_rcu_bh() and rcu_barrier_bh()")
+>   1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
 > 
 > from the rcu tree.
 > 
-> I fixed it up (I used the versions form net-next) and can carry the fix
-> as necessary. This is now fixed as far as linux-next is concerned, but
-> any non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> I fixed it up (I used the crypto tree version of teh changes) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-This one is already in -tip, so there is no time like the present to
-notify my upstream maintainer, who I have added on CC.
+Agreed, and again adding Ingo.
 
-Ingo, I agree with Stephen's analysis, so please feel free to revert
-1a56f7d53b5c ("net/bridge: Replace call_rcu_bh() and rcu_barrier_bh()").
-Or let me know if some other approach would be preferable.
-
-I really did get an Acked-by, but perhaps my long development cycles for
-RCU-related patches resulted in this being lost or forgotten.  Been
-there myself...  ;-)
+The author of the conflicting commit is on CC of my commit, FYI.
 
 							Thanx, Paul
