@@ -1,34 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the arm64
+Subject: linux-next: manual merge of the akpm-current tree with the FIXME
  tree
-Date: Tue, 11 Dec 2018 17:02:42 +1100
-Message-ID: <20181211170242.21fd4594@canb.auug.org.au>
+Date: Tue, 11 Dec 2018 17:11:02 +1100
+Message-ID: <20181211171102.14c0be9f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/D=xEj0+=rKQhB8Pr7lnnvVH"; protocol="application/pgp-signature"
+ boundary="Sig_/_6DsOEMbDGiGD8wJ4fTT/S3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Qian Cai <cai@lca.pw>, Andrey Konovalov <andreyknvl@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Konovalov <andreyknvl@google.com>, Steve Capper <steve.capper@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/D=xEj0+=rKQhB8Pr7lnnvVH
+--Sig_/_6DsOEMbDGiGD8wJ4fTT/S3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
+
+FIXME: Add owner of second tree to To:
+       Add author(s)/SOB of conflicting commits.
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/arm64/include/asm/memory.h
+  arch/arm64/mm/proc.S
 
-between commit:
+between commits:
 
-  6e8830674ea7 ("arm64: kasan: Increase stack size for KASAN_EXTRA")
+  67e7fdfcc682 ("arm64: mm: introduce 52-bit userspace support")
+  68d23da4373a ("rm64: Kconfig: Re-jig CONFIG options for 52-bit VA")
 
-from the arm64 tree and commit:
+from the FIXME tree and commit:
 
-  2a4689e7f69c ("kasan, arm64: adjust shadow size for tag-based mode")
+  089dc516f651 ("kasan, arm64: enable top byte ignore for the kernel")
 
 from the akpm-current tree.
 
@@ -43,54 +47,44 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/include/asm/memory.h
-index f771452d08c4,1235fa492307..000000000000
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@@ -77,19 -65,13 +68,18 @@@
-  #define KERNEL_END        _end
- =20
-  /*
--  * KASAN requires 1/8th of the kernel virtual address space for the shadow
--  * region. KASAN can bloat the stack significantly, so double the (minimu=
-m)
--  * stack size when KASAN is in use, and then double it again if KASAN_EXT=
-RA is
--  * on.
-+  * Generic and tag-based KASAN require 1/8th and 1/16th of the kernel vir=
-tual
-+  * address space for the shadow region respectively. They can bloat the s=
-tack
- - * significantly, so double the (minimum) stack size when they are in use.
-++ * significantly, so double the (minimum) stack size when they are in use,
-++ * and then double it again if KASAN_EXTRA is on.
-   */
-  #ifdef CONFIG_KASAN
-- #define KASAN_SHADOW_SCALE_SHIFT 3
-  #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
- +#ifdef CONFIG_KASAN_EXTRA
- +#define KASAN_THREAD_SHIFT	2
+diff --cc arch/arm64/mm/proc.S
+index e05b3ce1db6b,d861f208eeb1..73886a5f1f30
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@@ -449,16 -451,8 +455,16 @@@ ENTRY(__cpu_setup
+  	 */
+  	ldr	x10, =3DTCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
+  			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
+- 			TCR_TBI0 | TCR_A1
++ 			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
+ -	tcr_set_idmap_t0sz	x10, x9
+ +
+ +#ifdef CONFIG_ARM64_USER_VA_BITS_52
+ +	ldr_l		x9, vabits_user
+ +	sub		x9, xzr, x9
+ +	add		x9, x9, #64
  +#else
-  #define KASAN_THREAD_SHIFT	1
- +#endif /* CONFIG_KASAN_EXTRA */
-  #else
-  #define KASAN_SHADOW_SIZE	(0)
-  #define KASAN_THREAD_SHIFT	0
+ +	ldr_l		x9, idmap_t0sz
+ +#endif
+ +	tcr_set_t0sz	x10, x9
+ =20
+  	/*
+  	 * Set the IPS bits in TCR_EL1.
 
---Sig_/D=xEj0+=rKQhB8Pr7lnnvVH
+--Sig_/_6DsOEMbDGiGD8wJ4fTT/S3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwPUwIACgkQAVBC80lX
-0GxCNQf7BUr3FPrTJZVK1pi1yISZ1JBh0+TKDPhB9VzEVmvsWCHzqdO9u0vMpfOW
-lAnEhuu2sT7qOL7QpAMzF6UghD++4l5G6laOeaOuw9m+BUB2agIb+HHMJiIix607
-msj94mkO+MiNOvtPK5DXN8UhFTFjoWBqocC8s0BlgiobBVqkJA9uc1N3JF7UuTic
-3SbkYYIGvXBJcyvXGJhNQLFO+J1xAGuS11u4Ti7dhSXoD3RoS21m3IFJKRoysQCj
-ElqN+1M2dTLlBTgu+hVgGfaYRiBFri1Tx/g99DAahMrgR0/GHqPijXM4kOjsAMJa
-9ARioobPDG9j+EvkLV8ur5WMDRMzPg==
-=XrEz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwPVPYACgkQAVBC80lX
+0GzVtAf9Eaut33wucTUGl69ArkhPad21vdoNubcCXRS17OZazCsJ+IoWpU0ZJS+V
+PrOeG/TelQa9OqJT8cGlEw85AYO8XfsaRKjQjDiISiOr9SizB6Wg26eOQKAGUC03
+4BM/ZuOBYPTATUsDk5FcJmfC12QEBAnMTdiYyL1miRmSziKRbLx5FqF7EK3ALQoC
+jJsNfPxU8ddhOLef5jD+E5LkYfzqZFrQMVoza3axyNAEPdNV9UrH8cVnyyDjRHlD
+WSRyMAbwrcU3tS/H6PvMDRVBHNl1m2YMoNwD3qZWl3Utz9J5sJqwt0C8LFS34ZVl
+pzPSxFt4otqJz/n3vywT300aT2RgNg==
+=0/st
 -----END PGP SIGNATURE-----
 
---Sig_/D=xEj0+=rKQhB8Pr7lnnvVH--
+--Sig_/_6DsOEMbDGiGD8wJ4fTT/S3--
