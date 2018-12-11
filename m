@@ -1,82 +1,46 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: Re: linux-next: Tree for Dec 11
-Date: Tue, 11 Dec 2018 11:04:37 -0700
-Message-ID: <20181211180437.GA28010@flashbox>
-References: <20181211182627.42b79e40@canb.auug.org.au>
- <20181211173851.GA29028@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
+Date: Wed, 12 Dec 2018 07:24:02 +1100
+Message-ID: <20181212072402.7b967df7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/M8NGu9AN0qZCubDrYoPDlQ_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181211173851.GA29028@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote:
-> On Tue, Dec 11, 2018 at 06:26:27PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20181210:
-> > 
-> > The arm64 tree gained a conflict against Linus' tree.
-> > 
-> > The f2fs tree gained a conflict against the fscrypt tree.
-> > 
-> > The ubifs tree gained a conflict against the fscrypt tree.
-> > 
-> > The rdma tree still had its build failure so I used the version from
-> > next-20181203.
-> > 
-> > The tip tree gained a conflict against the hwmon-staging tree.
-> > 
-> > The gpio tree lost its build failure.
-> > 
-> > The akpm-current tree lost its build failure but gained conflist against
-> > the arm64 tree.
-> > 
-> > Non-merge commits (relative to Linus' tree): 7744
-> >  8462 files changed, 365061 insertions(+), 211977 deletions(-)
-> > 
-> 
-> Build results:
-> 	total: 152 pass: 150 fail: 2
-> Failed builds: 
-> 	arm:allmodconfig 
-> 	arm64:allmodconfig 
-> Qemu test results:
-> 	total: 337 pass: 137 fail: 200
-> 
-> Build failures:
-> 
-> arm:
-> 
-> In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
->                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
-> arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
-> 
+--Sig_/M8NGu9AN0qZCubDrYoPDlQ_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Just FYI, I noticed this one yesterday on next-20181210 and sent a patch:
-https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancellor@gmail.com/
+Hi all,
 
-> arm64:
-> 
-> arch/arm64/kernel/entry-ftrace.o:(_kprobe_blacklist+0x0): dangerous relocation:
-> 	unsupported relocation
-> 
-> The latter is with gcc 7.3.0. I'll build and try with gcc 7.4.0 and
-> the most recent binutils later.
-> 
-> Most of the failing qemu tests fail with something like
-> 
-> Starting init: /sbin/init exists but couldn't execute it (error -95)
-> 
-> Others (such as aarch64) crash silently.
-> 
-> Has anyone reported this already, or do I need to run bisect ?
-> 
-> Guenter
+Commit
 
-Thanks,
-Nathan
+  ec702fa79702 ("gfs2: Dump nrpages for inodes and their glocks")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/M8NGu9AN0qZCubDrYoPDlQ_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwQHOIACgkQAVBC80lX
+0GzsUwf+IlfRH/ejw9dftfobCVrGG1j/dX7txmrfqzRyuW1IkVAMeK5msA6V1Jcw
+3KZZmxYnbx506muCfbNzM1z5xzwophX7sR2qaAImDSakZlmIXKVmuAIKYlmojXzs
+Ws8loSGiSxP832sTKft8RFRMIx0Tv+4WyEUdHIInZZBi4Ei2xuWIDp4NKRzTXJJ1
+7NAdERa2TvMMzHtosyKdbdk63YBN79ZCjgCL7GFeVDy8aW2o6YEbxkXoUw6JrQsY
+o8IsTFtk7Y2CGg4u8vafYzvXfY+s8Qf65b5rDPGSilFHL+1FYQa/gbZeoOgPUJus
+LpwXTuaU9o12MNv1wIHKDwJuL3K1Rg==
+=0PFl
+-----END PGP SIGNATURE-----
+
+--Sig_/M8NGu9AN0qZCubDrYoPDlQ_--
