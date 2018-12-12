@@ -1,76 +1,55 @@
-From: John Garry <john.garry@huawei.com>
-Subject: arm64 board boot pauses on linux-next
-Date: Wed, 12 Dec 2018 16:00:10 +0000
-Message-ID: <568651c2-da2f-b0bc-777b-5a669cfb642d@huawei.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the sparc-next tree with the
+ dma-mapping tree
+Date: Wed, 12 Dec 2018 17:11:46 +0100
+Message-ID: <20181212161146.GA7176@lst.de>
+References: <20181212093042.00fbf6be@canb.auug.org.au> <20181212074420.GB29137@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181212074420.GB29137@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Linuxarm <linuxarm@huawei.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Christoph Hellwig <hch@lst.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Sam Ravnborg <sam@ravnborg.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Wed, Dec 12, 2018 at 08:44:20AM +0100, Christoph Hellwig wrote:
+> Dave, Sam:
+> 
+> should I just apply a version of Rob's tree that takes the refactoring
+> into account to the dma-mapping tree?  That way we should get the right
+> result independent of the merge order.
 
-I am finding our arm64 D05 board particularly slow to boot from 
-linux-next, specifically a 30+ second pause when setting up CPU features.
+E.g. something like the patch below:
 
-I tried to bisect, but I am finding bisect holes (board does not boot at 
-all).
+--
+>From 6ee3d6c39a0c8bc4b58fa601bb4370bdec785be7 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Wed, 12 Dec 2018 17:09:58 +0100
+Subject: sparc: use DT node full_name in sparc_dma_alloc_resource
 
-Snippet good, like v4.20-rc6:
-[    5.482756] smp: Brought up 4 nodes, 64 CPUs
-[    7.423242] SMP: Total of 64 processors activated.
-[    7.428087] CPU features: detected: GIC system register CPU interface
-[    7.434620] CPU features: detected: 32-bit EL0 Support
-[    7.439813] CPU features: detected: CRC32 instructions
-[    7.530336] CPU: All CPU(s) started at EL2
-[    7.534599] alternatives: patching kernel code
-[    7.556042] devtmpfs: initialized
-[    7.559982] clocksource: jiffies: mask: 0xffffffff max_cycles: 
-0xffffffff, max_idle_ns: 7645041785100000 ns
-[    7.569991] futex hash table entries: 16384 (order: 8, 1048576 bytes)
-[    7.577262] pinctrl core: initialized pinctrl subsystem
-[    7.582947] SMBIOS 3.0.0 present.
-[    7.586293] DMI: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT17 
-Nemo 2.0 RC0 10/05/2018
-[    7.594812] NET: Registered protocol family 16
-[    7.600073] audit: initializing netlink subsys (disabled)
-[    7.605593] audit: type=2000 audit(5.072:1): state=initialized 
-audit_enabled=0 res=1
+The sparc tree already has this change for the pre-refactored code,
+but pulling it into the dma-mapping tree like this should ease
+the merge conflicts a bit.
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/sparc/kernel/ioport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Snippet next-20181211:
-[    5.483420] GICv3: CPU63: found redistributor 70303 region 
-63:0x000004006d4c0000
-[    5.483438] GICv3: CPU63: using allocated LPI pending table 
-@0x0000001fb8dd0000
-[    5.483578] arch_timer: CPU63: Trapping CNTVCT access
-[    5.483582] CPU63: Booted secondary processor 0x0000070303 [0x410fd082]
-[    5.483666] smp: Brought up 4 nodes, 64 CPUs
-[    7.424162] SMP: Total of 64 processors activated.
-[    7.429006] CPU features: detected: GIC system register CPU interface
-[    7.435538] CPU features: detected: 32-bit EL0 Support
-[    7.440731] CPU features: detected: CRC32 instructions
-[   40.107984] CPU: All CPU(s) started at EL2
-[   40.112264] alternatives: patching kernel code
-[   40.134299] devtmpfs: initialized
-[   40.138196] clocksource: jiffies: mask: 0xffffffff max_cycles: 
-0xffffffff, max_idle_ns: 7645041785100000 ns
-[   40.148209] futex hash table entries: 16384 (order: 8, 1048576 bytes)
-[   40.155486] pinctrl core: initialized pinctrl subsystem
-[   40.161109] SMBIOS 3.0.0 present.
-[   40.164456] DMI: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT17 
-Nemo 2.0 RC0 10/05/2018
-[   40.172985] NET: Registered protocol family 16
-[   40.178236] audit: initializing netlink subsys (disabled)
-[   40.183748] audit: type=2000 audit(5.072:1): state=initialized 
-audit_enabled=0 res=1
-
-Anyone else notice a similar issue?
-
-Our nextgen D06 board does not seem to have this issue.
-
-Thanks,
-John
+diff --git a/arch/sparc/kernel/ioport.c b/arch/sparc/kernel/ioport.c
+index 51c128d80193..baa235652c27 100644
+--- a/arch/sparc/kernel/ioport.c
++++ b/arch/sparc/kernel/ioport.c
+@@ -252,7 +252,7 @@ unsigned long sparc_dma_alloc_resource(struct device *dev, size_t len)
+ 	res = kzalloc(sizeof(*res), GFP_KERNEL);
+ 	if (!res)
+ 		return 0;
+-	res->name = dev->of_node->name;
++	res->name = dev->of_node->full_name;
+ 
+ 	if (allocate_resource(&_sparc_dvma, res, len, _sparc_dvma.start,
+ 			      _sparc_dvma.end, PAGE_SIZE, NULL, NULL) != 0) {
+-- 
+2.19.2
