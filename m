@@ -1,26 +1,25 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb-next
- tree
-Date: Sun, 16 Dec 2018 17:23:39 +1100
-Message-ID: <20181216172339.486781e5@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the block tree
+Date: Sun, 16 Dec 2018 17:26:49 +1100
+Message-ID: <20181216172649.5278d8e6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EJLHN6UEr=yWXhdqJ+gvq5_"; protocol="application/pgp-signature"
+ boundary="Sig_/d_JbmqEiXaUv=thd_Di6wtA"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tian Shu Qiu <tian.shu.qiu@intel.com>, Yong Zhi <yong.zhi@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, "Cao,Bing Bu" <bingbu.cao@intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/EJLHN6UEr=yWXhdqJ+gvq5_
+--Sig_/d_JbmqEiXaUv=thd_Di6wtA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Jens,
 
 Commit
 
-  7ab9b77a9410 ("media: staging/intel-ipu3: Add dual pipe support")
+  6f7ceaa0559b ("block: remove the bioset_integrity_free export")
 
 is missing a Signed-off-by from its author.
 
@@ -28,20 +27,20 @@ is missing a Signed-off-by from its author.
 Cheers,
 Stephen Rothwell
 
---Sig_/EJLHN6UEr=yWXhdqJ+gvq5_
+--Sig_/d_JbmqEiXaUv=thd_Di6wtA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwV72sACgkQAVBC80lX
-0GyQWwf+OOEMZfbNLOekrTQe8KFwKpx5ne6QGoQ1qdKYS7qhJu4v3F28DuyqTFtw
-ZcFQoTmJiEojWNAyiQ1SlF/FnD+rek4Zxqmqbmmu9KDQK/bIAM2waZ0o0I4d+vBb
-ZYEzvSP1yx6IJUJxU8rjP0Mh8QMgwUA+dKk9kP6Q/AGzMeBo0VEsNMjFVNmfMwwd
-yQJn7chy61UqgpAQWQoPEiEzb8axAgyTWZq72WfyHWi8u43kP3e/l2GUyB4vhXW6
-RtM/I8MA42bP/7ivGgH1vgDP34CS8XWQl6gCoWLWhhYCVkX9kJq/pAyWZt0MnGSf
-9ShtBdvm25ejiObTAXTeUWbB0+ukyw==
-=JQPv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwV8CkACgkQAVBC80lX
+0GyKxggAiRYpVOBum6DDinY/2pUJU7nNXrEF5OkiuSaB13ZAu41J6cTfPc2u4/xY
+wSmHWnuLvRr/TP/HkWrPho1e4FZNnBwdKrkG7J+/pS9XWdj2XJeb4RTmmFtEyaXH
+oRoqpa2xWwrrn8EVLxh9//F2PQ7CbeRXtoDGcu75HCIImMMnvjHiyNM9cJvrnR0U
+6GxVmVGcE/ccqqU/d/bdSbBt//NyM7Cc9uQKMFBUfb3+lhGdkyq0PaPRyhkk/XPy
+UCIsyI5WOQe2P90el+0g+B2cpWXkprM5G97SpapMneYDqLcTES1fKB+RuDUPgMUD
+di/NHEJphgrkd0n0HgwOjg5FsSgJfA==
+=JcOC
 -----END PGP SIGNATURE-----
 
---Sig_/EJLHN6UEr=yWXhdqJ+gvq5_--
+--Sig_/d_JbmqEiXaUv=thd_Di6wtA--
