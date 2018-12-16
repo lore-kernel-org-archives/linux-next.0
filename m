@@ -1,35 +1,82 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: Signed-off-by missing for commit in the block tree
-Date: Sun, 16 Dec 2018 08:33:01 -0700
-Message-ID: <b78c1177-7dfc-7eca-1b8b-2411cfc29d1e@kernel.dk>
-References: <20181216172649.5278d8e6@canb.auug.org.au>
- <20181216101816.GA31756@lst.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the hwmon-staging tree
+Date: Mon, 17 Dec 2018 10:00:26 +1100
+Message-ID: <20181217100026.03438bcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dzd9M8gZrQuqUT0Elw5Dp=U"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181216101816.GA31756@lst.de>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eddie James <eajames@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On 12/16/18 3:18 AM, Christoph Hellwig wrote:
-> On Sun, Dec 16, 2018 at 05:26:49PM +1100, Stephen Rothwell wrote:
->> Hi Jens,
->>
->> Commit
->>
->>   6f7ceaa0559b ("block: remove the bioset_integrity_free export")
->>
->> is missing a Signed-off-by from its author.
-> 
-> Ooops.  Jens, in case you still feel ok ammending the tree:
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+--Sig_/dzd9M8gZrQuqUT0Elw5Dp=U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I guess I can do that, would like to squash a commit too.
+Hi Guenter,
 
--- 
-Jens Axboe
+After merging the hwmon-staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/hwmon/Kconfig:1298:warning: ignoring unsupported character '/'
+drivers/hwmon/Kconfig:1299: syntax error
+drivers/hwmon/Kconfig:1298:warning: ignoring unsupported character '/'
+drivers/hwmon/Kconfig:1298:warning: ignoring unsupported character '/'
+drivers/hwmon/Kconfig:1298: invalid statement
+
+Caused by commit
+
+  de75c2156b2f ("hwmon: Add On-Chip Controller (OCC) hwmon driver")
+
+interacting with updates to the kconfig system.
+
+I have applied the following merge fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Dec 2018 09:50:14 +1100
+Subject: [PATCH] hwmon: quote the path in Kconfig source statements
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/hwmon/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 62b68cd280dc..6f929bfa9fcd 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1295,7 +1295,7 @@ config SENSORS_NSA320
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called nsa320-hwmon.
+=20
+-source drivers/hwmon/occ/Kconfig
++source "drivers/hwmon/occ/Kconfig"
+=20
+ config SENSORS_PCF8591
+ 	tristate "Philips PCF8591 ADC/DAC"
+--=20
+2.19.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dzd9M8gZrQuqUT0Elw5Dp=U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW2QoACgkQAVBC80lX
+0Gw/Qwf+N07HzHYu832boHvaSVadC7IutAx3CZa2PkZSNY8iGfEfHPHdqN/nVTk+
+J7DvXuj7/p8/T4w8xty2hTVUzmYJhMwgh+DZkc0TQ0DccVTHRcc3Xdrx2zIY/hT4
+oq5tYesPIj9bgvyxZ23i+ffmrikG6V+4Q+k45uRrpaWg71u7zMx0dVP1YGwFYkiy
+/Nie8dU33rhNIncv3S2TUeyuDlM/C94BZyK+eZvwjWMXJajJL81/ayAsMSl7immL
+x0ckeLRj83GWg4mN7EN4faLWt+pQLMDexeAHyROLUphQPb9MXjuVepk/R9rN0TRn
+vHZCbgFdgqEhaHj0dPhL5N0u+kjvFQ==
+=nlrm
+-----END PGP SIGNATURE-----
+
+--Sig_/dzd9M8gZrQuqUT0Elw5Dp=U--
