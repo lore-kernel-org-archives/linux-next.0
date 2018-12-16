@@ -1,30 +1,35 @@
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [linux-next] Request to add auxdisplay tree
-Date: Sun, 16 Dec 2018 12:25:29 +0100
-Message-ID: <CANiq72=BCcBwY9thw8H6qWOAxd856rHf=TYJF3QMuyFNoKfbqg@mail.gmail.com>
-References: <CANiq72=EefCCj=ErujVHZesn0aiO5aDT2tKobzUCVw3aTsRS0A@mail.gmail.com>
- <20181216162345.24fa1876@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: Signed-off-by missing for commit in the block tree
+Date: Sun, 16 Dec 2018 08:33:01 -0700
+Message-ID: <b78c1177-7dfc-7eca-1b8b-2411cfc29d1e@kernel.dk>
+References: <20181216172649.5278d8e6@canb.auug.org.au>
+ <20181216101816.GA31756@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181216162345.24fa1876@canb.auug.org.au>
+In-Reply-To: <20181216101816.GA31756@lst.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 12/16/18 3:18 AM, Christoph Hellwig wrote:
+> On Sun, Dec 16, 2018 at 05:26:49PM +1100, Stephen Rothwell wrote:
+>> Hi Jens,
+>>
+>> Commit
+>>
+>>   6f7ceaa0559b ("block: remove the bioset_integrity_free export")
+>>
+>> is missing a Signed-off-by from its author.
+> 
+> Ooops.  Jens, in case you still feel ok ammending the tree:
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-On Sun, Dec 16, 2018 at 6:23 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Added from Monday.
+I guess I can do that, would like to squash a commit too.
 
-Thanks!
-
-> Out of interest, will this tree be sent directly to
-> Linus or merged vi some other tree?
-
-It is sent directly to Linus.
-
-Cheers,
-Miguel
+-- 
+Jens Axboe
