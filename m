@@ -1,27 +1,30 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: Signed-off-by missing for commit in the block tree
-Date: Sun, 16 Dec 2018 11:18:16 +0100
-Message-ID: <20181216101816.GA31756@lst.de>
-References: <20181216172649.5278d8e6@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: Re: [linux-next] Request to add auxdisplay tree
+Date: Sun, 16 Dec 2018 12:25:29 +0100
+Message-ID: <CANiq72=BCcBwY9thw8H6qWOAxd856rHf=TYJF3QMuyFNoKfbqg@mail.gmail.com>
+References: <CANiq72=EefCCj=ErujVHZesn0aiO5aDT2tKobzUCVw3aTsRS0A@mail.gmail.com>
+ <20181216162345.24fa1876@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181216172649.5278d8e6@canb.auug.org.au>
+In-Reply-To: <20181216162345.24fa1876@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Dec 16, 2018 at 05:26:49PM +1100, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> Commit
-> 
->   6f7ceaa0559b ("block: remove the bioset_integrity_free export")
-> 
-> is missing a Signed-off-by from its author.
+Hi Stephen,
 
-Ooops.  Jens, in case you still feel ok ammending the tree:
+On Sun, Dec 16, 2018 at 6:23 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Added from Monday.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Thanks!
+
+> Out of interest, will this tree be sent directly to
+> Linus or merged vi some other tree?
+
+It is sent directly to Linus.
+
+Cheers,
+Miguel
