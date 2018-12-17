@@ -1,64 +1,82 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [-next] strace tests fail because of "y2038: socket: Add compat_sys_recvmmsg_time64"
-Date: Mon, 17 Dec 2018 22:40:31 +0100
-Message-ID: <CAK8P3a0kLHcfAtVVuVBqwcQJE+qk6LAO9TBJO2Sb2_m6z5cn8g@mail.gmail.com>
-References: <20181217130646.GB3560@osiris>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Add secondary kgdb tree
+Date: Tue, 18 Dec 2018 08:48:13 +1100
+Message-ID: <20181218084813.03360386@canb.auug.org.au>
+References: <20181217164253.5ficzs4zr4dxbemu@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_FEzZclaidC3mbsmZDb2DHy"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217130646.GB3560@osiris>
+In-Reply-To: <20181217164253.5ficzs4zr4dxbemu@holly.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Wessel <jason.wessel@windriver.com>, kgdb-bugreport@lists.sourceforge.net
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 17, 2018 at 2:06 PM Heiko Carstens
-<heiko.carstens@de.ibm.com> wrote:
->
-> Hi Arnd,
->
-> in linux-next as of today 16 strace self tests fail on s390. I could
-> bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
->
-> The following tests fail:
+--Sig_/_FEzZclaidC3mbsmZDb2DHy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Heiko,
+Hi Daniel,
 
-Thanks for the report and sorry I broke things. I'll have a closer look
-tomorrow if I don't find it right away. I suppose the regression was in
-native system calls, not the compat syscalls with 31-bit user space,
-right?
+On Mon, 17 Dec 2018 16:42:53 +0000 Daniel Thompson <daniel.thompson@linaro.=
+org> wrote:
+>
+> Is there any change you could add my kgdb tree to the roster for
+> linux-next :
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git kgdb/fo=
+r-next
+>=20
+> I'm currently collecting kgdb patches for v4.21 together and at the
+> moment it looks like the PR for kgdb will come from my tree this dev
+> cycle.
+>=20
+> This will leave you with two kgdb trees in this list which I assume
+> isn't great for you (although Jason's tree isn't really changing much
+> at the moment so I guess merging it is a nop). Anyhow I've made a diary
+> note to follow this up in two kernel cycles time and decide which one
+> we want to keep on the roster. Is that OK for you?
 
-     Arnd
+Added from today.  I called it kgdb-dt but that can be changed if you
+decide to replace Jason's tree with this one.
 
-> mmsg.gen.test
-> clock.gen.test
-> regex.gen.test
-> sched.gen.test
-> trace_fstatfs.gen.test
-> trace_personality_regex_64.gen.test
-> trace_fstat.gen.test
-> trace_personality_32.gen.test
-> trace_question.gen.test
-> trace_personality_regex_32.gen.test
-> trace_personality_64.gen.test
-> trace_stat.gen.test
-> trace_statfs.gen.test
-> trace_lstat.gen.test
-> trace_stat_like.gen.test
-> trace_statfs_like.gen.test
->
-> If needed the s390 kernel config can be re-created with
->
-> make ARCH=s390 performance_defconfig
->
-> strace self tests can be reproduced with
->
-> > git clone https://gitlab.com/strace/strace.git
-> > cd strace
-> > ./bootstrap
-> > ./configure
-> > make
-> > cd tests
-> > make check
->
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/_FEzZclaidC3mbsmZDb2DHy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYGZ0ACgkQAVBC80lX
+0GyQ1wf/e5WXJTmLg29JEbKb5tf2bS0p9k0c7cc96zuFYnQ5M3768vyyYF5CeL/h
+dGautkUUwYz5O4gAaIixFhTowRjyAifvMjxXFqCB7/3VnwnhPLZpQRenCfkvdN0H
+mCEeGiD9ZaWSVmKKhb8ePHhNrej/jTJR8yVhlMBwAFNoLf5Efby62ziToK3ehvJC
+2qDS0bbTegwu+n0ogr2fmmqJCO6yGoZpS8JwmEmBzxz5px0K3mkGDxekzkvoZp7o
+4n2GvMXd4rLMUGLLXyzhKPqoJfHChejJyCMMauVnrOal8O8N9+JVD4gPTbP9zOJR
+IGp+Mqn1YeSdskgz5vsahr0VuYyF3A==
+=0Y7Y
+-----END PGP SIGNATURE-----
+
+--Sig_/_FEzZclaidC3mbsmZDb2DHy--
