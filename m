@@ -1,41 +1,59 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: linux-next: build failure after merge of the nfs-anna tree
-Date: Mon, 17 Dec 2018 12:18:01 +0100
-Message-ID: <809c5ec8-0763-6855-bbbc-3cb95e168278@rasmusvillemoes.dk>
-References: <20181217101630.292dd55e@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH] seccomp, s390: fix build for syscall type change
+Date: Mon, 17 Dec 2018 13:41:54 +0100
+Message-ID: <20181217124154.GA3560@osiris>
+References: <20181213201030.4072-1-tycho@tycho.ws>
+ <CAGXu5jLY16CjNZZ0QvkyaKep-qD8kEVZEnTQ7JqfozqAm=so_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217101630.292dd55e@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <CAGXu5jLY16CjNZZ0QvkyaKep-qD8kEVZEnTQ7JqfozqAm=so_Q@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Tycho Andersen <tycho@tycho.ws>, Martin Schwidefsky <schwidefsky@de.ibm.com>, prudo@linux.vnet.ibm.com, linux-s390 <linux-s390@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 17/12/2018 00.16, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Dec 13, 2018 at 04:50:06PM -0800, Kees Cook wrote:
+> On Thu, Dec 13, 2018 at 12:10 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> >
+> > A recent patch landed in the security tree [1] that changed the type of the
+> > seccomp syscall. Unfortunately, I didn't quite get every instance of the
+> > forward declarations, and thus there is a build failure. Here's the last
+> > one that I could find, for s390. It should go through the security tree,
+> > although hopefully some s390 people can check and make sure it looks
+> > reasonable?
+> >
+> > The only oddity is the trailing semicolon; some lines around this patch
+> > have it, and some lines don't. I've left this one as-is.
+> >
+> > [1]: https://lore.kernel.org/lkml/20181212231630.GA31584@beast/T/#u
+> >
+> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 > 
-> After merging the nfs-anna tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+> Thanks! Added to my -next tree.
 > 
-> /home/sfr/next/next/fs/nfs/nfsroot.c: In function 'root_nfs_data':
-> /home/sfr/next/next/fs/nfs/nfsroot.c:264:5: error: implicit declaration of function 'fmtcheck'; did you mean 'dst_check'? [-Werror=implicit-function-declaration]
->      fmtcheck(tmp, "%s", 0), utsname()->nodename);
->      ^~~~~~~~
->      dst_check
-> 
-> Caused by commit
-> 
->   66ab6f062d96 ("nfs: use fmtcheck() in root_nfs_data")
+> -Kees
 
-I didn't know anybody had picked that one up. It's completely safe to
-just ignore that commit until the fmtcheck() utility is actually in.
+Hi Kees,
 
-Anna, can I take the fact that this was picked up as a sort-of implicit
-ack, that I can use if and when I ever get around to resending the
-fmtcheck() series? And for simplicitly, would you mind if the nfs patch
-would just be routed along with the patches introducing fmtcheck()?
+did you forget to push your tree? At least today's linux-next kernel
+fails to compile on s390 because of this missing patch.
 
-Rasmus
+> >  arch/s390/kernel/compat_wrapper.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
+> > index 2ce28bf0c5ec..48c4ce668244 100644
+> > --- a/arch/s390/kernel/compat_wrapper.c
+> > +++ b/arch/s390/kernel/compat_wrapper.c
+> > @@ -164,7 +164,7 @@ COMPAT_SYSCALL_WRAP3(finit_module, int, fd, const char __user *, uargs, int, fla
+> >  COMPAT_SYSCALL_WRAP3(sched_setattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, flags);
+> >  COMPAT_SYSCALL_WRAP4(sched_getattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, size, unsigned int, flags);
+> >  COMPAT_SYSCALL_WRAP5(renameat2, int, olddfd, const char __user *, oldname, int, newdfd, const char __user *, newname, unsigned int, flags);
+> > -COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, const char __user *, uargs)
+> > +COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, void __user *, uargs)
+> >  COMPAT_SYSCALL_WRAP3(getrandom, char __user *, buf, size_t, count, unsigned int, flags)
+> >  COMPAT_SYSCALL_WRAP2(memfd_create, const char __user *, uname, unsigned int, flags)
+> >  COMPAT_SYSCALL_WRAP3(bpf, int, cmd, union bpf_attr *, attr, unsigned int, size);
