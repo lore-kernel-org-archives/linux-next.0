@@ -1,62 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the arm-soc tree
-Date: Mon, 17 Dec 2018 19:17:53 +1100
-Message-ID: <20181217191753.172ca200@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Mon, 17 Dec 2018 19:24:38 +1100
+Message-ID: <20181217192438.1741a2b9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CvY/7uXN8E.YOrGdwkkP4B1"; protocol="application/pgp-signature"
+ boundary="Sig_//=Es8H68pJaXDVtiirsyCdZ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CvY/7uXN8E.YOrGdwkkP4B1
+--Sig_//=Es8H68pJaXDVtiirsyCdZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the gpio tree got a conflict in:
+After merging the gpio tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  arch/arm/mach-omap1/board-ams-delta.c
+drivers/memory/omap-gpmc.c: In function 'gpmc_probe_generic_child':
+drivers/memory/omap-gpmc.c:2174:9: error: type of formal parameter 4 is inc=
+omplete
+         0);
+         ^
 
-between commit:
-
-  19a2668a8ae3 ("ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED d=
-evice")
-
-from the arm-soc tree and commit:
+Caused by commit
 
   21abf103818a ("gpio: Pass a flag to gpiochip_request_own_desc()")
 
-from the gpio tree.
-
-I fixed it up (the former removed the code updated by the latter, so
-I used that) and can carry the fix as necessary. This is now fixed as
-far as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I have used the gpio tree from next-20181214 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/CvY/7uXN8E.YOrGdwkkP4B1
+--Sig_//=Es8H68pJaXDVtiirsyCdZ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwXW7EACgkQAVBC80lX
-0GxrnAf9Hudx1lEWXTwWV/OlWQv+f6TR21Eart36sf/jj2GPbpXVNvDNKSN9f2HO
-Rhu6bU3St4uMWuKXAw+5W9F45A4gynKuHMrFZIu9XAlZpXCSschg16X83GOzuddf
-wStMikfOsGpXbnM0oXD4/z6CO8iTa42flOcomwMujvAomG/+EJ39XCwVGFuuw3pN
-u6wWuSrcDWqDjgzQTGjAJlkocOOgeJDutRAqLS/6Zf5hcML3QIIj8dt9yd6osWZf
-Vf97/GoZvjNVqeBJUPz0zxgvzJwj6GH+brvU8LjqOA1/Mc4ZZuXFY2mOyZGm2dy+
-79kihxZiRgSM6mT5QWa9l5mDkY6Abw==
-=nITP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwXXUYACgkQAVBC80lX
+0GzZQgf/V6a3Y2VGXxA9uo2cGp9vr20/7HG4cJxiXTecU+XwNszgzpzFueAbLbM5
+6mGuFeIxEbkS9dYk0RdRIaGJTCmDVm6Mk7UYifwpnPJllsSXxVxgJ3aa1tM86I7V
+Sry4+jsduwBDFRB93yhCMF0jvt+DEE+oWaVpkbGZ7NnwBefSHLdrpregFybjlgvY
+J/1C9/xUHSuMYbAQvbBOff+42aQ2opTgBQNtjGU/G/ksdC23vyKjsqRfZL//JE+6
+xUQi46/bxM/TxnBYo8VRB14MxyoHFLzHGENvMbfozmP0Gdj5eFvq3BTjbg+v0qF7
+HGqLm7eM6yU7WW9wM8WS8rvjYnuSyQ==
+=IOXC
 -----END PGP SIGNATURE-----
 
---Sig_/CvY/7uXN8E.YOrGdwkkP4B1--
+--Sig_//=Es8H68pJaXDVtiirsyCdZ--
