@@ -1,82 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Add secondary kgdb tree
-Date: Tue, 18 Dec 2018 08:48:13 +1100
-Message-ID: <20181218084813.03360386@canb.auug.org.au>
-References: <20181217164253.5ficzs4zr4dxbemu@holly.lan>
+Subject: linux-next: Signed-off-by missing for commits in the kgdb-dt tree
+Date: Tue, 18 Dec 2018 08:49:18 +1100
+Message-ID: <20181218084918.755551b7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_FEzZclaidC3mbsmZDb2DHy"; protocol="application/pgp-signature"
+ boundary="Sig_/eALjmxwk.k9Zd7a0ljy_cR9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217164253.5ficzs4zr4dxbemu@holly.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Wessel <jason.wessel@windriver.com>, kgdb-bugreport@lists.sourceforge.net
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_FEzZclaidC3mbsmZDb2DHy
+--Sig_/eALjmxwk.k9Zd7a0ljy_cR9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Daniel,
 
-On Mon, 17 Dec 2018 16:42:53 +0000 Daniel Thompson <daniel.thompson@linaro.=
-org> wrote:
->
-> Is there any change you could add my kgdb tree to the roster for
-> linux-next :
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git kgdb/fo=
-r-next
->=20
-> I'm currently collecting kgdb patches for v4.21 together and at the
-> moment it looks like the PR for kgdb will come from my tree this dev
-> cycle.
->=20
-> This will leave you with two kgdb trees in this list which I assume
-> isn't great for you (although Jason's tree isn't really changing much
-> at the moment so I guess merging it is a nop). Anyhow I've made a diary
-> note to follow this up in two kernel cycles time and decide which one
-> we want to keep on the roster. Is that OK for you?
+Commits
 
-Added from today.  I called it kgdb-dt but that can be changed if you
-decide to replace Jason's tree with this one.
+  aee700022ad5 ("kdb: Don't back trace on a cpu that didn't round up")
+  e046994f7695 ("kgdb: Don't round up a CPU that failed rounding up before")
+  2649a5d9dccd ("kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call=
+_function()")
+  990bbea1e0d1 ("kgdb: Remove irq flags from roundup")
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell
 
---Sig_/_FEzZclaidC3mbsmZDb2DHy
+--Sig_/eALjmxwk.k9Zd7a0ljy_cR9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYGZ0ACgkQAVBC80lX
-0GyQ1wf/e5WXJTmLg29JEbKb5tf2bS0p9k0c7cc96zuFYnQ5M3768vyyYF5CeL/h
-dGautkUUwYz5O4gAaIixFhTowRjyAifvMjxXFqCB7/3VnwnhPLZpQRenCfkvdN0H
-mCEeGiD9ZaWSVmKKhb8ePHhNrej/jTJR8yVhlMBwAFNoLf5Efby62ziToK3ehvJC
-2qDS0bbTegwu+n0ogr2fmmqJCO6yGoZpS8JwmEmBzxz5px0K3mkGDxekzkvoZp7o
-4n2GvMXd4rLMUGLLXyzhKPqoJfHChejJyCMMauVnrOal8O8N9+JVD4gPTbP9zOJR
-IGp+Mqn1YeSdskgz5vsahr0VuYyF3A==
-=0Y7Y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYGd4ACgkQAVBC80lX
+0GzinQf/fnPGJaZVqWGTtzqlQjECW40E10DmivNuvw+VZlZSCxR7l93wt4b6SHmk
+c8pOjHvevx6OKKlOQ+DQJCB9KuuXgjKmxqXdr2p+SLho0DRGxK9QF2rQmqaYHxiN
+AyOY35EchA69QY+26owU/76rKsOjm/fji9yPu6oA6R2Azud83MQQyIEU7RgSUZX6
+tYn5r3zeCHMUEzu4MF8WfpMv07j0V40PcL656Lx1aIYfX2MZYvLagALyYF6WUf2X
+tYjeM/LZT4eQbsAnqA9HkxBXGxsuapSh1ul43jxgOxglCNwM87F13q2/g8YI3jyx
+VTpfkPhHXyppq5JXEiAvI9TURmRNDw==
+=NkdK
 -----END PGP SIGNATURE-----
 
---Sig_/_FEzZclaidC3mbsmZDb2DHy--
+--Sig_/eALjmxwk.k9Zd7a0ljy_cR9--
