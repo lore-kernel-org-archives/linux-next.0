@@ -1,54 +1,64 @@
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Subject: Re: linux-next: manual merge of the rdma tree with the net tree
-Date: Mon, 17 Dec 2018 13:24:03 -0800
-Message-ID: <CALzJLG84yL5DQy20YdXa09WGFrR+5wYpO=YGmaoVGMueoJ-_pw@mail.gmail.com>
-References: <20181217110810.64c69fb7@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [-next] strace tests fail because of "y2038: socket: Add compat_sys_recvmmsg_time64"
+Date: Mon, 17 Dec 2018 22:40:31 +0100
+Message-ID: <CAK8P3a0kLHcfAtVVuVBqwcQJE+qk6LAO9TBJO2Sb2_m6z5cn8g@mail.gmail.com>
+References: <20181217130646.GB3560@osiris>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217110810.64c69fb7@canb.auug.org.au>
+In-Reply-To: <20181217130646.GB3560@osiris>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vu Pham <vu@mellanox.com>, Gal Pressman <pressmangal@gmail.com>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Dec 16, 2018 at 4:08 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Dec 17, 2018 at 2:06 PM Heiko Carstens
+<heiko.carstens@de.ibm.com> wrote:
 >
-> Hi all,
+> Hi Arnd,
 >
-> Today's linux-next merge of the rdma tree got a conflict in:
+> in linux-next as of today 16 strace self tests fail on s390. I could
+> bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
 >
->   include/linux/mlx5/mlx5_ifc.h
->
-> between commit:
->
->   663f146f2ecf ("net/mlx5: E-Switch, Fix fdb cap bits swap")
->
-> from the net tree and commit:
->
->   c74d90c11c05 ("net/mlx5: Fix offsets of ifc reserved fields")
->
-> from the rdma tree.
->
-> I fixed it up (I just used the net tree version) and can carry the fix
+> The following tests fail:
 
-Yes this is the correct resolution.
+Hi Heiko,
 
-> as necessary. This is now fixed as far as linux-next is concerned, but
-> any non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Thanks for the report and sorry I broke things. I'll have a closer look
+tomorrow if I don't find it right away. I suppose the regression was in
+native system calls, not the compat syscalls with 31-bit user space,
+right?
 
-Dave was already notified about this merge conflict.
-This conflict will go away once Dave merges net with net-next, and
-linux-next of rdma merge with net-next
-will not have this problem.
+     Arnd
 
-Thanks,
-Saeed.
-
+> mmsg.gen.test
+> clock.gen.test
+> regex.gen.test
+> sched.gen.test
+> trace_fstatfs.gen.test
+> trace_personality_regex_64.gen.test
+> trace_fstat.gen.test
+> trace_personality_32.gen.test
+> trace_question.gen.test
+> trace_personality_regex_32.gen.test
+> trace_personality_64.gen.test
+> trace_stat.gen.test
+> trace_statfs.gen.test
+> trace_lstat.gen.test
+> trace_stat_like.gen.test
+> trace_statfs_like.gen.test
 >
-> --
-> Cheers,
-> Stephen Rothwell
+> If needed the s390 kernel config can be re-created with
+>
+> make ARCH=s390 performance_defconfig
+>
+> strace self tests can be reproduced with
+>
+> > git clone https://gitlab.com/strace/strace.git
+> > cd strace
+> > ./bootstrap
+> > ./configure
+> > make
+> > cd tests
+> > make check
+>
