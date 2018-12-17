@@ -1,81 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 17 Dec 2018 11:31:06 +1100
-Message-ID: <20181217113106.32d98f30@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 17 Dec 2018 12:36:45 +1100
+Message-ID: <20181217123645.42a20fe5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UrkNE1PzDhRILSpE4niyV_7"; protocol="application/pgp-signature"
+ boundary="Sig_/s=EaVckg9P7Zmf7rCq4zdV0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>, Ido Schimmel <idosch@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UrkNE1PzDhRILSpE4niyV_7
+--Sig_/s=EaVckg9P7Zmf7rCq4zdV0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  net/ipv6/ip6_output.c
+In file included from net/core/dev.c:148:
+net/core/dev.c: In function 'napi_gro_complete':
+net/core/dev.c:5364:26: error: 'inet_gro_complete' undeclared (first use in=
+ this function); did you mean 'eth_gro_complete'?
+       ipv6_gro_complete, inet_gro_complete,
+                          ^~~~~~~~~~~~~~~~~
+include/linux/indirect_call_wrapper.h:32:41: note: in definition of macro '=
+INDIRECT_CALL_2'
+ #define INDIRECT_CALL_2(f, name, ...) f(__VA_ARGS__)
+                                         ^~~~~~~~~~~
 
-between commit:
+and on ....
 
-  8203e2d844d3 ("net: clear skb->tstamp in forwarding paths")
+Caused by commit
 
-from the net tree and commit:
+  aaa5d90b395a ("net: use indirect call wrappers at GRO network layer")
 
-  f839a6c92504 ("net: Do not route unicast IP packets twice")
+inet_gro_complete() is declared in include/net/inet_comon.h which is
+not directly included in net/core/dev.c.
 
-from the net-next tree.
-
-I fixed it up (I was not quite sure of the correct ordering - see below)
-and can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+I have used the net-next tree from next-20181214 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/ipv6/ip6_output.c
-index 4591ca4bdbe8,9d55ee33b7f9..000000000000
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@@ -378,7 -378,13 +378,14 @@@ static inline int ip6_forward_finish(st
-  	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
-  	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
- =20
-+ #ifdef CONFIG_NET_SWITCHDEV
-+ 	if (skb->offload_l3_fwd_mark) {
-+ 		consume_skb(skb);
-+ 		return 0;
-+ 	}
-+ #endif
-+=20
- +	skb->tstamp =3D 0;
-  	return dst_output(net, sk, skb);
-  }
- =20
-
---Sig_/UrkNE1PzDhRILSpE4niyV_7
+--Sig_/s=EaVckg9P7Zmf7rCq4zdV0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW7koACgkQAVBC80lX
-0GwsRQf/Zo4pSnTD1qLwVq9c5uBt1AZ5RXjROYnaw2aeRk1lghGABzLO09uw77qz
-sVns/6NXKeYdJtn5fzCJUupKRzUveNMiYjE5xjpnnNHskBRyuo06b58kAsdtNPgj
-VH1z+ZKtkMyOLUslkB+t5loPT0vwshkfFSZLMRlmiUoDFw6tlxF/+gO7Q11NsRbr
-eFTEx+YIB9upwebZ+l9+c29Kl4MKSxi9QRQhG7YGfgKERGnPHFhM9jzfA8jndDvT
-PNdcgcqKnEXqtl9ebXJZ2uFya0Kjnhn8SQt+kMaktb2Yp01Gn3+QlQqy/R+HVpUs
-jWJPo+WLLc3ow/oe85MG1S3+FyDJIQ==
-=9zHY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW/a0ACgkQAVBC80lX
+0Gw64Af9HyQT8f8aIe1lmDy05kk3qwbejdAIXwmJh1Xw173EzceuvagX7OuXnYqX
+6b8hXsf4h9ldDl/doUnicY4YTZZHiwak/NEE8rVmEhTU+PfnZ1qsQ3wP5XqT20I0
+1PWHwEusWInGrzebADxrjexZwXn0H2FVv3DTTHd0zcV8auIZTJAWPuNrMeUzSKeT
+76umWywR7dE7AeBUWUQtThLvf5VmDokcNWFDk/ShKP3h3Hj4+G3XiRNUMGgl6bbK
+cRMcZeQ/15kLHdf0CxN3vPv6H1K7QBZEm0bxManwKkcbNhS98bu2ApZ9/UVu3jg8
+GMlQgywVAQC+dL3YUmq86jMc+RFIXA==
+=LG2H
 -----END PGP SIGNATURE-----
 
---Sig_/UrkNE1PzDhRILSpE4niyV_7--
+--Sig_/s=EaVckg9P7Zmf7rCq4zdV0--
