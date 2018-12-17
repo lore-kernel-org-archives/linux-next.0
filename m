@@ -1,70 +1,44 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] seccomp, s390: fix build for syscall type change
-Date: Mon, 17 Dec 2018 09:54:47 -0800
-Message-ID: <CAGXu5jJqMtpzO2xCKJE3s0qthRFmGD6Q4_puXk27WaGxrdhDMQ@mail.gmail.com>
-References: <20181213201030.4072-1-tycho@tycho.ws> <CAGXu5jLY16CjNZZ0QvkyaKep-qD8kEVZEnTQ7JqfozqAm=so_Q@mail.gmail.com>
- <20181217124154.GA3560@osiris>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc tree
+Date: Mon, 17 Dec 2018 11:40:29 -0800
+Message-ID: <20181217194029.GZ6707@atomide.com>
+References: <20181217191753.172ca200@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217124154.GA3560@osiris>
+Content-Disposition: inline
+In-Reply-To: <20181217191753.172ca200@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, James Morris <jmorris@namei.org>
-Cc: Tycho Andersen <tycho@tycho.ws>, Martin Schwidefsky <schwidefsky@de.ibm.com>, prudo@linux.vnet.ibm.com, linux-s390 <linux-s390@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 17, 2018 at 4:42 AM Heiko Carstens
-<heiko.carstens@de.ibm.com> wrote:
->
-> On Thu, Dec 13, 2018 at 04:50:06PM -0800, Kees Cook wrote:
-> > On Thu, Dec 13, 2018 at 12:10 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > >
-> > > A recent patch landed in the security tree [1] that changed the type of the
-> > > seccomp syscall. Unfortunately, I didn't quite get every instance of the
-> > > forward declarations, and thus there is a build failure. Here's the last
-> > > one that I could find, for s390. It should go through the security tree,
-> > > although hopefully some s390 people can check and make sure it looks
-> > > reasonable?
-> > >
-> > > The only oddity is the trailing semicolon; some lines around this patch
-> > > have it, and some lines don't. I've left this one as-is.
-> > >
-> > > [1]: https://lore.kernel.org/lkml/20181212231630.GA31584@beast/T/#u
-> > >
-> > > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> >
-> > Thanks! Added to my -next tree.
-> >
-> > -Kees
->
-> Hi Kees,
->
-> did you forget to push your tree? At least today's linux-next kernel
-> fails to compile on s390 because of this missing patch.
+* Stephen Rothwell <sfr@canb.auug.org.au> [181217 00:18]:
+> Hi all,
+> 
+> Today's linux-next merge of the gpio tree got a conflict in:
+> 
+>   arch/arm/mach-omap1/board-ams-delta.c
+> 
+> between commit:
+> 
+>   19a2668a8ae3 ("ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED device")
+> 
+> from the arm-soc tree and commit:
+> 
+>   21abf103818a ("gpio: Pass a flag to gpiochip_request_own_desc()")
+> 
+> from the gpio tree.
+> 
+> I fixed it up (the former removed the code updated by the latter, so
+> I used that) and can carry the fix as necessary. This is now fixed as
+> far as linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-I sent a pull request to James for this. James, can you pick this up please?
+OK thank you.
 
--Kees
+Regards,
 
->
-> > >  arch/s390/kernel/compat_wrapper.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
-> > > index 2ce28bf0c5ec..48c4ce668244 100644
-> > > --- a/arch/s390/kernel/compat_wrapper.c
-> > > +++ b/arch/s390/kernel/compat_wrapper.c
-> > > @@ -164,7 +164,7 @@ COMPAT_SYSCALL_WRAP3(finit_module, int, fd, const char __user *, uargs, int, fla
-> > >  COMPAT_SYSCALL_WRAP3(sched_setattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, flags);
-> > >  COMPAT_SYSCALL_WRAP4(sched_getattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, size, unsigned int, flags);
-> > >  COMPAT_SYSCALL_WRAP5(renameat2, int, olddfd, const char __user *, oldname, int, newdfd, const char __user *, newname, unsigned int, flags);
-> > > -COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, const char __user *, uargs)
-> > > +COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, void __user *, uargs)
-> > >  COMPAT_SYSCALL_WRAP3(getrandom, char __user *, buf, size_t, count, unsigned int, flags)
-> > >  COMPAT_SYSCALL_WRAP2(memfd_create, const char __user *, uname, unsigned int, flags)
-> > >  COMPAT_SYSCALL_WRAP3(bpf, int, cmd, union bpf_attr *, attr, unsigned int, size);
->
-
-
--- 
-Kees Cook
+Tony
