@@ -1,40 +1,49 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [-next] lots of messages due to "mm, memory_hotplug: be more
- verbose for memory offline failures"
-Date: Mon, 17 Dec 2018 17:03:50 +0100
-Message-ID: <20181217160350.GV30879@dhcp22.suse.cz>
-References: <20181217155922.GC3560@osiris>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Dec 17 (regulator/mcp16502.c)
+Date: Mon, 17 Dec 2018 08:03:55 -0800
+Message-ID: <c7bd09d3-3c04-327e-6c0b-89ee058cced8@infradead.org>
+References: <20181217220914.29144a09@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181217155922.GC3560@osiris>
+In-Reply-To: <20181217220914.29144a09@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Oscar Salvador <osalvador@suse.de>, Anshuman Khandual <anshuman.khandual@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrei Stefanescu <andrei.stefanescu@microchip.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon 17-12-18 16:59:22, Heiko Carstens wrote:
-> Hi Michal,
+On 12/17/18 3:09 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> with linux-next as of today on s390 I see tons of messages like
+> Changes since 20181214:
 > 
-> [   20.536664] page dumped because: has_unmovable_pages
-> [   20.536792] page:000003d081ff4080 count:1 mapcount:0 mapping:000000008ff88600 index:0x0 compound_mapcount: 0
-> [   20.536794] flags: 0x3fffe0000010200(slab|head)
-> [   20.536795] raw: 03fffe0000010200 0000000000000100 0000000000000200 000000008ff88600
-> [   20.536796] raw: 0000000000000000 0020004100000000 ffffffff00000001 0000000000000000
-> [   20.536797] page dumped because: has_unmovable_pages
-> [   20.536814] page:000003d0823b0000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
-> [   20.536815] flags: 0x7fffe0000000000()
-> [   20.536817] raw: 07fffe0000000000 0000000000000100 0000000000000200 0000000000000000
-> [   20.536818] raw: 0000000000000000 0000000000000000 ffffffff00000001 0000000000000000
-> 
-> bisect points to b323c049a999 ("mm, memory_hotplug: be more verbose for memory offline failures")
-> which is the first commit with which the messages appear.
 
-I would bet this is CMA allocator. How much is tons? Maybe we want a
-rate limit or the other user is not really interested in them at all?
+on i386:
+# CONFIG_SUSPEND is not set
+CONFIG_PM=y
+
+  CC      drivers/regulator/mcp16502.o
+In file included from ../include/linux/device.h:23:0,
+                 from ../include/linux/gpio/driver.h:5,
+                 from ../include/asm-generic/gpio.h:13,
+                 from ../include/linux/gpio.h:62,
+                 from ../drivers/regulator/mcp16502.c:11:
+../drivers/regulator/mcp16502.c:527:32: error: 'mcp16502_suspend_noirq' undeclared here (not in a function)
+  SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend_noirq,
+                                ^
+../include/linux/pm.h:342:19: note: in definition of macro 'SET_NOIRQ_SYSTEM_SLEEP_PM_OPS'
+  .suspend_noirq = suspend_fn, \
+                   ^
+../drivers/regulator/mcp16502.c:528:10: error: 'mcp16502_resume_noirq' undeclared here (not in a function)
+          mcp16502_resume_noirq)
+          ^
+../include/linux/pm.h:343:18: note: in definition of macro 'SET_NOIRQ_SYSTEM_SLEEP_PM_OPS'
+  .resume_noirq = resume_fn, \
+                  ^
+
+
+
 -- 
-Michal Hocko
-SUSE Labs
+~Randy
