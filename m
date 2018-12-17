@@ -1,52 +1,29 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [-next] strace tests fail because of "y2038: socket: Add
- compat_sys_recvmmsg_time64"
-Date: Mon, 17 Dec 2018 14:06:47 +0100
-Message-ID: <20181217130646.GB3560@osiris>
+From: Chris Perl <cperl@janestreet.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the nfs-anna tree
+Date: Mon, 17 Dec 2018 08:59:58 -0500
+Message-ID: <CAAih9mj+u8Ec6=3K53_x8S-tHz_dXHORMfqZWsAnMS1WLzgz-w@mail.gmail.com>
+References: <20181216171933.2e4f5be6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20181216171933.2e4f5be6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Anna Schumaker <Anna.Schumaker@netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Arnd,
+On Sun, Dec 16, 2018 at 1:19 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+> Commit
+>
+>   748d6fd8d297 ("NFS: nfs_compare_mount_options always compare auth flavors.")
+>
+> is missing a Signed-off-by from its author.
 
-in linux-next as of today 16 strace self tests fail on s390. I could
-bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
+Whoops.  Sorry about that (I forgot to run it through checkpatch.pl).
 
-The following tests fail:
-
-mmsg.gen.test
-clock.gen.test
-regex.gen.test
-sched.gen.test
-trace_fstatfs.gen.test
-trace_personality_regex_64.gen.test
-trace_fstat.gen.test
-trace_personality_32.gen.test
-trace_question.gen.test
-trace_personality_regex_32.gen.test
-trace_personality_64.gen.test
-trace_stat.gen.test
-trace_statfs.gen.test
-trace_lstat.gen.test
-trace_stat_like.gen.test
-trace_statfs_like.gen.test
-
-If needed the s390 kernel config can be re-created with
-
-make ARCH=s390 performance_defconfig
-
-strace self tests can be reproduced with
-
-> git clone https://gitlab.com/strace/strace.git
-> cd strace
-> ./bootstrap
-> ./configure
-> make
-> cd tests
-> make check
+Should I resend a fresh patch with the Signed-off-by included or is it
+enough to just assert in this email that I wrote it and have the right
+to pass it on?  If the latter is sufficient, then I do assert those
+things.  If not, I'm happy to resend.
