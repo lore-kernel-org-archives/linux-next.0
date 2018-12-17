@@ -1,72 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the y2038 tree
-Date: Mon, 17 Dec 2018 13:49:33 +0100
-Message-ID: <CAK8P3a3LaRt8Gszbj2QYJhERKS=T3u=fzPTXaELW4a=BJDNnzA@mail.gmail.com>
-References: <20181217201146.170ca9b4@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [-next] strace tests fail because of "y2038: socket: Add
+ compat_sys_recvmmsg_time64"
+Date: Mon, 17 Dec 2018 14:06:47 +0100
+Message-ID: <20181217130646.GB3560@osiris>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217201146.170ca9b4@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, palcantara@suse.de, Aurelien Aptel <aaptel@suse.com>, stfrench@microsoft.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:11 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Arnd,
 
-> I have applied the following merge fix patch (better versions welcome):
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 17 Dec 2018 20:03:28 +1100
-> Subject: [PATCH] cifs: update for current_kernel_time64() removal
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
+in linux-next as of today 16 strace self tests fail on s390. I could
+bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
 
-Your patch looks correct, and the conflict should be easy to
-resolve by Steve merging this into his tree, as
-ktime_get_coarse_real_ts64() is readily available in mainline
-kernels.
+The following tests fail:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+mmsg.gen.test
+clock.gen.test
+regex.gen.test
+sched.gen.test
+trace_fstatfs.gen.test
+trace_personality_regex_64.gen.test
+trace_fstat.gen.test
+trace_personality_32.gen.test
+trace_question.gen.test
+trace_personality_regex_32.gen.test
+trace_personality_64.gen.test
+trace_stat.gen.test
+trace_statfs.gen.test
+trace_lstat.gen.test
+trace_stat_like.gen.test
+trace_statfs_like.gen.test
 
->  fs/cifs/dfs_cache.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
-> index 70f9c9e2175c..d20cc94d7abd 100644
-> --- a/fs/cifs/dfs_cache.c
-> +++ b/fs/cifs/dfs_cache.c
-> @@ -103,7 +103,7 @@ static inline bool cache_entry_expired(const struct dfs_cache_entry *ce)
->  {
->         struct timespec64 ts;
->
-> -       ts = current_kernel_time64();
-> +       ktime_get_coarse_real_ts64(&ts);
->         return timespec64_compare(&ts, &ce->ce_etime) >= 0;
->  }
->
-> @@ -338,8 +338,10 @@ static inline struct timespec64 get_expire_time(int ttl)
->                 .tv_sec = ttl,
->                 .tv_nsec = 0,
->         };
-> +       struct timespec64 now;
->
-> -       return timespec64_add(current_kernel_time64(), ts);
-> +       ktime_get_coarse_real_ts64(&now);
-> +       return timespec64_add(now, ts);
->  }
+If needed the s390 kernel config can be re-created with
 
-In case efficiency is a concern: using ktime_t with
-ktime_get_coarse_real() may be much faster if we decide to
-abandon the coarse-grained timespec64 accessors in the future.
+make ARCH=s390 performance_defconfig
 
-Also, I wonder if the expiration here has to use CLOCK_REALTIME,
-since that is affected by leap second adjustment and
-clock_settime().
+strace self tests can be reproduced with
 
-In other modules, we usually concluded that it should be either
-CLOCK_MONOTONIC or CLOCK_BOOTTIME, depending on whether
-you want the expiration timer to keep ticking during suspend.
-
-        Arnd
+> git clone https://gitlab.com/strace/strace.git
+> cd strace
+> ./bootstrap
+> ./configure
+> make
+> cd tests
+> make check
