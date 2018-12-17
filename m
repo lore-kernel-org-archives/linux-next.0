@@ -1,50 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the kgdb-dt tree
-Date: Tue, 18 Dec 2018 08:49:18 +1100
-Message-ID: <20181218084918.755551b7@canb.auug.org.au>
+From: Or Gerlitz <gerlitz.or@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 18 Dec 2018 00:01:57 +0200
+Message-ID: <CAJ3xEMjvoNZLaCWk8KydUTKH-fmqnF1Vgbu42u0ame_s-Cj3UQ@mail.gmail.com>
+References: <20181217112546.4e400eb3@canb.auug.org.au> <CALzJLG_g3QcYLM+ZXwfpu5E71nUOrG=KA4X2uR-WGeYAOYcsLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eALjmxwk.k9Zd7a0ljy_cR9"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALzJLG_g3QcYLM+ZXwfpu5E71nUOrG=KA4X2uR-WGeYAOYcsLg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Or Gerlitz <ogerlitz@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Eli Britstein <elibr@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/eALjmxwk.k9Zd7a0ljy_cR9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 17, 2018 at 11:29 PM Saeed Mahameed
+<saeedm@dev.mellanox.co.il> wrote:
+> On Sun, Dec 16, 2018 at 4:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Daniel,
+> > I fixed it up (see below) and can carry the fix as necessary. This
 
-Commits
+> Looks good to me.
 
-  aee700022ad5 ("kdb: Don't back trace on a cpu that didn't round up")
-  e046994f7695 ("kgdb: Don't round up a CPU that failed rounding up before")
-  2649a5d9dccd ("kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call=
-_function()")
-  990bbea1e0d1 ("kgdb: Remove irq flags from roundup")
+here too
 
-are missing a Signed-off-by from their committer.
 
---=20
-Cheers,
-Stephen Rothwell
+> > Today's linux-next merge of the net-next tree got a conflict in:
+> >   drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> > between commit:
 
---Sig_/eALjmxwk.k9Zd7a0ljy_cR9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> >   154e62abe9cd ("net/mlx5e: Properly initialize flow attributes for slow path eswitch rule deletion")
+> > from the net tree and commit:
 
------BEGIN PGP SIGNATURE-----
+> >   e88afe759a49 ("net/mlx5e: Err if asked to mirror a goto chain tc eswitch rule")
+> >   e85e02bad29e ("net/mlx5: E-Switch, Rename esw attr mirror count field")
+> > from the net-next tree.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYGd4ACgkQAVBC80lX
-0GzinQf/fnPGJaZVqWGTtzqlQjECW40E10DmivNuvw+VZlZSCxR7l93wt4b6SHmk
-c8pOjHvevx6OKKlOQ+DQJCB9KuuXgjKmxqXdr2p+SLho0DRGxK9QF2rQmqaYHxiN
-AyOY35EchA69QY+26owU/76rKsOjm/fji9yPu6oA6R2Azud83MQQyIEU7RgSUZX6
-tYn5r3zeCHMUEzu4MF8WfpMv07j0V40PcL656Lx1aIYfX2MZYvLagALyYF6WUf2X
-tYjeM/LZT4eQbsAnqA9HkxBXGxsuapSh1ul43jxgOxglCNwM87F13q2/g8YI3jyx
-VTpfkPhHXyppq5JXEiAvI9TURmRNDw==
-=NkdK
------END PGP SIGNATURE-----
+Just a note,
 
---Sig_/eALjmxwk.k9Zd7a0ljy_cR9--
+e88afe759a49  ("net/mlx5e: Err if asked to mirror a goto chain tc
+eswitch rule")i
+
+s from net  and not net-next
+
+see it here [1] among the top 10 patches
+
+https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/log/?qt=grep&q=mlx5
