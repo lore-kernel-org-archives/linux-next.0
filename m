@@ -1,83 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the vfs tree
-Date: Tue, 18 Dec 2018 10:38:10 +1100
-Message-ID: <20181218103810.11687f68@canb.auug.org.au>
+Subject: linux-next: manual merge of the selinux tree with the vfs tree
+Date: Tue, 18 Dec 2018 14:48:58 +1100
+Message-ID: <20181218144858.58d8d1f8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NtkgW1+nRoCK.YKjRv.S9xP"; protocol="application/pgp-signature"
+ boundary="Sig_/Jgy3mWL0eVVCNryKRbK_KCM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/NtkgW1+nRoCK.YKjRv.S9xP
+--Sig_/Jgy3mWL0eVVCNryKRbK_KCM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Paul,
 
-Commits
+Today's linux-next merge of the selinux tree got a conflict in:
 
-  c1cae12e6b4a ("vfs: Add a sample program for the new mount API")
-  d101a34a2c79 ("vfs: syscall: Add fspick() to select a superblock for reco=
-nfiguration")
-  1fcae4c630e3 ("vfs: syscall: Add fsmount() to create a mount for a superb=
-lock")
-  ec4256de39c3 ("vfs: syscall: Add fsconfig() for configuring and managing =
-a context")
-  0cba0050bcbe ("vfs: Implement logging through fs_context")
-  4552c960ff40 ("vfs: syscall: Add fsopen() to prepare for superblock creat=
-ion")
-  03ca430a2648 ("Make anon_inodes unconditional")
-  96298884c8b4 ("vfs: syscall: Add move_mount(2) to move mounts around")
-  6c606fff6c91 ("afs: Use fs_context to pass parameters over automount")
-  10424811186f ("afs: Add fs_context support")
-  8fa5366945d8 ("vfs: Add some logging to the core users of the fs_context =
-log")
-  8907f3967fbc ("vfs: Implement logging through fs_context")
-  bed15a150f44 ("vfs: Provide documentation for new mount API")
-  460375e70621 ("vfs: Remove kern_mount_data()")
-  e88bea43b477 ("hugetlbfs: Convert to fs_context")
-  d48db7fb30db ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
-  35822336b482 ("cpuset: Use fs_context")
-  b97c89323b7b ("ipc: Convert mqueue fs to fs_context")
-  e1f97a645981 ("proc: Add fs_context support to procfs")
-  5aed868ddf7f ("procfs: Move proc_fill_super() to fs/proc/root.c")
-  013c7af575e5 ("vfs: Implement a filesystem superblock creation/configurat=
-ion context")
-  47173883ff4d ("tomoyo: Implement security hooks for the new mount API")
-  c36d02347290 ("apparmor: Implement security hooks for the new mount API")
-  18ee890db905 ("vfs: Put security flags into the fs_context struct")
-  18ef962eeec1 ("vfs: Add LSM hooks for the new mount API")
-  1bff8b546644 ("vfs: Add configuration parser helpers")
-  57fb096cd685 ("vfs: Introduce logging functions")
-  23ac0033ae3c ("vfs: Introduce the basic header for the new mount API's fi=
-lesystem context")
-  0a8054c863b8 ("vfs: Separate changing mount flags full remount")
-  e322b9267880 ("vfs: Suppress MS_* flag defs within the kernel unless expl=
-icitly enabled")
+  security/selinux/hooks.c
 
-are missing a Signed-off-by from their committer.
+between commit:
+
+  2b8073b14c19 ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
+
+from the vfs tree and commit:
+
+  2cbdcb882f97 ("selinux: always allow mounting submounts")
+
+from the selinux tree.
+
+I fixed it up (I used the vfs tree version, plus added the following
+patch but I am not sure if it is correct as the latter patch only affected
+selinux) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 18 Dec 2018 14:44:13 +1100
+Subject: [PATCH] update for "selinux: always allow mounting submounts"
+
+The check moved.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 135b147c5bd3..a4505144f95e 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1527,7 +1527,7 @@ int vfs_get_tree(struct fs_context *fc)
+ 	if (ret)
+ 		goto err_sb;
+=20
+-	if (!(fc->sb_flags & MS_KERNMOUNT)) {
++	if (!(fc->sb_flags & (MS_KERNMOUNT | MS_SUBMOUNT))) {
+ 		ret =3D security_sb_kern_mount(sb);
+ 		if (ret)
+ 			goto err_sb;
+--=20
+2.19.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/NtkgW1+nRoCK.YKjRv.S9xP
+--Sig_/Jgy3mWL0eVVCNryKRbK_KCM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYM2IACgkQAVBC80lX
-0Gzcywf+JAGWAjUM0QAfyEBgD+a1rX97iANjWiwSWIaavUekLrNdt44yCgC1sN2M
-4ExYjFWy3jU5UhKfF7IAE5sh7LC8qEyQDBuvWqCLPxUc0ISGpAgZ8O7/aB5OCnC6
-OTGKBoh5FXU2fQGdcnC1STSlKIFEPtQyeNm+wNnMGqVbESQfJrLIAPJiKJfM9/Df
-klfa586JUvUyH12ctU6frdqIIPtfV0lYHXSxlOJ474XfLgaP2tcbo87VFq9BeMOD
-xFC+nUDaAMHLlAMilnSpWMKJ2Qc/AbCuEDdPqjtf0dX69U4LQz+XeZDpBMX1zGEg
-+HtgKUz+tMpHIFPKVI3N/vXGi6Kj1Q==
-=dhHA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYbioACgkQAVBC80lX
+0GyCVAgAmUBgqI0hz1s+BJF+peClzwuxPitHyVDv7TE2mtky4dREBGQ7uIAyTzNT
+cTGsJXYTRGd6YhgR6nJGZpr9thKoc+vkfc/8a6SDBzagzLsAohuUXzHNNwp3iERq
+ZOhGTrc3HZvpfqycdYjghEtnq7wI/mRw9TUHymQ38/r/bD6AdXZUS5OwBzjOt/tz
+Ob1GpxKX2u4DEWOk889AtHKSxFLc0DJmM4wvfPD/9xQBqml8u2XO82P0yL4gx2p0
+EdezQSvjKeNugQduLdbJ3o04Vu0HtkVdwOMzt242TIQb1/jmsksVNiPQvy1NjOii
+wImpqFpibmScXLL5ls7w3ZS8Yj+YKQ==
+=IR7e
 -----END PGP SIGNATURE-----
 
---Sig_/NtkgW1+nRoCK.YKjRv.S9xP--
+--Sig_/Jgy3mWL0eVVCNryKRbK_KCM--
