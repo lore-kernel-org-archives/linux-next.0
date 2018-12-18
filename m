@@ -1,46 +1,53 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Date: Tue, 18 Dec 2018 04:10:02 +0000
-Message-ID: <20181218041001.GU2217@ZenIV.linux.org.uk>
-References: <20181218144858.58d8d1f8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the gpio tree
+Date: Tue, 18 Dec 2018 16:41:31 +1100
+Message-ID: <20181218164131.7ecf23f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eLkytpj4ogzcuNbXQvkiUZl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181218144858.58d8d1f8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Moore <paul@paul-moore.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 18, 2018 at 02:48:58PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the selinux tree got a conflict in:
-> 
->   security/selinux/hooks.c
-> 
-> between commit:
-> 
->   2b8073b14c19 ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
-> 
-> from the vfs tree and commit:
-> 
->   2cbdcb882f97 ("selinux: always allow mounting submounts")
-> 
-> from the selinux tree.
-> 
-> I fixed it up (I used the vfs tree version, plus added the following
-> patch but I am not sure if it is correct as the latter patch only affected
-> selinux) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be mentioned
-> to your upstream maintainer when your tree is submitted for merging.
-> You may also want to consider cooperating with the maintainer of the
-> conflicting tree to minimise any particularly complex conflicts.
- 
-> -	if (!(fc->sb_flags & MS_KERNMOUNT)) {
-> +	if (!(fc->sb_flags & (MS_KERNMOUNT | MS_SUBMOUNT))) {
+--Sig_/eLkytpj4ogzcuNbXQvkiUZl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It is correct, but the long-term fix is to lift the conditional part out
-of vfs_get_tree() into the callers (as discussed a couple of weeks ago).
-I have it in a local branch, need to ripple it into the current main series...
+Hi Linus,
+
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+drivers/gpio/gpiolib-acpi.c: In function 'acpi_gpio_adr_space_handler':
+drivers/gpio/gpiolib-acpi.c:911:8: warning: unused variable 'err' [-Wunused=
+-variable]
+    int err;
+        ^~~
+
+Introduced by commit
+
+  21abf103818a ("gpio: Pass a flag to gpiochip_request_own_desc()")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eLkytpj4ogzcuNbXQvkiUZl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYiIsACgkQAVBC80lX
+0Gy9HQf/SKxwy/zpdCkX7IxHQ/7YlkjrwLeqQmtrQLNuA4h2K551MxyCPG/ZZu6K
+M0g7NfixRXLFLyW3HZzZH6qeobgF8wJ4Sbr96n38Q7+/KJDnDcc/Tv+1c3RFHz/b
+ddWV6y+h5TZ1X9yQLJhdCDDIK+Sn9OPUurYn8hm5njKWtPj4RW4tCTNWO82mCkIZ
+NLxHaZd+jlZvXOErCWWXUnrjeLAx2n7LlPRu5AAf3kZPVo6KoTSZNBg7rMP3Ef6I
+ptL5JRuGWIvfK9sSGGJRllyHB/GXR4rf5Al6iPrS13SAl/tPBWQsNwEEp+7nlot2
+lM1HEy1o/bVVk6/Awe/HWhddAb63uw==
+=iS+D
+-----END PGP SIGNATURE-----
+
+--Sig_/eLkytpj4ogzcuNbXQvkiUZl--
