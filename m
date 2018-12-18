@@ -1,52 +1,76 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [-next] strace tests fail because of "y2038: socket: Add compat_sys_recvmmsg_time64"
-Date: Tue, 18 Dec 2018 16:14:47 +0100
-Message-ID: <CAK8P3a239wziapVWTuPN09-FZ-fip_f3uhFD6B0=92Rw+=zWzw@mail.gmail.com>
-References: <20181217130646.GB3560@osiris> <CAK8P3a0kLHcfAtVVuVBqwcQJE+qk6LAO9TBJO2Sb2_m6z5cn8g@mail.gmail.com>
- <CAK8P3a3buLM8aKdN8PATzx_mQqFrrLcJmPjbeiJ8uCzx2GwS2Q@mail.gmail.com> <20181218075653.GB3590@osiris>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH v3 7/9] arm64: defconfig: Enable FSL_MC_BUS and FSL_MC_DPIO
+Date: Tue, 18 Dec 2018 21:10:30 +0100 (CET)
+Message-ID: <2071995319.127120.1545163830046@email.ionos.de>
+References: <49a5d199-4eeb-a7c2-b539-13356162547f@free.fr>
+ <beb32683-fbd0-fc17-8e71-4f4f51163223@free.fr>
+ <VI1PR0402MB3485824A9FB3BC878E7B83D498C60@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <20181213064803.kd7p7fzsegu6nhnl@localhost>
+ <1541367377.58314.1544910265605@email.ionos.de>
+ <VI1PR0402MB3485A452549CF37694720A7B98BC0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181218075653.GB3590@osiris>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <VI1PR0402MB3485A452549CF37694720A7B98BC0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Horia Geanta <horia.geanta@nxp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, arm-soc <arm@kernel.org>, Marc Gonzalez <marc.w.gonzalez@free.fr>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 18, 2018 at 8:57 AM Heiko Carstens
-<heiko.carstens@de.ibm.com> wrote:
->
-> On Mon, Dec 17, 2018 at 11:05:06PM +0100, Arnd Bergmann wrote:
-> > On Mon, Dec 17, 2018 at 10:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Mon, Dec 17, 2018 at 2:06 PM Heiko Carstens
-> > > <heiko.carstens@de.ibm.com> wrote:
-> > > >
-> > > > Hi Arnd,
-> > > >
-> > > > in linux-next as of today 16 strace self tests fail on s390. I could
-> > > > bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
-> > > >
-> > > > The following tests fail:
-> > >
-> > > Hi Heiko,
-> > >
-> > > Thanks for the report and sorry I broke things. I'll have a closer look
-> > > tomorrow if I don't find it right away. I suppose the regression was in
-> > > native system calls, not the compat syscalls with 31-bit user space,
-> > > right?
->
-> Yes, I was talking about 64 bit native system calls.
->
-> > I found a bug in my patch by inspection. Can you try if the patch
-> > below makes it all work (apologies for the garbled whitespace),
-> > I'm considering a rewrite of that function now (to split it into two
-> > again), but want to make sure there isn't another problem in my
-> > original patch.
->
-> With your patch below applied, the tests pass again.
-
-Ok, thanks for testing, I've pushed out the fixed version of that
-branch now.
-
-       Arnd
+SGkgSG9yaWEsCgo+IEhvcmlhIEdlYW50YSA8aG9yaWEuZ2VhbnRhQG54cC5jb20+IGhhdCBhbSAx
+Ny4gRGV6ZW1iZXIgMjAxOCB1bSAxNjozMyBnZXNjaHJpZWJlbjoKPiAKPiAKPiBPbiAxMi8xNS8y
+MDE4IDExOjQ0IFBNLCBTdGVmYW4gV2FocmVuIHdyb3RlOgo+ID4gSGksCj4gPiAKPiA+PiBPbG9m
+IEpvaGFuc3NvbiA8b2xvZkBsaXhvbS5uZXQ+IGhhdCBhbSAxMy4gRGV6ZW1iZXIgMjAxOCB1bSAw
+Nzo0OCBnZXNjaHJpZWJlbjoKPiA+Pgo+ID4+Cj4gPj4gT24gRnJpLCBOb3YgMDksIDIwMTggYXQg
+MDY6MDU6MjRBTSArMDAwMCwgSG9yaWEgR2VhbnRhIHdyb3RlOgo+ID4+PiBPbiAxMS85LzIwMTgg
+MzoxMSBBTSwgTWFyYyBHb256YWxleiB3cm90ZToKPiA+Pj4+IENvbW1pdCBlODM0MmNjNzk1NGUg
+KCJlbmFibGUgQ0FBTSBjcnlwdG8gZW5naW5lIG9uIFFvcklRIERQQUEyIFNvQ3MiKQo+ID4+Pj4g
+ZW5hYmxlZCBDUllQVE9fREVWX0ZTTF9EUEFBMl9DQUFNLCB3aGljaCBkZXBlbmRzIG9uIEZTTF9N
+Q19EUElPLAo+ID4+Pj4gd2hpY2ggaXMgbm90IHNldC4gRW5hYmxlIEZTTF9NQ19CVVMsIGFuZCBi
+dWlsZCBGU0xfTUNfRFBJTyBhbmQKPiA+Pj4+IENSWVBUT19ERVZfRlNMX0RQQUEyX0NBQU0gYXMg
+bW9kdWxlcy4KPiA+Pj4+Cj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBNYXJjIEdvbnphbGV6IDxtYXJj
+LncuZ29uemFsZXpAZnJlZS5mcj4KPiA+Pj4gUmV2aWV3ZWQtYnk6IEhvcmlhIEdlYW50xIMgPGhv
+cmlhLmdlYW50YUBueHAuY29tPgo+ID4+Cj4gPj4gSSBoYWQgdG8gcmVkbyB0aGlzIG9uZSwgYW5k
+IHdoZW4gSSBkaWQgSSBub3RpY2VkIHRoYXQgdGhlcmUncyBhbHNvIGFuIGV0aGVybmV0Cj4gPj4g
+ZHJpdmVyLiBTaG91bGQgdGhhdCBiZSBlbmFibGVkIGFzIHdlbGw/Cj4gPj4KPiA+IAo+ID4gdGhp
+cyBwYXRjaCBpbiBuZXh0LTIwMTgxMjE0IGJyZWFrcyAibWFrZSBtb2R1bGVzX2luc3RhbGwiIGZv
+ciBhcm02NC9kZWZjb25maWcgb24gbXkgVWJ1bnR1IG1hY2hpbmU6Cj4gPiAKPiA+IERFUE1PRCAg
+NC4yMC4wLXJjNi1uZXh0LTIwMTgxMjE0Cj4gPiBkZXBtb2Q6IEVSUk9SOiBGb3VuZCA2IG1vZHVs
+ZXMgaW4gZGVwZW5kZW5jeSBjeWNsZXMhCj4gPiBkZXBtb2Q6IEVSUk9SOiBDeWNsZSBkZXRlY3Rl
+ZDogY2FhbWFsZ19kZXNjIC0+IGRwYWEyX2NhYW0gLT4gYXV0aGVuYwo+ID4gZGVwbW9kOiBFUlJP
+UjogQ3ljbGUgZGV0ZWN0ZWQ6IGNhYW1hbGdfZGVzYyAtPiBkcGFhMl9jYWFtIC0+IGZzbF9tY19k
+cGlvCj4gPiBkZXBtb2Q6IEVSUk9SOiBDeWNsZSBkZXRlY3RlZDogZHBhYTJfY2FhbSAtPiBjYWFt
+aGFzaF9kZXNjIC0+IGRwYWEyX2NhYW0KPiA+IGRlcG1vZDogRVJST1I6IEN5Y2xlIGRldGVjdGVk
+OiBjYWFtYWxnX2Rlc2MgLT4gZHBhYTJfY2FhbSAtPiBjYWFtaGFzaF9kZXNjIC0+IGVycm9yCj4g
+PiBkZXBtb2Q6IEVSUk9SOiBDeWNsZSBkZXRlY3RlZDogY2FhbWFsZ19kZXNjIC0+IGRwYWEyX2Nh
+YW0gLT4gY2FhbWhhc2hfZGVzYyAtPiBjYWFtYWxnX2Rlc2MKPiA+IAo+ID4gQWZ0ZXIgcmV2ZXJ0
+aW5nIG9mIHRoaXMgcGF0Y2ggdGhlIGlzc3VlIGRpc2FwcGVhcmVkLgo+ID4gCj4gU2VlbXMgdGhl
+cmUncyBhIGRlcGVuZGVuY3kgY3ljbGUgYi93IGRwYWEyX2NhYW0gYW5kIGNhYW17YWxnLGhhc2h9
+X2Rlc2MsIGFzIGZvbGxvd3M6Cj4gCj4gQS0+Qgo+IC0tLQo+IGRwYWEyX2NhYW0gbmVlZHMgY25z
+dHJfKiBleHBvcnRlZCBieSBjYWFte2FsZyxoYXNofV9kZXNjCj4gCj4gQi0+QQo+IC0tLQo+IGNh
+YW17YWxnLGhhc2h9X2Rlc2MgbmVlZCBjYWFtX2lteCwgY2FhbV9saXR0bGVfZW5kOgo+IGNhYW17
+aGFzaCxhbGd9X2Rlc2MuYwo+IAktLT4gZGVzY19jb25zdHIuaCAoaW5jbHVkZWQgZm9yIGRlc2Ny
+aXB0b3JzIGdlbmVyYXRpb24gZnVuY3Rpb25zKQo+IAkJLS0+IHJlZ3MuaCAoaW5jbHVkZWQgZm9y
+IGVuZGlhbm5lc3MgaGVscGVycykKPiAJCQktLT4gZXh0ZXJuIGJvb2wgY2FhbV9pbXgsIGNhYW1f
+bGl0dGxlX2VuZAo+IGNhYW1faW14LCBjYWFtX2xpdHRsZV9lbmQgYXJlIGV4cG9ydGVkIGJ5IGRw
+YWEyX2NhYW0gLSBjYWFtYWxnX3FpMi5jICh3aGVuCj4gQ09ORklHX0NSWVBUT19ERVZfRlNMX0NB
+QU09bikKPiAKPiBDb3VsZCB3ZSBkcm9wIHRoaXMgcGF0Y2gsIHVudGlsIENBQU0gZHJpdmVyIGdl
+dHMgYSBwcm9wZXIgZml4ICh3aGljaCBpcyBub3QKPiBzdHJhaWdodGZvcndhcmQpPwoKdGhpcyBp
+c3N1ZSBzdGlsbCBwZXJzaXN0cyBpbiA0LjIwLjAtcmM3LW5leHQtMjAxODEyMTguIENvdWxkIHlv
+dSBwbGVhc2Ugc2VuZCBhIHBhdGNoIHRvIHJldmVydCB0aGlzIGNoYW5nZT8KClRoYW5rcyBTdGVm
+YW4KCj4gCj4gVGhhbmtzLAo+IEhvcmlhCj4gCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KPiBsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAo+IGxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IGh0dHA6Ly9saXN0cy5pbmZyYWRl
+YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5n
+IGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5p
+bmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
