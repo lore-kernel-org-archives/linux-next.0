@@ -1,57 +1,78 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Tue, 18 Dec 2018 21:07:06 -0600
-Message-ID: <32bfba42-ca52-57e1-d5d9-ce1d90bafc8a@embeddedor.com>
-References: <20181129112428.45287471@canb.auug.org.au>
- <20181219134243.674b80b7@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Dec 11
+Date: Wed, 19 Dec 2018 14:44:23 +1100
+Message-ID: <20181219144423.089e46b9@canb.auug.org.au>
+References: <20181211182627.42b79e40@canb.auug.org.au>
+        <20181211173851.GA29028@roeck-us.net>
+        <20181211180437.GA28010@flashbox>
+        <20181212093632.774c0603@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20181219134243.674b80b7@canb.auug.org.au>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, Kees Cook <keescook@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/O2rkDmhjeE=BWL8=zuE09Qt"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181212093632.774c0603@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/O2rkDmhjeE=BWL8=zuE09Qt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 12/18/18 8:42 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Thu, 29 Nov 2018 11:24:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the net-next tree, today's linux-next build
->> (x86_64_allmodconfig) produced this warning:
->>
->> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c: In function 'run_xdp':
->> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:324:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     bpf_warn_invalid_xdp_action(xdp_act);
->>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:325:2: note: here
->>    case XDP_ABORTED:
->>    ^~~~
->> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:326:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     trace_xdp_exception(priv->net_dev, xdp_prog, xdp_act);
->>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:327:2: note: here
->>    case XDP_DROP:
->>    ^~~~
->>
->> Introduced by commit
->>
->>    7e273a8ebdd3 ("dpaa2-eth: Add basic XDP support")
->>
->> This due to my use of -Wimplicit-fallthrough.  This is new code.  The
->> warning can be suppressed by adding a comment like /* fall through */
->> at the appropriate places to indicate that the fallthrough is intended.
-> 
-> I am still seeing these warnings.
-> 
+Hi all,
 
-That's weird. I don't see them anymore in next-20181218.
+On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Tue, 11 Dec 2018 11:04:37 -0700 Nathan Chancellor <natechancellor@gmai=
+l.com> wrote:
+> >
+> > On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote: =20
+> > > Build results:
+> > > 	total: 152 pass: 150 fail: 2
+> > > Failed builds:=20
+> > > 	arm:allmodconfig=20
+> > > 	arm64:allmodconfig=20
+> > > Qemu test results:
+> > > 	total: 337 pass: 137 fail: 200
+> > >=20
+> > > Build failures:
+> > >=20
+> > > arm:
+> > >=20
+> > > In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
+> > >                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
+> > > arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
+> > >    =20
+> >=20
+> > Just FYI, I noticed this one yesterday on next-20181210 and sent a patc=
+h:
+> > https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancello=
+r@gmail.com/ =20
+>=20
+> I have added that patch after the v4l-dvb tree for today.
 
-They were fixed by this commit: c1cb11bcbd09f5f027cbc7fadddab169714948df
+I am still applying that patch ...
 
-Thanks
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/O2rkDmhjeE=BWL8=zuE09Qt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZvpcACgkQAVBC80lX
+0Gw0Tgf/VjsVzhkRc3iFtCzf51Ei59QGW7MzBU7OLXZe5jSRDc4iF47ShDOQEPk4
+8q1RXR9kl74z34yp+8uFKtO9sP1wkVfT+qXPxKLNtcEgKa+K8cQe5zUNLjZllACj
+mw0TzVSS2y43LkqTbefCYiH2a5DFxrcsCmEXwWfatKAFZW5yapSxSpBI9PE/pB62
+o/Bmn+dG1JxraSEyO2pvodut/oSg3u1d8vjfpLP1N6uBHbSTUlUmPOPiTuBqTQzn
+Rep07w8gHPrDvWwTNLTHnDbvJexAWQCxBcRC+oJTokI6wfqZKdgtZhfoH1rtvTHj
+274ocTfDOLz75lOQWNLZMru/BMEv0Q==
+=wEjz
+-----END PGP SIGNATURE-----
+
+--Sig_/O2rkDmhjeE=BWL8=zuE09Qt--
