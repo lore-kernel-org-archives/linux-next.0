@@ -1,78 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Dec 11
-Date: Wed, 19 Dec 2018 14:44:23 +1100
-Message-ID: <20181219144423.089e46b9@canb.auug.org.au>
-References: <20181211182627.42b79e40@canb.auug.org.au>
-        <20181211173851.GA29028@roeck-us.net>
-        <20181211180437.GA28010@flashbox>
-        <20181212093632.774c0603@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Date: Wed, 19 Dec 2018 15:12:52 +1100
+Message-ID: <20181219151252.3e27a7f8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O2rkDmhjeE=BWL8=zuE09Qt"; protocol="application/pgp-signature"
+ boundary="Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181212093632.774c0603@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>, Marc Orr <marcorr@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/O2rkDmhjeE=BWL8=zuE09Qt
+--Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 11 Dec 2018 11:04:37 -0700 Nathan Chancellor <natechancellor@gmai=
-l.com> wrote:
-> >
-> > On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote: =20
-> > > Build results:
-> > > 	total: 152 pass: 150 fail: 2
-> > > Failed builds:=20
-> > > 	arm:allmodconfig=20
-> > > 	arm64:allmodconfig=20
-> > > Qemu test results:
-> > > 	total: 337 pass: 137 fail: 200
-> > >=20
-> > > Build failures:
-> > >=20
-> > > arm:
-> > >=20
-> > > In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
-> > >                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
-> > > arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
-> > >    =20
-> >=20
-> > Just FYI, I noticed this one yesterday on next-20181210 and sent a patc=
-h:
-> > https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancello=
-r@gmail.com/ =20
->=20
-> I have added that patch after the v4l-dvb tree for today.
+Today's linux-next merge of the kvm tree got a conflict in:
 
-I am still applying that patch ...
+  arch/x86/kvm/x86.c
+
+between commit:
+
+  eb012ef3b4e3 ("x86: Remove Intel MPX")
+
+from the tip tree and commit:
+
+  b666a4b69739 ("kvm: x86: Dynamically allocate guest_fpu")
+
+from the kvm tree.
+
+I fixed it up (the former removed some code updated by the latter, so I
+did that) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/O2rkDmhjeE=BWL8=zuE09Qt
+--Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZvpcACgkQAVBC80lX
-0Gw0Tgf/VjsVzhkRc3iFtCzf51Ei59QGW7MzBU7OLXZe5jSRDc4iF47ShDOQEPk4
-8q1RXR9kl74z34yp+8uFKtO9sP1wkVfT+qXPxKLNtcEgKa+K8cQe5zUNLjZllACj
-mw0TzVSS2y43LkqTbefCYiH2a5DFxrcsCmEXwWfatKAFZW5yapSxSpBI9PE/pB62
-o/Bmn+dG1JxraSEyO2pvodut/oSg3u1d8vjfpLP1N6uBHbSTUlUmPOPiTuBqTQzn
-Rep07w8gHPrDvWwTNLTHnDbvJexAWQCxBcRC+oJTokI6wfqZKdgtZhfoH1rtvTHj
-274ocTfDOLz75lOQWNLZMru/BMEv0Q==
-=wEjz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZxUQACgkQAVBC80lX
+0GxkgAf+KpOi5GYRWrCxptB3CZfRzKSZWoR3G20znQtTlsDyUq3dbmsv8LUOZv6q
+U0f1z0LnpmqQ/fjbdtn+nh+pESsV/W6HPQOmd+ya9kClEXN7wzmXaaxMDg66i1jh
+2VrEps5Nzw8RTh43eyA0Yn+iyB0GpuJk06uiV9FL9yVzhDoX+hrtwIQpvSgbp5pq
+R91tjiGLKrWHS1CZN7cmeG8MdzxcB86MG94m5sg416/y4iBBD0peWF7hd3y1PEbH
+lzbBI2EsXJmXW6iuqBYe3GSuxINAzwdQ2T22eTLSonEV2hQPUyOXf6kPOwfTt89o
+ErLokEJGCOJf+/tD3oJtgrwEY+Wslw==
+=2Igu
 -----END PGP SIGNATURE-----
 
---Sig_/O2rkDmhjeE=BWL8=zuE09Qt--
+--Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY--
