@@ -1,202 +1,110 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the kvm tree
-Date: Wed, 19 Dec 2018 15:33:20 +1100
-Message-ID: <20181219153320.2ef0e07b@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Wed, 19 Dec 2018 16:37:13 +1100
+Message-ID: <20181219163713.15af8a5f@canb.auug.org.au>
+References: <20181129112428.45287471@canb.auug.org.au>
+        <20181219134243.674b80b7@canb.auug.org.au>
+        <32bfba42-ca52-57e1-d5d9-ce1d90bafc8a@embeddedor.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2YVOyfxLi21RRL3WYN0sacM"; protocol="application/pgp-signature"
+ boundary="Sig_/cXh1re/hznPqt8Bu/nNLVNr"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <32bfba42-ca52-57e1-d5d9-ce1d90bafc8a@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@intel.com>, Sean Christopherson <sean.j.christopherson@intel.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, Kees Cook <keescook@google.com>, Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2YVOyfxLi21RRL3WYN0sacM
+--Sig_/cXh1re/hznPqt8Bu/nNLVNr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Gustavo,
 
-After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Tue, 18 Dec 2018 21:07:06 -0600 "Gustavo A. R. Silva" <gustavo@embeddedo=
+r.com> wrote:
+>
+> On 12/18/18 8:42 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > On Thu, 29 Nov 2018 11:24:28 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote: =20
+> >>
+> >> After merging the net-next tree, today's linux-next build
+> >> (x86_64_allmodconfig) produced this warning:
+> >>
+> >> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c: In function 'run_xdp=
+':
+> >> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:324:3: warning: this =
+statement may fall through [-Wimplicit-fallthrough=3D]
+> >>     bpf_warn_invalid_xdp_action(xdp_act);
+> >>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:325:2: note: here
+> >>    case XDP_ABORTED:
+> >>    ^~~~
+> >> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:326:3: warning: this =
+statement may fall through [-Wimplicit-fallthrough=3D]
+> >>     trace_xdp_exception(priv->net_dev, xdp_prog, xdp_act);
+> >>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >> drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:327:2: note: here
+> >>    case XDP_DROP:
+> >>    ^~~~
+> >>
+> >> Introduced by commit
+> >>
+> >>    7e273a8ebdd3 ("dpaa2-eth: Add basic XDP support")
+> >>
+> >> This due to my use of -Wimplicit-fallthrough.  This is new code.  The
+> >> warning can be suppressed by adding a comment like /* fall through */
+> >> at the appropriate places to indicate that the fallthrough is intended=
+. =20
+> >=20
+> > I am still seeing these warnings.
+> >  =20
+>=20
+> That's weird. I don't see them anymore in next-20181218.
+>=20
+> They were fixed by this commit: c1cb11bcbd09f5f027cbc7fadddab169714948df
 
-arch/x86/kvm/vmx/nested.c: In function 'prepare_vmcs02_full':
-arch/x86/kvm/vmx/nested.c:2242:6: error: implicit declaration of function '=
-kvm_mpx_supported'; did you mean 'vmx_mpx_supported'? [-Werror=3Dimplicit-f=
-unction-declaration]
-  if (kvm_mpx_supported()) {
-      ^~~~~~~~~~~~~~~~~
-      vmx_mpx_supported
+My mistake (patter mismatch :-)), there are very similar warnings in
+drivers/net/veth.c which are older.  Someone could fix those if they
+wanted to :-)
 
-Caused by commit
-
-  55d2375e58a6 ("KVM: nVMX: Move nested code to dedicated files")
-
-interacting with commit
-
-  eb012ef3b4e3 ("x86: Remove Intel MPX")
-
-from the tip tree.
-
-I applied the following merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 19 Dec 2018 15:28:31 +1100
-Subject: [PATCH] kvm: tidy up from MPX removal
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/kvm/vmx/nested.c | 13 -------------
- arch/x86/kvm/vmx/vmx.c    | 40 +++------------------------------------
- 2 files changed, 3 insertions(+), 50 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 3f019aa63341..59e6da4171a8 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2238,14 +2238,6 @@ static void prepare_vmcs02_full(struct vcpu_vmx *vmx=
-, struct vmcs12 *vmcs12)
- 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
-=20
- 	set_cr4_guest_host_mask(vmx);
--
--	if (kvm_mpx_supported()) {
--		if (vmx->nested.nested_run_pending &&
--			(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS))
--			vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
--		else
--			vmcs_write64(GUEST_BNDCFGS, vmx->nested.vmcs01_guest_bndcfgs);
--	}
- }
-=20
- /*
-@@ -2971,9 +2963,6 @@ int nested_vmx_enter_non_root_mode(struct kvm_vcpu *v=
-cpu, bool from_vmentry)
-=20
- 	if (!(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
- 		vmx->nested.vmcs01_debugctl =3D vmcs_read64(GUEST_IA32_DEBUGCTL);
--	if (kvm_mpx_supported() &&
--		!(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS))
--		vmx->nested.vmcs01_guest_bndcfgs =3D vmcs_read64(GUEST_BNDCFGS);
-=20
- 	vmx_switch_vmcs(vcpu, &vmx->nested.vmcs02);
-=20
-@@ -3496,8 +3485,6 @@ static void sync_vmcs12(struct kvm_vcpu *vcpu, struct=
- vmcs12 *vmcs12)
- 	vmcs12->guest_sysenter_cs =3D vmcs_read32(GUEST_SYSENTER_CS);
- 	vmcs12->guest_sysenter_esp =3D vmcs_readl(GUEST_SYSENTER_ESP);
- 	vmcs12->guest_sysenter_eip =3D vmcs_readl(GUEST_SYSENTER_EIP);
--	if (kvm_mpx_supported())
--		vmcs12->guest_bndcfgs =3D vmcs_read64(GUEST_BNDCFGS);
- }
-=20
- /*
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index c90fffdc5a93..ccab822be9cd 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1527,12 +1527,7 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct=
- msr_data *msr_info)
- 		msr_info->data =3D vmcs_readl(GUEST_SYSENTER_ESP);
- 		break;
- 	case MSR_IA32_BNDCFGS:
--		if (!kvm_mpx_supported() ||
--		    (!msr_info->host_initiated &&
--		     !guest_cpuid_has(vcpu, X86_FEATURE_MPX)))
--			return 1;
--		msr_info->data =3D vmcs_read64(GUEST_BNDCFGS);
--		break;
-+		return 1;
- 	case MSR_IA32_MCG_EXT_CTL:
- 		if (!msr_info->host_initiated &&
- 		    !(vmx->msr_ia32_feature_control &
-@@ -1610,15 +1605,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct=
- msr_data *msr_info)
- 		vmcs_writel(GUEST_SYSENTER_ESP, data);
- 		break;
- 	case MSR_IA32_BNDCFGS:
--		if (!kvm_mpx_supported() ||
--		    (!msr_info->host_initiated &&
--		     !guest_cpuid_has(vcpu, X86_FEATURE_MPX)))
--			return 1;
--		if (is_noncanonical_address(data & PAGE_MASK, vcpu) ||
--		    (data & MSR_IA32_BNDCFGS_RSVD))
--			return 1;
--		vmcs_write64(GUEST_BNDCFGS, data);
--		break;
-+		return 1;
- 	case MSR_IA32_SPEC_CTRL:
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
-@@ -3868,8 +3855,6 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, boo=
-l init_event)
- 	vmcs_write32(GUEST_ACTIVITY_STATE, GUEST_ACTIVITY_ACTIVE);
- 	vmcs_write32(GUEST_INTERRUPTIBILITY_INFO, 0);
- 	vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS, 0);
--	if (kvm_mpx_supported())
--		vmcs_write64(GUEST_BNDCFGS, 0);
-=20
- 	setup_msrs(vmx);
-=20
-@@ -6636,23 +6621,6 @@ static void nested_vmx_cr_fixed1_bits_update(struct =
-kvm_vcpu *vcpu)
- #undef cr4_fixed1_update
- }
-=20
--static void nested_vmx_entry_exit_ctls_update(struct kvm_vcpu *vcpu)
--{
--	struct vcpu_vmx *vmx =3D to_vmx(vcpu);
--
--	if (kvm_mpx_supported()) {
--		bool mpx_enabled =3D guest_cpuid_has(vcpu, X86_FEATURE_MPX);
--
--		if (mpx_enabled) {
--			vmx->nested.msrs.entry_ctls_high |=3D VM_ENTRY_LOAD_BNDCFGS;
--			vmx->nested.msrs.exit_ctls_high |=3D VM_EXIT_CLEAR_BNDCFGS;
--		} else {
--			vmx->nested.msrs.entry_ctls_high &=3D ~VM_ENTRY_LOAD_BNDCFGS;
--			vmx->nested.msrs.exit_ctls_high &=3D ~VM_EXIT_CLEAR_BNDCFGS;
--		}
--	}
--}
--
- static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx =3D to_vmx(vcpu);
-@@ -6669,10 +6637,8 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
- 		to_vmx(vcpu)->msr_ia32_feature_control_valid_bits &=3D
- 			~FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX;
-=20
--	if (nested_vmx_allowed(vcpu)) {
-+	if (nested_vmx_allowed(vcpu))
- 		nested_vmx_cr_fixed1_bits_update(vcpu);
--		nested_vmx_entry_exit_ctls_update(vcpu);
--	}
- }
-=20
- static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *ent=
-ry)
---=20
-2.19.1
+drivers/net/veth.c: In function 'veth_xdp_rcv_one':
+drivers/net/veth.c:542:4: warning: this statement may fall through [-Wimpli=
+cit-fallthrough=3D]
+    bpf_warn_invalid_xdp_action(act);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/veth.c:543:3: note: here
+   case XDP_ABORTED:
+   ^~~~
+drivers/net/veth.c: In function 'veth_xdp_rcv_skb':
+drivers/net/veth.c:663:3: warning: this statement may fall through [-Wimpli=
+cit-fallthrough=3D]
+   bpf_warn_invalid_xdp_action(act);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/veth.c:664:2: note: here
+  case XDP_ABORTED:
+  ^~~~
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/2YVOyfxLi21RRL3WYN0sacM
+--Sig_/cXh1re/hznPqt8Bu/nNLVNr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZyhAACgkQAVBC80lX
-0GxAfwf/Te/ACBld9lZUJtTuVhqaD0qr11RhixqUzDF0w88mMAXeYrv2HhRupmdo
-8ZJ1HEOkjm/uiacE7Q89wLB5xiUcNb+U5fImsJCMAzctLYPwmeOzh6v/Wz2hrCr1
-9rtxt2cfkMzDQmFTCs8NJqmh33JVgmmbrc9MjBApwj7f2Y0vnxZ17m7uWM8CbTVI
-t9OKob3QM8KLSxcApCLn161WRlIFFFNeXWyr7cOsZk+uCAMOZsTo07ILt/3efFZC
-+XK0UENp6X3/cp/Wp/DrAsfUhfU5hqYvhDaZr3ZSE0NfGJF1TSLYJAAZCv7aXMCz
-iR5mIQwRipzGTZTOfP0LKjkJSN6jZQ==
-=cZND
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZ2QkACgkQAVBC80lX
+0GzqSQgAlpifdRTKtvLcMvIl1gSlNyRh92r8U0grnmSHxD3NXxUe0shMt9het7zK
++wnncswGl88QCi4bX70Z8k106HMFMeweoqVsWlp4goul84UJ/p1kPeBq2OabWApl
+WXLaB9UNzLNBAJ7U4leVdUb7OSt0QHHditWCqczW/8Eb/6YNnn/laHRWWTBngpVC
+olxDplgwDAJW5scqF3KHiqui73xT5vY9E9bFPCO+Xl7uMbnZuIGjv4DmxVdCJ02h
+A8sCx9rqrqq6l4Md+K9x7aX/t+BQ3PucELMoFSFHFTF8noMBeZfTT78/8281AKps
+b0z13778m4yWIZif2mg8mi/g+L2TZw==
+=YZiP
 -----END PGP SIGNATURE-----
 
---Sig_/2YVOyfxLi21RRL3WYN0sacM--
+--Sig_/cXh1re/hznPqt8Bu/nNLVNr--
