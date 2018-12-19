@@ -1,67 +1,73 @@
-From: =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-Subject: [PATCH] Revert "arm64: defconfig: Enable FSL_MC_BUS and FSL_MC_DPIO"
-Date: Wed, 19 Dec 2018 12:18:44 +0200
-Message-ID: <20181219101844.6362-1-horia.geanta@nxp.com>
-References: <2071995319.127120.1545163830046@email.ionos.de>
+From: Luca Coelho <luca-XPOmlcxoEMv1KXRcyAk9cg@public.gmane.org>
+Subject: Re: linux-next: build warnings after merge of the
+ wireless-drivers-next tree
+Date: Wed, 19 Dec 2018 08:27:22 -0200
+Message-ID: <1ce59aaf30aaa9f59fc84c68a9e83299df0d4af8.camel@coelho.fi>
+References: <20181130120555.1d35eb6b@canb.auug.org.au>
+         <20181219134738.4efed34f@canb.auug.org.au>
+         <871s6evtra.fsf@kamboji.qca.qualcomm.com>
+         <0BA3FCBA62E2DC44AF3030971E174FB3013375F96C@HASMSX112.ger.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2071995319.127120.1545163830046@email.ionos.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc: arm@kernel.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB3013375F96C-cNwSTNrqBuVP9JyJpTNKArfspsVTdybXVpNB7YpNyf8@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Grumbach, Emmanuel" <emmanuel.grumbach-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Sharon, Sara" <sara.sharon-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kees Cook <keescook-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Gustavo A. R. Silva" <gustavo-L1vi/lXTdts+Va1GwOuvDg@public.gmane.org>, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Networking <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-This reverts commit d9678adbe733a770428a98651beaa2817d503ed3.
+On Wed, 2018-12-19 at 08:31 +0000, Grumbach, Emmanuel wrote:
+> > Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> writes:
+> > 
+> > > On Fri, 30 Nov 2018 12:05:55 +1100 Stephen Rothwell
+> > <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+> > > > After merging the wireless-drivers-next tree, today's linux-next
+> > > > build
+> > > > (x86_64 allmodconfig) produced these warnings:
+> > > > 
+> > > > drivers/net/wireless/intel/iwlwifi/iwl-drv.c: In function
+> > 'iwl_parse_tlv_firmware':
+> > > > drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1098:7: warning: this
+> > statement may fall through [-Wimplicit-fallthrough=]
+> > > >     if (iwlwifi_mod_params.enable_ini)
+> > > >        ^
+> > > > drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1100:3: note: here
+> > > >    default:
+> > > >    ^~~~~~~
+> > > > drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c: In function
+> > 'iwl_parse_fw_dbg_tlv':
+> > > > drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:203:4: warning: this
+> > statement may fall through [-Wimplicit-fallthrough=]
+> > > >     iwl_fw_dbg_copy_tlv(trans, tlv, true);
+> > > >     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:204:3: note: here
+> > > >    default:
+> > > >    ^~~~~~~
+> > > > 
+> > > > Introduced by commit
+> > > > 
+> > > >   f14cda6f3b31 ("iwlwifi: trans: parse and store debug ini TLVs")
+> > > > 
+> > > > These are noted because I use -Wimplict-fallthrough
+> > > > 
+> > > > The warnings can be suppressed by adding a comment like
+> > > > 	/* fall through */
+> > > > at the appropriate place to indicate that the fallthough is intended.
+> > > 
+> > > I am still seeing these warnings (but in the net-next tree now) and I
+> > > do not see a fix patch in the wireless-drivers-next tree.
+> > 
+> > Luca did submit a patch[1] for cfg80211 to fix those but I don't see any
+> > patches for iwlwifi (even in the one pending pull request he sent), not sure
+> > what happened. I know that Luca is already on holidays but adding
+> > Emmanuel, maybe he can help here?
+> > 
+> 
+> Just sent a patch.
 
-Received below report from Stefan.
-Revert the commit until CAAM driver dependency cycles are fixed.
+Those patches were still queued for upstreaming and I didn't think they
+were that urgent, so I didn't pick them.
 
-this patch in next-20181214 breaks "make modules_install" for
-arm64/defconfig on my Ubuntu machine:
-
-DEPMOD  4.20.0-rc6-next-20181214
-depmod: ERROR: Found 6 modules in dependency cycles!
-depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> authenc
-depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> fsl_mc_dpio
-depmod: ERROR: Cycle detected: dpaa2_caam -> caamhash_desc -> dpaa2_caam
-depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_desc -> error
-depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_desc -> caamalg_desc
-
-Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
----
- arch/arm64/configs/defconfig | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 989f51bb1bd4..d0724d4e0546 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -200,7 +200,6 @@ CONFIG_DMA_CMA=y
- CONFIG_CMA_SIZE_MBYTES=32
- CONFIG_HISILICON_LPC=y
- CONFIG_SIMPLE_PM_BUS=y
--CONFIG_FSL_MC_BUS=y
- CONFIG_MTD=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_M25P80=y
-@@ -644,7 +643,6 @@ CONFIG_RPMSG_QCOM_GLINK_RPM=y
- CONFIG_RPMSG_QCOM_GLINK_SMEM=m
- CONFIG_RPMSG_QCOM_SMD=y
- CONFIG_RASPBERRYPI_POWER=y
--CONFIG_FSL_MC_DPIO=m
- CONFIG_QCOM_COMMAND_DB=y
- CONFIG_QCOM_GENI_SE=y
- CONFIG_QCOM_GLINK_SSR=m
-@@ -737,7 +735,6 @@ CONFIG_NLS_ISO8859_1=y
- CONFIG_SECURITY=y
- CONFIG_CRYPTO_ECHAINIV=y
- CONFIG_CRYPTO_ANSI_CPRNG=y
--CONFIG_CRYPTO_DEV_FSL_DPAA2_CAAM=m
- CONFIG_PRINTK_TIME=y
- CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_FS=y
--- 
-2.16.2
+--
+Luca.
