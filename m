@@ -1,75 +1,57 @@
-From: Petr Machata <petrm@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Thu, 20 Dec 2018 10:43:00 +0000
-Message-ID: <wihpntw4h2d.fsf@dev-r-vrt-156.mtr.labs.mlnx>
-References: <20181220132824.341c10e9@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: linux-next: Tree for Dec 11
+Date: Thu, 20 Dec 2018 09:43:46 -0200
+Message-ID: <20181220094337.36d9aed3@coco.lan>
+References: <20181211182627.42b79e40@canb.auug.org.au>
+        <20181211173851.GA29028@roeck-us.net>
+        <20181211180437.GA28010@flashbox>
+        <20181212093632.774c0603@canb.auug.org.au>
+        <20181219144423.089e46b9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20181220132824.341c10e9@canb.auug.org.au> (Stephen Rothwell's
-        message of "Thu, 20 Dec 2018 13:28:24 +1100")
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181219144423.089e46b9@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Em Wed, 19 Dec 2018 14:44:23 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
 > Hi all,
->
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/net/vxlan.c: In function 'vxlan_changelink':
-> drivers/net/vxlan.c:3763:10: error: too few arguments to function 'vxlan_=
-fdb_update'
->     err =3D vxlan_fdb_update(vxlan, all_zeros_mac,
->           ^~~~~~~~~~~~~~~~
-> drivers/net/vxlan.c:830:12: note: declared here
->  static int vxlan_fdb_update(struct vxlan_dev *vxlan,
->             ^~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   ce5e098f7a10 ("vxlan: changelink: Fix handling of default remotes")
->
-> from the net tree interacting with commit
->
->   0e6160f3f5a9 ("vxlan: vxlan_fdb_notify(): Make switchdev notification c=
-onfigurable")
->
-> from the net-next tree.
->
-> I added the following merge fix patch for today.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 20 Dec 2018 13:24:05 +1100
-> Subject: [PATCH] vxlan: fix for vxlan_fdb_update() API change
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/vxlan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
-> index efd709a5e3a8..5209ee9aac47 100644
-> --- a/drivers/net/vxlan.c
-> +++ b/drivers/net/vxlan.c
-> @@ -3768,7 +3768,7 @@ static int vxlan_changelink(struct net_device *dev,=
- struct nlattr *tb[],
->  					       dst->remote_vni,
->  					       dst->remote_vni,
->  					       dst->remote_ifindex,
-> -					       NTF_SELF);
-> +					       NTF_SELF, true);
->  			if (err) {
->  				spin_unlock_bh(&vxlan->hash_lock);
->  				return err;
-> --=20
-> 2.19.1
+> 
+> On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Tue, 11 Dec 2018 11:04:37 -0700 Nathan Chancellor <natechancellor@gmail.com> wrote:  
+> > >
+> > > On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote:    
+> > > > Build results:
+> > > > 	total: 152 pass: 150 fail: 2
+> > > > Failed builds: 
+> > > > 	arm:allmodconfig 
+> > > > 	arm64:allmodconfig 
+> > > > Qemu test results:
+> > > > 	total: 337 pass: 137 fail: 200
+> > > > 
+> > > > Build failures:
+> > > > 
+> > > > arm:
+> > > > 
+> > > > In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
+> > > >                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
+> > > > arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
+> > > >       
+> > > 
+> > > Just FYI, I noticed this one yesterday on next-20181210 and sent a patch:
+> > > https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancellor@gmail.com/    
+> > 
+> > I have added that patch after the v4l-dvb tree for today.  
+> 
+> I am still applying that patch ...
 
-Yes, that's the correct fix.
+Sorry for taking so long with that. Patch applied, thanks!
 
-Thanks!
+Thanks,
+Mauro
