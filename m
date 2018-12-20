@@ -1,91 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Thu, 20 Dec 2018 13:28:24 +1100
-Message-ID: <20181220132824.341c10e9@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Thu, 20 Dec 2018 15:57:56 +1100
+Message-ID: <20181220155756.52a49829@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cwsMIF4xqo86oD7MLEsVxTl"; protocol="application/pgp-signature"
+ boundary="Sig_/0BAu8TO/WPePY_5xpeRdHwh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/cwsMIF4xqo86oD7MLEsVxTl
+--Sig_/0BAu8TO/WPePY_5xpeRdHwh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the tip tree got a conflict in:
 
-drivers/net/vxlan.c: In function 'vxlan_changelink':
-drivers/net/vxlan.c:3763:10: error: too few arguments to function 'vxlan_fd=
-b_update'
-    err =3D vxlan_fdb_update(vxlan, all_zeros_mac,
-          ^~~~~~~~~~~~~~~~
-drivers/net/vxlan.c:830:12: note: declared here
- static int vxlan_fdb_update(struct vxlan_dev *vxlan,
-            ^~~~~~~~~~~~~~~~
+  Makefile
 
-Caused by commit
+between commits:
 
-  ce5e098f7a10 ("vxlan: changelink: Fix handling of default remotes")
+  65bba0423ecf ("kbuild: fix UML build error with CONFIG_GCC_PLUGINS")
+  059bc9fc375e ("kbuild: make 'archprepare' depend on 'scripts'")
+  ce2fd53a10c7 ("kbuild: descend into scripts/gcc-plugins/ via scripts/Make=
+file")
 
-from the net tree interacting with commit
+from the kbuild tree and commit:
 
-  0e6160f3f5a9 ("vxlan: vxlan_fdb_notify(): Make switchdev notification con=
-figurable")
+  6ac389346e69 ("Revert "kbuild/Makefile: Prepare for using macros in inlin=
+e assembly code to work around asm() related GCC inlining bugs"")
 
-from the net-next tree.
+from the tip tree.
 
-I added the following merge fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 20 Dec 2018 13:24:05 +1100
-Subject: [PATCH] vxlan: fix for vxlan_fdb_update() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/vxlan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
-index efd709a5e3a8..5209ee9aac47 100644
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -3768,7 +3768,7 @@ static int vxlan_changelink(struct net_device *dev, s=
-truct nlattr *tb[],
- 					       dst->remote_vni,
- 					       dst->remote_vni,
- 					       dst->remote_ifindex,
--					       NTF_SELF);
-+					       NTF_SELF, true);
- 			if (err) {
- 				spin_unlock_bh(&vxlan->hash_lock);
- 				return err;
---=20
-2.19.1
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/cwsMIF4xqo86oD7MLEsVxTl
+diff --cc Makefile
+index 6ae8a5382d5d,885c74b192f9..000000000000
+--- a/Makefile
++++ b/Makefile
+@@@ -1104,12 -1104,9 +1104,10 @@@ prepare2: prepare3 outputmakefile asm-g
+  prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelea=
+se.h
+  	$(cmd_crmodverdir)
+ =20
+- macroprepare: prepare1 archmacros
+-=20
+- archprepare: archheaders archscripts macroprepare scripts
+ -archprepare: archheaders archscripts prepare1 scripts_basic
+++archprepare: archheaders archscripts prepare1 scripts
+ =20
+ -prepare0: archprepare gcc-plugins
+ +prepare0: archprepare
+ +	$(Q)$(MAKE) $(build)=3Dscripts/mod
+  	$(Q)$(MAKE) $(build)=3D.
+ =20
+  # All the preparing..
+
+--Sig_/0BAu8TO/WPePY_5xpeRdHwh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa/kgACgkQAVBC80lX
-0GwBOwf/Tgik72mNw76kDMNQdtdYVqGCQ9bBVGXIQAvsoqkQcr0TfwmTJNPzLISx
-5P2O9wT0N9ruOTW1atmEZQEU1RYRPHaZdBB7wKUvq94ovRc3DxfjPR2+9KOi9voK
-ZVkiVkNUjTvTOf03IbhRqYiIsPHClPh9SUVvQT7/97fLsQci6YhM7Ahxtix1ueQU
-07wDj1ROEQrKgmFyfeS7jrndCa/xOWp1bszbbFxzEoDYVxa/8duijTSywmIOeVv9
-HXVrnYRId2R02JMa5SY2i1mBS1yz6TzJGXlMaUWThB0UcNQloy5CBM3mDh7s2f5o
-Oh5nDZ6eNMDVZ+aZD3jhiY6zEZzCmA==
-=NjDq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwbIVQACgkQAVBC80lX
+0Gy4eQgAnX0GejxgKTDls2aCJcoce3Pyyc1tYENRHS3qJR1z/c+a+c+NOKPc3zxP
+WtzWqb7LEzMaEbDHMO8jV+FMbL2tSMp9TP7Lum5wDA2V2MfBPLc988xqX9WFLpSm
+kx3WIswrd0rfFX6/9C1rEga5gZhfooIezoSBOw7a2BVzAylKIxhR5pzb8e+GJU/q
+LDvjBMwv0eYsaNoK2hO9ZrVib/4pXI7/y4vy0USjO+d7lIGqHMM1PQEu1ZFd0IDi
+47fTwjrhEGHF3L0pvr5EWg6rNfE9lu3MDkfJPjdNGRvbVo3polLk+599BAmhGo07
+tBTMnIxAXjgUr6ve+S98+meAmMxpFw==
+=21V6
 -----END PGP SIGNATURE-----
 
---Sig_/cwsMIF4xqo86oD7MLEsVxTl--
+--Sig_/0BAu8TO/WPePY_5xpeRdHwh--
