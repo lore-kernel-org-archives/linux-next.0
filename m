@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 20 Dec 2018 12:56:35 +1100
-Message-ID: <20181220125635.76ae89ad@canb.auug.org.au>
+Date: Thu, 20 Dec 2018 13:00:38 +1100
+Message-ID: <20181220130038.753df0d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rN_.1I6oz98LMOcMEqK5afx"; protocol="application/pgp-signature"
+ boundary="Sig_/npEXLpUcHsugbpdsDGuUCiw"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>, Paolo Abeni <pabeni@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/rN_.1I6oz98LMOcMEqK5afx
+--Sig_/npEXLpUcHsugbpdsDGuUCiw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,19 +19,17 @@ Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/net/vxlan.c
+  tools/testing/selftests/net/Makefile
 
-between commits:
+between commit:
 
-  6db924687139 ("vxlan: Fix error path in __vxlan_dev_create()")
-  ce5e098f7a10 ("vxlan: changelink: Fix handling of default remotes")
+  55cbe0794294 ("selftests: net: Add test_vxlan_fdb_changelink.sh")
 
 from the net tree and commit:
 
-  0e6160f3f5a9 ("vxlan: vxlan_fdb_notify(): Make switchdev notification con=
-figurable")
+  e87f53b4fab7 ("selftests: add some benchmark for UDP GRO")
 
-from the net-next tree.
+( and following ones) from the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -44,71 +42,51 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/vxlan.c
-index 0565f8880199,71c3b7b6b1ab..000000000000
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@@ -3297,16 -3483,9 +3484,16 @@@ static int __vxlan_dev_create(struct ne
+diff --cc tools/testing/selftests/net/Makefile
+index 923570a9708a,9543a4c2f9be..000000000000
+--- a/tools/testing/selftests/net/Makefile
++++ b/tools/testing/selftests/net/Makefile
+@@@ -4,14 -4,15 +4,16 @@@
+  CFLAGS =3D  -Wall -Wl,--no-as-needed -O2 -g
+  CFLAGS +=3D -I../../../../usr/include/
  =20
-  	list_add(&vxlan->next, &vn->vxlan_list);
-  	return 0;
- +
-  errout:
- +	/* unregister_netdevice() destroys the default FDB entry with deletion
- +	 * notification. But the addition notification was not sent yet, so
- +	 * destroy the entry by hand here.
- +	 */
-  	if (f)
-- 		vxlan_fdb_destroy(vxlan, f, false);
-+ 		vxlan_fdb_destroy(vxlan, f, false, false);
- +	if (unregister)
- +		unregister_netdevice(dev);
-  	return err;
-  }
- =20
-@@@ -3540,8 -3719,10 +3727,9 @@@ static int vxlan_changelink(struct net_
-  {
-  	struct vxlan_dev *vxlan =3D netdev_priv(dev);
-  	struct vxlan_rdst *dst =3D &vxlan->default_dst;
-+ 	unsigned long old_age_interval;
-  	struct vxlan_rdst old_dst;
-  	struct vxlan_config conf;
- -	struct vxlan_fdb *f =3D NULL;
-  	int err;
- =20
-  	err =3D vxlan_nl2conf(tb, data,
-@@@ -3564,13 -3749,13 +3756,14 @@@
-  					   vxlan->cfg.dst_port,
-  					   old_dst.remote_vni,
-  					   old_dst.remote_vni,
-- 					   old_dst.remote_ifindex, 0);
-+ 					   old_dst.remote_ifindex,
-+ 					   true);
- =20
-  		if (!vxlan_addr_any(&dst->remote_ip)) {
- -			err =3D vxlan_fdb_create(vxlan, all_zeros_mac,
- +			err =3D vxlan_fdb_update(vxlan, all_zeros_mac,
-  					       &dst->remote_ip,
-  					       NUD_REACHABLE | NUD_PERMANENT,
- +					       NLM_F_APPEND | NLM_F_CREATE,
-  					       vxlan->cfg.dst_port,
-  					       dst->remote_vni,
-  					       dst->remote_vni,
+- TEST_PROGS :=3D run_netsocktests run_afpackettests test_bpf.sh netdevice.=
+sh rtnetlink.sh
++ TEST_PROGS :=3D run_netsocktests run_afpackettests test_bpf.sh netdevice.=
+sh \
++ 	      rtnetlink.sh xfrm_policy.sh
+  TEST_PROGS +=3D fib_tests.sh fib-onlink-tests.sh pmtu.sh udpgso.sh ip_def=
+rag.sh
+  TEST_PROGS +=3D udpgso_bench.sh fib_rule_tests.sh msg_zerocopy.sh psock_s=
+nd.sh
+ +TEST_PROGS +=3D test_vxlan_fdb_changelink.sh
++ TEST_PROGS +=3D udpgro_bench.sh udpgro.sh test_vxlan_under_vrf.sh reusepo=
+rt_addr_any.sh
+  TEST_PROGS_EXTENDED :=3D in_netns.sh
+  TEST_GEN_FILES =3D  socket
+- TEST_GEN_FILES +=3D psock_fanout psock_tpacket msg_zerocopy
+- TEST_GEN_FILES +=3D tcp_mmap tcp_inq psock_snd
++ TEST_GEN_FILES +=3D psock_fanout psock_tpacket msg_zerocopy reuseport_add=
+r_any
++ TEST_GEN_FILES +=3D tcp_mmap tcp_inq psock_snd txring_overwrite
+  TEST_GEN_FILES +=3D udpgso udpgso_bench_tx udpgso_bench_rx ip_defrag
+  TEST_GEN_PROGS =3D reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
+  TEST_GEN_PROGS +=3D reuseport_dualstack reuseaddr_conflict tls
 
---Sig_/rN_.1I6oz98LMOcMEqK5afx
+--Sig_/npEXLpUcHsugbpdsDGuUCiw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa9tMACgkQAVBC80lX
-0GxyhAf/RTpapDLHDtZ8Owg+OB7R34ZbrO5YNvGQeyTipJsnH8tqucKSY0H6LPqf
-j2U1UR9PUSEwYllH5YUSBEETT4Y2DVHHC8I6c3GPGFwGyLt+AtXhK1j/99swKQ5g
-tqnCQdu0pti/1d9FomXs+5tcN4HY9liWGB4eNlBBrqeojzNjMzp7y8Bnb7HDH16/
-G1CQgl4H/yzFM957tzhz5Qs0tlkz38rxShDa/xT0/sA8k1iCJZLMUtx0Dj2EXvEq
-PPNtNnoAhuXfppKT2aDPpMzjqZDmLA4DzoXtj0mFbf+XUblq/LR6pSApozKYklwD
-AjeiRHBbVesVli47Sj6wjx5QtplBsQ==
-=qH2F
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa98YACgkQAVBC80lX
+0GyBywgAmHV8ZPbG0QV+24AXch5IayeUfU97UlMKAGJvi42wxJCrPUQpXaBgOl6e
+nIEMr/AZZUYw5BR3bbDktsFg/8A2ckKiC8ParTf6mUvcguV7JggDx5PmoUsRwyp4
+CyWrUqvNndvVQ2UX+oJRGMLNoRJoSjWd9I7YGm2yS84vYLIBxB8cHassX5dg/IU9
+vtdRsnYLnlVaSoxgfx0X1SApukea8nG5IdRoPW9E2kTrGkV+0nu4rgxFMrKIbHsK
+EOblA0Y+8b+yuRZc03DP1lsQ+nxtgx3EtIdeaF/sOD81FPrI2NDvvF7fBghjWS5X
+eFJIJMuMrWGmnFYVHe9MbD/A3Hlw7w==
+=ApKF
 -----END PGP SIGNATURE-----
 
---Sig_/rN_.1I6oz98LMOcMEqK5afx--
+--Sig_/npEXLpUcHsugbpdsDGuUCiw--
