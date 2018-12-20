@@ -1,57 +1,48 @@
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: linux-next: Tree for Dec 11
-Date: Thu, 20 Dec 2018 09:43:46 -0200
-Message-ID: <20181220094337.36d9aed3@coco.lan>
-References: <20181211182627.42b79e40@canb.auug.org.au>
-        <20181211173851.GA29028@roeck-us.net>
-        <20181211180437.GA28010@flashbox>
-        <20181212093632.774c0603@canb.auug.org.au>
-        <20181219144423.089e46b9@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] Revert "arm64: defconfig: Enable FSL_MC_BUS and FSL_MC_DPIO"
+Date: Thu, 20 Dec 2018 16:27:56 +0100
+Message-ID: <CAK8P3a3RLdRtY2ND0r4VQ5447V1WLYD6b9NcWjYvYR2AUCV1tg@mail.gmail.com>
+References: <2071995319.127120.1545163830046@email.ionos.de> <20181219101844.6362-1-horia.geanta@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181219144423.089e46b9@canb.auug.org.au>
+In-Reply-To: <20181219101844.6362-1-horia.geanta@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nathan Chancellor <natechancellor@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>
+Cc: Olof Johansson <olof@lixom.net>, Marc Gonzalez <marc.w.gonzalez@free.fr>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Stefan Wahren <stefan.wahren@i2se.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-Em Wed, 19 Dec 2018 14:44:23 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+On Wed, Dec 19, 2018 at 11:18 AM Horia Geantă <horia.geanta@nxp.com> wrote:
+>
+> This reverts commit d9678adbe733a770428a98651beaa2817d503ed3.
+>
+> Received below report from Stefan.
+> Revert the commit until CAAM driver dependency cycles are fixed.
+>
+> this patch in next-20181214 breaks "make modules_install" for
+> arm64/defconfig on my Ubuntu machine:
+>
+> DEPMOD  4.20.0-rc6-next-20181214
+> depmod: ERROR: Found 6 modules in dependency cycles!
+> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> authenc
+> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> fsl_mc_dpio
+> depmod: ERROR: Cycle detected: dpaa2_caam -> caamhash_desc -> dpaa2_caam
+> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_desc -> error
+> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_desc -> caamalg_desc
+>
+> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 
-> Hi all,
-> 
-> On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Tue, 11 Dec 2018 11:04:37 -0700 Nathan Chancellor <natechancellor@gmail.com> wrote:  
-> > >
-> > > On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote:    
-> > > > Build results:
-> > > > 	total: 152 pass: 150 fail: 2
-> > > > Failed builds: 
-> > > > 	arm:allmodconfig 
-> > > > 	arm64:allmodconfig 
-> > > > Qemu test results:
-> > > > 	total: 337 pass: 137 fail: 200
-> > > > 
-> > > > Build failures:
-> > > > 
-> > > > arm:
-> > > > 
-> > > > In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
-> > > >                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
-> > > > arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
-> > > >       
-> > > 
-> > > Just FYI, I noticed this one yesterday on next-20181210 and sent a patch:
-> > > https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancellor@gmail.com/    
-> > 
-> > I have added that patch after the v4l-dvb tree for today.  
-> 
-> I am still applying that patch ...
+I've applied the revert, but I think there is still a problem, since
+anyone could manually enable those options and should not
+see those cycles in the module dependencies.
 
-Sorry for taking so long with that. Patch applied, thanks!
+Horia, can you have a look at what caused that and how to fix it?
+It's probably a commit in the caam drivers. I have also created
+a patch to address a problem with that driver but forgot
+to send that out, it might fix this one as well, see my follow-up
+patch "crypto: caam/qi2 - add a CRYPTO_DEV_FSL_CAAM
+dependency".
 
-Thanks,
-Mauro
+       Arnd
