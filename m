@@ -1,53 +1,57 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Signed-off-by missing for commits in the vfs tree
-Date: Thu, 20 Dec 2018 21:05:44 +0000
-Message-ID: <20181220210543.GX2217@ZenIV.linux.org.uk>
+Date: Fri, 21 Dec 2018 08:10:58 +1100
+Message-ID: <20181221081058.5ada2c53@canb.auug.org.au>
 References: <20181221074522.0b0c986c@canb.auug.org.au>
+        <20181220210543.GX2217@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3sCidSRlU2hsOUA+1pQsWWh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181221074522.0b0c986c@canb.auug.org.au>
+In-Reply-To: <20181220210543.GX2217@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 21, 2018 at 07:45:22AM +1100, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Commits
-> 
->   e6cf4b0ddae8 ("teach vfs_get_tree() to handle subtype, switch do_new_mount() to it")
->   a5df92eef26f ("new helper: vfs_create_mount()")
->   84b9446c0cb2 ("mount_fs: suppress MAC on MS_SUBMOUNT as well as MS_KERNMOUNT")
->   6df9e604628d ("smack: rewrite smack_sb_eat_lsm_opts()")
->   a4fdf6490284 ("smack: get rid of match_token()")
->   b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new helper")
->   324240b27f48 ("LSM: new method: ->sb_add_mnt_opt()")
->   8a2bfb0f835a ("selinux: rewrite selinux_sb_eat_lsm_opts()")
->   3cec2907c913 ("selinux: regularize Opt_... names a bit")
->   b0ab2db616c0 ("selinux: switch away from match_token()")
->   cbe9d96f42ba ("selinux: new helper - selinux_add_opt()")
->   2790a639b456 ("LSM: bury struct security_mnt_opts")
->   205b9b7a392a ("smack: switch to private smack_mnt_opts")
->   179a64d445e2 ("selinux: switch to private struct selinux_mnt_opts")
->   cb662518822e ("LSM: hide struct security_mnt_opts from any generic code")
->   6c63bb2d5323 ("selinux: kill selinux_sb_get_mnt_opts()")
->   e03db7f5411c ("LSM: turn sb_eat_lsm_opts() into a method")
->   dc0dadb3c3d7 ("nfs_remount(): don't leak, don't ignore LSM options quietly")
->   363540f775fb ("btrfs: sanitize security_mnt_opts use")
->   8f08fcb05ba6 ("selinux; don't open-code a loop in sb_finish_set_opts()")
->   144da0858c5e ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
->   be917e5b8736 ("new helper: security_sb_eat_lsm_opts()")
->   580a8bcb268b ("LSM: lift extracting and parsing LSM options into the caller of ->sb_remount()")
->   cf891373b60a ("LSM: lift parsing LSM options into the caller of ->sb_kern_mount()")
->   d02fc3452738 ("smack: make smack_parse_opts_str() clean up on failure")
->   17f3b556a3e3 ("selinux: expand superblock_doinit() calls")
-> 
-> are missing a Signed-off-by from their committers.
+--Sig_/3sCidSRlU2hsOUA+1pQsWWh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What the...  Oh, I see - that's David adding his reviewed-by and somehow
-losing my S-o-b in process...  *grumble*
+Hi Al,
 
-Will be fixed in tomorrow push.
+On Thu, 20 Dec 2018 21:05:44 +0000 Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> > are missing a Signed-off-by from their committers. =20
+>=20
+> What the...  Oh, I see - that's David adding his reviewed-by and somehow
+> losing my S-o-b in process...  *grumble*
+
+Actually, if David has actually added his Reviewed-by, then he has
+committed them and so he needs to add a SOB as committer.
+
+> Will be fixed in tomorrow push.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3sCidSRlU2hsOUA+1pQsWWh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwcBWIACgkQAVBC80lX
+0GyjGggAjM75t9jlM/lC8yXOo0KHZAYyjCTs2BaIr2sSv8vxSMSoe5vSfCEmWVvQ
+dnIr5Ws5LWr6g8KCXwd5CHkHDLOfMXeV04xs3W/FBsykEFbKpqqtg4X5SxvpPNjE
+ZL2zzyW/Ux+Nb69sy4a9y3tD8IHDdAeWumll9KO4psXre2iuUaqw4EjzCYKEgCbF
+FHWbOe/sEQhNnOAnmLYIK5IMOAqQUN60CRYOKtCqnkNxBCo79qYSU3ugUNzvZqzE
+GMnLdaSinEzSwG6J5xNgNJXwLi/6gmL2jNs9EeHRAujHCrVeAkZDB7aQCd2ObIWE
+0BRTekcDe+CsZ+J8JLtmyz2ikGMnPA==
+=6gY9
+-----END PGP SIGNATURE-----
+
+--Sig_/3sCidSRlU2hsOUA+1pQsWWh--
