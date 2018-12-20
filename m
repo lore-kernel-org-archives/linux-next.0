@@ -1,63 +1,79 @@
-From: Horia Geanta <horia.geanta@nxp.com>
-Subject: Re: [PATCH] Revert "arm64: defconfig: Enable FSL_MC_BUS and
- FSL_MC_DPIO"
-Date: Thu, 20 Dec 2018 20:43:19 +0000
-Message-ID: <VI1PR0402MB34856DA189C2B6677967E9CA98BF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <2071995319.127120.1545163830046@email.ionos.de>
- <20181219101844.6362-1-horia.geanta@nxp.com>
- <CAK8P3a3RLdRtY2ND0r4VQ5447V1WLYD6b9NcWjYvYR2AUCV1tg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the vfs tree
+Date: Fri, 21 Dec 2018 07:45:22 +1100
+Message-ID: <20181221074522.0b0c986c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p6HwAU_tfq9f5bddGFFOrnS"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, Marc Gonzalez <marc.w.gonzalez@free.fr>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Stefan Wahren <stefan.wahren@i2se.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On 12/20/2018 5:28 PM, Arnd Bergmann wrote:=0A=
-> On Wed, Dec 19, 2018 at 11:18 AM Horia Geant=E3 <horia.geanta@nxp.com> wr=
-ote:=0A=
->>=0A=
->> This reverts commit d9678adbe733a770428a98651beaa2817d503ed3.=0A=
->>=0A=
->> Received below report from Stefan.=0A=
->> Revert the commit until CAAM driver dependency cycles are fixed.=0A=
->>=0A=
->> this patch in next-20181214 breaks "make modules_install" for=0A=
->> arm64/defconfig on my Ubuntu machine:=0A=
->>=0A=
->> DEPMOD  4.20.0-rc6-next-20181214=0A=
->> depmod: ERROR: Found 6 modules in dependency cycles!=0A=
->> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> authenc=0A=
->> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> fsl_mc_dpio=
-=0A=
->> depmod: ERROR: Cycle detected: dpaa2_caam -> caamhash_desc -> dpaa2_caam=
-=0A=
->> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_de=
-sc -> error=0A=
->> depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_de=
-sc -> caamalg_desc=0A=
->>=0A=
->> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>=0A=
->> Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> =0A=
-> I've applied the revert, but I think there is still a problem, since=0A=
-> anyone could manually enable those options and should not=0A=
-> see those cycles in the module dependencies.=0A=
-> =0A=
-Agree, root cause has to be fixed.=0A=
-=0A=
-> Horia, can you have a look at what caused that and how to fix it?=0A=
-> It's probably a commit in the caam drivers. I have also created=0A=
-> a patch to address a problem with that driver but forgot=0A=
-> to send that out, it might fix this one as well, see my follow-up=0A=
-> patch "crypto: caam/qi2 - add a CRYPTO_DEV_FSL_CAAM=0A=
-> dependency".=0A=
-> =0A=
-Yes, will continue discussion there.=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
-=0A=
+--Sig_/p6HwAU_tfq9f5bddGFFOrnS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Al,
+
+Commits
+
+  e6cf4b0ddae8 ("teach vfs_get_tree() to handle subtype, switch do_new_moun=
+t() to it")
+  a5df92eef26f ("new helper: vfs_create_mount()")
+  84b9446c0cb2 ("mount_fs: suppress MAC on MS_SUBMOUNT as well as MS_KERNMO=
+UNT")
+  6df9e604628d ("smack: rewrite smack_sb_eat_lsm_opts()")
+  a4fdf6490284 ("smack: get rid of match_token()")
+  b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new =
+helper")
+  324240b27f48 ("LSM: new method: ->sb_add_mnt_opt()")
+  8a2bfb0f835a ("selinux: rewrite selinux_sb_eat_lsm_opts()")
+  3cec2907c913 ("selinux: regularize Opt_... names a bit")
+  b0ab2db616c0 ("selinux: switch away from match_token()")
+  cbe9d96f42ba ("selinux: new helper - selinux_add_opt()")
+  2790a639b456 ("LSM: bury struct security_mnt_opts")
+  205b9b7a392a ("smack: switch to private smack_mnt_opts")
+  179a64d445e2 ("selinux: switch to private struct selinux_mnt_opts")
+  cb662518822e ("LSM: hide struct security_mnt_opts from any generic code")
+  6c63bb2d5323 ("selinux: kill selinux_sb_get_mnt_opts()")
+  e03db7f5411c ("LSM: turn sb_eat_lsm_opts() into a method")
+  dc0dadb3c3d7 ("nfs_remount(): don't leak, don't ignore LSM options quietl=
+y")
+  363540f775fb ("btrfs: sanitize security_mnt_opts use")
+  8f08fcb05ba6 ("selinux; don't open-code a loop in sb_finish_set_opts()")
+  144da0858c5e ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
+  be917e5b8736 ("new helper: security_sb_eat_lsm_opts()")
+  580a8bcb268b ("LSM: lift extracting and parsing LSM options into the call=
+er of ->sb_remount()")
+  cf891373b60a ("LSM: lift parsing LSM options into the caller of ->sb_kern=
+_mount()")
+  d02fc3452738 ("smack: make smack_parse_opts_str() clean up on failure")
+  17f3b556a3e3 ("selinux: expand superblock_doinit() calls")
+
+are missing a Signed-off-by from their committers.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/p6HwAU_tfq9f5bddGFFOrnS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwb/2IACgkQAVBC80lX
+0GxLzgf+K7/8UPnOL5DR52WMIUS8B65SD37helBcAb9H1BZJfCJVb8jD27HLSL9N
+Ro/V04nGOxtUuXAQQgI3jhEyRSqKRe4aaXCEmzFyEufLGkUp/i8aR0LZlS2P5lL1
+pl1ZW9q4qKQwMpPMhOsoDLtfpUdnNlIY2X26SmzKYMbRBuBtiVLMySO/9J+3Cili
+6x3oZf6OR3DrynMQ30F6B+EsGxjZlXl/opi/HaPG4hr65Rx02MeIvMZ7f53IztU5
+K7PZNSu+1j5JNH+NSFQIp1cIV9lTztjsz5qcAz0ij73uNJusFEPJ0gLU2XrBpWNO
+mh7q6PDIavE55TKz0pzoYF4/F988JQ==
+=reGn
+-----END PGP SIGNATURE-----
+
+--Sig_/p6HwAU_tfq9f5bddGFFOrnS--
