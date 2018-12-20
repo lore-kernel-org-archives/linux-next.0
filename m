@@ -1,36 +1,73 @@
-From: Or Gerlitz <gerlitz.or@gmail.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 20 Dec 2018 08:54:25 +0200
-Message-ID: <CAJ3xEMiiRLCerdvOikn=xMqw+-Yu=UEm-YhdSMyXtCDzte0kcA@mail.gmail.com>
-References: <20181220130744.1c8db488@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ asm-generic tree
+Date: Thu, 20 Dec 2018 18:44:03 +1100
+Message-ID: <20181220184403.464d0e3f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NUFyURPUj4tlatfFTLUZIz/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181220130744.1c8db488@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gavi Teitz <gavi@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Firoz Khan <firoz.khan@linaro.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 20, 2018 at 4:47 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->
->   drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
->
-> between commit:
->
->   8956f0014ea5 ("net/mlx5e: Fix default amount of channels for VF representors")
->
-> from the net tree and commit:
->
->   d9ee0491c2ff ("net/mlx5e: Use dedicated uplink vport netdev representor")
->
-> from the net-next tree.
->
-> I fixed it up (I just used the net-next tree version) and can carry the
-> fix as necessary.  [..]
+--Sig_/NUFyURPUj4tlatfFTLUZIz/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, this is correct, thanks!
+Hi all,
+
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  arch/sh/include/asm/Kbuild
+
+between commit:
+
+  2b3c5a99d5f3 ("sh: generate uapi header and syscall table header files")
+
+from the asm-generic tree and commit:
+
+  548211e87ba0 ("sh: include: convert to SPDX identifiers")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/sh/include/asm/Kbuild
+index b15caf34813a,f4440779deab..000000000000
+--- a/arch/sh/include/asm/Kbuild
++++ b/arch/sh/include/asm/Kbuild
+@@@ -1,4 -1,4 +1,5 @@@
++ # SPDX-License-Identifier: GPL-2.0
+ +generated-y +=3D syscall_table.h
+  generic-y +=3D compat.h
+  generic-y +=3D current.h
+  generic-y +=3D delay.h
+
+--Sig_/NUFyURPUj4tlatfFTLUZIz/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwbSEMACgkQAVBC80lX
+0GzShgf/T5RSzdQNcTuGZpLDZGkVG3MNj9Lnc4z13HYouxP0cYXzajshfVvDlfpH
+TSgF59k8IX46bq9IH5xWn4/1/XczeThCqR8M7pUq/lFMWCDGuRRi+oBdy92yNLZV
+mtQ0si2Lgc7e0/JXrHAjKzBhZ2WZiS9MYYG73mQoM3TWsfRSBTt+X1Hq+hei7LAk
+UNWiOQcVSWJXMWpfcB4DmtuSjiQUezc70JURrG7mXfnv5LmLeuyHg9G2goXaIr11
+letF/r+8Ycc5V1lT1DHjkEchojVAuXTaPmqpxTb3KUDRjktSe5S2ACdI94M4EX6u
+crer9eRdWMs7M5qqWl4q7eYBgVRj+w==
+=Vhyn
+-----END PGP SIGNATURE-----
+
+--Sig_/NUFyURPUj4tlatfFTLUZIz/--
