@@ -1,45 +1,23 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH] ASoC: Intel: fix unmet dependencies in Kconfig
-Date: Fri, 21 Dec 2018 14:49:55 -0600
-Message-ID: <20181221204955.30993-1-pierre-louis.bossart@linux.intel.com>
+From: Florian Westphal <fw@strlen.de>
+Subject: Re: linux-next: Tree for Dec 21
+Date: Fri, 21 Dec 2018 21:57:44 +0100
+Message-ID: <20181221205744.piiwyctaxbbkdc56@breakpoint.cc>
+References: <20181221193244.3a6ed685@canb.auug.org.au>
+ <20181221162149.GA32500@roeck-us.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181221162149.GA32500@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: alsa-devel@alsa-project.org
-Cc: tiwai@suse.de, broonie@kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joel Fernandes <joel@joelfernandes.org>, "Kirill A. Shutemov" <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, Sinan Kaya <okaya@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Theodore Ts'o <tytso@mit.edu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wen He <wen.he_1@nxp.com>, Peng Ma <peng.ma@nxp.com>, Vinod Koul <vkoul@kernel.org>, Palmer Dabbelt <palmer@sifive.com>
 List-Id: linux-next.vger.kernel.org
 
-Remove warnings by selecting SND_HDA_INTEL_DSP_DETECTION_XYZ only when
-SND_HDA_INTEL is part of the config.
+Guenter Roeck <linux@roeck-us.net> wrote:
+> 	mips:cavium_octeon_defconfig [4]
 
-Fixes: c337104b1a16 ('ALSA: HD-Audio: SKL+: abort probe if DSP is present and Skylake driver selected')
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- sound/soc/intel/Kconfig | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> git bisect bad 4165079ba328dd47262a2183049d3591f0a750b1
+> # first bad commit: [4165079ba328dd47262a2183049d3591f0a750b1] net: switch secpath to use skb extension infrastructure
 
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index 2fd1b61e8331..555cdb1d87d4 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -188,12 +188,12 @@ config SND_SOC_INTEL_SKYLAKE_COMMON
- 	select SND_SOC_TOPOLOGY
- 	select SND_SOC_INTEL_SST
- 	select SND_SOC_HDAC_HDA if SND_SOC_INTEL_SKYLAKE_HDAUDIO_CODEC
--	select SND_HDA_INTEL_DSP_DETECTION_SKL if SND_SOC_INTEL_SKL
--	select SND_HDA_INTEL_DSP_DETECTION_APL if SND_SOC_INTEL_APL
--	select SND_HDA_INTEL_DSP_DETECTION_KBL if SND_SOC_INTEL_KBL
--	select SND_HDA_INTEL_DSP_DETECTION_GLK if SND_SOC_INTEL_GLK
--	select SND_HDA_INTEL_DSP_DETECTION_CNL if SND_SOC_INTEL_CNL
--	select SND_HDA_INTEL_DSP_DETECTION_CFL if SND_SOC_INTEL_CFL
-+	select SND_HDA_INTEL_DSP_DETECTION_SKL if SND_SOC_INTEL_SKL && SND_HDA_INTEL
-+	select SND_HDA_INTEL_DSP_DETECTION_APL if SND_SOC_INTEL_APL && SND_HDA_INTEL
-+	select SND_HDA_INTEL_DSP_DETECTION_KBL if SND_SOC_INTEL_KBL && SND_HDA_INTEL
-+	select SND_HDA_INTEL_DSP_DETECTION_GLK if SND_SOC_INTEL_GLK && SND_HDA_INTEL
-+	select SND_HDA_INTEL_DSP_DETECTION_CNL if SND_SOC_INTEL_CNL && SND_HDA_INTEL
-+	select SND_HDA_INTEL_DSP_DETECTION_CFL if SND_SOC_INTEL_CFL && SND_HDA_INTEL
- 	select SND_SOC_ACPI_INTEL_MATCH
- 	help
- 	  If you have a Intel Skylake/Broxton/ApolloLake/KabyLake/
--- 
-2.17.1
+Indeed, sorry.  staging/octeon needs a small fix.  Will send a patch asap.
