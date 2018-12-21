@@ -1,57 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commits in the vfs tree
-Date: Fri, 21 Dec 2018 08:10:58 +1100
-Message-ID: <20181221081058.5ada2c53@canb.auug.org.au>
-References: <20181221074522.0b0c986c@canb.auug.org.au>
-        <20181220210543.GX2217@ZenIV.linux.org.uk>
+Subject: linux-next: manual merge of the pm tree with the kbuild tree
+Date: Fri, 21 Dec 2018 12:59:45 +1100
+Message-ID: <20181221125945.0114b06c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3sCidSRlU2hsOUA+1pQsWWh"; protocol="application/pgp-signature"
+ boundary="Sig_/OtcpDx96gi_Op+L3WGIkaGf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181220210543.GX2217@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sinan Kaya <okaya@kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3sCidSRlU2hsOUA+1pQsWWh
+--Sig_/OtcpDx96gi_Op+L3WGIkaGf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-On Thu, 20 Dec 2018 21:05:44 +0000 Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> > are missing a Signed-off-by from their committers. =20
->=20
-> What the...  Oh, I see - that's David adding his reviewed-by and somehow
-> losing my S-o-b in process...  *grumble*
+Today's linux-next merge of the pm tree got a conflict in:
 
-Actually, if David has actually added his Reviewed-by, then he has
-committed them and so he needs to add a SOB as committer.
+  arch/arm64/Kconfig
 
-> Will be fixed in tomorrow push.
+between commits:
 
-Thanks.
+  2eac9c2dfb2b ("PCI: consolidate the PCI_DOMAINS and PCI_DOMAINS_GENERIC c=
+onfig options")
+  20f1b79d3359 ("PCI: consolidate the PCI_SYSCALL symbol")
+
+from the kbuild tree and commit:
+
+  52146173a033 ("arm64: select ACPI PCI code only when both features are en=
+abled")
+
+from the pm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/3sCidSRlU2hsOUA+1pQsWWh
+diff --cc arch/arm64/Kconfig
+index 53233ab80744,bcb6262044d8..000000000000
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@@ -163,9 -163,7 +163,9 @@@ config ARM6
+  	select OF
+  	select OF_EARLY_FLATTREE
+  	select OF_RESERVED_MEM
+ +	select PCI_DOMAINS_GENERIC if PCI
+- 	select PCI_ECAM if ACPI
++ 	select PCI_ECAM if (ACPI && PCI)
+ +	select PCI_SYSCALL if PCI
+  	select POWER_RESET
+  	select POWER_SUPPLY
+  	select REFCOUNT_FULL
+
+--Sig_/OtcpDx96gi_Op+L3WGIkaGf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwcBWIACgkQAVBC80lX
-0GyjGggAjM75t9jlM/lC8yXOo0KHZAYyjCTs2BaIr2sSv8vxSMSoe5vSfCEmWVvQ
-dnIr5Ws5LWr6g8KCXwd5CHkHDLOfMXeV04xs3W/FBsykEFbKpqqtg4X5SxvpPNjE
-ZL2zzyW/Ux+Nb69sy4a9y3tD8IHDdAeWumll9KO4psXre2iuUaqw4EjzCYKEgCbF
-FHWbOe/sEQhNnOAnmLYIK5IMOAqQUN60CRYOKtCqnkNxBCo79qYSU3ugUNzvZqzE
-GMnLdaSinEzSwG6J5xNgNJXwLi/6gmL2jNs9EeHRAujHCrVeAkZDB7aQCd2ObIWE
-0BRTekcDe+CsZ+J8JLtmyz2ikGMnPA==
-=6gY9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwcSREACgkQAVBC80lX
+0Gwssgf/eRqT4c2Sxt7OKBlG0L1FLEoHi5BNMUmZvHJYWUijT/ziNctms/mJuvB0
+ymP5h4eyTS0OuN9gA+TRhXnl1uWKjvq8NjfF0JfIo559Zfuvtu3ApOcvLGWvgdCU
+zUb0MJqK9WJyfN+Mghcd6qUaaxFLNtigHjso9a+LE7LZP5UDdz5NVTib1f5OcnQF
+Bpv2V7XIki7AB1ZP1G3eolevZkbZvJ0uU1So7SNGSJcMUy5pRwsHWXTxCalfxras
+mfxhUC/CLhnuKtb0UXNFSsl733JNXwmSUBhq7hNTFF7M3+xt1oUnZCkAYsP3aZHp
+WidPi+/k+NiD9lOJuhIVjkSVB20iug==
+=pyEM
 -----END PGP SIGNATURE-----
 
---Sig_/3sCidSRlU2hsOUA+1pQsWWh--
+--Sig_/OtcpDx96gi_Op+L3WGIkaGf--
