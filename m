@@ -1,7 +1,7 @@
 From: Sinan Kaya <okaya@kernel.org>
-Subject: [PATCH v2 02/11] ata: make PCI dependency explicit for PATA_ACPI
-Date: Sat, 22 Dec 2018 09:07:11 +0000
-Message-ID: <20181222090720.19234-3-okaya@kernel.org>
+Subject: [PATCH v2 10/11] x86: select IOSF_MBI only when CONFIG_PCI is set
+Date: Sat, 22 Dec 2018 09:07:19 +0000
+Message-ID: <20181222090720.19234-11-okaya@kernel.org>
 References: <20181222090720.19234-1-okaya@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,30 +9,30 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181222090720.19234-1-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-next@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>, Jens Axboe <axboe@kernel.dk>, "open list:LIBATA SUBSYSTEM Serial and
-        Parallel ATA drivers" <linux-ide@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE 32-BIT AND 64-BIT" <x86@kernel.org>, "open list:X86 ARCHITECTURE 32-BIT AND
+        64-BIT" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-PATA_ACPI is a PCI device driver but the PCI dependency has not been
-explicitly called out.
+Need CONFIG_PCI to be set in order to be able to use IOSF_MBI
+functionality.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/ata/Kconfig | 2 +-
+ arch/x86/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 4ca7a6b4eaae..8218db17ebdb 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index cc4f0c6ee1ed..322a58ababb0 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -617,7 +617,7 @@ config X86_INTEL_QUARK
  
- config PATA_ACPI
- 	tristate "ACPI firmware driver for PATA"
--	depends on ATA_ACPI && ATA_BMDMA
-+	depends on ATA_ACPI && ATA_BMDMA && PCI
- 	help
- 	  This option enables an ACPI method driver which drives
- 	  motherboard PATA controller interfaces through the ACPI
+ config X86_INTEL_LPSS
+ 	bool "Intel Low Power Subsystem Support"
+-	depends on X86 && ACPI
++	depends on X86 && ACPI && PCI
+ 	select COMMON_CLK
+ 	select PINCTRL
+ 	select IOSF_MBI
 -- 
 2.19.0
