@@ -1,55 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v1 08/11] ASoC: Intel: Make PCI dependency
-	explicit
-Date: Fri, 21 Dec 2018 19:18:21 -0800
-Message-ID: <eb27ab03-4f42-2e2e-9873-16d9a6927e2b@infradead.org>
-References: <20181222001452.7474-1-okaya@kernel.org>
- <20181222001452.7474-9-okaya@kernel.org>
+From: Sinan Kaya <okaya@kernel.org>
+Subject: [PATCH v2 03/11] vga-switcheroo: make PCI dependency explicit
+Date: Sat, 22 Dec 2018 09:07:12 +0000
+Message-ID: <20181222090720.19234-4-okaya@kernel.org>
+References: <20181222090720.19234-1-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20181222001452.7474-9-okaya@kernel.org>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sinan Kaya <okaya@kernel.org>, linux-next@vger.kernel.org
-Cc: "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, Jie Yang <yang.jie@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, linux-acpi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181222090720.19234-1-okaya@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-next@vger.kernel.org
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, Sinan Kaya <okaya@kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, linux-acpi@vger.kernel.org, Sean Paul <sean@poorly.run>
 List-Id: linux-next.vger.kernel.org
 
-On 12/21/18 4:14 PM, Sinan Kaya wrote:
-> IOSF_MBI driver depends on CONFIG_PCI set but this is not specified
-> anywhere.
-
-wrong patch description...?
-
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  sound/soc/intel/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-> index 2fd1b61e8331..b0764b2fe001 100644
-> --- a/sound/soc/intel/Kconfig
-> +++ b/sound/soc/intel/Kconfig
-> @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
->  config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
->  	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
->  	default ACPI
-> -	depends on X86 && ACPI
-> +	depends on X86 && ACPI && PCI
->  	select SND_SST_IPC_ACPI
->  	select SND_SST_ATOM_HIFI2_PLATFORM
->  	select SND_SOC_ACPI_INTEL_MATCH
-> 
-
-
--- 
-~Randy
+VGhpcyBkcml2ZXIgZGVwZW5kcyBvbiB0aGUgUENJIGluZnJhc3RydWN0dXJlIGJ1dCB0aGUgZGVw
+ZW5kZW5jeSBoYXMgbm90CmJlZW4gZXhwbGljaXRseSBjYWxsZWQgb3V0LgoKU2lnbmVkLW9mZi1i
+eTogU2luYW4gS2F5YSA8b2theWFAa2VybmVsLm9yZz4KUmV2aWV3ZWQtYnk6IEx1a2FzIFd1bm5l
+ciA8bHVrYXNAd3VubmVyLmRlPgotLS0KIGRyaXZlcnMvZ3B1L3ZnYS9LY29uZmlnIHwgMSArCiAx
+IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS92
+Z2EvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L3ZnYS9LY29uZmlnCmluZGV4IGI2NzdlNWQ1MjRlNi4u
+ZDVmMWQ4ZTFjNmY4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS92Z2EvS2NvbmZpZworKysgYi9k
+cml2ZXJzL2dwdS92Z2EvS2NvbmZpZwpAQCAtMjEsNiArMjEsNyBAQCBjb25maWcgVkdBX1NXSVRD
+SEVST08KIAlib29sICJMYXB0b3AgSHlicmlkIEdyYXBoaWNzIC0gR1BVIHN3aXRjaGluZyBzdXBw
+b3J0IgogCWRlcGVuZHMgb24gWDg2CiAJZGVwZW5kcyBvbiBBQ1BJCisJZGVwZW5kcyBvbiBQQ0kK
+IAlzZWxlY3QgVkdBX0FSQgogCWhlbHAKIAkgIE1hbnkgbGFwdG9wcyByZWxlYXNlZCBpbiAyMDA4
+LzkvMTAgaGF2ZSB0d28gR1BVcyB3aXRoIGEgbXVsdGlwbGV4ZXIKLS0gCjIuMTkuMAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
