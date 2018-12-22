@@ -1,65 +1,60 @@
-From: Sinan Kaya <okaya@kernel.org>
-Subject: [PATCH v1 07/11] drivers: thermal: Hide PCI driver when CONFIG_PCI is unset
-Date: Sat, 22 Dec 2018 00:14:48 +0000
-Message-ID: <20181222001452.7474-8-okaya@kernel.org>
-References: <20181222001452.7474-1-okaya@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] ASoC: Intel: fix unmet dependencies in Kconfig
+Date: Fri, 21 Dec 2018 16:39:45 -0800
+Message-ID: <c4588b86-0746-f05a-6b3f-304d170ecca3@infradead.org>
+References: <20181221204955.30993-1-pierre-louis.bossart@linux.intel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181222001452.7474-1-okaya@kernel.org>
+In-Reply-To: <20181221204955.30993-1-pierre-louis.bossart@linux.intel.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>, Amit Kucheria <amit.kucheria@linaro.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org
+Cc: tiwai@suse.de, broonie@kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-This driver is both a platform and PCI driver. Hide PCI specific pieces
-when CONFIG_PCI is unset.
+On 12/21/18 12:49 PM, Pierre-Louis Bossart wrote:
+> Remove warnings by selecting SND_HDA_INTEL_DSP_DETECTION_XYZ only when
+> SND_HDA_INTEL is part of the config.
+> 
+> Fixes: c337104b1a16 ('ALSA: HD-Audio: SKL+: abort probe if DSP is present and Skylake driver selected')
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- .../intel/int340x_thermal/processor_thermal_device.c      | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-index 284cf2c5a8fd..b84a475a1162 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-@@ -374,6 +374,7 @@ static int int3401_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PCI
- static irqreturn_t proc_thermal_pci_msi_irq(int irq, void *devid)
- {
- 	struct proc_thermal_device *proc_priv;
-@@ -482,6 +483,7 @@ static struct pci_driver proc_thermal_pci_driver = {
- 	.remove		= proc_thermal_pci_remove,
- 	.id_table	= proc_thermal_pci_ids,
- };
-+#endif
- 
- static const struct acpi_device_id int3401_device_ids[] = {
- 	{"INT3401", 0},
-@@ -505,16 +507,18 @@ static int __init proc_thermal_init(void)
- 	ret = platform_driver_register(&int3401_driver);
- 	if (ret)
- 		return ret;
--
-+#ifdef CONFIG_PCI
- 	ret = pci_register_driver(&proc_thermal_pci_driver);
--
-+#endif
- 	return ret;
- }
- 
- static void __exit proc_thermal_exit(void)
- {
- 	platform_driver_unregister(&int3401_driver);
-+#ifdef CONFIG_PCI
- 	pci_unregister_driver(&proc_thermal_pci_driver);
-+#endif
- }
- 
- module_init(proc_thermal_init);
+Thanks.
+
+> ---
+>  sound/soc/intel/Kconfig | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+> index 2fd1b61e8331..555cdb1d87d4 100644
+> --- a/sound/soc/intel/Kconfig
+> +++ b/sound/soc/intel/Kconfig
+> @@ -188,12 +188,12 @@ config SND_SOC_INTEL_SKYLAKE_COMMON
+>  	select SND_SOC_TOPOLOGY
+>  	select SND_SOC_INTEL_SST
+>  	select SND_SOC_HDAC_HDA if SND_SOC_INTEL_SKYLAKE_HDAUDIO_CODEC
+> -	select SND_HDA_INTEL_DSP_DETECTION_SKL if SND_SOC_INTEL_SKL
+> -	select SND_HDA_INTEL_DSP_DETECTION_APL if SND_SOC_INTEL_APL
+> -	select SND_HDA_INTEL_DSP_DETECTION_KBL if SND_SOC_INTEL_KBL
+> -	select SND_HDA_INTEL_DSP_DETECTION_GLK if SND_SOC_INTEL_GLK
+> -	select SND_HDA_INTEL_DSP_DETECTION_CNL if SND_SOC_INTEL_CNL
+> -	select SND_HDA_INTEL_DSP_DETECTION_CFL if SND_SOC_INTEL_CFL
+> +	select SND_HDA_INTEL_DSP_DETECTION_SKL if SND_SOC_INTEL_SKL && SND_HDA_INTEL
+> +	select SND_HDA_INTEL_DSP_DETECTION_APL if SND_SOC_INTEL_APL && SND_HDA_INTEL
+> +	select SND_HDA_INTEL_DSP_DETECTION_KBL if SND_SOC_INTEL_KBL && SND_HDA_INTEL
+> +	select SND_HDA_INTEL_DSP_DETECTION_GLK if SND_SOC_INTEL_GLK && SND_HDA_INTEL
+> +	select SND_HDA_INTEL_DSP_DETECTION_CNL if SND_SOC_INTEL_CNL && SND_HDA_INTEL
+> +	select SND_HDA_INTEL_DSP_DETECTION_CFL if SND_SOC_INTEL_CFL && SND_HDA_INTEL
+>  	select SND_SOC_ACPI_INTEL_MATCH
+>  	help
+>  	  If you have a Intel Skylake/Broxton/ApolloLake/KabyLake/
+> 
+
+
 -- 
-2.19.0
+~Randy
