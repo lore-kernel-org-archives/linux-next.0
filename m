@@ -1,63 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the iommu tree with the powerpc tree
-Date: Mon, 24 Dec 2018 16:03:51 +1100
-Message-ID: <20181224160351.04a23901@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: Tree for Dec 21
+Date: Mon, 24 Dec 2018 09:20:46 +0100
+Message-ID: <20181224082046.GD19684@kroah.com>
+References: <20181221193244.3a6ed685@canb.auug.org.au>
+ <20181221162149.GA32500@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_/09.8j6P+ZIxSBW5akcE94"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181221162149.GA32500@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joel Fernandes <joel@joelfernandes.org>, "Kirill A. Shutemov" <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, Sinan Kaya <okaya@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Theodore Ts'o <tytso@mit.edu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Wen He <wen.he_1@nxp.com>, Peng Ma <peng.ma@nxp.com>, Vinod Koul <vkoul@kernel.org>, Palmer Dabbelt <palmer@sifive.com>, Heinrich Schuchardt <xypron.glpk@gmx.de>, Ard
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_/09.8j6P+ZIxSBW5akcE94
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 21, 2018 at 08:21:49AM -0800, Guenter Roeck wrote:
+> ---
+> [5]:
+> 
+> The bisect is old, but still applies. Revering the offending patch fixes the problem.
+> 
+> # bad: [8c9733fd9806c71e7f2313a280f98cb3051f93df] Add linux-next specific files for 20181123
+> # good: [9ff01193a20d391e8dbce4403dd5ef87c7eaaca6] Linux 4.20-rc3
+> git bisect start 'HEAD' 'v4.20-rc3'
+> # good: [34c2101b4f765edf1b91c2837da9c60fbf9f6912] Merge remote-tracking branch 'spi-nor/spi-nor/next'
+> git bisect good 34c2101b4f765edf1b91c2837da9c60fbf9f6912
+> # good: [15367a0657fc8027ff3466bf0202bde9f270259b] Merge remote-tracking branch 'kgdb/kgdb-next'
+> git bisect good 15367a0657fc8027ff3466bf0202bde9f270259b
+> # bad: [d29686ab179c34c5dbaac067a9effbeeb6a8073e] Merge remote-tracking branch 'soundwire/next'
+> git bisect bad d29686ab179c34c5dbaac067a9effbeeb6a8073e
+> # good: [7cd63670817c236ccaf21ffe9d7b4921afeab130] Merge remote-tracking branch 'tip/auto-latest'
+> git bisect good 7cd63670817c236ccaf21ffe9d7b4921afeab130
+> # good: [597140853698c0dc174b93eb534406a40e467375] Merge remote-tracking branch 'rcu/rcu/next'
+> git bisect good 597140853698c0dc174b93eb534406a40e467375
+> # good: [acb97a35ae6d363144f4e3916bff5284a5a03d01] Merge remote-tracking branch 'phy-next/next'
+> git bisect good acb97a35ae6d363144f4e3916bff5284a5a03d01
+> # bad: [3f45b9087678824f50a34783db5a519f0d4d5e03] Merge remote-tracking branch 'tty/tty-next'
+> git bisect bad 3f45b9087678824f50a34783db5a519f0d4d5e03
+> # good: [61e169ee7683630ee0276dd5dcb5599976757770] serial: fsl_lpuart: fix the typo: UARTCR1_PE -> UARTCTRL_PE
+> git bisect good 61e169ee7683630ee0276dd5dcb5599976757770
+> # good: [646097940ad35aa2c1f2012af932d55976a9f255] serial: set suppress_bind_attrs flag only if builtin
+> git bisect good 646097940ad35aa2c1f2012af932d55976a9f255
+> # bad: [d6e1935819db0c91ce4a5af82466f3ab50d17346] serial: core: Allow processing sysrq at port unlock time
+> git bisect bad d6e1935819db0c91ce4a5af82466f3ab50d17346
+> # bad: [6d11023c345e369bcb9d5a68b271764e362c1f6e] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
+> git bisect bad 6d11023c345e369bcb9d5a68b271764e362c1f6e
+> # good: [347a28b586802d09604a149c1a1f6de5dccbe6fa] writeback: don't decrement wb->refcnt if !wb->bdi
+> git bisect good 347a28b586802d09604a149c1a1f6de5dccbe6fa
+> # first bad commit: [6d11023c345e369bcb9d5a68b271764e362c1f6e] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
 
-Hi all,
+Ok I have now reverted this patch, hopefully that resolves the issue.
 
-Today's linux-next merge of the iommu tree got a conflict in:
+thanks, and sorry it took this long to revert.
 
-  arch/powerpc/kernel/iommu.c
-
-between commit:
-
-  c4e9d3c1e65a ("powerpc/powernv/pseries: Rework device adding to IOMMU gro=
-ups")
-
-from the powerpc tree and commit:
-
-  bf8763d8f837 ("powerpc/iommu: Use device_iommu_mapped()")
-
-from the iommu tree.
-
-I fixed it up (I just used the powerpc tree version which removed the
-code modified by the latter) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your
-tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_/09.8j6P+ZIxSBW5akcE94
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwgaLcACgkQAVBC80lX
-0Gznegf/XgNzS4mNguePYLbRoG0Y96FOr3AYK8WKVvhjyUbF0B1WhA5gfwN8bU+7
-XsHv5QD2Hu4zeB/48cY5r2k8t/q4P0NGcLm/s59zoTgAvJ3Dgdcr3QBEbyMfUepS
-PzloWf0HrtsKLGCwNieg9Zz4+2ltSCDlDuYEtIdNT58d3Evqk9/2HGcIKLU7YLqw
-ewYmKizxviamZvcmAFgedf0ZbXyPm/Th0La1H1M/mOuoLx21er38OecvCeJqnaeV
-JyKDg5njjn/j3yCJl+I78UmuPypYfpF5ODtKMz3VpVNBPUUQd3qCvkl6vgZVlivg
-tAoeKWLGc8aH6UhKglB39UPUzSujnQ==
-=9OWf
------END PGP SIGNATURE-----
-
---Sig_/_/09.8j6P+ZIxSBW5akcE94--
+greg k-h
