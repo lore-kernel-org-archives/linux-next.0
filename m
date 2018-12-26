@@ -1,38 +1,67 @@
-From: Harsh Jain <harsh@chelsio.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the crypto tree
-Date: Wed, 26 Dec 2018 15:18:17 +0530
-Message-ID: <3bb5d08e-27c3-a088-6584-6f42e241c1a1@chelsio.com>
-References: <20181223231304.1654cf1d@canb.auug.org.au>
- <20181223123011.qxwfkoib6zadd2rn@gondor.apana.org.au>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH v3 08/11] ASoC: Intel: atom: Make PCI dependency explicit
+Date: Wed, 26 Dec 2018 11:35:05 -0600
+Message-ID: <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
+References: <20181223232521.11320-1-okaya@kernel.org>
+ <20181223232521.11320-9-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181223123011.qxwfkoib6zadd2rn@gondor.apana.org.au>
+In-Reply-To: <20181223232521.11320-9-okaya@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Atul Gupta <atul.gupta@chelsio.com>
+To: Sinan Kaya <okaya@kernel.org>, linux-next@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
-On 23-12-2018 18:00, Herbert Xu wrote:
-> On Sun, Dec 23, 2018 at 11:13:04PM +1100, Stephen Rothwell wrote:
->> Hi Herbert,
->>
->> Commit
->>
->>   6501ab5ed4d9 ("crypto: chelsio - Reset counters on cxgb4 Detach")
->>
->> is missing a Signed-off-by from its author.
-> Hi Stephen:
+On 12/23/18 5:25 PM, Sinan Kaya wrote:
+> Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
+> CONFIG_PCI set but this is not specified anywhere.
+
+Can you please share the .config that exposes this problem? This hasn't 
+changed in a long time and I wonder why this pops up now. You have 
+similar cases elsewhere, e.g. arch/x86/Kconfig
+
+config X86_INTEL_LPSS
+     bool "Intel Low Power Subsystem Support"
+     depends on X86 && ACPI
+     select COMMON_CLK
+     select PINCTRL
+     select IOSF_MBI
+
+or for the MMC.
+
+config MMC_SDHCI_ACPI
+     tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+     depends on MMC_SDHCI && ACPI
+     select IOSF_MBI if X86
+
+The use of IOSF_MBI is only for the Baytrail-CR detection and there are 
+already in-flight patches to change the code and move it to a helper.
+
+My understanding is that for compilation you only need CONFIG_x86 since 
+there are fall-back routines available in iosf_mbi.h
+
+Thanks!
+
 >
-> I believe the issue here is not a missing sign-off from the author,
-> but rather that the author was incorrectly set to Harsh who sent
-> the email rather than Atul.
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
+>   sound/soc/intel/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Harsh, please add a From header to the patch description in future
-> so that the Author field is set correctly.
-oops, Will take care next time. Thanks.
->
-> Cheers,
+> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+> index 2fd1b61e8331..b0764b2fe001 100644
+> --- a/sound/soc/intel/Kconfig
+> +++ b/sound/soc/intel/Kconfig
+> @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+>   config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+>   	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
+>   	default ACPI
+> -	depends on X86 && ACPI
+> +	depends on X86 && ACPI && PCI
+>   	select SND_SST_IPC_ACPI
+>   	select SND_SST_ATOM_HIFI2_PLATFORM
+>   	select SND_SOC_ACPI_INTEL_MATCH
