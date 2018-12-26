@@ -1,43 +1,38 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v3 09/11] mmc: add PCI dependency into IOSF_MBI
-Date: Wed, 26 Dec 2018 10:40:48 +0100
-Message-ID: <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
-References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-10-okaya@kernel.org>
+From: Harsh Jain <harsh@chelsio.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the crypto tree
+Date: Wed, 26 Dec 2018 15:18:17 +0530
+Message-ID: <3bb5d08e-27c3-a088-6584-6f42e241c1a1@chelsio.com>
+References: <20181223231304.1654cf1d@canb.auug.org.au>
+ <20181223123011.qxwfkoib6zadd2rn@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181223232521.11320-10-okaya@kernel.org>
+In-Reply-To: <20181223123011.qxwfkoib6zadd2rn@gondor.apana.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: okaya@kernel.org
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, Shawn Lin <shawn.lin@rock-chips.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Geert Uytterhoeven <geert@linux-m68k.org>, faiz_abbas@ti.com, chunyan.zhang@unisoc.com, Jisheng.Zhang@synaptics.com, ludovic.barre@st.com, Arnd Bergmann <arnd@arndb.de>, alex.smith@imgtec.com, chris.brandt@renesas.com, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Atul Gupta <atul.gupta@chelsio.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 24, 2018 at 12:26 AM Sinan Kaya <okaya@kernel.org> wrote:
->
-> Select IOSF_MBI only when PCI is set.
->
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index e26b8145efb3..4c5f037b246d 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -117,7 +117,7 @@ config MMC_RICOH_MMC
->  config MMC_SDHCI_ACPI
->         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
->         depends on MMC_SDHCI && ACPI
 
-It should depend on PCI as well, shouldn't it?
-
-As it stands with the patch applied, randconfig can still select it if
-PCI is unset AFAICS, can't it?
-
-> -       select IOSF_MBI if X86
-> +       select IOSF_MBI if (X86 && PCI)
->         help
->           This selects support for ACPI enumerated SDHCI controllers,
->           identified by ACPI Compatibility ID PNP0D40 or specific
-> --
+On 23-12-2018 18:00, Herbert Xu wrote:
+> On Sun, Dec 23, 2018 at 11:13:04PM +1100, Stephen Rothwell wrote:
+>> Hi Herbert,
+>>
+>> Commit
+>>
+>>   6501ab5ed4d9 ("crypto: chelsio - Reset counters on cxgb4 Detach")
+>>
+>> is missing a Signed-off-by from its author.
+> Hi Stephen:
+>
+> I believe the issue here is not a missing sign-off from the author,
+> but rather that the author was incorrectly set to Harsh who sent
+> the email rather than Atul.
+>
+> Harsh, please add a From header to the patch description in future
+> so that the Author field is set correctly.
+oops, Will take care next time. Thanks.
+>
+> Cheers,
