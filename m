@@ -1,79 +1,68 @@
-From: Sinan Kaya <Okaya@kernel.org>
-Subject: Re: [PATCH v3 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-Date: Wed, 26 Dec 2018 23:07:04 +0300
-Message-ID: <CAK9iUCMG9YkiZC-yAe0vJ62cJ2tW--KqVtDr3SMLM3zJFpJHSw@mail.gmail.com>
-References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-9-okaya@kernel.org>
- <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the rdma tree with the nfs-anna
+ tree
+Date: Sun, 30 Dec 2018 12:48:47 +1100
+Message-ID: <20181230124847.09855735@canb.auug.org.au>
+References: <20181224141352.461303be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fQ9swKvDDvNOmfMtlkvAh+5"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
+In-Reply-To: <20181224141352.461303be@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Mailing List <linux-acpi@vger.kernel.org>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>
+To: Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Kamal Heib <kamalheib1@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 26, 2018 at 8:35 PM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
->
-> On 12/23/18 5:25 PM, Sinan Kaya wrote:
-> > Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
-> > CONFIG_PCI set but this is not specified anywhere.
->
-> Can you please share the .config that exposes this problem? This hasn't
-> changed in a long time and I wonder why this pops up now. You have
-> similar cases elsewhere, e.g. arch/x86/Kconfig
->
-Here is the background :
+--Sig_/fQ9swKvDDvNOmfMtlkvAh+5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have a changeset that was added to 4.21-rc1 that decouples  ACPI from
-PCI. PCI was automatically selected when ACPI was chosen before.
+Hi all,
 
-This is no longer true.
+On Mon, 24 Dec 2018 14:13:52 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the rdma tree got a conflict in:
+>=20
+>   net/sunrpc/xprtrdma/fmr_ops.c
+>=20
+> between commit:
+>=20
+>   d31f8deac38d ("xprtrdma: Remove support for FMR memory registration")
+>=20
+> from the nfs-anna tree and commit:
+>=20
+>   3023a1e93656 ("RDMA: Start use ib_device_ops")
+>=20
+> from the rdma tree.
+>=20
+> I fixed it up (the former removed the file, so I did that) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-If a code needs PCI support, it now needs to explicitly state that.
+This is now a conflict between the nfs-anna tree and Linus' tree.
+--=20
+Cheers,
+Stephen Rothwell
 
-This allows usecase for smaller kernels and component isolation.
+--Sig_/fQ9swKvDDvNOmfMtlkvAh+5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> config X86_INTEL_LPSS
->      bool "Intel Low Power Subsystem Support"
->      depends on X86 && ACPI
->      select COMMON_CLK
->      select PINCTRL
->      select IOSF_MBI
->
-> or for the MMC.
->
-> config MMC_SDHCI_ACPI
->      tristate "SDHCI support for ACPI enumerated SDHCI controllers"
->      depends on MMC_SDHCI && ACPI
->      select IOSF_MBI if X86
->
-> The use of IOSF_MBI is only for the Baytrail-CR detection and there are
-> already in-flight patches to change the code and move it to a helper.
->
-> My understanding is that for compilation you only need CONFIG_x86 since
-> there are fall-back routines available in iosf_mbi.h
->
-> Thanks!
->
-> >
-> > Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> > ---
-> >   sound/soc/intel/Kconfig | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-> > index 2fd1b61e8331..b0764b2fe001 100644
-> > --- a/sound/soc/intel/Kconfig
-> > +++ b/sound/soc/intel/Kconfig
-> > @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
-> >   config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
-> >       tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
-> >       default ACPI
-> > -     depends on X86 && ACPI
-> > +     depends on X86 && ACPI && PCI
-> >       select SND_SST_IPC_ACPI
-> >       select SND_SST_ATOM_HIFI2_PLATFORM
-> >       select SND_SOC_ACPI_INTEL_MATCH
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwoI/8ACgkQAVBC80lX
+0Gx8zQf+PzBOOkT2I/QlmiFm9z3e6K7yj8ceByWoFSm2Vk7ETUqyErykrrI3ZiRR
+XUlbmBiZXSgJomzSvYDH6Yw7nsr21cdr/Hmv87b9A4JK6CRmyzmCNO3p2/cZm2at
+S4V54mQotkVBlnXZroEiWEhZa9XZdJubVx0Mfq/2oDieD7CDqF4YqZeQC4q2V7Gw
+KeEOhqbzPVs191wX3/md7TOZjZ+Raeqhnz0PFZYoLF8wo9UH6LjNUu2e2mWqj06A
+G7NnWydZGJtWNB+GVOMfzKnmJmr3SagST6bNJgpLHRCx/7ilsdf8y9H7Y5oytOzU
+EWI8wFYnS0LAsFzdBS7zit6Q07AMiQ==
+=D89L
+-----END PGP SIGNATURE-----
+
+--Sig_/fQ9swKvDDvNOmfMtlkvAh+5--
