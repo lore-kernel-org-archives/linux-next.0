@@ -1,40 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the f2fs tree with the fscrypt tree
-Date: Wed, 2 Jan 2019 11:26:10 +1100
-Message-ID: <20190102112610.3bc5fb97@canb.auug.org.au>
-References: <20181211101322.438946fe@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the jc_docs tree with the fscrypt
+ tree
+Date: Wed, 2 Jan 2019 11:37:02 +1100
+Message-ID: <20190102113702.6e8888b4@canb.auug.org.au>
+References: <20181207115340.2465a854@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oSPUQt/zVrd5X9qD0buRkfQ"; protocol="application/pgp-signature"
+ boundary="Sig_//ETDC9oO9CAGT2bX_9x3odt"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181211101322.438946fe@canb.auug.org.au>
+In-Reply-To: <20181207115340.2465a854@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Theodore Ts'o <tytso@mit.edu>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/oSPUQt/zVrd5X9qD0buRkfQ
+--Sig_//ETDC9oO9CAGT2bX_9x3odt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 11 Dec 2018 10:13:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Fri, 7 Dec 2018 11:53:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> Today's linux-next merge of the f2fs tree got a conflict in:
+> Hi all,
 >=20
->   fs/f2fs/dir.c
+> Today's linux-next merge of the jc_docs tree got a conflict in:
+>=20
+>   Documentation/filesystems/index.rst
 >=20
 > between commit:
 >=20
->   848a010287e6 ("f2fs: use IS_ENCRYPTED() to check encryption status")
+>   1b71a6809f96 ("fs-verity: add a documentation file")
 >=20
 > from the fscrypt tree and commit:
 >=20
->   4e240d1bab1e ("f2fs: check memory boundary by insane namelen")
+>   7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to rest=
+urctured text")
 >=20
-> from the f2fs tree.
+> from the jc_docs tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -47,30 +51,35 @@ wrote:
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc fs/f2fs/dir.c
-> index cf9e2564388d,c0c845da12fa..000000000000
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@@ -808,7 -808,18 +808,18 @@@ int f2fs_fill_dentries(struct dir_conte
->   		de_name.name =3D d->filename[bit_pos];
->   		de_name.len =3D le16_to_cpu(de->name_len);
+> diff --cc Documentation/filesystems/index.rst
+> index 818390c32be6,ba921bdd5b06..000000000000
+> --- a/Documentation/filesystems/index.rst
+> +++ b/Documentation/filesystems/index.rst
+> @@@ -360,13 -360,13 +360,24 @@@ encryption of files and directories
 >  =20
-> + 		/* check memory boundary before moving forward */
-> + 		bit_pos +=3D GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-> + 		if (unlikely(bit_pos > d->max)) {
-> + 			f2fs_msg(sbi->sb, KERN_WARNING,
-> + 				"%s: corrupted namelen=3D%d, run fsck to fix.",
-> + 				__func__, le16_to_cpu(de->name_len));
-> + 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> + 			err =3D -EINVAL;
-> + 			goto out;
-> + 		}
+>       fscrypt
+>  =20
+>  +Verity API
+>  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>  +
+>  +A library which filesystems can hook into to support transparent
+>  +authentication of read-only files.
+>  +
+>  +.. toctree::
+>  +    :maxdepth: 2
+>  +
+>  +    fsverity
+> ++
+> + Pathname lookup
+> + =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > +=20
->  -		if (f2fs_encrypted_inode(d->inode)) {
->  +		if (IS_ENCRYPTED(d->inode)) {
->   			int save_len =3D fstr->len;
->  =20
->   			err =3D fscrypt_fname_disk_to_usr(d->inode,
+> + Pathname lookup in Linux is a complex beast; the document linked below
+> + provides a comprehensive summary for those looking for the details.
+> +=20
+> + .. toctree::
+> +    :maxdepth: 2
+> +=20
+> +    path-lookup.rst
 
 This is now a conflict between the fscrypt tree and Linus' tree.
 
@@ -78,20 +87,20 @@ This is now a conflict between the fscrypt tree and Linus' tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/oSPUQt/zVrd5X9qD0buRkfQ
+--Sig_//ETDC9oO9CAGT2bX_9x3odt
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsBSIACgkQAVBC80lX
-0GyzVwf+LbzKgJ/S30mYe9TrC/Jlp3kD3VDfsUFtXLaK1WOs1mDfkDuU7bQDmPr8
-F/l6TFyuA9OKkSZpu/bYBuwwE/5Q+FdoFnT1yvTOUbh/XBL9RXKPyPrkab8jikna
-eP5VHiphKCgUsrbQFYAHv6HxGPc1S/P/g78neJ1zCBSN0qGPpNFdbzmygmL602t2
-YRUdDvXRcZGIuZkzsHbO6uEW3QrPIw2FAV+4iAq8ZLksWBDEJPlHljE9hwgU/0vK
-2juzugF5+P0n4YjmukNCFClH2H4h6TNEQDzAVm8aZ1UjoXTBcIzE1vQ3DDeafyHF
-rV+runCJJvBAn2jknx5T/NO/g/XLnw==
-=N6wc
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsB64ACgkQAVBC80lX
+0GxG/gf+Mecmp6Kpm4B6lOe72Tj4ghgmOuAyqo2AtmmWjVFC82CmnlXbbAi39qPX
+zzBjVV6twLwKMdWJbHGw4PClld30n3iup1o5LguljlhLJrbpHXs0mXIrmZsQx7H/
+ATIfONXJwpF/M9Yzoi0RmAnoYf5V0yIQIa7sPLDptSpWwoBECvJAtk/8xDhtnm07
++WnDoMHucuVqd8BELHdoOGN86hO8Lw4yQYheKxGeikNj4JCj25Ob6KzOe6zvxj3t
+I9Yz3UaZOZlnarg/YUUl32iKEXDdpRIHqbm5zFxxFaZd495Z1+ZrR1zS3/U56GZY
+IRSKpkrDVCFucZMQKrYBuLYNWtXNmg==
+=tEHw
 -----END PGP SIGNATURE-----
 
---Sig_/oSPUQt/zVrd5X9qD0buRkfQ--
+--Sig_//ETDC9oO9CAGT2bX_9x3odt--
