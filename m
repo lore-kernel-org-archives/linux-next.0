@@ -1,106 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the jc_docs tree with the fscrypt
- tree
-Date: Wed, 2 Jan 2019 11:37:02 +1100
-Message-ID: <20190102113702.6e8888b4@canb.auug.org.au>
-References: <20181207115340.2465a854@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext3 tree
+Date: Wed, 2 Jan 2019 12:09:10 +1100
+Message-ID: <20190102120910.7a673e28@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//ETDC9oO9CAGT2bX_9x3odt"; protocol="application/pgp-signature"
+ boundary="Sig_/NnCFe0smkMd93ta7/3oa+hz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181207115340.2465a854@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Phillip Potter <phil@philpotter.co.uk>, Amir Goldstein <amir73il@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//ETDC9oO9CAGT2bX_9x3odt
+--Sig_/NnCFe0smkMd93ta7/3oa+hz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-On Fri, 7 Dec 2018 11:53:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Hi all,
->=20
-> Today's linux-next merge of the jc_docs tree got a conflict in:
->=20
->   Documentation/filesystems/index.rst
->=20
-> between commit:
->=20
->   1b71a6809f96 ("fs-verity: add a documentation file")
->=20
-> from the fscrypt tree and commit:
->=20
->   7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to rest=
-urctured text")
->=20
-> from the jc_docs tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc Documentation/filesystems/index.rst
-> index 818390c32be6,ba921bdd5b06..000000000000
-> --- a/Documentation/filesystems/index.rst
-> +++ b/Documentation/filesystems/index.rst
-> @@@ -360,13 -360,13 +360,24 @@@ encryption of files and directories
->  =20
->       fscrypt
->  =20
->  +Verity API
->  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->  +
->  +A library which filesystems can hook into to support transparent
->  +authentication of read-only files.
->  +
->  +.. toctree::
->  +    :maxdepth: 2
->  +
->  +    fsverity
-> ++
-> + Pathname lookup
-> + =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +=20
-> + Pathname lookup in Linux is a complex beast; the document linked below
-> + provides a comprehensive summary for those looking for the details.
-> +=20
-> + .. toctree::
-> +    :maxdepth: 2
-> +=20
-> +    path-lookup.rst
+Today's linux-next merge of the vfs tree got a conflict in:
 
-This is now a conflict between the fscrypt tree and Linus' tree.
+  fs/Makefile
+
+between commit:
+
+  d44170a7ba48 ("fs: common implementation of file type")
+
+from the ext3 tree and commits:
+
+  fe43eec04841 ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+  82685adaccb3 ("vfs: Add configuration parser helpers")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//ETDC9oO9CAGT2bX_9x3odt
+diff --cc fs/Makefile
+index da0d43eb2bc5,9a0b8003f069..000000000000
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@@ -13,7 -13,7 +13,7 @@@ obj-y :=3D	open.o read_write.o file_table
+  		seq_file.o xattr.o libfs.o fs-writeback.o \
+  		pnode.o splice.o sync.o utimes.o d_path.o \
+  		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+- 		fs_types.o
+ -		fs_context.o fs_parser.o
+++		fs_types.o fs_context.o fs_parser.o
+ =20
+  ifeq ($(CONFIG_BLOCK),y)
+  obj-y +=3D	buffer.o block_dev.o direct-io.o mpage.o
+
+--Sig_/NnCFe0smkMd93ta7/3oa+hz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsB64ACgkQAVBC80lX
-0GxG/gf+Mecmp6Kpm4B6lOe72Tj4ghgmOuAyqo2AtmmWjVFC82CmnlXbbAi39qPX
-zzBjVV6twLwKMdWJbHGw4PClld30n3iup1o5LguljlhLJrbpHXs0mXIrmZsQx7H/
-ATIfONXJwpF/M9Yzoi0RmAnoYf5V0yIQIa7sPLDptSpWwoBECvJAtk/8xDhtnm07
-+WnDoMHucuVqd8BELHdoOGN86hO8Lw4yQYheKxGeikNj4JCj25Ob6KzOe6zvxj3t
-I9Yz3UaZOZlnarg/YUUl32iKEXDdpRIHqbm5zFxxFaZd495Z1+ZrR1zS3/U56GZY
-IRSKpkrDVCFucZMQKrYBuLYNWtXNmg==
-=tEHw
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsDzYACgkQAVBC80lX
+0GyURgf/en+UO6BfIbaIPXKlEDPDl+20r/Te3xZvbqCj5MLErzEjFxzD7qGN5ZlU
+loEzuYyMkNDrWKxQvx2BHChu0Re0UD03y9FdC7XyJN9Zc44xiayw8hy4JxepFTjX
+yU0FQb/hopfQZ6sXnsBIBd4JnDlKgQ6D901qSr0l6/mXYHy0uxsx6fDNikLMvFxI
+ccQ6dyenlMd0FsM9cm1LXEhGMBJKvTvSzhVgRN3FdesRu1k7CN4BoUtljnEjRsyU
+PK7GPnlFJ19p2mKSS7EX9f1KmtzIGVv2gOlAacGrbwKOD1BoKLjiWSVrQsV2Hy/K
+l/9A7bEhHoxrHpFSIWwQxeyiUQnyzw==
+=BK9a
 -----END PGP SIGNATURE-----
 
---Sig_//ETDC9oO9CAGT2bX_9x3odt--
+--Sig_/NnCFe0smkMd93ta7/3oa+hz--
