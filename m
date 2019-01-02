@@ -1,82 +1,97 @@
-From: Sinan Kaya <Okaya@kernel.org>
-Subject: Re: [PATCH v4 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-Date: Tue, 1 Jan 2019 04:07:34 +0300
-Message-ID: <CAK9iUCOJxws-gAgHT4RWxHMZKUHq-p4X9USpEO-6N_oZPht1GQ@mail.gmail.com>
-References: <20181230195612.6657-1-okaya@kernel.org> <20181230195612.6657-9-okaya@kernel.org>
- <20181231174654.GH1846@sirena.org.uk> <CAK9iUCPHu0FV9LqMOKixKi7Cg_DC_F04OeXh50YSHOpgkGKejQ@mail.gmail.com>
- <20181231193017.GN1846@sirena.org.uk> <CAK9iUCNf9JqwvtL4O5KVHP9ZN3y66wZOTjOsGcXFc-T_g6xtEQ@mail.gmail.com>
- <d288e6cf-158f-e832-6096-17d3faf9e3e9@linux.intel.com> <CAK9iUCNhPg21ZFxkbqquTQ5aRRh7ojsSiFP4_RJ2_MsD4t=cYw@mail.gmail.com>
- <765ab3a1-f1f1-3b29-aabb-0f3328abd631@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the f2fs tree with the fscrypt tree
+Date: Wed, 2 Jan 2019 11:26:10 +1100
+Message-ID: <20190102112610.3bc5fb97@canb.auug.org.au>
+References: <20181211101322.438946fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/oSPUQt/zVrd5X9qD0buRkfQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <765ab3a1-f1f1-3b29-aabb-0f3328abd631@linux.intel.com>
+In-Reply-To: <20181211101322.438946fe@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Mailing List <linux-acpi@vger.kernel.org>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chandan Rajendra <chandan@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 1, 2019 at 12:42 AM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
->
-> On 12/31/18 2:35 PM, Sinan Kaya wrote:
-> > On Mon, Dec 31, 2018 at 11:29 PM Pierre-Louis Bossart
-> > <pierre-louis.bossart@linux.intel.com> wrote:
-> >>
-> >> On 12/31/18 1:35 PM, Sinan Kaya wrote:
-> >>> On Mon, Dec 31, 2018 at 10:30 PM Mark Brown <broonie@kernel.org> wrot=
-e:
-> >>>> On Mon, Dec 31, 2018 at 08:52:52PM +0300, Sinan Kaya wrote:
-> >>>>> On Mon, Dec 31, 2018 at 8:47 PM Mark Brown <broonie@kernel.org> wro=
-te:
-> >>>>>> I don't have the cover letter or anything for this series, what's =
-going
-> >>>>>> on with dependencies?
-> >>>>> Here is the executive summary:
-> >>>>> I have a changeset that separates ACPI from PCI on 4.21. CONFIG_ACP=
-I
-> >>>>> used to select PCI. This is no longer true.
-> >>>>> You can build an ACPI system without any PCI devices.
-> >>>> So there's no dependency and I can just apply this?
-> >>> The plan is to apply this patchset via ACPI tree. Need an Acked-by pe=
-r patch.
-> >> Anytime we change the Kconfig settings for audio, we get all kinds of
-> >> problems with randconfig and 0day/kbuild due to depend/select issues.
-> >> I'd like to give this a spin first, can you share a link to the entire
-> >> series? Thanks!
-> > Sure,
-> >
-> > You can find them here
-> >
-> > https://lore.kernel.org/patchwork/patch/1028330/
-> >
-> > Click related.
->
-> Something must be missing, I get compilation errors when PCI is not
-> defined? And I see tons of references to pci stuff in drivers/acpi.
->
-> drivers/acpi/reboot.c: In function =E2=80=98acpi_reboot=E2=80=99:
-> drivers/acpi/reboot.c:37:10: error: implicit declaration of function
-> =E2=80=98pci_find_bus=E2=80=99; did you mean =E2=80=98pci_find_next_bus=
-=E2=80=99?
-> [-Werror=3Dimplicit-function-declaration]
->     bus0 =3D pci_find_bus(0, 0);
->            ^~~~~~~~~~~~
->            pci_find_next_bus
-> drivers/acpi/reboot.c:37:8: warning: assignment makes pointer from
-> integer without a cast [-Wint-conversion]
->     bus0 =3D pci_find_bus(0, 0);
->          ^
-> drivers/acpi/reboot.c:45:3: error: implicit declaration of function
-> =E2=80=98pci_bus_write_config_byte=E2=80=99; did you mean =E2=80=98pci_wr=
-ite_config_byte=E2=80=99?
-> [-Werror=3Dimplicit-function-declaration]
->     pci_bus_write_config_byte(bus0, devfn,
->     ^~~~~~~~~~~~~~~~~~~~~~~~~
->     pci_write_config_byte
->
->
+--Sig_/oSPUQt/zVrd5X9qD0buRkfQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please check out this tag next-20181224 and apply the patches afterwards.
+Hi all,
+
+On Tue, 11 Dec 2018 10:13:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the f2fs tree got a conflict in:
+>=20
+>   fs/f2fs/dir.c
+>=20
+> between commit:
+>=20
+>   848a010287e6 ("f2fs: use IS_ENCRYPTED() to check encryption status")
+>=20
+> from the fscrypt tree and commit:
+>=20
+>   4e240d1bab1e ("f2fs: check memory boundary by insane namelen")
+>=20
+> from the f2fs tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc fs/f2fs/dir.c
+> index cf9e2564388d,c0c845da12fa..000000000000
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@@ -808,7 -808,18 +808,18 @@@ int f2fs_fill_dentries(struct dir_conte
+>   		de_name.name =3D d->filename[bit_pos];
+>   		de_name.len =3D le16_to_cpu(de->name_len);
+>  =20
+> + 		/* check memory boundary before moving forward */
+> + 		bit_pos +=3D GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> + 		if (unlikely(bit_pos > d->max)) {
+> + 			f2fs_msg(sbi->sb, KERN_WARNING,
+> + 				"%s: corrupted namelen=3D%d, run fsck to fix.",
+> + 				__func__, le16_to_cpu(de->name_len));
+> + 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+> + 			err =3D -EINVAL;
+> + 			goto out;
+> + 		}
+> +=20
+>  -		if (f2fs_encrypted_inode(d->inode)) {
+>  +		if (IS_ENCRYPTED(d->inode)) {
+>   			int save_len =3D fstr->len;
+>  =20
+>   			err =3D fscrypt_fname_disk_to_usr(d->inode,
+
+This is now a conflict between the fscrypt tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/oSPUQt/zVrd5X9qD0buRkfQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsBSIACgkQAVBC80lX
+0GyzVwf+LbzKgJ/S30mYe9TrC/Jlp3kD3VDfsUFtXLaK1WOs1mDfkDuU7bQDmPr8
+F/l6TFyuA9OKkSZpu/bYBuwwE/5Q+FdoFnT1yvTOUbh/XBL9RXKPyPrkab8jikna
+eP5VHiphKCgUsrbQFYAHv6HxGPc1S/P/g78neJ1zCBSN0qGPpNFdbzmygmL602t2
+YRUdDvXRcZGIuZkzsHbO6uEW3QrPIw2FAV+4iAq8ZLksWBDEJPlHljE9hwgU/0vK
+2juzugF5+P0n4YjmukNCFClH2H4h6TNEQDzAVm8aZ1UjoXTBcIzE1vQ3DDeafyHF
+rV+runCJJvBAn2jknx5T/NO/g/XLnw==
+=N6wc
+-----END PGP SIGNATURE-----
+
+--Sig_/oSPUQt/zVrd5X9qD0buRkfQ--
