@@ -1,172 +1,177 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Wed, 2 Jan 2019 12:32:28 +1100
-Message-ID: <20190102123228.67892bdb@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
+Date: Wed, 2 Jan 2019 12:56:19 +1100
+Message-ID: <20190102125619.32ee905d@canb.auug.org.au>
+References: <20181126153925.3ab6b337@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zedF5+EIlAP=nTj/6pwVMue"; protocol="application/pgp-signature"
+ boundary="Sig_/IOa/WoZ2FKvyn2CGnIFnTQ1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181126153925.3ab6b337@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Tejun Heo <tj@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Babu Moger <Babu.Moger@amd.com>, Borislav Petkov <bp@suse.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/zedF5+EIlAP=nTj/6pwVMue
+--Sig_/IOa/WoZ2FKvyn2CGnIFnTQ1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+On Mon, 26 Nov 2018 15:39:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>=20
+> between commit:
+>=20
+>   16ec1a5d58ea ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
+> (where the file is arch/x86/kernel/cpu/intel_rdt_rdtgroup.c)
+>=20
+> from the vfs tree and commit:
+>=20
+>   580ebb66cbb3 ("x86/resctrl: Add vendor check for the MBA software contr=
+oller")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index 37c0ccb50823,61b102dd51a5..000000000000
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> @@@ -2032,88 -2065,8 +2032,91 @@@ out
+>   	rdt_last_cmd_clear();
+>   	mutex_unlock(&rdtgroup_mutex);
+>   	cpus_read_unlock();
+>  +	return ret;
+>  +}
+>  +
+>  +enum rdt_param {
+>  +	Opt_cdp,
+>  +	Opt_cdpl2,
+>  +	Opt_mba_mpbs,
+>  +	nr__rdt_params
+>  +};
+>  =20
+>  -	return dentry;
+>  +static const struct fs_parameter_spec rdt_param_specs[nr__rdt_params] =
+=3D {
+>  +	[Opt_cdp]	=3D { fs_param_is_flag },
+>  +	[Opt_cdpl2]	=3D { fs_param_is_flag },
+>  +	[Opt_mba_mpbs]	=3D { fs_param_is_flag },
+>  +};
+>  +
+>  +static const char *const rdt_param_keys[nr__rdt_params] =3D {
+>  +	[Opt_cdp]	=3D "cdp",
+>  +	[Opt_cdpl2]	=3D "cdpl2",
+>  +	[Opt_mba_mpbs]	=3D "mba_mbps",
+>  +};
+>  +
+>  +static const struct fs_parameter_description rdt_fs_parameters =3D {
+>  +	.name		=3D "rdt",
+>  +	.nr_params	=3D nr__rdt_params,
+>  +	.keys		=3D rdt_param_keys,
+>  +	.specs		=3D rdt_param_specs,
+>  +	.no_source	=3D true,
+>  +};
+>  +
+>  +static int rdt_parse_param(struct fs_context *fc, struct fs_parameter *=
+param)
+>  +{
+>  +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
+>  +	struct fs_parse_result result;
+>  +	int opt;
+>  +
+>  +	opt =3D fs_parse(fc, &rdt_fs_parameters, param, &result);
+>  +	if (opt < 0)
+>  +		return opt;
+>  +
+>  +	switch (opt) {
+>  +	case Opt_cdp:
+>  +		ctx->enable_cdpl3 =3D true;
+>  +		return 0;
+>  +	case Opt_cdpl2:
+>  +		ctx->enable_cdpl2 =3D true;
+>  +		return 0;
+>  +	case Opt_mba_mpbs:
+> - 		ctx->enable_mba_mbps =3D true;
+> - 		return 0;
+> ++		if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL) {
+> ++			ctx->enable_mba_mbps =3D true;
+> ++			return 0;
+> ++		}
+> ++		break;
+>  +	}
+>  +
+>  +	return -EINVAL;
+>  +}
+>  +
+>  +static void rdt_fs_context_free(struct fs_context *fc)
+>  +{
+>  +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
+>  +
+>  +	kernfs_free_fs_context(fc);
+>  +	kfree(ctx);
+>  +}
+>  +
+>  +static const struct fs_context_operations rdt_fs_context_ops =3D {
+>  +	.free		=3D rdt_fs_context_free,
+>  +	.parse_param	=3D rdt_parse_param,
+>  +	.get_tree	=3D rdt_get_tree,
+>  +};
+>  +
+>  +static int rdt_init_fs_context(struct fs_context *fc, struct dentry *re=
+ference)
+>  +{
+>  +	struct rdt_fs_context *ctx;
+>  +
+>  +	ctx =3D kzalloc(sizeof(struct rdt_fs_context), GFP_KERNEL);
+>  +	if (!ctx)
+>  +		return -ENOMEM;
+>  +
+>  +	ctx->kfc.root =3D rdt_root;
+>  +	ctx->kfc.magic =3D RDTGROUP_SUPER_MAGIC;
+>  +	fc->fs_private =3D &ctx->kfc;
+>  +	fc->ops =3D &rdt_fs_context_ops;
+>  +	return 0;
+>   }
+>  =20
+>   static int reset_all_ctrls(struct rdt_resource *r)
 
-  kernel/cgroup/cgroup-v1.c
-
-between commit:
-
-  3fc9c12d27b4 ("cgroup: Add named hierarchy disabling to cgroup_no_v1 boot=
- param")
-
-from Linus' tree and commit:
-
-  b3678086951a ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
-
-from the vfs tree.
-
-Its a pity that the former commit did not appear until after the merge
-window opened.  :-(
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+This is now a conflict between Linus' tree and the vfs tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc kernel/cgroup/cgroup-v1.c
-index 583b969b0c0e,4b189e821cad..000000000000
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@@ -1003,17 -968,91 +971,94 @@@ int cgroup1_parse_param(struct fs_conte
-  				continue;
- =20
-  			/* Mutually exclusive option 'all' + subsystem name */
-- 			if (all_ss)
-- 				return -EINVAL;
-- 			opts->subsys_mask |=3D (1 << i);
-- 			one_ss =3D true;
-+ 			if (ctx->all_ss)
-+ 				return cg_invalf(fc, "cgroup1: subsys name conflicts with all");
-+ 			ctx->subsys_mask |=3D (1 << i);
-+ 			ctx->one_ss =3D true;
-+ 			return 0;
-+ 		}
- =20
-- 			break;
-+ 		return cg_invalf(fc, "cgroup1: Unknown subsys name '%s'", param->key);
-+ 	}
-+ 	if (opt < 0)
-+ 		return opt;
-+=20
-+ 	switch (opt) {
-+ 	case Opt_none:
-+ 		/* Explicitly have no subsystems */
-+ 		ctx->none =3D true;
-+ 		return 0;
-+ 	case Opt_all:
-+ 		/* Mutually exclusive option 'all' + subsystem name */
-+ 		if (ctx->one_ss)
-+ 			return cg_invalf(fc, "cgroup1: all conflicts with subsys name");
-+ 		ctx->all_ss =3D true;
-+ 		return 0;
-+ 	case Opt_noprefix:
-+ 		ctx->flags |=3D CGRP_ROOT_NOPREFIX;
-+ 		return 0;
-+ 	case Opt_clone_children:
-+ 		ctx->cpuset_clone_children =3D true;
-+ 		return 0;
-+ 	case Opt_cpuset_v2_mode:
-+ 		ctx->flags |=3D CGRP_ROOT_CPUSET_V2_MODE;
-+ 		return 0;
-+ 	case Opt_xattr:
-+ 		ctx->flags |=3D CGRP_ROOT_XATTR;
-+ 		return 0;
-+ 	case Opt_release_agent:
-+ 		/* Specifying two release agents is forbidden */
-+ 		if (ctx->release_agent)
-+ 			return cg_invalf(fc, "cgroup1: release_agent respecified");
-+ 		ctx->release_agent =3D param->string;
-+ 		param->string =3D NULL;
-+ 		if (!ctx->release_agent)
-+ 			return -ENOMEM;
-+ 		return 0;
-+=20
-+ 	case Opt_name:
-++		/* blocked by boot param? */
-++		if (cgroup_no_v1_named)
-++			return cg_invalf(fc, "cgroup1: Blocked by boot paramter");
-+ 		/* Can't specify an empty name */
-+ 		if (!param->size)
-+ 			return cg_invalf(fc, "cgroup1: Empty name");
-+ 		if (param->size > MAX_CGROUP_ROOT_NAMELEN - 1)
-+ 			return cg_invalf(fc, "cgroup1: Name too long");
-+ 		/* Must match [\w.-]+ */
-+ 		for (i =3D 0; i < param->size; i++) {
-+ 			char c =3D param->string[i];
-+ 			if (isalnum(c))
-+ 				continue;
-+ 			if ((c =3D=3D '.') || (c =3D=3D '-') || (c =3D=3D '_'))
-+ 				continue;
-+ 			return cg_invalf(fc, "cgroup1: Invalid name");
-  		}
-- 		if (i =3D=3D CGROUP_SUBSYS_COUNT)
-- 			return -ENOENT;
-+ 		/* Specifying two names is forbidden */
-+ 		if (ctx->name)
-+ 			return cg_invalf(fc, "cgroup1: name respecified");
-+ 		ctx->name =3D param->string;
-+ 		param->string =3D NULL;
-+ 		return 0;
-  	}
- =20
-+ 	return 0;
-+ }
-+=20
-+ /*
-+  * Validate the options that have been parsed.
-+  */
-+ static int cgroup1_validate(struct fs_context *fc)
-+ {
-+ 	struct cgroup_fs_context *ctx =3D cgroup_fc2context(fc);
-+ 	struct cgroup_subsys *ss;
-+ 	u16 mask =3D U16_MAX;
-+ 	int i;
-+=20
-+ #ifdef CONFIG_CPUSETS
-+ 	mask =3D ~((u16)1 << cpuset_cgrp_id);
-+ #endif
-+=20
-  	/*
-  	 * If the 'all' option was specified select all the subsystems,
-  	 * otherwise if 'none', 'name=3D' and a subsystem name options were
-
---Sig_/zedF5+EIlAP=nTj/6pwVMue
+--Sig_/IOa/WoZ2FKvyn2CGnIFnTQ1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsFK0ACgkQAVBC80lX
-0GwL1gf/YL0Zs2VpoNeGXBa0AZRHyBhFgryB8xqqAJxONLiSBL6wkuLRwMYrWv/5
-SITPBcMrhDwqOXynao3yPet/PQBKE5axMksQhpt0V+3qRvp5s2mfZ6+e+6ktX2gC
-pCcCjtMlnLaYQ2Oj5ycWnRX5IcYDid38pLtL47kvQ9aMSYObuGR3VLBbHQsecqmM
-/buHqnemsztayerpoUztLRfNH64/6bAYchb9TYwJd8//fmVNzCas7fgqPVvfuM92
-tVQgGjje5xbRHqMReqQt7ZG8Lh+g+FsH9vDUHoSVQ6/JynkJC83eroq1KTF1eevd
-AGNSWadWjCMUvW/9yhISA3y72PlsFw==
-=QdGV
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsGkMACgkQAVBC80lX
+0GzovAf+OEju+9rxphuvCQZVgGIZJmRnq+w2GQxPttBlvk/iqMo/j9RKn1npVxEe
+X4F0nNSxPtxbJ/N6QMF7Wco5aMHfXqKsFylBmrfkJS1N2XV+JwMVrBU/1ywQgk4+
+c9CJYl0BEL+J1VvL7XWD7BKSN/x48n/ifyaRu8RDpP9tMi19tNbzQP4c1GlBXJvY
+nNwb+Yzm3Z4xgW6lk8jaTMwZW38N8aQ0tLDGi6Txxkn3h8QLyoM06S4NQSasUNlp
+5YqhMoepQbL4rwu5ahEyGStRK59bhDESBZllkEynSZDNoHCtNMenacyz2rzTHTZF
+bMeBRNU719jJNs98KHozKcq36VNZ6A==
+=2GVt
 -----END PGP SIGNATURE-----
 
---Sig_/zedF5+EIlAP=nTj/6pwVMue--
+--Sig_/IOa/WoZ2FKvyn2CGnIFnTQ1--
