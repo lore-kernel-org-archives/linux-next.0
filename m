@@ -1,99 +1,100 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the thermal tree with the kbuild
- tree
-Date: Thu, 3 Jan 2019 09:19:55 +1100
-Message-ID: <20190103091912.4fe2b2da@canb.auug.org.au>
-References: <20181217105715.5da0b389@canb.auug.org.au>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH v5 08/11] ASoC: Intel: atom: Make PCI
+ dependency explicit
+Date: Wed, 2 Jan 2019 16:50:51 -0600
+Message-ID: <a9ccf7e1-4752-6bf5-2621-15b21a80c2ca@linux.intel.com>
+References: <20190102181038.4418-1-okaya@kernel.org>
+ <20190102181038.4418-9-okaya@kernel.org>
+ <57ed1d94-7f89-20e8-3289-7ef7efd18c20@linux.intel.com>
+ <CAK9iUCNMAuDOh_CM-bTE1xT5FePfYbq7W+0R4KF1KbqskuJ8FA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BgvhUMfKshEZZG4L3ULlMrk"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217105715.5da0b389@canb.auug.org.au>
+In-Reply-To: <CAK9iUCNMAuDOh_CM-bTE1xT5FePfYbq7W+0R4KF1KbqskuJ8FA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Sinan Kaya <Okaya@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.com>, Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, ACPI Devel Mailing List <linux-acpi@vger.kernel.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BgvhUMfKshEZZG4L3ULlMrk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 17 Dec 2018 10:57:15 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+> This is pointing to a kconfig issue on ia64 arch.
 >
-> Today's linux-next merge of the thermal tree got a conflict in:
->=20
->   drivers/thermal/Kconfig
->=20
-> between commit:
->=20
->   17815cc6622c ("treewide: surround Kconfig file paths with double quotes=
-")
->=20
-> from the kbuild tree and commit:
->=20
->   3e8c4d31f8ed ("drivers: thermal: Move various drivers for intel platfor=
-ms into a subdir")
->=20
-> from the thermal tree.
->=20
-> I fixed it up (I used the thermal tree version of this file and added
-> the following merge fix patch) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 17 Dec 2018 10:54:07 +1100
-> Subject: [PATCH] drivers: thermal: fixup for Kconfig string parsing tight=
-ening up
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/thermal/intel/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kconfig
-> index 9c06d4ad7c97..2e013eeb4a1d 100644
-> --- a/drivers/thermal/intel/Kconfig
-> +++ b/drivers/thermal/intel/Kconfig
-> @@ -55,7 +55,7 @@ config INTEL_QUARK_DTS_THERMAL
->  	  underlying BIOS/Firmware.
-> =20
->  menu "ACPI INT340X thermal drivers"
-> -source drivers/thermal/intel/int340x_thermal/Kconfig
-> +source "drivers/thermal/intel/int340x_thermal/Kconfig"
->  endmenu
-> =20
->  config INTEL_BXT_PMIC_THERMAL
-> --=20
-> 2.19.1
+> arch/ia64/Kconfig:128:error: recursive dependency detected!
+> arch/ia64/Kconfig:128:    choice <choice> contains symbol IA64_HP_SIM
+> arch/ia64/Kconfig:202:    symbol IA64_HP_SIM is part of choice PM
+>
+> IA64_HP_SIM is both a choice and is selected.
+>
+> I did allyesconfig and disabled PCI afterwards to find all the issues
+> on this patchset.
 
-I am still applying that patch every day.  It could be applied directly
-to the thermal tree as it does not depend on the kbuild tree change.
+Are you saying there's a newer series that fixes this issue for both 
+allyesconfig and allmodconfig?
 
---=20
-Cheers,
-Stephen Rothwell
+if yes, then we're good.
 
---Sig_/BgvhUMfKshEZZG4L3ULlMrk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>
+>> 2. there are different patterns to express the dependency on PCI e.g.
+>>
+>>    config MMC_SDHCI_ACPI
+>>        tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+>>        depends on MMC_SDHCI && ACPI
+>> -    select IOSF_MBI if X86
+>> +    select IOSF_MBI if (X86 && PCI)
+>>
+>> but
+>>
+>> config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+>>        tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
+>>        default ACPI
+>> -    depends on X86 && ACPI
+>> +    depends on X86 && ACPI && PCI
+>>        select SND_SST_IPC_ACPI
+>>        select SND_SST_ATOM_HIFI2_PLATFORM
+>>        select SND_SOC_ACPI_INTEL_MATCH
+>>
+> I matched depends line to
+>
+> depends on X86 && ACPI && PCI
+>
+> for MMC_SDHCI_ACPI per feedback from Rafael on V5. This should resolve
+> the inconsistency.
+ok, I didn't see the delta
+>
+>
+>> IOSF is only needed for Baytrail-CR detection, and the code will compile
+>> fine without it, so maybe it'd be a better model if you used the
+>> following diff?
+>>
+>> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+>> index 2fd1b61e8331..68af0ea5c96c 100644
+>> --- a/sound/soc/intel/Kconfig
+>> +++ b/sound/soc/intel/Kconfig
+>> @@ -95,7 +95,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+>>           select SND_SST_IPC_ACPI
+>>           select SND_SST_ATOM_HIFI2_PLATFORM
+>>           select SND_SOC_ACPI_INTEL_MATCH
+>> -       select IOSF_MBI
+>> +       select IOSF_MBI if PCI
+>>
+>> 3. All the Intel machine drivers depend on X86_INTEL_LPSS which depends
+>> on PCI. But for Baytrail/Haswell/Broadwell we have only a dependency on
+>> ACPI, so we expose drivers that can be selected but fail on probe since
+>> there are no machine drivers. I am not sure if we want to be strict and
+>> only expose meaningful configurations, or allow for more compilations
+>> tests and corner cases?
+> Hopefully, v5 resolves this too with
+>
+> depends on X86 && ACPI && PCI
+>
+> Let me know otherwise.
 
------BEGIN PGP SIGNATURE-----
+it doesn't but that's not a good enough reason to lay on the tracks. 
+I'll follow-up with a cleanup for the Intel audio parts when this series 
+is merged. The PCI dependency could be moved to the top-level since it's 
+pretty much required for all platforms except for compilation tests, and 
+there are multiple dependencies that repeated for no good reason, so FWIW
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwtOQwACgkQAVBC80lX
-0Gx1OAf/TnTyVR9QqpMLlR8PR2m18JuT6gAY+ejftGfFN9bERusH+XSxdyYReseT
-/MQaZ6AVejaYMRo6LzLN8qZd3sgJDu86GAjNlhg9wLpzUJqYXrrkmnjvb2wcNhgw
-tyQQ/OQHZtdArkMvpEO9kfQHNhU9LaI5NowSuOo+wdO1vcvBofiguD5Q7IwKKWQs
-dxYaH4aHiw70su1QYF8zzmDUwf8PpadaKQoLir01QoTE2/ZxqK1qzLsu89nmY6yz
-TsdqRdZjA1om5NaBUY7V4k6jRHK3r3W0bmU/f6HoP4lv3nQHj1OnZXMUShSmYg34
-Ydl4GDN9HoDWWgU83JwOMd3U48wmNw==
-=B1RX
------END PGP SIGNATURE-----
-
---Sig_/BgvhUMfKshEZZG4L3ULlMrk--
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
