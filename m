@@ -1,36 +1,59 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v4 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-Date: Wed, 2 Jan 2019 10:36:43 +0100
-Message-ID: <CAJZ5v0h3br9+a8x2Vy406hJ-Rp24zs+b-ijxGJx0z7=9msWE7g@mail.gmail.com>
-References: <20181230195612.6657-1-okaya@kernel.org> <20181230195612.6657-9-okaya@kernel.org>
- <CAJZ5v0hSpAPzi2EcFKD_Wh23SeYnoJCAaQMGW=fSqgmhmhr37A@mail.gmail.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v3 09/11] mmc: add PCI dependency into IOSF_MBI
+Date: Wed, 2 Jan 2019 16:03:14 +0200
+Message-ID: <21e732e8-84e4-72f9-4142-8e6af54f1346@intel.com>
+References: <20181223232521.11320-1-okaya@kernel.org>
+ <20181223232521.11320-10-okaya@kernel.org>
+ <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
+ <CAK9iUCPqqyK7KMvchM4jY_FBgujnQm019J27TpDJjXUXvu5sjQ@mail.gmail.com>
+ <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0hSpAPzi2EcFKD_Wh23SeYnoJCAaQMGW=fSqgmhmhr37A@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sinan Kaya <okaya@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Sinan Kaya <Okaya@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Shawn Lin <shawn.lin@rock-chips.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Geert Uytterhoeven <geert@linux-m68k.org>, faiz_abbas@ti.com, chunyan.zhang@unisoc.com, Jisheng.Zhang@synaptics.com, ludovic.barre@st.com, Arnd Bergmann <arnd@arndb.de>, alex.smith@imgtec.com, chris.brandt@renesas.com, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 2, 2019 at 10:34 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Sun, Dec 30, 2018 at 8:56 PM Sinan Kaya <okaya@kernel.org> wrote:
-> >
-> > Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
-> > CONFIG_PCI set but this is not specified anywhere.
->
-> IMO it would be better to say
->
-> "After commit 5d32a66541c46 (PCI/ACPI: Allow ACPI to be built without
-> CONFIG_PCI set) dependencies on CONFIG_PCI that previously were
-> satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> specified directly.  For this reason, add a direct dependency on
-> CONFIG_PCI to the IOSF_MBI driver."
->
-> If you did that, the reviewers would know upfront what this was about
-> and that might save at least one back-and-forth e-mail exchange in
-> each case.
+On 31/12/18 11:40 AM, Rafael J. Wysocki wrote:
+> On Sun, Dec 30, 2018 at 7:57 PM Sinan Kaya <Okaya@kernel.org> wrote:
+>>
+>> On Wed, Dec 26, 2018 at 12:41 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>>
+>>> On Mon, Dec 24, 2018 at 12:26 AM Sinan Kaya <okaya@kernel.org> wrote:
+>>>>
+>>>> Select IOSF_MBI only when PCI is set.
+>>>>
+>>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>>>> ---
+>>>>  drivers/mmc/host/Kconfig | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>>> index e26b8145efb3..4c5f037b246d 100644
+>>>> --- a/drivers/mmc/host/Kconfig
+>>>> +++ b/drivers/mmc/host/Kconfig
+>>>> @@ -117,7 +117,7 @@ config MMC_RICOH_MMC
+>>>>  config MMC_SDHCI_ACPI
+>>>>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+>>>>         depends on MMC_SDHCI && ACPI
+>>>
+>>> It should depend on PCI as well, shouldn't it?
+>>>
+>>
+>> I don't think so. The PCI dependency is at IOSF_MBI code so code
+>> should select IOSF_MBI only when x86 and pci is defined as below.
+>>
+>> This driver does not depend on PCI.
+> 
+> Are you sure?
+> 
+> Do you know any systems in which to use it without PCI?
+> 
 
-But, of course, the changelog doesn't even match the patch contents in
-this particular case.  Please fix that.
+Qualcomm use it and I don't know if those systems have PCI.
+AMD use it but probably also have PCI.  And yes Intel systems (just BYT and
+CHT IIRC) that use this driver will always have PCI.
