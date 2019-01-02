@@ -1,92 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Wed, 2 Jan 2019 15:01:40 +1100
-Message-ID: <20190102150140.704c4533@canb.auug.org.au>
+From: Chandan Rajendra <chandan@linux.ibm.com>
+Subject: Re: linux-next: manual merge of the f2fs tree with the fscrypt tree
+Date: Wed, 02 Jan 2019 10:26:09 +0530
+Message-ID: <2265186.H1UptfE7Oa@localhost.localdomain>
+References: <20181211101322.438946fe@canb.auug.org.au> <20190102112610.3bc5fb97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8j9bjcOUK=mLTmizsGGHgnM"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190102112610.3bc5fb97@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chandan Rajendra <chandan@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8j9bjcOUK=mLTmizsGGHgnM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wednesday, January 2, 2019 5:56:10 AM IST Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 11 Dec 2018 10:13:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the f2fs tree got a conflict in:
+> > 
+> >   fs/f2fs/dir.c
+> > 
+> > between commit:
+> > 
+> >   848a010287e6 ("f2fs: use IS_ENCRYPTED() to check encryption status")
+> > 
+> > from the fscrypt tree and commit:
+> > 
+> >   4e240d1bab1e ("f2fs: check memory boundary by insane namelen")
+> > 
+> > from the f2fs tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> 
+> This is now a conflict between the fscrypt tree and Linus' tree.
+> 
+> 
 
-Hi Al,
+fscrypt's master branch has fsverity patches applied. These are not available
+on Linus' tree. Hence the conflict.
 
-After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
-failed like this:
+Just FYI, The discussion on merging fsverity into mainline kernel is still
+going on.
 
-fs/fs_context.c: In function 'logfc':
-fs/fs_context.c:400:3: error: implicit declaration of function 'vprintk_emi=
-t'; did you mean 'dev_printk_emit'? [-Werror=3Dimplicit-function-declaratio=
-n]
-   vprintk_emit(0, LOGLEVEL_WARNING, NULL, 0, fmt, va);
-   ^~~~~~~~~~~~
-   dev_printk_emit
-
-Caused by commit
-
-  e6d72ffc503f ("vfs: Implement logging through fs_context")
-
-# CONFIG_PRINTK is not set
-
-I added the following hack for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 2 Jan 2019 14:57:36 +1100
-Subject: [PATCH] vfs: work around CONFIG_PRINTK=3Dn in fs_context logging c=
-ode
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/fs_context.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 8728d49c7871..b0324598f573 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -391,6 +391,7 @@ EXPORT_SYMBOL(vfs_dup_fs_context);
-  */
- void logfc(struct fs_context *fc, const char *fmt, ...)
- {
-+#ifdef CONFIG_PRINTK
- 	va_list va;
-=20
- 	va_start(va, fmt);
-@@ -409,6 +410,7 @@ void logfc(struct fs_context *fc, const char *fmt, ...)
-=20
- 	pr_cont("\n");
- 	va_end(va);
-+#endif
- }
- EXPORT_SYMBOL(logfc);
-=20
---=20
-2.19.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8j9bjcOUK=mLTmizsGGHgnM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwsN6QACgkQAVBC80lX
-0GxCOAf+NcYWsZYMSnzubZq+Zgtrm5R1QlmhKgC2krRKzMqaBNbjgI71MQk4p80Q
-6911oaW0wnjnRV7a3h76GGYc2l3IJdJxNK4nC3WW0zD6zcUCbyg/K4MxvphdNc58
-QF0PQ1MJLi3SWFjXnqt6SLPunW6GwDMzrs/LMJU0BUUW14TLPSyz4qwTRqdT0Vq9
-Vbi9qRiQF3VRaRCf6Bjoc1bDb5qyg+mdCU8Ibbr4+mu3pmQrHfyHDDTp0q4yqa7D
-Pxd606xuX8EfOjbesfcfx7iR15XYlQ4e/rhsnw36F+kviVW1nIYP6CWhmCYodApm
-FmaxQ+5mPDqlIjT/+sE8olxiH8tNnA==
-=mJu7
------END PGP SIGNATURE-----
-
---Sig_/8j9bjcOUK=mLTmizsGGHgnM--
+-- 
+chandan
