@@ -1,58 +1,42 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH -next] ACPI/IORT: fix build when CONFIG_IOMMU_API=n
-Date: Fri, 4 Jan 2019 16:16:53 +0000
-Message-ID: <20190104161653.GA18795@e107981-ln.cambridge.arm.com>
-References: <20181224172058.56206-1-cai@lca.pw>
- <31c013ad-1261-7ca4-2434-69911d5d2cb8@huawei.com>
+From: Sinan Kaya <okaya@kernel.org>
+Subject: [PATCH v6 02/11] ata: pata_acpi: Make PCI dependency explicit
+Date: Sat,  5 Jan 2019 10:05:57 +0000
+Message-ID: <20190105100606.6673-3-okaya@kernel.org>
+References: <20190105100606.6673-1-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <31c013ad-1261-7ca4-2434-69911d5d2cb8@huawei.com>
+In-Reply-To: <20190105100606.6673-1-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hanjun Guo <guohanjun@huawei.com>
-Cc: Qian Cai <cai@lca.pw>, sfr@canb.auug.org.au, hanjun.guo@linaro.org, sudeep.holla@arm.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>, Jens Axboe <axboe@kernel.dk>, "open list:LIBATA SUBSYSTEM Serial and
+        Parallel ATA drivers" <linux-ide@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 25, 2018 at 10:44:38AM +0800, Hanjun Guo wrote:
-> Hi Qian,
-> 
-> Good catch, minor comments below.
-> 
-> On 2018/12/25 1:20, Qian Cai wrote:
-> > rivers/acpi/arm64/iort.c:880:1: error: expected identifier or '(' before '{' token
->   ^^
->   drivers
-> 
-> >  { return NULL; }
-> >  ^
-> > drivers/acpi/arm64/iort.c:879:39: warning: 'iort_fwspec_iommu_ops' used but never defined
-> >  static inline const struct iommu_ops *iort_fwspec_iommu_ops(struct device *dev);
-> >                                        ^~~~~~~~~~~~~~~~~~~~~
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
-> >  drivers/acpi/arm64/iort.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> > index fdd90ffceb85..5d29783ee5bd 100644
-> > --- a/drivers/acpi/arm64/iort.c
-> > +++ b/drivers/acpi/arm64/iort.c
-> > @@ -876,7 +876,7 @@ int iort_iommu_msi_get_resv_regions(struct device *dev, struct list_head *head)
-> >  	return (resv == its->its_count) ? resv : -ENODEV;
-> >  }
-> >  #else
-> > -static inline const struct iommu_ops *iort_fwspec_iommu_ops(struct device *dev);
-> > +static inline const struct iommu_ops *iort_fwspec_iommu_ops(struct device *dev)
-> >  { return NULL; }
-> >  static inline int iort_add_device_replay(const struct iommu_ops *ops,
-> >  					 struct device *dev)
-> 
-> Acked-by: Hanjun Guo <hanjun.guo@linaro.org>
-> 
-> Lorenzo, I think this is 4.21-rc1 material if it's OK for you.
+After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+satisfied implicitly through dependencies on CONFIG_ACPI have to be
+specified directly. PATA_ACPI is a PCI device driver but the PCI
+dependency has not been explicitly called out.
 
-It is a bit late for -rc1 but I will send it asap, with a proper Fixes:
-tag that points at the commit that introduced the typo.
+Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+---
+ drivers/ata/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Lorenzo
+diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+index 4ca7a6b4eaae..8218db17ebdb 100644
+--- a/drivers/ata/Kconfig
++++ b/drivers/ata/Kconfig
+@@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
+ 
+ config PATA_ACPI
+ 	tristate "ACPI firmware driver for PATA"
+-	depends on ATA_ACPI && ATA_BMDMA
++	depends on ATA_ACPI && ATA_BMDMA && PCI
+ 	help
+ 	  This option enables an ACPI method driver which drives
+ 	  motherboard PATA controller interfaces through the ACPI
+-- 
+2.19.0
