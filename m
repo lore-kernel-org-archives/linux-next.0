@@ -1,57 +1,64 @@
-From: Sinan Kaya <okaya@kernel.org>
-Subject: [PATCH v6 01/11] ACPI / LPSS: Make PCI dependency explicit
-Date: Sat,  5 Jan 2019 10:05:56 +0000
-Message-ID: <20190105100606.6673-2-okaya@kernel.org>
-References: <20190105100606.6673-1-okaya@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the csky tree with Linus' tree
+Date: Mon, 7 Jan 2019 10:27:27 +1100
+Message-ID: <20190107102727.0c67e3d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.Zc9CJH194ceCFRxm77Z9+b"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190105100606.6673-1-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-CONFIG_PCI set")', it is possible to build ACPI without any PCI support.
-This code depends on PCI. Compile only when PCI is present.
+--Sig_/.Zc9CJH194ceCFRxm77Z9+b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/acpi/Makefile   | 3 ++-
- drivers/acpi/internal.h | 4 ++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+Hi Guo,
 
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index 7c6afc111d76..bb857421c2e8 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -41,7 +41,8 @@ acpi-y				+= ec.o
- acpi-$(CONFIG_ACPI_DOCK)	+= dock.o
- acpi-$(CONFIG_PCI)		+= pci_root.o pci_link.o pci_irq.o
- obj-$(CONFIG_ACPI_MCFG)		+= pci_mcfg.o
--acpi-y				+= acpi_lpss.o acpi_apd.o
-+acpi-$(CONFIG_PCI)		+= acpi_lpss.o
-+acpi-y				+= acpi_apd.o
- acpi-y				+= acpi_platform.o
- acpi-y				+= acpi_pnp.o
- acpi-$(CONFIG_ARM_AMBA)	+= acpi_amba.o
-diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
-index 7e6952edb5b0..6a9e1fb8913a 100644
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -81,7 +81,11 @@ void acpi_debugfs_init(void);
- #else
- static inline void acpi_debugfs_init(void) { return; }
- #endif
-+#ifdef CONFIG_PCI
- void acpi_lpss_init(void);
-+#else
-+static inline void acpi_lpss_init(void) {}
-+#endif
- 
- void acpi_apd_init(void);
- 
--- 
-2.19.0
+Today's linux-next merge of the csky tree got a conflict in:
+
+  Documentation/features/io/sg-chain/arch-support.txt
+
+between commit:
+
+  7c703e54cc71 ("arch: switch the default on ARCH_HAS_SG_CHAIN")
+
+from Linus' tree and commit:
+
+  ee8972b1ab82 ("Documentation/features: Add csky kernel features")
+
+from the csky tree.
+
+I fixed it up (the former removed the file, so I did that) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+You want to add "select ARCH_NO_SG_CHAIN" to your Kconfig somewhere
+(see the commit from Linus' tree above).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.Zc9CJH194ceCFRxm77Z9+b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwyjt8ACgkQAVBC80lX
+0Gy09Qf9Fkilw44ICvIepYWbFbRsQgrY2aVSAQIn1CeOx4OmVagXgJhe47936KVq
+udfZkFF8N1NzZKBx2b/vQGyMi0RHUZUXhyEKat3EywVhGdNsgdTqtiP1UaKzKKk9
+WUUdhCxLeXY780ukdtDJn70y/M7thXwcQmTbWYpRSCvzjp8vlOQ1eOzup5Ek95ei
+V79b9urfXilzPDOsgyDgyUO7ycyFc84V8JLKlenxruiJ1GNeAGhG83IvmLNJJ8cw
+yfNUrEVLeGRtu0dJoF/sxaTXAinYf+rCFMOgCz3lKAnUDLSKwkFg03a+nSd4VhRC
+EZcTiTpPKL0fjHaqGVz0Ed1l7dLDOA==
+=wXDZ
+-----END PGP SIGNATURE-----
+
+--Sig_/.Zc9CJH194ceCFRxm77Z9+b--
