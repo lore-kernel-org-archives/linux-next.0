@@ -1,74 +1,45 @@
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: mmotm 2018-12-21-15-28 uploaded
-Date: Mon, 7 Jan 2019 13:02:31 +0530
-Message-ID: <99ab6512-9fce-9cb9-76e7-7f83d87d5f86@arm.com>
-References: <20181221232853.WLvEi%akpm@linux-foundation.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Jan 7
+Date: Mon, 7 Jan 2019 08:35:36 +0100
+Message-ID: <CAMuHMdUCKaADLBrv0KLXSYHe8bR3ws7mhYr+1SkFYW15kDGo9Q@mail.gmail.com>
+References: <20190107150609.0510def3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181221232853.WLvEi%akpm@linux-foundation.org>
-Content-Language: en-US
+In-Reply-To: <20190107150609.0510def3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+Hi Stephen, Michael,
 
+Happy NY! Looking forward to lots of linux-next releases and build
+logs in 2019 ;-)
 
-On 12/22/2018 04:58 AM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-12-21-15-28 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (4.x
-> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
-> This tree is partially included in linux-next.  To see which patches are
-> included in linux-next, consult the `series' file.  Only the patches
-> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> linux-next.
-> 
-> A git tree which contains the memory management portion of this tree is
-> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.gi
+On Mon, Jan 7, 2019 at 5:08 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
 
-Hello Michal,
+    Proxy Error
+    The proxy server received an invalid response from an upstream server.
+    The proxy server could not handle the request GET /kisskb/.
 
-I dont see the newer tags on this tree. Tried fetching all the tags from the tree
-but only see these right now for 2018. This release should have an equivalent tag
-(mmotm-2018-12-21-15-28) right ? 
+    Reason: Error reading from remote server
 
-mmotm-2018-01-04-16-19
-mmotm-2018-01-12-16-53
-mmotm-2018-01-18-16-31
-mmotm-2018-01-25-16-20
-mmotm-2018-01-31-16-51
-mmotm-2018-02-06-16-41
-mmotm-2018-02-21-14-48
-mmotm-2018-03-13-15-15
-mmotm-2018-03-14-16-24
-mmotm-2018-03-22-16-18
-mmotm-2018-03-28-16-05
-mmotm-2018-04-05-16-59
-mmotm-2018-04-10-17-02
-mmotm-2018-04-13-17-28
-mmotm-2018-05-03-15-54
-mmotm-2018-05-10-16-34
-mmotm-2018-05-18-16-44
-mmotm-2018-05-25-14-52
+    Apache/2.4.37 (Debian) Server at kisskb.ellerman.id.au Port 80
 
-- Anshuman
+Oops...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
