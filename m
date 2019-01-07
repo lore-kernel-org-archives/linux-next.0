@@ -1,45 +1,37 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Jan 7
-Date: Mon, 7 Jan 2019 08:35:36 +0100
-Message-ID: <CAMuHMdUCKaADLBrv0KLXSYHe8bR3ws7mhYr+1SkFYW15kDGo9Q@mail.gmail.com>
-References: <20190107150609.0510def3@canb.auug.org.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: mmotm 2018-12-21-15-28 uploaded
+Date: Mon, 7 Jan 2019 09:43:38 +0100
+Message-ID: <20190107084338.GW31793@dhcp22.suse.cz>
+References: <20181221232853.WLvEi%akpm@linux-foundation.org>
+ <99ab6512-9fce-9cb9-76e7-7f83d87d5f86@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190107150609.0510def3@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <99ab6512-9fce-9cb9-76e7-7f83d87d5f86@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: akpm@linux-foundation.org, broonie@kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen, Michael,
+Hi,
 
-Happy NY! Looking forward to lots of linux-next releases and build
-logs in 2019 ;-)
+On Mon 07-01-19 13:02:31, Anshuman Khandual wrote:
+> On 12/22/2018 04:58 AM, akpm@linux-foundation.org wrote:
+[...]
+> > A git tree which contains the memory management portion of this tree is
+> > maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.gi
+> 
+> Hello Michal,
+> 
+> I dont see the newer tags on this tree. Tried fetching all the tags from the tree
+> but only see these right now for 2018. This release should have an equivalent tag
+> (mmotm-2018-12-21-15-28) right ? 
 
-On Mon, Jan 7, 2019 at 5:08 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-
-    Proxy Error
-    The proxy server received an invalid response from an upstream server.
-    The proxy server could not handle the request GET /kisskb/.
-
-    Reason: Error reading from remote server
-
-    Apache/2.4.37 (Debian) Server at kisskb.ellerman.id.au Port 80
-
-Oops...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+I have stopped tracking mmotm trees in this tree quite some time ago. I
+would much rather turn mmotm into a proper git tree which I was
+discussing with Andrew but we didn't land in anything so far. I hope to
+use LSFMM this year to resurrect the idea. 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Michal Hocko
+SUSE Labs
