@@ -1,55 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the csky tree with Linus' tree
-Date: Mon, 7 Jan 2019 21:30:12 +1100
-Message-ID: <20190107213012.5c20154a@canb.auug.org.au>
-References: <20190107102727.0c67e3d7@canb.auug.org.au>
-        <20190107065344.GA11989@lst.de>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v4 03/11] vga-switcheroo: make PCI dependency explicit
+Date: Mon, 7 Jan 2019 11:34:48 +0100
+Message-ID: <20190107103448.GG21184@phenom.ffwll.local>
+References: <20181230195612.6657-1-okaya@kernel.org>
+ <20181230195612.6657-4-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VZMUNJFKtfIf3MqQHBArbg0"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190107065344.GA11989@lst.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Guo Ren <ren_guo@c-sky.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20181230195612.6657-4-okaya@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sinan Kaya <okaya@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, David Airlie <airlied@linux.ie>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Sean Paul <sean@poorly.run>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/VZMUNJFKtfIf3MqQHBArbg0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Christoph,
-
-On Mon, 7 Jan 2019 07:53:44 +0100 Christoph Hellwig <hch@lst.de> wrote:
->
-> On Mon, Jan 07, 2019 at 10:27:27AM +1100, Stephen Rothwell wrote:
-> > You want to add "select ARCH_NO_SG_CHAIN" to your Kconfig somewhere
-> > (see the commit from Linus' tree above). =20
->=20
-> No, csky should not select it.  There is no code directly poking
-> into scatterlists internals in csky, so it can safely enable chained
-> sglists.
-
-Thanks, good to know.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/VZMUNJFKtfIf3MqQHBArbg0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwzKjQACgkQAVBC80lX
-0GzLFQf/VfwgGcXlHVXFXnPjXNf6YrY9PhU0wEirAgPN6IIXPRKRGGM9BzjgNagX
-3YHtzcn6jvDQvbNJmp+VLXeFOFPTB5HW99CI2dL+N+0MQ6FJ1hw78owjr2yZHmsI
-4mL4Fja5EC/wxQ4DZbwcT9kiyJGcjnw0nloq0c6iaAdqus8zihRwPrGx5DeFLJIP
-5+EaC82H0VTn0FzTXB3ZLfFH/9uAapUezt9tRXQX7K38EASC/55go5w4gDprV77Q
-NjU8fDZX1fXGM0hhx1Mt8JN1p+D5JrTk/1TrW5JNwnvcvfRXiUffRNW5hzG++ljC
-kRx3XcKKXbgfkwbLDimM5q9T1zABUg==
-=OvRC
------END PGP SIGNATURE-----
-
---Sig_/VZMUNJFKtfIf3MqQHBArbg0--
+T24gU3VuLCBEZWMgMzAsIDIwMTggYXQgMDc6NTY6MDRQTSArMDAwMCwgU2luYW4gS2F5YSB3cm90
+ZToKPiBUaGlzIGRyaXZlciBkZXBlbmRzIG9uIHRoZSBQQ0kgaW5mcmFzdHJ1Y3R1cmUgYnV0IHRo
+ZSBkZXBlbmRlbmN5IGhhcyBub3QKPiBiZWVuIGV4cGxpY2l0bHkgY2FsbGVkIG91dC4KPiAKPiBG
+aXhlczogNWQzMmE2NjU0MWM0NiAoIlBDSS9BQ1BJOiBBbGxvdyBBQ1BJIHRvIGJlIGJ1aWx0IHdp
+dGhvdXQgQ09ORklHX1BDSSBzZXQiKQo+IFNpZ25lZC1vZmYtYnk6IFNpbmFuIEtheWEgPG9rYXlh
+QGtlcm5lbC5vcmc+Cj4gUmV2aWV3ZWQtYnk6IEx1a2FzIFd1bm5lciA8bHVrYXNAd3VubmVyLmRl
+Pgo+IEFja2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgoKSSdt
+IGFzc3VtaW5nIHRoaXMgZ29lcyBpbiB0aHJvdWdoIHRoZSBhY3BpIHRyZWUsIGNvcnJlY3Q/Ci1E
+YW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L3ZnYS9LY29uZmlnIHwgMSArCj4gIDEgZmlsZSBj
+aGFuZ2VkLCAxIGluc2VydGlvbigrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS92Z2Ev
+S2NvbmZpZyBiL2RyaXZlcnMvZ3B1L3ZnYS9LY29uZmlnCj4gaW5kZXggYjY3N2U1ZDUyNGU2Li5k
+NWYxZDhlMWM2ZjggMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvdmdhL0tjb25maWcKPiArKysg
+Yi9kcml2ZXJzL2dwdS92Z2EvS2NvbmZpZwo+IEBAIC0yMSw2ICsyMSw3IEBAIGNvbmZpZyBWR0Ff
+U1dJVENIRVJPTwo+ICAJYm9vbCAiTGFwdG9wIEh5YnJpZCBHcmFwaGljcyAtIEdQVSBzd2l0Y2hp
+bmcgc3VwcG9ydCIKPiAgCWRlcGVuZHMgb24gWDg2Cj4gIAlkZXBlbmRzIG9uIEFDUEkKPiArCWRl
+cGVuZHMgb24gUENJCj4gIAlzZWxlY3QgVkdBX0FSQgo+ICAJaGVscAo+ICAJICBNYW55IGxhcHRv
+cHMgcmVsZWFzZWQgaW4gMjAwOC85LzEwIGhhdmUgdHdvIEdQVXMgd2l0aCBhIG11bHRpcGxleGVy
+Cj4gLS0gCj4gMi4xOS4wCj4gCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwg
+SW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
