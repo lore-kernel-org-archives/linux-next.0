@@ -1,51 +1,77 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for Jan 7
-Date: Tue, 08 Jan 2019 13:28:01 +1100
-Message-ID: <87k1jfc28e.fsf@concordia.ellerman.id.au>
-References: <20190107150609.0510def3@canb.auug.org.au> <CAMuHMdUCKaADLBrv0KLXSYHe8bR3ws7mhYr+1SkFYW15kDGo9Q@mail.gmail.com> <87va30adsg.fsf@concordia.ellerman.id.au> <87sgy4a7vi.fsf@concordia.ellerman.id.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ubifs tree with the fscrypt
+ tree
+Date: Tue, 8 Jan 2019 13:39:03 +1100
+Message-ID: <20190108133855.03ac5cce@canb.auug.org.au>
+References: <20181211102425.7019f0a7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87sgy4a7vi.fsf@concordia.ellerman.id.au>
+In-Reply-To: <20181211102425.7019f0a7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Richard Weinberger <richard@nod.at>
 List-Id: linux-next.vger.kernel.org
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
-> Michael Ellerman <mpe@ellerman.id.au> writes:
->> Geert Uytterhoeven <geert@linux-m68k.org> writes:
->>> On Mon, Jan 7, 2019 at 5:08 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Status of my local build tests will be at
->>>> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
->>>> advice about cross compilers/configs that work, we are always open to add
->>>> more builds.
->>>
->>>     Proxy Error
->>>     The proxy server received an invalid response from an upstream server.
->>>     The proxy server could not handle the request GET /kisskb/.
->>>
->>>     Reason: Error reading from remote server
->>>
->>>     Apache/2.4.37 (Debian) Server at kisskb.ellerman.id.au Port 80
->>>
->>> Oops...
->>
->> Erk.
->>
->> Seems postgres is unhappy, database is corrupt.
->>
->> I'm restoring from a backup but it seems to be taking a long time, I may
->> not get it finished tonight.
+Hi all,
+
+On Tue, 11 Dec 2018 10:24:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> So I finally got the backup to restore.
->
-> Then I restarted everything, and as soon as the first set of new results
-> came in the DB appears to have wedged again.
+> Today's linux-next merge of the ubifs tree got a conflict in:
+> 
+>   fs/ubifs/Kconfig
+> 
+> between commit:
+> 
+>   6956097c429a ("fscrypt: remove filesystem specific build config option")
+> 
+> from the fscrypt tree and commit:
+> 
+>   1341551f1e2a ("ubifs: CONFIG_UBIFS_FS_AUTHENTICATION should depend on UBIFS_FS")
+> 
+> from the ubifs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc fs/ubifs/Kconfig
+> index ff7ea6f04555,bc1e082d921d..000000000000
+> --- a/fs/ubifs/Kconfig
+> +++ b/fs/ubifs/Kconfig
+> @@@ -65,9 -60,20 +62,9 @@@ config UBIFS_FS_XATT
+>   
+>   	  If unsure, say Y.
+>   
+>  -config UBIFS_FS_ENCRYPTION
+>  -	bool "UBIFS Encryption"
+>  -	depends on UBIFS_FS_XATTR && BLOCK
+>  -	select FS_ENCRYPTION
+>  -	default n
+>  -	help
+>  -	  Enable encryption of UBIFS files and directories. This
+>  -	  feature is similar to ecryptfs, but it is more memory
+>  -	  efficient since it avoids caching the encrypted and
+>  -	  decrypted pages in the page cache.
+>  -
+>   config UBIFS_FS_SECURITY
+>   	bool "UBIFS Security Labels"
+> - 	depends on UBIFS_FS && UBIFS_FS_XATTR
+> + 	depends on UBIFS_FS_XATTR
+>   	default y
+>   	help
+>   	  Security labels provide an access control facility to support Linux
 
-Seems 00:56 me was a pit too impatient. It's up now and seems to be
-working OK.
+This is now a conflict between Linus' tree and the fscrypt tree.
 
-Sorry for the outage.
-
-cheers
+-- 
+Cheers,
+Stephen Rothwell
