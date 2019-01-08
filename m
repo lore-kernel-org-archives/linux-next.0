@@ -1,97 +1,57 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the
- drm-misc tree
-Date: Tue, 8 Jan 2019 09:37:22 +0100
-Message-ID: <20190108083722.GQ21184@phenom.ffwll.local>
-References: <20190108111230.2dd3abd9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 8 Jan 2019 20:50:19 +1100
+Message-ID: <20190108205019.63ee0e04@canb.auug.org.au>
+References: <20190108131141.730e9c4f@canb.auug.org.au>
+        <78f2ee4a-9851-2b5c-18c6-ba3f3e6bd302@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190108111230.2dd3abd9@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Alex Deucher <alexander.deucher@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/87.Na2.kJfnNg6cGqx_2SRQ"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <78f2ee4a-9851-2b5c-18c6-ba3f3e6bd302@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCBKYW4gMDgsIDIwMTkgYXQgMTE6MTI6NDFBTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
-bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwg
-dG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZfNjQKPiBhbGxtb2Rjb25maWcpIGZhaWxlZCBs
-aWtlIHRoaXM6Cj4gCj4gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vZGlzcGxheS9hbWRn
-cHVfZG0vYW1kZ3B1X2RtLmM6IEluIGZ1bmN0aW9uICdhbWRncHVfZG1fbW9kZV9jb25maWdfaW5p
-dCc6Cj4gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vZGlzcGxheS9hbWRncHVfZG0vYW1k
-Z3B1X2RtLmM6MTY5NTozMDogZXJyb3I6IHBhc3NpbmcgYXJndW1lbnQgMSBvZiAnZHJtX2F0b21p
-Y19wcml2YXRlX29ial9pbml0JyBmcm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJy
-b3I9aW5jb21wYXRpYmxlLXBvaW50ZXItdHlwZXNdCj4gICBkcm1fYXRvbWljX3ByaXZhdGVfb2Jq
-X2luaXQoJmFkZXYtPmRtLmF0b21pY19vYmosCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgXn5+fn5+fn5+fn5+fn5+fn5+fn4KPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gaW5jbHVkZS9k
-cm0vZHJtX2RwX21zdF9oZWxwZXIuaDoyNywKPiAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVy
-cy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X21vZGUuaDo0NiwKPiAgICAgICAgICAgICAgICAg
-IGZyb20gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1Lmg6NTcsCj4gICAgICAgICAg
-ICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2Rpc3BsYXkvYW1kZ3B1
-X2RtL2FtZGdwdV9kbS5jOjM0Ogo+IGluY2x1ZGUvZHJtL2RybV9hdG9taWMuaDo0Mzc6NTM6IG5v
-dGU6IGV4cGVjdGVkICdzdHJ1Y3QgZHJtX2RldmljZSAqJyBidXQgYXJndW1lbnQgaXMgb2YgdHlw
-ZSAnc3RydWN0IGRybV9wcml2YXRlX29iaiAqJwo+ICB2b2lkIGRybV9hdG9taWNfcHJpdmF0ZV9v
-YmpfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB+fn5+fn5+fn5+fn5+fn5+fn5+Xn5+Cj4gZHJpdmVycy9ncHUvZHJtL2FtZC9h
-bWRncHUvLi4vZGlzcGxheS9hbWRncHVfZG0vYW1kZ3B1X2RtLmM6MTY5Njo5OiBlcnJvcjogcGFz
-c2luZyBhcmd1bWVudCAyIG9mICdkcm1fYXRvbWljX3ByaXZhdGVfb2JqX2luaXQnIGZyb20gaW5j
-b21wYXRpYmxlIHBvaW50ZXIgdHlwZSBbLVdlcnJvcj1pbmNvbXBhdGlibGUtcG9pbnRlci10eXBl
-c10KPiAgICAgICAgICAmc3RhdGUtPmJhc2UsCj4gICAgICAgICAgXn5+fn5+fn5+fn5+Cj4gSW4g
-ZmlsZSBpbmNsdWRlZCBmcm9tIGluY2x1ZGUvZHJtL2RybV9kcF9tc3RfaGVscGVyLmg6MjcsCj4g
-ICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9t
-b2RlLmg6NDYsCj4gICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
-Z3B1L2FtZGdwdS5oOjU3LAo+ICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0v
-YW1kL2FtZGdwdS8uLi9kaXNwbGF5L2FtZGdwdV9kbS9hbWRncHVfZG0uYzozNDoKPiBpbmNsdWRl
-L2RybS9kcm1fYXRvbWljLmg6NDM4OjMwOiBub3RlOiBleHBlY3RlZCAnc3RydWN0IGRybV9wcml2
-YXRlX29iaiAqJyBidXQgYXJndW1lbnQgaXMgb2YgdHlwZSAnc3RydWN0IGRybV9wcml2YXRlX3N0
-YXRlIConCj4gICAgICAgc3RydWN0IGRybV9wcml2YXRlX29iaiAqb2JqLAo+ICAgICAgIH5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fl5+fgo+IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2Rp
-c3BsYXkvYW1kZ3B1X2RtL2FtZGdwdV9kbS5jOjE2OTc6OTogZXJyb3I6IHBhc3NpbmcgYXJndW1l
-bnQgMyBvZiAnZHJtX2F0b21pY19wcml2YXRlX29ial9pbml0JyBmcm9tIGluY29tcGF0aWJsZSBw
-b2ludGVyIHR5cGUgWy1XZXJyb3I9aW5jb21wYXRpYmxlLXBvaW50ZXItdHlwZXNdCj4gICAgICAg
-ICAgJmRtX2F0b21pY19zdGF0ZV9mdW5jcyk7Cj4gICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+
-fn5+fgo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2RybS9kcm1fZHBfbXN0X2hlbHBl
-ci5oOjI3LAo+ICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdw
-dS9hbWRncHVfbW9kZS5oOjQ2LAo+ICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9k
-cm0vYW1kL2FtZGdwdS9hbWRncHUuaDo1NywKPiAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVy
-cy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vZGlzcGxheS9hbWRncHVfZG0vYW1kZ3B1X2RtLmM6MzQ6
-Cj4gaW5jbHVkZS9kcm0vZHJtX2F0b21pYy5oOjQzOTozMjogbm90ZTogZXhwZWN0ZWQgJ3N0cnVj
-dCBkcm1fcHJpdmF0ZV9zdGF0ZSAqJyBidXQgYXJndW1lbnQgaXMgb2YgdHlwZSAnc3RydWN0IGRy
-bV9wcml2YXRlX3N0YXRlX2Z1bmNzIConCj4gICAgICAgc3RydWN0IGRybV9wcml2YXRlX3N0YXRl
-ICpzdGF0ZSwKPiAgICAgICB+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fl5+fn5+Cj4gZHJpdmVy
-cy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vZGlzcGxheS9hbWRncHVfZG0vYW1kZ3B1X2RtLmM6MTY5
-NToyOiBlcnJvcjogdG9vIGZldyBhcmd1bWVudHMgdG8gZnVuY3Rpb24gJ2RybV9hdG9taWNfcHJp
-dmF0ZV9vYmpfaW5pdCcKPiAgIGRybV9hdG9taWNfcHJpdmF0ZV9vYmpfaW5pdCgmYWRldi0+ZG0u
-YXRvbWljX29iaiwKPiAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fgo+IEluIGZpbGUgaW5j
-bHVkZWQgZnJvbSBpbmNsdWRlL2RybS9kcm1fZHBfbXN0X2hlbHBlci5oOjI3LAo+ICAgICAgICAg
-ICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfbW9kZS5oOjQ2
-LAo+ICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRn
-cHUuaDo1NywKPiAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRn
-cHUvLi4vZGlzcGxheS9hbWRncHVfZG0vYW1kZ3B1X2RtLmM6MzQ6Cj4gaW5jbHVkZS9kcm0vZHJt
-X2F0b21pYy5oOjQzNzo2OiBub3RlOiBkZWNsYXJlZCBoZXJlCj4gIHZvaWQgZHJtX2F0b21pY19w
-cml2YXRlX29ial9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4gICAgICAgXn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+Cj4gCj4gQ2F1c2VkIGJ5IGNvbW1pdAo+IAo+ICAgYjk2MmExMjA1
-MGEzICgiZHJtL2F0b21pYzogaW50ZWdyYXRlIG1vZGVzZXQgbG9jayB3aXRoIHByaXZhdGUgb2Jq
-ZWN0cyIpCj4gCj4gaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQKPiAKPiAgIGViM2RjODk3ODU5NiAo
-ImRybS9hbWQvZGlzcGxheTogVXNlIHByaXZhdGUgb2JqIGhlbHBlcnMgZm9yIGRtX2F0b21pY19z
-dGF0ZSIpCj4gCj4gZnJvbSBMaW51cycgdHJlZSAobWVyZ2VkIGR1cmluZyB0aGUgbWVyZ2Ugd2lu
-ZG93KS4KPiAKPiBJdHMgbm90IG9idmlvdXMgaG93IHRvIGZpeCB0aGlzIHVwLCBzbyBJIGhhdmUg
-dXNlZCB0aGUgZHJtLW1pc2MgdHJlZQo+IGZyb20gbmV4dC0yMDE5MDEwNyBmb3IgdG9kYXkuCgpo
-dHRwczovL2NnaXQuZnJlZWRlc2t0b3Aub3JnL2RybS10aXAvdHJlZS9maXh1cHMvZHJtLW1pc2Mt
-bmV4dC5wYXRjaD9oPXJlcmVyZS1jYWNoZQoKaXMgdGhlIGZpeHVwIHlvdSB3YW50LiBTaG91bGQg
-Z2V0IGJha2VkIGludG8gZHJtLW5leHQgYW55IG1vbWVudCwgc2luY2UKdGhlIGZpcnN0IGRybS1t
-aXNjLW5leHQgcHVsbCBpcyBhbHJlYWR5IG91dC4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpT
-b2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+--Sig_/87.Na2.kJfnNg6cGqx_2SRQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Anshuman,
+
+On Tue, 8 Jan 2019 10:24:18 +0530 Anshuman Khandual <anshuman.khandual@arm.=
+com> wrote:
+>
+> Just curious why the NUMA_NO_NODE definition did not get resolved from th=
+e local
+> numa.h which had the same ones copied over from linux/numa.h but anyways =
+the fix
+> looks okay.
+
+I assume that <numa.h> is /usr/include/numa.h (i.e. the system include
+file which is whatever the distro installed) while <linux/numa.h> comes
+out of the tools/include directory (i.e. the one we copied over from
+the kernel source).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/87.Na2.kJfnNg6cGqx_2SRQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw0clsACgkQAVBC80lX
+0Gyu+wf+Mi/Q5OCYzDZUasaeWYGUHXu/OXxjIu2y36/h5i02Ri640GLXplJJhqRL
+o2gjCMgcjaI8KMdP80XKF32axAYFmM0119rZu7C/Y4yf/J/1BsdcLGB00e6SQ36X
+aE6q9HhTjB9xVnNCvAYaoK8F9alvUc5+4vhdgQxeQfL39fw+4Fr/fcJvtj0O/+n2
+oH1V7do26aq1x014NjLjEMXmtBKq0MIV1rEPaS2PsERIuN9doIFhJVkw/pTZIqen
+powB9B2hBnWQs6X8ww0brtCSurMvt+Fp+CDQHevTpcuNDGfX+VBPkP1sEwjA+rT5
+1sndaFfn7uI5jJewhzgrD519x1RpVg==
+=sVHt
+-----END PGP SIGNATURE-----
+
+--Sig_/87.Na2.kJfnNg6cGqx_2SRQ--
