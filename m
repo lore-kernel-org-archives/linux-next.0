@@ -1,72 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 8 Jan 2019 13:11:50 +1100
-Message-ID: <20190108131141.730e9c4f@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: Tree for Jan 7
+Date: Tue, 08 Jan 2019 13:28:01 +1100
+Message-ID: <87k1jfc28e.fsf@concordia.ellerman.id.au>
+References: <20190107150609.0510def3@canb.auug.org.au> <CAMuHMdUCKaADLBrv0KLXSYHe8bR3ws7mhYr+1SkFYW15kDGo9Q@mail.gmail.com> <87va30adsg.fsf@concordia.ellerman.id.au> <87sgy4a7vi.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <87sgy4a7vi.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual <anshuman.khandual@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+Michael Ellerman <mpe@ellerman.id.au> writes:
+> Michael Ellerman <mpe@ellerman.id.au> writes:
+>> Geert Uytterhoeven <geert@linux-m68k.org> writes:
+>>> On Mon, Jan 7, 2019 at 5:08 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> Status of my local build tests will be at
+>>>> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+>>>> advice about cross compilers/configs that work, we are always open to add
+>>>> more builds.
+>>>
+>>>     Proxy Error
+>>>     The proxy server received an invalid response from an upstream server.
+>>>     The proxy server could not handle the request GET /kisskb/.
+>>>
+>>>     Reason: Error reading from remote server
+>>>
+>>>     Apache/2.4.37 (Debian) Server at kisskb.ellerman.id.au Port 80
+>>>
+>>> Oops...
+>>
+>> Erk.
+>>
+>> Seems postgres is unhappy, database is corrupt.
+>>
+>> I'm restoring from a backup but it seems to be taking a long time, I may
+>> not get it finished tonight.
+>
+> So I finally got the backup to restore.
+>
+> Then I restarted everything, and as soon as the first set of new results
+> came in the DB appears to have wedged again.
 
-After merging the akpm-current tree, today's linux-next build (native
-perf) failed like this:
+Seems 00:56 me was a pit too impatient. It's up now and seems to be
+working OK.
 
-bench/numa.c: In function 'bind_to_node':
-bench/numa.c:301:21: error: 'NUMA_NO_NODE' undeclared (first use in this function); did you mean 'NUMA_NUM_NODES'?
-  if (target_node == NUMA_NO_NODE) {
-                     ^~~~~~~~~~~~
-                     NUMA_NUM_NODES
-bench/numa.c:301:21: note: each undeclared identifier is reported only once for each function it appears in
-bench/numa.c: In function 'bind_to_memnode':
-bench/numa.c:342:14: error: 'NUMA_NO_NODE' undeclared (first use in this function); did you mean 'NUMA_NUM_NODES'?
-  if (node == NUMA_NO_NODE)
-              ^~~~~~~~~~~~
-              NUMA_NUM_NODES
-bench/numa.c: In function 'init_thread_data':
-bench/numa.c:1366:19: error: 'NUMA_NO_NODE' undeclared (first use in this function); did you mean 'NUMA_NUM_NODES'?
-   td->bind_node = NUMA_NO_NODE;
-                   ^~~~~~~~~~~~
-                   NUMA_NUM_NODES
+Sorry for the outage.
 
-Caused by commit
-
-  3856193d8452 ("tools/: replace open encodings for NUMA_NO_NODE")
-
-[BTW, I did not write that patch, just added fixes last time]
-[BTW 2, there are lots of cc's that probably no longer apply since this
-was split form the previous patch]
-
-I have applied the following fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 8 Jan 2019 13:08:32 +1100
-Subject: [PATCH] tools/: fix for replace open encodings for NUMA_NO_NODE
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- tools/perf/bench/numa.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-index e0ad5f1de226..98ad783efc69 100644
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -34,6 +34,7 @@
- #include <sys/types.h>
- #include <linux/kernel.h>
- #include <linux/time64.h>
-+#include <linux/numa.h>
- 
- #include <numa.h>
- #include <numaif.h>
--- 
-2.20.1
-
--- 
-Cheers,
-Stephen Rothwell
+cheers
