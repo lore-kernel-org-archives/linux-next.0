@@ -1,26 +1,107 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
-Date: Tue, 8 Jan 2019 14:27:21 +0100
-Message-ID: <CAK8P3a35HQQCVOQORjmuJLdO3ieiZFjSCF+EwJHRkz_727cFsA@mail.gmail.com>
-References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-10-okaya@kernel.org>
+From: "Kazlauskas, Nicholas" <Nicholas.Kazlauskas@amd.com>
+Subject: Re: linux-next: build failure after merge of the
+ drm-misc tree
+Date: Tue, 8 Jan 2019 14:01:45 +0000
+Message-ID: <a0c98733-09fb-f589-7aa5-a4ec608de332@amd.com>
+References: <20190108111230.2dd3abd9@canb.auug.org.au>
+ <20190108083722.GQ21184@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190105100606.6673-10-okaya@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sinan Kaya <okaya@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Shawn Lin <shawn.lin@rock-chips.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Cercueil <paul@crapouillou.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Faiz Abbas <faiz_abbas@ti.com>, Chunyan Zhang <chunyan.zhang@unisoc.com>, Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Ludovic Barre <ludovic.barre@st.com>, Alex Smith <alex.smith@imgtec.com>, Chris Brandt <chris.brandt@renesas.com>, "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20190108083722.GQ21184@phenom.ffwll.local>
+Content-Language: en-US
+Content-ID: <63C6C9B05D5C8248B2A8C695E67E60F1@namprd12.prod.outlook.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
->
-> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
-> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
->
-> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+T24gMS84LzE5IDM6MzcgQU0sIERhbmllbCBWZXR0ZXIgd3JvdGU6DQo+IE9uIFR1ZSwgSmFuIDA4
+LCAyMDE5IGF0IDExOjEyOjQxQU0gKzExMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+PiBI
+aSBhbGwsDQo+Pg0KPj4gQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBs
+aW51eC1uZXh0IGJ1aWxkICh4ODZfNjQNCj4+IGFsbG1vZGNvbmZpZykgZmFpbGVkIGxpa2UgdGhp
+czoNCj4+DQo+PiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS8uLi9kaXNwbGF5L2FtZGdwdV9k
+bS9hbWRncHVfZG0uYzogSW4gZnVuY3Rpb24gJ2FtZGdwdV9kbV9tb2RlX2NvbmZpZ19pbml0JzoN
+Cj4+IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdw
+dV9kbS5jOjE2OTU6MzA6IGVycm9yOiBwYXNzaW5nIGFyZ3VtZW50IDEgb2YgJ2RybV9hdG9taWNf
+cHJpdmF0ZV9vYmpfaW5pdCcgZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRlciB0eXBlIFstV2Vycm9y
+PWluY29tcGF0aWJsZS1wb2ludGVyLXR5cGVzXQ0KPj4gICAgZHJtX2F0b21pY19wcml2YXRlX29i
+al9pbml0KCZhZGV2LT5kbS5hdG9taWNfb2JqLA0KPj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+DQo+PiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gaW5j
+bHVkZS9kcm0vZHJtX2RwX21zdF9oZWxwZXIuaDoyNywNCj4+ICAgICAgICAgICAgICAgICAgIGZy
+b20gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X21vZGUuaDo0NiwNCj4+ICAgICAg
+ICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1Lmg6NTcs
+DQo+PiAgICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4u
+L2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdwdV9kbS5jOjM0Og0KPj4gaW5jbHVkZS9kcm0vZHJtX2F0
+b21pYy5oOjQzNzo1Mzogbm90ZTogZXhwZWN0ZWQgJ3N0cnVjdCBkcm1fZGV2aWNlIConIGJ1dCBh
+cmd1bWVudCBpcyBvZiB0eXBlICdzdHJ1Y3QgZHJtX3ByaXZhdGVfb2JqIConDQo+PiAgIHZvaWQg
+ZHJtX2F0b21pY19wcml2YXRlX29ial9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsDQo+PiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH5+fn5+fn5+fn5+fn5+fn5+fn5efn4N
+Cj4+IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdw
+dV9kbS5jOjE2OTY6OTogZXJyb3I6IHBhc3NpbmcgYXJndW1lbnQgMiBvZiAnZHJtX2F0b21pY19w
+cml2YXRlX29ial9pbml0JyBmcm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJyb3I9
+aW5jb21wYXRpYmxlLXBvaW50ZXItdHlwZXNdDQo+PiAgICAgICAgICAgJnN0YXRlLT5iYXNlLA0K
+Pj4gICAgICAgICAgIF5+fn5+fn5+fn5+fg0KPj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGluY2x1
+ZGUvZHJtL2RybV9kcF9tc3RfaGVscGVyLmg6MjcsDQo+PiAgICAgICAgICAgICAgICAgICBmcm9t
+IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9tb2RlLmg6NDYsDQo+PiAgICAgICAg
+ICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdS5oOjU3LA0K
+Pj4gICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS8uLi9k
+aXNwbGF5L2FtZGdwdV9kbS9hbWRncHVfZG0uYzozNDoNCj4+IGluY2x1ZGUvZHJtL2RybV9hdG9t
+aWMuaDo0Mzg6MzA6IG5vdGU6IGV4cGVjdGVkICdzdHJ1Y3QgZHJtX3ByaXZhdGVfb2JqIConIGJ1
+dCBhcmd1bWVudCBpcyBvZiB0eXBlICdzdHJ1Y3QgZHJtX3ByaXZhdGVfc3RhdGUgKicNCj4+ICAg
+ICAgICBzdHJ1Y3QgZHJtX3ByaXZhdGVfb2JqICpvYmosDQo+PiAgICAgICAgfn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+Xn5+DQo+PiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS8uLi9kaXNwbGF5
+L2FtZGdwdV9kbS9hbWRncHVfZG0uYzoxNjk3Ojk6IGVycm9yOiBwYXNzaW5nIGFyZ3VtZW50IDMg
+b2YgJ2RybV9hdG9taWNfcHJpdmF0ZV9vYmpfaW5pdCcgZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRl
+ciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJsZS1wb2ludGVyLXR5cGVzXQ0KPj4gICAgICAgICAg
+ICZkbV9hdG9taWNfc3RhdGVfZnVuY3MpOw0KPj4gICAgICAgICAgIF5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn4NCj4+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2RybS9kcm1fZHBfbXN0X2hl
+bHBlci5oOjI3LA0KPj4gICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vYW1k
+L2FtZGdwdS9hbWRncHVfbW9kZS5oOjQ2LA0KPj4gICAgICAgICAgICAgICAgICAgZnJvbSBkcml2
+ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHUuaDo1NywNCj4+ICAgICAgICAgICAgICAgICAg
+IGZyb20gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vZGlzcGxheS9hbWRncHVfZG0vYW1k
+Z3B1X2RtLmM6MzQ6DQo+PiBpbmNsdWRlL2RybS9kcm1fYXRvbWljLmg6NDM5OjMyOiBub3RlOiBl
+eHBlY3RlZCAnc3RydWN0IGRybV9wcml2YXRlX3N0YXRlIConIGJ1dCBhcmd1bWVudCBpcyBvZiB0
+eXBlICdzdHJ1Y3QgZHJtX3ByaXZhdGVfc3RhdGVfZnVuY3MgKicNCj4+ICAgICAgICBzdHJ1Y3Qg
+ZHJtX3ByaXZhdGVfc3RhdGUgKnN0YXRlLA0KPj4gICAgICAgIH5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+Xn5+fn4NCj4+IGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2Rpc3BsYXkvYW1k
+Z3B1X2RtL2FtZGdwdV9kbS5jOjE2OTU6MjogZXJyb3I6IHRvbyBmZXcgYXJndW1lbnRzIHRvIGZ1
+bmN0aW9uICdkcm1fYXRvbWljX3ByaXZhdGVfb2JqX2luaXQnDQo+PiAgICBkcm1fYXRvbWljX3By
+aXZhdGVfb2JqX2luaXQoJmFkZXYtPmRtLmF0b21pY19vYmosDQo+PiAgICBefn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn4NCj4+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2RybS9kcm1f
+ZHBfbXN0X2hlbHBlci5oOjI3LA0KPj4gICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dw
+dS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfbW9kZS5oOjQ2LA0KPj4gICAgICAgICAgICAgICAgICAg
+ZnJvbSBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHUuaDo1NywNCj4+ICAgICAgICAg
+ICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vZGlzcGxheS9hbWRn
+cHVfZG0vYW1kZ3B1X2RtLmM6MzQ6DQo+PiBpbmNsdWRlL2RybS9kcm1fYXRvbWljLmg6NDM3OjY6
+IG5vdGU6IGRlY2xhcmVkIGhlcmUNCj4+ICAgdm9pZCBkcm1fYXRvbWljX3ByaXZhdGVfb2JqX2lu
+aXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwNCj4+ICAgICAgICBefn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn4NCj4+DQo+PiBDYXVzZWQgYnkgY29tbWl0DQo+Pg0KPj4gICAgYjk2MmExMjA1MGEz
+ICgiZHJtL2F0b21pYzogaW50ZWdyYXRlIG1vZGVzZXQgbG9jayB3aXRoIHByaXZhdGUgb2JqZWN0
+cyIpDQo+Pg0KPj4gaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQNCj4+DQo+PiAgICBlYjNkYzg5Nzg1
+OTYgKCJkcm0vYW1kL2Rpc3BsYXk6IFVzZSBwcml2YXRlIG9iaiBoZWxwZXJzIGZvciBkbV9hdG9t
+aWNfc3RhdGUiKQ0KPj4NCj4+IGZyb20gTGludXMnIHRyZWUgKG1lcmdlZCBkdXJpbmcgdGhlIG1l
+cmdlIHdpbmRvdykuDQo+Pg0KPj4gSXRzIG5vdCBvYnZpb3VzIGhvdyB0byBmaXggdGhpcyB1cCwg
+c28gSSBoYXZlIHVzZWQgdGhlIGRybS1taXNjIHRyZWUNCj4+IGZyb20gbmV4dC0yMDE5MDEwNyBm
+b3IgdG9kYXkuDQo+IA0KPiBodHRwczovL2NnaXQuZnJlZWRlc2t0b3Aub3JnL2RybS10aXAvdHJl
+ZS9maXh1cHMvZHJtLW1pc2MtbmV4dC5wYXRjaD9oPXJlcmVyZS1jYWNoZQ0KPiANCj4gaXMgdGhl
+IGZpeHVwIHlvdSB3YW50LiBTaG91bGQgZ2V0IGJha2VkIGludG8gZHJtLW5leHQgYW55IG1vbWVu
+dCwgc2luY2UNCj4gdGhlIGZpcnN0IGRybS1taXNjLW5leHQgcHVsbCBpcyBhbHJlYWR5IG91dC4N
+Cj4gLURhbmllbA0KPg0KUmV2aWV3ZWQtYnk6IE5pY2hvbGFzIEthemxhdXNrYXMgPG5pY2hvbGFz
+LmthemxhdXNrYXNAYW1kLmNvbT4NCg0KVGhhbmtzLCB0aGF0IGxpbmVzIHVwIHdpdGggdGhlIG90
+aGVyIGRyaXZlciBmaXhlcyB0aGF0IHBhdGNoIGFkZGVkLg0KDQpJIG1pc3NlZCB0aGF0IHNlcmll
+cyB3aGVuIEkgd2FzIGRldmVsb3BpbmcgdGhlIHByaXZhdGUgc3RhdGUgb2JqZWN0IA0KcGF0Y2gg
+Zm9yIGFtZGdwdS4NCg0KSSdsbCBzdGlsbCBuZWVkIHRvIHJlbW92ZSBvdXIgZXh0cmEgbG9jayBz
+aW5jZSB0aGUgb2JqZWN0cyBub3cgaGF2ZSANCnRoZWlyIG93biwgYnV0IHRoYXQgY2FuIGNvbWUg
+bGF0ZXIgaW4gYW5vdGhlciBub24tZml4dXAgcGF0Y2guDQoNCk5pY2hvbGFzIEthemxhdXNrYXMN
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdm
+eCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
