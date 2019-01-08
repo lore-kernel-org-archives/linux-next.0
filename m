@@ -1,57 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 8 Jan 2019 20:50:19 +1100
-Message-ID: <20190108205019.63ee0e04@canb.auug.org.au>
-References: <20190108131141.730e9c4f@canb.auug.org.au>
-        <78f2ee4a-9851-2b5c-18c6-ba3f3e6bd302@arm.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v6 07/11] drivers: thermal: int3406_thermal: Make PCI
+ dependency explicit
+Date: Tue, 08 Jan 2019 19:58:05 +0800
+Message-ID: <1546948685.2072.95.camel@intel.com>
+References: <20190105100606.6673-1-okaya@kernel.org>
+         <20190105100606.6673-8-okaya@kernel.org>
+         <CAJZ5v0gst1ZDgG-uP9GUUB1ziPnqhfArio3um=wCQjfbeH2_iw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/87.Na2.kJfnNg6cGqx_2SRQ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <78f2ee4a-9851-2b5c-18c6-ba3f3e6bd302@arm.com>
+In-Reply-To: <CAJZ5v0gst1ZDgG-uP9GUUB1ziPnqhfArio3um=wCQjfbeH2_iw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Sinan Kaya <okaya@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/87.Na2.kJfnNg6cGqx_2SRQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 一, 2019-01-07 at 12:19 +0100, Rafael J. Wysocki wrote:
+> On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
+> > 
+> > 
+> > After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built
+> > without
+> > CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> > satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> > specified directly. Need CONFIG_PCI to be set in order to be able
+> > to use
+> > this driver.
+> > 
+> > Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without
+> > CONFIG_PCI set")
+> > Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> > ---
+> >  drivers/thermal/intel/int340x_thermal/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/thermal/intel/int340x_thermal/Kconfig
+> > b/drivers/thermal/intel/int340x_thermal/Kconfig
+> > index 0582bd12a239..fba1976d5f8d 100644
+> > --- a/drivers/thermal/intel/int340x_thermal/Kconfig
+> > +++ b/drivers/thermal/intel/int340x_thermal/Kconfig
+> > @@ -31,7 +31,7 @@ if INT340X_THERMAL
+> > 
+> >  config INT3406_THERMAL
+> >         tristate "ACPI INT3406 display thermal driver"
+> > -       depends on ACPI_VIDEO
+> > +       depends on ACPI_VIDEO && PCI
+> >         help
+> >           The display thermal device represents the LED/LCD display
+> > panel
+> >           that may or may not include touch support. The main
+> > function of
+> > --
+> Rui, any objections here?  And for the [11/11]?
 
-Hi Anshuman,
+CONFIG_INT3406_THERMAL depends on CONFIG_INT340X_THERMAL, so IMO, patch
+11 is sufficient.
 
-On Tue, 8 Jan 2019 10:24:18 +0530 Anshuman Khandual <anshuman.khandual@arm.=
-com> wrote:
->
-> Just curious why the NUMA_NO_NODE definition did not get resolved from th=
-e local
-> numa.h which had the same ones copied over from linux/numa.h but anyways =
-the fix
-> looks okay.
-
-I assume that <numa.h> is /usr/include/numa.h (i.e. the system include
-file which is whatever the distro installed) while <linux/numa.h> comes
-out of the tools/include directory (i.e. the one we copied over from
-the kernel source).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/87.Na2.kJfnNg6cGqx_2SRQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw0clsACgkQAVBC80lX
-0Gyu+wf+Mi/Q5OCYzDZUasaeWYGUHXu/OXxjIu2y36/h5i02Ri640GLXplJJhqRL
-o2gjCMgcjaI8KMdP80XKF32axAYFmM0119rZu7C/Y4yf/J/1BsdcLGB00e6SQ36X
-aE6q9HhTjB9xVnNCvAYaoK8F9alvUc5+4vhdgQxeQfL39fw+4Fr/fcJvtj0O/+n2
-oH1V7do26aq1x014NjLjEMXmtBKq0MIV1rEPaS2PsERIuN9doIFhJVkw/pTZIqen
-powB9B2hBnWQs6X8ww0brtCSurMvt+Fp+CDQHevTpcuNDGfX+VBPkP1sEwjA+rT5
-1sndaFfn7uI5jJewhzgrD519x1RpVg==
-=sVHt
------END PGP SIGNATURE-----
-
---Sig_/87.Na2.kJfnNg6cGqx_2SRQ--
+thanks,
+rui
