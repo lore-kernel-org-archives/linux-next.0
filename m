@@ -1,54 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Wed, 9 Jan 2019 11:29:39 +1100
-Message-ID: <20190109112939.04ca3fee@canb.auug.org.au>
-References: <20190108111230.2dd3abd9@canb.auug.org.au>
-        <20190108083722.GQ21184@phenom.ffwll.local>
+From: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
+Date: Wed, 9 Jan 2019 02:10:08 +0000
+Message-ID: <532b0481985641138516730fe01290d9@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <20190105100606.6673-1-okaya@kernel.org>
+ <20190105100606.6673-10-okaya@kernel.org>
+ <CAJZ5v0gXM3d0uuaQPyeafVS3S1tNbo0gY5TMskpQptNGvmVKzA@mail.gmail.com>
+ <39fa9438-8928-5a1b-2a86-617df39e4c73@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O0DKDpXUcy50pkSujkZIdZB"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190108083722.GQ21184@phenom.ffwll.local>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Sinan Kaya <okaya@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Shawn Lin <shawn.lin@rock-chips.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Cercueil <paul@crapouillou.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Faiz Abbas <faiz_abbas@ti.com>, Chunyan Zhang <chunyan.zhang@unisoc.com>, Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Ludovic Barre <ludovic.barre@st.com>, Arnd Bergmann <arnd@arndb.de>, Alex Smith <alex.smith@imgtec.com>, Chris Brandt <chris.brandt@renesas.com>, "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Shah Nehal-Bakulchandra <Nehal-bakulchan>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/O0DKDpXUcy50pkSujkZIdZB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Daniel,
-
-On Tue, 8 Jan 2019 09:37:22 +0100 Daniel Vetter <daniel@ffwll.ch> wrote:
+On 2019/1/7 20:43, Adrian Hunter wrote:
+> On 7/01/19 1:17 PM, Rafael J. Wysocki wrote:
+>> On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
+>>> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+>>> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+>>> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+>>> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
+>>> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
+>>>
+>>> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>>> ---
+>>>  drivers/mmc/host/Kconfig | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>> index e26b8145efb3..1b9401fe94c0 100644
+>>> --- a/drivers/mmc/host/Kconfig
+>>> +++ b/drivers/mmc/host/Kconfig
+>>> @@ -116,7 +116,7 @@ config MMC_RICOH_MMC
+>>>
+>>>  config MMC_SDHCI_ACPI
+>>>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+>>> -       depends on MMC_SDHCI && ACPI
+>>> +       depends on MMC_SDHCI && ACPI && PCI
+>>>         select IOSF_MBI if X86
+>>>         help
+>>>           This selects support for ACPI enumerated SDHCI controllers,
+>>> --
+>> Any objections against this one from anyone?
+> + QCOM and AMD contributors
 >
->=20
-> https://cgit.freedesktop.org/drm-tip/tree/fixups/drm-misc-next.patch?h=3D=
-rerere-cache
->=20
-> is the fixup you want. Should get baked into drm-next any moment, since
-> the first drm-misc-next pull is already out.
+No issue with QCOM.
 
-I added that resolution for today, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/O0DKDpXUcy50pkSujkZIdZB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw1QHMACgkQAVBC80lX
-0GzjuggAmCeKS9w8FjUSC0lVPqRjROMOOYbZlp5cdxOdeEpUr5mZGuyyeMNWC9J+
-SH3LxD5gtaywf5jBabVyzZcB067FpsaiDApAc3HzpK2JB84mjsalKUG5Dq4xkV+j
-XmB6RPDe3lCxyPt0p7ScAXJrvF07KHnIMmnUKAqDvCsqms7nyXWs+FNvbC1AOt0o
-Wagdj6H9K/iPIpI/cdmYIP1La51vYWEWWo7kwTObtUm49c9/w5k1uMXXsqd0UmK1
-vsTTJLr66iLV5fNZ5+uKDARGeiFuNcCIbwTdY0E/tYZbU+XCtyzMi1doxoU2JaRj
-z+8GbII70zEnV/Shiu0/z3bI/X6mGg==
-=KUKa
------END PGP SIGNATURE-----
-
---Sig_/O0DKDpXUcy50pkSujkZIdZB--
+Cheers
+Dongsheng
