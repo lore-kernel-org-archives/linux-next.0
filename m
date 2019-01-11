@@ -1,17 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
-Date: Fri, 11 Jan 2019 13:51:00 +1100
-Message-ID: <20190111135100.487a1896@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the security
+ tree
+Date: Fri, 11 Jan 2019 13:55:24 +1100
+Message-ID: <20190111135524.5e3cceda@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/37tx.=JDpnn5.I9hB2NQekn"; protocol="application/pgp-signature"
+ boundary="Sig_/DO8h4dLRcQhDbH0nPFNPl+N"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Christopherson <sean.j.christopherson@intel.com>, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, James Morris <jmorris@namei.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <keescook@chromium.org>, Kent Overstreet <kent.overstreet@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/37tx.=JDpnn5.I9hB2NQekn
+--Sig_/DO8h4dLRcQhDbH0nPFNPl+N
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,17 +20,15 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  mm/rmap.c
+  security/selinux/ss/services.c
 
 between commit:
 
-  ba422731316d ("mm/mmu_notifier: mm/rmap.c: Fix a mmu_notifier range bug i=
-n try_to_unmap_one")
+  3d252529480c ("SELinux: Remove unused selinux_is_enabled")
 
-from Linus' tree and commit:
+from the security tree and commit:
 
-  f955d5dda846 ("mm/mmu_notifier: contextual information for event triggeri=
-ng invalidation v2")
+  dd4c293d6d4d ("selinux: convert to kvmalloc")
 
 from the akpm-current tree.
 
@@ -44,39 +43,34 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc mm/rmap.c
-index 0454ecc29537,62e47f3462cf..000000000000
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@@ -1371,9 -1372,10 +1372,10 @@@ static bool try_to_unmap_one(struct pag
-  	 * Note that the page can not be free in this function as call of
-  	 * try_to_unmap() must hold a reference on the page.
-  	 */
- -	mmu_notifier_range_init(&range, vma->vm_mm, vma->vm_start,
- -				min(vma->vm_end, vma->vm_start +
- +	mmu_notifier_range_init(&range, vma->vm_mm, address,
- +				min(vma->vm_end, address +
-- 				    (PAGE_SIZE << compound_order(page))));
-+ 				    (PAGE_SIZE << compound_order(page))),
-+ 				MMU_NOTIFY_CLEAR);
-  	if (PageHuge(page)) {
-  		/*
-  		 * If sharing is possible, start and end will be adjusted
+diff --cc security/selinux/ss/services.c
+index d6e7b4856d93,fac47b306b6b..000000000000
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@@ -49,7 -49,7 +49,6 @@@
+  #include <linux/sched.h>
+  #include <linux/audit.h>
+  #include <linux/mutex.h>
+- #include <linux/flex_array.h>
+ -#include <linux/selinux.h>
+  #include <linux/vmalloc.h>
+  #include <net/netlabel.h>
+ =20
 
---Sig_/37tx.=JDpnn5.I9hB2NQekn
+--Sig_/DO8h4dLRcQhDbH0nPFNPl+N
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw4BJQACgkQAVBC80lX
-0GyPlgf/Yh8zBzAujNlUYDUeZ4bR7J1ZUTjd+Oyllguhq+Hb3ABbGXNvfc4EGY0W
-aGVgPXLu7p4urRpYo6PITIQQY6YwUjNXWMWdNekXhmpr5i4UKWo+d4l/mSDfVuB+
-yu2s47/XUml1oXvtMgasSTmL1svOVWYn+2m2L0jO05l78GYUGZ4UmW3O6d6l572f
-ReGhuKHYthtaFEW4pX9gh55gDdTlt6qy76nVcDCWXHn0hn5a3HTC9JX9w5FogLM0
-Sf3MVG4dLbGJ1TUDNpcntX6ojAHy4CI52/7PZFSIaOnIHwO66JISXk57pL7mEsV0
-AaWfQuUca9sB2Z9qM0GwL+K2NjpiJg==
-=yDvH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw4BZwACgkQAVBC80lX
+0GxBJQf+LKof6Bjuuqe7LdWNnrMSkUtYVxLMnM0UvQzaQws7+9Y7+/4JP15++9YK
+wEJ2otXV1/nO64rzXPMggLbqKw7rmV/37ScBec0QV4H2bWDDdbQygyx2KVgxbo92
+ES7p4DxOmwRa1SgStbUq4rz9OozH3+YhnEh1XD8gmL09NKYlWvnrNNC11qAvZFhN
+zvG/wxUMZz3ZO/NQOfjFKnBj4HgKN0cCtjV2SD8lZyB+RcJBcWAB2ZDRnztqwtkM
+tZlP/Ja17EY4mFGRUAlwuQi9YKE10pHXQSfaxmRynz528gCz/xaACSWTA3Orcx/9
+oWK70WlCkH7itIRpH/OEvGdQdjGtGw==
+=nTsu
 -----END PGP SIGNATURE-----
 
---Sig_/37tx.=JDpnn5.I9hB2NQekn--
+--Sig_/DO8h4dLRcQhDbH0nPFNPl+N--
