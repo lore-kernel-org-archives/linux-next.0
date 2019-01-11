@@ -1,46 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net tree
-Date: Fri, 11 Jan 2019 14:48:18 +1100
-Message-ID: <20190111144818.0fe8bde2@canb.auug.org.au>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
+Date: Fri, 11 Jan 2019 07:10:21 +0100
+Message-ID: <685063fd-a1c2-954a-db1e-b1339ad90e15@gmail.com>
+References: <20190111144818.0fe8bde2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YmCBCE5/VNM7QcL2feSRQ2n"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190111144818.0fe8bde2@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Frank Wunderlich <frank-w@public-files.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Frank Wunderlich <frank-w@public-files.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YmCBCE5/VNM7QcL2feSRQ2n
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11.01.2019 04:48, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   b19bce0335e2 ("net: ethernet: mediatek: fix warning in phy_start_aneg")
+> 
+> is missing a Signed-off-by from its author.
+> 
+I suggested the changes and Frank prepared the patch with me as author.
+Therefore:
 
-Hi all,
-
-Commit
-
-  b19bce0335e2 ("net: ethernet: mediatek: fix warning in phy_start_aneg")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YmCBCE5/VNM7QcL2feSRQ2n
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw4EgIACgkQAVBC80lX
-0GxDOQf8CS4+7j4pDYbSDumoahs2ThLSJpJEbpzfGOImIcNHTiA7ch6xw7bgUktK
-da74siHJZYRRt/U3nvQR5cW3c8fA1RTDCqjoPhvu/XaMYzuS4dcJwb2Qiou5fuqa
-4GwNlk+roz9fDeFZPP+aiay2POvAZlIQNm4UiluNTURVqa1Z64Gy5rLgIr5jGak1
-GW7xGuQhPTzqxkbE9ayXVl6Kx3QTsJRS8l9hCgo6xKy5Z9HXbHKvvGDXIwVCU8vm
-Hk24KX2jsJTb/D8kso9AMzMd2iJ8AAoj6fnLup5TA2Oae2y3o82dlKtcggh3dyAm
-49KUNjJ8lQsNB8hFIeSFryvClz0QUg==
-=F1i+
------END PGP SIGNATURE-----
-
---Sig_/YmCBCE5/VNM7QcL2feSRQ2n--
+Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
