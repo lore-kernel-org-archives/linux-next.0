@@ -1,84 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with the scsi-fixes tree
-Date: Mon, 14 Jan 2019 13:52:55 +1100
-Message-ID: <20190114135255.1afee399@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net tree
+Date: Mon, 14 Jan 2019 15:15:55 +1100
+Message-ID: <20190114151555.31c85f81@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LWLreKvBQ/Z_uIl+eC/KW09"; protocol="application/pgp-signature"
+ boundary="Sig_/yf/8_zO68f+jchMjI852Q7E"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Luo Jiaxing <luojiaxing@huawei.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Taehee Yoo <ap420073@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/LWLreKvBQ/Z_uIl+eC/KW09
+--Sig_/yf/8_zO68f+jchMjI852Q7E
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the scsi tree got a conflict in:
+After merging the net tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-  drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+ld: warning: orphan section `.bpfilter_umh' from `net/bpfilter/bpfilter_umh=
+_blob.o' being placed in section `.bpfilter_umh'
 
-between commit:
+Introduced by commit
 
-  7bb25a89aad2 ("scsi: hisi_sas: Set protection parameters prior to adding =
-SCSI host")
-
-from the scsi-fixes tree and commit:
-
-  ef63464bcf8f ("scsi: hisi_sas: Create root and device debugfs directories=
-")
-
-from the scsi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  61fbf5933d42 ("net: bpfilter: restart bpfilter_umh when error occurred")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index c92b3822c408,b780b5269f0f..000000000000
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@@ -2507,12 -2672,9 +2672,15 @@@ hisi_sas_v3_probe(struct pci_dev *pdev
-  		sha->sas_port[i] =3D &hisi_hba->port[i].sas_port;
-  	}
- =20
- +	if (hisi_hba->prot_mask) {
- +		dev_info(dev, "Registering for DIF/DIX prot_mask=3D0x%x\n",
- +			 prot_mask);
- +		scsi_host_set_prot(hisi_hba->shost, prot_mask);
- +	}
- +
-+ 	if (hisi_sas_debugfs_enable)
-+ 		hisi_sas_debugfs_init(hisi_hba);
-+=20
-  	rc =3D scsi_add_host(shost, dev);
-  	if (rc)
-  		goto err_out_ha;
-
---Sig_/LWLreKvBQ/Z_uIl+eC/KW09
+--Sig_/yf/8_zO68f+jchMjI852Q7E
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw7+YcACgkQAVBC80lX
-0Gz7XwgAikKMCOIYC8KxZCFWjC5hvyYO9ZEdx+eJ0vw/WSDCCZeOMNvCVjA861pI
-IHkWyIYcDrvZq/yGeTdm7TZh2gdw+j/dVbG5i/r11rdNeSn/07XK0IJVqGWjsbMc
-r2KwsIEpmN4gXJg4GwgRzjnFtp60qJAi5ugt3NWxR9KT+OT+xS7IjAKhRoEcojah
-CPmRdsC+h58LzNffAsrWGdS+ENE8F+lGifUJReomGcAvs7s2fJyoqMo5GM3xdbEx
-TF0G8JjtWFDoSd03Du+3Tkesj9EHAJ9ARf2kb8OIHSHQv2DX5dfihIlp1ACbNu+l
-aHBetYpFHuRZt/v+boQjW96uya1hKw==
-=lq9r
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw8DPsACgkQAVBC80lX
+0GxZZAf+LKIiJM5K2/Z7NO8P6PCxpZoyEltYlQpGJKl00rc5DVktCV1mvgrYE0zQ
+qfNeQcjLYilRLq5ZCNWs0eNRDRkJTLeC5iYDKBUTQHfpw9UddDxtKRaUMf5yZ1G7
+N084G0Rq+PZ86B5Km7mZqFVjXcbSEIktwQPnsxTktoeAAs9KJXZhdjyBFZRkb2IQ
+YxswZXqczM/xNx+eYhclAeFi7Y7sxeHlPPKEz2ppobmg3brl/LRxKihaaYy8JrQo
+1EIwu+sJ3+SvsJEFtbyb3+xHY9QzhzHWGXyE9nzJL9Eaje3FU1lM6z+EiX3CCiRV
+yvT7dkJF5CWg6idv61IPMDP25qiqxQ==
+=ZJU/
 -----END PGP SIGNATURE-----
 
---Sig_/LWLreKvBQ/Z_uIl+eC/KW09--
+--Sig_/yf/8_zO68f+jchMjI852Q7E--
