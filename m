@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with Linus' tree
-Date: Mon, 14 Jan 2019 13:48:06 +1100
-Message-ID: <20190114134726.335c1da6@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the scsi-fixes tree
+Date: Mon, 14 Jan 2019 13:52:55 +1100
+Message-ID: <20190114135255.1afee399@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bv4Mk9JDXiR+2z=o/_+Ephy"; protocol="application/pgp-signature"
+ boundary="Sig_/LWLreKvBQ/Z_uIl+eC/KW09"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Christoph Hellwig <hch@lst.de>, Ching Huang <ching2048@areca.com.tw>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Luo Jiaxing <luojiaxing@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/bv4Mk9JDXiR+2z=o/_+Ephy
+--Sig_/LWLreKvBQ/Z_uIl+eC/KW09
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,16 +19,17 @@ Hi all,
 
 Today's linux-next merge of the scsi tree got a conflict in:
 
-  drivers/scsi/arcmsr/arcmsr_hba.c
+  drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 
 between commit:
 
-  750afb08ca71 ("cross-tree: phase out dma_zalloc_coherent()")
+  7bb25a89aad2 ("scsi: hisi_sas: Set protection parameters prior to adding =
+SCSI host")
 
-from Linus' tree and commit:
+from the scsi-fixes tree and commit:
 
-  381d66da7212 ("scsi: arcmsr: Rename acb structure member roundup_ccbsize =
-to ioqueue_size")
+  ef63464bcf8f ("scsi: hisi_sas: Create root and device debugfs directories=
+")
 
 from the scsi tree.
 
@@ -43,77 +44,41 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/scsi/arcmsr/arcmsr_hba.c
-index 57c6fa388bf6,9f85d5abbb0c..000000000000
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@@ -585,12 -641,9 +641,11 @@@ static bool arcmsr_alloc_io_queue(struc
+diff --cc drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index c92b3822c408,b780b5269f0f..000000000000
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@@ -2507,12 -2672,9 +2672,15 @@@ hisi_sas_v3_probe(struct pci_dev *pdev
+  		sha->sas_port[i] =3D &hisi_hba->port[i].sas_port;
+  	}
  =20
-  	switch (acb->adapter_type) {
-  	case ACB_ADAPTER_TYPE_B: {
-- 		struct MessageUnit_B *reg;
-- 		acb->roundup_ccbsize =3D roundup(sizeof(struct MessageUnit_B), 32);
-+ 		acb->ioqueue_size =3D roundup(sizeof(struct MessageUnit_B), 32);
- -		dma_coherent =3D dma_zalloc_coherent(&pdev->dev, acb->ioqueue_size,
- -			&dma_coherent_handle, GFP_KERNEL);
- +		dma_coherent =3D dma_alloc_coherent(&pdev->dev,
-- 						  acb->roundup_ccbsize,
-++						  acb->ioqueue_size,
- +						  &dma_coherent_handle,
- +						  GFP_KERNEL);
-  		if (!dma_coherent) {
-  			pr_notice("arcmsr%d: DMA allocation failed\n", acb->host->host_no);
-  			return false;
-@@@ -616,13 -655,9 +657,11 @@@
-  		}
-  		break;
-  	case ACB_ADAPTER_TYPE_D: {
-- 		struct MessageUnit_D *reg;
--=20
-- 		acb->roundup_ccbsize =3D roundup(sizeof(struct MessageUnit_D), 32);
-+ 		acb->ioqueue_size =3D roundup(sizeof(struct MessageUnit_D), 32);
- -		dma_coherent =3D dma_zalloc_coherent(&pdev->dev, acb->ioqueue_size,
- -			&dma_coherent_handle, GFP_KERNEL);
- +		dma_coherent =3D dma_alloc_coherent(&pdev->dev,
-- 						  acb->roundup_ccbsize,
-++						  acb->ioqueue_size,
- +						  &dma_coherent_handle,
- +						  GFP_KERNEL);
-  		if (!dma_coherent) {
-  			pr_notice("arcmsr%d: DMA allocation failed\n", acb->host->host_no);
-  			return false;
-@@@ -662,11 -671,9 +675,11 @@@
-  	case ACB_ADAPTER_TYPE_E: {
-  		uint32_t completeQ_size;
-  		completeQ_size =3D sizeof(struct deliver_completeQ) * ARCMSR_MAX_HBE_DO=
-NEQUEUE + 128;
-- 		acb->roundup_ccbsize =3D roundup(completeQ_size, 32);
-+ 		acb->ioqueue_size =3D roundup(completeQ_size, 32);
- -		dma_coherent =3D dma_zalloc_coherent(&pdev->dev, acb->ioqueue_size,
- -			&dma_coherent_handle, GFP_KERNEL);
- +		dma_coherent =3D dma_alloc_coherent(&pdev->dev,
-- 						  acb->roundup_ccbsize,
-++						  acb->ioqueue_size,
- +						  &dma_coherent_handle,
- +						  GFP_KERNEL);
-  		if (!dma_coherent){
-  			pr_notice("arcmsr%d: DMA allocation failed\n", acb->host->host_no);
-  			return false;
+ +	if (hisi_hba->prot_mask) {
+ +		dev_info(dev, "Registering for DIF/DIX prot_mask=3D0x%x\n",
+ +			 prot_mask);
+ +		scsi_host_set_prot(hisi_hba->shost, prot_mask);
+ +	}
+ +
++ 	if (hisi_sas_debugfs_enable)
++ 		hisi_sas_debugfs_init(hisi_hba);
++=20
+  	rc =3D scsi_add_host(shost, dev);
+  	if (rc)
+  		goto err_out_ha;
 
---Sig_/bv4Mk9JDXiR+2z=o/_+Ephy
+--Sig_/LWLreKvBQ/Z_uIl+eC/KW09
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw7+GYACgkQAVBC80lX
-0GxXEgf+KTbxTRvd9AMC23zy2LXueVohvU8fiwCMJBGZZyLZnZUEYxkpAatyZSWr
-hJzHQb6l8NcgtwWGufwweGMRq+1zspBV/+VfeC1HZslOfPdXaTN/PQeTwpvi93Yc
-X+Wh5BsOxP3lufRXaRuMPXYCAkolJMBn2blNwUILMpn2ks5Ehheyybg9m29ghD83
-jhXsdpAdsgn1cYYvZf7yqHU2ylWeOfXv4kKaK4nmuhsTgTarvOBUnkj4xJQJWFOf
-DRzuk5W3fOHS1/b+jUDB6vULvryG5xWcKxn5TgXdaejzL16RVSmFDRXqdZIM+xKv
-p2GSnlHLOeUz+6D1Nwt/XNEdOnClCA==
-=KaZp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw7+YcACgkQAVBC80lX
+0Gz7XwgAikKMCOIYC8KxZCFWjC5hvyYO9ZEdx+eJ0vw/WSDCCZeOMNvCVjA861pI
+IHkWyIYcDrvZq/yGeTdm7TZh2gdw+j/dVbG5i/r11rdNeSn/07XK0IJVqGWjsbMc
+r2KwsIEpmN4gXJg4GwgRzjnFtp60qJAi5ugt3NWxR9KT+OT+xS7IjAKhRoEcojah
+CPmRdsC+h58LzNffAsrWGdS+ENE8F+lGifUJReomGcAvs7s2fJyoqMo5GM3xdbEx
+TF0G8JjtWFDoSd03Du+3Tkesj9EHAJ9ARf2kb8OIHSHQv2DX5dfihIlp1ACbNu+l
+aHBetYpFHuRZt/v+boQjW96uya1hKw==
+=lq9r
 -----END PGP SIGNATURE-----
 
---Sig_/bv4Mk9JDXiR+2z=o/_+Ephy--
+--Sig_/LWLreKvBQ/Z_uIl+eC/KW09--
