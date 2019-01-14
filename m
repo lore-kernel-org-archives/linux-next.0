@@ -1,50 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the mali-dp tree
-Date: Mon, 14 Jan 2019 11:09:09 +1100
-Message-ID: <20190114110909.39a7285c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mali-dp tree
+Date: Mon, 14 Jan 2019 12:21:38 +1100
+Message-ID: <20190114122138.724ba326@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8P9dyVUn11f1UixO=d9m17d"; protocol="application/pgp-signature"
+ boundary="Sig_/Pl2mXa.vZIUYGfVekdw91c+"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8P9dyVUn11f1UixO=d9m17d
+--Sig_/Pl2mXa.vZIUYGfVekdw91c+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Liviu,
+Hi all,
 
-Commits
+After merging the mali-dp tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from drivers/gpu/drm/arm/display/komeda/komeda_framebuffer=
+.c:11:
+drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h:13:25: error: field=
+ 'base' has incomplete type
+  struct drm_framebuffer base;
+                         ^~~~
+
+Caused by commit
 
   31849148cb41 ("drm/komeda: Add komeda_framebuffer")
-  b347a024e10b ("drm/komeda: Add komeda_format_caps for format handling")
-  274d16527e45 ("drm/komeda: Add DT parsing")
-  f20978344694 ("drm/komeda: Build komeda to be a platform module")
-  f8eff4b21a16 ("drm/arm: Delete redundant CONFIG_DRM_ARM")
 
-are missing a Signed-off-by from their committer.
+I have used the mali-dp tree from next-20190111 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/8P9dyVUn11f1UixO=d9m17d
+--Sig_/Pl2mXa.vZIUYGfVekdw91c+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw70yUACgkQAVBC80lX
-0GwKkgf/XkfHhBTs6F3eGMF3xF4DjCITJB1A/UDH6o2r8hjM4+AZrinqkFlI3Z+k
-M9CwfiDPjt7PkMlvGinglbR1TfvVijlyx4VCJqk7t0hoKvwlFF/L0o386H4VSIeB
-TB/xTwZQISENygp9PQW0xkuRvcdq7Cgzy2U593WueChjgXQWEAkt9cCoOcXuZJ5F
-cvu7LwZceSbwemmopRz4dh3LQ6mBOQ0I2xEd68kk3kEK6PjHk9JDZT4y3Ktvw7oV
-bBf5/dePzvstH8M/VTHwZI2sT1hFACPJQcnKo8HhRdqJkgusLM93KrWSoVqMRmPI
-hh9vjjD8FDYohuyuS+ooE0YxGQ4AIg==
-=JcTV
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw75CIACgkQAVBC80lX
+0Gy7dwf/WLObYa5Tex18fs96k6sbY9Q8gfIaLwY5msyM00H9VpAGx1niLFFwIm4v
+VysxZ5cbaMRe8Cz3SHI/pg5JmUfLLFm/QymdPtWNEyWX5HrnBQpx4SusE0E3BRYq
+g0PW0HaBhiOQjd9/SWuSpP453CSkZHNvr9OPPe2trp5b1SKxTlrg2lUC73ugs2yw
+5yYdHZ0qK/msi0iSirPKeJ0gtQTjRUI1IB4HuFkR0ZQpV4FW6VjMHrbGJvKJL4sg
+Q5N9BWbduz1AGThf/kp+fp2sCaMPQGvEhCLD1A9g6SgQu+8KRvuMiDsKqop17Iif
+78FCJD/rei+2EqpKRc3Yipq52J/rCw==
+=PK2W
 -----END PGP SIGNATURE-----
 
---Sig_/8P9dyVUn11f1UixO=d9m17d--
+--Sig_/Pl2mXa.vZIUYGfVekdw91c+--
