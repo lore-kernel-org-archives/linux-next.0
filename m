@@ -1,54 +1,51 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the mali-dp tree
-Date: Mon, 14 Jan 2019 11:29:16 +0000
-Message-ID: <20190114112916.GN20661@e110455-lin.cambridge.arm.com>
-References: <20190114110909.39a7285c@canb.auug.org.au>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
+Date: Mon, 14 Jan 2019 12:44:45 +0100
+Message-ID: <CAPDyKFo7gQCZQbKhCaTukf8cRnRg5TzgDdOprHyeRbps=sjNWA@mail.gmail.com>
+References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-10-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190114110909.39a7285c@canb.auug.org.au>
+In-Reply-To: <20190105100606.6673-10-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Sinan Kaya <okaya@kernel.org>
+Cc: linux-next@vger.kernel.org, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Shawn Lin <shawn.lin@rock-chips.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Cercueil <paul@crapouillou.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Faiz Abbas <faiz_abbas@ti.com>, Chunyan Zhang <chunyan.zhang@unisoc.com>, Jisheng Zhang <Jisheng.Zhang@synaptics.com>, Ludovic Barre <ludovic.barre@st.com>, Arnd Bergmann <arnd@arndb.de>, Alex Smith <alex.smith@imgtec.com>, Chris Brandt <chris.brandt@renesas.com>, "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 14, 2019 at 11:09:09AM +1100, Stephen Rothwell wrote:
-> Hi Liviu,
+On Sat, 5 Jan 2019 at 11:06, Sinan Kaya <okaya@kernel.org> wrote:
+>
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
+> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
+>
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 
-Hi Stephen,
+Applied for fixes, thanks!
 
-> 
-> Commits
-> 
->   31849148cb41 ("drm/komeda: Add komeda_framebuffer")
->   b347a024e10b ("drm/komeda: Add komeda_format_caps for format handling")
->   274d16527e45 ("drm/komeda: Add DT parsing")
->   f20978344694 ("drm/komeda: Build komeda to be a platform module")
->   f8eff4b21a16 ("drm/arm: Delete redundant CONFIG_DRM_ARM")
-> 
-> are missing a Signed-off-by from their committer.
-
-Sorry about that! I have now fixed those commits and also the build
-failure you were seeing.
-
-Best regards,
-Liviu
-
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Kind regards
+Uffe
 
 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+> ---
+>  drivers/mmc/host/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index e26b8145efb3..1b9401fe94c0 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -116,7 +116,7 @@ config MMC_RICOH_MMC
+>
+>  config MMC_SDHCI_ACPI
+>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+> -       depends on MMC_SDHCI && ACPI
+> +       depends on MMC_SDHCI && ACPI && PCI
+>         select IOSF_MBI if X86
+>         help
+>           This selects support for ACPI enumerated SDHCI controllers,
+> --
+> 2.19.0
+>
