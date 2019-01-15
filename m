@@ -1,80 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH V2] ARM: imx: add i.MX7ULP cpuidle support
-Date: Wed, 16 Jan 2019 00:10:43 +1100
-Message-ID: <20190116001043.69529b90@canb.auug.org.au>
-References: <1547185955-2395-1-git-send-email-Anson.Huang@nxp.com>
-        <20190114005600.GN11426@dragon>
-        <e892304bde543b86a9d0ad4409d0c6a1f509a312.camel@nxp.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the mali-dp tree
+Date: Tue, 15 Jan 2019 14:37:06 +0100
+Message-ID: <CAKMK7uGZovo8O90XAgQnkub04ORVDZWGW6T-H2gsLtPYdc8ULw@mail.gmail.com>
+References: <20190115104619.516be4b9@canb.auug.org.au>
+ <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
+ <20190115214725.360798cf@canb.auug.org.au>
+ <20190115105102.GQ20661@e110455-lin.cambridge.arm.com>
+ <20190115120836.GN10517@phenom.ffwll.local>
+ <20190115122313.GR20661@e110455-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t.tgKeD2y1yX06Oh8kdGcV0"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e892304bde543b86a9d0ad4409d0c6a1f509a312.camel@nxp.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Anson Huang <anson.huang@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190115122313.GR20661@e110455-lin.cambridge.arm.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/t.tgKeD2y1yX06Oh8kdGcV0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Leonard,
-
-On Tue, 15 Jan 2019 12:30:23 +0000 Leonard Crestez <leonard.crestez@nxp.com=
-> wrote:
->
-> On 1/14/19 2:56 AM, Shawn Guo wrote:
-> > On Fri, Jan 11, 2019 at 05:57:30AM +0000, Anson Huang wrote: =20
-> > > This patch adds cpuidle support for i.MX7ULP, 3 cpuidle
-> > > states supported as below:
-> > >=20
-> > > 1. WFI, just ARM wfi;
-> > > 2. WAIT mode, mapped to SoC's partial stop mode #3;
-> > > 3. STOP mode, mapped to SoC's partial stop mode #1.
-> > >=20
-> > > In WAIT mode, system clock and bus clock will be enabled;
-> > > In STOP mode, system clock and bus clock will be disabled.
-> > >=20
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com> =20
-> >=20
-> > Applied, thanks.
-> >  =20
->=20
-> Hello,
->=20
-> I'm not sure if anyone else already noticed but it seems the
-> arch/arm/mach-imx/cpuidle-imx7ulp.c file was dropped?
->=20
-> It's not in your tree:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/commit=
-/?h=3Dimx/soc&id=3Dcf2d2d392906f5603cf0d0f3630f6386babf7e4b
->=20
-> This causes build failures in next-20190115 with imx_v6_v7_defconfig.
-
-That file does not exist in Linus' tree either.  And there are no
-commits in linux-next that add it.
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/t.tgKeD2y1yX06Oh8kdGcV0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw929MACgkQAVBC80lX
-0GyDEwgAmGv+Q6po4XzsOJ+7bVXlMggp3rkzl4n6ZYgfNPZgMeqcvHJ7/zVxj+TO
-nesTdlgal/q+X5x0f39z8t4+UcXJGIpctOULWDMIRt3n5G0aLIIlTSFae9yf3+gY
-2UvR483ALXoBUsoBFxJfSyBedzVvt+syAenCsN2RgSJxWe5ymPNX9/LZPjrJULEs
-d32HvN4hrGcIwKoHLceHRUCi4OBA9yJ2qEkAXgoPFFMBA5LaLM36SNAwr7yGw+SV
-kJQAToTo4IAs7LntQr/Kt1B/9n7VXV6UcrWRAKzwEp4ibIo8DTfL7Clglfgw+UgD
-NXmau7HKeWeCpAjmy7kprK2pgtSpbQ==
-=34oG
------END PGP SIGNATURE-----
-
---Sig_/t.tgKeD2y1yX06Oh8kdGcV0--
+T24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgMToyMyBQTSBMaXZpdSBEdWRhdSA8TGl2aXUuRHVkYXVA
+YXJtLmNvbT4gd3JvdGU6Cj4KPiBPbiBUdWUsIEphbiAxNSwgMjAxOSBhdCAwMTowODozNlBNICsw
+MTAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+ID4gT24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgMTA6
+NTE6MDJBTSArMDAwMCwgTGl2aXUgRHVkYXUgd3JvdGU6Cj4gPiA+IE9uIFR1ZSwgSmFuIDE1LCAy
+MDE5IGF0IDA5OjQ3OjI1UE0gKzExMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPiA+ID4g
+SGkgTGl2aXUsCj4gPiA+ID4KPiA+ID4gPiBPbiBUdWUsIDE1IEphbiAyMDE5IDEwOjEyOjE5ICsw
+MDAwIExpdml1IER1ZGF1IDxMaXZpdS5EdWRhdUBhcm0uY29tPiB3cm90ZToKPiA+ID4gPiA+Cj4g
+PiA+ID4gPiBUaGF0IGxvb2tzIGxpa2UgdGhlIHJpZ2h0IGZpeCwgdGhhbmsgeW91IGZvciB0aGF0
+IQo+ID4gPiA+Cj4gPiA+ID4gVGhhbmtzIGZvciB5b3VyIHZlcmlmaWNhdGlvbi4KPiA+ID4gPgo+
+ID4gPiA+ID4gSSB3aWxsIHJvbGwgeW91ciBwYXRjaCBpbnRvIG15IHRyZWUuCj4gPiA+ID4KPiA+
+ID4gPiBZb3UgY2FuIG9ubHkgZG8gdGhhdCB3aGVuIHlvdXIgdHJlZSBpcyBtZXJnZWQgd2l0aCB0
+aGUgZHJtIHRyZWUgKGFuZAo+ID4gPiA+IGl0IHNob3VsZCBiZSBwYXJ0IG9mIHRoZSBtZXJnZSBy
+ZXNvbHV0aW9uKS4KPiA+ID4KPiA+ID4gSSBjYW4gYWxzbyByZWJhc2Ugb24gdG9wIG9mIHRoZSBs
+YXRlc3QgZHJtLW5leHQgdHJlZSwgdGhhdCBzaG91bGQgbm90IGJlCj4gPiA+IGEgcHJvYmxlbS4K
+PiA+Cj4gPiBJZiB5b3UgaGF2ZSBhIGxvdCBvZiBwYXRjaGVzIGFscmVhZHkgcmViYXNpbmcgaXMg
+a2luZGEgZGlzY291cmFnZWQuIFRoZXJlCj4gPiBtaWdodCBiZSBvdGhlciBzdHVmZiB0aGF0J3Mg
+Y29uZmxpY3RpbmcgYW5kIHRoZW4gbWFraW5nIHlvdXIgZW50aXJlIHRyZWUKPiA+IG5vbi1iaXNl
+Y3RhYmxlIChtYXliZSBqdXN0IG9uIG9uZSBwbGF0Zm9ybSB0aGF0IHlvdSBtaXNzZWQgaW4gdGVz
+dGluZykuCj4KPiBNeSB0cmVlIGhhcyBhbHdheXMgYmVlbiAidW5zdGFibGUiLCBJIGhhdmUgYmVl
+biByZWJhc2luZyBpdCBvbiB0b3Agb2YKPiBsYXRlc3QgZHJtIG9yIGRybS1uZXh0IGluIHByZXBh
+cmF0aW9uIGZvciBzZW5kaW5nIHB1bGwgcmVxdWVzdHMuIEkndmUgaG9wZWQKPiB0aGF0IHBlb3Bs
+ZSBkb24ndCBkZXBlbmQgb24gdGhlIGxpbmVhcml0eSBvZiBteSB0cmVlIGFueXdheSBhbmQgaXQg
+aGFzbid0Cj4gYmVlbiBhbiBpc3N1ZSBzbyBmYXIuCgoiRG9uJ3QgdW5lY2Vzc2FyaWx5IHJlYmFz
+ZSIgaXNuJ3Qgb25seSBhYm91dCBzY3Jld2luZyB1cCBwZW9wbGUgd2hvCmJhc2UgdGhlaXIgb3du
+IHN0dWZmIG9uIHlvdXIgdHJlZSwgaXQncyBhbHNvIGFib3V0IGludmFsaWRhdGluZwp0ZXN0aW5n
+LiBFLmcuIGlmIHRoZXJlJ3MgYSBzaWxlbnQgY29uZmxpY3Qgd2l0aCBsYXRlc3QgZHJtLW5leHQs
+IGFuZAp5b3UgcmViYXNlIGJlZm9yZSBzZW5kaW5nIG91dCB5b3VyIHB1bGwgcmVxdWVzdCwgYnV0
+IHRoZW4gZG9uJ3Qgbm90aWNlCnRoYXQgbmV3IGlzc3VlLCB0aGVuIGFsbCB0aGVzZSBjb21taXQg
+d29uJ3Qgd29yayBpbiBhIGJpc2VjdCBmb3IgYSAybmQKaXNzdWUuCgpCdXQgaWYgeW91IGRvbid0
+IHJlYmFzZSwgdGhlbiBvbmx5IHRoZSBtZXJnZSBjb21taXQgd2lsbCBiZSBicm9rZW4KKHVudGls
+IHRoZSBidWdmaXggd2FzIGNvbW1pdCwgd2hpY2ggaXMgaG9wZWZ1bGx5IG5vdCB0b28gbG9uZyks
+IGFuZAphbGwgdGhlIGNvbW1pdHMgb24geW91ciBicmFuY2ggc3RpbGwgd29yay4KClNvIHN1bW1h
+cnkgaXMgdGhhdCBpZiB5b3UgcmVndWxhcmx5IHJlYmFzZSB5b3VyIHBpbGUgb2YgInJlYWR5IGZv
+cgpsaW51eC1uZXh0IiBwYXRjaGVzLCB0aGVuIHlvdSdyZSBkb2luZyBzb21ldGhpbmcgd3Jvbmcu
+IEFuZCB0aGUgYmlnZ2VyCnlvdXIgdGVhbSAoYW5kIGhlbmNlIHRoZSBhbW91bnQgb2Ygd29yayBn
+b2luZyBvbikgdGhlIG1vcmUgd3JvbmcgdGhpcwpiZWNvbWVzLiBJbWUgeW91IGNhbiByZWJhc2Ug
+dG8gc3F1YXNoIGluIGJ1Z2ZpeGVzIHdpdGggYSBiaWdnZXIgdGVhbQpzdGlsbCwgYnV0IHJlYmFz
+aW5nIHRvIGNoYW5nZSB0aGUgYmFzZWxpbmUgc3RvcHMgYmVpbmcgYSBnb29kIGlkZWEKcHJldHR5
+IHF1aWNrbHkuCi1EYW5pZWwKCj4gVEJILCBJIHNob3VsZCd2ZSBiYXNlZCB0aGUgbGF0ZXN0IHVw
+ZGF0ZSBvZiBteSB0cmVlIG9uIGRybS1uZXh0IGFueXdheSwgSQo+IGp1c3Qgc3RhcnRlZCBhdCB0
+aGUgdGltZSB3aGVuIGl0IHdhcyBhdCB2NS4wLXJjMSBzbyBJIHRob3VnaHQgaXQgd2lsbCBub3QK
+PiBtYXR0ZXIuCj4KPiBCZXN0IHJlZ2FyZHMsCj4gTGl2aXUKPgo+ID4KPiA+IEluIHRoYXQgY2Fz
+ZSBqdXN0IHNlbmQgb3V0IGEgcHVsbCBmb3IgZHJtLW5leHQgYW5kIGluY2x1ZGUgdGhlIG1lcmdl
+Cj4gPiByZXNvbHV0aW9uIGluIHRoZSBwdWxsIHJlcXVlc3Qgc28gRGF2ZS9JIGNhbiBkb3VibGUt
+Y2hlY2sgd2UgZGlkIGl0IHJpZ2h0Lgo+ID4gLURhbmllbAo+ID4gLS0KPiA+IERhbmllbCBWZXR0
+ZXIKPiA+IFNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgo+ID4gaHR0cDovL2Js
+b2cuZmZ3bGwuY2gKPgo+IC0tCj4gPT09PT09PT09PT09PT09PT09PT0KPiB8IEkgd291bGQgbGlr
+ZSB0byB8Cj4gfCBmaXggdGhlIHdvcmxkLCAgfAo+IHwgYnV0IHRoZXkncmUgbm90IHwKPiB8IGdp
+dmluZyBtZSB0aGUgICB8Cj4gIFwgc291cmNlIGNvZGUhICAvCj4gICAtLS0tLS0tLS0tLS0tLS0K
+PiAgICAgwq9cXyjjg4QpXy/Crwo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAoKCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwg
+SW50ZWwgQ29ycG9yYXRpb24KKzQxICgwKSA3OSAzNjUgNTcgNDggLSBodHRwOi8vYmxvZy5mZnds
+bC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
