@@ -1,61 +1,57 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH V2] ARM: imx: add i.MX7ULP cpuidle support
-Date: Tue, 15 Jan 2019 23:12:52 +0800
-Message-ID: <20190115151250.GC13895@dragon>
-References: <1547185955-2395-1-git-send-email-Anson.Huang@nxp.com>
- <20190114005600.GN11426@dragon>
- <e892304bde543b86a9d0ad4409d0c6a1f509a312.camel@nxp.com>
- <20190116001043.69529b90@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v6 05/11] platform/x86: intel_pmc: Make PCI dependency explicit
+Date: Tue, 15 Jan 2019 19:40:45 +0100
+Message-ID: <3717479.LUAfB5gYd9@aspire.rjw.lan>
+References: <20190105100606.6673-1-okaya@kernel.org> <3184241.VH7flF4h5P@aspire.rjw.lan> <CAHp75VeKB_4Fc-G_QG0YnSqhAu9w8csASrgrg0cVAo_gYjeJ_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190116001043.69529b90@canb.auug.org.au>
+In-Reply-To: <CAHp75VeKB_4Fc-G_QG0YnSqhAu9w8csASrgrg0cVAo_gYjeJ_g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>, dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Anson Huang <anson.huang@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Sinan Kaya <okaya@kernel.org>, Andy Shevchenko <andy@infradead.org>, linux-next <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, "open list:X86 PLATFORM DRIVERS" <platform-driver-x86@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:10:43AM +1100, Stephen Rothwell wrote:
-> Hi Leonard,
-> 
-> On Tue, 15 Jan 2019 12:30:23 +0000 Leonard Crestez <leonard.crestez@nxp.com> wrote:
+On Wednesday, January 9, 2019 12:10:45 PM CET Andy Shevchenko wrote:
+> On Wed, Jan 9, 2019 at 12:48 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 > >
-> > On 1/14/19 2:56 AM, Shawn Guo wrote:
-> > > On Fri, Jan 11, 2019 at 05:57:30AM +0000, Anson Huang wrote:  
-> > > > This patch adds cpuidle support for i.MX7ULP, 3 cpuidle
-> > > > states supported as below:
-> > > > 
-> > > > 1. WFI, just ARM wfi;
-> > > > 2. WAIT mode, mapped to SoC's partial stop mode #3;
-> > > > 3. STOP mode, mapped to SoC's partial stop mode #1.
-> > > > 
-> > > > In WAIT mode, system clock and bus clock will be enabled;
-> > > > In STOP mode, system clock and bus clock will be disabled.
-> > > > 
-> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>  
-> > > 
-> > > Applied, thanks.
-> > >   
-> > 
-> > Hello,
-> > 
-> > I'm not sure if anyone else already noticed but it seems the
-> > arch/arm/mach-imx/cpuidle-imx7ulp.c file was dropped?
-> > 
-> > It's not in your tree:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/commit/?h=imx/soc&id=cf2d2d392906f5603cf0d0f3630f6386babf7e4b
-> > 
-> > This causes build failures in next-20190115 with imx_v6_v7_defconfig.
+> > On Saturday, January 5, 2019 11:06:00 AM CET Sinan Kaya wrote:
+> > > After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> > > CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> > > satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> > > specified directly. Code relies on PCI for execution. Specify this
+> > > in the Kconfig.
+> > >
+> > > Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> > > Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> > > ---
+> > >  drivers/platform/x86/Kconfig | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> > > index b36ea14b41ad..7afb96cb1cd6 100644
+> > > --- a/drivers/platform/x86/Kconfig
+> > > +++ b/drivers/platform/x86/Kconfig
+> > > @@ -1174,7 +1174,7 @@ config INTEL_SMARTCONNECT
+> > >
+> > >  config INTEL_PMC_IPC
+> > >       tristate "Intel PMC IPC Driver"
+> > > -     depends on ACPI
+> > > +     depends on ACPI && PCI
+> > >       ---help---
+> > >       This driver provides support for PMC control on some Intel platforms.
+> > >       The PMC is an ARC processor which defines IPC commands for communication
+> >
+> > Andy, you had some reservations regarding this patch IIRC.
+> >
+> > Should I apply it?
 > 
-> That file does not exist in Linus' tree either.  And there are no
-> commits in linux-next that add it.
+> Let's do it as a quick fix with something like below being added to
+> the commit message:
+> 
+> "For sake of a quick fix this introduces a new mandatory dependency to
+> the driver which may survive without it. Otherwise we need to revisit
+> the driver architecture to address this properly."
 
-Sorry.  That's my fault.  The patch doesn't apply to my tree and I had
-to use 'patch' command.  However, I forgot to add this new
-cpuidle-imx7ulp.c file.
-
-Just fixed it.
-
-Shawn
+Done, thanks!
