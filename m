@@ -1,35 +1,55 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: Fixes tag needs work in the device-mapper tree
-Date: Tue, 15 Jan 2019 16:12:02 -0500
-Message-ID: <20190115211201.GA10746@redhat.com>
-References: <20190116080251.17ba9771@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the clk tree
+Date: Wed, 16 Jan 2019 08:34:40 +1100
+Message-ID: <20190116083440.11b6839c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/LUD=LGqnB_f5UgHKR.0CxKt"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190116080251.17ba9771@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alasdair G Kergon <agk@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Joe Thornber <ejt@redhat.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 15 2019 at  4:02pm -0500,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/LUD=LGqnB_f5UgHKR.0CxKt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> [I am experimenting with checking the Fixes tags in commits in linux-next.
-> Please let me know if you think I am being too strict.]
-> 
-> Hi all,
-> 
-> Commit
-> 
->   fc4d02aa0331 ("dm thin: fix passdown_double_checking_shared_status()")
-> 
-> has a malformed Fixes tag:
-> 
->   Fixes: 00a0ea33b49 ("dm thin: do not queue freed thin mapping for next stage processing")
-> 
-> It should show at least 12 digits of the SHA1.
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
 
-Fixed, thanks.
-Mike
+Hi all,
+
+Commit
+
+  b488517b28a4 ("clk: socfpga: stratix10: fix naming convention for the fix=
+ed-clocks")
+
+has a malformed Fixes tag:
+
+  Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+  Stratix10 platform")
+
+It should not be split over 2 lines.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LUD=LGqnB_f5UgHKR.0CxKt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+UfAACgkQAVBC80lX
+0Gx63gf/dAKugoyaKtZoTxvkBM7rUSXFDmIMyek1ikXkkAVEGAG6FCsMDOoL7wwZ
+aSy4gIHouoSfiMPp2bvNtyWe98ztjYul6qQlR2TOURsMNF8cy1vzulDpteDITaPY
+w+VGAVmmd5M+HmM8FO1g+56w3wwoZT0mexO+eqbeaoAcsaKEYhathKlksUPoQ9EW
+l3DO1cc0BQ4bEIKcmtEvAjvi5+sOnjFYBBeaZ/e5oq3vRjfyDv8JDayI9UeZ3+SS
+s8V4cYlcDnVJ0HS0nj+xbdnQj0qFXeLI/SYG3iIIpxyAv/qIHO9OpnVfb6MH2jcE
+RCI69JqkqswyNSN3Ymxz0KKXlb5tmQ==
+=FQSz
+-----END PGP SIGNATURE-----
+
+--Sig_/LUD=LGqnB_f5UgHKR.0CxKt--
