@@ -1,61 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the pm tree
-Date: Wed, 16 Jan 2019 07:55:40 +1100
-Message-ID: <20190116075540.78cff44e@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs work in the device-mapper tree
+Date: Wed, 16 Jan 2019 08:02:51 +1100
+Message-ID: <20190116080251.17ba9771@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ewciBN5rwJ4y3iGwf7XWmyg"; protocol="application/pgp-signature"
+ boundary="Sig_/sn9ifLak1VTNRq8BPCH/Gzg"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sinan Kaya <okaya@kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Joe Thornber <ejt@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ewciBN5rwJ4y3iGwf7XWmyg
+--Sig_/sn9ifLak1VTNRq8BPCH/Gzg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 [I am experimenting with checking the Fixes tags in commits in linux-next.
 Please let me know if you think I am being too strict.]
 
-Hi Rafael,
+Hi all,
 
-Commits
+Commit
 
-  62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency exp=
-licit")
-  cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
-  42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables(=
-)")
-  6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
-  34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
-  704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
-  5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
-  da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
-  ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
+  fc4d02aa0331 ("dm thin: fix passdown_double_checking_shared_status()")
 
-Have malformed Fixes tags:
+has a malformed Fixes tag:
 
-There should be double quotes around the commit subject.
+  Fixes: 00a0ea33b49 ("dm thin: do not queue freed thin mapping for next st=
+age processing")
+
+It should show at least 12 digits of the SHA1.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ewciBN5rwJ4y3iGwf7XWmyg
+--Sig_/sn9ifLak1VTNRq8BPCH/Gzg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+SMwACgkQAVBC80lX
-0GxIpAf/bcC3N9uGGIXP1nw6Of8LKN18uMRPIERRNs/1xJtbMzsJf4jzT7vFITlm
-VCbNgu1nI3yckOxz7g2Bt3k2/3DR+K21ck5pRGRBk9I8vfVp1/hM5f4k/NOreqAO
-gWXhCMOjtsy/sm9BzRJfT3k0NPBpXUZ6WE25MTlpCjIQwV9vhyV0f5pXnrS082Qw
-QSQem6GzhIyDJLkrz1JZWmh/mq83+oRJOIu7iO9YPRzGSRiq57jHFHeNWbAEJLqD
-WwePv8qal6zdp0wHRKAec+YLdo0PaBG2taPXSqlha3jL4vtSCKpT+2Gevy2Kc0pm
-gdZNSNRXa8LzuFKDA2PhovQkqueYMw==
-=4Ona
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+SnsACgkQAVBC80lX
+0Gzhngf+PIayDhdeOyHBaz8uQS+ropz3F12wSk7JJrfzG++9DVSaKi62A7Gch7Rw
+/EWGgW/Fg/i7FFymiQfC/pzlNGcL8dj8kmQN5ITfygHBztO+HbifblDPjnq1mP3O
+w7yxHgFWrbVskfW+Q3BsyMH5KCuUfxmKKsgpR5Yw+64kthggYjjc1P43RZAh1RZF
+YBfX4EMmix1LGiAR4/I7SMjMOyY2rDtIT0nPNhHEDd3mZq5RjqP5bFB88VHeqAmA
+Mk6rIXprVLsR72X10abQne4ZDRae14JoLirokAPss/+swgOEUAHT9JRe3YAlkwep
+SEWFwHOFvU4hccN0XUN4sbi1LpjN+w==
+=5Utl
 -----END PGP SIGNATURE-----
 
---Sig_/ewciBN5rwJ4y3iGwf7XWmyg--
+--Sig_/sn9ifLak1VTNRq8BPCH/Gzg--
