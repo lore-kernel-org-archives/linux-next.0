@@ -1,53 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the nfs-anna tree
-Date: Wed, 16 Jan 2019 08:38:31 +1100
-Message-ID: <20190116083831.256824cf@canb.auug.org.au>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: linux-next: Fixes tag needs work in the xen-tip tree
+Date: Tue, 15 Jan 2019 16:39:02 -0500
+Message-ID: <3b87ef37-3ca8-88cf-fe8f-3e8ee6af6975@oracle.com>
+References: <20190116080620.4c2c143f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1h5dzV+7Tjewx0X38wEgIld"; protocol="application/pgp-signature"
+ protocol="application/pgp-signature";
+ boundary="Z4JFOmEhMLFZ69tj1UJhy3wiMr4AN4hVK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190116080620.4c2c143f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wen Yang <wen.yang99@zte.com.cn>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/1h5dzV+7Tjewx0X38wEgIld
-Content-Type: text/plain; charset=US-ASCII
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Z4JFOmEhMLFZ69tj1UJhy3wiMr4AN4hVK
+Content-Type: multipart/mixed; boundary="s7roISkloo2Amv68gzmhPrcOFHbozNHy9";
+ protected-headers="v1"
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Juergen Gross <jgross@suse.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Wen Yang <wen.yang99@zte.com.cn>,
+ Paul Gortmaker <paul.gortmaker@windriver.com>
+Message-ID: <3b87ef37-3ca8-88cf-fe8f-3e8ee6af6975@oracle.com>
+Subject: Re: linux-next: Fixes tag needs work in the xen-tip tree
+References: <20190116080620.4c2c143f@canb.auug.org.au>
+In-Reply-To: <20190116080620.4c2c143f@canb.auug.org.au>
+
+--s7roISkloo2Amv68gzmhPrcOFHbozNHy9
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-[I am experimenting with checking the Fixes tags in commits in linux-next.
-Please let me know if you think I am being too strict.]
+On 1/15/19 4:06 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Commit
+>
+>   786e1048e7f4 ("pvcalls-front: fix potential null dereference")
+>
+> has a malformed Fixes tag:
+>
+>   Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL)=
 
-Hi all,
+>   under spinlock")
+>
+> It should not be split over 2 lines.
+>
 
-Commit
 
-  deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior regression")
+Thanks, fixed.
 
-has problem with this Fixes tag:
+-boris
 
-  Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
 
-The subject should match the subject of the fixed commit.
+--s7roISkloo2Amv68gzmhPrcOFHbozNHy9--
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1h5dzV+7Tjewx0X38wEgIld
-Content-Type: application/pgp-signature
+--Z4JFOmEhMLFZ69tj1UJhy3wiMr4AN4hVK
+Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+UtcACgkQAVBC80lX
-0GwZXggAmPnNzm6PKW98wUJiTP8uO8hDUoiKhdWOboko6FhJ2zDgs33TBvC2A1kV
-2KymX1+/ngBJL4uzMJE/hmtV3YdyQ/7AEhglL9g4Oa/RLvx7s34TGq3tk6p9w1X+
-o2QmYndmjvTAr5BuvB9M+5/bxFoKIoA4AHLUAy6Jc0zgp8UOIy1mfFDrszvkTxpl
-omyXwc0qgrE+/rCx5q2HdIkhIBFaBUibwnrlamSMZwz1jmFm+QpqyHi95xNwayct
-cELMWxJlRR5BPLtyFhYwjV/D0UFxbx6hi94aN30R0CD0pVqYrMmXoXzAGFUMyY0h
-9qdkRd/GWAUWzPXbQibO8QjEcuDtSA==
-=+UWx
+iQIzBAEBCAAdFiEExAVKDNg/TOdD61Yyit52kIbKwbIFAlw+UvYACgkQit52kIbK
+wbJLWxAAlYJb5qTJcKP7aPrZvOsOP7f/YR3FtbUvwxH1JqzXMkcrY1lQaf47+SdE
+7ZlfD0to+iG3RYqG2aQHEdWmEqXUeBJDLegzPgAFQv2veKu8YIx7LPT7PWAuSsiG
+ttg0KTt3jq8bFvjaJElwnt0pG9DKiz+VSsyeSzFA32ecdBsE67PqrNbj4QE/8WJ/
+cikqypygxRgu6zJnellkQKpekIkMUE5cEqLo5d5i9Xi/nCunAxOWuVZBusUexm8J
+6ibEIjskfjqxYB+/QONrtCxmK9PqT9Sj5v2S3fcVxthDVqtTL/VbHhEeybzeJGaw
+U/78/e7jKaDDUAaeBuss5A1jNaE+HHX3IQh+D6ZYXwdPmYmvCIKSmTzChXzAfIXw
+h6tBDdMJ3rgtQNcQQFgGFjgJLQOxccoMZ5qmACD3CikwWGMi8z7QLM39ZRRLI7mp
+lsJWpoG94B9PmyzA2WLEp+UDyMbsib+BiNhzl1cPrz+Dv5SOGva/y4LlBwDa2eas
+5hRIZIvySf3AVEwXTuF3mWDtNGL64JlRaR3ITQNWn7v0KHF4rIBxpDDl9rzIpAbJ
+qp/8LT+ZUarZBjwkgMu0PYnLcNMz2jUcd0jueew9rrjpShhBn20PWmZSws2P7bs5
+ZfJ3/ZFNTtFFS0GlH0/ZJ5RQvMiEh6nEVHZh2OZvNhBNU8Ew3Gc=
+=xBW/
 -----END PGP SIGNATURE-----
 
---Sig_/1h5dzV+7Tjewx0X38wEgIld--
+--Z4JFOmEhMLFZ69tj1UJhy3wiMr4AN4hVK--
