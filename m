@@ -1,57 +1,55 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v6 05/11] platform/x86: intel_pmc: Make PCI dependency explicit
-Date: Tue, 15 Jan 2019 19:40:45 +0100
-Message-ID: <3717479.LUAfB5gYd9@aspire.rjw.lan>
-References: <20190105100606.6673-1-okaya@kernel.org> <3184241.VH7flF4h5P@aspire.rjw.lan> <CAHp75VeKB_4Fc-G_QG0YnSqhAu9w8csASrgrg0cVAo_gYjeJ_g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs work in the usb-gadget tree
+Date: Wed, 16 Jan 2019 07:34:24 +1100
+Message-ID: <20190116073424.1a091912@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eMEQ0EwfU1dD=pZ8nReOXm/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VeKB_4Fc-G_QG0YnSqhAu9w8csASrgrg0cVAo_gYjeJ_g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Sinan Kaya <okaya@kernel.org>, Andy Shevchenko <andy@infradead.org>, linux-next <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, "open list:X86 PLATFORM DRIVERS" <platform-driver-x86@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Minas Harutyunyan <hminas@synopsys.com>, Greg KH <greg@kroah.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday, January 9, 2019 12:10:45 PM CET Andy Shevchenko wrote:
-> On Wed, Jan 9, 2019 at 12:48 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Saturday, January 5, 2019 11:06:00 AM CET Sinan Kaya wrote:
-> > > After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> > > CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> > > satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> > > specified directly. Code relies on PCI for execution. Specify this
-> > > in the Kconfig.
-> > >
-> > > Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> > > Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> > > ---
-> > >  drivers/platform/x86/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> > > index b36ea14b41ad..7afb96cb1cd6 100644
-> > > --- a/drivers/platform/x86/Kconfig
-> > > +++ b/drivers/platform/x86/Kconfig
-> > > @@ -1174,7 +1174,7 @@ config INTEL_SMARTCONNECT
-> > >
-> > >  config INTEL_PMC_IPC
-> > >       tristate "Intel PMC IPC Driver"
-> > > -     depends on ACPI
-> > > +     depends on ACPI && PCI
-> > >       ---help---
-> > >       This driver provides support for PMC control on some Intel platforms.
-> > >       The PMC is an ARC processor which defines IPC commands for communication
-> >
-> > Andy, you had some reservations regarding this patch IIRC.
-> >
-> > Should I apply it?
-> 
-> Let's do it as a quick fix with something like below being added to
-> the commit message:
-> 
-> "For sake of a quick fix this introduces a new mandatory dependency to
-> the driver which may survive without it. Otherwise we need to revisit
-> the driver architecture to address this properly."
+--Sig_/eMEQ0EwfU1dD=pZ8nReOXm/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Done, thanks!
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
+
+Hi Felipe,
+
+Commit
+
+  4a995e3496de ("usb: dwc2: gadget: Fix Remote Wakeup interrupt bit clearing
+Malformed Fixes tag")
+
+has a malformed Fixes tag:
+
+  Fixes: 187c5298a122 ("usb: dwc2: gadget: Add handler for WkupAlert
+  interrupt")
+
+It should not be split across to lines.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eMEQ0EwfU1dD=pZ8nReOXm/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+Q9AACgkQAVBC80lX
+0GxNlgf+OEabwCXDUWRTymZPTUSyHDCNkJo86L5nfdi5POO/NPaTYAVOB3L49Pa6
+3MpLtWn+iG6Lgd+SpPKCDC4daAR3rKGk5JeJAnr0a8qFR0NKoi9xOr68D9vIs01t
+3ilLOH0Rbi+Sa3515+ZWVraoYQhPEM39NRBGjwfE9Uopg0f+5a70tmSDUwhDIxDh
++3McxZ7vGg10HWPn6ugAWT0vBIoKiDEglOQu59VZtbjDo7SVZlUOD6vpnZxltyuQ
+jdUTjDjnNbTKonsdQILAD9gA5W9MW0GKLQgqzJt977wHCc86dPkMgYPZgekmTCwv
+CEHOCVUtLIo+1cy6JNIud/UMLLy1/w==
+=2Orw
+-----END PGP SIGNATURE-----
+
+--Sig_/eMEQ0EwfU1dD=pZ8nReOXm/--
