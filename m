@@ -1,55 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs work in the amlogic tree
-Date: Wed, 16 Jan 2019 07:45:10 +1100
-Message-ID: <20190116074510.7c7e6a4a@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the pm tree
+Date: Wed, 16 Jan 2019 07:55:40 +1100
+Message-ID: <20190116075540.78cff44e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JwLiueIBRTMFareA/PLW/UJ"; protocol="application/pgp-signature"
+ boundary="Sig_/ewciBN5rwJ4y3iGwf7XWmyg"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sinan Kaya <okaya@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/JwLiueIBRTMFareA/PLW/UJ
+--Sig_/ewciBN5rwJ4y3iGwf7XWmyg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 [I am experimenting with checking the Fixes tags in commits in linux-next.
 Please let me know if you think I am being too strict.]
 
-Hi all,
+Hi Rafael,
 
-Commit
+Commits
 
-  90d2bf8975cc ("ARM64: dts: meson-gxbb-odroidc2: Fix usb phy regulator pow=
-er failed warning")
+  62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency exp=
+licit")
+  cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
+  42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables(=
+)")
+  6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
+  34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
+  704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
+  5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
+  da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
+  ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
 
-has a malformed Fixes tag:
+Have malformed Fixes tags:
 
-  Fixes: 5a0803bd5ae (ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes)
-
-There should be at least 12 digits of the commit SHA1 and double quotes
-around the commit subject.
+There should be double quotes around the commit subject.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/JwLiueIBRTMFareA/PLW/UJ
+--Sig_/ewciBN5rwJ4y3iGwf7XWmyg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+RlYACgkQAVBC80lX
-0Gwo3gf9EiuOZIdh3hTk6RDXI6XcWLhYzK2e0I5Qm97mVT65nPEEp/tSgGLXHMYQ
-I520HkAjumZEKLP+xtpPS1eGL2O5isXd//qMMMGIrVzpWLQzD92SWXiwHlKQMzrN
-/bq2NSn1iAmNnz+Y3Fh1xyOwYTFa2UvdNeYm5XQrEbflE1qLDSDuRGeD0TdnqL95
-ThZLPgMf8ZumSMhHcHqRJlsLt0Y5Cxyy3eoAoY3VS4A/I0Gfq86ZQbOfELj/dgCk
-D6sLV02RF/9qj0XS6VndNYOqZCy7n2+6K/LDJwFYtkm4g0yzxgOPpa4n6Xg9doGd
-wbTwo88Wts4s4g0ZoJDwVR3CnsfUqA==
-=ciYL
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+SMwACgkQAVBC80lX
+0GxIpAf/bcC3N9uGGIXP1nw6Of8LKN18uMRPIERRNs/1xJtbMzsJf4jzT7vFITlm
+VCbNgu1nI3yckOxz7g2Bt3k2/3DR+K21ck5pRGRBk9I8vfVp1/hM5f4k/NOreqAO
+gWXhCMOjtsy/sm9BzRJfT3k0NPBpXUZ6WE25MTlpCjIQwV9vhyV0f5pXnrS082Qw
+QSQem6GzhIyDJLkrz1JZWmh/mq83+oRJOIu7iO9YPRzGSRiq57jHFHeNWbAEJLqD
+WwePv8qal6zdp0wHRKAec+YLdo0PaBG2taPXSqlha3jL4vtSCKpT+2Gevy2Kc0pm
+gdZNSNRXa8LzuFKDA2PhovQkqueYMw==
+=4Ona
 -----END PGP SIGNATURE-----
 
---Sig_/JwLiueIBRTMFareA/PLW/UJ--
+--Sig_/ewciBN5rwJ4y3iGwf7XWmyg--
