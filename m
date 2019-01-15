@@ -1,17 +1,18 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Liviu Dudau <Liviu.Dudau@arm.com>
 Subject: Re: linux-next: build failure after merge of the mali-dp tree
-Date: Tue, 15 Jan 2019 13:08:36 +0100
-Message-ID: <20190115120836.GN10517@phenom.ffwll.local>
+Date: Tue, 15 Jan 2019 12:23:13 +0000
+Message-ID: <20190115122313.GR20661@e110455-lin.cambridge.arm.com>
 References: <20190115104619.516be4b9@canb.auug.org.au>
  <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
  <20190115214725.360798cf@canb.auug.org.au>
  <20190115105102.GQ20661@e110455-lin.cambridge.arm.com>
+ <20190115120836.GN10517@phenom.ffwll.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190115105102.GQ20661@e110455-lin.cambridge.arm.com>
+In-Reply-To: <20190115120836.GN10517@phenom.ffwll.local>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -21,29 +22,40 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgMTA6NTE6MDJBTSArMDAwMCwgTGl2aXUgRHVkYXUgd3Jv
-dGU6Cj4gT24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgMDk6NDc6MjVQTSArMTEwMCwgU3RlcGhlbiBS
-b3Rod2VsbCB3cm90ZToKPiA+IEhpIExpdml1LAo+ID4gCj4gPiBPbiBUdWUsIDE1IEphbiAyMDE5
-IDEwOjEyOjE5ICswMDAwIExpdml1IER1ZGF1IDxMaXZpdS5EdWRhdUBhcm0uY29tPiB3cm90ZToK
-PiA+ID4KPiA+ID4gVGhhdCBsb29rcyBsaWtlIHRoZSByaWdodCBmaXgsIHRoYW5rIHlvdSBmb3Ig
-dGhhdCEKPiA+IAo+ID4gVGhhbmtzIGZvciB5b3VyIHZlcmlmaWNhdGlvbi4KPiA+IAo+ID4gPiBJ
-IHdpbGwgcm9sbCB5b3VyIHBhdGNoIGludG8gbXkgdHJlZS4KPiA+IAo+ID4gWW91IGNhbiBvbmx5
-IGRvIHRoYXQgd2hlbiB5b3VyIHRyZWUgaXMgbWVyZ2VkIHdpdGggdGhlIGRybSB0cmVlIChhbmQK
-PiA+IGl0IHNob3VsZCBiZSBwYXJ0IG9mIHRoZSBtZXJnZSByZXNvbHV0aW9uKS4KPiAKPiBJIGNh
-biBhbHNvIHJlYmFzZSBvbiB0b3Agb2YgdGhlIGxhdGVzdCBkcm0tbmV4dCB0cmVlLCB0aGF0IHNo
-b3VsZCBub3QgYmUKPiBhIHByb2JsZW0uCgpJZiB5b3UgaGF2ZSBhIGxvdCBvZiBwYXRjaGVzIGFs
-cmVhZHkgcmViYXNpbmcgaXMga2luZGEgZGlzY291cmFnZWQuIFRoZXJlCm1pZ2h0IGJlIG90aGVy
-IHN0dWZmIHRoYXQncyBjb25mbGljdGluZyBhbmQgdGhlbiBtYWtpbmcgeW91ciBlbnRpcmUgdHJl
-ZQpub24tYmlzZWN0YWJsZSAobWF5YmUganVzdCBvbiBvbmUgcGxhdGZvcm0gdGhhdCB5b3UgbWlz
-c2VkIGluIHRlc3RpbmcpLgoKSW4gdGhhdCBjYXNlIGp1c3Qgc2VuZCBvdXQgYSBwdWxsIGZvciBk
-cm0tbmV4dCBhbmQgaW5jbHVkZSB0aGUgbWVyZ2UKcmVzb2x1dGlvbiBpbiB0aGUgcHVsbCByZXF1
-ZXN0IHNvIERhdmUvSSBjYW4gZG91YmxlLWNoZWNrIHdlIGRpZCBpdCByaWdodC4KLURhbmllbAot
-LSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0
-cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+T24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgMDE6MDg6MzZQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
+cm90ZToKPiBPbiBUdWUsIEphbiAxNSwgMjAxOSBhdCAxMDo1MTowMkFNICswMDAwLCBMaXZpdSBE
+dWRhdSB3cm90ZToKPiA+IE9uIFR1ZSwgSmFuIDE1LCAyMDE5IGF0IDA5OjQ3OjI1UE0gKzExMDAs
+IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPiA+IEhpIExpdml1LAo+ID4gPiAKPiA+ID4gT24g
+VHVlLCAxNSBKYW4gMjAxOSAxMDoxMjoxOSArMDAwMCBMaXZpdSBEdWRhdSA8TGl2aXUuRHVkYXVA
+YXJtLmNvbT4gd3JvdGU6Cj4gPiA+ID4KPiA+ID4gPiBUaGF0IGxvb2tzIGxpa2UgdGhlIHJpZ2h0
+IGZpeCwgdGhhbmsgeW91IGZvciB0aGF0IQo+ID4gPiAKPiA+ID4gVGhhbmtzIGZvciB5b3VyIHZl
+cmlmaWNhdGlvbi4KPiA+ID4gCj4gPiA+ID4gSSB3aWxsIHJvbGwgeW91ciBwYXRjaCBpbnRvIG15
+IHRyZWUuCj4gPiA+IAo+ID4gPiBZb3UgY2FuIG9ubHkgZG8gdGhhdCB3aGVuIHlvdXIgdHJlZSBp
+cyBtZXJnZWQgd2l0aCB0aGUgZHJtIHRyZWUgKGFuZAo+ID4gPiBpdCBzaG91bGQgYmUgcGFydCBv
+ZiB0aGUgbWVyZ2UgcmVzb2x1dGlvbikuCj4gPiAKPiA+IEkgY2FuIGFsc28gcmViYXNlIG9uIHRv
+cCBvZiB0aGUgbGF0ZXN0IGRybS1uZXh0IHRyZWUsIHRoYXQgc2hvdWxkIG5vdCBiZQo+ID4gYSBw
+cm9ibGVtLgo+IAo+IElmIHlvdSBoYXZlIGEgbG90IG9mIHBhdGNoZXMgYWxyZWFkeSByZWJhc2lu
+ZyBpcyBraW5kYSBkaXNjb3VyYWdlZC4gVGhlcmUKPiBtaWdodCBiZSBvdGhlciBzdHVmZiB0aGF0
+J3MgY29uZmxpY3RpbmcgYW5kIHRoZW4gbWFraW5nIHlvdXIgZW50aXJlIHRyZWUKPiBub24tYmlz
+ZWN0YWJsZSAobWF5YmUganVzdCBvbiBvbmUgcGxhdGZvcm0gdGhhdCB5b3UgbWlzc2VkIGluIHRl
+c3RpbmcpLgoKTXkgdHJlZSBoYXMgYWx3YXlzIGJlZW4gInVuc3RhYmxlIiwgSSBoYXZlIGJlZW4g
+cmViYXNpbmcgaXQgb24gdG9wIG9mCmxhdGVzdCBkcm0gb3IgZHJtLW5leHQgaW4gcHJlcGFyYXRp
+b24gZm9yIHNlbmRpbmcgcHVsbCByZXF1ZXN0cy4gSSd2ZSBob3BlZAp0aGF0IHBlb3BsZSBkb24n
+dCBkZXBlbmQgb24gdGhlIGxpbmVhcml0eSBvZiBteSB0cmVlIGFueXdheSBhbmQgaXQgaGFzbid0
+CmJlZW4gYW4gaXNzdWUgc28gZmFyLgoKVEJILCBJIHNob3VsZCd2ZSBiYXNlZCB0aGUgbGF0ZXN0
+IHVwZGF0ZSBvZiBteSB0cmVlIG9uIGRybS1uZXh0IGFueXdheSwgSQpqdXN0IHN0YXJ0ZWQgYXQg
+dGhlIHRpbWUgd2hlbiBpdCB3YXMgYXQgdjUuMC1yYzEgc28gSSB0aG91Z2h0IGl0IHdpbGwgbm90
+Cm1hdHRlci4KCkJlc3QgcmVnYXJkcywKTGl2aXUKCj4gCj4gSW4gdGhhdCBjYXNlIGp1c3Qgc2Vu
+ZCBvdXQgYSBwdWxsIGZvciBkcm0tbmV4dCBhbmQgaW5jbHVkZSB0aGUgbWVyZ2UKPiByZXNvbHV0
+aW9uIGluIHRoZSBwdWxsIHJlcXVlc3Qgc28gRGF2ZS9JIGNhbiBkb3VibGUtY2hlY2sgd2UgZGlk
+IGl0IHJpZ2h0Lgo+IC1EYW5pZWwKPiAtLSAKPiBEYW5pZWwgVmV0dGVyCj4gU29mdHdhcmUgRW5n
+aW5lZXIsIEludGVsIENvcnBvcmF0aW9uCj4gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKCi0tIAo9PT09
+PT09PT09PT09PT09PT09PQp8IEkgd291bGQgbGlrZSB0byB8CnwgZml4IHRoZSB3b3JsZCwgIHwK
+fCBidXQgdGhleSdyZSBub3QgfAp8IGdpdmluZyBtZSB0aGUgICB8CiBcIHNvdXJjZSBjb2RlISAg
+LwogIC0tLS0tLS0tLS0tLS0tLQogICAgwq9cXyjjg4QpXy/CrwpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
