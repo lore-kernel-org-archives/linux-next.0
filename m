@@ -1,61 +1,34 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: linux-next: build failure after merge of the mali-dp tree
-Date: Tue, 15 Jan 2019 12:23:13 +0000
-Message-ID: <20190115122313.GR20661@e110455-lin.cambridge.arm.com>
-References: <20190115104619.516be4b9@canb.auug.org.au>
- <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
- <20190115214725.360798cf@canb.auug.org.au>
- <20190115105102.GQ20661@e110455-lin.cambridge.arm.com>
- <20190115120836.GN10517@phenom.ffwll.local>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH V2] ARM: imx: add i.MX7ULP cpuidle support
+Date: Tue, 15 Jan 2019 12:30:23 +0000
+Message-ID: <e892304bde543b86a9d0ad4409d0c6a1f509a312.camel@nxp.com>
+References: <1547185955-2395-1-git-send-email-Anson.Huang@nxp.com>
+         <20190114005600.GN11426@dragon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190115120836.GN10517@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Content-ID: <792730552A7B8A4E8B6CD2DF20208615@eurprd04.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "shawnguo@kernel.org" <shawnguo@kernel.org>
+Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Anson Huang <anson.huang@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgMDE6MDg6MzZQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBUdWUsIEphbiAxNSwgMjAxOSBhdCAxMDo1MTowMkFNICswMDAwLCBMaXZpdSBE
-dWRhdSB3cm90ZToKPiA+IE9uIFR1ZSwgSmFuIDE1LCAyMDE5IGF0IDA5OjQ3OjI1UE0gKzExMDAs
-IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPiA+IEhpIExpdml1LAo+ID4gPiAKPiA+ID4gT24g
-VHVlLCAxNSBKYW4gMjAxOSAxMDoxMjoxOSArMDAwMCBMaXZpdSBEdWRhdSA8TGl2aXUuRHVkYXVA
-YXJtLmNvbT4gd3JvdGU6Cj4gPiA+ID4KPiA+ID4gPiBUaGF0IGxvb2tzIGxpa2UgdGhlIHJpZ2h0
-IGZpeCwgdGhhbmsgeW91IGZvciB0aGF0IQo+ID4gPiAKPiA+ID4gVGhhbmtzIGZvciB5b3VyIHZl
-cmlmaWNhdGlvbi4KPiA+ID4gCj4gPiA+ID4gSSB3aWxsIHJvbGwgeW91ciBwYXRjaCBpbnRvIG15
-IHRyZWUuCj4gPiA+IAo+ID4gPiBZb3UgY2FuIG9ubHkgZG8gdGhhdCB3aGVuIHlvdXIgdHJlZSBp
-cyBtZXJnZWQgd2l0aCB0aGUgZHJtIHRyZWUgKGFuZAo+ID4gPiBpdCBzaG91bGQgYmUgcGFydCBv
-ZiB0aGUgbWVyZ2UgcmVzb2x1dGlvbikuCj4gPiAKPiA+IEkgY2FuIGFsc28gcmViYXNlIG9uIHRv
-cCBvZiB0aGUgbGF0ZXN0IGRybS1uZXh0IHRyZWUsIHRoYXQgc2hvdWxkIG5vdCBiZQo+ID4gYSBw
-cm9ibGVtLgo+IAo+IElmIHlvdSBoYXZlIGEgbG90IG9mIHBhdGNoZXMgYWxyZWFkeSByZWJhc2lu
-ZyBpcyBraW5kYSBkaXNjb3VyYWdlZC4gVGhlcmUKPiBtaWdodCBiZSBvdGhlciBzdHVmZiB0aGF0
-J3MgY29uZmxpY3RpbmcgYW5kIHRoZW4gbWFraW5nIHlvdXIgZW50aXJlIHRyZWUKPiBub24tYmlz
-ZWN0YWJsZSAobWF5YmUganVzdCBvbiBvbmUgcGxhdGZvcm0gdGhhdCB5b3UgbWlzc2VkIGluIHRl
-c3RpbmcpLgoKTXkgdHJlZSBoYXMgYWx3YXlzIGJlZW4gInVuc3RhYmxlIiwgSSBoYXZlIGJlZW4g
-cmViYXNpbmcgaXQgb24gdG9wIG9mCmxhdGVzdCBkcm0gb3IgZHJtLW5leHQgaW4gcHJlcGFyYXRp
-b24gZm9yIHNlbmRpbmcgcHVsbCByZXF1ZXN0cy4gSSd2ZSBob3BlZAp0aGF0IHBlb3BsZSBkb24n
-dCBkZXBlbmQgb24gdGhlIGxpbmVhcml0eSBvZiBteSB0cmVlIGFueXdheSBhbmQgaXQgaGFzbid0
-CmJlZW4gYW4gaXNzdWUgc28gZmFyLgoKVEJILCBJIHNob3VsZCd2ZSBiYXNlZCB0aGUgbGF0ZXN0
-IHVwZGF0ZSBvZiBteSB0cmVlIG9uIGRybS1uZXh0IGFueXdheSwgSQpqdXN0IHN0YXJ0ZWQgYXQg
-dGhlIHRpbWUgd2hlbiBpdCB3YXMgYXQgdjUuMC1yYzEgc28gSSB0aG91Z2h0IGl0IHdpbGwgbm90
-Cm1hdHRlci4KCkJlc3QgcmVnYXJkcywKTGl2aXUKCj4gCj4gSW4gdGhhdCBjYXNlIGp1c3Qgc2Vu
-ZCBvdXQgYSBwdWxsIGZvciBkcm0tbmV4dCBhbmQgaW5jbHVkZSB0aGUgbWVyZ2UKPiByZXNvbHV0
-aW9uIGluIHRoZSBwdWxsIHJlcXVlc3Qgc28gRGF2ZS9JIGNhbiBkb3VibGUtY2hlY2sgd2UgZGlk
-IGl0IHJpZ2h0Lgo+IC1EYW5pZWwKPiAtLSAKPiBEYW5pZWwgVmV0dGVyCj4gU29mdHdhcmUgRW5n
-aW5lZXIsIEludGVsIENvcnBvcmF0aW9uCj4gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKCi0tIAo9PT09
-PT09PT09PT09PT09PT09PQp8IEkgd291bGQgbGlrZSB0byB8CnwgZml4IHRoZSB3b3JsZCwgIHwK
-fCBidXQgdGhleSdyZSBub3QgfAp8IGdpdmluZyBtZSB0aGUgICB8CiBcIHNvdXJjZSBjb2RlISAg
-LwogIC0tLS0tLS0tLS0tLS0tLQogICAgwq9cXyjjg4QpXy/CrwpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+T24gMS8xNC8xOSAyOjU2IEFNLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9uIEZyaSwgSmFuIDExLCAy
+MDE5IGF0IDA1OjU3OjMwQU0gKzAwMDAsIEFuc29uIEh1YW5nIHdyb3RlOg0KPiA+IFRoaXMgcGF0
+Y2ggYWRkcyBjcHVpZGxlIHN1cHBvcnQgZm9yIGkuTVg3VUxQLCAzIGNwdWlkbGUNCj4gPiBzdGF0
+ZXMgc3VwcG9ydGVkIGFzIGJlbG93Og0KPiA+IA0KPiA+IDEuIFdGSSwganVzdCBBUk0gd2ZpOw0K
+PiA+IDIuIFdBSVQgbW9kZSwgbWFwcGVkIHRvIFNvQydzIHBhcnRpYWwgc3RvcCBtb2RlICMzOw0K
+PiA+IDMuIFNUT1AgbW9kZSwgbWFwcGVkIHRvIFNvQydzIHBhcnRpYWwgc3RvcCBtb2RlICMxLg0K
+PiA+IA0KPiA+IEluIFdBSVQgbW9kZSwgc3lzdGVtIGNsb2NrIGFuZCBidXMgY2xvY2sgd2lsbCBi
+ZSBlbmFibGVkOw0KPiA+IEluIFNUT1AgbW9kZSwgc3lzdGVtIGNsb2NrIGFuZCBidXMgY2xvY2sg
+d2lsbCBiZSBkaXNhYmxlZC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8
+QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gDQo+IEFwcGxpZWQsIHRoYW5rcy4NCj4gDQoNCkhlbGxv
+LA0KDQpJJ20gbm90IHN1cmUgaWYgYW55b25lIGVsc2UgYWxyZWFkeSBub3RpY2VkIGJ1dCBpdCBz
+ZWVtcyB0aGUNCmFyY2gvYXJtL21hY2gtaW14L2NwdWlkbGUtaW14N3VscC5jIGZpbGUgd2FzIGRy
+b3BwZWQ/DQoNCkl0J3Mgbm90IGluIHlvdXIgdHJlZToNCg0KaHR0cHM6Ly9naXQua2VybmVsLm9y
+Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvc2hhd25ndW8vbGludXguZ2l0L2NvbW1pdC8/aD1p
+bXgvc29jJmlkPWNmMmQyZDM5MjkwNmY1NjAzY2YwZDBmMzYzMGY2Mzg2YmFiZjdlNGINCg0KVGhp
+cyBjYXVzZXMgYnVpbGQgZmFpbHVyZXMgaW4gbmV4dC0yMDE5MDExNSB3aXRoIGlteF92Nl92N19k
+ZWZjb25maWcuDQoNCi0tDQpSZWdhcmRzLA0KTGVvbmFyZA0K
