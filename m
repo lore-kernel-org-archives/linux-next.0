@@ -1,52 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the v4l-dvb tree
-Date: Thu, 17 Jan 2019 08:02:48 +1100
-Message-ID: <20190117080248.6f26b8fc@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the net-next tree
+Date: Thu, 17 Jan 2019 08:06:19 +1100
+Message-ID: <20190117080619.5a632a41@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_B7K4PT4YEFOcVN4J6y=5Xy"; protocol="application/pgp-signature"
+ boundary="Sig_/htqkIb3uUy2yoYZgpWZV39E"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lepton Wu <ytht.net@gmail.com>, Stefan Hajnoczi <stefanha@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_B7K4PT4YEFOcVN4J6y=5Xy
+--Sig_/htqkIb3uUy2yoYZgpWZV39E
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-[I am experimenting with checking the Fixes tags in commits in linux-next.
-Please let me know if you think I am being too strict.]
-
-Hi Mauro,
+Hi all,
 
 Commit
 
-  961304d17a61 ("media: dt-bindings: media: i2c: Fix i2c address for OV5645=
- camera sensor")
+  a22d3251423f ("Fix ERROR:do not initialise statics to 0 in af_vsock.c")
 
-has a malformed Fixes tag.
-
-The subject in the Fixes tag is usually surrounded by (" and ").
+is missing a Signed-off-by from its author.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/_B7K4PT4YEFOcVN4J6y=5Xy
+--Sig_/htqkIb3uUy2yoYZgpWZV39E
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/m/gACgkQAVBC80lX
-0Gw7lAf+L1EVf1ZqsEhsfzzNyjD0kxf/zFmqGC/S3+YrjwUOA498RvswZdM39veC
-pwxL5M9ZrzOEUqamf5mxqpAoqBz+Gy8jevv7QnLbmSAZ2DZGCAZbScGyoge2M26O
-KRa4AnHL9e9hBRJl63F6He9RAdbJAaT4aKwFtw/pu+nSV48B4kTlWZzRZoraMDiz
-Qv7Aic87G/k/a8X67jsI9KqVOi3mpOVkDpo/sgW97aY0OANz+FCPZst/GOpsk7ic
-F4uBomatvO5PlSFzrM1rq9q7Ahquef79JmDZwHsG4vp/mgL8sRclsGcc6Vc/hzH2
-0AXeAiUDhMJIE8zm1ZlaKZG+MXTSlg==
-=7daM
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/nMsACgkQAVBC80lX
+0Gx9igf+Mamr/zsI+XWBRZ6R7+k2fBz/jA8H8GG0QPqvbXVApVLf/kHReC8ILRLG
+NjXleC0ZaHyhSXmUyRrBxbjxpnPx0qfbqxxaofTTb/Q1RAfq5bNnRXSTD5UGt49H
+M9IetCep8qyFObC7lG3fLwYN4eTlPJxFsWZWw4g9a/SqRyPnkfE1lfqafKiLNo+k
+WZnVkNu+RqqsFKRp9TDK+wr/uZNZ/qCg6l6UpWH607pV9swOJ1jc6MJzcilU9UYK
+0XsbuOBltV6tbpi5iQNXzK6yCrzns8XHu9JGUS1c5eN9sHat3PbGzx48ZnrA0HIg
+vBrSIWoU2u9FqXpoBrM0j1MjoNPNEw==
+=u/kX
 -----END PGP SIGNATURE-----
 
---Sig_/_B7K4PT4YEFOcVN4J6y=5Xy--
+--Sig_/htqkIb3uUy2yoYZgpWZV39E--
