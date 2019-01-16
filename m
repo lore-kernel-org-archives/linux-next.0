@@ -1,96 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Wed, 16 Jan 2019 13:48:24 +1100
-Message-ID: <20190116134824.74c2d7da@canb.auug.org.au>
+From: Ming Lei <ming.lei@redhat.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Wed, 16 Jan 2019 10:48:33 +0800
+Message-ID: <20190116024832.GA26146@ming.t460p>
+References: <20190116133552.37436b9c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2Jb9UHR.9gaR=CVdBX_Jlm4"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190116133552.37436b9c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2Jb9UHR.9gaR=CVdBX_Jlm4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 16, 2019 at 01:35:52PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the block tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> net/sunrpc/xprtsock.c: In function 'xs_flush_bvec':
+> net/sunrpc/xprtsock.c:390:2: error: implicit declaration of function 'for_each_bvec'; did you mean 'for_each_net'? [-Werror=implicit-function-declaration]
+>   for_each_bvec(bv, bvec, bi, bi)
+>   ^~~~~~~~~~~~~
+>   for_each_net
+> net/sunrpc/xprtsock.c:390:33: error: expected ';' before 'flush_dcache_page'
+>   for_each_bvec(bv, bvec, bi, bi)
+>                                  ^
+>                                  ;
+>    flush_dcache_page(bv.bv_page);
+>    ~~~~~~~~~~~~~~~~~              
+> 
+> Caused by commit
+> 
+>   f3effe4c1240 ("block: rename bvec helpers")
+> 
+> interacting with commit
+> 
+>   6a829eb8619f ("SUNRPC: Fix TCP receive code on archs with flush_dcache_page()")
+> 
+> from the nfs-anna tree.
+> 
+> [I love API changes :-(]
+> 
+> I have applied the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 16 Jan 2019 13:32:59 +1100
+> Subject: [PATCH] SUNRPC: merge fix for "block: rename bvec helpers"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/sunrpc/xprtsock.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+> index 7754aa3e434f..47f29cc23f27 100644
+> --- a/net/sunrpc/xprtsock.c
+> +++ b/net/sunrpc/xprtsock.c
+> @@ -387,7 +387,7 @@ xs_flush_bvec(const struct bio_vec *bvec, size_t count, size_t seek)
+>  	struct bio_vec bv;
+>  
+>  	bvec_iter_advance(bvec, &bi, seek & PAGE_MASK);
+> -	for_each_bvec(bv, bvec, bi, bi)
+> +	for_each_segment(bv, bvec, bi, bi)
+>  		flush_dcache_page(bv.bv_page);
+>  }
+>  #else
 
-Hi all,
+This fix is correct, thanks!
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-fs/gfs2/lops.c: In function 'gfs2_end_log_read':
-fs/gfs2/lops.c:394:39: error: macro "bio_for_each_segment_all" requires 4 a=
-rguments, but only 3 given
-  bio_for_each_segment_all(bvec, bio, i) {
-                                       ^
-fs/gfs2/lops.c:394:2: error: 'bio_for_each_segment_all' undeclared (first u=
-se in this function); did you mean 'bio_first_page_all'?
-  bio_for_each_segment_all(bvec, bio, i) {
-  ^~~~~~~~~~~~~~~~~~~~~~~~
-  bio_first_page_all
-fs/gfs2/lops.c:394:2: note: each undeclared identifier is reported only onc=
-e for each function it appears in
-fs/gfs2/lops.c:394:26: error: expected ';' before '{' token
-  bio_for_each_segment_all(bvec, bio, i) {
-                          ^              ~
-                          ;
-
-Caused by commit
-
-  eb754eb2a953 ("block: allow bio_for_each_segment_all() to iterate over mu=
-lti-page bvec")
-
-One instance of bio_for_each_segment_all() was missed.
-
-I have applied the following fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 16 Jan 2019 13:44:02 +1100
-Subject: [PATCH] block: fix up for bio_for_each_segment_all() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/gfs2/lops.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/gfs2/lops.c b/fs/gfs2/lops.c
-index ef68bf6232e7..15deefeaafd0 100644
---- a/fs/gfs2/lops.c
-+++ b/fs/gfs2/lops.c
-@@ -390,8 +390,9 @@ static void gfs2_end_log_read(struct bio *bio)
- 	struct page *page;
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all iter_all;
-=20
--	bio_for_each_segment_all(bvec, bio, i) {
-+	bio_for_each_segment_all(bvec, bio, i, iter_all) {
- 		page =3D bvec->bv_page;
- 		if (bio->bi_status) {
- 			int err =3D blk_status_to_errno(bio->bi_status);
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2Jb9UHR.9gaR=CVdBX_Jlm4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+m3gACgkQAVBC80lX
-0GwoHQf+P6tzwemxAKhgg71igIacjJmsdrVXibDJl934znQDD/Pp5u+7pOYTgREk
-4JEJXNX4/1E26k9dNBGE3CV0wUF2sLAsyvQ2PQ8BGO4deIUBUuieBAwtzOMISfsh
-cn+MZPvmwBVCehVoWNyooNHsZ2OHMOzjyjx1UMs1FNtYTXKzbRuoH7JzeN9JCpjz
-AsRoYsmBFjNxYTOFQFKgQs/rCcNOPNR8nNgNNIrDQbT82Mx2qHcJkX1+WZhgrzri
-QAnCpnr2N9fwfSQmq7RORKkgLUTF35l4bdnF/ARhY8Z6CtONhaN6W7daGsejGzXu
-JDgdvLChYR4btxvpVfm+6to4W+2Cbg==
-=8hO2
------END PGP SIGNATURE-----
-
---Sig_/2Jb9UHR.9gaR=CVdBX_Jlm4--
+Thanks,
+Ming
