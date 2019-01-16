@@ -1,86 +1,83 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with the fscrypt tree
-Date: Wed, 16 Jan 2019 07:27:25 -0700
-Message-ID: <62f1085d-a436-d0ab-6bc1-2b3d7d0ea2c7@kernel.dk>
-References: <20190116132522.1b756433@canb.auug.org.au>
- <ca843f39-3fcd-1a03-34c9-7284f10fe262@kernel.dk>
- <20190116031301.GC26146@ming.t460p>
- <a1ce4d1d-13e0-c765-bf22-55fd67c9f1d4@kernel.dk>
- <20190116073915.GA1089@ming.t460p>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: linux-next: Fixes tag needs some work in the nfs-anna tree
+Date: Wed, 16 Jan 2019 10:24:20 -0500
+Message-ID: <0014CBAD-D596-4DA5-B6DE-61160FFD033C@oracle.com>
+References: <20190116083831.256824cf@canb.auug.org.au>
+ <A4B834E5-2DFD-428E-8E24-9F6F6A822B09@oracle.com>
+ <s5hbm4hfu45.wl-tiwai@suse.de> <20190115233811.GD26416@windriver.com>
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190116073915.GA1089@ming.t460p>
-Content-Language: en-US
+In-Reply-To: <20190115233811.GD26416@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 1/16/19 12:39 AM, Ming Lei wrote:
-> On Tue, Jan 15, 2019 at 08:17:36PM -0700, Jens Axboe wrote:
->> On 1/15/19 8:13 PM, Ming Lei wrote:
->>> On Tue, Jan 15, 2019 at 07:55:39PM -0700, Jens Axboe wrote:
->>>> On 1/15/19 7:25 PM, Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> Today's linux-next merge of the block tree got a conflict in:
->>>>>
->>>>>   fs/ext4/readpage.c
->>>>>
->>>>> between commit:
->>>>>
->>>>>   acc9eb0a6073 ("ext4: add fs-verity read support")
->>>>>
->>>>> from the fscrypt tree and commit:
->>>>>
->>>>>   eb754eb2a953 ("block: allow bio_for_each_segment_all() to iterate over multi-page bvec")
->>>>>
->>>>> from the block tree.
->>>>>
->>>>> I fixed it up (see below - the former moved the code modified by the
->>>>> latter) and can carry the fix as necessary. This is now fixed as far as
->>>>> linux-next is concerned, but any non trivial conflicts should be mentioned
->>>>> to your upstream maintainer when your tree is submitted for merging.
->>>>> You may also want to consider cooperating with the maintainer of the
->>>>> conflicting tree to minimise any particularly complex conflicts.
->>>>
->>>> Ming, I'm pulling this, I thought we agreed none of these bullshit
->>>> renames? The fact that a patch looks like this:
->>>>
->>>> -               for_each_bvec(bv, (it)->bvecs, __cur_iter, __cur_iter)        \
->>>> +               for_each_segment(bv, (it)->bvecs, __cur_iter, __cur_iter)     \
->>>>
->>>> is SUPER annoying and does NOTHING but to cause merge conflicts.
->>>>
->>>> Resend it without that.
->>>
->>> We need to differentiate 'segment' with 'bvec' in bvec helpers, which is
->>> usually seldom used by drivers. For example, only two in-tree users(ceph, iov_iter).
->>> That is why I rename it, and seems Christoph prefers to do it too.
->>
->> If you want to do a rename, then we do it after. I don't want to deal with
->> weeks and weeks of fallout from this. Write a rename script that we can
->> then run at the end of the next merge window. You're going to be playing
->> catch-up until that happens if we go the current route, and honestly
->> I'm not at all interested in the fallout from that.
->>
->> I know exactly what will happen until 5.1-rc opens, and what my tree will
->> look like from having to deal with this. And then I know exactly what Linus
->> is going to say, and I can't even argue against it, since he'll be totally
->> right.
->>
->> Hence it's not going to happen this way.
-> 
-> I can remove the renaming in patch 'block: rename bvec helpers', but
-> change on bio_for_each_segment_all() is inevitable, and it is still an
-> API change, so merge conflict can't avoid too.
 
-That's not what I'm complaining about, API changes are inevitable for
-something like this. What I'm complaining about is the very example
-I posted above, and which has already caused issues. That's a frivolous
-name change. Don't do it.
 
--- 
-Jens Axboe
+On Jan 15, 2019, at 6:38 PM, Paul Gortmaker =
+<paul.gortmaker@windriver.com> wrote:
+
+> [Re: linux-next: Fixes tag needs some work in the nfs-anna tree] On =
+15/01/2019 (Tue 23:12) Takashi Iwai wrote:
+>=20
+>> On Tue, 15 Jan 2019 22:41:21 +0100,
+>> Chuck Lever wrote:
+>>>=20
+>>> Hi Stephen-
+>>>=20
+>>> On Jan 15, 2019, at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>>>=20
+>>>> [I am experimenting with checking the Fixes tags in commits in =
+linux-next.
+>>>> Please let me know if you think I am being too strict.]
+>>>>=20
+>>>> Hi all,
+>>>>=20
+>>>> Commit
+>>>>=20
+>>>> deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior =
+regression")
+>>>>=20
+>>>> has problem with this Fixes tag:
+>>>>=20
+>>>> Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... =
+")
+>>>>=20
+>>>> The subject should match the subject of the fixed commit.
+>>>>=20
+>>>> --=20
+>>>> Cheers,
+>>>> Stephen Rothwell
+>>>=20
+>>> I shortened the commit title so that the Fixes: line is shorter than =
+68
+>>> characters. I can leave these titles alone if that's preferred.
+>>=20
+>> I've sometimes shorted the subject like the above, too, as I find a
+>> too long text annoying.  Maybe the partial string matching should
+>> suffice, especially when it ends with "..." ?
+>=20
+> The problem is consistency.  Perhaps you shorten at four words.  A
+> person searches with five words or 70 chars -  they never see your =
+commit.
+>=20
+> The idea of consistency across the "Fixes:" tags is to allow a level =
+of
+> automated processing so that the creators of the stable releases can =
+do
+> a lot less manual hands-on processing.  They have enough work to do.
+
+My impression was the scripted processing here relies on the commit
+ID and not on the patch short description.
+
+The convention of shortening the description with an ellipsis is
+already widely used. I think it's reasonable to allow it.
+
+
+--
+Chuck Lever
