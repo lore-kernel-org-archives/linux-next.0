@@ -1,98 +1,86 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: Fixes tags need some work in the pm tree
-Date: Wed, 16 Jan 2019 12:50:47 +0100
-Message-ID: <4595555.i8zNzpiWno@aspire.rjw.lan>
-References: <20190116075540.78cff44e@canb.auug.org.au> <8346227.VjU8HeZdOJ@aspire.rjw.lan> <20190116002257.GE26416@windriver.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the block tree with the fscrypt tree
+Date: Wed, 16 Jan 2019 07:27:25 -0700
+Message-ID: <62f1085d-a436-d0ab-6bc1-2b3d7d0ea2c7@kernel.dk>
+References: <20190116132522.1b756433@canb.auug.org.au>
+ <ca843f39-3fcd-1a03-34c9-7284f10fe262@kernel.dk>
+ <20190116031301.GC26146@ming.t460p>
+ <a1ce4d1d-13e0-c765-bf22-55fd67c9f1d4@kernel.dk>
+ <20190116073915.GA1089@ming.t460p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190116002257.GE26416@windriver.com>
+In-Reply-To: <20190116073915.GA1089@ming.t460p>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sinan Kaya <okaya@kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday, January 16, 2019 1:22:57 AM CET Paul Gortmaker wrote:
-> [Re: linux-next: Fixes tags need some work in the pm tree] On 16/01/2019 (Wed 00:06) Rafael J. Wysocki wrote:
+On 1/16/19 12:39 AM, Ming Lei wrote:
+> On Tue, Jan 15, 2019 at 08:17:36PM -0700, Jens Axboe wrote:
+>> On 1/15/19 8:13 PM, Ming Lei wrote:
+>>> On Tue, Jan 15, 2019 at 07:55:39PM -0700, Jens Axboe wrote:
+>>>> On 1/15/19 7:25 PM, Stephen Rothwell wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> Today's linux-next merge of the block tree got a conflict in:
+>>>>>
+>>>>>   fs/ext4/readpage.c
+>>>>>
+>>>>> between commit:
+>>>>>
+>>>>>   acc9eb0a6073 ("ext4: add fs-verity read support")
+>>>>>
+>>>>> from the fscrypt tree and commit:
+>>>>>
+>>>>>   eb754eb2a953 ("block: allow bio_for_each_segment_all() to iterate over multi-page bvec")
+>>>>>
+>>>>> from the block tree.
+>>>>>
+>>>>> I fixed it up (see below - the former moved the code modified by the
+>>>>> latter) and can carry the fix as necessary. This is now fixed as far as
+>>>>> linux-next is concerned, but any non trivial conflicts should be mentioned
+>>>>> to your upstream maintainer when your tree is submitted for merging.
+>>>>> You may also want to consider cooperating with the maintainer of the
+>>>>> conflicting tree to minimise any particularly complex conflicts.
+>>>>
+>>>> Ming, I'm pulling this, I thought we agreed none of these bullshit
+>>>> renames? The fact that a patch looks like this:
+>>>>
+>>>> -               for_each_bvec(bv, (it)->bvecs, __cur_iter, __cur_iter)        \
+>>>> +               for_each_segment(bv, (it)->bvecs, __cur_iter, __cur_iter)     \
+>>>>
+>>>> is SUPER annoying and does NOTHING but to cause merge conflicts.
+>>>>
+>>>> Resend it without that.
+>>>
+>>> We need to differentiate 'segment' with 'bvec' in bvec helpers, which is
+>>> usually seldom used by drivers. For example, only two in-tree users(ceph, iov_iter).
+>>> That is why I rename it, and seems Christoph prefers to do it too.
+>>
+>> If you want to do a rename, then we do it after. I don't want to deal with
+>> weeks and weeks of fallout from this. Write a rename script that we can
+>> then run at the end of the next merge window. You're going to be playing
+>> catch-up until that happens if we go the current route, and honestly
+>> I'm not at all interested in the fallout from that.
+>>
+>> I know exactly what will happen until 5.1-rc opens, and what my tree will
+>> look like from having to deal with this. And then I know exactly what Linus
+>> is going to say, and I can't even argue against it, since he'll be totally
+>> right.
+>>
+>> Hence it's not going to happen this way.
 > 
-> > On Tuesday, January 15, 2019 11:43:05 PM CET Stephen Rothwell wrote:
-> > > Hi Rafael,
-> > > 
-> > > On Tue, 15 Jan 2019 23:13:16 +0100 "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
-> > > >
-> > > > On Tuesday, January 15, 2019 9:55:40 PM CET Stephen Rothwell wrote:
-> > > > > [I am experimenting with checking the Fixes tags in commits in linux-next.
-> > > > > Please let me know if you think I am being too strict.]
-> > > > > 
-> > > > > Hi Rafael,
-> > > > > 
-> > > > > Commits
-> > > > > 
-> > > > >   62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency explicit")
-> > > > >   cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
-> > > > >   42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables()")
-> > > > >   6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
-> > > > >   34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
-> > > > >   704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
-> > > > >   5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
-> > > > >   da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
-> > > > >   ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
-> > > > > 
-> > > > > Have malformed Fixes tags:
-> > > > > 
-> > > > > There should be double quotes around the commit subject.  
-> > > > 
-> > > > Well, where does this requirement come from?
-> > > > 
-> > > > It hasn't been there before AFAICS.
-> > > 
-> > > Documentation/process/submitting-patches.rst has the following, but I
-> > > am sure people are happy to discuss changes and it does say "For
-> > > example", so maybe I am being to strict?
-> > 
-> > If that's the source of it, then it's rather weak IMO.
-> 
-> Rafael, allow me to rewind a bit, and add context you would not have...
-> 
-> A quick on-the-fly script shows we have a lot of "Fixes:" tags that
-> either have bad (rebased/gone) commit IDs and/or non-standard
-> formatting.
-> 
-> The biggest issue is having commits in mainline that reference a commit
-> ID in a Fixes: tag that doesn't exist - for one reason or another.  Once
-> that is in mainline, we can't correct it.  It is there forever.
-> 
-> Doing a sanity check for that in linux-next seems like a good place to
-> check for this and prevent it.  And if we sanity check for one thing, we
-> can sanity check for other common issues.  Hence the less important
-> formatting checks.
+> I can remove the renaming in patch 'block: rename bvec helpers', but
+> change on bio_for_each_segment_all() is inevitable, and it is still an
+> API change, so merge conflict can't avoid too.
 
-I agree with that in general, and I'd really appreciate telling me that I
-have a non-existing SHA-ID in a Fixes: tag, but is it really a good idea to
-make it a fail if someone uses "non-canonical" quoting style in the summary
-part?
+That's not what I'm complaining about, API changes are inevitable for
+something like this. What I'm complaining about is the very example
+I posted above, and which has already caused issues. That's a frivolous
+name change. Don't do it.
 
-> > Formal requirements should be documented as such and I would expect that
-> > to happen through the usual process: patch submission, review, acceptance etc.
-> 
-> I'd rather not misinterpret this as a formal requirement.  We just want
-> to catch bad SHA IDs in Fixes: and also help our friends doing the
-> linux-stable releases so they can parse those Fixes: fields more easily
-> and reliably.
-> 
-> I'd like to think we all can support the work the linux-stable people do
-> and stand behind doing whatever we can to help them.  At the same time,
-> people (maintainers and submitters) have the choice to ignore the
-> e-mails that suggest "Fixes:" changes, if they feel they are invalid.
-> And suggestions for improvements in parsing etc etc are always welcome.
-
-IMO, if you don't find the SHA ID given in the tag, it is a fail already.
-
-If you find it, you should at least be able to get a partial match of the
-initial part of the original commit summary with what is given in the
-summary part of the tag except for some possible quoting characters at
-the beginning of it.  That should be reasonably straightforward to implement.
-
-Cheers,
-Rafael
+-- 
+Jens Axboe
