@@ -1,46 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net-next tree
-Date: Thu, 17 Jan 2019 08:06:19 +1100
-Message-ID: <20190117080619.5a632a41@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the drm-misc tree
+Date: Thu, 17 Jan 2019 08:13:51 +1100
+Message-ID: <20190117081351.661539c5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/htqkIb3uUy2yoYZgpWZV39E"; protocol="application/pgp-signature"
+ boundary="Sig_/d6ZA1OcL.iAiJtEIBDxPVQ."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lepton Wu <ytht.net@gmail.com>, Stefan Hajnoczi <stefanha@redhat.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/htqkIb3uUy2yoYZgpWZV39E
+--Sig_/d6ZA1OcL.iAiJtEIBDxPVQ.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
 
 Hi all,
 
 Commit
 
-  a22d3251423f ("Fix ERROR:do not initialise statics to 0 in af_vsock.c")
+  94520db52fc0 ("drm: fix alpha build after drm_util.h change")
 
-is missing a Signed-off-by from its author.
+has a malformed Fixes tag:
+
+  Fixes: 733748ac37b45 ("drm: move drm_can_sleep() to drm_util.h")
+
+The SHA1 does not reference a commit currently in the tree.  Maybe it
+was meant to be e9eafcb58921.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/htqkIb3uUy2yoYZgpWZV39E
+--Sig_/d6ZA1OcL.iAiJtEIBDxPVQ.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/nMsACgkQAVBC80lX
-0Gx9igf+Mamr/zsI+XWBRZ6R7+k2fBz/jA8H8GG0QPqvbXVApVLf/kHReC8ILRLG
-NjXleC0ZaHyhSXmUyRrBxbjxpnPx0qfbqxxaofTTb/Q1RAfq5bNnRXSTD5UGt49H
-M9IetCep8qyFObC7lG3fLwYN4eTlPJxFsWZWw4g9a/SqRyPnkfE1lfqafKiLNo+k
-WZnVkNu+RqqsFKRp9TDK+wr/uZNZ/qCg6l6UpWH607pV9swOJ1jc6MJzcilU9UYK
-0XsbuOBltV6tbpi5iQNXzK6yCrzns8XHu9JGUS1c5eN9sHat3PbGzx48ZnrA0HIg
-vBrSIWoU2u9FqXpoBrM0j1MjoNPNEw==
-=u/kX
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/no8ACgkQAVBC80lX
+0Gwmqgf+NL4U8JStAX92XZgjZQw7/hFo5KY57biiSGgVj41hvBd8eeaflmBNf7R6
+FvlLouSJ1EVggH2MDriUCchPzrpymJuVyESeGhk9vyT4oerf/2aRsRgQ/1QL27VO
+Nya6AhYTNudr8RMjLSkwV/lMKqiDa6+e7BI9tFTukFTpN1xXAQdx3n+RoOdzDHVL
+Zf1zauC289c1PD+erRtXP2xsM+uWl+OJ2H60DicrC02tMttgvVzk0RCFkwftApIg
+M2IaOpMUsJjtaeh/Be/H2TOWL/ep0bQoiFkM6HbzcB79ri847+nFs3GX6q5Y00Fs
+nqFKj9LA8kvDdh5wC/8RXPCqwrV5ZQ==
+=E49g
 -----END PGP SIGNATURE-----
 
---Sig_/htqkIb3uUy2yoYZgpWZV39E--
+--Sig_/d6ZA1OcL.iAiJtEIBDxPVQ.--
