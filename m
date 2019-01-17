@@ -1,56 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Date: Fri, 18 Jan 2019 09:35:15 +1100
-Message-ID: <20190118093515.4bee6eb3@canb.auug.org.au>
+From: Sinan Kaya <okaya@kernel.org>
+Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
+ is enabled
+Date: Thu, 17 Jan 2019 18:02:42 -0500
+Message-ID: <b92f439e-b95c-56e3-6960-52ae1e1afe71@kernel.org>
+References: <20190117161722.3945-1-okaya@kernel.org>
+ <20190117163722.GE5023@zn.tnic>
+ <c0fa174a-2e7b-2ef2-4913-167934c68c06@kernel.org>
+ <20190117215631.GF5023@zn.tnic>
+ <CAJZ5v0hHFASeJb8z8QwQkh-tCs409pnaywtWcqLP5K5ZDGhTsw@mail.gmail.com>
+ <20190117220959.GG5023@zn.tnic>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5PiD/2NNvmxyX0sF9CD35_k"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190117220959.GG5023@zn.tnic>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>
+To: Borislav Petkov <bp@alien8.de>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5PiD/2NNvmxyX0sF9CD35_k
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/17/2019 5:09 PM, Borislav Petkov wrote:
+> On Thu, Jan 17, 2019 at 11:05:43PM +0100, Rafael J. Wysocki wrote:
+>> I have patches for intel_ips and intel_pmc_ipc queued up (will be
+>> pushed for -rc3), plus some others.
+> 
+> Yeah, I saw the patchset and applied some of them locally so that I be
+> able to do randconfig builds. Do you have a branch somewhere which I can
+> merge locally for testing?
+>
 
-Hi all,
-
-Commit
-
-  f0ca26ca4f36 ("genirq: Fix the kerneldoc comment for struct irq_affinity_=
-desc")
-
-Fixes tag
-
-  Fixes: Commit c410abbbacb9 ("genirq/affinity: Add is_managed to struct ir=
-q_affinity_desc")
-
-has these problems:
-
-  - No SHA1 recognised
-
-The word "Commit" is unexpected in the Fixes tag line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5PiD/2NNvmxyX0sF9CD35_k
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxBAyMACgkQAVBC80lX
-0GxbLAf/VieyF6p6fTQBYXT/primhzrOqVllyMUpwak9ySL1UXP9Qe1O1HSGAIkT
-irlg0BH6utD/J/l6iyVRKRy9NhKTGsbcLbVKfFs0Fk6RwvAqO7CmlAONzaCDrOvX
-aTkHKSq6CQ8xLDvcdvsu3ECof9xjPR6O3iKk2onb5JsMDv2Tc+p5oFBWLxnwvJFH
-8ymoVlIxJzuAs5OLSwSdmgeW5VVldhx+1bcKJHP9Tdb5DJ8r5WeztJkCryQkMLUO
-vD4GlG3G/Eg1za2dFGW345BUolyvkyw2OMkgHUtXnw8xeUFNofDD0F4eD3dgBhTB
-w20QRiGhu00Wla/WmVpPW7HNosdHaQ==
-=j5pL
------END PGP SIGNATURE-----
-
---Sig_/5PiD/2NNvmxyX0sF9CD35_k--
+You can use this tag (next-20190116) for local test.
