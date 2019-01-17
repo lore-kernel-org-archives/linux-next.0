@@ -1,33 +1,52 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
- is enabled
-Date: Thu, 17 Jan 2019 23:09:59 +0100
-Message-ID: <20190117220959.GG5023@zn.tnic>
-References: <20190117161722.3945-1-okaya@kernel.org>
- <20190117163722.GE5023@zn.tnic>
- <c0fa174a-2e7b-2ef2-4913-167934c68c06@kernel.org>
- <20190117215631.GF5023@zn.tnic>
- <CAJZ5v0hHFASeJb8z8QwQkh-tCs409pnaywtWcqLP5K5ZDGhTsw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the tip tree
+Date: Fri, 18 Jan 2019 09:31:35 +1100
+Message-ID: <20190118093135.39cf071e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AqHG0K4+LaYSP5cre78SC7M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hHFASeJb8z8QwQkh-tCs409pnaywtWcqLP5K5ZDGhTsw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sinan Kaya <okaya@kernel.org>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:05:43PM +0100, Rafael J. Wysocki wrote:
-> I have patches for intel_ips and intel_pmc_ipc queued up (will be
-> pushed for -rc3), plus some others.
+--Sig_/AqHG0K4+LaYSP5cre78SC7M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I saw the patchset and applied some of them locally so that I be
-able to do randconfig builds. Do you have a branch somewhere which I can
-merge locally for testing?
+Hi all,
 
--- 
-Regards/Gruss,
-    Boris.
+Commit
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+  a31e184e4f69 ("x86/pkeys: Properly copy pkey state at fork()")
+
+Fixes tag
+
+  Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
+
+has these problems:
+
+  - SHA1 should be at least 12 digits long
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AqHG0K4+LaYSP5cre78SC7M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxBAkcACgkQAVBC80lX
+0GwqQgf/R7FSce8yihSxWinaT3Z/YltX1oHHs9AIPl82Ent2gd6gwX7Ix5pvBHLT
+B4VLjtxDJBq822TVI4UxWT7cjFTJ++u40OiPj5AORzy3ygVwrf/bYHV1lPBSf4zg
+i8/R9aNmefUj/Ui7He3V4G6/gYNl4/UVyDHQBHfz4mVmUjFTUNLNuaEN6nd4cw/i
+ZZ00Ugv5ZV7xBSBX+0Yu09jrbDbNMzoNUC+bVJZ39Jqy1V0bHDe52OhNpepdizaE
+Nk5diD+BgM7FrOgblT0AreymtJQDOe9wABz5vhdJpkz2dJu4Z2ZGu3aXKqBaPOYd
+gkwYTA/0uH7EowhAm5MOmhIQdIndGg==
+=ECMj
+-----END PGP SIGNATURE-----
+
+--Sig_/AqHG0K4+LaYSP5cre78SC7M--
