@@ -1,29 +1,26 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: Fixes tag needs some work in the imx-mxs tree
-Date: Thu, 17 Jan 2019 08:36:58 +0800
-Message-ID: <20190117003655.GA19069@dragon>
-References: <20190117075459.50e6a22f@canb.auug.org.au>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the clk tree
+Date: Wed, 16 Jan 2019 23:25:21 -0200
+Message-ID: <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com>
+References: <20190116083440.11b6839c@canb.auug.org.au> <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190117075459.50e6a22f@canb.auug.org.au>
+In-Reply-To: <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 17, 2019 at 07:54:59AM +1100, Stephen Rothwell wrote:
-> Hi Shawn,
-> 
-> Commit
-> 
->   fde7ed930ca2 ("arm64: dts: imx8qxp: Fix MU4_INT number")
-> 
-> has a malformed Fixes tag.
-> 
-> The SHA1 should be at least 12 digits long.
+On Wed, Jan 16, 2019 at 10:44 PM Stephen Boyd <sboyd@kernel.org> wrote:
 
-Fixed.  Thanks for spotting it, Stephen.
+> Ok sure. Does this matter to scripts? Is it documented in
+> Documentation/process/submitting-patches.rst? I've seen both types, one
 
-Shawn
+>From Documentation/process/submitting-patches.rst"
+
+"If your patch fixes a bug in a specific commit, e.g. you found an issue using
+``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+the SHA-1 ID, and the one line summary.  For example::
+
+Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()")"
