@@ -1,39 +1,35 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: Tree for Jan 16
-Date: Thu, 17 Jan 2019 11:34:01 -0700
-Message-ID: <10619062-9531-e843-1620-7518e27583f8@kernel.dk>
-References: <20190116173838.042db659@canb.auug.org.au>
- <20190116203547.GA788@roeck-us.net> <20190117084902.GA20220@ming.t460p>
- <20190117103553.GB23565@ming.t460p> <20190117183254.GA17361@roeck-us.net>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the clk tree
+Date: Thu, 17 Jan 2019 10:42:24 -0800
+Message-ID: <154775054438.169631.5111867106558251203@swboyd.mtv.corp.google.com>
+References: <20190116083440.11b6839c@canb.auug.org.au> <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com> <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190117183254.GA17361@roeck-us.net>
-Content-Language: en-US
+In-Reply-To: <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Ming Lei <ming.lei@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On 1/17/19 11:32 AM, Guenter Roeck wrote:
-> On Thu, Jan 17, 2019 at 06:35:55PM +0800, Ming Lei wrote:
->>>
->>> Hi Guenter,
->>>
->>> Could you share me the .config?
->>
-> Any 32 bit configuration from affected architectures should work.
-> 
->> From your dmesg log, looks the test is run on i386, so please
->> feel free to try the following patch:
->>
->> https://marc.info/?l=linux-kernel&m=154772088110800&w=2
->>
-> Is this still relevant ? Today's image is fine.
+Quoting Fabio Estevam (2019-01-16 17:25:21)
+> On Wed, Jan 16, 2019 at 10:44 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>=20
+> > Ok sure. Does this matter to scripts? Is it documented in
+> > Documentation/process/submitting-patches.rst? I've seen both types, one
+>=20
+> From Documentation/process/submitting-patches.rst"
+>=20
+> "If your patch fixes a bug in a specific commit, e.g. you found an issue =
+using
+> ``git bisect``, please use the 'Fixes:' tag with the first 12 characters =
+of
+> the SHA-1 ID, and the one line summary.  For example::
+>=20
+> Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()")"
 
-The patches were pulled, I think Ming would still appreciate it if
-you could test the previous tree with that patch on top.
-
--- 
-Jens Axboe
+Yes but 'one line summary' is not clear to me. Does it mean the summary
+line? Or the one line summary on one line regardless of commit message
+column wrapping? Sorry to be pedantic but I can see how this can be
+misunderstood.
