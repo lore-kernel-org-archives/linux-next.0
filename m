@@ -1,64 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the imx-drm tree
-Date: Fri, 18 Jan 2019 07:50:01 +1100
-Message-ID: <20190118075001.6ce1d088@canb.auug.org.au>
+From: Vineet Gupta <vineet.gupta1@synopsys.com>
+Subject: Re: linux-next: Fixes tag needs some work in the arc-current tree
+Date: Thu, 17 Jan 2019 20:52:47 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA2307501464292E3@US01WEMBX2.internal.synopsys.com>
+References: <20190118073257.5809b05f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3UE/NSD7f7zVGAmH2yIIzUU"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Longerbeam <slongerbeam@gmail.com>, Alexander Shiyan <shc_work@mail.ru>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3UE/NSD7f7zVGAmH2yIIzUU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Lucas,
-
-Commit
-
-  bb867d219fda ("gpu: ipu-v3: Fix CSI offsets for imx53")
-
-Fixes tag
-
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problems:
-
-  - SHA1 should be at least 12 digits long
-
-Commit
-
-  2c0408dd0d89 ("gpu: ipu-v3: Fix i.MX51 CSI control registers offset")
-
-Fixes tag
-
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problems:
-
-  - SHA1 should be at least 12 digits long
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3UE/NSD7f7zVGAmH2yIIzUU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxA6nkACgkQAVBC80lX
-0GxhLgf9FbeiI4wacaLPqUs3dBEH6G7Qc/YN31GkVSy48SsLNVXHTbBYoMCTygmp
-vLMqwjyOroNveI7z+0C9MaisdCsqmj3pfsyvLjqLomQr9G8q4obkcMY2FjlxMWBS
-/c7AZPWHsFrHM3LFpPk+5s/DBiLATltzmb2uO4rFgFF6eD03ye+PN30+qmz2bogl
-BESqVisfohgcwgLIwoS5N+FAfADHwHDuiDBZ3fqf0J7w4UjLmAx6yP93j00AJBOb
-c4bQDyg+rUF94CfMSLz+hrwMjnjM8ItZ6Brtt/jMtgnqOPWxvMxmsn2WHRBNHhB8
-ospZgvuBH//pJ+lT/NaNCI4pnEXY0A==
-=+QMu
------END PGP SIGNATURE-----
-
---Sig_/3UE/NSD7f7zVGAmH2yIIzUU--
+On 1/17/19 12:33 PM, Stephen Rothwell wrote:=0A=
+> Hi Vineet,=0A=
+>=0A=
+> Commit=0A=
+>=0A=
+>   8e542d2a28c9 ("ARC: adjust memblock_reserve of kernel memory")=0A=
+>=0A=
+> Fixes tag=0A=
+>=0A=
+>   Fixes: 9ed68785f7f ("ARC: mm: Decouple RAM base address from kernel lin=
+k addr")=0A=
+>=0A=
+> has these problems:=0A=
+>=0A=
+>   - SHA1 should be at least 12 digits long=0A=
+>=0A=
+=0A=
+Thx for the report Stephen. Now fixed and pushed !=0A=
+=0A=
+-Vineet=0A=
