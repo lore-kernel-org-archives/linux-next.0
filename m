@@ -1,91 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arc-current tree with Linus' tree
-Date: Fri, 18 Jan 2019 08:22:37 +1100
-Message-ID: <20190118082237.4cb892c6@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 16
+Date: Thu, 17 Jan 2019 13:35:24 -0800
+Message-ID: <20190117213524.GA26237@roeck-us.net>
+References: <20190116173838.042db659@canb.auug.org.au>
+ <20190116203547.GA788@roeck-us.net>
+ <20190117084902.GA20220@ming.t460p>
+ <20190117103553.GB23565@ming.t460p>
+ <20190117183254.GA17361@roeck-us.net>
+ <10619062-9531-e843-1620-7518e27583f8@kernel.dk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+cLRlcqQ.iby8NRqd33W9Aw"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <10619062-9531-e843-1620-7518e27583f8@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ming Lei <ming.lei@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/+cLRlcqQ.iby8NRqd33W9Aw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 17, 2019 at 11:34:01AM -0700, Jens Axboe wrote:
+> On 1/17/19 11:32 AM, Guenter Roeck wrote:
+> > On Thu, Jan 17, 2019 at 06:35:55PM +0800, Ming Lei wrote:
+> >>>
+> >>> Hi Guenter,
+> >>>
+> >>> Could you share me the .config?
+> >>
+> > Any 32 bit configuration from affected architectures should work.
+> > 
+> >> From your dmesg log, looks the test is run on i386, so please
+> >> feel free to try the following patch:
+> >>
+> >> https://marc.info/?l=linux-kernel&m=154772088110800&w=2
+> >>
+> > Is this still relevant ? Today's image is fine.
+> 
+> The patches were pulled, I think Ming would still appreciate it if
+> you could test the previous tree with that patch on top.
+> 
 
-Hi all,
+next-20190116 with Ming's patch added and "sh: generate uapi header and
+syscall table header files" reverted:
 
-Today's linux-next merge of the arc-current tree got a conflict in:
+Qemu test results:
+	total: 343 pass: 343 fail: 0
 
-  arch/arc/mm/fault.c
+Note though that my tests do not run any block device stress tests.
 
-between commit:
-
-  d8d7d842e828 ("arch/arc/mm/fault.c: remove caller signal_pending_branch p=
-redictions")
-
-from Linus' tree and commit:
-
-  ce3e02e8be58 ("ARC: mm: do_page_fault fixes #1: relinquish mmap_sem if si=
-gnal arrives while handle_mm_fault")
-
-from the arc-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arc/mm/fault.c
-index a1d723197084,535cf18e8bf2..000000000000
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@@ -141,12 -141,17 +141,17 @@@ good_area
-  	 */
-  	fault =3D handle_mm_fault(vma, address, flags);
- =20
-- 	/* If Pagefault was interrupted by SIGKILL, exit page fault "early" */
- -	if (unlikely(fatal_signal_pending(current))) {
- +	if (fatal_signal_pending(current)) {
-- 		if ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY))
-- 			up_read(&mm->mmap_sem);
-- 		if (user_mode(regs))
-+=20
-+ 		/*
-+ 		 * if fault retry, mmap_sem already relinquished by core mm
-+ 		 * so OK to return to user mode (with signal handled first)
-+ 		 */
-+ 		if (fault & VM_FAULT_RETRY) {
-+ 			if (!user_mode(regs))
-+ 				goto no_context;
-  			return;
-+ 		}
-  	}
- =20
-  	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-
---Sig_/+cLRlcqQ.iby8NRqd33W9Aw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxA8h0ACgkQAVBC80lX
-0GyLAwf7BLnSKmuQV1SRxUTc4sQVuaTbJ6Le68lfRqFU0PWOtCqcXxffmy1xUsKN
-ihgJ+mu25mw9ZpX2razrtAxJJDy2jyDdlZ8E+Q9o0PZQ6/natcaUBIxayvnBsGiC
-SjfEAAS7l1Q5Lt5fYydY6ZQBfYyVNM64lQtr8rrcspmgSusS0Jxj5QxpZZVZ+8Hu
-19f6JiFrpjGS4v3ISC32Rv13GuJYTg++ASnnvwfZiMOYVtTmkNDEaY26of+fXnOa
-4P5lNPjTo62MDV/o7EKSqVuqRTS8HqUiJ68c9z1rZbzSTZ+6l87vqjtBwcBuPV7j
-TVw3x7fboUP2t7C6jVYXRr0PI0iHdg==
-=eZEw
------END PGP SIGNATURE-----
-
---Sig_/+cLRlcqQ.iby8NRqd33W9Aw--
+Guenter
