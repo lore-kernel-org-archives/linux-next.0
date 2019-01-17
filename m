@@ -1,23 +1,35 @@
-From: Sinan Kaya <okaya@kernel.org>
-Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
- is enabled
-Date: Thu, 17 Jan 2019 11:42:39 -0500
-Message-ID: <c0fa174a-2e7b-2ef2-4913-167934c68c06@kernel.org>
-References: <20190117161722.3945-1-okaya@kernel.org>
- <20190117163722.GE5023@zn.tnic>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 16
+Date: Thu, 17 Jan 2019 10:32:54 -0800
+Message-ID: <20190117183254.GA17361@roeck-us.net>
+References: <20190116173838.042db659@canb.auug.org.au>
+ <20190116203547.GA788@roeck-us.net>
+ <20190117084902.GA20220@ming.t460p>
+ <20190117103553.GB23565@ming.t460p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190117163722.GE5023@zn.tnic>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190117103553.GB23565@ming.t460p>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>
 List-Id: linux-next.vger.kernel.org
 
-On 1/17/2019 11:37 AM, Borislav Petkov wrote:
-> Also, I see a lot of build failures when doing randconfig builds for the
-> stuff in drivers/platform/x86/Kconfig. Is someone picking those up too?
+On Thu, Jan 17, 2019 at 06:35:55PM +0800, Ming Lei wrote:
+> > 
+> > Hi Guenter,
+> > 
+> > Could you share me the .config?
+> 
+Any 32 bit configuration from affected architectures should work.
 
-Can you share the build failures you are seeing?
+> From your dmesg log, looks the test is run on i386, so please
+> feel free to try the following patch:
+> 
+> https://marc.info/?l=linux-kernel&m=154772088110800&w=2
+> 
+Is this still relevant ? Today's image is fine.
+
+Thanks,
+Guenter
