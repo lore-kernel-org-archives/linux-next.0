@@ -1,77 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the drm-fixes tree
-Date: Fri, 18 Jan 2019 15:42:59 +1100
-Message-ID: <20190118154259.16a7761c@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the cpufreq-arm tree
+Date: Fri, 18 Jan 2019 16:33:07 +1100
+Message-ID: <20190118163307.03bd6710@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0357270764=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Leo Li <sunpeng.li@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bjEUKAb9lkwEFU/uoNpoNdc"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0357270764==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/C7iIOJ8361rdN+P8fID7TB/"; protocol="application/pgp-signature"
-
---Sig_/C7iIOJ8361rdN+P8fID7TB/
+--Sig_/bjEUKAb9lkwEFU/uoNpoNdc
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Viresh,
 
 In commit
 
-  dddce8b49005 ("drm/amd/display: Only get the connector state for VRR when=
- toggled")
+  3ca12c96ef5e ("MAINTAINERS: use common indentation")
 
 Fixes tag
 
-  Fixes: 3cc22f281318 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
-ties")
+  Fixes: 46e2856b8e188949757c9123fd7f9ce36edd1a52
 
-has these problem(s):
+Fixes tags should be in this format:
 
-  - Target SHA1 does not exist
+  Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/C7iIOJ8361rdN+P8fID7TB/
+--Sig_/bjEUKAb9lkwEFU/uoNpoNdc
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxBWVMACgkQAVBC80lX
-0GwXAgf+OfFNrTFt7rrvVi61EvmhO0VxYVPrWdNNxAjAo7YbZ8ZI4KoLUhWdcIL4
-pGMCmW8Po61nxzyhQmfGD19pMAyqPSxoLYAEEsUogid2zTcDmEHj47YxnA/mOISv
-lffPtN5DrtXmsSIlyYobYfGhWCa7UczIAFG0cZ6TwW1OVocmsrW2L39WiRe65nXW
-1Kp/7N6m5bhi/QUUgWPTSy70FPVJlXC1dguAu+kE07HVeRA5m3aysA/6P42Bg5Qi
-vHrcY5h6Pe4NmF2MZuZg3kCBta8xgzs7vHN3hqzepIB9KrQyyiyeqAQGBlMEjU3R
-OKp/f9y/MGAKwIU4G5y28ybJEUosRg==
-=nMR1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxBZRMACgkQAVBC80lX
+0Gw0lgf/WP5OBAbTgWyjx2Es9pKXovjKtzKBU0MFCrVHmnUTOX+BzOn9obH9ginW
+gsFOi13oVI+m3SEYZevvnjp4mJ0/2KI3M0rwkrJWNticIu3pzXmIcP1lYRI8bRJY
+e5KhvKF1dJ5cFwlY/+FGKCtpF+zie6P82wkVmlKGYrDxQWz4f2eJnLht2w0QQ4e9
+OHrjfQmnwiXyy1il7WAjJALPPGiu2xyYQJ4PbtUUcLKGWMWQu+Uk/kC426PXJ2Vg
+pmOYucrPEGHsMQBIhRqsoUuhM7DYVkv549uTb0RQx9IjCMaMyo3nHKzEnYSJfYNg
+a1uOSTfx8WdD7aC3UnEwP/lD2+p2kw==
+=+BBN
 -----END PGP SIGNATURE-----
 
---Sig_/C7iIOJ8361rdN+P8fID7TB/--
-
---===============0357270764==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0357270764==--
+--Sig_/bjEUKAb9lkwEFU/uoNpoNdc--
