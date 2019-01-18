@@ -1,154 +1,130 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: Fixes tag needs some work in the tip tree
-Date: Thu, 17 Jan 2019 17:19:37 -0800
-Message-ID: <40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com>
-References: <20190118093135.39cf071e@canb.auug.org.au>
-         <alpine.DEB.2.21.1901180044260.1647@nanos.tec.linutronix.de>
-         <20190118113230.3d11be0c@canb.auug.org.au>
+From: Ming Lei <ming.lei@redhat.com>
+Subject: Re: linux-next: manual merge of the block tree with the fscrypt tree
+Date: Fri, 18 Jan 2019 10:45:24 +0800
+Message-ID: <20190118024523.GA27808@ming.t460p>
+References: <20190116132522.1b756433@canb.auug.org.au>
+ <ca843f39-3fcd-1a03-34c9-7284f10fe262@kernel.dk>
+ <20190116031301.GC26146@ming.t460p>
+ <a1ce4d1d-13e0-c765-bf22-55fd67c9f1d4@kernel.dk>
+ <20190116073915.GA1089@ming.t460p>
+ <62f1085d-a436-d0ab-6bc1-2b3d7d0ea2c7@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190118113230.3d11be0c@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <62f1085d-a436-d0ab-6bc1-2b3d7d0ea2c7@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, avarab@gmail.com
-Cc: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2019-01-18 at 11:32 +1100, Stephen Rothwell wrote:
-> Hi Thomas,
-> 
-> On Fri, 18 Jan 2019 00:45:44 +0100 (CET) Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Fri, 18 Jan 2019, Stephen Rothwell wrote:
-> > > Commit
-> > > 
-> > >   a31e184e4f69 ("x86/pkeys: Properly copy pkey state at fork()")
-> > > 
-> > > Fixes tag
-> > > 
-> > >   Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
-> > > 
-> > > has these problems:
-> > > 
-> > >   - SHA1 should be at least 12 digits long  
+On Wed, Jan 16, 2019 at 07:27:25AM -0700, Jens Axboe wrote:
+> On 1/16/19 12:39 AM, Ming Lei wrote:
+> > On Tue, Jan 15, 2019 at 08:17:36PM -0700, Jens Axboe wrote:
+> >> On 1/15/19 8:13 PM, Ming Lei wrote:
+> >>> On Tue, Jan 15, 2019 at 07:55:39PM -0700, Jens Axboe wrote:
+> >>>> On 1/15/19 7:25 PM, Stephen Rothwell wrote:
+> >>>>> Hi all,
+> >>>>>
+> >>>>> Today's linux-next merge of the block tree got a conflict in:
+> >>>>>
+> >>>>>   fs/ext4/readpage.c
+> >>>>>
+> >>>>> between commit:
+> >>>>>
+> >>>>>   acc9eb0a6073 ("ext4: add fs-verity read support")
+> >>>>>
+> >>>>> from the fscrypt tree and commit:
+> >>>>>
+> >>>>>   eb754eb2a953 ("block: allow bio_for_each_segment_all() to iterate over multi-page bvec")
+> >>>>>
+> >>>>> from the block tree.
+> >>>>>
+> >>>>> I fixed it up (see below - the former moved the code modified by the
+> >>>>> latter) and can carry the fix as necessary. This is now fixed as far as
+> >>>>> linux-next is concerned, but any non trivial conflicts should be mentioned
+> >>>>> to your upstream maintainer when your tree is submitted for merging.
+> >>>>> You may also want to consider cooperating with the maintainer of the
+> >>>>> conflicting tree to minimise any particularly complex conflicts.
+> >>>>
+> >>>> Ming, I'm pulling this, I thought we agreed none of these bullshit
+> >>>> renames? The fact that a patch looks like this:
+> >>>>
+> >>>> -               for_each_bvec(bv, (it)->bvecs, __cur_iter, __cur_iter)        \
+> >>>> +               for_each_segment(bv, (it)->bvecs, __cur_iter, __cur_iter)     \
+> >>>>
+> >>>> is SUPER annoying and does NOTHING but to cause merge conflicts.
+> >>>>
+> >>>> Resend it without that.
+> >>>
+> >>> We need to differentiate 'segment' with 'bvec' in bvec helpers, which is
+> >>> usually seldom used by drivers. For example, only two in-tree users(ceph, iov_iter).
+> >>> That is why I rename it, and seems Christoph prefers to do it too.
+> >>
+> >> If you want to do a rename, then we do it after. I don't want to deal with
+> >> weeks and weeks of fallout from this. Write a rename script that we can
+> >> then run at the end of the next merge window. You're going to be playing
+> >> catch-up until that happens if we go the current route, and honestly
+> >> I'm not at all interested in the fallout from that.
+> >>
+> >> I know exactly what will happen until 5.1-rc opens, and what my tree will
+> >> look like from having to deal with this. And then I know exactly what Linus
+> >> is going to say, and I can't even argue against it, since he'll be totally
+> >> right.
+> >>
+> >> Hence it's not going to happen this way.
 > > 
-> > Sigh. I'll add that to my sanity checks, but this one has to be as is as
-> > it's in the middle of a series of fixes pending for linus tree.
+> > I can remove the renaming in patch 'block: rename bvec helpers', but
+> > change on bio_for_each_segment_all() is inevitable, and it is still an
+> > API change, so merge conflict can't avoid too.
 > 
-> That's OK, more of a reminder ... the abbreviated SHA1 is unique now,
-> but may not be in the future - of course 12 digits does not guarantee
-> that either.  I am told we already have some clashes using 11 digits :-(
+> That's not what I'm complaining about, API changes are inevitable for
+> something like this. What I'm complaining about is the very example
+> I posted above, and which has already caused issues. That's a frivolous
+> name change. Don't do it.
 
-Ævar Arnfjörð Bjarmason sent a [atch to
-	Documentation/process/submitting-patches.rst
-for that .gitconfig default length problem last month.
+Hi Jens,
 
-https://lore.kernel.org/patchwork/patch/1026639/
+I may avoid the rename for avoiding merge conflict.
 
-Perhaps something will come of that one day.
+However, given we have been back and forth for this naming thing several
+times, I'd rather explain the story one more time:
 
-It does seem that of the 30K or so commits with "Fixes:" that
-the style has standardized on the typical form below where
-12 ("") is a 12 char SHA1 and ("") is the commit description
+In V13's patch4, we rename:
 
-  21911 Fixes: 12 ("")
-   1151 Fixes: 13 ("")
-   1053 Fixes: 12 (')
-    541 Fixes: 16 ("")
-    325 Fixes: 10 ("")
-    323 Fixes: 40
-    274 Fixes:
-    272 Fixes: 12 ""
-    256 Fixes: 11 ("")
-    217 Fixes: 14 ("")
-    188 Fixes: commit 12 ("")
-    181 Fixes: 8 ("")
-    178 Fixes: 7 ("")
-    163 Fixes: 9 ("")
-     94 Fixes: 15 ("")
-     51 Fixes: 12("")
-     48 Fixes: 13 (')
-     38 Fixes: 12
-     35 Fixes: 12(')
-     34 Fixes: 40 ("")
-     30 Fixes: 12 (""
-     28 Fixes: 17 ("")
-     24 Fixes: Commit 12 ("")
+    for_each_bvec
+    bvec_iter_bvec
+    bvec_iter_len
+    bvec_iter_page
+    bvec_iter_offset
 
-So for checkpatch, maybe something like the below
-would help standardize the Fixes line:
----
- scripts/checkpatch.pl | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+into:
+    for_each_segment
+    segment_iter_bvec
+    segment_iter_len
+    segment_iter_page
+    segment_iter_offset
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 155fa9305166..a1aa3787d0b0 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2730,10 +2730,11 @@ sub process {
- 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
- 		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
- 		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
--		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i &&
--		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
-+		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i))) {
- 			my $init_char = "c";
- 			my $orig_commit = "";
-+			my $prefix = "commit";
-+			my $prefix_case = "[Cc]ommit";
- 			my $short = 1;
- 			my $long = 0;
- 			my $case = 1;
-@@ -2744,18 +2745,24 @@ sub process {
- 			my $orig_desc = "commit description";
- 			my $description = "";
- 
--			if ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
-+			if ($line =~ /\b(f)ixes:\s+([0-9a-f]{5,})\b/i) {
-+				$init_char = $1;
-+				$orig_commit = lc($2);
-+				$prefix = "Fixes:";
-+				$prefix_case = "Fixes:";
-+				$init_char = "F";
-+			} elsif ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
- 				$init_char = $1;
- 				$orig_commit = lc($2);
- 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
- 				$orig_commit = lc($1);
- 			}
- 
--			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
--			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
--			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
--			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
--			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
-+			$short = 0 if ($line =~ /\b$prefix\s+[0-9a-f]{12,40}/i);
-+			$long = 1 if ($line =~ /\b$prefix\s+[0-9a-f]{41,}/i);
-+			$space = 0 if ($line =~ /\b$prefix [0-9a-f]/i);
-+			$case = 0 if ($line =~ /\b$prefix_case\s+[0-9a-f]{5,40}[^A-F]/);
-+			if ($line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
- 			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
-@@ -2763,10 +2770,10 @@ sub process {
- 				 $rawlines[$linenr] =~ /^\s*\("([^"]+)"\)/) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
--			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
-+			} elsif ($line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*[^"]+"\)/) {
--				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
-+				$line =~ /\b$prefix\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
- 				$orig_desc = $1;
- 				$rawlines[$linenr] =~ /^\s*([^"]+)"\)/;
- 				$orig_desc .= " " . $1;
-@@ -2779,7 +2786,7 @@ sub process {
- 			if (defined($id) &&
- 			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens)) {
- 				ERROR("GIT_COMMIT_ID",
--				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
-+				      "Please use git commit description style '$prefix <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}" . substr($prefix, 1) . " $id (\"$description\")'\n" . $herecurr);
- 			}
- 		}
- 
+so that these helpers named with 'segment' only deal with single-page
+bvec, or called segment. We re-introduce helpers named with 'bvec'
+for multi-page bvec, as suggested by Christoph.
+
+If the above renaming has to be avoided, we need one new name
+for multi-page bvec helpers, previous I name it as 'mp_bvec', such as:
+
+    for_each_mp_bvec
+    mp_bvec_iter_bvec
+    mp_bvec_iter_len
+    mp_bvec_iter_page
+    mp_bvec_iter_offset
+
+However, Christoph were not very happy with the above name.
+
+Given you mentioned one more rename after the patches are merged should
+be fine, I understand the new name of 'mp_bvec' should be fine for you
+because it is just short-life.
+
+Please confirm or provide another better name, so that we can move on.
+
+Thanks,
+Ming
