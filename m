@@ -1,36 +1,52 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: linux-next: build failure after merge of the imx-drm tree
-Date: Fri, 18 Jan 2019 11:41:30 +0100
-Message-ID: <1547808090.3375.5.camel@pengutronix.de>
-References: <20190118141912.69d2a6e9@canb.auug.org.au>
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+Subject: Re: linux-next: build warning after merge of the mali-dp tree
+Date: Fri, 18 Jan 2019 10:43:58 +0000
+Message-ID: <20190118104358.GG20661@e110455-lin.cambridge.arm.com>
+References: <20190118112811.091dd962@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190118141912.69d2a6e9@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20190118112811.091dd962@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Lucas Stach <l.stach@pengutronix.de>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2019-01-18 at 14:19 +1100, Stephen Rothwell wrote:
-> Hi Lucas,
+On Fri, Jan 18, 2019 at 11:28:11AM +1100, Stephen Rothwell wrote:
+> Hi Liviu,
 > 
-> After merging the imx-drm tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> After merging the mali-dp tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
-> drivers/gpu/drm/imx/imx-tve.c: At top level:
-> drivers/gpu/drm/imx/imx-tve.c:437:29: error: storage size of 'clk_tve_di_ops' isn't known
->  static const struct clk_ops clk_tve_di_ops = {
->                              ^~~~~~~~~~~~~~
+> drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_parse_dt':
+> drivers/gpu/drm/arm/display/komeda/komeda_dev.c:52:26: warning: unused variable 'pdev' [-Wunused-variable]
+>   struct platform_device *pdev = to_platform_device(dev);
+>                           ^~~~
 > 
-> Exposed by commit
+> Introduced by commit
 > 
->   97144d12df00 ("drm/imx: Allow building under COMPILE_TEST")
-> 
-> I have reverted that commit for today.
+>   7e8d4fcf8daf ("drm: arm/komeda: Remove IRQ parsing from initial series")
 
-Sorry, I have dropped the commit for now.
+Argh, sorry about that! I'll get it fixed!
 
-regards
-Philipp
+Thanks for reporting it,
+Liviu
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
