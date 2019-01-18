@@ -1,38 +1,36 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: linux-next: Fixes tag needs some work in the cpufreq-arm tree
-Date: Fri, 18 Jan 2019 11:08:02 +0530
-Message-ID: <20190118053802.rm7fc5z7wk3agc2f@vireshk-i7>
-References: <20190118163307.03bd6710@canb.auug.org.au>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: linux-next: build failure after merge of the imx-drm tree
+Date: Fri, 18 Jan 2019 11:41:30 +0100
+Message-ID: <1547808090.3375.5.camel@pengutronix.de>
+References: <20190118141912.69d2a6e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190118163307.03bd6710@canb.auug.org.au>
+In-Reply-To: <20190118141912.69d2a6e9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Lucas Stach <l.stach@pengutronix.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 18-01-19, 16:33, Stephen Rothwell wrote:
-> Hi Viresh,
+On Fri, 2019-01-18 at 14:19 +1100, Stephen Rothwell wrote:
+> Hi Lucas,
 > 
-> In commit
+> After merging the imx-drm tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
->   3ca12c96ef5e ("MAINTAINERS: use common indentation")
+> drivers/gpu/drm/imx/imx-tve.c: At top level:
+> drivers/gpu/drm/imx/imx-tve.c:437:29: error: storage size of 'clk_tve_di_ops' isn't known
+>  static const struct clk_ops clk_tve_di_ops = {
+>                              ^~~~~~~~~~~~~~
 > 
-> Fixes tag
+> Exposed by commit
 > 
->   Fixes: 46e2856b8e188949757c9123fd7f9ce36edd1a52
+>   97144d12df00 ("drm/imx: Allow building under COMPILE_TEST")
 > 
-> Fixes tags should be in this format:
-> 
->   Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
+> I have reverted that commit for today.
 
-Fixed and pushed again.
+Sorry, I have dropped the commit for now.
 
-I missed looking into that. You must be running some sort of sanity
-checks on the branch itself, can I know what exactly are you doing so
-that I can try the same.
-
--- 
-viresh
+regards
+Philipp
