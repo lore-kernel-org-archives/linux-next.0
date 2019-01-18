@@ -1,52 +1,29 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: linux-next: build warning after merge of the mali-dp tree
-Date: Fri, 18 Jan 2019 10:43:58 +0000
-Message-ID: <20190118104358.GG20661@e110455-lin.cambridge.arm.com>
-References: <20190118112811.091dd962@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
+ is enabled
+Date: Fri, 18 Jan 2019 12:45:12 +0100
+Message-ID: <CAJZ5v0iR=0ZoS_=KpTRefZ+fdZOKAAH1PSxfS0cfyS+zx39Hgw@mail.gmail.com>
+References: <20190117161722.3945-1-okaya@kernel.org> <20190117163722.GE5023@zn.tnic>
+ <c0fa174a-2e7b-2ef2-4913-167934c68c06@kernel.org> <20190117215631.GF5023@zn.tnic>
+ <CAJZ5v0hHFASeJb8z8QwQkh-tCs409pnaywtWcqLP5K5ZDGhTsw@mail.gmail.com> <20190117220959.GG5023@zn.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190118112811.091dd962@canb.auug.org.au>
+In-Reply-To: <20190117220959.GG5023@zn.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sinan Kaya <okaya@kernel.org>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jan 18, 2019 at 11:28:11AM +1100, Stephen Rothwell wrote:
-> Hi Liviu,
-> 
-> After merging the mali-dp tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_parse_dt':
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c:52:26: warning: unused variable 'pdev' [-Wunused-variable]
->   struct platform_device *pdev = to_platform_device(dev);
->                           ^~~~
-> 
-> Introduced by commit
-> 
->   7e8d4fcf8daf ("drm: arm/komeda: Remove IRQ parsing from initial series")
+On Thu, Jan 17, 2019 at 11:10 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Thu, Jan 17, 2019 at 11:05:43PM +0100, Rafael J. Wysocki wrote:
+> > I have patches for intel_ips and intel_pmc_ipc queued up (will be
+> > pushed for -rc3), plus some others.
+>
+> Yeah, I saw the patchset and applied some of them locally so that I be
+> able to do randconfig builds. Do you have a branch somewhere which I can
+> merge locally for testing?
 
-Argh, sorry about that! I'll get it fixed!
-
-Thanks for reporting it,
-Liviu
-
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
-
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+You can pull the tag I've just pushed to Linus:
+https://lore.kernel.org/lkml/CAJZ5v0jiK=zLP4cUsw=y9ea7PLHHgy=xshAsHFhTgyDJH+kOiQ@mail.gmail.com/T/#u
