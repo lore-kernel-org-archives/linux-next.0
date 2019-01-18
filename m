@@ -1,29 +1,58 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
- is enabled
-Date: Fri, 18 Jan 2019 12:45:12 +0100
-Message-ID: <CAJZ5v0iR=0ZoS_=KpTRefZ+fdZOKAAH1PSxfS0cfyS+zx39Hgw@mail.gmail.com>
-References: <20190117161722.3945-1-okaya@kernel.org> <20190117163722.GE5023@zn.tnic>
- <c0fa174a-2e7b-2ef2-4913-167934c68c06@kernel.org> <20190117215631.GF5023@zn.tnic>
- <CAJZ5v0hHFASeJb8z8QwQkh-tCs409pnaywtWcqLP5K5ZDGhTsw@mail.gmail.com> <20190117220959.GG5023@zn.tnic>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: Fixes tag needs some work in the clk tree
+Date: Fri, 18 Jan 2019 23:41:41 +1100
+Message-ID: <878szi3zp6.fsf@concordia.ellerman.id.au>
+References: <20190116083440.11b6839c@canb.auug.org.au> <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com> <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com> <154775054438.169631.5111867106558251203@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190117220959.GG5023@zn.tnic>
+In-Reply-To: <154775054438.169631.5111867106558251203@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sinan Kaya <okaya@kernel.org>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>, Fabio Estevam <festevam@gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:10 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Jan 17, 2019 at 11:05:43PM +0100, Rafael J. Wysocki wrote:
-> > I have patches for intel_ips and intel_pmc_ipc queued up (will be
-> > pushed for -rc3), plus some others.
->
-> Yeah, I saw the patchset and applied some of them locally so that I be
-> able to do randconfig builds. Do you have a branch somewhere which I can
-> merge locally for testing?
+Stephen Boyd <sboyd@kernel.org> writes:
 
-You can pull the tag I've just pushed to Linus:
-https://lore.kernel.org/lkml/CAJZ5v0jiK=zLP4cUsw=y9ea7PLHHgy=xshAsHFhTgyDJH+kOiQ@mail.gmail.com/T/#u
+> Quoting Fabio Estevam (2019-01-16 17:25:21)
+>> On Wed, Jan 16, 2019 at 10:44 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>> 
+>> > Ok sure. Does this matter to scripts? Is it documented in
+>> > Documentation/process/submitting-patches.rst? I've seen both types, one
+>> 
+>> From Documentation/process/submitting-patches.rst"
+>> 
+>> "If your patch fixes a bug in a specific commit, e.g. you found an issue using
+>> ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+>> the SHA-1 ID, and the one line summary.  For example::
+>> 
+>> Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()")"
+>
+> Yes but 'one line summary' is not clear to me. Does it mean the summary
+> line? Or the one line summary on one line regardless of commit message
+> column wrapping? Sorry to be pedantic but I can see how this can be
+> misunderstood.
+
+Yeah "one line summary" is referring to the subject of the commit.
+
+So it doesn't explicitly say not to split it across lines, it probably
+should.
+
+eg: ?
+
+diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+index 30dc00a364e8..12a283ba3929 100644
+--- a/Documentation/process/submitting-patches.rst
++++ b/Documentation/process/submitting-patches.rst
+@@ -186,6 +186,8 @@ If your patch fixes a bug in a specific commit, e.g. you found an issue using
+ 
+ 	Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()")
+ 
++To ease parsing of the 'Fixes:' tag please don't split it across multiple lines.
++
+ The following ``git config`` settings can be used to add a pretty format for
+ outputting the above style in the ``git log`` or ``git show`` commands::
+ 
+
+
+cheers
