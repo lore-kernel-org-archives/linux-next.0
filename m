@@ -1,33 +1,57 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: Fixes tag needs some work in the clk tree
-Date: Fri, 18 Jan 2019 10:36:45 -0800
-Message-ID: <537b4ea9870fbb93e26f83e7a06ff2091db39ec5.camel@perches.com>
-References: <20190116083440.11b6839c@canb.auug.org.au>
-         <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com>
-         <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com>
-         <154775054438.169631.5111867106558251203@swboyd.mtv.corp.google.com>
-         <878szi3zp6.fsf@concordia.ellerman.id.au>
-         <154783304655.169631.12906027462791855701@swboyd.mtv.corp.google.com>
-         <20190118174127.GA822@flashbox>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Date: Sun, 20 Jan 2019 15:10:25 +1100
+Message-ID: <20190120151025.196b7a5e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190118174127.GA822@flashbox>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nathan Chancellor <natechancellor@gmail.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eB5QcuqC+._gdmVJWj8Nsk."; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eli Britstein <elibr@mellanox.com>, Oz Shlomo <ozsh@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2019-01-18 at 10:41 -0700, Nathan Chancellor wrote:
-> On Fri, Jan 18, 2019 at 09:37:26AM -0800, Stephen Boyd wrote:
-> > Do you have a patch for checkpatch too? Maybe Joe can solve my problem.
-> Joe posted a checkpatch diff in another thread:
-> https://lore.kernel.org/lkml/40bfc40958fca6e2cc9b86101153aa0715fac4f7.camel@perches.com/
+--Sig_/eB5QcuqC+._gdmVJWj8Nsk.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That proposal has the negative that a Fixes: line
-is often after a Signed-off-by: line and the test
-does not validate Fixes lines after Signed-off-by:s.
+Hi all,
 
-I would still appreciate some external testing of
-the proposed patch.
+In commit
+
+  25f2d0e7791e ("net/mlx5e: Fix cb_ident duplicate in indirect block regist=
+er")
+
+Fixes tag
+
+  Fixes: f5bc2c5de101 ("net/mlx5e: Support TC indirect block notifications
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+The Fixes tag line was split over 2 lines.  Please, in the future, try
+to keep it on a single line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eB5QcuqC+._gdmVJWj8Nsk.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxD9LEACgkQAVBC80lX
+0GzaMwf/Qub8Lk1mIzFmEFUEqxZ0C/Brpc0crAwn1bDT1AR2thWpYcGQwvxwFmjM
+EEdrjxEAEhsV8DAPJuEuLjQNFSRRsC4WUOVzng6Y/+73NmHmEXu5+Q5cISv78c/J
+bEvVL4M27MBJ6r+ddp9+sAnWt+ZjsguuyjtvKVo6wTIOkkrSza215Unhj06YOh7w
+Bz4/sbTBEUbLkbHWabOUkDNPhZ/7C6DJuoAt5vUlDNhP3Af8j9FyFxt6c18aZV9k
+1IYbk/AuaERo+MRXCmh5LHS2B7uOpDcFTeVIfc7cyJ+48Bo/tzTHn7iPkWsSn93R
+ozrfE29iipxSVQ8NBY21TWvt8iZnFg==
+=KssF
+-----END PGP SIGNATURE-----
+
+--Sig_/eB5QcuqC+._gdmVJWj8Nsk.--
