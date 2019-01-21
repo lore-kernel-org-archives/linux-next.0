@@ -1,56 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the pinctrl tree
-Date: Tue, 22 Jan 2019 09:42:03 +1100
-Message-ID: <20190122094203.54570662@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
+Date: Mon, 21 Jan 2019 15:44:17 -0700
+Message-ID: <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
+References: <20190121143951.68956db3@canb.auug.org.au>
+ <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
+ <20190121191306.ifga5aw5atu2vvb7@brauner.io>
+ <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
+ <20190121202328.rgrv54lybilsvitu@brauner.io>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9oi3s5XDxr69yehg7+C6bLZ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190121202328.rgrv54lybilsvitu@brauner.io>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>
+To: Christian Brauner <christian@brauner.io>, Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/9oi3s5XDxr69yehg7+C6bLZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/21/19 1:23 PM, Christian Brauner wrote:
+> On Mon, Jan 21, 2019 at 09:15:27PM +0100, Arnd Bergmann wrote:
+>> On Mon, Jan 21, 2019 at 8:13 PM Christian Brauner <christian@brauner.io> wrote:
+>>> On Mon, Jan 21, 2019 at 06:16:22PM +0100, Arnd Bergmann wrote:
+>>>> On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>> I plan on sending the pidfd branch with the new pidfd_send_signal()
+>>> syscall for the 5.1 window. Should we somehow coordinate so that our
+>>> branches don't conflict? Any suggestions?
+>>
+>> A conflict can't be avoided, but if you pick system call number 427
+>> for pidfd_send_signal, and Jens picks numbers 424 through 426 for
+> 
+> That sounds good to me. Since it's only one syscall for the pidfd branch
+> is there anything that speaks against me using 424? Given that the other
+> patchset has 4 new syscalls. :)
+> Jens, any objections?
 
-Hi Linus,
+I'm fine with either one, I'll have to renumber in any case. But it's 3
+new syscalls (424, 425, 426), not 4.
 
-In commit
+Arnd, what's the best way to make this switch now, in my tree? Would be
+great if I didn't have to change it again once I make the change.
 
-  15d90c339a7f ("pinctrl: sunxi: Correct number of IRQ banks on H6 main pin=
- controller")
-
-Fixes tag
-
-  Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes: tags over more than 1 line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9oi3s5XDxr69yehg7+C6bLZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxGSrsACgkQAVBC80lX
-0Gx1tggAiOhilq5/5UdLah4RSfv3BEye2oUOX4Em2WQRcR3K2SAFV/WqkRbc/qB4
-GCDa6DAUUXs94QXDln3tV25PmHAp3WrxcN4DcThaqKCmtvHCsI2xDJ4RNKutS6JY
-jfMCReXfSDX1+ehCnJtgB/C0Y1Oia2kn/OEPWnsqpAemF07ydRyVZRk65QT7dNEY
-v341Y2WoZlGl1d1Rta9drHo35hqOWzW6pjh45aNx6inIZLeY+lw1kWKn3fDz4H5e
-GmgvkluVQ2WaHv9If3QTVdX9xCsPMxEN+/kMELKkXqMWuVVegxkCIfZJS6v0YGV/
-tMckmzxle9XFEc9drxFU/lG42ZzPEw==
-=X9vq
------END PGP SIGNATURE-----
-
---Sig_/9oi3s5XDxr69yehg7+C6bLZ--
+-- 
+Jens Axboe
