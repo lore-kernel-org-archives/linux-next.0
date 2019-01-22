@@ -1,48 +1,39 @@
-From: Sinan Kaya <okaya@kernel.org>
-Subject: [for next][PATCH] iwlwifi: Fix unmet dependency error for IWLWIFI_LEDS
-Date: Mon, 21 Jan 2019 23:31:02 +0000
-Message-ID: <20190121233102.13705-1-okaya@kernel.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
+Date: Tue, 22 Jan 2019 10:20:28 +0800
+Message-ID: <CAGb2v65=fa9aL3+wKhbkbeuAVAuFL_KUqSPuQCXveJXU=DJt+Q@mail.gmail.com>
+References: <20190122094203.54570662@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190122094203.54570662@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: Sinan Kaya <okaya@kernel.org>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, "open list:INTEL WIRELESS WIFI LINK
-        iwlwifi" <linux-wireless@vger.kernel.org>, "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-There is an unresolved dependency as follows:
+Hi,
 
-IWLWIFI_LEDS selects MAC80211_LEDS.
-MAC80211_LEDS depends on MAC80211.
+On Tue, Jan 22, 2019 at 6:42 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Linus,
+>
+> In commit
+>
+>   15d90c339a7f ("pinctrl: sunxi: Correct number of IRQ banks on H6 main pin controller")
+>
+> Fixes tag
+>
+>   Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6
+>
+> has these problem(s):
+>
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+>
+> Please do not split Fixes: tags over more than 1 line.
 
-It is possible to choose MAC80211_LEDS (y) but not choose MAC80211 (n)
+Sorry about that. I've been doing for some time now.
+Should none of the tags be wrapped?
 
-WARNING: unmet direct dependencies detected for MAC80211_LEDS
-  Depends on [n]: NET [=y] && WIRELESS [=y] && MAC80211 [=n] && LEDS_CLASS [=y]
-  Selected by [y]:
-  - IWLWIFI_LEDS [=y] && NETDEVICES [=y] && WLAN [=y] && WLAN_VENDOR_INTEL [=y] && IWLWIFI [=y] && (LEDS_CLASS [=y]=y || LEDS_CLASS [=y]=IWLWIFI [=y])
-
-Move the MAC80211 dependency into IWLWIFI_LEDS so that we avoid this
-configuration.
-
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/net/wireless/intel/iwlwifi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/Kconfig b/drivers/net/wireless/intel/iwlwifi/Kconfig
-index 491ca3c8b43c..74f0d0bbed34 100644
---- a/drivers/net/wireless/intel/iwlwifi/Kconfig
-+++ b/drivers/net/wireless/intel/iwlwifi/Kconfig
-@@ -46,7 +46,7 @@ if IWLWIFI
- 
- config IWLWIFI_LEDS
- 	bool
--	depends on LEDS_CLASS=y || LEDS_CLASS=IWLWIFI
-+	depends on MAC80211 && (LEDS_CLASS=y || LEDS_CLASS=IWLWIFI)
- 	select LEDS_TRIGGERS
- 	select MAC80211_LEDS
- 	default y
--- 
-2.19.0
+ChenYu
