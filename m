@@ -1,51 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
-Date: Tue, 22 Jan 2019 15:50:31 +1100
-Message-ID: <20190122155031.65b46a9a@canb.auug.org.au>
-References: <20190122094203.54570662@canb.auug.org.au>
-        <CAGb2v65=fa9aL3+wKhbkbeuAVAuFL_KUqSPuQCXveJXU=DJt+Q@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the kbuild tree
+Date: Tue, 22 Jan 2019 14:30:20 +0900
+Message-ID: <CAK7LNAQAL0zm+OpHDpKdufznZ_nSqyOcEh_Pes3oCMs1CtA9Cw@mail.gmail.com>
+References: <20190122150231.0191e8d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/B8zQFPn1sn1bkRsAbEbKN31"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGb2v65=fa9aL3+wKhbkbeuAVAuFL_KUqSPuQCXveJXU=DJt+Q@mail.gmail.com>
+In-Reply-To: <20190122150231.0191e8d4@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/B8zQFPn1sn1bkRsAbEbKN31
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Chen-Yu,
-
-On Tue, 22 Jan 2019 10:20:28 +0800 Chen-Yu Tsai <wens@csie.org> wrote:
+On Tue, Jan 22, 2019 at 1:06 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Sorry about that. I've been doing for some time now.
-> Should none of the tags be wrapped?
+> Hi all,
+>
+> Today's linux-next merge of the akpm tree got a conflict in:
+>
+>   Makefile
+>
+> between commit:
+>
+>   b57304bb03de ("kbuild: remove meaningless prepare2 target")
+>
+> from the kbuild tree and patch:
+>
+>   "locking/atomics: build atomic headers as required"
 
-Generally they should be single lines (in my opinion) ... it makes
-grepping for things a lot harder if they are split.
 
---=20
-Cheers,
-Stephen Rothwell
+This has been sitting around since the previous development cycle.
+The relevant patches were not sent to Linus in the previous MW.
 
---Sig_/B8zQFPn1sn1bkRsAbEbKN31
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I believe those should be dropped entirely,
+and re-implemented cleanly/correctly if Mark Rutland wants this change.
 
------BEGIN PGP SIGNATURE-----
+People already pointed out the scripts are so slow,
+but that is not the only problem.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxGoRcACgkQAVBC80lX
-0GyNlQf+OGChGS3usU0pPGKDKIFRcm1ict6MpMHoTdZH3QQ7iMbcSdzMRY73xmIT
-aqvr4KE8e2lyp5p3JynWI9XAK/jfwCVmdWQPG0AvmEM3OZKFPI3191kOqOqbWYgs
-bFZmOO9LBdO+p+qrPdHbblqAnCRzV6dDCzgX8HYv1Fc+6nU7joZEsFytz2r0RD1J
-0yjnzdct+Euyx9fZhfLRvXHKVhtcVcU5CcJzvvpS2x9NOpx9KiR8BVRlU/f52/aR
-Ld9Kfde2Q3ljyo8zSWXrEuhSlMtPm+EnQwy9Xw99qv80gyGM0i+ZSCAVEi8k4sIU
-IdBkQz3dOVfSLY16ebJdBTNyj52PZQ==
-=kqay
------END PGP SIGNATURE-----
+[1] I see annoying log message
+    "Nothing to be done for 'all'"
+    for every incremental build
 
---Sig_/B8zQFPn1sn1bkRsAbEbKN31--
+[2] Dependencies might not be sufficient.
+    For example, nothing is rebuilt when scripts/atomic/fallbacks/* is touched.
+
+[3] I do not understand why scripts/Makefile.genheader must be added.
+
+
+
+
+
+
+> from the akpm tree.
+>
+> I fixed it up (I hope - see below) and can carry the fix as necessary.
+> This is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc Makefile
+> index 004a190e3ece,bd0f79d8295e..000000000000
+> --- a/Makefile
+> +++ b/Makefile
+> @@@ -1077,8 -1077,12 +1077,8 @@@ ifneq ($(KBUILD_SRC),
+>         fi;
+>   endif
+>
+> - prepare1: prepare3 outputmakefile asm-generic $(version_h) $(autoksyms_h) \
+> -                                               include/generated/utsrelease.h
+>  -# prepare2 creates a makefile if using a separate output directory.
+>  -# From this point forward, .config has been reprocessed, so any rules
+>  -# that need to depend on updated CONFIG_* values can be checked here.
+>  -prepare2: prepare3 outputmakefile asm-generic genheader
+>  -
+>  -prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
+> ++prepare1: prepare3 outputmakefile asm-generic genheader $(version_h) \
+> ++                              $(autoksyms_h) include/generated/utsrelease.h
+>         $(cmd_crmodverdir)
+>
+>   archprepare: archheaders archscripts prepare1 scripts
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
