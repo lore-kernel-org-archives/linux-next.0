@@ -1,55 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the renesas tree
-Date: Wed, 23 Jan 2019 07:56:05 +1100
-Message-ID: <20190123075605.116ddbd0@canb.auug.org.au>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: linux-next: Tree for Jan 22 (drivers/reset/reset-brcmstb.c)
+Date: Tue, 22 Jan 2019 15:10:22 -0800
+Message-ID: <65480a4a-c9b3-91cd-0de8-51d92686b365@gmail.com>
+References: <20190122153649.77efe7cc@canb.auug.org.au>
+ <44246f8e-7cc7-bf2a-1306-b21d6cb5e268@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <44246f8e-7cc7-bf2a-1306-b21d6cb5e268@infradead.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/22/19 8:21 AM, Randy Dunlap wrote:
+> On 1/21/19 8:36 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20190121:
+>>
+> 
+> on i386:
+> 
+> ld: drivers/reset/reset-brcmstb.o: in function `brcmstb_reset_probe':
+> reset-brcmstb.c:(.text+0xd7): undefined reference to `__umoddi3'
+> ld: reset-brcmstb.c:(.text+0x120): undefined reference to `__udivdi3'
+> 
+> 
+> Full randconfig file is attached.
 
-Hi all,
-
-In commit
-
-  8d6e2bbaeceb ("arm64: dts: renesas: r8a774a1: Fix hsusb reg size")
-
-Fixes tag
-
-  Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please don't split Fixes tags across 2 lines.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxHg2UACgkQAVBC80lX
-0Gwkxgf/ZCI/KU8klbgL6sKakQ50tMiJOqh3vRQCJUZ6fLKDXWJW7sHRyXx2wx9R
-+pki+C9w2Rs6zRy3ZaSmeb7NzNiz8GamCw5cXsgYII/uYM7lPkSz63dWPCI0mzLf
-+IVapC1mjMF2iIXJ9ekFO/ltb2PyY9S6pX9OvmWOGwP0mlHpRiOEy0fAty9SVDjm
-aroLfa7gurTeQQd8lYPX+3dJ4GzGJwiG5rpKoqtOU3RHkow0LVa/T+n23sn4xBcF
-1hwdbuckMP3l37g/GzjRy39hLzTX4B4r+mfTLR1eqi4rGac4gTeZVNvA+nVSLu9K
-Xz51EJ4umBC0TZ2MZC5YbqYS+ibqQw==
-=+QQm
------END PGP SIGNATURE-----
-
---Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz--
+Thanks, I will be submitting a fix for this shortly.
+-- 
+Florian
