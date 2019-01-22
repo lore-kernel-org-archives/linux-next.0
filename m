@@ -1,63 +1,56 @@
-From: Sinan Kaya <Okaya@kernel.org>
-Subject: Re: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if
- PCI is enabled
-Date: Tue, 22 Jan 2019 09:39:54 -0500
-Message-ID: <CAK9iUCPiyPQQt++cYs79KdMZ0hXkz02XPuyVEpOPnWbjS+KWLA@mail.gmail.com>
-References: <20190121231958.28255-1-okaya@kernel.org> <20190121231958.28255-2-okaya@kernel.org>
- <20190122125440.GG26587@zn.tnic>
+From: Sinan Kaya <okaya@kernel.org>
+Subject: Re: [for next][PATCH] iwlwifi: Fix unmet dependency error for
+ IWLWIFI_LEDS
+Date: Tue, 22 Jan 2019 11:12:06 -0500
+Message-ID: <d00c99a7-423a-9a70-5f50-f95c5d044f85@kernel.org>
+References: <20190121233102.13705-1-okaya@kernel.org>
+ <ef50896ee3ecc895c72a9fbdedca65ac6433fef2.camel@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122125440.GG26587@zn.tnic>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <ef50896ee3ecc895c72a9fbdedca65ac6433fef2.camel@intel.com>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: Luciano Coelho <luciano.coelho@intel.com>, linux-next@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" <linux-wireless@vger.kernel.org>, "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 1/22/19, Borislav Petkov <bp@alien8.de> wrote:
-> On Mon, Jan 21, 2019 at 11:19:58PM +0000, Sinan Kaya wrote:
->> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
->> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
->> satisfied implicitly through dependencies on CONFIG_ACPI have to be
->> specified directly.
+On 1/22/2019 5:15 AM, Luciano Coelho wrote:
+> On Mon, 2019-01-21 at 23:31 +0000, Sinan Kaya wrote:
+>> There is an unresolved dependency as follows:
 >>
->> PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
->> mentioned in the Kconfig.
+>> IWLWIFI_LEDS selects MAC80211_LEDS.
+>> MAC80211_LEDS depends on MAC80211.
 >>
->> Add an explicit dependency here.
+>> It is possible to choose MAC80211_LEDS (y) but not choose MAC80211
+>> (n)
 >>
->> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI
->> set")
+>> WARNING: unmet direct dependencies detected for MAC80211_LEDS
+>>    Depends on [n]: NET [=y] && WIRELESS [=y] && MAC80211 [=n] &&
+>> LEDS_CLASS [=y]
+>>    Selected by [y]:
+>>    - IWLWIFI_LEDS [=y] && NETDEVICES [=y] && WLAN [=y] &&
+>> WLAN_VENDOR_INTEL [=y] && IWLWIFI [=y] && (LEDS_CLASS [=y]=y ||
+>> LEDS_CLASS [=y]=IWLWIFI [=y])
+>>
+>> Move the MAC80211 dependency into IWLWIFI_LEDS so that we avoid this
+>> configuration.
+>>
 >> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 >> ---
->>  arch/x86/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->> index 568f339595ed..0519da6f8ee4 100644
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -199,7 +199,7 @@ config X86
->>  	select IRQ_FORCED_THREADING
->>  	select NEED_SG_DMA_LENGTH
->>  	select PCI_DOMAINS			if PCI
->> -	select PCI_LOCKLESS_CONFIG
->> +	select PCI_LOCKLESS_CONFIG		if PCI
->>  	select PERF_EVENTS
->>  	select RTC_LIB
->>  	select RTC_MC146818_LIB
->> --
->
-> AFAICT, this is not really fixing a random config build issue but only
-> correcting the dependency, right?
->
+> 
+> Thanks for your patch! But we already have another patch to fix this
+> issued queued for 5.0-rc4 (it's currently in wireless-drivers.git):
+> 
+> https://patchwork.kernel.org/patch/10762079/
 
-This is fixing a warning found by randconfig on this thread
-'linux-next: Tree for Jan 16 (PCI config warning?)'
+Is it possible to queue this up soon? There is an effort to clean up
+linux-next against randconfig failures and this issue showed up there.
 
+> 
 > --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
->
+> Cheers,
+> Luca.
+> 
+> 
