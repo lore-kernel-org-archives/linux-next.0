@@ -1,44 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
-Date: Tue, 22 Jan 2019 14:44:04 +0100
-Message-ID: <CAK8P3a0pzdGHO_CNt26rx0wn38YJrpux9Xtz_dvZWkCw6gDj1w@mail.gmail.com>
-References: <20190121202328.rgrv54lybilsvitu@brauner.io> <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
- <20190121224811.gbvg22vg4kgg4kbs@brauner.io> <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
- <20190122093146.kmckcgdbvo2e7v3c@brauner.io> <20190122103009.vu2a67kviqhcb3cn@brauner.io>
- <CAK8P3a0EW6ZSMoo6FsRQ=XvyhJe50SR7YtpCtuHcPr=JO3fCtA@mail.gmail.com>
- <20190122105747.6gxvghn7n5dxa65w@brauner.io> <CAK8P3a0HJX6+1vks=ZCqNymLwWFS+Wt5PPuYnLedpMo=aVSwKA@mail.gmail.com>
- <20190122114656.joasjhlpwo3vy7hg@brauner.io> <20190122122419.b7lmm4j25w5cbmcx@brauner.io>
+From: Sinan Kaya <Okaya@kernel.org>
+Subject: Re: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if
+ PCI is enabled
+Date: Tue, 22 Jan 2019 09:39:54 -0500
+Message-ID: <CAK9iUCPiyPQQt++cYs79KdMZ0hXkz02XPuyVEpOPnWbjS+KWLA@mail.gmail.com>
+References: <20190121231958.28255-1-okaya@kernel.org> <20190121231958.28255-2-okaya@kernel.org>
+ <20190122125440.GG26587@zn.tnic>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122122419.b7lmm4j25w5cbmcx@brauner.io>
+In-Reply-To: <20190122125440.GG26587@zn.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Brauner <christian@brauner.io>
-Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 22, 2019 at 1:24 PM Christian Brauner <christian@brauner.io> wrote:
-> On Tue, Jan 22, 2019 at 12:46:56PM +0100, Christian Brauner wrote:
-> > On Tue, Jan 22, 2019 at 12:42:44PM +0100, Arnd Bergmann wrote:
-> > >
-> > > You need to change __NR_syscalls to 425 as well. This will
-> > > clearly create a conflict, but then the resolution will be to pick
-> > > the correct (a.k.a. highest) number, rather than remembering
-> > > to update it manually.
-> >
-> > Hm, ok. Wasn't sure if that would confuse people.
-> >
-> > Ok, when I sent my PR I will make a note in the PR that this branch is
-> > aligned to create only minimal conflicts with your y2038 branch. The
-> > patch carries your ack already so this should be good.
+On 1/22/19, Borislav Petkov <bp@alien8.de> wrote:
+> On Mon, Jan 21, 2019 at 11:19:58PM +0000, Sinan Kaya wrote:
+>> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+>> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+>> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+>> specified directly.
+>>
+>> PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
+>> mentioned in the Kconfig.
+>>
+>> Add an explicit dependency here.
+>>
+>> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI
+>> set")
+>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>> ---
+>>  arch/x86/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index 568f339595ed..0519da6f8ee4 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -199,7 +199,7 @@ config X86
+>>  	select IRQ_FORCED_THREADING
+>>  	select NEED_SG_DMA_LENGTH
+>>  	select PCI_DOMAINS			if PCI
+>> -	select PCI_LOCKLESS_CONFIG
+>> +	select PCI_LOCKLESS_CONFIG		if PCI
+>>  	select PERF_EVENTS
+>>  	select RTC_LIB
+>>  	select RTC_MC146818_LIB
+>> --
+>
+> AFAICT, this is not really fixing a random config build issue but only
+> correcting the dependency, right?
+>
 
-My point was just that __NR_syscalls has to be one more than the highest
-syscall number, otherwise we get a build failure on architectures that
-create an array of __NR_syscalls entries.
+This is fixing a warning found by randconfig on this thread
+'linux-next: Tree for Jan 16 (PCI config warning?)'
 
-> Arnd, in case you care to take a look
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=for-next
-
-Looks good to me.
-
-      Arnd
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> Good mailing practices for 400: avoid top-posting and trim the reply.
+>
