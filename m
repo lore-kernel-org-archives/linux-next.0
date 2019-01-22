@@ -1,74 +1,57 @@
-From: Christian Brauner <christian@brauner.io>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
-Date: Tue, 22 Jan 2019 13:24:20 +0100
-Message-ID: <20190122122419.b7lmm4j25w5cbmcx@brauner.io>
-References: <20190121202328.rgrv54lybilsvitu@brauner.io>
- <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
- <20190121224811.gbvg22vg4kgg4kbs@brauner.io>
- <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
- <20190122093146.kmckcgdbvo2e7v3c@brauner.io>
- <20190122103009.vu2a67kviqhcb3cn@brauner.io>
- <CAK8P3a0EW6ZSMoo6FsRQ=XvyhJe50SR7YtpCtuHcPr=JO3fCtA@mail.gmail.com>
- <20190122105747.6gxvghn7n5dxa65w@brauner.io>
- <CAK8P3a0HJX6+1vks=ZCqNymLwWFS+Wt5PPuYnLedpMo=aVSwKA@mail.gmail.com>
- <20190122114656.joasjhlpwo3vy7hg@brauner.io>
+From: Borislav Petkov <bp@alien8.de>
+Subject: Re: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if
+ PCI is enabled
+Date: Tue, 22 Jan 2019 13:54:41 +0100
+Message-ID: <20190122125440.GG26587@zn.tnic>
+References: <20190121231958.28255-1-okaya@kernel.org>
+ <20190121231958.28255-2-okaya@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190122114656.joasjhlpwo3vy7hg@brauner.io>
+In-Reply-To: <20190121231958.28255-2-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>
+To: Sinan Kaya <okaya@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 22, 2019 at 12:46:56PM +0100, Christian Brauner wrote:
-> On Tue, Jan 22, 2019 at 12:42:44PM +0100, Arnd Bergmann wrote:
-> > On Tue, Jan 22, 2019 at 11:57 AM Christian Brauner <christian@brauner.io> wrote:
-> > > On Tue, Jan 22, 2019 at 11:48:12AM +0100, Arnd Bergmann wrote:
-> > 
-> > > > Do you mean the asm-generic uapi header? In my current series, I do that:
-> > >
-> > > Yes. My idea was to only change pidfd_send_signal's entry to 424 and
-> > > leave the other ones untouched:
-> > >
-> > >  #
-> > >  # x32-specific system call numbers start at 512 to avoid cache impact
-> > > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> > > index b77538af7aca..4d86d0787d99 100644
-> > > --- a/include/uapi/asm-generic/unistd.h
-> > > +++ b/include/uapi/asm-generic/unistd.h
-> > > @@ -740,7 +740,7 @@ __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
-> > >  __SYSCALL(__NR_rseq, sys_rseq)
-> > >  #define __NR_kexec_file_load 294
-> > >  __SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
-> > > -#define __NR_pidfd_send_signal 295
-> > > +#define __NR_pidfd_send_signal 424
-> > >  __SYSCALL(__NR_pidfd_send_signal, sys_pidfd_send_signal)
-> > >
-> > > and also leave
-> > 
-> > Yes, that looks good.
-> > 
-> > > #undef __NR_syscalls
-> > > #define __NR_syscalls 296
-> > >
-> > > Does that work to avoid the merge conflict or do you need something
-> > > more?
-> > 
-> > You need to change __NR_syscalls to 425 as well. This will
-> > clearly create a conflict, but then the resolution will be to pick
-> > the correct (a.k.a. highest) number, rather than remembering
-> > to update it manually.
+On Mon, Jan 21, 2019 at 11:19:58PM +0000, Sinan Kaya wrote:
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly.
 > 
-> Hm, ok. Wasn't sure if that would confuse people.
+> PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
+> mentioned in the Kconfig.
 > 
-> Ok, when I sent my PR I will make a note in the PR that this branch is
-> aligned to create only minimal conflicts with your y2038 branch. The
-> patch carries your ack already so this should be good.
+> Add an explicit dependency here.
+> 
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
+>  arch/x86/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 568f339595ed..0519da6f8ee4 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -199,7 +199,7 @@ config X86
+>  	select IRQ_FORCED_THREADING
+>  	select NEED_SG_DMA_LENGTH
+>  	select PCI_DOMAINS			if PCI
+> -	select PCI_LOCKLESS_CONFIG
+> +	select PCI_LOCKLESS_CONFIG		if PCI
+>  	select PERF_EVENTS
+>  	select RTC_LIB
+>  	select RTC_MC146818_LIB
+> -- 
 
-Arnd, in case you care to take a look
-https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=for-next
+AFAICT, this is not really fixing a random config build issue but only
+correcting the dependency, right?
 
-Thanks!
-Christian
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
