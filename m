@@ -1,94 +1,100 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Fixes tags need some work in the dma-mapping-fixes
  tree
-Date: Wed, 23 Jan 2019 11:50:47 +0100
-Message-ID: <20190123105047.GA18410@ulmo>
+Date: Wed, 23 Jan 2019 23:09:15 +1100
+Message-ID: <20190123230915.18046ca7@canb.auug.org.au>
 References: <20190123074747.7cd44f12@canb.auug.org.au>
+        <20190123071933.GA24861@lst.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+ boundary="Sig_/zfTzgZkjMu+JxxAL2Rw8Bfk"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190123074747.7cd44f12@canb.auug.org.au>
+In-Reply-To: <20190123071933.GA24861@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Christoph Hellwig <hch@lst.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/zfTzgZkjMu+JxxAL2Rw8Bfk
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 23, 2019 at 07:47:47AM +1100, Stephen Rothwell wrote:
-> Hi Christoph,
->=20
-> In commit
->=20
->   702e8ed37bed ("arm64/xen: fix xen-swiotlb cache flushing")
 
 Hi Christoph,
 
-I'm not subscribed to any of the mailing list that the above patch was
-reviewed on, so I'm replying here because it is the only reference that
-I have.
+On Wed, 23 Jan 2019 08:19:33 +0100 Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Wed, Jan 23, 2019 at 07:47:47AM +1100, Stephen Rothwell wrote:
+> >   - SHA1 should be at least 12 digits long =20
+>=20
+> When did we decide on that?  As far as I know it was bumped to 10
+> a while ago.  12 basically makes the line even more unreadable.
 
-The above commit breaks the build on 64-bit ARM, like so:
+=46rom Documentation//process/submitting-patches.rst:
 
-	  CC      drivers/xen/swiotlb-xen.o
-	In file included from drivers/xen/swiotlb-xen.c:47:
-	arch/arm64/include/asm/xen/page-coherent.h: In function 'xen_dma_map_page':
-	arch/arm64/include/asm/xen/page-coherent.h:53:16: error: 'pfn' undeclared =
-(first use in this function)
-	  if (pfn_valid(pfn))
-			^~~
-	arch/arm64/include/asm/xen/page-coherent.h:53:16: note: each undeclared id=
-entifier is reported only once for each function it appears in
-	arch/arm64/include/asm/xen/page-coherent.h:50:7: warning: unused variable =
-'local' [-Wunused-variable]
-	  bool local =3D (page_pfn <=3D dev_pfn) &&
-	       ^~~~~
+"If your patch fixes a bug in a specific commit, e.g. you found an issue us=
+ing
+``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+the SHA-1 ID, and the one line summary."
 
-Given that the "local" variable is unused, it seems like maybe a chunk
-is missing from the commit and it may have been meant to look like this:
+Apparently we already have some clashes for 11 digit abbreviations.
+Also, the git-config man page has:
 
-diff --git a/arch/arm64/include/asm/xen/page-coherent.h b/arch/arm64/includ=
-e/asm/xen/page-coherent.h
-index 77e36decc50c..d88e56b90b93 100644
---- a/arch/arm64/include/asm/xen/page-coherent.h
-+++ b/arch/arm64/include/asm/xen/page-coherent.h
-@@ -50,7 +50,7 @@ static inline void xen_dma_map_page(struct device *hwdev,=
- struct page *page,
-  bool local =3D (page_pfn <=3D dev_pfn) &&
-   (dev_pfn - page_pfn < compound_pages);
+"core.abbrev
+           Set the length object names are abbreviated to. If unspecified or
+           set to "auto", an appropriate value is computed based on the
+           approximate number of packed objects in your repository, which
+           hopefully is enough for abbreviated object names to stay unique =
+for
+           some time."
 
-- if (pfn_valid(pfn))
-+ if (local)
-   dma_direct_map_page(hwdev, page, offset, size, dir, attrs);
-  else
-   __xen_dma_map_page(hwdev, page, dev_addr, offset, size, dir, attrs);
+and when I set mine to "auto" it produces 12 digit SHA1 abbreviations
+in the linux-next tree and in Linus' tree. So there has been some
+discussion of suggesting core.abbrev not be set (which is the same as
+"auto"), or being set to 13 to give some leeway.
 
-Thierry
+> > In commit
+> >=20
+> >   8218a55b6b91 ("sbitmap: Protect swap_lock from hardirq")
+> >=20
+> > This later patch appears to already be in Linus' tree as commit
+> > fe76fc6aaf53 (also with an incorrect Fixes tag :-() =20
+>=20
+> That commit is not from the dma-mapping tree..
 
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
+This is in my linux-next tree today:
+
+$ git log --oneline origin/master..dma-mapping-fixes/for-linus=20
+702e8ed37bed arm64/xen: fix xen-swiotlb cache flushing
+eda14f8977df nvme-pci: fix nvme_setup_irqs()
+7c6f88f2fb4b nvmet-tcp: fix uninitialized variable access
+8218a55b6b91 sbitmap: Protect swap_lock from hardirq
+f5ac6c1e96a9 md: Make bio_alloc_mddev use bio_alloc_bioset
+2490a5f5f2f8 block, bfq: fix comments on __bfq_deactivate_entity
+
+origin/master is Linus' tree and dma-mapping-fixes is
+git://git.infradead.org/users/hch/dma-mapping.git#for-linus
+
+However, the committer of 8218a55b6b91 is Jens Axboe, so have you
+accidentally based your for-linus branch on something from Jens?  That
+commit does not appear in any other branch in linux-next.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zfTzgZkjMu+JxxAL2Rw8Bfk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxIRwQACgkQ3SOs138+
-s6GhZhAAuRKSdCg40WcUgwLZBlCRKVwAoaRgNYvZpKjWX0ucxuN1SNCf684+qE4w
-HwUldlcbLD6CTXIR9tX4jC/j1WWsM5N5OcsXTj/eo//njO5SZC0C8yuneuljeuPb
-avwcnPSSYOC76LvTnXZxaiAMF3T7yT4RznJkee7g+cJZiAG3s+ww2wS3V+pEZzeh
-DVJelRFdVSJNhPrI1pyp4Flfho2qu89o3fIp5fBOn3MBKwHe2hpYQs7lbC9fMFM0
-Hj/TTY70YLIAzLf7+PatOh+pXZpBIfvySn1SxJg2WsTz/OOgEMvaHq0eCG5e5f3I
-q0HlC6s5YKb68t6HZf8B5lhWB3PnHoOlW/1sxIVSMLrUEidNmV5QztbygX9sBuvI
-0d6TKxtQ+C3NclrFho3Gux3QZ+cqcykDI+XDxyhBrrphB0pc+LF2SEQhoW/83ook
-x2+wyRAZfWzKEC2VH/LGEA1jDQI6HoDzCDtQUb1RsQjVLu9/uKVoE2Rfd2ROsZDi
-JzwrC619LDLdbHNCJD8VEnlp4gd6735sbttbD1yAM+dj4FBt5vzFTPseXaPnXqQ2
-wibVUij6nC0fIFTENyeEQW49yEBb4gACR1BGWfyLkzMRl2ZqXJ6IQSt1HyOyiu+U
-4lhzrUPLWiyVksW6VCYxq2OQRQQUvtaYRlsbY9Cyc1asZiBn/sc=
-=gH1L
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxIWWsACgkQAVBC80lX
+0GwxsAf+LPHzHY6BWlHBnlYeErRWrj2FYpDzkLOAcdVXGmfCkVXwn3rIO9o87f/n
+gJxESJTa8jOhvb0IKkK8/BH4mJxyYt948M/580ENL6i7jefwE+7n45nmw/uMvyqF
+8C4trhf22rYfwtN6/e4IYQkeGoINccsX0XH0LdouxvDXhAYFHI78WGLzTk0CpG2p
+2PBiZpdoHUcFGPRld/GYJn8M+pn14/wGkcSyUq4+Wocahcn/VWQFgrX4VBUW+1uv
+LIc9/VNuhA4/l9BTOoqQje/TiVp6suYBCl4NO+PhJeHDNatKoYWh4S7yejW2IOaf
+5gPUSv73vGfnUm5SkYZhXgyTEot98Q==
+=8yEt
 -----END PGP SIGNATURE-----
 
---tKW2IUtsqtDRztdT--
+--Sig_/zfTzgZkjMu+JxxAL2Rw8Bfk--
