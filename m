@@ -1,56 +1,62 @@
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: linux-next: Fixes tag needs some work in the renesas tree
-Date: Wed, 23 Jan 2019 08:55:21 +0000
-Message-ID: <TY1PR01MB1770C404E14E88CB912D12D4C0990@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <20190123075605.116ddbd0@canb.auug.org.au>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH reset-next 2/2] reset: brcmstb: Fix 32-bit build with
+ 64-bit resource_size_t
+Date: Wed, 23 Jan 2019 10:39:26 +0100
+Message-ID: <1548236366.3904.1.camel@pengutronix.de>
+References: <20190123003345.13750-1-f.fainelli@gmail.com>
+         <20190123003345.13750-3-f.fainelli@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190123075605.116ddbd0@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <20190123003345.13750-3-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Simon Horman <horms@verge.net.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, rdunlap@infradead.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, paul.gortmaker@windriver.com
 List-Id: linux-next.vger.kernel.org
 
-Hello Stephen,
+Hi Florian,
 
-I am sorry for the trouble. My editor is configured to automatically wrap l=
-ines when they are too long, I'll be more careful next time.
-Do you need me to do anything about this patch?
+On Tue, 2019-01-22 at 16:33 -0800, Florian Fainelli wrote:
+> On 32-bit architectures defining resource_size_t as 64-bit (because of
+> PAE), we can run into a linker failure because of the modulo and the
+> division against resource_size(), replace the two problematic operations
+> with an alignment check on the register resource (instead of modulo),
+> and the division with DIV_ROUND_CLOSEST_ULL().
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Fixes: c196cdc7659d ("reset: Add Broadcom STB SW_INIT reset controller driver")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  drivers/reset/reset-brcmstb.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/reset/reset-brcmstb.c b/drivers/reset/reset-brcmstb.c
+> index 01ab1f71518b..c4cab8b5052d 100644
+> --- a/drivers/reset/reset-brcmstb.c
+> +++ b/drivers/reset/reset-brcmstb.c
+> @@ -91,7 +91,8 @@ static int brcmstb_reset_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (resource_size(res) % SW_INIT_BANK_SIZE) {
+> +	if (!IS_ALIGNED(res->start, SW_INIT_BANK_SIZE) ||
+> +	    !IS_AGLINED(resource_size(res), SW_INIT_BANK_SIZE)) {
 
-Thanks,
-Fab
+Typo.
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Sent: 22 January 2019 20:56
-> To: Simon Horman <horms@verge.net.au>
-> Subject: linux-next: Fixes tag needs some work in the renesas tree
->
-> Hi all,
->
-> In commit
->
->   8d6e2bbaeceb ("arm64: dts: renesas: r8a774a1: Fix hsusb reg size")
->
-> Fixes tag
->
->   Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and
->
-> has these problem(s):
->
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
->
-> Please don't split Fixes tags across 2 lines.
->
-> --
-> Cheers,
-> Stephen Rothwell
+>  		dev_err(kdev, "incorrect register range\n");
+>  		return -EINVAL;
+>  	}
+> @@ -103,7 +104,8 @@ static int brcmstb_reset_probe(struct platform_device *pdev)
+>  	dev_set_drvdata(kdev, priv);
+>  
+>  	priv->rcdev.owner = THIS_MODULE;
+> -	priv->rcdev.nr_resets = (resource_size(res) / SW_INIT_BANK_SIZE) * 32;
+> +	priv->rcdev.nr_resets = DIV_ROUND_CLOSEST_ULL(resource_size(res),
+> +						      SW_INIT_BANK_SIZE) * 32;
 
+This should be DIV_ROUND_DOWN_ULL.
 
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+regards
+Philipp
