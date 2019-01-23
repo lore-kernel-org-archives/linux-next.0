@@ -1,92 +1,130 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
-Date: Wed, 23 Jan 2019 13:41:57 +1100
-Message-ID: <20190123134157.29c69b3f@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the cpufreq-arm tree
+Date: Wed, 23 Jan 2019 15:20:07 +1100
+Message-ID: <20190123152007.36b29ff7@canb.auug.org.au>
+References: <20190118163307.03bd6710@canb.auug.org.au>
+        <20190118053802.rm7fc5z7wk3agc2f@vireshk-i7>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/msBv5YKQHsia=WBv1OUTT1I"; protocol="application/pgp-signature"
+ boundary="Sig_/A05E6ih9uXbbI+n6Fopv24h"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190118053802.rm7fc5z7wk3agc2f@vireshk-i7>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Christoph Hellwig <hch@lst.de>, Andy Duan <fugang.duan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/msBv5YKQHsia=WBv1OUTT1I
+--Sig_/A05E6ih9uXbbI+n6Fopv24h
+Content-Type: multipart/mixed; boundary="MP_/XTriIDQf5sZwxq.A1_bu48r"
+
+--MP_/XTriIDQf5sZwxq.A1_bu48r
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Hi Vinod,
+Hi Viresh,
 
-Today's linux-next merge of the slave-dma tree got a conflict in:
+On Fri, 18 Jan 2019 11:08:02 +0530 Viresh Kumar <viresh.kumar@linaro.org> w=
+rote:
+>
+> I missed looking into that. You must be running some sort of sanity
+> checks on the branch itself, can I know what exactly are you doing so
+> that I can try the same.
 
-  drivers/dma/imx-sdma.c
+I have attached my current script.  I run this on the range of new
+commits for each tree each day.
 
-between commit:
-
-  750afb08ca71 ("cross-tree: phase out dma_zalloc_coherent()")
-
-from Linus' tree and commit:
-
-  ceaf52265148 ("dmaengine: imx-sdma: pass ->dev to dma_alloc_coherent() AP=
-I")
-
-from the slave-dma tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Suggestions welcome! :-)
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/dma/imx-sdma.c
-index 86708fb9bda1,af14a8d6efa8..000000000000
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@@ -1182,8 -1189,8 +1189,8 @@@ static int sdma_request_channel0(struc
-  {
-  	int ret =3D -EBUSY;
- =20
-- 	sdma->bd0 =3D dma_alloc_coherent(NULL, PAGE_SIZE, &sdma->bd0_phys,
- -	sdma->bd0 =3D dma_zalloc_coherent(sdma->dev, PAGE_SIZE, &sdma->bd0_phys,
- -					GFP_NOWAIT);
-++	sdma->bd0 =3D dma_alloc_coherent(sdma->dev, PAGE_SIZE, &sdma->bd0_phys,
- +				       GFP_NOWAIT);
-  	if (!sdma->bd0) {
-  		ret =3D -ENOMEM;
-  		goto out;
-@@@ -1205,8 -1212,8 +1212,8 @@@ static int sdma_alloc_bd(struct sdma_de
-  	u32 bd_size =3D desc->num_bd * sizeof(struct sdma_buffer_descriptor);
-  	int ret =3D 0;
- =20
-- 	desc->bd =3D dma_alloc_coherent(NULL, bd_size, &desc->bd_phys,
-- 				      GFP_NOWAIT);
- -	desc->bd =3D dma_zalloc_coherent(desc->sdmac->sdma->dev, bd_size,
- -				       &desc->bd_phys, GFP_NOWAIT);
-++	desc->bd =3D dma_alloc_coherent(desc->sdmac->sdma->dev, bd_size,
-++				      &desc->bd_phys, GFP_NOWAIT);
-  	if (!desc->bd) {
-  		ret =3D -ENOMEM;
-  		goto out;
+--MP_/XTriIDQf5sZwxq.A1_bu48r
+Content-Type: application/x-shellscript
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=check_fixes
 
---Sig_/msBv5YKQHsia=WBv1OUTT1I
+IyEvYmluL2Jhc2gKCmlmIFsgIiQjIiAtbHQgMSBdOyB0aGVuCiAgICAgICAgcHJpbnRmICdVc2Fn
+ZTogJXMgPGNvbW1pdCByYW5nZT5cbicsICIkMCIgMT4mMgogICAgICAgIGV4aXQgMQpmaQoKY29t
+bWl0cz0kKGdpdCByZXYtbGlzdCAtLW5vLW1lcmdlcyAtaSAtLWdyZXA9J15bWzpzcGFjZTpdXSpG
+aXhlczonICIkQCIpCmlmIFsgLXogIiRjb21taXRzIiBdOyB0aGVuCiAgICAgICAgZXhpdCAwCmZp
+CgojIFRoaXMgc2hvdWxkIGJlIGEgZ2l0IHRyZWUgdGhhdCBjb250YWlucyAqb25seSogTGludXMn
+IHRyZWUKTGludXNfdHJlZT0iJHtIT01FfS9rZXJuZWxzL2xpbnVzLmdpdCIKc3BsaXRfcmU9J14o
+W1s6eGRpZ2l0Ol1dKylbWzpzcGFjZTpdXSsoLiopJCcKbmw9JCdcbicKCiMgU3RyaXAgdGhlIGxl
+YWRpbmcgYW5kIHRyYWluaW5nIHNwYWNlcyBmcm9tIGEgc3RyaW5nCnN0cmlwX3NwYWNlcygpCnsK
+CVtbICIkMSIgPX4gXltbOnNwYWNlOl1dKiguKlteWzpzcGFjZTpdXSlbWzpzcGFjZTpdXSokIF1d
+CgllY2hvICIke0JBU0hfUkVNQVRDSFsxXX0iCn0KCmZvciBjIGluICRjb21taXRzOyBkbwoKCWNv
+bW1pdF9sb2c9JChnaXQgbG9nIC0xIC0tZm9ybWF0PSclaCAoIiVzIiknICIkYyIpCgljb21taXRf
+bXNnPSJJbiBjb21taXQKCiAgJGNvbW1pdF9sb2cKCiIKCglmaXhlc19saW5lcz0kKGdpdCBsb2cg
+LTEgLS1mb3JtYXQ9JyVCJyAiJGMiIHwKCQkJZ3JlcCAtaSAnXltbOnNwYWNlOl1dKkZpeGVzOicp
+CgoJd2hpbGUgcmVhZCAtciBmbGluZTsgZG8KCQlmPSQoZWNobyAiJGZsaW5lIiB8IHNlZCAncy9e
+W1s6c3BhY2U6XV0qRml4ZXM6W1s6c3BhY2U6XV0qLy9pJykKCQlmaXhlc19tc2c9IkZpeGVzIHRh
+ZwoKICAkZmxpbmUKCmhhcyB0aGVzZSBwcm9ibGVtKHMpOgoKIgoJCXNoYT0KCQlzdWJqZWN0PQoJ
+CW1zZz0KCQlbWyAiJGYiID1+ICRzcGxpdF9yZSBdXQoJCXNoYT0iJHtCQVNIX1JFTUFUQ0hbMV19
+IgoJCXN1YmplY3Q9IiR7QkFTSF9SRU1BVENIWzJdfSIKCgkJaWYgWyAteiAiJHNoYSIgXTsgdGhl
+bgoJCQlwcmludGYgJyVzJXMgIC0gJXNcbicgIiRjb21taXRfbXNnIiAiJGZpeGVzX21zZyIgJ05v
+IFNIQTEgcmVjb2duaXNlZCcKCQkJY29tbWl0X21zZz0nJwoJCQljb250aW51ZQoJCWZpCgkJaWYg
+ISBnaXQgcmV2LXBhcnNlIC1xIC0tdmVyaWZ5ICIkc2hhIiA+L2Rldi9udWxsOyB0aGVuCgkJCXBy
+aW50ZiAnJXMlcyAgLSAlc1xuJyAiJGNvbW1pdF9tc2ciICIkZml4ZXNfbXNnIiAnVGFyZ2V0IFNI
+QTEgZG9lcyBub3QgZXhpc3QnCgkJCWNvbW1pdF9tc2c9JycKCQkJY29udGludWUKCQlmaQoKCQlp
+ZiBbICIkeyNzaGF9IiAtbHQgMTIgXTsgdGhlbgoJCQltc2c9IiR7bXNnOiske21zZ30ke25sfX0g
+IC0gU0hBMSBzaG91bGQgYmUgYXQgbGVhc3QgMTIgZGlnaXRzIGxvbmciCgkJZmkKCQkjIHJlZHVj
+ZSB0aGUgc3ViamVjdCB0byB0aGUgcGFydCBiZXR3ZWVuICgpIGlmIHRoZXJlCgkJaWYgW1sgIiRz
+dWJqZWN0IiA9fiBeXCgoLiopXCkgXV07IHRoZW4KCQkJc3ViamVjdD0iJHtCQVNIX1JFTUFUQ0hb
+MV19IgoJCWVsaWYgW1sgIiRzdWJqZWN0IiA9fiBeXCgoLiopIF1dOyB0aGVuCgkJCXN1YmplY3Q9
+IiR7QkFTSF9SRU1BVENIWzFdfSIKCQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIFN1Ympl
+Y3QgaGFzIGxlYWRpbmcgYnV0IG5vIHRyYWlsaW5nIHBhcmVudGhlc2VzIgoJCWZpCgoJCSMgc3Ry
+aXAgbWF0Y2hpbmcgcXVvdGVzIGF0IHRoZSBzdGFydCBhbmQgZW5kIG9mIHRoZSBzdWJqZWN0CgkJ
+IyB0aGUgdW5pY29kZSBjaGFyYWN0ZXJzIGluIHRoZSBjbGFzc2VzIGFyZQoJCSMgVSsyMDFDIExF
+RlQgRE9VQkxFIFFVT1RBVElPTiBNQVJLCgkJIyBVKzIwMUQgUklHSFQgRE9VQkxFIFFVT1RBVElP
+TiBNQVJLCgkJIyBVKzIwMTggTEVGVCBTSU5HTEUgUVVPVEFUSU9OIE1BUksKCQkjIFUrMjAxOSBS
+SUdIVCBTSU5HTEUgUVVPVEFUSU9OIE1BUksKCQlyZTE9JCdeW1wiXHUyMDFDXSguKilbXCJcdTIw
+MURdJCcKCQlyZTI9JCdeW1wnXHUyMDE4XSguKilbXCdcdTIwMTldJCcKCQlyZTM9JCdeW1wiXCdc
+dTIwMUNcdTIwMThdKC4qKSQnCgkJaWYgW1sgIiRzdWJqZWN0IiA9fiAkcmUxIF1dOyB0aGVuCgkJ
+CXN1YmplY3Q9IiR7QkFTSF9SRU1BVENIWzFdfSIKCQllbGlmIFtbICIkc3ViamVjdCIgPX4gJHJl
+MiBdXTsgdGhlbgoJCQlzdWJqZWN0PSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJZWxpZiBbWyAiJHN1
+YmplY3QiID1+ICRyZTMgXV07IHRoZW4KCQkJc3ViamVjdD0iJHtCQVNIX1JFTUFUQ0hbMV19IgoJ
+CQltc2c9IiR7bXNnOiske21zZ30ke25sfX0gIC0gU3ViamVjdCBoYXMgbGVhZGluZyBidXQgbm8g
+dHJhaWxpbmcgcXVvdGVzIgoJCWZpCgoJCXN1YmplY3Q9JChzdHJpcF9zcGFjZXMgIiRzdWJqZWN0
+IikKCgkJdGFyZ2V0X3N1YmplY3Q9JChnaXQgbG9nIC0xIC0tZm9ybWF0PSclcycgIiRzaGEiKQoJ
+CXRhcmdldF9zdWJqZWN0PSQoc3RyaXBfc3BhY2VzICIkdGFyZ2V0X3N1YmplY3QiKQoKCQkjIG1h
+dGNoIHdpdGggZWxsaXBzZXMKCQljYXNlICIkc3ViamVjdCIgaW4KCQkqLi4uKQlzdWJqZWN0PSIk
+e3N1YmplY3QlLi4ufSIKCQkJdGFyZ2V0X3N1YmplY3Q9IiR7dGFyZ2V0X3N1YmplY3Q6MDokeyNz
+dWJqZWN0fX0iCgkJCTs7CgkJLi4uKikJc3ViamVjdD0iJHtzdWJqZWN0Iy4uLn0iCgkJCXRhcmdl
+dF9zdWJqZWN0PSIke3RhcmdldF9zdWJqZWN0OiAtJHsjc3ViamVjdH19IgoJCQk7OwoJCSpcIC4u
+LlwgKikKCQkJczE9IiR7c3ViamVjdCUgLi4uICp9IgoJCQlzMj0iJHtzdWJqZWN0IyogLi4uIH0i
+CgkJCXN1YmplY3Q9IiRzMSAkczIiCgkJCXQxPSIke3RhcmdldF9zdWJqZWN0OjA6JHsjczF9fSIK
+CQkJdDI9IiR7dGFyZ2V0X3N1YmplY3Q6IC0keyNzMn19IgoJCQl0YXJnZXRfc3ViamVjdD0iJHQx
+ICR0MiIKCQkJOzsKCQllc2FjCgkJc3ViamVjdD0kKHN0cmlwX3NwYWNlcyAiJHN1YmplY3QiKQoJ
+CXRhcmdldF9zdWJqZWN0PSQoc3RyaXBfc3BhY2VzICIkdGFyZ2V0X3N1YmplY3QiKQoKCQlpZiBb
+ICIkc3ViamVjdCIgIT0gIiR7dGFyZ2V0X3N1YmplY3Q6MDokeyNzdWJqZWN0fX0iIF07IHRoZW4K
+CQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIFN1YmplY3QgZG9lcyBub3QgbWF0Y2ggdGFy
+Z2V0IGNvbW1pdCBzdWJqZWN0IgoJCWZpCgkJbHNoYT0kKGNkICIkTGludXNfdHJlZSIgJiYgZ2l0
+IHJldi1wYXJzZSAtcSAtLXZlcmlmeSAiJHNoYSIpCgkJaWYgWyAteiAiJGxzaGEiIF07IHRoZW4K
+CQkJY291bnQ9JChnaXQgcmV2LWxpc3QgLS1jb3VudCAiJHNoYSIuLiIkYyIpCgkJCWlmIFsgIiRj
+b3VudCIgLWVxIDAgXTsgdGhlbgoJCQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIFRhcmdl
+dCBpcyBub3QgYW4gYW5jZXN0b3Igb2YgdGhpcyBjb21taXQiCgkJCWZpCgkJZmkKCQlpZiBbICIk
+bXNnIiBdOyB0aGVuCgkJCXByaW50ZiAnJXMlcyVzXG4nICIkY29tbWl0X21zZyIgIiRmaXhlc19t
+c2ciICIkbXNnIgoJCQljb21taXRfbXNnPScnCgkJZmkKCWRvbmUgPDw8ICIkZml4ZXNfbGluZXMi
+CmRvbmUKCmV4aXQgMAo=
+
+--MP_/XTriIDQf5sZwxq.A1_bu48r--
+
+--Sig_/A05E6ih9uXbbI+n6Fopv24h
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxH1HUACgkQAVBC80lX
-0GznDQgAhP4eSUOMArUCWUJt1zJ7xaqmfn/BElyVcjKPB6GD3skB/zQngpQylLfQ
-jmRzTBOaQnWhRhHkzZ/MhkoDB5EUsKZl2L701n8qP6vA1JxPKnX3ruOajgOwDP5j
-f+sRSd8hGFl3+ajBfMh646rEg2fQePtD6yAzIbTBk8u1g208YtGzkjGG2MG/fEW9
-V6G35Rgqgi+BC5YwsjRP0LrqXBGoc7JqY2DYt0hRA2urD/ms01DkVgErGBJgaAs1
-vaPrfaUu8SAYDr0INNFfpDmo4sFcO0vWaEQ6HCt6LbNxARdjEObJ+cDk3QYiyWq+
-ttZxcTrjmJ9eWJMH4m34i3QOI4LpMQ==
-=PtbG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxH63cACgkQAVBC80lX
+0GxisggAoGnzDpQ1DsjlSZHCZXsyrYDVdLGhCmnQbkhUVJPgePL1RYj7GslWp5sW
+L2QzY3t3bzxnilBdrTt1EkUjteMu+G/4PWZZIDd/Iqz/YckRNqYjQgde3FvB5NqF
+VBs1omLXVneDwzxh2cUybSWyOUfkKxC7dgHMGPsIFKmeIDsB9Q56yDcMMKN0Yjvt
+7eQgTMbMP8Vl0w1L6H0kJAgxE7tPcfU5MBrTsxAnnQRVAqtlrbY5uSVnuu8w6UTu
+g2hdhldbyOBKR8aP8qyKf7jGL9bnr0+S011K7IYyXDwcVEQROAISA/K+xgixR//R
+oklokK0S2YKVEJh65HrqKernX/VNqQ==
+=fLhh
 -----END PGP SIGNATURE-----
 
---Sig_/msBv5YKQHsia=WBv1OUTT1I--
+--Sig_/A05E6ih9uXbbI+n6Fopv24h--
