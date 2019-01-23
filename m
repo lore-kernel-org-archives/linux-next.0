@@ -1,77 +1,92 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH reset-next 2/2] reset: brcmstb: Fix 32-bit build with
- 64-bit resource_size_t
-Date: Tue, 22 Jan 2019 16:53:58 -0800
-Message-ID: <1c64196a-b23c-efae-b449-a62981d44a26@infradead.org>
-References: <20190123003345.13750-1-f.fainelli@gmail.com>
- <20190123003345.13750-3-f.fainelli@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
+Date: Wed, 23 Jan 2019 13:41:57 +1100
+Message-ID: <20190123134157.29c69b3f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/msBv5YKQHsia=WBv1OUTT1I"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190123003345.13750-3-f.fainelli@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, sfr@canb.auug.org.au, paul.gortmaker@windriver.com
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Christoph Hellwig <hch@lst.de>, Andy Duan <fugang.duan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-On 1/22/19 4:33 PM, Florian Fainelli wrote:
-> On 32-bit architectures defining resource_size_t as 64-bit (because of
-> PAE), we can run into a linker failure because of the modulo and the
-> division against resource_size(), replace the two problematic operations
-> with an alignment check on the register resource (instead of modulo),
-> and the division with DIV_ROUND_CLOSEST_ULL().
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Fixes: c196cdc7659d ("reset: Add Broadcom STB SW_INIT reset controller driver")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/reset/reset-brcmstb.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/reset/reset-brcmstb.c b/drivers/reset/reset-brcmstb.c
-> index 01ab1f71518b..c4cab8b5052d 100644
-> --- a/drivers/reset/reset-brcmstb.c
-> +++ b/drivers/reset/reset-brcmstb.c
-> @@ -91,7 +91,8 @@ static int brcmstb_reset_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (resource_size(res) % SW_INIT_BANK_SIZE) {
-> +	if (!IS_ALIGNED(res->start, SW_INIT_BANK_SIZE) ||
-> +	    !IS_AGLINED(resource_size(res), SW_INIT_BANK_SIZE)) {
->  		dev_err(kdev, "incorrect register range\n");
->  		return -EINVAL;
->  	}
-> @@ -103,7 +104,8 @@ static int brcmstb_reset_probe(struct platform_device *pdev)
->  	dev_set_drvdata(kdev, priv);
->  
->  	priv->rcdev.owner = THIS_MODULE;
-> -	priv->rcdev.nr_resets = (resource_size(res) / SW_INIT_BANK_SIZE) * 32;
-> +	priv->rcdev.nr_resets = DIV_ROUND_CLOSEST_ULL(resource_size(res),
-> +						      SW_INIT_BANK_SIZE) * 32;
->  	priv->rcdev.ops = &brcmstb_reset_ops;
->  	priv->rcdev.of_node = kdev->of_node;
->  	/* Use defaults: 1 cell and simple xlate function */
-> 
+--Sig_/msBv5YKQHsia=WBv1OUTT1I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Florian,
+Hi Vinod,
 
-This gives me:
+Today's linux-next merge of the slave-dma tree got a conflict in:
 
-  CC      drivers/reset/reset-brcmstb.o
-../drivers/reset/reset-brcmstb.c: In function ‘brcmstb_reset_probe’:
-../drivers/reset/reset-brcmstb.c:95:6: error: implicit declaration of function ‘IS_AGLINED’ [-Werror=implicit-function-declaration]
-      !IS_AGLINED(resource_size(res), SW_INIT_BANK_SIZE)) {
-      ^
+  drivers/dma/imx-sdma.c
 
+between commit:
 
-but if the typo is fixed, it is fine :) then you can added:
+  750afb08ca71 ("cross-tree: phase out dma_zalloc_coherent()")
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+from Linus' tree and commit:
 
-Thanks.
+  ceaf52265148 ("dmaengine: imx-sdma: pass ->dev to dma_alloc_coherent() AP=
+I")
 
--- 
-~Randy
+from the slave-dma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/dma/imx-sdma.c
+index 86708fb9bda1,af14a8d6efa8..000000000000
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@@ -1182,8 -1189,8 +1189,8 @@@ static int sdma_request_channel0(struc
+  {
+  	int ret =3D -EBUSY;
+ =20
+- 	sdma->bd0 =3D dma_alloc_coherent(NULL, PAGE_SIZE, &sdma->bd0_phys,
+ -	sdma->bd0 =3D dma_zalloc_coherent(sdma->dev, PAGE_SIZE, &sdma->bd0_phys,
+ -					GFP_NOWAIT);
+++	sdma->bd0 =3D dma_alloc_coherent(sdma->dev, PAGE_SIZE, &sdma->bd0_phys,
+ +				       GFP_NOWAIT);
+  	if (!sdma->bd0) {
+  		ret =3D -ENOMEM;
+  		goto out;
+@@@ -1205,8 -1212,8 +1212,8 @@@ static int sdma_alloc_bd(struct sdma_de
+  	u32 bd_size =3D desc->num_bd * sizeof(struct sdma_buffer_descriptor);
+  	int ret =3D 0;
+ =20
+- 	desc->bd =3D dma_alloc_coherent(NULL, bd_size, &desc->bd_phys,
+- 				      GFP_NOWAIT);
+ -	desc->bd =3D dma_zalloc_coherent(desc->sdmac->sdma->dev, bd_size,
+ -				       &desc->bd_phys, GFP_NOWAIT);
+++	desc->bd =3D dma_alloc_coherent(desc->sdmac->sdma->dev, bd_size,
+++				      &desc->bd_phys, GFP_NOWAIT);
+  	if (!desc->bd) {
+  		ret =3D -ENOMEM;
+  		goto out;
+
+--Sig_/msBv5YKQHsia=WBv1OUTT1I
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxH1HUACgkQAVBC80lX
+0GznDQgAhP4eSUOMArUCWUJt1zJ7xaqmfn/BElyVcjKPB6GD3skB/zQngpQylLfQ
+jmRzTBOaQnWhRhHkzZ/MhkoDB5EUsKZl2L701n8qP6vA1JxPKnX3ruOajgOwDP5j
+f+sRSd8hGFl3+ajBfMh646rEg2fQePtD6yAzIbTBk8u1g208YtGzkjGG2MG/fEW9
+V6G35Rgqgi+BC5YwsjRP0LrqXBGoc7JqY2DYt0hRA2urD/ms01DkVgErGBJgaAs1
+vaPrfaUu8SAYDr0INNFfpDmo4sFcO0vWaEQ6HCt6LbNxARdjEObJ+cDk3QYiyWq+
+ttZxcTrjmJ9eWJMH4m34i3QOI4LpMQ==
+=PtbG
+-----END PGP SIGNATURE-----
+
+--Sig_/msBv5YKQHsia=WBv1OUTT1I--
