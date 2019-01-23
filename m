@@ -1,34 +1,54 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH reset-next 0/2] reset: brcmstb: Misc fixes
-Date: Wed, 23 Jan 2019 14:56:57 -0800
-Message-ID: <759cd990-75a3-d7cc-94a6-c62714c85f0e@gmail.com>
-References: <20190123003345.13750-1-f.fainelli@gmail.com>
- <1548236510.3904.3.camel@pengutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pm tree
+Date: Thu, 24 Jan 2019 10:45:47 +1100
+Message-ID: <20190124104547.34632568@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7ND3.SG5kjGcQuGL11stxx="; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548236510.3904.3.camel@pengutronix.de>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>, Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, rdunlap@infradead.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, paul.gortmaker@windriver.com
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On 1/23/19 1:41 AM, Philipp Zabel wrote:
-> On Tue, 2019-01-22 at 16:33 -0800, Florian Fainelli wrote:
->> Hi Philipp,
->>
->> These two patches fix some recent issues brought up by Paul and Randy,
->> feel free to squash into c196cdc7659d ("reset: Add Broadcom STB SW_INIT
->> reset controller driver") since this is only in reset/next and
->> linux-next so far.
-> 
-> If you want this squashed, feel free to submit an updated version of the
-> original patches and I'll replace them. That way I don't have to decide
-> how to stitch (or drop) the commit messages.
+--Sig_/7ND3.SG5kjGcQuGL11stxx=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I sent you a replacement version for the second patch only, hope
-that is alright.
--- 
-Florian
+Hi Rafael,
+
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+drivers/acpi/acpi_dbg.c: In function 'acpi_aml_init':
+drivers/acpi/acpi_dbg.c:774:1: warning: label 'err_exit' defined but not us=
+ed [-Wunused-label]
+ err_exit:
+ ^~~~~~~~
+
+Introduced by commit
+
+  9ec6dbfbdc0a ("ACPI: no need to check return value of debugfs_create func=
+tions")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7ND3.SG5kjGcQuGL11stxx=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxI/KsACgkQAVBC80lX
+0GyzdggApYeZJ7VDpHZOESPwoU0ccwt/Unm+IzRyl7xXCoK2KuNsDtw4XMB0ddTf
+f0l9YstkRInLAzwTDD0N/YEmxt5kP0PMM7QLJyzKnSHXTUV0VFPGexSFWW6+h20w
+X9VZiRwBXnurh12mB0L8ZTQedk0YZL8mDHBTQvsTOg4qMfO0OBVdKIZQ8M6qOmaG
+HLmbkAQYhIyUP2aWDKUpmD/j8frZe4cErXS10JR6uIYsdJY+t4wOIw/VeKQxCk91
+GEX6Na1T/Xh36fUd3K8a+TmL8ydOhkSmyj/HzQuBOsbTX6LXgSwAWj+6ERg5OhhZ
+VvNqP68KujsoESx7D6Sh65MkwLQOSQ==
+=LxYY
+-----END PGP SIGNATURE-----
+
+--Sig_/7ND3.SG5kjGcQuGL11stxx=--
