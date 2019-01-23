@@ -1,68 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the omap-fixes tree
-Date: Wed, 23 Jan 2019 16:32:09 +1100
-Message-ID: <20190123163209.6187fe78@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the scsi-fixes tree
+Date: Wed, 23 Jan 2019 16:34:32 +1100
+Message-ID: <20190123163432.2f02124f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lngOp2KCqMP11/jq7hfbJ/q"; protocol="application/pgp-signature"
+ boundary="Sig_/_Dq84qRTbUxqZWewXeQy8pp"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heiko Schocher <hs@denx.de>, Arthur Demchenkov <spinal.by@gmail.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/lngOp2KCqMP11/jq7hfbJ/q
+--Sig_/_Dq84qRTbUxqZWewXeQy8pp
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+Hi Martin,
 
 In commit
 
-  5a1826e1b175 ("ARM: dts: am335x-shc.dts: fix wrong cd pin level")
+  a8cf59a6692c ("scsi: communicate max segment size to the DMA mapping code=
+")
 
 Fixes tag
 
-  Fixes: e63201f19438 ("mmc: omap_hsmmc: Delete platform data
+  Fixes: 50c2e9107f ("scsi: introduce a max_segment_size host_template para=
+meters")
 
 has these problem(s):
 
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-In commit
-
-  0b30afcb8948 ("ARM: dts: n900: fix mmc1 card detect gpio polarity")
-
-Fixes tag
-
-  Fixes: e63201f19438 ("mmc: omap_hsmmc: Delete platform data GPIO
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes tags across more than one line.
+  - SHA1 should be at least 12 digits long
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/lngOp2KCqMP11/jq7hfbJ/q
+--Sig_/_Dq84qRTbUxqZWewXeQy8pp
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxH/FkACgkQAVBC80lX
-0GwZcgf9H2XAWDGWy18PBxQiHa33tJCEXc/jWTiT9oEkM6JsYPNlKAB6S0O3vwro
-ccanxmURPWXOfhzRjEZai3eYHZ4dE4womGkoCtW1ARQDPnx3Wjdvx8jaWpfDLmE4
-vjAUGnRAs5RTw2pbBDsXRjvMOxuG/TBVRA/hi5ZSAz0/shGAXSdRMouwsXhx2kPt
-lZFg3u5c/BP30DB1CmoX4iooOOB9FUiBv1KCVhGW4GKb5nw9mw3KwnQZ+WmcLUsx
-rqdYTuZMCe/ph2wQajZmNaPITOHLIWpH26fvwSmdYk1aB78v6ejRct7g2/pO2IqM
-AjUDj8rZ+jXw+ZFJvekJpHZF5XKQnQ==
-=64lW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxH/OgACgkQAVBC80lX
+0GzOrggAhkjgBJvTiIMeACDKBBiYZO1wuMloGtOIH1niULzg+uCJEasS8qkpEZY2
+gGUWr9ty5j70F4f1h5p6lBtKJdgyyGrCSDQbN6YIupl8pGtPhk0aRTBlBQpr74bl
+ire0J3ehOBrMpxLM4OG7bML4heA92+9Dhr/HdszLg+I/NC0mIt86uPZNrKyMbf8s
+5ON8ibKMWnNaOoBUdN4bLhFbmttzbY4S9h/Kg+VNRlWaSQEWPy733CNJu05qtSNC
+sIYW0xI4XuGWFpegT7yCjGeh8qIWDkmAxhNrPuQjCe9cDFTBe/dYKeG/ibND3Lvo
+JZIpFJNV4Pqa6HcLO0/axcHTcxBKyQ==
+=2fae
 -----END PGP SIGNATURE-----
 
---Sig_/lngOp2KCqMP11/jq7hfbJ/q--
+--Sig_/_Dq84qRTbUxqZWewXeQy8pp--
