@@ -1,54 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the scsi-fixes tree
-Date: Wed, 23 Jan 2019 16:34:32 +1100
-Message-ID: <20190123163432.2f02124f@canb.auug.org.au>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: Fixes tags need some work in the dma-mapping-fixes
+ tree
+Date: Wed, 23 Jan 2019 08:19:33 +0100
+Message-ID: <20190123071933.GA24861@lst.de>
+References: <20190123074747.7cd44f12@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_Dq84qRTbUxqZWewXeQy8pp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190123074747.7cd44f12@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_Dq84qRTbUxqZWewXeQy8pp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 23, 2019 at 07:47:47AM +1100, Stephen Rothwell wrote:
+> Hi Christoph,
+> 
+> In commit
+> 
+>   702e8ed37bed ("arm64/xen: fix xen-swiotlb cache flushing")
+> 
+> Fixes tag
+> 
+>   Fixes: 356da6d0cd ("dma-mapping: bypass indirect calls for dma-direct")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
 
-Hi Martin,
+When did we decide on that?  As far as I know it was bumped to 10
+a while ago.  12 basically makes the line even more unreadable.
 
-In commit
+> In commit
+> 
+>   8218a55b6b91 ("sbitmap: Protect swap_lock from hardirq")
+> 
+> Fixes tag
+> 
+>   Fixes: ab53dcfb3e7b ("sbitmap: Protect swap_lock from hardirq")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> This later patch appears to already be in Linus' tree as commit
+> fe76fc6aaf53 (also with an incorrect Fixes tag :-()
 
-  a8cf59a6692c ("scsi: communicate max segment size to the DMA mapping code=
-")
-
-Fixes tag
-
-  Fixes: 50c2e9107f ("scsi: introduce a max_segment_size host_template para=
-meters")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_Dq84qRTbUxqZWewXeQy8pp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxH/OgACgkQAVBC80lX
-0GzOrggAhkjgBJvTiIMeACDKBBiYZO1wuMloGtOIH1niULzg+uCJEasS8qkpEZY2
-gGUWr9ty5j70F4f1h5p6lBtKJdgyyGrCSDQbN6YIupl8pGtPhk0aRTBlBQpr74bl
-ire0J3ehOBrMpxLM4OG7bML4heA92+9Dhr/HdszLg+I/NC0mIt86uPZNrKyMbf8s
-5ON8ibKMWnNaOoBUdN4bLhFbmttzbY4S9h/Kg+VNRlWaSQEWPy733CNJu05qtSNC
-sIYW0xI4XuGWFpegT7yCjGeh8qIWDkmAxhNrPuQjCe9cDFTBe/dYKeG/ibND3Lvo
-JZIpFJNV4Pqa6HcLO0/axcHTcxBKyQ==
-=2fae
------END PGP SIGNATURE-----
-
---Sig_/_Dq84qRTbUxqZWewXeQy8pp--
+That commit is not from the dma-mapping tree..
