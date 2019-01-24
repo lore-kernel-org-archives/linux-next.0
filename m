@@ -1,46 +1,54 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: linux-next: arm multi_v7_defconfig build failure next-20190124
-Date: Thu, 24 Jan 2019 10:41:10 -0800
-Message-ID: <84da29c7-a51b-4844-2963-f155dad28eee@gmail.com>
-References: <CA+G9fYv0m79UC+Pq9Cq_5vGcos8A87oPYA7Ph7LUyZrfEkLXQA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [for next][PATCH v2 2/2] platform/x86: Fix unmet dependency
+ warning for SAMSUNG_Q10
+Date: Thu, 24 Jan 2019 21:15:54 +0200
+Message-ID: <CAHp75VdbEVUvf1+ySY=J02op-EbqSCkzegGfoO3RXmBRO-63hQ@mail.gmail.com>
+References: <20190124175702.4801-1-okaya@kernel.org> <20190124175702.4801-2-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CA+G9fYv0m79UC+Pq9Cq_5vGcos8A87oPYA7Ph7LUyZrfEkLXQA@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Naresh Kamboju <naresh.kamboju@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, computersforpeace@gmail.com, gregory.0xf0@gmail.com, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190124175702.4801-2-okaya@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sinan Kaya <okaya@kernel.org>
+Cc: linux-next <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, "open list:X86 PLATFORM DRIVERS" <platform-driver-x86@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 1/24/19 8:57 AM, Naresh Kamboju wrote:
-> linux-next 20190122,  20190123 and 20190124 build arm
-> multi_v7_defconfig failed like this:
-> drivers/reset/reset-brcmstb.o: In function `brcmstb_reset_probe':
-> reset-brcmstb.c:(.text+0x110): undefined reference to `__aeabi_uldivmod'
-> reset-brcmstb.c:(.text+0x160): undefined reference to `__aeabi_uldivmod'
-> 
-> Full test log,
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=lkft,MACHINE=am57xx-evm,label=docker-lkft/448/console
+On Thu, Jan 24, 2019 at 7:57 PM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
+> warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
+>
+> SAMSUNG_Q10 selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
+> depends on BACKLIGHT_LCD_SUPPORT.
+>
+> Copy BACKLIGHT_LCD_SUPPORT dependency into SAMSUNG_Q10 to fix:
+>
+> WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
+>   Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
+>   Selected by [y]:
+>   - SAMSUNG_Q10 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y]
 
-Should be fixed tonight, since Philipp applied a revised version:
+Thanks for the fix.
+One comment below though.
 
-https://lore.kernel.org/patchwork/patch/1035070/
+>  config SAMSUNG_Q10
+>         tristate "Samsung Q10 Extras"
+> -       depends on ACPI
 
-> 
-> Best regards
-> Naresh Kamboju
-> 
+> +       depends on ACPI && BACKLIGHT_LCD_SUPPORT
+
+I would like rather see it on a separate line in both patches.
+
+Rafael, you may take it if it feels comfortable.
+
+>         select BACKLIGHT_CLASS_DEVICE
+>         ---help---
+>           This driver provides support for backlight control on Samsung Q10
+> --
+> 2.19.0
+>
 
 
 -- 
-Florian
+With Best Regards,
+Andy Shevchenko
