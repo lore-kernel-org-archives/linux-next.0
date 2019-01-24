@@ -1,51 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the fscrypt tree
-Date: Thu, 24 Jan 2019 17:37:18 +1100
-Message-ID: <20190124173718.4549bf2a@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI is enabled
+Date: Thu, 24 Jan 2019 11:51:19 +0100
+Message-ID: <37767989.Gns3VtERSa@aspire.rjw.lan>
+References: <20190121231958.28255-1-okaya@kernel.org> <20190121231958.28255-2-okaya@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PqJ3JW9C9TX3.J89xb.cTXV"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190121231958.28255-2-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Sinan Kaya <okaya@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PqJ3JW9C9TX3.J89xb.cTXV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tuesday, January 22, 2019 12:19:58 AM CET Sinan Kaya wrote:
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly.
+> 
+> PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
+> mentioned in the Kconfig.
+> 
+> Add an explicit dependency here.
+> 
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
+>  arch/x86/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 568f339595ed..0519da6f8ee4 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -199,7 +199,7 @@ config X86
+>  	select IRQ_FORCED_THREADING
+>  	select NEED_SG_DMA_LENGTH
+>  	select PCI_DOMAINS			if PCI
+> -	select PCI_LOCKLESS_CONFIG
+> +	select PCI_LOCKLESS_CONFIG		if PCI
+>  	select PERF_EVENTS
+>  	select RTC_LIB
+>  	select RTC_MC146818_LIB
+> 
 
-Hi Ted,
-
-Commits
-
-  f5e55e777cc9 ("fscrypt: return -EXDEV for incompatible rename or link int=
-o encrypted dir")
-  643fa9612bf1 ("fscrypt: remove filesystem specific build config option")
-  62230e0d702f ("f2fs: use IS_ENCRYPTED() to check encryption status")
-  592ddec7578a ("ext4: use IS_ENCRYPTED() to check encryption status")
-  1058ef0dcb71 ("fscrypt: remove CRYPTO_CTR dependency")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/PqJ3JW9C9TX3.J89xb.cTXV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxJXR4ACgkQAVBC80lX
-0GxrYAgAkcbm3Eb/XEyJB8m67F+dzJdl4MzHPTOWnr22BNSy7UFRG3ZmqHv6YTM9
-hwPg3SdTwGb1J1UmngAr817xk5z0lbHhcnZLywjmVACI+aS4BoMCrBs5p6gc687Q
-JiVV2wfTjF1tI4jmsAsdxn1tZu+D59Uq0hcdCXnj7yBmCf22Y1uZPCIfcFkxXLix
-KbYT1zEHEdXsGjCEn/zqgtGq2Nufxoik2DsfJ5Lj/3Af7AV+4x2GziSoH46/ht/H
-S68jJv9eToU5n19bIEk7VeI8cun391kZdw7Ab2b2pPn2MuT6eSknh4nMTEDK7Nul
-j9LukzJV2eFienPV80XJznLz7s/hKA==
-=Cfpm
------END PGP SIGNATURE-----
-
---Sig_/PqJ3JW9C9TX3.J89xb.cTXV--
+Is anyone taking this or should I?
