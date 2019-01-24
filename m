@@ -1,32 +1,29 @@
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: linux-next: arm multi_v7_defconfig build failure next-20190124
-Date: Thu, 24 Jan 2019 22:27:42 +0530
-Message-ID: <CA+G9fYv0m79UC+Pq9Cq_5vGcos8A87oPYA7Ph7LUyZrfEkLXQA@mail.gmail.com>
+From: Sinan Kaya <okaya@kernel.org>
+Subject: Re: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if
+ PCI is enabled
+Date: Thu, 24 Jan 2019 12:42:32 -0500
+Message-ID: <cd9774f9-ba35-23ae-7083-6645c7a526c7@kernel.org>
+References: <20190121231958.28255-1-okaya@kernel.org>
+ <20190121231958.28255-2-okaya@kernel.org>
+ <37767989.Gns3VtERSa@aspire.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, computersforpeace@gmail.com, gregory.0xf0@gmail.com, p.zabel@pengutronix.de, Stephen Rothwell <sfr@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <37767989.Gns3VtERSa@aspire.rjw.lan>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-linux-next 20190122,  20190123 and 20190124 build arm
-multi_v7_defconfig failed like this:
-drivers/reset/reset-brcmstb.o: In function `brcmstb_reset_probe':
-reset-brcmstb.c:(.text+0x110): undefined reference to `__aeabi_uldivmod'
-reset-brcmstb.c:(.text+0x160): undefined reference to `__aeabi_uldivmod'
+On 1/24/2019 5:51 AM, Rafael J. Wysocki wrote:
+>>
+> Is anyone taking this or should I?
+> 
+> 
+> 
 
-Full test log,
-https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=lkft,MACHINE=am57xx-evm,label=docker-lkft/448/console
+This got applied:
 
-Best regards
-Naresh Kamboju
+https://git.kernel.org/tip/625210cfa6c0c26ea422f655bf68288176f174e6
