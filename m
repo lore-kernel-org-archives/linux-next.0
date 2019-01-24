@@ -1,55 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the input-current tree
-Date: Thu, 24 Jan 2019 22:09:54 +1100
-Message-ID: <20190124220954.2147f1da@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the
+ drm-intel-fixes tree
+Date: Thu, 24 Jan 2019 22:19:49 +1100
+Message-ID: <20190124221949.4c89542a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0inBpMCXdbZb.4K1MiJ=/7M"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
+Content-Type: multipart/mixed; boundary="===============0977476896=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/0inBpMCXdbZb.4K1MiJ=/7M
+--===============0977476896==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7qoanAhA0ZHpgGlz=eH3LyR"; protocol="application/pgp-signature"
+
+--Sig_/7qoanAhA0ZHpgGlz=eH3LyR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi all,
 
 In commit
 
-  ec87da107d11 ("Input: olpc_apsp - assign priv->dev earlier")
+  0f7555121609 ("drm/i915/gvt: release shadow batch buffer and wa_ctx befor=
+e destroy one workload")
 
 Fixes tag
 
-  Fixes: commit af518342effd ("Input: olpc_apsp - check FIFO status on open=
-(), not probe()")
+  Fixes: 0cce2823ed37 ("drm/i915/gvt/kvmgt:Refine error handling for prepar=
+e_execlist_workload")
 
 has these problem(s):
 
-  - No SHA1 recognised
+  - Subject does not match target commit subject
 
-The "commit" at the start of the tag value was unexpected.
+Just some whitespace.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/0inBpMCXdbZb.4K1MiJ=/7M
+--Sig_/7qoanAhA0ZHpgGlz=eH3LyR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxJnQIACgkQAVBC80lX
-0Gy3wAf/VXbFqCqycCQnS/MsDgCGYSxbx1Pwb3FXwv6SOCwqQdroCiayj01EzpmR
-h0PiRHjHXAN4BfEyuxCgbnQ9G6fRIgZWIquHEflqvhdnpy4Gy8l6DlOC2x5GPoCI
-NsF5DrmcYPstEpkgozZVNVuxdckc45m5IZRlRDYjGvMHLCsJ5CPuEjlLLQj3DWxt
-LKoMYMQyik6wlkWOo1/DAyfzF12IlvBqzNvyN7NJ6mGI7mTYf5p78XxBOLc+DGUN
-BrIrl3Dc77TNxSfuJRYaCca/JSyEtrixVbM8agbIAoQ4/n5M+GQIlM5tZXql38bP
-3PAyGgdq6lmkpKW7CPVdFiM+ocgiYQ==
-=aN4J
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxJn1UACgkQAVBC80lX
+0Gw1Ogf9Gh2sv35SuCnhKYg+w/8FnMOvWbfSFu3gmWsmah0PTbKLnpcfPfhoCW75
+uTuD+ET7KEWT2SeXQIm+Xa6WCSGIAl3eyq8MucF+ZUAcmlGSVdEW+KI+4ND8OlaR
+3/gyp0NWtSWY/FRVsDnSCBuLRIhD9fNDrs9vU54UeDbsKnMUrbfILlj3chskiEeo
+kawthx0UC6DIaZuIajEUV2FM2Mm0Jwf1meFcMwhblkCsxy/flwNGOEse8FQjrYQb
+mozEZfHlP6oVyNGTOXHqFlYTFxLRp1TxrTQdTfoorWuw6tKmMvkeE5ruqzkCxWoe
+QAEeRK0GliNme3UIq9gmZxNi4quL8g==
+=AIv0
 -----END PGP SIGNATURE-----
 
---Sig_/0inBpMCXdbZb.4K1MiJ=/7M--
+--Sig_/7qoanAhA0ZHpgGlz=eH3LyR--
+
+--===============0977476896==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--===============0977476896==--
