@@ -1,46 +1,54 @@
-From: Sinan Kaya <okaya@kernel.org>
-Subject: [for next][PATCH v3 2/2] platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
-Date: Thu, 24 Jan 2019 19:31:01 +0000
-Message-ID: <20190124193101.24519-2-okaya@kernel.org>
-References: <20190124193101.24519-1-okaya@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the kvm-arm tree
+Date: Fri, 25 Jan 2019 07:14:50 +1100
+Message-ID: <20190125071450.5107222b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SJ=ngjBB2bSqh5H2YMogom/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190124193101.24519-1-okaya@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, "open list:X86 PLATFORM DRIVERS" <platform-driver-x86@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
-warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
+--Sig_/SJ=ngjBB2bSqh5H2YMogom/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-SAMSUNG_Q10 selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
-depends on BACKLIGHT_LCD_SUPPORT.
+Hi all,
 
-Copy BACKLIGHT_LCD_SUPPORT dependency into SAMSUNG_Q10 to fix:
+Commits
 
-WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
-  Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
-  Selected by [y]:
-  - SAMSUNG_Q10 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y]
+  188922da4992 ("KVM: arm64: Reuse sys_reg() macro when searching the trap =
+table")
+  ef40b3d5528e ("arm/arm64: KVM: Statically configure the host's view of MP=
+IDR")
+  31fc83bdbaba ("ARM: KVM: Teach some form of type-safety to kvm_call_hyp")
+  74bdc394c5a3 ("arm64: KVM: Drop VHE-specific HYP call stub")
+  051a0ebd09ce ("arm64: KVM: Allow for direct call of HYP functions when us=
+ing VHE")
+  1fbfa15343a0 ("arm/arm64: KVM: Introduce kvm_call_hyp_ret()")
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+are missing a Signed-off-by from their committer.
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 11810591840d..b5e9db85e881 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1129,6 +1129,7 @@ config INTEL_OAKTRAIL
- config SAMSUNG_Q10
- 	tristate "Samsung Q10 Extras"
- 	depends on ACPI
-+	depends on BACKLIGHT_LCD_SUPPORT
- 	select BACKLIGHT_CLASS_DEVICE
- 	---help---
- 	  This driver provides support for backlight control on Samsung Q10
--- 
-2.19.0
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SJ=ngjBB2bSqh5H2YMogom/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxKHLoACgkQAVBC80lX
+0Gxh+Af+KNurm3MNFwX0BwGPBGpgy5hL28aSqRJ13CpBQBwAxR/qOvkT2hHuJllC
+8zLDQOXIzVw0V5QzKz5Lm80pr+R0H8RyOlJd+ebOD9CXkIT0jnTFEBq1JA05w8ZX
+d+38UqDLoZQ0IGCJ/PJ3zdm08lrdA6VnCgqNCDuwfgPOsqXcxYJ2ZdbJeGqRNk4Z
+zqdp4MBWKByUrOpNGCSNmDOBRhdDFAb2967L2e7KiUw3hWdcAu6UxDmREM61oA3k
+w+wCUA78b15eZysMH2jMNX8RdKNopszi5f3SbQ30onbdG3iVCD55DdWqPetGnK+U
+U0Qe5e8Xnm01jOTscs22EoPToNsEgg==
+=O3DQ
+-----END PGP SIGNATURE-----
+
+--Sig_/SJ=ngjBB2bSqh5H2YMogom/--
