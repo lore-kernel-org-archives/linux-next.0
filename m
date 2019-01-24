@@ -1,54 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the pm tree
-Date: Thu, 24 Jan 2019 10:45:47 +1100
-Message-ID: <20190124104547.34632568@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with the mips tree
+Date: Thu, 24 Jan 2019 13:27:59 +1100
+Message-ID: <20190124132759.1416fec0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7ND3.SG5kjGcQuGL11stxx="; protocol="application/pgp-signature"
+ boundary="Sig_/yeSH+FhAFozHcaFoh=H1CTs"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Mark Brown <broonie@kernel.org>, Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Crispin <john@phrozen.org>, Paul Burton <paul.burton@mips.com>, Alban Bedel <albeu@free.fr>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/7ND3.SG5kjGcQuGL11stxx=
+--Sig_/yeSH+FhAFozHcaFoh=H1CTs
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Mark,
 
-After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+Today's linux-next merge of the spi tree got a conflict in:
 
-drivers/acpi/acpi_dbg.c: In function 'acpi_aml_init':
-drivers/acpi/acpi_dbg.c:774:1: warning: label 'err_exit' defined but not us=
-ed [-Wunused-label]
- err_exit:
- ^~~~~~~~
+  arch/mips/ath79/dev-spi.h
 
-Introduced by commit
+between commit:
 
-  9ec6dbfbdc0a ("ACPI: no need to check return value of debugfs_create func=
-tions")
+  85b9686dae30 ("MIPS: ath79: drop platform device registration code")
+
+from the mips tree and commit:
+
+  b172fd0c8980 ("spi: ath79: Enable support for compile test")
+
+from the spi tree.
+
+I fixed it up (the former removed the file so I did that) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/7ND3.SG5kjGcQuGL11stxx=
+--Sig_/yeSH+FhAFozHcaFoh=H1CTs
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxI/KsACgkQAVBC80lX
-0GyzdggApYeZJ7VDpHZOESPwoU0ccwt/Unm+IzRyl7xXCoK2KuNsDtw4XMB0ddTf
-f0l9YstkRInLAzwTDD0N/YEmxt5kP0PMM7QLJyzKnSHXTUV0VFPGexSFWW6+h20w
-X9VZiRwBXnurh12mB0L8ZTQedk0YZL8mDHBTQvsTOg4qMfO0OBVdKIZQ8M6qOmaG
-HLmbkAQYhIyUP2aWDKUpmD/j8frZe4cErXS10JR6uIYsdJY+t4wOIw/VeKQxCk91
-GEX6Na1T/Xh36fUd3K8a+TmL8ydOhkSmyj/HzQuBOsbTX6LXgSwAWj+6ERg5OhhZ
-VvNqP68KujsoESx7D6Sh65MkwLQOSQ==
-=LxYY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxJIq8ACgkQAVBC80lX
+0GxHoQgAiDHn82GV+RjZoF7MpPbTKbNJRhOwevlepdE+CxrYAinRjp6ixmhSr5/Y
+tAelTyGzjt63Ds1gDVbuz2gtLGsb6SIIZagQ7zAUIttL1PtEcyCBviKJ1yril2+L
+3LXtUFp0NQP141MEv7yUtEUF30TAg/aN3g4gBS+a2sJvL8C/JEefO2TNyz4mkq0L
+YFhPOEb78Zx/BIrEzmHn+6wA727KIY5IxP71R4e47SYobWkk0qNhtZovPBA07NBh
+vTIMOALtRhGWipjGLVmsp9WqIX7X8wsMyUMnA9i1FD5KbxDkxm8TvX/qwoBxLUXm
+gn1jW0XirkEWNc4zw2WJhZznX/+f4Q==
+=TWqE
 -----END PGP SIGNATURE-----
 
---Sig_/7ND3.SG5kjGcQuGL11stxx=--
+--Sig_/yeSH+FhAFozHcaFoh=H1CTs--
