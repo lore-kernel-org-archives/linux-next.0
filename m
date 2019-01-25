@@ -1,60 +1,64 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [for next][PATCH v3 1/2] platform/x86: Fix unmet dependency
- warning for ACPI_CMPC
-Date: Thu, 24 Jan 2019 23:32:56 +0200
-Message-ID: <CAHp75VerwCxYqozQmaJZL8tcbfDFLBp+nTheP0Ran4qWPqTcLw@mail.gmail.com>
-References: <20190124193101.24519-1-okaya@kernel.org>
+From: "Li, Weinan Z" <weinan.z.li@intel.com>
+Subject: RE: linux-next: Fixes tag needs some work in the drm-intel-fixes
+ tree
+Date: Fri, 25 Jan 2019 01:21:26 +0000
+Message-ID: <9BD218709B5F2A4F96F08B4A3B98A8977335C38E@SHSMSX101.ccr.corp.intel.com>
+References: <20190124221949.4c89542a@canb.auug.org.au>
+ <87munq1e9u.fsf@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190124193101.24519-1-okaya@kernel.org>
+In-Reply-To: <87munq1e9u.fsf@intel.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sinan Kaya <okaya@kernel.org>
-Cc: linux-next <linux-next@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, "open list:X86 PLATFORM DRIVERS" <platform-driver-x86@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhenyu Wang <zhenyuw@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 24, 2019 at 9:31 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
-> warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
->
-> ACPI_CMPC selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
-> depends on BACKLIGHT_LCD_SUPPORT.
->
-> Copy BACKLIGHT_LCD_SUPPORT dependency into ACPI_CMPC to fix
->
-> WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
->   Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
->   Selected by [y]:
->   - ACPI_CMPC [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && INPUT [=y] && (RFKILL [=n] || RFKILL [=n]=n)
->
+Thank Stephen.
+I am not sure about the problem. The commit id "0cce2823ed37" is just for the patch of "drm/i915/gvt: Refine error handling for prepare_execlist_workload". Is there any other problems I missed?
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Regards.
+-Weinan
 
-for both patches in case Rafael takes care of them.
 
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  drivers/platform/x86/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 5e2109c54c7c..11810591840d 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -905,6 +905,7 @@ config TOSHIBA_WMI
->  config ACPI_CMPC
->         tristate "CMPC Laptop Extras"
->         depends on ACPI && INPUT
-> +       depends on BACKLIGHT_LCD_SUPPORT
->         depends on RFKILL || RFKILL=n
->         select BACKLIGHT_CLASS_DEVICE
->         help
+> -----Original Message-----
+> From: Jani Nikula [mailto:jani.nikula@linux.intel.com]
+> Sent: Thursday, January 24, 2019 7:33 PM
+> To: Stephen Rothwell <sfr@canb.auug.org.au>; Daniel Vetter
+> <daniel.vetter@ffwll.ch>; Joonas Lahtinen <joonas.lahtinen@linux.intel.com>;
+> Vivi, Rodrigo <rodrigo.vivi@intel.com>; Intel Graphics
+> <intel-gfx@lists.freedesktop.org>; DRI <dri-devel@lists.freedesktop.org>
+> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>; Li, Weinan Z <weinan.z.li@intel.com>; Zhenyu
+> Wang <zhenyuw@linux.intel.com>
+> Subject: Re: linux-next: Fixes tag needs some work in the drm-intel-fixes tree
+> 
+> On Thu, 24 Jan 2019, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > In commit
+> >
+> >   0f7555121609 ("drm/i915/gvt: release shadow batch buffer and wa_ctx
+> > before destroy one workload")
+> >
+> > Fixes tag
+> >
+> >   Fixes: 0cce2823ed37 ("drm/i915/gvt/kvmgt:Refine error handling for
+> > prepare_execlist_workload")
+> >
+> > has these problem(s):
+> >
+> >   - Subject does not match target commit subject
+> >
+> > Just some whitespace.
+> 
+> Thanks for the report. The commit being referenced seems to be the right one,
+> though, so I don't think I'm going to force push to fix this.
+> 
+> BR,
+> Jani.
+> 
 > --
-> 2.19.0
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+> Jani Nikula, Intel Open Source Graphics Center
