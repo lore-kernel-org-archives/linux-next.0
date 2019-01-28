@@ -1,50 +1,43 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: linux-next: build warning after merge of the gpio-brgl tree
-Date: Sun, 27 Jan 2019 13:30:55 +0100
-Message-ID: <CAMRc=MdMK=PMqHeroiyytwZ0w3++iiXWZaBQsRMQvjgvQqDBQw@mail.gmail.com>
-References: <20190124151837.1ca96816@canb.auug.org.au> <df1743f8-71c8-3b18-1e8a-94198d99477d@huawei.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release today
+Date: Mon, 28 Jan 2019 11:32:45 +1100
+Message-ID: <20190128113245.065d0d30@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iLM.VuBMHTjN.g3=3ElLo6M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <df1743f8-71c8-3b18-1e8a-94198d99477d@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-czw., 24 sty 2019 o 06:42 YueHaibing <yuehaibing@huawei.com> napisa=C5=82(a=
-):
->
-> On 2019/1/24 12:18, Stephen Rothwell wrote:
-> > Hi Bartosz,
-> >
-> > After merging the gpio-brgl tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> >
-> > drivers/gpio/gpio-davinci.c: In function 'davinci_gpio_get_irq_chip':
-> > drivers/gpio/gpio-davinci.c:472:9: warning: function returns address of=
- local variable [-Wreturn-local-addr]
-> >   return &gpio_unbanked.chip;
-> >          ^~~~~~~~~~~~~~~~~~~
-> > drivers/gpio/gpio-davinci.c: In function 'keystone_gpio_get_irq_chip':
-> > drivers/gpio/gpio-davinci.c:480:9: warning: function returns address of=
- local variable [-Wreturn-local-addr]
-> >   return &gpio_unbanked;
-> >          ^~~~~~~~~~~~~~
-> >
-> > Introduced by commit
-> >
-> >   ee5e87158e63 ("gpio: davinci: drop pointless static qualifier")
->
-> I'm very sorry for this.
->
-> I misread the code, Pls revert this.
->
-> >
->
+--Sig_/iLM.VuBMHTjN.g3=3ElLo6M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I backed out this one.
+Hi all,
 
-Thanks,
-Bartosz
+There will be no linux-next release today, normal service will resume
+tomorrow.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iLM.VuBMHTjN.g3=3ElLo6M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxOTa0ACgkQAVBC80lX
+0GxdMwf/WNQf6UqUdruN21domcy0XqIESEzf/OmDSqqwF3fyXU8277CH5BhfCYFr
+8cXAny56TbntUiRCe4hF80MEGuNrE9na/JBKUSm3YCH2XOYrSDLnSnuOFI+HvjUe
+TwQ132dqNPDwTzQNgpP6JhfrvCnKJQYZo/N3yHv882YcUwO1HEWqm7oldA8r9juW
+9/Ox4vV6Utr6JrO3RuofDyYUw17Un9Y0H9GhZbp/36Dd4w0/Zg1wDO+bNaO2Iycq
+FyDOQlsnuM508kMM3zfdJ+JLVctRSi3IDll1uz8iYAyy6scWQ6El0Ji+Iskxki8A
+qtI9W7A9X5YfAMHuF85hK+uWYhS2EA==
+=3USI
+-----END PGP SIGNATURE-----
+
+--Sig_/iLM.VuBMHTjN.g3=3ElLo6M--
