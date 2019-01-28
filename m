@@ -1,54 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the hwmon-fixes tree
-Date: Mon, 28 Jan 2019 12:18:55 +1100
-Message-ID: <20190128121855.55ef0b9c@canb.auug.org.au>
+From: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+Subject: [PATCH] extcon: Fix build issues in ptn5150
+Date: Mon, 28 Jan 2019 10:08:12 +0530
+Message-ID: <1548650292-15762-1-git-send-email-vijaikumar.kanagarajan@gmail.com>
+References: <88f71303-575e-6680-a207-da102bda8ef2@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5.SzisS3xg0ya0Y=1hBFfo."; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <88f71303-575e-6680-a207-da102bda8ef2@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Cc: rdunlap@infradead.org, linux-kernel@vger.kernel.org, Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5.SzisS3xg0ya0Y=1hBFfo.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+- extcon-ptn5150 driver uses gpio libraries
+- Add GPIOLIB in depends section of Kconfig
 
-Hi Guenter,
+Error:
+-----
+>   CC      drivers/extcon/extcon-ptn5150.o
+> ../drivers/extcon/extcon-ptn5150.c: In function ‘ptn5150_irq_work’:
+> ../drivers/extcon/extcon-ptn5150.c:130:5: error: implicit declaration of function ‘gpiod_set_value’ [-Werror=implicit-function-declaration]
+>      gpiod_set_value(info->vbus_gpiod, 0);
+>      ^
+> ../drivers/extcon/extcon-ptn5150.c: In function ‘ptn5150_i2c_probe’:
+> ../drivers/extcon/extcon-ptn5150.c:242:2: error: implicit declaration of function ‘devm_gpiod_get’ [-Werror=implicit-function-declaration]
+>   info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
+>   ^
+> ../drivers/extcon/extcon-ptn5150.c:242:53: error: ‘GPIOD_IN’ undeclared (first use in this function)
+>   info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
+>                                                      ^
+> ../drivers/extcon/extcon-ptn5150.c:242:53: note: each undeclared identifier is reported only once for each function it appears in
+> ../drivers/extcon/extcon-ptn5150.c:252:2: error: implicit declaration of function ‘gpiod_direction_output’ [-Werror=implicit-function-declaration]
+>   ret = gpiod_direction_output(info->vbus_gpiod, 0);
+>   ^
+> ../drivers/extcon/extcon-ptn5150.c:271:3: error: implicit declaration of function ‘gpiod_to_irq’ [-Werror=implicit-function-declaration]
+>    info->irq = gpiod_to_irq(info->int_gpiod);
+-----
 
-In commit
+Signed-off-by: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+---
+ drivers/extcon/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  315fd42cc1f8 ("hwmon: (nct6775) Fix fan6 detection for NCT6793D")
-
-Fixes tag
-
-  Fixes: 2d99925a15b6 ("hwmon: (nct6775) Separate fan/pwm configuration
-
-has these problem(s):
-
-  - Subject has leading but no trailing quotes
-
-Pleas do not split the subject over more than 1 line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5.SzisS3xg0ya0Y=1hBFfo.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxOWH8ACgkQAVBC80lX
-0Gx0fgf/eZxT5Es2cZhjd6jEDsBGQgTH5lAecKkuRyG1KFj8uZ7YF5qsQ8e0j7Qo
-7TZ8r0tz876sPHwiJ+W6O1ebnziN5RIEksfbaCunokdsYWY3zQrdphVhQoRT0ubY
-m7AausqVBChNH4MAj/MRPuiZDLPd+UPHoUHNZNGjlnltnd7GwyeacClOeLlDkzQb
-ALzcWJD1ETaEh7g7YE8gZehBD/gb5xC6IRVDL0stI5BsvZ2SDmPvnSM1/37Us7BY
-6oQCFFHAsojT7DSN054Rbo1Lw4CExRAbC4vnx/HnWUdHQuSbJ44OGHJhRCtagAkQ
-oukto2F2uU/vrOnAAL1LzvbouOtVXg==
-=TQIr
------END PGP SIGNATURE-----
-
---Sig_/5.SzisS3xg0ya0Y=1hBFfo.--
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index b9cc027..330dd8b 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -116,7 +116,7 @@ config EXTCON_PALMAS
+ 
+ config EXTCON_PTN5150
+ 	tristate "NXP PTN5150 CC LOGIC USB EXTCON support"
+-	depends on I2C
++	depends on I2C && GPIOLIB
+ 	select REGMAP_I2C
+ 	help
+ 	  Say Y here to enable support for USB peripheral and USB host
+-- 
+2.7.4
