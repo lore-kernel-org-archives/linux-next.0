@@ -1,39 +1,30 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [for next][PATCH 1/2] mfd: Fix unmet dependency warning for
- MFD_TPS68470
-Date: Mon, 28 Jan 2019 07:21:56 +0000
-Message-ID: <20190128072156.GE4678@dell>
-References: <20190121231958.28255-1-okaya@kernel.org>
- <2222147.2pZxjFhHIY@aspire.rjw.lan>
- <f4bc6037-7c0f-f053-a150-8ae6f683b1bc@kernel.org>
+From: shuah <shuah@kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the
+ kselftest-fixes tree
+Date: Mon, 28 Jan 2019 08:03:42 -0700
+Message-ID: <6898228d-5c0f-227c-4164-1a73d97381c3@kernel.org>
+References: <20190127143616.2e27781a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <f4bc6037-7c0f-f053-a150-8ae6f683b1bc@kernel.org>
+In-Reply-To: <20190127143616.2e27781a@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sinan Kaya <okaya@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denys Dmytriyenko <denys@ti.com>, Fathi Boudra <fathi.boudra@linaro.org>, shuah <shuah@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 24 Jan 2019, Sinan Kaya wrote:
-
-> On 1/24/2019 5:51 AM, Rafael J. Wysocki wrote:
-> > Is anyone taking this or should I?
+On 1/26/19 8:36 PM, Stephen Rothwell wrote:
+> Hi Shuah,
 > 
-> Nobody replied to this yet. I was hoping this series to go through acpi
-> tree like the rest of the other fixes.
+> Commit
+> 
+>    5d09ac9241a3 ("selftests: lib: allow to override CC in the top-level Makefile")
+> 
+> is missing a Signed-off-by from its author.
+> 
 
-[post-vacation reply]
+Thanks for finding this. The patch has been dropped for now.
 
-That's not how these things are usually handled, but I taking into
-consideration the trivialises of the patch, I don't really mind.
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+-- Shuah
