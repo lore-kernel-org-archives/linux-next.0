@@ -1,77 +1,87 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Date: Tue, 29 Jan 2019 07:27:14 +1100
-Message-ID: <20190129072714.6a5f4a95@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] extcon: Fix build issues in ptn5150
+Date: Mon, 28 Jan 2019 13:26:42 -0800
+Message-ID: <3fd82d2a-c3db-0afa-13bb-25206aeb9ccd@infradead.org>
+References: <88f71303-575e-6680-a207-da102bda8ef2@infradead.org>
+ <1548650292-15762-1-git-send-email-vijaikumar.kanagarajan@gmail.com>
+ <20190128071059.GA32040@chikyu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VAP5OkJHrwINr4TkJTvehOP"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190128071059.GA32040@chikyu>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/VAP5OkJHrwINr4TkJTvehOP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/27/19 11:10 PM, Vijai Kumar K wrote:
+> On Mon, Jan 28, 2019 at 10:08:12AM +0530, Vijai Kumar K wrote:
+> I was wondering, what is the normal procedure in the below case
+> when the build fails because of the driver.
+> Should I send a new patch as a whole [PATCH v3] for the driver
+> or should I send a new patch to fix the issue like below.
 
-Hi all,
+Hi,
 
-In commit
+I think that's up to the maintainer who merged the version that is
+currently in linux-next.
 
-  720734a0b66f ("ASoC: soc-core: use for_each_link_codecs() for dai_link co=
-decs V2")
+For the patch:
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-Fixes tag
+Thanks.
 
-  Fixes: 50acc7e49 ("ASoC: core: Fix multi-CODEC setups")
+> Thanks,
+> Vijai Kumar K
+>> - extcon-ptn5150 driver uses gpio libraries
+>> - Add GPIOLIB in depends section of Kconfig
+>>
+>> Error:
+>> -----
+>>>   CC      drivers/extcon/extcon-ptn5150.o
+>>> ../drivers/extcon/extcon-ptn5150.c: In function ‘ptn5150_irq_work’:
+>>> ../drivers/extcon/extcon-ptn5150.c:130:5: error: implicit declaration of function ‘gpiod_set_value’ [-Werror=implicit-function-declaration]
+>>>      gpiod_set_value(info->vbus_gpiod, 0);
+>>>      ^
+>>> ../drivers/extcon/extcon-ptn5150.c: In function ‘ptn5150_i2c_probe’:
+>>> ../drivers/extcon/extcon-ptn5150.c:242:2: error: implicit declaration of function ‘devm_gpiod_get’ [-Werror=implicit-function-declaration]
+>>>   info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
+>>>   ^
+>>> ../drivers/extcon/extcon-ptn5150.c:242:53: error: ‘GPIOD_IN’ undeclared (first use in this function)
+>>>   info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
+>>>                                                      ^
+>>> ../drivers/extcon/extcon-ptn5150.c:242:53: note: each undeclared identifier is reported only once for each function it appears in
+>>> ../drivers/extcon/extcon-ptn5150.c:252:2: error: implicit declaration of function ‘gpiod_direction_output’ [-Werror=implicit-function-declaration]
+>>>   ret = gpiod_direction_output(info->vbus_gpiod, 0);
+>>>   ^
+>>> ../drivers/extcon/extcon-ptn5150.c:271:3: error: implicit declaration of function ‘gpiod_to_irq’ [-Werror=implicit-function-declaration]
+>>>    info->irq = gpiod_to_irq(info->int_gpiod);
+>> -----
+>>
+>> Signed-off-by: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+>> ---
+>>  drivers/extcon/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+>> index b9cc027..330dd8b 100644
+>> --- a/drivers/extcon/Kconfig
+>> +++ b/drivers/extcon/Kconfig
+>> @@ -116,7 +116,7 @@ config EXTCON_PALMAS
+>>  
+>>  config EXTCON_PTN5150
+>>  	tristate "NXP PTN5150 CC LOGIC USB EXTCON support"
+>> -	depends on I2C
+>> +	depends on I2C && GPIOLIB
+>>  	select REGMAP_I2C
+>>  	help
+>>  	  Say Y here to enable support for USB peripheral and USB host
+>> -- 
+>> 2.7.4
+>>
 
-has these problem(s):
 
-  - Target SHA1 does not exist
-
-Maybe commit 3f6a125230d8bfcbfe0c06ff0b8eaccbc727acd7?
-
-Fixes tag
-
-  Fixes: 10dff9b0d ("ASoC: soc-core: use for_each_link_codecs() for dai_lin=
-k codecs")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-
-In commit
-
-  141474c6ac7f ("ASoC: Fixup build error for mt6358")
-
-Fixes tag
-
-  Fixes: commit 6a8d4198ca8 ("ASoC: mediatek: mt6358: add codec driver")
-
-has these problem(s):
-
-  - leading word 'commit' unexpected
-  - SHA1 should be at least 12 digits long
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/VAP5OkJHrwINr4TkJTvehOP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxPZaIACgkQAVBC80lX
-0GwCaAf/RMLiCOcx7j6Yq2GttU3Jq7HypxQvKN8Ywj0sMnBUBLySrSiLn4fUttlo
-OaZ6pAUpHuPM/A1W5/LIyv3+25PU8/W4S40ifjeWjlzbc+y8Bclqgq2o5eSUQvSf
-NbiRtf6riLYYllO6cAZ0qiOLlKiG4PywEV9TUj8P1kAgW+Bd0y00GNbip6Mgc6Wa
-rUQLgP9hpT1KMq/6BIBlRAesZHcATVyuUwDOfCRu+2Hcvg7LJ3GbXhaBPULBVMUW
-ywPk8Cvujo9dSLxktVXE8o0HNsYatlfCl1wIHauMrwDoYih3mg9TaIrgCIqPA7xG
-OHG1ijjrbyUh0BxIeqI09DlEhCu+0A==
-=B4pV
------END PGP SIGNATURE-----
-
---Sig_/VAP5OkJHrwINr4TkJTvehOP--
+-- 
+~Randy
