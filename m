@@ -1,45 +1,57 @@
-From: Schrempf Frieder <frieder.schrempf@kontron.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warning after merge of the spi tree
-Date: Tue, 29 Jan 2019 07:25:24 +0000
-Message-ID: <384775b2-bf1c-3b85-9929-d883196fb90a@kontron.de>
+Date: Tue, 29 Jan 2019 19:26:58 +1100
+Message-ID: <20190129192658.72c88d0b@canb.auug.org.au>
 References: <20190129130237.677e5ac8@canb.auug.org.au>
- <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
+        <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nR.wLo.BV8Z2hlBxcL3ZgDf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
-Content-Language: en-US
-Content-ID: <EB92287712B47E4D91F967EF50D9DA77@snt-world.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <bbrezillon@kernel.org>
+To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Frieder Schrempf <frieder.schrempf@kontron.de>, Boris Brezillon <bbrezillon@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gMjkuMDEuMTkgMDc6NTcsIFlvZ2VzaCBOYXJheWFuIEdhdXIgd3JvdGU6DQo+IEhpLA0KPiAN
-Cj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+PiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxs
-IFttYWlsdG86c2ZyQGNhbmIuYXV1Zy5vcmcuYXVdDQo+PiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5
-IDI5LCAyMDE5IDc6MzMgQU0NCj4+IFRvOiBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
-DQo+PiBDYzogTGludXggTmV4dCBNYWlsaW5nIExpc3QgPGxpbnV4LW5leHRAdmdlci5rZXJuZWwu
-b3JnPjsgTGludXggS2VybmVsIE1haWxpbmcNCj4+IExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc+OyBZb2dlc2ggTmFyYXlhbiBHYXVyDQo+PiA8eW9nZXNobmFyYXlhbi5nYXVyQG54
-cC5jb20+OyBGcmllZGVyIFNjaHJlbXBmDQo+PiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRl
-PjsgQm9yaXMgQnJlemlsbG9uIDxiYnJlemlsbG9uQGtlcm5lbC5vcmc+Ow0KPj4gQXNoaXNoIEt1
-bWFyIDxhc2hpc2gua3VtYXJAbnhwLmNvbT4NCj4+IFN1YmplY3Q6IGxpbnV4LW5leHQ6IGJ1aWxk
-IHdhcm5pbmcgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHNwaSB0cmVlDQo+Pg0KPj4gSGkgYWxsLA0KPj4N
-Cj4+IEFmdGVyIG1lcmdpbmcgdGhlIHNwaSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQg
-KEtDT05GSUdfTkFNRSkgcHJvZHVjZWQNCj4+IHRoaXMgd2FybmluZzoNCj4+DQo+PiBXQVJOSU5H
-OiBtb2Rwb3N0OiBtaXNzaW5nIE1PRFVMRV9MSUNFTlNFKCkgaW4gZHJpdmVycy9zcGkvc3BpLW54
-cC1mc3BpLm8NCj4+IHNlZSBpbmNsdWRlL2xpbnV4L21vZHVsZS5oIGZvciBtb3JlIGluZm9ybWF0
-aW9uDQo+Pg0KPiBDYW4gc29tZW9uZSBoZWxwIGluIHBvaW50aW5nIG91dCB0aGF0IHdoeSBhYm92
-ZSB3YXJuaW5nIG1lc3NhZ2UgaXMgY29taW5nIGZvciBtZW50aW9uZWQgY29tbWl0Lg0KPiBCZWxv
-dyBNT0RVTEVfTElDRU5TRSBzdHJpbmcgaXMgcHJlc2VudCBpbiB0aGUgYWJvdmUgbWVudGlvbmVk
-IGZpbGUsIGRyaXZlcnMvc3BpL3NwaS1ueHAtZnNwaS5jLg0KPiAgICAgIE1PRFVMRV9MSUNFTlNF
-KCJHUEwgdjIiKTsNCg0KTm8sIGl0IGlzIG5vdCBwcmVzZW50LiBMb29rIGF0IHlvdXIgcGF0Y2hl
-cyBbMV0gb3IgYXQgc3BpLW5leHQgWzJdLiANCk1PRFVMRV9MSUNFTlNFIGlzIGRlZmluaXRlbHkg
-bWlzc2luZy4NCg0KSW4gcGF0Y2h3b3JrIHRoZSBtaXNzaW5nIGxpbmUgd2FzIGFwcGVuZGVkIHRv
-IHRoZSBjb21taXQgbWVzc2FnZSBpbnN0ZWFkIA0Kb2YgdGhlIGFjdHVhbCBwYXRjaCBmb3Igc29t
-ZSByZWFzb24uDQoNClsxXSBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwNzY0
-MzQ3Lw0KWzJdIA0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQvYnJvb25pZS9zcGkuZ2l0L2NvbW1pdC8/aD1mb3ItbmV4dCZpZD1hNTM1NmFlZjZhOTA3YzJl
-MmFlZDBjYWFhMmI4OGI2MDIxMzk0NDcx
+--Sig_/nR.wLo.BV8Z2hlBxcL3ZgDf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Yogesh,
+
+On Tue, 29 Jan 2019 06:57:51 +0000 Yogesh Narayan Gaur <yogeshnarayan.gaur@=
+nxp.com> wrote:
+>
+> > WARNING: modpost: missing MODULE_LICENSE() in drivers/spi/spi-nxp-fspi.o
+> > see include/linux/module.h for more information
+> >  =20
+> Can someone help in pointing out that why above warning message is coming=
+ for mentioned commit.
+> Below MODULE_LICENSE string is present in the above mentioned file, drive=
+rs/spi/spi-nxp-fspi.c.
+>     MODULE_LICENSE("GPL v2");
+
+The version in linux-next has no such line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/nR.wLo.BV8Z2hlBxcL3ZgDf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxQDlIACgkQAVBC80lX
+0GwMyAgAlaxhXi/RTWjS/ke601GBHyLuVCuVlpvtFGJKsTUynKb9Q7MKSRMCUe1i
+HRUSgcXihvAE3iCJVOcx0zgV8XqeG0X11G0x9l2QzZ/4LXqnFlynHD7fWGynDTf0
+deDR6znEwfiaKzQ4eAuSz0QLMjwELAd/kwdbVzkAkDhk8nJ82dlF9d6o2eJ95GUj
+Bo8Z2Fdt/zKGkzQSWK6l2BjsCV8prwvONiqxm8FiqkDwBZ8Z80QYmiDWjralR/Ko
+4vcn+SNje0qR62QWojdg8hhrpLDjpVbo0i4KunKgblf+FuSX5BaAZhww++hgSQCQ
+s7NeqH7wI+D4MhRookiF/Ydj/UQYMg==
+=bDbJ
+-----END PGP SIGNATURE-----
+
+--Sig_/nR.wLo.BV8Z2hlBxcL3ZgDf--
