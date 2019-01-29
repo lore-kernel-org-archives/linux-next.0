@@ -1,46 +1,62 @@
-From: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Subject: Re: linux-next: build failure after merge of the
- drm-intel-fixes tree
-Date: Tue, 29 Jan 2019 14:53:21 -0800
-Message-ID: <CAKi4VA+kGT1WbUHV=Q6PW+PR+Vh+AEE+a2_wLkmMVq88tTSH_Q@mail.gmail.com>
-References: <20190130093830.728e9d06@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the xfs tree
+Date: Wed, 30 Jan 2019 10:06:40 +1100
+Message-ID: <20190130100640.5c2512a4@canb.auug.org.au>
+References: <20190130075647.53e86078@canb.auug.org.au>
+        <20190129220802.GC4205@dastard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20190130093830.728e9d06@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iLFP5jwk9YbZv+n5EqBFhBM"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190129220802.GC4205@dastard>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCBKYW4gMjksIDIwMTkgYXQgMjozOSBQTSBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
-Yi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4KPiBIaSBhbGwsCj4KPiBBZnRlciBtZXJnaW5nIHRoZSBk
-cm0taW50ZWwtZml4ZXMgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZfNjQKPiBh
-bGxtb2Rjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4KPiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9p
-bnRlbF9kaXNwbGF5LmM6IEluIGZ1bmN0aW9uICdoYXNfYm9ndXNfZHBsbF9jb25maWcnOgo+IGRy
-aXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuYzoxNTQzMjoyNzogZXJyb3I6IG1hY3Jv
-ICJJU19HRU4iIHJlcXVpcmVzIDMgYXJndW1lbnRzLCBidXQgb25seSAyIGdpdmVuCj4gICByZXR1
-cm4gSVNfR0VOKGRldl9wcml2LCA2KSAmJgo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4K
-Pgo+IENhdXNlZCBieSBjb21taXQKPgo+ICAgYTQ5YTE3MjI2ZmViICgiZHJtL2k5MTU6IFRyeSB0
-byBzYW5pdGl6ZSBib2d1cyBEUExMIHN0YXRlIGxlZnQgb3ZlciBieSBicm9rZW4gU05CIEJJT1Nl
-biIpCj4KPiBJdCBzZWVtcyB0aGlzIHdhcyBjaGVycnktcGlja2VkIGluY29ycmVjdGx5IDotKAoK
-d2hpbGUgdGhlIGNoZXJyeS1waWNrIHdhcyBjb3JyZWN0LCB0aGUgbWFjcm8gaXMgZGlmZmVyZW50
-IG9uCmRybS1pbnRlbC1maXhlcy4gSVNfR0VOKGRldl9wcml2LCA2KSBuZWVkcyB0byBiZSBjb252
-ZXJ0ZWQgdG8KSVNfR0VONihkZXZfcHJpdikuCgpMdWNhcyBEZSBNYXJjaGkKCj4KPiBJIGhhdmUg
-cmV2ZXJ0ZWQgdGhhdCBjb21taXQgZm9yIHRvZGF5Lgo+Cj4gLS0KPiBDaGVlcnMsCj4gU3RlcGhl
-biBSb3Rod2VsbAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCj4gSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdAo+IEludGVsLWdmeEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lu
-dGVsLWdmeAoKCgotLSAKTHVjYXMgRGUgTWFyY2hpCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2ludGVsLWdmeAo=
+--Sig_/iLFP5jwk9YbZv+n5EqBFhBM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dave,
+
+On Wed, 30 Jan 2019 09:08:02 +1100 Dave Chinner <david@fromorbit.com> wrote:
+>
+> Might be worth adding this to the boiler plate code:
+>=20
+> 	This can be fixed by adding the following to your ~/.gitconfig file:
+>=20
+> 	[core]
+> 		abbrev =3D 12
+
+Actually, since git v2.11 (released Nov 29, 2016), abbrev =3D auto (which
+is the default) means that the default scales with the size of the
+repository.  For Linus' tree, that currently produces 12 digit commit
+SHA1 abbreviations, but will probably soon become 13.  So the best
+currently, is to *not* set core.abbrev (or set it to something above 12
+(for future robustness).
+
+See
+https://lore.kernel.org/lkml/20181220000112.24891-1-avarab@gmail.com/
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iLFP5jwk9YbZv+n5EqBFhBM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxQ3IAACgkQAVBC80lX
+0Gx37Qf9FSpK4OGd25bXQtiBYLML04zl/2Do252BnI4Gzn0uuvVPIrqh/d7585gs
+nF2aL/pWKIDFXge+WzbD+Ki/J3XKMj3NnTHKw6ODd5b2H2EViO+RRv/6hmRdFRIU
+8bD8LwsMIudDw43IF25XvOGTEyIAawjwXJhWplho2nciAg30PgsSMsw7UHp7JFF/
+vHP3QTI70IC0xjyVH0PloBbhWbTK451LtqbIuum5JVftmy4w1trpm3QHGWfMUS+a
+3Mk3JYgcNofj6d7g3TovqaNDAnMQ/CPMox5T2bUs4JZGMtJVcYyHzYJe40L2UY5T
+uTZUQFUBPqwbqPYwKZqBxEbCder43A==
+=dZmb
+-----END PGP SIGNATURE-----
+
+--Sig_/iLFP5jwk9YbZv+n5EqBFhBM--
