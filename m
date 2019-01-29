@@ -1,50 +1,64 @@
-From: Andy Gross <andy.gross@linaro.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
-Date: Tue, 29 Jan 2019 14:30:08 -0600
-Message-ID: <CAPBZ5QeLEHOLJDBW4zGXJ8DayvDU3V=rGJ6Ty-pKruZEYv88DQ@mail.gmail.com>
-References: <20190129140846.4dc4c158@canb.auug.org.au> <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the net tree
+Date: Wed, 30 Jan 2019 07:49:39 +1100
+Message-ID: <20190130074939.03c7ac10@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Dai <daidavid1@codeaurora.org>, Taniya Das <tdas@codeaurora.org>, Rajendra Nayak <rnayak@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ye_IUSmdmxYlZXhS7CsnT=z"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Watson <davejwatson@fb.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 29 Jan 2019 at 05:46, Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> Hi Stephen,
->
-> On 1/29/19 05:08, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the char-misc tree got a conflict in:
-> >
-> >   arch/arm64/boot/dts/qcom/sdm845.dtsi
-> >
-> > between commits:
-> >
-> >   05556681948b ("arm64: dts: sdm845: Add videocc node")
-> >   5b6f186f0abb ("arm64: dts: sdm845: Add rpmh powercontroller node")
-> >
-> > from the qcom tree and commit:
-> >
-> >   ae0037dbfc5e ("arm64: dts: sdm845: Add interconnect provider DT nodes")
-> >
-> > from the char-misc tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+--Sig_/Ye_IUSmdmxYlZXhS7CsnT=z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Greg,
-I'd prefer in this instance that this patch get dropped from
-char-misc.  I have too much stuff in flight with some additional
-patches coming in to mess with this right now.  And we don't have
-clients rdy anyway for this so let's wait till next cycle on this one.
+Hi all,
 
-Andy
+In commit
+
+  1023121375c6 ("net: tls: Fix deadlock in free_resources tx")
+
+Fixes tag
+
+  Fixes: a42055e8d2c30 ("Add support for async encryption of records...")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+
+In commit
+
+  32eb67b93c9e ("net: tls: Save iv in tls_rec for async crypto requests")
+
+Fixes tag
+
+  Fixes: a42055e8d2c30 ("Add support for async encryption of records...")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ye_IUSmdmxYlZXhS7CsnT=z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxQvGMACgkQAVBC80lX
+0Gxy+wf/WxMHLhIt5mf7GXfKJMLjMM6ZVELxvHPWYHlf/E7WiMBqqVZ5x6/3qJbY
+xBSOMP3pAcJBzcjoiHQNbO/0PJzypC0hKTLNvMg99iMNgPE84NnXQ1dxOUPfpgFB
+9apZ78yUqLb/I973ne3jvqtMYg2yXwqGSap2fjuU8fogf/UMEkswMmfXLNCVCK9I
+gWYFO6CjvgKjWjIBUcQR5ndnf7iEkNzynkWJVt2gmoy6r/TVGIDu6UIWuQHOOF8w
+ct8ZEah8jESzsS5TOUZqlNHJyEwH04MKdYHSEVj12SjxQtbyPGE5u0A73z2m2S0y
+DfCk+Xkl3LxvIrOuHPk7WDDy7mzUmw==
+=LYvE
+-----END PGP SIGNATURE-----
+
+--Sig_/Ye_IUSmdmxYlZXhS7CsnT=z--
