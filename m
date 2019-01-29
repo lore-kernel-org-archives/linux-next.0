@@ -1,30 +1,50 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] LSM: SafeSetID: 'depend' on CONFIG_SECURITY
-Date: Wed, 30 Jan 2019 06:52:01 +1100 (AEDT)
-Message-ID: <alpine.LRH.2.21.1901300651530.30410@namei.org>
-References: <CAJ-EccMgDvx81g-XgWymdYn_G5Ou8mgbef3GUbx-C_Ai5qF-pQ@mail.gmail.com> <20190129185424.251139-1-mortonm@chromium.org>
+From: Andy Gross <andy.gross@linaro.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
+Date: Tue, 29 Jan 2019 14:30:08 -0600
+Message-ID: <CAPBZ5QeLEHOLJDBW4zGXJ8DayvDU3V=rGJ6Ty-pKruZEYv88DQ@mail.gmail.com>
+References: <20190129140846.4dc4c158@canb.auug.org.au> <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129185424.251139-1-mortonm@chromium.org>
+In-Reply-To: <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Micah Morton <mortonm@chromium.org>
-Cc: rdunlap@infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Dai <daidavid1@codeaurora.org>, Taniya Das <tdas@codeaurora.org>, Rajendra Nayak <rnayak@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 29 Jan 2019, mortonm@chromium.org wrote:
+On Tue, 29 Jan 2019 at 05:46, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Hi Stephen,
+>
+> On 1/29/19 05:08, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the char-misc tree got a conflict in:
+> >
+> >   arch/arm64/boot/dts/qcom/sdm845.dtsi
+> >
+> > between commits:
+> >
+> >   05556681948b ("arm64: dts: sdm845: Add videocc node")
+> >   5b6f186f0abb ("arm64: dts: sdm845: Add rpmh powercontroller node")
+> >
+> > from the qcom tree and commit:
+> >
+> >   ae0037dbfc5e ("arm64: dts: sdm845: Add interconnect provider DT nodes")
+> >
+> > from the char-misc tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
 
-> From: Micah Morton <mortonm@chromium.org>
-> 
-> This patch changes the Kconfig file for the SafeSetID LSM to depend on
-> CONFIG_SECURITY as well as select CONFIG_SECURITYFS, since the policies
-> for the LSM are configured through writing to securityfs.
-> 
-> Signed-off-by: Micah Morton <mortonm@chromium.org>
+Greg,
+I'd prefer in this instance that this patch get dropped from
+char-misc.  I have too much stuff in flight with some additional
+patches coming in to mess with this right now.  And we don't have
+clients rdy anyway for this so let's wait till next cycle on this one.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-
--- 
-James Morris
-<jmorris@namei.org>
+Andy
