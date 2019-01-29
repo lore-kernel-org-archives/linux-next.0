@@ -1,58 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-intel-fixes tree
-Date: Wed, 30 Jan 2019 09:39:08 +1100
-Message-ID: <20190130093830.728e9d06@canb.auug.org.au>
+From: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Subject: Re: linux-next: build failure after merge of the
+ drm-intel-fixes tree
+Date: Tue, 29 Jan 2019 14:53:21 -0800
+Message-ID: <CAKi4VA+kGT1WbUHV=Q6PW+PR+Vh+AEE+a2_wLkmMVq88tTSH_Q@mail.gmail.com>
+References: <20190130093830.728e9d06@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//EuLT0clbUsC3uFs9.Gmalb"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Mika Kahola <mika.kahola@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20190130093830.728e9d06@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//EuLT0clbUsC3uFs9.Gmalb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-After merging the drm-intel-fixes tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/gpu/drm/i915/intel_display.c: In function 'has_bogus_dpll_config':
-drivers/gpu/drm/i915/intel_display.c:15432:27: error: macro "IS_GEN" requir=
-es 3 arguments, but only 2 given
-  return IS_GEN(dev_priv, 6) &&
-                           ^
-
-Caused by commit
-
-  a49a17226feb ("drm/i915: Try to sanitize bogus DPLL state left over by br=
-oken SNB BIOSen")
-
-It seems this was cherry-picked incorrectly :-(
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//EuLT0clbUsC3uFs9.Gmalb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxQ1gwACgkQAVBC80lX
-0GytTgf9GZWitM+DC3u9Y/fcXzYCvMqy13W0wUhocGeY9qpeJ2fFyqgcKbQ42Kd+
-w8avgWv61j/aLdO6kBqQBK2D46gbWf3om2BQ0vWNHJ0aVzj22lqJr9pNP84P+mvX
-to8m8R2jU4gpoHq9wNByNhZDB+mCuzA/B0QLZo4o/arr43kStqeZ+nfNvoRcjjrT
-VNGWYRmmg4N1ofrdvoioHiNBWCVFNPljP245eUUtKgMibg1fH/5UwZjpuYQP/ctf
-jgdZ93M1F/qTRE/j2iTAQU7GMn4fRPTh/m/fTNh81hLKchbj8ra87D6mLcakIpf6
-XniPMDJrzGbxBXf0x1rbYaI/54Ly/A==
-=MmjD
------END PGP SIGNATURE-----
-
---Sig_//EuLT0clbUsC3uFs9.Gmalb--
+T24gVHVlLCBKYW4gMjksIDIwMTkgYXQgMjozOSBQTSBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
+Yi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4KPiBIaSBhbGwsCj4KPiBBZnRlciBtZXJnaW5nIHRoZSBk
+cm0taW50ZWwtZml4ZXMgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZfNjQKPiBh
+bGxtb2Rjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4KPiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9p
+bnRlbF9kaXNwbGF5LmM6IEluIGZ1bmN0aW9uICdoYXNfYm9ndXNfZHBsbF9jb25maWcnOgo+IGRy
+aXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuYzoxNTQzMjoyNzogZXJyb3I6IG1hY3Jv
+ICJJU19HRU4iIHJlcXVpcmVzIDMgYXJndW1lbnRzLCBidXQgb25seSAyIGdpdmVuCj4gICByZXR1
+cm4gSVNfR0VOKGRldl9wcml2LCA2KSAmJgo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4K
+Pgo+IENhdXNlZCBieSBjb21taXQKPgo+ICAgYTQ5YTE3MjI2ZmViICgiZHJtL2k5MTU6IFRyeSB0
+byBzYW5pdGl6ZSBib2d1cyBEUExMIHN0YXRlIGxlZnQgb3ZlciBieSBicm9rZW4gU05CIEJJT1Nl
+biIpCj4KPiBJdCBzZWVtcyB0aGlzIHdhcyBjaGVycnktcGlja2VkIGluY29ycmVjdGx5IDotKAoK
+d2hpbGUgdGhlIGNoZXJyeS1waWNrIHdhcyBjb3JyZWN0LCB0aGUgbWFjcm8gaXMgZGlmZmVyZW50
+IG9uCmRybS1pbnRlbC1maXhlcy4gSVNfR0VOKGRldl9wcml2LCA2KSBuZWVkcyB0byBiZSBjb252
+ZXJ0ZWQgdG8KSVNfR0VONihkZXZfcHJpdikuCgpMdWNhcyBEZSBNYXJjaGkKCj4KPiBJIGhhdmUg
+cmV2ZXJ0ZWQgdGhhdCBjb21taXQgZm9yIHRvZGF5Lgo+Cj4gLS0KPiBDaGVlcnMsCj4gU3RlcGhl
+biBSb3Rod2VsbAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCj4gSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdAo+IEludGVsLWdmeEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lu
+dGVsLWdmeAoKCgotLSAKTHVjYXMgRGUgTWFyY2hpCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2ludGVsLWdmeAo=
