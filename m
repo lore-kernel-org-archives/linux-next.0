@@ -1,65 +1,35 @@
-From: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: RE: linux-next: build warning after merge of the spi tree
-Date: Tue, 29 Jan 2019 08:39:55 +0000
-Message-ID: <VI1PR04MB57268573920A23B333CBE68799970@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <20190129130237.677e5ac8@canb.auug.org.au>
-        <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
- <20190129192658.72c88d0b@canb.auug.org.au>
+From: Schrempf Frieder <frieder.schrempf@kontron.de>
+Subject: Re: [PATCH] spi: spi-mem: spi-nxp-fspi: add module license info
+Date: Tue, 29 Jan 2019 08:45:52 +0000
+Message-ID: <0a8ae87a-5c71-0d07-e3c0-b3f665f4ea35@kontron.de>
+References: <1548750550-23565-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129192658.72c88d0b@canb.auug.org.au>
+In-Reply-To: <1548750550-23565-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 Content-Language: en-US
+Content-ID: <1BA1732D09912D4C94190E3C2F1947D7@snt-world.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Frieder Schrempf <frieder.schrempf@kontron.de>, Boris Brezillon <bbrezillon@kernel.org>
+To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "bbrezillon@kernel.org" <bbrezillon@kernel.org>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "computersforpeace@gmail.com" <computersforpeace@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Tuesday, January 29, 2019 1:57 PM
-> To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-> Cc: Mark Brown <broonie@kernel.org>; Linux Next Mailing List <linux-
-> next@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kerne=
-l.org>;
-> Frieder Schrempf <frieder.schrempf@kontron.de>; Boris Brezillon
-> <bbrezillon@kernel.org>
-> Subject: Re: linux-next: build warning after merge of the spi tree
->=20
-> Hi Yogesh,
->=20
-> On Tue, 29 Jan 2019 06:57:51 +0000 Yogesh Narayan Gaur
-> <yogeshnarayan.gaur@nxp.com> wrote:
-> >
-> > > WARNING: modpost: missing MODULE_LICENSE() in
-> > > drivers/spi/spi-nxp-fspi.o see include/linux/module.h for more
-> > > information
-> > >
-> > Can someone help in pointing out that why above warning message is comi=
-ng
-> for mentioned commit.
-> > Below MODULE_LICENSE string is present in the above mentioned file,
-> drivers/spi/spi-nxp-fspi.c.
-> >     MODULE_LICENSE("GPL v2");
->=20
-> The version in linux-next has no such line.
->=20
-Yes, somehow this missing line was appended to the commit message instead o=
-f the actual in patchwork, also being pointed out by Frieder in his reply.
-Sorry for this.
-
-I have send fix patch for this warning message [1]. Please check the patch =
-and apply.
-
---
-Regards,
-Yogesh Gaur
-
-[1] https://patchwork.ozlabs.org/patch/1032586/
-
-> --
-> Cheers,
-> Stephen Rothwell
+T24gMjkuMDEuMTkgMDk6MzEsIFlvZ2VzaCBOYXJheWFuIEdhdXIgd3JvdGU6DQo+IEFkZCBNT0RV
+TEVfTElDRU5TRSBpbmZvIHRvIGZpeCBiZWxvdyB3YXJuaW5nOg0KPiBXQVJOSU5HOiBtb2Rwb3N0
+OiBtaXNzaW5nIE1PRFVMRV9MSUNFTlNFKCkgaW4gZHJpdmVycy9zcGkvc3BpLW54cC1mc3BpLm8N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IFlvZ2VzaCBOYXJheWFuIEdhdXIgPHlvZ2VzaG5hcmF5YW4u
+Z2F1ckBueHAuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL3NwaS9zcGktbnhwLWZzcGkuYyB8IDEg
+Kw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvc3BpL3NwaS1ueHAtZnNwaS5jIGIvZHJpdmVycy9zcGkvc3BpLW54cC1mc3BpLmMN
+Cj4gaW5kZXggMDMyNzIxNmVmN2FhLi45MGYzZDJlNGZlNWQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvc3BpL3NwaS1ueHAtZnNwaS5jDQo+ICsrKyBiL2RyaXZlcnMvc3BpL3NwaS1ueHAtZnNwaS5j
+DQo+IEBAIC0xMTAzLDMgKzExMDMsNCBAQCBNT0RVTEVfQVVUSE9SKCJOWFAgU2VtaWNvbmR1Y3Rv
+ciIpOw0KPiAgIE1PRFVMRV9BVVRIT1IoIllvZ2VzaCBOYXJheWFuIEdhdXIgPHlvZ2VzaG5hcmF5
+YW4uZ2F1ckBueHAuY29tPiIpOw0KPiAgIE1PRFVMRV9BVVRIT1IoIkJvcmlzIEJyZXppbGxpb24g
+PGJicmV6aWxsb25Aa2VybmVsLm9yZz4iKTsNCg0KSSBqdXN0IGZvdW5kIGEgdHlwbyBpbiBCb3Jp
+cycgbGFzdCBuYW1lIHdoZW4gSSBsb29rZWQgYXQgdGhpcyBkaWZmLiBUaGUgDQpzZWNvbmQgJ2kn
+IGlzIHRvbyBtdWNoLg0KVGhlIHNhbWUgdHlwbyBjYW4gYWxzbyBiZSBmb3VuZCBpbiB0aGUgY29t
+bWVudCBoZWFkZXIgb2YgdGhlIGZpbGUuDQoNCj4gICBNT0RVTEVfQVVUSE9SKCJGcmllZGVyIFNj
+aHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+Iik7DQo+ICtNT0RVTEVfTElDRU5T
+RSgiR1BMIHYyIik7DQo+IA==
