@@ -1,46 +1,32 @@
-From: Luca Coelho <luca@coelho.fi>
-Subject: Re: linux-next: build warning after merge of the
- wireless-drivers-next tree
-Date: Thu, 31 Jan 2019 01:51:44 +0200
-Message-ID: <9455f1b9e746f2c28d1573ccdce3836ece42cd8a.camel@coelho.fi>
-References: <20190131104626.62ff05ce@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [for next][PATCH 1/2] mfd: Fix unmet dependency warning for MFD_TPS68470
+Date: Thu, 31 Jan 2019 00:55:33 +0100
+Message-ID: <2030742.Xi8Ns1LLnS@aspire.rjw.lan>
+References: <20190121231958.28255-1-okaya@kernel.org> <f4bc6037-7c0f-f053-a150-8ae6f683b1bc@kernel.org> <20190128072156.GE4678@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190131104626.62ff05ce@canb.auug.org.au>
+In-Reply-To: <20190128072156.GE4678@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johannes Berg <johannes.berg@intel.com>
+To: Lee Jones <lee.jones@linaro.org>, Sinan Kaya <okaya@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2019-01-31 at 10:46 +1100, Stephen Rothwell wrote:
-> Hi all,
+On Monday, January 28, 2019 8:21:56 AM CET Lee Jones wrote:
+> On Thu, 24 Jan 2019, Sinan Kaya wrote:
 > 
-> After merging the wireless-drivers-next tree, today's linux-next
-> build
-> (x86_64 allmodconfig) produced this warning:
+> > On 1/24/2019 5:51 AM, Rafael J. Wysocki wrote:
+> > > Is anyone taking this or should I?
+> > 
+> > Nobody replied to this yet. I was hoping this series to go through acpi
+> > tree like the rest of the other fixes.
 > 
-> drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:195:13: warning:
-> 'iwl_mvm_add_rtap_sniffer_config' defined but not used [-Wunused-
-> function]
->  static void iwl_mvm_add_rtap_sniffer_config(struct iwl_mvm *mvm,
->              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> [post-vacation reply]
 > 
-> Introduced by commit
+> That's not how these things are usually handled, but I taking into
+> consideration the trivialises of the patch, I don't really mind.
 > 
->   9bf13bee2d74 ("iwlwifi: mvm: include configured sniffer AID in
-> radiotap")
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-This was a conflict resolution damage in one of the patches I applied. 
-We already have a fix for it[1] and Kalle will apply it to wireless-
-drivers-next soon.
-
-Sorry for the trouble, but somehow I didn't see this warning and
-kbuildbot also reported successful compilation with it. :(
-
-[1] https://patchwork.kernel.org/patch/10788503/
-
---
-Cheers,
-Luca.
+I've applied this one, thanks!
