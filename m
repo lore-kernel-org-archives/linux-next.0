@@ -1,53 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext3 tree
-Date: Thu, 31 Jan 2019 15:14:11 +1100
-Message-ID: <20190131151411.7e8b89b3@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Thu, 31 Jan 2019 15:31:56 +1100
+Message-ID: <20190131153156.0a26ebda@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8o/_ST.PInOHu0vP8rsGp0e"; protocol="application/pgp-signature"
+ boundary="Sig_/uV77eKg_jxRiBeGkLI2d+7k"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8o/_ST.PInOHu0vP8rsGp0e
+--Sig_/uV77eKg_jxRiBeGkLI2d+7k
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi all,
 
-After merging the ext3 tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-ld: fs/ext2/super.o: in function `ext2_fill_super':
-super.c:(.text+0x1494): undefined reference to `__divdi3'
-ld: super.c:(.text+0x14bc): undefined reference to `__divdi3'
+  include/linux/sched.h
 
-Caused by commit
+between commit:
 
-  455d38a0e62f ("ext2: Fix underflow in ext2_max_size()")
+  15917dc02841 ("sched: Remove stale PF_MUTEX_TESTER bit")
 
-I have reverted that commit for today.
+from the tip tree and commit:
+
+  ca299cb98649 ("mm/cma: add PF flag to force non cma alloc")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/8o/_ST.PInOHu0vP8rsGp0e
+diff --cc include/linux/sched.h
+index bb68abafac29,1ef3995b7564..000000000000
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@@ -1409,6 -1423,8 +1423,7 @@@ extern struct pid *cad_pid
+  #define PF_UMH			0x02000000	/* I'm an Usermodehelper process */
+  #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle=
+ with cpus_allowed */
+  #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process polic=
+y */
++ #define PF_MEMALLOC_NOCMA	0x10000000	/* All allocation request will have =
+_GFP_MOVABLE cleared */
+ -#define PF_MUTEX_TESTER		0x20000000	/* Thread belongs to the rt mutex tes=
+ter */
+  #define PF_FREEZER_SKIP		0x40000000	/* Freezer should not count it as fre=
+ezable */
+  #define PF_SUSPEND_TASK		0x80000000      /* This thread called freeze_pro=
+cesses() and should not be frozen */
+ =20
+
+--Sig_/uV77eKg_jxRiBeGkLI2d+7k
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSdhMACgkQAVBC80lX
-0GxR9gf9FEto0xpI7MLQl7zy+a/dkbLaUuljzr5mdaRNn39EFCQhiujoPRtDAtRZ
-rTGRelCJ9mMpnjXNmYFtCEmrGSsJs0zEMh2ZxdHjsj+QIAeBhXv+J+6Tof1U31OZ
-25fNTfjKk/uOUESQ/MtWg6k2LI5k7iguaWZajCK9B1Rb4HfGC8K198+T2brdC2Cy
-0Mp060+akFsii7J7x+ECvaX+9NSG1p6iR2tn4KC/JUJ0X6w8k8axc6artsm0FhUG
-/V1/i22SyPz0Kpyjl5nnaW4Bgt0kvyYSjW7VPo1vy3DXUQoYGlFQIf+lvb6bCmmR
-bs1Xzjiljm2YW5O56mGvtg3Ca1TUOA==
-=m/j+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSejwACgkQAVBC80lX
+0GzOoAf+KDBwyeSs/d8iF/S41DQNfnvzywvMh8u5753oJcadOiYq1C6rTPok5Ifz
+V6S6t0/BczKL0+uzTQhi1nrXvtp07zNq3qZ7+Nl0HVu7LDqoItlLnoURv7rB3YiD
+LukcRQSHosFYCs3cgPp9368CXiQEQPjoa5sPbtzyOBl91jyeXA/tWS+2/QSW0UOG
+Q1Hpqj6bRl2MZEJ2kflbx3bz+/sjFChG5Ok9uYJ/CJJrECzESNVkp7EtmatLbrCw
+mf97z0wp9pEwHJyB1frquvreucWU8YryFg7SFmfiewRez59xzXeJ0cIygy9UXR78
+5iKuynV256girUI2zqmjpCWvi3Obgw==
+=kQ70
 -----END PGP SIGNATURE-----
 
---Sig_/8o/_ST.PInOHu0vP8rsGp0e--
+--Sig_/uV77eKg_jxRiBeGkLI2d+7k--
