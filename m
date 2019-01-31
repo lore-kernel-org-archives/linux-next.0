@@ -1,51 +1,53 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2019-01-30-15-02 uploaded (i386 build summary)
-Date: Wed, 30 Jan 2019 19:15:27 -0800
-Message-ID: <c19c92ac-2490-4342-4cc1-276b5bf5ea8f@infradead.org>
-References: <20190130230305.d7osZ%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ext3 tree
+Date: Thu, 31 Jan 2019 15:14:11 +1100
+Message-ID: <20190131151411.7e8b89b3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8o/_ST.PInOHu0vP8rsGp0e"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190130230305.d7osZ%akpm@linux-foundation.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 1/30/19 3:03 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-01-30-15-02 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
+--Sig_/8o/_ST.PInOHu0vP8rsGp0e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-argghh.  I guess nobody builds on i386 any more.
+Hi Jan,
 
-Summary from 8 i386 builds:
-(ignoring "missing braces" in drm)
+After merging the ext3 tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-../kernel/dma/swiotlb.c:211:9: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘size_t’ [-Wformat=]
-../kernel/dma/swiotlb.c:217:9: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘size_t’ [-Wformat=]
+ld: fs/ext2/super.o: in function `ext2_fill_super':
+super.c:(.text+0x1494): undefined reference to `__divdi3'
+ld: super.c:(.text+0x14bc): undefined reference to `__divdi3'
 
-ld: drivers/mtd/nand/raw/meson_nand.o: in function `meson_nfc_setup_data_interface':
-meson_nand.c:(.text+0x1f9): undefined reference to `__udivdi3'
+Caused by commit
 
-../arch/x86/platform/olpc/olpc_dt.c:146:10: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘size_t’ [-Wformat=]
+  455d38a0e62f ("ext2: Fix underflow in ext2_max_size()")
 
-../mm/memcontrol.c:5629:52: error: ‘THP_FAULT_ALLOC’ undeclared (first use in this function)
-../mm/memcontrol.c:5631:17: error: ‘THP_COLLAPSE_ALLOC’ undeclared (first use in this function)
-../mm/memcontrol.c:5629:52: error: ‘THP_FAULT_ALLOC’ undeclared (first use in this function)
-../mm/memcontrol.c:5631:17: error: ‘THP_COLLAPSE_ALLOC’ undeclared (first use in this function)
+I have reverted that commit for today.
 
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-~Randy
+--Sig_/8o/_ST.PInOHu0vP8rsGp0e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSdhMACgkQAVBC80lX
+0GxR9gf9FEto0xpI7MLQl7zy+a/dkbLaUuljzr5mdaRNn39EFCQhiujoPRtDAtRZ
+rTGRelCJ9mMpnjXNmYFtCEmrGSsJs0zEMh2ZxdHjsj+QIAeBhXv+J+6Tof1U31OZ
+25fNTfjKk/uOUESQ/MtWg6k2LI5k7iguaWZajCK9B1Rb4HfGC8K198+T2brdC2Cy
+0Mp060+akFsii7J7x+ECvaX+9NSG1p6iR2tn4KC/JUJ0X6w8k8axc6artsm0FhUG
+/V1/i22SyPz0Kpyjl5nnaW4Bgt0kvyYSjW7VPo1vy3DXUQoYGlFQIf+lvb6bCmmR
+bs1Xzjiljm2YW5O56mGvtg3Ca1TUOA==
+=m/j+
+-----END PGP SIGNATURE-----
+
+--Sig_/8o/_ST.PInOHu0vP8rsGp0e--
