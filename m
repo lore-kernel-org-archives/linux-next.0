@@ -1,50 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the ext3 tree
-Date: Fri, 1 Feb 2019 09:09:39 +1100
-Message-ID: <20190201090939.08eeda02@canb.auug.org.au>
-References: <20190131151411.7e8b89b3@canb.auug.org.au>
-        <20190131101122.GD19222@quack2.suse.cz>
+From: Liviu Dudau <liviu@dudau.co.uk>
+Subject: Re: linux-next: Fixes tags needs some work in the akpm-current tree
+Date: Thu, 31 Jan 2019 22:51:52 +0000
+Message-ID: <20190131225151.GA3110@bart.dudau.co.uk>
+References: <20190131110541.3f3a808c@canb.auug.org.au>
+ <6d110fc4-85b6-cf66-6045-dc81956ffc5c@lca.pw>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n7C1yrq3FIFtrBcXeHrTUhh"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190131101122.GD19222@quack2.suse.cz>
+Content-Disposition: inline
+In-Reply-To: <6d110fc4-85b6-cf66-6045-dc81956ffc5c@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Qian Cai <cai@lca.pw>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/n7C1yrq3FIFtrBcXeHrTUhh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 30, 2019 at 08:51:42PM -0500, Qian Cai wrote:
+> 
+> 
+> On 1/30/19 7:05 PM, Stephen Rothwell wrote:
+> > In commit
+> > 
+> >   6e9ed490d190 ("mm/page_owner: fix for deferred struct page init")
+> > 
+> > Fixes tag
+> > 
+> >   Fixes: fe53ca54270 ("mm: use early_pfn_to_nid in page_ext_init")
+> > 
+> > has these problem(s):
+> > 
+> >   - SHA1 should be at least 12 digits long
+> >     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+> >     or later) just making sure it is not set (or set to "auto").
+> > 
+> 
+> I think it is better to replace with this version instead,
+> 
+> https://lore.kernel.org/lkml/20190115202812.75820-1-cai@lca.pw/
 
-Hi Jan,
 
-On Thu, 31 Jan 2019 11:11:22 +0100 Jan Kara <jack@suse.cz> wrote:
->
-> Yeah, I've fixed that already in my tree. Thanks for letting me know and
-> sorry for the breakage.
+That patch does not look related, afaict.
 
-Thanks.
+Andrew, do you want me to re-send the patch with a fixed commit log, or are you OK to
+do some inline editing?
 
---=20
-Cheers,
-Stephen Rothwell
+Best regards,
+Liviu
 
---Sig_/n7C1yrq3FIFtrBcXeHrTUhh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTciQACgkQAVBC80lX
-0GwB7Qf/SkXfeq8qUGxf/3aLrQswVGAa2JKtF5tHUTMRuHgb5cWPX2V5smkC5smM
-qNHgTdM8YVnXHhbD73zKzRcNkWg/y5bEr0G842DKfqV0PmILO9uRBczyXtWMvcaR
-ahabaHgsH//+kwR1XXfy3ehCpNoi5U64+LWbhr8yc4YpLeOXLarY8V8EC7CgAkRB
-6QMC7sE9MSqry1FQtJ/BgJT4gFbQekCakI1ROEDkStkgW/eRPyVr5GCBDaZs7gGr
-UXoKx2lz/UJxpZmosKKB/V/wYOurGWcTAyb2e63qfCrtwFI9iZQbUbdtfQBRLow6
-7w+3qBt/58o9B6FFfGutng1x1btFSA==
-=y7+E
------END PGP SIGNATURE-----
-
---Sig_/n7C1yrq3FIFtrBcXeHrTUhh--
+-- 
+           ________________________________________________________
+  ________|                                                        |_______
+  \       |  With enough courage, you can do without a reputation  |      /
+   \      |                                  -- Rhett Butler       |     /
+   /      |________________________________________________________|     \
+  /__________)                                                  (_________\
