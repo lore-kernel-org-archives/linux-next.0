@@ -1,35 +1,134 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pci-current tree
-Date: Fri, 1 Feb 2019 08:57:58 -0600
-Message-ID: <CAErSpo7=GUvSpYWYKVBdH_ypoqOHyU7P_zq_QX_QYTx8ynvgiQ@mail.gmail.com>
-References: <20190201165130.1d9c9850@canb.auug.org.au>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: bpf: test_tunnel.sh: BUG: unable to handle kernel NULL pointer dereference
+Date: Fri, 1 Feb 2019 21:00:01 +0530
+Message-ID: <CA+G9fYu-RXRUPyTeAfSQjXXbtGQeTkbhns9-L5ZVhm12G3xhmQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190201165130.1d9c9850@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Netdev <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Valdis Kletnieks <valdis.kletnieks@vt.edu>, Song Liu <songliubraving@fb.com>, Rafael Tinoco <rafael.tinoco@linaro.org>, ast@kernel.org, Daniel Borkmann <daniel@iogearbox.net>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:51 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Bjorn,
->
-> Commits
->
->   f14bcc0add3a ("Revert "PCI: armada8k: Add support for gpio controlled reset signal"")
->   432dd7064aa1 ("ARM: cns3xxx: Use actual size reads for PCIe")
->   65dbb423cf28 ("ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment")
->   a4ace4fa2007 ("PCI: imx: Fix checking pd_pcie_phy device link addition")
->   a6093ad7fc49 ("PCI: imx: Fix probe failure without power domain")
->
-> are missing a Signed-off-by from their committer.
+Kernel panic while running bpf: test_tunnel.sh on linux -next
+5.0.0-rc4-next-20190129.
 
-Dang, that's my fault.  They were originally commited by Lorenzo, but
-instead of merging Lorenzo's branch directly, I cherry-picked the
-commits into my for-linus branch so I could tweak a changelog.  I'd
-fix it, but Linus has already pulled them.  Sorry, I'll try to
-remember to do this right next time.
+selftests: bpf: test_tunnel.sh
+[  273.997647] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+[  274.054068] ip (11458) used greatest stack depth: 11448 bytes left
+[  274.120445] BUG: unable to handle kernel NULL pointer dereference
+at 0000000000000000
+[  274.128285] #PF error: [INSTR]
+[  274.131351] PGD 8000000414a0e067 P4D 8000000414a0e067 PUD 3b6334067 PMD 0
+[  274.138241] Oops: 0010 [#1] SMP PTI
+[  274.141734] CPU: 1 PID: 11464 Comm: ping Not tainted
+5.0.0-rc4-next-20190129 #1
+[  274.149046] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[  274.156526] RIP: 0010:          (null)
+[  274.160280] Code: Bad RIP value.
+[  274.163509] RSP: 0018:ffffbc9681f83540 EFLAGS: 00010286
+[  274.168726] RAX: 0000000000000000 RBX: ffffdc967fa80a18 RCX: 0000000000000000
+[  274.175851] RDX: ffff9db2ee08b540 RSI: 000000000000000e RDI: ffffdc967fa809a0
+[  274.182974] RBP: ffffbc9681f83580 R08: ffff9db2c4d62690 R09: 000000000000000c
+[  274.190098] R10: 0000000000000000 R11: ffff9db2ee08b540 R12: ffff9db31ce7c000
+[  274.197222] R13: 0000000000000001 R14: 000000000000000c R15: ffff9db3179cf400
+[  274.204346] FS:  00007ff4ae7c5740(0000) GS:ffff9db31fa80000(0000)
+knlGS:0000000000000000
+[  274.212424] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  274.218162] CR2: ffffffffffffffd6 CR3: 00000004574da004 CR4: 00000000003606e0
+[  274.225292] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  274.232416] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  274.239541] Call Trace:
+[  274.241988]  ? tnl_update_pmtu+0x296/0x3b0
+[  274.246085]  ip_md_tunnel_xmit+0x1bc/0x520
+[  274.250176]  gre_fb_xmit+0x330/0x390
+[  274.253754]  gre_tap_xmit+0x128/0x180
+[  274.257414]  dev_hard_start_xmit+0xb7/0x300
+[  274.261598]  sch_direct_xmit+0xf6/0x290
+[  274.265430]  __qdisc_run+0x15d/0x5e0
+[  274.269007]  __dev_queue_xmit+0x2c5/0xc00
+[  274.273011]  ? dev_queue_xmit+0x10/0x20
+[  274.276842]  ? eth_header+0x2b/0xc0
+[  274.280326]  dev_queue_xmit+0x10/0x20
+[  274.283984]  ? dev_queue_xmit+0x10/0x20
+[  274.287813]  arp_xmit+0x1a/0xf0
+[  274.290952]  arp_send_dst.part.19+0x46/0x60
+[  274.295138]  arp_solicit+0x177/0x6b0
+[  274.298708]  ? mod_timer+0x18e/0x440
+[  274.302281]  neigh_probe+0x57/0x70
+[  274.305684]  __neigh_event_send+0x197/0x2d0
+[  274.309862]  neigh_resolve_output+0x18c/0x210
+[  274.314212]  ip_finish_output2+0x257/0x690
+[  274.318304]  ip_finish_output+0x219/0x340
+[  274.322314]  ? ip_finish_output+0x219/0x340
+[  274.326493]  ip_output+0x76/0x240
+[  274.329805]  ? ip_fragment.constprop.53+0x80/0x80
+[  274.334510]  ip_local_out+0x3f/0x70
+[  274.337992]  ip_send_skb+0x19/0x40
+[  274.341391]  ip_push_pending_frames+0x33/0x40
+[  274.345740]  raw_sendmsg+0xc15/0x11d0
+[  274.349403]  ? __might_fault+0x85/0x90
+[  274.353151]  ? _copy_from_user+0x6b/0xa0
+[  274.357070]  ? rw_copy_check_uvector+0x54/0x130
+[  274.361604]  inet_sendmsg+0x42/0x1c0
+[  274.365179]  ? inet_sendmsg+0x42/0x1c0
+[  274.368937]  sock_sendmsg+0x3e/0x50
+[  274.372460]  ___sys_sendmsg+0x26f/0x2d0
+[  274.376293]  ? lock_acquire+0x95/0x190
+[  274.380043]  ? __handle_mm_fault+0x7ce/0xb70
+[  274.384307]  ? lock_acquire+0x95/0x190
+[  274.388053]  ? __audit_syscall_entry+0xdd/0x130
+[  274.392586]  ? ktime_get_coarse_real_ts64+0x64/0xc0
+[  274.397461]  ? __audit_syscall_entry+0xdd/0x130
+[  274.401989]  ? trace_hardirqs_on+0x4c/0x100
+[  274.406173]  __sys_sendmsg+0x63/0xa0
+[  274.409744]  ? __sys_sendmsg+0x63/0xa0
+[  274.413488]  __x64_sys_sendmsg+0x1f/0x30
+[  274.417405]  do_syscall_64+0x55/0x190
+[  274.421064]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  274.426113] RIP: 0033:0x7ff4ae0e6e87
+[  274.429686] Code: 64 89 02 48 c7 c0 ff ff ff ff eb b9 0f 1f 80 00
+00 00 00 8b 05 ca d9 2b 00 48 63 d2 48 63 ff 85 c0 75 10 b8 2e 00 00
+00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 53 48 89 f3 48 83 ec 10 48 89 7c
+24 08
+[  274.448422] RSP: 002b:00007ffcd9b76db8 EFLAGS: 00000246 ORIG_RAX:
+000000000000002e
+[  274.455978] RAX: ffffffffffffffda RBX: 0000000000000040 RCX: 00007ff4ae0e6e87
+[  274.463104] RDX: 0000000000000000 RSI: 00000000006092e0 RDI: 0000000000000003
+[  274.470228] RBP: 0000000000000000 R08: 00007ffcd9bc40a0 R09: 00007ffcd9bc4080
+[  274.477349] R10: 000000000000060a R11: 0000000000000246 R12: 0000000000000003
+[  274.484475] R13: 0000000000000016 R14: 00007ffcd9b77fa0 R15: 00007ffcd9b78da4
+[  274.491602] Modules linked in: cls_bpf sch_ingress iptable_filter
+ip_tables algif_hash af_alg x86_pkg_temp_thermal fuse [last unloaded:
+test_bpf]
+[  274.504634] CR2: 0000000000000000
+[  274.507976] ---[ end trace 196d18386545eae1 ]---
+[  274.512588] RIP: 0010:          (null)
+[  274.516334] Code: Bad RIP value.
+[  274.519557] RSP: 0018:ffffbc9681f83540 EFLAGS: 00010286
+[  274.524775] RAX: 0000000000000000 RBX: ffffdc967fa80a18 RCX: 0000000000000000
+[  274.531921] RDX: ffff9db2ee08b540 RSI: 000000000000000e RDI: ffffdc967fa809a0
+[  274.539082] RBP: ffffbc9681f83580 R08: ffff9db2c4d62690 R09: 000000000000000c
+[  274.546205] R10: 0000000000000000 R11: ffff9db2ee08b540 R12: ffff9db31ce7c000
+[  274.553329] R13: 0000000000000001 R14: 000000000000000c R15: ffff9db3179cf400
+[  274.560456] FS:  00007ff4ae7c5740(0000) GS:ffff9db31fa80000(0000)
+knlGS:0000000000000000
+[  274.568541] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  274.574277] CR2: ffffffffffffffd6 CR3: 00000004574da004 CR4: 00000000003606e0
+[  274.581403] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  274.588535] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  274.595658] Kernel panic - not syncing: Fatal exception in interrupt
+[  274.602046] Kernel Offset: 0x14400000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  274.612827] ---[ end Kernel panic - not syncing: Fatal exception in
+interrupt ]---
+[  274.620387] ------------[ cut here ]------------
 
-Bjorn
+The above log is from x86_64 device.
+
+Full test log on arm64.
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20190129/testrun/589455/log
+
+Best regards
+Naresh Kamboju
