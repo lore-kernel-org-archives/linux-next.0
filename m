@@ -1,72 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm tree
-Date: Fri, 1 Feb 2019 11:53:51 +1100
-Message-ID: <20190201115351.70a23b79@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Fri, 1 Feb 2019 13:41:46 +1100
+Message-ID: <20190201134146.0bfd5ba0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tHjXEVvVgo3Asx/RuDMdgHF"; protocol="application/pgp-signature"
+ boundary="Sig_/lmUdlu=jNXJPqEDeJ+DeG3j"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josip Pavic <Josip.Pavic@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Greg KH <greg@kroah.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard Gong <richard.gong@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/tHjXEVvVgo3Asx/RuDMdgHF
+--Sig_/lmUdlu=jNXJPqEDeJ+DeG3j
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/gpu/drm/amd/amdgpu/../display/modules/power/power_helpers.c:160:9: =
-warning: #pragma pack (pop) encountered without matching #pragma pack (push=
-) [-Wpragmas]
- #pragma pack(pop)
-         ^~~~
+ERROR: "__arm_smccc_hvc" [drivers/firmware/stratix10-svc.ko] undefined!
+ERROR: "__arm_smccc_smc" [drivers/firmware/stratix10-svc.ko] undefined!
 
-Introduced by commit
+Exposed by commit
 
-  1411fd85416f ("Merge remote-tracking branch 'drm/drm-next'")
+  095ff29d2b88 ("firmware: intel_stratix10_service: add hardware dependency=
+")
 
-Commits
+I have added the following partial revert for today:
 
-  099139bef026 ("drm/amd/display: Pack DMCU iRAM alignment")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 1 Feb 2019 13:37:59 +1100
+Subject: [PATCH] firmware: intel_stratix10_service: remove COMPILE_TEST
 
-from Linus' tree and
+This does not build yet ...
 
-  c591d8429df2 ("drm/amd/display: Pack DMCU iRAM alignment")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/firmware/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-from the drm tree are identical, but then commit
-
-  bf75572a2536 ("drm/amd/display: Create switching mechanism for ABM 2.2")
-
-added more code before the "#pragma(pop)" and so git's automatic merge
-resolution ended up adding the "#pragma(pop)" line twice.
-
-I will fix up the merge resolution for tomorrow.  This will need to be
-reported to Linus when the drm tree is merged (or a back merge of
-Linus' tree will need to be done - and well commented :-)).
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 7e5491aed5c8..cac16c4b0df3 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -218,7 +218,7 @@ config FW_CFG_SYSFS_CMDLINE
+=20
+ config INTEL_STRATIX10_SERVICE
+ 	tristate "Intel Stratix10 Service Layer"
+-	depends on (ARCH_STRATIX10 && HAVE_ARM_SMCCC) || COMPILE_TEST
++	depends on ARCH_STRATIX10 && HAVE_ARM_SMCCC
+ 	default n
+ 	help
+ 	  Intel Stratix10 service layer runs at privileged exception level,
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/tHjXEVvVgo3Asx/RuDMdgHF
+--Sig_/lmUdlu=jNXJPqEDeJ+DeG3j
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTmJ8ACgkQAVBC80lX
-0GxdFwf/TyEr3KPjLAcTYrxVWaaQWHeOf8v0ZRcvhJYb16GpQe7F9CprXURlYutW
-OumdQVX0lO8p+q6pJRbJWIgY1lTQsXcPvs5KATjTqsiOIZLwONcYNUIW+G/VqBX1
-b206NJHB/yhSbY0DQbOsjB47JAjoUJ0FW7pNxIzSY6tWEn6oUpZi2cp/4kmJH5mL
-ASDUOJusWeM6gIkyhh+HFU7p0Z/EkmrMKcqtRQ3pDJ8WTNmnMxCie0nqotR1Azi0
-kHlM3bIrErXWxU24yQszbPTq9TF5d6joG34+PCXpvA811+0LYlme5eD+9Qaf0JCp
-BwR+SxAJ+JxVZrA18jJ3QoxEMU87+A==
-=gOZf
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTseoACgkQAVBC80lX
+0GyNlggAjvyfwfqu/vDXDZ4bD8SrzOP0wIDWi+xujMJPplSrmMXk8VijnxS0fmOF
+rXxcBikI0GVgUi+g6yVTkwmxtkXk3AwloLf68HUM7tW96bLFJf8XmX8jkAULdQ5j
+CJ6rYo09oyK3kQIM40I/2zYd+jX9RdDmhn7UEq+RPiEkBB/GDnGIYLX4Nf26YtxA
+HW1qbnxPiVbz9z9YgcPYua4bhtpeDApkvQgc5q9kkQ28qHDg2i7TCgUD4JJ5DqHN
+RuSNWe//4iAbVogQMEQ4hxfQc9upDqaBkQM0yaKW6Aof7o7LVtNhwtAFFXmXWo5p
+vDb+07OnWWZa8kCVbchj1+8QhBlk5Q==
+=VwrN
 -----END PGP SIGNATURE-----
 
---Sig_/tHjXEVvVgo3Asx/RuDMdgHF--
+--Sig_/lmUdlu=jNXJPqEDeJ+DeG3j--
