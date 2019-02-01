@@ -1,127 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the drm tree
-Date: Fri, 1 Feb 2019 10:57:36 +1100
-Message-ID: <20190201105736.1428c9fc@canb.auug.org.au>
+From: Liviu Dudau <liviu@dudau.co.uk>
+Subject: Re: linux-next: Fixes tags needs some work in the akpm-current tree
+Date: Fri, 1 Feb 2019 00:18:26 +0000
+Message-ID: <20190201001825.GB3110@bart.dudau.co.uk>
+References: <20190131110541.3f3a808c@canb.auug.org.au>
+ <6d110fc4-85b6-cf66-6045-dc81956ffc5c@lca.pw>
+ <20190131225151.GA3110@bart.dudau.co.uk>
+ <20190131145734.80036199beb369d3ceb0123a@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0158520816=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Leo Li <sunpeng.li@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Kent Russell <kent.russell@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Ken Chalmers <ken.chalmers@amd.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190131145734.80036199beb369d3ceb0123a@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qian Cai <cai@lca.pw>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---===============0158520816==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Q7A6sF2/x+N6AAYNC/JNS11"; protocol="application/pgp-signature"
+On Thu, Jan 31, 2019 at 02:57:34PM -0800, Andrew Morton wrote:
+> On Thu, 31 Jan 2019 22:51:52 +0000 Liviu Dudau <liviu@dudau.co.uk> wrote:
+> 
+> > On Wed, Jan 30, 2019 at 08:51:42PM -0500, Qian Cai wrote:
+> > > 
+> > > 
+> > > On 1/30/19 7:05 PM, Stephen Rothwell wrote:
+> > > > In commit
+> > > > 
+> > > >   6e9ed490d190 ("mm/page_owner: fix for deferred struct page init")
+> > > > 
+> > > > Fixes tag
+> > > > 
+> > > >   Fixes: fe53ca54270 ("mm: use early_pfn_to_nid in page_ext_init")
+> > > > 
+> > > > has these problem(s):
+> > > > 
+> > > >   - SHA1 should be at least 12 digits long
+> > > >     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+> > > >     or later) just making sure it is not set (or set to "auto").
+> > > > 
+> > > 
+> > > I think it is better to replace with this version instead,
+> > > 
+> > > https://lore.kernel.org/lkml/20190115202812.75820-1-cai@lca.pw/
+> > 
+> > 
+> > That patch does not look related, afaict.
+> 
+> Confused.
+> 
+> https://lore.kernel.org/lkml/20190115202812.75820-1-cai@lca.pw/
+> and
+> https://lore.kernel.org/lkml/20181220203156.43441-1-cai@lca.pw/T/#u
+> 
+> are very much related?
 
---Sig_/Q7A6sF2/x+N6AAYNC/JNS11
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+My bad, I've read the top of the message that was talking about my commit splitting the
+Fixes: commit title into multiple lines and assumed that was the only issue reported.
 
-Hi all,
 
-In commit
+> 
+> > Andrew, do you want me to re-send the patch with a fixed commit log, or are you OK to
+> > do some inline editing?
+> 
+> Resend what, exactly?
 
-  a93587b31e34 ("drm/amd/display: Only get the connector state for VRR when=
- toggled")
+Content of commit 86c7502b25ed so that the title of the commit it fixes does not spill
+over into the next line.
 
-Fixes tag
+Best regards,
+Liviu
 
-  Fixes: 3cc22f281318 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
-ties")
 
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe instead:
-
-  FIxes: bb47de736661 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
-ties")
-
-In commit
-
-  32e61361b82e ("drm/amd/display: Fix 64-bit division for 32-bit builds")
-
-Fixes tag
-
-  Fixes: https://lists.freedesktop.org/archives/dri-devel/2018-December/201=
-008.html
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-Maybe instead:
-
-  Fixes: 80604e27bc9 ("drm/amd/display: Use 100 Hz precision for pipe pixel=
- clocks")
-
-In commit
-
-  c4312c27c826 ("drm/amdgpu: Cleanup 2 compiler warnings")
-
-Fixes tag
-
-  Fixes: e4ae0fc drm/amdgpu: implement gfx8 post_soft_reset
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-Fixes tag
-
-  Fixes: 5e01c09 drm/amdgpu/gfx_v8_0: Reorder the gfx, kiq and kcq rings
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe instead:
-
-  Fixes: c6064de4b734 ("drm/amdgpu/gfx_v8_0: Reorder the gfx, kiq and kcq r=
-ings test sequence")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Q7A6sF2/x+N6AAYNC/JNS11
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTi3AACgkQAVBC80lX
-0GwzRwf8DBWijKBMDHpG/ElUnWlulbVi9qYhXRJxHKvmLEnHRNlPnjFC4qXS65ci
-Fm7U27XnpTKYNN86dtGCELE6V1whHZaCGgyV6yZZUneD2JmmJYVv9AnGeEygkBzX
-xuFS1l3C8DNrf290dWP9QPABCD1Vcpw5EXgqEjd1EgRs6v1tvu+s0yoR2BIvWDzf
-nF38r46RSYZoc3pq0xorKJ6MX8onfi5lZBjMA2zntmswKPDcga31d6vjfwlEBp+G
-U7rb1xsTHJKaanjp9AOyHm1dphpXR98LX1phRBRxshu9Z7ypuOGD9Xrs5bwOP/55
-uGJYarSgcjICevRyBSX6CRnqIat0dg==
-=xPLZ
------END PGP SIGNATURE-----
-
---Sig_/Q7A6sF2/x+N6AAYNC/JNS11--
-
---===============0158520816==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0158520816==--
+-- 
+           ________________________________________________________
+  ________|                                                        |_______
+  \       |  With enough courage, you can do without a reputation  |      /
+   \      |                                  -- Rhett Butler       |     /
+   /      |________________________________________________________|     \
+  /__________)                                                  (_________\
