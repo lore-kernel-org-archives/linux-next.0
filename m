@@ -1,77 +1,56 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20190201 build: 2 failures 19 warnings (next-20190201)
-Date: Sat, 2 Feb 2019 15:39:54 +0000
-Message-ID: <20190202153954.GK20797@sirena.org.uk>
-References: <E1gpgTf-0002ZN-NF@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in Linus' tree
+Date: Sun, 3 Feb 2019 08:28:03 +1100
+Message-ID: <20190203082803.5f7fc82e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2372484514746747843=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1gpgTf-0002ZN-NF@optimist>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Brian Masney <masneyb@onstation.org>, Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WQfnB1TBUNONhsJ5OCl6FnW"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jianchao Wang <jianchao.w.wang@oracle.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-
---===============2372484514746747843==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+HmK7y6O+lKZIGkr"
-Content-Disposition: inline
-
-
---+HmK7y6O+lKZIGkr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/WQfnB1TBUNONhsJ5OCl6FnW
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 01, 2019 at 09:35:59PM +0000, Build bot for Mark Brown wrote:
+[Just a reminder for the future.]
 
-Friday's -next fails to build an arm64 allmodconfig due to (among other
-things):
+Hi all,
 
-> 	arm64-allmodconfig
-> ERROR: "irq_chip_set_wake_parent" [drivers/pinctrl/qcom/pinctrl-spmi-gpio=
-=2Eko] undefined!
+In commit
 
-due to ca69e2d165eb3d060cc9 (qcom: spmi-gpio: add support for
-hierarchical IRQ chip) as the driver can be built as a module but the
-above symbol is not exported. =20
+  85bd6e61f34d ("blk-mq: fix a hung issue when fsync")
 
---+HmK7y6O+lKZIGkr
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes tag
+
+  Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WQfnB1TBUNONhsJ5OCl6FnW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxVucYACgkQJNaLcl1U
-h9Ap4Qf/Z35JMYW6BS61H0kHt826Qfnh7yMwv8szJtscn2QX/dM31wESH3VYpTNw
-kn7lax8Vh+8I/A+1paCYhFen1M6nMHLdSBG0SRsNyjmTOg8T7tczrfvmONl5QBZ8
-LgDbhA0xnTxAP9m6lAoSS8mrm2JJf1o3HnI4iS8FHW7ZlCQSKmZlR4GxdbTCAX+3
-11BDRz3G+mQ3yv2haAfBPlXH5eXnQSOphqOD1ZHlRaOPppRMXigYAVIeNVN3axsP
-9c3qbOOvM85OpO6o/OE7Kog5HVSqTK9+mYbdp9KVlIbnUByQlC81TVSSfyWZWYcY
-bIHaYHfXVUdogmchPweF14hyuPFnvw==
-=3yvP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxWC2MACgkQAVBC80lX
+0GwuIAgAk2onIopY2IFHDyz3J32pg835WL186IdxMJ/R8MhRXl1HI01AFQnCR5aw
+RKpuDzlrlX/yBIHFPI3ZacaD38VgPfA7QGsR9smSUSF/WtGJBQXgAHVw4AxC+cMM
+rKIZdh2O7UBU1ICLXTxLpeiV18N1nqR9Pmi1ZeUBBJGqNlc6/y2dVptg6YbPCbHH
+hFEVLrCv4mwpWxBQArF0Mvtw/P/7AdnUnrAv/Bo21/WsVOd9623OBy2RzeFg/rFY
+bnW7NqVeNCrFh5PUbtP6tH/WHBpJSEvxOL32tmjG/qYrPw46LL2h01P2meqAA0pM
+EbXh5N1FKZEym5CpyBX8unIiNYWHrQ==
+=6IJF
 -----END PGP SIGNATURE-----
 
---+HmK7y6O+lKZIGkr--
-
-
---===============2372484514746747843==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2372484514746747843==--
+--Sig_/WQfnB1TBUNONhsJ5OCl6FnW--
