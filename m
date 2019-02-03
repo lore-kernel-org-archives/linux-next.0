@@ -1,66 +1,70 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH -next 1/2] genirq: export irq_chip_set_wake_parent
- symbol
-Date: Sun, 3 Feb 2019 13:05:33 +0000
-Message-ID: <20190203130533.072b235e@why.wild-wind.fr.eu.org>
-References: <20190203123131.28323-1-masneyb@onstation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the vfs tree
+Date: Mon, 4 Feb 2019 09:33:34 +1100
+Message-ID: <20190204093334.0ccc42bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190203123131.28323-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: linus.walleij@linaro.org, tglx@linutronix.de, andy.gross@linaro.org, sboyd@kernel.org, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sun,  3 Feb 2019 07:31:30 -0500
-Brian Masney <masneyb@onstation.org> wrote:
+--Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+Hi Al,
 
-> Export the irq_chip_set_wake_parent symbol so that drivers with
-> hierarchical IRQ chips can be built as a module.
-> 
-> This fixes a build failure in linux-next's spmi-gpio when using
-> allmodconfig.
+After merging the vfs tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-I don't think the mention of linux-next helps in the commit message. It
-would have been better together with the note below.
+In file included from include/linux/printk.h:7,
+                 from include/linux/kernel.h:14,
+                 from include/linux/fs_context.h:15,
+                 from fs/fs_parser.c:13:
+fs/fs_parser.c: In function 'fs_validate_description':
+include/linux/kern_levels.h:5:18: warning: format '%lu' expects argument of=
+ type 'long unsigned int', but argument 3 has type 'int' [-Wformat=3D]
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^~~~~~
+include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
+ #define KERN_ERR KERN_SOH "3" /* error conditions */
+                  ^~~~~~~~
+include/linux/printk.h:303:9: note: in expansion of macro 'KERN_ERR'
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         ^~~~~~~~
+fs/fs_parser.c:413:6: note: in expansion of macro 'pr_err'
+      pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
+      ^~~~~~
+fs/fs_parser.c:413:31: note: format string is defined here
+      pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
+                             ~~^
+                             %u
 
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Reported-by: Mark Brown <broonie@kernel.org>
+Introduced by commit
 
-Otherwise:
+  f512b838c104 ("vfs: Add configuration parser helpers")
 
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
+--Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-	M.
+-----BEGIN PGP SIGNATURE-----
 
-> ---
-> See https://www.spinics.net/lists/linux-next/msg46362.html for Mark's
-> message.
-> 
->  kernel/irq/chip.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-> index 34e969069488..086d5a34b5a0 100644
-> --- a/kernel/irq/chip.c
-> +++ b/kernel/irq/chip.c
-> @@ -1381,6 +1381,7 @@ int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
->  
->  	return -ENOSYS;
->  }
-> +EXPORT_SYMBOL_GPL(irq_chip_set_wake_parent);
->  #endif
->  
->  /**
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXbD4ACgkQAVBC80lX
+0GyGOggAojmSbNcpsWYJ22TFTQQm67eqpcLfVY9tyfjgJIPbjvukYi3LoHpLvgC1
+Qz+Sf38QrPAjom/euzOivARZJBFyASIQ+Eff3Rr2ZH8gpLWLoOJzu7fWprc5M2f9
++OgOVbUm4xkG7pMplJBOhSct4711Es0Di/AVbZ/xFCgCmABbOOwVNSxx/LeG0fv4
+V8Poe6it8YpZ/W3Q6f2YTfd0foDD+/ubXi+Obs7uMFTW+Te3X4ItzL2pO7qxECB9
+pWIdP44BerCn3FJPL4b7g8nE3GXfgM20autI4Le8BgZdYyVWOzEc1vNyhBRVrmsu
+aQXayUyGuCb3D5vnbhdfgsm8mIFoDw==
+=juti
+-----END PGP SIGNATURE-----
 
-
-
--- 
-Without deviation from the norm, progress is not possible.
+--Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv--
