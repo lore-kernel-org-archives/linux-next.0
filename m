@@ -1,73 +1,79 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm-tegra tree
-Date: Mon, 4 Feb 2019 08:30:03 +0100
-Message-ID: <20190204073003.GB16448@ulmo>
-References: <20190204111241.278b6215@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: Fixes tags need some work in the drm tree
+Date: Mon, 4 Feb 2019 10:13:32 +0100
+Message-ID: <20190204091332.GJ3271@phenom.ffwll.local>
+References: <20190201105736.1428c9fc@canb.auug.org.au>
+ <CAKMK7uGf7X3m3Hp1r3-RSrKvGqsJK61WAMQ7goFP_28GAieP2w@mail.gmail.com>
+ <CADnq5_O3rGYGi95pB_0-xxODpcKYdB_ZaHcNS9zzBRGorE2oMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190204111241.278b6215@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+In-Reply-To: <CADnq5_O3rGYGi95pB_0-xxODpcKYdB_ZaHcNS9zzBRGorE2oMg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Leo Li <sunpeng.li@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Kent Russell <kent.russell@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Ken Chalmers <ken.chalmers@amd.com>
 List-Id: linux-next.vger.kernel.org
 
-
---1UWUbFP1cBYEclgG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 04, 2019 at 11:12:41AM +1100, Stephen Rothwell wrote:
-> Hi Thierry,
->=20
-> After merging the drm-tegra tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/gpu/host1x/cdma.c: In function 'host1x_cdma_wait_pushbuffer_space=
-':
-> drivers/gpu/host1x/cdma.c:279:13: error: 'struct host1x_cdma' has no memb=
-er named 'sem'
->    down(&cdma->sem);
->              ^~
->=20
-> Caused by commit
->=20
->   abb289796799 ("gpu: host1x: Use completion instead of semaphore")
->=20
-> interacting with commit
->=20
->   db5652be58a9 ("gpu: host1x: Introduce support for wide opcodes")
->=20
-> I have used the drm-tegra tree from next-20190201 for today.
-
-Oh my... so I go through all the build testing and then pull in the
-seemlessly harmless fix and ruin everything...
-
-I've fixed it up in my tree now, thanks.
-
-Thierry
-
---1UWUbFP1cBYEclgG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxX6fsACgkQ3SOs138+
-s6HwkA/+NQ62abvdo/YP6rg2FdIQbFVodcXKOf0wvWAE//O6xdEFtHghQaHbzkn1
-jp+Guv8Y6/mEnHHfbsTE+OUXh1AyRJ0BOq6t7saVA3hiV81IQAuGwSWaV9C/i5dQ
-8aRGgkIeegxrECAL4i1+B+EkdZbMif1zZ3fypydI13kdQvl04gUHGl+iKYxwQWJg
-rX2dRHbBVbODb6X9PwEslEWfm1ArAAy6z+I98J7sMQ5BLSGqzsD29KxyUR4x107R
-g+I6JFz4Djy0SAM+b/h66jyn7fvy3kvpvknOj/9+0sWatGlNUVOKhWcwMww+rg69
-cdVPKDrPYm7Eoq7Wf+OHKaXvvqa3yKJudwDW+q8IKU4Aup2/WbKyvog+onJoOdmA
-sdUWJ6+XN+7ln5jsY/gwRE0m4Kk7BMLGcwS356Qxun0Ygiy+Dh4igauZV/4hJBKm
-vk/wmUEnxzuk4Ffl+jYGynQT/rSVWpxaL1FdsBuh7QrkONPgcPQjma+LuiNV0y9y
-DsRuCGY2kTCWlAKO+FH9YkMrkvI++Bcc61qzAzK7o6+pWeOavtjcwMCIMOte2meQ
-2DZ50Mi6RA03TEqj4bIutXzY8k61/5z93AJWYJddgyJUMZs0sT4SInvs7X0N8lVZ
-ALcvMp8YnrcpxrhlspKABowfVm9o6IG0cuj9O+K6wTAEp4EcR98=
-=aLFD
------END PGP SIGNATURE-----
-
---1UWUbFP1cBYEclgG--
+T24gRnJpLCBGZWIgMDEsIDIwMTkgYXQgMDM6MzQ6NDZQTSAtMDUwMCwgQWxleCBEZXVjaGVyIHdy
+b3RlOgo+IE9uIEZyaSwgRmViIDEsIDIwMTkgYXQgNTowNSBBTSBEYW5pZWwgVmV0dGVyIDxkYW5p
+ZWxAZmZ3bGwuY2g+IHdyb3RlOgo+ID4KPiA+IE9uIEZyaSwgRmViIDEsIDIwMTkgYXQgMTI6NTcg
+QU0gU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+IHdyb3RlOgo+ID4gPgo+
+ID4gPiBIaSBhbGwsCj4gPiA+Cj4gPiA+IEluIGNvbW1pdAo+ID4gPgo+ID4gPiAgIGE5MzU4N2Iz
+MWUzNCAoImRybS9hbWQvZGlzcGxheTogT25seSBnZXQgdGhlIGNvbm5lY3RvciBzdGF0ZSBmb3Ig
+VlJSIHdoZW4gdG9nZ2xlZCIpCj4gPiA+Cj4gPiA+IEZpeGVzIHRhZwo+ID4gPgo+ID4gPiAgIEZp
+eGVzOiAzY2MyMmYyODEzMTggKCJkcm0vYW1kZ3B1OiBTZXQgRnJlZVN5bmMgc3RhdGUgdXNpbmcg
+ZHJtIFZSUiBwcm9wZXJ0aWVzIikKPiA+ID4KPiA+ID4gaGFzIHRoZXNlIHByb2JsZW0ocyk6Cj4g
+PiA+Cj4gPiA+ICAgLSBUYXJnZXQgU0hBMSBkb2VzIG5vdCBleGlzdAo+ID4gPgo+ID4gPiBNYXli
+ZSBpbnN0ZWFkOgo+ID4gPgo+ID4gPiAgIEZJeGVzOiBiYjQ3ZGU3MzY2NjEgKCJkcm0vYW1kZ3B1
+OiBTZXQgRnJlZVN5bmMgc3RhdGUgdXNpbmcgZHJtIFZSUiBwcm9wZXJ0aWVzIikKPiA+ID4KPiA+
+ID4gSW4gY29tbWl0Cj4gPiA+Cj4gPiA+ICAgMzJlNjEzNjFiODJlICgiZHJtL2FtZC9kaXNwbGF5
+OiBGaXggNjQtYml0IGRpdmlzaW9uIGZvciAzMi1iaXQgYnVpbGRzIikKPiA+ID4KPiA+ID4gRml4
+ZXMgdGFnCj4gPiA+Cj4gPiA+ICAgRml4ZXM6IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE4LURlY2VtYmVyLzIwMTAwOC5odG1sCj4gPiA+Cj4gPiA+
+IGhhcyB0aGVzZSBwcm9ibGVtKHMpOgo+ID4gPgo+ID4gPiAgIC0gTm8gU0hBMSByZWNvZ25pc2Vk
+Cj4gPiA+Cj4gPiA+IE1heWJlIGluc3RlYWQ6Cj4gPiA+Cj4gPiA+ICAgRml4ZXM6IDgwNjA0ZTI3
+YmM5ICgiZHJtL2FtZC9kaXNwbGF5OiBVc2UgMTAwIEh6IHByZWNpc2lvbiBmb3IgcGlwZSBwaXhl
+bCBjbG9ja3MiKQo+ID4gPgo+ID4gPiBJbiBjb21taXQKPiA+ID4KPiA+ID4gICBjNDMxMmMyN2M4
+MjYgKCJkcm0vYW1kZ3B1OiBDbGVhbnVwIDIgY29tcGlsZXIgd2FybmluZ3MiKQo+ID4gPgo+ID4g
+PiBGaXhlcyB0YWcKPiA+ID4KPiA+ID4gICBGaXhlczogZTRhZTBmYyBkcm0vYW1kZ3B1OiBpbXBs
+ZW1lbnQgZ2Z4OCBwb3N0X3NvZnRfcmVzZXQKPiA+ID4KPiA+ID4gaGFzIHRoZXNlIHByb2JsZW0o
+cyk6Cj4gPiA+Cj4gPiA+ICAgLSBTSEExIHNob3VsZCBiZSBhdCBsZWFzdCAxMiBkaWdpdHMgbG9u
+Zwo+ID4gPiAgICAgQ2FuIGJlIGZpeGVkIGJ5IHNldHRpbmcgY29yZS5hYmJyZXYgdG8gMTIgKG9y
+IG1vcmUpIG9yIChmb3IgZ2l0IHYyLjExCj4gPiA+ICAgICBvciBsYXRlcikganVzdCBtYWtpbmcg
+c3VyZSBpdCBpcyBub3Qgc2V0IChvciBzZXQgdG8gImF1dG8iKS4KPiA+ID4KPiA+ID4gRml4ZXMg
+dGFnCj4gPiA+Cj4gPiA+ICAgRml4ZXM6IDVlMDFjMDkgZHJtL2FtZGdwdS9nZnhfdjhfMDogUmVv
+cmRlciB0aGUgZ2Z4LCBraXEgYW5kIGtjcSByaW5ncwo+ID4gPgo+ID4gPiBoYXMgdGhlc2UgcHJv
+YmxlbShzKToKPiA+ID4KPiA+ID4gICAtIFRhcmdldCBTSEExIGRvZXMgbm90IGV4aXN0Cj4gPiA+
+Cj4gPiA+IE1heWJlIGluc3RlYWQ6Cj4gPiA+Cj4gPiA+ICAgRml4ZXM6IGM2MDY0ZGU0YjczNCAo
+ImRybS9hbWRncHUvZ2Z4X3Y4XzA6IFJlb3JkZXIgdGhlIGdmeCwga2lxIGFuZCBrY3EgcmluZ3Mg
+dGVzdCBzZXF1ZW5jZSIpCj4gPgo+ID4gWWVhaCB0aGUgdG9wIDcxIGNvbW1pdHMgaW4gdGhlIGxh
+dGVzdCBhbWRncHUgcHVsbCBnb3QgcmViYXNlZCwgd2hpY2gKPiA+IGlzIGEgYml0IG11Y2guIFdo
+ZXJlIGFyZSB3ZSB3aXRoIHRoZSAiZGlyZWN0IGdyb3VwIGNvbW1pdCwgbm8gbW9yZQo+ID4gcmVi
+YXNlcyIgcHJvamVjdCBmb3IgYW1kPyBTdGlsbCBzdHVjayBvbiBDSSB0cm91Ymxlcz8KPiAKPiBJ
+biBmYWlybmVzcywgc29tZSBvZiB0aGUgcmViYXNpbmcgd2FzIHRvIHNxdWFzaCBpbiBzb21lIGJ1
+ZyBmaXhlcyB0bwo+IGhlbHAgd2l0aCBiaXNlY3RpbmcuICBBcyB0byBkaXJlY3QgY29tbWl0LCBu
+b3QgZW5vdWdoIGludGVybmFsCj4gcHJpb3JpdHkgYXQgdGhlIG1vbWVudCBhbmQgdG9vIG1hbnkg
+b3RoZXIgcHJvamVjdHMuICBJJ2xsIHRyeSB0bwo+IGRvdWJsZSBjaGVjayB0aGVtIGJldHRlciBn
+b2luZyBmb3J3YXJkLgoKWWVhaCBJIHRoaW5rIGludGVybmFsIHByaW9yaXRpeSBpcyBwcm9iYWJs
+eSBub3QgZ29pbmcgdG8gaGFwcGVuLiBUaGUKYmVuZWZpdCBpbW8gaXMgbXVjaCBtb3JlIGZvciBl
+dmVyeW9uZSBlbHNlLCBzaW5jZSBpdCByZXF1aXJlcyBhIG1vcmUKb3BlbiZ0cmFuc3BhcmVudCBw
+cm9jZXNzLiBFLmcuIGZvciBkcm0taW50ZWwgYSBiaWcgcmVhc29uIGZvciB0aGUgcHVibGljCkNJ
+IHJlc3VsdHMgaXMgdGhhdCB3ZSBjYW4gbWFrZSB0aGUgY29tbWl0dGVyIG1vZGVsIHdvcmsgZm9y
+IGV4dGVybmFsCnBlb3BsZSAod2hpY2ggd2UgZG8gaGF2ZSkuIEhlbmNlIG15IHJlZ3VsYXIgbmFn
+cyBmcm9tIG1lIHdpdGggbXkgdXBzdHJlYW0KY29tbXVuaXR5IGhhdCBvbiwgYW5kIEFNRCBkZWZp
+bml0ZWx5IGNhbiBkbyB0aGlzICh2aXogcmFkZW9uc2kpLgoKQ2hlZXJzLCBEYW5pZWwKLS0gCkRh
+bmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9i
+bG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
