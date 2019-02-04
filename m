@@ -1,83 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Mon, 4 Feb 2019 15:32:54 +1100
-Message-ID: <20190204153254.78c4be0e@canb.auug.org.au>
-References: <20190204104427.0c0da12d@canb.auug.org.au>
-        <20190203.202606.1052226767975507689.davem@davemloft.net>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 4 Feb 2019 15:34:46 +1100
+Message-ID: <20190204153446.03ffb5e4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m=qz5rF8O7JV5Nu.bpNzkcs"; protocol="application/pgp-signature"
+ boundary="Sig_/p4WyhcwF87_CCDBil/U8v7g"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190203.202606.1052226767975507689.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, deepa.kernel@gmail.com, gustavo@embeddedor.com, keescook@chromium.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Deepa Dinamani <deepa.kernel@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/m=qz5rF8O7JV5Nu.bpNzkcs
+--Sig_/p4WyhcwF87_CCDBil/U8v7g
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-On Sun, 03 Feb 2019 20:26:06 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> Thanks, I just pushed the following:
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [PATCH] net: Fix fall through warning in y2038 tstamp changes.
->=20
-> net/core/sock.c: In function 'sock_setsockopt':
-> net/core/sock.c:914:3: warning: this statement may fall through [-Wimplic=
-it-fallthrough=3D]
->    sock_set_flag(sk, SOCK_TSTAMP_NEW);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> net/core/sock.c:915:2: note: here
->   case SO_TIMESTAMPING_OLD:
->   ^~~~
->=20
-> Fixes: 9718475e6908 ("socket: Add SO_TIMESTAMPING_NEW")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> ---
->  net/core/sock.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index a8904ae40713..71ded4d8025c 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -912,6 +912,7 @@ int sock_setsockopt(struct socket *sock, int level, i=
-nt optname,
-> =20
->  	case SO_TIMESTAMPING_NEW:
->  		sock_set_flag(sk, SOCK_TSTAMP_NEW);
-> +		/* fall through */
->  	case SO_TIMESTAMPING_OLD:
->  		if (val & ~SOF_TIMESTAMPING_MASK) {
->  			ret =3D -EINVAL;
+After merging the net-next tree, today's linux-next build (sparc64
+defconfig) failed like this:
 
-Looks good, thanks.
+/home/sfr/next/next/net/core/sock.c: In function 'sock_setsockopt':
+/home/sfr/next/next/net/core/sock.c:1146:2: error: duplicate case value
+  case SO_BINDTOIFINDEX:
+  ^~~~
+/home/sfr/next/next/net/core/sock.c:891:2: note: previously used here
+  case SO_TIMESTAMP_NEW:
+  ^~~~
+/home/sfr/next/next/net/core/sock.c: In function 'sock_getsockopt':
+/home/sfr/next/next/net/core/sock.c:1493:2: error: duplicate case value
+  case SO_BINDTOIFINDEX:
+  ^~~~
+/home/sfr/next/next/net/core/sock.c:1293:2: note: previously used here
+  case SO_TIMESTAMP_NEW:
+  ^~~~
+
+Caused by commit
+
+  887feae36aee ("socket: Add SO_TIMESTAMP[NS]_NEW")
+
+I applied the following fix patch (I just update the clashing id rather
+than update them all, but the latter may be better).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 4 Feb 2019 15:24:11 +1100
+Subject: [PATCH] socket: fix for Add SO_TIMESTAMP[NS]_NEW
+
+Fixes: 887feae36aee ("socket: Add SO_TIMESTAMP[NS]_NEW")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/include/uapi/asm/socket.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sparc/include/uapi/asm/socket.h b/arch/sparc/include/uapi=
+/asm/socket.h
+index 8c9f74a66b55..88fe4f978aca 100644
+--- a/arch/sparc/include/uapi/asm/socket.h
++++ b/arch/sparc/include/uapi/asm/socket.h
+@@ -108,7 +108,7 @@
+ #define SO_TIMESTAMPNS_OLD       0x0021
+ #define SO_TIMESTAMPING_OLD      0x0023
+=20
+-#define SO_TIMESTAMP_NEW         0x0041
++#define SO_TIMESTAMP_NEW         0x0046
+ #define SO_TIMESTAMPNS_NEW       0x0042
+ #define SO_TIMESTAMPING_NEW      0x0043
+=20
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/m=qz5rF8O7JV5Nu.bpNzkcs
+--Sig_/p4WyhcwF87_CCDBil/U8v7g
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXwHYACgkQAVBC80lX
-0GyUOQf/S+6wsCBMEa5p7LrVjgNrMtBCFvStxozA0593II7hsmGHAEw/kmgzB3mG
-4+UeSW9wiCp+fhWNXtsI6YderQQ+lmCgv9wetMR00+0uyBndfvXh3slYBo4zKEdC
-hRpb5RxF7+6zKcwBYgYXCO/RLVafq0jKvNr4sh4Rj2oE9bru9rolfGgWEcA1alLB
-qsqklV008rsBVJHq8kh/LlRijLc59oMr59w88Kfv8w1YRWVdw9Fa5XVppfmQ2a9m
-jRrzhAtlbawHmArZ4wMeSv5RgQ0qyb7PSsMmCXMYYBvTkjKweeIT+sElZ0MFzaco
-ZQsKQaI8Os9hjKJnlH4+K6aum2P1VA==
-=phMT
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXwOYACgkQAVBC80lX
+0GxRzgf+Mua9He8p3RVJFI8H+Newl2TzzXODR3x+tqg6QAUFC6Nx2XsEW35LIl//
+eEER5nBqeSyEFIw5GKFfIZ6OmPbqXTZa+YcAuQelxb6rTvYsMepVBSGa41grL52T
+jTGmSCkr6BW+sHmirM3DRbzzuCS8tBddcsZCF8IgEJzOaDvOr46Fs2qPUcWK2Z+B
+muYQArx2V0wnI8zDec0pvxpgs7g/b1vvMUKPXMfjMWhduQnrBKEVHjnDPez9sXHa
+j9jbBbI6I2oiOsWxm1LOAUvVLffw3SZstk4odTrxOfPke6/wpzlp6gN5xhqjRtGN
+Xrv9xdBtXCfzmdVb8TdwukGr1JwB1A==
+=TCyT
 -----END PGP SIGNATURE-----
 
---Sig_/m=qz5rF8O7JV5Nu.bpNzkcs--
+--Sig_/p4WyhcwF87_CCDBil/U8v7g--
