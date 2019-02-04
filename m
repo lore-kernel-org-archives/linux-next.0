@@ -1,79 +1,42 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: Fixes tags need some work in the drm tree
-Date: Mon, 4 Feb 2019 10:13:32 +0100
-Message-ID: <20190204091332.GJ3271@phenom.ffwll.local>
-References: <20190201105736.1428c9fc@canb.auug.org.au>
- <CAKMK7uGf7X3m3Hp1r3-RSrKvGqsJK61WAMQ7goFP_28GAieP2w@mail.gmail.com>
- <CADnq5_O3rGYGi95pB_0-xxODpcKYdB_ZaHcNS9zzBRGorE2oMg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CADnq5_O3rGYGi95pB_0-xxODpcKYdB_ZaHcNS9zzBRGorE2oMg@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Leo Li <sunpeng.li@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Kent Russell <kent.russell@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Ken Chalmers <ken.chalmers@amd.com>
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH v2 -next 1/2] genirq: export irq_chip_set_wake_parent symbol
+Date: Mon,  4 Feb 2019 04:58:52 -0500
+Message-ID: <20190204095853.12212-1-masneyb@onstation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, tglx@linutronix.de, marc.zyngier@arm.com
+Cc: andy.gross@linaro.org, sboyd@kernel.org, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-T24gRnJpLCBGZWIgMDEsIDIwMTkgYXQgMDM6MzQ6NDZQTSAtMDUwMCwgQWxleCBEZXVjaGVyIHdy
-b3RlOgo+IE9uIEZyaSwgRmViIDEsIDIwMTkgYXQgNTowNSBBTSBEYW5pZWwgVmV0dGVyIDxkYW5p
-ZWxAZmZ3bGwuY2g+IHdyb3RlOgo+ID4KPiA+IE9uIEZyaSwgRmViIDEsIDIwMTkgYXQgMTI6NTcg
-QU0gU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+IHdyb3RlOgo+ID4gPgo+
-ID4gPiBIaSBhbGwsCj4gPiA+Cj4gPiA+IEluIGNvbW1pdAo+ID4gPgo+ID4gPiAgIGE5MzU4N2Iz
-MWUzNCAoImRybS9hbWQvZGlzcGxheTogT25seSBnZXQgdGhlIGNvbm5lY3RvciBzdGF0ZSBmb3Ig
-VlJSIHdoZW4gdG9nZ2xlZCIpCj4gPiA+Cj4gPiA+IEZpeGVzIHRhZwo+ID4gPgo+ID4gPiAgIEZp
-eGVzOiAzY2MyMmYyODEzMTggKCJkcm0vYW1kZ3B1OiBTZXQgRnJlZVN5bmMgc3RhdGUgdXNpbmcg
-ZHJtIFZSUiBwcm9wZXJ0aWVzIikKPiA+ID4KPiA+ID4gaGFzIHRoZXNlIHByb2JsZW0ocyk6Cj4g
-PiA+Cj4gPiA+ICAgLSBUYXJnZXQgU0hBMSBkb2VzIG5vdCBleGlzdAo+ID4gPgo+ID4gPiBNYXli
-ZSBpbnN0ZWFkOgo+ID4gPgo+ID4gPiAgIEZJeGVzOiBiYjQ3ZGU3MzY2NjEgKCJkcm0vYW1kZ3B1
-OiBTZXQgRnJlZVN5bmMgc3RhdGUgdXNpbmcgZHJtIFZSUiBwcm9wZXJ0aWVzIikKPiA+ID4KPiA+
-ID4gSW4gY29tbWl0Cj4gPiA+Cj4gPiA+ICAgMzJlNjEzNjFiODJlICgiZHJtL2FtZC9kaXNwbGF5
-OiBGaXggNjQtYml0IGRpdmlzaW9uIGZvciAzMi1iaXQgYnVpbGRzIikKPiA+ID4KPiA+ID4gRml4
-ZXMgdGFnCj4gPiA+Cj4gPiA+ICAgRml4ZXM6IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE4LURlY2VtYmVyLzIwMTAwOC5odG1sCj4gPiA+Cj4gPiA+
-IGhhcyB0aGVzZSBwcm9ibGVtKHMpOgo+ID4gPgo+ID4gPiAgIC0gTm8gU0hBMSByZWNvZ25pc2Vk
-Cj4gPiA+Cj4gPiA+IE1heWJlIGluc3RlYWQ6Cj4gPiA+Cj4gPiA+ICAgRml4ZXM6IDgwNjA0ZTI3
-YmM5ICgiZHJtL2FtZC9kaXNwbGF5OiBVc2UgMTAwIEh6IHByZWNpc2lvbiBmb3IgcGlwZSBwaXhl
-bCBjbG9ja3MiKQo+ID4gPgo+ID4gPiBJbiBjb21taXQKPiA+ID4KPiA+ID4gICBjNDMxMmMyN2M4
-MjYgKCJkcm0vYW1kZ3B1OiBDbGVhbnVwIDIgY29tcGlsZXIgd2FybmluZ3MiKQo+ID4gPgo+ID4g
-PiBGaXhlcyB0YWcKPiA+ID4KPiA+ID4gICBGaXhlczogZTRhZTBmYyBkcm0vYW1kZ3B1OiBpbXBs
-ZW1lbnQgZ2Z4OCBwb3N0X3NvZnRfcmVzZXQKPiA+ID4KPiA+ID4gaGFzIHRoZXNlIHByb2JsZW0o
-cyk6Cj4gPiA+Cj4gPiA+ICAgLSBTSEExIHNob3VsZCBiZSBhdCBsZWFzdCAxMiBkaWdpdHMgbG9u
-Zwo+ID4gPiAgICAgQ2FuIGJlIGZpeGVkIGJ5IHNldHRpbmcgY29yZS5hYmJyZXYgdG8gMTIgKG9y
-IG1vcmUpIG9yIChmb3IgZ2l0IHYyLjExCj4gPiA+ICAgICBvciBsYXRlcikganVzdCBtYWtpbmcg
-c3VyZSBpdCBpcyBub3Qgc2V0IChvciBzZXQgdG8gImF1dG8iKS4KPiA+ID4KPiA+ID4gRml4ZXMg
-dGFnCj4gPiA+Cj4gPiA+ICAgRml4ZXM6IDVlMDFjMDkgZHJtL2FtZGdwdS9nZnhfdjhfMDogUmVv
-cmRlciB0aGUgZ2Z4LCBraXEgYW5kIGtjcSByaW5ncwo+ID4gPgo+ID4gPiBoYXMgdGhlc2UgcHJv
-YmxlbShzKToKPiA+ID4KPiA+ID4gICAtIFRhcmdldCBTSEExIGRvZXMgbm90IGV4aXN0Cj4gPiA+
-Cj4gPiA+IE1heWJlIGluc3RlYWQ6Cj4gPiA+Cj4gPiA+ICAgRml4ZXM6IGM2MDY0ZGU0YjczNCAo
-ImRybS9hbWRncHUvZ2Z4X3Y4XzA6IFJlb3JkZXIgdGhlIGdmeCwga2lxIGFuZCBrY3EgcmluZ3Mg
-dGVzdCBzZXF1ZW5jZSIpCj4gPgo+ID4gWWVhaCB0aGUgdG9wIDcxIGNvbW1pdHMgaW4gdGhlIGxh
-dGVzdCBhbWRncHUgcHVsbCBnb3QgcmViYXNlZCwgd2hpY2gKPiA+IGlzIGEgYml0IG11Y2guIFdo
-ZXJlIGFyZSB3ZSB3aXRoIHRoZSAiZGlyZWN0IGdyb3VwIGNvbW1pdCwgbm8gbW9yZQo+ID4gcmVi
-YXNlcyIgcHJvamVjdCBmb3IgYW1kPyBTdGlsbCBzdHVjayBvbiBDSSB0cm91Ymxlcz8KPiAKPiBJ
-biBmYWlybmVzcywgc29tZSBvZiB0aGUgcmViYXNpbmcgd2FzIHRvIHNxdWFzaCBpbiBzb21lIGJ1
-ZyBmaXhlcyB0bwo+IGhlbHAgd2l0aCBiaXNlY3RpbmcuICBBcyB0byBkaXJlY3QgY29tbWl0LCBu
-b3QgZW5vdWdoIGludGVybmFsCj4gcHJpb3JpdHkgYXQgdGhlIG1vbWVudCBhbmQgdG9vIG1hbnkg
-b3RoZXIgcHJvamVjdHMuICBJJ2xsIHRyeSB0bwo+IGRvdWJsZSBjaGVjayB0aGVtIGJldHRlciBn
-b2luZyBmb3J3YXJkLgoKWWVhaCBJIHRoaW5rIGludGVybmFsIHByaW9yaXRpeSBpcyBwcm9iYWJs
-eSBub3QgZ29pbmcgdG8gaGFwcGVuLiBUaGUKYmVuZWZpdCBpbW8gaXMgbXVjaCBtb3JlIGZvciBl
-dmVyeW9uZSBlbHNlLCBzaW5jZSBpdCByZXF1aXJlcyBhIG1vcmUKb3BlbiZ0cmFuc3BhcmVudCBw
-cm9jZXNzLiBFLmcuIGZvciBkcm0taW50ZWwgYSBiaWcgcmVhc29uIGZvciB0aGUgcHVibGljCkNJ
-IHJlc3VsdHMgaXMgdGhhdCB3ZSBjYW4gbWFrZSB0aGUgY29tbWl0dGVyIG1vZGVsIHdvcmsgZm9y
-IGV4dGVybmFsCnBlb3BsZSAod2hpY2ggd2UgZG8gaGF2ZSkuIEhlbmNlIG15IHJlZ3VsYXIgbmFn
-cyBmcm9tIG1lIHdpdGggbXkgdXBzdHJlYW0KY29tbXVuaXR5IGhhdCBvbiwgYW5kIEFNRCBkZWZp
-bml0ZWx5IGNhbiBkbyB0aGlzICh2aXogcmFkZW9uc2kpLgoKQ2hlZXJzLCBEYW5pZWwKLS0gCkRh
-bmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9i
-bG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Export the irq_chip_set_wake_parent symbol so that drivers with
+hierarchical IRQ chips can be built as a module.
+
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+This fixes a build failure in linux-next's spmi-gpio when using
+allmodconfig. See https://www.spinics.net/lists/linux-next/msg46362.html
+for Mark's message.
+
+Changes since v1:
+- Moved message about build failure out of the commit message and into
+  the notes field.
+
+ kernel/irq/chip.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 34e969069488..086d5a34b5a0 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1381,6 +1381,7 @@ int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
+ 
+ 	return -ENOSYS;
+ }
++EXPORT_SYMBOL_GPL(irq_chip_set_wake_parent);
+ #endif
+ 
+ /**
+-- 
+2.17.2
