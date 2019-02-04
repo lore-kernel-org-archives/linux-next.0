@@ -1,59 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-tegra tree
-Date: Mon, 4 Feb 2019 11:12:41 +1100
-Message-ID: <20190204111241.278b6215@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Sun, 03 Feb 2019 20:26:06 -0800 (PST)
+Message-ID: <20190203.202606.1052226767975507689.davem@davemloft.net>
+References: <20190204104427.0c0da12d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vuFuZpYzUppTel1lu9266P2"; protocol="application/pgp-signature"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190204104427.0c0da12d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, deepa.kernel@gmail.com, gustavo@embeddedor.com, keescook@chromium.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vuFuZpYzUppTel1lu9266P2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 4 Feb 2019 10:44:27 +1100
 
-Hi Thierry,
+> After merging the net-next tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> net/core/sock.c: In function 'sock_setsockopt':
+> net/core/sock.c:914:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    sock_set_flag(sk, SOCK_TSTAMP_NEW);
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> net/core/sock.c:915:2: note: here
+>   case SO_TIMESTAMPING_OLD:
+>   ^~~~
+> 
+> Introduced by commit
+> 
+>   9718475e6908 ("socket: Add SO_TIMESTAMPING_NEW")
 
-After merging the drm-tegra tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Thanks, I just pushed the following:
 
-drivers/gpu/host1x/cdma.c: In function 'host1x_cdma_wait_pushbuffer_space':
-drivers/gpu/host1x/cdma.c:279:13: error: 'struct host1x_cdma' has no member=
- named 'sem'
-   down(&cdma->sem);
-             ^~
+====================
+[PATCH] net: Fix fall through warning in y2038 tstamp changes.
 
-Caused by commit
+net/core/sock.c: In function 'sock_setsockopt':
+net/core/sock.c:914:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   sock_set_flag(sk, SOCK_TSTAMP_NEW);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+net/core/sock.c:915:2: note: here
+  case SO_TIMESTAMPING_OLD:
+  ^~~~
 
-  abb289796799 ("gpu: host1x: Use completion instead of semaphore")
+Fixes: 9718475e6908 ("socket: Add SO_TIMESTAMPING_NEW")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ net/core/sock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-interacting with commit
-
-  db5652be58a9 ("gpu: host1x: Introduce support for wide opcodes")
-
-I have used the drm-tegra tree from next-20190201 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vuFuZpYzUppTel1lu9266P2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXg3kACgkQAVBC80lX
-0GwI8wf+LvaaP1f9ZFNpFhIxJODXYdI7c7W3nDdHP98jBZNCqOIncX+NIDl5MJPG
-IqQd4MzqijCIjR1+i+PsHwXi2lNCbvZRum0DQYpBKOmRUx3KkLF1bnO8TyiekLLx
-doSjwKRK+7PF9AnQH9sd/pLzLOSc7MTR81fTsFU/fJHdySkJVae+otJf8ZzD7e8/
-KnftByXw5KrM4e+PHnZXI+mIcU3hr5q0WjP4bGYfdG6tQwMH7mzpI+t9xoPMkVds
-+izkY87r277gPbs7oapCcRUqcirB7Gy3LRwGIs1wUKP70ojqIjGs62sE1m7clWi5
-f/BtCRHsgjYhmoBdvJcrkgY0xgHY/A==
-=Cr3E
------END PGP SIGNATURE-----
-
---Sig_/vuFuZpYzUppTel1lu9266P2--
+diff --git a/net/core/sock.c b/net/core/sock.c
+index a8904ae40713..71ded4d8025c 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -912,6 +912,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+ 
+ 	case SO_TIMESTAMPING_NEW:
+ 		sock_set_flag(sk, SOCK_TSTAMP_NEW);
++		/* fall through */
+ 	case SO_TIMESTAMPING_OLD:
+ 		if (val & ~SOF_TIMESTAMPING_MASK) {
+ 			ret = -EINVAL;
+-- 
+2.20.1
