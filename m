@@ -1,61 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net-next tree
-Date: Mon, 4 Feb 2019 10:44:27 +1100
-Message-ID: <20190204104427.0c0da12d@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the crypto tree
+Date: Mon, 4 Feb 2019 11:01:06 +1100
+Message-ID: <20190204110106.345c3e21@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/C9aL6jcq7mIw1XNb2++WJs3"; protocol="application/pgp-signature"
+ boundary="Sig_/1lqagE=XXd0DpGg6hohh3uM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Deepa Dinamani <deepa.kernel@gmail.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/C9aL6jcq7mIw1XNb2++WJs3
+--Sig_/1lqagE=XXd0DpGg6hohh3uM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Herbert,
 
-After merging the net-next tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+After merging the crypto tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-net/core/sock.c: In function 'sock_setsockopt':
-net/core/sock.c:914:3: warning: this statement may fall through [-Wimplicit=
--fallthrough=3D]
-   sock_set_flag(sk, SOCK_TSTAMP_NEW);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-net/core/sock.c:915:2: note: here
-  case SO_TIMESTAMPING_OLD:
-  ^~~~
+drivers/crypto/qat/qat_common/adf_transport.c: In function 'adf_init_etr_da=
+ta':
+drivers/crypto/qat/qat_common/adf_transport.c:501:1: warning: label 'err_ba=
+nk_debug' defined but not used [-Wunused-label]
+ err_bank_debug:
+ ^~~~~~~~~~~~~~
 
 Introduced by commit
 
-  9718475e6908 ("socket: Add SO_TIMESTAMPING_NEW")
-
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
+  f0fcf9ade46a ("crypto: qat - no need to check return value of debugfs_cre=
+ate functions")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/C9aL6jcq7mIw1XNb2++WJs3
+--Sig_/1lqagE=XXd0DpGg6hohh3uM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXfNsACgkQAVBC80lX
-0Gz0Uwf9FnoKSsHxIa47p9mNaxkWAOdMvaoCj4Ug9JusbzXgaM7Y5WVePkXrrYmx
-TOPQila3eDKRURwlfJiZoQVPC9ZqRTuY8+3/EnN+FV+B8i19BN7NESITZoCoTSgm
-ACFDqjDCW42YpEJQ/Anv2p0yEbGVc0V681XmKnlhUzShndsuhacKtG70hgUOJano
-O2fsmzaX+9ttYGW8vIUbqucrD2M52THSZBWTkmZHz+HkJNOh4+MzBdfGijILxqvO
-cAXOGR3O8gfAzsV1tc6f+C2BEz9SXFAgGZhIV3+uSVllpb48yltOuVTP2wF7EGc3
-BI9w0nRZWxu92MC3WmfEgTuQzlEmsQ==
-=NpVH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXgMIACgkQAVBC80lX
+0Gz9PQf+KalnOtLSHQ1AxBFmCNlj1d9Pp/xkZRqGfWaRLFaMWoSRnkK/zgWwdhmO
+pGuWRbTTfhh4TK5elG8Za+z8rIgIoSNxip7d9su4wda+KJey8yWbOD2bGLAr2618
+lkJXX7+rLo9RKvNlx4HSfDsCU9VN12HVVqYM0ot5FIJqg8c3ucYe+vkdjgLG7PQE
+37JctlpAxNC68k3PzplupRnjInrpryWVO4ifWxHsbr7cx0NLISW+XVQ4R8kvH9Ae
+TnPZ2mkpqSD4AUFgqdEPoBU8qE1y+8EsXg9IAINou+6F5giHNjTZs443XU2tHOqD
+YttzCnhQ8XiDSHriUCPyu7ROseysUg==
+=6G/t
 -----END PGP SIGNATURE-----
 
---Sig_/C9aL6jcq7mIw1XNb2++WJs3--
+--Sig_/1lqagE=XXd0DpGg6hohh3uM--
