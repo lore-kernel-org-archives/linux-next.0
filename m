@@ -1,37 +1,35 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: linux-next: Tree for Feb 5 (btrfs/zstd)
-Date: Tue, 5 Feb 2019 19:25:44 +0100
-Message-ID: <20190205182543.GX2900@twin.jikos.cz>
-References: <20190205171228.41a9f771@canb.auug.org.au>
- <26ce21e5-0e3c-d847-c895-6cb166507441@infradead.org>
-Reply-To: dsterba@suse.cz
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: linux-next: Fixes tag needs some work in the origin tree
+Date: Tue, 05 Feb 2019 10:47:43 -0800 (PST)
+Message-ID: <mhng-d27cd6f4-522a-4666-a046-1803f6ee37c9@palmer-si-x1c4>
+References: <20190203083310.12b97619@canb.auug.org.au>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <26ce21e5-0e3c-d847-c895-6cb166507441@infradead.org>
+In-Reply-To: <20190203083310.12b97619@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Btrfs <linux-btrfs@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: schwab@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 05, 2019 at 09:40:40AM -0800, Randy Dunlap wrote:
-> On 2/4/19 10:12 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20190204:
-> > 
-> 
-> on i386:
-> 
-> ../fs/btrfs/zstd.c: In function ‘zstd_reclaim_timer_fn’:
-> ../fs/btrfs/zstd.c:27:35: warning: integer overflow in expression [-Woverflow]
->  #define ZSTD_BTRFS_RECLAIM_NS (45 * NSEC_PER_SEC)
->                                    ^
-> ../fs/btrfs/zstd.c:96:33: note: in expansion of macro ‘ZSTD_BTRFS_RECLAIM_NS’
->    if (now < victim->last_used + ZSTD_BTRFS_RECLAIM_NS)
+On Sat, 02 Feb 2019 13:33:10 PST (-0800), Stephen Rothwell wrote:
+> [Just a reminder for the future.]
+>
+> Hi all,
+>
+> In commit
+>
+>   2bb10639f12c ("RISC-V: fix bad use of of_node_put")
+>
+> Fixes tag
+>
+>   Fixes: 94f9bf118f ("RISC-V: Fix of_node_* refcount")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-Thanks for the report. There's a v2 of the patchset that uses the
-timer_after helper and this warning should be gone. The updated version
-will appear in for-next soonish.
+Thanks.  Is there a script I should be running to pre-check these?
