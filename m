@@ -1,70 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the staging tree
-Date: Tue, 5 Feb 2019 14:22:17 +1100
-Message-ID: <20190205142217.0c9ecabf@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2019-02-04-17-47 uploaded (fs/binfmt_elf.c)
+Date: Mon, 4 Feb 2019 20:26:43 -0800
+Message-ID: <08a894b1-66f6-19bf-67be-c9b7b1b01126@infradead.org>
+References: <20190205014806.rQcAx%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EQ1.i=fuU3alADHDwrjr6wj"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190205014806.rQcAx%akpm@linux-foundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tomasz Duszynski <tduszyns@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org, Richard Weinberger <richard@nod.at>, Alexey Dobriyan <adobriyan@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/EQ1.i=fuU3alADHDwrjr6wj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2/4/19 5:48 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-02-04-17-47 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (4.x
+> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
 
-Hi Greg,
+on x86_64 UML: (although should be many places)
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+../fs/binfmt_elf.c: In function ‘write_note_info’:
+../fs/binfmt_elf.c:2122:19: error: ‘tmp’ undeclared (first use in this function)
+   for (i = 0; i < tmp->num_notes; i++)
+                   ^
 
-drivers/iio/chemical/sps30.c: In function 'sps30_read_raw':
-drivers/iio/chemical/sps30.c:289:4: warning: this statement may fall throug=
-h [-Wimplicit-fallthrough=3D]
-    switch (chan->channel2) {
-    ^~~~~~
-drivers/iio/chemical/sps30.c:299:3: note: here
-   default:
-   ^~~~~~~
-drivers/iio/chemical/sps30.c: In function 'sps30_do_cmd':
-drivers/iio/chemical/sps30.c:120:10: warning: this statement may fall throu=
-gh [-Wimplicit-fallthrough=3D]
-   buf[1] =3D (u8)SPS30_AUTO_CLEANING_PERIOD;
-          ^
-drivers/iio/chemical/sps30.c:121:2: note: here
-  case SPS30_READ_DATA_READY_FLAG:
-  ^~~~
 
-Introduced by commits
 
-  232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sensor")
-  62129a0849d2 ("iio: chemical: sps30: allow changing self cleaning period")
-
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EQ1.i=fuU3alADHDwrjr6wj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxZAWkACgkQAVBC80lX
-0GxotQgAjjtxzjNI5j2QdRHhEKudzsyMoPybYe7Q6cZ08k80wARqQwUWJZY1zRwL
-W2MRlTp9RYnJCA8B7FS5pk6ifc1AvK2Wd+2d823ZT/1tS2K8m/YvNvP8YyBryeCP
-C0YCWY+gZSsavK9CBVrCJ4R05v8e5N5IMRT8iKyaYBLggGQDd3dGGPR4+Q8a9Cia
-Q0rx5vXM2cS0lfeJRgMKBbKDz5/8302fzUtQWSNMOSJ0amKAxZFoDGPucdCiYLSS
-YRqF+iAYBpmU9ZcbDlYd1qX0eDwPWAeq+kFRQ6Le3YYahMGE07EUH/PrmEoGcptV
-KlFkXCe8ZfTdyw1zENp2fCTfD/Yeog==
-=p4Jf
------END PGP SIGNATURE-----
-
---Sig_/EQ1.i=fuU3alADHDwrjr6wj--
+-- 
+~Randy
