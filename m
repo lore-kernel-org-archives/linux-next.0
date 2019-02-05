@@ -1,134 +1,135 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with the mips-fixes tree
-Date: Wed, 6 Feb 2019 09:17:36 +1100
-Message-ID: <20190206091736.73bd95ec@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the origin tree
+Date: Wed, 6 Feb 2019 09:42:55 +1100
+Message-ID: <20190206094255.771d4b21@canb.auug.org.au>
+References: <20190203083310.12b97619@canb.auug.org.au>
+        <mhng-d27cd6f4-522a-4666-a046-1803f6ee37c9@palmer-si-x1c4>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XXTD5u49pk6W=n13DKfhCzR"; protocol="application/pgp-signature"
+ boundary="Sig_/7aQn_VKWOsB7WEHTIZbd=2N"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <mhng-d27cd6f4-522a-4666-a046-1803f6ee37c9@palmer-si-x1c4>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huacai Chen <chenhc@lemote.com>, Paul Burton <paul.burton@mips.com>, Huang Pei <huangpei@loongson.cn>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: schwab@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/XXTD5u49pk6W=n13DKfhCzR
+--Sig_/7aQn_VKWOsB7WEHTIZbd=2N
+Content-Type: multipart/mixed; boundary="MP_/hlbs7XfKp0qruSndPV9NbbL"
+
+--MP_/hlbs7XfKp0qruSndPV9NbbL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Hi all,
+Hi Palmer,
 
-Today's linux-next merge of the mips tree got conflicts in:
+On Tue, 05 Feb 2019 10:47:43 -0800 (PST) Palmer Dabbelt <palmer@sifive.com>=
+ wrote:
+>
+> Thanks.  Is there a script I should be running to pre-check these?
 
-  arch/mips/include/asm/barrier.h
-  arch/mips/include/asm/pgtable.h
-
-between commit:
-
-  e02e07e3127d ("MIPS: Loongson: Introduce and use loongson_llsc_mb()")
-
-from the mips-fixes tree and commits:
-
-  535113896e80 ("MIPS: Add GINVT instruction helpers")
-  82f4f66ddf11 ("MIPS: Remove open-coded cmpxchg() in set_pte()")
-
-from the mips tree.
-
-I fixed it up (see below and for the latter file, I used the mips tree
-version but wondered if cmpxchg() needs the fixups from the mips-fixes
-tree commit) and can carry the fix as necessary. This is now fixed as
-far as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging. You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I run the attached script on each set of new commits that turn up.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/mips/include/asm/barrier.h
-index b7f6ac5e513c,b48ee2caf78d..000000000000
---- a/arch/mips/include/asm/barrier.h
-+++ b/arch/mips/include/asm/barrier.h
-@@@ -222,42 -236,11 +236,47 @@@
-  #define __smp_mb__before_atomic()	__smp_mb__before_llsc()
-  #define __smp_mb__after_atomic()	smp_llsc_mb()
- =20
- +/*
- + * Some Loongson 3 CPUs have a bug wherein execution of a memory access (=
-load,
- + * store or pref) in between an ll & sc can cause the sc instruction to
- + * erroneously succeed, breaking atomicity. Whilst it's unusual to write =
-code
- + * containing such sequences, this bug bites harder than we might otherwi=
-se
- + * expect due to reordering & speculation:
- + *
- + * 1) A memory access appearing prior to the ll in program order may actu=
-ally
- + *    be executed after the ll - this is the reordering case.
- + *
- + *    In order to avoid this we need to place a memory barrier (ie. a sync
- + *    instruction) prior to every ll instruction, in between it & any ear=
-lier
- + *    memory access instructions. Many of these cases are already covered=
- by
- + *    smp_mb__before_llsc() but for the remaining cases, typically ones in
- + *    which multiple CPUs may operate on a memory location but ordering i=
-s not
- + *    usually guaranteed, we use loongson_llsc_mb() below.
- + *
- + *    This reordering case is fixed by 3A R2 CPUs, ie. 3A2000 models and =
-later.
- + *
- + * 2) If a conditional branch exists between an ll & sc with a target out=
-side
- + *    of the ll-sc loop, for example an exit upon value mismatch in cmpxc=
-hg()
- + *    or similar, then misprediction of the branch may allow speculative
- + *    execution of memory accesses from outside of the ll-sc loop.
- + *
- + *    In order to avoid this we need a memory barrier (ie. a sync instruc=
-tion)
- + *    at each affected branch target, for which we also use loongson_llsc=
-_mb()
- + *    defined below.
- + *
- + *    This case affects all current Loongson 3 CPUs.
- + */
- +#ifdef CONFIG_CPU_LOONGSON3_WORKAROUNDS /* Loongson-3's LLSC workaround */
- +#define loongson_llsc_mb()	__asm__ __volatile__(__WEAK_LLSC_MB : : :"memo=
-ry")
- +#else
- +#define loongson_llsc_mb()	do { } while (0)
- +#endif
- +
-+ static inline void sync_ginv(void)
-+ {
-+ 	asm volatile("sync\t%0" :: "i"(STYPE_GINV));
-+ }
-+=20
-  #include <asm-generic/barrier.h>
- =20
-  #endif /* __ASM_BARRIER_H */
-diff --cc arch/mips/include/asm/pgtable.h
-index 910851c62db3,6c13c1d44045..000000000000
---- a/arch/mips/include/asm/pgtable.h
-+++ b/arch/mips/include/asm/pgtable.h
+--MP_/hlbs7XfKp0qruSndPV9NbbL
+Content-Type: application/x-shellscript
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=check_fixes
 
---Sig_/XXTD5u49pk6W=n13DKfhCzR
+IyEvYmluL2Jhc2gKCmlmIFsgIiQjIiAtbHQgMSBdOyB0aGVuCiAgICAgICAgcHJpbnRmICdVc2Fn
+ZTogJXMgPGNvbW1pdCByYW5nZT5cbicsICIkMCIgMT4mMgogICAgICAgIGV4aXQgMQpmaQoKY29t
+bWl0cz0kKGdpdCByZXYtbGlzdCAtLW5vLW1lcmdlcyAtaSAtLWdyZXA9J15bWzpzcGFjZTpdXSpG
+aXhlczonICIkQCIpCmlmIFsgLXogIiRjb21taXRzIiBdOyB0aGVuCiAgICAgICAgZXhpdCAwCmZp
+CgojIFRoaXMgc2hvdWxkIGJlIGEgZ2l0IHRyZWUgdGhhdCBjb250YWlucyAqb25seSogTGludXMn
+IHRyZWUKTGludXNfdHJlZT0iJHtIT01FfS9rZXJuZWxzL2xpbnVzLmdpdCIKCnNwbGl0X3JlPSde
+KFtDY11bT29dW01tXVtNbV1bSWldW1R0XSk/W1s6c3BhY2U6XV0qKFtbOnhkaWdpdDpdXXs1LH0p
+KFtbOnNwYWNlOl1dKikoLiopJCcKbmw9JCdcbicKCiMgU3RyaXAgdGhlIGxlYWRpbmcgYW5kIHRy
+YWluaW5nIHNwYWNlcyBmcm9tIGEgc3RyaW5nCnN0cmlwX3NwYWNlcygpCnsKCVtbICIkMSIgPX4g
+XltbOnNwYWNlOl1dKiguKlteWzpzcGFjZTpdXSlbWzpzcGFjZTpdXSokIF1dCgllY2hvICIke0JB
+U0hfUkVNQVRDSFsxXX0iCn0KCmZvciBjIGluICRjb21taXRzOyBkbwoKCWNvbW1pdF9sb2c9JChn
+aXQgbG9nIC0xIC0tZm9ybWF0PSclaCAoIiVzIiknICIkYyIpCgljb21taXRfbXNnPSJJbiBjb21t
+aXQKCiAgJGNvbW1pdF9sb2cKCiIKCglmaXhlc19saW5lcz0kKGdpdCBsb2cgLTEgLS1mb3JtYXQ9
+JyVCJyAiJGMiIHwKCQkJZ3JlcCAtaSAnXltbOnNwYWNlOl1dKkZpeGVzOicpCgoJd2hpbGUgcmVh
+ZCAtciBmbGluZTsgZG8KCQlbWyAiJGZsaW5lIiA9fiBeW1s6c3BhY2U6XV0qW0ZmXVtJaV1bWHhd
+W0VlXVtTc106W1s6c3BhY2U6XV0qKC4qKSQgXV0KCQlmPSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJ
+Zml4ZXNfbXNnPSJGaXhlcyB0YWcKCiAgJGZsaW5lCgpoYXMgdGhlc2UgcHJvYmxlbShzKToKCiIK
+CQlzaGE9CgkJc3ViamVjdD0KCQltc2c9CgkJaWYgW1sgIiRmIiA9fiAkc3BsaXRfcmUgXV07IHRo
+ZW4KCQkJZmlyc3Q9IiR7QkFTSF9SRU1BVENIWzFdfSIKCQkJc2hhPSIke0JBU0hfUkVNQVRDSFsy
+XX0iCgkJCXNwYWNlcz0iJHtCQVNIX1JFTUFUQ0hbM119IgoJCQlzdWJqZWN0PSIke0JBU0hfUkVN
+QVRDSFs0XX0iCgkJCWlmIFsgIiRmaXJzdCIgXTsgdGhlbgoJCQkJbXNnPSIke21zZzorJHttc2d9
+JHtubH19ICAtIGxlYWRpbmcgd29yZCAnJGZpcnN0JyB1bmV4cGVjdGVkIgoJCQlmaQoJCQlpZiBb
+IC16ICIkc3ViamVjdCIgXTsgdGhlbgoJCQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIG1p
+c3Npbmcgc3ViamVjdCIKCQkJZWxpZiBbIC16ICIkc3BhY2VzIiBdOyB0aGVuCgkJCQltc2c9IiR7
+bXNnOiske21zZ30ke25sfX0gIC0gbWlzc2luZyBzcGFjZSBiZXR3ZWVuIHRoZSBTSEExIGFuZCB0
+aGUgc3ViamVjdCIKCQkJZmkKCQllbHNlCgkJCXByaW50ZiAnJXMlcyAgLSAlc1xuJyAiJGNvbW1p
+dF9tc2ciICIkZml4ZXNfbXNnIiAnTm8gU0hBMSByZWNvZ25pc2VkJwoJCQljb21taXRfbXNnPScn
+CgkJCWNvbnRpbnVlCgkJZmkKCQlpZiAhIGdpdCByZXYtcGFyc2UgLXEgLS12ZXJpZnkgIiRzaGEi
+ID4vZGV2L251bGw7IHRoZW4KCQkJcHJpbnRmICclcyVzICAtICVzXG4nICIkY29tbWl0X21zZyIg
+IiRmaXhlc19tc2ciICdUYXJnZXQgU0hBMSBkb2VzIG5vdCBleGlzdCcKCQkJY29tbWl0X21zZz0n
+JwoJCQljb250aW51ZQoJCWZpCgoJCWlmIFsgIiR7I3NoYX0iIC1sdCAxMiBdOyB0aGVuCgkJCW1z
+Zz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBTSEExIHNob3VsZCBiZSBhdCBsZWFzdCAxMiBkaWdp
+dHMgbG9uZyR7bmx9ICAgIENhbiBiZSBmaXhlZCBieSBzZXR0aW5nIGNvcmUuYWJicmV2IHRvIDEy
+IChvciBtb3JlKSBvciAoZm9yIGdpdCB2Mi4xMSR7bmx9ICAgIG9yIGxhdGVyKSBqdXN0IG1ha2lu
+ZyBzdXJlIGl0IGlzIG5vdCBzZXQgKG9yIHNldCB0byBcImF1dG9cIikuIgoJCWZpCgkJIyByZWR1
+Y2UgdGhlIHN1YmplY3QgdG8gdGhlIHBhcnQgYmV0d2VlbiAoKSBpZiB0aGVyZQoJCWlmIFtbICIk
+c3ViamVjdCIgPX4gXlwoKC4qKVwpIF1dOyB0aGVuCgkJCXN1YmplY3Q9IiR7QkFTSF9SRU1BVENI
+WzFdfSIKCQllbGlmIFtbICIkc3ViamVjdCIgPX4gXlwoKC4qKSBdXTsgdGhlbgoJCQlzdWJqZWN0
+PSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJCW1zZz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBTdWJq
+ZWN0IGhhcyBsZWFkaW5nIGJ1dCBubyB0cmFpbGluZyBwYXJlbnRoZXNlcyIKCQlmaQoKCQkjIHN0
+cmlwIG1hdGNoaW5nIHF1b3RlcyBhdCB0aGUgc3RhcnQgYW5kIGVuZCBvZiB0aGUgc3ViamVjdAoJ
+CSMgdGhlIHVuaWNvZGUgY2hhcmFjdGVycyBpbiB0aGUgY2xhc3NlcyBhcmUKCQkjIFUrMjAxQyBM
+RUZUIERPVUJMRSBRVU9UQVRJT04gTUFSSwoJCSMgVSsyMDFEIFJJR0hUIERPVUJMRSBRVU9UQVRJ
+T04gTUFSSwoJCSMgVSsyMDE4IExFRlQgU0lOR0xFIFFVT1RBVElPTiBNQVJLCgkJIyBVKzIwMTkg
+UklHSFQgU0lOR0xFIFFVT1RBVElPTiBNQVJLCgkJcmUxPSQnXltcIlx1MjAxQ10oLiopW1wiXHUy
+MDFEXSQnCgkJcmUyPSQnXltcJ1x1MjAxOF0oLiopW1wnXHUyMDE5XSQnCgkJcmUzPSQnXltcIlwn
+XHUyMDFDXHUyMDE4XSguKikkJwoJCWlmIFtbICIkc3ViamVjdCIgPX4gJHJlMSBdXTsgdGhlbgoJ
+CQlzdWJqZWN0PSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJZWxpZiBbWyAiJHN1YmplY3QiID1+ICRy
+ZTIgXV07IHRoZW4KCQkJc3ViamVjdD0iJHtCQVNIX1JFTUFUQ0hbMV19IgoJCWVsaWYgW1sgIiRz
+dWJqZWN0IiA9fiAkcmUzIF1dOyB0aGVuCgkJCXN1YmplY3Q9IiR7QkFTSF9SRU1BVENIWzFdfSIK
+CQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIFN1YmplY3QgaGFzIGxlYWRpbmcgYnV0IG5v
+IHRyYWlsaW5nIHF1b3RlcyIKCQlmaQoKCQlzdWJqZWN0PSQoc3RyaXBfc3BhY2VzICIkc3ViamVj
+dCIpCgoJCXRhcmdldF9zdWJqZWN0PSQoZ2l0IGxvZyAtMSAtLWZvcm1hdD0nJXMnICIkc2hhIikK
+CQl0YXJnZXRfc3ViamVjdD0kKHN0cmlwX3NwYWNlcyAiJHRhcmdldF9zdWJqZWN0IikKCgkJIyBt
+YXRjaCB3aXRoIGVsbGlwc2VzCgkJY2FzZSAiJHN1YmplY3QiIGluCgkJKi4uLikJc3ViamVjdD0i
+JHtzdWJqZWN0JS4uLn0iCgkJCXRhcmdldF9zdWJqZWN0PSIke3RhcmdldF9zdWJqZWN0OjA6JHsj
+c3ViamVjdH19IgoJCQk7OwoJCS4uLiopCXN1YmplY3Q9IiR7c3ViamVjdCMuLi59IgoJCQl0YXJn
+ZXRfc3ViamVjdD0iJHt0YXJnZXRfc3ViamVjdDogLSR7I3N1YmplY3R9fSIKCQkJOzsKCQkqXCAu
+Li5cICopCgkJCXMxPSIke3N1YmplY3QlIC4uLiAqfSIKCQkJczI9IiR7c3ViamVjdCMqIC4uLiB9
+IgoJCQlzdWJqZWN0PSIkczEgJHMyIgoJCQl0MT0iJHt0YXJnZXRfc3ViamVjdDowOiR7I3MxfX0i
+CgkJCXQyPSIke3RhcmdldF9zdWJqZWN0OiAtJHsjczJ9fSIKCQkJdGFyZ2V0X3N1YmplY3Q9IiR0
+MSAkdDIiCgkJCTs7CgkJZXNhYwoJCXN1YmplY3Q9JChzdHJpcF9zcGFjZXMgIiRzdWJqZWN0IikK
+CQl0YXJnZXRfc3ViamVjdD0kKHN0cmlwX3NwYWNlcyAiJHRhcmdldF9zdWJqZWN0IikKCgkJaWYg
+WyAiJHN1YmplY3QiICE9ICIke3RhcmdldF9zdWJqZWN0OjA6JHsjc3ViamVjdH19IiBdOyB0aGVu
+CgkJCW1zZz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBTdWJqZWN0IGRvZXMgbm90IG1hdGNoIHRh
+cmdldCBjb21taXQgc3ViamVjdCIKCQlmaQoJCWxzaGE9JChjZCAiJExpbnVzX3RyZWUiICYmIGdp
+dCByZXYtcGFyc2UgLXEgLS12ZXJpZnkgIiRzaGEiKQoJCWlmIFsgLXogIiRsc2hhIiBdOyB0aGVu
+CgkJCWNvdW50PSQoZ2l0IHJldi1saXN0IC0tY291bnQgIiRzaGEiLi4iJGMiKQoJCQlpZiBbICIk
+Y291bnQiIC1lcSAwIF07IHRoZW4KCQkJCW1zZz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBUYXJn
+ZXQgaXMgbm90IGFuIGFuY2VzdG9yIG9mIHRoaXMgY29tbWl0IgoJCQlmaQoJCWZpCgkJaWYgWyAi
+JG1zZyIgXTsgdGhlbgoJCQlwcmludGYgJyVzJXMlc1xuJyAiJGNvbW1pdF9tc2ciICIkZml4ZXNf
+bXNnIiAiJG1zZyIKCQkJY29tbWl0X21zZz0nJwoJCWZpCglkb25lIDw8PCAiJGZpeGVzX2xpbmVz
+Igpkb25lCgpleGl0IDAK
+
+--MP_/hlbs7XfKp0qruSndPV9NbbL--
+
+--Sig_/7aQn_VKWOsB7WEHTIZbd=2N
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaC4AACgkQAVBC80lX
-0GwktQf+NHMvhV4u4QOPoJGuHgHdQ5sWm44t4VZoLjQfYKDyggWvQG60erao0q37
-WFWFbSx3aJR0R2KzMareFVzy+7p5vJbegJ2qqroNsR10t2sYo9TATDKofyykeEwA
-bxFWyJzCBSOB3yzUAne0Z+W9biYuta2K+bNxJLv/KRny0y+Jyh7r2+HXq0Rpi5hj
-KgOFbVVXZhWLeE1+MaJKDiF3V6ZvZN83WlJ96e1OMCjpDVEQB9griX8BpJA+FaXW
-7DqkNr1uQXOsFCS28IuSwsk5jVEWSZ2Ochyo8chDL6thSagaj/9I50Pw1eAXdgLQ
-WWUl6CMaNjGxCVXhjxYBGfkbqu0pUw==
-=z9ev
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaEW8ACgkQAVBC80lX
+0GzKvwf+IKJnlIOBY+KAF7firQe1Pp1QaOz3r8NW5Y6ETdVYXzfPC4NEMTt/9UTn
+FjgleIkZWnPAEVvORpGDE42VmAcT/X7LeXADHMsPV7zWT/iJI5QFNAmY0WNhaZdg
+ICRwVu/dF/+EsBlkvqZy3EpqVnuSGTa8D7jqTMNlU5/Ah8HRYlfY9U2wpMPcVk57
+KppxPpY85BcOutNtUhAy0Res7Y71eYI54NGc7wxi7LuqlQk2AAQn9Rc/+qiF9kfh
+8Dt999ppFUawhOXX25Ao0rFyng0Wzw3H9Kg+OxGIK7xsXPrz9RWYi/vl5HldQ9Eu
+skKXuWJ10li22YOxmJnUeCcW4gH4HQ==
+=/1zt
 -----END PGP SIGNATURE-----
 
---Sig_/XXTD5u49pk6W=n13DKfhCzR--
+--Sig_/7aQn_VKWOsB7WEHTIZbd=2N--
