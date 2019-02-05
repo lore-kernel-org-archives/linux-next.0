@@ -1,53 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the mips tree with the mips-fixes
- tree
-Date: Wed, 6 Feb 2019 10:44:33 +1100
-Message-ID: <20190206104433.1c832a0b@canb.auug.org.au>
-References: <20190206091736.73bd95ec@canb.auug.org.au>
-        <20190205233530.tnk6boxzxm7okgcr@pburton-laptop>
+Subject: linux-next: manual merge of the opp tree with the pm tree
+Date: Wed, 6 Feb 2019 10:52:28 +1100
+Message-ID: <20190206105228.42f7568c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/I8EBZ///vtMYXyZ=Im65Tyu"; protocol="application/pgp-signature"
+ boundary="Sig_/fPxxs.qTiMFREPlX5SvVanf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190205233530.tnk6boxzxm7okgcr@pburton-laptop>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huacai Chen <chenhc@lemote.com>, Huang Pei <huangpei@loongson.cn>
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Quentin Perret <quentin.perret@arm.com>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/I8EBZ///vtMYXyZ=Im65Tyu
+--Sig_/fPxxs.qTiMFREPlX5SvVanf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Viresh,
 
-On Tue, 5 Feb 2019 23:35:31 +0000 Paul Burton <paul.burton@mips.com> wrote:
->
-> cmpxchg() doesn't need the added loongson_llsc_mb() barrier that
-> set_pte() has in mips-fixes because for the affected Loongson 3
-> configurations the smp_mb__before_llsc() that cmpxchg() already contains
-> is equivalent (both will emit a "sync 0" instruction).
+Today's linux-next merge of the opp tree got a conflict in:
 
-OK, good to know, thanks.
+  drivers/cpufreq/scmi-cpufreq.c
+
+between commit:
+
+  5da7af9a94a7 ("cpufreq: scmi: Use auto-registration of thermal cooling de=
+vice")
+
+from the pm tree and commit:
+
+  d7194c939ea3 ("cpufreq: scmi: Register an Energy Model")
+
+from the opp tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/I8EBZ///vtMYXyZ=Im65Tyu
+diff --cc drivers/cpufreq/scmi-cpufreq.c
+index 66b633b48eb1,44449ff8ad47..000000000000
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@@ -11,6 -11,8 +11,7 @@@
+  #include <linux/cpu.h>
+  #include <linux/cpufreq.h>
+  #include <linux/cpumask.h>
+ -#include <linux/cpu_cooling.h>
++ #include <linux/energy_model.h>
+  #include <linux/export.h>
+  #include <linux/module.h>
+  #include <linux/pm_opp.h>
+
+--Sig_/fPxxs.qTiMFREPlX5SvVanf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaH+EACgkQAVBC80lX
-0GxYNQf/ftzRetfxC0vB4nWsaAsrCpC2G63z0791p/OZx1lMk217b1Z4q1pFZ4qo
-KXn/v2C0UF4NJkUoDTCvmWhaxL+hj5Uj662iSFm3soYpXTyNRujLZ1DY+LyiOpyC
-+UIFf0enA8JZ+KJlE9M3TKP1dR6S59OiGocpIqmcqInE9hpcc08qwxCh6/LwTGAl
-w5nE7j0rJLxXnrSgPipV1SMMNT7PUANZ+6Hicm7d4p3vJVy+L39cH5GMlk0YB5XN
-mgDkcIavnYRQJW563H+hkLqcvynohd0hBohrSZhpwcRB51k1NonggVkr+T2mtQcC
-Xm/049xk1/DUktO1jtxovS2ORwASsw==
-=7jT0
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaIbwACgkQAVBC80lX
+0GxXTAf+Mk4usPSHntcGU7c9TGd4/0fOgG+Nu89UrAnBixkkNvc/AJFV54BwUp4R
+wSBypXHeBHPI668tEwAaY5FdzaqQPmOA5SjA/zmBEToDI85Jon3tQwQRQhcra1nh
+GQwn+Y5JnIl4NVb410MEhbLM+/PKHpPg8P1sqKkQCkMUXLKNSx26dao9MnzccDu5
+RiKFk8EQzQCiMhS+8bivWwP36fK2HGTIyGO8gbb34yBEyMI2bkBUmDEwByRldfJH
+PgoUHwbsocDfXBmteI+DkeKVN23y9Qq/+eK9/g9Q+DzZkP5J7dHQ4ebvw2oXok0Z
+6xIYXNal0XZsWfS9pzQJR3uvjrWTiw==
+=lb1C
 -----END PGP SIGNATURE-----
 
---Sig_/I8EBZ///vtMYXyZ=Im65Tyu--
+--Sig_/fPxxs.qTiMFREPlX5SvVanf--
