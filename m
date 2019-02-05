@@ -1,135 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Fixes tag needs some work in the origin tree
-Date: Wed, 6 Feb 2019 09:42:55 +1100
-Message-ID: <20190206094255.771d4b21@canb.auug.org.au>
-References: <20190203083310.12b97619@canb.auug.org.au>
-        <mhng-d27cd6f4-522a-4666-a046-1803f6ee37c9@palmer-si-x1c4>
+Subject: Re: linux-next: Fixes tag needs some work in the userns tree
+Date: Wed, 6 Feb 2019 10:04:54 +1100
+Message-ID: <20190206100454.7a5066cb@canb.auug.org.au>
+References: <20190206073330.6e266351@canb.auug.org.au>
+        <87bm3pzzz3.fsf@xmission.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7aQn_VKWOsB7WEHTIZbd=2N"; protocol="application/pgp-signature"
+ boundary="Sig_/1+Y.4ihF5A7Y45/5=5iUjWn"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <mhng-d27cd6f4-522a-4666-a046-1803f6ee37c9@palmer-si-x1c4>
+In-Reply-To: <87bm3pzzz3.fsf@xmission.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: schwab@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/7aQn_VKWOsB7WEHTIZbd=2N
-Content-Type: multipart/mixed; boundary="MP_/hlbs7XfKp0qruSndPV9NbbL"
-
---MP_/hlbs7XfKp0qruSndPV9NbbL
+--Sig_/1+Y.4ihF5A7Y45/5=5iUjWn
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-Hi Palmer,
+Hi Eric,
 
-On Tue, 05 Feb 2019 10:47:43 -0800 (PST) Palmer Dabbelt <palmer@sifive.com>=
- wrote:
+On Tue, 05 Feb 2019 15:29:04 -0600 ebiederm@xmission.com (Eric W. Biederman=
+) wrote:
 >
-> Thanks.  Is there a script I should be running to pre-check these?
+> The SHA1 tag does exist and I have another tag:
+> History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/histor=
+y.git
+> That lists the tree it actually came from.
 
-I run the attached script on each set of new commits that turn up.
+Ah, tricky.
 
+> That is the best way I can see to handle bugs that predate v2.6.12 that
+> Linus first put into git.
+>=20
+> Would it make sense to graft you tree that you check for the existence
+> of bad sha1s to Thomas's import of the bk tree into git?
+
+I can just get a copy of that tree and check for things in there as
+well, I guess.  Though it shouldn't come up much (I hope :-))
+
+> Is there a better way to refer to old commits that I haven't seen?
+
+Not that I am aware of and I guess it is as good as any.
+
+Thanks.
 --=20
 Cheers,
 Stephen Rothwell
 
---MP_/hlbs7XfKp0qruSndPV9NbbL
-Content-Type: application/x-shellscript
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=check_fixes
-
-IyEvYmluL2Jhc2gKCmlmIFsgIiQjIiAtbHQgMSBdOyB0aGVuCiAgICAgICAgcHJpbnRmICdVc2Fn
-ZTogJXMgPGNvbW1pdCByYW5nZT5cbicsICIkMCIgMT4mMgogICAgICAgIGV4aXQgMQpmaQoKY29t
-bWl0cz0kKGdpdCByZXYtbGlzdCAtLW5vLW1lcmdlcyAtaSAtLWdyZXA9J15bWzpzcGFjZTpdXSpG
-aXhlczonICIkQCIpCmlmIFsgLXogIiRjb21taXRzIiBdOyB0aGVuCiAgICAgICAgZXhpdCAwCmZp
-CgojIFRoaXMgc2hvdWxkIGJlIGEgZ2l0IHRyZWUgdGhhdCBjb250YWlucyAqb25seSogTGludXMn
-IHRyZWUKTGludXNfdHJlZT0iJHtIT01FfS9rZXJuZWxzL2xpbnVzLmdpdCIKCnNwbGl0X3JlPSde
-KFtDY11bT29dW01tXVtNbV1bSWldW1R0XSk/W1s6c3BhY2U6XV0qKFtbOnhkaWdpdDpdXXs1LH0p
-KFtbOnNwYWNlOl1dKikoLiopJCcKbmw9JCdcbicKCiMgU3RyaXAgdGhlIGxlYWRpbmcgYW5kIHRy
-YWluaW5nIHNwYWNlcyBmcm9tIGEgc3RyaW5nCnN0cmlwX3NwYWNlcygpCnsKCVtbICIkMSIgPX4g
-XltbOnNwYWNlOl1dKiguKlteWzpzcGFjZTpdXSlbWzpzcGFjZTpdXSokIF1dCgllY2hvICIke0JB
-U0hfUkVNQVRDSFsxXX0iCn0KCmZvciBjIGluICRjb21taXRzOyBkbwoKCWNvbW1pdF9sb2c9JChn
-aXQgbG9nIC0xIC0tZm9ybWF0PSclaCAoIiVzIiknICIkYyIpCgljb21taXRfbXNnPSJJbiBjb21t
-aXQKCiAgJGNvbW1pdF9sb2cKCiIKCglmaXhlc19saW5lcz0kKGdpdCBsb2cgLTEgLS1mb3JtYXQ9
-JyVCJyAiJGMiIHwKCQkJZ3JlcCAtaSAnXltbOnNwYWNlOl1dKkZpeGVzOicpCgoJd2hpbGUgcmVh
-ZCAtciBmbGluZTsgZG8KCQlbWyAiJGZsaW5lIiA9fiBeW1s6c3BhY2U6XV0qW0ZmXVtJaV1bWHhd
-W0VlXVtTc106W1s6c3BhY2U6XV0qKC4qKSQgXV0KCQlmPSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJ
-Zml4ZXNfbXNnPSJGaXhlcyB0YWcKCiAgJGZsaW5lCgpoYXMgdGhlc2UgcHJvYmxlbShzKToKCiIK
-CQlzaGE9CgkJc3ViamVjdD0KCQltc2c9CgkJaWYgW1sgIiRmIiA9fiAkc3BsaXRfcmUgXV07IHRo
-ZW4KCQkJZmlyc3Q9IiR7QkFTSF9SRU1BVENIWzFdfSIKCQkJc2hhPSIke0JBU0hfUkVNQVRDSFsy
-XX0iCgkJCXNwYWNlcz0iJHtCQVNIX1JFTUFUQ0hbM119IgoJCQlzdWJqZWN0PSIke0JBU0hfUkVN
-QVRDSFs0XX0iCgkJCWlmIFsgIiRmaXJzdCIgXTsgdGhlbgoJCQkJbXNnPSIke21zZzorJHttc2d9
-JHtubH19ICAtIGxlYWRpbmcgd29yZCAnJGZpcnN0JyB1bmV4cGVjdGVkIgoJCQlmaQoJCQlpZiBb
-IC16ICIkc3ViamVjdCIgXTsgdGhlbgoJCQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIG1p
-c3Npbmcgc3ViamVjdCIKCQkJZWxpZiBbIC16ICIkc3BhY2VzIiBdOyB0aGVuCgkJCQltc2c9IiR7
-bXNnOiske21zZ30ke25sfX0gIC0gbWlzc2luZyBzcGFjZSBiZXR3ZWVuIHRoZSBTSEExIGFuZCB0
-aGUgc3ViamVjdCIKCQkJZmkKCQllbHNlCgkJCXByaW50ZiAnJXMlcyAgLSAlc1xuJyAiJGNvbW1p
-dF9tc2ciICIkZml4ZXNfbXNnIiAnTm8gU0hBMSByZWNvZ25pc2VkJwoJCQljb21taXRfbXNnPScn
-CgkJCWNvbnRpbnVlCgkJZmkKCQlpZiAhIGdpdCByZXYtcGFyc2UgLXEgLS12ZXJpZnkgIiRzaGEi
-ID4vZGV2L251bGw7IHRoZW4KCQkJcHJpbnRmICclcyVzICAtICVzXG4nICIkY29tbWl0X21zZyIg
-IiRmaXhlc19tc2ciICdUYXJnZXQgU0hBMSBkb2VzIG5vdCBleGlzdCcKCQkJY29tbWl0X21zZz0n
-JwoJCQljb250aW51ZQoJCWZpCgoJCWlmIFsgIiR7I3NoYX0iIC1sdCAxMiBdOyB0aGVuCgkJCW1z
-Zz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBTSEExIHNob3VsZCBiZSBhdCBsZWFzdCAxMiBkaWdp
-dHMgbG9uZyR7bmx9ICAgIENhbiBiZSBmaXhlZCBieSBzZXR0aW5nIGNvcmUuYWJicmV2IHRvIDEy
-IChvciBtb3JlKSBvciAoZm9yIGdpdCB2Mi4xMSR7bmx9ICAgIG9yIGxhdGVyKSBqdXN0IG1ha2lu
-ZyBzdXJlIGl0IGlzIG5vdCBzZXQgKG9yIHNldCB0byBcImF1dG9cIikuIgoJCWZpCgkJIyByZWR1
-Y2UgdGhlIHN1YmplY3QgdG8gdGhlIHBhcnQgYmV0d2VlbiAoKSBpZiB0aGVyZQoJCWlmIFtbICIk
-c3ViamVjdCIgPX4gXlwoKC4qKVwpIF1dOyB0aGVuCgkJCXN1YmplY3Q9IiR7QkFTSF9SRU1BVENI
-WzFdfSIKCQllbGlmIFtbICIkc3ViamVjdCIgPX4gXlwoKC4qKSBdXTsgdGhlbgoJCQlzdWJqZWN0
-PSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJCW1zZz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBTdWJq
-ZWN0IGhhcyBsZWFkaW5nIGJ1dCBubyB0cmFpbGluZyBwYXJlbnRoZXNlcyIKCQlmaQoKCQkjIHN0
-cmlwIG1hdGNoaW5nIHF1b3RlcyBhdCB0aGUgc3RhcnQgYW5kIGVuZCBvZiB0aGUgc3ViamVjdAoJ
-CSMgdGhlIHVuaWNvZGUgY2hhcmFjdGVycyBpbiB0aGUgY2xhc3NlcyBhcmUKCQkjIFUrMjAxQyBM
-RUZUIERPVUJMRSBRVU9UQVRJT04gTUFSSwoJCSMgVSsyMDFEIFJJR0hUIERPVUJMRSBRVU9UQVRJ
-T04gTUFSSwoJCSMgVSsyMDE4IExFRlQgU0lOR0xFIFFVT1RBVElPTiBNQVJLCgkJIyBVKzIwMTkg
-UklHSFQgU0lOR0xFIFFVT1RBVElPTiBNQVJLCgkJcmUxPSQnXltcIlx1MjAxQ10oLiopW1wiXHUy
-MDFEXSQnCgkJcmUyPSQnXltcJ1x1MjAxOF0oLiopW1wnXHUyMDE5XSQnCgkJcmUzPSQnXltcIlwn
-XHUyMDFDXHUyMDE4XSguKikkJwoJCWlmIFtbICIkc3ViamVjdCIgPX4gJHJlMSBdXTsgdGhlbgoJ
-CQlzdWJqZWN0PSIke0JBU0hfUkVNQVRDSFsxXX0iCgkJZWxpZiBbWyAiJHN1YmplY3QiID1+ICRy
-ZTIgXV07IHRoZW4KCQkJc3ViamVjdD0iJHtCQVNIX1JFTUFUQ0hbMV19IgoJCWVsaWYgW1sgIiRz
-dWJqZWN0IiA9fiAkcmUzIF1dOyB0aGVuCgkJCXN1YmplY3Q9IiR7QkFTSF9SRU1BVENIWzFdfSIK
-CQkJbXNnPSIke21zZzorJHttc2d9JHtubH19ICAtIFN1YmplY3QgaGFzIGxlYWRpbmcgYnV0IG5v
-IHRyYWlsaW5nIHF1b3RlcyIKCQlmaQoKCQlzdWJqZWN0PSQoc3RyaXBfc3BhY2VzICIkc3ViamVj
-dCIpCgoJCXRhcmdldF9zdWJqZWN0PSQoZ2l0IGxvZyAtMSAtLWZvcm1hdD0nJXMnICIkc2hhIikK
-CQl0YXJnZXRfc3ViamVjdD0kKHN0cmlwX3NwYWNlcyAiJHRhcmdldF9zdWJqZWN0IikKCgkJIyBt
-YXRjaCB3aXRoIGVsbGlwc2VzCgkJY2FzZSAiJHN1YmplY3QiIGluCgkJKi4uLikJc3ViamVjdD0i
-JHtzdWJqZWN0JS4uLn0iCgkJCXRhcmdldF9zdWJqZWN0PSIke3RhcmdldF9zdWJqZWN0OjA6JHsj
-c3ViamVjdH19IgoJCQk7OwoJCS4uLiopCXN1YmplY3Q9IiR7c3ViamVjdCMuLi59IgoJCQl0YXJn
-ZXRfc3ViamVjdD0iJHt0YXJnZXRfc3ViamVjdDogLSR7I3N1YmplY3R9fSIKCQkJOzsKCQkqXCAu
-Li5cICopCgkJCXMxPSIke3N1YmplY3QlIC4uLiAqfSIKCQkJczI9IiR7c3ViamVjdCMqIC4uLiB9
-IgoJCQlzdWJqZWN0PSIkczEgJHMyIgoJCQl0MT0iJHt0YXJnZXRfc3ViamVjdDowOiR7I3MxfX0i
-CgkJCXQyPSIke3RhcmdldF9zdWJqZWN0OiAtJHsjczJ9fSIKCQkJdGFyZ2V0X3N1YmplY3Q9IiR0
-MSAkdDIiCgkJCTs7CgkJZXNhYwoJCXN1YmplY3Q9JChzdHJpcF9zcGFjZXMgIiRzdWJqZWN0IikK
-CQl0YXJnZXRfc3ViamVjdD0kKHN0cmlwX3NwYWNlcyAiJHRhcmdldF9zdWJqZWN0IikKCgkJaWYg
-WyAiJHN1YmplY3QiICE9ICIke3RhcmdldF9zdWJqZWN0OjA6JHsjc3ViamVjdH19IiBdOyB0aGVu
-CgkJCW1zZz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBTdWJqZWN0IGRvZXMgbm90IG1hdGNoIHRh
-cmdldCBjb21taXQgc3ViamVjdCIKCQlmaQoJCWxzaGE9JChjZCAiJExpbnVzX3RyZWUiICYmIGdp
-dCByZXYtcGFyc2UgLXEgLS12ZXJpZnkgIiRzaGEiKQoJCWlmIFsgLXogIiRsc2hhIiBdOyB0aGVu
-CgkJCWNvdW50PSQoZ2l0IHJldi1saXN0IC0tY291bnQgIiRzaGEiLi4iJGMiKQoJCQlpZiBbICIk
-Y291bnQiIC1lcSAwIF07IHRoZW4KCQkJCW1zZz0iJHttc2c6KyR7bXNnfSR7bmx9fSAgLSBUYXJn
-ZXQgaXMgbm90IGFuIGFuY2VzdG9yIG9mIHRoaXMgY29tbWl0IgoJCQlmaQoJCWZpCgkJaWYgWyAi
-JG1zZyIgXTsgdGhlbgoJCQlwcmludGYgJyVzJXMlc1xuJyAiJGNvbW1pdF9tc2ciICIkZml4ZXNf
-bXNnIiAiJG1zZyIKCQkJY29tbWl0X21zZz0nJwoJCWZpCglkb25lIDw8PCAiJGZpeGVzX2xpbmVz
-Igpkb25lCgpleGl0IDAK
-
---MP_/hlbs7XfKp0qruSndPV9NbbL--
-
---Sig_/7aQn_VKWOsB7WEHTIZbd=2N
+--Sig_/1+Y.4ihF5A7Y45/5=5iUjWn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaEW8ACgkQAVBC80lX
-0GzKvwf+IKJnlIOBY+KAF7firQe1Pp1QaOz3r8NW5Y6ETdVYXzfPC4NEMTt/9UTn
-FjgleIkZWnPAEVvORpGDE42VmAcT/X7LeXADHMsPV7zWT/iJI5QFNAmY0WNhaZdg
-ICRwVu/dF/+EsBlkvqZy3EpqVnuSGTa8D7jqTMNlU5/Ah8HRYlfY9U2wpMPcVk57
-KppxPpY85BcOutNtUhAy0Res7Y71eYI54NGc7wxi7LuqlQk2AAQn9Rc/+qiF9kfh
-8Dt999ppFUawhOXX25Ao0rFyng0Wzw3H9Kg+OxGIK7xsXPrz9RWYi/vl5HldQ9Eu
-skKXuWJ10li22YOxmJnUeCcW4gH4HQ==
-=/1zt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaFpYACgkQAVBC80lX
+0GxQoQf/SD8jtgTJjFKsDffjTu10J02sMEHM8//HI56mfHbcVUZhYP51yOTgrORB
+5+EWIlmqbjWhns0nbxCogkS1twXBehH2MdzvTAiouXtQDF/47y8yo5semLDGqQGe
+wjbzctsz/4/AbXXgzBaGyBw0XUq++PsJ4qW0XxJY/7NEtiYuA+OrfQ9lY7Sl+tVF
+9JGHPrx7qx37yrbncER/m1TjbjE5CIuc+To/Pm1EVgismLkt7tm06DlrX7y95ljz
+PW4lUPWC94BVF2Lq1AogQWkXismenFsx/pFYcHJSF10IJUTvo6ta6YLz0BYJjGco
+HTDigYpd/4TuY9wQ1rl2BzbyG1GWIg==
+=M7aA
 -----END PGP SIGNATURE-----
 
---Sig_/7aQn_VKWOsB7WEHTIZbd=2N--
+--Sig_/1+Y.4ihF5A7Y45/5=5iUjWn--
