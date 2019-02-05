@@ -1,56 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: mmotm 2019-02-04-17-47 uploaded (fs/binfmt_elf.c)
-Date: Tue, 5 Feb 2019 18:58:29 +1100
-Message-ID: <20190205185829.113a8812@canb.auug.org.au>
-References: <20190205014806.rQcAx%akpm@linux-foundation.org>
-        <08a894b1-66f6-19bf-67be-c9b7b1b01126@infradead.org>
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: linux-next: build warnings after merge of the staging tree
+Date: Tue, 5 Feb 2019 10:24:03 +0000
+Message-ID: <20190205102403.000046d6@huawei.com>
+References: <20190205142217.0c9ecabf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+HD3eexliaqabC4pbA07JGT"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <08a894b1-66f6-19bf-67be-c9b7b1b01126@infradead.org>
+In-Reply-To: <20190205142217.0c9ecabf@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org, Richard Weinberger <richard@nod.at>, Alexey Dobriyan <adobriyan@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tomasz Duszynski <tduszyns@gmail.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/+HD3eexliaqabC4pbA07JGT
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, 5 Feb 2019 14:22:17 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Randy,
+> Hi Greg,
+> 
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+> 
+> drivers/iio/chemical/sps30.c: In function 'sps30_read_raw':
+> drivers/iio/chemical/sps30.c:289:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     switch (chan->channel2) {
+>     ^~~~~~
+> drivers/iio/chemical/sps30.c:299:3: note: here
+>    default:
+>    ^~~~~~~
+> drivers/iio/chemical/sps30.c: In function 'sps30_do_cmd':
+> drivers/iio/chemical/sps30.c:120:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
+>           ^
+> drivers/iio/chemical/sps30.c:121:2: note: here
+>   case SPS30_READ_DATA_READY_FLAG:
+>   ^~~~
+> 
+> Introduced by commits
+> 
+>   232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sensor")
+>   62129a0849d2 ("iio: chemical: sps30: allow changing self cleaning period")
+> 
+> I get this warning because I am building with -Wimplicit-fallthrough
+> in attempt to catch new additions early.  The gcc warning can be turned
+> off by adding a /* fall through */ comment at the point the fall through
+> happens (assuming that the fall through is intentional).
+> 
 
-On Mon, 4 Feb 2019 20:26:43 -0800 Randy Dunlap <rdunlap@infradead.org> wrot=
-e:
->
-> on x86_64 UML: (although should be many places)
->=20
-> ../fs/binfmt_elf.c: In function =E2=80=98write_note_info=E2=80=99:
-> ../fs/binfmt_elf.c:2122:19: error: =E2=80=98tmp=E2=80=99 undeclared (firs=
-t use in this function)
->    for (i =3D 0; i < tmp->num_notes; i++)
+These both should both be marked - certainly look to be intentional.
+The second one might be better handled with an additional return of the -EINVAL.
 
-This only a problem for !defined(CORE_DUMP_USE_REGSET) architectures,
-but a problem none the less.
+Thomasz, could you send me a patch tidying this up.
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks Stephen!
 
---Sig_/+HD3eexliaqabC4pbA07JGT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxZQiUACgkQAVBC80lX
-0GxwRgf+P5QlePLLQEgqvTRa0Shz+SodC89zAUfN8U46W7XmYSmMjbfH4en9aAS5
-LRZFLYwLDb0pTF1BKACQtmjcpSB981/iXf4+S3lGDdqL12eY22UCb9TkYArOGXhD
-WJSnzABFZULOpnqbVwG7tLDSo0sOpoPEaaYPg1T++tLRDuryfgU0sdBtZ6kmUGjf
-ktmuUnHfg+L0YEhPEOOemnb3/GV2m/R7ei2YpCB5J8I+WuBVc0exO14N6A09x3Qc
-vDKgDkk9LTUzfzcBo+jlUjI+RoOOzE3dAEX5u1Wx3BIcSREWlUi4AWjaxatefXdY
-qMw62ST26RJbtBiewhhTSIbCEpts7A==
-=QLXe
------END PGP SIGNATURE-----
-
---Sig_/+HD3eexliaqabC4pbA07JGT--
+Jonathan
