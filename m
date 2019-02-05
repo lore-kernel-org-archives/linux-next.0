@@ -1,67 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Fixes tag needs some work in the userns tree
-Date: Wed, 6 Feb 2019 10:04:54 +1100
-Message-ID: <20190206100454.7a5066cb@canb.auug.org.au>
-References: <20190206073330.6e266351@canb.auug.org.au>
-        <87bm3pzzz3.fsf@xmission.com>
+From: Paul Burton <paul.burton@mips.com>
+Subject: Re: linux-next: manual merge of the mips tree with the mips-fixes
+ tree
+Date: Tue, 5 Feb 2019 23:35:31 +0000
+Message-ID: <20190205233530.tnk6boxzxm7okgcr@pburton-laptop>
+References: <20190206091736.73bd95ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1+Y.4ihF5A7Y45/5=5iUjWn"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87bm3pzzz3.fsf@xmission.com>
+In-Reply-To: <20190206091736.73bd95ec@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <9799C4E23CC3D34CA24B1F6B8C38B25B@namprd22.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huacai Chen <chenhc@lemote.com>, Huang Pei <huangpei@loongson.cn>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/1+Y.4ihF5A7Y45/5=5iUjWn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Eric,
-
-On Tue, 05 Feb 2019 15:29:04 -0600 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> The SHA1 tag does exist and I have another tag:
-> History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/histor=
-y.git
-> That lists the tree it actually came from.
-
-Ah, tricky.
-
-> That is the best way I can see to handle bugs that predate v2.6.12 that
-> Linus first put into git.
+On Wed, Feb 06, 2019 at 09:17:36AM +1100, Stephen Rothwell wrote:
+> Hi all,
 >=20
-> Would it make sense to graft you tree that you check for the existence
-> of bad sha1s to Thomas's import of the bk tree into git?
+> Today's linux-next merge of the mips tree got conflicts in:
+>=20
+>   arch/mips/include/asm/barrier.h
+>   arch/mips/include/asm/pgtable.h
+>=20
+> between commit:
+>=20
+>   e02e07e3127d ("MIPS: Loongson: Introduce and use loongson_llsc_mb()")
+>=20
+> from the mips-fixes tree and commits:
+>=20
+>   535113896e80 ("MIPS: Add GINVT instruction helpers")
+>   82f4f66ddf11 ("MIPS: Remove open-coded cmpxchg() in set_pte()")
+>=20
+> from the mips tree.
+>=20
+> I fixed it up (see below and for the latter file, I used the mips tree
+> version but wondered if cmpxchg() needs the fixups from the mips-fixes
+> tree commit)
 
-I can just get a copy of that tree and check for things in there as
-well, I guess.  Though it shouldn't come up much (I hope :-))
+Thanks - that looks good.
 
-> Is there a better way to refer to old commits that I haven't seen?
+cmpxchg() doesn't need the added loongson_llsc_mb() barrier that
+set_pte() has in mips-fixes because for the affected Loongson 3
+configurations the smp_mb__before_llsc() that cmpxchg() already contains
+is equivalent (both will emit a "sync 0" instruction).
 
-Not that I am aware of and I guess it is as good as any.
-
-Thanks.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1+Y.4ihF5A7Y45/5=5iUjWn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaFpYACgkQAVBC80lX
-0GxQoQf/SD8jtgTJjFKsDffjTu10J02sMEHM8//HI56mfHbcVUZhYP51yOTgrORB
-5+EWIlmqbjWhns0nbxCogkS1twXBehH2MdzvTAiouXtQDF/47y8yo5semLDGqQGe
-wjbzctsz/4/AbXXgzBaGyBw0XUq++PsJ4qW0XxJY/7NEtiYuA+OrfQ9lY7Sl+tVF
-9JGHPrx7qx37yrbncER/m1TjbjE5CIuc+To/Pm1EVgismLkt7tm06DlrX7y95ljz
-PW4lUPWC94BVF2Lq1AogQWkXismenFsx/pFYcHJSF10IJUTvo6ta6YLz0BYJjGco
-HTDigYpd/4TuY9wQ1rl2BzbyG1GWIg==
-=M7aA
------END PGP SIGNATURE-----
-
---Sig_/1+Y.4ihF5A7Y45/5=5iUjWn--
+Thanks,
+    Paul
