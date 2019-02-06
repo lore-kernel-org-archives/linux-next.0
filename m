@@ -1,38 +1,61 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: Re: linux-next: Tree for Feb 6 (drivers/edac/skx* and i10nm)
-Date: Wed, 6 Feb 2019 13:23:00 -0800
-Message-ID: <20190206212259.GA28490@agluck-desk>
-References: <20190206170000.286b1f53@canb.auug.org.au>
- <3f095f3e-ace0-aadb-ead1-01908da5c08c@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the compiler-attributes
+ tree
+Date: Thu, 7 Feb 2019 08:30:57 +1100
+Message-ID: <20190207083057.05b40e61@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hjvuW_iBqyef=vyrnfbgAh2"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3f095f3e-ace0-aadb-ead1-01908da5c08c@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Edac Mailing List <linux-edac@vger.kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 06, 2019 at 01:11:23PM -0800, Randy Dunlap wrote:
-> on x86_64:
-> 
-> ld: drivers/edac/skx_common.o: in function `skx_mce_check_error':
-> skx_common.c:(.text+0x982): undefined reference to `adxl_decode'
-> ld: drivers/edac/skx_common.o: in function `skx_adxl_get':
-> skx_common.c:(.init.text+0x11): undefined reference to `adxl_get_component_names'
-> 
-> 
-> CONFIG_EDAC_I10NM=y
-> but CONFIG_EDAC_SKX is not set.
-> since # CONFIG_ACPI is not set
-> 
-> Should EDAC_I10NM depend on ACPI also?
+--Sig_/hjvuW_iBqyef=vyrnfbgAh2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Miguel,
 
-Yes it should.
+After merging the compiler-attributes tree, today's linux-next build
+(arm multi_v7_defconfig) failed like this:
 
-Boris applied a patch to fix this to his "for-next" branch today. So
-this should be all fixed when linux-next does a new build.
+In file included from arch/arm/crypto/aes-neonbs-glue.c:17:
+include/linux/module.h:138:7: error: section of alias 'cleanup_module' must=
+ match section of its target
+  void cleanup_module(void) __exit __attribute__((alias(#exitfn)));
+       ^~~~~~~~~~~~~~
+arch/arm/crypto/aes-neonbs-glue.c:433:1: note: in expansion of macro 'modul=
+e_exit'
+ module_exit(aes_exit);
+ ^~~~~~~~~~~
 
--Tony
+Caused by commit
+
+  b31ca3fcca36 ("include/linux/module.h: mark init/cleanup_module aliases a=
+s __init/exit")
+
+I have used the compiler-attributes tree from next-20190206 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hjvuW_iBqyef=vyrnfbgAh2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbUhEACgkQAVBC80lX
+0Gx53wf7B4zCxw5ht8kqQLvI+WQWkDANF4kDEsUCGoHAU7W1iW0T5CJSeVYAMA6L
+hAYfWWltoDmh9LAINyfkiV+ik6y4b0i4GHs/mUWFZruPV0UDl8k4gZiRBAlKQn56
+Og2BIyom8iSS4qdkb//N0QpzIehAgsoOq54BAGDBBV+yz1vEGlqutnbJVqU2aObW
+4GPQ1hn6pGWtxP16ix3flZ6pmDkzk6lclOEUxvPoTXlp3+uhw0HInim1BYooU88v
+1W0jHfqdlJe7dhHYca3vcFUoGWKFxoFenZdc9LLQTddX5HtmKBu395DZp9RxrxCW
+xSNJmgMZRHAiuZUtPg/6cYHEX81i4A==
+=Nvsz
+-----END PGP SIGNATURE-----
+
+--Sig_/hjvuW_iBqyef=vyrnfbgAh2--
