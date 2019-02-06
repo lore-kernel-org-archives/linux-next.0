@@ -1,75 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20190206 build: 3 failures 22 warnings (next-20190206)
-Date: Wed, 6 Feb 2019 18:24:31 +0000
-Message-ID: <20190206182431.GH17630@sirena.org.uk>
-References: <E1grRJi-0002vu-FB@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
+Date: Thu, 7 Feb 2019 07:05:50 +1100
+Message-ID: <20190207070550.0b650148@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3402228840397754213=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1grRJi-0002vu-FB@optimist>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Christoph Hellwig <hch@lst.de>
-Cc: linux-tegra@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fLFIfflFhhi3=SPda+1M/tz"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/fLFIfflFhhi3=SPda+1M/tz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---===============3402228840397754213==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cW+P/jduATWpL925"
-Content-Disposition: inline
+Hi all,
 
+In commit
 
---cW+P/jduATWpL925
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  d9111d36024d ("ASoC: rsnd: fixup rsnd_ssi_master_clk_start() user count c=
+heck")
 
-On Wed, Feb 06, 2019 at 05:48:58PM +0000, Build bot for Mark Brown wrote:
+Fixes tag
 
-Today's -next fails to build an arm64 defconfig and allmodconfig due to:
+  Fixes: commit 4d230d1271064 ("ASoC: rsnd: fixup not to call clk_get/set u=
+nder non-atomic")
 
-> ERROR: "dma_direct_free" [drivers/gpu/host1x/host1x.ko] undefined!
-> ERROR: "dma_direct_alloc" [drivers/gpu/host1x/host1x.ko] undefined!
+has these problem(s):
 
-due to 7a0658caa44d01 (gpu: host1x: Use direct DMA with IOMMU API usage)
-which adds usage of those non-exported functions.  Either the functions
-need exporting, the driver needs to be built in or those functions can't
-be used.
+  - leading word 'commit' unexpected
 
---cW+P/jduATWpL925
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fLFIfflFhhi3=SPda+1M/tz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxbJl8ACgkQJNaLcl1U
-h9AY5ggAhWZA+Gg7sWeyjCK2NVsA0vfe0NshzyIG8YwPxzB3qnzHEiBPY0QbbnyC
-uU10Eoa0QniVTyn/Ui4X91WTGlR0VuPqzRUmi618FuffvB1J9qVCEaz2nsWMEpnS
-sq/kyGskh0c0aW7rsWvI4CaGZ4eXxAVMdHcQ2R1epIc+8z/VfyaP0+EMtPFmDUxb
-+QvlXWub6BE8eg2hxxo0ZdqPbhPT+mjBiXPv9UwXLRRvjB5bSd5874CBZwcb3crW
-WPmulLtUH7llC4aPGSuNsq6Bkv2bUu1+ZQiR6Gj+oxPxVqeYZoJS5huhvsXlgW7o
-5RXZ4zwm3VWbvNM+RaNFoK3orfyjQQ==
-=ZFJz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbPh4ACgkQAVBC80lX
+0GxsHwf/SfETPsPfrw/ESm5Uzxcza99r7DkZ5oa7WUcg7Mj3dmCQYnfL+9N0nnCC
+Qd0WgIJGT12hPA89d44lPQ9/PJcUPFaDyWT6Mz2+7umrWwoKLFpyXVdmeVER0F9e
+ghrKkBU3ImnixjV2wOfhw2mQSu+ld7u4u707WZfIfn55d4urkP1IUFeUAJ7VIB/H
+E/8HhCVbnQMW7NoIMALTxLZtbH2PIGaWc6yVkFXNWjNsjREkTEkt0TFWxbZS7iPd
+Su5L0olvYiZCRSFz3kZaHnSJXnhOM/HL89o+M3XHJQVIsypJOATHsZS9FMV74aQL
+YADZAPUBdlyeU3IjB1SfDCG/R46scQ==
+=oFdY
 -----END PGP SIGNATURE-----
 
---cW+P/jduATWpL925--
-
-
---===============3402228840397754213==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============3402228840397754213==--
+--Sig_/fLFIfflFhhi3=SPda+1M/tz--
