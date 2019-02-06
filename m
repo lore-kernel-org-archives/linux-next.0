@@ -1,76 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the imx-mxs tree
-Date: Thu, 7 Feb 2019 09:51:42 +1100
-Message-ID: <20190207095142.5ccc4a8a@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the drivers-x86 tree
+Date: Thu, 7 Feb 2019 09:57:03 +1100
+Message-ID: <20190207095703.564e76b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WT+k+ePHoTcu=Rq6DTBR8a4"; protocol="application/pgp-signature"
+ boundary="Sig_/JrloarUeDi9Ju44Le1giVnh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@nxp.com>
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WT+k+ePHoTcu=Rq6DTBR8a4
+--Sig_/JrloarUeDi9Ju44Le1giVnh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tegra tree got a conflict in:
+In commit
 
-  arch/arm64/configs/defconfig
+  4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr=
+_show")
 
-between commit:
+Fixes tag
 
-  9bd01e74c715 ("arm64: defconfig: Add i.MX8MQ boot necessary configs")
+  Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Toleranc=
+e info")
 
-from the imx-mxs tree and commit:
+has these problem(s):
 
-  bc72bed682a9 ("arm64: defconfig: Enable Tegra TCU")
+  - Target SHA1 does not exist
 
-from the tegra tree.
+Did you mean:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index e82bc8cf1253,ad8f3dea0a74..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -323,8 -319,7 +323,9 @@@ CONFIG_SERIAL_MESON_CONSOLE=3D
-  CONFIG_SERIAL_SAMSUNG=3Dy
-  CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
-  CONFIG_SERIAL_TEGRA=3Dy
-+ CONFIG_SERIAL_TEGRA_TCU=3Dy
- +CONFIG_SERIAL_IMX=3Dy
- +CONFIG_SERIAL_IMX_CONSOLE=3Dy
-  CONFIG_SERIAL_SH_SCI=3Dy
-  CONFIG_SERIAL_MSM=3Dy
-  CONFIG_SERIAL_MSM_CONSOLE=3Dy
-
---Sig_/WT+k+ePHoTcu=Rq6DTBR8a4
+--Sig_/JrloarUeDi9Ju44Le1giVnh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbZP4ACgkQAVBC80lX
-0Gxg1gf/TVpU60x2w77NkepYpjEhutbNqhFgZkB8I4+txLylVckQ42g9LJe38j3Z
-SBqeHI12IgZQPhWVPg7FHkm5i4cKQ52aL0KkxQeAmMSLefUl1mP4iwnVWJQ92PhJ
-a7nEAqRyQ2HfOkJciG5hdYyRaj4Qn8ba9hLlFG+0MTkQ31Fk9YcQkipOzkyTr21p
-iUB3jnsQQQeto+s/22buRY0unu+yB3V0koppc0ECMQ+XyM5W4A0LQaXh9cLaloRj
-F4umJHcjYnU6FiRcem+ZEDEV2D1koU9FztSmo4q+h50FNgiYk2lQ1MXE24Ny2YC4
-3/ir4oKjhHswah6coflg8YtxMIlzTw==
-=gSE1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbZj8ACgkQAVBC80lX
+0GxziAf+OZiiUxf14raDsB9CyenVnSXgLln30g4hqU9cdgCHDsXjNSN1KKevSQ/P
+Kd9W26sBqt5KlPZ2mUJ6fWiHtmRi5vv0dvHVavGvgAr380qjIIQvucpKSdqSP2iJ
+Yq+x6l9Hxq6VXTocJKATMdTojwnW3KSYu5ENVhYnZJH2K0KTmQOiUDsl5lONwMtN
+Eupg3rW/iSyahpG3eB5nPIjBf6B5LwbosRzpbKsBqaQwKZwY+46LYGg/ddSe8A84
+GlQaBGY3ZHYjN+V89jPvh7ZlqSSIjSZAlA1CAYm1wl6qsU2ha9yt9Slnt2U+oQ8y
+zzPx72gpdpAFPDvMgrJOq7LOz67/vw==
+=J3HE
 -----END PGP SIGNATURE-----
 
---Sig_/WT+k+ePHoTcu=Rq6DTBR8a4--
+--Sig_/JrloarUeDi9Ju44Le1giVnh--
