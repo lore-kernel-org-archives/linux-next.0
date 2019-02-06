@@ -1,49 +1,76 @@
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: linux-next: build failure after merge of the compiler-attributes tree
-Date: Wed, 6 Feb 2019 22:48:13 +0100
-Message-ID: <CANiq72k9VSdZzGcRhZn5JYJ8N6_JPStjQKcr4rac=DNrVfDYtw@mail.gmail.com>
-References: <20190207083057.05b40e61@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tegra tree with the imx-mxs tree
+Date: Thu, 7 Feb 2019 09:51:42 +1100
+Message-ID: <20190207095142.5ccc4a8a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WT+k+ePHoTcu=Rq6DTBR8a4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207083057.05b40e61@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/WT+k+ePHoTcu=Rq6DTBR8a4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 6, 2019 at 10:31 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Miguel,
->
-> After merging the compiler-attributes tree, today's linux-next build
-> (arm multi_v7_defconfig) failed like this:
->
-> In file included from arch/arm/crypto/aes-neonbs-glue.c:17:
-> include/linux/module.h:138:7: error: section of alias 'cleanup_module' must match section of its target
->   void cleanup_module(void) __exit __attribute__((alias(#exitfn)));
->        ^~~~~~~~~~~~~~
-> arch/arm/crypto/aes-neonbs-glue.c:433:1: note: in expansion of macro 'module_exit'
->  module_exit(aes_exit);
->  ^~~~~~~~~~~
->
-> Caused by commit
->
->   b31ca3fcca36 ("include/linux/module.h: mark init/cleanup_module aliases as __init/exit")
->
-> I have used the compiler-attributes tree from next-20190206 for today.
+Hi all,
 
-Yeah, sorry about that! I saw it an hour ago from the build bot and
-already took out the branch from -next.
+Today's linux-next merge of the tegra tree got a conflict in:
 
-I tested the change on a subset of modules before pushing, but it
-turns out there are some modules that do not mark their functions with
-__init/__exit and that, in turns, makes GCC complain.
+  arch/arm64/configs/defconfig
 
-I sent a message about it a few minutes ago:
-https://lore.kernel.org/lkml/CANiq72=gS7=G6WbZ4jqybMBh44FeF7UeVEfeb1hN8uMAMt_2bw@mail.gmail.com/
+between commit:
 
+  9bd01e74c715 ("arm64: defconfig: Add i.MX8MQ boot necessary configs")
+
+from the imx-mxs tree and commit:
+
+  bc72bed682a9 ("arm64: defconfig: Enable Tegra TCU")
+
+from the tegra tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
 Cheers,
-Miguel
+Stephen Rothwell
+
+diff --cc arch/arm64/configs/defconfig
+index e82bc8cf1253,ad8f3dea0a74..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -323,8 -319,7 +323,9 @@@ CONFIG_SERIAL_MESON_CONSOLE=3D
+  CONFIG_SERIAL_SAMSUNG=3Dy
+  CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
+  CONFIG_SERIAL_TEGRA=3Dy
++ CONFIG_SERIAL_TEGRA_TCU=3Dy
+ +CONFIG_SERIAL_IMX=3Dy
+ +CONFIG_SERIAL_IMX_CONSOLE=3Dy
+  CONFIG_SERIAL_SH_SCI=3Dy
+  CONFIG_SERIAL_MSM=3Dy
+  CONFIG_SERIAL_MSM_CONSOLE=3Dy
+
+--Sig_/WT+k+ePHoTcu=Rq6DTBR8a4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbZP4ACgkQAVBC80lX
+0Gxg1gf/TVpU60x2w77NkepYpjEhutbNqhFgZkB8I4+txLylVckQ42g9LJe38j3Z
+SBqeHI12IgZQPhWVPg7FHkm5i4cKQ52aL0KkxQeAmMSLefUl1mP4iwnVWJQ92PhJ
+a7nEAqRyQ2HfOkJciG5hdYyRaj4Qn8ba9hLlFG+0MTkQ31Fk9YcQkipOzkyTr21p
+iUB3jnsQQQeto+s/22buRY0unu+yB3V0koppc0ECMQ+XyM5W4A0LQaXh9cLaloRj
+F4umJHcjYnU6FiRcem+ZEDEV2D1koU9FztSmo4q+h50FNgiYk2lQ1MXE24Ny2YC4
+3/ir4oKjhHswah6coflg8YtxMIlzTw==
+=gSE1
+-----END PGP SIGNATURE-----
+
+--Sig_/WT+k+ePHoTcu=Rq6DTBR8a4--
