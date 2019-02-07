@@ -1,25 +1,21 @@
-From: Thierry Reding <treding@nvidia.com>
+From: Abel Vesa <abel.vesa@nxp.com>
 Subject: Re: linux-next: manual merge of the tegra tree with the imx-mxs tree
-Date: Thu, 7 Feb 2019 09:49:48 +0100
-Message-ID: <20190207084946.GA8741@ulmo>
+Date: Thu, 7 Feb 2019 09:01:55 +0000
+Message-ID: <20190207090154.myin5rcs3kprostg@fsr-ub1664-175>
 References: <20190207095142.5ccc4a8a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190207095142.5ccc4a8a@canb.auug.org.au>
-Content-Disposition: inline
+Content-Language: en-US
+Content-ID: <791CA834A472C246B4022A7108EAE047@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Shawn Guo <shawn.guo@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@nxp.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 07, 2019 at 09:51:42AM +1100, Stephen Rothwell wrote:
+On 19-02-07 09:51:42, Stephen Rothwell wrote:
 > Hi all,
 >=20
 > Today's linux-next merge of the tegra tree got a conflict in:
@@ -62,28 +58,6 @@ On Thu, Feb 07, 2019 at 09:51:42AM +1100, Stephen Rothwell wrote:
 >   CONFIG_SERIAL_MSM=3Dy
 >   CONFIG_SERIAL_MSM_CONSOLE=3Dy
 
-Looks good to me.
+Looks fine to me.
 
-Thierry
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxb8ScACgkQ3SOs138+
-s6HRPg/+KwFzYrM5xwqCpacCYlcLCj3NEe9Prg6MfdrCGGN3txJRiGmgNE1RtJRY
-MiJY9wLxhEAOD4qZq6OUaP3sL7blkdVegu8ilMlBfcAbk8iECdUk7ttpbcPheSdW
-LxjqQ1fPYvIprZEA/hTOfhUAL3T8f6kWDfclVvKu4pQKnkq2XDGIdh1cEjZZwBcJ
-Nae+x7Aw7Olr57UAO/XqlVkkSjHDNklOTkkaUvoQvxnNP4o/koUUQWq3vI21cuSl
-pnijxr/Ee8efD2Kuu5XNxnO4snnuYjGGrmuXy2VI5Xwu1SfUeMBwbzjRvNhsxgHX
-oz44YJlRAa7SNMk15814DL9AgGu4vNbTdOYtWNTKCYrEHL+ap9o/d9dNgHKAqhga
-GS/NoN8Bk0xzQK/bnPCcT1DeuE+NGZp10NHnD1eqdDLxv09dsKsdQv5dXQ05OrMp
-d1XKKRCtO/3RT1m9+JAjyeVBAodE4xh00sYDpGclYw+x4xISbeF5TOeHJRS6JuXK
-CfFhRefxN1jYoJfgf94ZnqfBaRduJMaV2dduWD+cdNPr8EB7qrdSzUPQHZgLTiwN
-OeQTNJsDPSrLghJOHkQQBfSBTPptiGnzR4h5jiXDS5UfMXj4MY62o6tfMvy/KOYm
-Z8eqc91rTJhrK19v/OYibVenN87nRg0sN/4ZRaqSBPHUJXJRYZI=
-=U5z5
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+Abel=
