@@ -1,70 +1,92 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the v4l-dvb tree
-Date: Fri, 8 Feb 2019 07:39:43 +1100
-Message-ID: <20190208073943.0317d5ea@canb.auug.org.au>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: linux-next: build warning after merge of the tpmdd tree
+Date: Thu, 7 Feb 2019 23:16:40 +0200
+Message-ID: <20190207211640.GA23906@linux.intel.com>
+References: <20190207134733.05a8e55a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/aTJTitUrGHEGzsnvTdXsFnI"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190207134733.05a8e55a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel@collabora.com>, "Lucas A. M. =?UTF-8?B?TWFnYWxow6Nlcw==?=" <lucmaga@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/aTJTitUrGHEGzsnvTdXsFnI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 07, 2019 at 01:47:33PM +1100, Stephen Rothwell wrote:
+> Hi Jarkko,
+> 
+> After merging the tpmdd tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/char/tpm/tpm_i2c_nuvoton.c:45: warning: "TPM_RETRY" redefined
+>  #define TPM_RETRY      5
+>  
+> In file included from drivers/char/tpm/tpm_i2c_nuvoton.c:35:
+> drivers/char/tpm/tpm.h:43: note: this is the location of the previous definition
+>  #define TPM_RETRY  50
+>  
+> drivers/char/tpm/tpm_i2c_infineon.c:30: warning: "TPM_BUFSIZE" redefined
+>  #define TPM_BUFSIZE 1260
+>  
+> In file included from drivers/char/tpm/tpm_i2c_infineon.c:27:
+> drivers/char/tpm/tpm.h:41: note: this is the location of the previous definition
+>  #define TPM_BUFSIZE  4096
+>  
+> In file included from drivers/char/tpm/st33zp24/i2c.c:30:
+> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+>  #define TPM_BUFSIZE                     2048
+>  
+> In file included from drivers/char/tpm/st33zp24/i2c.c:29:
+> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
+>  #define TPM_BUFSIZE  4096
+>  
+> In file included from drivers/char/tpm/st33zp24/spi.c:30:
+> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+>  #define TPM_BUFSIZE                     2048
+>  
+> In file included from drivers/char/tpm/st33zp24/spi.c:29:
+> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
+>  #define TPM_BUFSIZE  4096
+>  
+> In file included from drivers/char/tpm/st33zp24/st33zp24.c:34:
+> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+>  #define TPM_BUFSIZE                     2048
+>  
+> In file included from drivers/char/tpm/st33zp24/st33zp24.c:33:
+> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
+>  #define TPM_BUFSIZE  4096
+>  
+> In file included from drivers/char/tpm/st33zp24/st33zp24.c:34:
+> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+>  #define TPM_BUFSIZE                     2048
+>  
+> In file included from drivers/char/tpm/st33zp24/st33zp24.c:33:
+> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
+>  #define TPM_BUFSIZE  4096
+>  
+> 
+> Introduced by commit
+> 
+>   569c1057f9ac ("tpm: move tpm_chip definition to include/linux/tpm.h")
 
-Hi Mauro,
+Hi I forgot apply this before that commit:
 
-In commit
+tpm: Fix some name collisions with drivers/char/tpm.h
 
-  c2d88e7d66f9 ("media: vb2: Fix buf_out_validate documentation")
+* Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
+  ST33ZP24_BUFSIZE.
+* Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
+  TPM_I2C_INFINEON_BUFSIZE.
+* Rename TPM_RETRY in tpm_i2c_nuvoton to TPM_I2C_RETRIES.
+* Remove TPM_HEADER_SIZE from tpm_i2c_nuvoton.
 
-Fixes tag
+Cc: stable@vger.kernel.org
+Fixes: bf38b8710892 ("tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy)")
+Fixes: aad628c1d91a ("char/tpm: Add new driver for Infineon I2C TIS TPM")
+Fixes: 32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-  Fixes: 28d77c21cb ("media: vb2: add buf_out_validate callback")
+It is now pushed.
 
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-In commit
-
-  adc589d2a208 ("media: vimc: Add vimc-streamer for stream control")
-
-Fixes tag
-
-  Fixes: f2fe89061d797 ("vimc: Virtual Media Controller core, capture
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-  - Subject does not match target commit subject
-
-Please do not split Fixes tags over more than one line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/aTJTitUrGHEGzsnvTdXsFnI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcl48ACgkQAVBC80lX
-0GysvAgAgu5WnSrelhXf2Jf0WHsXlx43cgzfSZDH1iYsR0setTzVpRU+5sbrBBF1
-py3SaLAJv9ll8cwCWqhQ9gk1+pQ5fec4RXBNDYfjiropM1hjt6y83j6cEnZlrmNM
-zpcR8jVZ8fGfdGnrdL3j30rP/dUPSXDC1DsWBW3vic1piS7GZlovO1SscPYVIWsm
-aEXvUXAgHOVRRgUFzRHaqSvb2vdyiWOB8l47/eqQGQfha5qf3KXveiYZ3Y0BauoL
-bhYozUSjRaxFnAIFmtjwEVDVaFUtV4QoO36M+CVWqeiaU3Bka5BqGeceV18VBkGS
-IL50vZESus3c308x8PGALN61BbT9uQ==
-=mNyq
------END PGP SIGNATURE-----
-
---Sig_/aTJTitUrGHEGzsnvTdXsFnI--
+/Jarkko
