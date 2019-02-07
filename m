@@ -1,49 +1,38 @@
-From: James Smart <jsmart2021@gmail.com>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Date: Thu, 7 Feb 2019 10:30:02 -0800
-Message-ID: <eea2211e-6342-1949-5a3e-2c08b87db0d9@gmail.com>
-References: <20190207154446.3f48c496@canb.auug.org.au>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 7 Feb 2019 19:36:20 +0100
+Message-ID: <20190207183620.7h4i4fdl4g7kgkjz@salvia>
+References: <20190207115425.61c3708a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207154446.3f48c496@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Ewan D. Milne" <emilne@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190207115425.61c3708a@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guy Shattah <sguy@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On 2/6/2019 8:44 PM, Stephen Rothwell wrote:
+Hi Stephen,
+
+On Thu, Feb 07, 2019 at 11:54:24AM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
->    drivers/scsi/lpfc/lpfc_nvme.c
+>   drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
 > 
 > between commit:
 > 
->    7961cba6f7d8 ("scsi: lpfc: nvme: avoid hang / use-after-free when destroying localport")
+>   1651925d403e ("net/mlx5e: Use the inner headers to determine tc/pedit offload limitation on decap flows")
 > 
-> from Linus' tree and commit:
+> from the net tree and commit:
 > 
->    4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to hardware queue structures")
+>   738678817573 ("drivers: net: use flow action infrastructure")
 > 
-> from the scsi-mkp tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> from the net-next tree.
 
+This conflict resolution when merging net into net-next looks good to me.
 
-Thank You. The fixup patch looks correct.
-
-Martin, let me know if there's anything else you'd like me to do.
-
--- james
-
-Signed-off-by:  James Smart <james.smart@broadcom.com>
+Thanks.
