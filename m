@@ -1,92 +1,63 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: build warning after merge of the tpmdd tree
-Date: Thu, 7 Feb 2019 23:16:40 +0200
-Message-ID: <20190207211640.GA23906@linux.intel.com>
-References: <20190207134733.05a8e55a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with the mips-fixes tree
+Date: Fri, 8 Feb 2019 09:22:10 +1100
+Message-ID: <20190208092210.653a9bcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rrF3iid0usznE6OR18/XudT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190207134733.05a8e55a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huacai Chen <chenhc@lemote.com>, Paul Burton <paul.burton@mips.com>, Huang Pei <huangpei@loongson.cn>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 07, 2019 at 01:47:33PM +1100, Stephen Rothwell wrote:
-> Hi Jarkko,
-> 
-> After merging the tpmdd tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/char/tpm/tpm_i2c_nuvoton.c:45: warning: "TPM_RETRY" redefined
->  #define TPM_RETRY      5
->  
-> In file included from drivers/char/tpm/tpm_i2c_nuvoton.c:35:
-> drivers/char/tpm/tpm.h:43: note: this is the location of the previous definition
->  #define TPM_RETRY  50
->  
-> drivers/char/tpm/tpm_i2c_infineon.c:30: warning: "TPM_BUFSIZE" redefined
->  #define TPM_BUFSIZE 1260
->  
-> In file included from drivers/char/tpm/tpm_i2c_infineon.c:27:
-> drivers/char/tpm/tpm.h:41: note: this is the location of the previous definition
->  #define TPM_BUFSIZE  4096
->  
-> In file included from drivers/char/tpm/st33zp24/i2c.c:30:
-> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
->  #define TPM_BUFSIZE                     2048
->  
-> In file included from drivers/char/tpm/st33zp24/i2c.c:29:
-> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
->  #define TPM_BUFSIZE  4096
->  
-> In file included from drivers/char/tpm/st33zp24/spi.c:30:
-> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
->  #define TPM_BUFSIZE                     2048
->  
-> In file included from drivers/char/tpm/st33zp24/spi.c:29:
-> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
->  #define TPM_BUFSIZE  4096
->  
-> In file included from drivers/char/tpm/st33zp24/st33zp24.c:34:
-> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
->  #define TPM_BUFSIZE                     2048
->  
-> In file included from drivers/char/tpm/st33zp24/st33zp24.c:33:
-> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
->  #define TPM_BUFSIZE  4096
->  
-> In file included from drivers/char/tpm/st33zp24/st33zp24.c:34:
-> drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
->  #define TPM_BUFSIZE                     2048
->  
-> In file included from drivers/char/tpm/st33zp24/st33zp24.c:33:
-> drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the previous definition
->  #define TPM_BUFSIZE  4096
->  
-> 
-> Introduced by commit
-> 
->   569c1057f9ac ("tpm: move tpm_chip definition to include/linux/tpm.h")
+--Sig_/rrF3iid0usznE6OR18/XudT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi I forgot apply this before that commit:
+Hi all,
 
-tpm: Fix some name collisions with drivers/char/tpm.h
+Today's linux-next merge of the mips tree got a conflict in:
 
-* Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
-  ST33ZP24_BUFSIZE.
-* Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
-  TPM_I2C_INFINEON_BUFSIZE.
-* Rename TPM_RETRY in tpm_i2c_nuvoton to TPM_I2C_RETRIES.
-* Remove TPM_HEADER_SIZE from tpm_i2c_nuvoton.
+  arch/mips/include/asm/pgtable.h
 
-Cc: stable@vger.kernel.org
-Fixes: bf38b8710892 ("tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy)")
-Fixes: aad628c1d91a ("char/tpm: Add new driver for Infineon I2C TIS TPM")
-Fixes: 32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+between commit:
 
-It is now pushed.
+  e02e07e3127d ("MIPS: Loongson: Introduce and use loongson_llsc_mb()")
 
-/Jarkko
+from the mips-fixes tree and commit:
+
+  c7e2d71dda7a ("MIPS: Fix set_pte() for Netlogic XLR using cmpxchg64()")
+
+from the mips tree.
+
+I fixed it up (I just used the mips tree version) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/rrF3iid0usznE6OR18/XudT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcr5IACgkQAVBC80lX
+0GwAfAf+OdzsNJWdkZsZAt0+mLS7IYyWB45KKDXCzrAwK/9i2b1MIjeECKheJUyE
+NRbJ6wBN//+b/XbgZq27/nPe0rasyzDCwN6SxOpgCNKpCSl5Ylcbjz97EPdUp1Z8
+m6o6mMz8qU/LDBf2khURAPUWO7lMmmj9zTU4RhZa1Rr08Crq1jo8227JEUSt3noS
++d7Uni4EcWoA7J28L3qesoHCo+k31QAivlbkXtXW053lZ9uNWoXQAklWhXQC20Sy
+S4opS3eXReLA089SmE8r3O6f8go/56IclzGl76Oeh+tRiYfE65VH7/bpGmSjfueq
+4sNwTbG0HFPNCGt3wBy4L+Xygz/0XQ==
+=fmO3
+-----END PGP SIGNATURE-----
+
+--Sig_/rrF3iid0usznE6OR18/XudT--
