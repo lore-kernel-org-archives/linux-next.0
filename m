@@ -1,85 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nand tree with the mvebu tree
-Date: Thu, 7 Feb 2019 12:25:09 +1100
-Message-ID: <20190207122509.68144d86@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tpmdd tree
+Date: Thu, 7 Feb 2019 13:47:33 +1100
+Message-ID: <20190207134733.05a8e55a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/erH/6b8z4jz=/2fEeJwtDsJ"; protocol="application/pgp-signature"
+ boundary="Sig_/=d=+R=oonV4=cYeZD9ZjYxr"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vladimir Vid <vladimir.vid@sartura.hr>, Jianxin Pan <jianxin.pan@amlogic.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/erH/6b8z4jz=/2fEeJwtDsJ
+--Sig_/=d=+R=oonV4=cYeZD9ZjYxr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jarkko,
 
-Today's linux-next merge of the nand tree got a conflict in:
+After merging the tpmdd tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  MAINTAINERS
+drivers/char/tpm/tpm_i2c_nuvoton.c:45: warning: "TPM_RETRY" redefined
+ #define TPM_RETRY      5
+=20
+In file included from drivers/char/tpm/tpm_i2c_nuvoton.c:35:
+drivers/char/tpm/tpm.h:43: note: this is the location of the previous defin=
+ition
+ #define TPM_RETRY  50
+=20
+drivers/char/tpm/tpm_i2c_infineon.c:30: warning: "TPM_BUFSIZE" redefined
+ #define TPM_BUFSIZE 1260
+=20
+In file included from drivers/char/tpm/tpm_i2c_infineon.c:27:
+drivers/char/tpm/tpm.h:41: note: this is the location of the previous defin=
+ition
+ #define TPM_BUFSIZE  4096
+=20
+In file included from drivers/char/tpm/st33zp24/i2c.c:30:
+drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+ #define TPM_BUFSIZE                     2048
+=20
+In file included from drivers/char/tpm/st33zp24/i2c.c:29:
+drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the pr=
+evious definition
+ #define TPM_BUFSIZE  4096
+=20
+In file included from drivers/char/tpm/st33zp24/spi.c:30:
+drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+ #define TPM_BUFSIZE                     2048
+=20
+In file included from drivers/char/tpm/st33zp24/spi.c:29:
+drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the pr=
+evious definition
+ #define TPM_BUFSIZE  4096
+=20
+In file included from drivers/char/tpm/st33zp24/st33zp24.c:34:
+drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+ #define TPM_BUFSIZE                     2048
+=20
+In file included from drivers/char/tpm/st33zp24/st33zp24.c:33:
+drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the pr=
+evious definition
+ #define TPM_BUFSIZE  4096
+=20
+In file included from drivers/char/tpm/st33zp24/st33zp24.c:34:
+drivers/char/tpm/st33zp24/st33zp24.h:22: warning: "TPM_BUFSIZE" redefined
+ #define TPM_BUFSIZE                     2048
+=20
+In file included from drivers/char/tpm/st33zp24/st33zp24.c:33:
+drivers/char/tpm/st33zp24/../tpm.h:41: note: this is the location of the pr=
+evious definition
+ #define TPM_BUFSIZE  4096
+=20
 
-between commit:
+Introduced by commit
 
-  2e73bb33366d ("arm64: dts: marvell: Add device tree for uDPU board")
-
-from the mvebu tree and commit:
-
-  0f416a463ecc ("MAINTAINERS: Add entry for Amlogic NAND controller driver")
-
-from the nand tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  569c1057f9ac ("tpm: move tpm_chip definition to include/linux/tpm.h")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index 2d958beee76f,e6b902c7c828..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -9887,11 -9849,13 +9887,18 @@@ F:	drivers/media/platform/meson/ao-cec.
-  F:	Documentation/devicetree/bindings/media/meson-ao-cec.txt
-  T:	git git://linuxtv.org/media_tree.git
- =20
-+ MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
-+ M:	Liang Yang <liang.yang@amlogic.com>
-+ L:	linux-mtd@lists.infradead.org
-+ S:	Maintained
-+ F:	drivers/mtd/nand/raw/meson_*
-+ F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-+=20
- +METHODE UDPU SUPPORT
- +M:	Vladimir Vid <vladimir.vid@sartura.hr>
- +S:	Maintained
- +F:	arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
- +
-  MICROBLAZE ARCHITECTURE
-  M:	Michal Simek <monstr@monstr.eu>
-  W:	http://www.monstr.eu/fdt/
-
---Sig_/erH/6b8z4jz=/2fEeJwtDsJ
+--Sig_/=d=+R=oonV4=cYeZD9ZjYxr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbiPUACgkQAVBC80lX
-0GyH1gf/a6LAWUFi6kZSTqxMHXZFZj1xcglu51VmEcCgrCh9ooQvqF510dVdr9LS
-21FvQrp7TvudZRef3PrL+dGX4HJGP7tT+5HlGID3f1mmrR1xnA6lOhY4ecThx8GY
-Vk9yYxFFbuL3u7mCKlfevDmh1nw3kuGPfHcyLnkKEYgDKsQTNnuHUvBiwdtGhFq+
-Fc12gV7BvSmrWt8OstFGO89sx1unQMJV9O2faWykT4OHhrO7ZDHFblUDEyVQH8IW
-Gn82LWyi5RbjUpVi3nt4p8rDqTXVoQMm5q3ChMYVF1o68CO5NT2JVTIX9A4rOfVu
-X8LhnLJp3iieUYLa71DsaL7MHujp4g==
-=tYPF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbnEUACgkQAVBC80lX
+0Gw2Owf9HH8whEe0KGtfzMrkqlrYsRUgJ1suOxLPHzD4RA42Y7itmZz0aKiNrTp2
+heNMNsEDQYTyGbO6Vgc5XNJgtV2eciv6CXMY6YdnM2TgrgwVXQNqXG5Httj2SqxB
+aO1G/grEAnNSXlZPDYJUwwLfYuiIqUePeCWN3gG3qo6B3nqTSwF7l4JNtIr/XAZ2
+QxDn43dbdG+hl0onQIVXHwMeFi9ApUTYU8WRfmRI4Pg+WrU/67ckjg5WRlrLrWOK
+aVXOaNtjpz6XuDdafaRZHNtGLnOFjllDmoscUDLGrCvkPY28OvhoJBEpsMIMBllw
+wYWv+IjwzObHE8aw3iFGml3QrTq6Xw==
+=7kGl
 -----END PGP SIGNATURE-----
 
---Sig_/erH/6b8z4jz=/2fEeJwtDsJ--
+--Sig_/=d=+R=oonV4=cYeZD9ZjYxr--
