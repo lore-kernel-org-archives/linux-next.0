@@ -1,58 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the qcom tree
-Date: Fri, 8 Feb 2019 00:47:21 +1100
-Message-ID: <20190208004721.129a9eb7@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the sunxi tree
+Date: Fri, 8 Feb 2019 00:50:42 +1100
+Message-ID: <20190208005042.6b353e17@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BjaIFSiDSbYLuTTzOa_Sn9a"; protocol="application/pgp-signature"
+ boundary="Sig_/d+eRIT+1OUH4EPb868ItlbJ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BjaIFSiDSbYLuTTzOa_Sn9a
+--Sig_/d+eRIT+1OUH4EPb868ItlbJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi all,
 
 In commit
 
-  761f63b2ff21 ("arm64: dts: sdm845: Add clocks and iommus to WCN3990 WLAN =
-node")
+  df0aeb208b24 ("ARM: dts: sun9i: a80-optimus: Add node for AXP809's unused=
+ dc1sw regulator")
 
 Fixes tag
 
-  Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device n=
-ode")
+  Fixes: aa4a27bc819e ("ARM: dts: sun9i: a80-optimus: Add AXP809 PMIC
 
 has these problem(s):
 
-  - Target SHA1 does not exist
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
 
-Did you mean:
-
-  022bccb840b7 ("arm64: dts: sdm845: Add WCN3990 WLAN module device node")
+Please don't wrap the Fixes tag over more than one line.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/BjaIFSiDSbYLuTTzOa_Sn9a
+--Sig_/d+eRIT+1OUH4EPb868ItlbJ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcNukACgkQAVBC80lX
-0GyegAgAmfcukKZOJpy0z7Ung0nahPqBX5T6Tb5PVnrPei0EY/d/9/EzSlNYR47n
-diYx6t/sdGC+5OnSy4Xqm18oX22bny8mqolIaf2DnTs1GIqUScssWAFNwuy/GNsI
-oEXZocBhE457HqEmch8rvLnTIZj/JWES1qwt98/QMbPh4Uo8Hfg0/HWDAK3LPpZ9
-4I+oGW9fm4NezXv543Hd5iNLtljRr+Pb3h5XbDwjA/1/L6C1izwLz9esRlGsAX1U
-1A/ixluZTaZ1DwhcB8X+bYzVLJp4o27Ox2YLSus0vsrkDmlRzyiHurHZAs7uWo5i
-ABmaMIsxek9VMf09YeTka+VCXubPPQ==
-=iq23
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcN7IACgkQAVBC80lX
+0GxTuwf+K+Dot6BOmPRtiyc1uN1tXZhp4cl3ssTep9EFaOnYGHps7oM0LcOWZgQS
+wfLR1lZr3UOhcRqzQic+jPcfLZP6I8j7Cuif2JQvUGlRLwxIuqpXPslane/gON9q
+ysZd9Gpv9tV3E3y8/g/RiePeYiDhHFaKfW/9RwEEl58Ad/3p/PmImr5+cpbncON+
+DXzSJ5CIF31gjeESCht4YDfqPfWioxhE4b+wJLlLFBXRHhOUmnOUs7wl7B5KceIN
+SPThONLzhNdxrIpEYafiUHC9DfaLDHnDMaUi19UwfNbmvF0YQKOEyUE/sfO04TAq
+dfywZya1Q3q7ClY0yuEWX5K+CQWi3g==
+=moIH
 -----END PGP SIGNATURE-----
 
---Sig_/BjaIFSiDSbYLuTTzOa_Sn9a--
+--Sig_/d+eRIT+1OUH4EPb868ItlbJ--
