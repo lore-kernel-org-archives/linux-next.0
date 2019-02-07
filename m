@@ -1,76 +1,49 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: linux-next: Fixes tag needs some work in the qcom tree
-Date: Thu, 7 Feb 2019 09:06:19 -0800
-Message-ID: <CAD=FV=U07_E6O96o4KrJGPaKvE4aSGb9OT6kCy7x40Q_-kGGOA@mail.gmail.com>
-References: <20190208004721.129a9eb7@canb.auug.org.au>
+From: James Smart <jsmart2021@gmail.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with Linus' tree
+Date: Thu, 7 Feb 2019 10:30:02 -0800
+Message-ID: <eea2211e-6342-1949-5a3e-2c08b87db0d9@gmail.com>
+References: <20190207154446.3f48c496@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190208004721.129a9eb7@canb.auug.org.au>
+In-Reply-To: <20190207154446.3f48c496@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Gross <andy.gross@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Ewan D. Milne" <emilne@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+On 2/6/2019 8:44 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> 
+>    drivers/scsi/lpfc/lpfc_nvme.c
+> 
+> between commit:
+> 
+>    7961cba6f7d8 ("scsi: lpfc: nvme: avoid hang / use-after-free when destroying localport")
+> 
+> from Linus' tree and commit:
+> 
+>    4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to hardware queue structures")
+> 
+> from the scsi-mkp tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-On Thu, Feb 7, 2019 at 5:47 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Andy,
->
-> In commit
->
->   761f63b2ff21 ("arm64: dts: sdm845: Add clocks and iommus to WCN3990 WLAN node")
->
-> Fixes tag
->
->   Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device node")
->
-> has these problem(s):
->
->   - Target SHA1 does not exist
->
-> Did you mean:
->
->   022bccb840b7 ("arm64: dts: sdm845: Add WCN3990 WLAN module device node")
 
-+Bjorn
+Thank You. The fixup patch looks correct.
 
-Looks like someone reorganized and/or rebased the tree after I sent
-out my fix.  When I check locally I have the old commit still and the
-new:
+Martin, let me know if there's anything else you'd like me to do.
 
-commit be7019103469e6ccb997f932d3e0dce0141a0eda
-Author:     Govind Singh <govinds@codeaurora.org>
-AuthorDate: Mon Nov 5 18:38:37 2018 +0530
-Commit:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CommitDate: Wed Jan 16 14:13:41 2019 -0800
+-- james
 
-    dts: arm64/sdm845: Add WCN3990 WLAN module device node
-
-    Add device node for the ath10k SNOC platform driver probe
-    and add resources required for WCN3990 on SDM845 soc.
-
-    Reviewed-by: Brian Norris <briannorris@chromium.org>
-    Tested-by: Brian Norris <briannorris@chromium.org>
-    Signed-off-by: Govind Singh <govinds@codeaurora.org>
-    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
----
-
-commit 022bccb840b7ff9c64a70e81ac017d4d10bb8a9c
-Author:     Govind Singh <govinds@codeaurora.org>
-AuthorDate: Mon Nov 5 18:38:37 2018 +0530
-Commit:     Andy Gross <andy.gross@linaro.org>
-CommitDate: Thu Jan 24 22:19:20 2019 -0600
-
-    arm64: dts: sdm845: Add WCN3990 WLAN module device node
-
-    Add device node for the ath10k SNOC platform driver probe
-    and add resources required for WCN3990 on SDM845 soc.
-
-    Reviewed-by: Brian Norris <briannorris@chromium.org>
-    Tested-by: Brian Norris <briannorris@chromium.org>
-    Signed-off-by: Govind Singh <govinds@codeaurora.org>
-    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-    Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by:  James Smart <james.smart@broadcom.com>
