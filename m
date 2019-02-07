@@ -1,30 +1,30 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the drivers-x86 tree
-Date: Thu, 7 Feb 2019 17:55:46 +0200
-Message-ID: <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
-References: <20190207095703.564e76b2@canb.auug.org.au> <38152c55-c2c1-c89f-2751-0ef0d40fcba9@linux.intel.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: linux-next: Fixes tag needs some work in the qcom tree
+Date: Thu, 7 Feb 2019 09:06:19 -0800
+Message-ID: <CAD=FV=U07_E6O96o4KrJGPaKvE4aSGb9OT6kCy7x40Q_-kGGOA@mail.gmail.com>
+References: <20190208004721.129a9eb7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <38152c55-c2c1-c89f-2751-0ef0d40fcba9@linux.intel.com>
+In-Reply-To: <20190208004721.129a9eb7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Darren Hart <dvhart@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andy Gross <andy.gross@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 7, 2019 at 4:06 AM Bhardwaj, Rajneesh
-<rajneesh.bhardwaj@linux.intel.com> wrote:
-> On 07-Feb-19 4:27 AM, Stephen Rothwell wrote:
+Hi,
+
+On Thu, Feb 7, 2019 at 5:47 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Hi all,
+> Hi Andy,
 >
 > In commit
 >
->   4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr_show")
+>   761f63b2ff21 ("arm64: dts: sdm845: Add clocks and iommus to WCN3990 WLAN node")
 >
 > Fixes tag
 >
->   Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
+>   Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device node")
 >
 > has these problem(s):
 >
@@ -32,17 +32,45 @@ On Thu, Feb 7, 2019 at 4:06 AM Bhardwaj, Rajneesh
 >
 > Did you mean:
 >
->   2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
->
-> Yes, upstream commit is 2eb150558bb79ee01c39b64c2868216c0be2904f. For some reason when i do git show on my repo with both these SHA1 i see the same patch.
->
-> I will fix this in next version.
+>   022bccb840b7 ("arm64: dts: sdm845: Add WCN3990 WLAN module device node")
 
-Hmm... this came to our published branch, i.e. for-next, would it be
-better to update it via rebasing?
++Bjorn
 
-Darren, what do you think?
+Looks like someone reorganized and/or rebased the tree after I sent
+out my fix.  When I check locally I have the old commit still and the
+new:
 
--- 
-With Best Regards,
-Andy Shevchenko
+commit be7019103469e6ccb997f932d3e0dce0141a0eda
+Author:     Govind Singh <govinds@codeaurora.org>
+AuthorDate: Mon Nov 5 18:38:37 2018 +0530
+Commit:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CommitDate: Wed Jan 16 14:13:41 2019 -0800
+
+    dts: arm64/sdm845: Add WCN3990 WLAN module device node
+
+    Add device node for the ath10k SNOC platform driver probe
+    and add resources required for WCN3990 on SDM845 soc.
+
+    Reviewed-by: Brian Norris <briannorris@chromium.org>
+    Tested-by: Brian Norris <briannorris@chromium.org>
+    Signed-off-by: Govind Singh <govinds@codeaurora.org>
+    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+---
+
+commit 022bccb840b7ff9c64a70e81ac017d4d10bb8a9c
+Author:     Govind Singh <govinds@codeaurora.org>
+AuthorDate: Mon Nov 5 18:38:37 2018 +0530
+Commit:     Andy Gross <andy.gross@linaro.org>
+CommitDate: Thu Jan 24 22:19:20 2019 -0600
+
+    arm64: dts: sdm845: Add WCN3990 WLAN module device node
+
+    Add device node for the ath10k SNOC platform driver probe
+    and add resources required for WCN3990 on SDM845 soc.
+
+    Reviewed-by: Brian Norris <briannorris@chromium.org>
+    Tested-by: Brian Norris <briannorris@chromium.org>
+    Signed-off-by: Govind Singh <govinds@codeaurora.org>
+    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+    Signed-off-by: Andy Gross <andy.gross@linaro.org>
