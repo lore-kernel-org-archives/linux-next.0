@@ -1,60 +1,47 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Fri, 8 Feb 2019 09:52:44 +0100
-Message-ID: <CAKMK7uHOJwunZ0erM31fBNi+kADoK=Y=CRpoSTx=CRKFFL596w@mail.gmail.com>
-References: <20190208123815.64757bc5@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: manual merge of the drm-misc tree with
+ the drm tree
+Date: Fri, 8 Feb 2019 09:53:33 +0100
+Message-ID: <20190208085333.GH23159@phenom.ffwll.local>
+References: <20190208122744.4a63bec0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190208123815.64757bc5@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Liviu Dudau <Liviu.Dudau@arm.com>, Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190208122744.4a63bec0@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 8, 2019 at 2:38 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the drm-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> In file included from drivers/gpu/drm/arm/display/komeda/komeda_drv.c:13:
-> drivers/gpu/drm/arm/display/komeda/komeda_kms.h:87:20: error: field 'base' has incomplete type
->   struct drm_device base;
->                     ^~~~
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_parse_pipe_dt':
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c:27:3: error: implicit declaration of function 'DRM_ERROR'; did you mean 'DRM_IOR'? [-Werror=implicit-function-declaration]
->    DRM_ERROR("get aclk for pipeline %d failed!\n", pipe_id);
->    ^~~~~~~~~
->    DRM_IOR
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_dev_create':
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c:127:2: error: implicit declaration of function 'DRM_INFO'; did you mean 'DRM_IO'? [-Werror=implicit-function-declaration]
->   DRM_INFO("Found ARM Mali-D%x version r%dp%d\n",
->   ^~~~~~~~
->   DRM_IO
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_dev_destroy':
-> drivers/gpu/drm/arm/display/komeda/komeda_dev.c:170:3: error: implicit declaration of function 'devm_iounmap'; did you mean 'pci_iounmap'? [-Werror=implicit-function-declaration]
->    devm_iounmap(dev, mdev->reg_base);
->    ^~~~~~~~~~~~
->    pci_iounmap
->
-> and lots more ...
->
-> Probably caused by commit
->
->   e3b01f0d576a ("drm: remove drmP.h from drm_modeset_helper.h")
->
-> I have used the drm-misc tree from next-20190207 for today.
-
-Yup.
-
-Sam, can you pls take a look at what komeda needs? you need to
-manually merge together drm-misc-next and drm-next first I think.
-
-Dave, Maxime, Liviu: Heads up, drm-misc-next + drm-next will colide.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+T24gRnJpLCBGZWIgMDgsIDIwMTkgYXQgMTI6Mjc6NDRQTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBk
+cm0tbWlzYyB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJpdmVycy9ncHUvZHJtL2k5
+MTUvaW50ZWxfZGlzcGxheS5jCj4gCj4gYmV0d2VlbiBjb21taXQ6Cj4gCj4gICA5ZjU4ODkyZWE5
+OTYgKCJkcm0vaTkxNTogUHVsbCBhbGwgdGhlIHJlc2V0IGZ1bmN0aW9uYWxpdHkgdG9nZXRoZXIg
+aW50byBpOTE1X3Jlc2V0LmMiKQo+IAo+IGZyb20gdGhlIGRybSB0cmVlIGFuZCBjb21taXQ6Cj4g
+Cj4gICBkMGU5MzU5OWQzOTYgKCJkcm0vaTkxNTogcHJlcGFyZSBmb3IgZHJtUC5oIHJlbW92YWwg
+ZnJvbSBkcm1fbW9kZXNldF9oZWxwZXIuaCIpCj4gCj4gZnJvbSB0aGUgZHJtLW1pc2MgdHJlZS4K
+PiAKPiBJIGZpeGVkIGl0IHVwIChJIHRoaW5rIEkgZ290IHRoZSByaWdodCBpbmNsdWRlIGZpbGVz
+IGluIHRoZSByaWdodCBvcmRlciBpbgo+IHRoZSBlbmQgLSBzZWUgYmVsb3cgYW5kIHBsZWFzZSBj
+aGVjayB0aGUgZmluYWwgcmVzdWx0KSBhbmQgY2FuIGNhcnJ5IHRoZQo+IGZpeCBhcyBuZWNlc3Nh
+cnkuIFRoaXMgaXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwK
+PiBidXQgYW55IG5vbiB0cml2aWFsIGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlv
+dXIgdXBzdHJlYW0KPiBtYWludGFpbmVyIHdoZW4geW91ciB0cmVlIGlzIHN1Ym1pdHRlZCBmb3Ig
+bWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50Cj4gdG8gY29uc2lkZXIgY29vcGVyYXRpbmcgd2l0
+aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0bwo+IG1pbmltaXNlIGFu
+eSBwYXJ0aWN1bGFybHkgY29tcGxleCBjb25mbGljdHMuCgpUaGVyZSBpc24ndCBhICJiZWxvdyIg
+YWZhaWNzIC4uLi4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwg
+SW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRl
+bC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
