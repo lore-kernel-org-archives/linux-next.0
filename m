@@ -1,55 +1,58 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH] crypto: qat - Remove unused goto label
-Date: Fri, 8 Feb 2019 15:04:56 +0800
-Message-ID: <20190208070456.xywdb3ga2kqwoxaf@gondor.apana.org.au>
-References: <20190204110106.345c3e21@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the apparmor tree
+Date: Fri, 8 Feb 2019 18:33:32 +1100
+Message-ID: <20190208183332.47dc655a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uS4PLsnuHLrdg_ZH0=xgX/4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190204110106.345c3e21@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chris Coulson <chris.coulson@canonical.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 04, 2019 at 11:01:06AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> After merging the crypto tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/crypto/qat/qat_common/adf_transport.c: In function 'adf_init_etr_data':
-> drivers/crypto/qat/qat_common/adf_transport.c:501:1: warning: label 'err_bank_debug' defined but not used [-Wunused-label]
->  err_bank_debug:
->  ^~~~~~~~~~~~~~
-> 
-> Introduced by commit
-> 
->   f0fcf9ade46a ("crypto: qat - no need to check return value of debugfs_create functions")
+--Sig_/uS4PLsnuHLrdg_ZH0=xgX/4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the report Stephen!
+Hi all,
 
----8<---
-This patch removes an unused label.
+After merging the apparmor tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: f0fcf9ade46a ("crypto: qat - no need to check return...")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+security/apparmor/policy_unpack.c: In function 'deflate_compress':
+security/apparmor/policy_unpack.c:1064:4: error: implicit declaration of fu=
+nction 'vfree'; did you mean 'kfree'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    vfree(stgbuf);
+    ^~~~~
+    kfree
 
-diff --git a/drivers/crypto/qat/qat_common/adf_transport.c b/drivers/crypto/qat/qat_common/adf_transport.c
-index ac658ce46836..2136cbe4bf6c 100644
---- a/drivers/crypto/qat/qat_common/adf_transport.c
-+++ b/drivers/crypto/qat/qat_common/adf_transport.c
-@@ -498,7 +498,6 @@ int adf_init_etr_data(struct adf_accel_dev *accel_dev)
- 
- err_bank_all:
- 	debugfs_remove(etr_data->debug);
--err_bank_debug:
- 	kfree(etr_data->banks);
- err_bank:
- 	kfree(etr_data);
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Caused by commit
+
+  876dd866c084 ("apparmor: Initial implementation of raw policy blob compre=
+ssion")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/uS4PLsnuHLrdg_ZH0=xgX/4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxdMMwACgkQAVBC80lX
+0Gwzjwf/ZCSuAYz/zQuV2+5MzeQ2oW0vmlnjdR3sRRRm9e+HoGeD3//cFeKWsNPL
+JWus6w8GoJ+SifTg5Pplgc0uhHHPuNcTCEO0dxvRwf4jSWw46VSEv92BST2q9BV6
+BnfxXx0x5NIDGIVspOiLtbwQ+hn/7P7jF+F0nmGSnwxxHJEfaDIWCruOYGGrrSso
+NhsUCxpMMJQUSS27YSzmHMzR07ypgQRqTDyRV6h/vQJb5m1+3J5mGLE9EdPuerMe
+FZYR5FKugUcnvrLySbnZuxCrJfb1Re53sew5dESyrPcveiUgBq9a1OK7uz5AQcfi
+5QLxH6WAbBBi8fG7LGARuFBOsEQiUA==
+=efXZ
+-----END PGP SIGNATURE-----
+
+--Sig_/uS4PLsnuHLrdg_ZH0=xgX/4--
