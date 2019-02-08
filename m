@@ -1,51 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the drm tree
-Date: Fri, 8 Feb 2019 20:25:55 +1100
-Message-ID: <20190208202555.3aa6473c@canb.auug.org.au>
-References: <20190208122744.4a63bec0@canb.auug.org.au>
-        <20190208085333.GH23159@phenom.ffwll.local>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: linux-next: build warning after merge of the drm-misc tree
+Date: Fri, 8 Feb 2019 10:29:34 +0100
+Message-ID: <20190208092934.jgp7mqmi2wzbtmqg@flea>
+References: <20190208123204.1be5d047@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IkI/MDgmKiqO9iooJ7Ip3a1"; protocol="application/pgp-signature"
+        protocol="application/pgp-signature"; boundary="ydb5uovmisukq5gg"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190208085333.GH23159@phenom.ffwll.local>
+Content-Disposition: inline
+In-Reply-To: <20190208123204.1be5d047@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Chris Wilson <chris@chris-wilson.co.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/IkI/MDgmKiqO9iooJ7Ip3a1
-Content-Type: text/plain; charset=US-ASCII
+
+--ydb5uovmisukq5gg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi Stephen,
 
-On Fri, 8 Feb 2019 09:53:33 +0100 Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> There isn't a "below" afaics ....
+On Fri, Feb 08, 2019 at 12:32:04PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the drm-misc tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c: In function 'sun6i_dsi_probe':
+> drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c:1053:9: warning: 'ret' may be used=
+ uninitialized in this function [-Wmaybe-uninitialized]
+>   return ret;
+>          ^~~
+>=20
+> Introduced by commit
+>=20
+>   bb3b6fcb6849 ("sun6i: dsi: Convert to generic phy handling")
 
-Oops :-(  However the merge diff is not very enlightening in this case
-anyway.  It makes more sense to look at the final result when I finish
-up in a while.
+I just pushed a fix for this, thanks!
+Maxime
+
 
 --=20
-Cheers,
-Stephen Rothwell
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
---Sig_/IkI/MDgmKiqO9iooJ7Ip3a1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--ydb5uovmisukq5gg
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxdSyMACgkQAVBC80lX
-0GwU6AgAhGy5s9AdDKIb1AtaiQRHBDFOlJfBuGxosUXpSyHX9oXwwj3tDFdcb0JM
-pTbfJhUnSYl2wds/hWpBS9pldGul39f9WvayXTLrvKhl0EgOHmZZBraiPwhVOPkf
-r+SQBmQhReiI59ilX2Ss5EuwQBDmHK3TDjx2xB8LIrtnosDJbuyBjn5EmCMm9CLN
-q6meExKyfX6G+tQ+Xupy+IxDIitV9aoF6Otj/YxUGKGd5rQzC6mOrWZ5RRCgc/XT
-VDCanhuwF88GEXly4emLfuDk0zWHeRmImUMCxUeGop2GSdiApOIVQ5UDyTwDK0r8
-bhmPQA9T0BU2pWE9c5myhQMSWm0CXQ==
-=+TSK
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXF1L/gAKCRDj7w1vZxhR
+xYJRAPwM9rJedUBSeZQW+uJxd0Y/SShCzQp8L+LVtVNGBUrJGQEAjjVVdRnfXd7j
+zydunZPhRGvKbTD745OAJ/i6XQLnuwc=
+=njD/
 -----END PGP SIGNATURE-----
 
---Sig_/IkI/MDgmKiqO9iooJ7Ip3a1--
+--ydb5uovmisukq5gg--
