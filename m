@@ -1,64 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with the drm tree
-Date: Fri, 8 Feb 2019 12:27:44 +1100
-Message-ID: <20190208122744.4a63bec0@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm-misc tree
+Date: Fri, 8 Feb 2019 12:32:04 +1100
+Message-ID: <20190208123204.1be5d047@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0_T==Z=29r/u++WozInW5UT"; protocol="application/pgp-signature"
+ boundary="Sig_/hXVPOnLm3.eMKytNTgqaPIQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Chris Wilson <chris@chris-wilson.co.uk>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/0_T==Z=29r/u++WozInW5UT
+--Sig_/hXVPOnLm3.eMKytNTgqaPIQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+After merging the drm-misc tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  drivers/gpu/drm/i915/intel_display.c
+drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c: In function 'sun6i_dsi_probe':
+drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c:1053:9: warning: 'ret' may be used u=
+ninitialized in this function [-Wmaybe-uninitialized]
+  return ret;
+         ^~~
 
-between commit:
+Introduced by commit
 
-  9f58892ea996 ("drm/i915: Pull all the reset functionality together into i=
-915_reset.c")
-
-from the drm tree and commit:
-
-  d0e93599d396 ("drm/i915: prepare for drmP.h removal from drm_modeset_help=
-er.h")
-
-from the drm-misc tree.
-
-I fixed it up (I think I got the right include files in the right order in
-the end - see below and please check the final result) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
+  bb3b6fcb6849 ("sun6i: dsi: Convert to generic phy handling")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/0_T==Z=29r/u++WozInW5UT
+--Sig_/hXVPOnLm3.eMKytNTgqaPIQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxc2xAACgkQAVBC80lX
-0GylaggAjPC9HHdpNadMV9CvoolOn3OaLbZwNK+ZUmluW48Txp3IvtTWNAUqwK/o
-/WdATEJlUw4o3AhJR6CqeuU7hN+U+sajYp83L8bHoUx4P0vu5sq0F+RreB7IeDE0
-VF1IPW7Hh6oJrg2UVdjFRL2/YWTLjsgVf3nwX9dtyT9e0ujqYzT3iQfmgDix4V6L
-Cb0P80XfTBUu9NHzP59M0eMt9wWcjMiHq/K+gN8BnNOi0kXREEurenOH7R3khQYs
-YImrErySL2wbc0dVY7/hNAOdziSEgejfm/Dou+MxDeEOXfXIl8RuxRTK5/Bdo6Rx
-JYNEKHlCn5uiBqosdVNx3M4s6S2YTg==
-=sAO9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxc3BQACgkQAVBC80lX
+0GwplAf/ReukGG+lHsXsAfgLXJ1Tbr2ZvFi4psfJBOdXlxky/gFqxdbw5ZboxkCe
+AtqPeDluqW3Zc/XTqFWMDNiAkEkXcKd5T4Cc041cPAy/6lDp6hDd44L6hdoMknV8
+UHZ8eZreuS33+YZq2kbMZGYpUPQfIfBqtgtQM8U6tqm0+wKmqdyDGzDaZhylzx5a
+TLfLncTaJGIjUFe9QIpJiWMRfViC/FDddXgWIELwgp9U27i4X6PlzLXdrpq8guTr
+hI+yf0F+09AhpCxbtQVMQyvQIcc0OdtP3FcLBba8R/VUx9I2ZLMXPPQ0pKB6/ibk
+TzPyjg8AWV7c7uxIE9Pq87w8QtPLqg==
+=N4M2
 -----END PGP SIGNATURE-----
 
---Sig_/0_T==Z=29r/u++WozInW5UT--
+--Sig_/hXVPOnLm3.eMKytNTgqaPIQ--
