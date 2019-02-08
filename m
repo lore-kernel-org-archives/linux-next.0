@@ -1,105 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-misc
- tree
-Date: Fri, 8 Feb 2019 12:38:15 +1100
-Message-ID: <20190208123815.64757bc5@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 8 Feb 2019 13:18:23 +1100
+Message-ID: <20190208131823.0fd205b5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0798674301=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dC5s+7syQoLthq/0T6_91Yv"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0798674301==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/s41kT1wJ9KiC_S1fzk_H/T9"; protocol="application/pgp-signature"
-
---Sig_/s41kT1wJ9KiC_S1fzk_H/T9
+--Sig_/dC5s+7syQoLthq/0T6_91Yv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the drm-misc tree, today's linux-next build (x86_64
+After merging the sound-asoc tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-In file included from drivers/gpu/drm/arm/display/komeda/komeda_drv.c:13:
-drivers/gpu/drm/arm/display/komeda/komeda_kms.h:87:20: error: field 'base' =
-has incomplete type
-  struct drm_device base;
-                    ^~~~
-drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_parse_=
-pipe_dt':
-drivers/gpu/drm/arm/display/komeda/komeda_dev.c:27:3: error: implicit decla=
-ration of function 'DRM_ERROR'; did you mean 'DRM_IOR'? [-Werror=3Dimplicit=
--function-declaration]
-   DRM_ERROR("get aclk for pipeline %d failed!\n", pipe_id);
-   ^~~~~~~~~
-   DRM_IOR
-drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_dev_cr=
-eate':
-drivers/gpu/drm/arm/display/komeda/komeda_dev.c:127:2: error: implicit decl=
-aration of function 'DRM_INFO'; did you mean 'DRM_IO'? [-Werror=3Dimplicit-=
-function-declaration]
-  DRM_INFO("Found ARM Mali-D%x version r%dp%d\n",
-  ^~~~~~~~
-  DRM_IO
-drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_dev_de=
-stroy':
-drivers/gpu/drm/arm/display/komeda/komeda_dev.c:170:3: error: implicit decl=
-aration of function 'devm_iounmap'; did you mean 'pci_iounmap'? [-Werror=3D=
-implicit-function-declaration]
-   devm_iounmap(dev, mdev->reg_base);
-   ^~~~~~~~~~~~
-   pci_iounmap
+sound/soc/xilinx/xlnx_formatter_pcm.c: In function 'xlnx_formatter_pcm_new':
+sound/soc/xilinx/xlnx_formatter_pcm.c:539:9: error: void value not ignored =
+as it ought to be
+  return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SNDRV_DMA_TYPE_DEV, component->dev,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    xlnx_pcm_hardware.buffer_bytes_max,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    xlnx_pcm_hardware.buffer_bytes_max);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/xilinx/xlnx_formatter_pcm.c:543:1: warning: control reaches end o=
+f non-void function [-Wreturn-type]
+ }
+ ^
 
-and lots more ...
+Caused by commit
 
-Probably caused by commit
+  6f6c3c36f091 ("ASoC: xlnx: add pcm formatter platform driver")
 
-  e3b01f0d576a ("drm: remove drmP.h from drm_modeset_helper.h")
+interacting with commit
 
-I have used the drm-misc tree from next-20190207 for today.
+  9adb5165f1de ("ALSA: pcm: Define snd_pcm_lib_preallocate_*() as returning=
+ void")
+
+from the sound tree.
+
+I have applied the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 8 Feb 2019 13:14:24 +1100
+Subject: [PATCH] Asoc: xlnx: fix up for snd_pcm_lib_preallocate_pages_for_a=
+ll() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/soc/xilinx/xlnx_formatter_pcm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_=
+formatter_pcm.c
+index 97177d35652e..dc8721f4f56b 100644
+--- a/sound/soc/xilinx/xlnx_formatter_pcm.c
++++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
+@@ -536,10 +536,11 @@ static int xlnx_formatter_pcm_new(struct snd_soc_pcm_=
+runtime *rtd)
+ {
+ 	struct snd_soc_component *component =3D snd_soc_rtdcom_lookup(rtd,
+ 								    DRV_NAME);
+-	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++	snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
+ 			SNDRV_DMA_TYPE_DEV, component->dev,
+ 			xlnx_pcm_hardware.buffer_bytes_max,
+ 			xlnx_pcm_hardware.buffer_bytes_max);
++	return 0;
+ }
+=20
+ static const struct snd_pcm_ops xlnx_formatter_pcm_ops =3D {
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/s41kT1wJ9KiC_S1fzk_H/T9
+--Sig_/dC5s+7syQoLthq/0T6_91Yv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxc3YcACgkQAVBC80lX
-0GwvPQf/e7ynhE4kY26XTf2XYCZR6ASXbbQb4Zmu5M+5/3q/wXB7sjheG0B7jCmf
-LpLw3V+8bSAQ4Sx3+Qpdivt3LVfSupVLJH+36EB4twobks/Oj3K88HhbHHJoqFiK
-fu10/NKZXJj46BO3/dHpEDFC8mPT0J0FnF60sAD2tgjZaO46h4l7jnekrEzWka37
-rVTrAj+Fm6OTJQuTE9xpKU6wmzMmi4Y7RL9qgpYemphk6GpDSZPz6kttzSWLp++w
-mczWlug1Yt+iaX7cODTtP/WNNDq9vGG1+ax/yihR1NoPQpvSLyKud6Nn1t0VmRix
-C+71fRY8UudG1wETkmeihM3lDMsycQ==
-=N8EN
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxc5u8ACgkQAVBC80lX
+0GyUqgf9FAFNpFyJcXdLgAa2q8jefELz/jD6C/KUnQa9QvDGfHjitpEYgXVF7/65
+4IOyrlP4Nx7s+u/6WzXhSRHQyuOwL46pQr7SjaYyZwEXD775Rf+y9iVNblSKKj+9
+ZtI+k+Id5ql7XqUOIZMbaCyKAmhKqhVPdUrcXSTPzmtN/0Iq/6Gu7B4Pe1K+uvc8
+2ohN1VhEmlo+JR8qJ4lVMEJZLGbTubTaCwbiw2EkvI1cBe0mNZN1mlu6B1371Snm
+elJH5ULszcEzoZ9A1+RWagfA5ps1Hk3vIoQ6R+78IWPoLjXzSZZpaRGuMoAmgeVi
+OqKzNbxSqjpEs0mbl/cf/+sG7hMP3A==
+=4bUa
 -----END PGP SIGNATURE-----
 
---Sig_/s41kT1wJ9KiC_S1fzk_H/T9--
-
---===============0798674301==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
-
---===============0798674301==--
+--Sig_/dC5s+7syQoLthq/0T6_91Yv--
