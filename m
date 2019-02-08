@@ -1,67 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rtc tree
-Date: Fri, 8 Feb 2019 16:55:56 +1100
-Message-ID: <20190208165556.00c7f51e@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH] crypto: qat - Remove unused goto label
+Date: Fri, 8 Feb 2019 15:04:56 +0800
+Message-ID: <20190208070456.xywdb3ga2kqwoxaf@gondor.apana.org.au>
+References: <20190204110106.345c3e21@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/R+xc41jAMQvlMdCd4s4qsh1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190204110106.345c3e21@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/R+xc41jAMQvlMdCd4s4qsh1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 04, 2019 at 11:01:06AM +1100, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> After merging the crypto tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/crypto/qat/qat_common/adf_transport.c: In function 'adf_init_etr_data':
+> drivers/crypto/qat/qat_common/adf_transport.c:501:1: warning: label 'err_bank_debug' defined but not used [-Wunused-label]
+>  err_bank_debug:
+>  ^~~~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   f0fcf9ade46a ("crypto: qat - no need to check return value of debugfs_create functions")
 
-Hi Alexandre,
+Thanks for the report Stephen!
 
-After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+---8<---
+This patch removes an unused label.
 
-drivers/rtc/rtc-x1205: struct of_device_id is 200 bytes.  The last of 1 is:
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x78 0x69 0x72 0x63 0x6f 0x6d 0x2c 0x78 0x31 0x32 0x30 =
-0x35 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00
-FATAL: drivers/rtc/rtc-x1205: struct of_device_id is not terminated with a =
-NULL entry!
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: f0fcf9ade46a ("crypto: qat - no need to check return...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Caused by commit
-
-  08bb868190c2 ("rtc: x1205: Add DT probing support")
-
-I have used the rtc tree from next-20190207 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/R+xc41jAMQvlMdCd4s4qsh1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxdGewACgkQAVBC80lX
-0Gyjawf/a/LF1fDrbutNdXV0KPbb5K7GTfZsypi01DEVTFs9Q/c9Ng1CyGae14Y4
-0m3DtJeMGnemEtwiOe5d2iyO6CbntR9oNux1UDkz70sQzJMW/OnWDYrB/xRWymj8
-YlgQ88QwsMU6EQ7W84viOqMuYQIjKP1UOj28XWC8SiAmwsw+VqzeQ1YDrO5GCvRQ
-tpyJ8D+NuHJstZvZqFLm2S9swFcbvIDH9aNgzsnxx6yWm29iPic+bft313dYsuDh
-W8ld25izapRvaadCQIauoV+fIP20UJMBqLEwwaWKGaobCwMmqQcgpZ0larbXOzCt
-ZYE+9qqMMoLN8ITLGcL0Q1LrU30m8g==
-=xuvB
------END PGP SIGNATURE-----
-
---Sig_/R+xc41jAMQvlMdCd4s4qsh1--
+diff --git a/drivers/crypto/qat/qat_common/adf_transport.c b/drivers/crypto/qat/qat_common/adf_transport.c
+index ac658ce46836..2136cbe4bf6c 100644
+--- a/drivers/crypto/qat/qat_common/adf_transport.c
++++ b/drivers/crypto/qat/qat_common/adf_transport.c
+@@ -498,7 +498,6 @@ int adf_init_etr_data(struct adf_accel_dev *accel_dev)
+ 
+ err_bank_all:
+ 	debugfs_remove(etr_data->debug);
+-err_bank_debug:
+ 	kfree(etr_data->banks);
+ err_bank:
+ 	kfree(etr_data);
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
