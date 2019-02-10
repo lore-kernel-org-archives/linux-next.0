@@ -1,52 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Date: Mon, 11 Feb 2019 07:14:42 +1100
-Message-ID: <20190211071442.153e158d@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the fbdev tree
+Date: Mon, 11 Feb 2019 07:24:43 +1100
+Message-ID: <20190211072443.1cbedb29@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JuyT=nG_xTwOHADdz3gBgWj"; protocol="application/pgp-signature"
+ boundary="Sig_/0jbvx2uDb=JZ6mlzAEZVh6q"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.ibm.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal =?UTF-8?B?Vm9rw6E=?= =?UTF-8?B?xI0=?= <michal.vokac@ysoft.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/JuyT=nG_xTwOHADdz3gBgWj
+--Sig_/0jbvx2uDb=JZ6mlzAEZVh6q
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bartlomiej,
 
 In commit
 
-  ccc8ca9b90ac ("net/smc: fix byte_order for rx_curs_confirmed")
+  7d7e58d30e04 ("dt-bindings: display: ssd1307fb: Remove reset-active-low f=
+rom examples")
 
 Fixes tag
 
-  Fixes: b8649efad879 ("net/smc: fix sender_free computation") (net-tree)
+  Fixes: 519b4db ("fbdev: ssd1307fb: Remove reset-active-low from the DT bi=
+nding document")
 
 has these problem(s):
 
-  - The trailing '(net-tree)' is unexpected
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/JuyT=nG_xTwOHADdz3gBgWj
+--Sig_/0jbvx2uDb=JZ6mlzAEZVh6q
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxghjIACgkQAVBC80lX
-0GwyXwf+POnzrOJWYp6o9ChWPy+nupuh/WVQ3ZoBfFWas4arHyu9HGjXTP/wSo8w
-KBQvgTwANygKb+zciao/0ACZtCC5qmZJTOQXAeo/vFn0gPnaJ3DHkN8Z5GSGBXvL
-OCk/LN+bQoHm6I1QFc+xlSye9d26S/o6jA/RPun4l7jPuu0Hd5uWdXef/KdkSWME
-6W7fM+BqK1nDvSxnaTOUDIULsTJPepShZi3vMFKD5ytzt8IT+qZ/RAYlbPYc7lVk
-rISKsO8cMdwYlzmtB5ocaYd83RKHMtj1fM/g9movwbrWQn39wpH0+KvAgSh5ZVNh
-9yWPoXa7HOa2M9g5o7VBD8/40MYHLg==
-=/Jb8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxgiIsACgkQAVBC80lX
+0Gx8Owf/ef1b6SjQ6j0R8Pi+vN3kshSml97kMXbIWa4NNhcS1+7NuQ5kbNfFEl9O
+rR2nQWdUTsmgcm2b0E0CrySJvv4rmBdC7oNkz7BcuYs78GxXjhgpyrzBU0W3iADH
+vbDO3Lxn62d7ZMS7+Hb8S+WBWHB+Ei/yA7c3HLOZA7rRyUdFQoekuvbi9wKnmY3w
+NtLgIUokp61sCafaKpfXmld3R7jhHtvzlWXWrhHn1HZEuqredwp26AlX4Cqz5bgZ
+QCVK5ph7nrP/rN3KChV4dKKIl3VLOB93+T1M8qlvm8QP+9HX63P2iElEKBf43za6
+F3JikrgLYUemqNsNImPnthcbcXDSdQ==
+=d/FZ
 -----END PGP SIGNATURE-----
 
---Sig_/JuyT=nG_xTwOHADdz3gBgWj--
+--Sig_/0jbvx2uDb=JZ6mlzAEZVh6q--
