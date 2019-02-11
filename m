@@ -1,43 +1,46 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Fixes tag needs some work in the driver-core tree
-Date: Mon, 11 Feb 2019 08:44:02 +0100
-Message-ID: <20190211074402.GA7356@kroah.com>
-References: <20190211074052.2407f1e3@canb.auug.org.au>
+From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Subject: Re: linux-next: Fixes tag needs some work in the fbdev tree
+Date: Mon, 11 Feb 2019 10:10:33 +0100
+Message-ID: <4cf3fb95-e7d6-8813-c6f6-2075ca50e18c@ysoft.com>
+References: <20190211072443.1cbedb29@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190211074052.2407f1e3@canb.auug.org.au>
+In-Reply-To: <20190211072443.1cbedb29@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Luis Chamberlain <mcgrof@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 11, 2019 at 07:40:52AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On 10. 02. 19 21:24, Stephen Rothwell wrote:
+> Hi Bartlomiej,
 > 
 > In commit
 > 
->   344c0152d878 ("selftests: firmware: fix verify_reqs() return value")
+>    7d7e58d30e04 ("dt-bindings: display: ssd1307fb: Remove reset-active-low from examples")
 > 
 > Fixes tag
 > 
->   Fixes: a6a9be9270c87 ("selftests: firmware: return Kselftest Skip code for for skipped tests")
+>    Fixes: 519b4db ("fbdev: ssd1307fb: Remove reset-active-low from the DT binding document")
 > 
 > has these problem(s):
 > 
->   - Subject does not match target commit subject
+>    - SHA1 should be at least 12 digits long
+>      Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>      or later) just making sure it is not set (or set to "auto").
 
-I don't understand, what is wrong with the fixes: tag here?
+Hi Stephen,
 
-$ git show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n" a6a9be9270c87
-a6a9be9270c8 ("selftests: firmware: return Kselftest Skip code for skipped tests")
+Sorry, that is my fault, I put the Fixes tag into the submitted patch.
+Thanks for the git configuration hint. All my machines were configured
+correctly except the one I generated the Fixes tag on, ups :(
 
-How does that not match up?
+Normally checkpatch.pl does a good job identifying errors in referenced
+commits. Unfortunately it did not complain in this case. Would be nice
+to add this check. I skimmed through the appropriate part of the script
+but I do not feel like adding this feature myself, Perl is not my domain.
 
-Ah, an extra "for" in there.  Luis, you need to fix up your scripts, and
-not be forced to manually type in those lines :)
-
-thanks,
-
-greg k-h
+Sorry for the inconvenience.
+Michal
