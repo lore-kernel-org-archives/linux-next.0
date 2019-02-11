@@ -1,51 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rtc tree
-Date: Mon, 11 Feb 2019 16:24:38 +1100
-Message-ID: <20190211162438.1112c0ee@canb.auug.org.au>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the wireless-drivers-next tree
+Date: Mon, 11 Feb 2019 08:12:52 +0200
+Message-ID: <87lg2m7t0b.fsf@kamboji.qca.qualcomm.com>
+References: <20190211072814.7428f192@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WzvQmp36pyL4..zvstGkkAV"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190211072814.7428f192@canb.auug.org.au> (Stephen Rothwell's
+        message of "Mon, 11 Feb 2019 07:28:14 +1100")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wireless <linux-wireless@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Govind Singh <govinds@codeaurora.org>, ath10k@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WzvQmp36pyL4..zvstGkkAV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
++ ath10k
 
-Hi all,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+> Hi all,
+>
+> Commit
+>
+>   768ec4c012ac ("ath10k: update HOST capability qmi message")
+>
+> is missing a Signed-off-by from its author.
 
-ERROR: "rtc_nvmem_unregister" [drivers/rtc/rtc-meson.ko] undefined!
+Oh, I had missed that. Thanks for reporting.
 
-Caused by commit
+Unfortunately it would be difficult to rebase wireless-drivers-next so I
+can't (easily) fix this. But v1 had s-o-b so at least we have the sign
+off publically available:
 
-  21358403bb29 ("rtc: support for the Amlogic Meson RTC")
+https://patchwork.kernel.org/patch/10688563/
 
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WzvQmp36pyL4..zvstGkkAV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxhBxYACgkQAVBC80lX
-0Gw8xgf9HGjTc5BrkVt73NlhX5cAxTYyvHS4J6dt4f4pcgF8jzNaePNcCfEmaKtB
-kXB/xajWMt6TPO12okQgSRwbhVzF/uUVtBGyU12+q2BvoLvvl0hmxO/wv2JUiQ+8
-7AToNkkJhHLiMAFKd78gO8GxLXU/KBBKsabwiHgPJk8GhLy1/9l9RNWL/khbBa3E
-Lcush/ZLHPhaf8bC3SgOoo1R4eU8f/m5xsxO0hzCe/7Ji6PPvSBJ+soqneJhJ862
-Xb2SV+E8i9YKJhAameBAtAKGRiRkqWBTLQCkmqqax+7s8lJF0oObtPa30nhL3CcI
-sc6Fpx4tYIGAJURMOS4yoaOsOrwJqw==
-=xrwp
------END PGP SIGNATURE-----
-
---Sig_/WzvQmp36pyL4..zvstGkkAV--
+-- 
+Kalle Valo
