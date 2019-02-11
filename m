@@ -1,30 +1,45 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 11 (wireless/80211)
-Date: Mon, 11 Feb 2019 09:07:05 -0800
-Message-ID: <80b32344-08c9-0d8b-fdae-1db9b1003f60@infradead.org>
-References: <20190211183951.3fe1dad9@canb.auug.org.au>
+From: Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the driver-core tree
+Date: Mon, 11 Feb 2019 09:10:47 -0800
+Message-ID: <20190211171047.GN11489@garbanzo.do-not-panic.com>
+References: <20190211074052.2407f1e3@canb.auug.org.au>
+ <20190211074402.GA7356@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211183951.3fe1dad9@canb.auug.org.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190211074402.GA7356@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Johannes Berg <johannes@sipsolutions.net>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2/10/19 11:39 PM, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Feb 11, 2019 at 08:44:02AM +0100, Greg KH wrote:
+> On Mon, Feb 11, 2019 at 07:40:52AM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > In commit
+> > 
+> >   344c0152d878 ("selftests: firmware: fix verify_reqs() return value")
+> > 
+> > Fixes tag
+> > 
+> >   Fixes: a6a9be9270c87 ("selftests: firmware: return Kselftest Skip code for for skipped tests")
+> > 
+> > has these problem(s):
+> > 
+> >   - Subject does not match target commit subject
 > 
-> Changes since 20190208:
+> I don't understand, what is wrong with the fixes: tag here?
 > 
+> $ git show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n" a6a9be9270c87
+> a6a9be9270c8 ("selftests: firmware: return Kselftest Skip code for skipped tests")
+> 
+> How does that not match up?
+> 
+> Ah, an extra "for" in there.  Luis, you need to fix up your scripts, and
+> not be forced to manually type in those lines :)
 
-on i386:
+Will do.
 
-ERROR: "__umoddi3" [net/wireless/cfg80211.ko] undefined!
-ERROR: "__umoddi3" [net/mac80211/mac80211.ko] undefined!
-
-
--- 
-~Randy
+  Luis
