@@ -1,62 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the mips tree
-Date: Mon, 11 Feb 2019 17:42:56 +1100
-Message-ID: <20190211174256.14d38238@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the tip tree
+Date: Mon, 11 Feb 2019 08:17:37 +0100
+Message-ID: <20190211071737.GB55579@gmail.com>
+References: <20190211073657.7f9cd5ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o6Ck2HvIdXu=uqY=vDyTOOu"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190211073657.7f9cd5ef@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Burton <paul.burton@mips.com>, Davidlohr Bueso <dave@stgolabs.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/o6Ck2HvIdXu=uqY=vDyTOOu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the akpm tree got a conflict in:
+> Hi all,
+> 
+> In commit
+> 
+>   f6783319737f ("sched/fair: Fix insertion in rq->leaf_cfs_rq_list")
+> 
+> Fixes tag
+> 
+>   Fixes: 9c2791f936ef ("Fix hierarchical order in rq->leaf_cfs_rq_list")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
 
-  arch/mips/mm/c-r4k.c
+It's still a unique substring of the original subject, so not a big deal 
+IMO.
 
-between commit:
+Thanks,
 
-  3315b6b336c8 ("MIPS: Delete unused flush_cache_sigtramp()")
-
-from the mips tree and commit:
-
-   "arch/mips/mm/c-r4k.c: do not use mmap_sem for gup_fast()"
-
-from the akpm tree.
-
-I fixed it up (the former removed the function modified by the latter, so
-I just dropped the latter patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/o6Ck2HvIdXu=uqY=vDyTOOu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxhGXAACgkQAVBC80lX
-0GxTsAf+IqKacXcl9Ff/x8EdFwHTzUJEBSzBQc4Bod/q+l0M5Nnbam9vpGiPWsHB
-+pkKEpE4txCN9VgHlrV/2YLT7FsJimP9uXC3PyTfUkUvPIiKPFmHTO5QdQVLnU+i
-XwdkpA2JWsjKT3cm0/0RP8l7p3H5o8ykoQR1GvpF5xI82CKd83offvhXKQ/GX8Zi
-K+qX9V98hdEWAN44bsxOxIaOuVbcRTSCVeF6lPPEf11uGqBvtNn5kz+WDn7NKeVo
-lSbQXfuD68rItAzpiLZMXluHJ1nGI4MRPH/+COvR/yEYjq9CEzZ3pNpm8XBWQZcw
-XZ042Mgo18NLLZJgF/g/axfjgAxYfg==
-=KZfO
------END PGP SIGNATURE-----
-
---Sig_/o6Ck2HvIdXu=uqY=vDyTOOu--
+	Ingo
