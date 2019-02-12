@@ -1,92 +1,218 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 12 Feb 2019 11:23:20 +1100
-Message-ID: <20190212112320.0996efa7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xarray tree
+Date: Tue, 12 Feb 2019 16:20:03 +1100
+Message-ID: <20190212162003.1aa1ffbd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YbkeD63/IR2nkraSiaXS+k/"; protocol="application/pgp-signature"
+ boundary="Sig_/zp94lxzFZ8Wtk+cbgvBz+cv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>
+To: Matthew Wilcox <willy@infradead.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YbkeD63/IR2nkraSiaXS+k/
+--Sig_/zp94lxzFZ8Wtk+cbgvBz+cv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got conflicts in:
+After merging the xarray tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
-  net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+In file included from include/linux/list.h:9,
+                 from include/linux/module.h:9,
+                 from drivers/infiniband/core/device.c:34:
+drivers/infiniband/core/device.c: In function 'assign_name':
+include/linux/kernel.h:22:18: warning: passing argument 3 of 'xa_alloc' mak=
+es pointer from integer without a cast [-Wint-conversion]
+ #define INT_MAX  ((int)(~0U>>1))
+                  ^~~~~~~~~~~~~~~
+drivers/infiniband/core/device.c:591:43: note: in expansion of macro 'INT_M=
+AX'
+  ret =3D xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
+                                           ^~~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/linux/kernfs.h:14,
+                 from include/linux/sysfs.h:16,
+                 from include/linux/kobject.h:20,
+                 from include/linux/module.h:17,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/xarray.h:796:9: note: expected 'void *' but argument is of ty=
+pe 'int'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+   ~~~~~~^~~~~
+drivers/infiniband/core/device.c:591:52: error: incompatible type for argum=
+ent 4 of 'xa_alloc'
+  ret =3D xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
+                                                    ^~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/linux/kernfs.h:14,
+                 from include/linux/sysfs.h:16,
+                 from include/linux/kobject.h:20,
+                 from include/linux/module.h:17,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/xarray.h:796:32: note: expected 'struct xa_limit' but argumen=
+t is of type 'struct ib_device *'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+                ~~~~~~~~~~~~~~~~^~~~~
+In file included from include/linux/list.h:9,
+                 from include/linux/module.h:9,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/kernel.h:22:18: warning: passing argument 3 of 'xa_alloc' mak=
+es pointer from integer without a cast [-Wint-conversion]
+ #define INT_MAX  ((int)(~0U>>1))
+                  ^~~~~~~~~~~~~~~
+drivers/infiniband/core/device.c:594:44: note: in expansion of macro 'INT_M=
+AX'
+   ret =3D xa_alloc(&devices, &device->index, INT_MAX, device,
+                                            ^~~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/linux/kernfs.h:14,
+                 from include/linux/sysfs.h:16,
+                 from include/linux/kobject.h:20,
+                 from include/linux/module.h:17,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/xarray.h:796:9: note: expected 'void *' but argument is of ty=
+pe 'int'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+   ~~~~~~^~~~~
+drivers/infiniband/core/device.c:594:53: error: incompatible type for argum=
+ent 4 of 'xa_alloc'
+   ret =3D xa_alloc(&devices, &device->index, INT_MAX, device,
+                                                     ^~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/linux/kernfs.h:14,
+                 from include/linux/sysfs.h:16,
+                 from include/linux/kobject.h:20,
+                 from include/linux/module.h:17,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/xarray.h:796:32: note: expected 'struct xa_limit' but argumen=
+t is of type 'struct ib_device *'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+                ~~~~~~~~~~~~~~~~^~~~~
+In file included from include/linux/list.h:9,
+                 from include/linux/module.h:9,
+                 from drivers/infiniband/core/device.c:34:
+drivers/infiniband/core/device.c: In function 'assign_client_id':
+include/linux/kernel.h:22:18: warning: passing argument 3 of 'xa_alloc' mak=
+es pointer from integer without a cast [-Wint-conversion]
+ #define INT_MAX  ((int)(~0U>>1))
+                  ^~~~~~~~~~~~~~~
+drivers/infiniband/core/device.c:826:47: note: in expansion of macro 'INT_M=
+AX'
+  ret =3D xa_alloc(&clients, &client->client_id, INT_MAX, client,
+                                               ^~~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/linux/kernfs.h:14,
+                 from include/linux/sysfs.h:16,
+                 from include/linux/kobject.h:20,
+                 from include/linux/module.h:17,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/xarray.h:796:9: note: expected 'void *' but argument is of ty=
+pe 'int'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+   ~~~~~~^~~~~
+drivers/infiniband/core/device.c:826:56: error: incompatible type for argum=
+ent 4 of 'xa_alloc'
+  ret =3D xa_alloc(&clients, &client->client_id, INT_MAX, client,
+                                                        ^~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/linux/kernfs.h:14,
+                 from include/linux/sysfs.h:16,
+                 from include/linux/kobject.h:20,
+                 from include/linux/module.h:17,
+                 from drivers/infiniband/core/device.c:34:
+include/linux/xarray.h:796:32: note: expected 'struct xa_limit' but argumen=
+t is of type 'struct ib_client *'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+                ~~~~~~~~~~~~~~~~^~~~~
 
-between commit:
+Caused by commit
 
-  8303b7e8f018 ("netfilter: nat: fix spurious connection timeouts")
+  a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
 
-from the net tree and commit:
+interacting with commits
 
-  303e0c558959 ("netfilter: conntrack: avoid unneeded nf_conntrack_l4proto =
-lookups")
+  e59178d895af ("RDMA/devices: Use xarray to store the clients")
+  0df91bb67334 ("RDMA/devices: Use xarray to store the client_data")
 
-from the net-next tree.
+from the rdma tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Its a bit of a pain modifying a published API like this :-(
+
+I have added the following merge fixup patch for today (I assume some
+of the assignments are also now redundant).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 12 Feb 2019 16:09:58 +1100
+Subject: [PATCH] RDMA/devices: fix up for xa_alloc API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/infiniband/core/device.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/dev=
+ice.c
+index 3325be4f91a5..283ecc2aee89 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -588,11 +588,12 @@ static int assign_name(struct ib_device *device, cons=
+t char *name)
+=20
+ 	/* Cyclically allocate a user visible ID for the device */
+ 	device->index =3D last_id;
+-	ret =3D xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
++	ret =3D xa_alloc(&devices, &device->index, device,
++		       XA_LIMIT(last_id, INT_MAX), GFP_KERNEL);
+ 	if (ret =3D=3D -ENOSPC) {
+ 		device->index =3D 0;
+-		ret =3D xa_alloc(&devices, &device->index, INT_MAX, device,
+-			       GFP_KERNEL);
++		ret =3D xa_alloc(&devices, &device->index, device,
++			       XA_LIMIT(0, INT_MAX), GFP_KERNEL);
+ 	}
+ 	if (ret)
+ 		goto out;
+@@ -823,8 +824,8 @@ static int assign_client_id(struct ib_client *client)
+ 		client->client_id =3D
+ 			list_last_entry(&client_list, struct ib_client, list)
+ 				->client_id;
+-	ret =3D xa_alloc(&clients, &client->client_id, INT_MAX, client,
+-		       GFP_KERNEL);
++	ret =3D xa_alloc(&clients, &client->client_id, client,
++		       XA_LIMIT(client->client_id, INT_MAX), GFP_KERNEL);
+ 	if (ret)
+ 		goto out;
+=20
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
-index fa2ba7c500e4,e26165af45cb..000000000000
---- a/net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
-+++ b/net/ipv4/netfilter/nf_nat_l3proto_ipv4.c
-@@@ -214,8 -214,7 +214,8 @@@ int nf_nat_icmp_reply_translation(struc
-  	}
- =20
-  	/* Change outer to look like the reply to an incoming packet */
-- 	nf_ct_invert_tuplepr(&target, &ct->tuplehash[!dir].tuple);
-+ 	nf_ct_invert_tuple(&target, &ct->tuplehash[!dir].tuple);
- +	target.dst.protonum =3D IPPROTO_ICMP;
-  	if (!nf_nat_ipv4_manip_pkt(skb, 0, &target, manip))
-  		return 0;
- =20
-diff --cc net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
-index 7a41ee3c11b4,9c914db44bec..000000000000
---- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
-+++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
-@@@ -225,8 -225,7 +225,8 @@@ int nf_nat_icmpv6_reply_translation(str
-  						     skb->len - hdrlen, 0));
-  	}
- =20
-- 	nf_ct_invert_tuplepr(&target, &ct->tuplehash[!dir].tuple);
-+ 	nf_ct_invert_tuple(&target, &ct->tuplehash[!dir].tuple);
- +	target.dst.protonum =3D IPPROTO_ICMPV6;
-  	if (!nf_nat_ipv6_manip_pkt(skb, 0, &target, manip))
-  		return 0;
- =20
-
---Sig_/YbkeD63/IR2nkraSiaXS+k/
+--Sig_/zp94lxzFZ8Wtk+cbgvBz+cv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxiEfgACgkQAVBC80lX
-0GxzNgf+PirhJ6pPEHvtapZE94AYU1Fj7a/ennZKjC239GpoG9nxN+6Zwr0ee/qD
-hf9ie8vkYtroxApeWNzoXMpefPTxNfWykXRrVIompckrjajmBBtCQWqEtIXrouTi
-2riHBXdL2r3HCdF4RCapqEuxX305Ra4jq47qqpVxxlPCpx+2LcXozSo5WLRx8l5j
-eYXcA8mQWedH9UiV7iROCjDqujaxAcirPICGo2YgFCzxg10XtpPp7PP/fWOfQPuE
-FUqsLb1+56iyj/aFvBFvyXPUR2bGLEyetbOCf098vINWPsheQ+dbTmLK3XMKBmKp
-RFzYAtWvd3LcXAvafQCTGYQnmZ55Zw==
-=ullt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxiV4MACgkQAVBC80lX
+0Gy/fQf/R8zSv4ADGK5tjOwla8mCRTPX9jLAuOoym0LcigxKAbGRYgMtRvPLhS2N
+Opla/Q3fs1UeiGeO4CskTKDRvCzAQiVrDEAfyOUyBmN/jykspcRMOpmenl2rNzVG
+1gYV6HVL3VqkQgHVYvmuR0wxlsVYKWE8siTL1kibdw+WYj/RYbQLfm1hgGu7CkzN
+P3FlsbXkzsWb1Yw1ccsze1lBLrgMqlvCCVZ9462ROWVHwQMn7+hKs8UqUGtmW5Ou
+pzklJE1CvnG9l9Mdgmq5b0RmdP/BekKck6grBMDCqb8ot8UOfi+RFJ6v53JOQZed
+Gs7m88whOKDxdsN/R4gFZtyPGBMtAA==
+=yFml
 -----END PGP SIGNATURE-----
 
---Sig_/YbkeD63/IR2nkraSiaXS+k/--
+--Sig_/zp94lxzFZ8Wtk+cbgvBz+cv--
