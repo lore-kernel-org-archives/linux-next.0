@@ -1,75 +1,117 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 12 (chrome/wilco_ec/)
-Date: Tue, 12 Feb 2019 16:13:54 -0800
-Message-ID: <6913db72-85b3-0b7d-5e38-9cbb6ec4c8c2@infradead.org>
-References: <20190212175059.1ea4c16c@canb.auug.org.au>
- <94edf49b-6b37-2dac-a2db-ad454b105fd1@infradead.org>
- <CAHX4x87=Myx45wBYtFY=rwz8jVmYY-tYVQjnzod-V8HaWJSy+g@mail.gmail.com>
- <CAHX4x87nRpTR5880y6hc=r7k0OFV9YKate21U=2kkqC-ihdmCQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 13 Feb 2019 11:33:27 +1100
+Message-ID: <20190213113327.78a7ceac@canb.auug.org.au>
+References: <20190213111325.30cfc931@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHX4x87nRpTR5880y6hc=r7k0OFV9YKate21U=2kkqC-ihdmCQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nick Crews <ncrews@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6ZgmXHY6zflD8dOhO0L_Ve_"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190213111325.30cfc931@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>, Vlad Buslov <vladbu@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On 2/12/19 3:49 PM, Nick Crews wrote:
-> OK, here is the patch to fix this problem. We had the dependency backwards.
-> 
-> Should I re-send out the entire patch series to the LKML with this fix in it?
-> 
-> 
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 462eb9dfa4f2..b69561050868 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -95,7 +95,7 @@ config CROS_EC_LPC
->  
->  config CROS_EC_LPC_MEC
->         bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
-> -       depends on CROS_EC_LPC || WILCO_EC
-> +       depends on CROS_EC_LPC
->         default n
->         help
->           If you say Y here, a variant LPC protocol for the Microchip EC
-> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
-> index d8e2cddb4712..6ea2d3f64ce5 100644
-> --- a/drivers/platform/chrome/wilco_ec/Kconfig
-> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
-> @@ -1,6 +1,6 @@
->  config WILCO_EC
->         tristate "ChromeOS Wilco Embedded Controller"
-> -       depends on ACPI && X86
-> +       depends on ACPI && X86 && CROS_EC_LPC_MEC
->         select CROS_EC_LPC_MEC
->         help
->           If you say Y here, you get support for talking to the ChromeOS
-> 
-> 
+--Sig_/6ZgmXHY6zflD8dOhO0L_Ve_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Nick,
+Hi all,
 
-Did you test this?
+On Wed, 13 Feb 2019 11:13:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>=20
+>   net/sched/cls_tcindex.c
+>=20
+> between commits:
+>=20
+>   8015d93ebd27 ("net_sched: fix a race condition in tcindex_destroy()")
+>   033b228e7f26 ("net_sched: fix a memory leak in cls_tcindex")
+>=20
+> from the net tree and commit:
+>=20
+>   12db03b65c2b ("net: sched: extend proto ops to support unlocked classif=
+iers")
+>=20
+> from the net-next tree.
+>=20
+> I fixed it up (see the final resolution when linux-next is published)
+> and can carry the fix as necessary. This is now fixed as far as
+> linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-When I apply the patch (by hand, since it was whitespace-mangled/damaged),
-I get this:
+Actually, see the below resolution.
 
-rdunlap@midway:linux-next-20190212> make ARCH=x86_64 O=X64 oldconfig
-make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20190212/X64'
-  GEN     Makefile
-scripts/kconfig/conf  --oldconfig Kconfig
-drivers/platform/chrome/Kconfig:84:error: recursive dependency detected!
-drivers/platform/chrome/Kconfig:84:	symbol CROS_EC_LPC_MEC is selected by WILCO_EC
-drivers/platform/chrome/wilco_ec/Kconfig:1:	symbol WILCO_EC depends on CROS_EC_LPC_MEC
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
+--=20
+Cheers,
+Stephen Rothwell
 
+diff --cc net/sched/cls_tcindex.c
+index 38bb882bb958,14d6b4058045..e6cf20bc8e80
+--- a/net/sched/cls_tcindex.c
++++ b/net/sched/cls_tcindex.c
+@@@ -559,34 -563,15 +560,34 @@@ static void tcindex_destroy(struct tcf_
+  			    struct netlink_ext_ack *extack)
+  {
+  	struct tcindex_data *p =3D rtnl_dereference(tp->root);
+ -	struct tcf_walker walker;
+ +	int i;
+ =20
+  	pr_debug("tcindex_destroy(tp %p),p %p\n", tp, p);
+ -	walker.count =3D 0;
+ -	walker.skip =3D 0;
+ -	walker.fn =3D tcindex_destroy_element;
+ -	tcindex_walk(tp, &walker, true);
+ =20
+ -	call_rcu(&p->rcu, __tcindex_destroy);
+ +	if (p->perfect) {
+ +		for (i =3D 0; i < p->hash; i++) {
+ +			struct tcindex_filter_result *r =3D p->perfect + i;
+ +
+ +			tcf_unbind_filter(tp, &r->res);
+ +			if (tcf_exts_get_net(&r->exts))
+ +				tcf_queue_work(&r->rwork,
+ +					       tcindex_destroy_rexts_work);
+ +			else
+ +				__tcindex_destroy_rexts(r);
+ +		}
+ +	}
+ +
+ +	for (i =3D 0; p->h && i < p->hash; i++) {
+ +		struct tcindex_filter *f, *next;
+ +		bool last;
+ +
+ +		for (f =3D rtnl_dereference(p->h[i]); f; f =3D next) {
+ +			next =3D rtnl_dereference(f->next);
+- 			tcindex_delete(tp, &f->result, &last, NULL);
+++			tcindex_delete(tp, &f->result, &last, false, NULL);
+ +		}
+ +	}
+ +
+ +	tcf_queue_work(&p->rwork, tcindex_destroy_work);
+  }
+ =20
+ =20
 
+--Sig_/6ZgmXHY6zflD8dOhO0L_Ve_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-~Randy
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjZdcACgkQAVBC80lX
+0GzwXwf+P/P0Pvg5DWt7UC+QZRPFZyQHcozuS3V7I0ubGDP+KUp6vR4QWGmTE8PK
+NC0tm4ZE4z9tfjtnHFP3SRDOQpn26KbwCVHgZlKU7/Ws28ep89lgOmTt1/fa8iLg
+DsVKmhfj+DcZ4VPIocXYKNFn+no0/6wjOuMJOHWnFD498a4l3ZQ3asbWqQ/6uBS+
+BCVRxa6TRBLA3DM+Djy2PpEqI13wB3MAQp+JvCkOBztdBR4UOQnVy4pNDpF4OmOs
+ujG22TNcq+km/2zmjuZap0gn779F8D8Y8aprbhHY9A+AWWH1S95Sdp0U5AxRQKW3
+N6R+qcUBCpyrIvNBV4+MjuFDEE8jJQ==
+=+ZAS
+-----END PGP SIGNATURE-----
+
+--Sig_/6ZgmXHY6zflD8dOhO0L_Ve_--
