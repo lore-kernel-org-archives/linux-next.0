@@ -1,68 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the drm-fixes tree
-Date: Wed, 13 Feb 2019 21:36:42 +1100
-Message-ID: <20190213213642.2d980994@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
+ (now block and tip trees)
+Date: Wed, 13 Feb 2019 13:57:51 +0100
+Message-ID: <CAK8P3a1hw03ik+tZSG8PnP7Rd=Pzwbo7n59HLJW04ncndyqzsg@mail.gmail.com>
+References: <20190122141027.70cd9166@canb.auug.org.au> <20190213162212.500a7cd5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F7mdYu/8dbNmNNZxbk8NiyX"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190213162212.500a7cd5@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Longerbeam <slongerbeam@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Philipp Zabel <p.zabel@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <christian@brauner.io>, Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/F7mdYu/8dbNmNNZxbk8NiyX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 13, 2019 at 6:22 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Tue, 22 Jan 2019 14:10:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the pidfd tree got conflicts in:
+> >
+> >   arch/x86/entry/syscalls/syscall_32.tbl
+> >   arch/x86/entry/syscalls/syscall_64.tbl
+> >   include/uapi/asm-generic/unistd.h
+> >
+> > between commits:
+> >
+> >   63a96220ad45 ("arch: add split IPC system calls where needed")
+> >   0bd4bb9c5612 ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
+> >
+> > from the y2038 tree and commit:
+> >
+> >   3d2991bc7a67 ("signal: add pidfd_send_signal() syscall")
+> >
+> > from the pidfd tree.
+>
+> This is now a conflict between the block, tip and pidfd trees.  The
+> resolution now looks like below.
 
-Hi all,
+Checked it again, still looks good. Thanks,
 
-In commit
-
-  bb867d219fda ("gpu: ipu-v3: Fix CSI offsets for imx53")
-
-Fixes tag
-
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-In commit
-
-  2c0408dd0d89 ("gpu: ipu-v3: Fix i.MX51 CSI control registers offset")
-
-Fixes tag
-
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/F7mdYu/8dbNmNNZxbk8NiyX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxj8zoACgkQAVBC80lX
-0GzRVAf7Bs+SIUV1xY2TI78/YhLT38xA+p4+nm8tSDcNnsjAI80+J8PkcRaSUktR
-pe8Och0obcwgc5JZL4/JGCSkuD4fNk1ap0mUfaRTjHeDJQQ9ODe0AbDI7HeZvZsE
-x+hAT3J+DWlue6/23Oo/fAPGpBq7b7STNv8dedpxWJXnuu6kzMX4zh8bH/BvnwSa
-efvPZH3FfaDwzumH4DUhJjqcmfPY3mFjlG+0R8KzT0QjjGn2FjruAo4MBP52BSKm
-97Mw+Ne1P0RODX9zxnkzF+aaSNo6AGEAacSTHvihLMyCNoKxVBndTvg5/hIz+bMs
-CZUlauU3M5X2+1TMPveBGOw9XRX9TQ==
-=9MM2
------END PGP SIGNATURE-----
-
---Sig_/F7mdYu/8dbNmNNZxbk8NiyX--
+    Arnd
