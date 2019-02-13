@@ -1,167 +1,104 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 12 (chrome/wilco_ec/)
-Date: Wed, 13 Feb 2019 13:29:06 -0800
-Message-ID: <7ec90d13-844d-5fe7-3ae3-d65152ebf37e@infradead.org>
-References: <20190212175059.1ea4c16c@canb.auug.org.au>
- <94edf49b-6b37-2dac-a2db-ad454b105fd1@infradead.org>
- <CAHX4x87=Myx45wBYtFY=rwz8jVmYY-tYVQjnzod-V8HaWJSy+g@mail.gmail.com>
- <CAHX4x87nRpTR5880y6hc=r7k0OFV9YKate21U=2kkqC-ihdmCQ@mail.gmail.com>
- <6913db72-85b3-0b7d-5e38-9cbb6ec4c8c2@infradead.org>
- <CAHX4x84H3Z+5zeUR_WCa4vwcARWtxxxKVQCnQObcThqntFPM6Q@mail.gmail.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: linux-next: build failure after merge of the xarray tree
+Date: Wed, 13 Feb 2019 22:09:36 +0000
+Message-ID: <20190213220929.GO24706@mellanox.com>
+References: <20190212162003.1aa1ffbd@canb.auug.org.au>
+ <20190212161528.GN12668@bombadil.infradead.org>
+ <20190212162324.GU24706@mellanox.com>
+ <20190213212621.GW12668@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHX4x84H3Z+5zeUR_WCa4vwcARWtxxxKVQCnQObcThqntFPM6Q@mail.gmail.com>
+In-Reply-To: <20190213212621.GW12668@bombadil.infradead.org>
 Content-Language: en-US
+Content-ID: <8529BD425F11A841A0C9B902E24867A5@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nick Crews <ncrews@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2/13/19 9:26 AM, Nick Crews wrote:
-> Randy,
-> 
-> No, I didn't test it, I'm sorry, of course I should done that.
-> Sorry for the formatting too, I'm new to this and wasn't sure what
-> tool to use. The following version of the patch was made with
-> "git format-patch" and now I'm replying in plaintext, it hopefully is better.
-> 
+On Wed, Feb 13, 2019 at 01:26:23PM -0800, Matthew Wilcox wrote:
+> On Tue, Feb 12, 2019 at 04:23:31PM +0000, Jason Gunthorpe wrote:
+> > On Tue, Feb 12, 2019 at 08:15:28AM -0800, Matthew Wilcox wrote:
+> > > Seriously, there are several defects in the published API which do
+> > > warrant a change.  The most severe one is that it's really easy to
+> > > forget to initialise the start index.  And while I'm making that chan=
+ge,
+> > > I should fix smaller things like the errno at the same time.
+> >=20
+> > I hope you will send your tree in the 2nd week of the merge window
+> > with all these merge fixes in it..
+> >=20
+> > I think Linus will not like it if he has to fix this when merging
+> > rdma.
+>=20
+> Ahhahhahhah.  No.  Burned once.  Not doing that again.
 
-Hi Nick,
+I'm not suggesting you should do that - basing on the nvdimm tree to
+avoid conflicts was a terrible idea.
 
-A few small comments:
+There are two sane approaches you can do here:
 
-> From 0cfb3db970636983c1570827b7793e31e352716e Mon Sep 17 00:00:00 2001
-> From: Nick Crews <ncrews@chromium.org>
-> Date: Tue, 12 Feb 2019 16:46:15 -0700
-> Subject: [PATCH] FROMLIST: wilco_ec: Fix Kconfig dependencies
+1) Base on -rcX and Merge to Linus's tree and resolve all conflicts
+   before sending the PR. The PR should ideally go in the second week
+   as it is a tree wide API change.
 
-delete FROMLIST:
+   You can read Linus's comments on handling complex merge resolutions
+   in PRs here:
+    https://lore.kernel.org/lkml/CA+55aFzcp=3Da2sNOVR7DTEY9dehYamXaJ1bpSfF0=
+FZir_9MhsVg@mail.gmail.com/
 
-The Subject should include a subsystem reference, e.g.:
+2) Rebase on top of Linus's actual tree in the *second* week of the
+   merge window and resolve all conflicts in your rebase, then
+   send the PR.
 
-[PATCH] chrome: fix wilco_ex Kconfig dependencies
+In both cases coordinate with conflicting trees to have their PR's
+sent in the first week so Linus sees no conflicts.
+ =20
+This is basically the same advise Linus gave you:
 
+https://lore.kernel.org/lkml/CA+55aFw+dwofadgvzrM-UCMSih+f1choCwW+xFFM3aPjo=
+RQX_g@mail.gmail.com/
 
-> 
-> In the initial version of the Wilco EC Driver, the
-> dependency order was wrong. It before was possible to
-> select CONFIG_WILCO_EC and CONFIG_CROS_EC_LPC without
-> having CONFIG_CROS_EC_LPC_MEC. This was wrong, since
-> WILCO_EC depends upon CONFIG CROS_EC_LPC_MEC, not the
-> other way around.
-> 
+Linus talks here about the trade off for #1 and #2, with a preference
+to #1.
 
-More importantly, the patch is still whitespace-damaged.
-The Kconfig file lines that begin with "bool", "depends", "help", etc.
-should contain a tab.  Maybe your email client mangled the whitespace.
+#2 is good for "you just want your series to make more sense on its
+own" - which I think is where tree-wide changes tend to end up.
 
-You might need to take a look at Documentation/process/email-clients.rst
-for some hints.
+I personally think it is not good to put major logic changes in merge
+commits, so I would prefer the #2 approach for this case.
 
-Or if you email the patch with "git send-email", it might be fine.
+Also, the general philosophy that the person doing the tree-wide
+change should do the work :)
 
-Aside from that, after I fixed the whitespace, the kernel build does work
-without errors.
+> > > @@ -750,7 +738,7 @@ int ib_register_device(struct ib_device *device, =
+const char *name)
+> > >  	int ret;
+> > > =20
+> > >  	ret =3D assign_name(device, name);
+> > > -	if (ret)
+> > > +	if (ret < 0)
+> > >  		return ret;
+> >=20
+> > This <0 should be near the xa_alloc_cyclic, I don't want the unusual
+> > '1' to propogate.. Far too likely that someone will forget about
+> > the special case.
+>=20
+> Feel free to propose an alternate fix for sfr to put in his tree and we
+> can both include it as a proposed patch in our respective pull requests.
 
-Thanks.
+SFR's tree is just a reference. Who ever takes care to resolve these
+conflicts has to manually do the fixing up. If you do send your tree
+early I will fix it up as part of prepping the RDMA tree PR. Otherwise
+you will have to fix it.
 
-> ---
->  drivers/platform/chrome/Kconfig          | 2 +-
->  drivers/platform/chrome/wilco_ec/Kconfig | 3 +--
->  2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 462eb9dfa4f2..b69561050868 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -95,7 +95,7 @@ config CROS_EC_LPC
-> 
->  config CROS_EC_LPC_MEC
->   bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
-> - depends on CROS_EC_LPC || WILCO_EC
-> + depends on CROS_EC_LPC
->   default n
->   help
->     If you say Y here, a variant LPC protocol for the Microchip EC
-> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig
-> b/drivers/platform/chrome/wilco_ec/Kconfig
-> index d8e2cddb4712..de097690fce3 100644
-> --- a/drivers/platform/chrome/wilco_ec/Kconfig
-> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
-> @@ -1,7 +1,6 @@
->  config WILCO_EC
->   tristate "ChromeOS Wilco Embedded Controller"
-> - depends on ACPI && X86
-> - select CROS_EC_LPC_MEC
-> + depends on ACPI && X86 && CROS_EC_LPC_MEC
->   help
->     If you say Y here, you get support for talking to the ChromeOS
->     Wilco EC over an eSPI bus. This uses a simple byte-level protocol
-> --
-> 2.20.1
-> 
-> 
-> On Tue, Feb 12, 2019 at 5:13 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> On 2/12/19 3:49 PM, Nick Crews wrote:
->>> OK, here is the patch to fix this problem. We had the dependency backwards.
->>>
->>> Should I re-send out the entire patch series to the LKML with this fix in it?
->>>
->>>
->>> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
->>> index 462eb9dfa4f2..b69561050868 100644
->>> --- a/drivers/platform/chrome/Kconfig
->>> +++ b/drivers/platform/chrome/Kconfig
->>> @@ -95,7 +95,7 @@ config CROS_EC_LPC
->>>
->>>  config CROS_EC_LPC_MEC
->>>         bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
->>> -       depends on CROS_EC_LPC || WILCO_EC
->>> +       depends on CROS_EC_LPC
->>>         default n
->>>         help
->>>           If you say Y here, a variant LPC protocol for the Microchip EC
->>> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
->>> index d8e2cddb4712..6ea2d3f64ce5 100644
->>> --- a/drivers/platform/chrome/wilco_ec/Kconfig
->>> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
->>> @@ -1,6 +1,6 @@
->>>  config WILCO_EC
->>>         tristate "ChromeOS Wilco Embedded Controller"
->>> -       depends on ACPI && X86
->>> +       depends on ACPI && X86 && CROS_EC_LPC_MEC
->>>         select CROS_EC_LPC_MEC
->>>         help
->>>           If you say Y here, you get support for talking to the ChromeOS
->>>
->>>
->>
->> Nick,
->>
->> Did you test this?
->>
->> When I apply the patch (by hand, since it was whitespace-mangled/damaged),
->> I get this:
->>
->> rdunlap@midway:linux-next-20190212> make ARCH=x86_64 O=X64 oldconfig
->> make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20190212/X64'
->>   GEN     Makefile
->> scripts/kconfig/conf  --oldconfig Kconfig
->> drivers/platform/chrome/Kconfig:84:error: recursive dependency detected!
->> drivers/platform/chrome/Kconfig:84:     symbol CROS_EC_LPC_MEC is selected by WILCO_EC
->> drivers/platform/chrome/wilco_ec/Kconfig:1:     symbol WILCO_EC depends on CROS_EC_LPC_MEC
->> For a resolution refer to Documentation/kbuild/kconfig-language.txt
->> subsection "Kconfig recursive dependency limitations"
->>
->>
->>
->>
->> --
->> ~Randy
+What I don't want to see is we send both trees at the same time and
+neither gives merge guidance to Linus.
 
+Also, FWIW, there are two more series in the RDMA patchworks adding an
+xa_array call.
 
--- 
-~Randy
+Regards,
+Jason
