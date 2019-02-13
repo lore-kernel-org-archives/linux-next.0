@@ -1,37 +1,41 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pci tree
-Date: Wed, 13 Feb 2019 09:55:57 +0000
-Message-ID: <20190213095557.GA23223@e107981-ln.cambridge.arm.com>
-References: <20190213100309.03b5ea58@canb.auug.org.au>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: linux-next: build warning after merge of the sound-asoc tree
+Date: Wed, 13 Feb 2019 11:35:25 +0100
+Message-ID: <d5c9f73e-8a60-c268-87b2-1ca98e86bfb1@samsung.com>
+References: <CGME20190213013212epcas5p436da6762dea86287ed3aea31ef2bb830@epcas5p4.samsung.com>
+        <20190213123129.2961c236@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190213100309.03b5ea58@canb.auug.org.au>
+In-reply-to: <20190213123129.2961c236@canb.auug.org.au>
+Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wen Yang <wen.yang99@zte.com.cn>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 13, 2019 at 10:03:09AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   593425276b94 ("PCI: endpoint: functions: Use memcpy_fromio()/memcpy_toio()")
-> 
-> Fixes tag
-> 
->   Fixes: 349e7a85b25f ("PCI: endpoint: functions: Add an EP function to
-> 
-> has these problem(s):
-> 
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
-> 
-> Please do not split Fixes tags over more than 1 line.
+Hi Stephen,
 
-It is my mistake, apologies, I will fix the commit log up.
+On 2/13/19 02:31, Stephen Rothwell wrote:
+> After merging the sound-asoc tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> sound/soc/samsung/i2s.c: In function 'samsung_i2s_remove':
+> sound/soc/samsung/i2s.c:1469:27: warning: unused variable 'priv' [-Wunused-variable]
+>   struct samsung_i2s_priv *priv = dev_get_drvdata(&pdev->dev);
+                            ^~~~
+> 
+> Introduced by commit
+> 
+>   a404b72d2bdd ("ASoC: samsung: i2s: Convert to single component with multiple DAIs")
 
-Thanks,
-Lorenzo
+Thanks for the information. Due to my messed up rebase the line
+quoted above ended up in the above mentioned commit instead of 
+in the next on in the series, which has not yet been applied:
+
+"ASoC: samsung: i2s: Restore support for the secondary PCM"
+
+-- 
+Regards
+Sylwester
