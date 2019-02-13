@@ -1,89 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 13 Feb 2019 17:25:18 +1100
-Message-ID: <20190213172518.50d4fec7@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Wed, 13 Feb 2019 17:49:28 +1100
+Message-ID: <20190213174928.18128be0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YHOchZ/0xpMrBCruzfM58WQ"; protocol="application/pgp-signature"
+ boundary="Sig_/46bUxRtCSLx_u3UBCkH3naR"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YHOchZ/0xpMrBCruzfM58WQ
+--Sig_/46bUxRtCSLx_u3UBCkH3naR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in:
 
-fs/io_uring.c: In function 'io_async_list_note':
-fs/io_uring.c:931:16: error: 'VM_MAX_READAHEAD' undeclared (first use in th=
-is function); did you mean 'VM_MAYREAD'?
-    max_pages =3D VM_MAX_READAHEAD >> (PAGE_SHIFT - 10);
-                ^~~~~~~~~~~~~~~~
-                VM_MAYREAD
+  scripts/atomic/check-atomics.sh
 
-Caused by commit
+between commit:
 
-  4c416502dae2 ("mm: Refactor readahead defines in mm.h")
+  4ad119545d78 ("locking/atomics: Check atomic headers with sha1sum")
 
-interacting with commit
+from the tip tree and patch:
 
-  6eff5fa16a2e ("io_uring: allow workqueue item to handle multiple buffered=
- requests")
+  "scripts/atomic/check-atomics.sh: don't assume that scripts are executabl=
+e"
 
-from the block tree.
+from the akpm tree.
 
-I have applied this merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 13 Feb 2019 17:21:44 +1100
-Subject: [PATCH] io_uring: fix up for readahead defines refactor
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1ff4acc9654d..c8272bc96d84 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -928,7 +928,7 @@ static void io_async_list_note(int rw, struct io_kiocb =
-*req, size_t len)
- 		/* Use 8x RA size as a decent limiter for both reads/writes */
- 		max_pages =3D filp->f_ra.ra_pages;
- 		if (!max_pages)
--			max_pages =3D VM_MAX_READAHEAD >> (PAGE_SHIFT - 10);
-+			max_pages =3D VM_READAHEAD_PAGES;
- 		max_pages *=3D 8;
-=20
- 		/* If max pages are exceeded, reset the state */
---=20
-2.20.1
+I fixed it up (this latter patch is now needed against the new
+scripts/atomic/gen-atomics.sh instead) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/YHOchZ/0xpMrBCruzfM58WQ
+--Sig_/46bUxRtCSLx_u3UBCkH3naR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjuE4ACgkQAVBC80lX
-0GxwaAf/bYpw9p+xNQbhPOLksKtY6LePxfnwcuBePysjuh9uWNt92N38var6cTXk
-rXCfhfZmEvU54aNTWrMtKtDUpGoR2sEOdRJEK+qC1jq2XCudxl0gRO6FA2Do+lrh
-oRqwR9umXK4mGeeLLDEP+i6MZDL9hZNFeztKcqx6fM6VhL6Gp1QnnOwSWgY8gIQL
-ZWZMl2xMbsemx6V5TFN8ODSeQhTXvmMJZPDsJ5asPu+8dV01L7onpar9e8AX1G7K
-6d7hf3/VzJMuQiENEpdpICPcwoUl85vajf/lWechpXf63ZP3hPWXh60fzaJIP6TB
-tIsreEmvniFT/WegiNguVeSCobEDfA==
-=tyJJ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjvfgACgkQAVBC80lX
+0GxhPQf/WZPKKMkkBisXpXhIIF+AQilxcK4XmHrYowxx1ih4uoPYys+Y9eRvfvk4
+eXSeyTcUovEWn8BmMKtGNNLSAEa9tdweE1NfPQ5TDRUqW8xTEeKShK9JFLYXoQMd
+/GU4DtWNfXVPkC/HWSclSV00G+Gz4Z+zqVbVehkYgs0x4X8lxo4GXUuqO11797Ib
+1sZtHKLpmDlXnOOYySDkkRuuTY7sTwmAC4D/Y/m8agSpHXpBxeXGlTVY5XYNMFpF
+YGrD5Xk2fGiHyzmcHRyYh2NBF3ukk1SdmR1WQmetcTggnw8IH9W5UNBc6t0qhEVi
+MDy1gBe+xlRo4LbsSN9cuIYefIAjxw==
+=ZAbZ
 -----END PGP SIGNATURE-----
 
---Sig_/YHOchZ/0xpMrBCruzfM58WQ--
+--Sig_/46bUxRtCSLx_u3UBCkH3naR--
