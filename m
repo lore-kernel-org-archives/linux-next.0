@@ -1,129 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Fixes tag needs some work in the pci tree
-Date: Thu, 14 Feb 2019 08:17:16 +1100
-Message-ID: <20190214081716.1367f024@canb.auug.org.au>
-References: <20190213100309.03b5ea58@canb.auug.org.au>
-        <CAErSpo5vmvx8QcQoEGzvN+5sWbL1syr2c5hD9AJwW3FGJ=8Hyw@mail.gmail.com>
-        <20190214070958.058aaf32@canb.auug.org.au>
-        <CAErSpo41bDxfajDJFH1AQK0ZwX=fC2jnay8Y5CyaS0f=+9LOHA@mail.gmail.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: linux-next: build failure after merge of the xarray tree
+Date: Wed, 13 Feb 2019 13:26:23 -0800
+Message-ID: <20190213212621.GW12668@bombadil.infradead.org>
+References: <20190212162003.1aa1ffbd@canb.auug.org.au>
+ <20190212161528.GN12668@bombadil.infradead.org>
+ <20190212162324.GU24706@mellanox.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PH76b2KzPsXn/xXl=LbMreg"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo41bDxfajDJFH1AQK0ZwX=fC2jnay8Y5CyaS0f=+9LOHA@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190212162324.GU24706@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wen Yang <wen.yang99@zte.com.cn>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PH76b2KzPsXn/xXl=LbMreg
-Content-Type: multipart/mixed; boundary="MP_/Ckag9eUwX/k/LeRKcpE3w7."
+On Tue, Feb 12, 2019 at 04:23:31PM +0000, Jason Gunthorpe wrote:
+> On Tue, Feb 12, 2019 at 08:15:28AM -0800, Matthew Wilcox wrote:
+> > Seriously, there are several defects in the published API which do
+> > warrant a change.  The most severe one is that it's really easy to
+> > forget to initialise the start index.  And while I'm making that change,
+> > I should fix smaller things like the errno at the same time.
+> 
+> I hope you will send your tree in the 2nd week of the merge window
+> with all these merge fixes in it..
+> 
+> I think Linus will not like it if he has to fix this when merging
+> rdma.
 
---MP_/Ckag9eUwX/k/LeRKcpE3w7.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Ahhahhahhah.  No.  Burned once.  Not doing that again.
 
-Hi Bjorn,
+https://lore.kernel.org/lkml/CA+55aFxFjAmrFpwQmEHCthHOzgidCKnod+cNDEE+3Spu9o1s3w@mail.gmail.com/
 
-On Wed, 13 Feb 2019 14:19:32 -0600 Bjorn Helgaas <bhelgaas@google.com> wrot=
-e:
->
-> Thanks, I guess now I have no more excuse :)
+> > @@ -750,7 +738,7 @@ int ib_register_device(struct ib_device *device, const char *name)
+> >  	int ret;
+> >  
+> >  	ret = assign_name(device, name);
+> > -	if (ret)
+> > +	if (ret < 0)
+> >  		return ret;
+> 
+> This <0 should be near the xa_alloc_cyclic, I don't want the unusual
+> '1' to propogate.. Far too likely that someone will forget about
+> the special case.
 
-:-)
-
-> Is the "missing a Signed-off-by from their committer" thing that I
-> regularly trip over a manual check?
-
-Ah, attached is the other script I run (maybe I should combine them).
---=20
-Cheers,
-Stephen Rothwell
-
---MP_/Ckag9eUwX/k/LeRKcpE3w7.
-Content-Type: application/x-shellscript
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment; filename=check_commits
-
-#!/bin/bash
-
-if [ "$#" -lt 1 ]; then
-	printf "Usage: %s <commit range>\n", "$0" 1>&2
-	exit 1
-fi
-
-commits=3D$(git rev-list --no-merges "$@")
-if [ -z "$commits" ]; then
-	printf "No commits\n"
-	exit 0
-fi
-
-author_missing=3D
-committer_missing=3D
-
-print_commits()
-{
-	local t=3D"$1"
-
-	shift
-
-	s=3D
-	is=3D'is'
-	its=3D'its'
-	[ "$#" -gt 1 ] && {
-		s=3D's'
-		is=3D'are'
-		its=3D'their'
-	}
-	printf "Commit%s\n\n" "$s"
-	git log --no-walk --pretty=3D'format:  %h ("%s")' "$@"
-	printf "\n%s missing a Signed-off-by from %s %s%s.\n" "$is" "$its" "$t" "$=
-s"
-	printf "\n"
-}
-
-for c in $commits; do
-	ae=3D$(git log -1 --format=3D'<%ae>%n<%aE>%n %an %n %aN ' "$c" | sort -u)
-	ce=3D$(git log -1 --format=3D'<%ce>%n<%cE>%n %cn %n %cN ' "$c" | sort -u)
-	msg=3D$(git log -1 --format=3D'%b' "$c")
-	sob=3D$(echo "$msg" | sed -En 's/^\s*Signed-off-by:?\s*/ /ip')
-
-	am=3Dfalse
-	cm=3Dfalse
-	grep -i -F -q "$ae" <<<"$sob" ||
-		am=3Dtrue
-	grep -i -F -q "$ce" <<<"$sob" ||
-		cm=3Dtrue
-	"$am" && author_missing+=3D" $c"
-	"$cm" && committer_missing+=3D" $c"
-done
-
-if [ "$author_missing" ]; then
-	print_commits "author" $author_missing
-fi
-if [ "$committer_missing" ]; then
-	print_commits "committer" $committer_missing
-fi
-
-exec gitk "$@"
-
---MP_/Ckag9eUwX/k/LeRKcpE3w7.--
-
---Sig_/PH76b2KzPsXn/xXl=LbMreg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxkiVwACgkQAVBC80lX
-0GxHnAgAn0wqCQDaZTTAKXS0uh4RKt4K+8EFvWHTku2hhvUXsbP2ZKTBcWWj71T+
-sdu4+Gb5AgNXCUagRL3ujNwQKXosfQ0XhKVr9PlC0mh9zzodX/p5Wl63ECQRrJkI
-0wiT1gyQMVgmSIpge1Q3iC24fCUbAaL+bQslxYk1Lkg+ka20sFax4ji2+7yn4Cks
-sJHAm+SrfsamfhK3plTivebLHZe7Ifw6RpCUykRVn7WoilP1khBHl7MXzzo0bS59
-5/opDSbEDf8MWYuWn49BgMO2GLy2Jy44DfRP5TqtrZxUDMu6GZvTerd7uAUqUtKq
-p9v9r3lHVNUyhSpLLXVfkFvHkcfdTw==
-=10xJ
------END PGP SIGNATURE-----
-
---Sig_/PH76b2KzPsXn/xXl=LbMreg--
+Feel free to propose an alternate fix for sfr to put in his tree and we
+can both include it as a proposed patch in our respective pull requests.
