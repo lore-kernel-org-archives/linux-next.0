@@ -1,37 +1,54 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Tue, 12 Feb 2019 16:58:04 -0800
-Message-ID: <e61383a7-012e-1c47-82c1-dbe4b982e0bc@gmail.com>
-References: <20190213115141.376058e8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Wed, 13 Feb 2019 12:31:29 +1100
+Message-ID: <20190213123129.2961c236@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SES/Uk8Zq=n8IQY6xaCHmr6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190213115141.376058e8@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-Le 2/12/19 à 4:51 PM, Stephen Rothwell a écrit :
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/staging/fsl-dpaa2/ethsw/ethsw.c: In function 'swdev_port_attr_get':
-> drivers/staging/fsl-dpaa2/ethsw/ethsw.c:646:26: warning: unused variable 'port_priv' [-Wunused-variable]
->   struct ethsw_port_priv *port_priv = netdev_priv(netdev);
->                           ^~~~~~~~~
-> 
-> Introduced by commit
-> 
->   1b8b589d9103 ("staging: fsl-dpaa2: ethsw: Remove getting PORT_BRIDGE_FLAGS")
-> 
+--Sig_/SES/Uk8Zq=n8IQY6xaCHmr6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Also fixed with:
+Hi all,
 
-http://patchwork.ozlabs.org/project/netdev/list/?series=91603
--- 
-Florian
+After merging the sound-asoc tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
+
+sound/soc/samsung/i2s.c: In function 'samsung_i2s_remove':
+sound/soc/samsung/i2s.c:1469:27: warning: unused variable 'priv' [-Wunused-=
+variable]
+  struct samsung_i2s_priv *priv =3D dev_get_drvdata(&pdev->dev);
+                           ^~~~
+
+Introduced by commit
+
+  a404b72d2bdd ("ASoC: samsung: i2s: Convert to single component with multi=
+ple DAIs")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SES/Uk8Zq=n8IQY6xaCHmr6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjc3EACgkQAVBC80lX
+0GxTDwf/S2h2/y6jfYGlw1Xos8AxugZtWyWGhOFelbPkIXovmRuwRbr8xdHMQq7/
+QHIsHjhMkgL/faf7DvXa1tm5nBaCkulm9nt61Wev2/pXb86tvdb0sLbYSXy8RTcB
++pKlRTIVmk4cN4zg02kELUHjHV4CrJZQWJacOZB2LTBm+UCgU+P6ejy8D0UrM/ck
++R1QTTn9QAHuCc+8PQYFsimKS7pl6jYknzkTKHr96/wTAGv9JjvhYBodq0QkdcGP
+0Cw4GgNiKsUGLY1sR238WuIH70Osi09SydhpL6I/miWgQXzVXQihstc5NPY5j6kN
+ruOTLbaCD8eePWg2hRUE7zs/blhC7A==
+=Sbqi
+-----END PGP SIGNATURE-----
+
+--Sig_/SES/Uk8Zq=n8IQY6xaCHmr6--
