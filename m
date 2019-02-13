@@ -1,58 +1,52 @@
-From: "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Subject: Re: linux-next: Fixes tag needs some work in the drivers-x86 tree
-Date: Wed, 13 Feb 2019 20:45:56 +0530
-Message-ID: <e0c40627-f1a2-254f-14b0-b9df0d62dd34@linux.intel.com>
-References: <20190207095703.564e76b2@canb.auug.org.au>
- <38152c55-c2c1-c89f-2751-0ef0d40fcba9@linux.intel.com>
- <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 13 (drivers/spmi/spmi-pmic-arb.c)
+Date: Wed, 13 Feb 2019 08:47:03 -0800
+Message-ID: <fb0508f1-131d-ff17-9b5d-123ec75275dd@infradead.org>
+References: <20190213183900.2f68474f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
+In-Reply-To: <20190213183900.2f68474f@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Darren Hart <dvhart@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
+On 2/12/19 11:39 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190212:
+> 
 
-On 07-Feb-19 9:25 PM, Andy Shevchenko wrote:
-> On Thu, Feb 7, 2019 at 4:06 AM Bhardwaj, Rajneesh
-> <rajneesh.bhardwaj@linux.intel.com> wrote:
->> On 07-Feb-19 4:27 AM, Stephen Rothwell wrote:
->>
->> Hi all,
->>
->> In commit
->>
->>    4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr_show")
->>
->> Fixes tag
->>
->>    Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
->>
->> has these problem(s):
->>
->>    - Target SHA1 does not exist
->>
->> Did you mean:
->>
->>    2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
->>
->> Yes, upstream commit is 2eb150558bb79ee01c39b64c2868216c0be2904f. For some reason when i do git show on my repo with both these SHA1 i see the same patch.
->>
->> I will fix this in next version.
-> Hmm... this came to our published branch, i.e. for-next, would it be
-> better to update it via rebasing?
->
-> Darren, what do you think?
+seen on i386:
 
-Hi Andy, I have corrected this in v2 anyway and i sent to upstream 
-today, just in case you prefer it over rebasing.
+when CONFIG_IRQ_DOMAIN_HIERARCHY is not enabled:
 
-https://patchwork.kernel.org/patch/10810123/
+../drivers/spmi/spmi-pmic-arb.c:1154:2: error: unknown field ‘activate’ specified in initializer
+  .activate = qpnpint_irq_domain_activate,
+  ^
+../drivers/spmi/spmi-pmic-arb.c:1154:2: warning: initialization from incompatible pointer type [enabled by default]
+../drivers/spmi/spmi-pmic-arb.c:1154:2: warning: (near initialization for ‘pmic_arb_irq_domain_ops.match’) [enabled by default]
+../drivers/spmi/spmi-pmic-arb.c:1155:2: error: unknown field ‘alloc’ specified in initializer
+  .alloc = qpnpint_irq_domain_alloc,
+  ^
+../drivers/spmi/spmi-pmic-arb.c:1155:2: warning: initialization from incompatible pointer type [enabled by default]
+../drivers/spmi/spmi-pmic-arb.c:1155:2: warning: (near initialization for ‘pmic_arb_irq_domain_ops.select’) [enabled by default]
+../drivers/spmi/spmi-pmic-arb.c:1156:2: error: unknown field ‘free’ specified in initializer
+  .free = irq_domain_free_irqs_common,
+  ^
+../drivers/spmi/spmi-pmic-arb.c:1156:10: error: ‘irq_domain_free_irqs_common’ undeclared here (not in a function)
+  .free = irq_domain_free_irqs_common,
+          ^
+../drivers/spmi/spmi-pmic-arb.c:1157:2: error: unknown field ‘translate’ specified in initializer
+  .translate = qpnpint_irq_domain_translate,
+  ^
+../drivers/spmi/spmi-pmic-arb.c:1157:2: warning: initialization from incompatible pointer type [enabled by default]
+../drivers/spmi/spmi-pmic-arb.c:1157:2: warning: (near initialization for ‘pmic_arb_irq_domain_ops.unmap’) [enabled by default]
 
 
 
->
+-- 
+~Randy
