@@ -1,41 +1,68 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: linux-next: build warning after merge of the sound-asoc tree
-Date: Wed, 13 Feb 2019 11:35:25 +0100
-Message-ID: <d5c9f73e-8a60-c268-87b2-1ca98e86bfb1@samsung.com>
-References: <CGME20190213013212epcas5p436da6762dea86287ed3aea31ef2bb830@epcas5p4.samsung.com>
-        <20190213123129.2961c236@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the drm-fixes tree
+Date: Wed, 13 Feb 2019 21:36:42 +1100
+Message-ID: <20190213213642.2d980994@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/F7mdYu/8dbNmNNZxbk8NiyX"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20190213123129.2961c236@canb.auug.org.au>
-Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Longerbeam <slongerbeam@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Philipp Zabel <p.zabel@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/F7mdYu/8dbNmNNZxbk8NiyX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2/13/19 02:31, Stephen Rothwell wrote:
-> After merging the sound-asoc tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> sound/soc/samsung/i2s.c: In function 'samsung_i2s_remove':
-> sound/soc/samsung/i2s.c:1469:27: warning: unused variable 'priv' [-Wunused-variable]
->   struct samsung_i2s_priv *priv = dev_get_drvdata(&pdev->dev);
-                            ^~~~
-> 
-> Introduced by commit
-> 
->   a404b72d2bdd ("ASoC: samsung: i2s: Convert to single component with multiple DAIs")
+Hi all,
 
-Thanks for the information. Due to my messed up rebase the line
-quoted above ended up in the above mentioned commit instead of 
-in the next on in the series, which has not yet been applied:
+In commit
 
-"ASoC: samsung: i2s: Restore support for the secondary PCM"
+  bb867d219fda ("gpu: ipu-v3: Fix CSI offsets for imx53")
 
--- 
-Regards
-Sylwester
+Fixes tag
+
+  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+In commit
+
+  2c0408dd0d89 ("gpu: ipu-v3: Fix i.MX51 CSI control registers offset")
+
+Fixes tag
+
+  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/F7mdYu/8dbNmNNZxbk8NiyX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxj8zoACgkQAVBC80lX
+0GzRVAf7Bs+SIUV1xY2TI78/YhLT38xA+p4+nm8tSDcNnsjAI80+J8PkcRaSUktR
+pe8Och0obcwgc5JZL4/JGCSkuD4fNk1ap0mUfaRTjHeDJQQ9ODe0AbDI7HeZvZsE
+x+hAT3J+DWlue6/23Oo/fAPGpBq7b7STNv8dedpxWJXnuu6kzMX4zh8bH/BvnwSa
+efvPZH3FfaDwzumH4DUhJjqcmfPY3mFjlG+0R8KzT0QjjGn2FjruAo4MBP52BSKm
+97Mw+Ne1P0RODX9zxnkzF+aaSNo6AGEAacSTHvihLMyCNoKxVBndTvg5/hIz+bMs
+CZUlauU3M5X2+1TMPveBGOw9XRX9TQ==
+=9MM2
+-----END PGP SIGNATURE-----
+
+--Sig_/F7mdYu/8dbNmNNZxbk8NiyX--
