@@ -1,96 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the kspp
- tree
-Date: Wed, 13 Feb 2019 17:03:45 +1100
-Message-ID: <20190213170345.656c3030@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 13 Feb 2019 17:25:18 +1100
+Message-ID: <20190213172518.50d4fec7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3Gc2sE8KC2b8Gtu8=f2jYIg"; protocol="application/pgp-signature"
+ boundary="Sig_/YHOchZ/0xpMrBCruzfM58WQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@google.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Ryabinin <aryabinin@virtuozzo.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3Gc2sE8KC2b8Gtu8=f2jYIg
+--Sig_/YHOchZ/0xpMrBCruzfM58WQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  scripts/gcc-plugins/Kconfig
+fs/io_uring.c: In function 'io_async_list_note':
+fs/io_uring.c:931:16: error: 'VM_MAX_READAHEAD' undeclared (first use in th=
+is function); did you mean 'VM_MAYREAD'?
+    max_pages =3D VM_MAX_READAHEAD >> (PAGE_SHIFT - 10);
+                ^~~~~~~~~~~~~~~~
+                VM_MAYREAD
 
-between commit:
+Caused by commit
 
-  9219e54be983 ("gcc-plugins: structleak: Generalize to all variable types")
+  4c416502dae2 ("mm: Refactor readahead defines in mm.h")
 
-from the kspp tree and commit:
+interacting with commit
 
-  7fabedf42152 ("kasan: remove use after scope bugs detection.")
+  6eff5fa16a2e ("io_uring: allow workqueue item to handle multiple buffered=
+ requests")
 
-from the akpm-current tree.
+from the block tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have applied this merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 13 Feb 2019 17:21:44 +1100
+Subject: [PATCH] io_uring: fix up for readahead defines refactor
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1ff4acc9654d..c8272bc96d84 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -928,7 +928,7 @@ static void io_async_list_note(int rw, struct io_kiocb =
+*req, size_t len)
+ 		/* Use 8x RA size as a decent limiter for both reads/writes */
+ 		max_pages =3D filp->f_ra.ra_pages;
+ 		if (!max_pages)
+-			max_pages =3D VM_MAX_READAHEAD >> (PAGE_SHIFT - 10);
++			max_pages =3D VM_READAHEAD_PAGES;
+ 		max_pages *=3D 8;
+=20
+ 		/* If max pages are exceeded, reset the state */
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc scripts/gcc-plugins/Kconfig
-index d0cc92e48f6f,d9fd9988ef27..000000000000
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@@ -67,22 -67,13 +67,18 @@@ config GCC_PLUGIN_LATENT_ENTROP
-  	   * https://pax.grsecurity.net/
- =20
-  config GCC_PLUGIN_STRUCTLEAK
- -	bool "Force initialization of variables containing userspace addresses"
- +	bool "Zero initialize stack variables"
-- 	# Currently STRUCTLEAK inserts initialization out of live scope of
-- 	# variables from KASAN point of view. This leads to KASAN false
-- 	# positive reports. Prohibit this combination for now.
-- 	depends on !KASAN_EXTRA
-  	help
- -	  This plugin zero-initializes any structures containing a
- -	  __user attribute. This can prevent some classes of information
- -	  exposures.
- -
- -	  This plugin was ported from grsecurity/PaX. More information at:
- +	  While the kernel is built with warnings enabled for any missed
- +	  stack variable initializations, this warning is silenced for
- +	  anything passed by reference to another function, under the
- +	  occasionally misguided assumption that the function will do
- +	  the initialization. As this regularly leads to exploitable
- +	  flaws, this plugin is available to identify and zero-initialize
- +	  such variables, depending on the chosen level of coverage.
- +
- +	  This plugin was originally ported from grsecurity/PaX. More
- +	  information at:
-  	   * https://grsecurity.net/
-  	   * https://pax.grsecurity.net/
- =20
-
---Sig_/3Gc2sE8KC2b8Gtu8=f2jYIg
+--Sig_/YHOchZ/0xpMrBCruzfM58WQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjs0EACgkQAVBC80lX
-0GzayQf/V98XM0JTiHCheBVhkf9RjTLiVDFPwM5mGCWbvTlYEQlfH174/b9qzkok
-YqT2Y8oUBScvB9s8xEP0tcnbw9ZfKLm9LPRNIOvu+fWnrebCX7zYtbzRwUAgROu7
-xFAVrftk+vH0Ij+cgCUPbAUN5pmx1axchaN5O/JTYNRAqRroOjqWBMJsr2aAHc/S
-3li0xUAXO7oFNSVjlMqKg/3DtKqxMbVmVNWjGXv1JtAcZ13Ug+2paPF3IEQLCLMb
-rx0bH+4yVFQNAzPk3bg2T+WTdRSOVZpulqALscri2+2oiVVndDZgv3LzOPIjq6wL
-Yg/JNtpoeYUhgQ07E6MTW6qHBEnR/A==
-=M/Xn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjuE4ACgkQAVBC80lX
+0GxwaAf/bYpw9p+xNQbhPOLksKtY6LePxfnwcuBePysjuh9uWNt92N38var6cTXk
+rXCfhfZmEvU54aNTWrMtKtDUpGoR2sEOdRJEK+qC1jq2XCudxl0gRO6FA2Do+lrh
+oRqwR9umXK4mGeeLLDEP+i6MZDL9hZNFeztKcqx6fM6VhL6Gp1QnnOwSWgY8gIQL
+ZWZMl2xMbsemx6V5TFN8ODSeQhTXvmMJZPDsJ5asPu+8dV01L7onpar9e8AX1G7K
+6d7hf3/VzJMuQiENEpdpICPcwoUl85vajf/lWechpXf63ZP3hPWXh60fzaJIP6TB
+tIsreEmvniFT/WegiNguVeSCobEDfA==
+=tyJJ
 -----END PGP SIGNATURE-----
 
---Sig_/3Gc2sE8KC2b8Gtu8=f2jYIg--
+--Sig_/YHOchZ/0xpMrBCruzfM58WQ--
