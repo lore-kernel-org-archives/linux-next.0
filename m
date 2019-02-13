@@ -1,68 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 13 Feb 2019 11:13:25 +1100
-Message-ID: <20190213111325.30cfc931@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 12 (chrome/wilco_ec/)
+Date: Tue, 12 Feb 2019 16:13:54 -0800
+Message-ID: <6913db72-85b3-0b7d-5e38-9cbb6ec4c8c2@infradead.org>
+References: <20190212175059.1ea4c16c@canb.auug.org.au>
+ <94edf49b-6b37-2dac-a2db-ad454b105fd1@infradead.org>
+ <CAHX4x87=Myx45wBYtFY=rwz8jVmYY-tYVQjnzod-V8HaWJSy+g@mail.gmail.com>
+ <CAHX4x87nRpTR5880y6hc=r7k0OFV9YKate21U=2kkqC-ihdmCQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/e1bzDPTGv3EFI.geS+VAeWk"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHX4x87nRpTR5880y6hc=r7k0OFV9YKate21U=2kkqC-ihdmCQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>, Vlad Buslov <vladbu@mellanox.com>
+To: Nick Crews <ncrews@chromium.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/e1bzDPTGv3EFI.geS+VAeWk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2/12/19 3:49 PM, Nick Crews wrote:
+> OK, here is the patch to fix this problem. We had the dependency backwards.
+> 
+> Should I re-send out the entire patch series to the LKML with this fix in it?
+> 
+> 
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 462eb9dfa4f2..b69561050868 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -95,7 +95,7 @@ config CROS_EC_LPC
+>  
+>  config CROS_EC_LPC_MEC
+>         bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
+> -       depends on CROS_EC_LPC || WILCO_EC
+> +       depends on CROS_EC_LPC
+>         default n
+>         help
+>           If you say Y here, a variant LPC protocol for the Microchip EC
+> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
+> index d8e2cddb4712..6ea2d3f64ce5 100644
+> --- a/drivers/platform/chrome/wilco_ec/Kconfig
+> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
+> @@ -1,6 +1,6 @@
+>  config WILCO_EC
+>         tristate "ChromeOS Wilco Embedded Controller"
+> -       depends on ACPI && X86
+> +       depends on ACPI && X86 && CROS_EC_LPC_MEC
+>         select CROS_EC_LPC_MEC
+>         help
+>           If you say Y here, you get support for talking to the ChromeOS
+> 
+> 
 
-Hi all,
+Nick,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Did you test this?
 
-  net/sched/cls_tcindex.c
+When I apply the patch (by hand, since it was whitespace-mangled/damaged),
+I get this:
 
-between commits:
+rdunlap@midway:linux-next-20190212> make ARCH=x86_64 O=X64 oldconfig
+make[1]: Entering directory '/home/rdunlap/lnx/next/linux-next-20190212/X64'
+  GEN     Makefile
+scripts/kconfig/conf  --oldconfig Kconfig
+drivers/platform/chrome/Kconfig:84:error: recursive dependency detected!
+drivers/platform/chrome/Kconfig:84:	symbol CROS_EC_LPC_MEC is selected by WILCO_EC
+drivers/platform/chrome/wilco_ec/Kconfig:1:	symbol WILCO_EC depends on CROS_EC_LPC_MEC
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
 
-  8015d93ebd27 ("net_sched: fix a race condition in tcindex_destroy()")
-  033b228e7f26 ("net_sched: fix a memory leak in cls_tcindex")
 
-from the net tree and commit:
 
-  12db03b65c2b ("net: sched: extend proto ops to support unlocked classifie=
-rs")
 
-from the net-next tree.
-
-I fixed it up (see the final resolution when linux-next is published)
-and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/sched/cls_tcindex.c
-index 38bb882bb958,14d6b4058045..000000000000
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-
---Sig_/e1bzDPTGv3EFI.geS+VAeWk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjYSUACgkQAVBC80lX
-0Gxv2Af9G8F2PMhER1FlSc/JpRwDJWHm6gFCJcBxPG0aKhIlr8vHXRGOjpMo/fTc
-I7zlzIMMWdQtHnrylJrMOmEMYwhslPQ5FvqFIEWJQiYxDAhlbVmFCC8BJz1wCKXe
-n1X49pjYE8/QnuqpINMrzh2RlNmPJ87qLESfdRHusBuVI5xGSS90ZeFkAvWM714m
-Pi7QkC2NDd9HtIPLyATwQ1K5Nc0pVLwIKmJ5KDcfoC2/nGlwDYHUKy50W8QfaTRP
-1kUWDLYGLoC3Amo33aHS8ptCVqQYFBIf0I8hJlvP+K+tX29Rq3xmRsxJ1S6+b335
-TY1Vjgi36ADBzxVkMqqG81czxYMpZg==
-=VSfd
------END PGP SIGNATURE-----
-
---Sig_/e1bzDPTGv3EFI.geS+VAeWk--
+-- 
+~Randy
