@@ -1,25 +1,37 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: Tree for Feb 11 (wireless/80211)
-Date: Wed, 13 Feb 2019 09:04:20 +0100
-Message-ID: <6b0e066f05fa8c78a2e6850dbece388533a223d1.camel@sipsolutions.net>
-References: <20190211183951.3fe1dad9@canb.auug.org.au>
-         <80b32344-08c9-0d8b-fdae-1db9b1003f60@infradead.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: linux-next: Fixes tag needs some work in the pci tree
+Date: Wed, 13 Feb 2019 09:55:57 +0000
+Message-ID: <20190213095557.GA23223@e107981-ln.cambridge.arm.com>
+References: <20190213100309.03b5ea58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <80b32344-08c9-0d8b-fdae-1db9b1003f60@infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190213100309.03b5ea58@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wen Yang <wen.yang99@zte.com.cn>
 List-Id: linux-next.vger.kernel.org
 
-Thanks for the heads-up, Randy. We'd seen separate build bot reports on
-this as well.
+On Wed, Feb 13, 2019 at 10:03:09AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   593425276b94 ("PCI: endpoint: functions: Use memcpy_fromio()/memcpy_toio()")
+> 
+> Fixes tag
+> 
+>   Fixes: 349e7a85b25f ("PCI: endpoint: functions: Add an EP function to
+> 
+> has these problem(s):
+> 
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+> 
+> Please do not split Fixes tags over more than 1 line.
 
-> ERROR: "__umoddi3" [net/wireless/cfg80211.ko] undefined!
-> ERROR: "__umoddi3" [net/mac80211/mac80211.ko] undefined!
+It is my mistake, apologies, I will fix the commit log up.
 
-Should be fixed as of yesterday, let me know if it reappears.
-
-johannes
+Thanks,
+Lorenzo
