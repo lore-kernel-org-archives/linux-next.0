@@ -1,57 +1,54 @@
-From: "Tobin C. Harding" <me@tobin.cc>
-Subject: Re: linux-next: Signed-off-by missing for commit in the leaks tree
-Date: Thu, 14 Feb 2019 19:33:35 +1100
-Message-ID: <20190214083335.GA3053@eros.localdomain>
-References: <20190214183605.3132886d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the pinctrl tree
+Date: Thu, 14 Feb 2019 22:03:38 +1100
+Message-ID: <20190214220338.7241bdc5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KlTLonZdfXUG/YUdjLwpWnH"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190214183605.3132886d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 List-Id: linux-next.vger.kernel.org
 
-
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/KlTLonZdfXUG/YUdjLwpWnH
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 14, 2019 at 06:36:05PM +1100, Stephen Rothwell wrote:
-> Hi Tobin,
->=20
-> Commit
->=20
->   5d06b3fc8e61 ("leaking_addresses: Completely remove --version flag")
->=20
-> is missing a Signed-off-by from its author and committer.
+Hi Linus,
 
-Thanks, fixed.
+In commit
 
-	Tobin
+  a5a0bbca16cd ("pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins")
 
+Fixes tag
 
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
+  Fixes: 0fefcb6 ("pinctrl: Add support for Meson8b")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KlTLonZdfXUG/YUdjLwpWnH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEc/+jpUAIMPwyplf8QL+eTCadZgcFAlxlJ9sACgkQQL+eTCad
-Zgdy8A/8DxMAK2W0fTnqiOFd/W/cU1295Av8IUBdKBrgXlDaiSzIJLaCN29EQwE+
-Ku4xiHgBPzSqbkif+UfbHnPLEH7yxRjg8+2VGx3Q8QUm1Fh4s0jBurPXX1iDe5lx
-BwTehd+ruEREdZaOafA2DRT3+yKo/OiVRkDmrjl7SG6fmDiYiO91bVfjv8aJqNEg
-4PJZnUI6qeI0V2ASZVtWqUfZp8vqVKCBNQHOrPRUFsIOIbxItM06VGHAZNsKkbzp
-DM+aNDOGHklq3mv11dv5nC5ydVr+NetnLkDaqZkZd3EbIr20DkrGpoOYiqj4rV+f
-4ZwX76tDv6+GD5QEQJ7HmKIBneDHQp6DnRhMRk13UvkgBCG+3QTelo0hWgVspoZW
-f5Uu/hhC/pfoERMESgk56/L7rJENaHQGtw60+zDMhsJLeWMGiW3/f2oj703IuCwn
-Xvki5IoKftSdsiUBgWmYZcy+MlygDfZrzfaBUoDTnO2GZ5m3GwIZKIpdzEPO+i5x
-KqTcg7TSe75JnZbO0hIHXuJm5moIVbaa17jyOoqDHh8MHrCicIPi7OxO2KoFjiXa
-drriAYZFIr2XRirQOAHqZAH+I7eGSep0/yvh9LZR60Xp8U7ez920tcU1q08b1u4r
-482lLY/U1HntoDhTI8NOFM9ZeuaByKAkWOanlfYC/DT/oLfKSZE=
-=fzEN
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxlSwsACgkQAVBC80lX
+0Gw/ywf/THFr29snIMcqZ4CD7J83H5MzpQW4efbNUNk2+m4bZmJKLnIwRsywxwON
+vO5BDH8Mc3DkoKA7V/mt1rbj/s7VlDilqsSOvKIFZ1GTdFFmCPOYCIK8uNlkV7eP
+KHrf2A14r8QCSyHG/9W/MfRRHKH+ETqLZEqL2vUrhUbdi9/vWgwa1UnR1GpD5uBN
+KQgweRJy1m/H3zzPb4UoSSDLr8iRY62RiGILFeYOhXrmdXWSeF2DR0dGR5JOpae/
+BNMEJD98ivevj5kErGkMj8BT06PgyTsGvm53fReaPSkicWP3dBUvAbuS+3z4zjRl
+wICUfOi6VuBElYbB1p5AQ6gjYISG/Q==
+=x77H
 -----END PGP SIGNATURE-----
 
---u3/rZRmxL6MmkK24--
+--Sig_/KlTLonZdfXUG/YUdjLwpWnH--
