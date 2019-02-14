@@ -1,42 +1,49 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
-Date: Thu, 14 Feb 2019 12:55:42 +0100
-Message-ID: <CAFBinCCTbn0zMQqTzk2RvELCRBX1=Vf1QuY54Kp+BKc+sOmKHQ@mail.gmail.com>
-References: <20190214220338.7241bdc5@canb.auug.org.au>
+From: "Wan, Kaike" <kaike.wan@intel.com>
+Subject: RE: linux-next: build warning after merge of the rdma tree
+Date: Thu, 14 Feb 2019 12:35:34 +0000
+Message-ID: <3F128C9216C9B84BB6ED23EF16290AFB750DA68D@CRSMSX101.amr.corp.intel.com>
+References: <20190214111839.6300f9b7@canb.auug.org.au>
+ <86f77ecfe862e224149ada80dd5b5650280c74ec.camel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214220338.7241bdc5@canb.auug.org.au>
+In-Reply-To: <86f77ecfe862e224149ada80dd5b5650280c74ec.camel@redhat.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen, Hi Linus,
-
-On Thu, Feb 14, 2019 at 12:03 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Linus,
->
-> In commit
->
->   a5a0bbca16cd ("pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins")
->
-> Fixes tag
->
->   Fixes: 0fefcb6 ("pinctrl: Add support for Meson8b")
->
-> has these problem(s):
->
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
-this is my fault - sorry about that.
-
-Linus, do you want me to re-send the patch or do you want to change
-the referenced SHA1 to 0fefcb6876d0d6 ?
-I'm fine either way, please let me know what's easiest for you.
-
-
-Regards
-Martin
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG91ZyBMZWRmb3JkIFtt
+YWlsdG86ZGxlZGZvcmRAcmVkaGF0LmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBGZWJydWFyeSAx
+MywgMjAxOSA3OjIxIFBNDQo+IFRvOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9y
+Zy5hdT47IEphc29uIEd1bnRob3JwZQ0KPiA8amdnQG1lbGxhbm94LmNvbT4NCj4gQ2M6IExpbnV4
+IE5leHQgTWFpbGluZyBMaXN0IDxsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZz47IExpbnV4IEtl
+cm5lbA0KPiBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBXYW4s
+IEthaWtlDQo+IDxrYWlrZS53YW5AaW50ZWwuY29tPjsgR3VzdGF2byBBLiBSLiBTaWx2YSA8Z3Vz
+dGF2b0BlbWJlZGRlZG9yLmNvbT47DQo+IEtlZXMgQ29vayA8a2Vlc2Nvb2tAY2hyb21pdW0ub3Jn
+Pg0KPiBTdWJqZWN0OiBSZTogbGludXgtbmV4dDogYnVpbGQgd2FybmluZyBhZnRlciBtZXJnZSBv
+ZiB0aGUgcmRtYSB0cmVlDQo+IA0KPiBPbiBUaHUsIDIwMTktMDItMTQgYXQgMTE6MTggKzExMDAs
+IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gSGkgYWxsLA0KPiA+DQo+ID4gQWZ0ZXIgbWVy
+Z2luZyB0aGUgcmRtYSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NA0KPiA+
+IGFsbG1vZGNvbmZpZykgcHJvZHVjZWQgdGhpcyB3YXJuaW5nOg0KPiA+DQo+ID4gZHJpdmVycy9p
+bmZpbmliYW5kL2h3L2hmaTEvcXAuYzogSW4gZnVuY3Rpb24gJ2hmaTFfc2V0dXBfd3FlJzoNCj4g
+PiBkcml2ZXJzL2luZmluaWJhbmQvaHcvaGZpMS9xcC5jOjMyODozOiB3YXJuaW5nOiB0aGlzIHN0
+YXRlbWVudCBtYXkgZmFsbA0KPiB0aHJvdWdoIFstV2ltcGxpY2l0LWZhbGx0aHJvdWdoPV0NCj4g
+PiAgICBoZmkxX3NldHVwX3RpZF9yZG1hX3dxZShxcCwgd3FlKTsNCj4gPiAgICBefn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0KPiA+IGRyaXZlcnMvaW5maW5pYmFuZC9ody9oZmkxL3Fw
+LmM6MzI5OjI6IG5vdGU6IGhlcmUNCj4gPiAgIGNhc2UgSUJfUVBUX1VDOg0KPiA+ICAgXn5+fg0K
+PiA+DQo+ID4gSW50cm9kdWNlZCBieSBjb21taXQNCj4gPg0KPiA+ICAgZjFhYjRlZmE2ZDMyICgi
+SUIvaGZpMTogRW5hYmxlIFRJRCBSRE1BIFJFQUQgcHJvdG9jb2wiKQ0KPiA+DQo+ID4gSSBnZXQg
+dGhpcyB3YXJuaW5nIGJlY2F1c2UgSSBhbSBidWlsZGluZyB3aXRoIC1XaW1wbGljaXQtZmFsbHRo
+cm91Z2gNCj4gPiBpbiBhdHRlbXB0IHRvIGNhdGNoIG5ldyBhZGRpdGlvbnMgZWFybHkuICBUaGUg
+Z2NjIHdhcm5pbmcgY2FuIGJlDQo+ID4gdHVybmVkIG9mZiBieSBhZGRpbmcgYSAvKiBmYWxsIHRo
+cm91Z2ggKi8gY29tbWVudCBhdCB0aGUgcG9pbnQgdGhlDQo+ID4gZmFsbCB0aHJvdWdoIGhhcHBl
+bnMgKGFzc3VtaW5nIHRoYXQgdGhlIGZhbGwgdGhyb3VnaCBpcyBpbnRlbnRpb25hbCkuDQo+ID4N
+Cj4gDQo+IFRoYW5rcyBTdGVwaGVuLCB3ZSdsbCBzb3J0IGl0IGFuZCBtYWtlIGFuIGFwcHJvcHJp
+YXRlIGZpeHVwIHBhdGNoLg0KPiANCj4gS2Fpa2U/DQoNCkl0J3MgaW50ZW50aW9uYWwuIFdlIHdp
+bGwgYWRkIGEgIi8qIGZhbGwgdGhyb3VnaCAqLyIgY29tbWVudCBhcyBhIGZpeHVwIHBhdGNoLg0K
+DQpLYWlrZQ0KPiANCj4gLS0NCj4gRG91ZyBMZWRmb3JkIDxkbGVkZm9yZEByZWRoYXQuY29tPg0K
+PiAgICAgR1BHIEtleUlEOiBCODI2QTMzMzBFNTcyRkREDQo+ICAgICBLZXkgZmluZ2VycHJpbnQg
+PSBBRTZCIDFCREEgMTIyQiAyM0I0IDI2NUIgIDEyNzQgQjgyNiBBMzMzIDBFNTcgMkZERA0K
