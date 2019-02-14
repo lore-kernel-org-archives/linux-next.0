@@ -1,30 +1,41 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the vhost tree
-Date: Thu, 14 Feb 2019 15:21:37 -0500
-Message-ID: <20190214152115-mutt-send-email-mst@kernel.org>
-References: <20190215071702.56ca522f@canb.auug.org.au>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: linux-next: build warning after merge of the leds tree
+Date: Thu, 14 Feb 2019 22:13:45 +0100
+Message-ID: <a741b99c-83ff-547b-90d6-f54f8f7de966@gmail.com>
+References: <20190214144610.3672e9d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190215071702.56ca522f@canb.auug.org.au>
+In-Reply-To: <20190214144610.3672e9d7@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Kazior <michal@plume.com>, Pavel Machek <pavel@ucw.cz>, Anders Roxell <anders.roxell@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 15, 2019 at 07:17:02AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   8fcf13f6be52 ("mm/page_poison: update comment after code moved")
-> 
-> is missing a Signed-off-by from its author and committer.
+Hi Stephen and all,
 
-Thanks!
-It's upstream already anyway, I will drop it.
+On 2/14/19 4:46 AM, Stephen Rothwell wrote:
+> Hi Jacek,
+> 
+> After merging the leds tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_firmware_loaded':
+> drivers/leds/leds-lp55xx-common.c:217:1: warning: label 'out' defined but not used [-Wunused-label]
+>   out:
+>   ^~~
 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Thank you for the heads-up. It's my bad - I didn't use sparse on it.
+
+Fixed up the original patch.
+
+> Introduced by commit
+> 
+>    905c2157dd19 ("leds: lp55xx: fix null deref on firmware load failure")
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
