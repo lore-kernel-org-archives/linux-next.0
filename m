@@ -1,39 +1,46 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: Tree for Feb 14 (fanotify)
-Date: Thu, 14 Feb 2019 17:49:37 +0100
-Message-ID: <20190214164937.GC23000@quack2.suse.cz>
-References: <20190214175138.3f69ec91@canb.auug.org.au>
- <b005f0f9-6db1-e9dc-a04c-bf37b37be8ce@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the vhost tree
+Date: Fri, 15 Feb 2019 07:17:02 +1100
+Message-ID: <20190215071702.56ca522f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JlU.7LRQ5UAzBF0AwgB9f3J"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b005f0f9-6db1-e9dc-a04c-bf37b37be8ce@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu 14-02-19 07:58:33, Randy Dunlap wrote:
-> On 2/13/19 10:51 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20190213:
-> > 
-> 
-> seen on i386:
-> 
-> when # CONFIG_EXPORTFS_BLOCK_OPS is not set:
-> 
-> ld: fs/notify/fanotify/fanotify.o: in function `fanotify_alloc_event':
-> fanotify.c:(.text+0x25a): undefined reference to `exportfs_encode_inode_fh'
-> ld: fanotify.c:(.text+0x29e): undefined reference to `exportfs_encode_inode_fh'
+--Sig_/JlU.7LRQ5UAzBF0AwgB9f3J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, fanotify needs to select EXPORTFS now. Added patch to my tree. Thanks
-for report!
+Hi all,
 
-								Honza
+Commit
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+  8fcf13f6be52 ("mm/page_poison: update comment after code moved")
+
+is missing a Signed-off-by from its author and committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/JlU.7LRQ5UAzBF0AwgB9f3J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxlzL4ACgkQAVBC80lX
+0GwA5Af+IG+DrTclqTKdNi+ECHT7YKQuP5d8U2Fo5ptXyi6TC1LVJceMMVcF0Xgy
+olAP9kxbBcYomfvu69rJ0WHpnUzS0+XlPbc+xKADhXQZWCRXBFNR0pOCYkgd2Njw
+0UKUf9LXhwNjREM8jymlGKebdKRa8rr9tPshpS3d3kD1kwRKCfPWjWaooDBqe10G
+Gd9b0lLF38ZOby5JWqPdpKO+pNtnh1COVhhqLjCp261F0TInpy6fWOgYVYghcfmC
+ZE17Eq6isYI5uEgaYE/1XxtzopG7tICDWG8jRBqAuwCAuT35EED09vN2cnG5EZJg
+iLr9qMjGfWCaMiwTIV4q8/1gz24rUw==
+=Pfyh
+-----END PGP SIGNATURE-----
+
+--Sig_/JlU.7LRQ5UAzBF0AwgB9f3J--
