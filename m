@@ -1,46 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the cifs tree
-Date: Thu, 14 Feb 2019 18:37:55 +1100
-Message-ID: <20190214183755.71b8f1b4@canb.auug.org.au>
+From: Michal Kazior <michal@plume.com>
+Subject: Re: linux-next: build warning after merge of the leds tree
+Date: Thu, 14 Feb 2019 08:51:07 +0100
+Message-ID: <CABqz6Wz_J7xJwzYc7xaHJ87t6Uzzvkrn2x7M0ij6C6JbSOm82w@mail.gmail.com>
+References: <20190214144610.3672e9d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sgSiSkvbPg_SznL/PXDkN3D"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190214144610.3672e9d7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/sgSiSkvbPg_SznL/PXDkN3D
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 14, 2019 at 4:46 AM Stephen Rothwell <sfr@canb.auug.org.au> wro=
+te:
+>
+> Hi Jacek,
+>
+> After merging the leds tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_firmware_loaded':
+> drivers/leds/leds-lp55xx-common.c:217:1: warning: label 'out' defined but=
+ not used [-Wunused-label]
+>  out:
+>  ^~~
+>
+> Introduced by commit
+>
+>   905c2157dd19 ("leds: lp55xx: fix null deref on firmware load failure")
 
-Hi all,
+I'm sorry guys, that's my fault. Let me fix that.
 
-Commit
 
-  375808983c63 ("smb3: request more credits on tree connect")
-
-is missing a Signed-off-by from its author and committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sgSiSkvbPg_SznL/PXDkN3D
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxlGtMACgkQAVBC80lX
-0Gws/Qf/aJHGk5hm9nMhBvPW03P4hdyJ/aDbHk8OffH7B07VO5Cmx2jAb8zd19nY
-VQFaDcV0CTTlD5nJKXKkBFO9mZg8Xa5GorDvbe8EkU50brxcQ/yvG/z+fBsywol/
-Up7Wr2TdJX1dHRfVMehw7bxY1lzwGoaA2d5m/Jb0lOVmxznwhxT/gSPcaxJGD5KN
-4/bT5KZ4LyZIsUy14zL4KIS5vdjqdpzNHhBihyOhwGYYRYnMKhOLJY3A/oV7LRFU
-RE4TTRRDTU5qgnN2qHFpUcz7NAvhAS69uKanlv0iV95CfWJb3RXv/0i93RZSXi6a
-hacu0OkUkF3smHtm56aFoaZOYFIezQ==
-=DS9N
------END PGP SIGNATURE-----
-
---Sig_/sgSiSkvbPg_SznL/PXDkN3D--
+Micha=C5=82
