@@ -1,49 +1,35 @@
-From: "Wan, Kaike" <kaike.wan@intel.com>
-Subject: RE: linux-next: build warning after merge of the rdma tree
-Date: Thu, 14 Feb 2019 12:35:34 +0000
-Message-ID: <3F128C9216C9B84BB6ED23EF16290AFB750DA68D@CRSMSX101.amr.corp.intel.com>
-References: <20190214111839.6300f9b7@canb.auug.org.au>
- <86f77ecfe862e224149ada80dd5b5650280c74ec.camel@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 14 (fanotify)
+Date: Thu, 14 Feb 2019 07:58:33 -0800
+Message-ID: <b005f0f9-6db1-e9dc-a04c-bf37b37be8ce@infradead.org>
+References: <20190214175138.3f69ec91@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <86f77ecfe862e224149ada80dd5b5650280c74ec.camel@redhat.com>
+In-Reply-To: <20190214175138.3f69ec91@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG91ZyBMZWRmb3JkIFtt
-YWlsdG86ZGxlZGZvcmRAcmVkaGF0LmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBGZWJydWFyeSAx
-MywgMjAxOSA3OjIxIFBNDQo+IFRvOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9y
-Zy5hdT47IEphc29uIEd1bnRob3JwZQ0KPiA8amdnQG1lbGxhbm94LmNvbT4NCj4gQ2M6IExpbnV4
-IE5leHQgTWFpbGluZyBMaXN0IDxsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZz47IExpbnV4IEtl
-cm5lbA0KPiBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBXYW4s
-IEthaWtlDQo+IDxrYWlrZS53YW5AaW50ZWwuY29tPjsgR3VzdGF2byBBLiBSLiBTaWx2YSA8Z3Vz
-dGF2b0BlbWJlZGRlZG9yLmNvbT47DQo+IEtlZXMgQ29vayA8a2Vlc2Nvb2tAY2hyb21pdW0ub3Jn
-Pg0KPiBTdWJqZWN0OiBSZTogbGludXgtbmV4dDogYnVpbGQgd2FybmluZyBhZnRlciBtZXJnZSBv
-ZiB0aGUgcmRtYSB0cmVlDQo+IA0KPiBPbiBUaHUsIDIwMTktMDItMTQgYXQgMTE6MTggKzExMDAs
-IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gSGkgYWxsLA0KPiA+DQo+ID4gQWZ0ZXIgbWVy
-Z2luZyB0aGUgcmRtYSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NA0KPiA+
-IGFsbG1vZGNvbmZpZykgcHJvZHVjZWQgdGhpcyB3YXJuaW5nOg0KPiA+DQo+ID4gZHJpdmVycy9p
-bmZpbmliYW5kL2h3L2hmaTEvcXAuYzogSW4gZnVuY3Rpb24gJ2hmaTFfc2V0dXBfd3FlJzoNCj4g
-PiBkcml2ZXJzL2luZmluaWJhbmQvaHcvaGZpMS9xcC5jOjMyODozOiB3YXJuaW5nOiB0aGlzIHN0
-YXRlbWVudCBtYXkgZmFsbA0KPiB0aHJvdWdoIFstV2ltcGxpY2l0LWZhbGx0aHJvdWdoPV0NCj4g
-PiAgICBoZmkxX3NldHVwX3RpZF9yZG1hX3dxZShxcCwgd3FlKTsNCj4gPiAgICBefn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0KPiA+IGRyaXZlcnMvaW5maW5pYmFuZC9ody9oZmkxL3Fw
-LmM6MzI5OjI6IG5vdGU6IGhlcmUNCj4gPiAgIGNhc2UgSUJfUVBUX1VDOg0KPiA+ICAgXn5+fg0K
-PiA+DQo+ID4gSW50cm9kdWNlZCBieSBjb21taXQNCj4gPg0KPiA+ICAgZjFhYjRlZmE2ZDMyICgi
-SUIvaGZpMTogRW5hYmxlIFRJRCBSRE1BIFJFQUQgcHJvdG9jb2wiKQ0KPiA+DQo+ID4gSSBnZXQg
-dGhpcyB3YXJuaW5nIGJlY2F1c2UgSSBhbSBidWlsZGluZyB3aXRoIC1XaW1wbGljaXQtZmFsbHRo
-cm91Z2gNCj4gPiBpbiBhdHRlbXB0IHRvIGNhdGNoIG5ldyBhZGRpdGlvbnMgZWFybHkuICBUaGUg
-Z2NjIHdhcm5pbmcgY2FuIGJlDQo+ID4gdHVybmVkIG9mZiBieSBhZGRpbmcgYSAvKiBmYWxsIHRo
-cm91Z2ggKi8gY29tbWVudCBhdCB0aGUgcG9pbnQgdGhlDQo+ID4gZmFsbCB0aHJvdWdoIGhhcHBl
-bnMgKGFzc3VtaW5nIHRoYXQgdGhlIGZhbGwgdGhyb3VnaCBpcyBpbnRlbnRpb25hbCkuDQo+ID4N
-Cj4gDQo+IFRoYW5rcyBTdGVwaGVuLCB3ZSdsbCBzb3J0IGl0IGFuZCBtYWtlIGFuIGFwcHJvcHJp
-YXRlIGZpeHVwIHBhdGNoLg0KPiANCj4gS2Fpa2U/DQoNCkl0J3MgaW50ZW50aW9uYWwuIFdlIHdp
-bGwgYWRkIGEgIi8qIGZhbGwgdGhyb3VnaCAqLyIgY29tbWVudCBhcyBhIGZpeHVwIHBhdGNoLg0K
-DQpLYWlrZQ0KPiANCj4gLS0NCj4gRG91ZyBMZWRmb3JkIDxkbGVkZm9yZEByZWRoYXQuY29tPg0K
-PiAgICAgR1BHIEtleUlEOiBCODI2QTMzMzBFNTcyRkREDQo+ICAgICBLZXkgZmluZ2VycHJpbnQg
-PSBBRTZCIDFCREEgMTIyQiAyM0I0IDI2NUIgIDEyNzQgQjgyNiBBMzMzIDBFNTcgMkZERA0K
+On 2/13/19 10:51 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190213:
+> 
+
+seen on i386:
+
+when # CONFIG_EXPORTFS_BLOCK_OPS is not set:
+
+ld: fs/notify/fanotify/fanotify.o: in function `fanotify_alloc_event':
+fanotify.c:(.text+0x25a): undefined reference to `exportfs_encode_inode_fh'
+ld: fanotify.c:(.text+0x29e): undefined reference to `exportfs_encode_inode_fh'
+
+
+
+
+-- 
+~Randy
