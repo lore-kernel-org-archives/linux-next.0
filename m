@@ -1,37 +1,57 @@
-From: Michal Kazior <michal@plume.com>
-Subject: Re: linux-next: build warning after merge of the leds tree
-Date: Thu, 14 Feb 2019 08:51:07 +0100
-Message-ID: <CABqz6Wz_J7xJwzYc7xaHJ87t6Uzzvkrn2x7M0ij6C6JbSOm82w@mail.gmail.com>
-References: <20190214144610.3672e9d7@canb.auug.org.au>
+From: "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: linux-next: Signed-off-by missing for commit in the leaks tree
+Date: Thu, 14 Feb 2019 19:33:35 +1100
+Message-ID: <20190214083335.GA3053@eros.localdomain>
+References: <20190214183605.3132886d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214144610.3672e9d7@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20190214183605.3132886d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 14, 2019 at 4:46 AM Stephen Rothwell <sfr@canb.auug.org.au> wro=
-te:
->
-> Hi Jacek,
->
-> After merging the leds tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->
-> drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_firmware_loaded':
-> drivers/leds/leds-lp55xx-common.c:217:1: warning: label 'out' defined but=
- not used [-Wunused-label]
->  out:
->  ^~~
->
-> Introduced by commit
->
->   905c2157dd19 ("leds: lp55xx: fix null deref on firmware load failure")
 
-I'm sorry guys, that's my fault. Let me fix that.
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Feb 14, 2019 at 06:36:05PM +1100, Stephen Rothwell wrote:
+> Hi Tobin,
+>=20
+> Commit
+>=20
+>   5d06b3fc8e61 ("leaking_addresses: Completely remove --version flag")
+>=20
+> is missing a Signed-off-by from its author and committer.
+
+Thanks, fixed.
+
+	Tobin
 
 
-Micha=C5=82
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEc/+jpUAIMPwyplf8QL+eTCadZgcFAlxlJ9sACgkQQL+eTCad
+Zgdy8A/8DxMAK2W0fTnqiOFd/W/cU1295Av8IUBdKBrgXlDaiSzIJLaCN29EQwE+
+Ku4xiHgBPzSqbkif+UfbHnPLEH7yxRjg8+2VGx3Q8QUm1Fh4s0jBurPXX1iDe5lx
+BwTehd+ruEREdZaOafA2DRT3+yKo/OiVRkDmrjl7SG6fmDiYiO91bVfjv8aJqNEg
+4PJZnUI6qeI0V2ASZVtWqUfZp8vqVKCBNQHOrPRUFsIOIbxItM06VGHAZNsKkbzp
+DM+aNDOGHklq3mv11dv5nC5ydVr+NetnLkDaqZkZd3EbIr20DkrGpoOYiqj4rV+f
+4ZwX76tDv6+GD5QEQJ7HmKIBneDHQp6DnRhMRk13UvkgBCG+3QTelo0hWgVspoZW
+f5Uu/hhC/pfoERMESgk56/L7rJENaHQGtw60+zDMhsJLeWMGiW3/f2oj703IuCwn
+Xvki5IoKftSdsiUBgWmYZcy+MlygDfZrzfaBUoDTnO2GZ5m3GwIZKIpdzEPO+i5x
+KqTcg7TSe75JnZbO0hIHXuJm5moIVbaa17jyOoqDHh8MHrCicIPi7OxO2KoFjiXa
+drriAYZFIr2XRirQOAHqZAH+I7eGSep0/yvh9LZR60Xp8U7ez920tcU1q08b1u4r
+482lLY/U1HntoDhTI8NOFM9ZeuaByKAkWOanlfYC/DT/oLfKSZE=
+=fzEN
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
