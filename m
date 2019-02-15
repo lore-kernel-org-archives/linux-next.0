@@ -1,37 +1,69 @@
-From: Peter Oskolkov <posk@posk.io>
-Subject: Re: linux-next: Tree for Feb 15 (net/core/lwt_bpf.c)
-Date: Fri, 15 Feb 2019 09:42:10 -0800
-Message-ID: <CAFTs51WKL7u+H_4_S1au_dGw20avosJt4n63pkhUXr7wV4aC6A@mail.gmail.com>
-References: <20190215170342.1b704e7c@canb.auug.org.au> <51ee23dd-b852-db61-ef21-ff5819488386@infradead.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 1/2] misc: fastrpc: select CONFIG_DMA_SHARED_BUFFER
+Date: Fri, 15 Feb 2019 15:14:14 -0800
+Message-ID: <92483887-d10c-9ee0-3e75-192286c4a66f@infradead.org>
+References: <20190215104007.27103-1-srinivas.kandagatla@linaro.org>
+ <20190215104007.27103-2-srinivas.kandagatla@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <51ee23dd-b852-db61-ef21-ff5819488386@infradead.org>
-Sender: netdev-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190215104007.27103-2-srinivas.kandagatla@linaro.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 15, 2019 at 8:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 2/14/19 10:03 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20190214:
-> >
->
-> on x86_64:
->
-> ld: net/core/lwt_bpf.o: in function `bpf_lwt_xmit_reroute':
-> lwt_bpf.c:(.text+0x11e): undefined reference to `ip_route_output_flow'
-> ld: net/core/lwt_bpf.o: in function `bpf_input':
-> lwt_bpf.c:(.text+0x9d3): undefined reference to `ip_route_input_noref'
+On 2/15/19 2:40 AM, Srinivas Kandagatla wrote:
+> Fastrpc is a dma buf exporter as well, so select the corresponding
+> DMA_SHARED_BUFFER config to fix below compilation errors on platforms
+> without this config.
+> 
+> ld: drivers/misc/fastrpc.o: in function 'fastrpc_free_map':
+> fastrpc.c:(.text+0xbe): undefined reference to 'dma_buf_unmap_attachment'
+> ld: fastrpc.c:(.text+0xcb): undefined reference to 'dma_buf_detach'
+> ld: fastrpc.c:(.text+0xd4): undefined reference to 'dma_buf_put'
+> ld: drivers/misc/fastrpc.o: in function 'fastrpc_map_create':
+> fastrpc.c:(.text+0xb2b): undefined reference to 'dma_buf_get'
+> ld: fastrpc.c:(.text+0xb47): undefined reference to 'dma_buf_attach'
+> ld: fastrpc.c:(.text+0xb61): undefined reference to 'dma_buf_map_attachment'
+> ld: fastrpc.c:(.text+0xc36): undefined reference to 'dma_buf_put'
+> ld: fastrpc.c:(.text+0xc48): undefined reference to 'dma_buf_detach'
+> ld: drivers/misc/fastrpc.o: in function 'fastrpc_device_ioctl':
+> fastrpc.c:(.text+0x1756): undefined reference to 'dma_buf_get'
+> ld: fastrpc.c:(.text+0x1776): undefined reference to 'dma_buf_put'
+> ld: fastrpc.c:(.text+0x1780): undefined reference to 'dma_buf_put'
+> ld: fastrpc.c:(.text+0x1abf): undefined reference to 'dma_buf_export'
+> ld: fastrpc.c:(.text+0x1ae7): undefined reference to 'dma_buf_fd'
+> ld: fastrpc.c:(.text+0x1cb5): undefined reference to 'dma_buf_put'
+> ld: fastrpc.c:(.text+0x1cca): undefined reference to 'dma_buf_put'
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-A fix suggested here: https://patchwork.ozlabs.org/patch/1043098/
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
->
->
-> Full randconfig file is attached.
->
-> --
-> ~Randy
+Thanks.
+
+> ---
+>  drivers/misc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 7e0726253755..53cd16f795d6 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -299,6 +299,7 @@ config QCOM_FASTRPC
+>  	tristate "Qualcomm FastRPC"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+>  	depends on RPMSG
+> +	select DMA_SHARED_BUFFER
+>  	help
+>  	  Provides a communication mechanism that allows for clients to
+>  	  make remote method invocations across processor boundary to
+> 
+
+
+-- 
+~Randy
