@@ -1,69 +1,71 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 1/2] misc: fastrpc: select CONFIG_DMA_SHARED_BUFFER
-Date: Fri, 15 Feb 2019 15:14:14 -0800
-Message-ID: <92483887-d10c-9ee0-3e75-192286c4a66f@infradead.org>
-References: <20190215104007.27103-1-srinivas.kandagatla@linaro.org>
- <20190215104007.27103-2-srinivas.kandagatla@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the kvm tree
+Date: Sat, 16 Feb 2019 18:34:33 +1100
+Message-ID: <20190216183433.71b7cfa7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hT0TtUrI84sJUehGndQa1v_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215104007.27103-2-srinivas.kandagatla@linaro.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, Sean Christopherson <sean.j.christopherson@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On 2/15/19 2:40 AM, Srinivas Kandagatla wrote:
-> Fastrpc is a dma buf exporter as well, so select the corresponding
-> DMA_SHARED_BUFFER config to fix below compilation errors on platforms
-> without this config.
-> 
-> ld: drivers/misc/fastrpc.o: in function 'fastrpc_free_map':
-> fastrpc.c:(.text+0xbe): undefined reference to 'dma_buf_unmap_attachment'
-> ld: fastrpc.c:(.text+0xcb): undefined reference to 'dma_buf_detach'
-> ld: fastrpc.c:(.text+0xd4): undefined reference to 'dma_buf_put'
-> ld: drivers/misc/fastrpc.o: in function 'fastrpc_map_create':
-> fastrpc.c:(.text+0xb2b): undefined reference to 'dma_buf_get'
-> ld: fastrpc.c:(.text+0xb47): undefined reference to 'dma_buf_attach'
-> ld: fastrpc.c:(.text+0xb61): undefined reference to 'dma_buf_map_attachment'
-> ld: fastrpc.c:(.text+0xc36): undefined reference to 'dma_buf_put'
-> ld: fastrpc.c:(.text+0xc48): undefined reference to 'dma_buf_detach'
-> ld: drivers/misc/fastrpc.o: in function 'fastrpc_device_ioctl':
-> fastrpc.c:(.text+0x1756): undefined reference to 'dma_buf_get'
-> ld: fastrpc.c:(.text+0x1776): undefined reference to 'dma_buf_put'
-> ld: fastrpc.c:(.text+0x1780): undefined reference to 'dma_buf_put'
-> ld: fastrpc.c:(.text+0x1abf): undefined reference to 'dma_buf_export'
-> ld: fastrpc.c:(.text+0x1ae7): undefined reference to 'dma_buf_fd'
-> ld: fastrpc.c:(.text+0x1cb5): undefined reference to 'dma_buf_put'
-> ld: fastrpc.c:(.text+0x1cca): undefined reference to 'dma_buf_put'
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+--Sig_/hT0TtUrI84sJUehGndQa1v_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Hi all,
 
-Thanks.
+In commit
 
-> ---
->  drivers/misc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 7e0726253755..53cd16f795d6 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -299,6 +299,7 @@ config QCOM_FASTRPC
->  	tristate "Qualcomm FastRPC"
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	depends on RPMSG
-> +	select DMA_SHARED_BUFFER
->  	help
->  	  Provides a communication mechanism that allows for clients to
->  	  make remote method invocations across processor boundary to
-> 
+  aa8359972cfc ("KVM: x86/mmu: Differentiate between nr zapped and list uns=
+table")
 
+Fixes tag
 
--- 
-~Randy
+  Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return
+
+has these problem(s):
+
+  - Subject has leading but no trailing quotes
+    Please do not split Fixes tags over more than one line
+
+In commit
+
+  4d3f8e4ff75e ("kvm: vmx: Fix typos in vmentry/vmexit control setting")
+
+Fixes tag
+
+  Fixes: 'commit f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work =
+mode")'
+
+has these problem(s):
+
+  - No SHA1 recognised
+    The leading word 'commit' is unexpected and the surrounding single
+    quotes likewise.
+    Please just use
+	git log -1 --format=3D'Fixes: %h ("%s")' <SHA>
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hT0TtUrI84sJUehGndQa1v_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxnvQkACgkQAVBC80lX
+0Gxprwf8CWexXHWXQA91GxrA3UJL1hOxOOGpSXagv2JwXVraclf1I1A8UgI3+y7W
+Wqk0XXTyWZIjhH6MkUVY3os32Ox3NtXk6ew8K9XuZGPjoSVTAxRRdAdUVQPEyO2q
++asrvQl3k8DbylsJB+w7EqJEEDpuvkKwzkse6SDZAezVbJlH7SW7dJyDgE391HTt
+Tjb8MnPW09ULg+79YnKVj7+TMn6/lZBMo4K/3+UHcvTASeeATYVO4rCO8enljzoH
+mjxQoYMu3BAVPv5tO+188Shitu20HYQjeLJGwpxgT8DVjltbukvODuSoJKivzGkG
+areJk+MDZZJNPntCCGkEihSwCVnZ1g==
+=LwcH
+-----END PGP SIGNATURE-----
+
+--Sig_/hT0TtUrI84sJUehGndQa1v_--
