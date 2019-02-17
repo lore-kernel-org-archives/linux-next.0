@@ -1,70 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the net tree
-Date: Mon, 18 Feb 2019 00:52:03 +1100
-Message-ID: <20190218005203.5ac3473e@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the xen-tip tree
+Date: Mon, 18 Feb 2019 00:57:17 +1100
+Message-ID: <20190218005717.175ba89f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VA06HLo6cQnKKBHv6kwGPJ2"; protocol="application/pgp-signature"
+ boundary="Sig_/u2uu1OvJX=AMbFcvWehUyAo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hauke Mehrtens <hauke.mehrtens@intel.com>, Florian Fainelli <f.fainelli@gmail.com>
+To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/VA06HLo6cQnKKBHv6kwGPJ2
+--Sig_/u2uu1OvJX=AMbFcvWehUyAo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commits
 
-  a40061ea2e39 ("net: systemport: Fix reception of BPDUs")
+  28df69acbd27 ("xen-scsiback: mark expected switch fall-through")
+  7bb17e0ca4a5 ("xen: mark expected switch fall-through")
 
-Fixes tag
-
-  Fixes: 4e8aedfe78c7 ("net: systemport: Turn on offloads by default")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-    Did you mean
-
-  Fixes: b5061778f822 ("net: systemport: Turn on offloads by default")?
-
-In commit
-
-  3b89ea9c5902 ("net: Fix for_each_netdev_feature on Big endian")
-
-Fixes tag
-
-  Fixes: fd867d51f ("net/core: generic support for disabling netdev feature=
-s down stack")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/VA06HLo6cQnKKBHv6kwGPJ2
+--Sig_/u2uu1OvJX=AMbFcvWehUyAo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxpZwMACgkQAVBC80lX
-0GxBsgf9EBROBBV550yn6EKnHtKW6p8tbXNFQU5KQJ+kyQ95gXzcRGnmKkb7n9MV
-6T3IxbISKBxrJqdxXf9lKJf07JidLT+hI2eb5aCeEqwxZ1P2ZfcGcLBDHatZqrpq
-ewgksDmeJRhkdsIwE8DnSz2YP03MaDIbcUCpNAgVUmMIscB3czbqKdtgj/kouRYc
-GZJj2UlK7ESN05SR5Rp3zvx8qBmdqAOY32lfHyJS4uIWhr9m3TbPQg1sLXYE3kFS
-nLFwsqeSYAD5tiXaBbI/sSkGJ2yrUPFbRzlCurqou60iGknasv9Dj3XIxPMIWHwX
-XNv3O9czCbTQxumnSPF/us2dvGpjdw==
-=saU4
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxpaD0ACgkQAVBC80lX
+0GyUPgf/V4oAVkGq1tLAQdyUT/BLYb3Bcv16Qh/NzBL/Z4STDCZeNTOdXedRqhb1
+IB0/QEW9jSPrLAZQ64cIGXD1nd6c6A2AT1mbuMUVVTSq8fqfiuLZWfBVUb/cyN0D
+eqw150jMr86KJhjY//TtY4uuch3BAU82gZvnXS4O4OrLV4uZgU04z7QV+QAwtCgk
+XEg2DQCn/gHXkGLkNTr665BQKWSRzVJ/VEvBMPD4eabxxR6nVUs8qtcqt6B6TXr5
+5l6zbMQWfUznVMTm2Ro1n5pvdBH2uVp1GUpvf/jCqLAuE/F+kk63p9Z+0yPRQqLx
+JlmEMOiubYLRF0GRZnihVPrOXx8dOA==
+=2EOl
 -----END PGP SIGNATURE-----
 
---Sig_/VA06HLo6cQnKKBHv6kwGPJ2--
+--Sig_/u2uu1OvJX=AMbFcvWehUyAo--
