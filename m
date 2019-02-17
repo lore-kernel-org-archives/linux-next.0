@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the kvm tree
-Date: Sat, 16 Feb 2019 18:34:33 +1100
-Message-ID: <20190216183433.71b7cfa7@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the net tree
+Date: Mon, 18 Feb 2019 00:52:03 +1100
+Message-ID: <20190218005203.5ac3473e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hT0TtUrI84sJUehGndQa1v_"; protocol="application/pgp-signature"
+ boundary="Sig_/VA06HLo6cQnKKBHv6kwGPJ2"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, Sean Christopherson <sean.j.christopherson@intel.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hauke Mehrtens <hauke.mehrtens@intel.com>, Florian Fainelli <f.fainelli@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/hT0TtUrI84sJUehGndQa1v_
+--Sig_/VA06HLo6cQnKKBHv6kwGPJ2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,53 +19,52 @@ Hi all,
 
 In commit
 
-  aa8359972cfc ("KVM: x86/mmu: Differentiate between nr zapped and list uns=
-table")
+  a40061ea2e39 ("net: systemport: Fix reception of BPDUs")
 
 Fixes tag
 
-  Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return
+  Fixes: 4e8aedfe78c7 ("net: systemport: Turn on offloads by default")
 
 has these problem(s):
 
-  - Subject has leading but no trailing quotes
-    Please do not split Fixes tags over more than one line
+  - Target SHA1 does not exist
+    Did you mean
+
+  Fixes: b5061778f822 ("net: systemport: Turn on offloads by default")?
 
 In commit
 
-  4d3f8e4ff75e ("kvm: vmx: Fix typos in vmentry/vmexit control setting")
+  3b89ea9c5902 ("net: Fix for_each_netdev_feature on Big endian")
 
 Fixes tag
 
-  Fixes: 'commit f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work =
-mode")'
+  Fixes: fd867d51f ("net/core: generic support for disabling netdev feature=
+s down stack")
 
 has these problem(s):
 
-  - No SHA1 recognised
-    The leading word 'commit' is unexpected and the surrounding single
-    quotes likewise.
-    Please just use
-	git log -1 --format=3D'Fixes: %h ("%s")' <SHA>
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/hT0TtUrI84sJUehGndQa1v_
+--Sig_/VA06HLo6cQnKKBHv6kwGPJ2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxnvQkACgkQAVBC80lX
-0Gxprwf8CWexXHWXQA91GxrA3UJL1hOxOOGpSXagv2JwXVraclf1I1A8UgI3+y7W
-Wqk0XXTyWZIjhH6MkUVY3os32Ox3NtXk6ew8K9XuZGPjoSVTAxRRdAdUVQPEyO2q
-+asrvQl3k8DbylsJB+w7EqJEEDpuvkKwzkse6SDZAezVbJlH7SW7dJyDgE391HTt
-Tjb8MnPW09ULg+79YnKVj7+TMn6/lZBMo4K/3+UHcvTASeeATYVO4rCO8enljzoH
-mjxQoYMu3BAVPv5tO+188Shitu20HYQjeLJGwpxgT8DVjltbukvODuSoJKivzGkG
-areJk+MDZZJNPntCCGkEihSwCVnZ1g==
-=LwcH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxpZwMACgkQAVBC80lX
+0GxBsgf9EBROBBV550yn6EKnHtKW6p8tbXNFQU5KQJ+kyQ95gXzcRGnmKkb7n9MV
+6T3IxbISKBxrJqdxXf9lKJf07JidLT+hI2eb5aCeEqwxZ1P2ZfcGcLBDHatZqrpq
+ewgksDmeJRhkdsIwE8DnSz2YP03MaDIbcUCpNAgVUmMIscB3czbqKdtgj/kouRYc
+GZJj2UlK7ESN05SR5Rp3zvx8qBmdqAOY32lfHyJS4uIWhr9m3TbPQg1sLXYE3kFS
+nLFwsqeSYAD5tiXaBbI/sSkGJ2yrUPFbRzlCurqou60iGknasv9Dj3XIxPMIWHwX
+XNv3O9czCbTQxumnSPF/us2dvGpjdw==
+=saU4
 -----END PGP SIGNATURE-----
 
---Sig_/hT0TtUrI84sJUehGndQa1v_--
+--Sig_/VA06HLo6cQnKKBHv6kwGPJ2--
