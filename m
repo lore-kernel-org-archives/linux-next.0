@@ -1,47 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the xen-tip tree
-Date: Mon, 18 Feb 2019 00:57:17 +1100
-Message-ID: <20190218005717.175ba89f@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
+Date: Sun, 17 Feb 2019 22:25:42 +0100
+Message-ID: <CACRpkdbUKzpKnozHpH8Gz6S41S-qxQS0DJrqTEwycqG3pz+OnQ@mail.gmail.com>
+References: <20190214220338.7241bdc5@canb.auug.org.au> <CAFBinCCTbn0zMQqTzk2RvELCRBX1=Vf1QuY54Kp+BKc+sOmKHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u2uu1OvJX=AMbFcvWehUyAo"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFBinCCTbn0zMQqTzk2RvELCRBX1=Vf1QuY54Kp+BKc+sOmKHQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/u2uu1OvJX=AMbFcvWehUyAo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 14, 2019 at 12:55 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+> Hi Stephen, Hi Linus,
+>
+> On Thu, Feb 14, 2019 at 12:03 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi Linus,
+> >
+> > In commit
+> >
+> >   a5a0bbca16cd ("pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins")
+> >
+> > Fixes tag
+> >
+> >   Fixes: 0fefcb6 ("pinctrl: Add support for Meson8b")
+> >
+> > has these problem(s):
+> >
+> >   - SHA1 should be at least 12 digits long
+> >     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+> >     or later) just making sure it is not set (or set to "auto").
+> this is my fault - sorry about that.
+>
+> Linus, do you want me to re-send the patch or do you want to change
+> the referenced SHA1 to 0fefcb6876d0d6 ?
+> I'm fine either way, please let me know what's easiest for you.
 
-Hi all,
+I fixed it up, no big deal.
 
-Commits
-
-  28df69acbd27 ("xen-scsiback: mark expected switch fall-through")
-  7bb17e0ca4a5 ("xen: mark expected switch fall-through")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/u2uu1OvJX=AMbFcvWehUyAo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxpaD0ACgkQAVBC80lX
-0GyUPgf/V4oAVkGq1tLAQdyUT/BLYb3Bcv16Qh/NzBL/Z4STDCZeNTOdXedRqhb1
-IB0/QEW9jSPrLAZQ64cIGXD1nd6c6A2AT1mbuMUVVTSq8fqfiuLZWfBVUb/cyN0D
-eqw150jMr86KJhjY//TtY4uuch3BAU82gZvnXS4O4OrLV4uZgU04z7QV+QAwtCgk
-XEg2DQCn/gHXkGLkNTr665BQKWSRzVJ/VEvBMPD4eabxxR6nVUs8qtcqt6B6TXr5
-5l6zbMQWfUznVMTm2Ro1n5pvdBH2uVp1GUpvf/jCqLAuE/F+kk63p9Z+0yPRQqLx
-JlmEMOiubYLRF0GRZnihVPrOXx8dOA==
-=2EOl
------END PGP SIGNATURE-----
-
---Sig_/u2uu1OvJX=AMbFcvWehUyAo--
+Thanks Stephen, Martin!
+Linus Walleij
