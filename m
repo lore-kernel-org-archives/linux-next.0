@@ -1,65 +1,114 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
-Date: Mon, 18 Feb 2019 14:27:49 +1100
-Message-ID: <20190218142749.04daecaa@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Mon, 18 Feb 2019 14:42:00 +1100
+Message-ID: <20190218144200.2dc3283f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zq4D+8ArvcK_JRDm6BNeBnl"; protocol="application/pgp-signature"
+ boundary="Sig_/kBSwC6M=QS2NBKYnWU6mIKd"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luwei Kang <luwei.kang@intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Christopherson <sean.j.christopherson@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/zq4D+8ArvcK_JRDm6BNeBnl
+--Sig_/kBSwC6M=QS2NBKYnWU6mIKd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm tree got conflicts in:
+After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  arch/x86/kvm/vmx/vmx.c
-  arch/x86/kvm/vmx/vmx.h
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:14:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/../../../virt/kvm/kvm_main.c:21:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/../../../virt/kvm/eventfd.c:24:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/../../../virt/kvm/irqchip.c:27:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/../../../virt/kvm/async_pf.c:23:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/../../../virt/kvm/vfio.c:14:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/x86.c:22:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/irq.h:27,
+                 from arch/x86/kvm/mmu.c:21:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from arch/x86/kvm/emulate.c:23:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/kvm_host.h:38,
+                 from drivers/gpu/drm/i915/gvt/kvmgt.c:42:
+arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
+ such file or directory
+ #include <asm/kvm_vcpu_regs.h>
+          ^~~~~~~~~~~~~~~~~~~~~
 
-between commit:
+Caused by commits
 
-  c112b5f50232 ("KVM: x86: Recompute PID.ON when clearing PID.SN")
+  1561fcbc8e16 ("KVM: x86: Explicitly #define the VCPU_REGS_* indices")
+  a46e726511f4 ("KVM: VMX: Move vCPU-run code to a proper assembly routine")
 
-from the kvm-fixes tree and commit:
+It looks like a file was not git added :-(
 
-  abd2fb15a57e ("KVM: x86: Sync the pending Posted-Interrupts")
-
-from the kvm tree.
-
-These 2 commits are very similar so I just used the latter version of
-the comflicting bits.
-
-I fixed it up (see above) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the kvm tree from next-20190215 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/zq4D+8ArvcK_JRDm6BNeBnl
+--Sig_/kBSwC6M=QS2NBKYnWU6mIKd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxqJjUACgkQAVBC80lX
-0Gz+Nwf/WVzAAx/aqMYuwqlu9CBxLl71/F19xDtrLRYZmNOVihMu6UWezsKEgPDp
-+ICSAyMI7rdgkSIml2kcdrPj7IVRUMw7dXUe2iU3/zT9ccg6qLrGZDwj7tCz5Qmo
-MojziMb6YILT3lG2moiTQiCQk52X2AEfC/YupHL1ANk0DldqdWWVfTfg9JGnuWK5
-X6LIOIYDKuMtduN6L8ardPgXeIYqJ7vKtDG4XRaTMnxR3DamzA5vPnym9Q0BSR2I
-CNyt2vFJBon26NJqp1J4Ow9c70flDAJNEhY0PbuEfHrKSVdYYyVJUJhuf19EHLC2
-r3J1hGdQB3MMLpGK0NEcU4RHvxYLCg==
-=8t9u
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxqKYgACgkQAVBC80lX
+0GwXJggAmATWb08AJYliDghecOEVUJ6KsLonX8QoruP/A+RWn1jUrxXwlk/aK42R
+k0PKpAE1hNuvKQZVHZLa8KCuC5EbwM+9XjKm7OUd1Mu/czRJ1ceimTj3QdqUJEb8
+U3gdHWbHM+G0jE1xIWKqMMyE31inS6D+4bUq/6t16Day86KcW3FdeSfrBh5JAn+k
+VGWGzOoAdj4HWWxwDAVbnf2c5pY0VwoZamInLa6GihJB+7ii7SvGxdJdyPPH3BWS
+OlfPdwISVUTFCKDwWT3ngp348TBRC6Mhbto5C6aezK22/VhyPO5dwo2A6UIbQcMY
+y3e1HwvJyrN4+MliMZYnEd8xlGM+vw==
+=N5hA
 -----END PGP SIGNATURE-----
 
---Sig_/zq4D+8ArvcK_JRDm6BNeBnl--
+--Sig_/kBSwC6M=QS2NBKYnWU6mIKd--
