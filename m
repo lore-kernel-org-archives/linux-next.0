@@ -1,33 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in Linus' tree
-Date: Tue, 19 Feb 2019 07:33:45 +1100
-Message-ID: <20190219073345.11c39f70@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the s390 tree
+Date: Tue, 19 Feb 2019 07:38:47 +1100
+Message-ID: <20190219073847.6f288b66@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GrZ9A5Fh=N39xhpfbTOTBXT"; protocol="application/pgp-signature"
+ boundary="Sig_/B9/EvsB9I=piEZuCoRd.Qe="; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@gmail.com>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/GrZ9A5Fh=N39xhpfbTOTBXT
+--Sig_/B9/EvsB9I=piEZuCoRd.Qe=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-[Just a note for some future improvement]
-
 In commit
 
-  2c4f1fcbef0b ("kprobe: Do not use uaccess functions to access kernel memo=
-ry that can fault")
+  b99740ef221f ("s390/setup: fix boot crash for machine without EDAT-1")
 
 Fixes tag
 
-  Fixes: 9da3f2b7405 ("x86/fault: BUG() when uaccess helpers fault on kerne=
-l addresses")
+  Fixes: 94f85ed3e2 ("s390/setup: fix early warning messages")
 
 has these problem(s):
 
@@ -39,20 +35,20 @@ has these problem(s):
 Cheers,
 Stephen Rothwell
 
---Sig_/GrZ9A5Fh=N39xhpfbTOTBXT
+--Sig_/B9/EvsB9I=piEZuCoRd.Qe=
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrFqkACgkQAVBC80lX
-0GytoggAmdtCOewmkX4T/+YLuM3ht7rrRxO8ZXYdA2klMVBHRvFklwcSVlcNsLrz
-wK0o4tlhQqNWNlaAnhWeCiqjW1p0igykRDW9nqwwl/jL85x1TY2hY8ivXaWrBOZ+
-ue9N5gZEE1vmQUXSjkzY+J8OFqnAwEBDRl9vxVRpIYrWRWmg9GaTi+4D7hDvYJQD
-x9rZu45Nb+CL1DU5AaLhq65OipPqP1f6imuzB9gPD54OZCFBXW4KijU42IJemXiV
-Pp1jDkyNvMsXifJkQrla4RmAsuAtM4SE/2WurCKWNMVrJC4Kg2FrqYMfgsLXOYIr
-q0xdHukZqo907nQV8pzqduLL49y7LQ==
-=daug
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrF9cACgkQAVBC80lX
+0Gy+UAf/Ze5thMdyBppz5qmN/BIEI0bSQ+hSYJ1MUnb3c7eVlFu5fn/6oJTyWNpc
+kqk2+Gr9X86R5JM6JhTUv9hXzqNXc4ONyeB2HQLbkncQimeXh4gcVkvNS0VFEsuT
++ty74o0w123QTYcqIyI99ZOMpDtV+MBsHLQ1XZYom20sEztv+5Jm/r6HvtFYexEL
+Rp0drPnRb0XYNPnjMx5elmkCFFxTNxpt0B36sDhsqgNiM5VuRxGD+rvbiiJrW9g+
+EMjCOeXY4QdKK8ENobPx+MlxAnM0hU7x65iGb/ze0LISArMAiqmXEUUqbfdnhlaq
+9usrqJ61WQzfwxpb88+VvVrADLwt1g==
+=Llpo
 -----END PGP SIGNATURE-----
 
---Sig_/GrZ9A5Fh=N39xhpfbTOTBXT--
+--Sig_/B9/EvsB9I=piEZuCoRd.Qe=--
