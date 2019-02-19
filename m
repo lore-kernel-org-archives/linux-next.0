@@ -1,52 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the kvm-arm
- tree
-Date: Wed, 20 Feb 2019 09:33:03 +1100
-Message-ID: <20190220093303.6abb8fe5@canb.auug.org.au>
-References: <20190220073801.3cb6082a@canb.auug.org.au>
-        <86zhqrqy2w.wl-marc.zyngier@arm.com>
+Subject: linux-next: please clean up the v4l-dvb-next tree
+Date: Wed, 20 Feb 2019 10:57:03 +1100
+Message-ID: <20190220105703.69c9b582@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UDZJS21+o2rUFV/_yMV13Uu"; protocol="application/pgp-signature"
+ boundary="Sig_/K_B8T43XAryDoJ6zl_PUVi6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <86zhqrqy2w.wl-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UDZJS21+o2rUFV/_yMV13Uu
+--Sig_/K_B8T43XAryDoJ6zl_PUVi6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
+Hi Mauro,
 
-On Tue, 19 Feb 2019 21:15:35 +0000 Marc Zyngier <marc.zyngier@arm.com> wrot=
-e:
->
-> Thanks for the heads up. I've just fixed the tree and pushed it out
-> again.
-
-Excellent, thanks.
+It seems most (if not all) of the commits in the v4l-dvb-next tree are
+also in the v4l-dvb tree and are now causing lots of conflicts when I
+merge them both.  Please clean it up.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/UDZJS21+o2rUFV/_yMV13Uu
+--Sig_/K_B8T43XAryDoJ6zl_PUVi6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxshB8ACgkQAVBC80lX
-0Gyccwf+Io6dJnQkexgitl9WgP3vwSG54cT/WmbLD3vg1wF7CsWX4Di1Yl1desJ2
-46ytNUnnQYSSU3oTLiOo1Wz6LCEX5VkQZQGqpnECJXuLsy1MJeZ86Cy4laDJbxzP
-prjt68jvSm8Dle/aupjBXvDT76CrxkB2FddqMFwXK4ZCfra5SCnOCTTofgwGJMuV
-LLGOI6Cu15xdTN0cFZu9QEmAJT0joc8w4C53Ps5zWP2oaDk8iiwXpUCQpKRwYidf
-O0TVchZdwSc/SAmkx0sll4DxZAD34Uhdo9mBv9y1dy93XmyjffodZSKsGbpNzVje
-OzH5whT+/VgO5EiJPXrGb0KYOFmWHw==
-=/y5m
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsl88ACgkQAVBC80lX
+0GxaMwf6A+gpGs2vkgWY9iBnIVQ2FudZoKz6zhpOWx/ZAebtqUTkrCzR6IjDZ5FV
+n2zR3FDylV7IiOEZHtMqhqbK9emb4f3AGE9tYWUZYuqJ1nle2Ru9WYrbBoBU7Lo/
+efdrNSAZ72YLt3o9pDOi1+t28/RKvEKPa26u+pqW1RKv8QKHFKve7eJ8MkoWHdTJ
+V2EukCXvICW5PEjgk3czzMx3HvxL9P55TL19dvpxlex0vfcspiIhqqjgy7HBi2KX
+xH8dMebs4VjdvPnbnhKTbFFcCENA2L5IfSLerU4U2xd+bWcbtY9I9TOP1ATn9PjY
+S2fArRS+WCscvez8KxL959LdU2Zwqg==
+=+aMG
 -----END PGP SIGNATURE-----
 
---Sig_/UDZJS21+o2rUFV/_yMV13Uu--
+--Sig_/K_B8T43XAryDoJ6zl_PUVi6--
