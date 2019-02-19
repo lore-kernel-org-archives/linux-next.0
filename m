@@ -1,131 +1,182 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the asm-generic
- tree
-Date: Tue, 19 Feb 2019 15:34:06 +1100
-Message-ID: <20190219153406.5ed74b40@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the asm-generic tree
+Date: Tue, 19 Feb 2019 17:36:54 +1100
+Message-ID: <20190219173654.47e9bc36@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4l9P=MH3XyGHQkandahlrn4"; protocol="application/pgp-signature"
+ boundary="Sig_/erXL9gtqk3srxR_XUm_zKYo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Hugo Lefeuvre <hle@owl.eu.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hugo Lefeuvre <hle@owl.eu.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4l9P=MH3XyGHQkandahlrn4
+--Sig_/erXL9gtqk3srxR_XUm_zKYo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Arnd,
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+After merging the asm-generic tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-  include/asm-generic/iomap.h
+arch/powerpc/kernel/iomap.c:18:14: error: conflicting types for 'ioread8'
+ unsigned int ioread8(void __iomem *addr)
+              ^~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:29:21: note: previous declaration of 'ioread8' =
+was here
+ extern unsigned int ioread8(const void __iomem *addr);
+                     ^~~~~~~
+arch/powerpc/kernel/iomap.c:22:14: error: conflicting types for 'ioread16'
+ unsigned int ioread16(void __iomem *addr)
+              ^~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:30:21: note: previous declaration of 'ioread16'=
+ was here
+ extern unsigned int ioread16(const void __iomem *addr);
+                     ^~~~~~~~
+arch/powerpc/kernel/iomap.c:26:14: error: conflicting types for 'ioread16be'
+ unsigned int ioread16be(void __iomem *addr)
+              ^~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:31:21: note: previous declaration of 'ioread16b=
+e' was here
+ extern unsigned int ioread16be(const void __iomem *addr);
+                     ^~~~~~~~~~
+arch/powerpc/kernel/iomap.c:30:14: error: conflicting types for 'ioread32'
+ unsigned int ioread32(void __iomem *addr)
+              ^~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:32:21: note: previous declaration of 'ioread32'=
+ was here
+ extern unsigned int ioread32(const void __iomem *addr);
+                     ^~~~~~~~
+arch/powerpc/kernel/iomap.c:34:14: error: conflicting types for 'ioread32be'
+ unsigned int ioread32be(void __iomem *addr)
+              ^~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:33:21: note: previous declaration of 'ioread32b=
+e' was here
+ extern unsigned int ioread32be(const void __iomem *addr);
+                     ^~~~~~~~~~
+arch/powerpc/kernel/iomap.c:142:6: error: conflicting types for 'ioread8_re=
+p'
+ void ioread8_rep(void __iomem *addr, void *dst, unsigned long count)
+      ^~~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:82:13: note: previous declaration of 'ioread8_r=
+ep' was here
+ extern void ioread8_rep(const void __iomem *port, void *buf, unsigned long=
+ count);
+             ^~~~~~~~~~~
+arch/powerpc/kernel/iomap.c:146:6: error: conflicting types for 'ioread16_r=
+ep'
+ void ioread16_rep(void __iomem *addr, void *dst, unsigned long count)
+      ^~~~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:83:13: note: previous declaration of 'ioread16_=
+rep' was here
+ extern void ioread16_rep(const void __iomem *port, void *buf, unsigned lon=
+g count);
+             ^~~~~~~~~~~~
+arch/powerpc/kernel/iomap.c:150:6: error: conflicting types for 'ioread32_r=
+ep'
+ void ioread32_rep(void __iomem *addr, void *dst, unsigned long count)
+      ^~~~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:84:13: note: previous declaration of 'ioread32_=
+rep' was here
+ extern void ioread32_rep(const void __iomem *port, void *buf, unsigned lon=
+g count);
+             ^~~~~~~~~~~~
 
-between commit:
+Caused by commit
 
-  e377ce8bcba0 ("iomap: add missing function args identifier names")
+  8e074c243ed3 ("iomap: add missing const to ioread*/iowrite addr arg")
 
-from the asm-generic tree and commit:
+The const qualifiers are also missing in:
 
-  79bf0cbd86ac ("iomap: introduce io{read|write}64_{lo_hi|hi_lo}")
+arch/parisc/lib/iomap.c
+arch/sh/kernel/iomap.c
 
-from the char-misc tree.
+I have reverted that commit for today.
 
-I fixed it up (see below - though I guess the new ioread... prototypes
-introduced by the char-misc tree may want "const" added to their
-arguments) and can carry the fix as necessary. This is now fixed as far
-as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
+BTW, that commit only added the const to the ioread* functions ...
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/asm-generic/iomap.h
-index cd92d32a4d87,a008f504a2d0..000000000000
---- a/include/asm-generic/iomap.h
-+++ b/include/asm-generic/iomap.h
-@@@ -26,26 -26,48 +26,48 @@@
-   * in the low address range. Architectures for which this is not
-   * true can't use this generic implementation.
-   */
- -extern unsigned int ioread8(void __iomem *);
- -extern unsigned int ioread16(void __iomem *);
- -extern unsigned int ioread16be(void __iomem *);
- -extern unsigned int ioread32(void __iomem *);
- -extern unsigned int ioread32be(void __iomem *);
- +extern unsigned int ioread8(const void __iomem *addr);
- +extern unsigned int ioread16(const void __iomem *addr);
- +extern unsigned int ioread16be(const void __iomem *addr);
- +extern unsigned int ioread32(const void __iomem *addr);
- +extern unsigned int ioread32be(const void __iomem *addr);
-  #ifdef CONFIG_64BIT
- -extern u64 ioread64(void __iomem *);
- -extern u64 ioread64be(void __iomem *);
- +extern u64 ioread64(const void __iomem *addr);
- +extern u64 ioread64be(const void __iomem *addr);
-  #endif
- =20
-+ #ifdef readq
-+ #define ioread64_lo_hi ioread64_lo_hi
-+ #define ioread64_hi_lo ioread64_hi_lo
-+ #define ioread64be_lo_hi ioread64be_lo_hi
-+ #define ioread64be_hi_lo ioread64be_hi_lo
-+ extern u64 ioread64_lo_hi(void __iomem *addr);
-+ extern u64 ioread64_hi_lo(void __iomem *addr);
-+ extern u64 ioread64be_lo_hi(void __iomem *addr);
-+ extern u64 ioread64be_hi_lo(void __iomem *addr);
-+ #endif
-+=20
- -extern void iowrite8(u8, void __iomem *);
- -extern void iowrite16(u16, void __iomem *);
- -extern void iowrite16be(u16, void __iomem *);
- -extern void iowrite32(u32, void __iomem *);
- -extern void iowrite32be(u32, void __iomem *);
- +extern void iowrite8(u8 value, void __iomem *addr);
- +extern void iowrite16(u16 value, void __iomem *addr);
- +extern void iowrite16be(u16 value, void __iomem *addr);
- +extern void iowrite32(u32 value, void __iomem *addr);
- +extern void iowrite32be(u32 value, void __iomem *addr);
-  #ifdef CONFIG_64BIT
- -extern void iowrite64(u64, void __iomem *);
- -extern void iowrite64be(u64, void __iomem *);
- +extern void iowrite64(u64 value, void __iomem *addr);
- +extern void iowrite64be(u64 value, void __iomem *addr);
-  #endif
- =20
-+ #ifdef writeq
-+ #define iowrite64_lo_hi iowrite64_lo_hi
-+ #define iowrite64_hi_lo iowrite64_hi_lo
-+ #define iowrite64be_lo_hi iowrite64be_lo_hi
-+ #define iowrite64be_hi_lo iowrite64be_hi_lo
-+ extern void iowrite64_lo_hi(u64 val, void __iomem *addr);
-+ extern void iowrite64_hi_lo(u64 val, void __iomem *addr);
-+ extern void iowrite64be_lo_hi(u64 val, void __iomem *addr);
-+ extern void iowrite64be_hi_lo(u64 val, void __iomem *addr);
-+ #endif
-+=20
-  /*
-   * "string" versions of the above. Note that they
-   * use native byte ordering for the accesses (on
-
---Sig_/4l9P=MH3XyGHQkandahlrn4
+--Sig_/erXL9gtqk3srxR_XUm_zKYo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrhz4ACgkQAVBC80lX
-0GzV0wgAleV5S1teEikmp+kklJu+X1jnLVcRgXSid8HRh+PK/zETCL8op3MX8Ahp
-rIG0Aoqub7IdWOKz+NZ4l63YwnQ5VdgB52dUP0t61EKqshZpsModGeSnxxLao8t/
-MyXQZeACXmRbU3HdVdHE3d4wE6N4B2iOMIARjLzhA/KX1ti/zTTQVY+hI3qu687h
-iPbJf9pY6PN1aphAxS0xubzZLro/hOniPg3+1/0Muvi+HOCyIrxbIT8q/7kvVHJX
-Nuoy8cjf799N/VvTGNCIvvXnVk4U6F/EdbedBDzXY4YObZaNP9T9kyyRYpcrBNAM
-18vvhOIENZXx1ldiMhgPSdTHdVAhyw==
-=gztb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrpAYACgkQAVBC80lX
+0Gxx1wf+O0ZHOKq4GG22Nbh/5mbDKPOYSrn6Zu2VPdTzoZxZFR7F7BMdoYv9s4ir
+KrVYUCIFs+2fRr9fV1iD4bQg1ka6kO5TEsE8s89Y+7sruYy8sdblcKKNc4ak14ge
+BfP+2a6n8CHvWanozOAM82+nOJqfD4Itv/pMbyfwGvBymonLUlfJY5NCTDO2QOIw
+Inq9zAZfBH16+56RRtXPwMLIOSGJcXksa/AcYRXZea7Zw/sD1ARILJb5GKX0+rI6
+yFKJq2VFOcT4BrDHUGqlkCYRzR+Mf0M7TaRoV/ilyH45A9a0AUhD79JOUT9QmPSA
+0ry4saWfXKNDvn9WR6pOr1MfdaG6Rw==
+=NwSv
 -----END PGP SIGNATURE-----
 
---Sig_/4l9P=MH3XyGHQkandahlrn4--
+--Sig_/erXL9gtqk3srxR_XUm_zKYo--
