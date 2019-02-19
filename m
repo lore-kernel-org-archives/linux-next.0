@@ -1,44 +1,58 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: build failure after merge of the kvm tree
-Date: Tue, 19 Feb 2019 19:17:23 +0100
-Message-ID: <44033bb2-68a2-957e-a307-066c44d10856@redhat.com>
-References: <20190218144200.2dc3283f@canb.auug.org.au>
- <20190219153605.GC29888@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the kvm-arm tree
+Date: Wed, 20 Feb 2019 07:38:05 +1100
+Message-ID: <20190220073801.3cb6082a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/k78+FvmXYI+NSxj2YGr6R6H"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190219153605.GC29888@linux.intel.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Christopherson <sean.j.christopherson@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 19/02/19 16:36, Sean Christopherson wrote:
-> On Mon, Feb 18, 2019 at 02:42:00PM +1100, Stephen Rothwell wrote:
->> Hi all,
-> 
-> ...
-> 
->> Caused by commits
->>
->>   1561fcbc8e16 ("KVM: x86: Explicitly #define the VCPU_REGS_* indices")
->>   a46e726511f4 ("KVM: VMX: Move vCPU-run code to a proper assembly routine")
->>
->> It looks like a file was not git added :-(
-> 
-> Yep, 1561fcbc8e16 should have introduced arch/x86/include/asm/kvm_vcpu_regs.h.
-> 
-> I assume there's nothing to do but wait for Paolo or Radim to fixup the
-> KVM tree?
+--Sig_/k78+FvmXYI+NSxj2YGr6R6H
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I'll do it shortly.
+Hi all,
 
-Paolo
+Commits
 
-> 
-> Original patch:
-> 
->   https://patchwork.kernel.org/patch/10781575/
-> 
+  32296b9048b7 ("KVM: arm64: Fix comment for KVM_PHYS_SHIFT")
+  bfc871bad87c ("KVM: arm/arm64: fix spelling mistake: "auxilary" -> "auxil=
+iary"")
+  1c1c37e5600b ("KVM: arm/arm64: Update MAINTAINERS entries")
+  b1206bfb39d6 ("KVM: arm/arm64: Prefix header search paths with $(srctree)=
+/")
+  507f5a8474ef ("KVM: arm/arm64: Remove -I. header search paths")
+  af8c5901d5e3 ("KVM: arm/arm64: Fix TRACE_INCLUDE_PATH")
+  d116a11d3ccc ("KVM: arm/arm64: arch_timer: Mark physical interrupt active=
+ when a virtual interrupt is pending")
+  17925ec8a87d ("arm64: KVM: Describe data or unified caches as having 1 se=
+t and 1 way")
+  eabb8caadca8 ("arm64: KVM: Expose sanitised cache type register to guest")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/k78+FvmXYI+NSxj2YGr6R6H
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsaS0ACgkQAVBC80lX
+0GzQjAf+NWA40y/iJlRA9RE6gK3SVcBtezJaNKWR+9d7eO9HkFNgbl441OfGMAcQ
+9KLDI5dXwYA5/J3LeqrJJQokQ5f3tthkVsb2WeOJT8DglIn+QNLR7xRd2bgZBtg8
+idXnIHkz7ZFZIllh/y7wGfq9mPHBN6QO9A0Sg/BINaCi2lxRczi/VNJrF3Uh/nDq
+p8E2hzI/TfvTEHf7gAmyD9BKjcEkAErwUP83cijfZl6jjEt69DOk+e009EnUgd4M
+U0FnIzxTdIjbSjk2lUYd+u53b23M3TxC1Z2rlpO5zwVXtcwJPnjzsNciSrqqxv+N
+8Bm9dgCaPeP4fuJBG2QUM39IQdcFQA==
+=K9ro
+-----END PGP SIGNATURE-----
+
+--Sig_/k78+FvmXYI+NSxj2YGr6R6H--
