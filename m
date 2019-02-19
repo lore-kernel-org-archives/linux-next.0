@@ -1,56 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net-next tree
-Date: Wed, 20 Feb 2019 09:31:36 +1100
-Message-ID: <20190220093136.73779781@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the kvm-arm
+ tree
+Date: Wed, 20 Feb 2019 09:33:03 +1100
+Message-ID: <20190220093303.6abb8fe5@canb.auug.org.au>
+References: <20190220073801.3cb6082a@canb.auug.org.au>
+        <86zhqrqy2w.wl-marc.zyngier@arm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PeFdU3HN7vduMNJqwUmiEU3"; protocol="application/pgp-signature"
+ boundary="Sig_/UDZJS21+o2rUFV/_yMV13Uu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <86zhqrqy2w.wl-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Christoffer Dall <cdall@cs.columbia.edu>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PeFdU3HN7vduMNJqwUmiEU3
+--Sig_/UDZJS21+o2rUFV/_yMV13Uu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Marc,
 
-In commit
+On Tue, 19 Feb 2019 21:15:35 +0000 Marc Zyngier <marc.zyngier@arm.com> wrot=
+e:
+>
+> Thanks for the heads up. I've just fixed the tree and pushed it out
+> again.
 
-  a968b5e9d587 ("net: dsa: qca8k: Enable delay for RGMII_ID mode")
-
-Fixes tag
-
-  Fixes: 40269aa9f40a ("net: dsa: qca8k: disable delay for RGMII mode")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean:
-
-  Fixes: 5ecdd77c61c8 ("net: dsa: qca8k: disable delay for RGMII mode")
+Excellent, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/PeFdU3HN7vduMNJqwUmiEU3
+--Sig_/UDZJS21+o2rUFV/_yMV13Uu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsg8gACgkQAVBC80lX
-0GymcQgAobz4jyG0c9hquVzRF0ipROjjFvYsC85cwcNrr0KvArwZY3n39LBMuq9M
-5h/40Ws53z+uM27ZnYo5WP6tne4mWMs/kzIwJMwzNobV5dV6FlOtE6Qvv8QSHD9V
-1BxiYc/Dq6kLw3EBqUtlcKjx748NqKf8LKSBFqX886FXDMTFC+L3EOlzJcKK7lFV
-l9CwLhSWwxmecKMIeRMCB8mM+T8/A4tw3ET0mBFHfJOMiPokf5fwNp+K/ItGN8Iy
-LceNVO+JEgha+cAQx7ZFNgvikVxV+3izAKN+aY8VBJimzeKtp55wMkLbMklDFSIf
-5gNQFNL9zXyxI7vAUCv96h3dEXQNiQ==
-=NX/A
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxshB8ACgkQAVBC80lX
+0Gyccwf+Io6dJnQkexgitl9WgP3vwSG54cT/WmbLD3vg1wF7CsWX4Di1Yl1desJ2
+46ytNUnnQYSSU3oTLiOo1Wz6LCEX5VkQZQGqpnECJXuLsy1MJeZ86Cy4laDJbxzP
+prjt68jvSm8Dle/aupjBXvDT76CrxkB2FddqMFwXK4ZCfra5SCnOCTTofgwGJMuV
+LLGOI6Cu15xdTN0cFZu9QEmAJT0joc8w4C53Ps5zWP2oaDk8iiwXpUCQpKRwYidf
+O0TVchZdwSc/SAmkx0sll4DxZAD34Uhdo9mBv9y1dy93XmyjffodZSKsGbpNzVje
+OzH5whT+/VgO5EiJPXrGb0KYOFmWHw==
+=/y5m
 -----END PGP SIGNATURE-----
 
---Sig_/PeFdU3HN7vduMNJqwUmiEU3--
+--Sig_/UDZJS21+o2rUFV/_yMV13Uu--
