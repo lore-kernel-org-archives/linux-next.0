@@ -1,46 +1,48 @@
-From: Stanislav Fomichev <sdf@google.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
-Date: Tue, 19 Feb 2019 16:45:46 -0800
-Message-ID: <CAKH8qBuoYKPMhHn6Xzo=nEBevBt93c4+9cAVW7BZZwpNj46SCA@mail.gmail.com>
-References: <20190220113729.49f28f73@canb.auug.org.au> <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the drm tree
+Date: Wed, 20 Feb 2019 11:51:29 +1100
+Message-ID: <20190220115129.70e4093d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CbGYXyplzt=xCVUFQexHiHt"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 19, 2019 at 4:41 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Feb 19, 2019 at 4:37 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi all,
-> >
-> > Today's linux-next merge of the net-next tree got a conflict in:
-> >
-> >   tools/testing/selftests/bpf/test_progs.c
-> >
-> > between commit:
-> >
-> >   f6be4d16039b ("selftests/bpf: make sure signal interrupts BPF_PROG_TEST_RUN")
->
-> Ouch. Thanks for the heads up.
->
-> Daniel,
-> should we drop this one from bpf tree ?
-> I don't think it's strictly necessary.
-Yeah, those can go via the bpf-next three as well, not very critical.
+--Sig_/CbGYXyplzt=xCVUFQexHiHt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-OTOH, I don't understand why is there a conflict? bpf and bpf-next
-adding tests in the same place/file? Those can be trivially resolved
-when bpf and bpf-next are merged in the next window.
->
-> > from the bpf tree and commits:
-> >
-> >   bf0f0fd93945 ("selftests/bpf: add simple BPF_PROG_TEST_RUN examples for flow dissector")
-> >   ab963beb9f5d ("selftests/bpf: add bpf_spin_lock C test")
-> >   ba72a7b4badb ("selftests/bpf: test for BPF_F_LOCK")
-> >
+Hi all,
+
+Commits
+
+  f180bf12ac06 ("drm/nouveau/svm: new ioctl to migrate process memory to GP=
+U memory")
+  5be73b690875 ("drm/nouveau/dmem: device memory helpers for SVM")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CbGYXyplzt=xCVUFQexHiHt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxspJEACgkQAVBC80lX
+0GwFJAf+KmMI3FzHtXhEfWAV9sXkcD8t4TtN8SRRcY/M05/c0m4ySZSz1FKgNJ+c
+9XJHEuJXvYEKnYoXJxpK5xqE1ATaHzlwbn0VZ8SBT6Te6eGXahUUNt1/UujhhFw1
+0SqRjeFSU2xYqdbFeSagyUyWju/c90wbjaTAaI8L+i+BKELZBp/MyrVTrwaKShQF
++kGVcRLH1dBhsd0I2ajz6wZYXfn5aLKtKkumTWsJTVdN+NbI8f4ttLmDIoADMXwj
+rD+jLGVjRgTPILFz8NE2l8bG9YcAD4cOyQR21gyLA7ckrL3H8GZyVBd731842CWt
+wGxHERKMafSHDgB2OVnvd2uK6gF1xQ==
+=n/Gt
+-----END PGP SIGNATURE-----
+
+--Sig_/CbGYXyplzt=xCVUFQexHiHt--
