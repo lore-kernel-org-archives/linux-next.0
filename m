@@ -1,54 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in Linus' tree
-Date: Thu, 21 Feb 2019 07:38:35 +1100
-Message-ID: <20190221073835.7a18f007@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
+Date: Wed, 20 Feb 2019 12:42:25 -0800 (PST)
+Message-ID: <20190220.124225.847188318007300089.davem@davemloft.net>
+References: <20190220205910.7bd7fd40@redhat.com>
+        <20190220.122548.2257661716734858013.davem@davemloft.net>
+        <20190220213729.49deb54f@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n5nf79UKNxZ+c28yIBKyNxN"; protocol="application/pgp-signature"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190220213729.49deb54f@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, James Morris <james.morris@microsoft.com>
+To: sbrivio@redhat.com
+Cc: jiri@resnulli.us, vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
 List-Id: linux-next.vger.kernel.org
 
---Sig_/n5nf79UKNxZ+c28yIBKyNxN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Stefano Brivio <sbrivio@redhat.com>
+Date: Wed, 20 Feb 2019 21:37:29 +0100
 
-Hi all,
+> On Wed, 20 Feb 2019 12:25:48 -0800 (PST)
+> David Miller <davem@davemloft.net> wrote:
+> 
+>> From: Stefano Brivio <sbrivio@redhat.com>
+>> Date: Wed, 20 Feb 2019 20:59:10 +0100
+>> 
+>> > On Wed, 20 Feb 2019 11:02:01 -0800 (PST)
+>> > David Miller <davem@davemloft.net> wrote:
+>> >   
+>> >> From: Jiri Pirko <jiri@resnulli.us>
+>> >> Date: Wed, 20 Feb 2019 09:36:11 +0100
+>> >>   
+>> >> > Would be good to have some robot checking "Fixes" sanity...    
+>> >> 
+>> >> I want to add a script to my trees that locally do it for me but the
+>> >> backlog for patch review for me is so huge that I never get to "fun"
+>> >> tasks like that....  
+>> > 
+>> > If it helps, this is what I use after being bitten once:  
+>> 
+>> Awesome, thanks!  You put this in as a pre-commit script?
+> 
+> Nope, I use it before sending patches out with git send-email.
+> 
+> But you can use this as .git/hooks/commit-msg, just skip taking the
+> tree as second argument, something like this (just quickly tested):
 
-In commit
-
-  822ad64d7e46 ("keys: Fix dependency loop between construction record and =
-auth key")
-
-Fixes tag
-
-  Fixes: 7ee02a316600 ("keys: Fix dependency loop between construction reco=
-rd and auth key")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n5nf79UKNxZ+c28yIBKyNxN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxtussACgkQAVBC80lX
-0GxO8AgApex+74qOgOh2047i2KJe/fCQk/X+t9m9uLFdZF/gho78BfoFGTGRkVAv
-aPUqizKZRX/PrYkxWShAdxXbSLXiyhbIDvhtspnOAsGpH2/oWHXRY2N91i++0w+r
-Lso14pXoPRF0svi+E9cTjFWd8hJleuIlTbsKNSdyOkSlrvEqvJwLZKr0eOf55aea
-1PLcY9nbb+jVX0RsNCj6HakxUy3XRSt99h42zrScWdKvoYJk/8hWo5HTtDociGz7
-i16wjhKqZBh8derwrFNJVean4jxDET8yGSGGdsLPiFRL14SXEWXd5BPaj0bUbZOG
-rve+ee5j1WE7mqp3/ODBcLyF8oAJCQ==
-=m1GQ
------END PGP SIGNATURE-----
-
---Sig_/n5nf79UKNxZ+c28yIBKyNxN--
+Awesome, thank you!
