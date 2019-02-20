@@ -1,42 +1,43 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: build warning after merge of the device-mapper tree
-Date: Tue, 19 Feb 2019 22:35:39 -0500
-Message-ID: <20190220033539.GA17586@redhat.com>
-References: <20190220131555.15317a39@canb.auug.org.au>
+From: Vinod Koul <vkoul@kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
+Date: Wed, 20 Feb 2019 10:10:55 +0530
+Message-ID: <20190220044055.GD21884@vkoul-mobl>
+References: <20190220093136.73779781@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190220131555.15317a39@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20190220093136.73779781@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alasdair G Kergon <agk@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 19 2019 at  9:15pm -0500,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
+On 20-02-19, 09:31, Stephen Rothwell wrote:
 > Hi all,
 > 
-> After merging the device-mapper tree, today's linux-next build
-> (powerpc_ppc64_defconfig) produced this warning:
+> In commit
 > 
-> In file included from include/linux/blkdev.h:21,
->                  from include/linux/blk-mq.h:5,
->                  from drivers/md/dm-core.h:14,
->                  from drivers/md/dm.c:8:
-> drivers/md/dm.c: In function 'dec_pending':
-> include/linux/bio.h:626:15: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   bio->bi_next = bl->head;
->   ~~~~~~~~~~~~~^~~~~~~~~~
-> drivers/md/dm.c:930:14: note: 'bio' was declared here
->   struct bio *bio;
->               ^~~
+>   a968b5e9d587 ("net: dsa: qca8k: Enable delay for RGMII_ID mode")
 > 
-> Introduced by commit
+> Fixes tag
 > 
->   58c66b86cfe7 ("dm: improve noclone_endio() to support multipath target")
+>   Fixes: 40269aa9f40a ("net: dsa: qca8k: disable delay for RGMII mode")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Did you mean:
+> 
+>   Fixes: 5ecdd77c61c8 ("net: dsa: qca8k: disable delay for RGMII mode")
 
-Thanks, I've fixed it up.
+Yes looks like I messed up the commit id.. Not sure why :(
 
-Mike
+Dave would you like to drop this and me sending updated patch or
+something else..
+
+Sorry about the miss
+
+-- 
+~Vinod
