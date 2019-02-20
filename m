@@ -1,53 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
 Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
-Date: Wed, 20 Feb 2019 12:03:05 +1100
-Message-ID: <20190220120305.3c22596e@canb.auug.org.au>
+Date: Wed, 20 Feb 2019 01:48:57 +0100
+Message-ID: <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
 References: <20190220113729.49f28f73@canb.auug.org.au>
-        <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
-        <CAKH8qBuoYKPMhHn6Xzo=nEBevBt93c4+9cAVW7BZZwpNj46SCA@mail.gmail.com>
+ <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RTVdESC3lpdA4KPdqx2fHd9"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKH8qBuoYKPMhHn6Xzo=nEBevBt93c4+9cAVW7BZZwpNj46SCA@mail.gmail.com>
+In-Reply-To: <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stanislav Fomichev <sdf@google.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stanislav Fomichev <sdf@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/RTVdESC3lpdA4KPdqx2fHd9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 02/20/2019 01:41 AM, Alexei Starovoitov wrote:
+> On Tue, Feb 19, 2019 at 4:37 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Hi all,
+>>
+>> Today's linux-next merge of the net-next tree got a conflict in:
+>>
+>>   tools/testing/selftests/bpf/test_progs.c
+>>
+>> between commit:
+>>
+>>   f6be4d16039b ("selftests/bpf: make sure signal interrupts BPF_PROG_TEST_RUN")
+> 
+> Ouch. Thanks for the heads up.
+> 
+> Daniel,
+> should we drop this one from bpf tree ?
+> I don't think it's strictly necessary.
 
-Hi Stanislav,
+Yeah no objections, lets move the selftest one over to bpf-next and
+have it properly integrated. I think test_progs might potentially need
+further topic-split aside from kernel progs like we did in test_verifier.
 
-On Tue, 19 Feb 2019 16:45:46 -0800 Stanislav Fomichev <sdf@google.com> wrot=
-e:
->
-> OTOH, I don't understand why is there a conflict? bpf and bpf-next
-> adding tests in the same place/file? Those can be trivially resolved
-> when bpf and bpf-next are merged in the next window.
-
-Yes, and yes :-)
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/RTVdESC3lpdA4KPdqx2fHd9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsp0kACgkQAVBC80lX
-0Gz2rAf6Av4sWZUHyBHAV1e84+jXQzEnf5E0p2RShtk2H6Rj03n3BbfULRDvHi0H
-vSuRh4rvkruNLBKSMcJZrL49MhqgXFUJLziuwag5NL77pnlDky7oMe6UYU/Os41l
-Y7jpK4KfHNhGQxgKZL4La1FdEmbWcCw6EfB8RnHXggGaXuqKlJDhxbECd6x4pUgT
-hkrUE5SNOihrVFPbw4a+V8iX1EqXVpLrX7nLfiYsMH7IaJKYxgVzgp2/qnTKXs9M
-MEVliOho+9Ejy+WiTTbdYDPLVSZg8V/CKRzcpD4aec3PSy9oXryCUAwI/BVT0kUv
-VB8mGov04T3qkoSzFcP0B0ZBIjrgLw==
-=23Cb
------END PGP SIGNATURE-----
-
---Sig_/RTVdESC3lpdA4KPdqx2fHd9--
+>> from the bpf tree and commits:
+>>
+>>   bf0f0fd93945 ("selftests/bpf: add simple BPF_PROG_TEST_RUN examples for flow dissector")
+>>   ab963beb9f5d ("selftests/bpf: add bpf_spin_lock C test")
+>>   ba72a7b4badb ("selftests/bpf: test for BPF_F_LOCK")
