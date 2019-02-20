@@ -1,48 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Date: Wed, 20 Feb 2019 12:42:25 -0800 (PST)
-Message-ID: <20190220.124225.847188318007300089.davem@davemloft.net>
-References: <20190220205910.7bd7fd40@redhat.com>
-        <20190220.122548.2257661716734858013.davem@davemloft.net>
-        <20190220213729.49deb54f@redhat.com>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: Fixes tag needs some work in Linus' tree
+Date: Wed, 20 Feb 2019 21:36:56 +0000
+Message-ID: <28431.1550698616@warthog.procyon.org.uk>
+References: <20190221073835.7a18f007@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190220213729.49deb54f@redhat.com>
+In-Reply-To: <20190221073835.7a18f007@canb.auug.org.au>
+Content-ID: <28430.1550698616.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sbrivio@redhat.com
-Cc: jiri@resnulli.us, vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morris <james.morris@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Stefano Brivio <sbrivio@redhat.com>
-Date: Wed, 20 Feb 2019 21:37:29 +0100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On Wed, 20 Feb 2019 12:25:48 -0800 (PST)
-> David Miller <davem@davemloft.net> wrote:
+> In commit
 > 
->> From: Stefano Brivio <sbrivio@redhat.com>
->> Date: Wed, 20 Feb 2019 20:59:10 +0100
->> 
->> > On Wed, 20 Feb 2019 11:02:01 -0800 (PST)
->> > David Miller <davem@davemloft.net> wrote:
->> >   
->> >> From: Jiri Pirko <jiri@resnulli.us>
->> >> Date: Wed, 20 Feb 2019 09:36:11 +0100
->> >>   
->> >> > Would be good to have some robot checking "Fixes" sanity...    
->> >> 
->> >> I want to add a script to my trees that locally do it for me but the
->> >> backlog for patch review for me is so huge that I never get to "fun"
->> >> tasks like that....  
->> > 
->> > If it helps, this is what I use after being bitten once:  
->> 
->> Awesome, thanks!  You put this in as a pre-commit script?
+>   822ad64d7e46 ("keys: Fix dependency loop between construction record and auth key")
 > 
-> Nope, I use it before sending patches out with git send-email.
+> Fixes tag
 > 
-> But you can use this as .git/hooks/commit-msg, just skip taking the
-> tree as second argument, something like this (just quickly tested):
+>   Fixes: 7ee02a316600 ("keys: Fix dependency loop between construction record and auth key")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
 
-Awesome, thank you!
+Oops.  I guess I pasted in the wrong commit details.
+
+	commit 76181c134f87479fa13bf2548ddf2999055d34d4
+	KEYS: Make request_key() and co fundamentally asynchronous
+
+should've been it.
+
+David
