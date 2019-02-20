@@ -1,60 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the device-mapper tree
-Date: Wed, 20 Feb 2019 13:15:55 +1100
-Message-ID: <20190220131555.15317a39@canb.auug.org.au>
+From: Stanislav Fomichev <sdf@google.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
+Date: Tue, 19 Feb 2019 19:03:51 -0800
+Message-ID: <CAKH8qBtqcx+qXKpq-xNq6_MeciJghppszSF-vHfp0UKsESkcOA@mail.gmail.com>
+References: <20190220113729.49f28f73@canb.auug.org.au> <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
+ <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PVmk/xY08i5Nb.lRcC+fPGh"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
+Sender: netdev-owner@vger.kernel.org
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PVmk/xY08i5Nb.lRcC+fPGh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 19, 2019 at 5:07 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>
+> On 02/20/2019 01:41 AM, Alexei Starovoitov wrote:
+> > On Tue, Feb 19, 2019 at 4:37 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >>
+> >> Hi all,
+> >>
+> >> Today's linux-next merge of the net-next tree got a conflict in:
+> >>
+> >>   tools/testing/selftests/bpf/test_progs.c
+> >>
+> >> between commit:
+> >>
+> >>   f6be4d16039b ("selftests/bpf: make sure signal interrupts BPF_PROG_TEST_RUN")
+> >
+> > Ouch. Thanks for the heads up.
+> >
+> > Daniel,
+> > should we drop this one from bpf tree ?
+> > I don't think it's strictly necessary.
+>
+> Yeah no objections, lets move the selftest one over to bpf-next and
+> have it properly integrated. I think test_progs might potentially need
+> further topic-split aside from kernel progs like we did in test_verifier.
+Do you want me to follow up with a clean rebased bpf-next sefltest patch?
+Or you'll take care of it yourself?
 
-Hi all,
-
-After merging the device-mapper tree, today's linux-next build
-(powerpc_ppc64_defconfig) produced this warning:
-
-In file included from include/linux/blkdev.h:21,
-                 from include/linux/blk-mq.h:5,
-                 from drivers/md/dm-core.h:14,
-                 from drivers/md/dm.c:8:
-drivers/md/dm.c: In function 'dec_pending':
-include/linux/bio.h:626:15: warning: 'bio' may be used uninitialized in thi=
-s function [-Wmaybe-uninitialized]
-  bio->bi_next =3D bl->head;
-  ~~~~~~~~~~~~~^~~~~~~~~~
-drivers/md/dm.c:930:14: note: 'bio' was declared here
-  struct bio *bio;
-              ^~~
-
-Introduced by commit
-
-  58c66b86cfe7 ("dm: improve noclone_endio() to support multipath target")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/PVmk/xY08i5Nb.lRcC+fPGh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsuFsACgkQAVBC80lX
-0GwpLQgAiHux41yYTJ7TJsVOCUAyNKhkgVpAJJ7PmKZHgqBSx9ev+FfRCeynGzNE
-wGAzX5wuZUprPB1+evEZK5u6LWlW+vn+OnnwpAQznJpIsD03WkuSFODq+KTfnoVq
-T+tyZsL2aZloBC0CV0wWBj/ZJ40EO5O/uuauPWLobuw1ot+wMHI+Cid1RuE4V0hU
-gpreP5sB8qbKnpAqq55pQpfKN6g+qQIEqUTd9tFesqPeiWSMRKs1vBKdUewQir8j
-B12qXrE7+AhmNh8cHzxQwNDgXHmgSj1enWgVYEKQWD/i1LBz5c71o+kGoBTb/h6s
-6JVeFtBaoMop602l/nNm/ovd7Nx/9w==
-=+D6c
------END PGP SIGNATURE-----
-
---Sig_/PVmk/xY08i5Nb.lRcC+fPGh--
+> >> from the bpf tree and commits:
+> >>
+> >>   bf0f0fd93945 ("selftests/bpf: add simple BPF_PROG_TEST_RUN examples for flow dissector")
+> >>   ab963beb9f5d ("selftests/bpf: add bpf_spin_lock C test")
+> >>   ba72a7b4badb ("selftests/bpf: test for BPF_F_LOCK")
