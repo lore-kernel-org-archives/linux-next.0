@@ -1,38 +1,56 @@
-From: Jiri Pirko <jiri@resnulli.us>
+From: Stefano Brivio <sbrivio@redhat.com>
 Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Date: Wed, 20 Feb 2019 21:26:08 +0100
-Message-ID: <20190220202608.GP3080@nanopsycho>
+Date: Wed, 20 Feb 2019 21:37:29 +0100
+Message-ID: <20190220213729.49deb54f@redhat.com>
 References: <20190220083611.GJ3080@nanopsycho>
- <20190220.110201.2245447687492293995.davem@davemloft.net>
- <20190220195811.GO3080@nanopsycho>
- <20190220.122522.1237657062289636264.davem@davemloft.net>
+        <20190220.110201.2245447687492293995.davem@davemloft.net>
+        <20190220205910.7bd7fd40@redhat.com>
+        <20190220.122548.2257661716734858013.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190220.122522.1237657062289636264.davem@davemloft.net>
+In-Reply-To: <20190220.122548.2257661716734858013.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>
-Cc: vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
+Cc: jiri@resnulli.us, vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
 List-Id: linux-next.vger.kernel.org
 
-Wed, Feb 20, 2019 at 09:25:22PM CET, davem@davemloft.net wrote:
->From: Jiri Pirko <jiri@resnulli.us>
->Date: Wed, 20 Feb 2019 20:58:11 +0100
->
->> Wed, Feb 20, 2019 at 08:02:01PM CET, davem@davemloft.net wrote:
->>>From: Jiri Pirko <jiri@resnulli.us>
->>>Date: Wed, 20 Feb 2019 09:36:11 +0100
->>>
->>>> Would be good to have some robot checking "Fixes" sanity...
->>>
->>>I want to add a script to my trees that locally do it for me but the
->> 
->> When it is in tree, it's already late. The robot has to check
->> emails/patchwork.
->
->It's for me, on my computer, to abort things when I try to commit
->with a bad fixes tag or missing signoff.
+On Wed, 20 Feb 2019 12:25:48 -0800 (PST)
+David Miller <davem@davemloft.net> wrote:
 
-Okay, but still, robot checking emails/patchwork would safe you some
-overhead.
+> From: Stefano Brivio <sbrivio@redhat.com>
+> Date: Wed, 20 Feb 2019 20:59:10 +0100
+> 
+> > On Wed, 20 Feb 2019 11:02:01 -0800 (PST)
+> > David Miller <davem@davemloft.net> wrote:
+> >   
+> >> From: Jiri Pirko <jiri@resnulli.us>
+> >> Date: Wed, 20 Feb 2019 09:36:11 +0100
+> >>   
+> >> > Would be good to have some robot checking "Fixes" sanity...    
+> >> 
+> >> I want to add a script to my trees that locally do it for me but the
+> >> backlog for patch review for me is so huge that I never get to "fun"
+> >> tasks like that....  
+> > 
+> > If it helps, this is what I use after being bitten once:  
+> 
+> Awesome, thanks!  You put this in as a pre-commit script?
+
+Nope, I use it before sending patches out with git send-email.
+
+But you can use this as .git/hooks/commit-msg, just skip taking the
+tree as second argument, something like this (just quickly tested):
+
+#!/bin/sh
+
+grep "^Fixes: " "${1}" | while read -r f; do
+	sha="$(echo "${f}" | cut -d' ' -f2)"
+	if [ -z "${sha}" ] || [ "${f}" != "$(git show -s --abbrev=12 --pretty=format:"Fixes: %h (\"%s\")" "${sha}" 2>/dev/null)" ]; then
+		echo "Bad tag: ${f}" && exit 1
+	fi
+done
+
+-- 
+Stefano
