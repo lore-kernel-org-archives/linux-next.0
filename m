@@ -1,47 +1,42 @@
-From: Stanislav Fomichev <sdf@google.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
-Date: Tue, 19 Feb 2019 19:03:51 -0800
-Message-ID: <CAKH8qBtqcx+qXKpq-xNq6_MeciJghppszSF-vHfp0UKsESkcOA@mail.gmail.com>
-References: <20190220113729.49f28f73@canb.auug.org.au> <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
- <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: linux-next: build warning after merge of the device-mapper tree
+Date: Tue, 19 Feb 2019 22:35:39 -0500
+Message-ID: <20190220033539.GA17586@redhat.com>
+References: <20190220131555.15317a39@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
-Sender: netdev-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190220131555.15317a39@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alasdair G Kergon <agk@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 19, 2019 at 5:07 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
->
-> On 02/20/2019 01:41 AM, Alexei Starovoitov wrote:
-> > On Tue, Feb 19, 2019 at 4:37 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> Hi all,
-> >>
-> >> Today's linux-next merge of the net-next tree got a conflict in:
-> >>
-> >>   tools/testing/selftests/bpf/test_progs.c
-> >>
-> >> between commit:
-> >>
-> >>   f6be4d16039b ("selftests/bpf: make sure signal interrupts BPF_PROG_TEST_RUN")
-> >
-> > Ouch. Thanks for the heads up.
-> >
-> > Daniel,
-> > should we drop this one from bpf tree ?
-> > I don't think it's strictly necessary.
->
-> Yeah no objections, lets move the selftest one over to bpf-next and
-> have it properly integrated. I think test_progs might potentially need
-> further topic-split aside from kernel progs like we did in test_verifier.
-Do you want me to follow up with a clean rebased bpf-next sefltest patch?
-Or you'll take care of it yourself?
+On Tue, Feb 19 2019 at  9:15pm -0500,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> >> from the bpf tree and commits:
-> >>
-> >>   bf0f0fd93945 ("selftests/bpf: add simple BPF_PROG_TEST_RUN examples for flow dissector")
-> >>   ab963beb9f5d ("selftests/bpf: add bpf_spin_lock C test")
-> >>   ba72a7b4badb ("selftests/bpf: test for BPF_F_LOCK")
+> Hi all,
+> 
+> After merging the device-mapper tree, today's linux-next build
+> (powerpc_ppc64_defconfig) produced this warning:
+> 
+> In file included from include/linux/blkdev.h:21,
+>                  from include/linux/blk-mq.h:5,
+>                  from drivers/md/dm-core.h:14,
+>                  from drivers/md/dm.c:8:
+> drivers/md/dm.c: In function 'dec_pending':
+> include/linux/bio.h:626:15: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   bio->bi_next = bl->head;
+>   ~~~~~~~~~~~~~^~~~~~~~~~
+> drivers/md/dm.c:930:14: note: 'bio' was declared here
+>   struct bio *bio;
+>               ^~~
+> 
+> Introduced by commit
+> 
+>   58c66b86cfe7 ("dm: improve noclone_endio() to support multipath target")
+
+Thanks, I've fixed it up.
+
+Mike
