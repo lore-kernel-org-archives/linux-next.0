@@ -1,65 +1,84 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: linux-next: Fixes tag needs some work in the drivers-x86 tree
-Date: Wed, 20 Feb 2019 16:40:41 -0800
-Message-ID: <20190221004041.GA5838@wrath>
-References: <20190207095703.564e76b2@canb.auug.org.au>
- <38152c55-c2c1-c89f-2751-0ef0d40fcba9@linux.intel.com>
- <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
- <e0c40627-f1a2-254f-14b0-b9df0d62dd34@linux.intel.com>
+From: Zhangshaokun <zhangshaokun@hisilicon.com>
+Subject: Re: linux-next: Tree for Feb 20
+Date: Thu, 21 Feb 2019 08:43:22 +0800
+Message-ID: <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
+References: <20190220184341.73bd2084@canb.auug.org.au>
+ <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
+ <20190220095252.GA9089@linux.intel.com>
+ <20190220095806.GB9089@linux.intel.com>
+ <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <e0c40627-f1a2-254f-14b0-b9df0d62dd34@linux.intel.com>
+In-Reply-To: <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi <linux-efi@vger.kernel.org>, linux-integrity <linux-integrity@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 13, 2019 at 08:45:56PM +0530, Bhardwaj, Rajneesh wrote:
+Hi Ard,
+
+On 2019/2/20 18:05, Ard Biesheuvel wrote:
+> On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+>>
+>> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
+>>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
+>>>> There is a compiler failure on arm64 platform, as follow:
+>>>>
+>>>>   AS      arch/arm64/kvm/hyp.o
+>>>>   CC      kernel/trace/ring_buffer.o
+>>>> In file included from security/integrity/ima/ima_fs.c:30:0:
+>>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
+>>>>   hook(NONE)   \
+>>>>        ^
+>>>> security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
+>>>>  #define __ima_hook_enumify(ENUM) ENUM,
+>>>>                                   ^
+>>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
+>>>>   __ima_hooks(__ima_hook_enumify)
+>>>>   ^
+>>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
+>>>>                  from ./include/acpi/acpi_io.h:7,
+>>>>                  from ./include/linux/acpi.h:47,
+>>>>                  from ./include/linux/tpm.h:26,
+>>>>                  from security/integrity/ima/ima.h:25,
+>>>>                  from security/integrity/ima/ima_fs.c:30:
+>>>> ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
+>>>>   NONE,
+>>>>   ^
+>>>> scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
+>>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
+>>>>
+>>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
+>>>
+>>> This results from a new include in tpm.h:
+>>>
+>>>   #include <linux/acpi.h>
+>>>
+>>> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
+>>> those files have a name collision. Makes me wonder why neither has taken
+>>> care of prefixing the constants properly.
+>>
+>> Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
+>> prefixes. Defining a constant named as NONE in a non-generic subsystem
+>> (e.g. not part of the core data structures of Linux) and especially
+>> exporting it to include/linux is not too well considered act.
+>>
 > 
-> On 07-Feb-19 9:25 PM, Andy Shevchenko wrote:
-> > On Thu, Feb 7, 2019 at 4:06 AM Bhardwaj, Rajneesh
-> > <rajneesh.bhardwaj@linux.intel.com> wrote:
-> > > On 07-Feb-19 4:27 AM, Stephen Rothwell wrote:
-> > > 
-> > > Hi all,
-> > > 
-> > > In commit
-> > > 
-> > >    4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr_show")
-> > > 
-> > > Fixes tag
-> > > 
-> > >    Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
-> > > 
-> > > has these problem(s):
-> > > 
-> > >    - Target SHA1 does not exist
-> > > 
-> > > Did you mean:
-> > > 
-> > >    2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
-> > > 
-> > > Yes, upstream commit is 2eb150558bb79ee01c39b64c2868216c0be2904f. For some reason when i do git show on my repo with both these SHA1 i see the same patch.
-> > > 
-> > > I will fix this in next version.
-> > Hmm... this came to our published branch, i.e. for-next, would it be
-> > better to update it via rebasing?
-> > 
-> > Darren, what do you think?
+> Fixes for this have already been proposed, and should appear in -next shortly
 > 
-> Hi Andy, I have corrected this in v2 anyway and i sent to upstream today,
-> just in case you prefer it over rebasing.
-> 
-> https://patchwork.kernel.org/patch/10810123/
+> The EFI one is here
+> https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
 > 
 
-While we try hard not to rebase, if the choice is to rebase for-next or send a
-bad commit to upstream, I will opt for the rebase.
+Because of no privilege, the website is denied for me. Anyway, it's nice to have been fixed.
 
-Andy, I would suggest doing the rebase.
+Thanks,
+Shaokun
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+> Not sure about the IMA one, Mimi should be able to comment ...
+> 
+> .
+> 
