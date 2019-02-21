@@ -1,55 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the block tree
-Date: Fri, 22 Feb 2019 07:39:59 +1100
-Message-ID: <20190222073959.5accc9a9@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree with the dma-mapping
+ tree
+Date: Fri, 22 Feb 2019 09:17:28 +1100
+Message-ID: <20190222091728.6d3d9877@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/d2IDwTjbDbdXOzL0VNZTwgb"; protocol="application/pgp-signature"
+ boundary="Sig_/ok17N8/ya7k8hwIQAwaZptq"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Christoph Hellwig <hch@lst.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/d2IDwTjbDbdXOzL0VNZTwgb
+--Sig_/ok17N8/ya7k8hwIQAwaZptq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-In commit
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-  8f4e80da764e ("block: bounce: make sure that bvec table is updated")
+  arch/powerpc/kernel/dma-swiotlb.c
 
-Fixes tag
+between commit:
 
-  Fixes: 6dc4f100c ("block: allow bio_for_each_segment_all() to iterate ove=
-r multi-page bvec")
+  cfced786969c ("dma-mapping: remove the default map_resource implementatio=
+n")
 
-has these problem(s):
+from the dma-mapping tree and commit:
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  68005b67d15a ("powerpc/dma: use the generic direct mapping bypass")
+
+from the powerpc tree.
+
+I fixed it up (I just used the latter) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/d2IDwTjbDbdXOzL0VNZTwgb
+--Sig_/ok17N8/ya7k8hwIQAwaZptq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvDKAACgkQAVBC80lX
-0GwEdgf+NQ9BrCjeYBU4miFrZTJgDOuQCie968O6KG+9/5yEZYexZBMXA6LUC+fo
-YQACAW44XgiDIuiWYDVmI0LZGsgaKeuUsxGThub0s+dn5pYiiy50EG2JMK82+jte
-0vDZSvALvVTQdznhEu9YatEKySwYOCOeNSSPxqVRIJIKgcRWd+MmXPxrbiYRstK6
-jzZxJyMZgekHBXi7n9mLTVZ8WiUeWVM19qhQx6Pv+9GX5FiIvXXB4pAyqFWApvP3
-37YUY0QWHZGTbPdf38fAhF+DGbmBqTlRK6ivP3JLy0jHXZvd+wnNzGbi4eWJ/+hC
-W5Ml5kHQUQdqQxVH5nYogpTv8pFQbw==
-=xxJa
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvI3gACgkQAVBC80lX
+0GwCLwf8Cs2kNsCKIdpn1d0w4LHBA4HAlvsOfuZgHZktoG/FprY7Yi1Z/1zHEehJ
+jUvUjJN9x6Ml6oTk6aunNl1vFIXX3BvtUz4NAmZF+tSY3ycnHJ8CT76QjOPzzeH8
+dgnKqzM2RwkgJ0H2ZwkRwr5KVjM5ZVVyqJuzBsMbi/iaZoKIxWI+gc9pI3jPz1fl
+47x3wE4KxhI/eu/LKb3lTNgFuatwNqlWYd+mV411VyuXiWBqsuCsluT5vsVWOFfd
+nzJlEfcBdZ5q20piok04KZItnCHOFB0trw0BpbBXawTW/6ml8AbY3QNJP/BFhMmx
+zU6xpU/5SNGeDu5rCTkHMacnq4Zd/w==
+=VWkj
 -----END PGP SIGNATURE-----
 
---Sig_/d2IDwTjbDbdXOzL0VNZTwgb--
+--Sig_/ok17N8/ya7k8hwIQAwaZptq--
