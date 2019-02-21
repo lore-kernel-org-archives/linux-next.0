@@ -1,30 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in Linus' tree
-Date: Fri, 22 Feb 2019 07:16:55 +1100
-Message-ID: <20190222071655.31e0fdbd@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the block tree
+Date: Fri, 22 Feb 2019 07:39:59 +1100
+Message-ID: <20190222073959.5accc9a9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lHrgtj6XcjRWGQLRBff+fWi"; protocol="application/pgp-signature"
+ boundary="Sig_/d2IDwTjbDbdXOzL0VNZTwgb"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/lHrgtj6XcjRWGQLRBff+fWi
+--Sig_/d2IDwTjbDbdXOzL0VNZTwgb
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Jens,
 
 In commit
 
-  1062af920c07 ("tmpfs: fix link accounting when a tmpfile is linked in")
+  8f4e80da764e ("block: bounce: make sure that bvec table is updated")
 
 Fixes tag
 
-  Fixes: f4e0c30c191 ("allow the temp files created by open() to be linked =
-to")
+  Fixes: 6dc4f100c ("block: allow bio_for_each_segment_all() to iterate ove=
+r multi-page bvec")
 
 has these problem(s):
 
@@ -36,20 +36,20 @@ has these problem(s):
 Cheers,
 Stephen Rothwell
 
---Sig_/lHrgtj6XcjRWGQLRBff+fWi
+--Sig_/d2IDwTjbDbdXOzL0VNZTwgb
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvBzcACgkQAVBC80lX
-0GzWPgf/eJLLEeL9nQ+U1BVDfIDO7GHG7/kua8bUonZR+bQVf7gDw9D+WwRotbP1
-9GVkOZA5TcwHh2F2TMgXj6UzL4W6U3VrvRDSnhByYw0LktQZyKZ1jDc0uvrP7jDA
-kSj1rKf9dsUyvUkD8DSEZAfS1n3DgSXBbbnIUXPWUCO47f1yvClaD2pZRQ5gLHhZ
-Dc5dzAz/xVLesmdnV3nEB5tlFrK2tc5DjdLrfLiuwMy18RvuX/3CPmZMSDxhFJyM
-EvjsvKExk3n8LFAiMEgf4F9O3pR77NzyN2twqVrSOpb8LqocAWCAFw+nEIu02NdY
-w43NLPvM0MFDSbaTGDorzrJxvja1Fw==
-=yAbA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvDKAACgkQAVBC80lX
+0GwEdgf+NQ9BrCjeYBU4miFrZTJgDOuQCie968O6KG+9/5yEZYexZBMXA6LUC+fo
+YQACAW44XgiDIuiWYDVmI0LZGsgaKeuUsxGThub0s+dn5pYiiy50EG2JMK82+jte
+0vDZSvALvVTQdznhEu9YatEKySwYOCOeNSSPxqVRIJIKgcRWd+MmXPxrbiYRstK6
+jzZxJyMZgekHBXi7n9mLTVZ8WiUeWVM19qhQx6Pv+9GX5FiIvXXB4pAyqFWApvP3
+37YUY0QWHZGTbPdf38fAhF+DGbmBqTlRK6ivP3JLy0jHXZvd+wnNzGbi4eWJ/+hC
+W5Ml5kHQUQdqQxVH5nYogpTv8pFQbw==
+=xxJa
 -----END PGP SIGNATURE-----
 
---Sig_/lHrgtj6XcjRWGQLRBff+fWi--
+--Sig_/d2IDwTjbDbdXOzL0VNZTwgb--
