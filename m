@@ -1,101 +1,95 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: linux-next: Tree for Feb 20
-Date: Thu, 21 Feb 2019 10:12:37 +0100
-Message-ID: <CAKv+Gu8MWECBMgvQhLXpYkn6GQBXpGEo93EdjXcTxMsjCicaDQ@mail.gmail.com>
-References: <20190220184341.73bd2084@canb.auug.org.au> <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
- <20190220095252.GA9089@linux.intel.com> <20190220095806.GB9089@linux.intel.com>
- <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
- <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com> <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the net-next tree
+Date: Thu, 21 Feb 2019 22:11:22 +1100
+Message-ID: <20190221221122.7e0f13a5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ab1MvUwH6nCM2WdhBMI08n1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Zhangshaokun <zhangshaokun@hisilicon.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Mimi Zohar <zohar@linux.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi <linux-efi@vger.kernel.org>, linux-integrity <linux-integrity@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bodong Wang <bodong@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 21 Feb 2019 at 09:04, Geert Uytterhoeven <geert@linux-m68k.org> wro=
-te:
->
-> Hi Shaokun,
->
-> On Thu, Feb 21, 2019 at 1:45 AM Zhangshaokun <zhangshaokun@hisilicon.com>=
- wrote:
-> > On 2019/2/20 18:05, Ard Biesheuvel wrote:
-> > > On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >>
-> > >> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
-> > >>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
-> > >>>> There is a compiler failure on arm64 platform, as follow:
-> > >>>>
-> > >>>>   AS      arch/arm64/kvm/hyp.o
-> > >>>>   CC      kernel/trace/ring_buffer.o
-> > >>>> In file included from security/integrity/ima/ima_fs.c:30:0:
-> > >>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumer=
-ator =E2=80=98NONE=E2=80=99
-> > >>>>   hook(NONE)   \
-> > >>>>        ^
-> > >>>> security/integrity/ima/ima.h:188:34: note: in definition of macro =
-=E2=80=98__ima_hook_enumify=E2=80=99
-> > >>>>  #define __ima_hook_enumify(ENUM) ENUM,
-> > >>>>                                   ^
-> > >>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro =
-=E2=80=98__ima_hooks=E2=80=99
-> > >>>>   __ima_hooks(__ima_hook_enumify)
-> > >>>>   ^
-> > >>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
-> > >>>>                  from ./include/acpi/acpi_io.h:7,
-> > >>>>                  from ./include/linux/acpi.h:47,
-> > >>>>                  from ./include/linux/tpm.h:26,
-> > >>>>                  from security/integrity/ima/ima.h:25,
-> > >>>>                  from security/integrity/ima/ima_fs.c:30:
-> > >>>> ./include/linux/efi.h:1716:2: note: previous definition of =E2=80=
-=98NONE=E2=80=99 was here
-> > >>>>   NONE,
-> > >>>>   ^
-> > >>>> scripts/Makefile.build:276: recipe for target 'security/integrity/=
-ima/ima_fs.o' failed
-> > >>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
-> > >>>>
-> > >>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip de=
-finition to include/linux/tpm.h")
-> > >>>
-> > >>> This results from a new include in tpm.h:
-> > >>>
-> > >>>   #include <linux/acpi.h>
-> > >>>
-> > >>> Must be fixed either in include/linux/efi.h or security/integrity/i=
-ma.h as
-> > >>> those files have a name collision. Makes me wonder why neither has =
-taken
-> > >>> care of prefixing the constants properly.
-> > >>
-> > >> Preferably both subsystems should be fixed with proper 'EFI_' and 'I=
-MA_'
-> > >> prefixes. Defining a constant named as NONE in a non-generic subsyst=
-em
-> > >> (e.g. not part of the core data structures of Linux) and especially
-> > >> exporting it to include/linux is not too well considered act.
-> > >>
-> > >
-> > > Fixes for this have already been proposed, and should appear in -next=
- shortly
-> > >
-> > > The EFI one is here
-> > > https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkW=
-RqRqVclGgVDnB
-> > >
-> >
-> > Because of no privilege, the website is denied for me. Anyway, it's nic=
-e to have been fixed.
->
-> Looks like Ard posted a link to a label in his personal gmail mailbox?
->
+--Sig_/ab1MvUwH6nCM2WdhBMI08n1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Silly me.
+Hi all,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=3Defi=
-/core&id=3D5c418dc789a3898717ebf2caa5716ba91a7150b2
+In commit
+
+  1c50d369f560 ("net/mlx5: E-Switch, Disable esw manager vport correctly")
+
+Fixes tag
+
+  Fixes: de9e6a8136c5 ("net/mlx5: E-Switch, Properly refer to host PF vport=
+ as other vport")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+  Fixes: cbc44e76bfcd ("net/mlx5: E-Switch, Properly refer to host PF vport=
+ as other vport")
+
+In commit
+
+  acad70731e63 ("net/mlx5: E-Switch, Fix the warning on vport index out of =
+range")
+
+Fixes tag
+
+  Fixes: 22b8ddc86bf4 ("net/mlx5: E-Switch, Assign a different position for=
+ uplink rep and vport")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+  Fixes: 5ae5162066d8 ("net/mlx5: E-Switch, Assign a different position for=
+ uplink rep and vport")
+
+In commit
+
+  e87636117e9a ("net/mlx5e: Remove unused variable =E2=80=98esw=E2=80=99")
+
+Fixes tag
+
+  Fixes: 1cd3ab86b713 ("net/mlx5e: Introduce mlx5e_flow_esw_attr_init() hel=
+per")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+  Fixes: 988ab9c7363a ("net/mlx5e: Introduce mlx5e_flow_esw_attr_init() hel=
+per")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ab1MvUwH6nCM2WdhBMI08n1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxuh1oACgkQAVBC80lX
+0GwQ4wf/VKc7gJSMN5KAuJ5Wg5h+yW4R/nGjffsKTiMf0RQ4DkWKZEXmCuSyyGPO
+CZUmN3bpymp60xL3RscyEu5Bt8/KcDspBocezmQ5OqOn5kqfJLpEDGZn6vt/goCc
+Ukhcb3gc1nkjceWA2yba3oga53MBL+VgxAZelS+CKl+xPsG2wYW3Gfrkfp5AW1G4
+0Q2nqGBHb9Z6WYghRse3/t92Rq/h4G1bgYceGBO8xakJsFhsvdZQ6ewDqqZ7un9l
+b6iMrjWbq4aTkXkAMaSFXcqFBel+58T3I0BL70KRZuFbs3rIxrYDwCcgrTp6y0v1
+8/KO7LbNXLVkfkPAoONBQo9HMcebWQ==
+=zSYl
+-----END PGP SIGNATURE-----
+
+--Sig_/ab1MvUwH6nCM2WdhBMI08n1--
