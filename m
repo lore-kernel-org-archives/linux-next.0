@@ -1,63 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with the dma-mapping
- tree
-Date: Thu, 21 Feb 2019 10:58:51 +1100
-Message-ID: <20190221105851.5b0a9b20@canb.auug.org.au>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: Fixes tag needs some work in the drivers-x86 tree
+Date: Wed, 20 Feb 2019 16:40:41 -0800
+Message-ID: <20190221004041.GA5838@wrath>
+References: <20190207095703.564e76b2@canb.auug.org.au>
+ <38152c55-c2c1-c89f-2751-0ef0d40fcba9@linux.intel.com>
+ <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
+ <e0c40627-f1a2-254f-14b0-b9df0d62dd34@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9qZbnT/+rkMau5rPE3RXGXh"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <e0c40627-f1a2-254f-14b0-b9df0d62dd34@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To: "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/9qZbnT/+rkMau5rPE3RXGXh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 13, 2019 at 08:45:56PM +0530, Bhardwaj, Rajneesh wrote:
+> 
+> On 07-Feb-19 9:25 PM, Andy Shevchenko wrote:
+> > On Thu, Feb 7, 2019 at 4:06 AM Bhardwaj, Rajneesh
+> > <rajneesh.bhardwaj@linux.intel.com> wrote:
+> > > On 07-Feb-19 4:27 AM, Stephen Rothwell wrote:
+> > > 
+> > > Hi all,
+> > > 
+> > > In commit
+> > > 
+> > >    4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr_show")
+> > > 
+> > > Fixes tag
+> > > 
+> > >    Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
+> > > 
+> > > has these problem(s):
+> > > 
+> > >    - Target SHA1 does not exist
+> > > 
+> > > Did you mean:
+> > > 
+> > >    2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
+> > > 
+> > > Yes, upstream commit is 2eb150558bb79ee01c39b64c2868216c0be2904f. For some reason when i do git show on my repo with both these SHA1 i see the same patch.
+> > > 
+> > > I will fix this in next version.
+> > Hmm... this came to our published branch, i.e. for-next, would it be
+> > better to update it via rebasing?
+> > 
+> > Darren, what do you think?
+> 
+> Hi Andy, I have corrected this in v2 anyway and i sent to upstream today,
+> just in case you prefer it over rebasing.
+> 
+> https://patchwork.kernel.org/patch/10810123/
+> 
 
-Hi all,
+While we try hard not to rebase, if the choice is to rebase for-next or send a
+bad commit to upstream, I will opt for the rebase.
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in:
+Andy, I would suggest doing the rebase.
 
-  drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-
-between commit:
-
-  82c5de0ab8db ("dma-mapping: remove the DMA_MEMORY_EXCLUSIVE flag")
-
-from the dma-mapping tree and commit:
-
-  43a445f188e1 ("media: sh_mobile_ceu_camera: remove obsolete soc_camera dr=
-iver")
-
-from the v4l-dvb tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9qZbnT/+rkMau5rPE3RXGXh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxt6bsACgkQAVBC80lX
-0GxEcQf/d2kq/a1lx+IVPNdHYa1ZDF2Wl4/WoHlZx14OQ0cU4mmawzvzfhmYqulI
-bfF2LwPEbmJ3f+yOns9APDyWZCREcjfQxSKX5g0JbRLkoK2ZZjVQtglexOAF/+0G
-D4QL6H3E76oqzhtZ32G3VUJt1KqfU+BaNp+OMjHzclQ39iYFlUuFrKCtwb/tl9H7
-+BgagX8wp80SBMxHS7sntcm8g8Q/AuyLihitEWe7+AI6sGEK3EBAh9h3WSn8VRRa
-PbfKdKLGJJtKRE9QDeZCyCOva/Vj/SxaaLzVGBL0p51MeQ+XuYkBERZvgKOTp4p3
-sFpmw+YoG0qCS/GdkabExDrmpyzuEw==
-=NlNm
------END PGP SIGNATURE-----
-
---Sig_/9qZbnT/+rkMau5rPE3RXGXh--
+-- 
+Darren Hart
+VMware Open Source Technology Center
