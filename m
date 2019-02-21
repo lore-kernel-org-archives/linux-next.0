@@ -1,55 +1,55 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-Date: Thu, 21 Feb 2019 17:40:08 +0000
-Message-ID: <20190221174000.GG17515@mellanox.com>
-References: <20190212162003.1aa1ffbd@canb.auug.org.au>
- <20190212161528.GN12668@bombadil.infradead.org>
- <20190212162324.GU24706@mellanox.com>
- <20190213212621.GW12668@bombadil.infradead.org>
- <20190213220929.GO24706@mellanox.com>
- <20190221234716.2144eba3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in Linus' tree
+Date: Fri, 22 Feb 2019 07:16:55 +1100
+Message-ID: <20190222071655.31e0fdbd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lHrgtj6XcjRWGQLRBff+fWi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190221234716.2144eba3@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <E0E23B6138D82145A628566764491D93@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matthew Wilcox <willy@infradead.org>, Doug Ledford <dledford@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:47:16PM +1100, Stephen Rothwell wrote:
-> Hi Jason,
->=20
-> On Wed, 13 Feb 2019 22:09:36 +0000 Jason Gunthorpe <jgg@mellanox.com> wro=
-te:
-> >
-> > I personally think it is not good to put major logic changes in merge
-> > commits, so I would prefer the #2 approach for this case.
->=20
-> These are not difficult merge fixes or logic changes.
+--Sig_/lHrgtj6XcjRWGQLRBff+fWi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That comment was directed at Matt's correct suggestion to use
-alloc_cyclic, this same suggestion applies to this conflict as well.
+Hi Linus,
 
-The mechanical change of the args is not so bad for a merge commit.
+In commit
 
-> > SFR's tree is just a reference. Who ever takes care to resolve these
-> > conflicts has to manually do the fixing up. If you do send your tree
-> > early I will fix it up as part of prepping the RDMA tree PR. Otherwise
-> > you will have to fix it.
->=20
-> Neither of you need to fix it ...
+  1062af920c07 ("tmpfs: fix link accounting when a tmpfile is linked in")
 
-Not quite, I always re-do and verify all your merge resolutions and
-send them to Linus as both a raw diff and as an actual merge commit
-for him to reference. This way these things are checked in multiple
-ways.
+Fixes tag
 
-It is difficult to run this flow if we don't have an agreed order of
-trees, as producing the resolutions for an unmerged tree is not so
-straight forward.
+  Fixes: f4e0c30c191 ("allow the temp files created by open() to be linked =
+to")
 
-Jason
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lHrgtj6XcjRWGQLRBff+fWi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvBzcACgkQAVBC80lX
+0GzWPgf/eJLLEeL9nQ+U1BVDfIDO7GHG7/kua8bUonZR+bQVf7gDw9D+WwRotbP1
+9GVkOZA5TcwHh2F2TMgXj6UzL4W6U3VrvRDSnhByYw0LktQZyKZ1jDc0uvrP7jDA
+kSj1rKf9dsUyvUkD8DSEZAfS1n3DgSXBbbnIUXPWUCO47f1yvClaD2pZRQ5gLHhZ
+Dc5dzAz/xVLesmdnV3nEB5tlFrK2tc5DjdLrfLiuwMy18RvuX/3CPmZMSDxhFJyM
+EvjsvKExk3n8LFAiMEgf4F9O3pR77NzyN2twqVrSOpb8LqocAWCAFw+nEIu02NdY
+w43NLPvM0MFDSbaTGDorzrJxvja1Fw==
+=yAbA
+-----END PGP SIGNATURE-----
+
+--Sig_/lHrgtj6XcjRWGQLRBff+fWi--
