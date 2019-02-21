@@ -1,53 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Thu, 21 Feb 2019 13:13:56 +1100
-Message-ID: <20190221131356.6a477727@canb.auug.org.au>
+From: Vinod Koul <vkoul@kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
+Date: Thu, 21 Feb 2019 11:04:09 +0530
+Message-ID: <20190221053409.GH2736@vkoul-mobl>
+References: <20190220044055.GD21884@vkoul-mobl>
+ <20190219.224813.723564128666927693.davem@davemloft.net>
+ <20190220083611.GJ3080@nanopsycho>
+ <20190220.110201.2245447687492293995.davem@davemloft.net>
+ <20190220205910.7bd7fd40@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/D.353ghiToqxg5gJzzMiy=o"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190220205910.7bd7fd40@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Stefano Brivio <sbrivio@redhat.com>
+Cc: David Miller <davem@davemloft.net>, jiri@resnulli.us, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
 List-Id: linux-next.vger.kernel.org
 
---Sig_/D.353ghiToqxg5gJzzMiy=o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 20-02-19, 20:59, Stefano Brivio wrote:
+> On Wed, 20 Feb 2019 11:02:01 -0800 (PST)
+> David Miller <davem@davemloft.net> wrote:
+> 
+> > From: Jiri Pirko <jiri@resnulli.us>
+> > Date: Wed, 20 Feb 2019 09:36:11 +0100
+> > 
+> > > Would be good to have some robot checking "Fixes" sanity...  
+> > 
+> > I want to add a script to my trees that locally do it for me but the
+> > backlog for patch review for me is so huge that I never get to "fun"
+> > tasks like that....
+> 
+> If it helps, this is what I use after being bitten once:
+> 
+> #!/bin/sh
+> 
+> [ ${#} -ne 2 ] && echo "Usage: %0 PATCH_FILE GIT_TREE" && exit 1
+> grep "^Fixes: " "${1}" | while read -r f; do
+> 	sha="$(echo "${f}" | cut -d' ' -f2)"
+> 	if [ -z "${sha}" ] || [ "${f}" != "$(git -C "${2}" show -s --abbrev=12 --pretty=format:"Fixes: %h (\"%s\")" "${sha}" 2>/dev/null)" ]; then
+> 		echo "Bad tag: ${f}" && exit 1
+> 	fi
+> done
 
-Hi all,
+Awesome thanks, I am adding this into my patch commit script and well as
+send script
 
-After merging the sound-asoc tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
-
-sound/soc/samsung/odroid.c: In function 'odroid_audio_probe':
-sound/soc/samsung/odroid.c:298:22: warning: 'cpu_dai' may be used uninitial=
-ized in this function [-Wmaybe-uninitialized]
-  priv->clk_i2s_bus =3D of_clk_get_by_name(cpu_dai, "iis");
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Introduced by commit
-
-  d832d2b246c5 ("ASoC: samsung: odroid: Fix of_node refcount unbalance")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/D.353ghiToqxg5gJzzMiy=o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxuCWQACgkQAVBC80lX
-0GzLKgf+I8LD/4hoM5MTxufQtLAdqo9N5W4ueLqdsa3QLgsBmn8zF3jXEtYVehTB
-aatLJJl/ePg0hZwnkSUYqvW1JIhDVRZNJyNM2scBsIOZ0F5yswbWB2v+6V+mkIga
-uoSb0z/UksnJspbwlNvh8hLr1ryVqWm+PsvYfyRuaGo+x29TKiJ9RFV5FCJj21Ib
-XwXuhe5V7qa7iT9HoHz1k/1oAcQGtZW5HYQBUL4Qz+nGYaAhBZs9BRQelYF5M9fC
-S+CZaN7OH2wakyksTDIhhKty6BNhF90T/Sn+OXcaykKz2W0GKOMB/nC1ZZpzrcWF
-3l2QpujD5w4s+L2mTwZ53tR2oaa+TA==
-=ANSR
------END PGP SIGNATURE-----
-
---Sig_/D.353ghiToqxg5gJzzMiy=o--
+-- 
+~Vinod
