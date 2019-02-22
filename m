@@ -1,43 +1,50 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the powerpc tree
-Date: Fri, 22 Feb 2019 22:28:26 +1100
-Message-ID: <87tvgwkqp1.fsf@concordia.ellerman.id.au>
-References: <20190222181403.4ce373bd@canb.auug.org.au> <535192d6-2142-05a6-4088-0f71d744c345@c-s.fr>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the powerpc tree with the
+ dma-mapping tree
+Date: Fri, 22 Feb 2019 13:49:46 +0100
+Message-ID: <20190222124946.GA29125@lst.de>
+References: <20190222091728.6d3d9877@canb.auug.org.au> <87ef80pjwy.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <535192d6-2142-05a6-4088-0f71d744c345@c-s.fr>
+Content-Disposition: inline
+In-Reply-To: <87ef80pjwy.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christophe Leroy <christophe.leroy@c-s.fr>, Stephen Rothwell <sfr@canb.auug.org.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Christoph Hellwig <hch@lst.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> Le 22/02/2019 à 08:14, Stephen Rothwell a écrit :
->> Hi all,
->> 
->> After merging the powerpc tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->> 
->> make[4]: *** No rule to make target 'arch/powerpc/mm/ptdump/core.o', needed by 'arch/powerpc/mm/ptdump/built-in.a'.
->> 
->> Caused by commit
->> 
->>    5df1cfa43394 ("powerpc: Move page table dump files in a dedicated subdirectory")
->> 
->> I have reverted that commit for today.
->
-> In the Makefile, replace core.o by ptdump.o (or rename the file ptdump.c 
-> to core.c). Michael, what was your intention ?
+On Fri, Feb 22, 2019 at 02:43:41PM +1100, Michael Ellerman wrote:
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> 
+> > Hi all,
+> >
+> > Today's linux-next merge of the powerpc tree got a conflict in:
+> >
+> >   arch/powerpc/kernel/dma-swiotlb.c
+> >
+> > between commit:
+> >
+> >   cfced786969c ("dma-mapping: remove the default map_resource implementation")
+> >
+> > from the dma-mapping tree and commit:
+> >
+> >   68005b67d15a ("powerpc/dma: use the generic direct mapping bypass")
+> >
+> > from the powerpc tree.
+> >
+> > I fixed it up (I just used the latter) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.
+> 
+> Thanks.
+> 
+> Christoph, I've put the powerpc dma changes in a topic branch if you
+> want to merge it to reduce the conflicts. Up to you.
 
-To not break the build :}
-
-I originally used core.c but then decided ptdump.c was clearer.
-
-My jenkins was unhappy last night due to a distro upgrade so my builds
-didn't run and catch the breakage.
-
-I'll just fix it and force push.
-
-cheers
+Thanks.  I think the conflicts are pretty harmless as we are mostly
+removing code entirely in the powerpc tree that the dma-mapping tree
+touches.
