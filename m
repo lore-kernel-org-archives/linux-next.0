@@ -1,47 +1,41 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Thu, 21 Feb 2019 17:10:41 -0800
-Message-ID: <e21bc598-fe9f-c988-bc8a-bc23b6d62a71@gmail.com>
-References: <20190222120644.0bdc4da8@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: manual merge of the swiotlb tree with the powerpc tree
+Date: Fri, 22 Feb 2019 14:17:58 +1100
+Message-ID: <87h8cwpl3t.fsf@concordia.ellerman.id.au>
+References: <20190222113624.2499244a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190222120644.0bdc4da8@canb.auug.org.au>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190222113624.2499244a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Dongli Zhang <dongli.zhang@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-On 2/21/19 5:06 PM, Stephen Rothwell wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 > Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/net/ethernet/rocker/rocker_main.c: In function 'rocker_port_attr_set':
-> drivers/net/ethernet/rocker/rocker_main.c:2083:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    err = rocker_world_port_attr_pre_bridge_flags_set(rocker_port,
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->               attr->u.brport_flags,
->               ~~~~~~~~~~~~~~~~~~~~~
->               trans);
->               ~~~~~~
-> drivers/net/ethernet/rocker/rocker_main.c:2086:2: note: here
->   case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS:
->   ^~~~
-> 
-> Introduced by commit
-> 
->   93700458ff63 ("rocker: Check Handle PORT_PRE_BRIDGE_FLAGS")
-> 
-> I get this warning because I am building with -Wimplicit-fallthrough
-> in attempt to catch new additions early.  The gcc warning can be turned
-> off by adding a /* fall through */ comment at the point the fall through
-> happens (assuming that the fall through is intentional).
+>
+> Today's linux-next merge of the swiotlb tree got a conflict in:
+>
+>   kernel/dma/swiotlb.c
+>
+> between commit:
+>
+>   feee96440c9c ("swiotlb: remove swiotlb_dma_supported")
+>
+> from the powerpc tree and commit:
+>
+>   71602fe6d4e9 ("swiotlb: add debugfs to track swiotlb buffer usage")
+>
+> from the swiotlb tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-There is a missing break, my rebase went wrong with that, I will send a
-fix shortly for that.
--- 
-Florian
+OK thanks. That looks pretty harmless as far as conflicts go.
+
+cheers
