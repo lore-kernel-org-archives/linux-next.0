@@ -1,45 +1,49 @@
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: linux-next: build failure after merge of the rpmsg tree
-Date: Fri, 22 Feb 2019 14:02:20 +0000
-Message-ID: <e643b3be45d342adb331d5c07139b505@SFHDAG7NODE2.st.com>
-References: <20190222161817.32e35462@canb.auug.org.au>
- <20190222125046.GB29125@lst.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the powerpc tree
+Date: Sun, 24 Feb 2019 01:05:11 +1100
+Message-ID: <20190224010511.74f25272@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ioXh4QPO9VkP60je8D=8ArN"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190222125046.GB29125@lst.de>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+--Sig_/ioXh4QPO9VkP60je8D=8ArN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Changes in remoteproc have been introduced to associate dedicated dma coherent memory pool to each virtio device.
-It is needed when we have several virtio devices for which buffers can't be allocated from the same memory region.
-Patch introduces support in both ways:
-- memory region declared thanks to reserved memory and associated thanks to of_reserved_mem_device_init_by_idx(): mainly used for regions located in DDR.
-- memory region specified in rproc driver itself and defined as dma coherent thanks to dma_declare_coherent_memory(): These regions are generally located in coprocessor/SoC internal memories and declared in different ways by the different rproc drivers (regs in DT, hard coded values in drivers...).
+Hi all,
 
-For me, dma_declare_coherent_memory based solution is there to allow a smooth transition from current rproc drivers implementations to a cleaner and unified one based on reserved memory declaration.
+Commit
 
-Regards,
-Loic
+  f68e7927212f ("Revert "powerpc/book3s32: Reorder _PAGE_XXX flags to simpl=
+ify TLB handling"")
 
-> -----Original Message-----
-> From: Christoph Hellwig <hch@lst.de>
-> Sent: vendredi 22 février 2019 13:51
-> To: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>; Christoph Hellwig
-> <hch@lst.de>; Linux Next Mailing List <linux-next@vger.kernel.org>; Linux
-> Kernel Mailing List <linux-kernel@vger.kernel.org>; Loic PALLARDY
-> <loic.pallardy@st.com>
-> Subject: Re: linux-next: build failure after merge of the rpmsg tree
-> 
-> FYI, can I please get an explanation for the remoteproc changes?
-> 
-> We really should avoid adding new callers of
-> dma_declare_coherent_memory,
-> which is a rather badly designed interface.
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits as well :-)
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ioXh4QPO9VkP60je8D=8ArN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxxUxcACgkQAVBC80lX
+0Gxx5Qf7BnKPha2u1xMJBx5xoklk9av9LFuDOse22ee8m4nznWE7QxBicgMNy6Yp
+OoKA+h31QqtB/QRbd13uJoAaO3oP4ou+IpXfKao3tNolnP3SlYhQ8f4SEeLH4FlZ
+9RUC9Ej3iBCyBfx3Xr64vkUp3U9BaCuIxyPl1/c8NBAd9qAZb2zBZyhz8HpIEEVv
+arZ4m6TkhG+TaoxVXsnisbT4Ru6J1QN8j+mN4nHsjhy37uGPKNGKR1rEG7NK4pYE
+0zNCQrLGGGcWTHEdh4L+gTOGqLxeLfEjYg6FtfVJ7Ubj1MMtWWxBUmVFYlPfD62+
+rjx4cH8MAUb4SXqyd4iyXHcRlwE2JQ==
+=TZV/
+-----END PGP SIGNATURE-----
+
+--Sig_/ioXh4QPO9VkP60je8D=8ArN--
