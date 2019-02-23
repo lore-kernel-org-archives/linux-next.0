@@ -1,55 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the device-mapper tree
-Date: Sun, 24 Feb 2019 01:17:14 +1100
-Message-ID: <20190224011714.0d72b6ad@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Date: Sun, 24 Feb 2019 01:19:25 +1100
+Message-ID: <20190224011925.6db87446@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1jNdi.VcJAdx5+P6/1zIl/1"; protocol="application/pgp-signature"
+ boundary="Sig_/N_xnHxZuO.fQFKL=eVIoH.m"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/1jNdi.VcJAdx5+P6/1zIl/1
+--Sig_/N_xnHxZuO.fQFKL=eVIoH.m
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commit
 
-  eeee919c8a63 ("dm: always call blk_queue_split() in dm_process_bio()")
+  9bfe33ba29d0 ("x86/CPU: Add Icelake model number")
 
-Fixes tag
-
-  Fixes: 568c73a355e ("dm: update dm_process_bio() to split bio if in ->mak=
-e_request_fn()")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/1jNdi.VcJAdx5+P6/1zIl/1
+--Sig_/N_xnHxZuO.fQFKL=eVIoH.m
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxxVeoACgkQAVBC80lX
-0GyjcAf+LhRt827AX4Q9A+S8sxCNq2kgWch4Tqnv4TtWWUnVoHEPB06QdDsXoEn7
-FUQ/MvFCZSJldaD689qJneGTNLL4UPLzf/8JRpOP/sFtdbEnkZgs3AMRZHE2cVG0
-jpccyM4mv/sc3HxMWWoa/+bFk7fWAd+vrtUts0VhXeEKrwtfxSD6vBh3odZ9t86z
-bfqMLZd4973jAh5fPYUq7yELQVZtupeklbLbQ6N6irBmnSdk5aU2p/xAQpdGVDm4
-A+Z35UcLepCtLHXILyPfwG9E8AH/3+zq+yb+GyDY23CngOGJ2iXPzWW31be92Sjr
-SailG8oLiUigMv/tSY++rAbGPDFsvw==
-=eDnb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxxVm0ACgkQAVBC80lX
+0GzqUwgApQKmt2XQS+R5d3owu3zH3NlBwWJXCi7Nr7UaYv3tfOijnnt624mmUnAl
+XNxEHLZYyYakNSuDM7xe0RMXFv7lltE5mZkLE9WIm1XnjBVjbYFSMr4A3T5fujNU
+vT34qhwvvVcgTM1Ay0Iuuj1Y53wW1nEDRPyX3yyiUX8rVzqUwIzffXJrbqODrRIK
+J7hVVCv6wwKzl0aFoX2opYysfOJZdy97WQ+Q7Zy5DlV+vshgDYP2O37n8vO7Iz1t
+Gzztya/gpmjMR/oK9sPfDS6x2gcifOSCo9iHKTiFcAZtpFIPVw3uuKxWNK1P6vTi
+8ig14K2FIVmD0PF0QL5NVNUM5N9IOw==
+=Qd4J
 -----END PGP SIGNATURE-----
 
---Sig_/1jNdi.VcJAdx5+P6/1zIl/1--
+--Sig_/N_xnHxZuO.fQFKL=eVIoH.m--
