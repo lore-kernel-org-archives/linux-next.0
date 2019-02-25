@@ -1,55 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net-next tree
-Date: Mon, 25 Feb 2019 19:00:34 +1100
-Message-ID: <20190225190034.0cad4e3d@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the sound tree with the arm-soc tree
+Date: Mon, 25 Feb 2019 10:19:15 +0100
+Message-ID: <CAK8P3a3moJ12SDM3Ow-Hw3qBeTv9siswK+9pPiEA4JJ+7k4xvg@mail.gmail.com>
+References: <20190225123615.49bce7cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+eE9o=RAO22YcHqlnU8p7X7"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190225123615.49bce7cd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>, Thierry Reding <treding@nvidia.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/+eE9o=RAO22YcHqlnU8p7X7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 25, 2019 at 2:36 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Takashi,
+>
+> Today's linux-next merge of the sound tree got conflicts in:
+>
+>   arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>   arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>
+> between commits:
+>
+>   5eef17ee764d ("arm64: tegra: p2972: Sort nodes properly")
+>   be4f0dd347ad ("arm64: tegra: p2597: Sort nodes by unit-address")
+>
+> from the arm-soc tree and commit:
+>
+>   11ce4308307c ("arm64: tegra: custom name for hda sound card")
+>
+> from the sound tree.
+>
+> I fixed it up (see below - in tegra194-p2972-0000.dts. the line added
+> just needed to be moved up a few lines) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Hi all,
+The merge looks fine to me, but I wonder about that commit
+in the alsa tree, why does the sound card need a board specific
+name?
 
-In commit
+I see this property being used in commit c0bde003a013 ("ALSA:
+hda/tegra: sound card name from device tree"), which removes
+a questionable use of the root compatible property, replacing
+it with the new 'nvidia,model' property. We don't do this for any
+other subsystem, so why does the sound subsystem export
+information about the board as a string here?
 
-  a638b1d8cc87 ("net: hns3: fix get VF RSS issue")
+(added ASoC maintainers to Cc for insight).
 
-Fixes tag
-
-  Fixes: 374ad291762a ("net: hns3: net: hns3: Add RSS general configuration=
- support for VF")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h (%s)'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/+eE9o=RAO22YcHqlnU8p7X7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxzoKIACgkQAVBC80lX
-0GxBpggAhgGK6bijkh0RiWclJTK1zRkfY1qhr3oqhxgdjnoZJbUFL/dPXlwB5/Fj
-RZGnOTkvs/MsVC7tpGx34gWxKLM48/uxCbLgqRJ0iCtN4KN9uxS6wUsjbGrhAar6
-5u0UniFTIpvXs1JvVGfEA2Px1B9FSisixH+khaciEgSsfoJpkojXiOcCcFWpwFpD
-wEbUf/cQ87954Ve2m0pBP5MGz+FM+YEXlkTiyVdOFoJfw8sz+1s7v6Md73+9N7lE
-JRyCnOYbCtWHY/Y//PnbR40MKaqeNaMKW0U9gE029cAQlqXj1L/n2+1pWcEWzJrm
-mItJFqaFYFeSyFsQbfIl8IztpePVZw==
-=Nmow
------END PGP SIGNATURE-----
-
---Sig_/+eE9o=RAO22YcHqlnU8p7X7--
+      Arnd
