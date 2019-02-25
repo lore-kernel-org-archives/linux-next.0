@@ -1,58 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc-fixes tree
-Date: Tue, 26 Feb 2019 08:22:00 +1100
-Message-ID: <20190226082200.4f7aa469@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the hwmon-staging tree
+Date: Tue, 26 Feb 2019 10:55:47 +1100
+Message-ID: <20190226105547.7343cf8c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HsmC5+H8BGJg6XR3Y=16OJp"; protocol="application/pgp-signature"
+ boundary="Sig_/o05=A/bh3XSY4oJOmcMSpY/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Takeshi Saito <takeshi.saito.xv@renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Simon Horman <horms+renesas@verge.net.au>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/HsmC5+H8BGJg6XR3Y=16OJp
+--Sig_/o05=A/bh3XSY4oJOmcMSpY/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ulf,
+Hi Guenter,
 
-After merging the mmc-fixes tree, today's linux-next build (x86_64
+After merging the hwmon-staging tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/mmc/host/tmio_mmc_core.c: In function 'tmio_mmc_start_data':
-drivers/mmc/host/tmio_mmc_core.c:706:34: error: 'SZ_64K' undeclared (first =
-use in this function); did you mean 'EM_68K'?
-  if (host->mmc->max_blk_count >=3D SZ_64K)
-                                  ^~~~~~
-                                  EM_68K
-drivers/mmc/host/tmio_mmc_core.c:706:34: note: each undeclared identifier i=
-s reported only once for each function it appears in
+drivers/hwmon/ad7418: struct of_device_id is 200 bytes.  The last of 3 is:
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x61 0x64 0x69 0x2c 0x61 0x64 0x37 0x34 0x31 0x38 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x02 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00=20
+FATAL: drivers/hwmon/ad7418: struct of_device_id is not terminated with a N=
+ULL entry!
 
 Caused by commit
 
-  063f8fee9927 ("mmc: tmio: fix access width of Block Count Register")
-
-I have reverted that commit for today.
+  08c95c6f6f95 ("hwmon: (ad7418) Add device tree probing")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/HsmC5+H8BGJg6XR3Y=16OJp
+--Sig_/o05=A/bh3XSY4oJOmcMSpY/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx0XHgACgkQAVBC80lX
-0Gy7OAf/cT6Hlz+ghJ1ym3d25eF+1tCidaPkMIzPTfdZs7B+jKiILoehFNQqPvqc
-7rjFL5a/7vZd5JDeH9kXADKRBRUKFTOMGeNtleIfZO5hewkfRYDDtLU4r77A9NtS
-RATn3uo1JwfHUUsi2YC2dNvzc8UiNKlsKLSNSnUmA9heVHmkl0xqvIdekd15JEKI
-mpKqkRg2aITc+5SleFqzTguifd+mJARhqt5m9X4GgWHbQqa5jpI8yQgw8VnJGrCN
-G7J0DMpvUzWYXmji8lCDn848t74uqvT7y+MAFdNN4QyN/SGKcqzZREN2zghbOyAV
-X5JwnHUJqqW8Y12KkgMWjPTx3FZvBQ==
-=8Idg
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx0gIMACgkQAVBC80lX
+0Gx4Qwf+LUVgwUImJgFE2+OLSSFZXsGeTo/KzRNfab83NXhBjOPXOiRQGfhrNelK
+fd7v+8dmwbn9GLpDzvbhW/dRIQwJiRelIYoWnFsgah42WmR9zTHOR2DmjtFtN4gh
+g1mJER9bt0gEwbF4qT4uLDxScJuQXXhGzEVzZbYNwMIri6szI1z8oAGvL/hVbaM8
+dwAQShvZI3H1jsATrU6gOm1DL2bul/jkxeoKxIo4fiOV1xnBcdqoKOCzrKQ+3fZK
+FKbeAjFu0UusJNlRSelI3H2Pj6b4Kpvvn4STPRI9pVnOlXIM5V4vyxGFJGXgzKeB
+/0Ni4BEDfEtURi9OFF8H7C4uoAZRRQ==
+=Qevw
 -----END PGP SIGNATURE-----
 
---Sig_/HsmC5+H8BGJg6XR3Y=16OJp--
+--Sig_/o05=A/bh3XSY4oJOmcMSpY/--
