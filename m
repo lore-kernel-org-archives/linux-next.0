@@ -1,61 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the gpio tree
-Date: Mon, 25 Feb 2019 15:52:19 +1100
-Message-ID: <20190225155219.3ed4979c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the powerpc
+ tree
+Date: Mon, 25 Feb 2019 17:16:09 +1100
+Message-ID: <20190225171609.07e1fc5c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Q5yfiHQ1x7dkA5sHNRDHoyX"; protocol="application/pgp-signature"
+ boundary="Sig_/wB4RF05PjbNRP=+Lz_T8n29"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>
+To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christophe Leroy <christophe.leroy@c-s.fr>, Mike Rapoport <rppt@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Q5yfiHQ1x7dkA5sHNRDHoyX
+--Sig_/wB4RF05PjbNRP=+Lz_T8n29
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
-After merging the gpio tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
-drivers/gpio/gpio-amd-fch.c:164:49: warning: passing argument 2 of 'devm_io=
-remap_resource' discards 'const' qualifier from pointer target type [-Wdisc=
-arded-qualifiers]
-  priv->base =3D devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
-                                                 ^~~~~~~~~~~~~~~~~~~
-In file included from include/linux/platform_device.h:14,
-                 from drivers/gpio/gpio-amd-fch.c:15:
-include/linux/device.h:709:15: note: expected 'struct resource *' but argum=
-ent is of type 'const struct resource *'
- void __iomem *devm_ioremap_resource(struct device *dev, struct resource *r=
-es);
-               ^~~~~~~~~~~~~~~~~~~~~
+  arch/powerpc/kernel/setup_64.c
 
-Introduced by commit
+between commits:
 
-  e09d168f13f0 ("gpio: AMD G-Series PCH gpio driver")
+  c8e409a33cf8 ("powerpc/irq: use memblock functions returning virtual addr=
+ess")
+  d608898abc74 ("powerpc: clean stack pointers naming")
+
+from the powerpc tree and commit:
+
+  82af77ee7503 ("powerpc: prefer memblock APIs returning virtual address")
+
+from the akpm-current tree.
+
+Commits 82af77ee7503 and c8e409a33cf8 overlap.
+
+I fixed it up (I just used the powerpc tree version of this file) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Q5yfiHQ1x7dkA5sHNRDHoyX
+--Sig_/wB4RF05PjbNRP=+Lz_T8n29
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxzdIMACgkQAVBC80lX
-0Gwgugf/S+ddkjwOvu8aDpA+Q59Cmr6zPSTiRHYymhFK5M3BtNbclN63WTKNhTzS
-NfxsRBgNoGdy4M1wKi7WiQ74kYGyUCin8EV6piBy8x57sE8XPgkwJKddu2bGain1
-Lsj5uvS9z3so7RO8Y29wzSSLXduemaMcekWZ8rIfXaWzQitYPc1Tt13P6YLj4z84
-2xkFj1FOrfPPeadx+KKYle9Brn33wJ3J/4KK28HOOxAlug25lWZapmWX2FT2Mluv
-YJsIc6Tulj6xsqKkGbKJ46DCx5n5jyi4XyBKdBx7+Gve0L44JDA5u9vWiwW5ca4X
-f+LKP4eqSI599OSSju4cduQMQFLE0A==
-=rkTb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxziCkACgkQAVBC80lX
+0GyuBgf9FaNXvPy+jebJC00E3VW/fZhuXIA/tmJo/VHT5juh3uXkJI9uOO2/m435
+vHSCtdrKouDdZilm0nv2flDVU/h+Cat4Rh5icLYuB5+b1q1LPgIgNUhaMayKQDNs
+XK6knx7bw+ZFhxzEUS6C24G0W80ywnXwNcAysrL/nE8ter4QfjSq5ejjfsS9rdw8
+4M+9rv2KmRu7uvF4BkzGoj4nnwq6C6v1TqCHcudCdqMV4aYIkWPqOvaE8vHqUXis
+ak0wiRwiBYAXO/mMV4TjRi0PA8RXjbq6ZJ6pIu90yzsyu/3xnmE1CYnnWaUF24tn
+ZsW6cU2KMMVGgcQBlnhk2H0OxzkDtw==
+=VCbT
 -----END PGP SIGNATURE-----
 
---Sig_/Q5yfiHQ1x7dkA5sHNRDHoyX--
+--Sig_/wB4RF05PjbNRP=+Lz_T8n29--
