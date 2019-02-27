@@ -1,39 +1,48 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mmc-fixes tree
-Date: Wed, 27 Feb 2019 10:43:15 +0100
-Message-ID: <CAPDyKFoXY2wx+HoVEJuPGEJnmUYYK+sCEGEDWhAKJ9bV5zytkg@mail.gmail.com>
-References: <20190226082200.4f7aa469@canb.auug.org.au>
+From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: Re: linux-next: manual merge of the vhost tree with the iommu tree
+Date: Wed, 27 Feb 2019 11:30:27 +0000
+Message-ID: <2370af99-9dc1-b694-9f1c-1951d1e70435@arm.com>
+References: <20190227152506.4696a59f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190226082200.4f7aa469@canb.auug.org.au>
+In-Reply-To: <20190227152506.4696a59f@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Takeshi Saito <takeshi.saito.xv@renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Simon Horman <horms+renesas@verge.net.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Michael S. Tsirkin" <mst@redhat.com>, Joerg Roedel <joro@8bytes.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lan Tianyu <Tianyu.Lan@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 25 Feb 2019 at 22:22, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Ulf,
->
-> After merging the mmc-fixes tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/mmc/host/tmio_mmc_core.c: In function 'tmio_mmc_start_data':
-> drivers/mmc/host/tmio_mmc_core.c:706:34: error: 'SZ_64K' undeclared (first use in this function); did you mean 'EM_68K'?
->   if (host->mmc->max_blk_count >= SZ_64K)
->                                   ^~~~~~
->                                   EM_68K
-> drivers/mmc/host/tmio_mmc_core.c:706:34: note: each undeclared identifier is reported only once for each function it appears in
->
-> Caused by commit
->
->   063f8fee9927 ("mmc: tmio: fix access width of Block Count Register")
->
-> I have reverted that commit for today.
+On 27/02/2019 04:25, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the vhost tree got conflicts in:
+> 
+>   drivers/iommu/Kconfig
+>   drivers/iommu/Makefile
+> 
+> between commit:
+> 
+>   004240dcc222 ("iommu/hyper-v: Add Hyper-V stub IOMMU driver")
+> 
+> from the iommu tree and commit:
+> 
+>   d906f4225497 ("iommu: Add virtio-iommu driver")
+> 
+> from the vhost tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+Thanks Stephen, sorry about the extra work. The virtio-iommu driver was
+helpfully added to the vhost tree to ensure it doesn't break anything,
+but since Joerg has some reservations, only the hyper-v change will be
+merged in v5.1. I'd welcome a change of heart however, in which case the
+driver should probably go via the iommu tree to avoid conflicts.
 
-Thanks for letting me know and sorry for the inconvenience! The
-offending patch is now amended and should be fixed.
-
-Kind regards
-Uffe
+Thanks,
+Jean
