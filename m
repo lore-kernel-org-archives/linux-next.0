@@ -1,34 +1,39 @@
-From: Michael Kelley <mikelley@microsoft.com>
-Subject: RE: linux-next: Tree for Feb 27 (mshyperv)
-Date: Wed, 27 Feb 2019 18:51:35 +0000
-Message-ID: <DM5PR2101MB09184DFB7037015F99C5EB93D7740@DM5PR2101MB0918.namprd21.prod.outlook.com>
-References: <20190227174427.4e8f7f24@canb.auug.org.au>
- <a6cfb923-c21e-b0e3-44e1-33197aac2625@infradead.org>
+From: Kuppuswamy Sathyanarayanan
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: [PATCH v1 1/1] PCI/ATS: Add inline to pci_prg_resp_pasid_required()
+Date: Wed, 27 Feb 2019 11:26:46 -0800
+Message-ID: <65d2712b741cc17c72994642458520853e78f6ba.1551295414.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20190227132004.4d3a3da4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a6cfb923-c21e-b0e3-44e1-33197aac2625@infradead.org>
-Content-Language: en-US
+In-Reply-To: <20190227132004.4d3a3da4@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, "joro@8bytes.org" <joro@8bytes.org>, Tianyu Lan <Tianyu.Lan@microsoft.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+To: sfr@canb.auug.org.au, joro@8bytes.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org> Sent: Wednesday, February 27, 20=
-19 9:25 AM
->
-> on i386:
->=20
-> ../arch/x86/kernel/cpu/mshyperv.c: In function 'ms_hyperv_init_platform':
-> ../arch/x86/kernel/cpu/mshyperv.c:339:3: error: 'x2apic_phys' undeclared =
-(first use in this
-> function)
->    x2apic_phys =3D 1;
->    ^
+Fix unused function warning when compiled with CONFIG_PCI_PASID
+disabled.
 
-FYI, the kbuild test robot flagged this issue overnight, and Tianyu Lan sub=
-mitted a
-fix earlier this morning.
+Fixes: e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required() interface.")
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ include/linux/pci-ats.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Michael
+diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
+index facfd6a18fe1..1ebb88e7c184 100644
+--- a/include/linux/pci-ats.h
++++ b/include/linux/pci-ats.h
+@@ -67,7 +67,7 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
+ 	return -EINVAL;
+ }
+ 
+-static int pci_prg_resp_pasid_required(struct pci_dev *pdev)
++static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+ {
+ 	return 0;
+ }
+-- 
+2.20.1
