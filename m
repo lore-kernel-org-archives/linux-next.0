@@ -1,39 +1,47 @@
-From: Kuppuswamy Sathyanarayanan
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH v1 1/1] PCI/ATS: Add inline to pci_prg_resp_pasid_required()
-Date: Wed, 27 Feb 2019 11:26:46 -0800
-Message-ID: <65d2712b741cc17c72994642458520853e78f6ba.1551295414.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <20190227132004.4d3a3da4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the pci tree
+Date: Thu, 28 Feb 2019 08:01:47 +1100
+Message-ID: <20190228080147.20df150f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZkBFemCWfKw2zLvRzJ93lP1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190227132004.4d3a3da4@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au, joro@8bytes.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-Fix unused function warning when compiled with CONFIG_PCI_PASID
-disabled.
+--Sig_/ZkBFemCWfKw2zLvRzJ93lP1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required() interface.")
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- include/linux/pci-ats.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Bjorn,
 
-diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
-index facfd6a18fe1..1ebb88e7c184 100644
---- a/include/linux/pci-ats.h
-+++ b/include/linux/pci-ats.h
-@@ -67,7 +67,7 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
- 	return -EINVAL;
- }
- 
--static int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-+static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
- {
- 	return 0;
- }
--- 
-2.20.1
+Commit
+
+  a048671aa0c8 ("PCI: qcom: Don't deassert reset GPIO during probe")
+
+is missing a Signed-off-by from its committer.
+
+
+-=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZkBFemCWfKw2zLvRzJ93lP1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx2+rsACgkQAVBC80lX
+0GxSvAf9FIFR60LO91Ch5Uf/pK99io3w7dhQh7oi6xj3hBaFcez/fpnxCDf05bIp
+R7cGYx5JZIu8Qn1VeRSr6RYq1izVWvudOQid3HzTDpaWbUFC3XJ0bLBjdDBTiLEO
+J045gjA4A4Tp6G+DJgrqBrsA0VDJtEbnJ3N/57Nx9l4bvNiGDmnksu2D4WTK+C+S
+wn+AaZmLPm4koXcaiS/t361lVbE5cKwRkf/sKY4o8KUDtDD2QT4cTRUPSzak6DAb
+7CvWxfhH3c37ZVHDWGfvjC8s7e4Ro3kFfL6MUjgIUz5PtoxLewvj4O4drr0qFYfY
+0arjtNj6UI+iKZT8sdzFpYLN+jIuJA==
+=eobH
+-----END PGP SIGNATURE-----
+
+--Sig_/ZkBFemCWfKw2zLvRzJ93lP1--
