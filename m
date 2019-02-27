@@ -1,55 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the iommu tree
-Date: Wed, 27 Feb 2019 13:20:04 +1100
-Message-ID: <20190227132004.4d3a3da4@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
+Date: Wed, 27 Feb 2019 13:23:14 +1100
+Message-ID: <20190227132314.16dd9257@canb.auug.org.au>
+References: <20190225190034.0cad4e3d@canb.auug.org.au>
+        <0788736a-dfba-edd1-f62d-2205d6702f4b@huawei.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ezeCYBum=Iq9ezBpZwWBF6+"; protocol="application/pgp-signature"
+ boundary="Sig_/v5Gv7/8/PvwYbgq2qPELyxu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0788736a-dfba-edd1-f62d-2205d6702f4b@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+To: tanhuazhong <tanhuazhong@huawei.com>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ezeCYBum=Iq9ezBpZwWBF6+
+--Sig_/v5Gv7/8/PvwYbgq2qPELyxu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Joerg,
+Hi,
 
-After merging the iommu tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+On Wed, 27 Feb 2019 09:12:57 +0800 tanhuazhong <tanhuazhong@huawei.com> wro=
+te:
+>
+> It is my mistake, so sorry about this. There is a redundant "net: hns3:=20
+> " in the fixes tag.
+>=20
+> How could I fix it?
 
-In file included from drivers/pci/pci.c:32:
-include/linux/pci-ats.h:70:12: warning: 'pci_prg_resp_pasid_required' defin=
-ed but not used [-Wunused-function]
- static int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Introduced by commit
-
-  e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required() interface.")
-
-The non CONFIG_PCI_PASID version needs an "inline".
+Since Dave doesn't rebase his tree, there is no way to fix it (and it
+is not that important any in this case), just use this as a learning
+experience for next time :-)
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ezeCYBum=Iq9ezBpZwWBF6+
+--Sig_/v5Gv7/8/PvwYbgq2qPELyxu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx189QACgkQAVBC80lX
-0GxdKAf8DbcfYSLMKlKP0orGWyczZk+rTFfiLuN2m4Hq+QvaUo95ST9AmAJ7EGcY
-gQduiIbC6zcoFg7V3+1cGo98KLX4gepynYET64c8CuY4ahTgncZ6PxXiYwC6Ga74
-FKKPu5WgvsJDH//Lp0ztJFuMevJMYqaqErN+HFtSOo+rGvurFuTqSgUAuDysadls
-QsFFsS04NxS38SNyxbo2hCjtBFkoxNRWjlFto/wBC9JnqfPi9XARCYh5/Xh53MH5
-8lDSw+P29Vv9MB1zeaZHeA7IaYtK8H3brqLCRgKnM0i6tCAuKcey2+b+Y2zTSYAx
-fLFHJMDYiW58SCkWomO37fm9+4yhCA==
-=jpbv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx19JIACgkQAVBC80lX
+0GymYwf/WnsyKFMcu0U5ZauVBV5cU51Tmv1UVIhWPZfKsG9U9pl/FkEYSB1Srnwx
+JIdTRT+1B1weSJmVdoqGrby7T5OJY0u094Nrv2X2O3z8kVItWT4Xqk4u3+dxlkNI
+c3cQEJA8waAzLwos4d9BZjcv8JKhTYYOtZ6e0yiok6h2+/Cqqku6oNQB6YvAX32i
+RlsKqQz+MFX+X+uWI2YUZEuZ/E4762bHkF9AtuuGwWNASn9D39w7YfyZQane6dxY
+AKpDPSByAKY9W/ctofwy0/IvbGEN850xZ5iItKMJ455KcjNcN/fHVz2/uxg9F1+o
+zuuyblSK4Hl/2TBWzQsLlyW45hH0sg==
+=HzPf
 -----END PGP SIGNATURE-----
 
---Sig_/ezeCYBum=Iq9ezBpZwWBF6+--
+--Sig_/v5Gv7/8/PvwYbgq2qPELyxu--
