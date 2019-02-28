@@ -1,39 +1,63 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-Date: Wed, 27 Feb 2019 18:18:37 -0800
-Message-ID: <CAADnVQJXiZyCvDVTN4_Z=CnEo2hb3nxGWg6YhArxN9zrPaC8JQ@mail.gmail.com>
-References: <20190228123136.064f94a4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Thu, 28 Feb 2019 15:52:01 +1100
+Message-ID: <20190228155201.329a1fad@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JyAC1TUGYkg3xe9svj/HL1K"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190228123136.064f94a4@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 27, 2019 at 5:31 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the bpf-next tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> kernel/sysctl.c:1238:13: error: 'sysctl_bpf_stats_enabled' undeclared here (not in a function); did you mean 'sysctl_base_table'?
->    .data  = &sysctl_bpf_stats_enabled,
->              ^~~~~~~~~~~~~~~~~~~~~~~~
->              sysctl_base_table
->
-> Caused by commit
->
->   492ecee892c2 ("bpf: enable program stats")
->
-> CONFIG_BPF=y
-> # CONFIG_BPF_SYSCALL is not set
->
-> I applied the following patch for today, but it should be done
-> properly. Also this patch leaves proc_dointvec_minmax_bpf_stats() as an
-> unused function.
+--Sig_/JyAC1TUGYkg3xe9svj/HL1K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-thanks for the report.
-working on the fix.
+Hi all,
+
+Today's linux-next merge of the staging tree got a conflict in:
+
+  drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+
+between commit:
+
+  570b68c8ddde ("staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_SET")
+
+from the net-next tree and commit:
+
+  11f27765f611 ("staging: fsl-dpaa2: ethsw: Add missing netdevice check")
+
+from the staging tree.
+
+I fixed it up (the former is a superset of the latter) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/JyAC1TUGYkg3xe9svj/HL1K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx3aPEACgkQAVBC80lX
+0Gx+1Af/XY5BPPNxunXMZml6YaUuyP+N/0nOxUeF9h28hRtJBXvyWvE+RCPfWB0p
+9mrH+wa3XCkmyMAjxrtcDI96btwioE9GRFSDRO4ZXXwZp8eepfUXglDzBfuS4qS/
+fHlDFvm4rRQ2NLsASmLzfqfMHDXPbaaMp7sCDV7OpeZbUD0Ps2/RVwodWqzT7Y4y
+TyHb4uaNEgwaqng1BhwQev/LSWbUI2ZpUupEz4gk8O752RObvI9iPseXogQ6NF/p
+n+LPTKSRMFapArvqFj9rN0Q8CsrlU+ant929VPLjH8VPNxBQE2h4xLQeSq45NcJ+
+I26Xxhqd2YqwpaMqu2hpEteB47fstA==
+=ScKE
+-----END PGP SIGNATURE-----
+
+--Sig_/JyAC1TUGYkg3xe9svj/HL1K--
