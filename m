@@ -1,82 +1,34 @@
-From: Leon Romanovsky <leon@kernel.org>
-Subject: Re: linux-next: manual merge of the net-next tree with the rdma tree
-Date: Thu, 28 Feb 2019 11:05:38 +0200
-Message-ID: <20190228090538.GI15253@mtr-leonro.mtl.com>
-References: <20190227112522.2f32b5d7@canb.auug.org.au>
- <16f0ac6227f948165b7062a72e1fa82f1dfe4697.camel@redhat.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pci tree
+Date: Thu, 28 Feb 2019 10:03:11 +0000
+Message-ID: <20190228100311.GA10207@e107981-ln.cambridge.arm.com>
+References: <20190228080147.20df150f@canb.auug.org.au>
+ <CAErSpo5-wi128AGyMsyvoyX0ObKon3Q4dU8FJEDTZAtxFHPk=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Sw7tCqrGA+HQ0/zt"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <16f0ac6227f948165b7062a72e1fa82f1dfe4697.camel@redhat.com>
+In-Reply-To: <CAErSpo5-wi128AGyMsyvoyX0ObKon3Q4dU8FJEDTZAtxFHPk=w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Jason Gunthorpe <jgg@mellanox.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shamir Rabinovitch <shamir.rabinovitch@oracle.com>, Jakub Kicinski <jakub.kicinski@netronome.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-
---Sw7tCqrGA+HQ0/zt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Feb 27, 2019 at 11:24:51AM -0500, Doug Ledford wrote:
-> On Wed, 2019-02-27 at 11:25 +1100, Stephen Rothwell wrote:
-> > Hi all,
+On Wed, Feb 27, 2019 at 05:51:46PM -0600, Bjorn Helgaas wrote:
+> On Wed, Feb 27, 2019 at 3:01 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > Today's linux-next merge of the net-next tree got a conflict in:
+> > Hi Bjorn,
 > >
-> >   drivers/infiniband/hw/mlx4/Kconfig
+> > Commit
 > >
-> > between commit:
+> >   a048671aa0c8 ("PCI: qcom: Don't deassert reset GPIO during probe")
 > >
-> >   6fa8f1afd337 ("IB/{core,uverbs}: Move ib_umem_xxx functions from ib_core to ib_uverbs")
-> >
-> > from the rdma tree and commit:
-> >
-> >   f4b6bcc7002f ("net: devlink: turn devlink into a built-in")
-> >
-> > from the net-next tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
->
-> Thanks Stephen, we'll add it to the (largish this release) list of
-> conflicts to bring to Linus' attention.
+> > is missing a Signed-off-by from its committer.
+> 
+> Lorenzo, if you add your signed-off-by, I can rebuild this.  I think
+> it's on your pci/dwc branch.
 
-Thanks
+Apologies, sorry about this. I have now updated the branch.
 
->
-> --
-> Doug Ledford <dledford@redhat.com>
->     GPG KeyID: B826A3330E572FDD
->     Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
-
-
---Sw7tCqrGA+HQ0/zt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcd6RiAAoJEORje4g2cling6UQALWqfFTY0PGurqrSq5C/SMa0
-+drjsyY7SaxOO1pE6kXGAzA3QrM4qjD4jMPkk4yMdDx+Z9cdM0ycApnIKQhfzfGq
-VO+lWr3cvRRmYq2q+Hh0doLh8MWlBooTicc1m1DzLgziYRQUw1LyAs5El6UbcQvl
-BWnlPHF0ilcqIw5JCtKStchov7JLo/UYsrFtVX7G+0SSyw8TNmo53BaFQ4RwwR25
-XrYy93M86UGs7dALYmMVco+JTp5JvgD5u2f+7EQfe6DMHixcLQT2ynCDSwF4Fh02
-EYDiPw6N/ca1xpBYbZxE/Log8B3cAIGuh1W6yBeXidAYfDWuR89ep/RAotdAJuNM
-Q81+xMbwNmx49HP2ex7Jf4Ppjn6SPvPbkktzXjzgIDEs2YB0ElW9jj+HAPzwHEp3
-HPmuysZawGQY4SI3QETgUBtkFp+erezKoM8DxtC4mKCiDf8r12ZObmEuL5cDjORB
-gMUXh+L5J6C6H3SxTInMp9C/2dAEhpfWZvOKszZ4FxEV6FsQxmyqGV0z0TgvarCu
-UfzYpqiIIcPXRamjUcPJIHSgssORO6MNw5BBRbEwpsx11ux7me5vK6lB3FseNmUi
-YkpleORNneUZlfDLRuPWOGdXyafWhuKlwrBOkiI6dsNJ8Tt/fE848cx0hF43LHH/
-8oIm6QU4gEpIKQZkOBBt
-=WiJt
------END PGP SIGNATURE-----
-
---Sw7tCqrGA+HQ0/zt--
+Thanks,
+Lorenzo
