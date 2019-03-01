@@ -1,68 +1,111 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Date: Fri, 1 Mar 2019 13:23:51 +1100
-Message-ID: <20190301132351.6f4e815f@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with the xen-tip tree
+Date: Fri, 1 Mar 2019 17:06:22 +1100
+Message-ID: <20190301170622.6547961e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UfcNgO3NRzprj7em811gPnl"; protocol="application/pgp-signature"
+ boundary="Sig_/VOyMZKpg9/519naT73GnYsI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Kleiner <mario.kleiner.de@gmail.com>, David Francis <David.Francis@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Dan Williams <dan.j.williams@intel.com>, Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UfcNgO3NRzprj7em811gPnl
+--Sig_/VOyMZKpg9/519naT73GnYsI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+[Thanks, Dan for the heads up and resolution.]
 
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+Today's linux-next merge of the nvdimm tree got a conflict in:
+
+  mm/memory_hotplug.c
 
 between commit:
 
-  d63716658ac1 ("drm/amd/display: Use vrr friendly pageflip throttling in D=
-C.")
+  357b4da50a62 ("x86: respect memory size limiting via mem=3D parameter")
 
-from the drm-fixes tree and commits:
+from the xen-tip tree and commit:
 
-  8a48b44cd00f ("drm/amd/display: Call into DC once per multiplane flip")
-  bc7f670ee04c ("drm/amd/display: Perform plane updates only when needed")
+  2794129e902d ("mm/memory-hotplug: Allow memory resources to be children")
 
-from the drm tree.
+from the nvdimm tree.
 
-I had no idea how to resolve this, so I just effectively reverted the
-drm-fixes commit.
-
-I fixed it up (see above) and can carry the fix as necessary. This
+I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-
-
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/UfcNgO3NRzprj7em811gPnl
+diff --cc mm/memory_hotplug.c
+index 1f678568ce5c,d2c44146473f..b96a3121b5e9
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@@ -101,28 -99,21 +101,24 @@@ u64 max_mem_size =3D U64_MAX
+  /* add this memory to iomem resource */
+  static struct resource *register_memory_resource(u64 start, u64 size)
+  {
+- 	struct resource *res, *conflict;
++ 	struct resource *res;
++ 	unsigned long flags =3D  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
++ 	char *resource_name =3D "System RAM";
+ =20
+ +	if (start + size > max_mem_size)
+ +		return ERR_PTR(-E2BIG);
+ +
+- 	res =3D kzalloc(sizeof(struct resource), GFP_KERNEL);
+- 	if (!res)
+- 		return ERR_PTR(-ENOMEM);
+-=20
+- 	res->name =3D "System RAM";
+- 	res->start =3D start;
+- 	res->end =3D start + size - 1;
+- 	res->flags =3D IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+- 	conflict =3D  request_resource_conflict(&iomem_resource, res);
+- 	if (conflict) {
+- 		if (conflict->desc =3D=3D IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+- 			pr_debug("Device unaddressable memory block "
+- 				 "memory hotplug at %#010llx !\n",
+- 				 (unsigned long long)start);
+- 		}
+- 		pr_debug("System RAM resource %pR cannot be added\n", res);
+- 		kfree(res);
++ 	/*
++ 	 * Request ownership of the new memory range.  This might be
++ 	 * a child of an existing resource that was present but
++ 	 * not marked as busy.
++ 	 */
++ 	res =3D __request_region(&iomem_resource, start, size,
++ 			       resource_name, flags);
++=20
++ 	if (!res) {
++ 		pr_debug("Unable to reserve System RAM region: %016llx->%016llx\n",
++ 				start, start + size);
+  		return ERR_PTR(-EEXIST);
+  	}
+  	return res;
+
+--Sig_/VOyMZKpg9/519naT73GnYsI
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx4l7cACgkQAVBC80lX
-0Gwk2gf/db06P2eC151aw7EZr+PzAu18jkqbNDEMzeVWYd+7oMjcmlY2BEnQA040
-Z+uL90Lu24M0ar8lCwRpvq6A7KJG0IzhgudHYG0K6JzWwP+MmJsUYZT1rzTpLcuy
-EsNRI00+UQTK51LsSTYdToQsMNX2maasDtlZzYtkXoooRB8oRsytyiDaGBAVA/pb
-C4IvTeYqtDGC/viJ+0oqHaUUEVf9uuipXaThUlt8XO/l7RSs2ytQfqPfXExmpEoL
-PMEgSBG26etYrNTpZoR6ksmR728W3cozR5jl20eLGsRT8lgMIPyIivu5v5xUo0Oo
-xT0MmQdddaFU0oDPBz5NkW6zoDM4Tg==
-=NNfy
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx4y94ACgkQAVBC80lX
+0GzieggAmiLoxygKDBJOg/eZMsP5iMc1q6sHmFialsNHFfKQjfEfXWPW5lGTWL7J
+8ze2HzK2kUFBQRUysmk8v9AviXw0zxBW9OeS+0ruzczImdYDiNQkrdi97KzuEDsH
+heVLTV7tUevV5+z83sYdPCFxQ1mTCcndLcbsXsl7QUlJg6mql6HNt4soSIhe9c/Q
+XWvDAq+ADYkGt9NbwslcPGb3agaiganxSh62FjrVSfKuNTlmU5kSmjX5Ee5vIOjt
+bbqwWh8peYkxW0jud4W77hwF4n3/cK9RGB4wY7Q6QVoVgB7Sev427bUK5eFSxhs3
+sIopJXg+8EgeLY6cBfftJYXBdgAxWA==
+=1QDT
 -----END PGP SIGNATURE-----
 
---Sig_/UfcNgO3NRzprj7em811gPnl--
+--Sig_/VOyMZKpg9/519naT73GnYsI--
