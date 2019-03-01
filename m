@@ -1,57 +1,71 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm64 tree
-Date: Fri, 1 Mar 2019 10:58:42 +0000
-Message-ID: <20190301105842.GA10733@arrakis.emea.arm.com>
-References: <20190301091036.3e97bb49@canb.auug.org.au>
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: linux-next: Boot hangs 3 minutes with device mapper
+	on s390
+Date: Fri, 1 Mar 2019 13:30:50 -0500
+Message-ID: <20190301183050.GA29752@redhat.com>
+References: <20190301183350.5ff697d4@TP-holzheu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dm-devel-bounces@redhat.com>
 Content-Disposition: inline
-In-Reply-To: <20190301091036.3e97bb49@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Will Deacon <will.deacon@arm.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+In-Reply-To: <20190301183350.5ff697d4@TP-holzheu>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/dm-devel>
+List-Post: <mailto:dm-devel@redhat.com>
+List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=subscribe>
+Sender: dm-devel-bounces@redhat.com
+Errors-To: dm-devel-bounces@redhat.com
+To: Michael Holzheu <holzheu@linux.ibm.com>
+Cc: Benjamin Block <bblock@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, dm-devel@redhat.com, linux-next@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Steffen Maier <maier@linux.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 01, 2019 at 09:10:36AM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-soc tree got a conflict in:
-> 
->   arch/arm64/Kconfig.platforms
-> 
-> between commit:
-> 
->   a29c78234942 ("arm64: Kconfig.platforms: fix warning unmet direct dependencies")
-> 
-> from the arm64 tree and commits:
-> 
->   67b9282387c5 ("arm64: imx8mq: select GPCv2 irqchip driver")
->   84a2ab25b12d ("arm64: imx8mq: select PM support")
-> 
-> from the arm-soc tree.
-[...]
-> diff --cc arch/arm64/Kconfig.platforms
-> index d4faca775d9c,c5f6a57f16b8..000000000000
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@@ -145,7 -151,11 +151,11 @@@ config ARCH_MVEB
->   config ARCH_MXC
->   	bool "ARMv8 based NXP i.MX SoC family"
->   	select ARM64_ERRATUM_843419
->  -	select ARM64_ERRATUM_845719
->  +	select ARM64_ERRATUM_845719 if COMPAT
-> + 	select IMX_GPCV2
-> + 	select IMX_GPCV2_PM_DOMAINS
-> + 	select PM
-> + 	select PM_GENERIC_DOMAINS
->   	help
->   	  This enables support for the ARMv8 based SoCs in the
->   	  NXP i.MX family.
-
-The resolution looks fine, thanks Stephen.
-
-Olof, Arnd, I can drop this commit if you'd rather merge it via the
-arm-soc tree (it was related to a CPU erratum and thought I'd pick it
-up).
-
--- 
-Catalin
+T24gRnJpLCBNYXIgMDEgMjAxOSBhdCAxMjozM3BtIC0wNTAwLApNaWNoYWVsIEhvbHpoZXUgPGhv
+bHpoZXVAbGludXguaWJtLmNvbT4gd3JvdGU6Cgo+IEhpIE1pa2UsCj4gCj4gT24gRmVkb3JhIDI5
+LCB0aGUgZm9sbG93aW5nICJsaW51eC1uZXh0IiBjb21taXQgaW50cm9kdWNlZCBhIHJlZ3Jlc3Np
+b24gb24gczM5MDoKPiAKPiAgIGNvbW1pdCAxZWZhM2JiNzlkM2RlOGNhMWI3ZjY3NzAzMTNhMWZj
+MGJlYmUyNWM3Cj4gICBBdXRob3I6IE1pa2UgU25pdHplciA8c25pdHplckByZWRoYXQuY29tPgo+
+ICAgRGF0ZTogICBGcmkgRmViIDIyIDExOjIzOjAxIDIwMTkgLTA1MDAKPiAKPiAgICAgZG06IG11
+c3QgYWxsb2NhdGUgZG1fbm9jbG9uZSBmb3Igc3RhY2tlZCBub2Nsb25lIGRldmljZXMKPiAgICAg
+Cj4gICAgIE90aGVyd2lzZSB2YXJpb3VzIGx2bTIgdGVzdHN1aXRlIHRlc3RzIGZhaWwgYmVjYXVz
+ZSB0aGUgbG93ZXIgbGF5ZXJzIG9mCj4gICAgIHRoZSBzdGFja2VkIG5vY2xvbmUgZGV2aWNlIGFy
+ZW4ndCB1cGRhdGVkIHRvIGFsbG9jYXRlIGEgbmV3ICdzdHJ1Y3QKPiAgICAgZG1fY2xvbmUnIHRo
+YXQgcmVmbGVjdHMgdGhlIHVwcGVyIGxheWVyIGJpbyB0aGF0IHdhcyBpc3N1ZWQgdG8gaXQuCj4g
+ICAgIAo+ICAgICBGaXhlczogOTdhODk0NTgwMjBiMzggKCJkbTogaW1wcm92ZSBub2Nsb25lIGJp
+byBzdXBwb3J0IikKPiAgICAgUmVwb3J0ZWQtYnk6IE1pa3VsYXMgUGF0b2NrYSA8bXBhdG9ja2FA
+cmVkaGF0LmNvbT4KPiAgICAgU2lnbmVkLW9mZi1ieTogTWlrZSBTbml0emVyIDxzbml0emVyQHJl
+ZGhhdC5jb20+Cj4gCj4gV2l0aCB0aGlzIGNvbW1pdCB0aGUgYm9vdCBoYW5ncyB0aHJlZSBtaW51
+dGVzIG9uIGEgei9WTSBzeXN0ZW0gd2l0aCB0aGUKPiBmb2xsb3dpbmcgZGV2aWNlIG1hcHBlciBz
+ZXR1cDoKPiAKPiAjIGRtc2V0dXAgbHMgLS10cmVlCj4gbXBhdGhlICgyNTI6NSkKPiAg4pSc4pSA
+ICg4OjEyOCkKPiAg4pSU4pSAICg4OjE0NCkKPiBtcGF0aGQgKDI1Mjo0KQo+ICDilJzilIAgKDg6
+OTYpCj4gIOKUlOKUgCAoODoxMTIpCj4gbXBhdGhjICgyNTI6MykKPiAg4pSc4pSAICg4OjY0KQo+
+ICDilJTilIAgKDg6ODApCj4gbXBhdGhiICgyNTI6MikKPiAg4pSc4pSAICg4OjMyKQo+ICDilJTi
+lIAgKDg6NDgpCj4gbXBhdGhhMSAoMjUyOjEpCj4gIOKUlOKUgG1wYXRoYSAoMjUyOjApCj4gICAg
+IOKUnOKUgCAoODoxNikKPiAgICAg4pSU4pSAICg4OjApCj4gCj4gT24gdGhlIGNvbnNvbGUgd2Ug
+Z2V0IG1lc3NhZ2VzIGxpa2UgdGhlIGZvbGxvd2luZzoKPiAKPiAgICAxMC4xMTY4NjMgc2QgMzow
+OjA6MTA4MzcxOTgxMzogc2RqIFdyaXRlIFByb3RlY3QgaXMgb2ZmIAo+ICAgIDEwLjExNzE3MCBz
+ZCAzOjA6MDoxMDgzNzE5ODEzOiBzZGogV3JpdGUgY2FjaGU6IGVuYWJsZWQsIHJlYWQgY2FjaGU6
+IGVuYWJsZWQsIGRvZXNuJ3Qgc3VwcG9ydCBEUE8gb3IgRlVBIAo+ICAgIDEwLjEzMDU2MiBzZCAz
+OjA6MDoxMDgzNzE5ODEzOiBzZGogQXR0YWNoZWQgU0NTSSBkaXNrIAo+ICBBIHN0YXJ0IGpvYiBp
+cyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFsaXphdGlvbiAoNnMgLyAzbWlu
+KQo+ICBBIHN0YXJ0IGpvYiBpcyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFs
+aXphdGlvbiAoNnMgLyAzbWluKQo+ICBBIHN0YXJ0IGpvYiBpcyBydW5uaW5nIGZvciB1ZGV2IFdh
+aSAgIERldmljZSBJbml0aWFsaXphdGlvbiAoN3MgLyAzbWluKQo+ICBBIHN0YXJ0IGpvYiBpcyBy
+dW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFsaXphdGlvbiAoN3MgLyAzbWluKQo+
+ICBBIHN0YXJ0IGpvYiBpcyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFsaXph
+dGlvbiAoOHMgLyAzbWluKQo+ICAuLi4KPiAKPiBBZnRlciB0aHJlZSBtaW51dGVzIHRoZSBib290
+IHByb2Nlc3MgY29udGludWVzIGFuZCB0aGUgc3lzdGVtIGNvbWVzLgo+IAo+IEFzIGtlcm5lbCBj
+b25maWcgd2UgdXNlZCAicGVyZm9ybWFuY2VfZGVmY29uZmlnIiAobWFrZSBwZXJmb3JtYW5jZV9k
+ZWZjb25maWcpLgoKSSdtIHN0cnVnZ2xpbmcgdG8gc2VlIHdoeSB0aGlzIHBhcnRpY3VsYXIgY2hh
+bmdlIHdvdWxkIGNhdXNlIHN1Y2ggYSBib290CnN0YWxsIC0tIGJ1dCB0aGVuIHJlc29sdmUgaXRz
+ZWxmLgoKQ2FuIHlvdSBwcm92aWRlIHRoZSBvdXRwdXQgZnJvbSAnZG1zZXR1cCB0YWJsZSc/CgpN
+dWx0aXBhdGggZGVmYXVsdHMgdG8gYmxrLW1xIChyZXF1ZXN0LWJhc2VkKS4gIFRoZSBjaGFuZ2Ug
+eW91J3ZlIGNhbGxlZAppbnRvIHF1ZXN0aW9uIGlzIHJlbGF0ZWQgdG8gYmlvLWJhc2VkIERNLiAg
+U28gVGhlcmUgbXVzdCBiZSBzb21lCmJpby1iYXNlZCBETSBsYXllciBvbnRvcCBvZiB0aGUgbXVs
+dGlwYXRoIGRldmljZXMuICBJcyBtcGF0aGExIGEKZG0tbGluZWFyIGRldmljZSBsYXllcmVkIG9u
+dG9wIG9mIG11bHRpcGF0aD8KClRoYW5rcywKTWlrZQoKLS0KZG0tZGV2ZWwgbWFpbGluZyBsaXN0
+CmRtLWRldmVsQHJlZGhhdC5jb20KaHR0cHM6Ly93d3cucmVkaGF0LmNvbS9tYWlsbWFuL2xpc3Rp
+bmZvL2RtLWRldmVs
