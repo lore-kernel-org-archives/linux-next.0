@@ -1,52 +1,50 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Subject: Re: linux-next: manual merge of the drm tree with the drm-fixes tree
-Date: Fri, 1 Mar 2019 18:29:58 -0500
-Message-ID: <CADnq5_PXqjcQeH1vh9ftpPfoCzD5SfdcXQSqAh2BPgrs1V28LQ@mail.gmail.com>
-References: <20190301132351.6f4e815f@canb.auug.org.au>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Subject: x86 VM Boot hang with latest linux-next
+Date: Sat, 2 Mar 2019 15:34:15 -0800
+Message-ID: <CAKgT0UeMqmojVrNV1i-DdY18EBwbJ_4zVTUggAWas5D5yeU1PQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190301132351.6f4e815f@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, David Francis <David.Francis@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: snitzer@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-T24gVGh1LCBGZWIgMjgsIDIwMTkgYXQgOToyNCBQTSBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
-Yi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4KPiBIaSBhbGwsCj4KPiBUb2RheSdzIGxpbnV4LW5leHQg
-bWVyZ2Ugb2YgdGhlIGRybSB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+Cj4gICBkcml2ZXJzL2dw
-dS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdwdV9kbS5jCj4KPiBiZXR3ZWVuIGNvbW1p
-dDoKPgo+ICAgZDYzNzE2NjU4YWMxICgiZHJtL2FtZC9kaXNwbGF5OiBVc2UgdnJyIGZyaWVuZGx5
-IHBhZ2VmbGlwIHRocm90dGxpbmcgaW4gREMuIikKPgo+IGZyb20gdGhlIGRybS1maXhlcyB0cmVl
-IGFuZCBjb21taXRzOgo+Cj4gICA4YTQ4YjQ0Y2QwMGYgKCJkcm0vYW1kL2Rpc3BsYXk6IENhbGwg
-aW50byBEQyBvbmNlIHBlciBtdWx0aXBsYW5lIGZsaXAiKQo+ICAgYmM3ZjY3MGVlMDRjICgiZHJt
-L2FtZC9kaXNwbGF5OiBQZXJmb3JtIHBsYW5lIHVwZGF0ZXMgb25seSB3aGVuIG5lZWRlZCIpCj4K
-PiBmcm9tIHRoZSBkcm0gdHJlZS4KPgo+IEkgaGFkIG5vIGlkZWEgaG93IHRvIHJlc29sdmUgdGhp
-cywgc28gSSBqdXN0IGVmZmVjdGl2ZWx5IHJldmVydGVkIHRoZQo+IGRybS1maXhlcyBjb21taXQu
-Cj4KPiBJIGZpeGVkIGl0IHVwIChzZWUgYWJvdmUpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBu
-ZWNlc3NhcnkuIFRoaXMKPiBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29u
-Y2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCj4gY29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9u
-ZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4geW91ciB0cmVlCj4gaXMgc3VibWl0
-dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRp
-bmcKPiB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGluZyB0cmVlIHRvIG1pbmlt
-aXNlIGFueSBwYXJ0aWN1bGFybHkKPiBjb21wbGV4IGNvbmZsaWN0cy4KCmQ2MzcxNjY1OGFjMSAo
-ImRybS9hbWQvZGlzcGxheTogVXNlIHZyciBmcmllbmRseSBwYWdlZmxpcCB0aHJvdHRsaW5nCmlu
-IERDLiIpIHNob3VsZCBiZSByZXZlcnRlZCBhbmQgdGhpcyBzaG91bGQgYmUgYXBwbGllZCBpbnN0
-ZWFkIGZvcgpkcm0tbmV4dDoKaHR0cHM6Ly9jZ2l0LmZyZWVkZXNrdG9wLm9yZy9+YWdkNWYvbGlu
-dXgvY29tbWl0Lz9oPWRybS1uZXh0LTUuMi13aXAmaWQ9NWQ1ZjQzYzIzNWQwMmU0ZDhlOWQ1MGQw
-MTJmM2IyMWYzODA0ODZlYgoKQWxleAoKPgo+Cj4KPiAtLQo+IENoZWVycywKPiBTdGVwaGVuIFJv
-dGh3ZWxsCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-Zwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+So I have been seeing an issue with an intermittent boot hang on my
+x86 KVM VM with the latest linux-next and have bisected it down to the
+following commit:
+1efa3bb79d3de8ca1b7f6770313a1fc0bebe25c7 is the first bad commit
+commit 1efa3bb79d3de8ca1b7f6770313a1fc0bebe25c7
+Author: Mike Snitzer <snitzer@redhat.com>
+Date:   Fri Feb 22 11:23:01 2019 -0500
+
+    dm: must allocate dm_noclone for stacked noclone devices
+
+    Otherwise various lvm2 testsuite tests fail because the lower layers of
+    the stacked noclone device aren't updated to allocate a new 'struct
+    dm_clone' that reflects the upper layer bio that was issued to it.
+
+    Fixes: 97a89458020b38 ("dm: improve noclone bio support")
+    Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+    Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+
+What I am seeing is in about 3 out of 4 boots the startup just hangs
+at the filesystem check stage with the following message:
+[  OK  ] Reached target Local File Systems (Pre).
+         Starting File System Check on /dev/=E2=80=A6127-ad57-426f-bb45-363=
+950544c0c...
+[    **] (1 of 2) A start job is running for=E2=80=A6n on device 252:2 (19s=
+ / no limit)
+
+I did some googling and it looks like a similar issue has been
+reported for s390. Based on the request for data there I have the
+following info:
+[root@localhost ~]# dmsetup ls --tree
+fedora-swap (253:1)
+ =E2=94=94=E2=94=80 (252:2)
+fedora-root (253:0)
+ =E2=94=94=E2=94=80 (252:2)
+
+[root@localhost ~]# dmsetup table
+fedora-swap: 0 4194304 linear 252:2 2048
+fedora-root: 0 31457280 linear 252:2 4196352
