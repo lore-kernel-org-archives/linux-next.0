@@ -1,53 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the drm tree
-Date: Mon, 4 Mar 2019 19:09:53 +1100
-Message-ID: <20190304190953.342ec64e@canb.auug.org.au>
+From: Steffen Maier <maier@linux.ibm.com>
+Subject: Re: linux-next: Boot hangs 3 minutes with device mapper
+	on s390
+Date: Mon, 4 Mar 2019 11:01:46 +0100
+Message-ID: <113ebf5f-a5e8-b313-f515-ac7c49f51c50@linux.ibm.com>
+References: <20190301183350.5ff697d4@TP-holzheu>
+	<20190301183050.GA29752@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2G1qVqAboWVRSB1Qz.zxaT_"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Kleiner <mario.kleiner.de@gmail.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dm-devel-bounces@redhat.com>
+In-Reply-To: <20190301183050.GA29752@redhat.com>
+Content-Language: en-US
+List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/dm-devel>
+List-Post: <mailto:dm-devel@redhat.com>
+List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=subscribe>
+Sender: dm-devel-bounces@redhat.com
+Errors-To: dm-devel-bounces@redhat.com
+To: Mike Snitzer <snitzer@redhat.com>, Michael Holzheu <holzheu@linux.ibm.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Benjamin Block <bblock@linux.ibm.com>, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, dm-devel@redhat.com
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2G1qVqAboWVRSB1Qz.zxaT_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-In commit
-
-  289aabbf7bc8 ("drm/amd/display: Use vrr friendly pageflip throttling in D=
-C.")
-
-Fixes tag
-
-  Fixes: bb47de736661 ("drm/amdgpu: Set FreeSync state using drm VRR
-
-has these problem(s):
-
-  - Please don't split Fixes tags over more than one line
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2G1qVqAboWVRSB1Qz.zxaT_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx83VIACgkQAVBC80lX
-0GyaFAf9FikT8e1m5N8PZiyZp4XFCG3A7aozEiNSJLy6x/709YwBRqePFEw9t+nL
-tzsBm/bXMDhkVsIIIoc9QYeAeD5SEc4Q7QJaqhWvZoWxhtVwTtLd34dkqRuN8FAT
-9is+RX9jh2hcidmQEckxH4U4PgE5/7dyH0/2UhRP6xD9B6FfQDiCUyxRvb0kX1pv
-Hl4ppr7N2l7akbARR84aw2WsnQ/Xbz2AWwFGslA1RgU6BNw8OlkYQtzUdk6kzc6W
-jt4yBur0WjME0uPteqvbev1003tqg8scb2VvTBlwrCv+jfHB1JHLcAozKHPZJ1X1
-OFZyfBfoOzP/iOPQikc9ThaN1TtdMQ==
-=nhdB
------END PGP SIGNATURE-----
-
---Sig_/2G1qVqAboWVRSB1Qz.zxaT_--
+T24gMDMvMDEvMjAxOSAwNzozMCBQTSwgTWlrZSBTbml0emVyIHdyb3RlOgo+IE9uIEZyaSwgTWFy
+IDAxIDIwMTkgYXQgMTI6MzNwbSAtMDUwMCwKPiBNaWNoYWVsIEhvbHpoZXUgPGhvbHpoZXVAbGlu
+dXguaWJtLmNvbT4gd3JvdGU6Cj4gCj4+IEhpIE1pa2UsCj4+Cj4+IE9uIEZlZG9yYSAyOSwgdGhl
+IGZvbGxvd2luZyAibGludXgtbmV4dCIgY29tbWl0IGludHJvZHVjZWQgYSByZWdyZXNzaW9uIG9u
+IHMzOTA6Cj4+Cj4+ICAgIGNvbW1pdCAxZWZhM2JiNzlkM2RlOGNhMWI3ZjY3NzAzMTNhMWZjMGJl
+YmUyNWM3Cj4+ICAgIEF1dGhvcjogTWlrZSBTbml0emVyIDxzbml0emVyQHJlZGhhdC5jb20+Cj4+
+ICAgIERhdGU6ICAgRnJpIEZlYiAyMiAxMToyMzowMSAyMDE5IC0wNTAwCj4+Cj4+ICAgICAgZG06
+IG11c3QgYWxsb2NhdGUgZG1fbm9jbG9uZSBmb3Igc3RhY2tlZCBub2Nsb25lIGRldmljZXMKPj4g
+ICAgICAKPj4gICAgICBPdGhlcndpc2UgdmFyaW91cyBsdm0yIHRlc3RzdWl0ZSB0ZXN0cyBmYWls
+IGJlY2F1c2UgdGhlIGxvd2VyIGxheWVycyBvZgo+PiAgICAgIHRoZSBzdGFja2VkIG5vY2xvbmUg
+ZGV2aWNlIGFyZW4ndCB1cGRhdGVkIHRvIGFsbG9jYXRlIGEgbmV3ICdzdHJ1Y3QKPj4gICAgICBk
+bV9jbG9uZScgdGhhdCByZWZsZWN0cyB0aGUgdXBwZXIgbGF5ZXIgYmlvIHRoYXQgd2FzIGlzc3Vl
+ZCB0byBpdC4KPj4gICAgICAKPj4gICAgICBGaXhlczogOTdhODk0NTgwMjBiMzggKCJkbTogaW1w
+cm92ZSBub2Nsb25lIGJpbyBzdXBwb3J0IikKPj4gICAgICBSZXBvcnRlZC1ieTogTWlrdWxhcyBQ
+YXRvY2thIDxtcGF0b2NrYUByZWRoYXQuY29tPgo+PiAgICAgIFNpZ25lZC1vZmYtYnk6IE1pa2Ug
+U25pdHplciA8c25pdHplckByZWRoYXQuY29tPgo+Pgo+PiBXaXRoIHRoaXMgY29tbWl0IHRoZSBi
+b290IGhhbmdzIHRocmVlIG1pbnV0ZXMgb24gYSB6L1ZNIHN5c3RlbSB3aXRoIHRoZQo+PiBmb2xs
+b3dpbmcgZGV2aWNlIG1hcHBlciBzZXR1cDoKPj4KPj4gIyBkbXNldHVwIGxzIC0tdHJlZQo+PiBt
+cGF0aGUgKDI1Mjo1KQo+PiAgIOKUnOKUgCAoODoxMjgpCj4+ICAg4pSU4pSAICg4OjE0NCkKPj4g
+bXBhdGhkICgyNTI6NCkKPj4gICDilJzilIAgKDg6OTYpCj4+ICAg4pSU4pSAICg4OjExMikKPj4g
+bXBhdGhjICgyNTI6MykKPj4gICDilJzilIAgKDg6NjQpCj4+ICAg4pSU4pSAICg4OjgwKQo+PiBt
+cGF0aGIgKDI1MjoyKQo+PiAgIOKUnOKUgCAoODozMikKPj4gICDilJTilIAgKDg6NDgpCj4+IG1w
+YXRoYTEgKDI1MjoxKQo+PiAgIOKUlOKUgG1wYXRoYSAoMjUyOjApCj4+ICAgICAg4pSc4pSAICg4
+OjE2KQo+PiAgICAgIOKUlOKUgCAoODowKQo+Pgo+PiBPbiB0aGUgY29uc29sZSB3ZSBnZXQgbWVz
+c2FnZXMgbGlrZSB0aGUgZm9sbG93aW5nOgo+Pgo+PiAgICAgMTAuMTE2ODYzIHNkIDM6MDowOjEw
+ODM3MTk4MTM6IHNkaiBXcml0ZSBQcm90ZWN0IGlzIG9mZgo+PiAgICAgMTAuMTE3MTcwIHNkIDM6
+MDowOjEwODM3MTk4MTM6IHNkaiBXcml0ZSBjYWNoZTogZW5hYmxlZCwgcmVhZCBjYWNoZTogZW5h
+YmxlZCwgZG9lc24ndCBzdXBwb3J0IERQTyBvciBGVUEKPj4gICAgIDEwLjEzMDU2MiBzZCAzOjA6
+MDoxMDgzNzE5ODEzOiBzZGogQXR0YWNoZWQgU0NTSSBkaXNrCj4+ICAgQSBzdGFydCBqb2IgaXMg
+cnVubmluZyBmb3IgdWRldiBXYWkgICBEZXZpY2UgSW5pdGlhbGl6YXRpb24gKDZzIC8gM21pbikK
+Pj4gICBBIHN0YXJ0IGpvYiBpcyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFs
+aXphdGlvbiAoNnMgLyAzbWluKQo+PiAgIEEgc3RhcnQgam9iIGlzIHJ1bm5pbmcgZm9yIHVkZXYg
+V2FpICAgRGV2aWNlIEluaXRpYWxpemF0aW9uICg3cyAvIDNtaW4pCj4+ICAgQSBzdGFydCBqb2Ig
+aXMgcnVubmluZyBmb3IgdWRldiBXYWkgICBEZXZpY2UgSW5pdGlhbGl6YXRpb24gKDdzIC8gM21p
+bikKPj4gICBBIHN0YXJ0IGpvYiBpcyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0
+aWFsaXphdGlvbiAoOHMgLyAzbWluKQo+PiAgIC4uLgo+Pgo+PiBBZnRlciB0aHJlZSBtaW51dGVz
+IHRoZSBib290IHByb2Nlc3MgY29udGludWVzIGFuZCB0aGUgc3lzdGVtIGNvbWVzLgo+Pgo+PiBB
+cyBrZXJuZWwgY29uZmlnIHdlIHVzZWQgInBlcmZvcm1hbmNlX2RlZmNvbmZpZyIgKG1ha2UgcGVy
+Zm9ybWFuY2VfZGVmY29uZmlnKS4KPiAKPiBJJ20gc3RydWdnbGluZyB0byBzZWUgd2h5IHRoaXMg
+cGFydGljdWxhciBjaGFuZ2Ugd291bGQgY2F1c2Ugc3VjaCBhIGJvb3QKPiBzdGFsbCAtLSBidXQg
+dGhlbiByZXNvbHZlIGl0c2VsZi4KPiAKPiBDYW4geW91IHByb3ZpZGUgdGhlIG91dHB1dCBmcm9t
+ICdkbXNldHVwIHRhYmxlJz8KPiAKPiBNdWx0aXBhdGggZGVmYXVsdHMgdG8gYmxrLW1xIChyZXF1
+ZXN0LWJhc2VkKS4gIFRoZSBjaGFuZ2UgeW91J3ZlIGNhbGxlZAo+IGludG8gcXVlc3Rpb24gaXMg
+cmVsYXRlZCB0byBiaW8tYmFzZWQgRE0uICBTbyBUaGVyZSBtdXN0IGJlIHNvbWUKPiBiaW8tYmFz
+ZWQgRE0gbGF5ZXIgb250b3Agb2YgdGhlIG11bHRpcGF0aCBkZXZpY2VzLiAgSXMgbXBhdGhhMSBh
+Cj4gZG0tbGluZWFyIGRldmljZSBsYXllcmVkIG9udG9wIG9mIG11bHRpcGF0aD8KClllcywgbXBh
+dGhhMSBpcyBqdXN0IGFuIGF1dG9tYXRpY2FsbHkgZ2VuZXJhdGVkIGtwYXJ0eCBsaW5lYXIgcGFy
+dGl0aW9uIAptYXBwaW5nLCBzbyB0aGF0IG9uZSBpcyBiaW8tYmFzZWQuCgoKLS0gCk1pdCBmcmV1
+bmRsaWNoZW4gR3J1ZXNzZW4gLyBLaW5kIHJlZ2FyZHMKU3RlZmZlbiBNYWllcgoKTGludXggb24g
+SUJNIFogRGV2ZWxvcG1lbnQKCmh0dHBzOi8vd3d3LmlibS5jb20vcHJpdmFjeS91cy9lbi8KSUJN
+IERldXRzY2hsYW5kIFJlc2VhcmNoICYgRGV2ZWxvcG1lbnQgR21iSApWb3JzaXR6ZW5kZXIgZGVz
+IEF1ZnNpY2h0c3JhdHM6IE1hdHRoaWFzIEhhcnRtYW5uCkdlc2NoYWVmdHNmdWVocnVuZzogRGly
+ayBXaXR0a29wcApTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IEJvZWJsaW5nZW4KUmVnaXN0ZXJnZXJp
+Y2h0OiBBbXRzZ2VyaWNodCBTdHV0dGdhcnQsIEhSQiAyNDMyOTQKCi0tCmRtLWRldmVsIG1haWxp
+bmcgbGlzdApkbS1kZXZlbEByZWRoYXQuY29tCmh0dHBzOi8vd3d3LnJlZGhhdC5jb20vbWFpbG1h
+bi9saXN0aW5mby9kbS1kZXZlbA==
