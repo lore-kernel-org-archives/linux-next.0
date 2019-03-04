@@ -1,85 +1,48 @@
-From: Michael Holzheu <holzheu@linux.ibm.com>
-Subject: Re: linux-next: Boot hangs 3 minutes with device mapper
-	on s390
-Date: Mon, 4 Mar 2019 11:03:34 +0100
-Message-ID: <20190304110334.6f71962a@TP-holzheu>
-References: <20190301183350.5ff697d4@TP-holzheu>
-	<20190301183050.GA29752@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the s390 tree
+Date: Tue, 5 Mar 2019 07:03:24 +1100
+Message-ID: <20190305070324.294111f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dm-devel-bounces@redhat.com>
-In-Reply-To: <20190301183050.GA29752@redhat.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Benjamin Block <bblock@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, dm-devel@redhat.com, linux-next@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Steffen Maier <maier@linux.ibm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PoaZu1Tr0gIvI7lqzBsX.2n"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-QW0gRnJpLCAxIE1hciAyMDE5IDEzOjMwOjUwIC0wNTAwCnNjaHJpZWIgTWlrZSBTbml0emVyIDxz
-bml0emVyQHJlZGhhdC5jb20+OgoKPiBPbiBGcmksIE1hciAwMSAyMDE5IGF0IDEyOjMzcG0gLTA1
-MDAsCj4gTWljaGFlbCBIb2x6aGV1IDxob2x6aGV1QGxpbnV4LmlibS5jb20+IHdyb3RlOgo+IAo+
-ID4gSGkgTWlrZSwKPiA+IAo+ID4gT24gRmVkb3JhIDI5LCB0aGUgZm9sbG93aW5nICJsaW51eC1u
-ZXh0IiBjb21taXQgaW50cm9kdWNlZCBhIHJlZ3Jlc3Npb24gb24gczM5MDoKPiA+IAo+ID4gICBj
-b21taXQgMWVmYTNiYjc5ZDNkZThjYTFiN2Y2NzcwMzEzYTFmYzBiZWJlMjVjNwo+ID4gICBBdXRo
-b3I6IE1pa2UgU25pdHplciA8c25pdHplckByZWRoYXQuY29tPgo+ID4gICBEYXRlOiAgIEZyaSBG
-ZWIgMjIgMTE6MjM6MDEgMjAxOSAtMDUwMAo+ID4gCj4gPiAgICAgZG06IG11c3QgYWxsb2NhdGUg
-ZG1fbm9jbG9uZSBmb3Igc3RhY2tlZCBub2Nsb25lIGRldmljZXMKPiA+ICAgICAKPiA+ICAgICBP
-dGhlcndpc2UgdmFyaW91cyBsdm0yIHRlc3RzdWl0ZSB0ZXN0cyBmYWlsIGJlY2F1c2UgdGhlIGxv
-d2VyIGxheWVycyBvZgo+ID4gICAgIHRoZSBzdGFja2VkIG5vY2xvbmUgZGV2aWNlIGFyZW4ndCB1
-cGRhdGVkIHRvIGFsbG9jYXRlIGEgbmV3ICdzdHJ1Y3QKPiA+ICAgICBkbV9jbG9uZScgdGhhdCBy
-ZWZsZWN0cyB0aGUgdXBwZXIgbGF5ZXIgYmlvIHRoYXQgd2FzIGlzc3VlZCB0byBpdC4KPiA+ICAg
-ICAKPiA+ICAgICBGaXhlczogOTdhODk0NTgwMjBiMzggKCJkbTogaW1wcm92ZSBub2Nsb25lIGJp
-byBzdXBwb3J0IikKPiA+ICAgICBSZXBvcnRlZC1ieTogTWlrdWxhcyBQYXRvY2thIDxtcGF0b2Nr
-YUByZWRoYXQuY29tPgo+ID4gICAgIFNpZ25lZC1vZmYtYnk6IE1pa2UgU25pdHplciA8c25pdHpl
-ckByZWRoYXQuY29tPgo+ID4gCj4gPiBXaXRoIHRoaXMgY29tbWl0IHRoZSBib290IGhhbmdzIHRo
-cmVlIG1pbnV0ZXMgb24gYSB6L1ZNIHN5c3RlbSB3aXRoIHRoZQo+ID4gZm9sbG93aW5nIGRldmlj
-ZSBtYXBwZXIgc2V0dXA6Cj4gPiAKPiA+ICMgZG1zZXR1cCBscyAtLXRyZWUKPiA+IG1wYXRoZSAo
-MjUyOjUpCj4gPiAg4pSc4pSAICg4OjEyOCkKPiA+ICDilJTilIAgKDg6MTQ0KQo+ID4gbXBhdGhk
-ICgyNTI6NCkKPiA+ICDilJzilIAgKDg6OTYpCj4gPiAg4pSU4pSAICg4OjExMikKPiA+IG1wYXRo
-YyAoMjUyOjMpCj4gPiAg4pSc4pSAICg4OjY0KQo+ID4gIOKUlOKUgCAoODo4MCkKPiA+IG1wYXRo
-YiAoMjUyOjIpCj4gPiAg4pSc4pSAICg4OjMyKQo+ID4gIOKUlOKUgCAoODo0OCkKPiA+IG1wYXRo
-YTEgKDI1MjoxKQo+ID4gIOKUlOKUgG1wYXRoYSAoMjUyOjApCj4gPiAgICAg4pSc4pSAICg4OjE2
-KQo+ID4gICAgIOKUlOKUgCAoODowKQo+ID4gCj4gPiBPbiB0aGUgY29uc29sZSB3ZSBnZXQgbWVz
-c2FnZXMgbGlrZSB0aGUgZm9sbG93aW5nOgo+ID4gCj4gPiAgICAxMC4xMTY4NjMgc2QgMzowOjA6
-MTA4MzcxOTgxMzogc2RqIFdyaXRlIFByb3RlY3QgaXMgb2ZmIAo+ID4gICAgMTAuMTE3MTcwIHNk
-IDM6MDowOjEwODM3MTk4MTM6IHNkaiBXcml0ZSBjYWNoZTogZW5hYmxlZCwgcmVhZCBjYWNoZTog
-ZW5hYmxlZCwgZG9lc24ndCBzdXBwb3J0IERQTyBvciBGVUEgCj4gPiAgICAxMC4xMzA1NjIgc2Qg
-MzowOjA6MTA4MzcxOTgxMzogc2RqIEF0dGFjaGVkIFNDU0kgZGlzayAKPiA+ICBBIHN0YXJ0IGpv
-YiBpcyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFsaXphdGlvbiAoNnMgLyAz
-bWluKQo+ID4gIEEgc3RhcnQgam9iIGlzIHJ1bm5pbmcgZm9yIHVkZXYgV2FpICAgRGV2aWNlIElu
-aXRpYWxpemF0aW9uICg2cyAvIDNtaW4pCj4gPiAgQSBzdGFydCBqb2IgaXMgcnVubmluZyBmb3Ig
-dWRldiBXYWkgICBEZXZpY2UgSW5pdGlhbGl6YXRpb24gKDdzIC8gM21pbikKPiA+ICBBIHN0YXJ0
-IGpvYiBpcyBydW5uaW5nIGZvciB1ZGV2IFdhaSAgIERldmljZSBJbml0aWFsaXphdGlvbiAoN3Mg
-LyAzbWluKQo+ID4gIEEgc3RhcnQgam9iIGlzIHJ1bm5pbmcgZm9yIHVkZXYgV2FpICAgRGV2aWNl
-IEluaXRpYWxpemF0aW9uICg4cyAvIDNtaW4pCj4gPiAgLi4uCj4gPiAKPiA+IEFmdGVyIHRocmVl
-IG1pbnV0ZXMgdGhlIGJvb3QgcHJvY2VzcyBjb250aW51ZXMgYW5kIHRoZSBzeXN0ZW0gY29tZXMu
-Cj4gPiAKPiA+IEFzIGtlcm5lbCBjb25maWcgd2UgdXNlZCAicGVyZm9ybWFuY2VfZGVmY29uZmln
-IiAobWFrZSBwZXJmb3JtYW5jZV9kZWZjb25maWcpLgo+IAo+IEknbSBzdHJ1Z2dsaW5nIHRvIHNl
-ZSB3aHkgdGhpcyBwYXJ0aWN1bGFyIGNoYW5nZSB3b3VsZCBjYXVzZSBzdWNoIGEgYm9vdAo+IHN0
-YWxsIC0tIGJ1dCB0aGVuIHJlc29sdmUgaXRzZWxmLgo+IAo+IENhbiB5b3UgcHJvdmlkZSB0aGUg
-b3V0cHV0IGZyb20gJ2Rtc2V0dXAgdGFibGUnPwoKIyBkbXNldHVwIHRhYmxlCm1wYXRoZTogMCA0
-MTk0MzA0MCBtdWx0aXBhdGggMSBxdWV1ZV9pZl9ub19wYXRoIDEgYWx1YSAxIDEgc2VydmljZS10
-aW1lIDAgMiAyIDg6NjQgMSAxIDg6MTI4IDEgMSAKbXBhdGhkOiAwIDQxOTQzMDQwIG11bHRpcGF0
-aCAxIHF1ZXVlX2lmX25vX3BhdGggMSBhbHVhIDEgMSBzZXJ2aWNlLXRpbWUgMCAyIDIgODo0OCAx
-IDEgODoxMTIgMSAxIAptcGF0aGM6IDAgNDE5NDMwNDAgbXVsdGlwYXRoIDEgcXVldWVfaWZfbm9f
-cGF0aCAxIGFsdWEgMSAxIHNlcnZpY2UtdGltZSAwIDIgMiA4OjMyIDEgMSA4Ojk2IDEgMSAKbXBh
-dGhiOiAwIDQxOTQzMDQwIG11bHRpcGF0aCAxIHF1ZXVlX2lmX25vX3BhdGggMSBhbHVhIDEgMSBz
-ZXJ2aWNlLXRpbWUgMCAyIDIgODoxNiAxIDEgODo4MCAxIDEgCm1wYXRoYTogMCAyMDk3MTUyMDAg
-bXVsdGlwYXRoIDEgcXVldWVfaWZfbm9fcGF0aCAxIGFsdWEgMSAxIHNlcnZpY2UtdGltZSAwIDEg
-MiA4OjAgMSAxIAptcGF0aGExOiAwIDIwOTcxMzE1MiBsaW5lYXIgMjUyOjAgMjA0OAoKIAo+IE11
-bHRpcGF0aCBkZWZhdWx0cyB0byBibGstbXEgKHJlcXVlc3QtYmFzZWQpLiAgVGhlIGNoYW5nZSB5
-b3UndmUgY2FsbGVkCj4gaW50byBxdWVzdGlvbiBpcyByZWxhdGVkIHRvIGJpby1iYXNlZCBETS4g
-IFNvIFRoZXJlIG11c3QgYmUgc29tZQo+IGJpby1iYXNlZCBETSBsYXllciBvbnRvcCBvZiB0aGUg
-bXVsdGlwYXRoIGRldmljZXMuICBJcyBtcGF0aGExIGEKPiBkbS1saW5lYXIgZGV2aWNlIGxheWVy
-ZWQgb250b3Agb2YgbXVsdGlwYXRoPwoKU2VlIGFib3ZlIG91dHB1dCBvZiAiZG1zZXR1cCB0YWJs
-ZSIuCgpCZXN0IFJlZ2FyZHMsCk1pY2hhZWwKCgotLQpkbS1kZXZlbCBtYWlsaW5nIGxpc3QKZG0t
-ZGV2ZWxAcmVkaGF0LmNvbQpodHRwczovL3d3dy5yZWRoYXQuY29tL21haWxtYW4vbGlzdGluZm8v
-ZG0tZGV2ZWw=
+--Sig_/PoaZu1Tr0gIvI7lqzBsX.2n
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Commit
+
+  c533b46e5527 ("Revert "s390/cpum_cf: Add kernel message exaplanations"")
+
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits as well.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PoaZu1Tr0gIvI7lqzBsX.2n
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx9hIwACgkQAVBC80lX
+0Gx3PAgAnU58+GUwHdjyHAUCcA1I/fWSsVv1roKKoYuN8sKcDHG/4dBekE31o7BP
+MZeIYaG6T5FMt3miWkdkOv8/gugLt+8Q97tv2dr+oBoAooz/iPZ6jMJEqIYFu6EH
+CNY/G60vJ+wkA5MSTO9AFY+19eyr1BhyDKRFiKRptN4OGL/e0L9ucGxEUjGMFBXo
+auXV4vW/7AitctlW3hO0aTL7GN9w8uARQr8pLN6BIEBm1UIsE3uiq3GbL7lV5NqD
+56iIblzTfWBmpK0vekbiwYOGg8Psg5ayFigHgLa/cGWTtIpEZ+PVhgne6XX5E10R
+q9JpDwcBoqrY0Y0Fsa3xOpoY5Tlnkw==
+=eFNq
+-----END PGP SIGNATURE-----
+
+--Sig_/PoaZu1Tr0gIvI7lqzBsX.2n--
