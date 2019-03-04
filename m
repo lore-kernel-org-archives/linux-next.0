@@ -1,35 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Mon, 4 Mar 2019 13:50:34 +1100
-Message-ID: <20190304135034.79b90d37@canb.auug.org.au>
+Subject: linux-next: manual merge of the drivers-x86 tree with the watchdog
+ tree
+Date: Mon, 4 Mar 2019 14:37:35 +1100
+Message-ID: <20190304143735.308edd1e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WfOBf/gbWqGR=ZAJW2p.JX9"; protocol="application/pgp-signature"
+ boundary="Sig_/22xVno_WMun1/gOIgWBEiZn"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Gardon <bgardon@google.com>
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Wim Van Sebroeck <wim@iguana.be>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Shych <michaelsh@mellanox.com>, Vadim Pasternak <vadimp@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WfOBf/gbWqGR=ZAJW2p.JX9
+--Sig_/22xVno_WMun1/gOIgWBEiZn
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+Today's linux-next merge of the drivers-x86 tree got a conflict in:
 
-  virt/kvm/kvm_main.c
+  include/linux/platform_data/mlxreg.h
 
 between commit:
 
-  8ed0579c12b2 ("kvm: properly check debugfs dentry before using it")
+  9f03161a1bd8 ("platform_data/mlxreg: additions for Mellanox watchdog driv=
+er.")
 
-from Linus' tree and commit:
+from the watchdog tree and commit:
 
-  b12ce36a43f2 ("kvm: Add memcg accounting to KVM allocations")
+  9b28aa1d0eae ("platform_data/mlxreg: Document fixes for core platform dat=
+a")
 
-from the kvm tree.
+from the drivers-x86 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,36 +45,40 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc virt/kvm/kvm_main.c
-index d237d3350a99,0fb0e9aa0935..000000000000
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@@ -4044,8 -4049,8 +4049,8 @@@ static void kvm_uevent_notify_change(un
-  	}
-  	add_uevent_var(env, "PID=3D%d", kvm->userspace_pid);
- =20
- -	if (kvm->debugfs_dentry) {
- +	if (!IS_ERR_OR_NULL(kvm->debugfs_dentry)) {
-- 		char *tmp, *p =3D kmalloc(PATH_MAX, GFP_KERNEL);
-+ 		char *tmp, *p =3D kmalloc(PATH_MAX, GFP_KERNEL_ACCOUNT);
- =20
-  		if (p) {
-  			tmp =3D dentry_path_raw(kvm->debugfs_dentry, p, PATH_MAX);
+diff --cc include/linux/platform_data/mlxreg.h
+index 31f7c25a44da,1b2f86f96743..000000000000
+--- a/include/linux/platform_data/mlxreg.h
++++ b/include/linux/platform_data/mlxreg.h
+@@@ -120,12 -109,9 +122,12 @@@ struct mlxreg_core_item=20
+  /**
+   * struct mlxreg_core_platform_data - platform data:
+   *
+-  * @led_data: led private data;
++  * @data: instance private data;
+   * @regmap: register map of parent device;
+-  * @counter: number of led instances;
++  * @counter: number of instances;
+ + * @features: supported features of device;
+ + * @version: implementation version;
+ + * @identity: device identity name;
+   */
+  struct mlxreg_core_platform_data {
+  	struct mlxreg_core_data *data;
 
---Sig_/WfOBf/gbWqGR=ZAJW2p.JX9
+--Sig_/22xVno_WMun1/gOIgWBEiZn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx8knoACgkQAVBC80lX
-0Gy0ZggAmznncpwSwuDUKj1gBbbtRklv1vzWT1RBYegD3e98gZEqjgFVHqHDGrCp
-ZmLUanMdKEmtBChJ7c0nWnTwKZgmmZ9Bo9q1PLda9F7b6uomqydckx5eoFB0FrPI
-fVMe/3ozdbbyQHasbP5xLKJlRQ3DaZX+HW6SWQ34iPX2L9YpJJ3BCBUIDP8alMAK
-1s9esQDG8k7Fi0xjec+W7JXR2b4HlY3O2RxFnQmy/ybNLKiwOI9KOg+Hu7eyNkd7
-aMOVxVfW247/ABL8Pj1JRM7Z9ms+iVD4iM72EQaMYVbKmCGBDVHfNMkeWBpvivrX
-VwUYI5xwbGt9SQlQkZzdihBwkGEGQg==
-=k5ru
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx8nX8ACgkQAVBC80lX
+0Gxv8wf/eZZGiNqsMFy4QgB0xzyZ0zDoLXsi7rJHrpTTJwTn94QopWOaWWUxvXel
+/8IJhwyMrX3fs2561HhzAbhuFw/fdnz02zFsN4TATz23tKZeIMLqWLArEMWyxe3B
+KPS0VPdy2NDB8sWtf0hfhROWCXYcrbj/7bMXZlMNl/uB/AOYWFTCTqGDjfCngj4Y
+2EKO4gAeeR9BSQHKV6/2GchRf/LmB+KpGEZqO1d2dxeQVIRT/pN3Tmd2OBiEHMwg
+OQKtVsIPUnPLIQCA3SyzA2msa5UFOksFK498+eytcN/8Kju7DHoeGJPnhV6jh/74
+BytgW6gYJbcpPBVXgfUgAb+weW8ALg==
+=C2Cp
 -----END PGP SIGNATURE-----
 
---Sig_/WfOBf/gbWqGR=ZAJW2p.JX9--
+--Sig_/22xVno_WMun1/gOIgWBEiZn--
