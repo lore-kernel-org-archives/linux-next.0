@@ -1,40 +1,78 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: x86 VM Boot hang with latest linux-next
-Date: Mon, 4 Mar 2019 18:02:46 -0500
-Message-ID: <20190304230246.GC20327@redhat.com>
-References: <CAKgT0UeMqmojVrNV1i-DdY18EBwbJ_4zVTUggAWas5D5yeU1PQ@mail.gmail.com>
- <20190303034847.GA8699@redhat.com>
- <CAKgT0Ue9+wSL60Bj0drkgVQwem=mh_eTrFMda+inX4=qBgi3dA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Tue, 5 Mar 2019 12:48:44 +1100
+Message-ID: <20190305124844.05e44755@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/B5zHwxVW_bqVsvYOIvnbPs/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKgT0Ue9+wSL60Bj0drkgVQwem=mh_eTrFMda+inX4=qBgi3dA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com
+To: Jens Axboe <axboe@kernel.dk>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Mar 03 2019 at 12:06pm -0500,
-Alexander Duyck <alexander.duyck@gmail.com> wrote:
+--Sig_/B5zHwxVW_bqVsvYOIvnbPs/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Thanks. The behavior of it has me wondering if we are looking at
-> something like an uninitialized data issue or something like that
-> since as I mentioned I don't see this occur on every boot, just on
-> most of them. So every now and then I can boot up the VM without any
-> issues, but most of the time it will boot and then get stuck waiting
-> on jobs that take forever.
+Hi all,
 
-The commit in question (1efa3bb79d3 "dm: must allocate dm_noclone for
-stacked noclone devices") conditionally allocates the 'struct
-dm_noclone' and I can only infer that the change is causing a negative
-side-effect in virtualized environments (both x86_64 and s390).
+Today's linux-next merge of the block tree got a conflict in:
 
-I haven't been able to reproduce on x86_64 kvm with virtio-scsi on
-fedora 25 though.  Will try fedora 29 shortly, and also try virtio-blk.
+  include/linux/fs.h
 
-Could you please provide your guest's .config (even if just off-list)?
-Also, what kernel are you running on the host?
+between commit:
 
-Thanks,
-Mike
+  84c4e1f89fef ("aio: simplify - and fix - fget/fput for io_submit()")
+
+from Linus' tree and commit:
+
+  fb7e160019f4 ("fs: add an iopoll method to struct file_operations")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/fs.h
+index 76c7205d4f0d,80e1b199a4b1..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -317,9 -310,8 +317,10 @@@ struct kiocb=20
+  	int			ki_flags;
+  	u16			ki_hint;
+  	u16			ki_ioprio; /* See linux/ioprio.h */
++ 	unsigned int		ki_cookie; /* for ->iopoll */
+ -} __randomize_layout;
+ +
+ +	randomized_struct_fields_end
+ +};
+ =20
+  static inline bool is_sync_kiocb(struct kiocb *kiocb)
+  {
+
+--Sig_/B5zHwxVW_bqVsvYOIvnbPs/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx91XwACgkQAVBC80lX
+0Gwb7AgAkCdTqpNCAv5Yaw+AQSwC74X/Iwl6PW20EwP8FpHsjomppf/C+Vf0qhMM
+GPZJTyVlhQGASo/aRtQBQ80garQQY45CiXvqivgQe2cKyH6nuvdEfyvYmc42vEn3
+u3WYLpdmBaXKOZvUXEp+hqtIngGz2aT3tVo4Vkgy+U6JTFJJZ50yf0sqlBhnqFzH
+EXnHbM2GzOYFP0xW5HAEtrdgq61mhfBNZPGNlK6If25SU9mmAHFbuMp7pwV51AXO
+OZ46SkmSKFlinv0KLa6Xm2OndQRnr0oDt6/KWdwTue0jjX32G4CHcnVLa9q3ml+h
+09q5ziPSK78ifcUXp/tOoO373rPAbg==
+=xU3a
+-----END PGP SIGNATURE-----
+
+--Sig_/B5zHwxVW_bqVsvYOIvnbPs/--
