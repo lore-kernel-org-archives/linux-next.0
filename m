@@ -1,95 +1,76 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: Boot hangs 3 minutes with device mapper
-	on s390
-Date: Tue, 5 Mar 2019 08:29:14 -0500
-Message-ID: <20190305132914.GA24388@redhat.com>
-References: <20190301183350.5ff697d4@TP-holzheu>
-	<20190301183050.GA29752@redhat.com>
-	<20190304110334.6f71962a@TP-holzheu>
-	<20190305040321.GA21739@redhat.com>
-	<alpine.LRH.2.02.1903050440470.24841@file01.intranet.prod.int.rdu2.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dma-mapping tree with Linus' tree
+Date: Wed, 6 Mar 2019 08:36:51 +1100
+Message-ID: <20190306083651.6670648b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1903050440470.24841@file01.intranet.prod.int.rdu2.redhat.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Benjamin Block <bblock@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Alexander Duyck <alexander.duyck@gmail.com>, dm-devel@redhat.com, linux-next@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>, Michael Holzheu <holzheu@linux.ibm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/v1vOyBJJA5R=Tdj5kr6T=qm"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 05 2019 at  4:46am -0500,
-Mikulas Patocka <mpatocka@redhat.com> wrote:
+--Sig_/v1vOyBJJA5R=Tdj5kr6T=qm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> 
-> On Mon, 4 Mar 2019, Mike Snitzer wrote:
-> 
-> > Hi,
-> > 
-> > Alexander reported this same boot hang in another thread.  I was able to
-> > reproduce using an x86_64 .config that Alexander provided.
-> > 
-> > I've pushed this fix out to linux-next:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-5.1&id=be2c5301817833f692aadb2e5fa209582db01d3b
-> > 
-> > If you could verify this fix works for you I'd appreciate it.
-> > 
-> > Thanks,
-> > Mike
-> 
-> So, remove this no-clone optimization and stage it for the next merge 
-> window. There's something we don't understand, so don't merge it. This 
-> patch is just papering over the problem.
+Hi all,
 
-I layered changes that extended your initial noclone support and that
-seems to have upset you.  Yes the evolution could've been cleaner but
-to say this is papering over anything is purely wrong.
+Today's linux-next merge of the dma-mapping tree got a conflict in:
 
-Clearly we're reentering dm_noclone_process_bio() and the relaxed
-negative check that only concerned itself with whether we were in
-make_request_fn lost sight of the potential for losing an 'struct
-dm_noclone' that was already attached to the bio.  _THAT_ is cause for
-the hang.  Full stop.
+  arch/x86/Kconfig
 
-I didn't have time to sort out why we rentered dm_noclone_process_bio()
-yesterday.  But I can easily do so today.  Just to fully appreciate
-_why_ it happened.
+between commit:
 
-To categorize any of this as papering over is just _wrong_ and I don't
-understand why you think it OK to accuse me with that.  Rather than dig
-in to help you've sat back and attacked me.
+  eac616557050 ("x86: Deprecate a.out support")
 
-> "Stacking noclone targets creates more complexity than is tolerable" just 
-> means that no one knows what is hapenning there.
+from Linus' tree and commit:
 
-Not constructive.  What it means is: I wrote the code that enables
-splitting + stacking no_clone + dm_work_fn rentry in dm_process_bio.
-The duality of use in the shared code paths and flag day to support all
-of it made this noclone optimization brittle.  I'll grant you that.
+  ff4c25f26a71 ("dma-mapping: improve selection of dma_declare_coherent ava=
+ilability")
 
-Given the mental gymnastics I had to do to reason through what _could_ be
-going on in different stacking scenarios just made me uneasy to support
-such noclone complexity from the start.  Could revisit allowing stacking
-at a later date though.
- 
-> Meanwile, we could get access to the system that reports hangs and test it 
-> there.
+from the dma-mapping tree.
 
-What part of "I was able to reproduce using an x86_64 .config that
-Alexander provided" don't you understand?
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-It wasn't even that the code was just superficially broken.  It required
-Alexander's .config to tease out the problem.  It took quite a while to
-get my kvm guest testbed sorted out and zero in on reproducing.  I did
-that work.  I then asked those who reported the problem to confirm it
-fixes the issue for them.
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/Kconfig
+index ade12ec4224b,0e33dede053e..000000000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -14,7 -14,7 +14,6 @@@ config X86_3
+  	select ARCH_WANT_IPC_PARSE_VERSION
+  	select CLKSRC_I8253
+  	select CLONE_BACKWARDS
+- 	select HAVE_GENERIC_DMA_COHERENT
+ -	select HAVE_AOUT
+  	select MODULES_USE_ELF_REL
+  	select OLD_SIGACTION
+ =20
+
+--Sig_/v1vOyBJJA5R=Tdj5kr6T=qm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx+6/MACgkQAVBC80lX
+0Gy0sQf/f1qIoI2QcYN8Ng9uTeCpY6cuhwm5vWZjfG4kFyW1Mwc5LCsWdBukj7PS
+/3IRuIvhb4wm1RgEmLo/sL0P+LJIi2vDMFigiUpu+3wq9CGMPxTUjDMMtXWT6xuZ
+6cSpZBZ2vo8p0bKug8l7QRppPg0jxUOKQ3XixTc91VdPINBhweDPtP8pfTOsiYxt
+r6lBrJvZJaeX3nFdReiLG2ZF8ejrpMiktiLx17BAPvBlXrZUItynsvgHmdjZu5Ca
+Lw6xyrwGfQp2GTJm7vDaPEERJyCRBY0kZ8t4npDozSpYG74BxSVSVMhJQu4FLF4f
+6p8iITEM3zwD7t1dNluQ5XTX64ylsA==
+=FeMr
+-----END PGP SIGNATURE-----
+
+--Sig_/v1vOyBJJA5R=Tdj5kr6T=qm--
