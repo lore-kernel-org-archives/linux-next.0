@@ -1,68 +1,69 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: bio-based DM's "noclone" changes have been dropped from
- 5.1 [was: Re: linux-next: Boot hangs 3 minutes with device mapper on s390]
-Date: Tue, 5 Mar 2019 17:21:12 -0500
-Message-ID: <20190305222112.GA26427@redhat.com>
-References: <20190301183350.5ff697d4@TP-holzheu>
-	<20190301183050.GA29752@redhat.com>
-	<20190304110334.6f71962a@TP-holzheu>
-	<20190305040321.GA21739@redhat.com>
-	<CAKgT0UeZ26BDr2FzKKECPLgCfij0SwPrk7GA+UuUuf0nnp3S1A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the regulator tree with the arm-soc
+ tree
+Date: Wed, 6 Mar 2019 09:27:14 +1100
+Message-ID: <20190306092714.23cf72d6@canb.auug.org.au>
+References: <20190218125627.003fc22c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UeZ26BDr2FzKKECPLgCfij0SwPrk7GA+UuUuf0nnp3S1A@mail.gmail.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Benjamin Block <bblock@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, dm-devel@redhat.com, linux-next@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Steffen Maier <maier@linux.ibm.com>, Michael Holzheu <holzheu@linux.ibm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zyDoips50+zG4pgA22y7AE4"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190218125627.003fc22c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 05 2019 at  1:02pm -0500,
-Alexander Duyck <alexander.duyck@gmail.com> wrote:
+--Sig_/zyDoips50+zG4pgA22y7AE4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Mar 4, 2019 at 8:03 PM Mike Snitzer <snitzer@redhat.com> wrote:
-> >
-> > Hi,
-> >
-> > Alexander reported this same boot hang in another thread.  I was able to
-> > reproduce using an x86_64 .config that Alexander provided.
-> >
-> > I've pushed this fix out to linux-next:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-5.1&id=be2c5301817833f692aadb2e5fa209582db01d3b
-> >
-> > If you could verify this fix works for you I'd appreciate it.
-> >
-> > Thanks,
-> > Mike
-> 
-> I've verified I am no longer seeing the issue with this patch applied.
+Hi all,
 
-Thanks for testing.
+On Mon, 18 Feb 2019 12:56:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the regulator tree got a conflict in:
+>=20
+>   arch/arm/mach-pxa/raumfeld.c
+>=20
+> between commit:
+>=20
+>   0f884f8a090e ("ARM: pxa: remove raumfeld board files and defconfig")
+>=20
+> from the arm-soc tree and commit:
+>=20
+>   01dc79cd6fe7 ("regulator: fixed/gpio: Pull inversion/OD into gpiolib")
+>=20
+> from the regulator tree.
+>=20
+> I fixed it up (the former removed the file, so I did that) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-But so you and others are aware: based on further internal discussion
-with Mikulas, I decided to drop all the bio-based DM "noclone" changes
-that were developed for 5.1.
+This is now a conflict between Linus' tree and the arm-soc tree.
 
-Mikulas had a really good point that the 10-13% performance benefit seen
-with 512b IO workloads all but disappears to only a 1% improvement as
-soon as the bio's payload is increased to >= 4K.  Meaning the risk
-associated with the noclone changes really is _not_ worth the reward.
+--=20
+Cheers,
+Stephen Rothwell
 
-I've rebased the dm-5.1 branch accordingly and linux-next will pick it
-up tonight.
+--Sig_/zyDoips50+zG4pgA22y7AE4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Mike
+-----BEGIN PGP SIGNATURE-----
 
-ps. in case anyone cares, the noclone changes have been preserved in
-this dm-noclone-support branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/log/?h=dm-noclone-support
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx+98IACgkQAVBC80lX
+0GwSHQf/en4eIkxCGL1kDVBrGK2ANdvzi4G9duJ7LfI8yznBHU0Q6ts91DjdM/gO
+UwXwaWgcWpVYZo8o3V3tX6ByZCgJOho8h5MdY+mgRHsiOKjibWy0kXFj37gcKFM8
+9JJ52uVe9KstcpvPJF+9aETJBJrkfsOu5fv2yXZfgc6k0fHUfmWfph1coaSKWctD
+LczcOqGiTYCXyNw3so082ndI0qnOs4eM9cJ6EwZ8suEPNtTtJe7CeK34cmUGc3o0
+uRJRPJ6x5UOgkPmM/2lx7caqI8UTzoVi7bWyN05AyxTRfFWYPhYHk5i5w3w/hbh3
+Xb8SasdRsz0LL745TA99USUPgyv2dg==
+=TFaY
+-----END PGP SIGNATURE-----
+
+--Sig_/zyDoips50+zG4pgA22y7AE4--
