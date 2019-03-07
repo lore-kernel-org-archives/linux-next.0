@@ -1,47 +1,71 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: linux-next: Boot hangs 3 minutes with device mapper
-	on s390
-Date: Tue, 5 Mar 2019 10:02:52 -0800
-Message-ID: <CAKgT0UeZ26BDr2FzKKECPLgCfij0SwPrk7GA+UuUuf0nnp3S1A@mail.gmail.com>
-References: <20190301183350.5ff697d4@TP-holzheu>
-	<20190301183050.GA29752@redhat.com>
-	<20190304110334.6f71962a@TP-holzheu>
-	<20190305040321.GA21739@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2019-03-05-16-36 uploaded (zstd)
+Date: Wed, 6 Mar 2019 16:22:04 -0800
+Message-ID: <a02fdae6-1f3c-6725-88e5-73316017f5ac@infradead.org>
+References: <20190306003721.eX4wF%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <dm-devel-bounces@redhat.com>
-In-Reply-To: <20190305040321.GA21739@redhat.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Benjamin Block <bblock@linux.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, dm-devel@redhat.com, linux-next@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Steffen Maier <maier@linux.ibm.com>, Michael Holzheu <holzheu@linux.ibm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190306003721.eX4wF%akpm@linux-foundation.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+Cc: Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 4, 2019 at 8:03 PM Mike Snitzer <snitzer@redhat.com> wrote:
->
-> Hi,
->
-> Alexander reported this same boot hang in another thread.  I was able to
-> reproduce using an x86_64 .config that Alexander provided.
->
-> I've pushed this fix out to linux-next:
-> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-5.1&id=be2c5301817833f692aadb2e5fa209582db01d3b
->
-> If you could verify this fix works for you I'd appreciate it.
->
-> Thanks,
-> Mike
+On 3/5/19 4:37 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-03-05-16-36 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
 
-I've verified I am no longer seeing the issue with this patch applied.
+on x86_64:
 
-Thanks.
+../lib/zstd/decompress.c: In function 'ZSTD_decompressStream':
+../lib/zstd/decompress.c:416:2: warning: argument 1 null where non-null expected [-Wnonnull]
+  memcpy(dst, src, srcSize);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ../arch/x86/include/asm/string.h:5:0,
+                 from ../include/linux/string.h:20,
+                 from ../lib/zstd/mem.h:24,
+                 from ../lib/zstd/bitstream.h:54,
+                 from ../lib/zstd/fse.h:228,
+                 from ../lib/zstd/decompress.c:32:
+../arch/x86/include/asm/string_64.h:14:14: note: in a call to function 'memcpy' declared here
+ extern void *memcpy(void *to, const void *from, size_t len);
+              ^~~~~~
+../lib/zstd/decompress.c:426:2: warning: argument 1 null where non-null expected [-Wnonnull]
+  memset(dst, *(const BYTE *)src, regenSize);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ../arch/x86/include/asm/string.h:5:0,
+                 from ../include/linux/string.h:20,
+                 from ../lib/zstd/mem.h:24,
+                 from ../lib/zstd/bitstream.h:54,
+                 from ../lib/zstd/fse.h:228,
+                 from ../lib/zstd/decompress.c:32:
+../arch/x86/include/asm/string_64.h:18:7: note: in a call to function 'memset' declared here
+ void *memset(void *s, int c, size_t n);
+       ^~~~~~
 
-- Alex
+
+
+-- 
+~Randy
