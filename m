@@ -1,124 +1,70 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-Date: Sun, 10 Mar 2019 19:44:34 -0700
-Message-ID: <20190311024434.GA19508@bombadil.infradead.org>
-References: <20190221171332.262cf619@canb.auug.org.au>
- <20190221123440.GD17501@mtr-leonro.mtl.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: New syscalls (was: Re: linux-next: manual merge of the pidfd tree
+ with the y2038 tree (now block and tip trees))
+Date: Mon, 11 Mar 2019 09:36:40 +0100
+Message-ID: <CAMuHMdUmPBeQ=jcDufVBDEGiO1Yk4bWWBSg488Jm_wwAuySHBQ@mail.gmail.com>
+References: <20190122141027.70cd9166@canb.auug.org.au> <20190213162212.500a7cd5@canb.auug.org.au>
+ <CAK8P3a1hw03ik+tZSG8PnP7Rd=Pzwbo7n59HLJW04ncndyqzsg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190221123440.GD17501@mtr-leonro.mtl.com>
+In-Reply-To: <CAK8P3a1hw03ik+tZSG8PnP7Rd=Pzwbo7n59HLJW04ncndyqzsg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Leon Romanovsky <leonro@mellanox.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christian Brauner <christian@brauner.io>, Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:34:42PM +0000, Leon Romanovsky wrote:
-> On Thu, Feb 21, 2019 at 05:13:32PM +1100, Stephen Rothwell wrote:
-> > Hi all,
+Hi Arnd,
+
+On Wed, Feb 13, 2019 at 3:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Feb 13, 2019 at 6:22 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > On Tue, 22 Jan 2019 14:10:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > Today's linux-next merge of the pidfd tree got conflicts in:
+> > >
+> > >   arch/x86/entry/syscalls/syscall_32.tbl
+> > >   arch/x86/entry/syscalls/syscall_64.tbl
+> > >   include/uapi/asm-generic/unistd.h
+> > >
+> > > between commits:
+> > >
+> > >   63a96220ad45 ("arch: add split IPC system calls where needed")
+> > >   0bd4bb9c5612 ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
+> > >
+> > > from the y2038 tree and commit:
+> > >
+> > >   3d2991bc7a67 ("signal: add pidfd_send_signal() syscall")
+> > >
+> > > from the pidfd tree.
 > >
-> > After merging the xarray tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
+> > This is now a conflict between the block, tip and pidfd trees.  The
+> > resolution now looks like below.
+>
+> Checked it again, still looks good. Thanks,
 
-[API change]
+What's the plan with adding new syscalls to all architectures?
 
-So I ended up being really busy last week and not having time to send
-my merge request for XArray yet.  I'm going to send a request this week;
-Leon and Jason, how does this merge resolution look?
+  + <stdin>: warning: #warning syscall io_uring_enter not implemented
+[-Wcpp]:  => 1481:2
+  + <stdin>: warning: #warning syscall io_uring_register not
+implemented [-Wcpp]:  => 1484:2
+  + <stdin>: warning: #warning syscall io_uring_setup not implemented
+[-Wcpp]:  => 1478:2
 
-Compile tested only.
+and more seem to be planned for this merge window.
 
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index a9f29156e486..8a93c0c95953 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -668,19 +668,10 @@ static int assign_name(struct ib_device *device, const char *name)
- 	}
- 	strlcpy(device->name, dev_name(&device->dev), IB_DEVICE_NAME_MAX);
- 
--	/* Cyclically allocate a user visible ID for the device */
--	device->index = last_id;
--	ret = xa_alloc(&devices, &device->index, INT_MAX, device, GFP_KERNEL);
--	if (ret == -ENOSPC) {
--		device->index = 0;
--		ret = xa_alloc(&devices, &device->index, INT_MAX, device,
--			       GFP_KERNEL);
--	}
--	if (ret)
--		goto out;
--	last_id = device->index + 1;
--
--	ret = 0;
-+	ret = xa_alloc_cyclic(&devices, &device->index, device, xa_limit_31b,
-+			&last_id, GFP_KERNEL);
-+	if (ret > 0)
-+		ret = 0;
- 
- out:
- 	up_write(&devices_rwsem);
-@@ -1059,14 +1050,14 @@ static int assign_client_id(struct ib_client *client)
- 	 * to get the LIFO order. The extra linked list can go away if xarray
- 	 * learns to reverse iterate.
- 	 */
--	if (list_empty(&client_list))
-+	if (list_empty(&client_list)) {
- 		client->client_id = 0;
--	else
--		client->client_id =
--			list_last_entry(&client_list, struct ib_client, list)
--				->client_id;
--	ret = xa_alloc(&clients, &client->client_id, INT_MAX, client,
--		       GFP_KERNEL);
-+	} else {
-+		struct ib_client *last = list_last_entry(&client_list,
-+				struct ib_client, list);
-+		client->client_id = last->client_id + 1;
-+	}
-+	ret = xa_insert(&clients, client->client_id, client, GFP_KERNEL);
- 	if (ret)
- 		goto out;
- 
-diff --git a/drivers/infiniband/core/restrack.c b/drivers/infiniband/core/restrack.c
-index fa804093fafb..3b5ff2f7b5f8 100644
---- a/drivers/infiniband/core/restrack.c
-+++ b/drivers/infiniband/core/restrack.c
-@@ -13,28 +13,6 @@
- #include "cma_priv.h"
- #include "restrack.h"
- 
--static int rt_xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
--			      u32 *next)
--{
--	int err;
--
--	*id = *next;
--	if (*next == U32_MAX)
--		*id = 0;
--
--	xa_lock(xa);
--	err = __xa_alloc(xa, id, U32_MAX, entry, GFP_KERNEL);
--	if (err && *next != U32_MAX) {
--		*id = 0;
--		err = __xa_alloc(xa, id, *next, entry, GFP_KERNEL);
--	}
--
--	if (!err)
--		*next = *id + 1;
--	xa_unlock(xa);
--	return err;
--}
--
- /**
-  * rdma_restrack_init() - initialize and allocate resource tracking
-  * @dev:  IB device
-@@ -226,7 +204,8 @@ static void rdma_restrack_add(struct rdma_restrack_entry *res)
- 	kref_init(&res->kref);
- 	init_completion(&res->comp);
- 	if (res->type != RDMA_RESTRACK_QP)
--		ret = rt_xa_alloc_cyclic(&rt->xa, &res->id, res, &rt->next_id);
-+		ret = xa_alloc_cyclic(&rt->xa, &res->id, res, xa_limit_32b,
-+				&rt->next_id, GFP_KERNEL);
- 	else {
- 		/* Special case to ensure that LQPN points to right QP */
- 		struct ib_qp *qp = container_of(res, struct ib_qp, res);
+Shall each architcture maintainer take care of this hxxself, or will
+this be done in
+a coordinated way?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
