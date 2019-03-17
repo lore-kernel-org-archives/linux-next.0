@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Date: Sun, 17 Mar 2019 12:28:51 +1100
-Message-ID: <20190317122851.2cf734bf@canb.auug.org.au>
+Date: Sun, 17 Mar 2019 12:34:41 +1100
+Message-ID: <20190317123441.1722959e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TelkFK1v.XotP9Mogd4PFsc"; protocol="application/pgp-signature"
+ boundary="Sig_/8YN0Of.WZu=rVDF3VUDLoz/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiada Wang <jiada_wang@mentor.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/TelkFK1v.XotP9Mogd4PFsc
+--Sig_/8YN0Of.WZu=rVDF3VUDLoz/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,40 +19,54 @@ Hi all,
 
 In commit
 
-  2b13bee38849 ("ASoC: samsung: odroid: Fix clock configuration for 44100 s=
-ample rate")
+  399706df420e ("ASoC: rsnd: src: fix compiler warnings")
 
 Fixes tag
 
-  Fixes: fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate handl=
-ing")
+  Fixes: linux-next commit 7674bec4fc09 ("ASoC: rsnd: update BSDSR/BSDISR h=
+andling")
 
 has these problem(s):
 
-  - Target SHA1 does not exist
+  - 'linux-next commit' was unexpected.
 
-Did you mean:
+In commit
 
-  1d22c337dc8f ("ASoC: samsung: odroid: Fix 32000 sample rate handling"
+  ba164a49f8f7 ("ASoC: rsnd: src: Avoid a potential deadlock")
+
+Fixes tag
+
+  Fixes: linux-next commit 7674bec4fc09 ("ASoC: rsnd: update BSDSR/BSDISR h=
+andling")
+
+has these problem(s):
+
+  - 'linux-next commit' was unexpected.
+
+Just use:
+
+  got log --format=3D'Fixes: %h ("%s")' <commit>
+
+to generate the Fixes tags.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/TelkFK1v.XotP9Mogd4PFsc
+--Sig_/8YN0Of.WZu=rVDF3VUDLoz/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyNotMACgkQAVBC80lX
-0Gxnugf/X28p2RcURStB9ykF5moKb4ErdogtMKHdm8I4QdhYUP+o+imuL8s3BVsC
-Hc0m2sz4F7DHhAycGRp3CE/njCHz9mrjDzgGeiq8230/pqthn/Q/HxjJ1SlSn+Og
-4VpwHhP1a4qR/EbNonWxul5kmd1ryRNVqwh7AtOs/Q7VYCxD1fCAGSxS3NaVV1ww
-W77esQnjOstyeyE9XIQyLOXY0bArxXKIjoBrDlPoPqDLzrBN1y0mNoUmjgnzf+6X
-ddTT1qNB5w8xvKgQSVrtjiXj7VUnTUuDKx/koOYRw+qnvoVGQQrXQyW2U4uc3aiC
-Znp3Bl9OVy1+aXdY50e1a46S7xClYQ==
-=j8eo
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyNpDEACgkQAVBC80lX
+0Gzsfgf7B8laTevaamvgYKDNrqzqZOvxNBpa+cE4O5SQ4Im9bigeXurNWrqWzk63
+3ztfn8GOPUEBKndYXDfoTx8mgdjBE4MJ5XvtOIKWVeTq03ZC/iwsqxWop9FFBPt8
+3SFsJpSEvjHhw5T6WLpvY3IgRyDq6jQrHsMgdp8HI8nKjC/B33GCC10x3DfBVwHD
+NYR395Ib4NMofhqEzvT9/VJYQvhdkzJVI8H8QQPusjuDnZt+AXCEy6emdORrdDm8
+t1Jx9btBzNKcnOT64/ZzQ8gndBvgxrUyvokeTbsSMxlEngs//Fi9JNYD1aCV/sGa
+jIPgZ9KKi7a+JLNG/P+gtCfyqUHb+A==
+=c82n
 -----END PGP SIGNATURE-----
 
---Sig_/TelkFK1v.XotP9Mogd4PFsc--
+--Sig_/8YN0Of.WZu=rVDF3VUDLoz/--
