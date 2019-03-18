@@ -1,56 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the regulator tree
-Date: Tue, 19 Mar 2019 08:31:04 +1100
-Message-ID: <20190319083104.1503e2ae@canb.auug.org.au>
+Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
+Date: Tue, 19 Mar 2019 10:55:28 +1100
+Message-ID: <20190319105528.115f0a88@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yeuk0cepF09Ag_WRB8Q0BYS"; protocol="application/pgp-signature"
+ boundary="Sig_/Z_JOi7uQlBwHhx=TkNMJKXv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Axel Lin <axel.lin@ingics.com>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Dave Airlie <airlied@redhat.com>, Mario Kleiner <mario.kleiner.de@gmail.com>, David Francis <David.Francis@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/yeuk0cepF09Ag_WRB8Q0BYS
+--Sig_/Z_JOi7uQlBwHhx=TkNMJKXv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-  d1a6cbdf1e59 ("regulator: lp87565: Fix missing register for LP87565_BUCK_=
-0")
+  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 
-Fixes tag
+between commits:
 
-  Fixes: f0168a9bf ("regulator: lp87565: Add support for lp87565 PMIC regul=
-ators")
+  d63716658ac1 ("drm/amd/display: Use vrr friendly pageflip throttling in D=
+C.")
+  634092b1b9f6 ("drm/amd/display: Use vrr friendly pageflip throttling in D=
+C.")
 
-has these problem(s):
+from Linus' tree and commit:
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  7b19bba58f77 ("drm/amd/display: Use vrr friendly pageflip throttling in D=
+C.")
+
+and following commits from the amdgpu tree.
+
+I fixed it up (I used the version from the amdgpu tree) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/yeuk0cepF09Ag_WRB8Q0BYS
+--Sig_/Z_JOi7uQlBwHhx=TkNMJKXv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyQDhgACgkQAVBC80lX
-0GySHggAjYdT2ySHL8s+1o4QM4JG2ZE71slYIMRiYEkkCG6TNOjXF0pbbk+px2SH
-0cXOBwb0uAH6wQokLpCiRIA4v2gA6l/t4JmPY8QP//F7StGkUc3wnZDTKEZCT1vB
-/8Ohil2WB0ffJJbk6B3PePVj2Alhy4SwQkj6cNDw6WJIGlcypzmwBwBgAVWWiwzB
-I6cJe7M0TP2eNpQgnPcDB1/B3EA4EtJN2j+EN4vCZMl0XF+Eg8tkiqT1zIHVzGTX
-Jvo2z6gh3O1VDALRMPv+qRRltGmYSCnGslOli8m4zJ3Fro903+EoNJKbAa3KvHOh
-DfQEWM9sGu9cSfnQ8vj00ViczDBJHQ==
-=XELr
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyQL/AACgkQAVBC80lX
+0GzcxAgAmKauUZUsKk0MC6nhciAMHKjHyRAmh1wq3xRwLeI66GMUf5dvNqI5q9mv
+x8KKkqCuDrUWy+MiGSMICX/m3JrGKifwAZltxSSTEjcVav3N0+DGHrsyNMT+7V1a
+PDb43IO5MtW+6OERkEVXXVEEbZb2Ku+bljLabDqth5vPehs1PKJBDfgWgBmlOfNu
+thIcciCIr84dXuJsQvSMsAKES+wkazNkZ8xxxMl4gEC/vFkCcOUJrJb0+fjXCIfc
++V89nCGWAZ4UL2TCJFWwHyjqlpPp0xeD04M6mzovX2ilmDT9UYvxJXzvV9mzGqlL
+s5BKXleCzNYc13XdXRzo7uuwh6OW9A==
+=Nooh
 -----END PGP SIGNATURE-----
 
---Sig_/yeuk0cepF09Ag_WRB8Q0BYS--
+--Sig_/Z_JOi7uQlBwHhx=TkNMJKXv--
