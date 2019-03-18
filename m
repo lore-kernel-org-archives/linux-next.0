@@ -1,68 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the bluetooth tree
-Date: Mon, 18 Mar 2019 10:30:25 +1100
-Message-ID: <20190318103025.12221d14@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the vfs tree
+Date: Mon, 18 Mar 2019 11:00:50 +1100
+Message-ID: <20190318110050.2bf8d87b@canb.auug.org.au>
+References: <20190204093334.0ccc42bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VoK8rJ/=9pFlPirTxDeQ.3P"; protocol="application/pgp-signature"
+ boundary="Sig_/F1JYpB8UULc1V+hLNijIqJf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190204093334.0ccc42bb@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/VoK8rJ/=9pFlPirTxDeQ.3P
+--Sig_/F1JYpB8UULc1V+hLNijIqJf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the bluetooth tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Mon, 4 Feb 2019 09:33:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the vfs tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> In file included from include/linux/printk.h:7,
+>                  from include/linux/kernel.h:14,
+>                  from include/linux/fs_context.h:15,
+>                  from fs/fs_parser.c:13:
+> fs/fs_parser.c: In function 'fs_validate_description':
+> include/linux/kern_levels.h:5:18: warning: format '%lu' expects argument =
+of type 'long unsigned int', but argument 3 has type 'int' [-Wformat=3D]
+>  #define KERN_SOH "\001"  /* ASCII Start Of Header */
+>                   ^~~~~~
+> include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
+>  #define KERN_ERR KERN_SOH "3" /* error conditions */
+>                   ^~~~~~~~
+> include/linux/printk.h:303:9: note: in expansion of macro 'KERN_ERR'
+>   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+>          ^~~~~~~~
+> fs/fs_parser.c:413:6: note: in expansion of macro 'pr_err'
+>       pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
+>       ^~~~~~
+> fs/fs_parser.c:413:31: note: format string is defined here
+>       pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
+>                              ~~^
+>                              %u
+>=20
+> Introduced by commit
+>=20
+>   f512b838c104 ("vfs: Add configuration parser helpers")
 
-drivers/bluetooth/btmtksdio.c: In function 'btmtksdio_interrupt':
-drivers/bluetooth/btmtksdio.c:470:2: warning: 'old_len' may be used uniniti=
-alized in this function [-Wmaybe-uninitialized]
-  print_hex_dump(KERN_ERR, "err sdio rx: ", DUMP_PREFIX_NONE, 4, 1,
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          old_data, old_len, true);
-          ~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/bluetooth/btmtksdio.c:376:15: note: 'old_len' was declared here
-  unsigned int old_len;
-               ^~~~~~~
-drivers/bluetooth/btmtksdio.c:470:2: warning: 'old_data' may be used uninit=
-ialized in this function [-Wmaybe-uninitialized]
-  print_hex_dump(KERN_ERR, "err sdio rx: ", DUMP_PREFIX_NONE, 4, 1,
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          old_data, old_len, true);
-          ~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/bluetooth/btmtksdio.c:375:17: note: 'old_data' was declared here
-  unsigned char *old_data;
-                 ^~~~~~~~
-
-Introduced by commit
-
-  d74eef2834b5 ("Bluetooth: mediatek: add support for MediaTek MT7663S and =
-MT7668S SDIO")
+We are now seeing that warning in Linus' tree :-(
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/VoK8rJ/=9pFlPirTxDeQ.3P
+--Sig_/F1JYpB8UULc1V+hLNijIqJf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyO2JEACgkQAVBC80lX
-0GxFNAf/ReP9mM3KG+CGIOkr/Rj72tuecW+ZaikVqYk7wgTUPvSwlJlUXgbMFBmP
-QBB8RTELrKq0+pX6deHOyFstiHY9N8Qt/u7siY2/WigNbBL9n1/nbxQoYxiKyXcp
-gpY/lZJ6X9sULmCTOUEJD87v1HrrqKCL8solsX+VCNgbHQ5IB6gqTMEuTuxfK2Lj
-tkop/xExYhuRbloXVmKA2PxVLgAuxPFvgfJ5iO33G3u+eWMpue8SAb0n4Roy9JRB
-wffylM5ltAulhvpTz23GGNyn7RBNjN40TjkZ5ZaRzYmE50JERUpTQ86Iduji39+S
-gKl8ttjFTO9vYg2pMozt5EQMD16fJg==
-=Q1J2
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyO37IACgkQAVBC80lX
+0GwxgQf8CMu4EwT6LxSYySpGZwl1cX3aYR6kiH3T93SSmVghkk5WRT0tMxgfUT2X
+WQVCt1+wb3j6mit76kr/yoZxr25exNUL3C+XjShG2ehN3AdQ3C7pTYttLhXpa4G6
+VrPStTLm15MinIOL0hiPLpY3h0pSUzX9vLBqdS6E1D4lvjL1as3VV+FHtWxCqqv7
+7QSto0oaE7s2UB0nJPdjt/wl4TJJYVukypvvvmk00GLtfXufwr+Uk42PUMtY9vJ4
+DZhFiUGEcH274bARIqWdjP9Oy5O903d7lukLBCknBn/Y0cOxeLEduHJhurrDC1WQ
+7bBZQoE8zZ1IaHh8wSpZN5jrRtOvvw==
+=86Mr
 -----END PGP SIGNATURE-----
 
---Sig_/VoK8rJ/=9pFlPirTxDeQ.3P--
+--Sig_/F1JYpB8UULc1V+hLNijIqJf--
