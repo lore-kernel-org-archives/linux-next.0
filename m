@@ -1,47 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the amdgpu tree
-Date: Mon, 18 Mar 2019 15:54:19 +1100
-Message-ID: <20190318155419.0e6d34f7@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the amdgpu tree
+Date: Mon, 18 Mar 2019 15:59:14 +1100
+Message-ID: <20190318155914.74b67033@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JLSLO4MGfOk6rg94xHti=c2"; protocol="application/pgp-signature"
+ boundary="Sig_/0ntJg.sTk1g4uTNh.zAX+0X"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Kleiner <mario.kleiner.de@gmail.com>, kbuild test robot <fengguang.wu@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, Dave Airlie <airlied@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/JLSLO4MGfOk6rg94xHti=c2
+--Sig_/0ntJg.sTk1g4uTNh.zAX+0X
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Alex,
 
-Commits
+In commit
 
-  b208c3a940b9 ("drm/amdkfd: avoid HMM change cause circular lock")
-  8a3397a108e5 ("drm/amdgpu: use HMM callback to replace mmu notifier")
+  4dc982bbdaad ("drm/amd/powerplay: fix memdup.cocci warnings")
 
-are missing a Signed-off-by from their committers.
+Fixes tag
+
+  Fixes: 76760fe3c00d ("drm/amd/powerplay: add function to store overdrive =
+information for smu11")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean:
+
+  ec95996ed982 ("drm/amd/powerplay: add function to store overdrive informa=
+tion for smu11")
+
+In commit
+
+  7b19bba58f77 ("drm/amd/display: Use vrr friendly pageflip throttling in D=
+C.")
+
+Fixes tag
+
+  Fixes: bb47de736661 ("drm/amdgpu: Set FreeSync state using drm VRR
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not wrap Fixes tags onto more than one line.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/JLSLO4MGfOk6rg94xHti=c2
+--Sig_/0ntJg.sTk1g4uTNh.zAX+0X
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyPJHsACgkQAVBC80lX
-0Gz1ewgAmXaUNL20i6dWQ0uvPZo68J+vWkXDBSc/DCESjgsz606PaCxrMt/sj2jF
-Tcy294QtNs1x41kYtVa5b0gqMMajToQYGNna/LTBy5SNfiiP2mIH/e9cLjHaSDky
-MkMLs09yJVIlVY5KgQPjsBkuTuCe0kRL9Ti9QDK4qXBRieILNbsBgF9GOy/8Vi6y
-PQ+3WskSAETJoVWsgA2szYQgsqm/UEjIH4R3YwxZ//glEqOL7dIIs+LJbzaqOFh8
-pK31QpHtEnSAx7LmmDqNmyFqM/X/wFI/KupSV6SOcs2kBB9wSR1YbjLevPnRvIjB
-1q7wkuKVXLkkVW/3GSzW0Dzr6AR9Cg==
-=H66S
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyPJaIACgkQAVBC80lX
+0GzuuQf+IKALn5aomqFo50WQB1fWMbKXf0mf8/+7ARYOjrMyNCsuhJajOoTeSdfL
+CjWwDyu1i/zhdClYA5Vq3Ys5Gx5leQMHVH/G8rqhZfX3zDXruhp0YE/aklRGicco
+l/QwnaSkTFvwHIDqqz6cbWXKkIehl2pT55lVpsdzkjcou0gvjPKTkaqPVGXnpnaC
+OsEN6yfC2fL5/ASd3KUzlnQzC2gtGUasb5IG4ck1GVNGc/N1hgGfViyZY0v42hOX
+YN92hMJHn4hkCQuGwwLz/UuHdxsJcQfrFBXSizQ2yVzkXqflp7wasIOwg/IA2KU5
+Ja7d7nyiUq+W94ZiomolwgRszNnCIw==
+=nfZ6
 -----END PGP SIGNATURE-----
 
---Sig_/JLSLO4MGfOk6rg94xHti=c2--
+--Sig_/0ntJg.sTk1g4uTNh.zAX+0X--
