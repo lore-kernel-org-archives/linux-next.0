@@ -1,75 +1,84 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: linux-next: Fixes tag needs some work in the sound-asoc tree
-Date: Mon, 18 Mar 2019 11:08:06 +0100
-Message-ID: <7d368c6e-3816-14fb-da32-2aeb9c076db6@samsung.com>
-References: <CGME20190317012907epcas3p129240b3dcef7d974c2fea23c26a76f2a@epcas3p1.samsung.com>
-        <20190317122851.2cf734bf@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the sound-asoc-fixes tree
+Date: Mon, 18 Mar 2019 21:45:06 +1100
+Message-ID: <20190318214506.03f6da24@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/drJHZdp+RxL3r7WN58u7e1s"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20190317122851.2cf734bf@canb.auug.org.au>
-Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jiada Wang <jiada_wang@mentor.com>
 List-Id: linux-next.vger.kernel.org
 
-On 3/17/19 02:28, Stephen Rothwell wrote:
-> In commit
-> 
->   2b13bee38849 ("ASoC: samsung: odroid: Fix clock configuration for 44100 sample rate")
-> 
-> Fixes tag
-> 
->   Fixes: fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate handling")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> Did you mean:
-> 
->   1d22c337dc8f ("ASoC: samsung: odroid: Fix 32000 sample rate handling"
+--Sig_/drJHZdp+RxL3r7WN58u7e1s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Yes, I unfortunately used erroneously hash from this -stable commit:
- 
+In commit
 
-commit fbeec965b8d1ca4005f2b63f70fd6ed54a147027
-Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date:   Wed Mar 14 17:41:13 2018 +0100
+  2b13bee38849 ("ASoC: samsung: odroid: Fix clock configuration for 44100 s=
+ample rate")
 
-    ASoC: samsung: odroid: Fix 32000 sample rate handling
-    
-    [ Upstream commit 1d22c337dc8f3a25638f7262e7bcb5729a34d140 ]
-    
-    In case of sample rates lower than 44100 currently there is too low MCLK
-    frequency set for the CODEC. Playback fails with following errors:
-    
-    $ speaker-test -c2 -t sine -f 1500 -l2 -r 32000
-    
-    Sine wave rate is 1500.0000Hz
-    Rate set to 32000Hz (requested 32000Hz)
-    Buffer size range from 128 to 131072
-    Period size range from 64 to 65536
-    Using max buffer size 131072
-    Periods = 4
-    Unable to set hw params for playback: Invalid argument
-    Setting of hwparams failed: Invalid argument
-    
-    [  497.883700] max98090 1-0010: Invalid master clock frequency
-    
-    To fix this the I2S root clock's frequency is increased, depending
-    on sampling rate.
-    
-    Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-    Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-    Signed-off-by: Mark Brown <broonie@kernel.org>
-    Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes tag
 
+  Fixes: fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate handl=
+ing")
 
--- 
-Thanks,
-Sylwester
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean:
+
+  1d22c337dc8f ("ASoC: samsung: odroid: Fix 32000 sample rate handling")
+
+In commit
+
+  399706df420e ("ASoC: rsnd: src: fix compiler warnings")
+
+Fixes tag
+
+  Fixes: linux-next commit 7674bec4fc09 ("ASoC: rsnd: update BSDSR/BSDISR h=
+andling")
+
+has these problem(s):
+
+  - 'linux-next commit' was unexpected.
+
+In commit
+
+  ba164a49f8f7 ("ASoC: rsnd: src: Avoid a potential deadlock")
+
+Fixes tag
+
+  Fixes: linux-next commit 7674bec4fc09 ("ASoC: rsnd: update BSDSR/BSDISR h=
+andling")
+
+has these problem(s):
+
+  - 'linux-next commit' was unexpected.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/drJHZdp+RxL3r7WN58u7e1s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyPdrIACgkQAVBC80lX
+0Gxc+gf/VLDJ5p9X1fbStVZTtCGuK66G8XCpVtGCGgXc14vSP98qn7dqXl9bUWIz
+iq1Lsbcf9WRQNMWTBkJskEiAgE85SqOBmgNbt++zmN/5NQh+1q/S1rG5tOaJfDLI
+KkIuiIXugTdPANccXMFZh6SzQdWcoDrUchCfwE/EDBMk6evgXg6+wAfIF9QBf9y0
+PT3qhwbCsVv7gKIbMiUMj0qZVZA4OqC0S9EkwECR4bfOSkwO1y+Or0bCBlGptdng
+Z6uuMvuhjba42l2dylVIklW4a0r/NKDiYMuJ0cI+NOemgecaWn1Sd4peOxy15PvD
+YPXl7LgASK3yduAoMCJGkRb+V/cwTg==
+=aGn2
+-----END PGP SIGNATURE-----
+
+--Sig_/drJHZdp+RxL3r7WN58u7e1s--
