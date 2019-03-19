@@ -1,56 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Date: Tue, 19 Mar 2019 16:20:25 +1100
-Message-ID: <20190319162025.3024a5e6@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the net tree
+Date: Tue, 19 Mar 2019 16:21:52 +1100
+Message-ID: <20190319162152.102d98d4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//kWFd7n=Pi9h5i=LkzhdcLF"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/wzK3DhsIfkktuZC/W=28rah"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yoshiki Komachi <komachi.yoshiki@lab.ntt.co.jp>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhiqiang Liu <liuzhiqiang26@huawei.com>, "Suanming.Mou" <mousuanming@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//kWFd7n=Pi9h5i=LkzhdcLF
+--Sig_/wzK3DhsIfkktuZC/W=28rah
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commit
 
-  18bed89107a4 ("af_packet: fix the tx skb protocol in raw sockets with ETH=
-_P_ALL")
+  cc4807bb6092 ("vxlan: Don't call gro_cells_destroy() before device is unr=
+egistered")
 
-Fixes tag
-
-  Fixes: 75c65772c3 ("net/packet: Ask driver for protocol if not provided b=
-y user")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+is missing a Signed-off-by from its author.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//kWFd7n=Pi9h5i=LkzhdcLF
+--Sig_/wzK3DhsIfkktuZC/W=28rah
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyQfBkACgkQAVBC80lX
-0Gz/Uwf/QM4t34PddhPvfqKsRMftReoe/YZZSAT1uCfk0TbLDi+MCm3oi5DclJM1
-ZUqMgye4kMZZmkH6lmzssW0d0wNrPwVlxo+Cd8lsXXPmhs7vsFffbTrAXGMbGJ8V
-L3oO4HogPYr6mNnhL8XKTBiO7luNMM/RR4ImT3ZPMgxOWTi2jRi54GklS14/tvxn
-v49o259YpVT2orZpZ/Foo15nUGomIZQpCAUI4MZQFtHDhw5sm1CryB6dQ6ANeyyC
-NeAdqACSeylKrQnYAl14UtmEdi1oFJ3Ax+kSwj9Kx1icIAIoiXvqbc4sgA5gQnUG
-37uMZguksrQy3C/wM1gb+SZb4X/Wzg==
-=0CFl
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyQfHAACgkQAVBC80lX
+0Gy2Egf+Lut+eekzPkamFTUU31A/3EHI2ZxLDdWWksBtyutAKuUzLJxDHxZGmkJo
+X0kBNKfX6oR1q4kdflxcr9X1PHWbSESto9r2neOqPmFPGDjA1gscWfWMAMAwsLQn
+6HTg8MNeXHFxloXImL1z5W9N1abzSa8n9xxTVLxH9nK/e0ozqYa2alKMq/YVmUwA
+5LLP0R8jAOLTeCoPVSYrO2mWAafYI/neJMvlNXx3UURKmuPzsLJURk649zuD+NUC
+Mvp8sfhtnlRQ2lqnDtNXU8hIFuOt/XhFoZbhjI89s1voRqWxNlENffxcmWWasQOU
+81HjottsmiQFQojA0Mp8sFVWsXNIUQ==
+=vYAJ
 -----END PGP SIGNATURE-----
 
---Sig_//kWFd7n=Pi9h5i=LkzhdcLF--
+--Sig_/wzK3DhsIfkktuZC/W=28rah--
