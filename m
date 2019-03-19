@@ -1,53 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the leds tree
-Date: Tue, 19 Mar 2019 13:58:33 +1100
-Message-ID: <20190319135833.64ad30b8@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the amdgpu
+ tree
+Date: Tue, 19 Mar 2019 15:24:03 +1100
+Message-ID: <20190319152403.41570130@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o2dvWC9DrisrNsricRIrHid"; protocol="application/pgp-signature"
+ boundary="Sig_/j+tJL_kw4Tm17VEcFezTcpn"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kangjie Lu <kjlu@umn.edu>
+To: Andrew Morton <akpm@linux-foundation.org>, Alex Deucher <alexdeucher@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/o2dvWC9DrisrNsricRIrHid
+--Sig_/j+tJL_kw4Tm17VEcFezTcpn
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the leds tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/leds/leds-pca9532.c: In function 'pca9532_probe':
-drivers/leds/leds-pca9532.c:536:11: warning: cast from pointer to integer o=
-f different size [-Wpointer-to-int-cast]
-   devid =3D (int)of_id->data;
-           ^
+  mm/hmm.c
 
-Introduced by commit
+between commit:
 
-  6b788fae618c ("leds: fix a potential NULL pointer dereference")
+  e811b0a79998 ("mm/hmm: use reference counting for HMM struct")
+
+from the amdgpu tree and commit:
+
+  e0ed7d6bb0c5 ("mm/hmm: use reference counting for HMM struct")
+
+and following commits from the akpm-current tree.
+
+I fixed it up (I just used the latter version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/o2dvWC9DrisrNsricRIrHid
+--Sig_/j+tJL_kw4Tm17VEcFezTcpn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyQWtkACgkQAVBC80lX
-0GzDDQf8CyTqf8Wutu88gxXhsR80cbHvKXmFwz9Akd1oCwDGEQi6lCEHAnjjg9KN
-37Q5bMojkFLVxHYOL0j5DJilQZ6nHd6OEzabnA8wKHzSTrPWF+NL2Yh6u0ruFaIZ
-nUd8zGuI2S0mdCUDF+k3dVaFusfRH8Aj/q/RcTRdoEfoL+QmwWWT8rWcjPWDJ/EO
-67cm9tlPykueWvj1//jlds9rgMrq0rlG9bIsP3sAUcXxItMeOB/8LXtcTTW93FiB
-+klXweaweZFbMaV5QzfQmdKbLpjZkccSwtaRg8GX81rbytM7VxfMQUf5oQ+oDQv1
-lZCGFd24C3zBHl3ndjmgzH0YbFDTVg==
-=p/x6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyQbuMACgkQAVBC80lX
+0Gyb7Qf/TQxNnjwXMss+AiF6aYhuzG5NrAZ61t/8/IXFdIFIJGBnhSGBBvc0WlzJ
+KFc4XPYkw5aO/9b0BD1uRmv3dQhm63VZfMzROUmMO13moylM+YqafQXR5u0SOQLT
+74XElhfHBsrsGpv5kkOjF2NuwIChZaijGOUzNQsjmbZ+2ZF+Il4XqEh16pIdGED8
+OzFsDDG8E4owTj8bYn6OQYhtaG6uB3Z4xJ2Bfc/DkZ0wSyBVfLhR1XjsCHNA6mK6
+NecCGHcyBVhjQsEA3lAgagvbqlMRHOP4lVMigGTXIiClvwtglfibc7D3WdG41cAr
+yfYqt4W/Aqyo4TQJPD0VMxrBOXmf9A==
+=Yx/A
 -----END PGP SIGNATURE-----
 
---Sig_/o2dvWC9DrisrNsricRIrHid--
+--Sig_/j+tJL_kw4Tm17VEcFezTcpn--
