@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the v4l-dvb tree
-Date: Wed, 20 Mar 2019 08:21:03 +1100
-Message-ID: <20190320082103.33faecc9@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the gfs2 tree
+Date: Wed, 20 Mar 2019 08:24:02 +1100
+Message-ID: <20190320082402.5af7812e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CvF6ijSEHOPcIWeUBaffbQU"; protocol="application/pgp-signature"
+ boundary="Sig_/dJcu8/ISlMk0rINfVKju5Rq"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Steve Longerbeam <slongerbeam@gmail.com>
+To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CvF6ijSEHOPcIWeUBaffbQU
+--Sig_/dJcu8/ISlMk0rINfVKju5Rq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,52 +19,36 @@ Hi all,
 
 In commit
 
-  e6f8bd59c28f ("media: gspca: do not resubmit URBs when streaming has stop=
-ped")
+  31b13f0abfa6 ("gfs2: Fix loop in gfs2_rbm_find (v2)")
 
 Fixes tag
 
-  Fixes: 6992effe5344 ("gspca: Kill all URBs before releasing any of them")
+  Fixes: e579ed4f44 ("GFS2: Introduce rbm field bii")
 
 has these problem(s):
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h (%s)'
-
-In commit
-
-  904371f90b2c ("media: imx: csi: Allow unknown nearest upstream entities")
-
-Fixes tag
-
-  Fixes: bf3cfaa712e5c ("media: staging/imx: get CSI bus type from nearest
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not wrap Fixes tags onto more that one line.
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/CvF6ijSEHOPcIWeUBaffbQU
+--Sig_/dJcu8/ISlMk0rINfVKju5Rq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyRXT8ACgkQAVBC80lX
-0GxVOQf6AlwmkMC9S5hkHasfSbyvpZN5Xj9+m/NXEU1SL0eRK9yGBzv2EpxVsQ6o
-faeg+LTxJaJ0wOhZsgPNbMwX+APSylZepn+jG1JrEYAGOSgrrR9oJFaNj0ln+hew
-d/cqEnmjsMVI4F6xHV53vfrJgfFO6SS/KRjL4VGKHLEKRw3Xs5rVPSs8J8Z7h1h9
-iYv1h40F16sAji9d3Ci+i1nhP+YcXhzYwHkcLQGZm1Nz/mWEvhJ72tcG3vmJujJs
-r0URmYqe1D1jif89+PNlvgGoNfgbr1lfOiQ7hSZJc0fSUCFjUSTHtNLa7kXBOJ7v
-pA5FSMHyEBD822pv03pjmBxyjCB2yQ==
-=UTpX
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyRXfIACgkQAVBC80lX
+0GzccQgAlFsa8NGGfgojG2MKSN3pjdgxlNyww8zmdJDQ5mkJwmBOJaVJ/UxZKGLL
+3zpMF63AfU9Ynp3zlaCh6J5C/2f/E+LfBv5SxPWMvpMneF22HVmHCFI70VI2FMVm
+wBvduapkUAPtmHsV0C9sDSKSV4CaDsD1SjAAuDj8E0QSMi9R08YzObd/JAHhXg+B
+QRWndVx1yxHaEtA6CPuelK/WjkD5OpnxTnTAI/PhEocYbhKhqHyeKyQq5QqRggtB
+YOBUsLZgMuzhHyWN/JquqqldRAEyHZ2Gr7BnwkMZoILrezRTzaozMeHQhnjONG8K
+mKPQP4rOWzTSDIKMV+lLEG65+zO3Bg==
+=DKaH
 -----END PGP SIGNATURE-----
 
---Sig_/CvF6ijSEHOPcIWeUBaffbQU--
+--Sig_/dJcu8/ISlMk0rINfVKju5Rq--
