@@ -1,30 +1,47 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Mar 19 (sound/soc/codecs/nau8810.c)
-Date: Tue, 19 Mar 2019 07:13:57 -0700
-Message-ID: <00f5cef0-4024-caf2-7f98-52b1e92b13b2@infradead.org>
-References: <20190319161236.214675f6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the arm64-fixes
+ tree
+Date: Wed, 20 Mar 2019 01:43:12 +1100
+Message-ID: <20190320014312.562c8f6d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AmGxuA8/qarnccXK.xvkdbe"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190319161236.214675f6@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Lin <ctlin0@nuvoton.com>, moderated for non-subscribers <alsa-devel@alsa-project.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Okamoto, Takayuki" <tokamoto@jp.fujitsu.com>, Zhang Lei <zhang.lei@jp.fujitsu.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On 3/18/19 10:12 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190318:
-> 
+--Sig_/AmGxuA8/qarnccXK.xvkdbe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on i386:
+Hi all,
 
-ld: sound/soc/codecs/nau8810.o: in function `nau8810_set_pll':
-nau8810.c:(.text+0x6e7): undefined reference to `__udivdi3'
+Commit
 
+  a4d17a19c493 ("arm64: apply workaround on A64FX v1r0")
 
--- 
-~Randy
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AmGxuA8/qarnccXK.xvkdbe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyRAAAACgkQAVBC80lX
+0Gx41gf/ZfSpi+0jqCI6K3S8+oo8y7PcshpCE3QktwewOpRNfqaA7r3l/+eIRWkm
+FJcWoFrBPXSDRPwzd60AGzHVVjSnhL6dD1ZV5+FQmpbMHXq5yqGGXKCMPP+Dq/ps
+6w87277OW8AwTsp5I7b+usn+TIuR174zqDCal4DTH3oigszMDMiBNqnSmwYWeeVX
+V/lADBPzQgnrUOXRvjq+zBjUFl8sJPohQoDd/QCx8ot3CMtxQM3PvyuQtRQSB3Kv
+Fgyk5Ox/hipfOjeZfcEYiTgOeTZM5ZojvWYkz3g6PGTBNI5Bxr0586A2lOGVpAj6
+xPffUlh4dhBM/szcxLsts/jeSrERlg==
+=6GDH
+-----END PGP SIGNATURE-----
+
+--Sig_/AmGxuA8/qarnccXK.xvkdbe--
