@@ -1,54 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the gfs2 tree
-Date: Wed, 20 Mar 2019 08:24:02 +1100
-Message-ID: <20190320082402.5af7812e@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Wed, 20 Mar 2019 10:45:02 +1100
+Message-ID: <20190320104502.29d22b96@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dJcu8/ISlMk0rINfVKju5Rq"; protocol="application/pgp-signature"
+ boundary="Sig_/KUo4UheB7.tCZKCPkEosc3O"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, Wen Shi <wenshi@opensource.cirrus.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/dJcu8/ISlMk0rINfVKju5Rq
+--Sig_/KUo4UheB7.tCZKCPkEosc3O
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  31b13f0abfa6 ("gfs2: Fix loop in gfs2_rbm_find (v2)")
+In file included from include/linux/pm_runtime.h:12,
+                 from sound/soc/codecs/wm_adsp.c:21:
+sound/soc/codecs/wm_adsp.c: In function 'wmfw_parse_id_header':
+sound/soc/codecs/wm_adsp.c:45:22: warning: format '%zu' expects argument of=
+ type 'size_t', but argument 8 has type 'int' [-Wformat=3D]
+  dev_info(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
+                      ^~~~~~
+include/linux/device.h:1400:22: note: in definition of macro 'dev_fmt'
+ #define dev_fmt(fmt) fmt
+                      ^~~
+sound/soc/codecs/wm_adsp.c:45:2: note: in expansion of macro 'dev_info'
+  dev_info(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
+  ^~~~~~~~
+sound/soc/codecs/wm_adsp.c:2145:2: note: in expansion of macro 'adsp_info'
+  adsp_info(dsp, "Firmware: %x v%d.%d.%d, %zu algorithms\n",
+  ^~~~~~~~~
+sound/soc/codecs/wm_adsp.c:2145:44: note: format string is defined here
+  adsp_info(dsp, "Firmware: %x v%d.%d.%d, %zu algorithms\n",
+                                          ~~^
+                                          %u
+In file included from include/linux/pm_runtime.h:12,
+                 from sound/soc/codecs/wm_adsp.c:21:
+sound/soc/codecs/wm_adsp.c: In function 'wmfw_v3_parse_id_header':
+sound/soc/codecs/wm_adsp.c:45:22: warning: format '%zu' expects argument of=
+ type 'size_t', but argument 9 has type 'int' [-Wformat=3D]
+  dev_info(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
+                      ^~~~~~
+include/linux/device.h:1400:22: note: in definition of macro 'dev_fmt'
+ #define dev_fmt(fmt) fmt
+                      ^~~
+sound/soc/codecs/wm_adsp.c:45:2: note: in expansion of macro 'dev_info'
+  dev_info(_dsp->dev, "%s: " fmt, _dsp->name, ##__VA_ARGS__)
+  ^~~~~~~~
+sound/soc/codecs/wm_adsp.c:2158:2: note: in expansion of macro 'adsp_info'
+  adsp_info(dsp, "Firmware: %x vendor: 0x%x v%d.%d.%d, %zu algorithms\n",
+  ^~~~~~~~~
+sound/soc/codecs/wm_adsp.c:2158:57: note: format string is defined here
+  adsp_info(dsp, "Firmware: %x vendor: 0x%x v%d.%d.%d, %zu algorithms\n",
+                                                       ~~^
+                                                       %u
 
-Fixes tag
+Introduced by commits
 
-  Fixes: e579ed4f44 ("GFS2: Introduce rbm field bii")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  a5dcb24d70ff ("ASoC: wm_adsp: Factor out parsing of firmware ID header")
+  170b1e123f38 ("ASoC: wm_adsp: Add support for new Halo core DSPs")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/dJcu8/ISlMk0rINfVKju5Rq
+--Sig_/KUo4UheB7.tCZKCPkEosc3O
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyRXfIACgkQAVBC80lX
-0GzccQgAlFsa8NGGfgojG2MKSN3pjdgxlNyww8zmdJDQ5mkJwmBOJaVJ/UxZKGLL
-3zpMF63AfU9Ynp3zlaCh6J5C/2f/E+LfBv5SxPWMvpMneF22HVmHCFI70VI2FMVm
-wBvduapkUAPtmHsV0C9sDSKSV4CaDsD1SjAAuDj8E0QSMi9R08YzObd/JAHhXg+B
-QRWndVx1yxHaEtA6CPuelK/WjkD5OpnxTnTAI/PhEocYbhKhqHyeKyQq5QqRggtB
-YOBUsLZgMuzhHyWN/JquqqldRAEyHZ2Gr7BnwkMZoILrezRTzaozMeHQhnjONG8K
-mKPQP4rOWzTSDIKMV+lLEG65+zO3Bg==
-=DKaH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyRfv4ACgkQAVBC80lX
+0GwIhAgAix2SPD+KLayj90+ET1qt9404kvtE7GMDzX5scOQnllo4WhRQjYoQaiey
+QpJ/Jenor+SO7FtsGiETefBuU7Tgywl7tECd/A3h0fMu4fb0WLHfkIuiL/E0f74u
+1Z0uV2AZCq0q1RrXaaWI43frBuSMJz94EN5KlafAnhTfc9Mqa1ZKFX89gDgRgveN
+HuyyCIKdbMzQToThjesRKW/+wVQfAyXdJjM+Ip6kV2ipe4VGtG9vB0k03v3IeCbl
+nqNMIbHEcOe7St7kEoGiJEUIX5XpWZIMyl5ear3g2jP1UNNwEH0QxfegVmEp/WGc
+ae5ieG63wOgbt8tOk4C6fOymuHpW1w==
+=6O7Y
 -----END PGP SIGNATURE-----
 
---Sig_/dJcu8/ISlMk0rINfVKju5Rq--
+--Sig_/KUo4UheB7.tCZKCPkEosc3O--
