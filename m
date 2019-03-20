@@ -1,54 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the hwmon-fixes tree
-Date: Thu, 21 Mar 2019 07:48:37 +1100
-Message-ID: <20190321074837.455ce23c@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the ntb tree
+Date: Thu, 21 Mar 2019 07:58:18 +1100
+Message-ID: <20190321075818.24f9703a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ldfzovifLuA+5x5wTb0r.=="; protocol="application/pgp-signature"
+ boundary="Sig_/wfWlJaTnCrn0=Kn4xr_QCJT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eddie James <eajames@linux.ibm.com>
+To: Jon Mason <jdmason@kudzu.us>, NTB Mailing List <linux-ntb@googlegroups.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ldfzovifLuA+5x5wTb0r.==
+--Sig_/wfWlJaTnCrn0=Kn4xr_QCJT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi all,
 
 In commit
 
-  9940b52b73e4 ("hwmon: (occ) Fix power sensor indexing")
+  f4d0dd1064b8 ("NTB: ntb_transport: Ensure qp->tx_mw_dma_addr is initaliaz=
+ed")
 
 Fixes tag
 
-  Fixes: 54076cb ("hwmon (occ): Add sensor attributes and register ...")
+  Fixes: c27ccb899219 ("NTB: ntb_transport: Ensure the destination buffer i=
+s mapped for TX DMA")
 
 has these problem(s):
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  - Target SHA1 does not exist
+
+Did you mean:
+
+  c59666bb32b9 ("NTB: ntb_transport: Ensure the destination buffer is mappe=
+d for TX DMA")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ldfzovifLuA+5x5wTb0r.==
+--Sig_/wfWlJaTnCrn0=Kn4xr_QCJT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlySpyUACgkQAVBC80lX
-0GwdxAgApA07TST/GYz44x6VzeKT86zGIYlCqDnF/vIDd9o/8eiab8lEWtai6HJ2
-4gCUSEVA1KLTFnxiQXHdyp1fuSoMRjph0EcF3fl+jMMe8DanSU3ryQ8D7c6WNhGC
-Pjdo03oUv6sn3gNYXLAFEgwvFReVhbfqFvZZSUuyljuUAnqaoiA/PY4S0+IdYkiE
-QkbagHSSPbsyj31i8jFpBZryU7wGiP6K3MHhXoV8PgD9etLMz1NlTP1CQB8Rxtce
-qQarZCn1gIdwbH2LN6ZfVcR7psuPa/VG+1dyNO6xkQvuRQRd64jF27N1Y+UvSrSY
-6sIeIAF866X9/ADR3pGcJ5gbN5mt2Q==
-=w2kI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlySqWoACgkQAVBC80lX
+0Gx1tAf/QOrwg468avcjYsUY2uzPNwTYuM1iGFnq15ztb04t10OLvcTKOIizdD+j
+Vtn6b9ZxkVoQUOER96omj01F4ZHbWntGOx1xKmsGg97+XJg9O0nb3bGqJo3RLnlJ
+uNYE6jLi+veZEILiEJ7MYqWw11EM/blYVp0YUg8/rrA/jsPkNL7xLutce4IPMepZ
+PZPRaskEbxTPWqkmU+bEyuSCyBGZSq4B7GxHRCbdaEAGMPEejcIkBwrWr4y6ddHM
+UwjHkoyQzkF1ceGiTMqBQPmVimBKsLUX2pkQCZ8Vh02oF7LpC9Mm+2d546ufj06I
+SFlqceiMAykAzB3rGP5k4/OaZQh2XA==
+=0+8A
 -----END PGP SIGNATURE-----
 
---Sig_/ldfzovifLuA+5x5wTb0r.==--
+--Sig_/wfWlJaTnCrn0=Kn4xr_QCJT--
