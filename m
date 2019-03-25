@@ -1,84 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the vfs tree
-Date: Tue, 26 Mar 2019 10:05:20 +1100
-Message-ID: <20190326100520.5306e2b7@canb.auug.org.au>
-References: <20190204093334.0ccc42bb@canb.auug.org.au>
-        <20190318110050.2bf8d87b@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the sunxi tree
+Date: Tue, 26 Mar 2019 10:09:15 +1100
+Message-ID: <20190326100915.3fa1e4c9@canb.auug.org.au>
+References: <20190322083048.31084cf8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ABI=vFaqmdVjLm/7McWb+Rh"; protocol="application/pgp-signature"
+ boundary="Sig_/pvwmm6ZF_4jU5TbsfpW_ZHY"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190318110050.2bf8d87b@canb.auug.org.au>
+In-Reply-To: <20190322083048.31084cf8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ABI=vFaqmdVjLm/7McWb+Rh
+--Sig_/pvwmm6ZF_4jU5TbsfpW_ZHY
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 18 Mar 2019 11:00:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Fri, 22 Mar 2019 08:30:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> On Mon, 4 Feb 2019 09:33:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > After merging the vfs tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> >=20
-> > In file included from include/linux/printk.h:7,
-> >                  from include/linux/kernel.h:14,
-> >                  from include/linux/fs_context.h:15,
-> >                  from fs/fs_parser.c:13:
-> > fs/fs_parser.c: In function 'fs_validate_description':
-> > include/linux/kern_levels.h:5:18: warning: format '%lu' expects argumen=
-t of type 'long unsigned int', but argument 3 has type 'int' [-Wformat=3D]
-> >  #define KERN_SOH "\001"  /* ASCII Start Of Header */
-> >                   ^~~~~~
-> > include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SO=
-H'
-> >  #define KERN_ERR KERN_SOH "3" /* error conditions */
-> >                   ^~~~~~~~
-> > include/linux/printk.h:303:9: note: in expansion of macro 'KERN_ERR'
-> >   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-> >          ^~~~~~~~
-> > fs/fs_parser.c:413:6: note: in expansion of macro 'pr_err'
-> >       pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
-> >       ^~~~~~
-> > fs/fs_parser.c:413:31: note: format string is defined here
-> >       pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
-> >                              ~~^
-> >                              %u
-> >=20
-> > Introduced by commit
-> >=20
-> >   f512b838c104 ("vfs: Add configuration parser helpers") =20
+> After merging the sunxi tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 >=20
-> We are now seeing that warning in Linus' tree :-(
+> WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
+>   Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
+>   Selected by [y]:
+>   - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+>   - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+>=20
+> WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
+>   Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
+>   Selected by [y]:
+>   - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+>   - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+>=20
+> WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
+>   Depends on [n]: HAS_IOMEM [=3Dy] && ARCH_SUNXI
+>   Selected by [y]:
+>   - CLK_SUNXI_PRCM_SUN6I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+>   - CLK_SUNXI_PRCM_SUN8I [=3Dy] && COMMON_CLK [=3Dy] && CLK_SUNXI [=3Dy]
+>=20
+> Introduced by commit
+>=20
+>   49c726d55c1b ("clk: sunxi: Add Kconfig options")
 
-I am still getting the above warning ...
-
+I am still getting these warnings.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ABI=vFaqmdVjLm/7McWb+Rh
+--Sig_/pvwmm6ZF_4jU5TbsfpW_ZHY
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyZXrAACgkQAVBC80lX
-0GwgOQf/S4/jp7NdxfpkLPV9xLUXG7WsDxDYb9d/b54xrB9x8IE6W7OrwjG9i5+Y
-1Mh3d+8L4PEzjG74Wy7V/lY2Op62+SSQkDgg3eDZ23aVayLjvRGsqDrgmz9gaETV
-fDLy1//nLjmuVt4/x7qcyt7R1sEqmhg/risCakxA1BvngeKy7G3QVMZYYEHC48yH
-nHvWwpb16UkLjGTMpb/q4maqb9EtKnhrlNXBTGoeJnBv/oXjTpeQ3XatjW8YIZk9
-GAxG+2wkFlCG/LSytufePdxNoBtlX2wBJV/9yGqb/EP/eHWh/1zgzDHmSejwqrEQ
-mIQPnlOykR02f7bYF7K/JKd01r+eSw==
-=xZ4k
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyZX5sACgkQAVBC80lX
+0GwnGgf+KwAyLaPwYOeCFAgclduhWxifha74rgF0zp7ZnaP0aTrn5etAgo+5bTpL
+pwJReMsMcPy4NT1Y6RE95UtDplZMLM1w2OwRteXO6zKFF3Kef9eQx2IM9Q5UhPVb
+SV0eJyXJcLMT9N8DDybNRhwm7H63zNLXzCe8Zffqj8QvCnZTXUybYKRwGuz+YlaV
+I4gmgKNv1rqsKRDohjUfUFfgJVUg1dwe/8Ht//lh4k7t67NITsBuIwY4oE7FQsDb
+ohj8UP0jmRyzPsOjn5zsrByeLXkt5XHCVMSOGxnHtFvRwrgnebnnIQGsv6AQ7PC/
+PaTm4guRvda4bzrPSnbiDoA/UFZZIA==
+=s4Bq
 -----END PGP SIGNATURE-----
 
---Sig_/ABI=vFaqmdVjLm/7McWb+Rh--
+--Sig_/pvwmm6ZF_4jU5TbsfpW_ZHY--
