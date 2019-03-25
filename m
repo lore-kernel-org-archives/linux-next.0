@@ -1,36 +1,47 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the coresight tree
-Date: Mon, 25 Mar 2019 08:53:03 -0600
-Message-ID: <CANLsYkz3bmb0+iwaPm9Nc6F=HTa9+_Uukx5hDTi28QSCOHyKWA@mail.gmail.com>
-References: <20190324223227.1987c866@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the btrfs-kdave
+ tree
+Date: Tue, 26 Mar 2019 07:05:47 +1100
+Message-ID: <20190326070547.006baaae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2jfdEvC4kh9np6OjprWeoGT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190324223227.1987c866@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, Nikolay Borisov <nborisov@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-Good day Stephen,
+--Sig_/2jfdEvC4kh9np6OjprWeoGT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 24 Mar 2019 at 05:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Mathieu,
->
-> Commits
->
->   0a3a3dfb0d15 ("perf tools: Add missing case value")
->   0dd14fd06504 ("perf cs-etm: return errcode in cs_etm__process_auxtrace_info()")
->   9b884872f9be ("perf cs-etm: Remove errnoeous ERR_PTR() usage in cs_etm__process_auxtrace_info")
->
-> are missing a Signed-off-by from their committer.
+Hi all,
 
-Fixed and pushed - thanks for pointing this out.
+Commit
 
-Mathieu
+  bb8bce012bdd ("btrfs: replace pending/pinned chunks lists with io tree")
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2jfdEvC4kh9np6OjprWeoGT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyZNJsACgkQAVBC80lX
+0GyX1wf+Ij6m29ScEqlcTMgJPu6yx1me56D7mr7zUuKv2WmLOPqwvj7gcn9kRKKs
+NWvrfi6a3hPdh1+oB0VYwU3Eu/HAUhqq99UoZ0xUA+ouC2RbUVhiMbZhKea3vh+e
+IqcUDULlxJ8geHdFmZ0rB2R6xgT6ItzrUW3eM0mJs9lPOH+LEK6EUQtAE5tju/Nf
+82OxaXnIwNShmWFS7LSb/Bz8VOGU8Bj4CPigHLeTeA3BizF1LZsKb2LH1a+cJ7u6
+ELl0XcsTkkyMPTIG2VvRgVC9pGchHySC/Emm+zYD0LZG+6usDzsO8IQypxxBrMrs
+0a/I7rOfz5a/X/HTkZkLUoqqaZ/LsA==
+=tIU9
+-----END PGP SIGNATURE-----
+
+--Sig_/2jfdEvC4kh9np6OjprWeoGT--
