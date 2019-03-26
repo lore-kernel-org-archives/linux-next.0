@@ -1,112 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bpf-next tree with the net tree
-Date: Wed, 27 Mar 2019 09:14:37 +1100
-Message-ID: <20190327091437.68ec6903@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 27 Mar 2019 10:03:36 +1100
+Message-ID: <20190327100336.142b4b08@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RzM0gbDkZ=flEpOJ8zcbFAU"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luca Boccassi <bluca@debian.org>
+ boundary="Sig_//EM.dT8f7SAzbtk7pXQ6So."; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viorel Suman <viorel.suman@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/RzM0gbDkZ=flEpOJ8zcbFAU
+--Sig_//EM.dT8f7SAzbtk7pXQ6So.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  tools/lib/bpf/Makefile
+In file included from include/linux/printk.h:330,
+                 from include/linux/kernel.h:15,
+                 from include/linux/clk.h:16,
+                 from sound/soc/fsl/fsl_audmix.c:8:
+sound/soc/fsl/fsl_audmix.c: In function 'fsl_audmix_state_trans':
+include/linux/dynamic_debug.h:80:13: error: initializer element is not cons=
+tant
+   .format =3D (fmt),    \
+             ^
+include/linux/dynamic_debug.h:116:2: note: in expansion of macro 'DEFINE_DY=
+NAMIC_DEBUG_METADATA'
+  DEFINE_DYNAMIC_DEBUG_METADATA(id, fmt);  \
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/dynamic_debug.h:136:2: note: in expansion of macro '__dynamic=
+_func_call'
+  __dynamic_func_call(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~~~
+include/linux/dynamic_debug.h:150:2: note: in expansion of macro '_dynamic_=
+func_call'
+  _dynamic_func_call(fmt,__dynamic_dev_dbg,   \
+  ^~~~~~~~~~~~~~~~~~
+include/linux/device.h:1493:2: note: in expansion of macro 'dynamic_dev_dbg'
+  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+  ^~~~~~~~~~~~~~~
+sound/soc/fsl/fsl_audmix.c:93:3: note: in expansion of macro 'dev_dbg'
+   dev_dbg(comp->dev, prm.msg);
+   ^~~~~~~
+include/linux/dynamic_debug.h:80:13: note: (near initialization for '__UNIQ=
+UE_ID_ddebug374.format')
+   .format =3D (fmt),    \
+             ^
+include/linux/dynamic_debug.h:116:2: note: in expansion of macro 'DEFINE_DY=
+NAMIC_DEBUG_METADATA'
+  DEFINE_DYNAMIC_DEBUG_METADATA(id, fmt);  \
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/dynamic_debug.h:136:2: note: in expansion of macro '__dynamic=
+_func_call'
+  __dynamic_func_call(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~~~
+include/linux/dynamic_debug.h:150:2: note: in expansion of macro '_dynamic_=
+func_call'
+  _dynamic_func_call(fmt,__dynamic_dev_dbg,   \
+  ^~~~~~~~~~~~~~~~~~
+include/linux/device.h:1493:2: note: in expansion of macro 'dynamic_dev_dbg'
+  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+  ^~~~~~~~~~~~~~~
+sound/soc/fsl/fsl_audmix.c:93:3: note: in expansion of macro 'dev_dbg'
+   dev_dbg(comp->dev, prm.msg);
+   ^~~~~~~
 
-between commit:
+Caused by commit
 
-  1d382264d911 ("bpf, libbpf: fix version info and add it to shared object")
+  be1df61cf06e ("ASoC: fsl: Add Audio Mixer CPU DAI driver")
 
-from the net tree and commit:
-
-  60e4786e229d ("tools/bpf: generate pkg-config file for libbpf")
-
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have reverted that commit (and its 2 following ones) for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/lib/bpf/Makefile
-index 5bf8e52c41fc,96e9571b0a2e..000000000000
---- a/tools/lib/bpf/Makefile
-+++ b/tools/lib/bpf/Makefile
-@@@ -79,6 -79,9 +79,8 @@@ export prefix libdir src ob
-  libdir_SQ =3D $(subst ','\'',$(libdir))
-  libdir_relative_SQ =3D $(subst ','\'',$(libdir_relative))
- =20
- -LIB_FILE =3D libbpf.a libbpf.so
-+ PC_FILE =3D libbpf.pc
-+=20
-  VERSION		=3D $(BPF_VERSION)
-  PATCHLEVEL	=3D $(BPF_PATCHLEVEL)
-  EXTRAVERSION	=3D $(BPF_EXTRAVERSION)
-@@@ -129,18 -129,17 +131,19 @@@ all
-  export srctree OUTPUT CC LD CFLAGS V
-  include $(srctree)/tools/build/Makefile.include
- =20
- -BPF_IN    :=3D $(OUTPUT)libbpf-in.o
- -LIB_FILE :=3D $(addprefix $(OUTPUT),$(LIB_FILE))
- -PC_FILE :=3D $(addprefix $(OUTPUT),$(PC_FILE))
- -VERSION_SCRIPT :=3D libbpf.map
- +BPF_IN		:=3D $(OUTPUT)libbpf-in.o
- +VERSION_SCRIPT	:=3D libbpf.map
- +
- +LIB_TARGET	:=3D $(addprefix $(OUTPUT),$(LIB_TARGET))
- +LIB_FILE	:=3D $(addprefix $(OUTPUT),$(LIB_FILE))
-++PC_FILE		:=3D $(addprefix $(OUTPUT),$(PC_FILE))
- =20
-  GLOBAL_SYM_COUNT =3D $(shell readelf -s --wide $(BPF_IN) | \
-  			   awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {s++} END{print s}')
-  VERSIONED_SYM_COUNT =3D $(shell readelf -s --wide $(OUTPUT)libbpf.so | \
-  			      grep -Eo '[^ ]+@LIBBPF_' | cut -d@ -f1 | sort -u | wc -l)
- =20
-- CMD_TARGETS =3D $(LIB_TARGET)
- -CMD_TARGETS =3D $(LIB_FILE) $(PC_FILE)
-++CMD_TARGETS =3D $(LIB_TARGET) $(PC_FILE)
- =20
-  CXX_TEST_TARGET =3D $(OUTPUT)test_libbpf
- =20
-@@@ -233,7 -232,7 +247,7 @@@ config-clean
- =20
-  clean:
-  	$(call QUIET_CLEAN, libbpf) $(RM) $(TARGETS) $(CXX_TEST_TARGET) \
-- 		*.o *~ *.a *.so *.so.$(VERSION) .*.d .*.cmd LIBBPF-CFLAGS
- -		*.o *~ *.a *.so .*.d .*.cmd *.pc LIBBPF-CFLAGS
-++		*.o *~ *.a *.so *.so.$(VERSION) .*.d .*.cmd *.pc LIBBPF-CFLAGS
-  	$(call QUIET_CLEAN, core-gen) $(RM) $(OUTPUT)FEATURE-DUMP.libbpf
- =20
- =20
-
---Sig_/RzM0gbDkZ=flEpOJ8zcbFAU
+--Sig_//EM.dT8f7SAzbtk7pXQ6So.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyapE0ACgkQAVBC80lX
-0GygTwf/Yo93YhpDOnBpP6Jr/rRoDsdFBnN4ttOr7s+hO2uOSBEXzjq3EfSkcsHk
-tfoAL6rssj+i6zIzMjhu8X+WQwAg85K/x/vAQ8ZGAQ7TcbAaPWCXmofoEvrEYr9f
-34skN4q2X0A+BRHFjAdLEpkAGC1ETivZYJdQxUV2J1mvP/Vb25aqX2Jnt5YueC+O
-m3vBrf7Ck0cYYoSUgcErw6G5Y5V4vK5bzRYgkbAu90tCYMa6n67zpivT7m7PiGFE
-jt8xWQ8+WRMbLBZZ+dOiG2OgrPDXB9GseZJnD6hixx/lkIPa+oTSISjCdJHIklAZ
-JdE0yuDpQROfr5SMUglkc5c9cmvJbQ==
-=klIF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyar8gACgkQAVBC80lX
+0Gzdagf+MnbpcBCIjxnTzv+8wKtN4YYichCECj4pWIRt+6p32ZIk6dlSWYo0yCOt
+JPR5mGvfdab1zOImVg/WNIkrauf5rRMo5lhNEKPrtEyIreMpD0l67IUQSSbpcf12
+5paAmJKOM4nrUc+XwPlSyhQsTGDPCUxum15fL3eSYQlDMc+TbER2pZ0KR3GbVKgH
+p2gvWtvUB1c6s7QsoD07rCJv1OI03cW0fYEnRBuDM3cDGMVeT5Y9igxCcMHGR2Uk
+YkktxhMXY9LaiK9GR4BuAfcVyfHYhqBK1Ia1W477I6wMHRRKQ7D9wEKpeaxzWBwE
+zqaNOC9LkT59vZh4Yfe4dKBsTPU/CA==
+=KLYT
 -----END PGP SIGNATURE-----
 
---Sig_/RzM0gbDkZ=flEpOJ8zcbFAU--
+--Sig_//EM.dT8f7SAzbtk7pXQ6So.--
