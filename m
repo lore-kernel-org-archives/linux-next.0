@@ -1,56 +1,57 @@
-From: Luca Boccassi <bluca@debian.org>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the net tree
-Date: Wed, 27 Mar 2019 09:26:02 +0000
-Message-ID: <df699947253913a7e572fd1252b99e594431e261.camel@debian.org>
-References: <20190327091437.68ec6903@canb.auug.org.au>
-         <20190327015623.ur46t5gdmraagi2q@ast-mbp>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the
+ drm-intel tree
+Date: Wed, 27 Mar 2019 13:07:40 +0200
+Message-ID: <155368485987.8699.12849690159482129286@jlahtine-desk.ger.corp.intel.com>
+References: <20190327135904.7830c60c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327015623.ur46t5gdmraagi2q@ast-mbp>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20190327135904.7830c60c@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paulo Zanoni <paulo.r.zanoni@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2019-03-26 at 18:56 -0700, Alexei Starovoitov wrote:
-> On Wed, Mar 27, 2019 at 09:14:37AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the bpf-next tree got a conflict in:
-> > 
-> >   tools/lib/bpf/Makefile
-> > 
-> > between commit:
-> > 
-> >   1d382264d911 ("bpf, libbpf: fix version info and add it to shared
-> > object")
-> > 
-> > from the net tree and commit:
-> > 
-> >   60e4786e229d ("tools/bpf: generate pkg-config file for libbpf")
-> > 
-> > from the bpf-next tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your
-> > tree
-> > is submitted for merging.  You may also want to consider
-> > cooperating
-> > with the maintainer of the conflicting tree to minimise any
-> > particularly
-> > complex conflicts.
-> 
-> argh. that's a heavy conflict.
-> Since that patch was at the top of the bpf-next I removed it for now
-> and will re-apply when bpf-next gets merged cleanly into net-next and
-> we bring back net changes into bpf-next. Sorry Luca.
-
-No worries - for the next time, should I have based the patch on net-
-next rather than bpf-next?
-
--- 
-Kind regards,
-Luca Boccassi
+UXVvdGluZyBTdGVwaGVuIFJvdGh3ZWxsICgyMDE5LTAzLTI3IDA0OjU5OjA0KQo+IEhpIGFsbCwK
+PiAKPiBBZnRlciBtZXJnaW5nIHRoZSBkcm0taW50ZWwgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0
+IGJ1aWxkIChpMzg2Cj4gZGVmY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKV2UgaGFkIGEgQ0kg
+cmVwb3J0aW5nIG1pc2hhcCwgd2hlcmUgYSBmYWlsZWQgMzItYml0IGJ1aWxkIHJlc3VsdGVkIGlu
+CmEgbWlzbGVhZGluZyBzdWNjZXNzIGUtbWFpbCBiZWluZyBzZW50LgoKVGhlIHRyZWUgaXMgbm93
+IGZpeGVkIGFuZCB3ZSdsbCBpbnZlc3RpZ2F0ZSB0aGUgcHJvYmxlbSB0byBhdm9pZCBzdWNoCmEg
+ZmFsc2UgcmVwb3J0IGluIHRoZSBmdXR1cmUuCgpSZWdhcmRzLCBKb29uYXMKCj4gCj4gSW4gZmls
+ZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2d1Yy5oOjI4OjAsCj4g
+ICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3VjLmg6Mjcs
+Cj4gICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3VjLmM6
+MjU6Cj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfdW5jb3JlLmg6IEluIGZ1bmN0aW9uICdf
+X3Jhd191bmNvcmVfcmVhZDY0JzoKPiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF91bmNvcmUu
+aDoyNTc6OTogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdyZWFkcSc7
+IGRpZCB5b3UgbWVhbiAncmVhZGwnPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJh
+dGlvbl0KPiAgIHJldHVybiByZWFkIyNzX18odW5jb3JlLT5yZWdzICsgaTkxNV9tbWlvX3JlZ19v
+ZmZzZXQocmVnKSk7IFwKPiAgICAgICAgICBeCj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
+dW5jb3JlLmg6MjY5OjE6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyAnX19yYXdfcmVhZCcK
+PiAgX19yYXdfcmVhZCg2NCwgcSkKPiAgXn5+fn5+fn5+fgo+IGRyaXZlcnMvZ3B1L2RybS9pOTE1
+L2ludGVsX3VuY29yZS5oOiBJbiBmdW5jdGlvbiAnX19yYXdfdW5jb3JlX3dyaXRlNjQnOgo+IGRy
+aXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3VuY29yZS5oOjI2NDoyOiBlcnJvcjogaW1wbGljaXQg
+ZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ3dyaXRlcSc7IGRpZCB5b3UgbWVhbiAnd3JpdGVsJz8g
+Wy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4gICB3cml0ZSMjc19fKHZh
+bCwgdW5jb3JlLT5yZWdzICsgaTkxNV9tbWlvX3JlZ19vZmZzZXQocmVnKSk7IFwKPiAgIF4KPiBk
+cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF91bmNvcmUuaDoyNzQ6MTogbm90ZTogaW4gZXhwYW5z
+aW9uIG9mIG1hY3JvICdfX3Jhd193cml0ZScKPiAgX19yYXdfd3JpdGUoNjQsIHEpCj4gIF5+fn5+
+fn5+fn5+Cj4gCj4gQ2F1c2VkIGJ5IGNvbW1pdAo+IAo+ICAgNmNjNWNhNzY4ODI1ICgiZHJtL2k5
+MTU6IHJlbmFtZSByYXcgcmVnIGFjY2VzcyBmdW5jdGlvbnMiKQo+IAo+IEkgaGF2ZSByZXZlcnRl
+ZCB0aGF0IGNvbW1pdCBhbmQgdGhlIGZvbGxvd2luZyBvbmVzIGluIHRoZSB0cmVlIHVwIHRvCj4g
+Cj4gICA5NTExY2I2NDgxYWYgKCJkcm0vaTkxNTogQWRkaW5nIG1pc3NpbmcgJzsgJyB0byBFTkdJ
+TkVfSU5TVEFOQ0VTIikKPiAKPiAtLSAKPiBDaGVlcnMsCj4gU3RlcGhlbiBSb3Rod2VsbApfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFp
+bGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZng=
