@@ -1,54 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 27 Mar 2019 11:57:45 +0000
-Message-ID: <20190327115745.GA11404@sirena.org.uk>
-References: <20190326133349.3d9427dc@canb.auug.org.au>
- <20190326131550.GB10898@sirena.org.uk>
- <87pnqdndmk.fsf@concordia.ellerman.id.au>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the net tree
+Date: Wed, 27 Mar 2019 08:15:05 -0700
+Message-ID: <20190327151503.5pdaqiwb7ugm3ly4@ast-mbp>
+References: <20190327091437.68ec6903@canb.auug.org.au>
+ <20190327015623.ur46t5gdmraagi2q@ast-mbp>
+ <df699947253913a7e572fd1252b99e594431e261.camel@debian.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <87pnqdndmk.fsf@concordia.ellerman.id.au>
+In-Reply-To: <df699947253913a7e572fd1252b99e594431e261.camel@debian.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Annaliese McDermond <nh6z@nh6z.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+To: Luca Boccassi <bluca@debian.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Wed, Mar 27, 2019 at 09:26:02AM +0000, Luca Boccassi wrote:
+> On Tue, 2019-03-26 at 18:56 -0700, Alexei Starovoitov wrote:
+> > On Wed, Mar 27, 2019 at 09:14:37AM +1100, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Today's linux-next merge of the bpf-next tree got a conflict in:
+> > > 
+> > >   tools/lib/bpf/Makefile
+> > > 
+> > > between commit:
+> > > 
+> > >   1d382264d911 ("bpf, libbpf: fix version info and add it to shared
+> > > object")
+> > > 
+> > > from the net tree and commit:
+> > > 
+> > >   60e4786e229d ("tools/bpf: generate pkg-config file for libbpf")
+> > > 
+> > > from the bpf-next tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your
+> > > tree
+> > > is submitted for merging.  You may also want to consider
+> > > cooperating
+> > > with the maintainer of the conflicting tree to minimise any
+> > > particularly
+> > > complex conflicts.
+> > 
+> > argh. that's a heavy conflict.
+> > Since that patch was at the top of the bpf-next I removed it for now
+> > and will re-apply when bpf-next gets merged cleanly into net-next and
+> > we bring back net changes into bpf-next. Sorry Luca.
+> 
+> No worries - for the next time, should I have based the patch on net-
+> next rather than bpf-next?
 
---YZ5djTAD1cGYuMQK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+new bpf related features -> bpf-next tree
+bpf bugfixes -> bpf tree
 
-On Wed, Mar 27, 2019 at 03:29:55PM +1100, Michael Ellerman wrote:
-> Mark Brown <broonie@kernel.org> writes:
-
-> > Hrm, seems PowerPC is still not using the common clock API - is there
-> > any plan for that?  There are some ASoC PowerPC uses so it's going to be
-> > a bit of an issue as we expand our use of the clock API.
-
-> I don't know anything about the common clock API. What would it involve
-> for powerpc to use it?
-
-It's what's in drivers/clk - you'd have to provide clock drivers for all
-the clocks that are current supported by arch-specific code, make sure
-that those drivers can be instantiated and then remove the custom
-implementation of the clock API in arch/powerpc in favour of those.
-
---YZ5djTAD1cGYuMQK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlybZTgACgkQJNaLcl1U
-h9B1Swf+PbhuOweQKwnnpdgGWrrDdszCdLjzP1NdPdjWVhB1B+Y8gm8uA2CbgSCQ
-FHCL9GmY1si64Jg2+W+uD7o+rdg3neUXfZ3rmQ60mdvdmg8O+iz6ngwn2iJIbGy2
-5zuQoky3maZLgElEQMKWlZ8A3nHQpk6BkWra83M7tZJJnU5SOQ69vE2oKK6sGfTf
-Xu7R13qHpVeRNQU2baIRdbkhgQFl01wiRswA8JbJSAQmeMX3XcjwrDakT10USHNy
-PnNPllnXLAE9brC8AeYr9vNQj7vTL5fjn94Gz9P0yX2dWbnVSy2Yc2QASwiKB4P+
-2qblx6/w3O4uBa8dTNx45qHwObNlHw==
-=kXyA
------END PGP SIGNATURE-----
-
---YZ5djTAD1cGYuMQK--
+Linus hasn't pulled Dave's PR yet: https://patchwork.ozlabs.org/patch/1066321/
+We need these fixes to land his tree first,
+then get propagated into net-next and then bpf-next will get them as well.
+Sorry for this unfortunate delay.
+This lib/bpf/Makefile conflict is not the only one we're waiting for.
+There are verifier and other libbpf fixes in there.
