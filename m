@@ -1,64 +1,56 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the net tree
-Date: Wed, 27 Mar 2019 08:15:05 -0700
-Message-ID: <20190327151503.5pdaqiwb7ugm3ly4@ast-mbp>
-References: <20190327091437.68ec6903@canb.auug.org.au>
- <20190327015623.ur46t5gdmraagi2q@ast-mbp>
- <df699947253913a7e572fd1252b99e594431e261.camel@debian.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the tty.current tree
+Date: Thu, 28 Mar 2019 07:27:34 +1100
+Message-ID: <20190328072734.2093d03c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NyVSC6m2iVyJYjsKHiymQmt"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <df699947253913a7e572fd1252b99e594431e261.camel@debian.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Luca Boccassi <bluca@debian.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Razvan Stefanescu <razvan.stefanescu@microchip.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Mar 27, 2019 at 09:26:02AM +0000, Luca Boccassi wrote:
-> On Tue, 2019-03-26 at 18:56 -0700, Alexei Starovoitov wrote:
-> > On Wed, Mar 27, 2019 at 09:14:37AM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Today's linux-next merge of the bpf-next tree got a conflict in:
-> > > 
-> > >   tools/lib/bpf/Makefile
-> > > 
-> > > between commit:
-> > > 
-> > >   1d382264d911 ("bpf, libbpf: fix version info and add it to shared
-> > > object")
-> > > 
-> > > from the net tree and commit:
-> > > 
-> > >   60e4786e229d ("tools/bpf: generate pkg-config file for libbpf")
-> > > 
-> > > from the bpf-next tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > conflicts should be mentioned to your upstream maintainer when your
-> > > tree
-> > > is submitted for merging.  You may also want to consider
-> > > cooperating
-> > > with the maintainer of the conflicting tree to minimise any
-> > > particularly
-> > > complex conflicts.
-> > 
-> > argh. that's a heavy conflict.
-> > Since that patch was at the top of the bpf-next I removed it for now
-> > and will re-apply when bpf-next gets merged cleanly into net-next and
-> > we bring back net changes into bpf-next. Sorry Luca.
-> 
-> No worries - for the next time, should I have based the patch on net-
-> next rather than bpf-next?
+--Sig_/NyVSC6m2iVyJYjsKHiymQmt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-new bpf related features -> bpf-next tree
-bpf bugfixes -> bpf tree
+Hi all,
 
-Linus hasn't pulled Dave's PR yet: https://patchwork.ozlabs.org/patch/1066321/
-We need these fixes to land his tree first,
-then get propagated into net-next and then bpf-next will get them as well.
-Sorry for this unfortunate delay.
-This lib/bpf/Makefile conflict is not the only one we're waiting for.
-There are verifier and other libbpf fixes in there.
+In commit
+
+  69646d7a3689 ("tty/serial: atmel: RS485 HD w/DMA: enable RX after TX is s=
+topped")
+
+Fixes tag
+
+  Fixes: b389f173aaa1 ("tty/serial: atmel: RS485 half duplex w/DMA: enable
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags across more than 1 line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NyVSC6m2iVyJYjsKHiymQmt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyb3LYACgkQAVBC80lX
+0GwHBQgAkD7cBTS7hUYKD4hoE9pLltdzovpDBdWdZKVXeTrMd4i9T4g2HgavU5Uk
+f4dHLMdvhO+nY1Snl7B4bra43+qbMLNnwYvXEF/Q8Atn6Hq97AqrZxV8MycQSu3x
+G6mfUFobNhy+UkDPPaPXMO1B1S0L7wB7bYNw9x48FBwtq6dYc0HyiGpj4FQh/LL2
+1oZSnS783Yq0zsZSatG6OwohHQ0MI7U/IpvZ5MQEAyHcQYsOU4GlYGfifivuPzdz
+sS+I71YNZl1Y3X2vwgOhpzkrY1HrZoJ6NpFDqCKu1ZPtsXfM75I6MHQP8ryp2E3S
+YMI3wa4qLVpPekQ18aHR2BXqZ2UEHA==
+=xMme
+-----END PGP SIGNATURE-----
+
+--Sig_/NyVSC6m2iVyJYjsKHiymQmt--
