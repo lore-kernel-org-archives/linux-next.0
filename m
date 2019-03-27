@@ -1,33 +1,56 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 27 Mar 2019 15:29:55 +1100
-Message-ID: <87pnqdndmk.fsf@concordia.ellerman.id.au>
-References: <20190326133349.3d9427dc@canb.auug.org.au> <20190326131550.GB10898@sirena.org.uk>
+From: Luca Boccassi <bluca@debian.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the net tree
+Date: Wed, 27 Mar 2019 09:26:02 +0000
+Message-ID: <df699947253913a7e572fd1252b99e594431e261.camel@debian.org>
+References: <20190327091437.68ec6903@canb.auug.org.au>
+         <20190327015623.ur46t5gdmraagi2q@ast-mbp>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190326131550.GB10898@sirena.org.uk>
+In-Reply-To: <20190327015623.ur46t5gdmraagi2q@ast-mbp>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Annaliese McDermond <nh6z@nh6z.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Mark Brown <broonie@kernel.org> writes:
-> On Tue, Mar 26, 2019 at 01:33:49PM +1100, Stephen Rothwell wrote:
->
->> After merging the sound-asoc tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->
->> sound/soc/codecs/tlv320aic32x4-clk.c: In function 'clk_aic32x4_pll_prepare':
->> include/linux/kernel.h:979:32: error: dereferencing pointer to incomplete type 'struct clk_hw'
->>   BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
->>                                 ^~~~~~
->
-> Hrm, seems PowerPC is still not using the common clock API - is there
-> any plan for that?  There are some ASoC PowerPC uses so it's going to be
-> a bit of an issue as we expand our use of the clock API.
+On Tue, 2019-03-26 at 18:56 -0700, Alexei Starovoitov wrote:
+> On Wed, Mar 27, 2019 at 09:14:37AM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the bpf-next tree got a conflict in:
+> > 
+> >   tools/lib/bpf/Makefile
+> > 
+> > between commit:
+> > 
+> >   1d382264d911 ("bpf, libbpf: fix version info and add it to shared
+> > object")
+> > 
+> > from the net tree and commit:
+> > 
+> >   60e4786e229d ("tools/bpf: generate pkg-config file for libbpf")
+> > 
+> > from the bpf-next tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your
+> > tree
+> > is submitted for merging.  You may also want to consider
+> > cooperating
+> > with the maintainer of the conflicting tree to minimise any
+> > particularly
+> > complex conflicts.
+> 
+> argh. that's a heavy conflict.
+> Since that patch was at the top of the bpf-next I removed it for now
+> and will re-apply when bpf-next gets merged cleanly into net-next and
+> we bring back net changes into bpf-next. Sorry Luca.
 
-I don't know anything about the common clock API. What would it involve
-for powerpc to use it?
+No worries - for the next time, should I have based the patch on net-
+next rather than bpf-next?
 
-cheers
+-- 
+Kind regards,
+Luca Boccassi
