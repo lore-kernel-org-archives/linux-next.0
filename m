@@ -1,84 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-Date: Wed, 27 Mar 2019 22:31:29 +1100
-Message-ID: <20190327223129.53ce82d6@canb.auug.org.au>
-References: <20190327135904.7830c60c@canb.auug.org.au>
- <155368485987.8699.12849690159482129286@jlahtine-desk.ger.corp.intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 27 Mar 2019 11:57:45 +0000
+Message-ID: <20190327115745.GA11404@sirena.org.uk>
+References: <20190326133349.3d9427dc@canb.auug.org.au>
+ <20190326131550.GB10898@sirena.org.uk>
+ <87pnqdndmk.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1459195343=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <155368485987.8699.12849690159482129286@jlahtine-desk.ger.corp.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>, Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <87pnqdndmk.fsf@concordia.ellerman.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Annaliese McDermond <nh6z@nh6z.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
---===============1459195343==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HEkKaYgDvwlsgpZofC+D=3+"; protocol="application/pgp-signature"
 
---Sig_/HEkKaYgDvwlsgpZofC+D=3+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Joonas,
+On Wed, Mar 27, 2019 at 03:29:55PM +1100, Michael Ellerman wrote:
+> Mark Brown <broonie@kernel.org> writes:
 
-On Wed, 27 Mar 2019 13:07:40 +0200 Joonas Lahtinen <joonas.lahtinen@linux.i=
-ntel.com> wrote:
->
-> Quoting Stephen Rothwell (2019-03-27 04:59:04)
-> >=20
-> > After merging the drm-intel tree, today's linux-next build (i386
-> > defconfig) failed like this: =20
->=20
-> We had a CI reporting mishap, where a failed 32-bit build resulted in
-> a misleading success e-mail being sent.
+> > Hrm, seems PowerPC is still not using the common clock API - is there
+> > any plan for that?  There are some ASoC PowerPC uses so it's going to be
+> > a bit of an issue as we expand our use of the clock API.
 
-It happens.
+> I don't know anything about the common clock API. What would it involve
+> for powerpc to use it?
 
-> The tree is now fixed and we'll investigate the problem to avoid such
-> a false report in the future.
+It's what's in drivers/clk - you'd have to provide clock drivers for all
+the clocks that are current supported by arch-specific code, make sure
+that those drivers can be instantiated and then remove the custom
+implementation of the clock API in arch/powerpc in favour of those.
 
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/HEkKaYgDvwlsgpZofC+D=3+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--YZ5djTAD1cGYuMQK
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlybXxEACgkQAVBC80lX
-0GzmKQf/Y3drSHltVV8A5o+ooBYdz9JFigcnRBqrrS7FF/CGGOhNAz/oB63jIRdo
-c3nodtXz9EBRs0ceY3oGVmswoc+RlTwqn5VfPawDP1wYSL10gaUhvzlNHnKFgNZu
-3mCu6hSKYn7l5wmQuBRjWlXJCu1zKy/Jg6DpeYhrl2GwPgCJgbyQUsH4m4vmq7FN
-WoTgkoBg6wETaPQrghgTkpo4dAhZ1abkxGa35ePwsM3GIDlh+IHrqVQYh4SHgsCu
-C4dixJocZYBrM2h/l3FIV/sQVAXmHvv07QQmZz4yb1MB6T1lBzzgYnn+0Qpc0j3g
-jI8lvBLjONBIPLpRmQEdRKjZ1/L9Rg==
-=3dkF
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlybZTgACgkQJNaLcl1U
+h9B1Swf+PbhuOweQKwnnpdgGWrrDdszCdLjzP1NdPdjWVhB1B+Y8gm8uA2CbgSCQ
+FHCL9GmY1si64Jg2+W+uD7o+rdg3neUXfZ3rmQ60mdvdmg8O+iz6ngwn2iJIbGy2
+5zuQoky3maZLgElEQMKWlZ8A3nHQpk6BkWra83M7tZJJnU5SOQ69vE2oKK6sGfTf
+Xu7R13qHpVeRNQU2baIRdbkhgQFl01wiRswA8JbJSAQmeMX3XcjwrDakT10USHNy
+PnNPllnXLAE9brC8AeYr9vNQj7vTL5fjn94Gz9P0yX2dWbnVSy2Yc2QASwiKB4P+
+2qblx6/w3O4uBa8dTNx45qHwObNlHw==
+=kXyA
 -----END PGP SIGNATURE-----
 
---Sig_/HEkKaYgDvwlsgpZofC+D=3+--
-
---===============1459195343==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============1459195343==--
+--YZ5djTAD1cGYuMQK--
