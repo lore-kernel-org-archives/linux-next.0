@@ -1,57 +1,84 @@
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the
- drm-intel tree
-Date: Wed, 27 Mar 2019 13:07:40 +0200
-Message-ID: <155368485987.8699.12849690159482129286@jlahtine-desk.ger.corp.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm-intel tree
+Date: Wed, 27 Mar 2019 22:31:29 +1100
+Message-ID: <20190327223129.53ce82d6@canb.auug.org.au>
 References: <20190327135904.7830c60c@canb.auug.org.au>
+ <155368485987.8699.12849690159482129286@jlahtine-desk.ger.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20190327135904.7830c60c@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paulo Zanoni <paulo.r.zanoni@intel.com>
+Content-Type: multipart/mixed; boundary="===============1459195343=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <155368485987.8699.12849690159482129286@jlahtine-desk.ger.corp.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>, Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-UXVvdGluZyBTdGVwaGVuIFJvdGh3ZWxsICgyMDE5LTAzLTI3IDA0OjU5OjA0KQo+IEhpIGFsbCwK
-PiAKPiBBZnRlciBtZXJnaW5nIHRoZSBkcm0taW50ZWwgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0
-IGJ1aWxkIChpMzg2Cj4gZGVmY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKV2UgaGFkIGEgQ0kg
-cmVwb3J0aW5nIG1pc2hhcCwgd2hlcmUgYSBmYWlsZWQgMzItYml0IGJ1aWxkIHJlc3VsdGVkIGlu
-CmEgbWlzbGVhZGluZyBzdWNjZXNzIGUtbWFpbCBiZWluZyBzZW50LgoKVGhlIHRyZWUgaXMgbm93
-IGZpeGVkIGFuZCB3ZSdsbCBpbnZlc3RpZ2F0ZSB0aGUgcHJvYmxlbSB0byBhdm9pZCBzdWNoCmEg
-ZmFsc2UgcmVwb3J0IGluIHRoZSBmdXR1cmUuCgpSZWdhcmRzLCBKb29uYXMKCj4gCj4gSW4gZmls
-ZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2d1Yy5oOjI4OjAsCj4g
-ICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3VjLmg6Mjcs
-Cj4gICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3VjLmM6
-MjU6Cj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfdW5jb3JlLmg6IEluIGZ1bmN0aW9uICdf
-X3Jhd191bmNvcmVfcmVhZDY0JzoKPiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF91bmNvcmUu
-aDoyNTc6OTogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdyZWFkcSc7
-IGRpZCB5b3UgbWVhbiAncmVhZGwnPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJh
-dGlvbl0KPiAgIHJldHVybiByZWFkIyNzX18odW5jb3JlLT5yZWdzICsgaTkxNV9tbWlvX3JlZ19v
-ZmZzZXQocmVnKSk7IFwKPiAgICAgICAgICBeCj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-dW5jb3JlLmg6MjY5OjE6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyAnX19yYXdfcmVhZCcK
-PiAgX19yYXdfcmVhZCg2NCwgcSkKPiAgXn5+fn5+fn5+fgo+IGRyaXZlcnMvZ3B1L2RybS9pOTE1
-L2ludGVsX3VuY29yZS5oOiBJbiBmdW5jdGlvbiAnX19yYXdfdW5jb3JlX3dyaXRlNjQnOgo+IGRy
-aXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3VuY29yZS5oOjI2NDoyOiBlcnJvcjogaW1wbGljaXQg
-ZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ3dyaXRlcSc7IGRpZCB5b3UgbWVhbiAnd3JpdGVsJz8g
-Wy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4gICB3cml0ZSMjc19fKHZh
-bCwgdW5jb3JlLT5yZWdzICsgaTkxNV9tbWlvX3JlZ19vZmZzZXQocmVnKSk7IFwKPiAgIF4KPiBk
-cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF91bmNvcmUuaDoyNzQ6MTogbm90ZTogaW4gZXhwYW5z
-aW9uIG9mIG1hY3JvICdfX3Jhd193cml0ZScKPiAgX19yYXdfd3JpdGUoNjQsIHEpCj4gIF5+fn5+
-fn5+fn5+Cj4gCj4gQ2F1c2VkIGJ5IGNvbW1pdAo+IAo+ICAgNmNjNWNhNzY4ODI1ICgiZHJtL2k5
-MTU6IHJlbmFtZSByYXcgcmVnIGFjY2VzcyBmdW5jdGlvbnMiKQo+IAo+IEkgaGF2ZSByZXZlcnRl
-ZCB0aGF0IGNvbW1pdCBhbmQgdGhlIGZvbGxvd2luZyBvbmVzIGluIHRoZSB0cmVlIHVwIHRvCj4g
-Cj4gICA5NTExY2I2NDgxYWYgKCJkcm0vaTkxNTogQWRkaW5nIG1pc3NpbmcgJzsgJyB0byBFTkdJ
-TkVfSU5TVEFOQ0VTIikKPiAKPiAtLSAKPiBDaGVlcnMsCj4gU3RlcGhlbiBSb3Rod2VsbApfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFp
-bGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZng=
+--===============1459195343==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/HEkKaYgDvwlsgpZofC+D=3+"; protocol="application/pgp-signature"
+
+--Sig_/HEkKaYgDvwlsgpZofC+D=3+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Joonas,
+
+On Wed, 27 Mar 2019 13:07:40 +0200 Joonas Lahtinen <joonas.lahtinen@linux.i=
+ntel.com> wrote:
+>
+> Quoting Stephen Rothwell (2019-03-27 04:59:04)
+> >=20
+> > After merging the drm-intel tree, today's linux-next build (i386
+> > defconfig) failed like this: =20
+>=20
+> We had a CI reporting mishap, where a failed 32-bit build resulted in
+> a misleading success e-mail being sent.
+
+It happens.
+
+> The tree is now fixed and we'll investigate the problem to avoid such
+> a false report in the future.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HEkKaYgDvwlsgpZofC+D=3+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlybXxEACgkQAVBC80lX
+0GzmKQf/Y3drSHltVV8A5o+ooBYdz9JFigcnRBqrrS7FF/CGGOhNAz/oB63jIRdo
+c3nodtXz9EBRs0ceY3oGVmswoc+RlTwqn5VfPawDP1wYSL10gaUhvzlNHnKFgNZu
+3mCu6hSKYn7l5wmQuBRjWlXJCu1zKy/Jg6DpeYhrl2GwPgCJgbyQUsH4m4vmq7FN
+WoTgkoBg6wETaPQrghgTkpo4dAhZ1abkxGa35ePwsM3GIDlh+IHrqVQYh4SHgsCu
+C4dixJocZYBrM2h/l3FIV/sQVAXmHvv07QQmZz4yb1MB6T1lBzzgYnn+0Qpc0j3g
+jI8lvBLjONBIPLpRmQEdRKjZ1/L9Rg==
+=3dkF
+-----END PGP SIGNATURE-----
+
+--Sig_/HEkKaYgDvwlsgpZofC+D=3+--
+
+--===============1459195343==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1459195343==--
