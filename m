@@ -1,50 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the pidfd tree
-Date: Thu, 28 Mar 2019 13:57:07 +1100
-Message-ID: <20190328135707.01e9368a@canb.auug.org.au>
-References: <20190328130449.1b6334b6@canb.auug.org.au>
-        <8EB36115-C5EB-4469-94F8-1D3DF1653ADB@brauner.io>
+From: Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: Re: linux-next: build warning after merge of the phy-next tree
+Date: Thu, 28 Mar 2019 08:33:54 +0530
+Message-ID: <CABe79T5uhZj6Ybo_7xCZ190qRikdJq9i4OBNEb6YQ0sJ7ukp+A@mail.gmail.com>
+References: <20190328112925.0fbe34e2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0J8FOeA2Wenpez0ong.TDt1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8EB36115-C5EB-4469-94F8-1D3DF1653ADB@brauner.io>
+In-Reply-To: <20190328112925.0fbe34e2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Brauner <christian@brauner.io>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/0J8FOeA2Wenpez0ong.TDt1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Christian,
+Thanks for the notice.
 
-On Thu, 28 Mar 2019 03:28:25 +0100 Christian Brauner <christian@brauner.io>=
- wrote:
+I sent patch to fix this warning.
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1964942.html
+
+Regards,
+Srinath.
+
+On Thu, Mar 28, 2019 at 5:59 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Sorry about that. Should be fixed now.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0J8FOeA2Wenpez0ong.TDt1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlycOAMACgkQAVBC80lX
-0GzvKwgAgmTIQvH5DXVAUunFKe7jVjvYr7HYZKirXQX9umSGA3BlaQTwcVhK9vg4
-KwesuYsfYvmR5D5rh5xyWolPr7JorOe3WejuxCBLs0YbCpNj7P+00WfWk8/AQJbw
-AJOPtxRf7UksdDZ0ZmszaZ4ginVNsoHCvECeodn/TNq30+sJML3r/iIFP7CudrsQ
-4IVFDefG5qW1P/SmAF9NHFfNsNtTVD/dG3PJxpEZ3nFO0utp8UXXI85n5xGOp/nR
-wW9EXWIrmyx4ok7/oQQuvNo8cgy41gukCwWxsqFxd+JkYk1r0wuNTcgG77+YR0M4
-DUrA4feFqUe7NRE0wu0eNw8NCi6cbw==
-=H+CL
------END PGP SIGNATURE-----
-
---Sig_/0J8FOeA2Wenpez0ong.TDt1--
+> Hi Kishon,
+>
+> After merging the phy-next tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>
+> In file included from include/linux/phy/phy.h:19,
+>                  from drivers/phy/broadcom/phy-bcm-sr-usb.c:10:
+> drivers/phy/broadcom/phy-bcm-sr-usb.c: In function 'bcm_usb_phy_probe':
+> include/linux/device.h:1138:19: warning: 'phy_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   dev->driver_data = data;
+>   ~~~~~~~~~~~~~~~~~^~~~~~
+> drivers/phy/broadcom/phy-bcm-sr-usb.c:289:26: note: 'phy_cfg' was declared here
+>   struct bcm_usb_phy_cfg *phy_cfg;
+>                           ^~~~~~~
+>
+> Introduced by commit
+>
+>   a3b96057577c ("phy: sr-usb: Add Stingray USB PHY driver")
+>
+> --
+> Cheers,
+> Stephen Rothwell
