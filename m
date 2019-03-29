@@ -1,42 +1,58 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2019-03-28-15-50 uploaded (gcov)
-Date: Thu, 28 Mar 2019 20:18:49 -0700
-Message-ID: <f4705506-676e-d331-2a96-5f6f5b00f604@infradead.org>
-References: <20190328225107.ULwYw%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Date: Fri, 29 Mar 2019 14:26:05 +1100
+Message-ID: <20190329142605.5e3263d1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lqN/RN1Ku3WGTkBHw0ryw3."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190328225107.ULwYw%akpm@linux-foundation.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org, Greg Hackmann <ghackmann@android.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arvind Sankar <niveditas98@gmail.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On 3/28/19 3:51 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-03-28-15-50 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+--Sig_/lqN/RN1Ku3WGTkBHw0ryw3.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
+In commit
 
-when # CONFIG_MODULES is not set:
+  dabb8338be53 ("igb: Fix WARN_ONCE on runtime suspend")
 
-  CC      kernel/gcov/gcc_4_7.o
-../kernel/gcov/gcc_4_7.c: In function ‘gcov_info_within_module’:
-../kernel/gcov/gcc_4_7.c:162:2: error: implicit declaration of function ‘within_module’ [-Werror=implicit-function-declaration]
-  return within_module((unsigned long)info, mod);
-  ^
+Fixes tag
 
+  Fixes: fb29f76cc566 ("igb: Fix an issue that PME is not enabled during ru=
+ntime suspend")
 
--- 
-~Randy
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean:
+
+Fixes: 1fb3a7a75e2e ("igb: Fix an issue that PME is not enabled during runt=
+ime suspend")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lqN/RN1Ku3WGTkBHw0ryw3.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlydkE0ACgkQAVBC80lX
+0Gy4/Af/e6yxaiyo9oxVuL1RhYbi6EMqhrimp+RbSCsBWX94YPwzuS0yNXwlWtbM
+0ET36YT/RTiU98NzmOM/NWc5eF/fBSl5/8L4Z3GXyZ6LptAJUYZL6+Q9pZNYaEew
+yIdjgs45997Pdo43k0DZfBcP2MalivBex2IOHbtK68BmLRsx2/ILDKgIV3OvVw19
+of4HcbtOjawCd/JtQYC9yugHU6H2F1aJwUmSX6ys422eomFYuqSs7oREZqeYElMn
+NtqORTA6qi1jowTChsQANBZGvurADayVN/U203Rp6Kwtcxzc1/vJ5lpyizKW4lzS
+F2epdR2v0LjLyMbTELaG17SwVk9c2g==
+=EmW4
+-----END PGP SIGNATURE-----
+
+--Sig_/lqN/RN1Ku3WGTkBHw0ryw3.--
