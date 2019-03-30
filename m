@@ -1,39 +1,55 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Fixes tag needs some work in the tty.current tree
-Date: Fri, 29 Mar 2019 20:47:18 +0100
-Message-ID: <20190329194718.GE12004@kroah.com>
-References: <20190328072734.2093d03c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the ext3 tree
+Date: Sat, 30 Mar 2019 16:19:39 +1100
+Message-ID: <20190330161939.231c39cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZvcIm2HgQnLvSurBMojGEfZ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190328072734.2093d03c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Razvan Stefanescu <razvan.stefanescu@microchip.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, yangerkun <yangerkun@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 28, 2019 at 07:27:34AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   69646d7a3689 ("tty/serial: atmel: RS485 HD w/DMA: enable RX after TX is stopped")
-> 
-> Fixes tag
-> 
->   Fixes: b389f173aaa1 ("tty/serial: atmel: RS485 half duplex w/DMA: enable
-> 
-> has these problem(s):
-> 
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
-> 
-> Please do not split Fixes tags across more than 1 line.
+--Sig_/ZvcIm2HgQnLvSurBMojGEfZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Is there a script somewhere that I can use to run on my tree before I
-push it out, much like I do now for the signed-off-by checks?
+Hi Jan,
 
-thanks,
+In commit
 
-greg k-h
+  47d92aa5d33a ("quota: fix a problem about transfer quota")
+
+Fixes tag
+
+  Fixes: 7b9ca4c61("quota: Reduce contention on dq_data_lock")
+
+has these problem(s):
+
+  - missing space between the SHA1 and the subject
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZvcIm2HgQnLvSurBMojGEfZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlye/GsACgkQAVBC80lX
+0GwccQf9Ee6TWHw3Vr8SYL5S20PDLodzRs1sNKFZdmrln+7D0MDzCzdhhodjD3O+
+uquOYZNrredVd9DfPNJJ4UmcwB7t1Nsu0JJWxgpVnUs23uuy+7Wrt1Im38RfEmPX
+ZLPb+h6sKH3jKtppJCasURVwOuIxg+8msZuvE7A6ZODC3DIduSPLXgUkWexEV/MA
+Co0QnYpVF8IOSn5GGeVKCxKHncjpwU7mym6yqQOnORVXIJceLnKQg81tpdVdyTzE
+ww+/1IQ2SFFqUeweXp+OAVK3mLY5Qf0KG78BKMXvhcEeYrHph6WLbfUuEtFmSbA4
+sOw6mUdtjkyCCcsh577N7lmodjPS0A==
+=nAzx
+-----END PGP SIGNATURE-----
+
+--Sig_/ZvcIm2HgQnLvSurBMojGEfZ--
