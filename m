@@ -1,35 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 1 Apr 2019 09:11:19 +1100
-Message-ID: <20190401091119.3ac313e8@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the
+ hwmon-staging tree
+Date: Mon, 1 Apr 2019 09:55:06 +1100
+Message-ID: <20190401095506.39bf18eb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4miz+nnpburOjOx=KhAFDFk"; protocol="application/pgp-signature"
+ boundary="Sig_/D1nDx4sTVRp2m=0iVF2hqso"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Huy Nguyen <huyn@mellanox.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lucas Tanure <tanureal@opensource.cirrus.com>, Piotr Stankiewicz <piotrs@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4miz+nnpburOjOx=KhAFDFk
+--Sig_/D1nDx4sTVRp2m=0iVF2hqso
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the sound-asoc tree got a conflict in:
 
-  drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
+  MAINTAINERS
 
 between commit:
 
-  e28408e98bce ("net/mlx5e: Update xon formula")
+  d1ce5addbaa0 ("hwmon: lochnagar: Add Lochnagar 2 hardware monitoring driv=
+er")
 
-from the net tree and commit:
+from the hwmon-staging tree and commit:
 
-  d3669ca9ff33 ("net/mlx5e: Fix port buffer function documentation format")
+  16123412a628 ("ASoC: lochnagar: Add driver to support Lochnagar 2 sound c=
+ard")
 
-from the net-next tree.
+from the sound-asoc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,69 +45,37 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
-index 4ab0d030b544,b0ce68feb0f3..000000000000
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
-@@@ -167,25 -165,25 +167,25 @@@ static int update_xoff_threshold(struc
-  }
+diff --cc MAINTAINERS
+index e254d42e0f2c,84b9d7557ca3..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -3815,10 -3805,9 +3816,11 @@@ F:	include/dt-bindings/pinctrl/lochnaga
+  F:	include/linux/mfd/lochnagar*
+  F:	Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
+  F:	Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+ +F:	Documentation/devicetree/bindings/hwmon/cirrus,lochnagar.txt
+  F:	Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.txt
+  F:	Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
++ F:	Documentation/devicetree/bindings/sound/cirrus,lochnagar.txt
+ +F:	Documentation/hwmon/lochnagar
  =20
-  /**
--  * update_buffer_lossy()
--  *   max_mtu: netdev's max_mtu
--  *   pfc_en: <input> current pfc configuration
--  *   buffer: <input> current prio to buffer mapping
--  *   xoff:   <input> xoff value
--  *   port_buffer: <output> port receive buffer configuration
--  *   change: <output>
-+  *	update_buffer_lossy	- Update buffer configuration based on pfc
- - *	@mtu: device's MTU
-++ *	@max_mtu: netdev's max_mtu
-+  *	@pfc_en: <input> current pfc configuration
-+  *	@buffer: <input> current prio to buffer mapping
-+  *	@xoff:   <input> xoff value
-+  *	@port_buffer: <output> port receive buffer configuration
-+  *	@change: <output>
-   *
--  *   Update buffer configuration based on pfc configuraiton and priority
--  *   to buffer mapping.
--  *   Buffer's lossy bit is changed to:
--  *     lossless if there is at least one PFC enabled priority mapped to t=
-his buffer
--  *     lossy if all priorities mapped to this buffer are PFC disabled
-+  *	Update buffer configuration based on pfc configuraiton and
-+  *	priority to buffer mapping.
-+  *	Buffer's lossy bit is changed to:
-+  *		lossless if there is at least one PFC enabled priority
-+  *		mapped to this buffer lossy if all priorities mapped to
-+  *		this buffer are PFC disabled
-   *
--  *   Return:
--  *     Return 0 if no error.
--  *     Set change to true if buffer configuration is modified.
-+  *	@return: 0 if no error,
-+  *	sets change to true if buffer configuration was modified.
-   */
- -static int update_buffer_lossy(unsigned int mtu,
- +static int update_buffer_lossy(unsigned int max_mtu,
-  			       u8 pfc_en, u8 *buffer, u32 xoff,
-  			       struct mlx5e_port_buffer *port_buffer,
-  			       bool *change)
+  CISCO FCOE HBA DRIVER
+  M:	Satish Kharat <satishkh@cisco.com>
 
---Sig_/4miz+nnpburOjOx=KhAFDFk
+--Sig_/D1nDx4sTVRp2m=0iVF2hqso
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyhOwcACgkQAVBC80lX
-0Gz2AQf8D9KE6qKJKKuXQBPLoXP6jApXBKTPQpiOiTEzuDXktBzaN9DfcrX4H/vu
-OE6BaDVB5jz9AkTDlguYE7ylYW+ZWlZPUkigG7yvDHsOoNxjS/5nO29DBkzVZXyD
-HouO0ch+AevEDVgVF+xWy97yCZD1+rDQ8Zq5G+pEn692VD68VWPr01W4cpMD0rz0
-oPQeVhmzUNsr+t9Jz07pulHrzRCw0Y1JavTQYNzTQaG2keyImnfHSdalYx1Z1qHK
-ERqX058CjoMutSQxS1KpPqOXfXWQirmRnEo3fisOLd4ZgkXnYaDkrtjmQuVBYu0J
-BLW2P+FSVPJf9TuVT+qYLprsyRcCZQ==
-=EsSp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyhRUoACgkQAVBC80lX
+0Gz8rQf8CpV/+ep/MsLMLf+QOc78n/7VqaLtqGqYRbK1ZOx4WwsNivRo3fI/ueh6
+islVMBZkrskN5KWKPd2sYpoR6D6qOBGig5v0WoI7wHslPQPlHNM5DIQsF8MASrpd
+UiSczbVPKsaE+W11lFo/jtv2Ok8qzbJe9A/lJwRqEftl44rJHTEeMA79B/UTnjIS
+zzjgkDV7F7bLm+MclY2ABpIKsfetGli8lbfVu7ahe4/oY6jBXCG1qnwUa0iebJYn
+y7UQ8I42j4kQ3cldIrRAqhC3BLPxmrL0WPMzOpVcpuqWZnZ+Z9dR6TBSbYkYGgev
+uuB+CU6HkdM7m8TCzufF/DPxuwKpyw==
+=kEsC
 -----END PGP SIGNATURE-----
 
---Sig_/4miz+nnpburOjOx=KhAFDFk--
+--Sig_/D1nDx4sTVRp2m=0iVF2hqso--
