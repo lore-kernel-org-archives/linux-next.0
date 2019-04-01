@@ -1,44 +1,67 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 01 Apr 2019 22:11:44 +1100
-Message-ID: <87tvfiou8f.fsf@concordia.ellerman.id.au>
-References: <20190326133349.3d9427dc@canb.auug.org.au> <20190326131550.GB10898@sirena.org.uk> <87pnqdndmk.fsf@concordia.ellerman.id.au> <20190327115745.GA11404@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Mar 27 (sunxi clk & mfd)
+Date: Mon, 1 Apr 2019 22:36:24 +1100
+Message-ID: <20190401223624.6b4f8c42@canb.auug.org.au>
+References: <20190327145020.2fff97b8@canb.auug.org.au>
+        <641a04ec-e2e6-4263-e77e-d272058c18c9@infradead.org>
+        <20190328095036.734adbba@canb.auug.org.au>
+        <20190401102732.GD4187@dell>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TQEStlbOBWCvct8AwL66QLQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327115745.GA11404@sirena.org.uk>
+In-Reply-To: <20190401102732.GD4187@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Annaliese McDermond <nh6z@nh6z.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <bbrezillon@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
 List-Id: linux-next.vger.kernel.org
 
-Mark Brown <broonie@kernel.org> writes:
-> On Wed, Mar 27, 2019 at 03:29:55PM +1100, Michael Ellerman wrote:
->> Mark Brown <broonie@kernel.org> writes:
+--Sig_/TQEStlbOBWCvct8AwL66QLQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Lee,
+
+On Mon, 1 Apr 2019 11:27:32 +0100 Lee Jones <lee.jones@linaro.org> wrote:
 >
->> > Hrm, seems PowerPC is still not using the common clock API - is there
->> > any plan for that?  There are some ASoC PowerPC uses so it's going to be
->> > a bit of an issue as we expand our use of the clock API.
->
->> I don't know anything about the common clock API. What would it involve
->> for powerpc to use it?
->
-> It's what's in drivers/clk - you'd have to provide clock drivers for all
-> the clocks that are current supported by arch-specific code, make sure
-> that those drivers can be instantiated and then remove the custom
-> implementation of the clock API in arch/powerpc in favour of those.
+> On Thu, 28 Mar 2019, Stephen Rothwell wrote:
+>=20
+> > I reported that a while ago (x86_64 allmodconfig after the merge of the
+> > sunxi tree).  Apparently there is a fix out there but it hasn't been
+> > applied yet. =20
+>=20
+> Where is the fix to be applied?  SUNXI or MFD?
 
-OK. I realise we do have some support for the common clock API, but only
-on certain sub-platforms (PPC_MPC512x, PPC_MPC52xx, PPC_E500MC).
+Well, I only see the problem after applying the sunxi tree (which
+happens before I merge the mfd tree).
 
-On other platforms we have nothing at all AFAICS.
+Maxime said:
 
-Seems Ben posted an RFC to support it in 2009, but nothing since:
-  http://patchwork.ozlabs.org/patch/31551/
+> I've just sent a patch fixing this:
+> https://lore.kernel.org/lkml/20190322091650.5189-1-maxime.ripard@bootlin.=
+com/
 
+So maybe if you (Lee) acked it, Maxime could apply it to the sunxi
+tree, so we keep the breakage and fix together?  Assuming that the fix
+is acceptable (and works :-)).
+--=20
+Cheers,
+Stephen Rothwell
 
-Anyway I think what you've done in next, make the code depend on
-COMMON_CLOCK, is the best option. If anyone cares about that driver on
-powerpc platforms that don't support COMMON_CLOCK they should speak up.
+--Sig_/TQEStlbOBWCvct8AwL66QLQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-cheers
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyh97gACgkQAVBC80lX
+0GyxLAf/bFGw4fX8AubeNHrIvatp3/buMOEzbllGr7f9Fb6GNcEk5KrQZ41JrB86
+eMw0kKGbelqGGBE1Lq2T5LvdsWataFx2nQGLy4hyX/sIPgq7p7BF/Qj9kwcgAehF
+kgPfvpcmOZ1xYnbq6YG1CCKKDpTCnD3Nm5IOCFVO0FjHfuzQKUQ24S0Ua+Ieq4gk
+EHjLZIGdK99j0RZKM1Z1zzzw4mzQRJ3eL2FsSTjfMNj9X5DmPstlnoYi4ZmA8l+/
+4NxDc1htdOczmfG9cSxv/lqFUXIOIoa7HFElS71xBB81s9erFvRkw5v+DmdllGwh
+CaOI1qJZXmQFCpqOR6CUf9tUnwmuFw==
+=uXY6
+-----END PGP SIGNATURE-----
+
+--Sig_/TQEStlbOBWCvct8AwL66QLQ--
