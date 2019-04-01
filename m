@@ -1,62 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the fbdev tree
-Date: Tue, 2 Apr 2019 09:30:07 +1100
-Message-ID: <20190402093007.0b03b02e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nand tree
+Date: Tue, 2 Apr 2019 10:14:31 +1100
+Message-ID: <20190402101431.6708cb70@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/P/3Nxd.XblUEf2RjQpecfHe"; protocol="application/pgp-signature"
+ boundary="Sig_/SM73UD2MzyaV1d/mseq/PqO"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yifeng Li <tomli@tomli.me>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/P/3Nxd.XblUEf2RjQpecfHe
+--Sig_/SM73UD2MzyaV1d/mseq/PqO
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bartlomiej,
+Hi all,
 
-After merging the fbdev tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the nand tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/video/fbdev/sm712fb.c: In function 'smtc_blank':
-drivers/video/fbdev/sm712fb.c:900:4: warning: this statement may fall throu=
-gh [-Wimplicit-fallthrough=3D]
-    smtc_seqw(0x6b, 0x02);
-    ^~~~~~~~~~~~~~~~~~~~~
-drivers/video/fbdev/sm712fb.c:901:3: note: here
-   case 0x720:
-   ^~~~
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:26:5: error: redefinition of 'in=
+genic_ecc_calculate'
+ int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
+     ^~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:39:5: note: previous definition =
+of 'ingenic_ecc_calculate' was here
+ int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
+     ^~~~~~~~~~~~~~~~~~~~~
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:47:5: error: redefinition of 'in=
+genic_ecc_correct'
+ int ingenic_ecc_correct(struct ingenic_ecc *ecc,
+     ^~~~~~~~~~~~~~~~~~~
+In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:46:5: note: previous definition =
+of 'ingenic_ecc_correct' was here
+ int ingenic_ecc_correct(struct ingenic_ecc *ecc,
+     ^~~~~~~~~~~~~~~~~~~
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:93:21: error: redefinition of 'o=
+f_ingenic_ecc_get'
+ struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *of_node)
+                     ^~~~~~~~~~~~~~~~~~
+In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:57:21: note: previous definition=
+ of 'of_ingenic_ecc_get' was here
+ struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *np)
+                     ^~~~~~~~~~~~~~~~~~
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:119:6: error: redefinition of 'i=
+ngenic_ecc_release'
+ void ingenic_ecc_release(struct ingenic_ecc *ecc)
+      ^~~~~~~~~~~~~~~~~~~
+In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:53:6: note: previous definition =
+of 'ingenic_ecc_release' was here
+ void ingenic_ecc_release(struct ingenic_ecc *ecc)
+      ^~~~~~~~~~~~~~~~~~~
 
-Introduced by commit
+Caused by commit
 
-  f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPM=
-S modesetting")
+  8278ad0d709a ("mtd: rawnand: ingenic: Separate top-level and SoC specific=
+ code")
 
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
+I have used the nand tree from next-20190401 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/P/3Nxd.XblUEf2RjQpecfHe
+--Sig_/SM73UD2MzyaV1d/mseq/PqO
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyikO8ACgkQAVBC80lX
-0GzPiwf/RsxhnQrKYYUV4DYpBXGK70zlPEcW1Bdz8Wmom/nfLea2LnqUgbmPa3Yl
-dXWMtEB7pN+ApkeNqDJYGRUQmgYg2TyKE03JuIaGGZiOMauIGsjxY77pcd9C8AHo
-bN6KIKjYItL+K7uzjaq8nCSS9rfU+HXvp0/olGxjRt1fqZKxixWOVfWAL+V+xJRE
-zO1p6x9+Us/17Ye8SYRp/RISWWpYeXOIW5C7ouhACj2pYYw2blgcxgkk8Ss/ga7f
-qmlfRYb5ERNKdKGvzN9BWP2EipZH69rT2mV7v0NHdELj/lTLYsjaFkJPUb2KDVU2
-yNLW5UsQ7I2qyRd/ESK702j+liouMQ==
-=E5eg
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyim1cACgkQAVBC80lX
+0Gxc7Qf7BDBnlFq4x0Gl/qDEcR1JZXDwErU+hl/CpawP7jzDIkej3XshiflwD3kb
+csiQjVgZfRepy7ekZfGHHF9x1SPp6sYXZ+pOHzSbdzQYaTtyW+ubAdiu0G7asc2r
+jVTABrp7BdrDlJVxopWl/hlSuV7rcIf2OYKTZIcr4q4ka6ZVe0LwJzphYF25GseU
+nDGCLuaQvZQuZ1mHdAdrFiKsfGchrtnNBfMCRiBfWwWLFMO2OhOfEoZkRPCJyruh
+xj3YlagoQuzA3bi+EAs+YvNUQ3MhkK+n6/p3qTeRIMFDK0ZMO/rY/bGKYmyXECeu
+bg8+trV2gJUGkqoD6vUT3nPOzqTQkw==
+=RsTs
 -----END PGP SIGNATURE-----
 
---Sig_/P/3Nxd.XblUEf2RjQpecfHe--
+--Sig_/SM73UD2MzyaV1d/mseq/PqO--
