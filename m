@@ -1,41 +1,42 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: Fixes tag needs some work in the ext3 tree
-Date: Mon, 1 Apr 2019 10:10:54 +0200
-Message-ID: <20190401081054.GC4826@quack2.suse.cz>
-References: <20190330161939.231c39cd@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: Tree for Mar 27 (sunxi clk & mfd)
+Date: Mon, 1 Apr 2019 11:27:32 +0100
+Message-ID: <20190401102732.GD4187@dell>
+References: <20190327145020.2fff97b8@canb.auug.org.au>
+ <641a04ec-e2e6-4263-e77e-d272058c18c9@infradead.org>
+ <20190328095036.734adbba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190330161939.231c39cd@canb.auug.org.au>
+In-Reply-To: <20190328095036.734adbba@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, yangerkun <yangerkun@huawei.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <bbrezillon@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen
+On Thu, 28 Mar 2019, Stephen Rothwell wrote:
 
-On Sat 30-03-19 16:19:39, Stephen Rothwell wrote:
-> In commit
+> Hi Randy,
 > 
->   47d92aa5d33a ("quota: fix a problem about transfer quota")
+> On Wed, 27 Mar 2019 13:32:26 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> > on i386 or x86_64:
+> > 
+> > WARNING: unmet direct dependencies detected for MFD_SUN6I_PRCM
+> >   Depends on [n]: HAS_IOMEM [=y] && ARCH_SUNXI
+> >   Selected by [y]:
+> >   - CLK_SUNXI_PRCM_SUN8I [=y] && COMMON_CLK [=y] && CLK_SUNXI [=y]
 > 
-> Fixes tag
-> 
->   Fixes: 7b9ca4c61("quota: Reduce contention on dq_data_lock")
-> 
-> has these problem(s):
-> 
->   - missing space between the SHA1 and the subject
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
+> I reported that a while ago (x86_64 allmodconfig after the merge of the
+> sunxi tree).  Apparently there is a fix out there but it hasn't been
+> applied yet.
 
-Thanks for the notice. I didn't notice the problems when merging the patch.
-I've fixed these problems up.
-
-								Honza
+Where is the fix to be applied?  SUNXI or MFD?
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
