@@ -1,52 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the spi tree
-Date: Tue, 2 Apr 2019 05:12:03 +1100
-Message-ID: <20190402051203.1d7579cf@canb.auug.org.au>
+From: Saeed Mahameed <saeedm@mellanox.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 1 Apr 2019 18:15:04 +0000
+Message-ID: <d42fbd530cebe3c5e6f380d5241adf03ce6c4ea6.camel@mellanox.com>
+References: <20190401091119.3ac313e8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZVP/=oh7A.EE_TbBm=fa9ab"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190401091119.3ac313e8@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <926B2EA0CAEF3646B40D744C094768CC@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sowjanya Komatineni <skomatineni@nvidia.com>
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Huy Nguyen <huyn@mellanox.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ZVP/=oh7A.EE_TbBm=fa9ab
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Mark,
-
-In commit
-
-  fc9ba6e3e28a ("spi: tegra114: use packed mode for 32 bits per word")
-
-Fixes tag
-
-  Fixes: Use packed mode for 32 bits per word transfers to increase
-
-has these problem(s):
-
-  - No SHA1 recognised
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZVP/=oh7A.EE_TbBm=fa9ab
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyiVHMACgkQAVBC80lX
-0GxBDQf9GOoynd/oAAwY5tyzijyrsdJ4theirRJ5eKnPom9X8G3f+CjHlvqY0rH2
-LxknGV/0dK1POM1sxC2lfYrPXO5DHZH57todXOE5xTmODEyr+IURcRhKcDhoqg1O
-YuuS5N/N8zRtupnARxmH0tn0/i5rlDtSAwrdQT5MV1FMWCGHl98mKVHrvMNN2B5Q
-9iuVqcmW+JWbPQ80N8YDcoeMS7yXNEEZfUcsZf7XYfhWtBIoLLTdhoDj6c2j3M1D
-CsJL7MS7N6fM6K+wvFG/zbeB1Z/95bt7qHsi9TYq+m7nYqU6zYjIZKx94+bqXdle
-31gdptNtV4yNiNK9v1k3ngO9i8Om/Q==
-=HnR1
------END PGP SIGNATURE-----
-
---Sig_/ZVP/=oh7A.EE_TbBm=fa9ab--
+T24gTW9uLCAyMDE5LTA0LTAxIGF0IDA5OjExICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Og0KPiBIaSBhbGwsDQo+IA0KPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIG5ldC1u
+ZXh0IHRyZWUgZ290IGEgY29uZmxpY3QgaW46DQo+IA0KPiAgIGRyaXZlcnMvbmV0L2V0aGVybmV0
+L21lbGxhbm94L21seDUvY29yZS9lbi9wb3J0X2J1ZmZlci5jDQo+IA0KPiBiZXR3ZWVuIGNvbW1p
+dDoNCj4gDQo+ICAgZTI4NDA4ZTk4YmNlICgibmV0L21seDVlOiBVcGRhdGUgeG9uIGZvcm11bGEi
+KQ0KPiANCj4gZnJvbSB0aGUgbmV0IHRyZWUgYW5kIGNvbW1pdDoNCj4gDQo+ICAgZDM2NjljYTlm
+ZjMzICgibmV0L21seDVlOiBGaXggcG9ydCBidWZmZXIgZnVuY3Rpb24gZG9jdW1lbnRhdGlvbg0K
+PiBmb3JtYXQiKQ0KPiANCj4gZnJvbSB0aGUgbmV0LW5leHQgdHJlZS4NCj4gDQo+IEkgZml4ZWQg
+aXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhp
+cw0KPiBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQg
+YW55IG5vbiB0cml2aWFsDQo+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIg
+dXBzdHJlYW0gbWFpbnRhaW5lciB3aGVuIHlvdXINCj4gdHJlZQ0KPiBpcyBzdWJtaXR0ZWQgZm9y
+IG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGluZw0KPiB3
+aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGluZyB0cmVlIHRvIG1pbmltaXNlIGFu
+eQ0KPiBwYXJ0aWN1bGFybHkNCj4gY29tcGxleCBjb25mbGljdHMuDQo+IA0KDQpUaGFua3MgU3Rl
+cGhlbiwgdGhlIHJlc29sdXRpb24gbG9va3MgZ29vZCwNCkRhdmUgd2FzIGFscmVhZHkgbm90aWZp
+ZWQgYWJvdXQgdGhpcy4NCg0K
