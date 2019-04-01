@@ -1,77 +1,147 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: linux-next: build failure after merge of the nand tree
-Date: Tue, 02 Apr 2019 01:31:52 +0200
-Message-ID: <1554161512.10471.3@crapouillou.net>
-References: <20190402101431.6708cb70@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Date: Tue, 2 Apr 2019 10:50:06 +1100
+Message-ID: <20190402105006.48f93e53@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402101431.6708cb70@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============1232090005=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, Qiang Yu <yuq825@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--===============1232090005==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SZEXJadgHBuvyUe/0V=B28w"; protocol="application/pgp-signature"
 
-Le mar. 2 avril 2019 =E0 1:14, Stephen Rothwell <sfr@canb.auug.org.au> a=20
-=E9crit :
-> Hi all,
->=20
-> After merging the nand tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:26:5: error: redefinition=20
-> of 'ingenic_ecc_calculate'
->  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
->      ^~~~~~~~~~~~~~~~~~~~~
-> In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:39:5: note: previous=20
-> definition of 'ingenic_ecc_calculate' was here
->  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
->      ^~~~~~~~~~~~~~~~~~~~~
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:47:5: error: redefinition=20
-> of 'ingenic_ecc_correct'
->  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
->      ^~~~~~~~~~~~~~~~~~~
-> In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:46:5: note: previous=20
-> definition of 'ingenic_ecc_correct' was here
->  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
->      ^~~~~~~~~~~~~~~~~~~
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:93:21: error: redefinition=20
-> of 'of_ingenic_ecc_get'
->  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *of_node)
->                      ^~~~~~~~~~~~~~~~~~
-> In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:57:21: note: previous=20
-> definition of 'of_ingenic_ecc_get' was here
->  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *np)
->                      ^~~~~~~~~~~~~~~~~~
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:119:6: error: redefinition=20
-> of 'ingenic_ecc_release'
->  void ingenic_ecc_release(struct ingenic_ecc *ecc)
->       ^~~~~~~~~~~~~~~~~~~
-> In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:53:6: note: previous=20
-> definition of 'ingenic_ecc_release' was here
->  void ingenic_ecc_release(struct ingenic_ecc *ecc)
->       ^~~~~~~~~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   8278ad0d709a ("mtd: rawnand: ingenic: Separate top-level and SoC=20
-> specific code")
->=20
-> I have used the nand tree from next-20190401 for today.
+--Sig_/SZEXJadgHBuvyUe/0V=B28w
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That makes no sense to me; from the offsets of the errors in the=20
-ingenic_ecc.h
-file, it seems that CONFIG_MTD_NAND_INGENIC_ECC is not set, and in this=20
-case
-ingenic_ecc.c should not be compiled at all.
+Hi all,
 
--Paul
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-=
+In file included from include/linux/kernel.h:7,
+                 from include/asm-generic/bug.h:18,
+                 from arch/x86/include/asm/bug.h:83,
+                 from include/linux/bug.h:5,
+                 from include/linux/mmdebug.h:5,
+                 from include/linux/gfp.h:5,
+                 from include/linux/slab.h:15,
+                 from drivers/gpu/drm/lima/lima_ctx.c:4:
+drivers/gpu/drm/lima/lima_ctx.c: In function 'lima_ctx_create':
+include/linux/limits.h:13:18: warning: passing argument 3 of 'xa_alloc' mak=
+es pointer from integer without a cast [-Wint-conversion]
+ #define UINT_MAX (~0U)
+                  ^~~~~
+drivers/gpu/drm/lima/lima_ctx.c:26:36: note: in expansion of macro 'UINT_MA=
+X'
+  err =3D xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
+                                    ^~~~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/drm/drm_device.h:7,
+                 from drivers/gpu/drm/lima/lima_device.h:7,
+                 from drivers/gpu/drm/lima/lima_ctx.c:6:
+include/linux/xarray.h:817:9: note: expected 'void *' but argument is of ty=
+pe 'unsigned int'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+   ~~~~~~^~~~~
+drivers/gpu/drm/lima/lima_ctx.c:26:46: error: incompatible type for argumen=
+t 4 of 'xa_alloc'
+  err =3D xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
+                                              ^~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/idr.h:15,
+                 from include/drm/drm_device.h:7,
+                 from drivers/gpu/drm/lima/lima_device.h:7,
+                 from drivers/gpu/drm/lima/lima_ctx.c:6:
+include/linux/xarray.h:817:32: note: expected 'struct xa_limit' but argumen=
+t is of type 'struct lima_ctx *'
+   void *entry, struct xa_limit limit, gfp_t gfp)
+                ~~~~~~~~~~~~~~~~^~~~~
+
+Caused by commit
+
+  a1d2a6339961 ("drm/lima: driver for ARM Mali4xx GPUs")
+
+interacting with commit
+
+  a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
+
+from Linus' tree (v5.1-rc1).
+
+I have applied the following patch for today.  It could be applied as
+part of a merge of v5.1-rc1 into drm-misc.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 2 Apr 2019 10:45:32 +1100
+Subject: [PATCH] drm/lima: update for xa_alloc API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/lima/lima_ctx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/lima/lima_ctx.c b/drivers/gpu/drm/lima/lima_ct=
+x.c
+index c8d12f7c6894..bafa00d74cc5 100644
+--- a/drivers/gpu/drm/lima/lima_ctx.c
++++ b/drivers/gpu/drm/lima/lima_ctx.c
+@@ -23,7 +23,7 @@ int lima_ctx_create(struct lima_device *dev, struct lima_=
+ctx_mgr *mgr, u32 *id)
+ 			goto err_out0;
+ 	}
+=20
+-	err =3D xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
++	err =3D xa_alloc(&mgr->handles, id, ctx, XA_LIMIT(*id, UINT_MAX), GFP_KER=
+NEL);
+ 	if (err < 0)
+ 		goto err_out0;
+=20
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SZEXJadgHBuvyUe/0V=B28w
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyio64ACgkQAVBC80lX
+0Gyxmwf7BUUcO3jO4XZMNB1v76C3+C8HGbIcponmP/SqlaVSm0ERkTwh5rpHCQJ6
+ckz2pUVtQOKWoRyzU9PkE061Qg5piQjIfW6aFGvVba8uyW/jXNXN9SgSDs9ldin5
+9HoQAW/5hcV/wiK/0kSd3lzcJUZw12PaVozlEGsp7M4hnnO5MXsxzvzWhJE3dwqK
+Ptj2T+XJu++rg8M4JacRlrq2AOuiydUC2M8EHbzqYek/ouNVj9QqPrGvAtCHzSrz
+AvAunWUXF/nmSbs+xvYUtyZ8rGN1iokwqEZeVZLqskWffnfsHVzBU+08czc5tkRI
+DijfB9yTtCwQvAD/PxNcM/p2WBAUhw==
+=OqG1
+-----END PGP SIGNATURE-----
+
+--Sig_/SZEXJadgHBuvyUe/0V=B28w--
+
+--===============1232090005==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1232090005==--
