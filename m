@@ -1,71 +1,115 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: linux-next: Tree for Mar 27 (sunxi clk & mfd)
-Date: Mon, 1 Apr 2019 14:33:37 +0200
-Message-ID: <20190401123337.2nhppxyl5nzyofub@flea>
-References: <20190327145020.2fff97b8@canb.auug.org.au>
- <641a04ec-e2e6-4263-e77e-d272058c18c9@infradead.org>
- <20190328095036.734adbba@canb.auug.org.au>
- <20190401102732.GD4187@dell>
- <20190401223624.6b4f8c42@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the spi-fixes tree
+Date: Tue, 2 Apr 2019 04:58:28 +1100
+Message-ID: <20190402045828.699f5700@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3wrik5kehvbal5cg"
+ boundary="Sig_/YE/xY76rigPlK8m2vOrcty0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190401223624.6b4f8c42@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <bbrezillon@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sowjanya Komatineni <skomatineni@nvidia.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/YE/xY76rigPlK8m2vOrcty0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---3wrik5kehvbal5cg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Mark,
 
-On Mon, Apr 01, 2019 at 10:36:24PM +1100, Stephen Rothwell wrote:
-> Hi Lee,
->
-> On Mon, 1 Apr 2019 11:27:32 +0100 Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > On Thu, 28 Mar 2019, Stephen Rothwell wrote:
-> >
-> > > I reported that a while ago (x86_64 allmodconfig after the merge of the
-> > > sunxi tree).  Apparently there is a fix out there but it hasn't been
-> > > applied yet.
-> >
-> > Where is the fix to be applied?  SUNXI or MFD?
->
-> Well, I only see the problem after applying the sunxi tree (which
-> happens before I merge the mfd tree).
->
-> Maxime said:
->
-> > I've just sent a patch fixing this:
-> > https://lore.kernel.org/lkml/20190322091650.5189-1-maxime.ripard@bootlin.com/
->
-> So maybe if you (Lee) acked it, Maxime could apply it to the sunxi
-> tree, so we keep the breakage and fix together?  Assuming that the fix
-> is acceptable (and works :-)).
+In commit
 
-That works for me
+  019194933339 ("spi: tegra114: reset controller on probe")
 
-Maxime
+Fixes tag
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+  Fixes: SPI driver can be built as module so perform SPI controller reset
 
---3wrik5kehvbal5cg
-Content-Type: application/pgp-signature; name="signature.asc"
+has these problem(s):
+
+  - No SHA1 recognised
+
+In commit
+
+  f4ce428c41fb ("spi: tegra114: configure dma burst size to fifo trig level=
+")
+
+Fixes tag
+
+  Fixes: Configure DMA burst size to be same as SPI TX/RX trigger levels
+
+has these problem(s):
+
+  - No SHA1 recognised
+
+In commit
+
+  c4fc9e5b28ff ("spi: tegra114: flush fifos")
+
+Fixes tag
+
+  Fixes: Flush TX and RX FIFOs before start of new transfer and on FIFO
+
+has these problem(s):
+
+  - No SHA1 recognised
+
+In commit
+
+  32bd1a9551ca ("spi: tegra114: terminate dma and reset on transfer timeout=
+")
+
+Fixes tag
+
+  Fixes: terminate DMA and perform controller reset on transfer timeout
+
+has these problem(s):
+
+  - No SHA1 recognised
+
+In commit
+
+  1a89ac5b9189 ("spi: tegra114: fix for unpacked mode transfers")
+
+Fixes tag
+
+  Fixes: computation of actual bytes to fill/receive in/from FIFO in unpack=
+ed
+
+has these problem(s):
+
+  - No SHA1 recognised
+
+In commit
+
+  7b3d10cdf54b ("spi: tegra114: clear packed bit for unpacked mode")
+
+Fixes tag
+
+  Fixes: Clear packed bit when not using packed mode.
+
+has these problem(s):
+
+  - No SHA1 recognised
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YE/xY76rigPlK8m2vOrcty0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKIFIQAKCRDj7w1vZxhR
-xXKRAQCpxIqp1fLVXeCSBx3FmBK9+OAs+wyf2wIlAg5J1lWT8QD+LuJc1TxgLuST
-yeXkfytOMPlqdqzMMRww9t9ltlvUcgM=
-=EIgP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyiUUQACgkQAVBC80lX
+0Gwa0gf/Rmt3xgQGd6sDTjIszOYyPmFEMxd6BrbE/1XaCvnMytytW2G+0Sbk1RW2
+e+xhO2D6N8hQck1EsWEZ9d5VZdHONXMqqjiuwlkyK6KORREoX8ORmHm4HNOwdfK4
+KQZ+rskrfpylpj1JR1zE74F2XteAM9t+4XJj6wI26wwfkinTR7CISIr+FHt04XJe
+90h7MJtwBxVaBv0j4BhdyyCP4FBT5v9c6cSSa6JmctuoO1smkjD3dNeym068UJFP
+MFyOYVnjuqQS85I2lAIFtzeTtoIBqe6Zs8ul2Z497aM1h5oOl/mbTO173C4VATYI
+qss4uEx9aN8RXDiPTZAp7eyV3npcZw==
+=87um
 -----END PGP SIGNATURE-----
 
---3wrik5kehvbal5cg--
+--Sig_/YE/xY76rigPlK8m2vOrcty0--
