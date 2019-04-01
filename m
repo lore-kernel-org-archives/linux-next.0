@@ -1,47 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the phy tree
-Date: Tue, 2 Apr 2019 05:00:48 +1100
-Message-ID: <20190402050048.0686d21b@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the block tree
+Date: Tue, 2 Apr 2019 05:08:42 +1100
+Message-ID: <20190402050842.2db07437@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sElZDQsZbtFXZVahKKZwkGP"; protocol="application/pgp-signature"
+ boundary="Sig_/hoXIUXK4_nbbYG+QyaZ=iS5"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
+To: Jens Axboe <axboe@kernel.dk>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/sElZDQsZbtFXZVahKKZwkGP
+--Sig_/hoXIUXK4_nbbYG+QyaZ=iS5
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kishon,
+Hi Jens,
 
-Commit
+Commits
 
-  b6e13b9c9482 ("phy: ti-pipe3: fix missing bit-wise or operator when assig=
-ning val")
+  837d7c7005c3 ("block: enable multi-page bvec for passthrough IO")
+  df88a384baa3 ("block: pass page to xen_biovec_phys_mergeable")
 
-is missing a Signed-off-by from its committer.
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/sElZDQsZbtFXZVahKKZwkGP
+--Sig_/hoXIUXK4_nbbYG+QyaZ=iS5
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyiUdAACgkQAVBC80lX
-0GwyhQf7BNaVB10IQERl6TIvNmwyzg8i0aU8Za5nGYVIA5qzLapvG3L/qJ//TtQ9
-ub+tz0qKiEufmd587vJflGyb5K3samVsJKz4wTyll8T8YSn0nLI6ybSHm9Ew0J89
-R+tug6HejGmXogbfaXvYs8i4FL+9iBbpCjgIcFYiqovFtOLKSZGdWOE2Qr3SzmaA
-a4x0rVse7r0B9bJjnbcwQuGLxcVen4RwKdBhNg0l8Rsqc4ZYRVklJ95FJgVdEj3h
-xs44NGc6Ea0tGAdM/RLNqOVRy1U2q1hY1/XpoU4syeCAYZ+L8C6wfiLee3u5A0F8
-Pckoa7li+N3+gqx5IC0B7NLLE8ooQg==
-=Dzux
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyiU6oACgkQAVBC80lX
+0GxYwAf/fQWS8rF7c1nzKnFqGDF53qMraksD1DjF6VVbzjZeR8Wa7UdrxDAt9x3q
+tv++BUZoKhEGvHN6vuy0R6JrB3yb5gFP5flqxLpRWbkvqBLSlp9mOai26MU0yhQC
++HmfqycmvzlBRsnGRnuvZDpNlvqGRa5i5SdBN2b5fYTA4Ca8tM4K8MtbjCT1yMDI
+HUT5SB0C4szs1pJr5Xgj7e+gNxBpNmeHvzRy1REEROyNP8Vth0/NLYUbI1k6FcVp
+D7NQmc1fGhyF9lvT6pjz1OlKsGT2nSc96G54tzNHDW9zP81A29uqOqo8sJTWCMVX
+8NHtaBhzd/P4xnInrnQR2+gk6QuuXw==
+=vGtk
 -----END PGP SIGNATURE-----
 
---Sig_/sElZDQsZbtFXZVahKKZwkGP--
+--Sig_/hoXIUXK4_nbbYG+QyaZ=iS5--
