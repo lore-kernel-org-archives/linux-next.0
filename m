@@ -1,104 +1,67 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: linux-next: build failure after merge of the nand tree
-Date: Tue, 2 Apr 2019 14:16:31 +0200
-Message-ID: <20190402141631.471c3f5f@xps13>
-References: <20190402101431.6708cb70@canb.auug.org.au>
-        <1554161512.10471.3@crapouillou.net>
-        <20190402135631.38dcfe2a@xps13>
-        <1554206414.1199.0@crapouillou.net>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [Intel-gfx] linux-next: Tree for Mar 29 (i915, no ACPI)
+Date: Tue, 02 Apr 2019 15:29:09 +0300
+Message-ID: <87zhp8zj3e.fsf@intel.com>
+References: <20190329141831.30fd841f@canb.auug.org.au> <a7cf7fb9-c154-77b6-c63d-d71a12a1706b@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554206414.1199.0@crapouillou.net>
+In-Reply-To: <a7cf7fb9-c154-77b6-c63d-d71a12a1706b@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+On Fri, 29 Mar 2019, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 3/28/19 8:18 PM, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> Changes since 20190328:
+>> 
+>> The pidfd tree lost its build failures.
+>> 
+>
+> on x86_64, when # CONFIG_ACPI is not set/enabled:
+>
+> ld: drivers/gpu/drm/i915/intel_panel.o: in function `intel_backlight_device_register':
+> intel_panel.c:(.text+0x2c49): undefined reference to `backlight_device_register'
+> ld: drivers/gpu/drm/i915/intel_panel.o: in function `intel_backlight_device_unregister':
+> intel_panel.c:(.text+0x2d01): undefined reference to `backlight_device_unregister'
+>
+>
+>
+> Full randconfig file is attached.
 
-Paul Cercueil <paul@crapouillou.net> wrote on Tue, 02 Apr 2019 14:00:14
-+0200:
+# CONFIG_ACPI is not set
+CONFIG_DRM_I915=y
+CONFIG_BACKLIGHT_CLASS_DEVICE=m
 
-> Hi Miquel,
-> 
-> Le mar. 2 avril 2019 à 13:56, Miquel Raynal <miquel.raynal@bootlin.com> a écrit :
-> > Hi Paul,
-> > 
-> > Paul Cercueil <paul@crapouillou.net> wrote on Tue, 02 Apr 2019 > 01:31:52
-> > +0200:
-> >   
-> >>  Hi Stephen,  
-> >> >>  Le mar. 2 avril 2019 à 1:14, Stephen Rothwell >> <sfr@canb.auug.org.au> a écrit :  
-> >>  > Hi all,
-> >>  >
-> >>  > After merging the nand tree, today's linux-next build (x86_64
-> >>  > allmodconfig) failed like this:
-> >>  >
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:26:5: error: >> redefinition > of 'ingenic_ecc_calculate'
-> >>  >  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
-> >>  >      ^~~~~~~~~~~~~~~~~~~~~
-> >>  > In file included from >> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:39:5: note: previous > >> definition of 'ingenic_ecc_calculate' was here
-> >>  >  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
-> >>  >      ^~~~~~~~~~~~~~~~~~~~~
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:47:5: error: >> redefinition > of 'ingenic_ecc_correct'
-> >>  >  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
-> >>  >      ^~~~~~~~~~~~~~~~~~~
-> >>  > In file included from >> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:46:5: note: previous > >> definition of 'ingenic_ecc_correct' was here
-> >>  >  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
-> >>  >      ^~~~~~~~~~~~~~~~~~~
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:93:21: error: >> redefinition > of 'of_ingenic_ecc_get'
-> >>  >  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node >> *of_node)
-> >>  >                      ^~~~~~~~~~~~~~~~~~
-> >>  > In file included from >> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:57:21: note: previous >> > definition of 'of_ingenic_ecc_get' was here
-> >>  >  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *np)
-> >>  >                      ^~~~~~~~~~~~~~~~~~
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:119:6: error: >> redefinition > of 'ingenic_ecc_release'
-> >>  >  void ingenic_ecc_release(struct ingenic_ecc *ecc)
-> >>  >       ^~~~~~~~~~~~~~~~~~~
-> >>  > In file included from >> drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> >>  > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:53:6: note: previous > >> definition of 'ingenic_ecc_release' was here
-> >>  >  void ingenic_ecc_release(struct ingenic_ecc *ecc)
-> >>  >       ^~~~~~~~~~~~~~~~~~~
-> >>  >
-> >>  > Caused by commit
-> >>  >
-> >>  >   8278ad0d709a ("mtd: rawnand: ingenic: Separate top-level and >> SoC > specific code")
-> >>  >
-> >>  > I have used the nand tree from next-20190401 for today.  
-> >> >>  That makes no sense to me; from the offsets of the errors in the >> ingenic_ecc.h  
-> >>  file, it seems that CONFIG_MTD_NAND_INGENIC_ECC is not set, and in >> this case
-> >>  ingenic_ecc.c should not be compiled at all.  
-> >> > > I think  
-> > 
-> >         #ifdef FOO
-> > 
-> > evaluates to true if
-> > 
-> >         FOO=y
-> > 
-> > while we can have
-> > 
-> >         FOO=m
-> > 
-> > which is evaluated to false, hence the double definition with
-> > allmodconfig.  
-> 
-> That's good to know, I guess I'll have to start using IS_DEFINED()
-> from now on.
-> 
-> > Here is a diff solving the issue, if you are fine with it I will
-> > correct in-place and push -f nand/next for tomorrow's build.  
-> 
-> That would be great.
+drivers/gpu/drm/i915/Kconfig:
 
-Done. I also pushed on 0-day, hope I'll have the notification before
-tonight.
+config DRM_I915
+	# ...
+	select BACKLIGHT_CLASS_DEVICE if ACPI
+
+The above pretty much sums it up. It's been reported before, the
+earliest I could find was [1].
+
+I've previously suggested patches that would make backlight a dependency
+instead of selecting it, in line with [2]. However we can't do that in
+i915 alone without recursive dependencies, and changing all backlight
+users was met with opposition because "select is convenient".
+
+Maybe I'll look at this one of these days, but don't hold your breath.
 
 
-Thanks,
-Miquèl
+BR,
+Jani.
+
+
+[1] http://mid.mail-archive.com/CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com
+
+[2] Documentation/kbuild/kconfig-language.txt "In general use select
+    only for non-visible symbols (no prompts anywhere) and for symbols
+    with no dependencies."
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
