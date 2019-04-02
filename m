@@ -1,67 +1,98 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [Intel-gfx] linux-next: Tree for Mar 29 (i915, no ACPI)
-Date: Tue, 02 Apr 2019 15:29:09 +0300
-Message-ID: <87zhp8zj3e.fsf@intel.com>
-References: <20190329141831.30fd841f@canb.auug.org.au> <a7cf7fb9-c154-77b6-c63d-d71a12a1706b@infradead.org>
+From: Tom Li <tomli@tomli.me>
+Subject: Re: linux-next: build warning after merge of the fbdev tree
+Date: Tue, 2 Apr 2019 20:38:50 +0800
+Message-ID: <20190402123849.GA4562@localhost.localdomain>
+References: <20190402093007.0b03b02e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a7cf7fb9-c154-77b6-c63d-d71a12a1706b@infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190402093007.0b03b02e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yifeng Li <tomli@tomli.me>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>, linux-fbdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 29 Mar 2019, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 3/28/19 8:18 PM, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Changes since 20190328:
->> 
->> The pidfd tree lost its build failures.
->> 
->
-> on x86_64, when # CONFIG_ACPI is not set/enabled:
->
-> ld: drivers/gpu/drm/i915/intel_panel.o: in function `intel_backlight_device_register':
-> intel_panel.c:(.text+0x2c49): undefined reference to `backlight_device_register'
-> ld: drivers/gpu/drm/i915/intel_panel.o: in function `intel_backlight_device_unregister':
-> intel_panel.c:(.text+0x2d01): undefined reference to `backlight_device_unregister'
->
->
->
-> Full randconfig file is attached.
+On Tue, Apr 02, 2019 at 09:30:07AM +1100, Stephen Rothwell wrote:
+> Hi Bartlomiej,
+> 
+> After merging the fbdev tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/video/fbdev/sm712fb.c: In function 'smtc_blank':
+> drivers/video/fbdev/sm712fb.c:900:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     smtc_seqw(0x6b, 0x02);
+>     ^~~~~~~~~~~~~~~~~~~~~
+> drivers/video/fbdev/sm712fb.c:901:3: note: here
+>    case 0x720:
+>    ^~~~
+> 
+> Introduced by commit
+> 
+>   f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting")
+> 
 
-# CONFIG_ACPI is not set
-CONFIG_DRM_I915=y
-CONFIG_BACKLIGHT_CLASS_DEVICE=m
+Nice catch! Thanks!
 
-drivers/gpu/drm/i915/Kconfig:
+This bug was introduced by me while attempting to fix another issue, a result of
+my copy-paste error. Since it only reprograms the clock to a different frequency,
+it's only a benign issue without visible side-effect, so it also evaded Sudip
+Mukherjee's code review and regression tests.
 
-config DRM_I915
-	# ...
-	select BACKLIGHT_CLASS_DEVICE if ACPI
+But what's I'm more concerned here is the failure of scripts/checkpatch.pl. I
+thought ./checkpatch.pl should have caught it, but for some reasons it cannot
+detect this one.
 
-The above pretty much sums it up. It's been reported before, the
-earliest I could find was [1].
+$ ./scripts/checkpatch.pl 0001-fbdev-sm712fb-fix-crashes-and-garbled-display-during.patch
+total: 0 errors, 0 warnings, 105 lines checked
 
-I've previously suggested patches that would make backlight a dependency
-instead of selecting it, in line with [2]. However we can't do that in
-i915 alone without recursive dependencies, and changing all backlight
-users was met with opposition because "select is convenient".
+So I mistakenly assumed the patch doesn't have a problem... It seems checkpatch.pl
+cannot detect fallthroughs in nested switch/case statements? I'm not sure. Should I
+report it to the maintainers of checkpatch.pl?
 
-Maybe I'll look at this one of these days, but don't hold your breath.
+Anyway, please apply the following patch ASAP.
 
+Thanks,
+Tom Li
 
-BR,
-Jani.
+>From 040fa4e6cc8b338cd845c11fd3efd7394ca55108 Mon Sep 17 00:00:00 2001
+From: Yifeng Li <tomli@tomli.me>
+Date: Tue, 2 Apr 2019 20:25:20 +0800
+Subject: [PATCH] fbdev: sm712fb: fix memory frequency by avoiding a
+ switch/case fallthrough.
 
+A fallthrough in switch/case was introduced in f627caf55b8e ("fbdev:
+sm712fb: fix crashes and garbled display during DPMS modesetting"),
+due to my copy-paste error, which would cause the memory clock frequency
+for SM720 to be programmed to SM712.
 
-[1] http://mid.mail-archive.com/CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com
+Since it only reprograms the clock to a different frequency, it's only
+a benign issue without visible side-effect, so it also evaded Sudip
+Mukherjee's code review and regression tests. scripts/checkpatch.pl
+also failed to discover the issue, possibly due to nested switch
+statements.
 
-[2] Documentation/kbuild/kconfig-language.txt "In general use select
-    only for non-visible symbols (no prompts anywhere) and for symbols
-    with no dependencies."
+This issue was found by Stephen Rothwell by building linux-next with
+-Wimplicit-fallthrough.
 
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting")
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+---
+ drivers/video/fbdev/sm712fb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/video/fbdev/sm712fb.c b/drivers/video/fbdev/sm712fb.c
+index 1e2503b52c6f..f1dcc6766d1e 100644
+--- a/drivers/video/fbdev/sm712fb.c
++++ b/drivers/video/fbdev/sm712fb.c
+@@ -898,6 +898,7 @@ static int smtc_blank(int blank_mode, struct fb_info *info)
+ 		case 0x712:
+ 			smtc_seqw(0x6a, 0x16);
+ 			smtc_seqw(0x6b, 0x02);
++			break;
+ 		case 0x720:
+ 			smtc_seqw(0x6a, 0x0d);
+ 			smtc_seqw(0x6b, 0x02);
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.20.1
