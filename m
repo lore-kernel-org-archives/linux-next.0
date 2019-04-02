@@ -1,103 +1,79 @@
-From: Qiang Yu <yuq825@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Tue, 2 Apr 2019 13:55:03 +0800
-Message-ID: <CAKGbVbvj9cZnJuey_ra7U+xm-JhoB17bpTgcXKiKaHWbjB9Sxw@mail.gmail.com>
-References: <20190402105006.48f93e53@canb.auug.org.au>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: linux-next: build failure after merge of the nand tree
+Date: Tue, 2 Apr 2019 09:27:47 +0200
+Message-ID: <20190402092747.758544a2@xps13>
+References: <20190402101431.6708cb70@canb.auug.org.au>
+        <1554161512.10471.3@crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402105006.48f93e53@canb.auug.org.au>
+In-Reply-To: <1554161512.10471.3@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Anholt <eric@anholt.net>, Matthew Wilcox <willy@infradead.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Thanks, patch is:
-Reviewed-by: Qiang Yu <yuq825@gmail.com>
+Hi Paul,
 
-Regards,
-Qiang
+Paul Cercueil <paul@crapouillou.net> wrote on Tue, 02 Apr 2019 01:31:52
++0200:
 
-On Tue, Apr 2, 2019 at 7:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the drm-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> In file included from include/linux/kernel.h:7,
->                  from include/asm-generic/bug.h:18,
->                  from arch/x86/include/asm/bug.h:83,
->                  from include/linux/bug.h:5,
->                  from include/linux/mmdebug.h:5,
->                  from include/linux/gfp.h:5,
->                  from include/linux/slab.h:15,
->                  from drivers/gpu/drm/lima/lima_ctx.c:4:
-> drivers/gpu/drm/lima/lima_ctx.c: In function 'lima_ctx_create':
-> include/linux/limits.h:13:18: warning: passing argument 3 of 'xa_alloc' makes pointer from integer without a cast [-Wint-conversion]
->  #define UINT_MAX (~0U)
->                   ^~~~~
-> drivers/gpu/drm/lima/lima_ctx.c:26:36: note: in expansion of macro 'UINT_MAX'
->   err = xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
->                                     ^~~~~~~~
-> In file included from include/linux/radix-tree.h:31,
->                  from include/linux/idr.h:15,
->                  from include/drm/drm_device.h:7,
->                  from drivers/gpu/drm/lima/lima_device.h:7,
->                  from drivers/gpu/drm/lima/lima_ctx.c:6:
-> include/linux/xarray.h:817:9: note: expected 'void *' but argument is of type 'unsigned int'
->    void *entry, struct xa_limit limit, gfp_t gfp)
->    ~~~~~~^~~~~
-> drivers/gpu/drm/lima/lima_ctx.c:26:46: error: incompatible type for argument 4 of 'xa_alloc'
->   err = xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
->                                               ^~~
-> In file included from include/linux/radix-tree.h:31,
->                  from include/linux/idr.h:15,
->                  from include/drm/drm_device.h:7,
->                  from drivers/gpu/drm/lima/lima_device.h:7,
->                  from drivers/gpu/drm/lima/lima_ctx.c:6:
-> include/linux/xarray.h:817:32: note: expected 'struct xa_limit' but argument is of type 'struct lima_ctx *'
->    void *entry, struct xa_limit limit, gfp_t gfp)
->                 ~~~~~~~~~~~~~~~~^~~~~
->
-> Caused by commit
->
->   a1d2a6339961 ("drm/lima: driver for ARM Mali4xx GPUs")
->
-> interacting with commit
->
->   a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
->
-> from Linus' tree (v5.1-rc1).
->
-> I have applied the following patch for today.  It could be applied as
-> part of a merge of v5.1-rc1 into drm-misc.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 2 Apr 2019 10:45:32 +1100
-> Subject: [PATCH] drm/lima: update for xa_alloc API change
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/gpu/drm/lima/lima_ctx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/lima/lima_ctx.c b/drivers/gpu/drm/lima/lima_ctx.c
-> index c8d12f7c6894..bafa00d74cc5 100644
-> --- a/drivers/gpu/drm/lima/lima_ctx.c
-> +++ b/drivers/gpu/drm/lima/lima_ctx.c
-> @@ -23,7 +23,7 @@ int lima_ctx_create(struct lima_device *dev, struct lima_ctx_mgr *mgr, u32 *id)
->                         goto err_out0;
->         }
->
-> -       err = xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
-> +       err = xa_alloc(&mgr->handles, id, ctx, XA_LIMIT(*id, UINT_MAX), GFP_KERNEL);
->         if (err < 0)
->                 goto err_out0;
->
-> --
-> 2.20.1
->
-> --
-> Cheers,
-> Stephen Rothwell
+> Hi Stephen,
+> 
+> Le mar. 2 avril 2019 à 1:14, Stephen Rothwell <sfr@canb.auug.org.au> a écrit :
+> > Hi all,
+> > 
+> > After merging the nand tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:26:5: error: redefinition > of 'ingenic_ecc_calculate'
+> >  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
+> >      ^~~~~~~~~~~~~~~~~~~~~
+> > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:39:5: note: previous > definition of 'ingenic_ecc_calculate' was here
+> >  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
+> >      ^~~~~~~~~~~~~~~~~~~~~
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:47:5: error: redefinition > of 'ingenic_ecc_correct'
+> >  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
+> >      ^~~~~~~~~~~~~~~~~~~
+> > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:46:5: note: previous > definition of 'ingenic_ecc_correct' was here
+> >  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
+> >      ^~~~~~~~~~~~~~~~~~~
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:93:21: error: redefinition > of 'of_ingenic_ecc_get'
+> >  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *of_node)
+> >                      ^~~~~~~~~~~~~~~~~~
+> > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:57:21: note: previous > definition of 'of_ingenic_ecc_get' was here
+> >  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *np)
+> >                      ^~~~~~~~~~~~~~~~~~
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:119:6: error: redefinition > of 'ingenic_ecc_release'
+> >  void ingenic_ecc_release(struct ingenic_ecc *ecc)
+> >       ^~~~~~~~~~~~~~~~~~~
+> > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
+> > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:53:6: note: previous > definition of 'ingenic_ecc_release' was here
+> >  void ingenic_ecc_release(struct ingenic_ecc *ecc)
+> >       ^~~~~~~~~~~~~~~~~~~
+> > 
+> > Caused by commit
+> > 
+> >   8278ad0d709a ("mtd: rawnand: ingenic: Separate top-level and SoC > specific code")
+> > 
+> > I have used the nand tree from next-20190401 for today.  
+> 
+> That makes no sense to me; from the offsets of the errors in the ingenic_ecc.h
+> file, it seems that CONFIG_MTD_NAND_INGENIC_ECC is not set, and in this case
+> ingenic_ecc.c should not be compiled at all.
+> 
+> -Paul
+> 
+> 
+
+There must be a mistmatch somewhere in Kconfig, please reproduce with
+allmodconfig on x86_64, I don't have time to check on this today.
+Otherwise I'll have to drop the patchset :/
+
+
+Thanks,
+Miquèl
