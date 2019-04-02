@@ -1,89 +1,44 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: linux-next: build failure after merge of the nand tree
-Date: Tue, 2 Apr 2019 11:21:41 +0200
-Message-ID: <20190402112141.3d2f5f38@xps13>
-References: <20190402101431.6708cb70@canb.auug.org.au>
-        <1554161512.10471.3@crapouillou.net>
-        <20190402092747.758544a2@xps13>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: linux-next: build failure after merge of the
+ drm-misc tree
+Date: Tue, 2 Apr 2019 04:21:13 -0700
+Message-ID: <20190402112113.GD22763@bombadil.infradead.org>
+References: <20190402105006.48f93e53@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402092747.758544a2@xps13>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Boris Brezillon <boris.brezillon@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190402105006.48f93e53@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Qiang Yu <yuq825@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
-
-Miquel Raynal <miquel.raynal@bootlin.com> wrote on Tue, 2 Apr 2019
-09:27:47 +0200:
-
-> Hi Paul,
-> 
-> Paul Cercueil <paul@crapouillou.net> wrote on Tue, 02 Apr 2019 01:31:52
-> +0200:
-> 
-> > Hi Stephen,
-> > 
-> > Le mar. 2 avril 2019 à 1:14, Stephen Rothwell <sfr@canb.auug.org.au> a écrit :  
-> > > Hi all,
-> > > 
-> > > After merging the nand tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:26:5: error: redefinition > of 'ingenic_ecc_calculate'
-> > >  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
-> > >      ^~~~~~~~~~~~~~~~~~~~~
-> > > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:39:5: note: previous > definition of 'ingenic_ecc_calculate' was here
-> > >  int ingenic_ecc_calculate(struct ingenic_ecc *ecc,
-> > >      ^~~~~~~~~~~~~~~~~~~~~
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:47:5: error: redefinition > of 'ingenic_ecc_correct'
-> > >  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
-> > >      ^~~~~~~~~~~~~~~~~~~
-> > > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:46:5: note: previous > definition of 'ingenic_ecc_correct' was here
-> > >  int ingenic_ecc_correct(struct ingenic_ecc *ecc,
-> > >      ^~~~~~~~~~~~~~~~~~~
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:93:21: error: redefinition > of 'of_ingenic_ecc_get'
-> > >  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *of_node)
-> > >                      ^~~~~~~~~~~~~~~~~~
-> > > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:57:21: note: previous > definition of 'of_ingenic_ecc_get' was here
-> > >  struct ingenic_ecc *of_ingenic_ecc_get(struct device_node *np)
-> > >                      ^~~~~~~~~~~~~~~~~~
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:119:6: error: redefinition > of 'ingenic_ecc_release'
-> > >  void ingenic_ecc_release(struct ingenic_ecc *ecc)
-> > >       ^~~~~~~~~~~~~~~~~~~
-> > > In file included from drivers/mtd/nand/raw/ingenic/ingenic_ecc.c:14:
-> > > drivers/mtd/nand/raw/ingenic/ingenic_ecc.h:53:6: note: previous > definition of 'ingenic_ecc_release' was here
-> > >  void ingenic_ecc_release(struct ingenic_ecc *ecc)
-> > >       ^~~~~~~~~~~~~~~~~~~
-> > > 
-> > > Caused by commit
-> > > 
-> > >   8278ad0d709a ("mtd: rawnand: ingenic: Separate top-level and SoC > specific code")
-> > > 
-> > > I have used the nand tree from next-20190401 for today.    
-> > 
-> > That makes no sense to me; from the offsets of the errors in the ingenic_ecc.h
-> > file, it seems that CONFIG_MTD_NAND_INGENIC_ECC is not set, and in this case
-> > ingenic_ecc.c should not be compiled at all.
-> > 
-> > -Paul
-> > 
-> >   
-> 
-> There must be a mistmatch somewhere in Kconfig, please reproduce with
-> allmodconfig on x86_64, I don't have time to check on this today.
-> Otherwise I'll have to drop the patchset :/
-
-I wonder if the root cause comes from another patchset (mine, actually)
-which I applied on top of your work. Maybe there is a conflict there. I
-am looking into it.
-
-
-Thanks,
-Miquèl
+T24gVHVlLCBBcHIgMDIsIDIwMTkgYXQgMTA6NTA6MDZBTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbGltYS9saW1hX2N0eC5jCj4gQEAgLTIz
+LDcgKzIzLDcgQEAgaW50IGxpbWFfY3R4X2NyZWF0ZShzdHJ1Y3QgbGltYV9kZXZpY2UgKmRldiwg
+c3RydWN0IGxpbWFfY3R4X21nciAqbWdyLCB1MzIgKmlkKQo+ICAJCQlnb3RvIGVycl9vdXQwOwo+
+ICAJfQo+ICAKPiAtCWVyciA9IHhhX2FsbG9jKCZtZ3ItPmhhbmRsZXMsIGlkLCBVSU5UX01BWCwg
+Y3R4LCBHRlBfS0VSTkVMKTsKPiArCWVyciA9IHhhX2FsbG9jKCZtZ3ItPmhhbmRsZXMsIGlkLCBj
+dHgsIFhBX0xJTUlUKCppZCwgVUlOVF9NQVgpLCBHRlBfS0VSTkVMKTsKPiAgCWlmIChlcnIgPCAw
+KQo+ICAJCWdvdG8gZXJyX291dDA7CgpJIGFncmVlIHRoYXQgdGhpcyBpcyBhbiBleGFjdCB0cmFu
+c2xhdGlvbiBvZiB3aGF0IHRoZSBjb2RlIHdhcyBkb2luZywKYnV0IEkgZG9uJ3QgdGhpbmsgaXQn
+cyB3aGF0IHRoZSBhdXRob3IgaW50ZW5kZWQgdGhlIGNvZGUgdG8gZG8uClRoZXkgYWxtb3N0IGNl
+cnRhaW5seSBtZWFudDoKCgllcnIgPSB4YV9hbGxvYygmbWdyLT5oYW5kbGVzLCBpZCwgY3R4LCB4
+YV9saW1pdF8zMmIsIEdGUF9LRVJORUwpOwoKSSdtIGJhc2luZyB0aGlzIG9uOgoKK3N0cnVjdCBk
+cm1fbGltYV9jdHhfY3JlYXRlIHsKKyAgICAgICBfX3UzMiBpZDsgICAgICAgICAgLyogb3V0LCBj
+b250ZXh0IGhhbmRsZSAqLworICAgICAgIF9fdTMyIF9wYWQ7ICAgICAgICAvKiBwYWQsIG11c3Qg
+YmUgemVybyAqLworfTsKCihhbmQgdGhpcyBjb25mdXNpb24gaXMgZXhhY3RseSB3aHkgSSBjaGFu
+Z2VkIHRoZSBBUEkgLi4uKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRl
+bC1nZng=
