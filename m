@@ -1,127 +1,121 @@
-From: Qiang Yu <yuq825@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Tue, 2 Apr 2019 16:59:37 +0800
-Message-ID: <CAKGbVbsn9BpbMZCshxzj=d38wHpBhBo7wrZDQnC01hB30B9-mA@mail.gmail.com>
-References: <20190402105006.48f93e53@canb.auug.org.au> <CAKGbVbvj9cZnJuey_ra7U+xm-JhoB17bpTgcXKiKaHWbjB9Sxw@mail.gmail.com>
+Date: Tue, 2 Apr 2019 11:08:07 +0200
+Message-ID: <20190402090807.GI2665@phenom.ffwll.local>
+References: <20190402105006.48f93e53@canb.auug.org.au>
+ <CAKGbVbvj9cZnJuey_ra7U+xm-JhoB17bpTgcXKiKaHWbjB9Sxw@mail.gmail.com>
  <20190402075744.GC2665@phenom.ffwll.local>
+ <CAKGbVbsn9BpbMZCshxzj=d38wHpBhBo7wrZDQnC01hB30B9-mA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402075744.GC2665@phenom.ffwll.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Qiang Yu <yuq825@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Anholt <eric@anholt.net>, Matthew Wilcox <willy@infradead.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CAKGbVbsn9BpbMZCshxzj=d38wHpBhBo7wrZDQnC01hB30B9-mA@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Qiang Yu <yuq825@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 2, 2019 at 3:57 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Tue, Apr 02, 2019 at 01:55:03PM +0800, Qiang Yu wrote:
-> > Thanks, patch is:
-> > Reviewed-by: Qiang Yu <yuq825@gmail.com>
->
-> Good time to get started with committing patches? In general it's kinda
-> confusing if the maintainer r-bs a patch, but doesn't say whether/when/how
-> it gets merged. Big chance the patch will get lost in limbo and fall
-> through cracks.
-
-Thanks for the remind, this patch should only be applied to drm-misc-next
-branch when 5.1-rcx branch gets merged to drm-misc-next for the new
-xa_alloc API. So I expect the guy who do the 5.1-rcx merge should apply
-this patch. Who will do the merge?
-
-Regards,
-Qiang
-
->
-> >
-> > Regards,
-> > Qiang
-> >
-> > On Tue, Apr 2, 2019 at 7:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > After merging the drm-misc tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >
-> > > In file included from include/linux/kernel.h:7,
-> > >                  from include/asm-generic/bug.h:18,
-> > >                  from arch/x86/include/asm/bug.h:83,
-> > >                  from include/linux/bug.h:5,
-> > >                  from include/linux/mmdebug.h:5,
-> > >                  from include/linux/gfp.h:5,
-> > >                  from include/linux/slab.h:15,
-> > >                  from drivers/gpu/drm/lima/lima_ctx.c:4:
-> > > drivers/gpu/drm/lima/lima_ctx.c: In function 'lima_ctx_create':
-> > > include/linux/limits.h:13:18: warning: passing argument 3 of 'xa_alloc' makes pointer from integer without a cast [-Wint-conversion]
-> > >  #define UINT_MAX (~0U)
-> > >                   ^~~~~
-> > > drivers/gpu/drm/lima/lima_ctx.c:26:36: note: in expansion of macro 'UINT_MAX'
-> > >   err = xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
-> > >                                     ^~~~~~~~
-> > > In file included from include/linux/radix-tree.h:31,
-> > >                  from include/linux/idr.h:15,
-> > >                  from include/drm/drm_device.h:7,
-> > >                  from drivers/gpu/drm/lima/lima_device.h:7,
-> > >                  from drivers/gpu/drm/lima/lima_ctx.c:6:
-> > > include/linux/xarray.h:817:9: note: expected 'void *' but argument is of type 'unsigned int'
-> > >    void *entry, struct xa_limit limit, gfp_t gfp)
-> > >    ~~~~~~^~~~~
-> > > drivers/gpu/drm/lima/lima_ctx.c:26:46: error: incompatible type for argument 4 of 'xa_alloc'
-> > >   err = xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
-> > >                                               ^~~
-> > > In file included from include/linux/radix-tree.h:31,
-> > >                  from include/linux/idr.h:15,
-> > >                  from include/drm/drm_device.h:7,
-> > >                  from drivers/gpu/drm/lima/lima_device.h:7,
-> > >                  from drivers/gpu/drm/lima/lima_ctx.c:6:
-> > > include/linux/xarray.h:817:32: note: expected 'struct xa_limit' but argument is of type 'struct lima_ctx *'
-> > >    void *entry, struct xa_limit limit, gfp_t gfp)
-> > >                 ~~~~~~~~~~~~~~~~^~~~~
-> > >
-> > > Caused by commit
-> > >
-> > >   a1d2a6339961 ("drm/lima: driver for ARM Mali4xx GPUs")
-> > >
-> > > interacting with commit
-> > >
-> > >   a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
-> > >
-> > > from Linus' tree (v5.1-rc1).
-> > >
-> > > I have applied the following patch for today.  It could be applied as
-> > > part of a merge of v5.1-rc1 into drm-misc.
-> > >
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Tue, 2 Apr 2019 10:45:32 +1100
-> > > Subject: [PATCH] drm/lima: update for xa_alloc API change
-> > >
-> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > ---
-> > >  drivers/gpu/drm/lima/lima_ctx.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/lima/lima_ctx.c b/drivers/gpu/drm/lima/lima_ctx.c
-> > > index c8d12f7c6894..bafa00d74cc5 100644
-> > > --- a/drivers/gpu/drm/lima/lima_ctx.c
-> > > +++ b/drivers/gpu/drm/lima/lima_ctx.c
-> > > @@ -23,7 +23,7 @@ int lima_ctx_create(struct lima_device *dev, struct lima_ctx_mgr *mgr, u32 *id)
-> > >                         goto err_out0;
-> > >         }
-> > >
-> > > -       err = xa_alloc(&mgr->handles, id, UINT_MAX, ctx, GFP_KERNEL);
-> > > +       err = xa_alloc(&mgr->handles, id, ctx, XA_LIMIT(*id, UINT_MAX), GFP_KERNEL);
-> > >         if (err < 0)
-> > >                 goto err_out0;
-> > >
-> > > --
-> > > 2.20.1
-> > >
-> > > --
-> > > Cheers,
-> > > Stephen Rothwell
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+T24gVHVlLCBBcHIgMDIsIDIwMTkgYXQgMDQ6NTk6MzdQTSArMDgwMCwgUWlhbmcgWXUgd3JvdGU6
+Cj4gT24gVHVlLCBBcHIgMiwgMjAxOSBhdCAzOjU3IFBNIERhbmllbCBWZXR0ZXIgPGRhbmllbEBm
+ZndsbC5jaD4gd3JvdGU6Cj4gPgo+ID4gT24gVHVlLCBBcHIgMDIsIDIwMTkgYXQgMDE6NTU6MDNQ
+TSArMDgwMCwgUWlhbmcgWXUgd3JvdGU6Cj4gPiA+IFRoYW5rcywgcGF0Y2ggaXM6Cj4gPiA+IFJl
+dmlld2VkLWJ5OiBRaWFuZyBZdSA8eXVxODI1QGdtYWlsLmNvbT4KPiA+Cj4gPiBHb29kIHRpbWUg
+dG8gZ2V0IHN0YXJ0ZWQgd2l0aCBjb21taXR0aW5nIHBhdGNoZXM/IEluIGdlbmVyYWwgaXQncyBr
+aW5kYQo+ID4gY29uZnVzaW5nIGlmIHRoZSBtYWludGFpbmVyIHItYnMgYSBwYXRjaCwgYnV0IGRv
+ZXNuJ3Qgc2F5IHdoZXRoZXIvd2hlbi9ob3cKPiA+IGl0IGdldHMgbWVyZ2VkLiBCaWcgY2hhbmNl
+IHRoZSBwYXRjaCB3aWxsIGdldCBsb3N0IGluIGxpbWJvIGFuZCBmYWxsCj4gPiB0aHJvdWdoIGNy
+YWNrcy4KPiAKPiBUaGFua3MgZm9yIHRoZSByZW1pbmQsIHRoaXMgcGF0Y2ggc2hvdWxkIG9ubHkg
+YmUgYXBwbGllZCB0byBkcm0tbWlzYy1uZXh0Cj4gYnJhbmNoIHdoZW4gNS4xLXJjeCBicmFuY2gg
+Z2V0cyBtZXJnZWQgdG8gZHJtLW1pc2MtbmV4dCBmb3IgdGhlIG5ldwo+IHhhX2FsbG9jIEFQSS4g
+U28gSSBleHBlY3QgdGhlIGd1eSB3aG8gZG8gdGhlIDUuMS1yY3ggbWVyZ2Ugc2hvdWxkIGFwcGx5
+Cj4gdGhpcyBwYXRjaC4gV2hvIHdpbGwgZG8gdGhlIG1lcmdlPwoKT2ggcmlnaHQsIEkgd2FzIGtp
+bmRhIG5vdCB5ZXQgYXdha2UgOi0pCgpZZWFoIERhdmUvbWUgYW5kIGRybS1taXNjIG1haW50YWlu
+ZXJzIHdpbGwgcmVzb2x2ZSB0aGlzIHdoZW4gZHJtLW1pc2MKbGFuZHMgaW4gZHJtLW5leHQuIE1p
+Z2h0IHRoZW4gbmVlZCBhIGJhY2ttZXJnZSBpbiBkcm0tbWlzYyB0byByb2xsCmZvcndhcmQuCi1E
+YW5pZWwKCj4gCj4gUmVnYXJkcywKPiBRaWFuZwo+IAo+ID4KPiA+ID4KPiA+ID4gUmVnYXJkcywK
+PiA+ID4gUWlhbmcKPiA+ID4KPiA+ID4gT24gVHVlLCBBcHIgMiwgMjAxOSBhdCA3OjUwIEFNIFN0
+ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPiA+ID4gPgo+ID4g
+PiA+IEhpIGFsbCwKPiA+ID4gPgo+ID4gPiA+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNjIHRy
+ZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0Cj4gPiA+ID4gYWxsbW9kY29uZmln
+KSBmYWlsZWQgbGlrZSB0aGlzOgo+ID4gPiA+Cj4gPiA+ID4gSW4gZmlsZSBpbmNsdWRlZCBmcm9t
+IGluY2x1ZGUvbGludXgva2VybmVsLmg6NywKPiA+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20g
+aW5jbHVkZS9hc20tZ2VuZXJpYy9idWcuaDoxOCwKPiA+ID4gPiAgICAgICAgICAgICAgICAgIGZy
+b20gYXJjaC94ODYvaW5jbHVkZS9hc20vYnVnLmg6ODMsCj4gPiA+ID4gICAgICAgICAgICAgICAg
+ICBmcm9tIGluY2x1ZGUvbGludXgvYnVnLmg6NSwKPiA+ID4gPiAgICAgICAgICAgICAgICAgIGZy
+b20gaW5jbHVkZS9saW51eC9tbWRlYnVnLmg6NSwKPiA+ID4gPiAgICAgICAgICAgICAgICAgIGZy
+b20gaW5jbHVkZS9saW51eC9nZnAuaDo1LAo+ID4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSBp
+bmNsdWRlL2xpbnV4L3NsYWIuaDoxNSwKPiA+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20gZHJp
+dmVycy9ncHUvZHJtL2xpbWEvbGltYV9jdHguYzo0Ogo+ID4gPiA+IGRyaXZlcnMvZ3B1L2RybS9s
+aW1hL2xpbWFfY3R4LmM6IEluIGZ1bmN0aW9uICdsaW1hX2N0eF9jcmVhdGUnOgo+ID4gPiA+IGlu
+Y2x1ZGUvbGludXgvbGltaXRzLmg6MTM6MTg6IHdhcm5pbmc6IHBhc3NpbmcgYXJndW1lbnQgMyBv
+ZiAneGFfYWxsb2MnIG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIHdpdGhvdXQgYSBjYXN0IFst
+V2ludC1jb252ZXJzaW9uXQo+ID4gPiA+ICAjZGVmaW5lIFVJTlRfTUFYICh+MFUpCj4gPiA+ID4g
+ICAgICAgICAgICAgICAgICAgXn5+fn4KPiA+ID4gPiBkcml2ZXJzL2dwdS9kcm0vbGltYS9saW1h
+X2N0eC5jOjI2OjM2OiBub3RlOiBpbiBleHBhbnNpb24gb2YgbWFjcm8gJ1VJTlRfTUFYJwo+ID4g
+PiA+ICAgZXJyID0geGFfYWxsb2MoJm1nci0+aGFuZGxlcywgaWQsIFVJTlRfTUFYLCBjdHgsIEdG
+UF9LRVJORUwpOwo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5+
+fn5+fn5+Cj4gPiA+ID4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGluY2x1ZGUvbGludXgvcmFkaXgt
+dHJlZS5oOjMxLAo+ID4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L2lk
+ci5oOjE1LAo+ID4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2RybS9kcm1fZGV2
+aWNlLmg6NywKPiA+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJtL2xp
+bWEvbGltYV9kZXZpY2UuaDo3LAo+ID4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJz
+L2dwdS9kcm0vbGltYS9saW1hX2N0eC5jOjY6Cj4gPiA+ID4gaW5jbHVkZS9saW51eC94YXJyYXku
+aDo4MTc6OTogbm90ZTogZXhwZWN0ZWQgJ3ZvaWQgKicgYnV0IGFyZ3VtZW50IGlzIG9mIHR5cGUg
+J3Vuc2lnbmVkIGludCcKPiA+ID4gPiAgICB2b2lkICplbnRyeSwgc3RydWN0IHhhX2xpbWl0IGxp
+bWl0LCBnZnBfdCBnZnApCj4gPiA+ID4gICAgfn5+fn5+Xn5+fn4KPiA+ID4gPiBkcml2ZXJzL2dw
+dS9kcm0vbGltYS9saW1hX2N0eC5jOjI2OjQ2OiBlcnJvcjogaW5jb21wYXRpYmxlIHR5cGUgZm9y
+IGFyZ3VtZW50IDQgb2YgJ3hhX2FsbG9jJwo+ID4gPiA+ICAgZXJyID0geGFfYWxsb2MoJm1nci0+
+aGFuZGxlcywgaWQsIFVJTlRfTUFYLCBjdHgsIEdGUF9LRVJORUwpOwo+ID4gPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBefn4KPiA+ID4gPiBJbiBmaWxl
+IGluY2x1ZGVkIGZyb20gaW5jbHVkZS9saW51eC9yYWRpeC10cmVlLmg6MzEsCj4gPiA+ID4gICAg
+ICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUvbGludXgvaWRyLmg6MTUsCj4gPiA+ID4gICAgICAg
+ICAgICAgICAgICBmcm9tIGluY2x1ZGUvZHJtL2RybV9kZXZpY2UuaDo3LAo+ID4gPiA+ICAgICAg
+ICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbGltYS9saW1hX2RldmljZS5oOjcsCj4g
+PiA+ID4gICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9saW1hL2xpbWFfY3R4
+LmM6NjoKPiA+ID4gPiBpbmNsdWRlL2xpbnV4L3hhcnJheS5oOjgxNzozMjogbm90ZTogZXhwZWN0
+ZWQgJ3N0cnVjdCB4YV9saW1pdCcgYnV0IGFyZ3VtZW50IGlzIG9mIHR5cGUgJ3N0cnVjdCBsaW1h
+X2N0eCAqJwo+ID4gPiA+ICAgIHZvaWQgKmVudHJ5LCBzdHJ1Y3QgeGFfbGltaXQgbGltaXQsIGdm
+cF90IGdmcCkKPiA+ID4gPiAgICAgICAgICAgICAgICAgfn5+fn5+fn5+fn5+fn5+fl5+fn5+Cj4g
+PiA+ID4KPiA+ID4gPiBDYXVzZWQgYnkgY29tbWl0Cj4gPiA+ID4KPiA+ID4gPiAgIGExZDJhNjMz
+OTk2MSAoImRybS9saW1hOiBkcml2ZXIgZm9yIEFSTSBNYWxpNHh4IEdQVXMiKQo+ID4gPiA+Cj4g
+PiA+ID4gaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQKPiA+ID4gPgo+ID4gPiA+ICAgYTNlNGQzZjk3
+ZWM4ICgiWEFycmF5OiBSZWRlc2lnbiB4YV9hbGxvYyBBUEkiKQo+ID4gPiA+Cj4gPiA+ID4gZnJv
+bSBMaW51cycgdHJlZSAodjUuMS1yYzEpLgo+ID4gPiA+Cj4gPiA+ID4gSSBoYXZlIGFwcGxpZWQg
+dGhlIGZvbGxvd2luZyBwYXRjaCBmb3IgdG9kYXkuICBJdCBjb3VsZCBiZSBhcHBsaWVkIGFzCj4g
+PiA+ID4gcGFydCBvZiBhIG1lcmdlIG9mIHY1LjEtcmMxIGludG8gZHJtLW1pc2MuCj4gPiA+ID4K
+PiA+ID4gPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPiA+
+ID4gPiBEYXRlOiBUdWUsIDIgQXByIDIwMTkgMTA6NDU6MzIgKzExMDAKPiA+ID4gPiBTdWJqZWN0
+OiBbUEFUQ0hdIGRybS9saW1hOiB1cGRhdGUgZm9yIHhhX2FsbG9jIEFQSSBjaGFuZ2UKPiA+ID4g
+Pgo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcu
+b3JnLmF1Pgo+ID4gPiA+IC0tLQo+ID4gPiA+ICBkcml2ZXJzL2dwdS9kcm0vbGltYS9saW1hX2N0
+eC5jIHwgMiArLQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
+ZXRpb24oLSkKPiA+ID4gPgo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbGlt
+YS9saW1hX2N0eC5jIGIvZHJpdmVycy9ncHUvZHJtL2xpbWEvbGltYV9jdHguYwo+ID4gPiA+IGlu
+ZGV4IGM4ZDEyZjdjNjg5NC4uYmFmYTAwZDc0Y2M1IDEwMDY0NAo+ID4gPiA+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9saW1hL2xpbWFfY3R4LmMKPiA+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+bGltYS9saW1hX2N0eC5jCj4gPiA+ID4gQEAgLTIzLDcgKzIzLDcgQEAgaW50IGxpbWFfY3R4X2Ny
+ZWF0ZShzdHJ1Y3QgbGltYV9kZXZpY2UgKmRldiwgc3RydWN0IGxpbWFfY3R4X21nciAqbWdyLCB1
+MzIgKmlkKQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyX291dDA7Cj4g
+PiA+ID4gICAgICAgICB9Cj4gPiA+ID4KPiA+ID4gPiAtICAgICAgIGVyciA9IHhhX2FsbG9jKCZt
+Z3ItPmhhbmRsZXMsIGlkLCBVSU5UX01BWCwgY3R4LCBHRlBfS0VSTkVMKTsKPiA+ID4gPiArICAg
+ICAgIGVyciA9IHhhX2FsbG9jKCZtZ3ItPmhhbmRsZXMsIGlkLCBjdHgsIFhBX0xJTUlUKCppZCwg
+VUlOVF9NQVgpLCBHRlBfS0VSTkVMKTsKPiA+ID4gPiAgICAgICAgIGlmIChlcnIgPCAwKQo+ID4g
+PiA+ICAgICAgICAgICAgICAgICBnb3RvIGVycl9vdXQwOwo+ID4gPiA+Cj4gPiA+ID4gLS0KPiA+
+ID4gPiAyLjIwLjEKPiA+ID4gPgo+ID4gPiA+IC0tCj4gPiA+ID4gQ2hlZXJzLAo+ID4gPiA+IFN0
+ZXBoZW4gUm90aHdlbGwKPiA+Cj4gPiAtLQo+ID4gRGFuaWVsIFZldHRlcgo+ID4gU29mdHdhcmUg
+RW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCj4gPiBodHRwOi8vYmxvZy5mZndsbC5jaAoKLS0g
+CkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6
+Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbA==
