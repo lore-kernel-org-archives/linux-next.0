@@ -1,68 +1,109 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Tue, 2 Apr 2019 07:10:41 -0700
-Message-ID: <20190402141041.GF22763@bombadil.infradead.org>
-References: <20190402105006.48f93e53@canb.auug.org.au>
- <CAKGbVbvj9cZnJuey_ra7U+xm-JhoB17bpTgcXKiKaHWbjB9Sxw@mail.gmail.com>
- <20190402112656.GE22763@bombadil.infradead.org>
- <CAKGbVbuY3mKAZ6bA9G87NHq7mdxkw95p7OoO_QyUU_101yQEuQ@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: linux-next: build warning after merge of the fbdev tree
+Date: Tue, 2 Apr 2019 17:16:47 +0200
+Message-ID: <14da80ce-4a9e-3571-2aca-98c90634ee29@samsung.com>
+References: <20190402093007.0b03b02e@canb.auug.org.au>
+        <CGME20190402123908epcas3p4c3c3d6f66320a3d3ef1a47f700925cf1@epcas3p4.samsung.com>
+        <20190402123849.GA4562@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKGbVbuY3mKAZ6bA9G87NHq7mdxkw95p7OoO_QyUU_101yQEuQ@mail.gmail.com>
+In-Reply-To: <20190402123849.GA4562@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Qiang Yu <yuq825@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Anholt <eric@anholt.net>
+To: Tom Li <tomli@tomli.me>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>, linux-fbdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 02, 2019 at 09:56:08PM +0800, Qiang Yu wrote:
-> On Tue, Apr 2, 2019 at 7:26 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Tue, Apr 02, 2019 at 01:55:03PM +0800, Qiang Yu wrote:
-> > > Thanks, patch is:
-> > > Reviewed-by: Qiang Yu <yuq825@gmail.com>
-> >
-> > This looks like a fairly naive conversion from the old IDR API to the
-> > XArray API.  You should be able to remove mgr->lock entirely, relying on
-> > the xa_lock for synchronising free and get.
+
+On 04/02/2019 02:38 PM, Tom Li wrote:
+> On Tue, Apr 02, 2019 at 09:30:07AM +1100, Stephen Rothwell wrote:
+>> Hi Bartlomiej,
+>>
+>> After merging the fbdev tree, today's linux-next build (x86_64
+>> allmodconfig) produced this warning:
+>>
+>> drivers/video/fbdev/sm712fb.c: In function 'smtc_blank':
+>> drivers/video/fbdev/sm712fb.c:900:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>     smtc_seqw(0x6b, 0x02);
+>>     ^~~~~~~~~~~~~~~~~~~~~
+>> drivers/video/fbdev/sm712fb.c:901:3: note: here
+>>    case 0x720:
+>>    ^~~~
+>>
+>> Introduced by commit
+>>
+>>   f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting")
+>>
 > 
-> I'm afraid the a little complex free path may involve some might sleep
-> functions so use a mutex lock instead of spinlock.
-
-Ah, good call ...
-
-+       mutex_lock(&mgr->lock);
-+       ctx = xa_erase(&mgr->handles, id);
-+       if (ctx)
-+               kref_put(&ctx->refcnt, lima_ctx_do_release);
-+       else
-+               ret = -EINVAL;
-+       mutex_unlock(&mgr->lock);
-
-+static void lima_ctx_do_release(struct kref *ref)
-+{
-+       struct lima_ctx *ctx = container_of(ref, struct lima_ctx, refcnt);
-+       int i;
-+
-+       for (i = 0; i < lima_pipe_num; i++)
-+               lima_sched_context_fini(ctx->dev->pipe + i, ctx->context + i);
-+       kfree(ctx);
-+}
-
-+void lima_sched_context_fini(struct lima_sched_pipe *pipe,
-+                            struct lima_sched_context *context)
-+{
-+       drm_sched_entity_fini(&context->base);
-+}
-
-and drm_sched_entity_fini() can call kthread_park(), which does sleep.
-
-> > If you think it's worth it,
-> > you could even use kfree_rcu() to free the ctx and kref_get_unless_zero()
-> > and then your get path would be lock-free.
+> Nice catch! Thanks!
 > 
-> I can take a look this way, thanks.
+> This bug was introduced by me while attempting to fix another issue, a result of
+> my copy-paste error. Since it only reprograms the clock to a different frequency,
+> it's only a benign issue without visible side-effect, so it also evaded Sudip
+> Mukherjee's code review and regression tests.
+> 
+> But what's I'm more concerned here is the failure of scripts/checkpatch.pl. I
+> thought ./checkpatch.pl should have caught it, but for some reasons it cannot
+> detect this one.
+> 
+> $ ./scripts/checkpatch.pl 0001-fbdev-sm712fb-fix-crashes-and-garbled-display-during.patch
+> total: 0 errors, 0 warnings, 105 lines checked
+> 
+> So I mistakenly assumed the patch doesn't have a problem... It seems checkpatch.pl
+> cannot detect fallthroughs in nested switch/case statements? I'm not sure. Should I
+> report it to the maintainers of checkpatch.pl?
+> 
+> Anyway, please apply the following patch ASAP.
+> 
+> Thanks,
+> Tom Li
+> 
+>>From 040fa4e6cc8b338cd845c11fd3efd7394ca55108 Mon Sep 17 00:00:00 2001
+> From: Yifeng Li <tomli@tomli.me>
+> Date: Tue, 2 Apr 2019 20:25:20 +0800
+> Subject: [PATCH] fbdev: sm712fb: fix memory frequency by avoiding a
+>  switch/case fallthrough.
+> 
+> A fallthrough in switch/case was introduced in f627caf55b8e ("fbdev:
+> sm712fb: fix crashes and garbled display during DPMS modesetting"),
+> due to my copy-paste error, which would cause the memory clock frequency
+> for SM720 to be programmed to SM712.
+> 
+> Since it only reprograms the clock to a different frequency, it's only
+> a benign issue without visible side-effect, so it also evaded Sudip
+> Mukherjee's code review and regression tests. scripts/checkpatch.pl
+> also failed to discover the issue, possibly due to nested switch
+> statements.
+> 
+> This issue was found by Stephen Rothwell by building linux-next with
+> -Wimplicit-fallthrough.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting")
+> Signed-off-by: Yifeng Li <tomli@tomli.me>
 
-I think that's the only way you can get rid of the mutex, given the
-sleeping functions called in the free path.
+Applied to fbdev-for-next, thanks!
+
+> ---
+>  drivers/video/fbdev/sm712fb.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/video/fbdev/sm712fb.c b/drivers/video/fbdev/sm712fb.c
+> index 1e2503b52c6f..f1dcc6766d1e 100644
+> --- a/drivers/video/fbdev/sm712fb.c
+> +++ b/drivers/video/fbdev/sm712fb.c
+> @@ -898,6 +898,7 @@ static int smtc_blank(int blank_mode, struct fb_info *info)
+>  		case 0x712:
+>  			smtc_seqw(0x6a, 0x16);
+>  			smtc_seqw(0x6b, 0x02);
+> +			break;
+>  		case 0x720:
+>  			smtc_seqw(0x6a, 0x0d);
+>  			smtc_seqw(0x6b, 0x02);
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
