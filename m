@@ -1,109 +1,47 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: linux-next: build warning after merge of the fbdev tree
-Date: Tue, 2 Apr 2019 17:16:47 +0200
-Message-ID: <14da80ce-4a9e-3571-2aca-98c90634ee29@samsung.com>
-References: <20190402093007.0b03b02e@canb.auug.org.au>
-        <CGME20190402123908epcas3p4c3c3d6f66320a3d3ef1a47f700925cf1@epcas3p4.samsung.com>
-        <20190402123849.GA4562@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the cifs tree
+Date: Wed, 3 Apr 2019 07:40:39 +1100
+Message-ID: <20190403074039.7c7af691@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8hnSVyUXSeuNUtvp.m5s/lV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402123849.GA4562@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Li <tomli@tomli.me>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>, linux-fbdev@vger.kernel.org
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ronnie Sahlberg <lsahlber@redhat.com>, Kenneth D'souza <kdsouza@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/8hnSVyUXSeuNUtvp.m5s/lV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 04/02/2019 02:38 PM, Tom Li wrote:
-> On Tue, Apr 02, 2019 at 09:30:07AM +1100, Stephen Rothwell wrote:
->> Hi Bartlomiej,
->>
->> After merging the fbdev tree, today's linux-next build (x86_64
->> allmodconfig) produced this warning:
->>
->> drivers/video/fbdev/sm712fb.c: In function 'smtc_blank':
->> drivers/video/fbdev/sm712fb.c:900:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     smtc_seqw(0x6b, 0x02);
->>     ^~~~~~~~~~~~~~~~~~~~~
->> drivers/video/fbdev/sm712fb.c:901:3: note: here
->>    case 0x720:
->>    ^~~~
->>
->> Introduced by commit
->>
->>   f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting")
->>
-> 
-> Nice catch! Thanks!
-> 
-> This bug was introduced by me while attempting to fix another issue, a result of
-> my copy-paste error. Since it only reprograms the clock to a different frequency,
-> it's only a benign issue without visible side-effect, so it also evaded Sudip
-> Mukherjee's code review and regression tests.
-> 
-> But what's I'm more concerned here is the failure of scripts/checkpatch.pl. I
-> thought ./checkpatch.pl should have caught it, but for some reasons it cannot
-> detect this one.
-> 
-> $ ./scripts/checkpatch.pl 0001-fbdev-sm712fb-fix-crashes-and-garbled-display-during.patch
-> total: 0 errors, 0 warnings, 105 lines checked
-> 
-> So I mistakenly assumed the patch doesn't have a problem... It seems checkpatch.pl
-> cannot detect fallthroughs in nested switch/case statements? I'm not sure. Should I
-> report it to the maintainers of checkpatch.pl?
-> 
-> Anyway, please apply the following patch ASAP.
-> 
-> Thanks,
-> Tom Li
-> 
->>From 040fa4e6cc8b338cd845c11fd3efd7394ca55108 Mon Sep 17 00:00:00 2001
-> From: Yifeng Li <tomli@tomli.me>
-> Date: Tue, 2 Apr 2019 20:25:20 +0800
-> Subject: [PATCH] fbdev: sm712fb: fix memory frequency by avoiding a
->  switch/case fallthrough.
-> 
-> A fallthrough in switch/case was introduced in f627caf55b8e ("fbdev:
-> sm712fb: fix crashes and garbled display during DPMS modesetting"),
-> due to my copy-paste error, which would cause the memory clock frequency
-> for SM720 to be programmed to SM712.
-> 
-> Since it only reprograms the clock to a different frequency, it's only
-> a benign issue without visible side-effect, so it also evaded Sudip
-> Mukherjee's code review and regression tests. scripts/checkpatch.pl
-> also failed to discover the issue, possibly due to nested switch
-> statements.
-> 
-> This issue was found by Stephen Rothwell by building linux-next with
-> -Wimplicit-fallthrough.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Fixes: f627caf55b8e ("fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting")
-> Signed-off-by: Yifeng Li <tomli@tomli.me>
+Hi all,
 
-Applied to fbdev-for-next, thanks!
+Commit
 
-> ---
->  drivers/video/fbdev/sm712fb.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/video/fbdev/sm712fb.c b/drivers/video/fbdev/sm712fb.c
-> index 1e2503b52c6f..f1dcc6766d1e 100644
-> --- a/drivers/video/fbdev/sm712fb.c
-> +++ b/drivers/video/fbdev/sm712fb.c
-> @@ -898,6 +898,7 @@ static int smtc_blank(int blank_mode, struct fb_info *info)
->  		case 0x712:
->  			smtc_seqw(0x6a, 0x16);
->  			smtc_seqw(0x6b, 0x02);
-> +			break;
->  		case 0x720:
->  			smtc_seqw(0x6a, 0x0d);
->  			smtc_seqw(0x6b, 0x02);
+  d0cb257cb7b0 ("Show locallease in /proc/mounts for cifs shares mounted wi=
+th locallease feature.")
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8hnSVyUXSeuNUtvp.m5s/lV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyjyMcACgkQAVBC80lX
+0Gwt/wf/fbeWIKFvLfaqVGUILxvjcd3F9qog6n45E3chwqQ9x/xot6NJ+Un76iJ+
+Ov/yhVhkxxPO4q0DZn4yNi7ShALgYfvHwacSSe+PrinlgnbimKI7gYvQWgpzQz98
+ppVy/QEp6V7AS2NQ9Wmsc5dY6F+IBXnRFzX4SrYJdN0fjHVUCEQbWUDcHCk4u4jK
+DJDLv587fzp36WtGWgAVUsYQycH2RVQrsIfQIwkW9hIKge10VrBvu1ikZZkm8QG3
+wIinqI5qeyxncCnGRlcdnpjHeUPpaHccOMZUHMjiBl12KuDlDncidEGHoUKO5rdP
+1TYuJ4p0REfHrI2pl067eRbiuepB3w==
+=VKnS
+-----END PGP SIGNATURE-----
+
+--Sig_/8hnSVyUXSeuNUtvp.m5s/lV--
