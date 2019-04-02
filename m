@@ -1,47 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the cifs tree
-Date: Wed, 3 Apr 2019 07:40:39 +1100
-Message-ID: <20190403074039.7c7af691@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Wed, 3 Apr 2019 09:56:50 +1100
+Message-ID: <20190403095650.0ded75e0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8hnSVyUXSeuNUtvp.m5s/lV"; protocol="application/pgp-signature"
+ boundary="Sig_/K6G1/X+k_XFOqI_fehCuh=8"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ronnie Sahlberg <lsahlber@redhat.com>, Kenneth D'souza <kdsouza@redhat.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neil@brown.name>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8hnSVyUXSeuNUtvp.m5s/lV
+--Sig_/K6G1/X+k_XFOqI_fehCuh=8
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  d0cb257cb7b0 ("Show locallease in /proc/mounts for cifs shares mounted wi=
-th locallease feature.")
+  drivers/staging/mt7621-eth/mtk_eth_soc.c
 
-is missing a Signed-off-by from its author.
+between commit:
+
+  bd31342f0046 ("staging: remove mt7621-eth")
+
+from Linus' tree and commit:
+
+  6b16f9ee89b8 ("net: move skb->xmit_more hint to softnet data")
+
+from the net-next tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/8hnSVyUXSeuNUtvp.m5s/lV
+--Sig_/K6G1/X+k_XFOqI_fehCuh=8
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyjyMcACgkQAVBC80lX
-0Gwt/wf/fbeWIKFvLfaqVGUILxvjcd3F9qog6n45E3chwqQ9x/xot6NJ+Un76iJ+
-Ov/yhVhkxxPO4q0DZn4yNi7ShALgYfvHwacSSe+PrinlgnbimKI7gYvQWgpzQz98
-ppVy/QEp6V7AS2NQ9Wmsc5dY6F+IBXnRFzX4SrYJdN0fjHVUCEQbWUDcHCk4u4jK
-DJDLv587fzp36WtGWgAVUsYQycH2RVQrsIfQIwkW9hIKge10VrBvu1ikZZkm8QG3
-wIinqI5qeyxncCnGRlcdnpjHeUPpaHccOMZUHMjiBl12KuDlDncidEGHoUKO5rdP
-1TYuJ4p0REfHrI2pl067eRbiuepB3w==
-=VKnS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyj6LIACgkQAVBC80lX
+0GxwkAf/WgDx6mwhxeIoHB+tASIZB4NPDsOZLIwX3ovacdgRikfVkduGpIgTMXM9
+LdAg0UAfyigTwMRFyaNq5tQJS5NSDWLZIiwcWVAhY4lyEMOAYEAKOWZ1B8rreO99
+7+Ji8+JVVKqTF2VUUzIa2Ax7WUjyq7hO8LMgXCZ4XCHEl56ScePi1vMzPMuXZElq
+NpbhaUxei+fGSkkxyJLDol1+PT+X10gPkox8GVSVGyaoFeE1KGuXa0U7mhIJT5+h
+IR9h5TcL+PGh5iYkuEtkImvqh5GcofMJgCcMEA+yN9F8f69CPWIoxfBBQBcs24Wo
+7nJEMTvVeyyiHH1tiCEehJ9DXkjx/A==
+=bGuk
 -----END PGP SIGNATURE-----
 
---Sig_/8hnSVyUXSeuNUtvp.m5s/lV--
+--Sig_/K6G1/X+k_XFOqI_fehCuh=8--
