@@ -1,36 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the
- char-misc.current tree
-Date: Wed, 3 Apr 2019 14:56:09 +1100
-Message-ID: <20190403145609.6eda97b6@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the net-next tree
+Date: Wed, 3 Apr 2019 15:22:37 +1100
+Message-ID: <20190403152237.631a0b3c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gxB=TXMfBxrY66HzfwAUM+9"; protocol="application/pgp-signature"
+ boundary="Sig_/s62lV97IyNeb3ffEJ54elnK"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bo YU <tsu.yubo@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/gxB=TXMfBxrY66HzfwAUM+9
+--Sig_/s62lV97IyNeb3ffEJ54elnK
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+Today's linux-next merge of the vhost tree got a conflict in:
 
-  drivers/misc/fastrpc.c
+  drivers/net/virtio_net.c
 
 between commit:
 
-  01b76c32e3f3 ("misc: fastrpc: add checked value for dma_set_mask")
+  6b16f9ee89b8 ("net: move skb->xmit_more hint to softnet data")
 
-from the char-misc.current tree and commit:
+from the net-next tree and commit:
 
-  977e6c8d1d18 ("misc: fastrpc: use correct spinlock variant")
+  916faccfe56d ("virtio-net: bql support")
 
-from the char-misc tree.
+from the vhost tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,49 +42,45 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/misc/fastrpc.c
-index 36d0d5c9cfba,c4cc8e53243d..000000000000
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@@ -1184,7 -1314,7 +1314,8 @@@ static int fastrpc_cb_probe(struct plat
-  	struct fastrpc_session_ctx *sess;
-  	struct device *dev =3D &pdev->dev;
-  	int i, sessions =3D 0;
- +	int rc;
-+ 	unsigned long flags;
+diff --cc drivers/net/virtio_net.c
+index ba246fc475ae,955b3e76eb8d..000000000000
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@@ -1568,13 -1571,15 +1572,15 @@@ static netdev_tx_t start_xmit(struct sk
+  	struct send_queue *sq =3D &vi->sq[qnum];
+  	int err;
+  	struct netdev_queue *txq =3D netdev_get_tx_queue(dev, qnum);
+- 	bool kick =3D !netdev_xmit_more();
+ -	bool more =3D skb->xmit_more;
+++	bool more =3D netdev_xmit_more();
+  	bool use_napi =3D sq->napi.weight;
++ 	unsigned int bytes =3D skb->len;
++ 	bool kick;
  =20
-  	cctx =3D dev_get_drvdata(dev->parent);
-  	if (!cctx)
-@@@ -1213,12 -1343,8 +1344,12 @@@
-  		}
-  	}
-  	cctx->sesscount++;
-- 	spin_unlock(&cctx->lock);
-+ 	spin_unlock_irqrestore(&cctx->lock, flags);
- -	dma_set_mask(dev, DMA_BIT_MASK(32));
- +	rc =3D dma_set_mask(dev, DMA_BIT_MASK(32));
- +	if (rc) {
- +		dev_err(dev, "32-bit DMA enable failed\n");
- +		return rc;
- +	}
+  	/* Free up any pending old buffers before queueing new ones. */
+- 	free_old_xmit_skbs(sq, false);
++ 	free_old_xmit_skbs(sq, txq, false);
  =20
-  	return 0;
-  }
+- 	if (use_napi && kick)
++ 	if (use_napi && !more)
+  		virtqueue_enable_cb_delayed(sq->vq);
+ =20
+  	/* timestamp packet in software */
 
---Sig_/gxB=TXMfBxrY66HzfwAUM+9
+--Sig_/s62lV97IyNeb3ffEJ54elnK
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlykLtkACgkQAVBC80lX
-0GyKbwf9ErnX9S9iWSwFKLKN1YP9PUcc+x1F8fi7P6yYSRo57abnbzak42lY2FiF
-oRFJtyoScgTDcT9MAEH3krTrd+kMuH9jnxrY02tgJKvwARdnl7DSg9NgsmuT5xEC
-NKf593+S0/O9Ci0EBblKs9qeoMUqa9omRD3H9i29JSkBrge5bqL8X31mECnMrrYE
-Vvos26+JDiV394tFlWuYcrzPEEBSmXC8ZXC+axFWYgQ4T9o5PZzcGfO7GDkEYGqO
-kMMqP1VLsYS4CC5QQQrtEYoN/L7d58iJeQHTTVBYyNmD/HtdH+uVHZ8/q2cDZYZA
-UXCAjlDwy5kVIIVOOnt7s5yn/FlLag==
-=iI9P
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlykNQ0ACgkQAVBC80lX
+0GzsTQf+Pxa9z5oMKmnyw2PcfDshstSYPMe2ncWXjTfjBSFDsmUJr3w31CCmTLpm
+crAnvBdX5PFTqcfQlsGoBcDG6iG9yFGxsB9jA+bSPHOQsUTPkBlG0JSz8pJO5ABj
+JFv24q2sLeaQF8xcD0ercsOupZxExfov4PdlAHmoLwNRbaR1oB02S4rhCmg+oRH5
+QyEjVF5cbHGGyfQEzV81pWDXrXtXlooHoDzRRgkKIjSVf2NeStwnk1fSK62j1Vtq
+RSHZ/aaNujmDBH45igXJgF50PAADMkPT5wvtqGDTaqkehYqqcn6ZZbYupySiCII5
+l4dWQGY6M4NYMWXkP1WCJTu/pMPOFg==
+=/gvM
 -----END PGP SIGNATURE-----
 
---Sig_/gxB=TXMfBxrY66HzfwAUM+9--
+--Sig_/s62lV97IyNeb3ffEJ54elnK--
