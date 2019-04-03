@@ -1,36 +1,35 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
-Date: Tue, 2 Apr 2019 23:27:22 -0500
-Message-ID: <CAH2r5mtrpLk4OO-T1texGVx8cjMtNaRbSHKXgzxTqqFFga-kSA@mail.gmail.com>
-References: <20190403074039.7c7af691@canb.auug.org.au>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 3 Apr 2019 12:27:53 +0800
+Message-ID: <CAMz4kuLyAKwRLWu3+cfpDsLwCtJS21BN0xmL-DNxfmPYXC_tZA@mail.gmail.com>
+References: <20190403111108.2ff4a309@canb.auug.org.au> <CAMz4ku+17HAZfh-03+y=WUy1NdsL7sQHK_XyzeToBh5-RAUSQg@mail.gmail.com>
+ <20190403033518.GI2059@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190403074039.7c7af691@canb.auug.org.au>
+In-Reply-To: <20190403033518.GI2059@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: CIFS <linux-cifs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ronnie Sahlberg <lsahlber@redhat.com>, Kenneth D'souza <kdsouza@redhat.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yintang Ren <yintang.ren@unisoc.com>
 List-Id: linux-next.vger.kernel.org
 
-Fixed - Updated author to match signed off line
+On Wed, 3 Apr 2019 at 11:35, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Wed, Apr 03, 2019 at 10:12:47AM +0800, Baolin Wang wrote:
+>
+> > snd-soc-sprd-platform-objs := sprd-pcm-dma.o sprd-pcm-compress.o
+>
+> > obj-$(CONFIG_SND_SOC_SPRD) += snd-soc-sprd-platform.o
+>
+> > I will send out one incremental patch to fix this issue after my
+> > business trip. Thanks.
+>
+> We can't leave this broken in -next for that long, can you please post
+> the patch now if you've already got it?
 
-On Tue, Apr 2, 2019 at 3:40 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   d0cb257cb7b0 ("Show locallease in /proc/mounts for cifs shares mounted with locallease feature.")
->
-> is missing a Signed-off-by from its author.
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
+OK, but I need some time to setup my environment to send this patch
+and I'll try to fix this ASAP. Thanks.
 
 -- 
-Thanks,
-
-Steve
+Baolin Wang
+Best Regards
