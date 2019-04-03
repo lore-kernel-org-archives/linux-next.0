@@ -1,69 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the nand tree
-Date: Wed, 3 Apr 2019 10:22:39 +1100
-Message-ID: <20190403102239.174fbe35@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 3 Apr 2019 11:11:08 +1100
+Message-ID: <20190403111108.2ff4a309@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q=JfJhV5EJO6hR.++ngTl6p"; protocol="application/pgp-signature"
+ boundary="Sig_/6t9BxO+vh_Iinn.Ler=0s8I"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Yintang Ren <yintang.ren@unisoc.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/q=JfJhV5EJO6hR.++ngTl6p
+--Sig_/6t9BxO+vh_Iinn.Ler=0s8I
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the nand tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/mtd/nand/raw/ingenic/jz4725b_bch.c: In function 'jz4725b_bch_read_p=
-arity':
-drivers/mtd/nand/raw/ingenic/jz4725b_bch.c:147:12: warning: this statement =
-may fall through [-Wimplicit-fallthrough=3D]
-   dest8[2] =3D (val >> 16) & 0xff;
-   ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
-drivers/mtd/nand/raw/ingenic/jz4725b_bch.c:148:2: note: here
-  case 2: /* fall-through */
-  ^~~~
-drivers/mtd/nand/raw/ingenic/jz4725b_bch.c:149:12: warning: this statement =
-may fall through [-Wimplicit-fallthrough=3D]
-   dest8[1] =3D (val >> 8) & 0xff;
-   ~~~~~~~~~^~~~~~~~~~~~~~~~~~~
-drivers/mtd/nand/raw/ingenic/jz4725b_bch.c:150:2: note: here
-  case 1: /* fall-through */
-  ^~~~
+ERROR: "sprd_platform_compr_ops" [sound/soc/sprd/sprd-pcm-dma.ko] undefined!
 
-Introduced by commit
+Caused by commit
 
-  acb29396f956 ("mtd: rawnand: ingenic: Add support for the JZ4725B")
+  cce1396936ef ("ASoC: sprd: Add Spreadtrum audio compress offload support")
 
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (i.e. before the next case label).
+I have used the sound-asoc tree from next-20190402 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/q=JfJhV5EJO6hR.++ngTl6p
+--Sig_/6t9BxO+vh_Iinn.Ler=0s8I
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyj7r8ACgkQAVBC80lX
-0Gzl1wf9F8tBlFkm/RNfUFHRI+y37bVEP4U4FPmEBApNFtOIUsIpsWzMz0g9ZOlT
-o7YlySPP4CRcaT5L1w2vCOsAeA8ASVmT7q19IBdpioXblMN2NVrB381AwEwUlop8
-NLKe4m8xhUHNT9bhidz79IOetiJnMow0IUDOUdg56l6pJrhR1tgraj5+DgtTH7CQ
-JlWhgJQBKkSe7LwLytldW0fKDk0GZfAoxgsNULLDaNVirnlgvlqjC9Z3pxtgOF8o
-046oL6tpOUtOzSupJlosNwlKcIKjudE2yJKxHjcDhNGnPgoJuoT00+YK6c8r5ogO
-VKNrdMP9PIXLqikQKkQknWfZjpXXsg==
-=zYtu
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyj+hwACgkQAVBC80lX
+0GyCYQf7BZL46LGn/rTF50AUMMp64FHZ0xYx9y/OxC7qQWWiyQp2eB9HfNpL2C1t
+awMnUzhyOznGLoejS5mahDyAPCJTfX3EXVgzShLQk30bnS57euTA4Z5wFpPIliq/
+CXcJ7kbhBBw+1ZmwJIJeG8cJHxtdElei43M8+PIIhqZLgBADIEzakEn9ZsKDyRt7
+WacWAlgjq9kfVzMaIeEVv7y/Mbq+c0gu/GW9xLgRli1kbpPr+hP+qnihfl5HLxdG
+NkCQSnVg1eDZVioDGH+xafoypgV0mC7UpElCdf26puSK5PRDs/NGmGqcFbFN5E66
+m7PVVuQD3UZv46Kls40vH9XZu1zh5w==
+=LM/B
 -----END PGP SIGNATURE-----
 
---Sig_/q=JfJhV5EJO6hR.++ngTl6p--
+--Sig_/6t9BxO+vh_Iinn.Ler=0s8I--
