@@ -1,65 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ipmi tree
-Date: Wed, 3 Apr 2019 14:33:23 +1100
-Message-ID: <20190403143323.156ac503@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 3 Apr 2019 10:35:18 +0700
+Message-ID: <20190403033518.GI2059@sirena.org.uk>
+References: <20190403111108.2ff4a309@canb.auug.org.au>
+ <CAMz4ku+17HAZfh-03+y=WUy1NdsL7sQHK_XyzeToBh5-RAUSQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BnlIDobU0SIz0QG2QJvEgqf"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ggHp9WSrPOeNxb0b"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMz4ku+17HAZfh-03+y=WUy1NdsL7sQHK_XyzeToBh5-RAUSQg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Corey Minyard <cminyard@mvista.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yintang Ren <yintang.ren@unisoc.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BnlIDobU0SIz0QG2QJvEgqf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Corey,
+--ggHp9WSrPOeNxb0b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After merging the ipmi tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Wed, Apr 03, 2019 at 10:12:47AM +0800, Baolin Wang wrote:
 
-drivers/char/ipmi/ipmi_msghandler.c: In function 'free_user':
-drivers/char/ipmi/ipmi_msghandler.c:1268:2: error: implicit declaration of =
-function 'cleanup_srcu_struct_quiesced'; did you mean 'cleanup_srcu_struct'=
-? [-Werror=3Dimplicit-function-declaration]
-  cleanup_srcu_struct_quiesced(&user->release_barrier);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cleanup_srcu_struct
+> snd-soc-sprd-platform-objs := sprd-pcm-dma.o sprd-pcm-compress.o
 
-Caused by commit
+> obj-$(CONFIG_SND_SOC_SPRD) += snd-soc-sprd-platform.o
 
-  487ecb21fa66 ("ipmi: fix sleep-in-atomic in free_user at cleanup SRCU use=
-r->release_barrier")
+> I will send out one incremental patch to fix this issue after my
+> business trip. Thanks.
 
-interacting with commit
+We can't leave this broken in -next for that long, can you please post
+the patch now if you've already got it?
 
-  f5ad3991493c ("srcu: Remove cleanup_srcu_struct_quiesced()")
-
-from the rcu tree.
-
-Based on the comments in the rcu tree commit, I have reverted the impi
-tree commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BnlIDobU0SIz0QG2QJvEgqf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--ggHp9WSrPOeNxb0b
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlykKYMACgkQAVBC80lX
-0GytbAgAisVFy0Bi0kM7OKJyg+fnkwkMvQbe5+NUPeDrbznizmOQPrv4u0iqieHa
-Zmdt0jireZLstdD/th9E6Ln3kQLQqeR8VgO1x21/3CBTvFYr4JW5BhzhQsiFfhPu
-c76Bt20P9dkqIdc+XEjbviTcCGumiB0aoLl8nBM9KjohrqGBu98DKIqfui0ZmqfL
-QK9RHlFKnaC6KuAnpyM+cuU4lZdGDyKJ3V0PkWec0hHkfB51zLlMxnk1EZNTGFAV
-6bWE/pH9lzmLPBPm5VE4YqwaQZrt7+CCeeFHDmeMCjARdVUnNnZ4TrsBnVt6sEQH
-YaLa/3d3IwIIXeSH7Zv9Ac7dzfGdUg==
-=vMn7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlykKfUACgkQJNaLcl1U
+h9BY6gf/ZpB3yEl94efbF5gOaXY6r5fyhFa25W+G+efPdBL5r6Cp8fcrlhZASCEy
+I98JPfaJiXhlognp4F0hYLcbWvELt7MGWGPB8k4ANk9/H+/WCvnXPMqLF8fucY4x
+qW2ZiaJLp7zwwiIkwh6LXTwHDX0labfeYFo5q8NCuAVEftvjUouKLHJfff+wmGvz
+M7ZRaOumz+lQ4HkQRkdm2YAjZjpeC2pk9+yvklDIuX4gwyzSsuS4Wb82UNZP0ipR
+s2CoN8pajVkQv4799FuoH4stqjYCmLh8rZ1HeB6VqTXcVask7iQZiRszCc3D7JT4
+0MCUe4zSHp4vmbt5jiTx3rSViImkAg==
+=fM9m
 -----END PGP SIGNATURE-----
 
---Sig_/BnlIDobU0SIz0QG2QJvEgqf--
+--ggHp9WSrPOeNxb0b--
