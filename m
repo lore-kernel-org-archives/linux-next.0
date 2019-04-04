@@ -1,69 +1,79 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Fixes tag needs some work in the hwmon-staging tree
-Date: Thu, 4 Apr 2019 14:26:18 -0700
-Message-ID: <20190404212618.GA20949@roeck-us.net>
-References: <20190405075438.12f98275@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the at91 tree with the at91-fixes tree
+Date: Fri, 5 Apr 2019 09:15:19 +1100
+Message-ID: <20190405091519.48aa4098@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bS0DsbD3k/Dgz/eh1700zt+"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190405075438.12f98275@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peng Hao <peng.hao2@zte.com.cn>, Claudiu Beznea <claudiu.beznea@microchip.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 05, 2019 at 07:54:38AM +1100, Stephen Rothwell wrote:
-> Hi Guenter,
-> 
-> In commit
-> 
->   742ad88f0440 ("hwmon: (smsc47b397) Use request_muxed_region for Super-IO accesses")
-> 
-> Fixes tag
-> 
->   Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
-> 
-The original subject is "[PATCH] I2C: Move hwmon drivers (2/3)", and
-I consider it quite pointless to include the "[PATCH] " prefix.
-Same for the other tag.
+--Sig_/bS0DsbD3k/Dgz/eh1700zt+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Guenter
+Hi all,
 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h (%s)'
-> 
-> In commit
-> 
->   4d730440042d ("hwmon: (smsc47b397) Use request_muxed_region for Super-IO accesses")
-> 
-> Fixes tag
-> 
->   Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
-> 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h (%s)'
-> 
-> In commit
-> 
->   2f38d5d31508 ("hwmon: (f71805f) Use request_muxed_region for Super-IO accesses")
-> 
-> Fixes tag
-> 
->   Fixes: e53004e20a58e ("hwmon: New f71805f driver")
-> 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h (%s)'
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Today's linux-next merge of the at91 tree got a conflict in:
+
+  arch/arm/mach-at91/pm.c
+
+between commit:
+
+  ba5e60c9b75d ("arm/mach-at91/pm : fix possible object reference leak")
+
+from the at91-fixes tree and commit:
+
+  c3f5b8fde71f ("ARM: at91: pm: introduce at91_soc_pm structure")
+
+from the at91 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/mach-at91/pm.c
+index 2a757dcaa1a5,5571658b3c46..000000000000
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@@ -620,10 -676,8 +676,10 @@@ static int __init at91_pm_backup_init(v
+  	return 0;
+ =20
+  securam_fail:
+ +	put_device(&pdev->dev);
+ +securam_fail_no_ref_dev:
+- 	iounmap(pm_data.sfrbu);
+- 	pm_data.sfrbu =3D NULL;
++ 	iounmap(soc_pm.data.sfrbu);
++ 	soc_pm.data.sfrbu =3D NULL;
+  	return ret;
+  }
+ =20
+
+--Sig_/bS0DsbD3k/Dgz/eh1700zt+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymgfcACgkQAVBC80lX
+0GyPowgAhuq7czn+9VRhS9GwHQlBbt0Ko0+qKjQKfc4Czbi97g+DYoO8cZqUnrIm
+u52MSWHJ8DIXq/2fu24Fk2za3WsUwp6GmXAiCma1UBhftY0zDoc9hOd9G/S3vORV
+9DiYLuvO949odXaQyufRJHeMdS20OY2Gb2BENgSB8p0R/xjssmLwbQdLow3KPrli
+zKEvMZP5LEKn8pkR8E252yQmYhHFtAucw2n00iNDJGz/aLYI/8zOCEl03W4AXSmj
+D+F95JSWbrm2ReIvpixVN9GfiQSm2V2+Jxnyx1ijlAiweVJ4ZVKPYT2jRbznbaIt
+tHm0+iJS0a/fYLWrDJ0MFBW8pUaVUg==
+=GQmp
+-----END PGP SIGNATURE-----
+
+--Sig_/bS0DsbD3k/Dgz/eh1700zt+--
