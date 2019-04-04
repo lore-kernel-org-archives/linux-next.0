@@ -1,64 +1,77 @@
-From: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: linux-next: build failure after merge of the ipmi tree
-Date: Wed, 3 Apr 2019 17:14:35 -0700
-Message-ID: <20190404001435.GC14111@linux.ibm.com>
-References: <20190403143323.156ac503@canb.auug.org.au>
- <20190403202728.GD2479@minyard.net>
- <20190403211212.GE2479@minyard.net>
-Reply-To: paulmck@linux.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the spi tree
+Date: Thu, 4 Apr 2019 13:33:17 +1100
+Message-ID: <20190404133317.56500903@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AqdhqQ7YcD9z6.=F1JwP81R"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190403211212.GE2479@minyard.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Corey Minyard <cminyard@mvista.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To: Greg KH <greg@kroah.com>, Mark Brown <broonie@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishka Dasgupta <nishka.dasgupta@yahoo.com>, Stefan Roese <sr@denx.de>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 03, 2019 at 04:12:12PM -0500, Corey Minyard wrote:
-> On Wed, Apr 03, 2019 at 03:27:29PM -0500, Corey Minyard wrote:
-> > On Wed, Apr 03, 2019 at 02:33:23PM +1100, Stephen Rothwell wrote:
-> > > Hi Corey,
-> > > 
-> > > After merging the ipmi tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > 
-> > Paul, any opinions on this?  Is just running this in a workqueue
-> > the best idea?
-> 
-> Well, I just that patch using a work item and pushed it up.  Seems
-> to work ok.  That was already done for other things in the driver.
+--Sig_/AqdhqQ7YcD9z6.=F1JwP81R
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sounds good to me, apologies for the slow response.
+Hi all,
 
-							Thanx, Paul
+Today's linux-next merge of the staging tree got a conflict in:
 
-> > -corey
-> > 
-> > > 
-> > > drivers/char/ipmi/ipmi_msghandler.c: In function 'free_user':
-> > > drivers/char/ipmi/ipmi_msghandler.c:1268:2: error: implicit declaration of function 'cleanup_srcu_struct_quiesced'; did you mean 'cleanup_srcu_struct'? [-Werror=implicit-function-declaration]
-> > >   cleanup_srcu_struct_quiesced(&user->release_barrier);
-> > >   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > >   cleanup_srcu_struct
-> > > 
-> > > Caused by commit
-> > > 
-> > >   487ecb21fa66 ("ipmi: fix sleep-in-atomic in free_user at cleanup SRCU user->release_barrier")
-> > > 
-> > > interacting with commit
-> > > 
-> > >   f5ad3991493c ("srcu: Remove cleanup_srcu_struct_quiesced()")
-> > > 
-> > > from the rcu tree.
-> > > 
-> > > Based on the comments in the rcu tree commit, I have reverted the impi
-> > > tree commit for today.
-> > > 
-> > > -- 
-> > > Cheers,
-> > > Stephen Rothwell
-> > 
-> > 
-> 
+  drivers/spi/spi-mt7621.c
+
+between commit:
+
+  cbd66c626e16 ("spi: mt7621: Move SPI driver out of staging")
+
+from the spi tree and commit:
+
+  18f0e249da67 ("staging: mt7621-spi: Remove parentheses")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/spi/spi-mt7621.c
+index ae836114ee3d,0e0e67280b00..000000000000
+--- a/drivers/spi/spi-mt7621.c
++++ b/drivers/spi/spi-mt7621.c
+@@@ -305,8 -301,8 +303,8 @@@ static int mt7621_spi_setup(struct spi_
+  	struct mt7621_spi *rs =3D spidev_to_mt7621_spi(spi);
+ =20
+  	if ((spi->max_speed_hz =3D=3D 0) ||
+ -		(spi->max_speed_hz > (rs->sys_freq / 2)))
+ +	    (spi->max_speed_hz > (rs->sys_freq / 2)))
+- 		spi->max_speed_hz =3D (rs->sys_freq / 2);
++ 		spi->max_speed_hz =3D rs->sys_freq / 2;
+ =20
+  	if (spi->max_speed_hz < (rs->sys_freq / 4097)) {
+  		dev_err(&spi->dev, "setup: requested speed is too low %d Hz\n",
+
+--Sig_/AqdhqQ7YcD9z6.=F1JwP81R
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlylbO0ACgkQAVBC80lX
+0Gx6Igf+K2YKTdU37c54sj8H7yIHR+NLJGaQWmWw0Nh4eEYs8dhI4RlT3znViScu
+V3GEOo1xJXOtTuN61IlPwFMnIHiUdpCFqid9bjf3IC6b9eM33JhCNf7oVSZSCW/P
+Sbky67qdms3cNPyLogcTuDpy+0L1ZO5X5zRNRXB7fxEQ+MUZqzNoZ6bfCsiVC8KL
+5DnmC+lKsxS0aVKNZWgi3xnRDCoZKwlT1Oxw4Wxp8XQCQ5Y5Y5GLTwYh1l++7m3i
+kNJnDBfa8IuPAic5rtO5b4Zv/BVmE9IkNN6KgOQkl5lhD7Mdwz0Mo6f1xpAqqJ1y
+b3CpMnwsJn5IjpvlaqlZrnPP4FKm/Q==
+=mtkn
+-----END PGP SIGNATURE-----
+
+--Sig_/AqdhqQ7YcD9z6.=F1JwP81R--
