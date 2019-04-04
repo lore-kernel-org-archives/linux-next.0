@@ -1,72 +1,69 @@
-From: Andreas Kemnade <andreas@kemnade.info>
-Subject: Re: linux-next: Fixes tag needs some work in the mfd-fixes tree
-Date: Thu, 4 Apr 2019 23:21:51 +0200
-Message-ID: <20190404232151.46cb903c@kemnade.info>
-References: <20190405074843.7f0013db@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Fixes tag needs some work in the hwmon-staging tree
+Date: Thu, 4 Apr 2019 14:26:18 -0700
+Message-ID: <20190404212618.GA20949@roeck-us.net>
+References: <20190405075438.12f98275@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vHMLlvOAa3d=0GF1FpV27k7"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190405074843.7f0013db@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20190405075438.12f98275@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vHMLlvOAa3d=0GF1FpV27k7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Stephen,
-
-On Fri, 5 Apr 2019 07:48:43 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Lee,
->=20
+On Fri, Apr 05, 2019 at 07:54:38AM +1100, Stephen Rothwell wrote:
+> Hi Guenter,
+> 
 > In commit
->=20
->   20bb907f7dc8 ("mfd: twl-core: Disable IRQ while suspended")
->=20
+> 
+>   742ad88f0440 ("hwmon: (smsc47b397) Use request_muxed_region for Super-IO accesses")
+> 
 > Fixes tag
->=20
->   Fixes: 6e2bd956936 ("i2c: omap: Use noirq system sleep pm ops to idle d=
-evice for suspend")
->=20
+> 
+>   Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
+> 
+The original subject is "[PATCH] I2C: Move hwmon drivers (2/3)", and
+I consider it quite pointless to include the "[PATCH] " prefix.
+Same for the other tag.
+
+Guenter
+
 > has these problem(s):
->=20
->   - Target SHA1 does not exist
->=20
-> Did you mean
->=20
-> Fixes: c6e2bd956936 ("i2c: omap: Use noirq system sleep pm ops to idle de=
-vice for suspend")
->
-I meant that patch. Copy and paste error on my side.
-Sorry for the confusion.
-
-Regards,
-Andreas
-
---Sig_/vHMLlvOAa3d=0GF1FpV27k7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAlymdW8ACgkQl4jFM1s/
-ye+bKhAAslPcXLN4x1kHuBmSdfvRZskFZ0SIXExTXZy4wkibiGH7hBtyk+rXWaCh
-5KnYz8ZSQJCp9/ZNltw64xW96gH1V9mQcBkSfqN5lo6fO7tviZ3u3u55H0+YvoNc
-QCJTKJ3yA5IudkMAYEsw29ywW+ZnBd28UGXg85o0YMwBxNZ0i420s1IRLWlAKAO0
-SrSXByKsOl3bb3WYtmMefae6NC4knWTHG9ssdnvQhnATawaoDwcw74vD0bx/1GD5
-QsHSrVMo9TUnUHCuhqVJy/RJdN6q5ct7RSH+sn+3mF8HxfiwYsPsznKrAM1wwNI1
-+xJuWqRiPjQ2jb2aLuPXHkImQdW8pMPjKx27jXEmrzXR/wqxmM1LxK/EEeSx3N9C
-v1T6mXzWj/owv6Y8g+TNw4AcErfOXr6emzfOtkqpEsfXf1If0Yd4e+ZtnOAozm8I
-SVRO2ptZLVvO45euOse223VO6pQO8pFedRuQWWEphFJvYjsWsk/PfUzDUVL/j1Dr
-1EQb5+/jYX3YIN7pEdF9g58N112f78cUuUjZ0kdaMuCnIj8pnv1k3aWKj+fwMhSc
-0S73nsP2btVEAtCRmXfHw78/d79kQ2DeeASeCRAAOqDAl3rfDHh53tu4DEFzHnDl
-00ikxRMBUg2qQPX4TOaeMFFP28OyRJ50x5cgBjkKuEm+dWn8fNE=
-=zvj5
------END PGP SIGNATURE-----
-
---Sig_/vHMLlvOAa3d=0GF1FpV27k7--
+> 
+>   - Subject does not match target commit subject
+>     Just use
+> 	git log -1 --format='Fixes: %h (%s)'
+> 
+> In commit
+> 
+>   4d730440042d ("hwmon: (smsc47b397) Use request_muxed_region for Super-IO accesses")
+> 
+> Fixes tag
+> 
+>   Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
+>     Just use
+> 	git log -1 --format='Fixes: %h (%s)'
+> 
+> In commit
+> 
+>   2f38d5d31508 ("hwmon: (f71805f) Use request_muxed_region for Super-IO accesses")
+> 
+> Fixes tag
+> 
+>   Fixes: e53004e20a58e ("hwmon: New f71805f driver")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
+>     Just use
+> 	git log -1 --format='Fixes: %h (%s)'
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
