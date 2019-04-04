@@ -1,66 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the btrfs-kdave tree with the
- btrfs-fixes tree
-Date: Fri, 5 Apr 2019 10:03:29 +1100
-Message-ID: <20190405100329.1fab45a8@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the hwmon-staging tree
+Date: Fri, 5 Apr 2019 10:04:57 +1100
+Message-ID: <20190405100457.134e9197@canb.auug.org.au>
+References: <20190405075438.12f98275@canb.auug.org.au>
+        <20190404212618.GA20949@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kTo4dKiR8goPPhKVcKF0iyi"; protocol="application/pgp-signature"
+ boundary="Sig_/98eBZhbKBR=GkV3jwTFA.g1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190404212618.GA20949@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anand Jain <anand.jain@oracle.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kTo4dKiR8goPPhKVcKF0iyi
+--Sig_/98eBZhbKBR=GkV3jwTFA.g1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Guenter,
 
-Today's linux-next merge of the btrfs-kdave tree got a conflict in:
+On Thu, 4 Apr 2019 14:26:18 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> The original subject is "[PATCH] I2C: Move hwmon drivers (2/3)", and
+> I consider it quite pointless to include the "[PATCH] " prefix.
+> Same for the other tag.
 
-  fs/btrfs/props.c
-
-between commits:
-
-  50398fde997f ("btrfs: prop: fix zstd compression parameter validation")
-  272e5326c783 ("btrfs: prop: fix vanished compression property after faile=
-d set")
-
-from the btrfs-fixes tree and commit:
-
-  10e02a8f96ea ("btrfs: drop redundant forward declaration in props.c")
-
-from the btrfs-kdave tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-
+True, sorry for the noise.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/kTo4dKiR8goPPhKVcKF0iyi
+--Sig_/98eBZhbKBR=GkV3jwTFA.g1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymjUEACgkQAVBC80lX
-0GxdPwf+KBlZTbMI/TAZjEQsz9yqsxyePbkhR+n7/rcV/J1xjWc08M+fdiec41XD
-ikKn4EH6HmWG45G/MMadHrm0kapzbev+BAu+Ntm8Kad5tnIrVXIqmdnWVVy0sSIU
-ycSY/3exlzdl1DMzEqsmIAr3SKNhvbKNIdOlYd0BfRkPu5sPR22I+O4K/pi6/by+
-jLnDLcoTRc5jFLJQpbnhFsCYL/0ly2FBnPUTNTykh4Iya6Xv/Wh20QBPx+mu3mhs
-bAXSMpm7VDmRqxmHtwMio6tlJJVg+VVQPM9w5x7hxAXzShANxRX/DmczICFFgpPA
-KUhxYyAJV7B5o3yVp3s5N3DdAcUsTQ==
-=xA1m
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymjZkACgkQAVBC80lX
+0GwOgQgAi/BbweXHJD+SFjrkJlp3RwHveSzlgAfhsMdapCHpV/+DQoq3hao+rzrm
+WDsqWfHUkpIXHbmJ+XTpYkPDO0s6Bhir0mplhfPg1mf8DeDGsP4akTPM+mPd3sv+
+DqHhlhSCqiH3c+LmzBY1xd8+dsuNaTArunvB4xyqNDvkgDbdGHbtxygGzRCeMafh
++hCe1nHhaDxEegFsMf8Hd5wyL0cU++rJ3y7xEhDj0ZlvOcMneofmjfdsZwcTzQ6W
+tWzFwCWY123ZeFtGWfEYy5RaffIR3xux/+1OxohJ3yDIwOPGPXbIJMz9/fBuQnku
+OL8bgNvf3635gVDkj+WO7HOilWLJmA==
+=GHoi
 -----END PGP SIGNATURE-----
 
---Sig_/kTo4dKiR8goPPhKVcKF0iyi--
+--Sig_/98eBZhbKBR=GkV3jwTFA.g1--
