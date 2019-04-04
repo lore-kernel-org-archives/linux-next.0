@@ -1,58 +1,58 @@
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: linux-next: Tree for Apr 3 (objtool)
-Date: Thu, 4 Apr 2019 12:16:18 -0500
-Message-ID: <20190404171618.6u36y5zu3euvd4zp@treble>
-References: <20190403192407.13a99513@canb.auug.org.au>
- <d37e0909-cacc-7c6c-4376-33891fa69f53@infradead.org>
- <20190403205305.tqqwttjytunzgtub@treble>
- <6a2455b9-5c02-99dc-e41c-e6b7d1c3118d@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the mfd-fixes tree
+Date: Fri, 5 Apr 2019 07:48:43 +1100
+Message-ID: <20190405074843.7f0013db@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Yv_EBHyDNOCLiHfipzYdhRa"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6a2455b9-5c02-99dc-e41c-e6b7d1c3118d@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Kemnade <andreas@kemnade.info>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 03, 2019 at 03:29:17PM -0700, Randy Dunlap wrote:
-> On 4/3/19 1:53 PM, Josh Poimboeuf wrote:
-> > On Wed, Apr 03, 2019 at 08:02:43AM -0700, Randy Dunlap wrote:
-> >> On 4/3/19 1:24 AM, Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20190402:
-> >>>
-> >>
-> >> on x86_64:
-> >>
-> >> arch/x86/entry/entry_64.o: warning: objtool: .entry.text+0x909: unreachable instruction
-> > 
-> > Your .o file looks odd.  I can't recreate the issue when I build the
-> > same object.
-> 
-> This (randconfig) build has tracing enabled?  Could that have anything to do
-> with it?
+--Sig_/Yv_EBHyDNOCLiHfipzYdhRa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No, I can't see any reasonable explanation for it other than a buggy
-toolchain.
+Hi Lee,
 
-> The randconfig file is attached.
+In commit
 
-I still can't recreate with your randconfig.
+  20bb907f7dc8 ("mfd: twl-core: Disable IRQ while suspended")
 
-> > Did the issue only just now show up?  Can you bisect it?  What version
-> > of binutils are you using?
-> 
-> > ld -v
-> GNU ld (GNU Binutils; openSUSE Leap 42.3) 2.31.1.20180828-19
-> 
-> 
-> My build logs show it first occurred (in my randconfig builds) in
-> linux-next-20190204.
+Fixes tag
 
-It seems really odd.  Can you do a bisect?
+  Fixes: 6e2bd956936 ("i2c: omap: Use noirq system sleep pm ops to idle dev=
+ice for suspend")
 
--- 
-Josh
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: c6e2bd956936 ("i2c: omap: Use noirq system sleep pm ops to idle devi=
+ce for suspend")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Yv_EBHyDNOCLiHfipzYdhRa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymbasACgkQAVBC80lX
+0GzFBgf+JL+7RAKtMeJRxKzgELc6PmZ0JOyU10LGmWDEYOiALYxjQAQmap5MeW6Y
+dMKZkpHRsKk3UsBC1dLuhCCsaWTCqOKtYMrfwe71ZSNB4b2umsgyZhaprQIUOAnf
+8jp4XBLaaljS2LyY1Q1dv+L+y8pyq/sQcC6uqvyBl3K++9uQfM8kre9W05VIS1AX
+GEwhi8d35rIEKMvLJZW3AFW/g038hQonqlBSVk6LbocXkH1Jyc8YRgtsvtWq+xuL
+xoaqU5VWncfwjf4SvXEc0dHyjV0Wq/NXVSmXF23roWBBoad/ODfdHdmFbH3qDDhK
+chBjJZCR5/GsWIbsgAdFrfU9B0Hf+g==
+=PBKK
+-----END PGP SIGNATURE-----
+
+--Sig_/Yv_EBHyDNOCLiHfipzYdhRa--
