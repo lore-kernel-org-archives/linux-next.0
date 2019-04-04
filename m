@@ -1,64 +1,85 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 3 (objtool)
-Date: Thu, 4 Apr 2019 13:51:36 -0700
-Message-ID: <9e4eb742-f306-7aea-a3d7-9abbb244bb55@infradead.org>
-References: <20190403192407.13a99513@canb.auug.org.au>
- <d37e0909-cacc-7c6c-4376-33891fa69f53@infradead.org>
- <20190403205305.tqqwttjytunzgtub@treble>
- <6a2455b9-5c02-99dc-e41c-e6b7d1c3118d@infradead.org>
- <20190404171618.6u36y5zu3euvd4zp@treble>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the hwmon-staging tree
+Date: Fri, 5 Apr 2019 07:54:38 +1100
+Message-ID: <20190405075438.12f98275@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RUYEN55DHEtgzUPI3Ya1w2K"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404171618.6u36y5zu3euvd4zp@treble>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 4/4/19 10:16 AM, Josh Poimboeuf wrote:
-> On Wed, Apr 03, 2019 at 03:29:17PM -0700, Randy Dunlap wrote:
->> On 4/3/19 1:53 PM, Josh Poimboeuf wrote:
->>> On Wed, Apr 03, 2019 at 08:02:43AM -0700, Randy Dunlap wrote:
->>>> On 4/3/19 1:24 AM, Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> Changes since 20190402:
->>>>>
->>>>
->>>> on x86_64:
->>>>
->>>> arch/x86/entry/entry_64.o: warning: objtool: .entry.text+0x909: unreachable instruction
->>>
->>> Your .o file looks odd.  I can't recreate the issue when I build the
->>> same object.
->>
->> This (randconfig) build has tracing enabled?  Could that have anything to do
->> with it?
-> 
-> No, I can't see any reasonable explanation for it other than a buggy
-> toolchain.
-> 
->> The randconfig file is attached.
-> 
-> I still can't recreate with your randconfig.
-> 
->>> Did the issue only just now show up?  Can you bisect it?  What version
->>> of binutils are you using?
->>
->>> ld -v
->> GNU ld (GNU Binutils; openSUSE Leap 42.3) 2.31.1.20180828-19
->>
->>
->> My build logs show it first occurred (in my randconfig builds) in
->> linux-next-20190204.
-> 
-> It seems really odd.  Can you do a bisect?
-> 
+--Sig_/RUYEN55DHEtgzUPI3Ya1w2K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sure, I'll give it a try.
+Hi Guenter,
 
--- 
-~Randy
+In commit
+
+  742ad88f0440 ("hwmon: (smsc47b397) Use request_muxed_region for Super-IO =
+accesses")
+
+Fixes tag
+
+  Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h (%s)'
+
+In commit
+
+  4d730440042d ("hwmon: (smsc47b397) Use request_muxed_region for Super-IO =
+accesses")
+
+Fixes tag
+
+  Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h (%s)'
+
+In commit
+
+  2f38d5d31508 ("hwmon: (f71805f) Use request_muxed_region for Super-IO acc=
+esses")
+
+Fixes tag
+
+  Fixes: e53004e20a58e ("hwmon: New f71805f driver")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h (%s)'
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/RUYEN55DHEtgzUPI3Ya1w2K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymbw4ACgkQAVBC80lX
+0GzZGQf+ImWg5fJO857xqIEzCOY9mNJEEk+4n+FEMEwi3FI/QDrgNGdegm9D37PJ
+gFHRSzX7wJPgvpbhTJTUFdPaqNrHIs/nIZLjyygWoPyIh1kZm4ZyiDyarJQb3wJq
+G1bJx8k6J/snctmOLtHEfToAR219pe3MixQSexdNg58PNfONeIyxWBL/NbD7T94S
+Ger1QUjgBNYO+LJHKh3dEzYmZOvmCscIKvC/AuuJxvpDJkPwa681w6Zg+u9zUh/m
+EljHj7bS2DDicu7GpKmMR8kgMx2m8Ke1cX1FcwGTJCF6Iolq38p+pn8t3Jv8Z+nt
+b//zGjAQYvDIc1JQTWA9hqzwLFbzrg==
+=eXAO
+-----END PGP SIGNATURE-----
+
+--Sig_/RUYEN55DHEtgzUPI3Ya1w2K--
