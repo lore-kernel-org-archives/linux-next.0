@@ -1,51 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Fixes tag needs some work in the hwmon-staging tree
-Date: Fri, 5 Apr 2019 10:04:57 +1100
-Message-ID: <20190405100457.134e9197@canb.auug.org.au>
-References: <20190405075438.12f98275@canb.auug.org.au>
-        <20190404212618.GA20949@roeck-us.net>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Fri, 5 Apr 2019 14:25:10 +1100
+Message-ID: <20190405142347.1f264cdf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/98eBZhbKBR=GkV3jwTFA.g1"; protocol="application/pgp-signature"
+ boundary="Sig_/qG1lbi3eneWefH0rN68cbG3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404212618.GA20949@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bvanassche@acm.org>, "Martin K. Petersen" <martin.petersen@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/98eBZhbKBR=GkV3jwTFA.g1
+--Sig_/qG1lbi3eneWefH0rN68cbG3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi James,
 
-On Thu, 4 Apr 2019 14:26:18 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->
-> The original subject is "[PATCH] I2C: Move hwmon drivers (2/3)", and
-> I consider it quite pointless to include the "[PATCH] " prefix.
-> Same for the other tag.
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-True, sorry for the noise.
+drivers/scsi/lpfc/lpfc_nvme.c:2140:1: warning: 'lpfc_nvme_lport_unreg_wait'=
+ defined but not used [-Wunused-function]
+ lpfc_nvme_lport_unreg_wait(struct lpfc_vport *vport,
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  3999df75bccb ("scsi: lpfc: Declare local functions static")
+
+It use is guarded by IS_ENABLED(CONFIG_NVME_FC).
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/98eBZhbKBR=GkV3jwTFA.g1
+--Sig_/qG1lbi3eneWefH0rN68cbG3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymjZkACgkQAVBC80lX
-0GwOgQgAi/BbweXHJD+SFjrkJlp3RwHveSzlgAfhsMdapCHpV/+DQoq3hao+rzrm
-WDsqWfHUkpIXHbmJ+XTpYkPDO0s6Bhir0mplhfPg1mf8DeDGsP4akTPM+mPd3sv+
-DqHhlhSCqiH3c+LmzBY1xd8+dsuNaTArunvB4xyqNDvkgDbdGHbtxygGzRCeMafh
-+hCe1nHhaDxEegFsMf8Hd5wyL0cU++rJ3y7xEhDj0ZlvOcMneofmjfdsZwcTzQ6W
-tWzFwCWY123ZeFtGWfEYy5RaffIR3xux/+1OxohJ3yDIwOPGPXbIJMz9/fBuQnku
-OL8bgNvf3635gVDkj+WO7HOilWLJmA==
-=GHoi
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlymypYACgkQAVBC80lX
+0Gw9Qwf+PcECZy9lorHevXKLfXYKO0tk7/o2Q3/5l6jBl+G5QmsK7MwZbjHvu1pf
+7bXNjYtE+HZnwMDQGFxiYQwa/X2cUmXRj92YcJT62AZjy+uRyxrjjvHxkSKNziYW
+7djP+G9pxzuMfXDhmVsac9K3kDx1p+12Ii1mSQgm0ZI5au+X+Ic7U5KEbOcS+KtH
+OzCW882RqKvVMpfurHq8NgI18IcNxMx8uY+sQdMjYYSIo8GZLf1Qx9k0uo3y6B5j
+RZDMZBGzUI1w4I6mtjmK7NT2zPrZvGGpWSQqfmBubFU+z3g1DEqT/dJBOhJ9cBFX
+BPfezKbTGo7k+sK62tmqP0OPA+hrjg==
+=w1Bb
 -----END PGP SIGNATURE-----
 
---Sig_/98eBZhbKBR=GkV3jwTFA.g1--
+--Sig_/qG1lbi3eneWefH0rN68cbG3--
