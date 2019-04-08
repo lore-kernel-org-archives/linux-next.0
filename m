@@ -1,51 +1,75 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: manual merge of the audit tree with Linus' tree
-Date: Mon, 8 Apr 2019 16:30:12 -0400
-Message-ID: <CAHC9VhRT3WDbidC2=0wGnKEB5syHh6D=zWS4TX2ZGYAKxfxASw@mail.gmail.com>
-References: <20190408113131.222f480a@canb.auug.org.au> <20190408171534.GA11717@altlinux.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the sound-asoc tree
+Date: Tue, 9 Apr 2019 07:27:20 +1000
+Message-ID: <20190409072720.0f51ff2b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pQyu_hxH_r8UsjTVlhUT5z/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190408171534.GA11717@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Apr 8, 2019 at 1:15 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> On Mon, Apr 08, 2019 at 11:31:31AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the audit tree got conflicts in:
-> >
-> >   arch/mips/kernel/ptrace.c
-> >   kernel/seccomp.c
-> >
-> > between commit:
-> >
-> >   b35f549df1d7 ("syscalls: Remove start and number from syscall_get_arguments() args")
-> >
-> > from Linus' tree and commit:
-> >
-> >   16add411645c ("syscall_get_arch: add "struct task_struct *" argument")
-> >
-> > from the audit tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
->
-> Thanks, the merge fix is correct.
-> I've also re-tested it using the new selftests/ptrace test
-> from PTRACE_GET_SYSCALL_INFO patchset.
+--Sig_/pQyu_hxH_r8UsjTVlhUT5z/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the verification Dmitry.
+Hi all,
 
-Stephen, thanks for the heads-up, I'll pass this along to Linus come merge time.
+In commit
 
--- 
-paul moore
-www.paul-moore.com
+  b4ed6b51f356 ("ASoC: core: conditionally increase module refcount on comp=
+onent open")
+
+Fixes tag
+
+  Fixes: b450b878('ASoC: core: don't increase component module refcount
+
+has these problem(s):
+
+  - missing space between the SHA1 and the subject
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not wrap FIxes tags over more than one line.
+
+
+In commit
+
+  17d3069ccf06 ("ASoC: stm32: fix sai driver name initialisation")
+
+Fixes tag
+
+  Fixes: 3e086ed ("ASoC: stm32: add SAI driver")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pQyu_hxH_r8UsjTVlhUT5z/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyrvLgACgkQAVBC80lX
+0GyBJQf+JTDG0sHcZEmjh5Z2Sz3cfy7m2JX7WlH7U0/kSTZKGc/zUCWUfwV38DH3
+z4lLIZIwtlb0dyjbGbXAahq065eBV1oMl68i9ppLwtXpuY3oyUP10Blq0sXvou+p
+hoRmfjtZP0sK3GgeZILI2ydMrhsBcY1g74tZF8WwJ+wA6gfoG1xZAxb++79qKDfz
+B4I3ixjHI9Lo9ULVw/crOiL/hlHI1+KeT45GeK4MhoAtzBI4QR/8Wpxb2Zn4WLIJ
+z/sp9hbXQHrG6tHHcUPF3socU3X9vFN+9U1RZV/C3zzwwk7CQht9/SAaZehQOtmM
+cty7uTbedG1yPFyz+e+dyjQvEx2M0Q==
+=dR/G
+-----END PGP SIGNATURE-----
+
+--Sig_/pQyu_hxH_r8UsjTVlhUT5z/--
