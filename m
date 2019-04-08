@@ -1,89 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the sound-asoc tree
-Date: Tue, 9 Apr 2019 09:12:31 +1000
-Message-ID: <20190409091231.57cf760a@canb.auug.org.au>
-References: <20190326100145.3ee50933@canb.auug.org.au>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: linux-next: manual merge of the kspp-gustavo tree with Linus'
+ tree
+Date: Mon, 8 Apr 2019 18:53:16 -0500
+Message-ID: <558944e8-5912-dc7c-637c-61dc892bae75@embeddedor.com>
+References: <20190408071731.6bd422f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UWcL=wt71r.47lzmU.udJqq"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190326100145.3ee50933@canb.auug.org.au>
+In-Reply-To: <20190408071731.6bd422f3@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Annaliese McDermond <nh6z@nh6z.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UWcL=wt71r.47lzmU.udJqq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Tue, 26 Mar 2019 10:01:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> sound/soc/codecs/tlv320aic32x4-clk.c: In function 'clk_aic32x4_pll_recalc=
-_rate':
-> sound/soc/codecs/tlv320aic32x4-clk.c:149:38: warning: 'settings.d' may be=
- used uninitialized in this function [-Wmaybe-uninitialized]
->      ((settings->j * 10000) + settings->d);
->                               ~~~~~~~~^~~
-> sound/soc/codecs/tlv320aic32x4-clk.c:197:32: note: 'settings.d' was decla=
-red here
->   struct clk_aic32x4_pll_muldiv settings;
->                                 ^~~~~~~~
-> sound/soc/codecs/tlv320aic32x4-clk.c:149:15: warning: 'settings.j' may be=
- used uninitialized in this function [-Wmaybe-uninitialized]
->      ((settings->j * 10000) + settings->d);
->        ~~~~~~~~^~~
-> sound/soc/codecs/tlv320aic32x4-clk.c:197:32: note: 'settings.j' was decla=
-red here
->   struct clk_aic32x4_pll_muldiv settings;
->                                 ^~~~~~~~
-> sound/soc/codecs/tlv320aic32x4-clk.c:148:37: warning: 'settings.r' may be=
- used uninitialized in this function [-Wmaybe-uninitialized]
->   rate =3D (u64) parent_rate * settings->r *
->                              ~~~~~~~~^~~
-> sound/soc/codecs/tlv320aic32x4-clk.c:197:32: note: 'settings.r' was decla=
-red here
->   struct clk_aic32x4_pll_muldiv settings;
->                                 ^~~~~~~~
-> sound/soc/codecs/tlv320aic32x4-clk.c:151:56: warning: 'settings.p' may be=
- used uninitialized in this function [-Wmaybe-uninitialized]
->   return (unsigned long) DIV_ROUND_UP_ULL(rate, settings->p * 10000);
->                                                         ^~
-> sound/soc/codecs/tlv320aic32x4-clk.c:197:32: note: 'settings.p' was decla=
-red here
->   struct clk_aic32x4_pll_muldiv settings;
->                                 ^~~~~~~~
->=20
-> Introduced by commit
->=20
->   514b044cba66 ("ASoC: tlv320aic32x4: Model PLL in CCF")
+On 4/7/19 4:17 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kspp-gustavo tree got a conflict in:
+> 
+>   arch/x86/include/asm/syscall.h
+> 
+> between commits:
+> 
+>   b35f549df1d7 ("syscalls: Remove start and number from syscall_get_arguments() args")
+>   32d92586629a ("syscalls: Remove start and number from syscall_set_arguments() args")
+> 
+> from Linus' tree and commit:
+> 
+>   1f7ae812f87e ("x86/syscalls: Mark expected switch fall-throughs")
+> 
 
-I am still getting these warnings.
+I just removed the above commit from my tree.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UWcL=wt71r.47lzmU.udJqq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyr1V8ACgkQAVBC80lX
-0GyUrAf/e8cfMwKWceRi9VmwDT+25ltW3Alzfq2rXyrnKMxgCRETRfUUf65nRZRC
-IZzgCosIfkhBrt6uhmLfZh+Opu7B98r+uNSPTpZ07w+Or7rqQDZKS9ZrzrnsjrAJ
-F+r5uo9F8aV8AlknM6Pp1lTWdImRAqQU43cI37IYjE4lnVQgDJOHUookUqvZjxOl
-ZUiJW5BkEvNqUIGMmKkfEa4UdZf8xy1Q0p5c81thsYDOQTVxVTMGOBGV0VBoHXaw
-ONVxkXjVKZmlw5KNoSgf754GaqhQdbaEQGmgwOraH5E2IW2YvVJOoj1e4NSofa6N
-FElZGj2HY9fgeem2JauvwNb5og/PUw==
-=EIkw
------END PGP SIGNATURE-----
-
---Sig_/UWcL=wt71r.47lzmU.udJqq--
+Thanks for the report, Stephen.
+--
+Gustavo
