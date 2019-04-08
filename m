@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the nfsd tree
-Date: Tue, 9 Apr 2019 07:43:29 +1000
-Message-ID: <20190409074329.26801b64@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the net-next tree
+Date: Tue, 9 Apr 2019 08:00:51 +1000
+Message-ID: <20190409080051.3cc54e1e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9e/4N1PA4V9e9d4qymNxMLY"; protocol="application/pgp-signature"
+ boundary="Sig_/1nioSGE/ngx_G5KfUGe8bw3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Murphy Zhou <jencce.kernel@gmail.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eli Britstein <elibr@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/9e/4N1PA4V9e9d4qymNxMLY
+--Sig_/1nioSGE/ngx_G5KfUGe8bw3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,38 +19,52 @@ Hi all,
 
 In commit
 
-  3c86794ac0e6 ("nfsd/nfsd3_proc_readdir: fix buffer count and page pointer=
-s")
+  6fca9d1e603a ("net/mlx5e: Allow VLAN rewrite of prio field with the same =
+match")
 
 Fixes tag
 
-  Fixes: f875a79 "nfsd: allow nfsv3 readdir request to be larger"
+  Fixes: 37410902874c ("net/mlx5e: Support VLAN modify action")
 
 has these problem(s):
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-  - Missing parentheses around the subject
+  - Target SHA1 does not exist
+
+In commit
+
+  bf2f3bca1c5d ("net/mlx5e: Deny VLAN rewrite if there is no VLAN header ma=
+tch")
+
+Fixes tag
+
+  Fixes: 37410902874c ("net/mlx5e: Support VLAN modify action")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: bdc837eecf73 ("net/mlx5e: Support VLAN modify action")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/9e/4N1PA4V9e9d4qymNxMLY
+--Sig_/1nioSGE/ngx_G5KfUGe8bw3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyrwIEACgkQAVBC80lX
-0GwU0Qf9H6glBzH4VbccEdwi1wq4IHb9hE69dtBYsU2F6JgbiBOCrYWekKoAkCNu
-Kn7XcXfKZhwmmtC+1JmgqkURf+BGCn+Fl3Gw4MSmpDEvQn2HP8cTC8dMD2P2AbKe
-HngGZGtWlW58uDePlSybDMi5y+2Frqb/jsgjkOD3yKebD7Jfnsdnv/iGW+Eqs33e
-3QODl2RFg1nG7DyX9nRiHiVNxs+Ih/DyNQ60Hq3bQzlT8iTc+Cpoq2AHYzTYB+Ug
-a8t0J7WG+p9mbQJ9KaFwSXZbY8CuZYCEqyFokFiwmku7iRyqEElBxAjhfmkWp12n
-65cGXcyy2Vab4m/T4rYGzREuVmK22g==
-=DMCd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyrxJMACgkQAVBC80lX
+0Gz7fggAkoBgU9zhYPP4JYUuabGM8rj0MGmi0PdToMvoYuB2OPsMlULWOdgWOaiX
+nwsFovdVSMMQf0+31/t3h2l+9NuiOQaCV+eQ/e5p2iVxxTMIO10aRRHCKoUB1p8q
+0Y8UMi0VgrH/iD81YOVmW1YVRSnXjugXCGZ8RzEU6PfEXho78z/kqHBpC3twejEw
+G5Oq4LLam5k5yApyEVMOfjDqkI74RgB+bCrvH0zVFx7OE/Vd9f+oRHV+FMG2Zder
+vGoKWPOAgZ7eL6gqF4KRcjbd9Z5QuHAEz0rUFg14KWi93qe8g9D0a8be8xlpEhO/
+4ejPo3bFN1J5cmk8py1fVvhj1+PUHg==
+=8nP6
 -----END PGP SIGNATURE-----
 
---Sig_/9e/4N1PA4V9e9d4qymNxMLY--
+--Sig_/1nioSGE/ngx_G5KfUGe8bw3--
