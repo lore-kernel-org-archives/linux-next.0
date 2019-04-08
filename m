@@ -1,70 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the net-next tree
-Date: Tue, 9 Apr 2019 08:00:51 +1000
-Message-ID: <20190409080051.3cc54e1e@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: Fixes tags need some work in the cifs tree
+Date: Mon, 8 Apr 2019 17:30:20 -0500
+Message-ID: <CAH2r5mvSQ6+gq92EMtj+_DYCZW_AOjZocJ9rAKHdtU09Nw-pgw@mail.gmail.com>
+References: <20190409073827.0ac717ab@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1nioSGE/ngx_G5KfUGe8bw3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190409073827.0ac717ab@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eli Britstein <elibr@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/1nioSGE/ngx_G5KfUGe8bw3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+I just fixed these up manually and repushed to cifs-2.6.git for-next
 
-Hi all,
+I was curious if checkpatch should have flagged this - I reran
+checkpatch on the original version of Zhang's patches and it didn't
+complain about the spacing (and probably should have).
 
-In commit
+On Mon, Apr 8, 2019 at 4:38 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   7d672725ba72 ("cifs: Fix lease buffer length error")
+>
+> Fixes tags
+>
+>   Fixes: 9764c02fcbad(SMB3: Add support for multidialect negotiate (SMB2.1 and later))
+>   Fixes: d5c7076b772a(smb3: add smb3.1.1 to default dialect list)
+>
+> has these problem(s):
+>
+>   - missing space between the SHA1 and the subject
+>   - missing quotes around the subject
+>
+> In commit
+>
+>   54492efdd6a2 ("cifs: Fix use-after-free in SMB2_read")
+>
+> Fixes tag
+>
+>   Fixes: eccb4422cf97(smb3: Add ftrace tracepoints for improved SMB3 debugging)
+>
+> has these problem(s):
+>
+>   - missing space between the SHA1 and the subject
+>   - missing quotes around the subject
+>
+> In commit
+>
+>   3cc71735cf9f ("cifs: Fix use-after-free in SMB2_write")
+>
+> Fixes tag
+>
+>   Fixes: eccb4422cf97(smb3: Add ftrace tracepoints for improved SMB3 debugging)
+>
+> has these problem(s):
+>
+>   - missing space between the SHA1 and the subject
+>   - missing quotes around the subject
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-  6fca9d1e603a ("net/mlx5e: Allow VLAN rewrite of prio field with the same =
-match")
 
-Fixes tag
 
-  Fixes: 37410902874c ("net/mlx5e: Support VLAN modify action")
+-- 
+Thanks,
 
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-In commit
-
-  bf2f3bca1c5d ("net/mlx5e: Deny VLAN rewrite if there is no VLAN header ma=
-tch")
-
-Fixes tag
-
-  Fixes: 37410902874c ("net/mlx5e: Support VLAN modify action")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: bdc837eecf73 ("net/mlx5e: Support VLAN modify action")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1nioSGE/ngx_G5KfUGe8bw3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyrxJMACgkQAVBC80lX
-0Gz7fggAkoBgU9zhYPP4JYUuabGM8rj0MGmi0PdToMvoYuB2OPsMlULWOdgWOaiX
-nwsFovdVSMMQf0+31/t3h2l+9NuiOQaCV+eQ/e5p2iVxxTMIO10aRRHCKoUB1p8q
-0Y8UMi0VgrH/iD81YOVmW1YVRSnXjugXCGZ8RzEU6PfEXho78z/kqHBpC3twejEw
-G5Oq4LLam5k5yApyEVMOfjDqkI74RgB+bCrvH0zVFx7OE/Vd9f+oRHV+FMG2Zder
-vGoKWPOAgZ7eL6gqF4KRcjbd9Z5QuHAEz0rUFg14KWi93qe8g9D0a8be8xlpEhO/
-4ejPo3bFN1J5cmk8py1fVvhj1+PUHg==
-=8nP6
------END PGP SIGNATURE-----
-
---Sig_/1nioSGE/ngx_G5KfUGe8bw3--
+Steve
