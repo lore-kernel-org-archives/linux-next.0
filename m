@@ -1,56 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the nvdimm-fixes tree
-Date: Mon, 8 Apr 2019 15:52:57 +1000
-Message-ID: <20190408155257.7b82b64f@canb.auug.org.au>
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Mon, 8 Apr 2019 09:14:58 +0100
+Message-ID: <20190408091458.00004e48@huawei.com>
+References: <20190408130212.0a41f2a8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Y85CkOK7KtKPvOP1lKX62K9"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190408130212.0a41f2a8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Li RongQing <lirongqing@baidu.com>, Liang ZhiCheng <liangzhicheng@baidu.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Y85CkOK7KtKPvOP1lKX62K9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 8 Apr 2019 13:02:12 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Dan,
+> Hi all,
+> 
+> Today's linux-next merge of the staging tree got a conflict in:
+> 
+>   drivers/iio/industrialio-buffer.c
+> 
+> between commit:
+> 
+>   20ea39ef9f2f ("iio: Fix scan mask selection")
+> 
+> from the staging.current tree and commit:
+> 
+>   3862828a903d ("iio: buffer: Switch to bitmap_zalloc()")
+> 
+> from the staging tree.
+> 
+> I fixed it up (I just used the staging tree version) and can carry the
+> fix as necessary. This is now fixed as far as linux-next is concerned,
+> but any non trivial conflicts should be mentioned to your upstream
+> maintainer when your tree is submitted for merging.  You may also want
+> to consider cooperating with the maintainer of the conflicting tree to
+> minimise any particularly complex conflicts.
+> 
+Thanks Stephen,
 
-In commit
+That is the correct resolution.
 
-  7c33bd4e3e97 ("libnvdimm/pmem: fix a possible OOB access when read and wr=
-ite pmem")
-
-Fixes tag
-
-  Fixes: 98cc093cba1e "(block, THP: make block_device_operations.rw_page su=
-pport THP)"
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Y85CkOK7KtKPvOP1lKX62K9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyq4bkACgkQAVBC80lX
-0GyBSQf/XNX2dgkF4NNrElEfq5+hcQh/yHDR1+vpJjQDdlq1/wCT1MoKZJKq2qKd
-o7Aj3xFFPf4EPBuyTH3B1NVhewogUGci4vz0dY2pSWyr3HW9bltrGX4iCPClonBC
-aXKVPDEr1xHSJjwK5LgTy49o1ndi64N85R5FbPtgr0t+YA+0UOdE2gKR7fWbnDPG
-El9RksgAC9lsONjxFMTyTZUyReefjtihqMvQmO4573glEplPxzvnp2n1zu2ccEsW
-KCzNBdV+iWrrEmjKKKq5tIR8Le+cuBHLWgIkiWoaQjnX9vk6dAzJ4QGH1nKzJocg
-WWF8VqM/KOI1bChl8SxZLyndfDKiQw==
-=lHdi
------END PGP SIGNATURE-----
-
---Sig_/Y85CkOK7KtKPvOP1lKX62K9--
+Jonathan
