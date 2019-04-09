@@ -1,29 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the printk tree with Linus' tree
-Date: Wed, 10 Apr 2019 09:24:07 +1000
-Message-ID: <20190410092407.4ed718b8@canb.auug.org.au>
+Date: Wed, 10 Apr 2019 09:29:01 +1000
+Message-ID: <20190410092901.0a17ee79@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GPuOcJ0TjSNjC=9LYTU4wu6"; protocol="application/pgp-signature"
+ boundary="Sig_/JLyIHtWwlpc=v2NS3d+BDIx"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Petr Mladek <pmladek@suse.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/GPuOcJ0TjSNjC=9LYTU4wu6
+--Sig_/JLyIHtWwlpc=v2NS3d+BDIx
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the printk tree got conflicts in:
+Today's linux-next merge of the printk tree got a conflict in:
 
-  drivers/base/power/main.c
+  include/trace/events/sunrpc.h
 
 between commit:
 
-  7a5bd1279bce ("PM: Add and use pr_fmt()")
+  6f701383368d ("SUNRPC: Display symbolic flag names in RPC trace events")
 
 from Linus' tree and commit:
 
@@ -43,35 +43,41 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/base/power/main.c
-index f80d298de3fa,c88f56b9ae5b..000000000000
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@@ -2063,7 -2062,7 +2063,7 @@@ EXPORT_SYMBOL_GPL(dpm_suspend_start)
-  void __suspend_report_result(const char *function, void *fn, int ret)
-  {
-  	if (ret)
-- 		pr_err("%s(): %pF returns %d\n", function, fn, ret);
- -		printk(KERN_ERR "%s(): %pS returns %d\n", function, fn, ret);
-++		pr_err("%s(): %pS returns %d\n", function, fn, ret);
-  }
-  EXPORT_SYMBOL_GPL(__suspend_report_result);
+diff --cc include/trace/events/sunrpc.h
+index 7e899e635d33,7b8b987d332e..000000000000
+--- a/include/trace/events/sunrpc.h
++++ b/include/trace/events/sunrpc.h
+@@@ -146,10 -102,10 +146,10 @@@ DECLARE_EVENT_CLASS(rpc_task_running
+  		__entry->flags =3D task->tk_flags;
+  		),
  =20
+- 	TP_printk("task:%u@%d flags=3D%s runstate=3D%s status=3D%d action=3D%pf",
+ -	TP_printk("task:%u@%d flags=3D%4.4x state=3D%4.4lx status=3D%d action=3D=
+%ps",
+++	TP_printk("task:%u@%d flags=3D%s runstate=3D%s status=3D%d action=3D%ps",
+  		__entry->task_id, __entry->client_id,
+ -		__entry->flags,
+ -		__entry->runstate,
+ +		rpc_show_task_flags(__entry->flags),
+ +		rpc_show_runstate(__entry->runstate),
+  		__entry->status,
+  		__entry->action
+  		)
 
---Sig_/GPuOcJ0TjSNjC=9LYTU4wu6
+--Sig_/JLyIHtWwlpc=v2NS3d+BDIx
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlytKZcACgkQAVBC80lX
-0GyH/gf/fuxtr4BM8vb+NfNB6K8sffpJAwGRe3IaLYujL4ud+5AQzR+pyTlerQRO
-VYM4KBB+XnpNdbWGiMPx1d+BWZSHnWYRiw3VPIDaAIH3U9SG2+xrdZuXzSTjchQ/
-vgG10U1xK1dVR89o3VralZFrkgeWGDGIWVWcZgR6AP9ylTWQqqrub2fjVhpF2QJZ
-p8noJlmZdRT5Eidu/5oo/qOnKf2pQUnYxAYHY/qvDLVtZLDMOB4DC9HBcsWazfcG
-2PVX2jC6CMBwznlXjqPuQBfZ2yKE9NYJTGzV79joTfyUjKCjOTCDnayI59mCkMZ6
-NTVBmFRZsBF3jB9mB6WE44cmGDlerQ==
-=81Gy
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlytKr4ACgkQAVBC80lX
+0GxVFgf/SidMM7NNcSNHCA1rIMrV0RjSRiC8V+f1o0oliCRjuzWGFWaNPK7Py1EW
+qa3OVIX7tFsp9lpDg4KhsXfgR/+Wr1/j3pejrE7P3B2QKuls1YkvTXj9b57XkJk8
+mSeQv2Sy+GiB+Ch3xLvOiYiYjYQ12lLALZG56ZyEzGInW8mIQnTS+mfummVYdm4u
+amN3dDAaDbqVOlI4dOV27euRn07Y+/cbDKz7jE3lcrdacPNhInVTOAikjSVDqkW2
+SxsnMsF/9j33hYxjQ0VFKCydlnQqCzlLCkVK8bvXajwiIzsVr9H1h28q8yX4PPDL
+Z69gWzSf+pPreLt2HX6ukdKmI1oGww==
+=uGU0
 -----END PGP SIGNATURE-----
 
---Sig_/GPuOcJ0TjSNjC=9LYTU4wu6--
+--Sig_/JLyIHtWwlpc=v2NS3d+BDIx--
