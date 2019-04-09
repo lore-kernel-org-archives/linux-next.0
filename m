@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the printk tree with Linus' tree
-Date: Wed, 10 Apr 2019 09:29:01 +1000
-Message-ID: <20190410092901.0a17ee79@canb.auug.org.au>
+Date: Wed, 10 Apr 2019 09:34:29 +1000
+Message-ID: <20190410093429.095c8975@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JLyIHtWwlpc=v2NS3d+BDIx"; protocol="application/pgp-signature"
+ boundary="Sig_/gimwf1eMZvYjGfuTZl5Qt=f"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Petr Mladek <pmladek@suse.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Mike Rapoport <rppt@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/JLyIHtWwlpc=v2NS3d+BDIx
+--Sig_/gimwf1eMZvYjGfuTZl5Qt=f
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,11 +19,11 @@ Hi all,
 
 Today's linux-next merge of the printk tree got a conflict in:
 
-  include/trace/events/sunrpc.h
+  mm/memblock.c
 
 between commit:
 
-  6f701383368d ("SUNRPC: Display symbolic flag names in RPC trace events")
+  26fb3dae0a1e ("memblock: drop memblock_alloc_*_nopanic() variants")
 
 from Linus' tree and commit:
 
@@ -32,52 +32,31 @@ from Linus' tree and commit:
 
 from the printk tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the former removed the code changed by part of the latter)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/trace/events/sunrpc.h
-index 7e899e635d33,7b8b987d332e..000000000000
---- a/include/trace/events/sunrpc.h
-+++ b/include/trace/events/sunrpc.h
-@@@ -146,10 -102,10 +146,10 @@@ DECLARE_EVENT_CLASS(rpc_task_running
-  		__entry->flags =3D task->tk_flags;
-  		),
- =20
-- 	TP_printk("task:%u@%d flags=3D%s runstate=3D%s status=3D%d action=3D%pf",
- -	TP_printk("task:%u@%d flags=3D%4.4x state=3D%4.4lx status=3D%d action=3D=
-%ps",
-++	TP_printk("task:%u@%d flags=3D%s runstate=3D%s status=3D%d action=3D%ps",
-  		__entry->task_id, __entry->client_id,
- -		__entry->flags,
- -		__entry->runstate,
- +		rpc_show_task_flags(__entry->flags),
- +		rpc_show_runstate(__entry->runstate),
-  		__entry->status,
-  		__entry->action
-  		)
-
---Sig_/JLyIHtWwlpc=v2NS3d+BDIx
+--Sig_/gimwf1eMZvYjGfuTZl5Qt=f
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlytKr4ACgkQAVBC80lX
-0GxVFgf/SidMM7NNcSNHCA1rIMrV0RjSRiC8V+f1o0oliCRjuzWGFWaNPK7Py1EW
-qa3OVIX7tFsp9lpDg4KhsXfgR/+Wr1/j3pejrE7P3B2QKuls1YkvTXj9b57XkJk8
-mSeQv2Sy+GiB+Ch3xLvOiYiYjYQ12lLALZG56ZyEzGInW8mIQnTS+mfummVYdm4u
-amN3dDAaDbqVOlI4dOV27euRn07Y+/cbDKz7jE3lcrdacPNhInVTOAikjSVDqkW2
-SxsnMsF/9j33hYxjQ0VFKCydlnQqCzlLCkVK8bvXajwiIzsVr9H1h28q8yX4PPDL
-Z69gWzSf+pPreLt2HX6ukdKmI1oGww==
-=uGU0
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlytLAUACgkQAVBC80lX
+0GyOrQgAgdKkTUNGAVzqQ6hevkkvY1uLF915JniPe35gp0n+OKEWPX1LY/R2fxPj
+Hq/esVJnuwz3Sx/hP7aajNUed0TUPw5xtvCsHf695HizP+iqGd/vhfiAwAdkV3IZ
+XkqUGJD90tddcZXpjAPHiViUm74rGrmZpah900eg9aoNqIQ0MoxQEYbWYQ3wrVoa
+kKK5yZCLdX8vBKmnA8LN6udU1ijA11tdpMjGXaBWJX1Yt6C57MW028MjnHPHXSNd
+gsHt+Ymx9DQbJiHc+kSCsh4ngV6H/Nqay2hacR9EyLb2vfljKNyxPz90yyJr1IK6
+cbdjr4bsRiOXe2YqKSamx5znc53H/w==
+=v2mZ
 -----END PGP SIGNATURE-----
 
---Sig_/JLyIHtWwlpc=v2NS3d+BDIx--
+--Sig_/gimwf1eMZvYjGfuTZl5Qt=f--
