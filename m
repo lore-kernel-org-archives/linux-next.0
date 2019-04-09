@@ -1,77 +1,88 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: manual merge of the mac80211-next tree with the
- mac80211 tree
-Date: Tue, 9 Apr 2019 11:06:07 +1000
-Message-ID: <20190409110607.29df3cf3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with the drm tree
+Date: Tue, 9 Apr 2019 11:34:10 +1000
+Message-ID: <20190409113410.3d2a8afc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nk7TK0lKM_uOHgtwjGYIvFv"; protocol="application/pgp-signature"
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============2134623265=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Gerd Hoffmann <kraxel@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/nk7TK0lKM_uOHgtwjGYIvFv
+--===============2134623265==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TrW1RSpeAuZFW0sWw8mGVis"; protocol="application/pgp-signature"
+
+--Sig_/TrW1RSpeAuZFW0sWw8mGVis
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mac80211-next tree got a conflict in:
+Today's linux-next merge of the drm-misc tree got conflicts in:
 
-  net/mac80211/tx.c
+  drivers/gpu/drm/cirrus/cirrus_drv.h
+  drivers/gpu/drm/cirrus/cirrus_ttm.c
 
-between commit:
+between commits:
 
-  eb9b64e3a9f8 ("mac80211: fix memory accounting with A-MSDU aggregation")
+  aa8e2435b3d4 ("drm/ttm: Define a single DRM_FILE_PAGE_OFFSET constant")
+  7d1500f9fbfc ("drm/ttm: Remove file_page_offset parameter from ttm_bo_dev=
+ice_init()")
+  bed2dd84212e ("drm/ttm: Quick-test mmap offset in ttm_bo_mmap()")
 
-from the mac80211 tree and commit:
+from the drm tree and commit:
 
-  dcec1d9bc8a7 ("mac80211: calculate hash for fq without holding fq->lock i=
-n itxq enqueue")
+  ab3e023b1b4c ("drm/cirrus: rewrite and modernize driver.")
 
-from the mac80211-next tree.
+from the drm-misc tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I just removed the files) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/mac80211/tx.c
-index 2e816dd67be7,3655aae96df1..000000000000
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@@ -3221,7 -3219,7 +3219,8 @@@ static bool ieee80211_amsdu_aggregate(s
-  	u8 max_subframes =3D sta->sta.max_amsdu_subframes;
-  	int max_frags =3D local->hw.max_tx_fragments;
-  	int max_amsdu_len =3D sta->sta.max_amsdu_len;
- +	int orig_truesize;
-+ 	u32 flow_idx;
-  	__be16 len;
-  	void *data;
-  	bool ret =3D false;
-
---Sig_/nk7TK0lKM_uOHgtwjGYIvFv
+--Sig_/TrW1RSpeAuZFW0sWw8mGVis
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyr7/8ACgkQAVBC80lX
-0Gz0cQgAm7Z45grpN06oI1vDHbeyWc1Nf5XOqaDdgOzObo+f8Fbemq832Wv9g9Rv
-2Um1yA8WsPO1n+avHfatwoEV8O34shDxpRxCQkSauALhsdKY4W1Wlp8FA2M7GteV
-E66NVIITDIL8Men0nhNTUG9UFWpI7yeEfzJyHhX0Zm3w3AyVTJqYn/06ikKYObx6
-ue8YTx74ttTG/hK1N9MMoDSGNFqx+XaG9MQPWdqhi30Q1KV10hOpHUNu56ma7ZSQ
-erEM9Lk1R3DJLYKklLGJEXz+x0yXQ+pHYIVYxWY6RNkFz5g+5P8z0j3ptRY6N9ki
-/CohVqDhFhZEEb2RJPDCSpc1jpCRMQ==
-=g+rO
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyr9pIACgkQAVBC80lX
+0Gx8OAf+P9Ywia+FIV6m/bOqBgRyK5oUg4qTRQW89r0wv8sOHU1ThW1w7ZDn5CJx
+WvhZNV4K7nzvt3RIzR0dJBDO4dF5KeK384AZI3KwNQlWhPXB8I+pnH0d6g8i/PlY
+af9JaTvJ2nopcQ8zc/6TqkUcIMMb6GDgHeta7PfbZok3UaaSy0x/wGTWZR4UBSZh
+2mFZ8o7dtiYGBHR0uUFlVl5/C2HQvti6Unsosk/IaEZ5r5CMJ2Wq7hGsb9cd9PBd
+7/ym6BzYSTgb1nqR6rFJSGQ0zyUlUIi6kZVym9MS2xbfkmjPEJr/1DkEC1oQL3/U
+oaebP3oVAdSiYj6lGEdNc3Xxzoymqg==
+=iCRq
 -----END PGP SIGNATURE-----
 
---Sig_/nk7TK0lKM_uOHgtwjGYIvFv--
+--Sig_/TrW1RSpeAuZFW0sWw8mGVis--
+
+--===============2134623265==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============2134623265==--
