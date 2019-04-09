@@ -1,56 +1,44 @@
-From: Guenter Roeck <linux@roeck-us.net>
+From: Trond Myklebust <trondmy@hammerspace.com>
 Subject: Re: linux-next: Tree for Apr 9
-Date: Tue, 9 Apr 2019 11:25:24 -0700
-Message-ID: <20190409182524.GA18518@roeck-us.net>
+Date: Tue, 9 Apr 2019 18:44:03 +0000
+Message-ID: <a7105dcd96843c456116e3aee96fd99a65e76851.camel@hammerspace.com>
 References: <20190409180042.15bb90b6@canb.auug.org.au>
+         <20190409182524.GA18518@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190409180042.15bb90b6@canb.auug.org.au>
+In-Reply-To: <20190409182524.GA18518@roeck-us.net>
+Content-Language: en-US
+Content-ID: <690DFFD24CAF2F4E98FF4FD51C00FE7E@namprd13.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, "J. Bruce Fields" <bfields@redhat.com>
+To: "linux@roeck-us.net" <linux@roeck-us.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bfields@redhat.com" <bfields@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 09, 2019 at 06:00:42PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190408:
-> 
-> The mac80211-next tree gained a conflict against the mac80211 tree.
-> 
-> The drm tree still had its build failure for which I disabled a driver.
-> 
-> The drm-misc tree gained conflicts against the drm tree and also a build
-> failure for which I marked a driver as BROKEN.
-> 
-> The scsi-mkp tree gained a build failure for which I reverted a commit.
-> 
-> The rtc tree gained a conflict against the omap tree.
-> 
-> Non-merge commits (relative to Linus' tree): 5587
->  5386 files changed, 176906 insertions(+), 87493 deletions(-)
-> 
-
-This one deserves a reply.
-
-Build results:
-	total: 159 pass: 144 fail: 15
-Failed builds: 
-	<many>
-Qemu test results:
-	total: 345 pass: 227 fail: 118
-Failed tests: 
-	<many>
-
-Build failure is:
-
-s/nfsd/nfssvc.c: In function 'nfsd_support_acl_version':
-fs/nfsd/nfssvc.c:145:14: error: 'NFSD_ACL_MINVERS' undeclared
-
-and similar. Build failures and (many ? most ? all ?) of the qemu failures
-are due to commit 55d4c716ea ("nfsd: Add custom rpcbind callbacks for
-knfsd").
-
-Guenter
+T24gVHVlLCAyMDE5LTA0LTA5IGF0IDExOjI1IC0wNzAwLCBHdWVudGVyIFJvZWNrIHdyb3RlOg0K
+PiBPbiBUdWUsIEFwciAwOSwgMjAxOSBhdCAwNjowMDo0MlBNICsxMDAwLCBTdGVwaGVuIFJvdGh3
+ZWxsIHdyb3RlOg0KPiA+IEhpIGFsbCwNCj4gPiANCj4gPiBDaGFuZ2VzIHNpbmNlIDIwMTkwNDA4
+Og0KPiA+IA0KPiA+IFRoZSBtYWM4MDIxMS1uZXh0IHRyZWUgZ2FpbmVkIGEgY29uZmxpY3QgYWdh
+aW5zdCB0aGUgbWFjODAyMTEgdHJlZS4NCj4gPiANCj4gPiBUaGUgZHJtIHRyZWUgc3RpbGwgaGFk
+IGl0cyBidWlsZCBmYWlsdXJlIGZvciB3aGljaCBJIGRpc2FibGVkIGENCj4gPiBkcml2ZXIuDQo+
+ID4gDQo+ID4gVGhlIGRybS1taXNjIHRyZWUgZ2FpbmVkIGNvbmZsaWN0cyBhZ2FpbnN0IHRoZSBk
+cm0gdHJlZSBhbmQgYWxzbyBhDQo+ID4gYnVpbGQNCj4gPiBmYWlsdXJlIGZvciB3aGljaCBJIG1h
+cmtlZCBhIGRyaXZlciBhcyBCUk9LRU4uDQo+ID4gDQo+ID4gVGhlIHNjc2ktbWtwIHRyZWUgZ2Fp
+bmVkIGEgYnVpbGQgZmFpbHVyZSBmb3Igd2hpY2ggSSByZXZlcnRlZCBhDQo+ID4gY29tbWl0Lg0K
+PiA+IA0KPiA+IFRoZSBydGMgdHJlZSBnYWluZWQgYSBjb25mbGljdCBhZ2FpbnN0IHRoZSBvbWFw
+IHRyZWUuDQo+ID4gDQo+ID4gTm9uLW1lcmdlIGNvbW1pdHMgKHJlbGF0aXZlIHRvIExpbnVzJyB0
+cmVlKTogNTU4Nw0KPiA+ICA1Mzg2IGZpbGVzIGNoYW5nZWQsIDE3NjkwNiBpbnNlcnRpb25zKCsp
+LCA4NzQ5MyBkZWxldGlvbnMoLSkNCj4gPiANCj4gDQo+IFRoaXMgb25lIGRlc2VydmVzIGEgcmVw
+bHkuDQo+IA0KPiBCdWlsZCByZXN1bHRzOg0KPiAJdG90YWw6IDE1OSBwYXNzOiAxNDQgZmFpbDog
+MTUNCj4gRmFpbGVkIGJ1aWxkczogDQo+IAk8bWFueT4NCj4gUWVtdSB0ZXN0IHJlc3VsdHM6DQo+
+IAl0b3RhbDogMzQ1IHBhc3M6IDIyNyBmYWlsOiAxMTgNCj4gRmFpbGVkIHRlc3RzOiANCj4gCTxt
+YW55Pg0KPiANCj4gQnVpbGQgZmFpbHVyZSBpczoNCj4gDQo+IHMvbmZzZC9uZnNzdmMuYzogSW4g
+ZnVuY3Rpb24gJ25mc2Rfc3VwcG9ydF9hY2xfdmVyc2lvbic6DQo+IGZzL25mc2QvbmZzc3ZjLmM6
+MTQ1OjE0OiBlcnJvcjogJ05GU0RfQUNMX01JTlZFUlMnIHVuZGVjbGFyZWQNCj4gDQo+IGFuZCBz
+aW1pbGFyLiBCdWlsZCBmYWlsdXJlcyBhbmQgKG1hbnkgPyBtb3N0ID8gYWxsID8pIG9mIHRoZSBx
+ZW11DQo+IGZhaWx1cmVzDQo+IGFyZSBkdWUgdG8gY29tbWl0IDU1ZDRjNzE2ZWEgKCJuZnNkOiBB
+ZGQgY3VzdG9tIHJwY2JpbmQgY2FsbGJhY2tzIGZvcg0KPiBrbmZzZCIpLg0KDQpBbiB1cGRhdGVk
+IHBhdGNoIHNldCB0aGF0IGZpeGVzIHRoaXMgaXNzdWUgd2FzIHNlbnQgb3V0IGVhcmxpZXIgdG9k
+YXkuDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIs
+IEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
