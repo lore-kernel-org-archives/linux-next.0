@@ -1,51 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kspp-gustavo tree with Linus'
- tree
-Date: Tue, 9 Apr 2019 10:51:38 +1000
-Message-ID: <20190409105138.6b202215@canb.auug.org.au>
-References: <20190408071731.6bd422f3@canb.auug.org.au>
-        <558944e8-5912-dc7c-637c-61dc892bae75@embeddedor.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: manual merge of the mac80211-next tree with the
+ mac80211 tree
+Date: Tue, 9 Apr 2019 11:06:07 +1000
+Message-ID: <20190409110607.29df3cf3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6Hj2W9W++m+9TWR4oeugLQO"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <558944e8-5912-dc7c-637c-61dc892bae75@embeddedor.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+ boundary="Sig_/nk7TK0lKM_uOHgtwjGYIvFv"; protocol="application/pgp-signature"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6Hj2W9W++m+9TWR4oeugLQO
+--Sig_/nk7TK0lKM_uOHgtwjGYIvFv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Gustavo,
+Hi all,
 
-On Mon, 8 Apr 2019 18:53:16 -0500 "Gustavo A. R. Silva" <gustavo@embeddedor=
-.com> wrote:
->
-> I just removed the above commit from my tree.
+Today's linux-next merge of the mac80211-next tree got a conflict in:
 
-OK, thanks.
+  net/mac80211/tx.c
+
+between commit:
+
+  eb9b64e3a9f8 ("mac80211: fix memory accounting with A-MSDU aggregation")
+
+from the mac80211 tree and commit:
+
+  dcec1d9bc8a7 ("mac80211: calculate hash for fq without holding fq->lock i=
+n itxq enqueue")
+
+from the mac80211-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/6Hj2W9W++m+9TWR4oeugLQO
+diff --cc net/mac80211/tx.c
+index 2e816dd67be7,3655aae96df1..000000000000
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@@ -3221,7 -3219,7 +3219,8 @@@ static bool ieee80211_amsdu_aggregate(s
+  	u8 max_subframes =3D sta->sta.max_amsdu_subframes;
+  	int max_frags =3D local->hw.max_tx_fragments;
+  	int max_amsdu_len =3D sta->sta.max_amsdu_len;
+ +	int orig_truesize;
++ 	u32 flow_idx;
+  	__be16 len;
+  	void *data;
+  	bool ret =3D false;
+
+--Sig_/nk7TK0lKM_uOHgtwjGYIvFv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyr7JoACgkQAVBC80lX
-0Gyiuwf/ZrFley/ma9CDR8e4X1Y73hpuoLw5XlulKMM5KeMSqGnMDs+fGG/At2wy
-/E8qao4HET8OC34lnNuPrDP6K+zVey8fVevFgnW5Pp7fNnBAO77MfgutTgGM7LwL
-dfQA81gsgrTm4xRBCh56XTtNQfCIsmVF3l/2qS3aRs5MR2uhh+yJ77Z4fX80SvNb
-Ak/yB8n5cAXIlpagi7E/eynJthzGx+pNkh+c6DVweNq5DGUY96qlxGWC79b3oazb
-B1HdkbAquZ52u4dnw4ewg904VrEGveCX/P5DNUDtCsQDkZ0YR4nKlGPN02D5oTN4
-X7ENHiPJ5idh285PkBFtgssuFVeJ6g==
-=ICcP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyr7/8ACgkQAVBC80lX
+0Gz0cQgAm7Z45grpN06oI1vDHbeyWc1Nf5XOqaDdgOzObo+f8Fbemq832Wv9g9Rv
+2Um1yA8WsPO1n+avHfatwoEV8O34shDxpRxCQkSauALhsdKY4W1Wlp8FA2M7GteV
+E66NVIITDIL8Men0nhNTUG9UFWpI7yeEfzJyHhX0Zm3w3AyVTJqYn/06ikKYObx6
+ue8YTx74ttTG/hK1N9MMoDSGNFqx+XaG9MQPWdqhi30Q1KV10hOpHUNu56ma7ZSQ
+erEM9Lk1R3DJLYKklLGJEXz+x0yXQ+pHYIVYxWY6RNkFz5g+5P8z0j3ptRY6N9ki
+/CohVqDhFhZEEb2RJPDCSpc1jpCRMQ==
+=g+rO
 -----END PGP SIGNATURE-----
 
---Sig_/6Hj2W9W++m+9TWR4oeugLQO--
+--Sig_/nk7TK0lKM_uOHgtwjGYIvFv--
