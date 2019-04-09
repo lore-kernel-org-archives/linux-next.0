@@ -1,44 +1,56 @@
-From: Trond Myklebust <trondmy@hammerspace.com>
-Subject: Re: linux-next: Tree for Apr 9
-Date: Tue, 9 Apr 2019 18:44:03 +0000
-Message-ID: <a7105dcd96843c456116e3aee96fd99a65e76851.camel@hammerspace.com>
-References: <20190409180042.15bb90b6@canb.auug.org.au>
-         <20190409182524.GA18518@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the nvdimm-fixes tree
+Date: Wed, 10 Apr 2019 07:15:55 +1000
+Message-ID: <20190410071555.6a283e81@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Lh_f5ZKb7voCN2YyW9N7roG"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190409182524.GA18518@roeck-us.net>
-Content-Language: en-US
-Content-ID: <690DFFD24CAF2F4E98FF4FD51C00FE7E@namprd13.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linux@roeck-us.net" <linux@roeck-us.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bfields@redhat.com" <bfields@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA0LTA5IGF0IDExOjI1IC0wNzAwLCBHdWVudGVyIFJvZWNrIHdyb3RlOg0K
-PiBPbiBUdWUsIEFwciAwOSwgMjAxOSBhdCAwNjowMDo0MlBNICsxMDAwLCBTdGVwaGVuIFJvdGh3
-ZWxsIHdyb3RlOg0KPiA+IEhpIGFsbCwNCj4gPiANCj4gPiBDaGFuZ2VzIHNpbmNlIDIwMTkwNDA4
-Og0KPiA+IA0KPiA+IFRoZSBtYWM4MDIxMS1uZXh0IHRyZWUgZ2FpbmVkIGEgY29uZmxpY3QgYWdh
-aW5zdCB0aGUgbWFjODAyMTEgdHJlZS4NCj4gPiANCj4gPiBUaGUgZHJtIHRyZWUgc3RpbGwgaGFk
-IGl0cyBidWlsZCBmYWlsdXJlIGZvciB3aGljaCBJIGRpc2FibGVkIGENCj4gPiBkcml2ZXIuDQo+
-ID4gDQo+ID4gVGhlIGRybS1taXNjIHRyZWUgZ2FpbmVkIGNvbmZsaWN0cyBhZ2FpbnN0IHRoZSBk
-cm0gdHJlZSBhbmQgYWxzbyBhDQo+ID4gYnVpbGQNCj4gPiBmYWlsdXJlIGZvciB3aGljaCBJIG1h
-cmtlZCBhIGRyaXZlciBhcyBCUk9LRU4uDQo+ID4gDQo+ID4gVGhlIHNjc2ktbWtwIHRyZWUgZ2Fp
-bmVkIGEgYnVpbGQgZmFpbHVyZSBmb3Igd2hpY2ggSSByZXZlcnRlZCBhDQo+ID4gY29tbWl0Lg0K
-PiA+IA0KPiA+IFRoZSBydGMgdHJlZSBnYWluZWQgYSBjb25mbGljdCBhZ2FpbnN0IHRoZSBvbWFw
-IHRyZWUuDQo+ID4gDQo+ID4gTm9uLW1lcmdlIGNvbW1pdHMgKHJlbGF0aXZlIHRvIExpbnVzJyB0
-cmVlKTogNTU4Nw0KPiA+ICA1Mzg2IGZpbGVzIGNoYW5nZWQsIDE3NjkwNiBpbnNlcnRpb25zKCsp
-LCA4NzQ5MyBkZWxldGlvbnMoLSkNCj4gPiANCj4gDQo+IFRoaXMgb25lIGRlc2VydmVzIGEgcmVw
-bHkuDQo+IA0KPiBCdWlsZCByZXN1bHRzOg0KPiAJdG90YWw6IDE1OSBwYXNzOiAxNDQgZmFpbDog
-MTUNCj4gRmFpbGVkIGJ1aWxkczogDQo+IAk8bWFueT4NCj4gUWVtdSB0ZXN0IHJlc3VsdHM6DQo+
-IAl0b3RhbDogMzQ1IHBhc3M6IDIyNyBmYWlsOiAxMTgNCj4gRmFpbGVkIHRlc3RzOiANCj4gCTxt
-YW55Pg0KPiANCj4gQnVpbGQgZmFpbHVyZSBpczoNCj4gDQo+IHMvbmZzZC9uZnNzdmMuYzogSW4g
-ZnVuY3Rpb24gJ25mc2Rfc3VwcG9ydF9hY2xfdmVyc2lvbic6DQo+IGZzL25mc2QvbmZzc3ZjLmM6
-MTQ1OjE0OiBlcnJvcjogJ05GU0RfQUNMX01JTlZFUlMnIHVuZGVjbGFyZWQNCj4gDQo+IGFuZCBz
-aW1pbGFyLiBCdWlsZCBmYWlsdXJlcyBhbmQgKG1hbnkgPyBtb3N0ID8gYWxsID8pIG9mIHRoZSBx
-ZW11DQo+IGZhaWx1cmVzDQo+IGFyZSBkdWUgdG8gY29tbWl0IDU1ZDRjNzE2ZWEgKCJuZnNkOiBB
-ZGQgY3VzdG9tIHJwY2JpbmQgY2FsbGJhY2tzIGZvcg0KPiBrbmZzZCIpLg0KDQpBbiB1cGRhdGVk
-IHBhdGNoIHNldCB0aGF0IGZpeGVzIHRoaXMgaXNzdWUgd2FzIHNlbnQgb3V0IGVhcmxpZXIgdG9k
-YXkuDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIs
-IEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
+--Sig_/Lh_f5ZKb7voCN2YyW9N7roG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dan,
+
+In commit
+
+  631804370762 ("tools/testing/nvdimm: Retain security state after overwrit=
+e")
+
+Fixes tag
+
+  Fixes: 926f74802cb ("tools/testing/nvdimm: Add overwrite support for nfit=
+_test")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Lh_f5ZKb7voCN2YyW9N7roG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlytC4sACgkQAVBC80lX
+0GwrPQf/cxotoDN5+QHPjWSNJ1vkJYZRiAmUIAa0RMJMbJhdRCpUtjZDCAKuu/EB
+aRrnCIO6eftLIR6my8lrzpDeqxHT0omHY9AWJI791mcvjIqcqmVF0mskGd6DJpGy
+VxvleYMuWo1ReJM84bplc2vu25JrgT2AGl9svOVE5fPXCEOHk7gGog8Jzov8uQfu
+Os6SaVf2Xjvyr9M9umf8Q9apzvmoSsN0Ebxr3zNfO8seYaZgEJ64mQQ+tuXdTW2k
+IgkAuu9OS47L/XGYaLJucHhylQ9ZpD+syiglw0V6cLyblYTEIFqvG6lGX+2iBmle
+PGz9mOfLt5+truOrhqxlA6NwcMOS4w==
+=PjQh
+-----END PGP SIGNATURE-----
+
+--Sig_/Lh_f5ZKb7voCN2YyW9N7roG--
