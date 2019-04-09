@@ -1,47 +1,38 @@
-From: Gerd Hoffmann <kraxel@redhat.com>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the drm tree
-Date: Tue, 9 Apr 2019 09:23:52 +0200
-Message-ID: <20190409072352.2qcuarc76kjgnhkm@sirius.home.kraxel.org>
-References: <20190409113410.3d2a8afc@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: manual merge of the mac80211-next tree with the
+ mac80211 tree
+Date: Tue, 09 Apr 2019 09:27:35 +0200
+Message-ID: <7deebb8e8c82e4455af8fc4963ffc7acca3aab36.camel@sipsolutions.net>
+References: <20190409110607.29df3cf3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190409113410.3d2a8afc@canb.auug.org.au>
+In-Reply-To: <20190409110607.29df3cf3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Felix Fietkau <nbd@nbd.name>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 09, 2019 at 11:34:10AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the drm-misc tree got conflicts in:
-> 
->   drivers/gpu/drm/cirrus/cirrus_drv.h
->   drivers/gpu/drm/cirrus/cirrus_ttm.c
-> 
-> between commits:
-> 
->   aa8e2435b3d4 ("drm/ttm: Define a single DRM_FILE_PAGE_OFFSET constant")
->   7d1500f9fbfc ("drm/ttm: Remove file_page_offset parameter from ttm_bo_device_init()")
->   bed2dd84212e ("drm/ttm: Quick-test mmap offset in ttm_bo_mmap()")
-> 
-> from the drm tree and commit:
-> 
->   ab3e023b1b4c ("drm/cirrus: rewrite and modernize driver.")
-> 
-> from the drm-misc tree.
-> 
-> I fixed it up (I just removed the files) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Hi Stephen,
 
-Ping drm-misc maintainers.  Time to update drm-misc-next with a
-backmerge I think?
+> Today's linux-next merge of the mac80211-next tree got a conflict in:
+> 
+>   net/mac80211/tx.c
+> 
+> between commit:
+> 
+>   eb9b64e3a9f8 ("mac80211: fix memory accounting with A-MSDU aggregation")
+> 
+> from the mac80211 tree and commit:
+> 
+>   dcec1d9bc8a7 ("mac80211: calculate hash for fq without holding fq->lock in itxq enqueue")
+> 
+> from the mac80211-next tree.
 
-thanks,
-  Gerd
+Thanks for the heads-up!
+
+But yes, I'm aware. It seemed simple enough though that I decided to
+keep it like that, I didn't really find a better solution.
+
+johannes
