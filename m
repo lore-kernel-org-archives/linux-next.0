@@ -1,60 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Date: Wed, 10 Apr 2019 14:57:34 +1000
-Message-ID: <20190410145734.150e881c@canb.auug.org.au>
-References: <20190409162749.7eb6656f@canb.auug.org.au>
-        <20190410112138.178aa7bd@canb.auug.org.au>
-        <yq1tvf6myp6.fsf@oracle.com>
-        <1554869059.3208.0.camel@HansenPartnership.com>
+From: Naga Sureshkumar Relli <nagasure@xilinx.com>
+Subject: RE: linux-next: Tree for Apr 9 (spi/spi-zynq-qspi.c)
+Date: Wed, 10 Apr 2019 05:46:54 +0000
+Message-ID: <MWHPR02MB2623DDF884FD2DAA9C4B7C40AF2E0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <20190409180042.15bb90b6@canb.auug.org.au>
+ <4c933ec6-0247-5820-dfc2-326a5bc6b227@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Wbmrv9PJSc+XgRhNyovFeHs"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554869059.3208.0.camel@HansenPartnership.com>
+In-Reply-To: <4c933ec6-0247-5820-dfc2-326a5bc6b227@infradead.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bvanassche@acm.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Simek <michals@xilinx.com>, linux-spi <linux-spi@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Wbmrv9PJSc+XgRhNyovFeHs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Randy,
 
-Hi all,
+I have sent the patch on top of the patch sent by yuehaibing@huawei.com.
 
-On Wed, 10 Apr 2019 06:04:19 +0200 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
->
-> On Tue, 2019-04-09 at 21:33 -0400, Martin K. Petersen wrote:
-> >  =20
-> > > > I have reverted that commit for today. =20
-> > >=20
-> > > This has now migrated to the scsi tree. =20
-> >=20
-> > I have a fix in my tree but I haven't pushed it yet. =20
+Thanks,
+Naga Sureshkumar Relli
+
+> -----Original Message-----
+> From: Randy Dunlap <rdunlap@infradead.org>
+> Sent: Tuesday, April 9, 2019 8:52 PM
+> To: Stephen Rothwell <sfr@canb.auug.org.au>; Linux Next Mailing List <lin=
+ux-
+> next@vger.kernel.org>
+> Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Naga Suresh=
+kumar Relli
+> <nagasure@xilinx.com>; Michal Simek <michals@xilinx.com>; linux-spi <linu=
+x-
+> spi@vger.kernel.org>
+> Subject: Re: linux-next: Tree for Apr 9 (spi/spi-zynq-qspi.c)
 >=20
-> It's upstream in both trees now.
-
-Thanks, it'll be in -next tomorrow.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Wbmrv9PJSc+XgRhNyovFeHs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlytd74ACgkQAVBC80lX
-0GwAxQf9G/Oe1vx4RmBGQbAqqUzUf9qqKv56OZYl2ZlDh8RUkobpvr4IhSDcRpiQ
-IYIGdZpmIhMkJY8J5775ZHl0VOazURYYoF2QfHCR4OUaj0HIrDinHHvk8a0XX/7C
-Gxs46pST9T4OnZ8NvdBpw71zZRVRtQefJBBSZCYsQuy8kIwt7+4YGciUMWFEX4Yn
-g+Kp8LCB7g3Oh4JzMQT2sj5SlP6kS01ysKS5qJFhMMn3jFH0iNZw8u8fek/pnwwu
-F5klR+nqHBHdK45c/vYT1efwrfHPTZnOaaAyb7H4yGPYdClCHoRlhJRJvROg8jtz
-sJm69uav7e3I9EOaq/KdvNWltzxwVQ==
-=g+UW
------END PGP SIGNATURE-----
-
---Sig_/Wbmrv9PJSc+XgRhNyovFeHs--
+> On 4/9/19 1:00 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20190408:
+> >
+>=20
+> on x86_64:
+>=20
+> ld: drivers/spi/spi-zynq-qspi.o: in function `zynq_qspi_supports_op':
+> spi-zynq-qspi.c:(.text+0x185): undefined reference to `spi_mem_default_su=
+pports_op'
+>=20
+>=20
+> Full randconfig file is attached.
+>=20
+> --
+> ~Randy
