@@ -1,46 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the orangefs tree
-Date: Thu, 11 Apr 2019 07:05:11 +1000
-Message-ID: <20190411070511.1188c602@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the devicetree tree
+Date: Thu, 11 Apr 2019 07:27:58 +1000
+Message-ID: <20190411072758.4fa7b9a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DBbhbAfzVPos_3Zmo2yIseP"; protocol="application/pgp-signature"
+ boundary="Sig_/LQokV/iAjCunMV7O7o+hXwJ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/DBbhbAfzVPos_3Zmo2yIseP
+--Sig_/LQokV/iAjCunMV7O7o+hXwJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi Rob,
 
-Commit
+In commit
 
-  a9781aff5d95 ("orangefs: add orangefs_revalidate_mapping")
+  7800990023f4 ("of: use correct function prototype for of_overlay_fdt_appl=
+y()")
 
-is missing a Signed-off-by from its committer.
+Fixes tag
+
+  Fixes: commit 39a751a4cb7e ("of: change overlay apply input data from unf=
+lattened to FDT")
+
+has these problem(s):
+
+  - leading word 'commit' unexpected
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/DBbhbAfzVPos_3Zmo2yIseP
+--Sig_/LQokV/iAjCunMV7O7o+hXwJ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyuWocACgkQAVBC80lX
-0Gwkhwf+LAQhAL3G0W7pmmmqNR0KISJCfEpDv9nIggiv4dHfaH+LinuXJ2+ZiKjP
-Z219MQOFi1rsLLdlR30RgvD5g00HIuJR87wzyigmSW/S2lGrcVNm7q4aLJcN5Zg1
-eboD9adKSbcJQCxu7lTtGlik7Tcf9VQCmEXOV5MPVhSXQl7wRu+J/7sHKpZn4/CB
-X9/QmqfF7lnoY/bP73ztZsEhN3/cnEXTSGySJ8SvirDXsqZl+PDZ0DuzOq8KTFKt
-cPnSeFYF/tLVZ94j69u/PRyo9F2YWlFqvg/djEEO9yv1CDqGkusW0UWqDH1/ocq3
-UGo+/e7Abd01TkBH2zcgKEGFTtArwg==
-=va5W
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyuX94ACgkQAVBC80lX
+0GyX+Af9HttUtYMG3UDHyUHqYx5Zr/yb8Y9lDg9zvZaCVaL3XW4ddRTY4sOVhHdp
+R8ghiyfyqvgk63ZFvRLIA1DHBPoPyrhOgHNZ8sMU4pwnDfYTZDtixck1bRl/524w
+1x+lRqWCCD6RCLPfpy12Rms90Gl7UQ6CD8Xm6CFYtOUm97eQTUizzw8ugE9HCOmq
+0tTqIUuYPjSqcBbkl2fOTeiPfqfhw9Nn+FeEZWjrGXcCPpPygXsRfdr7U3XoqzKx
+TUtYftGqaVqcIUAaVp81KDFzyAJNof4UUd09ROmEmuRSvDjYydGfNYE4kDT1JD9G
+jedBFTr8BpsHV5OR+Y0XDEVncD0OjQ==
+=pVTM
 -----END PGP SIGNATURE-----
 
---Sig_/DBbhbAfzVPos_3Zmo2yIseP--
+--Sig_/LQokV/iAjCunMV7O7o+hXwJ--
