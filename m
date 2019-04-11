@@ -1,56 +1,158 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the orangefs tree
-Date: Thu, 11 Apr 2019 09:19:47 +1000
-Message-ID: <20190411091947.741fa90d@canb.auug.org.au>
+Subject: linux-next: manual merge of the apparmor tree with Linus' tree
+Date: Thu, 11 Apr 2019 12:24:08 +1000
+Message-ID: <20190411122408.7b35cf74@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TD_ROFwRk9Q9Bq8gyuRi6Mj"; protocol="application/pgp-signature"
+ boundary="Sig_/Q/8EpOQ53.R7ce447/f/weu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, Chris Coulson <chris.coulson@canonical.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/TD_ROFwRk9Q9Bq8gyuRi6Mj
+--Sig_/Q/8EpOQ53.R7ce447/f/weu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi all,
 
-After merging the orangefs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the apparmor tree got a conflict in:
 
-/home/sfr/next/next/fs/orangefs/file.c:438:18: error: initialization of 'vm=
-_fault_t (*)(struct vm_fault *)' {aka 'unsigned int (*)(struct vm_fault *)'=
-} from incompatible pointer type 'int (*)(struct vm_fault *)' [-Werror=3Din=
-compatible-pointer-types]
-  .page_mkwrite =3D orangefs_page_mkwrite,
-                  ^~~~~~~~~~~~~~~~~~~~~
+  security/apparmor/lsm.c
 
-Caused by commit
+between commit:
 
-  c32607e8fc3b ("orangefs: write range tracking")
+  e33c1b992377 ("apparmor: Restore Y/N in /sys for apparmor's "enabled"")
 
-I have used the orangefs tree from next-20190410 for today.
+from Linus' tree and commit:
+
+  876dd866c084 ("apparmor: Initial implementation of raw policy blob compre=
+ssion")
+
+from the apparmor tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/TD_ROFwRk9Q9Bq8gyuRi6Mj
+diff --cc security/apparmor/lsm.c
+index 87500bde5a92,e1e9c3c01cd3..000000000000
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@@ -25,8 -25,8 +25,9 @@@
+  #include <linux/user_namespace.h>
+  #include <linux/netfilter_ipv4.h>
+  #include <linux/netfilter_ipv6.h>
++ #include <linux/zlib.h>
+  #include <net/sock.h>
+ +#include <uapi/linux/mount.h>
+ =20
+  #include "include/apparmor.h"
+  #include "include/apparmorfs.h"
+@@@ -1420,46 -1424,37 +1436,77 @@@ static int param_get_aauint(char *buffe
+  	return param_get_uint(buffer, kp);
+  }
+ =20
+ +/* Can only be set before AppArmor is initialized (i.e. on boot cmdline).=
+ */
+ +static int param_set_aaintbool(const char *val, const struct kernel_param=
+ *kp)
+ +{
+ +	struct kernel_param kp_local;
+ +	bool value;
+ +	int error;
+ +
+ +	if (apparmor_initialized)
+ +		return -EPERM;
+ +
+ +	/* Create local copy, with arg pointing to bool type. */
+ +	value =3D !!*((int *)kp->arg);
+ +	memcpy(&kp_local, kp, sizeof(kp_local));
+ +	kp_local.arg =3D &value;
+ +
+ +	error =3D param_set_bool(val, &kp_local);
+ +	if (!error)
+ +		*((int *)kp->arg) =3D *((bool *)kp_local.arg);
+ +	return error;
+ +}
+ +
+ +/*
+ + * To avoid changing /sys/module/apparmor/parameters/enabled from Y/N to
+ + * 1/0, this converts the "int that is actually bool" back to bool for
+ + * display in the /sys filesystem, while keeping it "int" for the LSM
+ + * infrastructure.
+ + */
+ +static int param_get_aaintbool(char *buffer, const struct kernel_param *k=
+p)
+ +{
+ +	struct kernel_param kp_local;
+ +	bool value;
+ +
+ +	/* Create local copy, with arg pointing to bool type. */
+ +	value =3D !!*((int *)kp->arg);
+ +	memcpy(&kp_local, kp, sizeof(kp_local));
+ +	kp_local.arg =3D &value;
+ +
+ +	return param_get_bool(buffer, &kp_local);
+ +}
+ +
++ static int param_set_aacompressionlevel(const char *val,
++ 					const struct kernel_param *kp)
++ {
++ 	int error;
++=20
++ 	if (!apparmor_enabled)
++ 		return -EINVAL;
++ 	if (apparmor_initialized)
++ 		return -EPERM;
++=20
++ 	error =3D param_set_int(val, kp);
++=20
++ 	aa_g_rawdata_compression_level =3D clamp(aa_g_rawdata_compression_level,
++ 					       Z_NO_COMPRESSION,
++ 					       Z_BEST_COMPRESSION);
++ 	pr_info("AppArmor: policy rawdata compression level set to %u\n",
++ 		aa_g_rawdata_compression_level);
++=20
++ 	return error;
++ }
++=20
++ static int param_get_aacompressionlevel(char *buffer,
++ 					const struct kernel_param *kp)
++ {
++ 	if (!apparmor_enabled)
++ 		return -EINVAL;
++ 	if (apparmor_initialized && !policy_view_capable(NULL))
++ 		return -EPERM;
++ 	return param_get_int(buffer, kp);
++ }
++=20
+  static int param_get_audit(char *buffer, const struct kernel_param *kp)
+  {
+  	if (!apparmor_enabled)
+
+--Sig_/Q/8EpOQ53.R7ce447/f/weu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyuehMACgkQAVBC80lX
-0Gz2dwf/Wh3cZVr6xtLK9sa9G+qy2Tv/uh+KrApbAHRN6CNRJ586lKdMKYfPkkNF
-g7vog9xDKOWmGLoLJJ1DZUdleTuf+6QsolBkGJhW+p8/1eeii/+cVnmmwNR9vFJn
-rqigYe0aWvxR85A4GqdEqtEMxW1r/QDw0rTdkpGb0mN8mhHAbxQtnBiB/32Ty1S5
-GicRROqzafGcgOlt6FVtOOt8kGBRr9bqC9zO1AXR3eZrZj+xMbw38aw2jlZ5BEJB
-9uZHS5k2zxiflx53ce3+iF1VmWT2+1ElX4vT9sEw+NYCw3aX1cmWJqm2BJT4/E5q
-lfTaxeYP3ZZsJhJ11i+fr6jqgSlP5g==
-=snbl
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyupUgACgkQAVBC80lX
+0Gx45gf/VB40HfJVDnmWY+s10LavRxSl+A0EbfHr4qU6PsC+vjkxxO62tWWLzcVZ
+SoGk/RhQ6zFZ6v7A8DJ6zFPKt+SyzKu8z4wvm5qaT+p5Tixjm1AzdL9re0FUEz7u
+QH9q5eGM7HiS1phlanEJVscIm1wtRkXZo8HYmWKOh8ukAEF5Jv0T5OZ5uGurFeUq
+/xelZvOpWqljZrYiUFwPqoMD7loqiH0kYLJTTgpXVlBGgdlbV6Qm3H8oOgEMO6No
+j1marxDD2H2VtZsuO6vg94Uf3MjNXjFhJ2SHTpGWKG4TQQ2oxorYfq+FvyAqGhD5
+Da4gRfEZutuLBQCmR8M6FC+AdDcIyA==
+=HLfv
 -----END PGP SIGNATURE-----
 
---Sig_/TD_ROFwRk9Q9Bq8gyuRi6Mj--
+--Sig_/Q/8EpOQ53.R7ce447/f/weu--
