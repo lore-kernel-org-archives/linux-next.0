@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the mmc-fixes tree
-Date: Fri, 12 Apr 2019 07:20:49 +1000
-Message-ID: <20190412072049.08b5eeb6@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the apparmor tree
+Date: Fri, 12 Apr 2019 07:32:01 +1000
+Message-ID: <20190412073201.5b8ad548@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rkIH=yXnYYacT/rKsFybRYs"; protocol="application/pgp-signature"
+ boundary="Sig_/KV+JkmtVQqczK+HXrh_=yhh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Faiz Abbas <faiz_abbas@ti.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/rkIH=yXnYYacT/rKsFybRYs
+--Sig_/KV+JkmtVQqczK+HXrh_=yhh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,12 +19,12 @@ Hi all,
 
 In commit
 
-  5c41ea6d5200 ("mmc: sdhci-omap: Don't finish_mrq() on a command error dur=
-ing tuning")
+  270ad142eb0f ("apparmor: fix missing ZLIB defines")
 
 Fixes tag
 
-  Fixes: 5b0d62108b46 ("mmc: sdhci-omap: Add platform specific reset
+  Fixes: 876dd866c084 ("apparmor: Initial implementation of raw policy blob=
+ co
 
 has these problem(s):
 
@@ -37,20 +37,20 @@ Please do not split Fixes tags over more than one line.
 Cheers,
 Stephen Rothwell
 
---Sig_/rkIH=yXnYYacT/rKsFybRYs
+--Sig_/KV+JkmtVQqczK+HXrh_=yhh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyvr7EACgkQAVBC80lX
-0GyELgf/UHblpwwqE1ZuCeiPBFhG8c1q868YBFpJzBv766hUCaa97L5mWu0Jc/7q
-Gv19k8lNyNEBGNC+C9YyjyapARB9MuMGVHq3/FHUsLqa0gJ+7NR7tGo+SgDB97sO
-z+b90XAukclD8q+AQlIEuVQ3F5a9M4sUq2yC8NNlCyoyt1AWEl/IIV+J80yA2+zu
-wogKm2ur6xI/T1iUBgEDwzaZCEgWwh3dXsChZGE2X8XIUTqSD6hRjXcJF+jMqypl
-9TbWJ97t9r7s40WpqvtKZGBVPnXfmhVxDvUBPKYd7J9tvQ5lxGJUFQaWUI1sPpR2
-2RCI5Xm3QPXk+wi6dLWBCVUcozRGRQ==
-=71oc
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyvslEACgkQAVBC80lX
+0GzWUQf+NBDLkS4TEXng1cnPegsE3iXTNOpfgSBojRCBZLJycNaULxilKtBqVoDP
+6/s1tiwIP4Zcz60ZUE/0MggoifQ/Z097eMfxCbgZW/bMph4kzErjLz6F2VZcCHXa
+3x0/FFqeZWMqU7uvpQ4zrA+PcAr/nsUH7oeTe1WOO2dJAhB29qg3JN375WN3gS89
+4VCW4IqfB9FveROTR1tOJzPIaQT/QZGglaPkaqyk4d1pLFF/5RlhxWEEns1ZnKWH
+6xULiRw6Wj3PlpEpVXhvpqJSlyQLwHrY2AVBvwVs4OQa+InCF701bOs5EzEufoRK
+m96z0sg7ZYoHJa3ZHPHNOoqahhBFAw==
+=Ag3f
 -----END PGP SIGNATURE-----
 
---Sig_/rkIH=yXnYYacT/rKsFybRYs--
+--Sig_/KV+JkmtVQqczK+HXrh_=yhh--
