@@ -1,75 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the imx-mxs tree
-Date: Fri, 12 Apr 2019 14:49:21 +1000
-Message-ID: <20190412144921.3a152478@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the netfilter-next tree
+Date: Fri, 12 Apr 2019 16:37:20 +1000
+Message-ID: <20190412163720.576c6610@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/a9VId0sWDIARXq36H946r=_"; protocol="application/pgp-signature"
+ boundary="Sig_/oR8njQFj0U8FUgPgAFadP=D"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Shawn Guo <shawn.guo@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robert Yang <decatf@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/a9VId0sWDIARXq36H946r=_
+--Sig_/oR8njQFj0U8FUgPgAFadP=D
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in:
+After merging the netfilter tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-  Documentation/devicetree/bindings/vendor-prefixes.txt
+In file included from /home/sfr/next/next/net/bridge/br_input.c:19:
+/home/sfr/next/next/include/net/netfilter/nf_queue.h:16:23: error: field 's=
+tate'
+ has incomplete type
+  struct nf_hook_state state;
+                       ^~~~~
 
-between commit:
+Caused by commit
 
-  189733b0a7e4 ("dt-bindings: Add vendor prefix for Rakuten Kobo, Inc.")
+  971502d77faa ("bridge: netfilter: unroll NF_HOOK helper in bridge input p=
+ath")
 
-from the imx-mxs tree and commit:
+This build has CONFIG_NETFILTER not set.
 
-  2e5cee6c7622 ("dt-bindings: Add vendor prefix for Kionix, Inc.")
+I have applied this patch for today:
 
-from the staging tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 12 Apr 2019 16:32:47 +1000
+Subject: [PATCH] bridge: only include nf_queue.h if needed
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+---
+ net/bridge/br_input.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+index e0aacfedcfe1..86dc46f6a68f 100644
+--- a/net/bridge/br_input.c
++++ b/net/bridge/br_input.c
+@@ -16,7 +16,9 @@
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
+ #include <linux/netfilter_bridge.h>
++#ifdef CONFIG_NETFILTER_FAMILY_BRIDGE
+ #include <net/netfilter/nf_queue.h>
++#endif
+ #include <linux/neighbour.h>
+ #include <net/arp.h>
+ #include <linux/export.h>
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-index 5f2b185a04e6,93753f447c20..000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@@ -211,7 -210,7 +211,8 @@@ kiebackpeter    Kieback & Peter Gmb
-  kinetic Kinetic Technologies
-  kingdisplay	King & Display Technology Co., Ltd.
-  kingnovel	Kingnovel Technology Co., Ltd.
-+ kionix	Kionix, Inc.
- +kobo	Rakuten Kobo Inc.
-  koe	Kaohsiung Opto-Electronics Inc.
-  kosagi	Sutajio Ko-Usagi PTE Ltd.
-  kyo	Kyocera Corporation
-
---Sig_/a9VId0sWDIARXq36H946r=_
+--Sig_/oR8njQFj0U8FUgPgAFadP=D
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlywGNEACgkQAVBC80lX
-0GxX0Qf/RyeVmwoWjw/cwDhEpO/ExAPZYuImXDgfxo1mjw/EuqR7CPh9oJI38SNm
-SkVTxDToJPzWk7TdjsergbLqaaKohVpyB7S5ZhOjOvDxytmWaWAaZicASlztDhhY
-FvYhfHSfeRb+FmQA1kG4Bo/iDgN9p1PFzeH7/oLciHvTjbovimJn0C/psHo822e7
-pXEYGr+k0yYvuxR6GImtQMvYLJHpSRkzILp81TwVxzdmmjgiyzvEg+8O+fSLcOHg
-CelSksLoRNCa5t9nH8MHJdwiGjo3fj6JISpQBjz/jqcpExtm5kU4FkNWs+XIO+On
-0vmC1Nd4M5JmyxkzqHMDpooGLsbXPw==
-=oDxS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlywMiAACgkQAVBC80lX
+0GylpAf+MwFoGn4mG286guZxJhwHgLa4J/ZQuJonNtQPbXxNNzJXpvJkfWZUm7h5
+vQAf+NtuAVoC7vG4zGubdkjXBo6nN+OEQjcoJMLgyou0EjVJDoj47+r02S0LwbZ+
+Flt/9IHsM9nN3qA2Rxdi+gSRv/NFMciwJQwORU8krfWpDRS3L8tArn4vwDoFCIir
+K4y5ITYJ5RhWkA6ML6TGR3dVqCz1IQKJw7W3jTF/MliWhURIRvk8oMsAazOhHc/e
+/vAjvYfb+Kchfc0MgZwEEYdiTgTq8M3mINkqSXmJBxLXjTJ47v8nHXjoTHGty5++
+fgwLWm/A/zhfLYSFiKUJNgqliTzMsg==
+=S0en
 -----END PGP SIGNATURE-----
 
---Sig_/a9VId0sWDIARXq36H946r=_--
+--Sig_/oR8njQFj0U8FUgPgAFadP=D--
