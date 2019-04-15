@@ -1,35 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Mon, 15 Apr 2019 14:25:14 +1000
-Message-ID: <20190415142514.6ca10bb5@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the block tree
+Date: Mon, 15 Apr 2019 15:59:39 +1000
+Message-ID: <20190415155939.35325ef1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wX+6k_R044lb2vPVfl5Eeod"; protocol="application/pgp-signature"
+ boundary="Sig_/d1NnJ8l8lFK=6uQL4lNPhGb"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Torsten Duwe <duwe@lst.de>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bvanassche@acm.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Martin Wilck <mwilck@suse.com>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/wX+6k_R044lb2vPVfl5Eeod
+--Sig_/d1NnJ8l8lFK=6uQL4lNPhGb
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+Today's linux-next merge of the scsi tree got a conflict in:
 
-  mm/kasan/Makefile
+  drivers/scsi/sd.c
 
 between commit:
 
-  e2092740b723 ("kasan: Makefile: Replace -pg with CC_FLAGS_FTRACE")
+  c92e2f04b359 ("block: disk_events: introduce event flags")
 
-from the arm64 tree and commit:
+from the block tree and commit:
 
-  57b78a62e7f2 ("x86/uaccess, kasan: Fix KASAN vs SMAP")
+  21e6ba3f0e02 ("scsi: sd: Rely on the driver core for asynchronous probing=
+")
+  d16ece577bf2 ("scsi: sd: Inline sd_probe_part2()")
 
-from the tip tree.
+from the scsi tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,41 +44,78 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc mm/kasan/Makefile
-index f06ee820d356,613dfe681e9f..000000000000
---- a/mm/kasan/Makefile
-+++ b/mm/kasan/Makefile
-@@@ -5,9 -6,10 +6,10 @@@ UBSAN_SANITIZE_generic_report.o :=3D=20
-  UBSAN_SANITIZE_tags.o :=3D n
-  KCOV_INSTRUMENT :=3D n
+diff --cc drivers/scsi/sd.c
+index ebc80354714c,e610b393809b..000000000000
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@@ -3404,8 -3374,49 +3342,50 @@@ static int sd_probe(struct device *dev
+  	get_device(dev);
+  	dev_set_drvdata(dev, sdkp);
  =20
- -CFLAGS_REMOVE_common.o =3D -pg
- -CFLAGS_REMOVE_generic.o =3D -pg
- -CFLAGS_REMOVE_generic_report.o =3D -pg
- -CFLAGS_REMOVE_tags.o =3D -pg
- +CFLAGS_REMOVE_common.o =3D $(CC_FLAGS_FTRACE)
- +CFLAGS_REMOVE_generic.o =3D $(CC_FLAGS_FTRACE)
-++CFLAGS_REMOVE_generic_report.o =3D $(CC_FLAGS_FTRACE)
- +CFLAGS_REMOVE_tags.o =3D $(CC_FLAGS_FTRACE)
+- 	get_device(&sdkp->dev);	/* prevent release before async_schedule */
+- 	async_schedule_domain(sd_probe_async, sdkp, &scsi_sd_probe_domain);
++ 	gd->major =3D sd_major((index & 0xf0) >> 4);
++ 	gd->first_minor =3D ((index & 0xf) << 4) | (index & 0xfff00);
++=20
++ 	gd->fops =3D &sd_fops;
++ 	gd->private_data =3D &sdkp->driver;
++ 	gd->queue =3D sdkp->device->request_queue;
++=20
++ 	/* defaults, until the device tells us otherwise */
++ 	sdp->sector_size =3D 512;
++ 	sdkp->capacity =3D 0;
++ 	sdkp->media_present =3D 1;
++ 	sdkp->write_prot =3D 0;
++ 	sdkp->cache_override =3D 0;
++ 	sdkp->WCE =3D 0;
++ 	sdkp->RCD =3D 0;
++ 	sdkp->ATO =3D 0;
++ 	sdkp->first_scan =3D 1;
++ 	sdkp->max_medium_access_timeouts =3D SD_MAX_MEDIUM_TIMEOUTS;
++=20
++ 	sd_revalidate_disk(gd);
++=20
++ 	gd->flags =3D GENHD_FL_EXT_DEVT;
++ 	if (sdp->removable) {
++ 		gd->flags |=3D GENHD_FL_REMOVABLE;
++ 		gd->events |=3D DISK_EVENT_MEDIA_CHANGE;
+++		gd->event_flags =3D DISK_EVENT_FLAG_POLL | DISK_EVENT_FLAG_UEVENT;
++ 	}
++=20
++ 	blk_pm_runtime_init(sdp->request_queue, dev);
++ 	device_add_disk(dev, gd, NULL);
++ 	if (sdkp->capacity)
++ 		sd_dif_config_host(sdkp);
++=20
++ 	sd_revalidate_disk(gd);
++=20
++ 	if (sdkp->security) {
++ 		sdkp->opal_dev =3D init_opal_dev(sdp, &sd_sec_submit);
++ 		if (sdkp->opal_dev)
++ 			sd_printk(KERN_NOTICE, sdkp, "supports TCG Opal\n");
++ 	}
++=20
++ 	sd_printk(KERN_NOTICE, sdkp, "Attached SCSI %sdisk\n",
++ 		  sdp->removable ? "removable " : "");
++ 	scsi_autopm_put_device(sdp);
  =20
-  # Function splitter causes unnecessary splits in __asan_load1/__asan_stor=
-e1
-  # see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D63533
+  	return 0;
+ =20
 
---Sig_/wX+6k_R044lb2vPVfl5Eeod
+--Sig_/d1NnJ8l8lFK=6uQL4lNPhGb
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly0B6oACgkQAVBC80lX
-0GyX2gf9Ezi7gad1MlJbVog/pBu5QtRlNTm0FQ3wCKyxWAaRzzZ+Yi10e9eC/QDi
-N/GLwmBmNAchgFpXBEn3rOyZZVRVuIH831aeFQKCesOwbQ6IFxY5LUzRlE48Ciov
-d01NeWpszocpH/eEsHd7+LdMGqtd3j+1GO9hZkE5U0mCdGe4SekEutdzTIPiPxa+
-UGlbhV9v+1D9vwB5kGrd7dyY+EMvGeO18VwiEvh0aPgPwOAqCLTj+HWumwLJB2of
-gwQLAi0eZvytYYvjdD/rhsrz1vllglN+MU4aSwDTkNP50kHch0XlePXNfctmt7hi
-ZO0WUKvQr1pu5oK9uxSjmMUfxeewfg==
-=Ybqa
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly0HcsACgkQAVBC80lX
+0GwbTQf+Jb5xUf5Ebg5uBgAKNEh0JT+CSlMUlVse1KhBLCjjdsmf5WfdDioIi1pw
+RzNS+dtHjhYjQr584aZA8gmWT/f8sBNbCYTN6UGmK1VjLaZ+GyTob/v3NNwvv5g0
+DYSGAd38tYrJAmchuwX3i58+0nGo3LHK4hWAMc3KT8y5bkZLG/5dqh5nViWmKtnh
+pMBSAv8WymAkUOC4TWgpGYEBmINdC8x1iIMJbnnSdgj6kF6/ZjKA4QB0sy7P7ydF
+8tdGnmBKIArlM3KTXAIF9gU2v+CBfYXOfIopA1EZAhk/QqZMSzrHp8YgI6lQjXdd
+mj6dhGkPDd6kFrypin6nErN/87w3Gw==
+=j269
 -----END PGP SIGNATURE-----
 
---Sig_/wX+6k_R044lb2vPVfl5Eeod--
+--Sig_/d1NnJ8l8lFK=6uQL4lNPhGb--
