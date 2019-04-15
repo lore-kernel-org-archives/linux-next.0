@@ -1,36 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 15 Apr 2019 13:06:08 +1000
-Message-ID: <20190415130608.02fabb3e@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the arm64 tree
+Date: Mon, 15 Apr 2019 14:21:34 +1000
+Message-ID: <20190415142134.0956422f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=J8r8IqDgri+FzYRlvZxeQ7"; protocol="application/pgp-signature"
+ boundary="Sig_/t3_dEJ+Z55BQXx9L74Sbklh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Waiman Long <longman@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=J8r8IqDgri+FzYRlvZxeQ7
+--Sig_/t3_dEJ+Z55BQXx9L74Sbklh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the block tree got a conflict in:
+Today's linux-next merge of the tip tree got a conflict in:
 
-  include/linux/bvec.h
+  arch/s390/include/asm/Kbuild
 
 between commit:
 
-  1200e07f3ad4 ("block: don't use for-inside-for in bio_for_each_segment_al=
-l")
+  fdcd06a8ab77 ("arch: Use asm-generic header for asm/mmiowb.h")
 
-from Linus' tree and commit:
+from the arm64 tree and commit:
 
-  52d52d1c98a9 ("block: only allow contiguous page structs in a bio_vec")
+  46ad0840b158 ("locking/rwsem: Remove arch specific rwsem files")
 
-from the block tree.
+from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,36 +42,34 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/bvec.h
-index 3bc91879e1e2,44b0f4684190..000000000000
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@@ -156,8 -151,8 +151,8 @@@ static inline void bvec_advance(const s
-  {
-  	struct bio_vec *bv =3D &iter_all->bv;
- =20
- -	if (bv->bv_page) {
- +	if (iter_all->done) {
-- 		bv->bv_page =3D nth_page(bv->bv_page, 1);
-+ 		bv->bv_page++;
-  		bv->bv_offset =3D 0;
-  	} else {
-  		bv->bv_page =3D bvec->bv_page;
+diff --cc arch/s390/include/asm/Kbuild
+index bdc4f06a04c5,d5fadefea33c..000000000000
+--- a/arch/s390/include/asm/Kbuild
++++ b/arch/s390/include/asm/Kbuild
+@@@ -20,8 -20,6 +20,7 @@@ generic-y +=3D local.
+  generic-y +=3D local64.h
+  generic-y +=3D mcs_spinlock.h
+  generic-y +=3D mm-arch-hooks.h
+ +generic-y +=3D mmiowb.h
+- generic-y +=3D rwsem.h
+  generic-y +=3D trace_clock.h
+  generic-y +=3D unaligned.h
+  generic-y +=3D word-at-a-time.h
 
---Sig_/=J8r8IqDgri+FzYRlvZxeQ7
+--Sig_/t3_dEJ+Z55BQXx9L74Sbklh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlyz9SEACgkQAVBC80lX
-0Gxv8Qf9HviITxbq1Z99gQvQYXLk/ueVvIET4kSn0+uHxpmVPv2VGvYzhxJSeTrM
-qXNk3LhSDkK5hsRppwZVUr046VW730r2ZgFZM/kwsyJidlf1BPhLJP8r7H6quGN6
-ROloInRb0awkKlYfl0UjMkWnmFvQnStyu2IkL8cW7rhTPt4fgUXGB/2sfTZw+g/J
-Iqj/f/XPufg4AsuZ+HlElg5+pMKRNB13eg4Go46wUlRqujdF9dGMm6wwA0uG43SN
-kKUvRA568jhn0kkFwCikQ0kZw1/ncAxYNDzPrx09YNoLtz/1s5mpi9Kn7Ri9gzyf
-AZJnqjze2CIV9x2jo0VfwmBtl6qKaw==
-=z3TK
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly0Bs4ACgkQAVBC80lX
+0Gw59gf/WtQapbHy3Zt/wrdgGGvPCPzxL6Vu2IqOx/8odyaKoS/iJg9UV5cx5/TV
+cTEj+Voy2QoV4VH7GUMwNLuMf6sEPT5e1M9GChRa7+c6XpbMzGIwxbdg17/Gdwxo
+okC4m0Vy0ik44xSCQQoyDbyj4+o6uNEPbDb03wXs3nkOJ/T2iq3iSBVAr/LYVNp9
+/t/Za6n6nC9l/oO9U6zOSraTUYxTckpCadog8iU39LfH98K1hs6s7VYiNisaXsAb
+H1dxpqNeQooh4eND1smLQ+nWWsAg/ffWuXN84kyJY1lIbFia6W/JdXp1OycftZyJ
+RUagmd/6gJUNc4I4pXe6eupbIAgcig==
+=70Xt
 -----END PGP SIGNATURE-----
 
---Sig_/=J8r8IqDgri+FzYRlvZxeQ7--
+--Sig_/t3_dEJ+Z55BQXx9L74Sbklh--
