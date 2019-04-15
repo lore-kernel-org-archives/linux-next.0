@@ -1,54 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the crypto tree
-Date: Tue, 16 Apr 2019 07:23:42 +1000
-Message-ID: <20190416072342.739863fb@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the chrome-platform
+ tree
+Date: Tue, 16 Apr 2019 07:36:14 +1000
+Message-ID: <20190416073614.01839443@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ool2hkG9X7ID6towcfBR+ki"; protocol="application/pgp-signature"
+ boundary="Sig_/EwWYngZQNSLZUtxQOYkQx_3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
+To: Benson Leung <bleung@google.com>, Guenter Roeck <groeck@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Ool2hkG9X7ID6towcfBR+ki
+--Sig_/EwWYngZQNSLZUtxQOYkQx_3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi all,
 
-In commit
+Commit
 
-  2e53582d158e ("crypto: mxc-scc - Remove broken driver")
+  d9a3f2b2a31b ("platform/chrome: cros_ec: Add EC host command support usin=
+g rpmsg")
 
-Fixes tag
-
-  Fixes: d293b640ebd ("crypto: mxc-scc - add basic driver for the...")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Ool2hkG9X7ID6towcfBR+ki
+--Sig_/EwWYngZQNSLZUtxQOYkQx_3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly09l4ACgkQAVBC80lX
-0GwNhQf/eBe5yA87ymp4gH6AjgNh8CiDDkmIiUWofYlc5QH3gFzwcsHNTOdyRotd
-umzVoJ1fEi7v4tNuDjT5Cae8EAYWLRCZ+C10EsdG4+XqH/3tMS+F0cbyZxY06dYj
-ut/oRSYMSmY09pnHJq4MonmgEi0ysIrH+UDtgrssg3zzoiQhropkXOpaki8vp5Ks
-/k3zmseS7jwaKWdoUTOo/Z0HRD18j25/dajhXQMeW9Sra2GSL/Ps2+cV9lGKp6FS
-k3bN/vIOkkCJb8Cie+LptjBNIjMz1j6K2XK/Q5pNKKxQ5/LfQ224d143s+LgrbBh
-P5OcnlXfZ31JwCr7Qf1YTm52gam6mg==
-=DAxh
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly0+U4ACgkQAVBC80lX
+0Gxxswf/QtcpM3im9DujvjbyoDWGUzkOBVnT/imefiUR97ksjdcje2KtPDcrllb4
+Re/ya5OWAv3ENAPNjI+rrjG/KPWvkp3jKbdzEO2cQ6NEKbTTQO7tqARgjK0YtA0T
+s/8Gkqvqfy8fLiaKSSx+tn9fcvGKGMGaq8HimlZwXYBaY8dBWpj2dyC5KQXcOH+I
+Vm9LSUrD4L35lDmJhjJX2snN7brCnux5Vn7GimKolnARh4j/l4gA33sUmERqPlBq
+hzDABIdQvOG4lj+F0KhrD9s7hhyLNUk9YGtmaeEYL7RpphV5NtL7+4qwEot8Ouwc
+wgXRUHDBxXHEeheEnOZR1Ll2jgbrQg==
+=dQsJ
 -----END PGP SIGNATURE-----
 
---Sig_/Ool2hkG9X7ID6towcfBR+ki--
+--Sig_/EwWYngZQNSLZUtxQOYkQx_3--
