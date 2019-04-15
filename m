@@ -1,39 +1,54 @@
-From: Wei Xu <xuwei5@hisilicon.com>
-Subject: Re: [PATCH v2 2/3] arm64: dts: hisilicon: hi3670: Add UFS controller
- support
-Date: Mon, 15 Apr 2019 17:00:20 +0100
-Message-ID: <fc511f16-d04f-a376-7173-6d1b26b591b5@hisilicon.com>
-References: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
- <20190105072859.9134-3-manivannan.sadhasivam@linaro.org>
- <20190220113508.GB7498@ulmo> <yq18syak0c2.fsf@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the crypto tree
+Date: Tue, 16 Apr 2019 07:23:42 +1000
+Message-ID: <20190416072342.739863fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ool2hkG9X7ID6towcfBR+ki"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <yq18syak0c2.fsf@oracle.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com, liwei213@huawei.com, robh+dt@kernel.org, devicetree@vger.kernel.org, guodong.xu@linaro.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, john.stultz@linaro.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, xuwei5@hisilicon.com
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Manivannan,
+--Sig_/Ool2hkG9X7ID6towcfBR+ki
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/2019 2:21 PM, Martin K. Petersen wrote:
-> 
-> Hi Thierry,
-> 
->> it looks like you picked this up into the SCSI tree (perhaps
->> inadvertently). It's been causing linux-next to fail to build since
->> Monday (next-20190218) because it references a phandle (&crg_rst)
->> that's not available.
-> 
-> I dropped the offending patch from the SCSI tree yesterday. When Stephen
-> updates -next, things should be fine.
-> 
+Hi Herbert,
 
-Thanks!
-Applied the dts patch to the hisilicon dts tree.
+In commit
 
-Best Regards,
-Wei
+  2e53582d158e ("crypto: mxc-scc - Remove broken driver")
+
+Fixes tag
+
+  Fixes: d293b640ebd ("crypto: mxc-scc - add basic driver for the...")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ool2hkG9X7ID6towcfBR+ki
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly09l4ACgkQAVBC80lX
+0GwNhQf/eBe5yA87ymp4gH6AjgNh8CiDDkmIiUWofYlc5QH3gFzwcsHNTOdyRotd
+umzVoJ1fEi7v4tNuDjT5Cae8EAYWLRCZ+C10EsdG4+XqH/3tMS+F0cbyZxY06dYj
+ut/oRSYMSmY09pnHJq4MonmgEi0ysIrH+UDtgrssg3zzoiQhropkXOpaki8vp5Ks
+/k3zmseS7jwaKWdoUTOo/Z0HRD18j25/dajhXQMeW9Sra2GSL/Ps2+cV9lGKp6FS
+k3bN/vIOkkCJb8Cie+LptjBNIjMz1j6K2XK/Q5pNKKxQ5/LfQ224d143s+LgrbBh
+P5OcnlXfZ31JwCr7Qf1YTm52gam6mg==
+=DAxh
+-----END PGP SIGNATURE-----
+
+--Sig_/Ool2hkG9X7ID6towcfBR+ki--
