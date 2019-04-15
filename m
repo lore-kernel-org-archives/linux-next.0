@@ -1,46 +1,39 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 15 Apr 2019 08:15:55 -0600
-Message-ID: <66a7abb7-7550-b2df-698b-b59932290f8a@kernel.dk>
-References: <20190415130608.02fabb3e@canb.auug.org.au>
+From: Wei Xu <xuwei5@hisilicon.com>
+Subject: Re: [PATCH v2 2/3] arm64: dts: hisilicon: hi3670: Add UFS controller
+ support
+Date: Mon, 15 Apr 2019 17:00:20 +0100
+Message-ID: <fc511f16-d04f-a376-7173-6d1b26b591b5@hisilicon.com>
+References: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
+ <20190105072859.9134-3-manivannan.sadhasivam@linaro.org>
+ <20190220113508.GB7498@ulmo> <yq18syak0c2.fsf@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415130608.02fabb3e@canb.auug.org.au>
+In-Reply-To: <yq18syak0c2.fsf@oracle.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com, liwei213@huawei.com, robh+dt@kernel.org, devicetree@vger.kernel.org, guodong.xu@linaro.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, john.stultz@linaro.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, xuwei5@hisilicon.com
 List-Id: linux-next.vger.kernel.org
 
-On 4/14/19 9:06 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the block tree got a conflict in:
-> 
->   include/linux/bvec.h
-> 
-> between commit:
-> 
->   1200e07f3ad4 ("block: don't use for-inside-for in bio_for_each_segment_all")
-> 
-> from Linus' tree and commit:
-> 
->   52d52d1c98a9 ("block: only allow contiguous page structs in a bio_vec")
-> 
-> from the block tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi Manivannan,
 
-Looks fine Stephen - but due to this and the BFQ one, I've merged in
-5.1-rc5 and resolved them as well. Tomorrow's branch should merge
-cleanly for you.
+On 2/20/2019 2:21 PM, Martin K. Petersen wrote:
+> 
+> Hi Thierry,
+> 
+>> it looks like you picked this up into the SCSI tree (perhaps
+>> inadvertently). It's been causing linux-next to fail to build since
+>> Monday (next-20190218) because it references a phandle (&crg_rst)
+>> that's not available.
+> 
+> I dropped the offending patch from the SCSI tree yesterday. When Stephen
+> updates -next, things should be fine.
+> 
 
--- 
-Jens Axboe
+Thanks!
+Applied the dts patch to the hisilicon dts tree.
+
+Best Regards,
+Wei
