@@ -1,55 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the drivers-x86 tree
-Date: Wed, 17 Apr 2019 07:33:49 +1000
-Message-ID: <20190417073349.3fadd192@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Tue, 16 Apr 2019 15:45:22 -0700
+Message-ID: <20190416154522.65aaa348161fc581181b56d9@linux-foundation.org>
+References: <20190329133914.45a4a255@canb.auug.org.au>
+        <20190416165256.1fbf2445@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MtS/Z8_SxH.4Z12.q1J3aeX"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190416165256.1fbf2445@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Limonciello <mario.limonciello@dell.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: George Spelvin <lkml@sdf.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/MtS/Z8_SxH.4Z12.q1J3aeX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 16 Apr 2019 16:52:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> Hi all,
+> 
+> On Fri, 29 Mar 2019 13:39:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the akpm-current tree, today's linux-next build (arm
+> > multi_v7_defconfig) produced this warning:
+> > 
+> > lib/list_sort.c:17:36: warning: 'pure' attribute ignored [-Wattributes]
+> >    struct list_head const *, struct list_head const *);
+> >                                     ^~~~~~~~~
+> > 
+> > Introduced by commit
+> > 
+> >   820c81be5237 ("lib/list_sort: simplify and remove MAX_LIST_LENGTH_BITS")
+> 
+> I am still getting that warning :-(
 
-In commit
+Me too and I can't figure it out.
 
-  6cc13c28da5b ("platform/x86: dell-laptop: fix rfkill functionality")
+Shrug, I guess we take a pass on it until someone has time/inclination
+to revisit it.
 
-Fixes tag
-
-  Fixes: 549b49 ("platform/x86: dell-smbios: Introduce dispatcher for SMM c=
-alls")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MtS/Z8_SxH.4Z12.q1J3aeX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2Sj0ACgkQAVBC80lX
-0GzBFggAo6r0WhMdvUg5ZQyb8D4rTe81gwO/cIU61IQEsI39OOW8Wuhd3NVxwc9V
-8BDhEP/wT25VsnhRkOTDEC4KACAHNIU5SGV1paLT0slGgK/+J5iTpvO/svBIgjNp
-DJRLgWkrgFGAZRWZsg/H+GJoOgdnHrvynYKRLNxh7tQ49cu4MEKU/IxkQFvjQjKi
-32FRKtYN5WhWqJzlWT0Z1Xuk8mW+usX+bByxwlpybp+ta7gMBcmIXHrpzkknYfoz
-HCOufbtfwd9SZDQa+ZaPeBpdwZJFj9kwOlJ2mocEUgMMRZ4CYVDD92hg0arCG7iY
-Lw3onaItBDDCSVDypNC5koWe0Wpulg==
-=8Pbd
------END PGP SIGNATURE-----
-
---Sig_/MtS/Z8_SxH.4Z12.q1J3aeX--
+--- a/lib/list_sort.c~lib-list_sort-simplify-and-remove-max_list_length_bits-fix
++++ a/lib/list_sort.c
+@@ -7,13 +7,7 @@
+ #include <linux/list_sort.h>
+ #include <linux/list.h>
+ 
+-/*
+- * By declaring the compare function with the __pure attribute, we give
+- * the compiler more opportunity to optimize.  Ideally, we'd use this in
+- * the prototype of list_sort(), but that would involve a lot of churn
+- * at all call sites, so just cast the function pointer passed in.
+- */
+-typedef int __pure __attribute__((nonnull(2,3))) (*cmp_func)(void *,
++typedef int __attribute__((nonnull(2,3))) (*cmp_func)(void *,
+ 		struct list_head const *, struct list_head const *);
+ 
+ /*
+_
