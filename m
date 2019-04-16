@@ -1,59 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the chrome-platform tree
-Date: Tue, 16 Apr 2019 14:30:30 +1000
-Message-ID: <20190416143030.07537982@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Tue, 16 Apr 2019 16:52:56 +1000
+Message-ID: <20190416165256.1fbf2445@canb.auug.org.au>
+References: <20190329133914.45a4a255@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//BOQKd8ymmpCrPnrqxk/2FO"; protocol="application/pgp-signature"
+ boundary="Sig_/XYLkmfGc2/zB5gjO9VQDMAM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190329133914.45a4a255@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benson Leung <bleung@google.com>, Guenter Roeck <groeck@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nick Crews <ncrews@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>, George Spelvin <lkml@sdf.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//BOQKd8ymmpCrPnrqxk/2FO
+--Sig_/XYLkmfGc2/zB5gjO9VQDMAM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the chrome-platform tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Fri, 29 Mar 2019 13:39:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> lib/list_sort.c:17:36: warning: 'pure' attribute ignored [-Wattributes]
+>    struct list_head const *, struct list_head const *);
+>                                     ^~~~~~~~~
+>=20
+> Introduced by commit
+>=20
+>   820c81be5237 ("lib/list_sort: simplify and remove MAX_LIST_LENGTH_BITS")
 
-In file included from drivers/platform/chrome/wilco_ec/debugfs.c:11:
-drivers/platform/chrome/wilco_ec/debugfs.c: In function 'fops_h1_gpio_open':
-drivers/platform/chrome/wilco_ec/debugfs.c:210:59: warning: format '%x' exp=
-ects argument of type 'unsigned int', but argument 2 has type 'long long un=
-signed int' [-Wformat=3D]
- DEFINE_DEBUGFS_ATTRIBUTE(fops_h1_gpio, h1_gpio_get, NULL, "0x%02x\n");
-                                                           ^~~~~~~~~~
-include/linux/debugfs.h:45:29: note: in definition of macro 'DEFINE_DEBUGFS=
-_ATTRIBUTE'
-  __simple_attr_check_format(__fmt, 0ull);   \
-                             ^~~~~
-
-Introduced by commit
-
-  db6c540a0018 ("platform/chrome: wilco_ec: Add h1_gpio status to debugfs")
+I am still getting that warning :-(
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//BOQKd8ymmpCrPnrqxk/2FO
+--Sig_/XYLkmfGc2/zB5gjO9VQDMAM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly1WmYACgkQAVBC80lX
-0GzrawgAoPvOqwI2AdlKc0GxmhLUlOjQejEBgooTENhIFcmLetwcWkxEDKeLuafT
-IQMPJ/yaBhqIR8AxKZT5HBT59mdusNqMHFodslqHFvIDQihbLIQMAA4IsWju7VD/
-M/K4H/u3qox6jbu+gM1m9Vc29kwA9WA31ycnEjG+2P3VSycszZH8tBedZT3EpABD
-kN+4k06xAn3LseU07Ja9TzEntQaUOZU0WEIwGi3obrIf5E/9lV82wYt1Y6rPcn/X
-Nap3GnX6n24j3Gc2v6mDinT7D/MRkBqtnD4Fa/ExA65zljjqM/OP2AOVXT/YDSTL
-ZClEi+rY3sZ5+8ZejPsQ7rBFW1OaHw==
-=9j2L
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly1e8gACgkQAVBC80lX
+0Gyr2Af8CgFxfluH1FgLdb+1E9LjxKmQbweuEQV2/GXQ6ipMQ/P5h3gzQcwA0mXs
+USAXvqcjF8bNVNEX7azE/yFJIvbmXZCWzArrl2hGrVhg88nx45dljHHQ5mhgymPk
+V538RoJXEGRWkvtJ+mMCJokwq529anFfco8I+82yxFGexf+wC988TLkvyLqyxTv+
+cNRYT8u/QaLbQqmp8SB7bKk7SfMGDpZqrlCaRiIHtdF3aP1Zs38mDYEDZ6AP/RoD
+NG6na2yT2tJUz2BVXvy1ixHKV+/evpnkKxA4PX2dmgCkoBteu+oeHlieoDlf1ydB
+KFDTt34JomAYSadnL1yHHvJelq5KqA==
+=blY6
 -----END PGP SIGNATURE-----
 
---Sig_//BOQKd8ymmpCrPnrqxk/2FO--
+--Sig_/XYLkmfGc2/zB5gjO9VQDMAM--
