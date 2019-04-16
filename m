@@ -1,89 +1,120 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the netfilter-next tree with the
- netfilter tree
-Date: Tue, 16 Apr 2019 11:26:24 +1000
-Message-ID: <20190416112624.597e3fd2@canb.auug.org.au>
-References: <20190415112216.451541f6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tpmdd tree
+Date: Tue, 16 Apr 2019 13:07:40 +1000
+Message-ID: <20190416130740.7ff9e561@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HdqGYCYdJHK2MVfjDqHqtMG"; protocol="application/pgp-signature"
+ boundary="Sig_/R4VDdDOj84NdA8uEha7ASeV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415112216.451541f6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg59@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/HdqGYCYdJHK2MVfjDqHqtMG
+--Sig_/R4VDdDOj84NdA8uEha7ASeV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jarkko,
 
-On Mon, 15 Apr 2019 11:22:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the netfilter-next tree got a conflict in:
->=20
->   tools/testing/selftests/netfilter/Makefile
->=20
-> between commit:
->=20
->   becf2319f320 ("selftests: netfilter: check icmp pkttoobig errors are se=
-t as related")
->=20
-> from the netfilter tree and commit:
->=20
->   26f7fe4a5db5 ("selftests: netfilter: add ebtables broute test case")
->=20
-> from the netfilter-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc tools/testing/selftests/netfilter/Makefile
-> index a37cb1192c6a,80dae72a25c7..000000000000
-> --- a/tools/testing/selftests/netfilter/Makefile
-> +++ b/tools/testing/selftests/netfilter/Makefile
-> @@@ -1,6 -1,6 +1,6 @@@
->   # SPDX-License-Identifier: GPL-2.0
->   # Makefile for netfilter selftests
->  =20
-> - TEST_PROGS :=3D nft_trans_stress.sh nft_nat.sh conntrack_icmp_related.sh
->  -TEST_PROGS :=3D nft_trans_stress.sh nft_nat.sh bridge_brouter.sh
-> ++TEST_PROGS :=3D nft_trans_stress.sh nft_nat.sh conntrack_icmp_related.s=
-h bridge_brouter.sh
->  =20
->   include ../lib.mk
+After merging the tpmdd tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-This is now a conflict between the net-next and netfilter trees.
+include/linux/tpm_eventlog.h: In function '__calc_tpm2_event_size':
+drivers/firmware/efi/tpm.c:7:35: error: implicit declaration of function 'e=
+arly_memremap'; did you mean 'early_memtest'? [-Werror=3Dimplicit-function-=
+declaration]
+ #define TPM_MEMREMAP(start, size) early_memremap(start, size)
+                                   ^~~~~~~~~~~~~~
+include/linux/tpm_eventlog.h:182:13: note: in expansion of macro 'TPM_MEMRE=
+MAP'
+   mapping =3D TPM_MEMREMAP((unsigned long)marker_start,
+             ^~~~~~~~~~~~
+In file included from drivers/firmware/efi/tpm.c:13:
+include/linux/tpm_eventlog.h:182:11: warning: assignment to 'void *' from '=
+int' makes pointer from integer without a cast [-Wint-conversion]
+   mapping =3D TPM_MEMREMAP((unsigned long)marker_start,
+           ^
+drivers/firmware/efi/tpm.c:8:35: error: implicit declaration of function 'e=
+arly_memunmap'; did you mean 'early_memtest'? [-Werror=3Dimplicit-function-=
+declaration]
+ #define TPM_MEMUNMAP(start, size) early_memunmap(start, size)
+                                   ^~~~~~~~~~~~~~
+include/linux/tpm_eventlog.h:203:4: note: in expansion of macro 'TPM_MEMUNM=
+AP'
+    TPM_MEMUNMAP(mapping, mapping_size);
+    ^~~~~~~~~~~~
+In file included from drivers/firmware/efi/tpm.c:13:
+include/linux/tpm_eventlog.h:205:12: warning: assignment to 'void *' from '=
+int' makes pointer from integer without a cast [-Wint-conversion]
+    mapping =3D TPM_MEMREMAP((unsigned long)marker_start,
+            ^
+include/linux/tpm_eventlog.h:225:14: warning: assignment to 'void *' from '=
+int' makes pointer from integer without a cast [-Wint-conversion]
+      mapping =3D TPM_MEMREMAP((unsigned long)marker_start,
+              ^
+include/linux/tpm_eventlog.h:251:11: warning: assignment to 'void *' from '=
+int' makes pointer from integer without a cast [-Wint-conversion]
+   mapping =3D TPM_MEMREMAP((unsigned long)marker_start,
+           ^
+In file included from ./arch/arm/include/generated/asm/early_ioremap.h:1,
+                 from drivers/firmware/efi/tpm.c:15:
+include/asm-generic/early_ioremap.h: At top level:
+include/asm-generic/early_ioremap.h:13:14: error: conflicting types for 'ea=
+rly_memremap'
+ extern void *early_memremap(resource_size_t phys_addr,
+              ^~~~~~~~~~~~~~
+drivers/firmware/efi/tpm.c:7:35: note: previous implicit declaration of 'ea=
+rly_memremap' was here
+ #define TPM_MEMREMAP(start, size) early_memremap(start, size)
+                                   ^~~~~~~~~~~~~~
+include/linux/tpm_eventlog.h:182:13: note: in expansion of macro 'TPM_MEMRE=
+MAP'
+   mapping =3D TPM_MEMREMAP((unsigned long)marker_start,
+             ^~~~~~~~~~~~
+In file included from ./arch/arm/include/generated/asm/early_ioremap.h:1,
+                 from drivers/firmware/efi/tpm.c:15:
+include/asm-generic/early_ioremap.h:20:13: warning: conflicting types for '=
+early_memunmap'
+ extern void early_memunmap(void *addr, unsigned long size);
+             ^~~~~~~~~~~~~~
+drivers/firmware/efi/tpm.c:8:35: note: previous implicit declaration of 'ea=
+rly_memunmap' was here
+ #define TPM_MEMUNMAP(start, size) early_memunmap(start, size)
+                                   ^~~~~~~~~~~~~~
+include/linux/tpm_eventlog.h:203:4: note: in expansion of macro 'TPM_MEMUNM=
+AP'
+    TPM_MEMUNMAP(mapping, mapping_size);
+    ^~~~~~~~~~~~
+
+Caused by commit
+
+  05165bf3d231 ("tpm: Abstract crypto agile event size calculations")
+
+and maybe
+
+  cdb75b359079 ("tpm: Reserve the TPM final events table")
+
+I have used the tmpdd tree from next-20190415 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/HdqGYCYdJHK2MVfjDqHqtMG
+--Sig_/R4VDdDOj84NdA8uEha7ASeV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly1L0AACgkQAVBC80lX
-0GyGuAgAnb38YRpcBwZLivcb7dTLp6GRoZSwyn8sAVFzvoioQPSyh1UrP/3YWPGC
-vD0tKMkm3DWJd0XjycbKY0isKp0NCzxWcrM2ikRu7ldTJ8u7FpNmCD3I7JL0SreU
-Zx7lKhxjiLfZW9VenoTzL0PGTRWo/1cqjbrf/b6+nYGUmOHrqkIG2KejvwaVTfQ/
-oaY7udoxS9KafGQAq7XvYc2v5NPwCkRsCVfwv/APEV7B/mFf54Pd84jh/98OfIie
-jmNB+adc81ZV6l7m9xMdZUjoe2IJIsYg4BvqqQ0ZzDKP4YXM0ctHKa++nKYBCkY1
-b61j6ZDxRkGNR7RDKqvhCw2YBFdk/g==
-=9yAt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly1RvwACgkQAVBC80lX
+0Gz5Ygf/VWqIWSOEQkMqZuZQ11MaN6oos1dgokn06sirX2N/MbBt777v/FZXjm6M
+snrj7k1rfjBgLXxWXwZCp3jpmaNmYP1rUdWj41FTYi9ln0owBpAwexWCYFtiHzmb
+khhdnggmyjroyadMhk9PogYvxAqQszoJ6KP4eRb2qy1hW8vRMLIFHUqpRayI9KKP
+YymzZum7PNylCarqzTjNoXL8pozYdOjv6QjAvUA6Tv96DLBo+Kwx6YZgFeFCXNxa
+GPsj8Lw8ubGMTnfuoRv8SYZ97Av+RXhGBcle6PuWgxVGbFzmRJKFjGK0cq66cEzW
+nlKn4a3y8xV0FEMppXpPo6oNk4SRTA==
+=5O9A
 -----END PGP SIGNATURE-----
 
---Sig_/HdqGYCYdJHK2MVfjDqHqtMG--
+--Sig_/R4VDdDOj84NdA8uEha7ASeV--
