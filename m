@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the drivers-x86-fixes tree
-Date: Wed, 17 Apr 2019 07:17:54 +1000
-Message-ID: <20190417071754.0fcdef3f@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the drivers-x86 tree
+Date: Wed, 17 Apr 2019 07:33:49 +1000
+Message-ID: <20190417073349.3fadd192@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ax4i8/oG68w.a6eeHy8nS9N"; protocol="application/pgp-signature"
+ boundary="Sig_/MtS/Z8_SxH.4Z12.q1J3aeX"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Limonciello <mario.limonciello@dell.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ax4i8/oG68w.a6eeHy8nS9N
+--Sig_/MtS/Z8_SxH.4Z12.q1J3aeX
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,7 +19,7 @@ Hi all,
 
 In commit
 
-  57f634b76a95 ("platform/x86: dell-laptop: fix rfkill functionality")
+  6cc13c28da5b ("platform/x86: dell-laptop: fix rfkill functionality")
 
 Fixes tag
 
@@ -36,20 +36,20 @@ has these problem(s):
 Cheers,
 Stephen Rothwell
 
---Sig_/ax4i8/oG68w.a6eeHy8nS9N
+--Sig_/MtS/Z8_SxH.4Z12.q1J3aeX
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2RoIACgkQAVBC80lX
-0Gwd4gf/XK9fWs+FiqliM5SmT/5Vmdo6F6jpasC26Atf0Y23x5FTwX1zLO8EEaF4
-WGLIExQaJ8mzIl2ktJpVxVK3sZZIOeu6bL7wupz+QqqDhz6kZbB86sHv7SmnkdXk
-3ttr8/nmmGgW9tJTBn0iP9rAjAA0rel6wA/Ki2sCoS9xNMg8+taN3eg7Kh+kQDuM
-HO/QxK+3iwx/gY+KpGuw7R8+1e0JpNKgtT9RWXrvnsRA2TDD+Z2LVAfLfxmK8miW
-0/bQQCgOTmmH/N+Ouzlevk8Qft4r8Mat4PEadFmKL/RGcwirFvRsbkgitQOqpjsx
-pZ0CRSo9FbqagCYQcCIgmPHXq/Q+cA==
-=1Lar
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2Sj0ACgkQAVBC80lX
+0GzBFggAo6r0WhMdvUg5ZQyb8D4rTe81gwO/cIU61IQEsI39OOW8Wuhd3NVxwc9V
+8BDhEP/wT25VsnhRkOTDEC4KACAHNIU5SGV1paLT0slGgK/+J5iTpvO/svBIgjNp
+DJRLgWkrgFGAZRWZsg/H+GJoOgdnHrvynYKRLNxh7tQ49cu4MEKU/IxkQFvjQjKi
+32FRKtYN5WhWqJzlWT0Z1Xuk8mW+usX+bByxwlpybp+ta7gMBcmIXHrpzkknYfoz
+HCOufbtfwd9SZDQa+ZaPeBpdwZJFj9kwOlJ2mocEUgMMRZ4CYVDD92hg0arCG7iY
+Lw3onaItBDDCSVDypNC5koWe0Wpulg==
+=8Pbd
 -----END PGP SIGNATURE-----
 
---Sig_/ax4i8/oG68w.a6eeHy8nS9N--
+--Sig_/MtS/Z8_SxH.4Z12.q1J3aeX--
