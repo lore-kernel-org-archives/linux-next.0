@@ -1,49 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the kvm-fixes tree
-Date: Tue, 16 Apr 2019 19:57:51 +1000
-Message-ID: <20190416195751.67ec14cb@canb.auug.org.au>
+From: John Hurley <john.hurley@netronome.com>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Tue, 16 Apr 2019 11:03:21 +0100
+Message-ID: <CAK+XE=m+0NMxbRSTa05n0wJU3EuF=oVwA9aCirs2Dq3AcO7bjw@mail.gmail.com>
+References: <20190416112039.25136d0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MFcnYW5PhciN51kBiLnbt_m"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190416112039.25136d0b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simon Horman <simon.horman@netronome.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/MFcnYW5PhciN51kBiLnbt_m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Apr 16, 2019 at 2:21 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/net/ethernet/netronome/nfp/flower/offload.c: In function 'nfp_flower_copy_pre_actions':
+> drivers/net/ethernet/netronome/nfp/flower/offload.c:630:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     if (tunnel_act)
+>        ^
+> drivers/net/ethernet/netronome/nfp/flower/offload.c:632:3: note: here
+>    case NFP_FL_ACTION_OPCODE_PRE_LAG:
+>    ^~~~
+>
+> Introduced by commit
+>
+>   1c6952ca587d ("nfp: flower: generate merge flow rule")
+>
+> I get this warning because I am building with -Wimplicit-fallthrough
+> in attempt to catch new additions early.  The gcc warning can be turned
+> off by adding a /* fall through */ comment at the point the fall through
+> happens (assuming that the fall through is intentional).
+>
 
-Hi all,
+Hi Stephen,
+Thanks for flagging this.
+The fall through is intentional.
+I'll submit a fix for the warning.
+John
 
-Commits
-
-  27d2a2e9e5c1 ("selftests: kvm/evmcs_test: complete I/O before migrating g=
-uest state")
-  94b8fc757b02 ("KVM: nVMX: always use early vmcs check when EPT is disable=
-d")
-
-are missing a Signed-off-by from their author and commiter.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MFcnYW5PhciN51kBiLnbt_m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly1px8ACgkQAVBC80lX
-0GzpQQf40Rsx5hx9IK2fqAP/68R2/PifMmbv9f9Q7orVul60grl8vvRKHsPOU6OX
-brBXl8ONw9xain3Z7E890R5ttAoccQ/mbG/qy0XUOfHEfxWhy4YaIzg7OZtGZVZg
-jjAUDxA8dxjJGTmcxDScUvaA3AZKVCTDF+BHWrPuCkFpVx8u1r/DQ49BsehJL4ui
-Y3BXvVrT8ZIQOCVNkPHr5NftcwlEOs/XEymIrgPjADMYsN6a7d5Ch+Tkitywn5FP
-bUoMo5P9TBgCOPBavHVznlMHgKSn4WFIJFImAx0etWjF1kKVFlPz/4Zip87d39Q5
-6BI8C4FVAMosuwg+LcY/KNIDl0V8
-=QK5n
------END PGP SIGNATURE-----
-
---Sig_/MFcnYW5PhciN51kBiLnbt_m--
+> --
+> Cheers,
+> Stephen Rothwell
