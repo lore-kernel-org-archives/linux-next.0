@@ -1,28 +1,55 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tpmdd tree
-Date: Tue, 16 Apr 2019 18:36:27 +0300
-Message-ID: <20190416153608.GA11353@linux.intel.com>
-References: <20190416130740.7ff9e561@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the drivers-x86-fixes tree
+Date: Wed, 17 Apr 2019 07:17:54 +1000
+Message-ID: <20190417071754.0fcdef3f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ax4i8/oG68w.a6eeHy8nS9N"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190416130740.7ff9e561@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Matthew Garrett <mjg59@google.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Limonciello <mario.limonciello@dell.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 16, 2019 at 01:07:40PM +1000, Stephen Rothwell wrote:
-> Hi Jarkko,
-> 
-> After merging the tpmdd tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+--Sig_/ax4i8/oG68w.a6eeHy8nS9N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Matthew, looking at the code I guess the includes are in wrong order
-i.e. early_ioremap.h should be included before tpm_eventlog.h. Do you
-agree that this is the correct conclusion? I can do the update.
+Hi all,
 
-Just as a temporary measure I removed the commits from my next branch.
+In commit
 
-/Jarkko
+  57f634b76a95 ("platform/x86: dell-laptop: fix rfkill functionality")
+
+Fixes tag
+
+  Fixes: 549b49 ("platform/x86: dell-smbios: Introduce dispatcher for SMM c=
+alls")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ax4i8/oG68w.a6eeHy8nS9N
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2RoIACgkQAVBC80lX
+0Gwd4gf/XK9fWs+FiqliM5SmT/5Vmdo6F6jpasC26Atf0Y23x5FTwX1zLO8EEaF4
+WGLIExQaJ8mzIl2ktJpVxVK3sZZIOeu6bL7wupz+QqqDhz6kZbB86sHv7SmnkdXk
+3ttr8/nmmGgW9tJTBn0iP9rAjAA0rel6wA/Ki2sCoS9xNMg8+taN3eg7Kh+kQDuM
+HO/QxK+3iwx/gY+KpGuw7R8+1e0JpNKgtT9RWXrvnsRA2TDD+Z2LVAfLfxmK8miW
+0/bQQCgOTmmH/N+Ouzlevk8Qft4r8Mat4PEadFmKL/RGcwirFvRsbkgitQOqpjsx
+pZ0CRSo9FbqagCYQcCIgmPHXq/Q+cA==
+=1Lar
+-----END PGP SIGNATURE-----
+
+--Sig_/ax4i8/oG68w.a6eeHy8nS9N--
