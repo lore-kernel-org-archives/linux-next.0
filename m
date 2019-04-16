@@ -1,48 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the chrome-platform
- tree
-Date: Tue, 16 Apr 2019 07:36:14 +1000
-Message-ID: <20190416073614.01839443@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the crypto tree
+Date: Tue, 16 Apr 2019 09:05:48 +0800
+Message-ID: <20190416010548.tnos7ro7rvi6mqqc@gondor.apana.org.au>
+References: <20190416072342.739863fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EwWYngZQNSLZUtxQOYkQx_3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190416072342.739863fb@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benson Leung <bleung@google.com>, Guenter Roeck <groeck@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/EwWYngZQNSLZUtxQOYkQx_3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Apr 16, 2019 at 07:23:42AM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> In commit
+> 
+>   2e53582d158e ("crypto: mxc-scc - Remove broken driver")
+> 
+> Fixes tag
+> 
+>   Fixes: d293b640ebd ("crypto: mxc-scc - add basic driver for the...")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-Hi all,
-
-Commit
-
-  d9a3f2b2a31b ("platform/chrome: cros_ec: Add EC host command support usin=
-g rpmsg")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EwWYngZQNSLZUtxQOYkQx_3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly0+U4ACgkQAVBC80lX
-0Gxxswf/QtcpM3im9DujvjbyoDWGUzkOBVnT/imefiUR97ksjdcje2KtPDcrllb4
-Re/ya5OWAv3ENAPNjI+rrjG/KPWvkp3jKbdzEO2cQ6NEKbTTQO7tqARgjK0YtA0T
-s/8Gkqvqfy8fLiaKSSx+tn9fcvGKGMGaq8HimlZwXYBaY8dBWpj2dyC5KQXcOH+I
-Vm9LSUrD4L35lDmJhjJX2snN7brCnux5Vn7GimKolnARh4j/l4gA33sUmERqPlBq
-hzDABIdQvOG4lj+F0KhrD9s7hhyLNUk9YGtmaeEYL7RpphV5NtL7+4qwEot8Ouwc
-wgXRUHDBxXHEeheEnOZR1Ll2jgbrQg==
-=dQsJ
------END PGP SIGNATURE-----
-
---Sig_/EwWYngZQNSLZUtxQOYkQx_3--
+Thanks Stephen, it should be fixed now.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
