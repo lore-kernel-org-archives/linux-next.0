@@ -1,58 +1,89 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Tue, 16 Apr 2019 15:45:22 -0700
-Message-ID: <20190416154522.65aaa348161fc581181b56d9@linux-foundation.org>
-References: <20190329133914.45a4a255@canb.auug.org.au>
-        <20190416165256.1fbf2445@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
+Date: Wed, 17 Apr 2019 11:08:56 +1000
+Message-ID: <20190417110856.54b4ac1c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PToTIyXnHLFQ77QlRBaumDo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190416165256.1fbf2445@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: George Spelvin <lkml@sdf.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Poirier <bpoirier@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 16 Apr 2019 16:52:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/PToTIyXnHLFQ77QlRBaumDo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> On Fri, 29 Mar 2019 13:39:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the akpm-current tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> > 
-> > lib/list_sort.c:17:36: warning: 'pure' attribute ignored [-Wattributes]
-> >    struct list_head const *, struct list_head const *);
-> >                                     ^~~~~~~~~
-> > 
-> > Introduced by commit
-> > 
-> >   820c81be5237 ("lib/list_sort: simplify and remove MAX_LIST_LENGTH_BITS")
-> 
-> I am still getting that warning :-(
+Hi all,
 
-Me too and I can't figure it out.
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-Shrug, I guess we take a pass on it until someone has time/inclination
-to revisit it.
+  tools/bpf/bpftool/map.c
 
---- a/lib/list_sort.c~lib-list_sort-simplify-and-remove-max_list_length_bits-fix
-+++ a/lib/list_sort.c
-@@ -7,13 +7,7 @@
- #include <linux/list_sort.h>
- #include <linux/list.h>
- 
--/*
-- * By declaring the compare function with the __pure attribute, we give
-- * the compiler more opportunity to optimize.  Ideally, we'd use this in
-- * the prototype of list_sort(), but that would involve a lot of churn
-- * at all call sites, so just cast the function pointer passed in.
-- */
--typedef int __pure __attribute__((nonnull(2,3))) (*cmp_func)(void *,
-+typedef int __attribute__((nonnull(2,3))) (*cmp_func)(void *,
- 		struct list_head const *, struct list_head const *);
- 
- /*
-_
+between commit:
+
+  e0665239e07f ("bpftool: Fix errno variable usage")
+
+from the bpf tree and commit:
+
+  0478c3bf8124 ("bpftool: Use print_entry_error() in case of ENOENT when du=
+mping")
+
+from the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/bpf/bpftool/map.c
+index 1744bf61a0b8,44b192e87708..000000000000
+--- a/tools/bpf/bpftool/map.c
++++ b/tools/bpf/bpftool/map.c
+@@@ -722,11 -715,16 +715,16 @@@ static int dump_map_elem(int fd, void *
+  		jsonw_string_field(json_wtr, "error", strerror(lookup_errno));
+  		jsonw_end_object(json_wtr);
+  	} else {
++ 		const char *msg =3D NULL;
++=20
+ -		if (errno =3D=3D ENOENT)
+ +		if (lookup_errno =3D=3D ENOENT)
+- 			print_entry_plain(map_info, key, NULL);
+- 		else
+- 			print_entry_error(map_info, key,
+- 					  strerror(lookup_errno));
++ 			msg =3D "<no entry>";
++ 		else if (lookup_errno =3D=3D ENOSPC &&
++ 			 map_info->type =3D=3D BPF_MAP_TYPE_REUSEPORT_SOCKARRAY)
++ 			msg =3D "<cannot read>";
++=20
++ 		print_entry_error(map_info, key,
++ 				  msg ? : strerror(lookup_errno));
+  	}
+ =20
+  	return 0;
+
+--Sig_/PToTIyXnHLFQ77QlRBaumDo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2fKgACgkQAVBC80lX
+0Gw8OQf/VvGCw2rn2B10cwgm/rjs+IduAfPs8kwMGJ+1YheHdRd6PggMRa2kqDPI
+2NW4J1kENtmWz5Jx48JzKrKbbwmpK5Af19oWbg7nTApBwTIeePd/uHeqorJYt/7P
+gSleXDPgq3TnyDhQhlzWLyTcRAaL7QadSdQWUjW1/zi/BI+HnzqzeXFDBX2F+yhn
+cWB6V0irEqDw11sLG8CmZi6FMJ9G/5HyP/T+LAv3lKR3thF6B1m8KBdPKuLfylSI
+kZ6cq6hcaINXHpO4ZMJ6rRWoE39kjOpv/nfuWTJUBY//xWkSsUxQuNmzt7DDV/Z5
+oTdt+XPhJeSnZeiDHKoRGq0WyAhNxw==
+=/wDW
+-----END PGP SIGNATURE-----
+
+--Sig_/PToTIyXnHLFQ77QlRBaumDo--
