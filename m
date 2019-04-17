@@ -1,58 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the drm-fixes tree
-Date: Thu, 18 Apr 2019 07:46:58 +1000
-Message-ID: <20190418074658.541fcfd7@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 17 Apr 2019 17:22:38 -0500
+Message-ID: <CAGXu5jKYxLe9-umda7C3iWfYFe-Thv=dL4bJQC9nU4GMGK5Wwg@mail.gmail.com>
+References: <20190417165321.61cd6380@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XLXTcL=ylQN8SHPoU=W3Ai+"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190417165321.61cd6380@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, Alexey Dobriyan <adobriyan@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/XLXTcL=ylQN8SHPoU=W3Ai+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 17, 2019 at 1:53 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Andrew,
+>
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> fs/binfmt_elf.c: In function 'load_elf_binary':
+> fs/binfmt_elf.c:1140:7: error: 'elf_interpreter' undeclared (first use in this function); did you mean 'interpreter'?
+>   if (!elf_interpreter)
+>        ^~~~~~~~~~~~~~~
+>        interpreter
 
-Hi all,
+static int load_elf_binary(struct linux_binprm *bprm)
+{
+...
+        char * elf_interpreter = NULL;
 
-In commit
+This is _absolutely_ a valid variable.
 
-  453393369dc9 ("drm/ttm: fix incrementing the page pointer for huge pages")
+>
+>
+> Caused by commit
+>
+>   3ebf0dd657ce ("fs/binfmt_elf.c: move brk out of mmap when doing direct loader exec")
+>
+> interacting with commit
+>
+>   a34f642bccf1 ("fs/binfmt_elf.c: free PT_INTERP filename ASAP")
+>
+> I have applied the following patch for today.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 17 Apr 2019 16:48:29 +1000
+> Subject: [PATCH] fix "fs/binfmt_elf.c: move brk out of mmap when doing direct loader exec"
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/binfmt_elf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index b3bbe6bca499..fe5668a1bbaa 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1137,7 +1137,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>          * collide early with the stack growing down), and into the unused
+>          * ELF_ET_DYN_BASE region.
+>          */
+> -       if (!elf_interpreter)
+> +       if (!interpreter)
 
-Fixes tag
+No, this is very wrong and will, I think, cause all PIE binaries to fail to run.
 
-  Fixes: e16858a7e6e7 drm/ttm: fix start page for huge page check in ttm_pu=
-t_pages()
+>                 current->mm->brk = current->mm->start_brk = ELF_ET_DYN_BASE;
+>
+>         if ((current->flags & PF_RANDOMIZE) && (randomize_va_space > 1)) {
+> --
+> 2.20.1
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-has these problem(s):
 
-  - Target SHA1 does not exist
 
-Did you mean
-
-Fixes: ac1e516d5a4c ("drm/ttm: fix start page for huge page check in ttm_pu=
-t_pages()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XLXTcL=ylQN8SHPoU=W3Ai+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly3ntIACgkQAVBC80lX
-0GwJFgf+L1fNt2DVdQGwvFYD1E2YdRwApLXSPHx5y4mAeuf96WDsDcwTEnSBucBe
-DLMF2YxsjfLBp/P/y6ZVm8mx7MdzGlUTapfrsh92tK5WjQsl1R6EiTGDN+2Wc3Fw
-Ykv42awjZmUPB8jZoAeAW5BLpdU+0nv0z0ru4r4yYlQboU5Hc6R3EAVTRpiGFcfO
-h/8TmuALnW0M3qBFjXfHeHMJLW9e6+4Yyc+kllo7/0mdXYkLDAPc1RZyjRArQd1y
-z0QfhifzC16rcFCugT1olN4B2QMBMECwSLfoa0T7Xey/ktyINbzA7Afu1u90UwQ8
-jqw82NLoVGUmSCLjazQJccDsdVwF7w==
-=ETlg
------END PGP SIGNATURE-----
-
---Sig_/XLXTcL=ylQN8SHPoU=W3Ai+--
+-- 
+Kees Cook
