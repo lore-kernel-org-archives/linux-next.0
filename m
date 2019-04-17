@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 17 Apr 2019 16:43:17 +1000
-Message-ID: <20190417164317.3b9cd9e2@canb.auug.org.au>
+Date: Wed, 17 Apr 2019 16:53:21 +1000
+Message-ID: <20190417165321.61cd6380@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tzk/XQ9FMReknp.btOTZ+sf"; protocol="application/pgp-signature"
+ boundary="Sig_/bd=lVB6xi8RtUho1ZJYpL/Y"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, Alexey Dobriyan <adobriyan@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/tzk/XQ9FMReknp.btOTZ+sf
+--Sig_/bd=lVB6xi8RtUho1ZJYpL/Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,45 +20,48 @@ Hi Andrew,
 After merging the akpm-current tree, today's linux-next build (arm
 multi_v7_defconfig) failed like this:
 
-mm/vmscan.c: In function 'snapshot_refaults':
-mm/vmscan.c:2969:14: error: implicit declaration of function 'lruvec_page_s=
-tate_local'; did you mean 'lruvec_page_state'? [-Werror=3Dimplicit-function=
--declaration]
-   refaults =3D lruvec_page_state_local(lruvec, WORKINGSET_ACTIVATE);
-              ^~~~~~~~~~~~~~~~~~~~~~~
-              lruvec_page_state
+fs/binfmt_elf.c: In function 'load_elf_binary':
+fs/binfmt_elf.c:1140:7: error: 'elf_interpreter' undeclared (first use in t=
+his function); did you mean 'interpreter'?
+  if (!elf_interpreter)
+       ^~~~~~~~~~~~~~~
+       interpreter
+
 
 Caused by commit
 
-  3c1fea8fbdf7 ("mm: fix inactive list balancing between NUMA nodes and cgr=
-oups")
+  3ebf0dd657ce ("fs/binfmt_elf.c: move brk out of mmap when doing direct lo=
+ader exec")
 
-I applied the following patch for today:
+interacting with commit
+
+  a34f642bccf1 ("fs/binfmt_elf.c: free PT_INTERP filename ASAP")
+
+I have applied the following patch for today.
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 17 Apr 2019 16:40:02 +1000
-Subject: [PATCH] fix "mm: fix inactive list balancing between NUMA nodes an=
-d cgroups"
+Date: Wed, 17 Apr 2019 16:48:29 +1000
+Subject: [PATCH] fix "fs/binfmt_elf.c: move brk out of mmap when doing dire=
+ct loader exec"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- mm/vmscan.c | 2 +-
+ fs/binfmt_elf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b828aae50d37..d545ace5e177 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2966,7 +2966,7 @@ static void snapshot_refaults(struct mem_cgroup *root=
-_memcg, pg_data_t *pgdat)
- 		struct lruvec *lruvec;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index b3bbe6bca499..fe5668a1bbaa 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1137,7 +1137,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	 * collide early with the stack growing down), and into the unused
+ 	 * ELF_ET_DYN_BASE region.
+ 	 */
+-	if (!elf_interpreter)
++	if (!interpreter)
+ 		current->mm->brk =3D current->mm->start_brk =3D ELF_ET_DYN_BASE;
 =20
- 		lruvec =3D mem_cgroup_lruvec(pgdat, memcg);
--		refaults =3D lruvec_page_state_local(lruvec, WORKINGSET_ACTIVATE);
-+		refaults =3D lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
- 		lruvec->refaults =3D refaults;
- 	} while ((memcg =3D mem_cgroup_iter(root_memcg, memcg, NULL)));
- }
+ 	if ((current->flags & PF_RANDOMIZE) && (randomize_va_space > 1)) {
 --=20
 2.20.1
 
@@ -66,20 +69,20 @@ _memcg, pg_data_t *pgdat)
 Cheers,
 Stephen Rothwell
 
---Sig_/tzk/XQ9FMReknp.btOTZ+sf
+--Sig_/bd=lVB6xi8RtUho1ZJYpL/Y
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2ywUACgkQAVBC80lX
-0GyyHAf8CK1k86+gh7EQuFkSbJeHDMfyyEqt1D8iU0d3HlEIy2ohewAjsFa2vfa7
-YwfEwlJDScqggKIRI03wgSNiy+XkUBG8dFg1Gx4PCbKJdTx+oI40JtCCEkgamAh+
-AD5kvT/GfDCZRJdOFFOsifwUQcmDOiEKwCCDdtzvQ4v02J1Klh5VgMJA3TE2eBEw
-R5FIHimuCBVJ2utJKbC0qLGYcZKql1BUYzbg3LmZe/jeasSQEIZ0eMHWj7N0l7gg
-ip41fvNdNvIVLlkfq85ISBkIz720wZH/mRw1daFwdkEjv7iDeZrLyLuKm3dC+0lJ
-KqX3uDqjB17J7sGIZzZ/BumLtzrwHw==
-=mPmR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2zWEACgkQAVBC80lX
+0GxAqQf/XtjY9CQ2auY+756f5/Mo7tU3IiCeQbfx/PqKttY6xFRhVPWUwYmLQBEO
+GXC13BL00o2WU6QBZyvxVJOTJEymolxOLIxL3soIwa8tafJZeJtZNiLfFUREoAXL
+meFN2pWstqGA3FjvJ02FmNQJ5kXEDIoKgRn+VGNzkj8RejX6Jld1JrY4X7oNjkw0
+9WIRcIB82tuKDpoPC5ktq/LU608qR36dA3FBoCFZVnpGidbESqA+2WjYip1TQpyi
+WKNB/FErVvGUTDihFlSYxt077pTncY2jKMA1eizlmvKrqBOJ9mq3KsoNS5eGeqIe
+LIPTGdFTgPtv7cXK2ATcjUdvAXRQ8Q==
+=0NE0
 -----END PGP SIGNATURE-----
 
---Sig_/tzk/XQ9FMReknp.btOTZ+sf--
+--Sig_/bd=lVB6xi8RtUho1ZJYpL/Y--
