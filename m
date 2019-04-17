@@ -1,89 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Date: Wed, 17 Apr 2019 11:08:56 +1000
-Message-ID: <20190417110856.54b4ac1c@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the block tree
+Date: Wed, 17 Apr 2019 12:31:25 +1000
+Message-ID: <20190417123125.3de22f73@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PToTIyXnHLFQ77QlRBaumDo"; protocol="application/pgp-signature"
+ boundary="Sig_/mNdL3ruxYKIGVZtrZ5ARkKw"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Poirier <bpoirier@suse.com>
+To: Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PToTIyXnHLFQ77QlRBaumDo
+--Sig_/mNdL3ruxYKIGVZtrZ5ARkKw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  tools/bpf/bpftool/map.c
+fs/f2fs/node.c: In function 'f2fs_remove_inode_page':
+fs/f2fs/node.c:1193:47: warning: format '%zu' expects argument of type 'siz=
+e_t', but argument 5 has type 'blkcnt_t' {aka 'long long unsigned int'} [-W=
+format=3D]
+    "Inconsistent i_blocks, ino:%lu, iblocks:%zu",
+                                             ~~^
+                                             %llu
+    inode->i_ino, inode->i_blocks);
+                  ~~~~~~~~~~~~~~~              =20
 
-between commit:
+Introduced by commit
 
-  e0665239e07f ("bpftool: Fix errno variable usage")
+  90ae238d9dac ("f2fs: fix to avoid panic in f2fs_remove_inode_page()")
 
-from the bpf tree and commit:
+from the f2fs tree interacting with commit
 
-  0478c3bf8124 ("bpftool: Use print_entry_error() in case of ENOENT when du=
-mping")
-
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  72deb455b5ec ("block: remove CONFIG_LBDAF")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/bpf/bpftool/map.c
-index 1744bf61a0b8,44b192e87708..000000000000
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@@ -722,11 -715,16 +715,16 @@@ static int dump_map_elem(int fd, void *
-  		jsonw_string_field(json_wtr, "error", strerror(lookup_errno));
-  		jsonw_end_object(json_wtr);
-  	} else {
-+ 		const char *msg =3D NULL;
-+=20
- -		if (errno =3D=3D ENOENT)
- +		if (lookup_errno =3D=3D ENOENT)
-- 			print_entry_plain(map_info, key, NULL);
-- 		else
-- 			print_entry_error(map_info, key,
-- 					  strerror(lookup_errno));
-+ 			msg =3D "<no entry>";
-+ 		else if (lookup_errno =3D=3D ENOSPC &&
-+ 			 map_info->type =3D=3D BPF_MAP_TYPE_REUSEPORT_SOCKARRAY)
-+ 			msg =3D "<cannot read>";
-+=20
-+ 		print_entry_error(map_info, key,
-+ 				  msg ? : strerror(lookup_errno));
-  	}
- =20
-  	return 0;
-
---Sig_/PToTIyXnHLFQ77QlRBaumDo
+--Sig_/mNdL3ruxYKIGVZtrZ5ARkKw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2fKgACgkQAVBC80lX
-0Gw8OQf/VvGCw2rn2B10cwgm/rjs+IduAfPs8kwMGJ+1YheHdRd6PggMRa2kqDPI
-2NW4J1kENtmWz5Jx48JzKrKbbwmpK5Af19oWbg7nTApBwTIeePd/uHeqorJYt/7P
-gSleXDPgq3TnyDhQhlzWLyTcRAaL7QadSdQWUjW1/zi/BI+HnzqzeXFDBX2F+yhn
-cWB6V0irEqDw11sLG8CmZi6FMJ9G/5HyP/T+LAv3lKR3thF6B1m8KBdPKuLfylSI
-kZ6cq6hcaINXHpO4ZMJ6rRWoE39kjOpv/nfuWTJUBY//xWkSsUxQuNmzt7DDV/Z5
-oTdt+XPhJeSnZeiDHKoRGq0WyAhNxw==
-=/wDW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly2j/0ACgkQAVBC80lX
+0GzDiwf/d9CUHjUAyzzDO9kDZdrbLqFE3thRc+3V4nrx1ZPK9YGjsQ4PQB6hhh7v
+pHdnVHq8V07WIYzPLvM/AW9MTwBhSQ+R5jpMfc7jIO3s2wACVjSrM2qofaZJqx89
+jXOEhPlQiRbDvYcgRvPpDACafFSeGe7gpB7e53pXPRdzlykIY0PYz/76J/87xVZd
+rrfz4fZ1PhYF8hODUIxll0BxiNQCdwO6v1ZJIf02Eb2E+C5Yft6t72Ro0sMaQtRg
+nP/3dMp41Yn+yiWhUn44RieVSpSwHPxOM0tUTMA6Q41jfnm+Iah+1+fbmvnRWgOs
+ZsaFjpACo22wyCovrk568/qk3Wma6g==
+=v9pi
 -----END PGP SIGNATURE-----
 
---Sig_/PToTIyXnHLFQ77QlRBaumDo--
+--Sig_/mNdL3ruxYKIGVZtrZ5ARkKw--
