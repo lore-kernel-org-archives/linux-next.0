@@ -1,54 +1,58 @@
-From: Martin Wilck <mwilck@suse.de>
-Subject: Re: linux-next: manual merge of the scsi tree with the block tree
-Date: Wed, 17 Apr 2019 21:11:11 +0200
-Message-ID: <d01f3c2c68f9e852b15526904f8dfd8cbcece120.camel@suse.de>
-References: <20190415155939.35325ef1@canb.auug.org.au>
-         <84c02649-1eeb-3d28-6cc2-0a5d0f5f6b7d@acm.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the drm-fixes tree
+Date: Thu, 18 Apr 2019 07:46:58 +1000
+Message-ID: <20190418074658.541fcfd7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XLXTcL=ylQN8SHPoU=W3Ai+"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <84c02649-1eeb-3d28-6cc2-0a5d0f5f6b7d@acm.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bart Van Assche <bvanassche@acm.org>, Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2019-04-15 at 06:48 -0700, Bart Van Assche wrote:
-> On 4/14/19 10:59 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the scsi tree got a conflict in:
-> > 
-> >   drivers/scsi/sd.c
-> > 
-> > between commit:
-> > 
-> >   c92e2f04b359 ("block: disk_events: introduce event flags")
-> > 
-> > from the block tree and commit:
-> > 
-> >   21e6ba3f0e02 ("scsi: sd: Rely on the driver core for asynchronous
-> > probing")
-> >   d16ece577bf2 ("scsi: sd: Inline sd_probe_part2()")
-> > 
-> > from the scsi tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your
-> > tree
-> > is submitted for merging.  You may also want to consider
-> > cooperating
-> > with the maintainer of the conflicting tree to minimise any
-> > particularly
-> > complex conflicts.
-> 
-> Thanks Stephen for having resolved this conflict. The conflict
-> resolution
-> looks good to me.
+--Sig_/XLXTcL=ylQN8SHPoU=W3Ai+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, it looks good to me as well.
+Hi all,
 
-Thanks,
-Martin
+In commit
+
+  453393369dc9 ("drm/ttm: fix incrementing the page pointer for huge pages")
+
+Fixes tag
+
+  Fixes: e16858a7e6e7 drm/ttm: fix start page for huge page check in ttm_pu=
+t_pages()
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: ac1e516d5a4c ("drm/ttm: fix start page for huge page check in ttm_pu=
+t_pages()")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/XLXTcL=ylQN8SHPoU=W3Ai+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly3ntIACgkQAVBC80lX
+0GwJFgf+L1fNt2DVdQGwvFYD1E2YdRwApLXSPHx5y4mAeuf96WDsDcwTEnSBucBe
+DLMF2YxsjfLBp/P/y6ZVm8mx7MdzGlUTapfrsh92tK5WjQsl1R6EiTGDN+2Wc3Fw
+Ykv42awjZmUPB8jZoAeAW5BLpdU+0nv0z0ru4r4yYlQboU5Hc6R3EAVTRpiGFcfO
+h/8TmuALnW0M3qBFjXfHeHMJLW9e6+4Yyc+kllo7/0mdXYkLDAPc1RZyjRArQd1y
+z0QfhifzC16rcFCugT1olN4B2QMBMECwSLfoa0T7Xey/ktyINbzA7Afu1u90UwQ8
+jqw82NLoVGUmSCLjazQJccDsdVwF7w==
+=ETlg
+-----END PGP SIGNATURE-----
+
+--Sig_/XLXTcL=ylQN8SHPoU=W3Ai+--
