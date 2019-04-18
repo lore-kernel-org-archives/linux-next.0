@@ -1,81 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bpf-next tree
-Date: Thu, 18 Apr 2019 11:57:48 +1000
-Message-ID: <20190418115748.0b0aefdc@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the printk tree
+Date: Thu, 18 Apr 2019 14:14:11 +1000
+Message-ID: <20190418141411.417e5c99@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Uey02cAE9AV_yMzV/uuoi04"; protocol="application/pgp-signature"
+ boundary="Sig_/_vOeBQlSfJaWe6hFJ8BwoxI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Magnus Karlsson <magnus.karlsson@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Petr Mladek <pmladek@suse.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Borislav Petkov <bp@suse.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Uey02cAE9AV_yMzV/uuoi04
+--Sig_/_vOeBQlSfJaWe6hFJ8BwoxI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the bpf-next tree, today's linux-next build (powerpc perf)
-failed like this:
+Today's linux-next merge of the tip tree got a conflict in:
 
-In file included from xsk.c:32:
-libbpf_util.h:49:3: error: #warning Architecture missing native barrier fun=
-ctions in libbpf_util.h. [-Werror=3Dcpp]
- # warning Architecture missing native barrier functions in libbpf_util.h.
-   ^~~~~~~
-cc1: all warnings being treated as errors
+  arch/x86/kernel/irq_64.c
 
-Caused by commit
+between commit:
 
-  b7e3a28019c9 ("libbpf: remove dependency on barrier.h in xsk.h")
+  d75f773c86a2 ("treewide: Switch printk users from %pf and %pF to %ps and =
+%pS, respectively")
 
-I have applied the following patch for today ... please fix this.
+from the printk tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 18 Apr 2019 11:54:56 +1000
-Subject: [PATCH] suppress warning in tools/lib/bpf/libbpf_util.h
+  117ed4548541 ("x86/irq/64: Remove stack overflow debug code")
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- tools/lib/bpf/libbpf_util.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+from the tip tree.
 
-diff --git a/tools/lib/bpf/libbpf_util.h b/tools/lib/bpf/libbpf_util.h
-index 172b707e007b..a54eb2cdbdd6 100644
---- a/tools/lib/bpf/libbpf_util.h
-+++ b/tools/lib/bpf/libbpf_util.h
-@@ -46,7 +46,7 @@ do {				\
- # define libbpf_smp_mb() asm volatile("dmb ish" : : : "memory")
- # define libbpf_smp_rwmb() libbpf_smp_mb()
- #else
--# warning Architecture missing native barrier functions in libbpf_util.h.
-+//# warning Architecture missing native barrier functions in libbpf_util.h.
- # define libbpf_smp_rmb() __sync_synchronize()
- # define libbpf_smp_wmb() __sync_synchronize()
- # define libbpf_smp_mb() __sync_synchronize()
---=20
-2.20.1
+I fixed it up (the latter removed taht code updated by the former) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Uey02cAE9AV_yMzV/uuoi04
+--Sig_/_vOeBQlSfJaWe6hFJ8BwoxI
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly32ZwACgkQAVBC80lX
-0GwnQAf+IUy3PBBmu9rOY+hoEog4+s52xXFZ7p67Cn6Vh7n+VrZbhPl1NhyHjtEj
-tms/einrmeJrRF4sFrkk6S79CWrfkZjH54SOTsj4KQaw1Us47zNiQIDFMZWIh5Fh
-nCVen72GKjPoy8xXdk1IiQj9a2fb5gCyrnOUDNcqx04LITM4JKpSkCYNCYFODmKQ
-3O4UEYUdEr98KDoYfb5XIkA6brL3+T0oJHObwSPAuUwwwPSKiBpWoKk5su9jximg
-pLNwHVnFQqfHPZHknQ4bP6Q3f7P5V4U7uLuJFXpOg/738oQhvnHY0Usd+Jnkj/pd
-ARlTMmW+1Elriz4fBS7XY4/VnMuXpQ==
-=xoS5
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly3+ZMACgkQAVBC80lX
+0GzMbwgAhbS4CbE61NbDYUAffPKO7r8e31VCo7CsSPAWcztIdusvrFELeMe0A8J0
+ut0F75yv4xCSNrM7aMM7nO+k3wajCecGmXZqzjExqQ+qVZJhxUOP54TYcwPeCI4I
+hyLSpasLKjD/UzRZG6P82CeUaJBVNRdz9QWg+UJx9aabObHMy2QfxNNu3J+XkU8S
+mroxvEoHc1mLtDHIH9+251k0rznFsvaT7Ih+MR/TUCesXLY/Gm66aujZk3IXaulg
+MvUPbokNbifYQ3y/rs+FtQ3oSbLzkhyLzMb5fUf/TIob97GJexphqbYJtKacCELW
+XVAHUnSzuYbv+lW91g55FDrnwE0M4A==
+=paty
 -----END PGP SIGNATURE-----
 
---Sig_/Uey02cAE9AV_yMzV/uuoi04--
+--Sig_/_vOeBQlSfJaWe6hFJ8BwoxI--
