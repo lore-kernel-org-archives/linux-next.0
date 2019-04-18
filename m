@@ -1,34 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
+From: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the wireless-drivers tree
-Date: Thu, 18 Apr 2019 16:49:02 +0300
-Message-ID: <87o9532zld.fsf@kamboji.qca.qualcomm.com>
-References: <20190415120133.40c0f343@canb.auug.org.au>
+Date: Thu, 18 Apr 2019 16:49:24 +0300
+Message-ID: <87k1fr2zkr.fsf@kamboji.qca.qualcomm.com>
+References: <20190415120853.39e0e46a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415120133.40c0f343@canb.auug.org.au> (Stephen Rothwell's
-        message of "Mon, 15 Apr 2019 12:01:33 +1000")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wireless <linux-wireless@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shahar S Matityahu <shahar.s.matityahu@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20190415120853.39e0e46a-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> (Stephen Rothwell's
+        message of "Mon, 15 Apr 2019 12:08:53 +1000")
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ihab Zhaika <ihab.zhaika-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Luca Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> writes:
 
-> Hi all,
+> Today's linux-next merge of the wireless-drivers-next tree got a
+> conflict in:
 >
-> Today's linux-next merge of the wireless-drivers-next tree got a conflict
-> in:
+>   drivers/net/wireless/intel/iwlwifi/pcie/drv.c
 >
->   drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+> between commits:
 >
-> between commit:
->
->   07d35b4270ef ("iwlwifi: use sync nmi in case of init flow failure")
+>   0d5bad14226a ("iwlwifi: rename structs to fit the new names")
+>   972d8e137779 ("iwlwifi: add new 0x2723/0x2080 card for 22000")
 >
 > from the wireless-drivers tree and commit:
 >
->   4b1831e48974 ("iwlwifi: dbg_ini: support HW error trigger")
+>   ef8a913766cd ("iwlwifi: remove misconfigured pci ids from 22260 series")
 >
 > from the wireless-drivers-next tree.
 >
