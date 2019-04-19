@@ -1,91 +1,28 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: linux-next: build warning after merge of the block tree
-Date: Fri, 19 Apr 2019 09:14:06 +0800
-Message-ID: <b2bc71fb-c11e-8939-daea-facbb5980742@huawei.com>
-References: <20190417123125.3de22f73@canb.auug.org.au>
- <0879e11b-c84c-65b8-581f-bf7adcb5e231@huawei.com>
- <20190417140305.GB23731@jaegeuk-macbookpro.roam.corp.google.com>
- <b1fcb057-6d89-9846-766b-dd1b710f7654@huawei.com>
- <20190418140104.GA52314@jaegeuk-macbookpro.roam.corp.google.com>
+From: Andy Gross <agross@kernel.org>
+Subject: Re: linux-next: manual merge of the phy-next tree with the qcom tree
+Date: Thu, 18 Apr 2019 23:58:44 -0500
+Message-ID: <20190419045844.GA3322@hector.attlocal.net>
+References: <20190418152954.255015e1@canb.auug.org.au>
+ <d194fa50-8bff-544e-eb88-128810f525f9@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190418140104.GA52314@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <d194fa50-8bff-544e-eb88-128810f525f9@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kishon Vijay Abraham I <kishon@ti.com>, Linux Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2019/4/18 22:01, Jaegeuk Kim wrote:
-> On 04/18, Chao Yu wrote:
->> On 2019/4/17 22:03, Jaegeuk Kim wrote:
->>> On 04/17, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2019/4/17 10:31, Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> After merging the block tree, today's linux-next build (x86_64
->>>>> allmodconfig) produced this warning:
->>>>>
->>>>> fs/f2fs/node.c: In function 'f2fs_remove_inode_page':
->>>>> fs/f2fs/node.c:1193:47: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'blkcnt_t' {aka 'long long unsigned int'} [-Wformat=]
->>>>>     "Inconsistent i_blocks, ino:%lu, iblocks:%zu",
->>>>>                                              ~~^
->>>>>                                              %llu
->>>>>     inode->i_ino, inode->i_blocks);
->>>>>                   ~~~~~~~~~~~~~~~       
->>>>
->>>> Could you please help to fix that as below in your dev branch directly?
->>>>
->>>> "Inconsistent i_blocks, ino:%lu, iblocks:%llu",
->>>
->>> We can just use "%lu"?
->>
->> We'd better follow sample in Documentation/core-api/printk-formats.rst:
->>
->> If <type> is dependent on a config option for its size (e.g., sector_t,
->> blkcnt_t) or is architecture-dependent for its size (e.g., tcflag_t), use a
->> format specifier of its largest possible type and explicitly cast to it.
+On Thu, Apr 18, 2019 at 09:35:44AM +0200, Marc Gonzalez wrote:
 > 
-> Great, done. :)
+> It is not clear to me what I could/should have done differently to avoid
+> the conflict?
 
-Thanks, :)
+I dropped the patch for now.  We can deal with this later as it is trivial.
+The best way probably would have been for Kishon to take this patch as well.
+Then he would have fixed it up and no one else would have seen it.  But we'll
+deal with it in a few weeks.  No biggie.
 
-> 
-> Thanks,
-> 
->>
->> Example::
->>
->>         printk("test: sector number/total blocks: %llu/%llu\n",
->>                 (unsigned long long)sector, (unsigned long long)blockcount);
->>
->> Thanks,
->>
->>>
->>>> inode->i_ino, (unsigned long long)inode->i_blocks)
->>>>
->>>>
->>>> It looks that we need to fix below commits as well:
->>>>
->>>> f2fs: fix to avoid panic in dec_valid_block_count()
->>>> f2fs: fix to avoid panic in dec_valid_node_count()
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Introduced by commit
->>>>>
->>>>>   90ae238d9dac ("f2fs: fix to avoid panic in f2fs_remove_inode_page()")
->>>>>
->>>>> from the f2fs tree interacting with commit
->>>>>
->>>>>   72deb455b5ec ("block: remove CONFIG_LBDAF")
->>>>>
->>> .
->>>
-> .
-> 
+
+Andy
