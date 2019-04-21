@@ -1,56 +1,94 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [linux-next] rtlwifi commit contains a patch reject file
-Date: Sat, 20 Apr 2019 11:50:09 -0400
-Message-ID: <20190420155008.GM23044@windriver.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Sun, 21 Apr 2019 19:56:11 +0300
+Message-ID: <20190421165611.GB26843@avx2>
+References: <20190417165321.61cd6380@canb.auug.org.au>
+ <CAGXu5jKYxLe9-umda7C3iWfYFe-Thv=dL4bJQC9nU4GMGK5Wwg@mail.gmail.com>
+ <CAGXu5j+9_f=5aT7x=K=Hg9LS3eQ9-dhVF18LCBfZcx+EmTO3PA@mail.gmail.com>
+ <20190418090247.2982dafd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20190418090247.2982dafd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-I'm kind of surprised sfr doesn't have a bot to complain when it sees
-a foo.c.rej or foo.c.orig in a commit...
+On Thu, Apr 18, 2019 at 09:02:47AM +1000, Stephen Rothwell wrote:
+> Hi Kees,
+> 
+> On Wed, 17 Apr 2019 17:28:39 -0500 Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Wed, Apr 17, 2019 at 5:22 PM Kees Cook <keescook@chromium.org> wrote:
+> > >
+> > > On Wed, Apr 17, 2019 at 1:53 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
+> > > >
+> > > > Hi Andrew,
+> > > >
+> > > > After merging the akpm-current tree, today's linux-next build (arm
+> > > > multi_v7_defconfig) failed like this:
+> > > >
+> > > > fs/binfmt_elf.c: In function 'load_elf_binary':
+> > > > fs/binfmt_elf.c:1140:7: error: 'elf_interpreter' undeclared (first use in this function); did you mean 'interpreter'?
+> > > >   if (!elf_interpreter)
+> > > >        ^~~~~~~~~~~~~~~
+> > > >        interpreter  
+> > >
+> > > static int load_elf_binary(struct linux_binprm *bprm)
+> > > {
+> > > ...
+> > >         char * elf_interpreter = NULL;
+> > >
+> > > This is _absolutely_ a valid variable.  
+> 
+> It was. However commit a34f642bccf1 from Andrew's tree changes its scope.
+> 
+> So there is nothing wrong with commit 3ebf0dd657ce, it is the incorrect
+> rebase of it on top of a34f642bccf1 that causes the build problem.
+> 
+> > > > Caused by commit
+> > > >
+> > > >   3ebf0dd657ce ("fs/binfmt_elf.c: move brk out of mmap when doing direct loader exec")
+> > > >
+> > > > interacting with commit
+> > > >
+> > > >   a34f642bccf1 ("fs/binfmt_elf.c: free PT_INTERP filename ASAP")
+> > > >
+> > > > I have applied the following patch for today.
+> > > >
+> > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > Date: Wed, 17 Apr 2019 16:48:29 +1000
+> > > > Subject: [PATCH] fix "fs/binfmt_elf.c: move brk out of mmap when doing direct loader exec"
+> > > >
+> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > ---
+> > > >  fs/binfmt_elf.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > > > index b3bbe6bca499..fe5668a1bbaa 100644
+> > > > --- a/fs/binfmt_elf.c
+> > > > +++ b/fs/binfmt_elf.c
+> > > > @@ -1137,7 +1137,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+> > > >          * collide early with the stack growing down), and into the unused
+> > > >          * ELF_ET_DYN_BASE region.
+> > > >          */
+> > > > -       if (!elf_interpreter)
+> > > > +       if (!interpreter)  
+> > >
+> > > No, this is very wrong and will, I think, cause all PIE binaries to fail to run.  
+> > 
+> > I may be wrong: I think this will cause all static binaries to see
+> > their brk moved very unexpectedly. All static PIE binaries will fail?
+> 
+> Are you sure that elf_interpreter == NULL is not equivalent to
+> interpreter == NULL by this point in the code?  Earlier if
+> elf_intpreter is not NULL, we have set interpreter (using open_exec)
+> and errored out if that fails.
 
-Paul.
----
-
-$ git show --stat ddab2eee794
-commit ddab2eee7949f94b8ecdc5c84ae238826142d35d
-Author: Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
-Date:   Thu Apr 4 13:29:31 2019 -0500
-
-    rtlwifi: Convert the wake_match variable to local
-    
-    In five of the drivers, the contents of bits 29-31 of one of the RX
-    descriptors is used to set bits in a variable that is used to save the
-    wakeup condition for output in a debugging statement. The resulting
-    variable is not used anywhere else even though it is stored in a struct
-    and could be available in other routines. This variable is changed to be
-    local.
-    
-    Signed-off-by: Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
-    Signed-off-by: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c     | 15 ++++++++-------
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c.rej | 10 ++++++++++
- drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c     | 13 +++++++------
- drivers/net/wireless/realtek/rtlwifi/rtl8723be/trx.c     | 14 +++++++-------
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/trx.c     | 14 +++++++-------
- drivers/net/wireless/realtek/rtlwifi/wifi.h              |  1 -
- 6 files changed, 39 insertions(+), 28 deletions(-)
-
- ---
-
-$ git describe --contains ddab2eee794
-next-20190415~86^2~1
-
-$ git show next-20190415~86
-commit e4aee692121581ee2b29812f0db701769ef3f571
-Merge: 61405eeb69ab bdfc4027de15
-Author: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Date:   Mon Apr 15 12:08:21 2019 +1000
-
-    Merge remote-tracking branch 'wireless-drivers-next/master'
+My patch was done based on this very observation: if interpreter has been
+opened then its filename has been allocated before otherwise how do you
+know which interpreter to open? Just like with pathname resolution, once
+lookup is done and inode has been fished out, pathname becomes irrelevant.
