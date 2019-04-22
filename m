@@ -1,70 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the powerpc-fixes tree
-Date: Mon, 22 Apr 2019 15:39:49 +1000
-Message-ID: <20190422153950.4488fd7e@canb.auug.org.au>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH] iio: trigger: stm32-timer: fix build issue when
+ disabled
+Date: Mon, 22 Apr 2019 11:14:43 +0100
+Message-ID: <20190422111443.276572ff@archlinux>
+References: <1555321642-482-1-git-send-email-fabrice.gasnier@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M8qfRr2dOHX9cZdNwPpP24Q"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1555321642-482-1-git-send-email-fabrice.gasnier@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>
+To: Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: rdunlap@infradead.org, sfr@canb.auug.org.au, benjamin.gaignard@linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, linux-iio@vger.kernel.org, lars@metafoo.de, knaack.h@gmx.de, pmeerw@pmeerw.net, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com, olivier.moysan@st.com
 List-Id: linux-next.vger.kernel.org
 
---Sig_/M8qfRr2dOHX9cZdNwPpP24Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 15 Apr 2019 11:47:22 +0200
+Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-Hi all,
+> This fixes a build issue when CONFIG_IIO_STM32_TIMER_TRIGGER isn't set but
+> used in stm32-dfsdm-adc driver (e.g. CONFIG_STM32_DFSDM_ADC is set):
+> ERROR: "is_stm32_timer_trigger" [drivers/iio/adc/stm32-dfsdm-adc.ko]
+> undefined!
+> 
+> There are two possible options to fix this issue:
+> - select IIO_STM32_TIMER_TRIGGER along with CONFIG_STM32_DFSDM_ADC.
+>   This is what's being done currently for CONFIG_STM32_ADC.
+> - stub "is_stm32_timer_trigger" function
+> 
+> Choice is made to stub this function as suggested in [1]. This is also
+> inspired by similar "is_stm32_lptim_trigger" function (see [2]) in
+> include/linux/iio/timer/stm32-lptim-trigger.h
+> 
+> [1]
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1977377.html
+> [2] https://lkml.org/lkml/2017/9/10/124
+> 
+> Fixes: 11646e81d775 ("iio: adc: stm32-dfsdm: add support for buffer modes")
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Fix-suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Hmm. That feels a bit more complex than I was anticipating but fair enough,
+it seems to cover the combinations.
 
-In commit
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to have another poke at it.
 
-  7a3a4d763837 ("powerpc/mm_iommu: Allow pinning large regions")
+Thanks,
 
-Fixes tag
+Jonathan
 
-  Fixes: 678e174c4c16 ("powerpc/mm/iommu: allow migration of cma allocated =
-pages during mm_iommu_do_alloc", 2019-03-05)
-
-has these problem(s):
-
-  - the ", 2019-03-05" is unexpected in a Fixes tag
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
-In commit
-
-  eb9d7a62c386 ("powerpc/mm_iommu: Fix potential deadlock")
-
-Fixes tag
-
-  Fixes: c10c21efa4bc ("powerpc/vfio/iommu/kvm: Do not pin device memory", =
-2018-12-19)
-
-has these problem(s):
-
-  - the ", 2018-12-19" is unexpected in a Fixes tag
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/M8qfRr2dOHX9cZdNwPpP24Q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly9U6YACgkQAVBC80lX
-0GzuwQf/Tg5k2+JLzmQv71XXAvomr8zCS4BkJSMEjYmBlJU/n+QbiamyueqJX3Wb
-PHYZQaPROrgZ5zCwuqpNA529ZUXvmRWtNWYVeEMz830VRtJzfapi6IsRlhRUkClU
-jSH0joMAHnasT5Z13IDEBUaFY3UaDrXL8fTBu3OUwrUB8ei730wLg9nJKoeVHrLl
-zWmAodxzHVK4sDKBJcDDSqEedL7lHancj8ATWuspJ2zAOaMRWQ8hJ3lobmahWBV4
-TRVKLMLCrF5FVIUprbdsNARk2r0UPTHrVNIET6faU0rmaHp5nP5xcyY5qN3+1kbB
-7kdAjVR69dc4fcGFwQ/GUaaik/4usg==
-=0q47
------END PGP SIGNATURE-----
-
---Sig_/M8qfRr2dOHX9cZdNwPpP24Q--
+> ---
+>  include/linux/iio/timer/stm32-timer-trigger.h | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/iio/timer/stm32-timer-trigger.h b/include/linux/iio/timer/stm32-timer-trigger.h
+> index d68add8..cbb7c7a 100644
+> --- a/include/linux/iio/timer/stm32-timer-trigger.h
+> +++ b/include/linux/iio/timer/stm32-timer-trigger.h
+> @@ -73,6 +73,15 @@
+>  
+>  #define TIM17_OC1	"tim17_oc1"
+>  
+> +#if IS_REACHABLE(CONFIG_IIO_STM32_TIMER_TRIGGER)
+>  bool is_stm32_timer_trigger(struct iio_trigger *trig);
+> -
+> +#else
+> +static inline bool is_stm32_timer_trigger(struct iio_trigger *trig)
+> +{
+> +#if IS_ENABLED(CONFIG_IIO_STM32_TIMER_TRIGGER)
+> +	pr_warn_once("stm32-timer-trigger not linked in\n");
+> +#endif
+> +	return false;
+> +}
+> +#endif
+>  #endif
