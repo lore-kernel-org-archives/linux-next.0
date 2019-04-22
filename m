@@ -1,49 +1,36 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 2/2] iio: adc: stm32-dfsdm: fix triggered buffer build
- dependency
-Date: Mon, 22 Apr 2019 11:17:54 +0100
-Message-ID: <20190422111754.018878c0@archlinux>
-References: <1555333251-4422-1-git-send-email-fabrice.gasnier@st.com>
-        <1555333251-4422-3-git-send-email-fabrice.gasnier@st.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: linux-next: manual merge of the phy-next tree with the qcom tree
+Date: Mon, 22 Apr 2019 17:17:40 +0530
+Message-ID: <4e8aefdf-d0bb-9dcd-63b1-94de9d4e69d4@ti.com>
+References: <20190418152954.255015e1@canb.auug.org.au>
+ <d194fa50-8bff-544e-eb88-128810f525f9@free.fr>
+ <20190419045844.GA3322@hector.attlocal.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555333251-4422-3-git-send-email-fabrice.gasnier@st.com>
+In-Reply-To: <20190419045844.GA3322@hector.attlocal.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: rdunlap@infradead.org, sfr@canb.auug.org.au, benjamin.gaignard@linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, linux-iio@vger.kernel.org, lars@metafoo.de, knaack.h@gmx.de, pmeerw@pmeerw.net, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com, olivier.moysan@st.com
+To: Andy Gross <agross@kernel.org>, Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 15 Apr 2019 15:00:51 +0200
-Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-> This fixes build errors seen when CONFIG_STM32_DFSDM_ADC is set, as
-> stm32-dfsdm-adc driver now also relies on triggered buffer API:
+
+On 19/04/19 10:28 AM, Andy Gross wrote:
+> On Thu, Apr 18, 2019 at 09:35:44AM +0200, Marc Gonzalez wrote:
+>>
+>> It is not clear to me what I could/should have done differently to avoid
+>> the conflict?
 > 
-> Fixes: 11646e81d775 ("iio: adc: stm32-dfsdm: add support for buffer modes")
-> 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+> I dropped the patch for now.  We can deal with this later as it is trivial.
+> The best way probably would have been for Kishon to take this patch as well.
+> Then he would have fixed it up and no one else would have seen it.  But we'll
+> deal with it in a few weeks.  No biggie.
 
-Thanks,
+I've included "dt-bindings: phy-qcom-qmp: Tweak qcom,msm8998-qmp-ufs-phy" in
+linux-phy tree now.
 
-Jonathan
-
-> ---
->  drivers/iio/adc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index b1b2bde..f3bd32e 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -823,6 +823,7 @@ config STM32_DFSDM_ADC
->  	select REGMAP_MMIO
->  	select IIO_BUFFER
->  	select IIO_BUFFER_HW_CONSUMER
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  Select this option to support ADCSigma delta modulator for
->  	  STMicroelectronics STM32 digital filter for sigma delta converter.
+Thanks
+Kishon
