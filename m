@@ -1,56 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the kvm-fixes tree
-Date: Tue, 23 Apr 2019 07:01:08 +1000
-Message-ID: <20190423070108.5069d3d8@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the v4l-dvb tree
+Date: Tue, 23 Apr 2019 07:22:35 +1000
+Message-ID: <20190423072235.254434f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cJEY4fCYAenYlXf.xvVhVVC"; protocol="application/pgp-signature"
+ boundary="Sig_/xutuPEP+=kfBtEDtddQ.6lV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, Paul Mackerras <paulus@ozlabs.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Potapenko <glider@google.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/cJEY4fCYAenYlXf.xvVhVVC
+--Sig_/xutuPEP+=kfBtEDtddQ.6lV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
 In commit
 
-  345077c8e172 ("KVM: PPC: Book3S: Protect memslots while validating user a=
-ddress")
+  dad7e270ba71 ("media: vivid: use vfree() instead of kfree() for dev->bitm=
+ap_cap")
 
 Fixes tag
 
-  Fixes: 42de7b9e2167 ("KVM: PPC: Validate TCEs against preregistered memor=
-y page sizes", 2018-09-10)
+  Fixes: ef834f7836ec0 ("[media] vivid: add the video capture and output
 
 has these problem(s):
 
-  - the ", 2018-09-10" is unexpected in a Fixes tag
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags across more than one line.  Also, keep
+all the tags on one group.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/cJEY4fCYAenYlXf.xvVhVVC
+--Sig_/xutuPEP+=kfBtEDtddQ.6lV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+K5QACgkQAVBC80lX
-0Gymzwf6Av3z+KQHk30XQxaQ6/SHXSCqD+K1qmLpD5CxLkVMdoshEZPA1nfID9le
-DkQiV6WLSgm86zL7KMXhHFl7SgdCdBC4ySef4RuVdwROXDIVFjYnmNP9Uk0oafgE
-LMYpsORDvz/S0SQlh8ayOHQIl1jTc/Cq41cZRl7ZngHLmP2iIw1xE0YVXBfx8+J9
-1kE/nZLub7POwjVnn85DhrNOEVjF3TFxw+MODFEibBpMC4z7BkcxJUVfsghbUTjw
-fKHOBevrXb7KrSy3OjWU5Kauf/ckHQJ7+P29R0U4g4ve56tsnmOfnf8rc59Z7BVV
-+TSfSlY120XESkb0KF92eXJYWqcRuQ==
-=C6H4
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+MJsACgkQAVBC80lX
+0Gz3sggAokEEQEbskUc6XRjgfq5/rr0Q7mQK0/3Q+OlKjLMjPApQretWRU7QJSku
+zMHTck02nK0zwxIyByZEjhfRZFZBZODg7EKuj1CjtZwoc8gWBEchZma/zHFfLRmM
+3I4/Ei8ioGu5y7nSwSEg/AQjhB+IItjy4F34C4os7KtWcm13+uC/GGrGxKslXhjC
+FncPe+zICgLUfWxunon0DAm5lzHoNF8xHL4zyO305MPdPUclCpDGQYX3QsaWtO3Q
+ulagWHC9lJtGK2du4C3vE+dNpow/stEM3XTCkFwnJy2SAszznA5KjF5VLo56zIOO
+tM5vaTzihyAOyuJf9qwws1pqFNJB/w==
+=Qd0J
 -----END PGP SIGNATURE-----
 
---Sig_/cJEY4fCYAenYlXf.xvVhVVC--
+--Sig_/xutuPEP+=kfBtEDtddQ.6lV--
