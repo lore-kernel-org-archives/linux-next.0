@@ -1,55 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the device-mapper tree
-Date: Tue, 23 Apr 2019 07:34:12 +1000
-Message-ID: <20190423073412.01c6376a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the at91 tree
+Date: Tue, 23 Apr 2019 08:40:42 +1000
+Message-ID: <20190423084042.29fd9c03@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/N2s5W2ifAqi=VcYKPBRHU/O"; protocol="application/pgp-signature"
+ boundary="Sig_/viFDtRPHsDztPYGKC4FRGVu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikos Tsironis <ntsironis@arrikto.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/N2s5W2ifAqi=VcYKPBRHU/O
+--Sig_/viFDtRPHsDztPYGKC4FRGVu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+After merging the at91 tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  e28adc3bf34e ("dm cache metadata: Fix loading discard bitset")
+arch/arm/mach-at91/pm_suspend.S:17:10: fatal error: pm_data-offsets.h: No s=
+uch file or directory
+ #include "pm_data-offsets.h"
+          ^~~~~~~~~~~~~~~~~~~
 
-Fixes tag
+Caused by commit
 
-  Fixes: ae4a46a1f6 ("dm cache metadata: use bitset cursor api to load disc=
-ard bitset")
+  ab690fa1eb4b ("ARM: at91: move platform-specific asm-offset.h to arch/arm=
+/mach-at91")
 
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+I used the version of the at91 tree from next-20190418 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/N2s5W2ifAqi=VcYKPBRHU/O
+--Sig_/viFDtRPHsDztPYGKC4FRGVu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+M1QACgkQAVBC80lX
-0GyI2Af+OvmatQ7Sy71kjrrDoXjdz/l0hjYnj30x8DLP22JF+NQbxd4ShA7KoPh9
-qegKMHykDKDdKP3A67/yVyt3R+GAaAQe5SA8ab61e3oZKvUfRHpV0YP8ljBn9c/D
-Q/4NORJL3YuV4f0EJ9hx634OvqdUQhock79kMGkM8Pn6KiughubyY9yro1dex5P8
-0SzIPvw3kta6GjbepTI1WJd0xwPe8A572EcGboZg+Zc17hg+cz2YuaxPxYNRr4ZE
-5c0TQ2Qr93k0GO/Umtwve1TKbNkpE2aDVK7BsK8WTuMgmA799oD6WT6yxGftOmSM
-Lnqezi++yIBsm7GPLMNM2Na1RuE6kA==
-=GWpp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+QuoACgkQAVBC80lX
+0GxptQf/eh89qqrmdmAN/MG1zs5M+JFtIoqW6ZJqnhPjnNWSObuz7rImFfprQTWQ
+84CK2p3OKS6V6JubBQfuSE30aADj+bgfsEReaUxeCko53GbZ6Zu5mUQAq7SP7inK
+p6VOvk05cM8csKVADQE/3Ri1v8pt/FI3c3+oBG07fABssx69Ghs5LuT/b88NJRyB
+gCVy+2L+kgI4uHg0ArGGuwbvemYfJpIWasmzJhJXI/LyEbm7wdyl/BQYuM15hyNb
+YMdNnCufYj7Z5Uq7Lll7IVkJWf320Y4oHXRs/aIxukubsHVtFdEYaLYlnUFcl1FR
+8Loim0X1oxD8bd+tBWElxHOMA/ACJw==
+=aW8/
 -----END PGP SIGNATURE-----
 
---Sig_/N2s5W2ifAqi=VcYKPBRHU/O--
+--Sig_/viFDtRPHsDztPYGKC4FRGVu--
