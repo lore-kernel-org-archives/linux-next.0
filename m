@@ -1,36 +1,55 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: linux-next: manual merge of the phy-next tree with the qcom tree
-Date: Mon, 22 Apr 2019 17:17:40 +0530
-Message-ID: <4e8aefdf-d0bb-9dcd-63b1-94de9d4e69d4@ti.com>
-References: <20190418152954.255015e1@canb.auug.org.au>
- <d194fa50-8bff-544e-eb88-128810f525f9@free.fr>
- <20190419045844.GA3322@hector.attlocal.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the rdma-fixes tree
+Date: Tue, 23 Apr 2019 06:57:12 +1000
+Message-ID: <20190423065712.7d0556b7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ediXCgdp=3VX2QzEgGD/S41"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190419045844.GA3322@hector.attlocal.net>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <agross@kernel.org>, Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guy Levi <guyle@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/ediXCgdp=3VX2QzEgGD/S41
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 19/04/19 10:28 AM, Andy Gross wrote:
-> On Thu, Apr 18, 2019 at 09:35:44AM +0200, Marc Gonzalez wrote:
->>
->> It is not clear to me what I could/should have done differently to avoid
->> the conflict?
-> 
-> I dropped the patch for now.  We can deal with this later as it is trivial.
-> The best way probably would have been for Kishon to take this patch as well.
-> Then he would have fixed it up and no one else would have seen it.  But we'll
-> deal with it in a few weeks.  No biggie.
+In commit
 
-I've included "dt-bindings: phy-qcom-qmp: Tweak qcom,msm8998-qmp-ufs-phy" in
-linux-phy tree now.
+  5efda3b6b122 ("IB/mlx5: Fix scatter to CQE in DCT QP creation")
 
-Thanks
-Kishon
+Fixes tag
+
+  Fixes: 5d6ff1babe ("IB/mlx5: Support scatter to CQE for DC transport type=
+")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ediXCgdp=3VX2QzEgGD/S41
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+KqgACgkQAVBC80lX
+0GwQxAf+JJ5wkBp7Q6O3j/mBPifO34ghfG60lN666idz/o6ToG4fxKvVnaviYD+Z
+CWfxxQksw/2dvWZl1M9jkb1pU5bBNZou8LWc3u0/Z0417wCdZvWZjC8Zsuu+PORC
+5H+BwZvCH5fLjN336Faek0UyBbMuFtK8s7whbiJq64X8nh0SmFEwcqbtIEnBC6Fp
+3fECQY0uKOk2oNwDqbZXhzFyX5QKLmnKEcTF9ToPfgvM0R/hbKKPGIFGs57knNGt
+TPszK2Y4NcjxiI1KcYuhrcjfW7vXCaulLqq1IGJ0kR4nX/FBmG4e7onAhbrBifAq
+4FNWOxVmg0Yq8wlMgCKsObFQPgkdbg==
+=Hz1f
+-----END PGP SIGNATURE-----
+
+--Sig_/ediXCgdp=3VX2QzEgGD/S41--
