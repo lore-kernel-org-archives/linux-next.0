@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net-next tree
-Date: Tue, 23 Apr 2019 07:26:34 +1000
-Message-ID: <20190423072634.57cdf8b0@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the crypto tree
+Date: Tue, 23 Apr 2019 07:30:36 +1000
+Message-ID: <20190423073036.3fe21a5f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tsgWxA3BKl85cM3aDU7WR=/"; protocol="application/pgp-signature"
+ boundary="Sig_/RXB9yMIEok_3_i2o/aOAro9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Hurley <john.hurley@netronome.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Brijesh Singh <brijesh.singh@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/tsgWxA3BKl85cM3aDU7WR=/
+--Sig_/RXB9yMIEok_3_i2o/aOAro9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,38 +19,37 @@ Hi all,
 
 In commit
 
-  7d26c96052cd ("nfp: flower: fix size_t compile warning")
+  f5a2aeb8b254 ("crypto: ccp - Do not free psp_master when PLATFORM_INIT fa=
+ils")
 
 Fixes tag
 
-  Fixes: a6156a6ab0f9 ("nfp: flower: handle merge hint messages")
+  Fixes: 200664d5237f ("crypto: ccp: Add SEV support")
 
 has these problem(s):
 
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: dbc2d68edc98 ("nfp: flower: handle merge hint messages")
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/tsgWxA3BKl85cM3aDU7WR=/
+--Sig_/RXB9yMIEok_3_i2o/aOAro9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+MYoACgkQAVBC80lX
-0GyxBAf/fSvY50YswnL5EHL0gGOHrxiidhu5XHP+FRdqSUvNBz41wzTzhyTaokVV
-TYcGJItf2n06jbyGMNhhA75NIIor8xaDbepJZ27rqimb4g1XMm/mTGnkfDGdBRR0
-Fv0S/ApnkAKvtuztEmeJLaCq/BSwweU86VynVIhmdABhKmGo4ENyiNe2+v7b+nLT
-U3nkoQCq/s/lKi9+dY+sTaUNlDiIXKk0gEcdnbAUcnmYCYtDtfRiMSmsGvnGewKN
-oPcV5VOL7Li4xbMMCgrWwtXct1K/N6SK8xJ8EozBQAv3duQAqX5wxDRXjWMl0Zqu
-/JzWU8KECIe/fUPZJXUaounXt9EFbQ==
-=sIOX
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+MnwACgkQAVBC80lX
+0GyE/Qf9GDRYxthCAWMoXZwE1IC/uYi30qs12/bOIeesOm5T5Db3m8TalDZiYalC
+GJyJfYJyZEmjxQDaQaB0ZMjkHbe1qAs7ELO5+2MlVWtXCFqEBD2ZYzkJkOAgkPqQ
+fjOWk46Db5GSVUKMXgO8Q25dIvso6HZ9Zj4aS195TkelRo6bZEUfXjTizAE3/iwF
+EtCyMH8ZuyKEGZYG048ItsO1Nnso4ezpSRT/RzCrT3c+wnU2e+An0avItCGXmjBn
+hPJCElUYqItbnJfbr8zWUh49yVxpoITd/sdLJnTyf5BkgACVmPKbbh7YGVSUz4E1
+Kur6dgY7WPLkcysTxqfm2Cu3d7r05Q==
+=izbc
 -----END PGP SIGNATURE-----
 
---Sig_/tsgWxA3BKl85cM3aDU7WR=/--
+--Sig_/RXB9yMIEok_3_i2o/aOAro9--
