@@ -1,76 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mediatek tree with Linus' tree
-Date: Wed, 24 Apr 2019 09:09:07 +1000
-Message-ID: <20190424090907.4221e701@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the qcom tree
+Date: Wed, 24 Apr 2019 09:25:31 +1000
+Message-ID: <20190424092531.3988850d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/I7hSmkFkp/1rA4Ou4IxaiMY"; protocol="application/pgp-signature"
+ boundary="Sig_/MdrnBC5ykLaNcA9m6R7BzHc"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Erin Lo <erin.lo@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Fabien Parent <fparent@baylibre.com>
+To: Andy Gross <andy.gross@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthias Kaehlcke <mka@chromium.org>, Douglas Anderson <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/I7hSmkFkp/1rA4Ou4IxaiMY
+--Sig_/MdrnBC5ykLaNcA9m6R7BzHc
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mediatek tree got a conflict in:
+After merging the qcom tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  Documentation/devicetree/bindings/serial/mtk-uart.txt
+arch/arm/boot/dts/qcom-apq8064.dtsi:1297.29-1309.5: ERROR (phandle_referenc=
+es): /soc/dsi-phy@4700200: Reference to non-existent node or label "xo_boar=
+d"
 
-between commit:
+Caused by commit
 
-  898a737c8a43 ("dt-bindings: serial: Add compatible for Mediatek MT8183")
+  3560af5a56b5 ("ARM: dts: qcom-apq8064: Set 'xo_board' as ref clock of the=
+ DSI PHY")
 
-from Linus' tree and commit:
-
-  61a640143f68 ("dt-bindings: serial: mtk-uart: add support for MT8516")
-
-from the mediatek tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the version of the qcom tree from next-20190423 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc Documentation/devicetree/bindings/serial/mtk-uart.txt
-index bcfb13194f16,ca7e9dc83087..000000000000
---- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
-+++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
-@@@ -16,7 -17,7 +17,8 @@@ Required properties
-    * "mediatek,mt8127-uart" for MT8127 compatible UARTS
-    * "mediatek,mt8135-uart" for MT8135 compatible UARTS
-    * "mediatek,mt8173-uart" for MT8173 compatible UARTS
- +  * "mediatek,mt8183-uart", "mediatek,mt6577-uart" for MT8183 compatible =
-UARTS
-+   * "mediatek,mt8516-uart" for MT8516 compatible UARTS
-    * "mediatek,mt6577-uart" for MT6577 and all of the above
- =20
-  - reg: The base address of the UART register bank.
-
---Sig_/I7hSmkFkp/1rA4Ou4IxaiMY
+--Sig_/MdrnBC5ykLaNcA9m6R7BzHc
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly/mxMACgkQAVBC80lX
-0GxRjgf/Y2cCmcpfixc9SDG1DVUNeDtLOm9wRvXAcXb2RpuDfV1Wj+TcM76fMnrK
-1DedmtBb3OQ9STbPahjG5zbAocNiUSNBidhqjK5hbirSXIO6vFO8Q7CbdOsdGBtj
-wAGhM99DJ+uwNqMMbPeHVLX3EWEO9LgVYF5YFJkJShsDmsbDPggWoYahWowiDRFg
-KIl+ZgZgRmX4l7RGeTAMCuzFE1Ck6c/0lEn2zxsgUrXAT7nfx0rmkzK8cXHTufuN
-xRx+D//0THDXEgQUXNGpKCYit8n876OT1BWot6IuqzHIgwrKJbf7OFSGI1++FTXM
-beJTNp283i7ZCRalwyj+CngRnANrMg==
-=3rE4
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly/nusACgkQAVBC80lX
+0GyOhggAjtHMOWN14OpkY33HFFHGlnXt2JzrszGAisrqemEBqnhfJ0AhY9Ez0Elc
+De8ThAyuJORxb1mcRatYHDspGKFs9jc2/jot9F1E4rqnyqlAR+hAJNiRPqQMkJuL
+3KkKfEy74BNMImuF6YGet3be1nZGMekezpxAu33U/kBGsGqmaMLcTo+/zxfuPfVn
+YN2PjeAuyWB02Ur2JQ3P/hz7eTGaBh6/xMLQtBlLo5soZeQt40uezQh/zKq66qRa
+U78VjHAubuATRvZzuPQ3IyCjXKNatzNNx8+xGDwIWCEjymX7TVlsr1K+fLDqob4a
+oPiKsGXVhnhtcgPBbGgK9OW+ptQ0qQ==
+=qdUn
 -----END PGP SIGNATURE-----
 
---Sig_/I7hSmkFkp/1rA4Ou4IxaiMY--
+--Sig_/MdrnBC5ykLaNcA9m6R7BzHc--
