@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the powerpc
- tree
-Date: Tue, 23 Apr 2019 18:57:30 +1000
-Message-ID: <20190423185730.401f8676@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ powerpc-fixes tree
+Date: Tue, 23 Apr 2019 19:06:06 +1000
+Message-ID: <20190423190606.0fefb856@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Nk6HokKlb1IQryWefgKDJ2M"; protocol="application/pgp-signature"
+ boundary="Sig_/2ARaGh/=BsU+UGXvuPb+u_l"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, Michal Hocko <mhocko@suse.com>, Laurent Vivier <lvivier@redhat.com>, David Hildenbrand <david@redhat.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, Ira Weiny <ira.weiny@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Nk6HokKlb1IQryWefgKDJ2M
+--Sig_/2ARaGh/=BsU+UGXvuPb+u_l
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,19 +20,17 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/powerpc/mm/mem.c
+  arch/powerpc/mm/mmu_context_iommu.c
 
-between commit:
+between commits:
 
-  f172acbfae1a ("powerpc/mm: move warning from resize_hpt_for_hotplug()")
-  26ad26718dfa ("powerpc/mm: Fix section mismatch warning")
+  eb9d7a62c386 ("powerpc/mm_iommu: Fix potential deadlock")
+  7a3a4d763837 ("powerpc/mm_iommu: Allow pinning large regions")
 
-from the powerpc tree and commit:
+from the powerpc-fixes tree and commit:
 
-  fc6a586376ab ("mm, memory_hotplug: provide a more generic restrictions fo=
-r memory hotplug")
-  e8b6bc564e97 ("mm/memory_hotplug: make __remove_pages() and arch_remove_m=
-emory() never fail")
+  02f506bad7af ("mm/gup: replace get_user_pages_longterm() with FOLL_LONGTE=
+RM")
 
 from the akpm-current tree.
 
@@ -47,64 +45,67 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/mm/mem.c
-index e12bec98366f,cc9425fb9056..000000000000
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@@ -109,8 -109,8 +109,8 @@@ int __weak remove_section_mapping(unsig
-  	return -ENODEV;
-  }
+diff --cc arch/powerpc/mm/mmu_context_iommu.c
+index 8330f135294f,755fe7adc0d8..000000000000
+--- a/arch/powerpc/mm/mmu_context_iommu.c
++++ b/arch/powerpc/mm/mmu_context_iommu.c
+@@@ -135,27 -144,18 +131,28 @@@ static long mm_iommu_do_alloc(struct mm
+  	}
  =20
-- int __ref arch_add_memory(int nid, u64 start, u64 size, struct vmem_altma=
-p *altmap,
-- 			  bool want_memblock)
- -int __meminit arch_add_memory(int nid, u64 start, u64 size,
- -			struct mhp_restrictions *restrictions)
-++int __ref arch_add_memory(int nid, u64 start, u64 size,
-++			  struct mhp_restrictions *restrictions)
-  {
-  	unsigned long start_pfn =3D start >> PAGE_SHIFT;
-  	unsigned long nr_pages =3D size >> PAGE_SHIFT;
-@@@ -131,8 -131,8 +131,8 @@@
-  }
+  	down_read(&mm->mmap_sem);
+ -	ret =3D get_user_pages(ua, entries, FOLL_WRITE | FOLL_LONGTERM,
+ -			     mem->hpages, NULL);
+ +	chunk =3D (1UL << (PAGE_SHIFT + MAX_ORDER - 1)) /
+ +			sizeof(struct vm_area_struct *);
+ +	chunk =3D min(chunk, entries);
+ +	for (entry =3D 0; entry < entries; entry +=3D chunk) {
+ +		unsigned long n =3D min(entries - entry, chunk);
+ +
+- 		ret =3D get_user_pages_longterm(ua + (entry << PAGE_SHIFT), n,
+- 				FOLL_WRITE, mem->hpages + entry, NULL);
+++		ret =3D get_user_pages(ua + (entry << PAGE_SHIFT), n,
+++				     FOLL_WRITE | FOLL_LONGTERM,
+++				     mem->hpages + entry, NULL);
+ +		if (ret =3D=3D n) {
+ +			pinned +=3D n;
+ +			continue;
+ +		}
+ +		if (ret > 0)
+ +			pinned +=3D ret;
+ +		break;
+ +	}
+  	up_read(&mm->mmap_sem);
+ -	if (ret !=3D entries) {
+ -		/* free the reference taken */
+ -		for (i =3D 0; i < ret; i++)
+ -			put_page(mem->hpages[i]);
+ -
+ -		vfree(mem->hpas);
+ -		kfree(mem);
+ -		ret =3D -EFAULT;
+ -		goto unlock_exit;
+ +	if (pinned !=3D entries) {
+ +		if (!ret)
+ +			ret =3D -EFAULT;
+ +		goto free_exit;
+  	}
  =20
-  #ifdef CONFIG_MEMORY_HOTREMOVE
-- int __ref arch_remove_memory(int nid, u64 start, u64 size,
-- 			     struct vmem_altmap *altmap)
- -void __meminit arch_remove_memory(int nid, u64 start, u64 size,
- -				  struct vmem_altmap *altmap)
-++void __ref arch_remove_memory(int nid, u64 start, u64 size,
-++			      struct vmem_altmap *altmap)
-  {
-  	unsigned long start_pfn =3D start >> PAGE_SHIFT;
-  	unsigned long nr_pages =3D size >> PAGE_SHIFT;
-@@@ -161,10 -160,7 +160,8 @@@
-  	 */
-  	vm_unmap_aliases();
- =20
- -	resize_hpt_for_hotplug(memblock_phys_mem_size());
- +	if (resize_hpt_for_hotplug(memblock_phys_mem_size()) =3D=3D -ENOSPC)
- +		pr_warn("Hash collision while resizing HPT\n");
--=20
-- 	return ret;
-  }
-  #endif
-  #endif /* CONFIG_MEMORY_HOTPLUG */
+  	pageshift =3D PAGE_SHIFT;
 
---Sig_/Nk6HokKlb1IQryWefgKDJ2M
+--Sig_/2ARaGh/=BsU+UGXvuPb+u_l
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+03oACgkQAVBC80lX
-0Gz8lgf/UMh08pAMMuEi1HXki2uwBPjULYkkOB7hT/sBlTNIsKj8PLg+HzB5AzS+
-3KLroeGactSUQPGdrOywqyE6E9dVlBulJwsWjLda5D1tVPmN4aDYkKG0eXaK7ATX
-sBRdb+AXlw4d4giNYySbvEkvUNNnOo/dd6jsdp/3jxuZVe/sq2U0s6Yfrh7hmUiN
-+pvaEiHEVZdkOiAW7ToD1ksbB56ubAz1zy4Ii9KAkAl+p80c69C8cufbOYhFASws
-83ItvUqxFfTSIehfHasJZybU1VUzAelZ5TfU460IC2addI9Q2cAAmxGiYWy8QTS3
-roYa+gqqyGScJwQmcHLnPXzSpe8Iew==
-=r82g
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+1X4ACgkQAVBC80lX
+0GzKPwf/eFaYcP4HXH0SSp2FFkj7xchpF5DtNJfmEvjnf230qoH/ZqNgTpSV9hBK
+Yonl18q1M7BNr13j+CNeKVr6iZOSDNPqSHCvB83cqIS7XcH8UzJEbuhpIfbAcI9f
+B06JwSs4eFhhpAINXRGbE492Jl5DGB8Rxl2+KWRjXRBqYD7Q5V9d5pzj0HAt8N8/
+zRvIEfDRxcCspk+x5LakeyiOh90fJC70+E72PhEtKHSYvjoLZ9pYtUARUVFaLfQG
+p7RTS+px69y4nCYuQp4zCAMpzRaTBSSGHAatg+W7G+SIAtfd/wbCgkrG3Y9f9SGk
+V9thHtcPP8+1j/HhkIipX9Fh0Skyow==
+=OJEv
 -----END PGP SIGNATURE-----
 
---Sig_/Nk6HokKlb1IQryWefgKDJ2M--
+--Sig_/2ARaGh/=BsU+UGXvuPb+u_l--
