@@ -1,56 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the staging tree
-Date: Tue, 23 Apr 2019 15:13:47 +1000
-Message-ID: <20190423151347.4ec9f51e@canb.auug.org.au>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [linux-next] rtlwifi commit contains a patch reject file
+Date: Tue, 23 Apr 2019 08:41:48 +0300
+Message-ID: <87a7ghxopv.fsf@purkki.adurom.net>
+References: <20190420155008.GM23044@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+/jYVB/VZPM.LzNzc7/cZbJ"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matt Sickler <Matt.Sickler@daktronics.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190420155008.GM23044@windriver.com> (Paul Gortmaker's message
+        of "Sat, 20 Apr 2019 11:50:09 -0400")
+Sender: netdev-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/+/jYVB/VZPM.LzNzc7/cZbJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Paul Gortmaker <paul.gortmaker@windriver.com> writes:
 
-Hi Greg,
+> I'm kind of surprised sfr doesn't have a bot to complain when it sees
+> a foo.c.rej or foo.c.orig in a commit...
+>
+> Paul.
+> ---
+>
+> $ git show --stat ddab2eee794
+> commit ddab2eee7949f94b8ecdc5c84ae238826142d35d
+> Author: Larry Finger <Larry.Finger@lwfinger.net>
+> Date:   Thu Apr 4 13:29:31 2019 -0500
+>
+>     rtlwifi: Convert the wake_match variable to local
+>     
+>     In five of the drivers, the contents of bits 29-31 of one of the RX
+>     descriptors is used to set bits in a variable that is used to save the
+>     wakeup condition for output in a debugging statement. The resulting
+>     variable is not used anywhere else even though it is stored in a struct
+>     and could be available in other routines. This variable is changed to be
+>     local.
+>     
+>     Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+>     Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+>
+>  drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c     | 15 ++++++++-------
+>  drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c.rej | 10 ++++++++++
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Thanks for the report, the issue was fixed by this:
 
-drivers/staging/kpc2000/kpc_spi/spi_driver.c:97:5: note: offset of packed b=
-it-field 'wl' has changed in GCC 4.4
-     } bitfield;
-     ^
-drivers/staging/kpc2000/kpc_spi/spi_driver.c:97:5: note: offset of packed b=
-it-field 'cs' has changed in GCC 4.4
-drivers/staging/kpc2000/kpc_spi/spi_driver.c:97:5: note: offset of packed b=
-it-field 'wcnt' has changed in GCC 4.4
+b5250c9c14c1 rtlwifi: rtl8188ee: Remove extraneous file
 
-Introduced by commit
-
-  7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/+/jYVB/VZPM.LzNzc7/cZbJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+nwsACgkQAVBC80lX
-0Gy20Af/X0CaM9Vv/zCUD/M7WO9/cY8wk6XGk53ydByELFmv6+tf95Wd/US3AXJ8
-hYukqJEI159o6omGF3TqpfuuyY/yEHSLNOFzgqJ5AvF+LH+StkzOMDG2TGLN3RVq
-5LWSRSG6IVyge6jBlL4zJlIL59Zof0tQW5mf10mXMwul5DnWGlfdMi/EyZhsehHb
-ed6oHNJLBbcM//I1MRM/Aw2/UV8nF5OcnUu5D3yDqc7hiYVGMCw+MXfVXezzNaIw
-fHEhsMfuk61T9Vi/rS3cCNsvjlowdaoX6KsbzwhLOLqSoonRDxuWi3aEWNny1b7z
-WjcdEOS7BNpy/xPrzx3+hYWbfheQBw==
-=71M1
------END PGP SIGNATURE-----
-
---Sig_/+/jYVB/VZPM.LzNzc7/cZbJ--
+-- 
+Kalle Valo
