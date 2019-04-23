@@ -1,100 +1,145 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: mmotm 2019-04-19-14-53 uploaded (objtool)
-Date: Tue, 23 Apr 2019 10:24:48 +0200
-Message-ID: <20190423082448.GY11158@hirez.programming.kicks-ass.net>
-References: <20190419215358.WMVFXV3bT%akpm@linux-foundation.org>
- <af3819b4-008f-171e-e721-a9a20f85d8d1@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the pidfd
+ tree
+Date: Tue, 23 Apr 2019 18:46:57 +1000
+Message-ID: <20190423184657.3d16ba97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eydUOPajQGaNyvHcxj254qE"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <af3819b4-008f-171e-e721-a9a20f85d8d1@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, Josh Poimboeuf <jpoimboe@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <christian@brauner.io>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrea Arcangeli <aarcange@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 19, 2019 at 09:36:46PM -0700, Randy Dunlap wrote:
-> On 4/19/19 2:53 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2019-04-19-14-53 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> 
-> on x86_64:
-> 
->   CC      lib/strncpy_from_user.o
-> lib/strncpy_from_user.o: warning: objtool: strncpy_from_user()+0x315: call to __ubsan_handle_add_overflow() with UACCESS enabled
->   CC      lib/strnlen_user.o
-> lib/strnlen_user.o: warning: objtool: strnlen_user()+0x337: call to __ubsan_handle_sub_overflow() with UACCESS enabled
+--Sig_/eydUOPajQGaNyvHcxj254qE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Lemme guess, you're using GCC < 8 ? That had a bug where UBSAN
-considered signed overflow UB when using -fno-strict-overflow or
--fwrapv.
+Hi all,
 
-Now, we could of course allow this symbol, but I found only the below
-was required to make allyesconfig build without issue.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Andy, Linus?
+  kernel/fork.c
 
-(note: the __put_user thing is from this one:
+between commit:
 
-  drivers/gpu/drm/i915/i915_gem_execbuffer.c:	if (unlikely(__put_user(offset, &urelocs[r-stack].presumed_offset))) {
+  2897d468ea48 ("clone: add CLONE_PIDFD")
 
- where (ptr) ends up non-trivial due to UBSAN)
+from the pidfd tree and commit:
 
----
+  83e1afab81ac ("userfaultfd: use RCU to free the task struct when fork fai=
+ls")
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 22ba683afdc2..c82abd6e4ca3 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -427,10 +427,11 @@ do {									\
- ({								\
- 	__label__ __pu_label;					\
- 	int __pu_err = -EFAULT;					\
--	__typeof__(*(ptr)) __pu_val;				\
--	__pu_val = x;						\
-+	__typeof__(*(ptr)) __pu_val = (x);			\
-+	__typeof__(ptr) __pu_ptr = (ptr);			\
-+	__typeof__(size) __pu_size = (size);			\
- 	__uaccess_begin();					\
--	__put_user_size(__pu_val, (ptr), (size), __pu_label);	\
-+	__put_user_size(__pu_val, __pu_ptr, __pu_size, __pu_label);	\
- 	__pu_err = 0;						\
- __pu_label:							\
- 	__uaccess_end();					\
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index 58eacd41526c..07045bc4872e 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -26,7 +26,7 @@
- static inline long do_strncpy_from_user(char *dst, const char __user *src, long count, unsigned long max)
- {
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
--	long res = 0;
-+	unsigned long res = 0;
- 
- 	/*
- 	 * Truncate 'max' to the user-specified limit, so that
-diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
-index 1c1a1b0e38a5..0729378ad3e9 100644
---- a/lib/strnlen_user.c
-+++ b/lib/strnlen_user.c
-@@ -28,7 +28,7 @@
- static inline long do_strnlen_user(const char __user *src, unsigned long count, unsigned long max)
- {
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
--	long align, res = 0;
-+	unsigned long align, res = 0;
- 	unsigned long c;
- 
- 	/*
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/fork.c
+index ad2896dd8df2,1c10a912b9b6..000000000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -1667,58 -1673,24 +1678,76 @@@ static inline void rcu_copy_process(str
+  #endif /* #ifdef CONFIG_TASKS_RCU */
+  }
+ =20
+ +static int pidfd_release(struct inode *inode, struct file *file)
+ +{
+ +	struct pid *pid =3D file->private_data;
+ +
+ +	file->private_data =3D NULL;
+ +	put_pid(pid);
+ +	return 0;
+ +}
+ +
+ +#ifdef CONFIG_PROC_FS
+ +static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ +{
+ +	struct pid_namespace *ns =3D proc_pid_ns(file_inode(m->file));
+ +	struct pid *pid =3D f->private_data;
+ +
+ +	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
+ +	seq_putc(m, '\n');
+ +}
+ +#endif
+ +
+ +const struct file_operations pidfd_fops =3D {
+ +	.release =3D pidfd_release,
+ +#ifdef CONFIG_PROC_FS
+ +	.show_fdinfo =3D pidfd_show_fdinfo,
+ +#endif
+ +};
+ +
+ +/**
+ + * pidfd_create() - Create a new pid file descriptor.
+ + *
+ + * @pid:  struct pid that the pidfd will reference
+ + *
+ + * This creates a new pid file descriptor with the O_CLOEXEC flag set.
+ + *
+ + * Note, that this function can only be called after the fd table has
+ + * been unshared to avoid leaking the pidfd to the new process.
+ + *
+ + * Return: On success, a cloexec pidfd is returned.
+ + *         On error, a negative errno number will be returned.
+ + */
+ +static int pidfd_create(struct pid *pid)
+ +{
+ +	int fd;
+ +
+ +	fd =3D anon_inode_getfd("[pidfd]", &pidfd_fops, get_pid(pid),
+ +			      O_RDWR | O_CLOEXEC);
+ +	if (fd < 0)
+ +		put_pid(pid);
+ +
+ +	return fd;
+ +}
+ +
++ #ifdef CONFIG_MEMCG
++ static void __delayed_free_task(struct rcu_head *rhp)
++ {
++ 	struct task_struct *tsk =3D container_of(rhp, struct task_struct, rcu);
++=20
++ 	free_task(tsk);
++ }
++ #endif /* CONFIG_MEMCG */
++=20
++ static __always_inline void delayed_free_task(struct task_struct *tsk)
++ {
++ #ifdef CONFIG_MEMCG
++ 	call_rcu(&tsk->rcu, __delayed_free_task);
++ #else /* CONFIG_MEMCG */
++ 	free_task(tsk);
++ #endif /* CONFIG_MEMCG */
++ }
++=20
+  /*
+   * This creates a new process as a copy of the old one,
+   * but does not actually start it yet.
+
+--Sig_/eydUOPajQGaNyvHcxj254qE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+0QEACgkQAVBC80lX
+0GyOjwgAigfdLOFajEgYYvXzKoBod23eQnMS7CkMSx6WmEqn3bHjYt8CMPhYzFlX
+kVHgPLdL+jVDWbo9ZiWgbU78L+52178E74NM8jWvScjM2iWTagjZ75nWsbr6jF8n
+qJsMRAKxC+wBCV09USySGGd4mau6Bj4OQdf+2OxZeWBOZufigd/JGjL/Mbb6ioUh
+9/M99UH9Dp+Ile0aARYGOy1YL9jUwv8PyKlGjifS6p6/QGP3uKpaoOofpYSkNHYv
+btRp3Y8Lx9AHNXacIrx25rpYDFpediO7Earyet1iF3tCL8g3x3gHqx1Ci6fxnDsI
+M1YAOsAgvcglBl66SC0kq4THIUmCvA==
+=/Tue
+-----END PGP SIGNATURE-----
+
+--Sig_/eydUOPajQGaNyvHcxj254qE--
