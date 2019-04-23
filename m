@@ -1,49 +1,54 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: [linux-next] rtlwifi commit contains a patch reject file
-Date: Tue, 23 Apr 2019 08:41:48 +0300
-Message-ID: <87a7ghxopv.fsf@purkki.adurom.net>
-References: <20190420155008.GM23044@windriver.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: linux-next: build failure after merge of the at91 tree
+Date: Tue, 23 Apr 2019 09:22:54 +0200
+Message-ID: <20190423072254.qa772iolhha7xb6l@M43218.corp.atmel.com>
+References: <20190423084042.29fd9c03@canb.auug.org.au>
+ <CAK7LNAQWMVqbN9Bytz7WWrUvJ_fe8joUR+R4jmszV54pkucvyA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190420155008.GM23044@windriver.com> (Paul Gortmaker's message
-        of "Sat, 20 Apr 2019 11:50:09 -0400")
-Sender: netdev-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQWMVqbN9Bytz7WWrUvJ_fe8joUR+R4jmszV54pkucvyA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Paul Gortmaker <paul.gortmaker@windriver.com> writes:
+On Tue, Apr 23, 2019 at 01:27:52PM +0900, Masahiro Yamada wrote:
+> External E-Mail
+> 
+> 
+> On Tue, Apr 23, 2019 at 10:33 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > After merging the at91 tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> >
+> > arch/arm/mach-at91/pm_suspend.S:17:10: fatal error: pm_data-offsets.h: No such file or directory
+> >  #include "pm_data-offsets.h"
+> >           ^~~~~~~~~~~~~~~~~~~
+> >
+> > Caused by commit
+> >
+> >   ab690fa1eb4b ("ARM: at91: move platform-specific asm-offset.h to arch/arm/mach-at91")
+> >
+> > I used the version of the at91 tree from next-20190418 for today.
+> 
+> 
+> Sorry, I missed to test the out-of-tree build.
+> 
+> -I $(srctree)/$(src) is not added
+> when check-in assembly files include a generated header.
+> (I think this should be automatically cared by Kbuild, though.)
+> 
+> 
+> Ludovic,
+> 
+> Could you drop this patch for now?
 
-> I'm kind of surprised sfr doesn't have a bot to complain when it sees
-> a foo.c.rej or foo.c.orig in a commit...
->
-> Paul.
-> ---
->
-> $ git show --stat ddab2eee794
-> commit ddab2eee7949f94b8ecdc5c84ae238826142d35d
-> Author: Larry Finger <Larry.Finger@lwfinger.net>
-> Date:   Thu Apr 4 13:29:31 2019 -0500
->
->     rtlwifi: Convert the wake_match variable to local
->     
->     In five of the drivers, the contents of bits 29-31 of one of the RX
->     descriptors is used to set bits in a variable that is used to save the
->     wakeup condition for output in a debugging statement. The resulting
->     variable is not used anywhere else even though it is stored in a struct
->     and could be available in other routines. This variable is changed to be
->     local.
->     
->     Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
->     Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
->
->  drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c     | 15 ++++++++-------
->  drivers/net/wireless/realtek/rtlwifi/rtl8188ee/trx.c.rej | 10 ++++++++++
+Yes I dropped it from my PR for 5.2 and remove it from at91-next.
 
-Thanks for the report, the issue was fixed by this:
+Regards
 
-b5250c9c14c1 rtlwifi: rtl8188ee: Remove extraneous file
-
--- 
-Kalle Valo
+Ludovic
