@@ -1,33 +1,35 @@
-From: Bart Van Assche <bvanassche@acm.org>
-Subject: Re: next-20190408..0418: Suspend/resume problems on Thinkpad X60
-Date: Tue, 23 Apr 2019 07:09:42 -0700
-Message-ID: <fed0549d-a789-294c-d899-304911106113@acm.org>
-References: <20190408173928.GB13260@amd> <20190412102812.GA24977@amd>
- <20190423102239.GA15531@amd>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 23 (crypto/ecrdsa)
+Date: Tue, 23 Apr 2019 08:22:40 -0700
+Message-ID: <ea752c71-b41f-47f5-290b-3a31bb0e96df@infradead.org>
+References: <20190423202832.49cdf5bc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190423102239.GA15531@amd>
+In-Reply-To: <20190423202832.49cdf5bc@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, kernel list <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net, linux-pm@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, hdegoede@redhat.com, axboe@kernel.dk, linux-ide@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitaly Chikunov <vt@altlinux.org>, Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 4/23/19 3:22 AM, Pavel Machek wrote:
->>> It boots ok (unlike mainline -- I'm debugging that), and I can suspend
->>> and resume... but then cursor in X is moving and I can talk to
->>> applications cached in memory, but any access to disk hangs.
->>
->> Mainline problem was identified.
->>
->> But resume is still broken. I took advantage of fact that I can still
->> do cached commands, and got complete dmesg. I'm attaching it.
+On 4/23/19 3:28 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Still broken in 0418. Ideas would be welcome at this point.
+> News: there will be no linux-next release on Thursday April 25.
+> 
+> Changes since 20190418:
+> 
 
-Have you already tried the debugging steps explained in
-Documentation/power to obtain more information about the nature of the
-suspend/resume problem?
+on i386 or x86_64:
 
-Bart.
+ERROR: "asn1_ber_decoder" [crypto/ecrdsa_generic.ko] undefined!
+ERROR: "look_up_OID" [crypto/ecrdsa_generic.ko] undefined!
+
+
+Do you need a failing config file?
+
+thanks.
+-- 
+~Randy
