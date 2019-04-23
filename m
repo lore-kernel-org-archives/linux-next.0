@@ -1,63 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb-next tree with the v4l-dvb
- tree
-Date: Tue, 23 Apr 2019 10:51:31 +1000
-Message-ID: <20190423105131.7f460991@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Tue, 23 Apr 2019 11:32:27 +1000
+Message-ID: <20190423113227.3dd68989@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UgZn/0eMWNXqs_CbU66YxT+"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>, Arnd Bergmann <arnd@arndb.de>
+ boundary="Sig_/kWc9vZT6BWDaAW2K4bbmfho"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UgZn/0eMWNXqs_CbU66YxT+
+--Sig_/kWc9vZT6BWDaAW2K4bbmfho
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the v4l-dvb-next tree got a conflict in:
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  drivers/media/platform/Kconfig
+net/socket.c: In function 'sock_ioctl':
+net/socket.c:1173:10: warning: this statement may fall through [-Wimplicit-=
+fallthrough=3D]
+    err =3D sock->ops->gettstamp(sock, argp,
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          cmd =3D=3D SIOCGSTAMP_OLD,
+          ~~~~~~~~~~~~~~~~~~~~~~
+          !IS_ENABLED(CONFIG_64BIT));
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~
+net/socket.c:1176:3: note: here
+   case SIOCGSTAMP_NEW:
+   ^~~~
 
-between commit:
+Introduced by commit
 
-  63604a143fe1 ("media: seco-cec: fix building with RC_CORE=3Dm")
+  0768e17073dc ("net: socket: implement 64-bit timestamps")
 
-from the v4l-dvb tree and commit:
-
-  81527254e151 ("media: seco: depend on CONFIG_RC_CORE=3Dy when not a modul=
-e")
-
-from the v4l-dvb-next tree.
-
-I fixed it up (I just used the v4l-dvb tree version) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
+I get this warning because I am building with -Wimplicit-fallthrough
+in attempt to catch new additions early.  The gcc warning can be turned
+off by adding a /* fall through */ comment at the point the fall through
+happens (assuming that the fall through is intentional).
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/UgZn/0eMWNXqs_CbU66YxT+
+--Sig_/kWc9vZT6BWDaAW2K4bbmfho
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+YZMACgkQAVBC80lX
-0GxNYQf+NVcWPMWliyvLuqJadx2S/9l3vjkMy8nHmyxORStdVA0URBMOmDxc8QhN
-gFdALg3DoJM8RFIEQoBjwa+hhLUT3F66yHhtY/u7hGG1609nYlsqknc4L4mC9H2Y
-EsDBpLaoQE+fVsmYjIjP8Z4FxQ77/WB37Sz4xyEpt47WffuVxB0axXjyLCBwJFCQ
-Y6w0xnUQKcqqd6Mwt8LlzM1TrfN5bWwYM+WIeEW2MWFmLuhI8x61hl46sNksKN/O
-NScctplex4HMOTXtlRRD3oO9eqOWR3z3Qk5dKdehytiGHiFX111ryunOVK61r0Y/
-PtZTTN8P+aHhYX9SgCJfwqjo3cvA2A==
-=L0ta
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+aysACgkQAVBC80lX
+0Gx74Af9EQr/Jmy5vXkadUq194+lVw9iMcHP9/4UNQyzjA3UNIDyII2c42Rzr3W7
+v68yLk2+vEDSDMKzBSCarV5MmK+3xaaiTfpLW3pVjThj4ogflYwMMftx+zbULNi5
+oTcoSft8xUe7wBmGHYxyeop2/BfPK7R8l30BZ0+5wEajA1G1B10URuRd+RNYx8cJ
+daXXoHDrTFKbNzkfnjDYK3ePm3g1agVed3ZZzjk3c28ronPMy/W8UVVQmk3aT1/B
+DGEUpn2kWECStgzZaxG6XN4goWqatlODxkzHhnFnZR+rhc+FipYCHI37mU1mZFOD
+esmZMxDnxzLdwhQmUvK0PPUAa1kq+Q==
+=hDj1
 -----END PGP SIGNATURE-----
 
---Sig_/UgZn/0eMWNXqs_CbU66YxT+--
+--Sig_/kWc9vZT6BWDaAW2K4bbmfho--
