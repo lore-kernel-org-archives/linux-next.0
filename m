@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the pidfd
+Subject: linux-next: manual merge of the akpm-current tree with the powerpc
  tree
-Date: Tue, 23 Apr 2019 18:46:57 +1000
-Message-ID: <20190423184657.3d16ba97@canb.auug.org.au>
+Date: Tue, 23 Apr 2019 18:57:30 +1000
+Message-ID: <20190423185730.401f8676@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eydUOPajQGaNyvHcxj254qE"; protocol="application/pgp-signature"
+ boundary="Sig_/Nk6HokKlb1IQryWefgKDJ2M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <christian@brauner.io>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrea Arcangeli <aarcange@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, Michal Hocko <mhocko@suse.com>, Laurent Vivier <lvivier@redhat.com>, David Hildenbrand <david@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/eydUOPajQGaNyvHcxj254qE
+--Sig_/Nk6HokKlb1IQryWefgKDJ2M
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,16 +20,19 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  kernel/fork.c
+  arch/powerpc/mm/mem.c
 
 between commit:
 
-  2897d468ea48 ("clone: add CLONE_PIDFD")
+  f172acbfae1a ("powerpc/mm: move warning from resize_hpt_for_hotplug()")
+  26ad26718dfa ("powerpc/mm: Fix section mismatch warning")
 
-from the pidfd tree and commit:
+from the powerpc tree and commit:
 
-  83e1afab81ac ("userfaultfd: use RCU to free the task struct when fork fai=
-ls")
+  fc6a586376ab ("mm, memory_hotplug: provide a more generic restrictions fo=
+r memory hotplug")
+  e8b6bc564e97 ("mm/memory_hotplug: make __remove_pages() and arch_remove_m=
+emory() never fail")
 
 from the akpm-current tree.
 
@@ -44,102 +47,64 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc kernel/fork.c
-index ad2896dd8df2,1c10a912b9b6..000000000000
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@@ -1667,58 -1673,24 +1678,76 @@@ static inline void rcu_copy_process(str
-  #endif /* #ifdef CONFIG_TASKS_RCU */
+diff --cc arch/powerpc/mm/mem.c
+index e12bec98366f,cc9425fb9056..000000000000
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@@ -109,8 -109,8 +109,8 @@@ int __weak remove_section_mapping(unsig
+  	return -ENODEV;
   }
  =20
- +static int pidfd_release(struct inode *inode, struct file *file)
- +{
- +	struct pid *pid =3D file->private_data;
- +
- +	file->private_data =3D NULL;
- +	put_pid(pid);
- +	return 0;
- +}
- +
- +#ifdef CONFIG_PROC_FS
- +static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
- +{
- +	struct pid_namespace *ns =3D proc_pid_ns(file_inode(m->file));
- +	struct pid *pid =3D f->private_data;
- +
- +	seq_put_decimal_ull(m, "Pid:\t", pid_nr_ns(pid, ns));
- +	seq_putc(m, '\n');
- +}
- +#endif
- +
- +const struct file_operations pidfd_fops =3D {
- +	.release =3D pidfd_release,
- +#ifdef CONFIG_PROC_FS
- +	.show_fdinfo =3D pidfd_show_fdinfo,
- +#endif
- +};
- +
- +/**
- + * pidfd_create() - Create a new pid file descriptor.
- + *
- + * @pid:  struct pid that the pidfd will reference
- + *
- + * This creates a new pid file descriptor with the O_CLOEXEC flag set.
- + *
- + * Note, that this function can only be called after the fd table has
- + * been unshared to avoid leaking the pidfd to the new process.
- + *
- + * Return: On success, a cloexec pidfd is returned.
- + *         On error, a negative errno number will be returned.
- + */
- +static int pidfd_create(struct pid *pid)
- +{
- +	int fd;
- +
- +	fd =3D anon_inode_getfd("[pidfd]", &pidfd_fops, get_pid(pid),
- +			      O_RDWR | O_CLOEXEC);
- +	if (fd < 0)
- +		put_pid(pid);
- +
- +	return fd;
- +}
- +
-+ #ifdef CONFIG_MEMCG
-+ static void __delayed_free_task(struct rcu_head *rhp)
-+ {
-+ 	struct task_struct *tsk =3D container_of(rhp, struct task_struct, rcu);
-+=20
-+ 	free_task(tsk);
-+ }
-+ #endif /* CONFIG_MEMCG */
-+=20
-+ static __always_inline void delayed_free_task(struct task_struct *tsk)
-+ {
-+ #ifdef CONFIG_MEMCG
-+ 	call_rcu(&tsk->rcu, __delayed_free_task);
-+ #else /* CONFIG_MEMCG */
-+ 	free_task(tsk);
-+ #endif /* CONFIG_MEMCG */
-+ }
-+=20
-  /*
-   * This creates a new process as a copy of the old one,
-   * but does not actually start it yet.
+- int __ref arch_add_memory(int nid, u64 start, u64 size, struct vmem_altma=
+p *altmap,
+- 			  bool want_memblock)
+ -int __meminit arch_add_memory(int nid, u64 start, u64 size,
+ -			struct mhp_restrictions *restrictions)
+++int __ref arch_add_memory(int nid, u64 start, u64 size,
+++			  struct mhp_restrictions *restrictions)
+  {
+  	unsigned long start_pfn =3D start >> PAGE_SHIFT;
+  	unsigned long nr_pages =3D size >> PAGE_SHIFT;
+@@@ -131,8 -131,8 +131,8 @@@
+  }
+ =20
+  #ifdef CONFIG_MEMORY_HOTREMOVE
+- int __ref arch_remove_memory(int nid, u64 start, u64 size,
+- 			     struct vmem_altmap *altmap)
+ -void __meminit arch_remove_memory(int nid, u64 start, u64 size,
+ -				  struct vmem_altmap *altmap)
+++void __ref arch_remove_memory(int nid, u64 start, u64 size,
+++			      struct vmem_altmap *altmap)
+  {
+  	unsigned long start_pfn =3D start >> PAGE_SHIFT;
+  	unsigned long nr_pages =3D size >> PAGE_SHIFT;
+@@@ -161,10 -160,7 +160,8 @@@
+  	 */
+  	vm_unmap_aliases();
+ =20
+ -	resize_hpt_for_hotplug(memblock_phys_mem_size());
+ +	if (resize_hpt_for_hotplug(memblock_phys_mem_size()) =3D=3D -ENOSPC)
+ +		pr_warn("Hash collision while resizing HPT\n");
+-=20
+- 	return ret;
+  }
+  #endif
+  #endif /* CONFIG_MEMORY_HOTPLUG */
 
---Sig_/eydUOPajQGaNyvHcxj254qE
+--Sig_/Nk6HokKlb1IQryWefgKDJ2M
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+0QEACgkQAVBC80lX
-0GyOjwgAigfdLOFajEgYYvXzKoBod23eQnMS7CkMSx6WmEqn3bHjYt8CMPhYzFlX
-kVHgPLdL+jVDWbo9ZiWgbU78L+52178E74NM8jWvScjM2iWTagjZ75nWsbr6jF8n
-qJsMRAKxC+wBCV09USySGGd4mau6Bj4OQdf+2OxZeWBOZufigd/JGjL/Mbb6ioUh
-9/M99UH9Dp+Ile0aARYGOy1YL9jUwv8PyKlGjifS6p6/QGP3uKpaoOofpYSkNHYv
-btRp3Y8Lx9AHNXacIrx25rpYDFpediO7Earyet1iF3tCL8g3x3gHqx1Ci6fxnDsI
-M1YAOsAgvcglBl66SC0kq4THIUmCvA==
-=/Tue
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+03oACgkQAVBC80lX
+0Gz8lgf/UMh08pAMMuEi1HXki2uwBPjULYkkOB7hT/sBlTNIsKj8PLg+HzB5AzS+
+3KLroeGactSUQPGdrOywqyE6E9dVlBulJwsWjLda5D1tVPmN4aDYkKG0eXaK7ATX
+sBRdb+AXlw4d4giNYySbvEkvUNNnOo/dd6jsdp/3jxuZVe/sq2U0s6Yfrh7hmUiN
++pvaEiHEVZdkOiAW7ToD1ksbB56ubAz1zy4Ii9KAkAl+p80c69C8cufbOYhFASws
+83ItvUqxFfTSIehfHasJZybU1VUzAelZ5TfU460IC2addI9Q2cAAmxGiYWy8QTS3
+roYa+gqqyGScJwQmcHLnPXzSpe8Iew==
+=r82g
 -----END PGP SIGNATURE-----
 
---Sig_/eydUOPajQGaNyvHcxj254qE--
+--Sig_/Nk6HokKlb1IQryWefgKDJ2M--
