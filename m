@@ -1,46 +1,100 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the v4l-dvb-next tree with the
- v4l-dvb tree
-Date: Tue, 23 Apr 2019 10:12:42 +0200
-Message-ID: <CAK8P3a1LDL51KW2jJdOacAxNP=Gk9YSdcP2LfX8ZasLOdcibDg@mail.gmail.com>
-References: <20190423105131.7f460991@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: mmotm 2019-04-19-14-53 uploaded (objtool)
+Date: Tue, 23 Apr 2019 10:24:48 +0200
+Message-ID: <20190423082448.GY11158@hirez.programming.kicks-ass.net>
+References: <20190419215358.WMVFXV3bT%akpm@linux-foundation.org>
+ <af3819b4-008f-171e-e721-a9a20f85d8d1@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190423105131.7f460991@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <af3819b4-008f-171e-e721-a9a20f85d8d1@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, Josh Poimboeuf <jpoimboe@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 23, 2019 at 2:51 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the v4l-dvb-next tree got a conflict in:
->
->   drivers/media/platform/Kconfig
->
-> between commit:
->
->   63604a143fe1 ("media: seco-cec: fix building with RC_CORE=m")
->
-> from the v4l-dvb tree and commit:
->
->   81527254e151 ("media: seco: depend on CONFIG_RC_CORE=y when not a module")
->
-> from the v4l-dvb-next tree.
->
-> I fixed it up (I just used the v4l-dvb tree version) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
+On Fri, Apr 19, 2019 at 09:36:46PM -0700, Randy Dunlap wrote:
+> On 4/19/19 2:53 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2019-04-19-14-53 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> 
+> on x86_64:
+> 
+>   CC      lib/strncpy_from_user.o
+> lib/strncpy_from_user.o: warning: objtool: strncpy_from_user()+0x315: call to __ubsan_handle_add_overflow() with UACCESS enabled
+>   CC      lib/strnlen_user.o
+> lib/strnlen_user.o: warning: objtool: strnlen_user()+0x337: call to __ubsan_handle_sub_overflow() with UACCESS enabled
 
-Thanks!
+Lemme guess, you're using GCC < 8 ? That had a bug where UBSAN
+considered signed overflow UB when using -fno-strict-overflow or
+-fwrapv.
 
-Both patches are correct, they just use slightly different syntax, so
-the merge is fine as well.
+Now, we could of course allow this symbol, but I found only the below
+was required to make allyesconfig build without issue.
 
-     Arnd
+Andy, Linus?
+
+(note: the __put_user thing is from this one:
+
+  drivers/gpu/drm/i915/i915_gem_execbuffer.c:	if (unlikely(__put_user(offset, &urelocs[r-stack].presumed_offset))) {
+
+ where (ptr) ends up non-trivial due to UBSAN)
+
+---
+
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 22ba683afdc2..c82abd6e4ca3 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -427,10 +427,11 @@ do {									\
+ ({								\
+ 	__label__ __pu_label;					\
+ 	int __pu_err = -EFAULT;					\
+-	__typeof__(*(ptr)) __pu_val;				\
+-	__pu_val = x;						\
++	__typeof__(*(ptr)) __pu_val = (x);			\
++	__typeof__(ptr) __pu_ptr = (ptr);			\
++	__typeof__(size) __pu_size = (size);			\
+ 	__uaccess_begin();					\
+-	__put_user_size(__pu_val, (ptr), (size), __pu_label);	\
++	__put_user_size(__pu_val, __pu_ptr, __pu_size, __pu_label);	\
+ 	__pu_err = 0;						\
+ __pu_label:							\
+ 	__uaccess_end();					\
+diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+index 58eacd41526c..07045bc4872e 100644
+--- a/lib/strncpy_from_user.c
++++ b/lib/strncpy_from_user.c
+@@ -26,7 +26,7 @@
+ static inline long do_strncpy_from_user(char *dst, const char __user *src, long count, unsigned long max)
+ {
+ 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
+-	long res = 0;
++	unsigned long res = 0;
+ 
+ 	/*
+ 	 * Truncate 'max' to the user-specified limit, so that
+diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+index 1c1a1b0e38a5..0729378ad3e9 100644
+--- a/lib/strnlen_user.c
++++ b/lib/strnlen_user.c
+@@ -28,7 +28,7 @@
+ static inline long do_strnlen_user(const char __user *src, unsigned long count, unsigned long max)
+ {
+ 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
+-	long align, res = 0;
++	unsigned long align, res = 0;
+ 	unsigned long c;
+ 
+ 	/*
