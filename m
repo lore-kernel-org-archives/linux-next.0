@@ -1,65 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net-next tree
-Date: Tue, 23 Apr 2019 11:32:27 +1000
-Message-ID: <20190423113227.3dd68989@canb.auug.org.au>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the imx-mxs tree
+Date: Tue, 23 Apr 2019 10:12:37 +0800
+Message-ID: <20190423021235.GE16166@dragon>
+References: <20190423084501.15824b18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kWc9vZT6BWDaAW2K4bbmfho"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190423084501.15824b18@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Fabio Estevam <festevam@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kWc9vZT6BWDaAW2K4bbmfho
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On Tue, Apr 23, 2019 at 08:45:01AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the imx-mxs tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> arch/arm/boot/dts/imx7d-zii-rpu2.dts:46.12-50.4: Warning (io_channels_property): /iio-hwmon: Missing property '#io-channel-cells' in node /soc/aips-bus@30400000/adc@30610000 or bad phandle (referred from io-channels[0])
+> 
+> Caused by commit
+> 
+>   69ab5392f517 ("ARM: dts: Add support for ZII i.MX7 RPU2 board")
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Fixed.  Thanks for reporting.
 
-net/socket.c: In function 'sock_ioctl':
-net/socket.c:1173:10: warning: this statement may fall through [-Wimplicit-=
-fallthrough=3D]
-    err =3D sock->ops->gettstamp(sock, argp,
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          cmd =3D=3D SIOCGSTAMP_OLD,
-          ~~~~~~~~~~~~~~~~~~~~~~
-          !IS_ENABLED(CONFIG_64BIT));
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~
-net/socket.c:1176:3: note: here
-   case SIOCGSTAMP_NEW:
-   ^~~~
-
-Introduced by commit
-
-  0768e17073dc ("net: socket: implement 64-bit timestamps")
-
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kWc9vZT6BWDaAW2K4bbmfho
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+aysACgkQAVBC80lX
-0Gx74Af9EQr/Jmy5vXkadUq194+lVw9iMcHP9/4UNQyzjA3UNIDyII2c42Rzr3W7
-v68yLk2+vEDSDMKzBSCarV5MmK+3xaaiTfpLW3pVjThj4ogflYwMMftx+zbULNi5
-oTcoSft8xUe7wBmGHYxyeop2/BfPK7R8l30BZ0+5wEajA1G1B10URuRd+RNYx8cJ
-daXXoHDrTFKbNzkfnjDYK3ePm3g1agVed3ZZzjk3c28ronPMy/W8UVVQmk3aT1/B
-DGEUpn2kWECStgzZaxG6XN4goWqatlODxkzHhnFnZR+rhc+FipYCHI37mU1mZFOD
-esmZMxDnxzLdwhQmUvK0PPUAa1kq+Q==
-=hDj1
------END PGP SIGNATURE-----
-
---Sig_/kWc9vZT6BWDaAW2K4bbmfho--
+Shawn
