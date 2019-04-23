@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the
- powerpc-fixes tree
-Date: Tue, 23 Apr 2019 19:06:06 +1000
-Message-ID: <20190423190606.0fefb856@canb.auug.org.au>
+ powerpc-fixes and powerpc trees
+Date: Tue, 23 Apr 2019 19:13:51 +1000
+Message-ID: <20190423191351.5824b525@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2ARaGh/=BsU+UGXvuPb+u_l"; protocol="application/pgp-signature"
+ boundary="Sig_/R84=d46Rj=zQUc3yYyHaa/U"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, Ira Weiny <ira.weiny@intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell Currey <ruscur@russell.cc>, Alexandre Ghiti <alex@ghiti.fr>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2ARaGh/=BsU+UGXvuPb+u_l
+--Sig_/R84=d46Rj=zQUc3yYyHaa/U
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,17 +20,23 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/powerpc/mm/mmu_context_iommu.c
+  arch/powerpc/platforms/Kconfig.cputype
 
-between commits:
+between commit:
 
-  eb9d7a62c386 ("powerpc/mm_iommu: Fix potential deadlock")
-  7a3a4d763837 ("powerpc/mm_iommu: Allow pinning large regions")
+  8adddf349fda ("powerpc/mm/radix: Make Radix require HUGETLB_PAGE")
 
-from the powerpc-fixes tree and commit:
+from the powerpc-fixes tree and commits:
 
-  02f506bad7af ("mm/gup: replace get_user_pages_longterm() with FOLL_LONGTE=
-RM")
+  1bb2bae2e6c7 ("powerpc/mm/radix: Use KUEP API for Radix MMU")
+  890274c2dc4c ("powerpc/64s: Implement KUAP for Radix MMU")
+
+from the powerpc tree and commits:
+
+  80d5ae3cf456 ("mm: simplify MEMORY_ISOLATION && COMPACTION || CMA into CO=
+NTIG_ALLOC")
+  3653abf7cded ("hugetlb: allow to free gigantic pages regardless of the co=
+nfiguration")
 
 from the akpm-current tree.
 
@@ -45,67 +51,38 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/mm/mmu_context_iommu.c
-index 8330f135294f,755fe7adc0d8..000000000000
---- a/arch/powerpc/mm/mmu_context_iommu.c
-+++ b/arch/powerpc/mm/mmu_context_iommu.c
-@@@ -135,27 -144,18 +131,28 @@@ static long mm_iommu_do_alloc(struct mm
-  	}
+diff --cc arch/powerpc/platforms/Kconfig.cputype
+index 00b2bb536c74,03ca91439473..000000000000
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@@ -328,10 -324,8 +328,10 @@@ config ARCH_ENABLE_SPLIT_PMD_PTLOC
  =20
-  	down_read(&mm->mmap_sem);
- -	ret =3D get_user_pages(ua, entries, FOLL_WRITE | FOLL_LONGTERM,
- -			     mem->hpages, NULL);
- +	chunk =3D (1UL << (PAGE_SHIFT + MAX_ORDER - 1)) /
- +			sizeof(struct vm_area_struct *);
- +	chunk =3D min(chunk, entries);
- +	for (entry =3D 0; entry < entries; entry +=3D chunk) {
- +		unsigned long n =3D min(entries - entry, chunk);
- +
-- 		ret =3D get_user_pages_longterm(ua + (entry << PAGE_SHIFT), n,
-- 				FOLL_WRITE, mem->hpages + entry, NULL);
-++		ret =3D get_user_pages(ua + (entry << PAGE_SHIFT), n,
-++				     FOLL_WRITE | FOLL_LONGTERM,
-++				     mem->hpages + entry, NULL);
- +		if (ret =3D=3D n) {
- +			pinned +=3D n;
- +			continue;
- +		}
- +		if (ret > 0)
- +			pinned +=3D ret;
- +		break;
- +	}
-  	up_read(&mm->mmap_sem);
- -	if (ret !=3D entries) {
- -		/* free the reference taken */
- -		for (i =3D 0; i < ret; i++)
- -			put_page(mem->hpages[i]);
- -
- -		vfree(mem->hpas);
- -		kfree(mem);
- -		ret =3D -EFAULT;
- -		goto unlock_exit;
- +	if (pinned !=3D entries) {
- +		if (!ret)
- +			ret =3D -EFAULT;
- +		goto free_exit;
-  	}
- =20
-  	pageshift =3D PAGE_SHIFT;
+  config PPC_RADIX_MMU
+  	bool "Radix MMU Support"
+ -	depends on PPC_BOOK3S_64
+ +	depends on PPC_BOOK3S_64 && HUGETLB_PAGE
+- 	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
++ 	select ARCH_HAS_GIGANTIC_PAGE
+ +	select PPC_HAVE_KUEP
+ +	select PPC_HAVE_KUAP
+  	default y
+  	help
+  	  Enable support for the Power ISA 3.0 Radix style MMU. Currently this
 
---Sig_/2ARaGh/=BsU+UGXvuPb+u_l
+--Sig_/R84=d46Rj=zQUc3yYyHaa/U
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+1X4ACgkQAVBC80lX
-0GzKPwf/eFaYcP4HXH0SSp2FFkj7xchpF5DtNJfmEvjnf230qoH/ZqNgTpSV9hBK
-Yonl18q1M7BNr13j+CNeKVr6iZOSDNPqSHCvB83cqIS7XcH8UzJEbuhpIfbAcI9f
-B06JwSs4eFhhpAINXRGbE492Jl5DGB8Rxl2+KWRjXRBqYD7Q5V9d5pzj0HAt8N8/
-zRvIEfDRxcCspk+x5LakeyiOh90fJC70+E72PhEtKHSYvjoLZ9pYtUARUVFaLfQG
-p7RTS+px69y4nCYuQp4zCAMpzRaTBSSGHAatg+W7G+SIAtfd/wbCgkrG3Y9f9SGk
-V9thHtcPP8+1j/HhkIipX9Fh0Skyow==
-=OJEv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly+108ACgkQAVBC80lX
+0GywTAf/W97IPQ/tIK8fZmjGIZ/gLRhR2yCYS21XLN6mGVVZ5zCRWP9h7HzSsD0n
+jyR5gumaGvY/wx/LjlLE0r2+Z5hdgL5Z26Rh7UOd7HiejTS+E8brZajbytKuJPVV
+VD7nsgA8IEMWL3OhSHDakJS50p262vWrQiApyqMQfxe5ev6zRe6+gmwx8FB/HBhd
+LwzvBew1rIYai+jV/L/bLABs4d9J4/+oMsxnBhk7e/h+Na8jIzi0hln8JjzPvxxV
+IHbJgOmQWgQK9BQUkvwEgTYLMGmHt27xiXg+Jx3cTl7mf6p4jP/TCqWMitr0whT+
+MkgbzmSMjhh6RG1dlzXqnoetBvo6AA==
+=uWCC
 -----END PGP SIGNATURE-----
 
---Sig_/2ARaGh/=BsU+UGXvuPb+u_l--
+--Sig_/R84=d46Rj=zQUc3yYyHaa/U--
