@@ -1,52 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drm tree
-Date: Wed, 24 Apr 2019 11:59:32 +1000
-Message-ID: <20190424115932.330a2174@canb.auug.org.au>
-References: <20190424102219.48cfdfe2@canb.auug.org.au>
-        <44707352378dcd414b476ec5420db23093fb9351.camel@vmware.com>
-        <20190424111259.6a1aacce@canb.auug.org.au>
-        <45f1305e2ea62ca76a86c6cca1693c20d3a0c891.camel@vmware.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+Date: Wed, 24 Apr 2019 13:12:40 +1000
+Message-ID: <20190424131240.765178fa@canb.auug.org.au>
+References: <20190417110856.54b4ac1c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jxLVVcFoz.UJKb2.QJ5VfFb"; protocol="application/pgp-signature"
+ boundary="Sig_/hg7Bz6yWY11NDvAbpdPlECU"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <45f1305e2ea62ca76a86c6cca1693c20d3a0c891.camel@vmware.com>
+In-Reply-To: <20190417110856.54b4ac1c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Deepak Singh Rawat <drawat@vmware.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Hellstrom <thellstrom@vmware.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "airlied@linux.ie" <airlied@linux.ie>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Poirier <bpoirier@suse.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jxLVVcFoz.UJKb2.QJ5VfFb
+--Sig_/hg7Bz6yWY11NDvAbpdPlECU
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Deepak,
+Hi all,
 
-On Wed, 24 Apr 2019 01:31:59 +0000 Deepak Singh Rawat <drawat@vmware.com> w=
-rote:
+On Wed, 17 Apr 2019 11:08:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Sorry missed that part and missed your email context about commiter and
-> not the author. I think at this point nothing can be done?
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+>=20
+>   tools/bpf/bpftool/map.c
+>=20
+> between commit:
+>=20
+>   e0665239e07f ("bpftool: Fix errno variable usage")
+>=20
+> from the bpf tree and commit:
+>=20
+>   0478c3bf8124 ("bpftool: Use print_entry_error() in case of ENOENT when =
+dumping")
+>=20
+> from the bpf-next tree.
+>=20
+> diff --cc tools/bpf/bpftool/map.c
+> index 1744bf61a0b8,44b192e87708..000000000000
+> --- a/tools/bpf/bpftool/map.c
+> +++ b/tools/bpf/bpftool/map.c
+> @@@ -722,11 -715,16 +715,16 @@@ static int dump_map_elem(int fd, void *
+>   		jsonw_string_field(json_wtr, "error", strerror(lookup_errno));
+>   		jsonw_end_object(json_wtr);
+>   	} else {
+> + 		const char *msg =3D NULL;
+> +=20
+>  -		if (errno =3D=3D ENOENT)
+>  +		if (lookup_errno =3D=3D ENOENT)
+> - 			print_entry_plain(map_info, key, NULL);
+> - 		else
+> - 			print_entry_error(map_info, key,
+> - 					  strerror(lookup_errno));
+> + 			msg =3D "<no entry>";
+> + 		else if (lookup_errno =3D=3D ENOSPC &&
+> + 			 map_info->type =3D=3D BPF_MAP_TYPE_REUSEPORT_SOCKARRAY)
+> + 			msg =3D "<cannot read>";
+> +=20
+> + 		print_entry_error(map_info, key,
+> + 				  msg ? : strerror(lookup_errno));
+>   	}
+>  =20
+>   	return 0;
 
-Probably, I am pretty sure that Dave does not rebase the drm tree.
+This is now a conflict between the net-next and bpf trees.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/jxLVVcFoz.UJKb2.QJ5VfFb
+--Sig_/hg7Bz6yWY11NDvAbpdPlECU
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly/wwQACgkQAVBC80lX
-0GyoEAf/caswu7ukXMn0c1mGWx4LgZ6otAOP9JVTCGAIrXlshnkEF/wR2CQmAXsD
-uAIiZRLgFw8zl8nZvgn9BR3dzmRdSikiCslKzN9ClNjXAhj4TQHuTSlx2ZYTyA7+
-2JqwcYUK7OBC0l250p89QteRvTEiaOTvsbFN68EVpCxRM11Nx5oSoCH0nS8RA7X9
-AJ+Ab0Txy7uqqCBTdWB99ZEySumqX1y15xVxiq0eaRkolYv+3dLreiFQDi62+XMQ
-omPZZvfGNWz4R2DUIIE6WEowA8lgUIhjAdZVwbC7vtzjBLymMEhaSroH0IKoMDlf
-LM4fwyiSzx7vSf9xAMt3l5DOqXOS/w==
-=nle/
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAly/1CkACgkQAVBC80lX
+0GwexAf/elm7U5ewo/HASPberAvkBUVACmF2FVFV9Y2kc5/P5lTUdiNdRVETtE2T
+7EHmwCU9S5ZGoFo0ya+1R3l+bXLlVpA82qOO3eGl/l3ledV22MBcDpBDHcC8vjvv
+p9YIWZecbXrHyxsqiSSUWQuoe8tEwvg3ycloy4r3K8EwEl0OVpofYzanl8zuMpob
+HYniNf1EUQGI2UW/JvarFduSLrggbuT2OY/e6ISIm7vsMAAXmmXuZ1tUfZLtRsqt
+OOdgA51qhg6TDOt04SuGJPSSw6vPLRSSrRl7dIkWJJ/x/5uN7UKXtE43zSbL4awJ
+z5bHehxyzrrd33ORggzR98D0/VfNSQ==
+=4QhK
 -----END PGP SIGNATURE-----
 
---Sig_/jxLVVcFoz.UJKb2.QJ5VfFb--
+--Sig_/hg7Bz6yWY11NDvAbpdPlECU--
