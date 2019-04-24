@@ -1,63 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the s390
- tree
-Date: Wed, 24 Apr 2019 18:23:28 +1000
-Message-ID: <20190424182200.71f5975d@canb.auug.org.au>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: next-20190408..0418: Suspend/resume problems on Thinkpad X60
+Date: Wed, 24 Apr 2019 10:26:19 +0200
+Message-ID: <20190424082618.GA6699@amd>
+References: <20190408173928.GB13260@amd>
+ <20190412102812.GA24977@amd>
+ <20190423102239.GA15531@amd>
+ <41d56ba6-d0cb-5d5e-f5f4-9bca045440dd@kernel.dk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//Ng1Kao81O8Yg=kz9KX.ul2"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <41d56ba6-d0cb-5d5e-f5f4-9bca045440dd@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: kernel list <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net, linux-pm@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, hdegoede@redhat.com, linux-ide@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_//Ng1Kao81O8Yg=kz9KX.ul2
-Content-Type: text/plain; charset=US-ASCII
+
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Tue 2019-04-23 07:55:05, Jens Axboe wrote:
+> On 4/23/19 4:22 AM, Pavel Machek wrote:
+> > Hi!
+> >=20
+> >>> It boots ok (unlike mainline -- I'm debugging that), and I can suspend
+> >>> and resume... but then cursor in X is moving and I can talk to
+> >>> applications cached in memory, but any access to disk hangs.
+> >>
+> >> Mainline problem was identified.
+> >>
+> >> But resume is still broken. I took advantage of fact that I can still
+> >> do cached commands, and got complete dmesg. I'm attaching it.
+> >=20
+> > Still broken in 0418. Ideas would be welcome at this point.
+>=20
+> Bisect it?
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
-
-  arch/s390/mm/gup.c
-
-between commit:
-
-  1a42010cdc26 ("s390/mm: convert to the generic get_user_pages_fast code")
-
-from the s390 tree and commit:
-
-  0dbe0ed39fa1 ("mm/gup: change GUP fast to use flags rather than a write '=
-bool'")
-
-from the akpm-current tree.
-
-I fixed it up (the former removed the file, so I just did that) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
+Before I start heavy debugging, it would be interesting to
+know... does suspend/resume work for you in -next?
+									Pavel
 --=20
-Cheers,
-Stephen Rothwell
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---Sig_//Ng1Kao81O8Yg=kz9KX.ul2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzAHQAACgkQAVBC80lX
-0GzA2wf/Zh2NqX9iOuM+7KN5LbFP+xsUxgj96y70YPJoxEnavdVmho8sdBIzrxZE
-Y1e9MypZ9lUwkRDmd8M1x4sKNuHfSdEOcjq4hLAYjikY+AGPjdZJJ8e+TNexj4S8
-oZrkwE0fN0ZLgyOjVFJBe7yrRE5N1qUKBYeGNXXqLtKqhYpbhm27oDqU62jNG5AE
-+uRYLlZk6Py5BbmyTGYYCpYSW4xrssbfCRwB/nQvXWR/Rf5kAnLChMJrqnKQoTL8
-kgUL3IcL8QGIB7ppJXF7xKMpSuk4TT4TKX8YvW5DfJN4+NsM2OO86BuypIFtvvbM
-6YAM4HdWk0UvasvsfUzXAh29YyLCgg==
-=K+Tm
+iEYEARECAAYFAlzAHaoACgkQMOfwapXb+vJTVQCeL08UyO+MXoIE7+XqHb1+5toc
+VTEAnR63BS4swj7ABf8xe1WLhTf+W+rZ
+=crwR
 -----END PGP SIGNATURE-----
 
---Sig_//Ng1Kao81O8Yg=kz9KX.ul2--
+--NzB8fVQJ5HfG6fxh--
