@@ -1,34 +1,39 @@
 From: Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: linux-next: build failure after merge of the qcom tree
-Date: Tue, 23 Apr 2019 16:50:41 -0700
-Message-ID: <20190423235041.GF112750@google.com>
-References: <20190424092531.3988850d@canb.auug.org.au>
+Subject: [PATCH] ARM: dts: qcom-apq8064: Fix DSI PHY ref clk phandle
+Date: Tue, 23 Apr 2019 17:12:10 -0700
+Message-ID: <20190424001210.201672-1-mka@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190424092531.3988850d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Gross <andy.gross@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>
+To: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linux Next Mailing List <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Douglas Anderson <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>, Matthias Kaehlcke <mka@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 24, 2019 at 09:25:31AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the qcom tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> arch/arm/boot/dts/qcom-apq8064.dtsi:1297.29-1309.5: ERROR (phandle_references): /soc/dsi-phy@4700200: Reference to non-existent node or label "xo_board"
-> 
-> Caused by commit
-> 
->   3560af5a56b5 ("ARM: dts: qcom-apq8064: Set 'xo_board' as ref clock of the DSI PHY")
-> 
-> I have used the version of the qcom tree from next-20190423 for today.
+Commit 3560af5a56b5 ("ARM: dts: qcom-apq8064: Set 'xo_board' as
+ref clock of the DSI PHY") specifies the non-existing phandle
+'xo_board' as DSI PHY ref clk. Fix this by using the correct
+phandle is 'cxo_board'.
 
-I thought I built-tested this, but probably only did arm64 builds :(
+Fixes: 3560af5a56b5 ("ARM: dts: qcom-apq8064: Set 'xo_board' as ref clock of the DSI PHY")
 
-I'm working on a fix.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ arch/arm/boot/dts/qcom-apq8064.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Matthias
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index 2fff5074f2d7..65975df6a8c3 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -1305,7 +1305,7 @@
+ 			reg-names = "dsi_pll", "dsi_phy", "dsi_phy_regulator";
+ 			clock-names = "iface_clk", "ref";
+ 			clocks = <&mmcc DSI_M_AHB_CLK>,
+-				 <&xo_board>;
++				 <&cxo_board>;
+ 		};
+ 
+ 
+-- 
+2.21.0.593.g511ec345e18-goog
