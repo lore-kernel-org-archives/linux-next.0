@@ -1,57 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the tegra tree with the rockchip tree
-Date: Wed, 24 Apr 2019 07:59:46 -0700
-Message-ID: <20190424145946.GD8007@atomide.com>
-References: <20190424094323.0ec123f0@canb.auug.org.au>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: linux-next: Tree for Apr 17 (objtool)
+Date: Wed, 24 Apr 2019 11:03:57 -0500
+Message-ID: <20190424160357.6olyocstevbz7wnw@treble>
+References: <20190417173117.196b5ac6@canb.auug.org.au>
+ <7114e2f5-0c1f-c5e4-177c-2a5c61d12d58@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190424094323.0ec123f0@canb.auug.org.au>
+In-Reply-To: <7114e2f5-0c1f-c5e4-177c-2a5c61d12d58@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [190423 23:43]:
-> Hi all,
+On Wed, Apr 17, 2019 at 08:41:34AM -0700, Randy Dunlap wrote:
+> On 4/17/19 12:31 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > News: there will be no linux-next release on Friday, Monday or Thursday
+> > April 25.
+> > 
+> > Changes since 20190416:
+> > 
 > 
-> Today's linux-next merge of the tegra tree got a conflict in:
+> on x86_64:
 > 
->   arch/arm/configs/multi_v7_defconfig
+>   CC      drivers/gpu/drm/i915/i915_gem_execbuffer.o
+> drivers/gpu/drm/i915/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x18: redundant UACCESS disable
 > 
-> between commit:
 > 
->   366391f04177 ("ARM: multi_v7_defconfig: Enable missing drivers for supported Chromebooks")
-> 
-> from the rockchip tree and commit:
-> 
->   35f8e2e29e74 ("ARM: multi_v7_defconfig: Update for moved options")
-> 
-> from the tegra tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> obj file is attached.
 
-OK thank you!
+Peter,
 
-Tony
+I haven't looked at this, do you know if this is the same issue as the
+other note from Randy, or something else?
 
-> diff --cc arch/arm/configs/multi_v7_defconfig
-> index 7a288d18e257,88d4da77ae9b..000000000000
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@@ -511,9 -501,6 +509,7 @@@ CONFIG_MFD_AC100=
->   CONFIG_MFD_AXP20X_I2C=y
->   CONFIG_MFD_AXP20X_RSB=y
->   CONFIG_MFD_CROS_EC=m
-> - CONFIG_CROS_EC_I2C=m
-> - CONFIG_CROS_EC_SPI=m
->  +CONFIG_MFD_CROS_EC_CHARDEV=m
->   CONFIG_MFD_DA9063=m
->   CONFIG_MFD_MAX14577=y
->   CONFIG_MFD_MAX77686=y
+-- 
+Josh
