@@ -1,77 +1,49 @@
-From: Pavel Machek <pavel@denx.de>
-Subject: Re: regression -next -- scsi: sd: Rely on the driver core for
- asynchronous probing was Re: next-20190408..0418: Suspend/resume problems on
- Thinkpad X60
-Date: Thu, 25 Apr 2019 09:33:43 +0200
-Message-ID: <20190425073343.GA19600@amd>
-References: <20190408173928.GB13260@amd>
- <20190412102812.GA24977@amd>
- <20190423102239.GA15531@amd>
- <41d56ba6-d0cb-5d5e-f5f4-9bca045440dd@kernel.dk>
- <20190424095431.GA32457@amd>
- <20190424104850.GC32457@amd>
- <20190424202119.GA26357@amd>
- <20190424204832.GA3111@amd>
- <20190424205150.GA4582@amd>
- <1556139361.161891.140.camel@acm.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the qcom tree
+Date: Thu, 25 Apr 2019 22:54:26 +1000
+Message-ID: <20190425225426.24bcdeb1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/omtWhIbuQlUWr_pBJz8oLQ3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1556139361.161891.140.camel@acm.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Pavel Machek <pavel@denx.de>, Jens Axboe <axboe@kernel.dk>, jejb@linux.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, hare@suse.com, mcgrof@kernel.org, jthumshirn@suse.de, hch@lst.de, gregkh@linuxfoundation.org, dan.j.williams@intel.com, kernel list <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net, linux-pm@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, hdegoede@redhat.com, linux-ide@vger.kernel.org
+To: Andy Gross <agross@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/omtWhIbuQlUWr_pBJz8oLQ3
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2019-04-24 13:56:01, Bart Van Assche wrote:
-> On Wed, 2019-04-24 at 22:51 +0200, Pavel Machek wrote:
-> > Unfortunately, that one does not revert cleanly on top of -next.
->=20
-> Can you try the following:
->=20
-> git revert d16ece577bf2cee7f94bab75a0d967bcb89dd2a7 &&
->   git revert 21e6ba3f0e0257cce1a226c1f15e0a8ba4338ca3
->=20
-> I will see whether I can come up with a better way to analyze what is
-> going on. I had not expected that these patches would cause any suspend/
-> resume problems.
+Hi all,
 
-Not even d16ece reverts:
+Commit
 
-pavel@duo:/data/l/linux-next-32$ git show  | head -3
-commit 76c938fcaa4b4a5d8f05fa907925d5043834964e
-Author: Stephen Rothwell <sfr@canb.auug.org.au>
-Date:   Tue Apr 23 20:24:59 2019 +1000
-pavel@duo:/data/l/linux-next-32$ git revert
-d16ece577bf2cee7f94bab75a0d967bcb89dd2a7
-error: could not revert d16ece5... scsi: sd: Inline sd_probe_part2()
-hint: after resolving the conflicts, mark the corrected paths
-hint: with 'git add <paths>' or 'git rm <paths>'
-hint: and commit the result with 'git commit'
+  4c26c9eaa465 ("Revert "ARM: dts: qcom-apq8064: Set 'xo_board' as ref cloc=
+k of the DSI PHY"")
 
-								Pavel
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits as well.
+
 --=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Cheers,
+Stephen Rothwell
 
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/omtWhIbuQlUWr_pBJz8oLQ3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlzBYtcACgkQMOfwapXb+vLSPACggAjbyoCyqU8ktZSlP27yCCjh
-Y5sAnRe/NkQIgD/Wl4euXqOxeO2JdhOO
-=JJcZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzBrgIACgkQAVBC80lX
+0GzenggAojQ67NPFc35iZ7zJ2L/kb8E4PDGPirBKiVP+6rWN8+M5RRIHc7e6ykv8
+s7rNmdqe4f7DPdv7RUVGsyqtnZ1NGy9EcFBleNqplZOaSV+p01K+Ifjra8/Hq/lf
+20EA28Q6GUyvs464Hj++w1Ulj6xXqDPmStQ92fl/ggipZsCdqXYQ3jf+oryynOgp
+kzipsWWL8bZfj+PPLwUdLvJmo1vbVcWk57j0tIphN+rJxeqXePzhcaJenNkZoMzK
+367f7T9Vu/36dyd58B8ziX6qNeCgUxfrTFNzqEdrqALrHhyMMiDGUbBULlL7yprA
+YKd4Cs1MlV6Byh1dxRhAJqvsoObUQg==
+=xeP+
 -----END PGP SIGNATURE-----
 
---k+w/mQv8wyuph6w0--
+--Sig_/omtWhIbuQlUWr_pBJz8oLQ3--
