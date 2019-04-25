@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the printk tree
-Date: Thu, 25 Apr 2019 23:30:49 +1000
-Message-ID: <20190425233049.7e2283b0@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the hid tree
+Date: Thu, 25 Apr 2019 23:34:30 +1000
+Message-ID: <20190425233430.14bdb102@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Yyontrw5S2VclYYMUmXe8cu"; protocol="application/pgp-signature"
+ boundary="Sig_/VptbqHJTGaAO0_23zbBy+FA"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Petr Mladek <pmladek@suse.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Yyontrw5S2VclYYMUmXe8cu
+--Sig_/VptbqHJTGaAO0_23zbBy+FA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,36 +19,51 @@ Hi all,
 
 In commit
 
-  e43bb4d0feb8 ("vsprintf: Consistent %pK handling for kptr_restrict =3D=3D=
- 0")
+  39b3c3a5fbc5 ("HID: input: fix assignment of .value")
 
 Fixes tag
 
-  Fixes: commit ef0010a30935de4e0211 ("vsprintf: don't use 'restricted_poin=
-ter()' when not restricting")
+  Fixes: 2dc702c991e377 ("HID: input: use the Resolution Multiplier for
 
 has these problem(s):
 
-  - leading word 'commit' unexpected
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+In commit
+
+  d43c17ead879 ("HID: input: make sure the wheel high resolution multiplier=
+ is set")
+
+Fixes tag
+
+  Fixes: 2dc702c991e377 ("HID: input: use the Resolution Multiplier for
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not aplit Fixes tags over more than one line.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Yyontrw5S2VclYYMUmXe8cu
+--Sig_/VptbqHJTGaAO0_23zbBy+FA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzBtokACgkQAVBC80lX
-0GwzZAf+Kdqa0CTbOnVe/SKI3EepZ2UY9VNLICynylv8/TmjgE4Shi4G8jo2+1rm
-z/tuNRhW+EluAMupigRBJHqfsgMJ74oSXaAfLudjXQW16dkWCJ8w6d4zqvb58YFL
-LL7qvquL3bO2YSgxT9D/Mb42JFtx0RXvsMSzQ8ME81sEEw7nRfrTiAjiYhnH8aQv
-R8Oii3VToXX78TuGfZTGbR10tezKlUzNcUhSaTVGzlN0wNzFM2VVt3PNpcf31P6u
-nbYNrhZq5hw1XH2cB7te3TbwNm2wqqGyzSi42QJWtnqhkGLVcppo3UF8A4dONTbq
-Dgg3LuAXY3EhnTJNgumRNHO0zIdU8Q==
-=vlVq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzBt2YACgkQAVBC80lX
+0Gyi6wf/U880bovOfKFESGLQK8IsFPz3Y8utCcnHmkG3aUrMybPnWGfelwe30bhi
+0yO9wqgxdsnssyt3atDPF0pKpWOdOHGXXkKalWRA/Lua4VTC01wjQ6fYnCI5xf0T
+O1zP4xpnoECg6krPxidVfs9Jkmjn2RgZxSfLb9BoDNqmDpLq0w2BbxCkvDJzCLSU
+lON5oeBH1VTSz7Nr1/RWIL+3+uUC9vjXS8asyYudsyHmiEnPEPu46jjM5TfakCdI
+loKMKNL9yR/0Bb6ZEkRGOhceSKJZZ/Y6Gf3DIsFuFCWz7PndB/anA+bUNIe3OqOp
+FW8cVLGSWEo3h2QRzLsNSdbAxLoIRA==
+=+Ln4
 -----END PGP SIGNATURE-----
 
---Sig_/Yyontrw5S2VclYYMUmXe8cu--
+--Sig_/VptbqHJTGaAO0_23zbBy+FA--
