@@ -1,62 +1,54 @@
-From: Bart Van Assche <bvanassche@acm.org>
-Subject: Re: regression -next -- scsi: sd: Rely on the driver core for
- asynchronous probing was Re: next-20190408..0418: Suspend/resume problems on
- Thinkpad X60
-Date: Thu, 25 Apr 2019 06:35:58 -0700
-Message-ID: <360f6936-ee21-a036-9bd4-93ecfee829e2@acm.org>
-References: <20190408173928.GB13260@amd> <20190412102812.GA24977@amd>
- <20190423102239.GA15531@amd> <41d56ba6-d0cb-5d5e-f5f4-9bca045440dd@kernel.dk>
- <20190424095431.GA32457@amd> <20190424104850.GC32457@amd>
- <20190424202119.GA26357@amd> <20190424204832.GA3111@amd>
- <20190424205150.GA4582@amd> <1556139361.161891.140.camel@acm.org>
- <20190425073343.GA19600@amd>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the xen-tip tree
+Date: Thu, 25 Apr 2019 23:44:12 +1000
+Message-ID: <20190425234412.5725f6ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/yTS9kI8Gluz2kwcJOhaw92Q"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190425073343.GA19600@amd>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@denx.de>
-Cc: Jens Axboe <axboe@kernel.dk>, jejb@linux.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, hare@suse.com, mcgrof@kernel.org, jthumshirn@suse.de, hch@lst.de, gregkh@linuxfoundation.org, dan.j.williams@intel.com, kernel list <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net, linux-pm@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, hdegoede@redhat.com, linux-ide@vger.kernel.org
+To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
-On 4/25/19 12:33 AM, Pavel Machek wrote:
-> On Wed 2019-04-24 13:56:01, Bart Van Assche wrote:
->> On Wed, 2019-04-24 at 22:51 +0200, Pavel Machek wrote:
->>> Unfortunately, that one does not revert cleanly on top of -next.
->>
->> Can you try the following:
->>
->> git revert d16ece577bf2cee7f94bab75a0d967bcb89dd2a7 &&
->>   git revert 21e6ba3f0e0257cce1a226c1f15e0a8ba4338ca3
->>
->> I will see whether I can come up with a better way to analyze what is
->> going on. I had not expected that these patches would cause any suspend/
->> resume problems.
-> 
-> Not even d16ece reverts:
-> 
-> pavel@duo:/data/l/linux-next-32$ git show  | head -3
-> commit 76c938fcaa4b4a5d8f05fa907925d5043834964e
-> Author: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date:   Tue Apr 23 20:24:59 2019 +1000
-> pavel@duo:/data/l/linux-next-32$ git revert
-> d16ece577bf2cee7f94bab75a0d967bcb89dd2a7
-> error: could not revert d16ece5... scsi: sd: Inline sd_probe_part2()
-> hint: after resolving the conflicts, mark the corrected paths
-> hint: with 'git add <paths>' or 'git rm <paths>'
-> hint: and commit the result with 'git commit'
+--Sig_/yTS9kI8Gluz2kwcJOhaw92Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There has been a non-trivial merge between the block and scsi trees in
-linux-next. That's probably what prevents these patches to revert
-cleanly. How about performing the following tests:
-* Build, boot and test Martin's latest for-5.2 branch
-(git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git; branch
-5.2/scsi-queue).
-* If suspend/resume does not work reliably with that branch, revert the
-two patches above, rebuild, reboot and retest.
+Hi all,
 
-Thanks,
+In commit
 
-Bart.
+  8a46b39f3aff ("xenbus: drop useless LIST_HEAD in xenbus_write_watch() and=
+ xenbus_file_write()")
+
+Fixes tag
+
+  Fixes: 1107ba885e469("xen: add xenfs to allow usermode <-> Xen interactio=
+n")
+
+has these problem(s):
+
+  - missing space between the SHA1 and the subject
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/yTS9kI8Gluz2kwcJOhaw92Q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzBuawACgkQAVBC80lX
+0GysZQf/XHecL4TEvcykV8YYeoQmha6sT5PZ73Ue8Cn5LoL9F3e5+wqrzlr6oZUE
+DPZvpR+rmC3TlSTJy99hzerkLJvYuk6YJklTdysL293h4hIK+Zv5luCKaJQiJBvH
+YO7le5b/2qVJFy7AVK4XQFd+dHKr4WJgiOVS/kqudFpfFPLrFVA04bZLmhwe0tN+
+l6qoYzhDWZtisW3717k8jYiCmiozZruQwK/M9T3BMSvrL8Q1Y1RuhE1lfEkDv75y
+1rS1ukKgi9ndiH90Q1UtT99hH5XbEdaEbVafZpvrY6nFOzFxJ5CJSJcQU+p2Yc+g
+4MMXpsPVFOGa30f+oQ2yUjslhblaxw==
+=evb/
+-----END PGP SIGNATURE-----
+
+--Sig_/yTS9kI8Gluz2kwcJOhaw92Q--
