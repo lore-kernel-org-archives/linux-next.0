@@ -1,56 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Date: Fri, 26 Apr 2019 07:09:49 +1000
-Message-ID: <20190426070949.154c425b@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma-fixes tree with Linus' tree
+Date: Fri, 26 Apr 2019 07:37:09 +1000
+Message-ID: <20190426073709.77e7b0bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jriS=yWeCbcqQe.lU7wK+0P"; protocol="application/pgp-signature"
+ boundary="Sig_/2ThAo/GKnTkTAEoqNWTyG/4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrea Arcangeli <aarcange@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jriS=yWeCbcqQe.lU7wK+0P
+--Sig_/2ThAo/GKnTkTAEoqNWTyG/4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Today's linux-next merge of the rdma-fixes tree got a conflict in:
 
-  a65c88e16f32 ("x86/mm: Remove in_nmi() warning from 64-bit implementation=
- of vmalloc_fault()")
+  drivers/infiniband/core/uverbs_main.c
 
-Fixes tag
+between commit:
 
-  Fixes: 6863ea0cda8 ("x86/mm: Remove in_nmi() warning from vmalloc_fault()=
-")
+  04f5866e41fb ("coredump: fix race condition between mmget_not_zero()/get_=
+task_mm() and core dumping")
 
-has these problem(s):
+from Linus' tree and commit:
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  67f269b37f9b ("RDMA/ucontext: Fix regression with disassociate")
+
+from the rdma-fixes tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/jriS=yWeCbcqQe.lU7wK+0P
+diff --cc drivers/infiniband/core/uverbs_main.c
+index f2e7ffe6fc54,db20b6e0f253..000000000000
+--- a/drivers/infiniband/core/uverbs_main.c
++++ b/drivers/infiniband/core/uverbs_main.c
+@@@ -992,9 -1039,7 +1039,9 @@@ void uverbs_user_mmap_disassociate(stru
+  		 * at a time to get the lock ordering right. Typically there
+  		 * will only be one mm, so no big deal.
+  		 */
+- 		down_write(&mm->mmap_sem);
++ 		down_read(&mm->mmap_sem);
+ +		if (!mmget_still_valid(mm))
+ +			goto skip_mm;
+  		mutex_lock(&ufile->umap_lock);
+  		list_for_each_entry_safe (priv, next_priv, &ufile->umaps,
+  					  list) {
+@@@ -1006,11 -1051,9 +1053,10 @@@
+ =20
+  			zap_vma_ptes(vma, vma->vm_start,
+  				     vma->vm_end - vma->vm_start);
+- 			vma->vm_flags &=3D ~(VM_SHARED | VM_MAYSHARE);
+  		}
+  		mutex_unlock(&ufile->umap_lock);
+ +	skip_mm:
+- 		up_write(&mm->mmap_sem);
++ 		up_read(&mm->mmap_sem);
+  		mmput(mm);
+  	}
+  }
+
+--Sig_/2ThAo/GKnTkTAEoqNWTyG/4
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzCIh4ACgkQAVBC80lX
-0Gw5YwgAn4RgAek2q+sj783FVvVZanql+32VfGuw8iJ4dVMBUN4n8tTHcI16YBRR
-birZ1xrtJdrouhnNete3Yo/e8A/rN5ptGiQxCR1aAUzdLfM6olG6gRDCkd4LZDVg
-MKjTN3Hxr+pjbP18iE/L3+U0CDTJiP+xCjvvwAC0D3QIrND6GOGiA8Ho7sM6sI54
-bpdyONSnyYtbuJ1tiIuoYHB/GfmbokCg2G94mvqv+zoAxZNRvadjpiRtnze9+UFZ
-GJ+KlJKRMbj2VFnI3Wfs1vn7fSlRUS9kz8cCSaa3e+/ltbY2erJjYukW7GYzdQWB
-utM4pkFN99xHPkv6oRMsFkfV2sTzWA==
-=CgRx
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzCKIUACgkQAVBC80lX
+0GwHVwf/ZrNV36PBAapIgDy+mi4MTqKAXXdl8vobgt+TdpXfF5AUNsZyvhNh32HO
+yZRVITnyaZx5fofjehE566jxz2nI6x56RXT031szgbVGnbtIViJpSLrTfHutqyTJ
+KiBvMiuaXYk+ELfqA6WML4qV+nh+Zne4fxjUckj0Inj4sOTQk8t0j+S/pAmmKMLO
+GXwX/Speum6UGykYDBzuNdMGDeYDyGcrWF3bWhhvu0PW207rjsft6Ds4EuNGgvws
+GzEQkylx9Y7O5avetSIF6vH2jOhSISWYaw1a2mdMqf/Gzu9f97ziURB6u6+v0BUk
+mKo2TpnH18Hacsr94okzQ0xXtT4sJw==
+=dKKb
 -----END PGP SIGNATURE-----
 
---Sig_/jriS=yWeCbcqQe.lU7wK+0P--
+--Sig_/2ThAo/GKnTkTAEoqNWTyG/4--
