@@ -1,64 +1,104 @@
-From: Patrick Venture <venture@google.com>
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-Date: Fri, 26 Apr 2019 11:00:49 -0700
-Message-ID: <CAO=notxMAQinwQrrbGwYAUD3JGq8zo42U314Km_QKQrnrkRoQA@mail.gmail.com>
-References: <20190426155653.2cdebc5d@canb.auug.org.au> <20190426062548.GB5920@kroah.com>
- <CAO=notwQFWRVDtoH+NGWpm647pJHVFvVoPm3EKdKmdrRUmDZqw@mail.gmail.com>
+From: Prarit Bhargava <prarit@redhat.com>
+Subject: Re: [-next] system hangs likely due to "modules: Only return -EEXIST
+ for modules that have finished loading"
+Date: Fri, 26 Apr 2019 14:10:15 -0400
+Message-ID: <2e047a7e-bf08-be8c-bdd0-429464fa133d@redhat.com>
+References: <20190426130736.GB8646@osiris>
+ <d4d75ad1-e193-c230-1edc-a93db2b068d7@redhat.com>
+ <20190426150741.GD8646@osiris> <20190426160956.GA3827@linux-8ccs>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAO=notwQFWRVDtoH+NGWpm647pJHVFvVoPm3EKdKmdrRUmDZqw@mail.gmail.com>
+In-Reply-To: <20190426160956.GA3827@linux-8ccs>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>
+To: Jessica Yu <jeyu@kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, Cathy Avery <cavery@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 26, 2019 at 7:30 AM Patrick Venture <venture@google.com> wrote:
->
-> On Thu, Apr 25, 2019 at 11:25 PM Greg KH <greg@kroah.com> wrote:
-> >
-> > On Fri, Apr 26, 2019 at 03:56:53PM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > After merging the char-misc tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > >
-> > > drivers/misc/aspeed-p2a-ctrl.c: In function 'aspeed_p2a_mmap':
-> > > drivers/misc/aspeed-p2a-ctrl.c:110:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-> > >   pgprot_t prot = vma->vm_page_prot;
-> > >   ^~~~~~~~
-> > >
-> > > Introduced by commit
-> > >
-> > >   01c60dcea9f7 ("drivers/misc: Add Aspeed P2A control driver")
-> >
-> > Patrick, I thought you fixed all of these already?  Can you send a patch
-> > again?
->
-> I fixed the ones caught by the robot.  I'll have to switch up my build
-> environment a bit to fault on warnings for the kernel, not sure why it
-> isn't --
 
-Verified the warnings being ignored isn't a local configuration issue,
-but the way OpenBMC is configured.  Verified the warning via normal
-kernel compilation and fixed the issue.  Reran and found no other
-issues for that drivers.  Submitted patch for review.
 
->
-> >
-> > Can you also make the driver so it can build with CONFIG_COMPILE_TEST
-> > enabled so that others can find your problems earlier in the review
-> > process?
+On 4/26/19 12:09 PM, Jessica Yu wrote:
+> +++ Heiko Carstens [26/04/19 17:07 +0200]:
+>> On Fri, Apr 26, 2019 at 09:22:34AM -0400, Prarit Bhargava wrote:
+>>> On 4/26/19 9:07 AM, Heiko Carstens wrote:
+>>> > Hello Prarit,
+>>> >
+>>> > it looks like your commit f9a75c1d717f ("modules: Only return -EEXIST
+>>> > for modules that have finished loading") _sometimes_ causes hangs on
+>>> > s390. This is unfortunately not 100% reproducible, however the
+>>> > mentioned commit seems to be the only relevant one in modules.c.
+>>> >
+>>> > What I see is a hanging system with messages like this on the console:
+>>> >
+>>> > [   65.876040] rcu: INFO: rcu_sched self-detected stall on CPU
+>>> > [   65.876049] rcu:     7-....: (5999 ticks this GP)
+>>> idle=eae/1/0x4000000000000002 softirq=1181/1181 fqs=2729
+>>> > [   65.876078]  (t=6000 jiffies g=-471 q=17196)
+>>> > [   65.876084] Task dump for CPU 7:
+>>> > [   65.876088] systemd-udevd   R  running task        0   731    721
+>>> 0x06000004
+>>> > [   65.876097] Call Trace:
+>>> > [   65.876113] ([<0000000000abb264>] __schedule+0x2e4/0x6e0)
+>>> > [   65.876122]  [<00000000001ee486>] finished_loading+0x4e/0xb0
+>>> > [   65.876128]  [<00000000001f1ed6>] load_module+0xcce/0x27a0
+>>> > [   65.876134]  [<00000000001f3af0>] __s390x_sys_init_module+0x148/0x178
+>>> > [   65.876142]  [<0000000000ac0766>] system_call+0x2aa/0x2c8
+>>> > I did not look any further into the dump, however since the commit
+>>> > touches exactly the code path which seems to be looping... ;)
+>>> >
+>>>
+>>> Ouch :(  I wonder if I exposed a further race or another bug.  Heiko, can you
+>>> determine which module is stuck?  Warning: I have not compiled this code.
+>>
+>> Here we go:
+>>
+>> [   11.716866] PRARIT: waiting for module s390_trng to load.
+>> [   11.716867] PRARIT: waiting for module s390_trng to load.
+>> [   11.716868] PRARIT: waiting for module s390_trng to load.
+>> [   11.716870] PRARIT: waiting for module s390_trng to load.
+>> [   11.716871] PRARIT: waiting for module s390_trng to load.
+>> [   11.716872] PRARIT: waiting for module s390_trng to load.
+>> [   11.716874] PRARIT: waiting for module s390_trng to load.
+>> [   11.716875] PRARIT: waiting for module s390_trng to load.
+>> [   11.716876] PRARIT: waiting for module s390_trng to load.
+>> [   16.726850] add_unformed_module: 31403529 callbacks suppressed
+>> [   16.726853] PRARIT: waiting for module s390_trng to load.
+>> [   16.726862] PRARIT: waiting for module s390_trng to load.
+>> [   16.726865] PRARIT: waiting for module s390_trng to load.
+>> [   16.726867] PRARIT: waiting for module s390_trng to load.
+>> [   16.726869] PRARIT: waiting for module s390_trng to load.
+>>
+>> If I'm not mistaken then there was _no_ corresponding message on the
+>> console stating that the module already exists.
 
-Verified the driver builds and produces no warnings.
+Heiko,
 
-Thanks,
-Patrick
+Where is the s390_trng module?  I can't seem to find it in the tree.
 
->
-> Roger that.
->
-> >
-> > thanks,
-> >
-> > greg k-h
+[02:06 PM root@ibm-z-108 linux-next]# find ./ -name *s390_trng*
+[02:06 PM root@ibm-z-108 linux-next]# git grep s390_trng
+[02:07 PM root@ibm-z-108 linux-next]#
+
+P.
+
+> 
+> Hm, my current theory is that we have a module whose exit() function
+> is taking a while to run to completion. While it is doing so, the
+> module's state is already set to MODULE_STATE_GOING.
+> 
+> With Prarit's patch, since this module is probably still in GOING,
+> add_unformed_module() will wait until the module is finally gone. If
+> this takes too long, we will keep trying to add ourselves to the
+> module list and hence stay in the loop in add_unformed_module().
+> According to Documentation/RCU/stallwarn.txt, this looping in the
+> kernel may trigger an rcu stall warning (see bullet point stating "a
+> CPU looping anywhere in the kernel without invoking schedule()".
+> 
+> Heiko, could you modify the patch to print the module's state to
+> confirm?
+> 
+> Thanks,
+> 
+> Jessica
