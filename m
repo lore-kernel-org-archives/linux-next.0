@@ -1,174 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ipsec-next tree with the ipsec tree
-Date: Fri, 26 Apr 2019 11:41:20 +1000
-Message-ID: <20190426114120.73e906e3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Fri, 26 Apr 2019 12:17:35 +1000
+Message-ID: <20190426121735.54ff8785@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2PEW0RL1QWRzfjPqg+1fO77"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>
+Content-Type: multipart/mixed; boundary="===============0323349662=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: =?UTF-8?B?TWFyYy1BbmRyw6k=?= Lureau <marcandre.lureau@redhat.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gerd Hoffmann <kraxel@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2PEW0RL1QWRzfjPqg+1fO77
+--===============0323349662==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CxWqRw_sHO9W/Gm/1zGUIvr"; protocol="application/pgp-signature"
+
+--Sig_/CxWqRw_sHO9W/Gm/1zGUIvr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the ipsec-next tree got a conflict in:
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  net/ipv4/xfrm4_policy.c
+drivers/gpu/drm/virtio/virtgpu_prime.c:43:18: error: redefinition of 'virtg=
+pu_gem_prime_get_sg_table'
+ struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/virtio/virtgpu_prime.c:31:18: note: previous definition of =
+'virtgpu_gem_prime_get_sg_table' was here
+ struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-between commit:
+Caused by a bad automaic merge between commit
 
-  8742dc86d0c7 ("xfrm4: Fix uninitialized memory read in _decode_session4")
+  a0cecc23cfcb ("Revert "drm/virtio: drop prime import/export callbacks"")
 
-from the ipsec tree and commit:
+from Linus' tree and commit
 
-  c53ac41e3720 ("xfrm: remove decode_session indirection from afinfo_policy=
-")
+  98f41dc3b3ee ("drm/virtio: implement prime export")
 
-from the ipsec-next tree.
+from the drm tree.
 
-I fixed it up (the code changed by the former has been moved by the latter
-- see below) and can carry the fix as necessary. This is now fixed as
-far as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I dropped the version of this function from the drm-fixes tree:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 26 Apr 2019 12:13:26 +1000
+Subject: [PATCH] drm/virtio: fix up bad merge of virtgpu_gem_prime_get_sg_t=
+able
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/virtio/virtgpu_prime.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virti=
+o/virtgpu_prime.c
+index 0f670fc6c954..8fbf71bd0c5e 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_prime.c
++++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
+@@ -40,11 +40,6 @@ struct sg_table *virtgpu_gem_prime_get_sg_table(struct d=
+rm_gem_object *obj)
+ 				     bo->tbo.ttm->num_pages);
+ }
+=20
+-struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
+-{
+-	return ERR_PTR(-ENODEV);
+-}
+-
+ struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
+ 	struct drm_device *dev, struct dma_buf_attachment *attach,
+ 	struct sg_table *table)
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 26 Apr 2019 11:37:41 +1000
-Subject: [PATCH] xfrm4: fix up for moved _decode_session4
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/xfrm/xfrm_policy.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index 410233c5681e..7a43ae6b2a44 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -3264,7 +3264,8 @@ static void
- decode_session4(struct sk_buff *skb, struct flowi *fl, bool reverse)
- {
- 	const struct iphdr *iph =3D ip_hdr(skb);
--	u8 *xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+	int ihl =3D iph->ihl;
-+	u8 *xprth =3D skb_network_header(skb) + ihl * 4;
- 	struct flowi4 *fl4 =3D &fl->u.ip4;
- 	int oif =3D 0;
-=20
-@@ -3275,6 +3276,11 @@ decode_session4(struct sk_buff *skb, struct flowi *f=
-l, bool reverse)
- 	fl4->flowi4_mark =3D skb->mark;
- 	fl4->flowi4_oif =3D reverse ? skb->skb_iif : oif;
-=20
-+	fl4->flowi4_proto =3D iph->protocol;
-+	fl4->daddr =3D reverse ? iph->saddr : iph->daddr;
-+	fl4->saddr =3D reverse ? iph->daddr : iph->saddr;
-+	fl4->flowi4_tos =3D iph->tos;
-+
- 	if (!ip_is_fragment(iph)) {
- 		switch (iph->protocol) {
- 		case IPPROTO_UDP:
-@@ -3286,7 +3292,7 @@ decode_session4(struct sk_buff *skb, struct flowi *fl=
-, bool reverse)
- 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
- 				__be16 *ports;
-=20
--				xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+				xprth =3D skb_network_header(skb) + ihl * 4;
- 				ports =3D (__be16 *)xprth;
-=20
- 				fl4->fl4_sport =3D ports[!!reverse];
-@@ -3298,7 +3304,7 @@ decode_session4(struct sk_buff *skb, struct flowi *fl=
-, bool reverse)
- 			    pskb_may_pull(skb, xprth + 2 - skb->data)) {
- 				u8 *icmp;
-=20
--				xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+				xprth =3D skb_network_header(skb) + ihl * 4;
- 				icmp =3D xprth;
-=20
- 				fl4->fl4_icmp_type =3D icmp[0];
-@@ -3310,7 +3316,7 @@ decode_session4(struct sk_buff *skb, struct flowi *fl=
-, bool reverse)
- 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
- 				__be32 *ehdr;
-=20
--				xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+				xprth =3D skb_network_header(skb) + ihl * 4;
- 				ehdr =3D (__be32 *)xprth;
-=20
- 				fl4->fl4_ipsec_spi =3D ehdr[0];
-@@ -3321,7 +3327,7 @@ decode_session4(struct sk_buff *skb, struct flowi *fl=
-, bool reverse)
- 			    pskb_may_pull(skb, xprth + 8 - skb->data)) {
- 				__be32 *ah_hdr;
-=20
--				xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+				xprth =3D skb_network_header(skb) + ihl * 4;
- 				ah_hdr =3D (__be32 *)xprth;
-=20
- 				fl4->fl4_ipsec_spi =3D ah_hdr[1];
-@@ -3332,7 +3338,7 @@ decode_session4(struct sk_buff *skb, struct flowi *fl=
-, bool reverse)
- 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
- 				__be16 *ipcomp_hdr;
-=20
--				xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+				xprth =3D skb_network_header(skb) + ihl * 4;
- 				ipcomp_hdr =3D (__be16 *)xprth;
-=20
- 				fl4->fl4_ipsec_spi =3D htonl(ntohs(ipcomp_hdr[1]));
-@@ -3344,7 +3350,7 @@ decode_session4(struct sk_buff *skb, struct flowi *fl=
-, bool reverse)
- 				__be16 *greflags;
- 				__be32 *gre_hdr;
-=20
--				xprth =3D skb_network_header(skb) + iph->ihl * 4;
-+				xprth =3D skb_network_header(skb) + ihl * 4;
- 				greflags =3D (__be16 *)xprth;
- 				gre_hdr =3D (__be32 *)xprth;
-=20
-@@ -3360,10 +3366,6 @@ decode_session4(struct sk_buff *skb, struct flowi *f=
-l, bool reverse)
- 			break;
- 		}
- 	}
--	fl4->flowi4_proto =3D iph->protocol;
--	fl4->daddr =3D reverse ? iph->saddr : iph->daddr;
--	fl4->saddr =3D reverse ? iph->daddr : iph->saddr;
--	fl4->flowi4_tos =3D iph->tos;
- }
-=20
- #if IS_ENABLED(CONFIG_IPV6)
---=20
-2.20.1
-
-
---Sig_/2PEW0RL1QWRzfjPqg+1fO77
+--Sig_/CxWqRw_sHO9W/Gm/1zGUIvr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzCYcAACgkQAVBC80lX
-0GxCSQgAoUSviUA41IlJYlzas/i369vwYlzK1Yev1JEIJkO8PHlfuttTZ4FG28y1
-itsitGtUBumgRjl4EQNPmft1zZKM124mqBTiIMhnXqMxH+O+KxRxpgdyAFbkwjJn
-wuzAJyyi+Z1tORKY2hfqU2t4po2ue7qSz6yB86QazUK+9XI22nUZ7iTZSVLxHKbQ
-VT5O4kWhftBNr9ts0Ut3ndBEtYLJ/rQJDsrnW1717zLI83ESWmUR5rrZLylrLLb0
-fbhNwDZZBa4MhIVUGSvZ08Z2KoSnJF6R0Uvk7zXT5mpip8NeGlQs0ULhi+mKlajh
-nYqoDBVrCyMMaKsSzOddGPC7/+Pwxw==
-=NdZV
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzCaj8ACgkQAVBC80lX
+0GxFpwf/TFuH0ZkexQDGAbpdNoL3tS0ByjHqfnk94wixNeEwLSb3GxiNzPUJJBmb
+HAzl4RVWa4aS6S1QyJPUa8lFA3op/k83vPWtavYVB4CWk/USsKY1ZzFBcz6g8ulW
+3E2bm3ZnAci+2VyreJnkAqlEKF1m5VjfiWcLmi4Co7dzye01JyQ0rnDd8ZYuGgRO
+3iOnLmJba58Hk0fMRMt6xNC/cyuMXPs/h+1MD6YyJTWz6VxXBEEBwXoY6w1zQCBd
+RH5y7lxfTdLyHY4/0+vy1wQIriCL2EzA3yXbDiN47ESUbCexsm+djVUGzSyEU1zG
+95iFa/9WsoSo+fW8ffex+HI0FUAHnQ==
+=0kOG
 -----END PGP SIGNATURE-----
 
---Sig_/2PEW0RL1QWRzfjPqg+1fO77--
+--Sig_/CxWqRw_sHO9W/Gm/1zGUIvr--
+
+--===============0323349662==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0323349662==--
