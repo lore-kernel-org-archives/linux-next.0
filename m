@@ -1,40 +1,34 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-Date: Fri, 26 Apr 2019 08:25:48 +0200
-Message-ID: <20190426062548.GB5920@kroah.com>
-References: <20190426155653.2cdebc5d@canb.auug.org.au>
+From: Petr Mladek <pmladek@suse.com>
+Subject: Re: linux-next: Fixes tag needs some work in the printk tree
+Date: Fri, 26 Apr 2019 09:37:32 +0200
+Message-ID: <20190426073732.mjen7hqw3skhb67x@pathway.suse.cz>
+References: <20190425233049.7e2283b0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190426155653.2cdebc5d@canb.auug.org.au>
+In-Reply-To: <20190425233049.7e2283b0@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Patrick Venture <venture@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 26, 2019 at 03:56:53PM +1000, Stephen Rothwell wrote:
+On Thu 2019-04-25 23:30:49, Stephen Rothwell wrote:
 > Hi all,
 > 
-> After merging the char-misc tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> In commit
 > 
-> drivers/misc/aspeed-p2a-ctrl.c: In function 'aspeed_p2a_mmap':
-> drivers/misc/aspeed-p2a-ctrl.c:110:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
->   pgprot_t prot = vma->vm_page_prot;
->   ^~~~~~~~
+>   e43bb4d0feb8 ("vsprintf: Consistent %pK handling for kptr_restrict == 0")
 > 
-> Introduced by commit
+> Fixes tag
 > 
->   01c60dcea9f7 ("drivers/misc: Add Aspeed P2A control driver")
+>   Fixes: commit ef0010a30935de4e0211 ("vsprintf: don't use 'restricted_pointer()' when not restricting")
+> 
+> has these problem(s):
+> 
+>   - leading word 'commit' unexpected
 
-Patrick, I thought you fixed all of these already?  Can you send a patch
-again?
+Thanks for the report! I have just fixed it.
 
-Can you also make the driver so it can build with CONFIG_COMPILE_TEST
-enabled so that others can find your problems earlier in the review
-process?
-
-thanks,
-
-greg k-h
+Best Regards,
+Petr
