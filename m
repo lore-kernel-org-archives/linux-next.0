@@ -1,123 +1,65 @@
-From: Pavel Machek <pavel@denx.de>
-Subject: Re: regression -next -- scsi: sd: Rely on the driver core for
- asynchronous probing was Re: next-20190408..0418: Suspend/resume problems on
- Thinkpad X60
-Date: Fri, 26 Apr 2019 12:32:49 +0200
-Message-ID: <20190426103249.GA5001@amd>
-References: <20190423102239.GA15531@amd>
- <41d56ba6-d0cb-5d5e-f5f4-9bca045440dd@kernel.dk>
- <20190424095431.GA32457@amd>
- <20190424104850.GC32457@amd>
- <20190424202119.GA26357@amd>
- <20190424204832.GA3111@amd>
- <20190424205150.GA4582@amd>
- <1556139361.161891.140.camel@acm.org>
- <20190425073343.GA19600@amd>
- <360f6936-ee21-a036-9bd4-93ecfee829e2@acm.org>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [-next] system hangs likely due to "modules: Only return -EEXIST for
+ modules that have finished loading"
+Date: Fri, 26 Apr 2019 15:07:36 +0200
+Message-ID: <20190426130736.GB8646@osiris>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <360f6936-ee21-a036-9bd4-93ecfee829e2@acm.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Pavel Machek <pavel@denx.de>, Jens Axboe <axboe@kernel.dk>, jejb@linux.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, hare@suse.com, mcgrof@kernel.org, jthumshirn@suse.de, hch@lst.de, gregkh@linuxfoundation.org, dan.j.williams@intel.com, kernel list <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net, linux-pm@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, hdegoede@redhat.com, linux-ide@vger.kernel.org
+To: Prarit Bhargava <prarit@redhat.com>, Jessica Yu <jeyu@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, Cathy Avery <cavery@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+Hello Prarit,
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+it looks like your commit f9a75c1d717f ("modules: Only return -EEXIST
+for modules that have finished loading") _sometimes_ causes hangs on
+s390. This is unfortunately not 100% reproducible, however the
+mentioned commit seems to be the only relevant one in modules.c.
 
-On Thu 2019-04-25 06:35:58, Bart Van Assche wrote:
-> On 4/25/19 12:33 AM, Pavel Machek wrote:
-> > On Wed 2019-04-24 13:56:01, Bart Van Assche wrote:
-> >> On Wed, 2019-04-24 at 22:51 +0200, Pavel Machek wrote:
-> >>> Unfortunately, that one does not revert cleanly on top of -next.
-> >>
-> >> Can you try the following:
-> >>
-> >> git revert d16ece577bf2cee7f94bab75a0d967bcb89dd2a7 &&
-> >>   git revert 21e6ba3f0e0257cce1a226c1f15e0a8ba4338ca3
-> >>
-> >> I will see whether I can come up with a better way to analyze what is
-> >> going on. I had not expected that these patches would cause any suspen=
-d/
-> >> resume problems.
-> >=20
-> > Not even d16ece reverts:
-> >=20
-> > pavel@duo:/data/l/linux-next-32$ git show  | head -3
-> > commit 76c938fcaa4b4a5d8f05fa907925d5043834964e
-> > Author: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date:   Tue Apr 23 20:24:59 2019 +1000
-> > pavel@duo:/data/l/linux-next-32$ git revert
-> > d16ece577bf2cee7f94bab75a0d967bcb89dd2a7
-> > error: could not revert d16ece5... scsi: sd: Inline sd_probe_part2()
-> > hint: after resolving the conflicts, mark the corrected paths
-> > hint: with 'git add <paths>' or 'git rm <paths>'
-> > hint: and commit the result with 'git commit'
->=20
-> There has been a non-trivial merge between the block and scsi trees in
-> linux-next. That's probably what prevents these patches to revert
-> cleanly. How about performing the following tests:
-> * Build, boot and test Martin's latest for-5.2 branch
-> (git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git; branch
-> 5.2/scsi-queue).
+What I see is a hanging system with messages like this on the console:
 
-Ok, so that's commit a7634b6f7cbbdc6efcf772e080a6fe845d1f6161
-=2E Suspend/resume is broken there.
+[   65.876040] rcu: INFO: rcu_sched self-detected stall on CPU
+[   65.876049] rcu:     7-....: (5999 ticks this GP) idle=eae/1/0x4000000000000002 softirq=1181/1181 fqs=2729
+[   65.876078]  (t=6000 jiffies g=-471 q=17196)
+[   65.876084] Task dump for CPU 7:
+[   65.876088] systemd-udevd   R  running task        0   731    721 0x06000004
+[   65.876097] Call Trace:
+[   65.876113] ([<0000000000abb264>] __schedule+0x2e4/0x6e0)
+[   65.876122]  [<00000000001ee486>] finished_loading+0x4e/0xb0
+[   65.876128]  [<00000000001f1ed6>] load_module+0xcce/0x27a0
+[   65.876134]  [<00000000001f3af0>] __s390x_sys_init_module+0x148/0x178
+[   65.876142]  [<0000000000ac0766>] system_call+0x2aa/0x2c8
 
-> * If suspend/resume does not work reliably with that branch, revert the
-> two patches above, rebuild, reboot and retest.
+crash's backtrace of this task looks like this:
 
-pavel@duo:/data/l/linux-next-32$ git show
-commit a7634b6f7cbbdc6efcf772e080a6fe845d1f6161
-Author: Colin Ian King <colin.king@canonical.com>
-pavel@duo:/data/l/linux-next-32$ git revert
-d16ece577bf2cee7f94bab75a0d967bcb89dd2a7
-Editing file: /data/fast/l/linux-next-32/.git/COMMIT_EDITMSG
-1026
-?
-[detached HEAD 916db0d] Revert "scsi: sd: Inline sd_probe_part2()"
- 1 file changed, 58 insertions(+), 43 deletions(-)
- pavel@duo:/data/l/linux-next-32$ git revert
- 21e6ba3f0e0257cce1a226c1f15e0a8ba4338ca3
- Editing file: /data/fast/l/linux-next-32/.git/COMMIT_EDITMSG
- 1163
- ?
- [detached HEAD ac8d625] Revert "scsi: sd: Rely on the driver core for
- asynchronous probing"
-  4 files changed, 47 insertions(+), 5 deletions(-)
+PID: 731    TASK: 1e79ba000         CPU: 7   COMMAND: "systemd-udevd"
+ LOWCORE INFO:
+  -psw      : 0x0704c00180000000 0x0000000000ab666a
+  -function : memcmp at ab666a
+  -prefix   : 0x7fe32000
+  -cpu timer: 0x7fffff5784d0f048
+  -clock cmp: 0xd60757081cd70d00
+  -general registers:
+     0x0000000000000009 0x0000000000000009
+     0x000003ff80347321 000000000000000000
+     0x000003ff8034f321 000000000000000000
+     0x000000000000001e 0x000003ff8c592708
+     0x000003e0047da900 0x000003ff8034f318
+     0x0000000000000001 0x0000000000000009
+     0x000003ff80347300 0x0000000000ad81b8
+     0x00000000001ee062 0x000003e004357cb0
+[...]
+ #0 [3e004357cf0] load_module at 1f1eb0
+ #1 [3e004357dd0] __se_sys_init_module at 1f3af0
+ #2 [3e004357ea8] system_call at ac0766
+ PSW:  0705000180000000 000003ff8c27ad3e (user space)
+ GPRS: 000002aa280d2fb0 000003ff8c27ad3c 0000000000000080 00000000000035fd
+       000003ff8c592708 000002aa280c8770 0000000000000000 000002aa280d7130
+       0000000000020000 000002aa28915760 000003ff8c592708 000002aa280c00b0
+       000003ff8c8fff80 000002aa280c00b0 000003ff8c58a456 000003ffe9cfde90
 
-
-And reverting those two indeed fixes it:
-
-Checking version...
-version is  Linux amd 5.1.0-rc1autobisect1556274387+ #261 SMP Fri Apr
-26 12:27:12 CEST 2019 i686 GNU/Linux
-Running test...
-Result is [ TEST SUCCESS ]
-Test said TEST SUCCESS
-
-								Pavel
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzC3lEACgkQMOfwapXb+vJoTQCffu48EpOKwrjNHzlGLiZ8G0rw
-4xgAoIa4q0JCnAK+g4FAgxxuCYx82gQt
-=bMOt
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+I did not look any further into the dump, however since the commit
+touches exactly the code path which seems to be looping... ;)
