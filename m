@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the s390 tree
-Date: Sun, 28 Apr 2019 17:07:13 +1000
-Message-ID: <20190428170713.770e1bfc@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the slave-dma tree
+Date: Sun, 28 Apr 2019 17:17:01 +1000
+Message-ID: <20190428171701.2a96cd3c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0kVjR4O274LwqJPu/Jm+bpT"; protocol="application/pgp-signature"
+ boundary="Sig_/gIT.vGV=8Z1cQK+Zum/=jgy"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philipp Rudo <prudo@linux.ibm.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/0kVjR4O274LwqJPu/Jm+bpT
+--Sig_/gIT.vGV=8Z1cQK+Zum/=jgy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,39 +19,37 @@ Hi all,
 
 In commit
 
-  2875248b5e1a ("s390/kexec_file: Fix potential segment overlap in ELF load=
-er")
+  9bd1be60f55b ("dmaengine: stm32-dma: Fix unsigned variable compared with =
+zero")
 
 Fixes tag
 
-  Fixes: 91a05d9e1d6b ("s390/kexec_file: Add ELF loader")
+  Fixes: f4fd2ec08f17: ("dmaengine: stm32-dma: use platform_get_irq()")
 
 has these problem(s):
 
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: 8be018827154 ("s390/kexec_file: Add ELF loader")
+  - The colon following the SHA1 is unexpected
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/0kVjR4O274LwqJPu/Jm+bpT
+--Sig_/gIT.vGV=8Z1cQK+Zum/=jgy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzFUSEACgkQAVBC80lX
-0GxQoQf/W8KM8sclN38B6l1gUVTRGhez6cbWfWWFqF/YVVoThbRFE/9LLBz4g9LO
-enAgykYBtM6hhipGzYZr52Rt4Z1HK73eHbmBLincOb8KZK/YUf6IuVbKdIF6vSjb
-X5BHIltPp0g9u/LTptv1ApItLU1uNQgW1Z1ItqpXytkwtw2SSgv7Yv5EEBGL67Gc
-fwzEzNOy+st2rU1UaCF9dlzCMFWMDoF5V6dQweEORarFQp+RPQkXva21iv9s+1o+
-pgQKFhahGLcpLWVSQTdj1QgO9FZgRv5lc6rygk8MM78lvZG5bMarD/H2f3VGm0os
-WYzeVEhwbboKrmY3cU4+O8W8lCrA2g==
-=SyRY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzFU20ACgkQAVBC80lX
+0GyKlwf/bnf3VUpSUMuG3FQDj9yJjjOusJkAUFg4tXVu5DCN0enIwHfHpT/xE4Sn
+x82OviM/UzfVriPYRkOVcpOCYMFzUVFLWuLYmHBo0IE6QkWmImn8qzGZ6tvFpf5Z
+FGLmPTacZQIl9ffcLkGq+w1UhFK9SVjpQlgGKjUm2fgLAjpy+8QFXo6pFRtXva7s
+m5F/X5TTqHCuPFX2P+bxs/kAytSn9UlUsI+3jBznODJIsAaRbP79FqMJYddnk+7x
+mVNgQOeSL/0Ts8+/ppwH6gf5wOTTy5OqMg0UwdsBc4llxJCeOzyuvdWmqIZ9+pA+
+R8FoPCT7NFX3OQbaQ5pCNoHX8Pcz+Q==
+=uhnc
 -----END PGP SIGNATURE-----
 
---Sig_/0kVjR4O274LwqJPu/Jm+bpT--
+--Sig_/gIT.vGV=8Z1cQK+Zum/=jgy--
