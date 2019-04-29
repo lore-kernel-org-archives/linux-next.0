@@ -1,55 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the mmc tree
-Date: Tue, 30 Apr 2019 07:46:32 +1000
-Message-ID: <20190430074632.41770aca@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma-fixes tree with Linus' tree
+Date: Tue, 30 Apr 2019 08:13:46 +1000
+Message-ID: <20190430081346.3196b60f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GTco9g8Ng=qUi3DFVj=uzvl"; protocol="application/pgp-signature"
+ boundary="Sig_/aGqEJja6r4eSE9GIBbFg4sy"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pan Bian <bianpan2016@163.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/GTco9g8Ng=qUi3DFVj=uzvl
+--Sig_/aGqEJja6r4eSE9GIBbFg4sy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ulf,
+Hi all,
 
-In commit
+Today's linux-next merge of the rdma-fixes tree got a conflict in:
 
-  98bc384ce704 ("mmc: core: fix possible use after free of host")
+  drivers/infiniband/core/uverbs_main.c
 
-Fixes tag
+between commit:
 
-  Fixes: 1ed21719448("mmc: core: fix error path in mmc_host_alloc")
+  6a5c5d26c4c6 ("rdma: fix build errors on s390 and MIPS due to bad ZERO_PA=
+GE use")
 
-has these problem(s):
+from Linus' tree and commit:
 
-  - missing space between the SHA1 and the subject
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  d79a26b99f5f ("RDMA/uverbs: Fix compilation error on s390 and mips platfo=
+rms")
+
+from the rdma-fixes tree.
+
+I fixed it up (I just used the version from Linus' tree) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/GTco9g8Ng=qUi3DFVj=uzvl
+--Sig_/aGqEJja6r4eSE9GIBbFg4sy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHcLgACgkQAVBC80lX
-0GylQwf/dKwPkuFztaqgyDI5/T15xB412WcccraMyV39arDYN4cJI9pD0g9VUXwJ
-JYfqBF/sjDTMxsmUohwXdsyJm5S1NRSjWaYOvtbhviO804HPHIr9PuqMOmva+0rV
-WnqQUdq9RxDIvy27cdmqr0BT5dajpBULY2aYP3kdKhfkAjEC8/azPAtrAO1brMAz
-uUnXnmhvH/55nXuLe0np4sbnuZGs9xQsazy4Z8xJC+Rk1zwlsEbmc8+GVbFwq+rI
-v4PoX3G4KXnrhvWQQlo3VpM4mm2BmiPaQ0vl2qc+JQSP+FRlHtuzN1VzvLPF3pMM
-5+PmkwSRdCCYoawJZnoCvku2doYesA==
-=B73O
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHdxoACgkQAVBC80lX
+0GwG3Af/a5q4L1kD5ptbcU8ulRUg1b6T7gFVsjTSYvloLMDOMxABY+duRjRaipTe
+FQl2rELZkLkt/7wXWv5NtRJgaBTLQ4Q+zV8liInIsypEOCjK5VWenuPzwxw3bJQ8
+WsqEObsNpBKTFJeqxSrgELc/mxHP4sn6Mt/c6silZ0FPodzCl4JSEFwWSm7HNzK/
+4SHP672W926uo4woPwUq1oRxmQnk0LHEMyPxJZ48wV/Z3U0F4vGYMfvQeJfYtCrW
+fPidonA254Mfg9TxwdOej3h9OZpu+yr7GRXJwfo1gvLn7ggtU4xQD83Cr41rclwf
+5FzB5nJ0z1DHrrwaJZfNk7eN4pGH8g==
+=oXyz
 -----END PGP SIGNATURE-----
 
---Sig_/GTco9g8Ng=qUi3DFVj=uzvl--
+--Sig_/aGqEJja6r4eSE9GIBbFg4sy--
