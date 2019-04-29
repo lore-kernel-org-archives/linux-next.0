@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 29 (drivers/md/dm-dust)
-Date: Mon, 29 Apr 2019 07:52:00 -0700
-Message-ID: <534f901f-c662-6216-c39a-addb545f614b@infradead.org>
+Subject: Re: linux-next: Tree for Apr 29 (drivers/leds/leds-turris-omnia)
+Date: Mon, 29 Apr 2019 08:03:02 -0700
+Message-ID: <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
 References: <20190429190354.0d5e2e93@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
@@ -11,7 +11,7 @@ In-Reply-To: <20190429190354.0d5e2e93@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dm-devel <dm-devel@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marek Behun <marek.behun@nic.cz>, linux-leds@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
 On 4/29/19 2:03 AM, Stephen Rothwell wrote:
@@ -22,10 +22,22 @@ On 4/29/19 2:03 AM, Stephen Rothwell wrote:
 
 on i386:
 
-ld: drivers/md/dm-dust.o: in function `dust_map':
-dm-dust.c:(.text+0x28d): undefined reference to `__udivdi3'
-ld: drivers/md/dm-dust.o: in function `dust_message':
-dm-dust.c:(.text+0x9a4): undefined reference to `__udivdi3'
+when CONFIG_LEDS_TURRIS_OMNIA=y and CONFIG_I2C=m:
+
+Probably should also depend on I2C.
+
+
+ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_remove':
+leds-turris-omnia.c:(.text+0xb): undefined reference to `i2c_smbus_write_byte_data'
+ld: drivers/leds/leds-turris-omnia.o: in function `omnia_led_brightness_set_blocking':
+leds-turris-omnia.c:(.text+0x62): undefined reference to `i2c_smbus_write_byte_data'
+ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_probe':
+leds-turris-omnia.c:(.text+0x1d8): undefined reference to `i2c_smbus_write_byte_data'
+ld: leds-turris-omnia.c:(.text+0x1f6): undefined reference to `i2c_smbus_write_byte_data'
+ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_driver_init':
+leds-turris-omnia.c:(.init.text+0x8): undefined reference to `i2c_register_driver'
+ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_driver_exit':
+leds-turris-omnia.c:(.exit.text+0x6): undefined reference to `i2c_del_driver'
 
 
 
