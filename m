@@ -1,46 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the clk tree
-Date: Tue, 30 Apr 2019 07:40:24 +1000
-Message-ID: <20190430074024.40bf4c99@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the mmc tree
+Date: Tue, 30 Apr 2019 07:46:32 +1000
+Message-ID: <20190430074632.41770aca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sBmbiR/G7ppATPAZ=rc/_zU"; protocol="application/pgp-signature"
+ boundary="Sig_/GTco9g8Ng=qUi3DFVj=uzvl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pan Bian <bianpan2016@163.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/sBmbiR/G7ppATPAZ=rc/_zU
+--Sig_/GTco9g8Ng=qUi3DFVj=uzvl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Ulf,
 
-Commit
+In commit
 
-  01d0a541ff4b ("clk: imx: correct i.MX7D AV PLL num/denom offset")
+  98bc384ce704 ("mmc: core: fix possible use after free of host")
 
-is missing a Signed-off-by from its committer.
+Fixes tag
+
+  Fixes: 1ed21719448("mmc: core: fix error path in mmc_host_alloc")
+
+has these problem(s):
+
+  - missing space between the SHA1 and the subject
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/sBmbiR/G7ppATPAZ=rc/_zU
+--Sig_/GTco9g8Ng=qUi3DFVj=uzvl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHb0gACgkQAVBC80lX
-0GwEXQgAi5ofR/8JCHxb95Bf6OedrtZbAaZxx6vup6H5pFus+C0tg5RWX6j65mpM
-/eIlZJRwJWtFrRxew8knNo6X32x8VSHEQQrwe4RQTY5k84KoSgTgO87330qBEclp
-j3yBWVAvyrc3K2nbDUTXbQMqTp0a1XVVYI51Pqs7yGm2TKhT7bvIRw0oHod/lDbF
-BA4xiMNfd0E91vQynY7VBq1uyDCysq8dbjN3eaE+rxSs4E/3jsBaeStfv9x2RDoP
-TsUXJu91wbhtHjCaerWkMhBsQnOuKl/MvVrOtmaXUxoZVxWPI/cBYove0LZDcI5P
-XJ3QlCyc5hNbtUlwFyDUUc7IATq7aA==
-=wDRd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHcLgACgkQAVBC80lX
+0GylQwf/dKwPkuFztaqgyDI5/T15xB412WcccraMyV39arDYN4cJI9pD0g9VUXwJ
+JYfqBF/sjDTMxsmUohwXdsyJm5S1NRSjWaYOvtbhviO804HPHIr9PuqMOmva+0rV
+WnqQUdq9RxDIvy27cdmqr0BT5dajpBULY2aYP3kdKhfkAjEC8/azPAtrAO1brMAz
+uUnXnmhvH/55nXuLe0np4sbnuZGs9xQsazy4Z8xJC+Rk1zwlsEbmc8+GVbFwq+rI
+v4PoX3G4KXnrhvWQQlo3VpM4mm2BmiPaQ0vl2qc+JQSP+FRlHtuzN1VzvLPF3pMM
+5+PmkwSRdCCYoawJZnoCvku2doYesA==
+=B73O
 -----END PGP SIGNATURE-----
 
---Sig_/sBmbiR/G7ppATPAZ=rc/_zU--
+--Sig_/GTco9g8Ng=qUi3DFVj=uzvl--
