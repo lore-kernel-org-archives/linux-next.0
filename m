@@ -1,54 +1,46 @@
-From: Marek Behun <marek.behun@nic.cz>
-Subject: Re: linux-next: Tree for Apr 29 (drivers/leds/leds-turris-omnia)
-Date: Mon, 29 Apr 2019 21:02:21 +0200
-Message-ID: <20190429210221.6e6c207e@nic.cz>
-References: <20190429190354.0d5e2e93@canb.auug.org.au>
-        <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
-        <20190429153200.GA11761@amd>
-        <20190429173842.06f02852@nic.cz>
-        <20190429163753.GA16782@amd>
-        <20190429184439.68049050@nic.cz>
-        <20190429165319.GB16782@amd>
-        <c045db7f-2147-1a58-8d65-8b52fddd932c@metux.net>
-        <20190429181245.GA24658@amd>
-        <ccf6596b-e645-a9b3-dfab-96ff14e8b70d@metux.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the clk tree
+Date: Tue, 30 Apr 2019 07:40:24 +1000
+Message-ID: <20190430074024.40bf4c99@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sBmbiR/G7ppATPAZ=rc/_zU"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ccf6596b-e645-a9b3-dfab-96ff14e8b70d@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 29 Apr 2019 20:49:59 +0200
-"Enrico Weigelt, metux IT consult" <lkml@metux.net> wrote:
+--Sig_/sBmbiR/G7ppATPAZ=rc/_zU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 29.04.19 20:12, Pavel Machek wrote:
-> 
-> >> Is that controller only built-in into some SoCs, or also available
-> >> as a separate chip ?  
-> > 
-> > AFAIU.. separate chip, but runs firmware not likely to be available
-> > outside Turris routers.  
-> 
-> hmm, if it's a separate chip, IMHO it should be selectable, so that
-> anybody who puts that chip on his board can directly use it.
-> 
-> --mtx
-> 
+Hi all,
 
-The chip is a cortex-m3 or something like that. What makes the LEDs
-work in this specific way this driver uses is the firmware on the chip,
-and that firmware is specific for Omnia.
+Commit
 
-It is possible that in the future someone makes a I2C controller
-compatible with the API the Omnia firmware provides, but very unlikely.
+  01d0a541ff4b ("clk: imx: correct i.MX7D AV PLL num/denom offset")
 
-I think it is reasonable to make the driver depend on MACH_ARMADA_38X
-and in the unlikely scenario that someone makes a compatible
-controller, the dependency can always be removed.
+is missing a Signed-off-by from its committer.
 
-Marek
-situation it is possible to 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sBmbiR/G7ppATPAZ=rc/_zU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHb0gACgkQAVBC80lX
+0GwEXQgAi5ofR/8JCHxb95Bf6OedrtZbAaZxx6vup6H5pFus+C0tg5RWX6j65mpM
+/eIlZJRwJWtFrRxew8knNo6X32x8VSHEQQrwe4RQTY5k84KoSgTgO87330qBEclp
+j3yBWVAvyrc3K2nbDUTXbQMqTp0a1XVVYI51Pqs7yGm2TKhT7bvIRw0oHod/lDbF
+BA4xiMNfd0E91vQynY7VBq1uyDCysq8dbjN3eaE+rxSs4E/3jsBaeStfv9x2RDoP
+TsUXJu91wbhtHjCaerWkMhBsQnOuKl/MvVrOtmaXUxoZVxWPI/cBYove0LZDcI5P
+XJ3QlCyc5hNbtUlwFyDUUc7IATq7aA==
+=wDRd
+-----END PGP SIGNATURE-----
+
+--Sig_/sBmbiR/G7ppATPAZ=rc/_zU--
