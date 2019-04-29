@@ -1,38 +1,48 @@
-From: Vinod Koul <vkoul@kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the slave-dma tree
-Date: Mon, 29 Apr 2019 10:01:06 +0530
-Message-ID: <20190429043106.GB3845@vkoul-mobl.Dlink>
-References: <20190428171701.2a96cd3c@canb.auug.org.au>
+From: Luca Coelho <luca@coelho.fi>
+Subject: Re: linux-next: manual merge of the net-next tree with the
+ wireless-drivers tree
+Date: Mon, 29 Apr 2019 08:19:34 +0300
+Message-ID: <cc5e71b2ae7c72b643b9666897bbf6eda4bddbb6.camel@coelho.fi>
+References: <20190429115338.5decb50b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190428171701.2a96cd3c@canb.auug.org.au>
+In-Reply-To: <20190429115338.5decb50b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On 28-04-19, 17:17, Stephen Rothwell wrote:
+Hi Stephen,
+
+On Mon, 2019-04-29 at 11:54 +1000, Stephen Rothwell wrote:
 > Hi all,
 > 
-> In commit
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
->   9bd1be60f55b ("dmaengine: stm32-dma: Fix unsigned variable compared with zero")
+>   drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
 > 
-> Fixes tag
+> between commits:
 > 
->   Fixes: f4fd2ec08f17: ("dmaengine: stm32-dma: use platform_get_irq()")
+>   154d4899e411 ("iwlwifi: mvm: properly check debugfs dentry before using it")
+>   d156e67d3f58 ("iwlwifi: mvm: fix merge damage in iwl_mvm_vif_dbgfs_register()")
 > 
-> has these problem(s):
+> from the wireless-drivers tree and commit:
 > 
->   - The colon following the SHA1 is unexpected
->     Just use
-> 	git log -1 --format='Fixes: %h ("%s")'
+>   c9af7528c331 ("iwlwifi: mvm: no need to check return value of debugfs_create functions")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (the latter removed the code modified by the former, so I
+> just did that) and can carry the fix as necessary. This is now fixed as
+> far as linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-Thanks Stephen for the report.
+I checked your merge and it looks good, thanks!
 
-Have fixed it up.
-
--- 
-~Vinod
+--
+Cheers,
+Luca.
