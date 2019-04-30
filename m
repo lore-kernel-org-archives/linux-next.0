@@ -1,60 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the clk tree
-Date: Tue, 30 Apr 2019 10:19:39 +1000
-Message-ID: <20190430101939.76dc077c@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the rdma-fixes tree with Linus'
+ tree
+Date: Tue, 30 Apr 2019 10:28:14 +1000
+Message-ID: <20190430102814.73f213e1@canb.auug.org.au>
+References: <20190430081346.3196b60f@canb.auug.org.au>
+        <16bb268f0b5b62d71cc65204bccea856333b87d8.camel@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O_CCSv_ik.J=.msdHR8HWg8"; protocol="application/pgp-signature"
+ boundary="Sig_/mSbVZQh6/BdOyK84lieBwgo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <16bb268f0b5b62d71cc65204bccea856333b87d8.camel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anson Huang <anson.huang@nxp.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/O_CCSv_ik.J=.msdHR8HWg8
+--Sig_/mSbVZQh6/BdOyK84lieBwgo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Doug,
 
-After merging the clk tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+On Mon, 29 Apr 2019 18:21:32 -0400 Doug Ledford <dledford@redhat.com> wrote:
+>
+> Sorry, I forgot to back that head commit out.  Once Linus committed his
+> fix the one in the rdma tree was superfluous (and wrong anyway).
 
-drivers/clk/imx/clk-pllv3.c:453:21: warning: this statement may fall throug=
-h [-Wimplicit-fallthrough=3D]
-   pll->denom_offset =3D PLL_IMX7_DENOM_OFFSET;
-                     ^
-drivers/clk/imx/clk-pllv3.c:454:2: note: here
-  case IMX_PLLV3_AV:
-  ^~~~
-
-Introduced by commit
-
-  01d0a541ff4b ("clk: imx: correct i.MX7D AV PLL num/denom offset")
-
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
+No worries - I even managed to choose the correct one by chance! :-)
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/O_CCSv_ik.J=.msdHR8HWg8
+--Sig_/mSbVZQh6/BdOyK84lieBwgo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHlJsACgkQAVBC80lX
-0GwcmQf8DQm/+a+825CRo/z9YbTfzFrH7k1fA68yg/EKjTDMMsXeZcdPfpLEZQrT
-/t+OF0ZCKTT/WEESDmmJHaViC7wGbqUzpKGKj9Z4JNC6mGBQbhGNXRt3aIUWUCBr
-NpA8DebUbaUciq1iu+j3w1jrUYzmsqEB7tDfeetdPE75kCy6NZVHKNvSoINtOzE/
-j/lpMl5Uv4UYQLgXmchiYgSO41iRz3xUSOZwRnuLvx0Be1i2PWBf/+SyMu9Qw9kw
-WsqSKhqldIpG9EeHb4MrSYQYSeUlXqaOUvwb3HuXYyKir7qoqtAu33U1p2KUXRHn
-rVOI5AteR8+bnJoo8sByoKStI6Ptsw==
-=Dwx1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHlp4ACgkQAVBC80lX
+0GzPhQf/aQox6wP+TJarWwq9a2oRtjQLg9FWKpjkODFhbBh9J2V4+Rk6V/PBFcRZ
+03DiD+8goxY7hX8drMtGPfjFSesYbmyQKz6ikM7lfxODpyzZiesHg7cHLLGJYIeb
+KcLDJnQWpQIaLLvr6hqZ+IPWYQyWzFKs1l70h+eLPfTRdR3niZ3d2hrDEgmYYCLv
++VWiphd6VYExwO42Ei7DNuHt2MsA7m+pnATtCWaWS1uj9ay1CSwBq4CCL/h9DJNK
+rsnOc4VfU4E5AWplyGqQlkO2a8nnwTiAm8ZErvUHKrwFOGlICPjriYgt6SNaHgf6
+EcmtTS6tgz74zPlJVa4XnYujb/X/YA==
+=1DgZ
 -----END PGP SIGNATURE-----
 
---Sig_/O_CCSv_ik.J=.msdHR8HWg8--
+--Sig_/mSbVZQh6/BdOyK84lieBwgo--
