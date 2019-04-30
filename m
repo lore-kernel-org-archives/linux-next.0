@@ -1,51 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rdma-fixes tree with Linus'
- tree
-Date: Tue, 30 Apr 2019 10:28:14 +1000
-Message-ID: <20190430102814.73f213e1@canb.auug.org.au>
-References: <20190430081346.3196b60f@canb.auug.org.au>
-        <16bb268f0b5b62d71cc65204bccea856333b87d8.camel@redhat.com>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: linux-next: build warning after merge of the clk tree
+Date: Tue, 30 Apr 2019 01:44:58 +0000
+Message-ID: <DB3PR0402MB3916B4CE00494BE730C07047F53A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190430101939.76dc077c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mSbVZQh6/BdOyK84lieBwgo"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <16bb268f0b5b62d71cc65204bccea856333b87d8.camel@redhat.com>
+In-Reply-To: <20190430101939.76dc077c@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/mSbVZQh6/BdOyK84lieBwgo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Stephen
+	Thanks for notice.
+	As it is intentional, I will send out a patch to add "/* fall through */" =
+to avoid this build warning,
 
-Hi Doug,
+Anson.
 
-On Mon, 29 Apr 2019 18:21:32 -0400 Doug Ledford <dledford@redhat.com> wrote:
->
-> Sorry, I forgot to back that head commit out.  Once Linus committed his
-> fix the one in the rdma tree was superfluous (and wrong anyway).
-
-No worries - I even managed to choose the correct one by chance! :-)
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mSbVZQh6/BdOyK84lieBwgo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHlp4ACgkQAVBC80lX
-0GzPhQf/aQox6wP+TJarWwq9a2oRtjQLg9FWKpjkODFhbBh9J2V4+Rk6V/PBFcRZ
-03DiD+8goxY7hX8drMtGPfjFSesYbmyQKz6ikM7lfxODpyzZiesHg7cHLLGJYIeb
-KcLDJnQWpQIaLLvr6hqZ+IPWYQyWzFKs1l70h+eLPfTRdR3niZ3d2hrDEgmYYCLv
-+VWiphd6VYExwO42Ei7DNuHt2MsA7m+pnATtCWaWS1uj9ay1CSwBq4CCL/h9DJNK
-rsnOc4VfU4E5AWplyGqQlkO2a8nnwTiAm8ZErvUHKrwFOGlICPjriYgt6SNaHgf6
-EcmtTS6tgz74zPlJVa4XnYujb/X/YA==
-=1DgZ
------END PGP SIGNATURE-----
-
---Sig_/mSbVZQh6/BdOyK84lieBwgo--
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Tuesday, April 30, 2019 8:20 AM
+> To: Mike Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>
+> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Ma=
+iling
+> List <linux-kernel@vger.kernel.org>; Anson Huang <anson.huang@nxp.com>;
+> Gustavo A. R. Silva <gustavo@embeddedor.com>; Kees Cook
+> <keescook@chromium.org>
+> Subject: linux-next: build warning after merge of the clk tree
+>=20
+> Hi all,
+>=20
+> After merging the clk tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> drivers/clk/imx/clk-pllv3.c:453:21: warning: this statement may fall thro=
+ugh [-
+> Wimplicit-fallthrough=3D]
+>    pll->denom_offset =3D PLL_IMX7_DENOM_OFFSET;
+>                      ^
+> drivers/clk/imx/clk-pllv3.c:454:2: note: here
+>   case IMX_PLLV3_AV:
+>   ^~~~
+>=20
+> Introduced by commit
+>=20
+>   01d0a541ff4b ("clk: imx: correct i.MX7D AV PLL num/denom offset")
+>=20
+> I get this warning because I am building with -Wimplicit-fallthrough in
+> attempt to catch new additions early.  The gcc warning can be turned off =
+by
+> adding a /* fall through */ comment at the point the fall through happens
+> (assuming that the fall through is intentional).
+>=20
+> --
+> Cheers,
+> Stephen Rothwell
