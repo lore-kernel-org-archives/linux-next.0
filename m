@@ -1,91 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mlx5-next tree with the rdma tree
-Date: Tue, 30 Apr 2019 13:58:46 +1000
-Message-ID: <20190430135846.0c17df6e@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: manual merge of the wireless-drivers-next tree with the
+ wireless-drivers tree
+Date: Tue, 30 Apr 2019 14:08:31 +1000
+Message-ID: <20190430140831.6095243c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/x6h10r0CWB.mHV.8Wd_JDuP"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vu Pham <vuhuong@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Mark Bloch <markb@mellanox.com>
+ boundary="Sig_/.r+ego657j0+ULOk+yG7gms"; protocol="application/pgp-signature"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Luca Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shahar S Matityahu <shahar.s.matityahu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/x6h10r0CWB.mHV.8Wd_JDuP
+--Sig_/.r+ego657j0+ULOk+yG7gms
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Leon,
+Hi all,
 
-Today's linux-next merge of the mlx5-next tree got a conflict in:
+Today's linux-next merge of the wireless-drivers-next tree got a
+conflict in:
 
-  drivers/infiniband/hw/mlx5/main.c
+  drivers/net/wireless/intel/iwlwifi/fw/file.h
 
 between commit:
 
-  35b0aa67b298 ("RDMA/mlx5: Refactor netdev affinity code")
+  b35f63972c5c ("iwlwifi: dbg_ini: check debug TLV type explicitly")
 
-from the rdma tree and commit:
+from the wireless-drivers tree and commit:
 
-  c42260f19545 ("net/mlx5: Separate and generalize dma device from pci devi=
-ce")
+  aee1b6385e29 ("iwlwifi: support fseq tlv and print fseq version")
 
-from the mlx5-next tree.
+from the wireless-drivers-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the latter is a superset of the former) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/infiniband/hw/mlx5/main.c
-index 6135a0b285de,fae6a6a1fbea..000000000000
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@@ -200,12 -172,18 +200,12 @@@ static int mlx5_netdev_event(struct not
- =20
-  	switch (event) {
-  	case NETDEV_REGISTER:
- +		/* Should already be registered during the load */
- +		if (ibdev->is_rep)
- +			break;
-  		write_lock(&roce->netdev_lock);
-- 		if (ndev->dev.parent =3D=3D &mdev->pdev->dev)
- -		if (ibdev->rep) {
- -			struct mlx5_eswitch *esw =3D ibdev->mdev->priv.eswitch;
- -			struct net_device *rep_ndev;
- -
- -			rep_ndev =3D mlx5_ib_get_rep_netdev(esw,
- -							  ibdev->rep->vport);
- -			if (rep_ndev =3D=3D ndev)
- -				roce->netdev =3D ndev;
- -		} else if (ndev->dev.parent =3D=3D mdev->device) {
-++		if (ndev->dev.parent =3D=3D mdev->device)
-  			roce->netdev =3D ndev;
- -		}
-  		write_unlock(&roce->netdev_lock);
-  		break;
- =20
-
---Sig_/x6h10r0CWB.mHV.8Wd_JDuP
+--Sig_/.r+ego657j0+ULOk+yG7gms
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHx/YACgkQAVBC80lX
-0Gzdcwf/TE5ogvk+bySoFuMFWxuO8ThJFKEgBwtNn3z3FV1lPop11h70cpNlLj0G
-2ZHQE5KFv3hos740rD/WELzVBnJUjPndb4OPV3VtRj0WAdiI1XemQ7i5Jf87j6yd
-LnpbcwtAF9jV2wjhJh5o9btd3RfqMpP4FDl6ew7PT5lMqcbyP+bBuWHScCsvW0jj
-pT7xo3Pf6zwfxiJoRlVRt1aW9QR1XJPIaxAKna5PKrvYRo1Y2Q00KU7yJv0ub8WB
-xfZJT6l8+Fa/jfqaZHHXZ8G9n16GHgYvq+6+OxkVYW4tIjRWgq1dwRAFja3M92up
-EESHkiDITShEDV5vj04TQnCMGfORsQ==
-=0oRm
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHyj8ACgkQAVBC80lX
+0GxKWQgAl7k/YiZbxsRuQX2dYBCZrZKieidNaLZ/YIpqGxPQB6gF2RnfD28Qrf7x
+cZ2CdxmwsBKyuD/2RdmmJrNzer8c9LNfv9OLimwgL8dFKnMbVhLpUZ48Qioeu8Sc
++SSLKIxn4dquOJzaYmgxplgsAt7exD6D1GApfeykCbx1fyl+GyMpaQ1yafJ0ApKR
+EZxq9kx/w8908rDBxH1hiUw2C0xLxd0XmYubWn52zCcUxe0/sOkQzGpfkUqiv9pu
+Wwi9SzaEC71Gi8l9bGNEK4A89EKbJjYBA8zrqEVFi1wm20oBlPeGJQXNag5jsVtu
+eRpWSe10j9zbezv79+txwKs2POctyg==
+=799w
 -----END PGP SIGNATURE-----
 
---Sig_/x6h10r0CWB.mHV.8Wd_JDuP--
+--Sig_/.r+ego657j0+ULOk+yG7gms--
