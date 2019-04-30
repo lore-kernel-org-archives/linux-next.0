@@ -1,51 +1,115 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the clk tree
-Date: Tue, 30 Apr 2019 15:56:38 +1000
-Message-ID: <20190430155638.48e059f1@canb.auug.org.au>
-References: <20190430101939.76dc077c@canb.auug.org.au>
-        <DB3PR0402MB3916B4CE00494BE730C07047F53A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Subject: linux-next: manual merge of the char-misc tree with the arm-soc
+ tree
+Date: Tue, 30 Apr 2019 17:40:51 +1000
+Message-ID: <20190430174051.038c77c8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K8vF_YX5vxvj4+T9qG7HvnH"; protocol="application/pgp-signature"
+ boundary="Sig_/Ny_5=Hqp3mTDaEmmISm8Ays"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <DB3PR0402MB3916B4CE00494BE730C07047F53A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <anson.huang@nxp.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrick Venture <venture@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/K8vF_YX5vxvj4+T9qG7HvnH
+--Sig_/Ny_5=Hqp3mTDaEmmISm8Ays
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anson,
+Hi all,
 
-On Tue, 30 Apr 2019 01:44:58 +0000 Anson Huang <anson.huang@nxp.com> wrote:
->
-> 	Thanks for notice.
-> 	As it is intentional, I will send out a patch to add "/* fall through */=
-" to avoid this build warning,
+Today's linux-next merge of the char-misc tree got conflicts in:
 
-Excellent, thanks.
+  drivers/misc/Kconfig
+  drivers/misc/Makefile
+
+between commit:
+
+  524feb799408 ("soc: add aspeed folder and misc drivers")
+
+from the arm-soc tree and commit:
+
+  01c60dcea9f7 ("drivers/misc: Add Aspeed P2A control driver")
+
+from the char-misc tree.
+
+I fixed it up (see below - though the additions probably want to be
+moved as in the arm-soc commit) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non
+trivial conflicts should be mentioned to your upstream maintainer when
+your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/K8vF_YX5vxvj4+T9qG7HvnH
+diff --cc drivers/misc/Kconfig
+index b80cb6af0cb4,3209ee020b15..000000000000
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@@ -496,6 -496,30 +496,14 @@@ config VEXPRESS_SYSCF
+  	  bus. System Configuration interface is one of the possible means
+  	  of generating transactions on this bus.
+ =20
++ config ASPEED_P2A_CTRL
++ 	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
++ 	tristate "Aspeed ast2400/2500 HOST P2A VGA MMIO to BMC bridge control"
++ 	help
++ 	  Control Aspeed ast2400/2500 HOST P2A VGA MMIO to BMC mappings through
++ 	  ioctl()s, the driver also provides an interface for userspace mappings=
+ to
++ 	  a pre-defined region.
++=20
+ -config ASPEED_LPC_CTRL
+ -	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
+ -	tristate "Aspeed ast2400/2500 HOST LPC to BMC bridge control"
+ -	---help---
+ -	  Control Aspeed ast2400/2500 HOST LPC to BMC mappings through
+ -	  ioctl()s, the driver also provides a read/write interface to a BMC ram
+ -	  region where the host LPC read/write region can be buffered.
+ -
+ -config ASPEED_LPC_SNOOP
+ -	tristate "Aspeed ast2500 HOST LPC snoop support"
+ -	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
+ -	help
+ -	  Provides a driver to control the LPC snoop interface which
+ -	  allows the BMC to listen on and save the data written by
+ -	  the host to an arbitrary LPC I/O port.
+ -
+  config PCI_ENDPOINT_TEST
+  	depends on PCI
+  	select CRC32
+diff --cc drivers/misc/Makefile
+index b9affcdaa3d6,c36239573a5c..000000000000
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@@ -54,6 -54,9 +54,7 @@@ obj-$(CONFIG_GENWQE)		+=3D genwqe
+  obj-$(CONFIG_ECHO)		+=3D echo/
+  obj-$(CONFIG_VEXPRESS_SYSCFG)	+=3D vexpress-syscfg.o
+  obj-$(CONFIG_CXL_BASE)		+=3D cxl/
+ -obj-$(CONFIG_ASPEED_LPC_CTRL)	+=3D aspeed-lpc-ctrl.o
+ -obj-$(CONFIG_ASPEED_LPC_SNOOP)	+=3D aspeed-lpc-snoop.o
++ obj-$(CONFIG_ASPEED_P2A_CTRL)	+=3D aspeed-p2a-ctrl.o
+  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+=3D pci_endpoint_test.o
+  obj-$(CONFIG_OCXL)		+=3D ocxl/
+  obj-y				+=3D cardreader/
+
+--Sig_/Ny_5=Hqp3mTDaEmmISm8Ays
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzH45YACgkQAVBC80lX
-0GyzHQf+MDOwduTppkTMmqNBNvANKGSLzgM5SCQYLxUUEiwvgQ2F3OEdv28njdbG
-IWeahaQisDX/lHf+ovKat4PYMO6cPpTIL+SgwiJREeR/PT7gnXj+QwYFg1e84ZnB
-ao51Yd7t53GvmVJRwuHkJrdxAvTX2uAGFMmW0fnkVylwrQZrxuDfE57S5LsILw/u
-mmV5QF4H0+X1gWdEo552bvNPomKsDa0DOjBuyUTNqq2dSaWWTwlVAJ4XrNoEsITB
-GVwj8U1SXA6NRBpuwEB1i9V2WYhcapvxrKkOM40k4V6uqTPcV4r8BGAJ9cvy0qLA
-W4nPNDhm/TX2z135CPjACbqgyIzK0A==
-=qNhx
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzH/AMACgkQAVBC80lX
+0Gxkrwf+KnscYdJuNJYRWeKxKXVoNBpZRmZMxj9BqOiQ5SeV5k443b22uXfrYHkT
+X5jRMJe0zGgRdu/1swgOQjVq02Vm7wpNMjvqU1dwOoTsD//zpSdypiAAsMDbz/gJ
+/3h/kp7/Wrj1QvwCCS9NItlQGNDy1ETwh0gVkeuLEw1LObxsr11B5bTYUN4Xm8QN
+9MipYy/MSjIIR3dQG7YjvaYHk6cY4+hItm7bwYgF1Z5BbXwVB96Ae16kHrHnPt7v
+qV2OvSLTgYsws3NwXQr6/zYg2PgM6pozMQrBhwDRjK3fjQhyXFBp7VRju2bfcDy8
+tOc0KEqsSUIkQRgnJYnZXgCTXcez7g==
+=9oiN
 -----END PGP SIGNATURE-----
 
---Sig_/K8vF_YX5vxvj4+T9qG7HvnH--
+--Sig_/Ny_5=Hqp3mTDaEmmISm8Ays--
