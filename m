@@ -1,56 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the kvm-fixes tree
-Date: Wed, 1 May 2019 08:01:44 +1000
-Message-ID: <20190501080144.639ed144@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the ext4 tree
+Date: Wed, 1 May 2019 08:06:07 +1000
+Message-ID: <20190501080607.0eb96cca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/aZ/E_6A3AqwvrrjhIZx4R.0"; protocol="application/pgp-signature"
+ boundary="Sig_/hVu=l+HBvRm+Ub+a1kBDF5F"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/aZ/E_6A3AqwvrrjhIZx4R.0
+--Sig_/hVu=l+HBvRm+Ub+a1kBDF5F
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commit
 
-  76d58e0f07ec ("KVM: fix KVM_CLEAR_DIRTY_LOG for memory slots of unaligned=
- size")
+  60ae11086c04 ("unicode: update unicode database unicode version 12.1.0")
 
-Fixes tag
-
-  Fixes: 98938aa8edd6 ("KVM: validate userspace input in kvm_clear_dirty_lo=
-g_protect()", 2019-01-02)
-
-has these problem(s):
-
-  - The trailing date ine the fixes tag is unexpected
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/aZ/E_6A3AqwvrrjhIZx4R.0
+--Sig_/hVu=l+HBvRm+Ub+a1kBDF5F
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzIxcgACgkQAVBC80lX
-0Gz04gf+OOlOZJQ0JfEk03Rm/muVUhLvu5k7kUeDkdbeAl4krsvvg+XghkAm/s+q
-qP66SXi9c3ANrFgBhZ2lycwWyGW9vStBAsCJRN0OvfB2Bj0F4ebEJNTYKl5tc+ja
-8qWpNdPkOUlnJR+TIoIW8+c2wV2olI6w4lb1Dm4r3HIK+tmAWmXx/12boXKSLwiH
-iz6G3nC4VGD3mbuY7lww4S8DD2AsFllTa1IzGm14RvSGgjn4/peMWkEE2vU64Jz4
-Yi1xF7RJUbUg24tGRwve8vmR7Dv20Uqv4G1apd+E+jqnF7FQKbeQx8rwlq8WHDoR
-WfntJQ/wmnWfzCtTw+frXNt2F95uyA==
-=pFs9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzIxs8ACgkQAVBC80lX
+0Gy/Cgf/WUkgseW71XeOjl36gvbgapRffGsHJTgcXb4HCeMM7GctKR/9zd+N+qC2
+YoUt2fxU+pEBv8ZeQIJQmZqiq8IV+Wu8m1tHlKKwvYV+cAGnV/7in+rWIRpgmUG4
+S4WW3YrkambUFJUBd/wvURENGY+7ZxBU6q/Ejlvry0iUiIDsiaoxystyZfyiS3sV
+hLpJLw7PKybv5dDEILZ2atRYu+mV13FCGfSOmQoD41QUveLMkM7pchengWuZnFBm
+OghQr6yXfaCP+zOyGMbqONYYFp8gNe0xFmo+amJJwMRqhwTeIoJ6C1zgsDCrZ6Gv
+UpFA8ft1sr9OvqlORb9T7g/q0EkXlQ==
+=h4iu
 -----END PGP SIGNATURE-----
 
---Sig_/aZ/E_6A3AqwvrrjhIZx4R.0--
+--Sig_/hVu=l+HBvRm+Ub+a1kBDF5F--
