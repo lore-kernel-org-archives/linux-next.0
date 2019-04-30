@@ -1,30 +1,56 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tpmdd tree
-Date: Tue, 30 Apr 2019 17:47:27 +0300
-Message-ID: <20190430144727.GA7901@linux.intel.com>
-References: <20190416130740.7ff9e561@canb.auug.org.au>
- <20190416153608.GA11353@linux.intel.com>
- <CACdnJuvat4=kXD6NMnMw5E8M4KB_1nBP6Simi8gBUChdBs7eRw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the kvm-fixes tree
+Date: Wed, 1 May 2019 08:01:44 +1000
+Message-ID: <20190501080144.639ed144@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/aZ/E_6A3AqwvrrjhIZx4R.0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACdnJuvat4=kXD6NMnMw5E8M4KB_1nBP6Simi8gBUChdBs7eRw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jmorris@namei.org
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 18, 2019 at 12:40:48PM -0700, Matthew Garrett wrote:
-> On Tue, Apr 16, 2019 at 8:36 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > Matthew, looking at the code I guess the includes are in wrong order
-> > i.e. early_ioremap.h should be included before tpm_eventlog.h. Do you
-> > agree that this is the correct conclusion? I can do the update.
-> 
-> Yes, I believe that that's the correct fix.
+--Sig_/aZ/E_6A3AqwvrrjhIZx4R.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll hold  up until the previous flush of patches is in
-security/next-general (bug fixes for v5.1 changes).
+Hi all,
 
-/Jarkko
+In commit
+
+  76d58e0f07ec ("KVM: fix KVM_CLEAR_DIRTY_LOG for memory slots of unaligned=
+ size")
+
+Fixes tag
+
+  Fixes: 98938aa8edd6 ("KVM: validate userspace input in kvm_clear_dirty_lo=
+g_protect()", 2019-01-02)
+
+has these problem(s):
+
+  - The trailing date ine the fixes tag is unexpected
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/aZ/E_6A3AqwvrrjhIZx4R.0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzIxcgACgkQAVBC80lX
+0Gz04gf+OOlOZJQ0JfEk03Rm/muVUhLvu5k7kUeDkdbeAl4krsvvg+XghkAm/s+q
+qP66SXi9c3ANrFgBhZ2lycwWyGW9vStBAsCJRN0OvfB2Bj0F4ebEJNTYKl5tc+ja
+8qWpNdPkOUlnJR+TIoIW8+c2wV2olI6w4lb1Dm4r3HIK+tmAWmXx/12boXKSLwiH
+iz6G3nC4VGD3mbuY7lww4S8DD2AsFllTa1IzGm14RvSGgjn4/peMWkEE2vU64Jz4
+Yi1xF7RJUbUg24tGRwve8vmR7Dv20Uqv4G1apd+E+jqnF7FQKbeQx8rwlq8WHDoR
+WfntJQ/wmnWfzCtTw+frXNt2F95uyA==
+=pFs9
+-----END PGP SIGNATURE-----
+
+--Sig_/aZ/E_6A3AqwvrrjhIZx4R.0--
