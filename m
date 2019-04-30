@@ -1,100 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
-Date: Tue, 30 Apr 2019 09:49:23 +1000
-Message-ID: <20190430094923.10e3be32@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the clk tree
+Date: Tue, 30 Apr 2019 10:19:39 +1000
+Message-ID: <20190430101939.76dc077c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6036731471626006055=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shawn Guo <shawnguo@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/O_CCSv_ik.J=.msdHR8HWg8"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anson Huang <anson.huang@nxp.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---===============6036731471626006055==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Iw_hvswPpXbdgI0hpBQL2t2"; protocol="application/pgp-signature"
-
---Sig_/Iw_hvswPpXbdgI0hpBQL2t2
+--Sig_/O_CCSv_ik.J=.msdHR8HWg8
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shawn,
+Hi all,
 
-Today's linux-next merge of the imx-mxs tree got a conflict in:
+After merging the clk tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  arch/arm64/configs/defconfig
+drivers/clk/imx/clk-pllv3.c:453:21: warning: this statement may fall throug=
+h [-Wimplicit-fallthrough=3D]
+   pll->denom_offset =3D PLL_IMX7_DENOM_OFFSET;
+                     ^
+drivers/clk/imx/clk-pllv3.c:454:2: note: here
+  case IMX_PLLV3_AV:
+  ^~~~
 
-between commit:
+Introduced by commit
 
-  7b0d021fbe41 ("arm64: defconfig: enable PCIE_ALTERA")
+  01d0a541ff4b ("clk: imx: correct i.MX7D AV PLL num/denom offset")
 
-from the arm-soc tree and commit:
-
-  2b4fd225df89 ("arm64: defconfig: Enable CONFIG_SPI_IMX")
-
-from the imx-mxs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I get this warning because I am building with -Wimplicit-fallthrough
+in attempt to catch new additions early.  The gcc warning can be turned
+off by adding a /* fall through */ comment at the point the fall through
+happens (assuming that the fall through is intentional).
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index 5392c12ef3b7,eb31c20e9914..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -357,7 -365,7 +358,8 @@@ CONFIG_SPI=3D
-  CONFIG_SPI_ARMADA_3700=3Dy
-  CONFIG_SPI_BCM2835=3Dm
-  CONFIG_SPI_BCM2835AUX=3Dm
- +CONFIG_SPI_NXP_FLEXSPI=3Dy
-+ CONFIG_SPI_IMX=3Dy
-  CONFIG_SPI_MESON_SPICC=3Dm
-  CONFIG_SPI_MESON_SPIFC=3Dm
-  CONFIG_SPI_ORION=3Dy
-
---Sig_/Iw_hvswPpXbdgI0hpBQL2t2
+--Sig_/O_CCSv_ik.J=.msdHR8HWg8
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHjYMACgkQAVBC80lX
-0GxmfAgAno8fSN5vL9ATAuhtSUMt2B01kxbRiVjVC235N2aFwLRx3mvgQqoyPzW4
-XVB5OPdHOcHW+fIM/pIQ2G85MqBph0KpQWhfYOoIIMNc9Ct5NkxSkLwtzPBhGddy
-js+lV+iAt1fYRDOO8cKHUMznrYct7QkrGD+ToUf/kMCqCbfmEY6Jsxmk3Hw4nquO
-WBgexu3qBJcxvQK7vwBrqSuoVkKTTJ7e/uZc1IFNYhDuZiGzLZO2ByLfkONiQ6/F
-wqdqdLABU7htcBgAiQRxcca3PRWBpOovTfuvBfuYCxPgp3CFauNkV7KU5Oj3NoNZ
-Ocj3qmNWhJ6fLm4xToHcMcXOv9q6Vw==
-=QgVM
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzHlJsACgkQAVBC80lX
+0GwcmQf8DQm/+a+825CRo/z9YbTfzFrH7k1fA68yg/EKjTDMMsXeZcdPfpLEZQrT
+/t+OF0ZCKTT/WEESDmmJHaViC7wGbqUzpKGKj9Z4JNC6mGBQbhGNXRt3aIUWUCBr
+NpA8DebUbaUciq1iu+j3w1jrUYzmsqEB7tDfeetdPE75kCy6NZVHKNvSoINtOzE/
+j/lpMl5Uv4UYQLgXmchiYgSO41iRz3xUSOZwRnuLvx0Be1i2PWBf/+SyMu9Qw9kw
+WsqSKhqldIpG9EeHb4MrSYQYSeUlXqaOUvwb3HuXYyKir7qoqtAu33U1p2KUXRHn
+rVOI5AteR8+bnJoo8sByoKStI6Ptsw==
+=Dwx1
 -----END PGP SIGNATURE-----
 
---Sig_/Iw_hvswPpXbdgI0hpBQL2t2--
-
-
---===============6036731471626006055==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6036731471626006055==--
+--Sig_/O_CCSv_ik.J=.msdHR8HWg8--
