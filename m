@@ -1,47 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the parisc-hd tree
-Date: Thu, 2 May 2019 07:45:19 +1000
-Message-ID: <20190502074519.61272b42@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the wireless-drivers-next
+ tree
+Date: Thu, 2 May 2019 07:50:22 +1000
+Message-ID: <20190502075022.7d0a9f69@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UxZFVieJsY9lj86GqzTCcoc"; protocol="application/pgp-signature"
+ boundary="Sig_/pnpuXjq4S2scTonmj6=o__M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kbuild test robot <lkp@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UxZFVieJsY9lj86GqzTCcoc
+--Sig_/pnpuXjq4S2scTonmj6=o__M
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+In commit
 
-  2b731a920986 ("parisc: Update huge TLB page support to use per-pagetable =
-spinlock")
+  9c7c756eb066 ("mt76: mt76x02: mt76x02_poll_tx() can be static")
 
-is missing a Signed-off-by from its committer.
+Fixes tag
 
+  Fixes: ec7d2d74760a ("mt76: mt76x02: use napi polling for tx cleanup")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: 2ac515a5d74f ("mt76: mt76x02: use napi polling for tx cleanup")
+
+And BTW, we prefer real names on Signed-off-by tags ...
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/UxZFVieJsY9lj86GqzTCcoc
+--Sig_/pnpuXjq4S2scTonmj6=o__M
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzKE28ACgkQAVBC80lX
-0GxRxwf8DHQTsHKRnH90QXbQDqi1m+thimy1aXVksY17/7RdZZU/tR8JSJ8yX1uc
-pEimJuBWfIbwieTRDx4wXHtehGKB39hK3WwxL7hfmWwR5nOK0iDgjA1MCD3c0K36
-USoqsNHAKuh971K0kG2i73sdVdlaur199k+VfjFL+4tX8hG4YrylluxjJAUgMjFU
-OB3X5dcMWyxuYrK6KX9WQkj1dvVR1YgF7ZMMnS/8XnP8retWcpcap0ZjKh9L/5Yf
-CHWYIST/jlNgrEDRZceSH5jwmyb6h5EzBFpjFhtqmRJHsva0yYoM+OZB5Fs+uLvQ
-ruDSMPCnBKSsnzYoTU+xO1lozVUk6g==
-=+BOR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzKFJ4ACgkQAVBC80lX
+0GzsKgf9GnowrC+vNhy3Jh0EFLyI+uRZuNKBeVzZB5O9c/Gjv8YAQwjLPq/9eeqp
+6ENGMLsRry09lpI2yaVjp4FrjAFzqQtI+MXw9nfwlQzF4++gx4qLEnUKGIWKw8jq
+pm70SSE+mJtT51rVtmAuSDQcVKSikAzTJ7uXBB1m0VyFB3IwOtVa0kJLwGxkn2LJ
+HwhwXg6TQH7MKeIef+IBQomNJDSgJrTdMgAb1wXPj45M3VeVDvMcX4ZWXMqqvMPy
+atYlLou0HahPjrybAvs68zrlj+iBUufL+7A3w+PN3T8D5+Fhu7N7AWOP+ZrAPhqc
+qoocrbAZdm2XSjhTCfyJEZSJhetWKA==
+=dMg2
 -----END PGP SIGNATURE-----
 
---Sig_/UxZFVieJsY9lj86GqzTCcoc--
+--Sig_/pnpuXjq4S2scTonmj6=o__M--
