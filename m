@@ -1,48 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the btrfs-kdave
- tree
-Date: Fri, 3 May 2019 07:35:39 +1000
-Message-ID: <20190503073523.5fa28df7@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 2
+Date: Fri, 3 May 2019 08:03:31 +1000
+Message-ID: <20190503080331.0ccc2419@canb.auug.org.au>
+References: <20190502201028.707453d8@canb.auug.org.au>
+        <CADYN=9LHJpDyvA=3wkcqdS5f3kahD0vdXFY415k8UmLHMDzL+Q@mail.gmail.com>
+        <20190502190845.GA19485@archlinux-i9>
+        <0a28f5b8-296a-451c-c2f4-c0057833fb00@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/txrj=/ehl5h7oLp=pKu4Epq"; protocol="application/pgp-signature"
+ boundary="Sig_/LDFhNINO6Q+CN8C=9JPJzpA"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0a28f5b8-296a-451c-c2f4-c0057833fb00@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Anders Roxell <anders.roxell@linaro.org>, maxime.ripard@bootlin.com, andre.przywara@arm.com, samuel@sholland.org, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/txrj=/ehl5h7oLp=pKu4Epq
+--Sig_/LDFhNINO6Q+CN8C=9JPJzpA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Daniel,
 
-Commit
+On Thu, 2 May 2019 22:09:49 +0200 Daniel Lezcano <daniel.lezcano@linaro.org=
+> wrote:
+>
+> Yes, I picked the patch and it was merged it via the tip tree [1] as
+> requested by Marc Zyngier [2] and notified [3].
+>=20
+> In any case, this patch should have go through my tree initially, so if
+> it is found somewhere else that's wrong.
+>=20
+> I did a respin of my branch and pushed it again in case there was
+> something wrong from it.
 
-  b835a4a3faec ("btrfs: use the existing reserved items for our first prop =
-for inheritance")
+The patch ("clocksource/drivers/arch_timer: Workaround for Allwinner
+A64 timer instability") was merged into v5.1-rc1 via the tip tree as
+you say, however the version of your clockevents tree in yesterday's
+linux-next was based on v5.0-rc1 and contained the patch again ...
 
-is missing a Signed-off-by from its author.
-
+Today's should be better.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/txrj=/ehl5h7oLp=pKu4Epq
+--Sig_/LDFhNINO6Q+CN8C=9JPJzpA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLYqsACgkQAVBC80lX
-0Gxsvwf+LE+kqv1DiuGFmEuhmfufcHuz4S2WAx6ccH+IYkg11gRIoGtyFfuRKZG9
-LP5RYV7m9eKu3hCX0ag8xDdFeqVAUsWWT3X5SCthln9dGTe2ltwZinWG0EHU//in
-WT49iYqbXpsOVdak8H/IXYPujz3SA0jH7r3WLWHG3+/sBKrU6hxYRM06D7BgUkHB
-dXRUqZQ3Qe0s60/hhWS8U1rdTaInYkFRdE5cFXL61SR8gMzcLQhROAllNjo7adLu
-Czo84KPjQjQSeWIsIGjNrsBhC/AlG/fSf9dVN8oYqraKHgD7AcENjOgbQbxVd6iX
-OQnUmBbGKLySgWi9Hte1TYPOFz0XPQ==
-=nx9F
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLaTMACgkQAVBC80lX
+0GwK2gf/T46LsHptfQcVHZYq0BKp3GlqA/KAkpndiWhiqzVF4j12VWKizW7fskBG
+jO6IQiEjlLugRilJxK8AH28UtkvETvLaiMeHBBGjxW4rvOpkkeVymsCZkVmGnNc/
+3Ywm6kkQWQ8bn+h1jmeSKm35+kNepC7Xa9/ll5ParMz0bsBoeKQ+p8Au0uLroEva
+DzGfgXq3m/5eihWwMlNcam7Kb6OjnN1+T9ArIg78y/UviaBvecBkzGsvJYJ07Nk1
+dwjNZliVpesEDiDT1iFMGcStQ04SEhZ6Cu+F1cSvL+LRoA1Pyjscp7ITP5/NQLuz
+mNJCgqfarwjbRYd8jPf/pXwpfT5q5w==
+=+AWD
 -----END PGP SIGNATURE-----
 
---Sig_/txrj=/ehl5h7oLp=pKu4Epq--
+--Sig_/LDFhNINO6Q+CN8C=9JPJzpA--
