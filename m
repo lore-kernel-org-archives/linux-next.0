@@ -1,104 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 2 May 2019 12:57:13 +1000
-Message-ID: <20190502125713.062a6c03@canb.auug.org.au>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: linux-next: build failure after merge of the f2fs tree
+Date: Wed, 1 May 2019 20:42:14 -0700
+Message-ID: <20190502034214.GA37709@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190502105309.7ad51660@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xX1HVvcycWHYg5aSwOZ0mB5"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190502105309.7ad51660@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin KaFai Lau <kafai@fb.com>, David Ahern <dsahern@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xX1HVvcycWHYg5aSwOZ0mB5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 05/02, Stephen Rothwell wrote:
+> Hi Jaegeuk,
+> 
+> After merging the f2fs tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from include/trace/define_trace.h:96,
+>                  from include/trace/events/f2fs.h:1724,
+>                  from fs/f2fs/super.c:35:
+> include/trace/events/f2fs.h: In function 'trace_raw_output_f2fs_filemap_fault':
+> include/trace/events/f2fs.h:1310:3: error: '_entry' undeclared (first use in this function); did you mean 'dentry'?
+>    _entry->ret)
+>    ^~~~~~
+> include/trace/trace_events.h:360:22: note: in definition of macro 'DECLARE_EVENT_CLASS'
+>   trace_seq_printf(s, print);     \
+>                       ^~~~~
+> include/trace/trace_events.h:79:9: note: in expansion of macro 'PARAMS'
+>          PARAMS(print));         \
+>          ^~~~~~
+> include/trace/events/f2fs.h:1287:1: note: in expansion of macro 'TRACE_EVENT'
+>  TRACE_EVENT(f2fs_filemap_fault,
+>  ^~~~~~~~~~~
+> include/trace/events/f2fs.h:1307:2: note: in expansion of macro 'TP_printk'
+>   TP_printk("dev = (%d,%d), ino = %lu, index = %lu, ret = %lx",
+>   ^~~~~~~~~
+> include/trace/events/f2fs.h:1310:3: note: each undeclared identifier is reported only once for each function it appears in
+>    _entry->ret)
+>    ^~~~~~
+> include/trace/trace_events.h:360:22: note: in definition of macro 'DECLARE_EVENT_CLASS'
+>   trace_seq_printf(s, print);     \
+>                       ^~~~~
+> include/trace/trace_events.h:79:9: note: in expansion of macro 'PARAMS'
+>          PARAMS(print));         \
+>          ^~~~~~
+> include/trace/events/f2fs.h:1287:1: note: in expansion of macro 'TRACE_EVENT'
+>  TRACE_EVENT(f2fs_filemap_fault,
+>  ^~~~~~~~~~~
+> include/trace/events/f2fs.h:1307:2: note: in expansion of macro 'TP_printk'
+>   TP_printk("dev = (%d,%d), ino = %lu, index = %lu, ret = %lx",
+>   ^~~~~~~~~
+> 
+> Caused by commit
+> 
+>   90a238561901 ("f2fs: add tracepoint for f2fs_filemap_fault()")
+> 
+> I have applied the following patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 2 May 2019 10:44:46 +1000
+> Subject: [PATCH] f2fs: fix up for "f2fs: add tracepoint for
+>  f2fs_filemap_fault()"
+> 
+> Fixes: 90a238561901 ("f2fs: add tracepoint for f2fs_filemap_fault()")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/trace/events/f2fs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+> index 6a53c793cf20..53b96f12300c 100644
+> --- a/include/trace/events/f2fs.h
+> +++ b/include/trace/events/f2fs.h
+> @@ -1307,7 +1307,7 @@ TRACE_EVENT(f2fs_filemap_fault,
+>  	TP_printk("dev = (%d,%d), ino = %lu, index = %lu, ret = %lx",
+>  		show_dev_ino(__entry),
+>  		(unsigned long)__entry->index,
+> -		_entry->ret)
+> +		__entry->ret)
 
-Hi all,
+My bad. I was so hurried up. Uploaded again w/ fix.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Thanks,
 
-  net/ipv6/route.c
-
-between commit:
-
-  886b7a50100a ("ipv6: A few fixes on dereferencing rt->from")
-
-from the net tree and commits:
-
-  85bd05deb35a ("ipv6: Pass fib6_result to ip6_rt_cache_alloc")
-  5012f0a5944c ("ipv6: Pass fib6_result to rt6_insert_exception")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/ipv6/route.c
-index 0520aca3354b,b18e85cd7587..000000000000
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@@ -3391,11 -3494,17 +3489,14 @@@ static void rt6_do_redirect(struct dst_
-  		     NDISC_REDIRECT, &ndopts);
- =20
-  	rcu_read_lock();
-- 	from =3D rcu_dereference(rt->from);
-- 	if (!from)
-+ 	res.f6i =3D rcu_dereference(rt->from);
- -	/* This fib6_info_hold() is safe here because we hold reference to rt
- -	 * and rt already holds reference to fib6_info.
- -	 */
- -	fib6_info_hold(res.f6i);
- -	rcu_read_unlock();
-++	if (!res.f6i)
- +		goto out;
- =20
-- 	nrt =3D ip6_rt_cache_alloc(from, &msg->dest, NULL);
-+ 	res.nh =3D &res.f6i->fib6_nh;
-+ 	res.fib6_flags =3D res.f6i->fib6_flags;
-+ 	res.fib6_type =3D res.f6i->fib6_type;
-+ 	nrt =3D ip6_rt_cache_alloc(&res, &msg->dest, NULL);
-  	if (!nrt)
-  		goto out;
- =20
-@@@ -3405,8 -3514,11 +3506,8 @@@
- =20
-  	nrt->rt6i_gateway =3D *(struct in6_addr *)neigh->primary_key;
- =20
- -	/* No need to remove rt from the exception table if rt is
- -	 * a cached route because rt6_insert_exception() will
- -	 * takes care of it
- -	 */
- +	/* rt6_insert_exception() will take care of duplicated exceptions */
-- 	if (rt6_insert_exception(nrt, from)) {
-+ 	if (rt6_insert_exception(nrt, &res)) {
-  		dst_release_immediate(&nrt->dst);
-  		goto out;
-  	}
-
---Sig_/xX1HVvcycWHYg5aSwOZ0mB5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzKXIkACgkQAVBC80lX
-0Gztzwf/ToY88yxVwWAUTvwTmg00mGiGlGcVjCVTR+uG3HsvYpqYdBDuS30OLXzZ
-3UVohdgPs40P9mB9aqWsXG857cej5wW03ATbtnNz9vHESBZgPOW5x53TkUR4Ua2D
-FwKtA19kMapS1B7DV8vqa+t+dWhzI17Surit6c/P/ev1WorvCC3Qps0Hyw8x83PF
-PWWzQCi7p/IwvsnbT3vSjnfy2QEW99AobT+FKHdTieq+germbds+t2jN7biszf6b
-xIPQ06qxWbNfwbBzkYVnMuBlRq//wk+q0eRyKHEkZlKmJBjDfoS6HLtDNAGql8mN
-AkcNUt8r21IdJTXVAasy/V/oCRWt/A==
-=+YCd
------END PGP SIGNATURE-----
-
---Sig_/xX1HVvcycWHYg5aSwOZ0mB5--
+>  );
+>  
+>  TRACE_EVENT(f2fs_writepages,
+> -- 
+> 2.20.1
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
