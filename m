@@ -1,63 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 2
-Date: Fri, 3 May 2019 08:03:31 +1000
-Message-ID: <20190503080331.0ccc2419@canb.auug.org.au>
-References: <20190502201028.707453d8@canb.auug.org.au>
-        <CADYN=9LHJpDyvA=3wkcqdS5f3kahD0vdXFY415k8UmLHMDzL+Q@mail.gmail.com>
-        <20190502190845.GA19485@archlinux-i9>
-        <0a28f5b8-296a-451c-c2f4-c0057833fb00@linaro.org>
+Subject: linux-next: build failure after merge of the clk tree
+Date: Fri, 3 May 2019 09:25:11 +1000
+Message-ID: <20190503092511.0054911e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LDFhNINO6Q+CN8C=9JPJzpA"; protocol="application/pgp-signature"
+ boundary="Sig_/gFfI+SNKNCDM.A9s2hfbtor"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0a28f5b8-296a-451c-c2f4-c0057833fb00@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Nathan Chancellor <natechancellor@gmail.com>, Anders Roxell <anders.roxell@linaro.org>, maxime.ripard@bootlin.com, andre.przywara@arm.com, samuel@sholland.org, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/LDFhNINO6Q+CN8C=9JPJzpA
+--Sig_/gFfI+SNKNCDM.A9s2hfbtor
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi all,
 
-On Thu, 2 May 2019 22:09:49 +0200 Daniel Lezcano <daniel.lezcano@linaro.org=
-> wrote:
->
-> Yes, I picked the patch and it was merged it via the tip tree [1] as
-> requested by Marc Zyngier [2] and notified [3].
->=20
-> In any case, this patch should have go through my tree initially, so if
-> it is found somewhere else that's wrong.
->=20
-> I did a respin of my branch and pushed it again in case there was
-> something wrong from it.
+After merging the clk tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-The patch ("clocksource/drivers/arch_timer: Workaround for Allwinner
-A64 timer instability") was merged into v5.1-rc1 via the tip tree as
-you say, however the version of your clockevents tree in yesterday's
-linux-next was based on v5.0-rc1 and contained the patch again ...
+arch/arm/mach-omap2/omap_hwmod.c: In function '_get_clkdm':
+arch/arm/mach-omap2/omap_hwmod.c:669:35: error: 'CLK_IS_BASIC' undeclared (=
+first use in this function); did you mean 'CLOCKS_MASK'?
+   if (__clk_get_flags(oh->_clk) & CLK_IS_BASIC)
+                                   ^~~~~~~~~~~~
+                                   CLOCKS_MASK
+arch/arm/mach-omap2/omap_hwmod.c:669:35: note: each undeclared identifier i=
+s reported only once for each function it appears in
 
-Today's should be better.
+Caused by commit
+
+  7c36ec8a90a8 ("clk: Remove CLK_IS_BASIC clk flag")
+
+I have used the clk tree from next-20190502 for today.  (The above commit
+does not revert cleanly.)
+
+
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/LDFhNINO6Q+CN8C=9JPJzpA
+--Sig_/gFfI+SNKNCDM.A9s2hfbtor
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLaTMACgkQAVBC80lX
-0GwK2gf/T46LsHptfQcVHZYq0BKp3GlqA/KAkpndiWhiqzVF4j12VWKizW7fskBG
-jO6IQiEjlLugRilJxK8AH28UtkvETvLaiMeHBBGjxW4rvOpkkeVymsCZkVmGnNc/
-3Ywm6kkQWQ8bn+h1jmeSKm35+kNepC7Xa9/ll5ParMz0bsBoeKQ+p8Au0uLroEva
-DzGfgXq3m/5eihWwMlNcam7Kb6OjnN1+T9ArIg78y/UviaBvecBkzGsvJYJ07Nk1
-dwjNZliVpesEDiDT1iFMGcStQ04SEhZ6Cu+F1cSvL+LRoA1Pyjscp7ITP5/NQLuz
-mNJCgqfarwjbRYd8jPf/pXwpfT5q5w==
-=+AWD
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLfFcACgkQAVBC80lX
+0GyepAf/W4XM6u3R+Sg7mSYJXwVPIsHCIho/yBw2mU2uJv+bFJvV+9GK+4OYmJIM
+L/cJ9Y4UEHswQuyXE+n7g6k/9C2j6WK/CkMhShzYuN0bGs+mYDWILOtRt4JYVmq0
+kiZZG1puq2hKnB/znXq1h3kvXeeoYjKORcXO9pvIkmI+nyhHWgtcSgQTqi2KxSM/
+paRRNMQyCtR64fQMsJaVtjCnVrah/tP5nwqk87R+6kuLCem+Z8bBKcP0rdTcXqQt
+f7HFkB55msnAjzAqA50iHnfQB26E+uzt45MUMTLr9gAFMUOEOynYZUxnebq1Pvw0
+dR5fQq0Mm8iDH5in036CW/thbea9/w==
+=QEbq
 -----END PGP SIGNATURE-----
 
---Sig_/LDFhNINO6Q+CN8C=9JPJzpA--
+--Sig_/gFfI+SNKNCDM.A9s2hfbtor--
