@@ -1,52 +1,102 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: linux-next: Tree for May 2
-Date: Fri, 3 May 2019 02:43:44 +0200
-Message-ID: <991a8520-5bb9-a4cd-8dc0-38ac2f76571d@linaro.org>
-References: <20190502201028.707453d8@canb.auug.org.au>
- <CADYN=9LHJpDyvA=3wkcqdS5f3kahD0vdXFY415k8UmLHMDzL+Q@mail.gmail.com>
- <20190502190845.GA19485@archlinux-i9>
- <0a28f5b8-296a-451c-c2f4-c0057833fb00@linaro.org>
- <20190503080331.0ccc2419@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the fscrypt tree
+Date: Fri, 3 May 2019 11:09:51 +1000
+Message-ID: <20190503110951.2df97b8c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5DT88H2gGKsN9j+elZMjYA_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190503080331.0ccc2419@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nathan Chancellor <natechancellor@gmail.com>, Anders Roxell <anders.roxell@linaro.org>, maxime.ripard@bootlin.com, andre.przywara@arm.com, samuel@sholland.org, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 03/05/2019 00:03, Stephen Rothwell wrote:
-> Hi Daniel,
-> 
-> On Thu, 2 May 2019 22:09:49 +0200 Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->>
->> Yes, I picked the patch and it was merged it via the tip tree [1] as
->> requested by Marc Zyngier [2] and notified [3].
->>
->> In any case, this patch should have go through my tree initially, so if
->> it is found somewhere else that's wrong.
->>
->> I did a respin of my branch and pushed it again in case there was
->> something wrong from it.
-> 
-> The patch ("clocksource/drivers/arch_timer: Workaround for Allwinner
-> A64 timer instability") was merged into v5.1-rc1 via the tip tree as
-> you say, however the version of your clockevents tree in yesterday's
-> linux-next was based on v5.0-rc1 and contained the patch again ...
-> 
-> Today's should be better.
+--Sig_/5DT88H2gGKsN9j+elZMjYA_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oh, ok. As I updated the branch today before having this merge conflict
-I thought the problem was coming from somewhere else. Thanks for the update.
+Hi all,
 
+Today's linux-next merge of the vfs tree got a conflict in:
 
+  fs/ext4/super.c
+  fs/f2fs/super.c
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+between commit:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  2c58d548f570 ("fscrypt: cache decrypted symlink target in ->i_link")
+
+from the fscrypt tree and commits:
+
+  94053139d482 ("ext4: make use of ->free_inode()")
+  d01718a050d0 ("f2fs: switch to ->free_inode()")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+Thanks, Al, for the heads up and example merge.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/ext4/super.c
+index 489cdeeab789,981f702848e7..000000000000
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@@ -1111,12 -1107,8 +1111,9 @@@ static int ext4_drop_inode(struct inod
+  	return drop;
+  }
+ =20
+- static void ext4_i_callback(struct rcu_head *head)
++ static void ext4_free_in_core_inode(struct inode *inode)
+  {
+- 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
+-=20
+ +	fscrypt_free_inode(inode);
+-=20
+  	kmem_cache_free(ext4_inode_cachep, EXT4_I(inode));
+  }
+ =20
+diff --cc fs/f2fs/super.c
+index f7605b3ff1f9,9924eac76254..000000000000
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@@ -1000,12 -1000,8 +1000,9 @@@ static void f2fs_dirty_inode(struct ino
+  	f2fs_inode_dirtied(inode, false);
+  }
+ =20
+- static void f2fs_i_callback(struct rcu_head *head)
++ static void f2fs_free_inode(struct inode *inode)
+  {
+- 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
+-=20
+ +	fscrypt_free_inode(inode);
+-=20
+  	kmem_cache_free(f2fs_inode_cachep, F2FS_I(inode));
+  }
+ =20
+
+--Sig_/5DT88H2gGKsN9j+elZMjYA_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLlN8ACgkQAVBC80lX
+0Gz7Pwf/V59IXjAUO1LLeQX7qhHxgK0OoZD2mvhrgFz2NbECImXsXvmFR9RhPstg
+TjHn1Vi6WT3gRnSRWPqJd0ywS9VN60S4GnB9Ho0OQv55aPjyP1FF8VGxsuy6UDFQ
+NBrs/JysXdfr/SCBV3FCUgB4oYTwwosZePsBurPotO/V2RySRFPM/GGOLGa/HKox
+sqA3WL4p4x9O+eIBqj1iO642lHI9gTWZ4rGzfn2oEwxfRdhWO/CKLZ4yXksI5LXm
+QB6EU8Keb+VlC1pWTBW6mKxlAnanNcmVNm5gxpQZD3GNDe9YY8cS5L9AJRRpYC/I
+G5YlnIWhrE6yalf3zZpe6NHRTOliCA==
+=oD1k
+-----END PGP SIGNATURE-----
+
+--Sig_/5DT88H2gGKsN9j+elZMjYA_--
