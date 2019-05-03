@@ -1,54 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the usb-gadget tree
-Date: Fri, 3 May 2019 15:31:44 +1000
-Message-ID: <20190503153144.06eaae7a@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build warning after merge of the arm-soc tree
+Date: Fri, 3 May 2019 07:49:33 +0100
+Message-ID: <CACRpkdYBuBf7jA2nUitiZWRriXVTPWCyB93q2CzmP4tbVZXqHA@mail.gmail.com>
+References: <20190430092839.767e5bf8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FdUO02xCRC3zY.1zL.XTFS3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190430092839.767e5bf8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/FdUO02xCRC3zY.1zL.XTFS3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Apr 30, 2019 at 12:28 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Felipe,
+> After merging the arm-soc tree, today's linux-next build
+> (x86_64 allmodconfig) produced this warning:
+>
+> drivers/clocksource/timer-ixp4xx.c:78:20: warning: 'ixp4xx_read_sched_clock' defined but not used [-Wunused-function]
+>  static u64 notrace ixp4xx_read_sched_clock(void)
+>                     ^~~~~~~~~~~~~~~~~~~~~~~
 
-In commit
+This is kind of normal for timer drivers, as the sched_clock() call is #ifdef:ed
+for CONFIG_ARM, it is not uniformly available on all archs. This appears
+as a side effect of COMPILE_TEST which I think is fair to produce
+things like this.
 
-  9f8dc24f7f5d ("usb: gadget: f_fs: don't free buffer prematurely")
-
-Fixes tag
-
-  Fixes: 772a7a724f6 ("usb: gadget: f_fs: Allow scatter-gather buffers")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FdUO02xCRC3zY.1zL.XTFS3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzL0kEACgkQAVBC80lX
-0Gw7qQf+JwVEjPgY7PgCB6VQzYYqo3fCcOw+UwpCdtrUNY0PuQdBE9O1nJTAROvg
-My2DFkDW+nB8xTBMRrOy5pkeK/AitCkaFLv4nEaI1E6UsylnLHiVLwGBqW34cJDS
-lKAUcxNnb0rbSabeomIKM9BR5BVAjCY/EQ2k9HHh9zupFYz2n82M/DpFG67HDlRX
-HcB2m9ZQI6ugxOmz4Mku0KsEGAjIxOAky9HlxUuC4sNlnOwIm02rGWHeBKUTZ13A
-UfK7FvBJf8W2GAi13iXorioXCNMtVD5x0pNSzuTWc4F3SBwbvVTPsU6MLAo4fQrv
-NprjJ8nuNsxb+E2MtFwHiUwl1uuArw==
-=REs9
------END PGP SIGNATURE-----
-
---Sig_/FdUO02xCRC3zY.1zL.XTFS3--
+Yours,
+Linus Walleij
