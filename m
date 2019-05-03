@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the fscrypt tree
-Date: Fri, 3 May 2019 11:09:51 +1000
-Message-ID: <20190503110951.2df97b8c@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the orangefs tree
+Date: Fri, 3 May 2019 11:15:10 +1000
+Message-ID: <20190503111510.6e866e3b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5DT88H2gGKsN9j+elZMjYA_"; protocol="application/pgp-signature"
+ boundary="Sig_/Pi+73itdhPqitBme2i5CtD/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Mike Marshall <hubcap@omnibond.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5DT88H2gGKsN9j+elZMjYA_
+--Sig_/Pi+73itdhPqitBme2i5CtD/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,17 +19,15 @@ Hi all,
 
 Today's linux-next merge of the vfs tree got a conflict in:
 
-  fs/ext4/super.c
-  fs/f2fs/super.c
+  fs/orangefs/super.c
 
 between commit:
 
-  2c58d548f570 ("fscrypt: cache decrypted symlink target in ->i_link")
+  77becb76042a ("orangefs: implement xattr cache")
 
-from the fscrypt tree and commits:
+from the orangefs tree and commit:
 
-  94053139d482 ("ext4: make use of ->free_inode()")
-  d01718a050d0 ("f2fs: switch to ->free_inode()")
+  f276ae0dd6d0 ("orangefs: make use of ->free_inode()")
 
 from the vfs tree.
 
@@ -40,63 +38,80 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-Thanks, Al, for the heads up and example merge.
-
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/ext4/super.c
-index 489cdeeab789,981f702848e7..000000000000
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@@ -1111,12 -1107,8 +1111,9 @@@ static int ext4_drop_inode(struct inod
-  	return drop;
+diff --cc fs/orangefs/super.c
+index 8fa30c13b7ed,3784f7e8b603..000000000000
+--- a/fs/orangefs/super.c
++++ b/fs/orangefs/super.c
+@@@ -125,20 -124,9 +125,19 @@@ static struct inode *orangefs_alloc_ino
+  	return &orangefs_inode->vfs_inode;
   }
  =20
-- static void ext4_i_callback(struct rcu_head *head)
-+ static void ext4_free_in_core_inode(struct inode *inode)
+- static void orangefs_i_callback(struct rcu_head *head)
++ static void orangefs_free_inode(struct inode *inode)
   {
 - 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
--=20
- +	fscrypt_free_inode(inode);
--=20
-  	kmem_cache_free(ext4_inode_cachep, EXT4_I(inode));
+ -	kmem_cache_free(orangefs_inode_cache, ORANGEFS_I(inode));
+ +	struct orangefs_inode_s *orangefs_inode =3D ORANGEFS_I(inode);
+ +	struct orangefs_cached_xattr *cx;
+ +	struct hlist_node *tmp;
+ +	int i;
+ +
+ +	hash_for_each_safe(orangefs_inode->xattr_cache, i, tmp, cx, node) {
+ +		hlist_del(&cx->node);
+ +		kfree(cx);
+ +	}
+ +
+ +	kmem_cache_free(orangefs_inode_cache, orangefs_inode);
   }
  =20
-diff --cc fs/f2fs/super.c
-index f7605b3ff1f9,9924eac76254..000000000000
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@@ -1000,12 -1000,8 +1000,9 @@@ static void f2fs_dirty_inode(struct ino
-  	f2fs_inode_dirtied(inode, false);
+  static void orangefs_destroy_inode(struct inode *inode)
+@@@ -148,17 -136,8 +147,15 @@@
+  	gossip_debug(GOSSIP_SUPER_DEBUG,
+  			"%s: deallocated %p destroying inode %pU\n",
+  			__func__, orangefs_inode, get_khandle_from_ino(inode));
+-=20
+- 	call_rcu(&inode->i_rcu, orangefs_i_callback);
   }
  =20
-- static void f2fs_i_callback(struct rcu_head *head)
-+ static void f2fs_free_inode(struct inode *inode)
-  {
-- 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
--=20
- +	fscrypt_free_inode(inode);
--=20
-  	kmem_cache_free(f2fs_inode_cachep, F2FS_I(inode));
-  }
+ +static int orangefs_write_inode(struct inode *inode,
+ +				struct writeback_control *wbc)
+ +{
+ +	gossip_debug(GOSSIP_SUPER_DEBUG, "orangefs_write_inode\n");
+ +	return orangefs_inode_setattr(inode);
+ +}
+ +
+  /*
+   * NOTE: information filled in here is typically reflected in the
+   * output of the system command 'df'
+@@@ -316,8 -295,8 +313,9 @@@ void fsid_key_table_finalize(void
  =20
+  static const struct super_operations orangefs_s_ops =3D {
+  	.alloc_inode =3D orangefs_alloc_inode,
++ 	.free_inode =3D orangefs_free_inode,
+  	.destroy_inode =3D orangefs_destroy_inode,
+ +	.write_inode =3D orangefs_write_inode,
+  	.drop_inode =3D generic_delete_inode,
+  	.statfs =3D orangefs_statfs,
+  	.remount_fs =3D orangefs_remount_fs,
 
---Sig_/5DT88H2gGKsN9j+elZMjYA_
+--Sig_/Pi+73itdhPqitBme2i5CtD/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLlN8ACgkQAVBC80lX
-0Gz7Pwf/V59IXjAUO1LLeQX7qhHxgK0OoZD2mvhrgFz2NbECImXsXvmFR9RhPstg
-TjHn1Vi6WT3gRnSRWPqJd0ywS9VN60S4GnB9Ho0OQv55aPjyP1FF8VGxsuy6UDFQ
-NBrs/JysXdfr/SCBV3FCUgB4oYTwwosZePsBurPotO/V2RySRFPM/GGOLGa/HKox
-sqA3WL4p4x9O+eIBqj1iO642lHI9gTWZ4rGzfn2oEwxfRdhWO/CKLZ4yXksI5LXm
-QB6EU8Keb+VlC1pWTBW6mKxlAnanNcmVNm5gxpQZD3GNDe9YY8cS5L9AJRRpYC/I
-G5YlnIWhrE6yalf3zZpe6NHRTOliCA==
-=oD1k
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLlh4ACgkQAVBC80lX
+0GzA1AgAhy3RIu6w7cHrdlvDjWpV5l+Xf9jr5PE4/zYFAXectc6fw2M2gKJx0UTQ
+QXQlMkuotzW5I2AbfhMTjMIIsUHb9AjFrbTXqldHxre3h/VsSRZFOOjAuLga+D4W
+BGmIQ1Rf2Rq2CRoZn760acF3eORAWVboxwfvAdBGJabvqxbHQl392VR6qp1IuCWH
+WdpqoS7awJRq5I2MYnX6cY9lk2HrUB0wQkvtpFgGqzBWPxsmB8Va1/dJY/ph/zy1
+9SnZqWJGHh9iLHYQzL+wF3RZf4RnqSFIJWtX3JIEY19WWkG5uquZYnWnNbz0sVF+
+hJvrVYBzQyW4YOAWsTDmFeBsdCiRWg==
+=6kG4
 -----END PGP SIGNATURE-----
 
---Sig_/5DT88H2gGKsN9j+elZMjYA_--
+--Sig_/Pi+73itdhPqitBme2i5CtD/--
