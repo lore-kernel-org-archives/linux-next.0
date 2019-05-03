@@ -1,37 +1,40 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-Date: Fri, 3 May 2019 15:37:46 +0200
-Message-ID: <20190503133746.GH20156@suse.cz>
-References: <20190503102105.13578cc9@canb.auug.org.au>
-Reply-To: dsterba@suse.cz
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: linux-next: build failure after merge of the clk tree
+Date: Fri, 03 May 2019 08:55:47 -0700
+Message-ID: <155689894782.200842.4115245530077819749@swboyd.mtv.corp.google.com>
+References: <20190503092511.0054911e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190503102105.13578cc9@canb.auug.org.au>
+In-Reply-To: <20190503092511.0054911e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 03, 2019 at 10:21:05AM +1000, Stephen Rothwell wrote:
-> Hi David,
-> 
-> After merging the btrfs-kdave tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> fs/btrfs/props.c: In function 'inherit_props':
-> fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitialized in this function [-Wmaybe-uninitialized]
->     btrfs_block_rsv_release(fs_info, trans->block_rsv,
->     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       num_bytes);
->       ~~~~~~~~~~
-> 
-> Probably introduced by commit
-> 
->   b835a4a3faec ("btrfs: use the existing reserved items for our first prop for inheritance")
-> 
-> Looks like a false positive to me.
+Quoting Stephen Rothwell (2019-05-02 16:25:11)
+> Hi all,
+>=20
+> After merging the clk tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> arch/arm/mach-omap2/omap_hwmod.c: In function '_get_clkdm':
+> arch/arm/mach-omap2/omap_hwmod.c:669:35: error: 'CLK_IS_BASIC' undeclared=
+ (first use in this function); did you mean 'CLOCKS_MASK'?
+>    if (__clk_get_flags(oh->_clk) & CLK_IS_BASIC)
+>                                    ^~~~~~~~~~~~
+>                                    CLOCKS_MASK
+> arch/arm/mach-omap2/omap_hwmod.c:669:35: note: each undeclared identifier=
+ is reported only once for each function it appears in
+>=20
+> Caused by commit
+>=20
+>   7c36ec8a90a8 ("clk: Remove CLK_IS_BASIC clk flag")
+>=20
+> I have used the clk tree from next-20190502 for today.  (The above commit
+> does not revert cleanly.)
+>=20
 
-Agreed and gcc 8.3.1 does not report that. Kbuild bot reported that as
-well and it uses 7.x.
+Sorry, I got confused and merged the wrong branch over. Should be fixed
+up now.
