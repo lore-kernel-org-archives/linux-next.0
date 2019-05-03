@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the orangefs tree
-Date: Fri, 3 May 2019 11:15:10 +1000
-Message-ID: <20190503111510.6e866e3b@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the kbuild tree
+Date: Fri, 3 May 2019 11:20:58 +1000
+Message-ID: <20190503112058.51336cd2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Pi+73itdhPqitBme2i5CtD/"; protocol="application/pgp-signature"
+ boundary="Sig_/N64jm+8l.uMFzxF4YR8ioZQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Mike Marshall <hubcap@omnibond.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Pi+73itdhPqitBme2i5CtD/
+--Sig_/N64jm+8l.uMFzxF4YR8ioZQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,15 +19,15 @@ Hi all,
 
 Today's linux-next merge of the vfs tree got a conflict in:
 
-  fs/orangefs/super.c
+  samples/Makefile
 
 between commit:
 
-  77becb76042a ("orangefs: implement xattr cache")
+  a757ed09d672 ("samples: guard sub-directories with CONFIG options")
 
-from the orangefs tree and commit:
+from the kbuild tree and commit:
 
-  f276ae0dd6d0 ("orangefs: make use of ->free_inode()")
+  f1b5618e013a ("vfs: Add a sample program for the new mount API")
 
 from the vfs tree.
 
@@ -42,76 +42,52 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/orangefs/super.c
-index 8fa30c13b7ed,3784f7e8b603..000000000000
---- a/fs/orangefs/super.c
-+++ b/fs/orangefs/super.c
-@@@ -125,20 -124,9 +125,19 @@@ static struct inode *orangefs_alloc_ino
-  	return &orangefs_inode->vfs_inode;
-  }
+diff --cc samples/Makefile
+index 0f2d70d785f5,95d71ffd62d5..000000000000
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@@ -1,21 -1,6 +1,21 @@@
+ +# SPDX-License-Identifier: GPL-2.0
+  # Makefile for Linux samples code
  =20
-- static void orangefs_i_callback(struct rcu_head *head)
-+ static void orangefs_free_inode(struct inode *inode)
-  {
-- 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
- -	kmem_cache_free(orangefs_inode_cache, ORANGEFS_I(inode));
- +	struct orangefs_inode_s *orangefs_inode =3D ORANGEFS_I(inode);
- +	struct orangefs_cached_xattr *cx;
- +	struct hlist_node *tmp;
- +	int i;
- +
- +	hash_for_each_safe(orangefs_inode->xattr_cache, i, tmp, cx, node) {
- +		hlist_del(&cx->node);
- +		kfree(cx);
- +	}
- +
- +	kmem_cache_free(orangefs_inode_cache, orangefs_inode);
-  }
- =20
-  static void orangefs_destroy_inode(struct inode *inode)
-@@@ -148,17 -136,8 +147,15 @@@
-  	gossip_debug(GOSSIP_SUPER_DEBUG,
-  			"%s: deallocated %p destroying inode %pU\n",
-  			__func__, orangefs_inode, get_khandle_from_ino(inode));
--=20
-- 	call_rcu(&inode->i_rcu, orangefs_i_callback);
-  }
- =20
- +static int orangefs_write_inode(struct inode *inode,
- +				struct writeback_control *wbc)
- +{
- +	gossip_debug(GOSSIP_SUPER_DEBUG, "orangefs_write_inode\n");
- +	return orangefs_inode_setattr(inode);
- +}
- +
-  /*
-   * NOTE: information filled in here is typically reflected in the
-   * output of the system command 'df'
-@@@ -316,8 -295,8 +313,9 @@@ void fsid_key_table_finalize(void
- =20
-  static const struct super_operations orangefs_s_ops =3D {
-  	.alloc_inode =3D orangefs_alloc_inode,
-+ 	.free_inode =3D orangefs_free_inode,
-  	.destroy_inode =3D orangefs_destroy_inode,
- +	.write_inode =3D orangefs_write_inode,
-  	.drop_inode =3D generic_delete_inode,
-  	.statfs =3D orangefs_statfs,
-  	.remount_fs =3D orangefs_remount_fs,
+ -obj-$(CONFIG_SAMPLES)	+=3D kobject/ kprobes/ trace_events/ livepatch/ \
+ -			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ -			   configfs/ connector/ v4l/ trace_printk/ \
+ -			   vfio-mdev/ vfs/ qmi/ binderfs/
+ +obj-$(CONFIG_SAMPLE_ANDROID_BINDERFS)	+=3D binderfs/
+ +obj-$(CONFIG_SAMPLE_CONFIGFS)		+=3D configfs/
+ +obj-$(CONFIG_SAMPLE_CONNECTOR)		+=3D connector/
+ +subdir-y				+=3D hidraw
+ +obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+=3D hw_breakpoint/
+ +obj-$(CONFIG_SAMPLE_KDB)		+=3D kdb/
+ +obj-$(CONFIG_SAMPLE_KFIFO)		+=3D kfifo/
+ +obj-$(CONFIG_SAMPLE_KOBJECT)		+=3D kobject/
+ +obj-$(CONFIG_SAMPLE_KPROBES)		+=3D kprobes/
+ +obj-$(CONFIG_SAMPLE_LIVEPATCH)		+=3D livepatch/
+ +obj-$(CONFIG_SAMPLE_QMI_CLIENT)		+=3D qmi/
+ +obj-$(CONFIG_SAMPLE_RPMSG_CLIENT)	+=3D rpmsg/
+ +subdir-$(CONFIG_SAMPLE_SECCOMP)		+=3D seccomp
+- subdir-$(CONFIG_SAMPLE_STATX)		+=3D statx
+++subdir-$(CONFIG_SAMPLE_VFS)		+=3D vfs
+ +obj-$(CONFIG_SAMPLE_TRACE_EVENTS)	+=3D trace_events/
+ +obj-$(CONFIG_SAMPLE_TRACE_PRINTK)	+=3D trace_printk/
+ +obj-$(CONFIG_VIDEO_PCI_SKELETON)	+=3D v4l/
+ +obj-y					+=3D vfio-mdev/
 
---Sig_/Pi+73itdhPqitBme2i5CtD/
+--Sig_/N64jm+8l.uMFzxF4YR8ioZQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLlh4ACgkQAVBC80lX
-0GzA1AgAhy3RIu6w7cHrdlvDjWpV5l+Xf9jr5PE4/zYFAXectc6fw2M2gKJx0UTQ
-QXQlMkuotzW5I2AbfhMTjMIIsUHb9AjFrbTXqldHxre3h/VsSRZFOOjAuLga+D4W
-BGmIQ1Rf2Rq2CRoZn760acF3eORAWVboxwfvAdBGJabvqxbHQl392VR6qp1IuCWH
-WdpqoS7awJRq5I2MYnX6cY9lk2HrUB0wQkvtpFgGqzBWPxsmB8Va1/dJY/ph/zy1
-9SnZqWJGHh9iLHYQzL+wF3RZf4RnqSFIJWtX3JIEY19WWkG5uquZYnWnNbz0sVF+
-hJvrVYBzQyW4YOAWsTDmFeBsdCiRWg==
-=6kG4
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzLl3oACgkQAVBC80lX
+0GyrEAf7BSGoO46Jk1cooZRmJFrWn9IvYS7DhIYtLoa64TxgHKaJPGXyqvTcn5h8
+DqjObvygN6PGwIxeXjfoj/TX4BBZd3vYTE7obcB4KJcysAeiMn2UU7Oyii2zoWFM
+/c6RQz31K/yWsPPo58b0b7Cqz+AObXiijcYVO1rZoR999LHyEmqA6WaJSUixhlrS
+KjlavZUVkwspxUqDbzm1OtcprLFPadAZMYEQQJv2VcleI6ayvI29ah/9QK6tCzYV
+t2dCgUsK3kHJUVIH+uLFF9NWjUiT8fYQ1DWMDGFojuyF+PCKRh16deQk0hQ2G90d
+XK01NnjqHH4AoKMqbdlYDCr9BWzG5A==
+=xQvL
 -----END PGP SIGNATURE-----
 
---Sig_/Pi+73itdhPqitBme2i5CtD/--
+--Sig_/N64jm+8l.uMFzxF4YR8ioZQ--
