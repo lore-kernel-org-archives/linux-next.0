@@ -1,108 +1,56 @@
-From: Mike Marshall <hubcap@omnibond.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the vfs tree with the orangefs tree
-Date: Fri, 3 May 2019 13:34:49 -0400
-Message-ID: <CAOg9mSSGUiCoeecpdLs-8-TAMkVDubHK5jG87dGseV4gkGRiOQ@mail.gmail.com>
+Date: Sat, 4 May 2019 08:26:34 +1000
+Message-ID: <20190504082634.6f78a061@canb.auug.org.au>
 References: <20190503111510.6e866e3b@canb.auug.org.au>
+        <CAOg9mSSGUiCoeecpdLs-8-TAMkVDubHK5jG87dGseV4gkGRiOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2IlGFZ=ogMBV774+e4=+kt8"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190503111510.6e866e3b@canb.auug.org.au>
+In-Reply-To: <CAOg9mSSGUiCoeecpdLs-8-TAMkVDubHK5jG87dGseV4gkGRiOQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mike Marshall <hubcap@omnibond.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen...
+--Sig_/2IlGFZ=ogMBV774+e4=+kt8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I noticed the conflict too when I added Al's patch series to the orangefs
-tree we have on next. I understood Linus to say he'd fix the conflict the
-way you did during the merge window. I guess that means you'll have to
-keep fixing it on next until then... I hate causing trouble, let me know if
-there's something different I should do to help...
+Hi Mike,
 
--Mike
+On Fri, 3 May 2019 13:34:49 -0400 Mike Marshall <hubcap@omnibond.com> wrote:
+>
+> I noticed the conflict too when I added Al's patch series to the orangefs
+> tree we have on next. I understood Linus to say he'd fix the conflict the
+> way you did during the merge window. I guess that means you'll have to
+> keep fixing it on next until then... I hate causing trouble, let me know =
+if
+> there's something different I should do to help...
 
-On Thu, May 2, 2019 at 9:15 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the vfs tree got a conflict in:
->
->   fs/orangefs/super.c
->
-> between commit:
->
->   77becb76042a ("orangefs: implement xattr cache")
->
-> from the orangefs tree and commit:
->
->   f276ae0dd6d0 ("orangefs: make use of ->free_inode()")
->
-> from the vfs tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc fs/orangefs/super.c
-> index 8fa30c13b7ed,3784f7e8b603..000000000000
-> --- a/fs/orangefs/super.c
-> +++ b/fs/orangefs/super.c
-> @@@ -125,20 -124,9 +125,19 @@@ static struct inode *orangefs_alloc_ino
->         return &orangefs_inode->vfs_inode;
->   }
->
-> - static void orangefs_i_callback(struct rcu_head *head)
-> + static void orangefs_free_inode(struct inode *inode)
->   {
-> -       struct inode *inode = container_of(head, struct inode, i_rcu);
->  -      kmem_cache_free(orangefs_inode_cache, ORANGEFS_I(inode));
->  +      struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
->  +      struct orangefs_cached_xattr *cx;
->  +      struct hlist_node *tmp;
->  +      int i;
->  +
->  +      hash_for_each_safe(orangefs_inode->xattr_cache, i, tmp, cx, node) {
->  +              hlist_del(&cx->node);
->  +              kfree(cx);
->  +      }
->  +
->  +      kmem_cache_free(orangefs_inode_cache, orangefs_inode);
->   }
->
->   static void orangefs_destroy_inode(struct inode *inode)
-> @@@ -148,17 -136,8 +147,15 @@@
->         gossip_debug(GOSSIP_SUPER_DEBUG,
->                         "%s: deallocated %p destroying inode %pU\n",
->                         __func__, orangefs_inode, get_khandle_from_ino(inode));
-> -
-> -       call_rcu(&inode->i_rcu, orangefs_i_callback);
->   }
->
->  +static int orangefs_write_inode(struct inode *inode,
->  +                              struct writeback_control *wbc)
->  +{
->  +      gossip_debug(GOSSIP_SUPER_DEBUG, "orangefs_write_inode\n");
->  +      return orangefs_inode_setattr(inode);
->  +}
->  +
->   /*
->    * NOTE: information filled in here is typically reflected in the
->    * output of the system command 'df'
-> @@@ -316,8 -295,8 +313,9 @@@ void fsid_key_table_finalize(void
->
->   static const struct super_operations orangefs_s_ops = {
->         .alloc_inode = orangefs_alloc_inode,
-> +       .free_inode = orangefs_free_inode,
->         .destroy_inode = orangefs_destroy_inode,
->  +      .write_inode = orangefs_write_inode,
->         .drop_inode = generic_delete_inode,
->         .statfs = orangefs_statfs,
->         .remount_fs = orangefs_remount_fs,
+Its all good.  I use "git rerere" which remembers the conflicts I have
+fixed once and fixes them automatically the next time I do the same
+merge.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2IlGFZ=ogMBV774+e4=+kt8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzMwBoACgkQAVBC80lX
+0GztzAgAnZiH9dzA+04iUsXDwzAq2LEaP+Ssd4oLtGy7w2IiizC4jrg4/1F50ZxB
+52hW5YkohsJfHj0/aSLlifXztvTnT4yIHcNDxcIFNkV3ISw2eVcfolJQL88I8Wcf
+TEPf6jgUbcipodTfVK7kKVPweyMf0xCDxtZerivvs7BOzDgXlVVM774qmJAGeuJR
+zb53TvWHtvCaiHeCdRZ4go5fhJhdzu/Gel42o4/gqHCiGzKzabVK7JpMxGFmUEV3
+aAauzCc1QxZKe6V89AAr9YJYicKvHYc6KtKz7od9cym2aKIqTEMSwmrujsamNTVh
+oulnM6F/2593DFbTEIgpHs8Yo5utpA==
+=wZCW
+-----END PGP SIGNATURE-----
+
+--Sig_/2IlGFZ=ogMBV774+e4=+kt8--
