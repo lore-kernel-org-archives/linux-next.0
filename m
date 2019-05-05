@@ -1,56 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the orangefs tree
-Date: Sat, 4 May 2019 08:26:34 +1000
-Message-ID: <20190504082634.6f78a061@canb.auug.org.au>
-References: <20190503111510.6e866e3b@canb.auug.org.au>
-        <CAOg9mSSGUiCoeecpdLs-8-TAMkVDubHK5jG87dGseV4gkGRiOQ@mail.gmail.com>
+From: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: linux-next: Tree for May 2 (drivers/usb/mtu3/mtu3_debugfs.o)
+Date: Sun, 5 May 2019 11:20:56 +0800
+Message-ID: <1557026456.10179.261.camel@mhfsdcap03>
+References: <20190502201028.707453d8@canb.auug.org.au>
+ <3e56059c-e024-324f-f584-75a806d9b0e0@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2IlGFZ=ogMBV774+e4=+kt8"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOg9mSSGUiCoeecpdLs-8-TAMkVDubHK5jG87dGseV4gkGRiOQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <3e56059c-e024-324f-f584-75a806d9b0e0-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2IlGFZ=ogMBV774+e4=+kt8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Randy,
+On Thu, 2019-05-02 at 08:17 -0700, Randy Dunlap wrote:
+> On 5/2/19 3:10 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20190501:
+> > 
+> 
+> on i386:
+> 
+> ld: drivers/usb/mtu3/mtu3_debugfs.o: in function `ssusb_debugfs_create_root':
+> mtu3_debugfs.c:(.text+0xba3): undefined reference to `usb_debug_root'
+> 
+> CONFIG_USB_SUPPORT=y
+> CONFIG_USB_COMMON=y
+> CONFIG_USB_ARCH_HAS_HCD=y
+> # CONFIG_USB is not set     <<<<< no host-side USB
+> # CONFIG_USB_PCI is not set
+> CONFIG_USB_MTU3=y
+> CONFIG_USB_MTU3_GADGET=y     <<<<< gadget-only mode
+> # CONFIG_USB_MTU3_DEBUG is not set
+> CONFIG_USB_MUSB_HDRC=m
+> CONFIG_USB_MUSB_GADGET=y
+> 
+> usb_debug_root is in drivers/usb/core/usb.c, which is only built
+> when CONFIG_USB is set/enabled.
+> 
+I'll fix it ASAP.
 
-Hi Mike,
+Thanks a lot
 
-On Fri, 3 May 2019 13:34:49 -0400 Mike Marshall <hubcap@omnibond.com> wrote:
->
-> I noticed the conflict too when I added Al's patch series to the orangefs
-> tree we have on next. I understood Linus to say he'd fix the conflict the
-> way you did during the merge window. I guess that means you'll have to
-> keep fixing it on next until then... I hate causing trouble, let me know =
-if
-> there's something different I should do to help...
-
-Its all good.  I use "git rerere" which remembers the conflicts I have
-fixed once and fixes them automatically the next time I do the same
-merge.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2IlGFZ=ogMBV774+e4=+kt8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzMwBoACgkQAVBC80lX
-0GztzAgAnZiH9dzA+04iUsXDwzAq2LEaP+Ssd4oLtGy7w2IiizC4jrg4/1F50ZxB
-52hW5YkohsJfHj0/aSLlifXztvTnT4yIHcNDxcIFNkV3ISw2eVcfolJQL88I8Wcf
-TEPf6jgUbcipodTfVK7kKVPweyMf0xCDxtZerivvs7BOzDgXlVVM774qmJAGeuJR
-zb53TvWHtvCaiHeCdRZ4go5fhJhdzu/Gel42o4/gqHCiGzKzabVK7JpMxGFmUEV3
-aAauzCc1QxZKe6V89AAr9YJYicKvHYc6KtKz7od9cym2aKIqTEMSwmrujsamNTVh
-oulnM6F/2593DFbTEIgpHs8Yo5utpA==
-=wZCW
------END PGP SIGNATURE-----
-
---Sig_/2IlGFZ=ogMBV774+e4=+kt8--
+> 
+> 
+> Full randconfig file is attached.
+> 
