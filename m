@@ -1,59 +1,55 @@
-From: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: linux-next: Tree for May 2 (drivers/usb/mtu3/mtu3_debugfs.o)
-Date: Sun, 5 May 2019 11:20:56 +0800
-Message-ID: <1557026456.10179.261.camel@mhfsdcap03>
-References: <20190502201028.707453d8@canb.auug.org.au>
- <3e56059c-e024-324f-f584-75a806d9b0e0@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Date: Mon, 6 May 2019 07:23:34 +1000
+Message-ID: <20190506072334.5eeb8858@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <3e56059c-e024-324f-f584-75a806d9b0e0-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iIoaWuLbT45b0W=22c.g9UB"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Ahern <dsahern@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
-On Thu, 2019-05-02 at 08:17 -0700, Randy Dunlap wrote:
-> On 5/2/19 3:10 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20190501:
-> > 
-> 
-> on i386:
-> 
-> ld: drivers/usb/mtu3/mtu3_debugfs.o: in function `ssusb_debugfs_create_root':
-> mtu3_debugfs.c:(.text+0xba3): undefined reference to `usb_debug_root'
-> 
-> CONFIG_USB_SUPPORT=y
-> CONFIG_USB_COMMON=y
-> CONFIG_USB_ARCH_HAS_HCD=y
-> # CONFIG_USB is not set     <<<<< no host-side USB
-> # CONFIG_USB_PCI is not set
-> CONFIG_USB_MTU3=y
-> CONFIG_USB_MTU3_GADGET=y     <<<<< gadget-only mode
-> # CONFIG_USB_MTU3_DEBUG is not set
-> CONFIG_USB_MUSB_HDRC=m
-> CONFIG_USB_MUSB_GADGET=y
-> 
-> usb_debug_root is in drivers/usb/core/usb.c, which is only built
-> when CONFIG_USB is set/enabled.
-> 
-I'll fix it ASAP.
+--Sig_/iIoaWuLbT45b0W=22c.g9UB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks a lot
+Hi all,
 
-> 
-> 
-> Full randconfig file is attached.
-> 
+In commit
+
+  64c6f4bbca74 ("neighbor: Reset gc_entries counter if new entry is release=
+d before insert")
+
+Fixes tag
+
+  Fixes: 58956317c8d ("neighbor: Improve garbage collection")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iIoaWuLbT45b0W=22c.g9UB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzPVFYACgkQAVBC80lX
+0GzgSQf/c6OvVDblN1/YNpJhV/j2sx2hjoI5gDJX3J2y1AR+2+BPmP/SDRL3ZJmM
+8ukm5AsBNqrIeYWlM9sSzjOoQd8DSvyviJcvXJRdGU8aHothh+5LYNcgYGY4/D9J
+JU0czzAObzpo7I5+/Wlse7k1qwqWHTLJLc7QbUbMihagc++flkjUP1XO+eOeT7qo
+QSHTveRrhX+E0nF6WLanSEVsMeofWf+ANI44cy9GyI68/ElhTT4Pk6G0rgEPtnp3
+E2Ct31QNroLOdwVHevUmYTBEW0zP0bRjCALxIi4MJvSlp8FmEgO6QEAhmzImDtW0
+706zq/XALUR8RVfwZJq7AFf5HU9ofg==
+=QLd4
+-----END PGP SIGNATURE-----
+
+--Sig_/iIoaWuLbT45b0W=22c.g9UB--
