@@ -1,107 +1,91 @@
-From: Leon Romanovsky <leon@kernel.org>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
-Date: Mon, 6 May 2019 07:13:12 +0300
-Message-ID: <20190506041312.GJ6938@mtr-leonro.mtl.com>
-References: <20190430135846.0c17df6e@canb.auug.org.au>
- <20190506140147.23d41ac1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the rdma
+ tree
+Date: Mon, 6 May 2019 20:37:10 +1000
+Message-ID: <20190506203710.10b080dc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
+ boundary="Sig_/3gncj=lu4fwPmti+gIskl1D"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190506140147.23d41ac1@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vu Pham <vuhuong@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Mark Bloch <markb@mellanox.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gal Pressman <galpress@amazon.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/3gncj=lu4fwPmti+gIskl1D
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-On Mon, May 06, 2019 at 02:01:47PM +1000, Stephen Rothwell wrote:
-> Hi all,
->
-> On Tue, 30 Apr 2019 13:58:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi Leon,
-> >
-> > Today's linux-next merge of the mlx5-next tree got a conflict in:
-> >
-> >   drivers/infiniband/hw/mlx5/main.c
-> >
-> > between commit:
-> >
-> >   35b0aa67b298 ("RDMA/mlx5: Refactor netdev affinity code")
-> >
-> > from the rdma tree and commit:
-> >
-> >   c42260f19545 ("net/mlx5: Separate and generalize dma device from pci device")
-> >
-> > from the mlx5-next tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
-> >
-> > diff --cc drivers/infiniband/hw/mlx5/main.c
-> > index 6135a0b285de,fae6a6a1fbea..000000000000
-> > --- a/drivers/infiniband/hw/mlx5/main.c
-> > +++ b/drivers/infiniband/hw/mlx5/main.c
-> > @@@ -200,12 -172,18 +200,12 @@@ static int mlx5_netdev_event(struct not
-> >
-> >   	switch (event) {
-> >   	case NETDEV_REGISTER:
-> >  +		/* Should already be registered during the load */
-> >  +		if (ibdev->is_rep)
-> >  +			break;
-> >   		write_lock(&roce->netdev_lock);
-> > - 		if (ndev->dev.parent == &mdev->pdev->dev)
-> >  -		if (ibdev->rep) {
-> >  -			struct mlx5_eswitch *esw = ibdev->mdev->priv.eswitch;
-> >  -			struct net_device *rep_ndev;
-> >  -
-> >  -			rep_ndev = mlx5_ib_get_rep_netdev(esw,
-> >  -							  ibdev->rep->vport);
-> >  -			if (rep_ndev == ndev)
-> >  -				roce->netdev = ndev;
-> >  -		} else if (ndev->dev.parent == mdev->device) {
-> > ++		if (ndev->dev.parent == mdev->device)
-> >   			roce->netdev = ndev;
-> >  -		}
-> >   		write_unlock(&roce->netdev_lock);
-> >   		break;
-> >
->
-> This is now a conflict between the net-next tree and the rdma tree.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Thanks Stephen,
-Looks good.
+  include/linux/dynamic_debug.h
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+between commit:
 
+  923abb9d797b ("RDMA/core: Introduce RDMA subsystem ibdev_* print function=
+s")
 
+from the rdma tree and commit:
 
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
+  8dc1ed58157d ("lib/dynamic_debug.c: introduce CONFIG_DYNAMIC_DEBUG_RELATI=
+VE_POINTERS")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/dynamic_debug.h
+index 6c809440f319,08175c219d60..000000000000
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@@ -71,13 -77,12 +77,20 @@@ void __dynamic_netdev_dbg(struct _ddebu
+  			  const struct net_device *dev,
+  			  const char *fmt, ...);
+ =20
+ +struct ib_device;
+ +
+ +extern __printf(3, 4)
+ +void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+ +			 const struct ib_device *ibdev,
+ +			 const char *fmt, ...);
+ +
+++
++ #ifdef CONFIG_DYNAMIC_DEBUG_RELATIVE_POINTERS
++ #include <asm/dynamic_debug.h>
++ #ifndef DEFINE_DYNAMIC_DEBUG_METADATA
++ # error "asm/dynamic_debug.h must provide definition of DEFINE_DYNAMIC_DE=
+BUG_METADATA"
++ #endif
++ #else
+  #define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)		\
+  	static struct _ddebug  __aligned(8)			\
+  	__attribute__((section("__verbose"))) name =3D {		\
+
+--Sig_/3gncj=lu4fwPmti+gIskl1D
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQT1m3YD37UfMCUQBNwp8NhrnBAZsQUCXM+0OwAKCRAp8NhrnBAZ
-sc9RAQDmnIWke/N+pH96y3NysRRPQo5qL4qm8zgCrYToys2YcgEAqTnEoZ5Y/T4A
-E1YB7CSiFyMI3G6S6lzNHE4EgrcehAk=
-=ruXy
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQDlYACgkQAVBC80lX
+0GxkFgf+ONRkS4T1A0ayyhOQWMeJN6RiJKna46rX1c8Y++CaIvFWZ32HXKtQnCiD
+1dOXB+sOgxVVqC4Mz05K95kPrLbbBEa4IFExeeZ0j+HY840veFN9mWNwI3MCDZMo
+kg/8ebo/odFMJEnrVLijlhPrecXQdp33sI8XFR2qs21exL+4wrh3/sH+ZThtmtmr
+oUPxXAHjOO147yQTSaMu4mAQvbHqpWClHx18fFy8JinFvi1kfgIEop9xTH2s69+6
+kmPUkjYIIIUrs2qMPZqCNxlXfME9O8nH4Zsev9xixrWXwD5rmXFSj+OUkhc914hI
+dMvr947yD8aQHM+LhI0k5a4WBGbBUg==
+=T39j
 -----END PGP SIGNATURE-----
 
---jI8keyz6grp/JLjh--
+--Sig_/3gncj=lu4fwPmti+gIskl1D--
