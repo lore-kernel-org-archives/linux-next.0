@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the rdma
+Subject: linux-next: manual merge of the akpm-current tree with the net-next
  tree
-Date: Mon, 6 May 2019 20:37:10 +1000
-Message-ID: <20190506203710.10b080dc@canb.auug.org.au>
+Date: Mon, 6 May 2019 20:43:03 +1000
+Message-ID: <20190506204303.0d0082d7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3gncj=lu4fwPmti+gIskl1D"; protocol="application/pgp-signature"
+ boundary="Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gal Pressman <galpress@amazon.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vladimir Oltean <olteanv@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3gncj=lu4fwPmti+gIskl1D
+--Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,17 +20,15 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  include/linux/dynamic_debug.h
+  lib/Makefile
 
 between commit:
 
-  923abb9d797b ("RDMA/core: Introduce RDMA subsystem ibdev_* print function=
-s")
+  554aae35007e ("lib: Add support for generic packing operations")
 
-from the rdma tree and commit:
+from the net-next tree and commit:
 
-  8dc1ed58157d ("lib/dynamic_debug.c: introduce CONFIG_DYNAMIC_DEBUG_RELATI=
-VE_POINTERS")
+  1a1e7f563bd5 ("lib: Move mathematic helpers to separate folder")
 
 from the akpm-current tree.
 
@@ -45,47 +43,56 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/dynamic_debug.h
-index 6c809440f319,08175c219d60..000000000000
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@@ -71,13 -77,12 +77,20 @@@ void __dynamic_netdev_dbg(struct _ddebu
-  			  const struct net_device *dev,
-  			  const char *fmt, ...);
+diff --cc lib/Makefile
+index 83d7df2661ff,4eeb814eee2e..000000000000
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@@ -17,20 -17,9 +17,20 @@@ KCOV_INSTRUMENT_list_debug.o :=3D=20
+  KCOV_INSTRUMENT_debugobjects.o :=3D n
+  KCOV_INSTRUMENT_dynamic_debug.o :=3D n
  =20
- +struct ib_device;
+ +# Early boot use of cmdline, don't instrument it
+ +ifdef CONFIG_AMD_MEM_ENCRYPT
+ +KASAN_SANITIZE_string.o :=3D n
  +
- +extern __printf(3, 4)
- +void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
- +			 const struct ib_device *ibdev,
- +			 const char *fmt, ...);
+ +ifdef CONFIG_FUNCTION_TRACER
+ +CFLAGS_REMOVE_string.o =3D -pg
+ +endif
  +
-++
-+ #ifdef CONFIG_DYNAMIC_DEBUG_RELATIVE_POINTERS
-+ #include <asm/dynamic_debug.h>
-+ #ifndef DEFINE_DYNAMIC_DEBUG_METADATA
-+ # error "asm/dynamic_debug.h must provide definition of DEFINE_DYNAMIC_DE=
-BUG_METADATA"
-+ #endif
-+ #else
-  #define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)		\
-  	static struct _ddebug  __aligned(8)			\
-  	__attribute__((section("__verbose"))) name =3D {		\
+ +CFLAGS_string.o :=3D $(call cc-option, -fno-stack-protector)
+ +endif
+ +
+  lib-y :=3D ctype.o string.o vsprintf.o cmdline.o \
+  	 rbtree.o radix-tree.o timerqueue.o xarray.o \
+- 	 idr.o int_sqrt.o extable.o \
++ 	 idr.o extable.o \
+  	 sha1.o chacha.o irq_regs.o argv_split.o \
+  	 flex_proportions.o ratelimit.o show_mem.o \
+  	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+@@@ -120,8 -110,6 +122,7 @@@ obj-$(CONFIG_DEBUG_LIST) +=3D list_debug.
+  obj-$(CONFIG_DEBUG_OBJECTS) +=3D debugobjects.o
+ =20
+  obj-$(CONFIG_BITREVERSE) +=3D bitrev.o
+ +obj-$(CONFIG_PACKING)	+=3D packing.o
+- obj-$(CONFIG_RATIONAL)	+=3D rational.o
+  obj-$(CONFIG_CRC_CCITT)	+=3D crc-ccitt.o
+  obj-$(CONFIG_CRC16)	+=3D crc16.o
+  obj-$(CONFIG_CRC_T10DIF)+=3D crc-t10dif.o
 
---Sig_/3gncj=lu4fwPmti+gIskl1D
+--Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQDlYACgkQAVBC80lX
-0GxkFgf+ONRkS4T1A0ayyhOQWMeJN6RiJKna46rX1c8Y++CaIvFWZ32HXKtQnCiD
-1dOXB+sOgxVVqC4Mz05K95kPrLbbBEa4IFExeeZ0j+HY840veFN9mWNwI3MCDZMo
-kg/8ebo/odFMJEnrVLijlhPrecXQdp33sI8XFR2qs21exL+4wrh3/sH+ZThtmtmr
-oUPxXAHjOO147yQTSaMu4mAQvbHqpWClHx18fFy8JinFvi1kfgIEop9xTH2s69+6
-kmPUkjYIIIUrs2qMPZqCNxlXfME9O8nH4Zsev9xixrWXwD5rmXFSj+OUkhc914hI
-dMvr947yD8aQHM+LhI0k5a4WBGbBUg==
-=T39j
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQD7cACgkQAVBC80lX
+0GxyFQf+Oxeg/myCZnkE2ztvU4e7GB6Gm8qPNwB50TGAVjL4g1CRrdmE6stC1xLr
+Vit2Qrx2qSojaECslnAv4DOf4kPsExXNrHkWCSzzwjfMPtCDFDTLcJulS7FB1xc9
+At47Hzd5dNdi50RRYaZ/FhXw6lMIJ/Ubq6YIFZOQ9Ir9xHiIXg0C1kY1Zou7C1ql
+8axPlPtYxcUeuFIfCiVQojGHdz0NfeZ6q7eQTY0lyY5lkJ9siHXi3KuU975nmj3S
+yRWM+Q4Pb0RH8d4zSqOBwtMYShoMRJr0besO6yx6p22s6PTLx6fit2HqhysjrkIX
+qYfeMoMBvxrZU6hREoeh8kwE8HpZ2A==
+=Lwq0
 -----END PGP SIGNATURE-----
 
---Sig_/3gncj=lu4fwPmti+gIskl1D--
+--Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h--
