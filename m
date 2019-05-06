@@ -1,188 +1,53 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: Fwd: linux-next: build failure after merge of the kbuild tree
-Date: Mon, 6 May 2019 21:07:16 +0900
-Message-ID: <CAK7LNAS=D96B_OgnRu-NK0-G+y8itvhe3qvwfYxZUCSqdC0gEA@mail.gmail.com>
-References: <20190506094609.08e930f2@canb.auug.org.au> <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
- <20190506033151.GB2649@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the netfilter tree
+Date: Mon, 6 May 2019 23:08:15 +1000
+Message-ID: <20190506230816.22452c4d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2dh7rGdDwXTz/NoDbDAJsn7"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190506033151.GB2649@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kristian Evensen <kristian.evensen@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+--Sig_/2dh7rGdDwXTz/NoDbDAJsn7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Mon, May 6, 2019 at 12:34 PM Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
->
-> [Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 11:19) Masahiro Yamada wrote:
->
-> > Hi Paul,
-> >
-> > In today's linux-next build testing,
-> > more "make ... explicitly non-modular"
-> > candidates showed up.
-> >
->
-> Hi Masahiro,
->
-> I am not 100% clear on what you are asking me.  There are lots and lots
-> of these in the kernel.... many fixed, and many remain unfortunately.
->
-> > arch/arm/plat-omap/dma.c
-> > drivers/clocksource/timer-ti-dm.c
-> > drivers/mfd/omap-usb-host.c
-> > drivers/mfd/omap-usb-tll.c
->
-> None of these are "new".  I just checked, and I have had patches for all
-> these for a long time, in my personal queue, found by my audits.
+n commit
 
+  4ff6d55abba3 ("netfilter: ctnetlink: Resolve conntrack L3-protocol flush =
+regression")
 
-OK, I saw many patches from you
-addressing this issue,
-so I just thought you might be motivated to
-fix them.
+Fixes tag
 
-Anyway, I have a reason to fix them
-because a patch in my tree is causing build errors.
+  Fixes: 59c08c69c278 ("netfilter: ctnetlink: Support L3 protocol-filter
 
-So, I will do something for them
-if you do not have a plan to send patches soon.
+has these problem(s):
 
-Thanks.
+  - Please do not split Fixes tags over more than one line.
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/2dh7rGdDwXTz/NoDbDAJsn7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> > Would you send patches?
->
-> It isn't that simple.  I wish it was.  Some subsystem maintainers are
-> glad to take the patches, and some think they are a waste of time and
-> reject them immediately.  Some I've sent just simply get "crickets".
->
-> What that means is, that I need to look at each maintainer's
-> requirements, and ensure the patch and commit log are matching
-> expectatins - I will not just spam out hundreds of patches across all
-> subsystems.  Anyone who has spent considerable time in linux development
-> knows that is a recipe for failure.
->
-> So I need to work across each subsystem - one at a time, with their
-> individual maintainer requirements in mind, and if you look at git
-> history, you will see that has been what I've tried to do when I had
-> free time to work on fixing these across the whole linux tree.
->
-> But fortunately, none of these represent a CVE/security issue, so I've
-> never had a reason to try and pretend there was any reason for an
-> immediate fix/merge - they just represent a better attention to detail
-> in the code we merge and support that I'd like to see happen tree-wide.
->
-> I appreciate that you are also interested in seeing all these fixed, and
-> I also wish they could all be solved in one version, but unfortunately I
-> don't think that is pragmatic.  So in the meantime, I will continue to
-> chip away at things when we are early in the dev cycle and not starting
-> the two week merge window, as we are just now.
->
-> Thanks,
-> Paul.
-> --
->
-> >
-> > I think EXPORT_SYMBOL_GPL() in omap-usb-tll.c
-> > are also unnecessary.
-> >
-> > Thanks.
-> >
-> >
-> >
-> > ---------- Forwarded message ---------
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, May 6, 2019 at 8:51 AM
-> > Subject: linux-next: build failure after merge of the kbuild tree
-> > To: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
-> > Mailing List <linux-kernel@vger.kernel.org>, Alexey Gladkov
-> > <gladkov.alexey@gmail.com>, Keshava Munegowda <keshava_mgowda@ti.com>,
-> > Samuel Ortiz <sameo@linux.intel.com>
-> >
-> >
-> > Hi Masahiro,
-> >
-> > After merging the kbuild tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> >
-> > In file included from include/linux/module.h:18,
-> >                  from drivers/mfd/omap-usb-tll.c:21:
-> > drivers/mfd/omap-usb-tll.c:462:26: error: expected ',' or ';' before
-> > 'USBHS_DRIVER_NAME'
-> >  MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-> >                           ^~~~~~~~~~~~~~~~~
-> > include/linux/moduleparam.h:26:47: note: in definition of macro '__MODULE_INFO'
-> >    = __MODULE_INFO_PREFIX __stringify(tag) "=" info
-> >                                                ^~~~
-> > include/linux/module.h:164:30: note: in expansion of macro 'MODULE_INFO'
-> >  #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)
-> >                               ^~~~~~~~~~~
-> > drivers/mfd/omap-usb-tll.c:462:1: note: in expansion of macro 'MODULE_ALIAS'
-> >  MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-> >  ^~~~~~~~~~~~
-> >
-> > Caused by commit
-> >
-> >   6a26793a7891 ("moduleparam: Save information about built-in modules
-> > in separate file")
-> >
-> > USBHS_DRIVER_NAME is not defined and this kbuild tree change has
-> > exposed it. It has been this way since commit
-> >
-> >   16fa3dc75c22 ("mfd: omap-usb-tll: HOST TLL platform driver")
-> >
-> > From v3.7-rc1 in 2012.
-> >
-> > I have applied the following patch for today.
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 6 May 2019 09:39:14 +1000
-> > Subject: [PATCH] mfd: omap: remove unused MODULE_ALIAS from omap-usb-tll.c
-> >
-> > USBHS_DRIVER_NAME has never been defined, so this cannot have ever
-> > been used.
-> >
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/mfd/omap-usb-tll.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-> > index 446713dbee27..1cc8937e8bec 100644
-> > --- a/drivers/mfd/omap-usb-tll.c
-> > +++ b/drivers/mfd/omap-usb-tll.c
-> > @@ -459,7 +459,7 @@ EXPORT_SYMBOL_GPL(omap_tll_disable);
-> >
-> >  MODULE_AUTHOR("Keshava Munegowda <keshava_mgowda@ti.com>");
-> >  MODULE_AUTHOR("Roger Quadros <rogerq@ti.com>");
-> > -MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-> > +// MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
-> >  MODULE_LICENSE("GPL v2");
-> >  MODULE_DESCRIPTION("usb tll driver for TI OMAP EHCI and OHCI controllers");
-> >
-> > --
-> > 2.20.1
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
-> >
-> >
-> > --
-> > Best Regards
-> > Masahiro Yamada
->
->
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQMcAACgkQAVBC80lX
+0Gxu7AgAjLH7b+D21AAun/ybz1JFuzbsjqUZM2urJFjKvGkFqvqIZMR+BiQ3NaR7
+RIKpUH3MUVVj1GrbA+eOCZiaWhL9yy59hZrLAdwJZO51NUdq1Z0Y+XuZaBEQjRR4
+kgqHjbteAMiY5EzrN2P5V/AMXg+nhcCROEAnINc0UfJHIVSw4YOxfry32DleYWbE
+ATfk0UL++vCIzF+FJE26g2zErza3vizazroIoUsQjdhkp2IaY6QrO0oewCx/pGpM
+Fbtgry3PpQY25AdVJyhKyOEIlIILKNKWB6S5NazFHXJ6NJcxU+R6uE7OjWfOUIFm
+3nBErmWA1Hh16rdIxL+f+CDKrYOrMg==
+=mrha
+-----END PGP SIGNATURE-----
 
--- 
-Best Regards
-Masahiro Yamada
+--Sig_/2dh7rGdDwXTz/NoDbDAJsn7--
