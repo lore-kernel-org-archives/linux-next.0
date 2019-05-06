@@ -1,75 +1,138 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
-Date: Mon, 6 May 2019 10:43:57 +1000
-Message-ID: <20190506104357.18e10955@canb.auug.org.au>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Fwd: linux-next: build failure after merge of the kbuild tree
+Date: Mon, 6 May 2019 11:19:02 +0900
+Message-ID: <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
+References: <20190506094609.08e930f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4A5VfpcTk.9FVkm=94W1xPA"; protocol="application/pgp-signature"
+Content-Type: multipart/mixed; boundary="0000000000007ac93f05882ebb3c"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190506094609.08e930f2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, Fabio Estevam <festevam@gmail.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4A5VfpcTk.9FVkm=94W1xPA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--0000000000007ac93f05882ebb3c
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+Hi Paul,
 
-Today's linux-next merge of the imx-mxs tree got a conflict in:
+In today's linux-next build testing,
+more "make ... explicitly non-modular"
+candidates showed up.
 
-  arch/arm64/configs/defconfig
 
-between commit:
+arch/arm/plat-omap/dma.c
+drivers/clocksource/timer-ti-dm.c
+drivers/mfd/omap-usb-host.c
+drivers/mfd/omap-usb-tll.c
 
-  7b0d021fbe41 ("arm64: defconfig: enable PCIE_ALTERA")
+Would you send patches?
 
-from the arm-soc tree and commit:
+I think EXPORT_SYMBOL_GPL() in omap-usb-tll.c
+are also unnecessary.
 
-  a9aa2a812255 ("arm64: defconfig: Enable CONFIG_SPI_IMX")
+Thanks.
 
-from the imx-mxs tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
---=20
+---------- Forwarded message ---------
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, May 6, 2019 at 8:51 AM
+Subject: linux-next: build failure after merge of the kbuild tree
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+Mailing List <linux-kernel@vger.kernel.org>, Alexey Gladkov
+<gladkov.alexey@gmail.com>, Keshava Munegowda <keshava_mgowda@ti.com>,
+Samuel Ortiz <sameo@linux.intel.com>
+
+
+Hi Masahiro,
+
+After merging the kbuild tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+In file included from include/linux/module.h:18,
+                 from drivers/mfd/omap-usb-tll.c:21:
+drivers/mfd/omap-usb-tll.c:462:26: error: expected ',' or ';' before
+'USBHS_DRIVER_NAME'
+ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
+                          ^~~~~~~~~~~~~~~~~
+include/linux/moduleparam.h:26:47: note: in definition of macro '__MODULE_INFO'
+   = __MODULE_INFO_PREFIX __stringify(tag) "=" info
+                                               ^~~~
+include/linux/module.h:164:30: note: in expansion of macro 'MODULE_INFO'
+ #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)
+                              ^~~~~~~~~~~
+drivers/mfd/omap-usb-tll.c:462:1: note: in expansion of macro 'MODULE_ALIAS'
+ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
+ ^~~~~~~~~~~~
+
+Caused by commit
+
+  6a26793a7891 ("moduleparam: Save information about built-in modules
+in separate file")
+
+USBHS_DRIVER_NAME is not defined and this kbuild tree change has
+exposed it. It has been this way since commit
+
+  16fa3dc75c22 ("mfd: omap-usb-tll: HOST TLL platform driver")
+
+>From v3.7-rc1 in 2012.
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 6 May 2019 09:39:14 +1000
+Subject: [PATCH] mfd: omap: remove unused MODULE_ALIAS from omap-usb-tll.c
+
+USBHS_DRIVER_NAME has never been defined, so this cannot have ever
+been used.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mfd/omap-usb-tll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+index 446713dbee27..1cc8937e8bec 100644
+--- a/drivers/mfd/omap-usb-tll.c
++++ b/drivers/mfd/omap-usb-tll.c
+@@ -459,7 +459,7 @@ EXPORT_SYMBOL_GPL(omap_tll_disable);
+
+ MODULE_AUTHOR("Keshava Munegowda <keshava_mgowda@ti.com>");
+ MODULE_AUTHOR("Roger Quadros <rogerq@ti.com>");
+-MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
++// MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb tll driver for TI OMAP EHCI and OHCI controllers");
+
+--
+2.20.1
+
+--
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index 5392c12ef3b7,979a95c915b6..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -357,7 -365,7 +358,8 @@@ CONFIG_SPI=3D
-  CONFIG_SPI_ARMADA_3700=3Dy
-  CONFIG_SPI_BCM2835=3Dm
-  CONFIG_SPI_BCM2835AUX=3Dm
-+ CONFIG_SPI_IMX=3Dm
- +CONFIG_SPI_NXP_FLEXSPI=3Dy
-  CONFIG_SPI_MESON_SPICC=3Dm
-  CONFIG_SPI_MESON_SPIFC=3Dm
-  CONFIG_SPI_ORION=3Dy
 
---Sig_/4A5VfpcTk.9FVkm=94W1xPA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+Best Regards
+Masahiro Yamada
 
------BEGIN PGP SIGNATURE-----
+--0000000000007ac93f05882ebb3c
+Content-Type: application/pgp-signature; name=noname
+Content-Disposition: attachment; filename=noname
+Content-Transfer-Encoding: base64
+Content-ID: <16a8aec8052c204bfcc1>
+X-Attachment-Id: 16a8aec8052c204bfcc1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzPg00ACgkQAVBC80lX
-0GzWQAf+IyIw7MKo75hxmAy5MsACq8sprZgHHDKKUik/Jdxj9t8Z/Ji47L8c6tEA
-v4OyB5zWxmAUL6D03p19K/xTKSCoBtTCb/LOOl1w+Z0PP5FAuu/ySAdz9OuVp88V
-mSfL9OJmTpsvoISDzXnY51TWGUGWe7yXQ0cvI2OSkocPQrRlwvPT2ppYIsx/TFtp
-iQRUC7RzBFMLAbJbAok/tBQ8pYSsnty3bzKHeNLAibTi0BkKx89pkOz7DbHtl/ti
-fOJqdZvtZJRVuA83ZkvInRrCdGbKyYu0wxepZhI4B2nxXl96ElQR0t89EZC0z1Rl
-9Jyul/AKnX00dB9VOcuZxsTgvZW1TA==
-=aEht
------END PGP SIGNATURE-----
-
---Sig_/4A5VfpcTk.9FVkm=94W1xPA--
+LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NCg0KaVFFekJBRUJDQUFkRmlFRU5JQzk2Z2la
+ODF0V2RMZ0tBVkJDODBsWDBHd0ZBbHpQZGNFQUNna1FBVkJDODBsWA0KMEd4UnRnZi9lNGNBdXRw
+WENGUFdOcGRtTEpuejB5UitrOUN0UGdhd0I2dTEvNWhvUGswbkZyWTZCU0hwbGltdw0KUjg2L2o4
+ajRoVmswMy9Yd3RjYVNGaXNqbnpVZ2lOSU04K3lWVU1WWUd0b20rM3hLLzR5RW42UGxXd1lybDBI
+UQ0KbG5pemx1U2lyZk1IOHVkN1FxV3htMk1xbENuVlJTV0piM3UrM0pzaUljSkNiS3I3MjNVczNI
+SUtKWktoK1MvdQ0KK3F3OXpscGM5c1U5N0JBWTBuVHh0VVFUVXVBTHF4UGYvanlXejlnR095dmF1
+dW1zd1lDb3MxSmtVeHMzaWhqNg0KaGErWklyeWdXT3VmVXF0bGFENXNveGoxbEdNdkpheXZ2K3R6
+bk1wQTNFUGxQMGNRTmwxR1FIbFQvWlVOTGJ4bQ0KVmpYcUNoUjZYaXRldWxyRG9tVGd5VHlJaUkz
+WmVBPT0NCj1SNXhNDQotLS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0NCg==
+--0000000000007ac93f05882ebb3c--
