@@ -1,53 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the netfilter tree
-Date: Mon, 6 May 2019 23:08:15 +1000
-Message-ID: <20190506230816.22452c4d@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Date: Mon, 6 May 2019 23:22:00 +1000
+Message-ID: <20190506232200.1acfe572@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2dh7rGdDwXTz/NoDbDAJsn7"; protocol="application/pgp-signature"
+ boundary="Sig_/a28TwsnwpW9V5LZub9mSM0J"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kristian Evensen <kristian.evensen@gmail.com>
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2dh7rGdDwXTz/NoDbDAJsn7
+--Sig_/a28TwsnwpW9V5LZub9mSM0J
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-n commit
+Commit
 
-  4ff6d55abba3 ("netfilter: ctnetlink: Resolve conntrack L3-protocol flush =
-regression")
+  cc86bb923508 ("platform/x86: thinkpad_acpi: fix spelling mistake "capabil=
+ites" -> "capabilities"")
 
-Fixes tag
-
-  Fixes: 59c08c69c278 ("netfilter: ctnetlink: Support L3 protocol-filter
-
-has these problem(s):
-
-  - Please do not split Fixes tags over more than one line.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/2dh7rGdDwXTz/NoDbDAJsn7
+--Sig_/a28TwsnwpW9V5LZub9mSM0J
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQMcAACgkQAVBC80lX
-0Gxu7AgAjLH7b+D21AAun/ybz1JFuzbsjqUZM2urJFjKvGkFqvqIZMR+BiQ3NaR7
-RIKpUH3MUVVj1GrbA+eOCZiaWhL9yy59hZrLAdwJZO51NUdq1Z0Y+XuZaBEQjRR4
-kgqHjbteAMiY5EzrN2P5V/AMXg+nhcCROEAnINc0UfJHIVSw4YOxfry32DleYWbE
-ATfk0UL++vCIzF+FJE26g2zErza3vizazroIoUsQjdhkp2IaY6QrO0oewCx/pGpM
-Fbtgry3PpQY25AdVJyhKyOEIlIILKNKWB6S5NazFHXJ6NJcxU+R6uE7OjWfOUIFm
-3nBErmWA1Hh16rdIxL+f+CDKrYOrMg==
-=mrha
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQNPgACgkQAVBC80lX
+0GxjGgf7BC+Atj5DkaYwW7NFNib74ZqV5RzKo8nHvbcWVOhZe5ifPqe81PVIUCKp
+tfNS+JNDiFm9SgGqPwzWwTCHMYW3WrHo4vDhG/JC7U9D/symqURSs8Qc4Kw22tl5
+yOBJPOcYGSOi8pP9S+ZYQ/YMFr7hyxxZQM4YPyhGBumZopP7qqNZ4hW7FDdBNrI9
+oMmQyvGKVtW/X1NBzqE5QlluzPa9WbZi7a2DNT19WHTE03ba16G4oPloNgeBd02g
+z3zrxYOHQUk1Pxhv+hCJCEbpS7+dni+aQLGFim4klF3i7do6bMreqr2v5QfrFbvn
+xsWwBRkS80m3eLEgHHPHMFPvZAnJUQ==
+=h3pg
 -----END PGP SIGNATURE-----
 
---Sig_/2dh7rGdDwXTz/NoDbDAJsn7--
+--Sig_/a28TwsnwpW9V5LZub9mSM0J--
