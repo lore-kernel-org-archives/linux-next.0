@@ -1,36 +1,46 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86 tree
-Date: Mon, 6 May 2019 17:50:45 +0300
-Message-ID: <CAHp75VcbWN+--XSepr3Ea48cnfY3h7=TpmM2sEt0rJLZ_QX2rA@mail.gmail.com>
-References: <20190506232200.1acfe572@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the powerpc tree
+Date: Tue, 7 May 2019 06:35:59 +1000
+Message-ID: <20190507063559.4922971c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vzW+/dFCG.78gfMV2QMIxFu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190506232200.1acfe572@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Darren Hart <dvhart@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sachin Sant <sachinp@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 6, 2019 at 4:22 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   cc86bb923508 ("platform/x86: thinkpad_acpi: fix spelling mistake "capabilites" -> "capabilities"")
->
-> is missing a Signed-off-by from its committer.
+--Sig_/vzW+/dFCG.78gfMV2QMIxFu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It's fixed now, thanks!
+Hi all,
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+Commit
 
+  04a1942933ce ("powerpc/mm: Fix hugetlb page initialization")
 
+is missing a Signed-off-by from its author.
 
--- 
-With Best Regards,
-Andy Shevchenko
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vzW+/dFCG.78gfMV2QMIxFu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQmq8ACgkQAVBC80lX
+0GwBxAf9Hi/CMUKMMo2Kt71IgUgPJ33Fa67pr2leR6MdL4qYbBfo4oXcSlO2AI+m
+GJBmhBEz0ozzZpDwLpHc4eIm62P7COZ1bAUQZ/Q2GAm04UUU/3hHeoQbBaRj1DYE
+FzPnaW1bx0mBkS5f5mgJq8zGEO5DFoBinXpy/r514jZ4THJjo81GSB3wnhJf2ZU8
+BaxbIXmCit+aHrcRQTfn6qBrcTUJ8XqLdjyG4WkEineIXtoRzU9TLocaPNGbM89O
+fQ2H81T+yIM5LFC9ITBzNUm6ZfwpeG79hKNoTxHRlCa4PaP72URTbUaeYO5MflXU
+MMvGD07VdnDRFWoGaTy4CANhH1LQJg==
+=K3O/
+-----END PGP SIGNATURE-----
+
+--Sig_/vzW+/dFCG.78gfMV2QMIxFu--
