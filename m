@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the net-next
+Subject: linux-next: manual merge of the akpm-current tree with the rdma
  tree
-Date: Mon, 6 May 2019 20:43:03 +1000
-Message-ID: <20190506204303.0d0082d7@canb.auug.org.au>
+Date: Mon, 6 May 2019 20:48:24 +1000
+Message-ID: <20190506204824.11a7b368@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h"; protocol="application/pgp-signature"
+ boundary="Sig_/8=Bp9QV4r5ApqToKC=N9mfu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vladimir Oltean <olteanv@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gal Pressman <galpress@amazon.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h
+--Sig_/8=Bp9QV4r5ApqToKC=N9mfu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,15 +20,21 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  lib/Makefile
+  lib/dynamic_debug.c
 
 between commit:
 
-  554aae35007e ("lib: Add support for generic packing operations")
+  923abb9d797b ("RDMA/core: Introduce RDMA subsystem ibdev_* print function=
+s")
 
-from the net-next tree and commit:
+from the rdma tree and commits:
 
-  1a1e7f563bd5 ("lib: Move mathematic helpers to separate folder")
+  c20acb85ecb2 ("lib/dynamic_debug.c: introduce accessors for string member=
+s of struct _ddebug")
+  686a19fd8999 ("lib/dynamic_debug.c: drop use of bitfields in struct _ddeb=
+ug")
+  8dc1ed58157d ("lib/dynamic_debug.c: introduce CONFIG_DYNAMIC_DEBUG_RELATI=
+VE_POINTERS")
 
 from the akpm-current tree.
 
@@ -43,56 +49,83 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc lib/Makefile
-index 83d7df2661ff,4eeb814eee2e..000000000000
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@@ -17,20 -17,9 +17,20 @@@ KCOV_INSTRUMENT_list_debug.o :=3D=20
-  KCOV_INSTRUMENT_debugobjects.o :=3D n
-  KCOV_INSTRUMENT_dynamic_debug.o :=3D n
+diff --cc lib/dynamic_debug.c
+index 8a16c2d498e9,58288560cc35..000000000000
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@@ -37,8 -37,55 +37,57 @@@
+  #include <linux/device.h>
+  #include <linux/netdevice.h>
  =20
- +# Early boot use of cmdline, don't instrument it
- +ifdef CONFIG_AMD_MEM_ENCRYPT
- +KASAN_SANITIZE_string.o :=3D n
+ +#include <rdma/ib_verbs.h>
  +
- +ifdef CONFIG_FUNCTION_TRACER
- +CFLAGS_REMOVE_string.o =3D -pg
- +endif
- +
- +CFLAGS_string.o :=3D $(call cc-option, -fno-stack-protector)
- +endif
- +
-  lib-y :=3D ctype.o string.o vsprintf.o cmdline.o \
-  	 rbtree.o radix-tree.o timerqueue.o xarray.o \
-- 	 idr.o int_sqrt.o extable.o \
-+ 	 idr.o extable.o \
-  	 sha1.o chacha.o irq_regs.o argv_split.o \
-  	 flex_proportions.o ratelimit.o show_mem.o \
-  	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
-@@@ -120,8 -110,6 +122,7 @@@ obj-$(CONFIG_DEBUG_LIST) +=3D list_debug.
-  obj-$(CONFIG_DEBUG_OBJECTS) +=3D debugobjects.o
++ #ifdef CONFIG_DYNAMIC_DEBUG_RELATIVE_POINTERS
++ static inline const char *dd_modname(const struct _ddebug *dd)
++ {
++ 	return (const char *)dd + dd->modname_disp;
++ }
++ static inline const char *dd_function(const struct _ddebug *dd)
++ {
++ 	return (const char *)dd + dd->function_disp;
++ }
++ static inline const char *dd_filename(const struct _ddebug *dd)
++ {
++ 	return (const char *)dd + dd->filename_disp;
++ }
++ static inline const char *dd_format(const struct _ddebug *dd)
++ {
++ 	return (const char *)dd + dd->format_disp;
++ }
++ #else
++ static inline const char *dd_modname(const struct _ddebug *dd)
++ {
++ 	return dd->modname;
++ }
++ static inline const char *dd_function(const struct _ddebug *dd)
++ {
++ 	return dd->function;
++ }
++ static inline const char *dd_filename(const struct _ddebug *dd)
++ {
++ 	return dd->filename;
++ }
++ static inline const char *dd_format(const struct _ddebug *dd)
++ {
++ 	return dd->format;
++ }
++ #endif
++=20
++ static inline unsigned dd_lineno(const struct _ddebug *dd)
++ {
++ 	return dd->flags_lineno >> 8;
++ }
++ static inline unsigned dd_flags(const struct _ddebug *dd)
++ {
++ 	return dd->flags_lineno & 0xff;
++ }
++ static inline void dd_set_flags(struct _ddebug *dd, unsigned newflags)
++ {
++ 	dd->flags_lineno =3D (dd_lineno(dd) << 8) | newflags;
++ }
++=20
+  extern struct _ddebug __start___verbose[];
+  extern struct _ddebug __stop___verbose[];
  =20
-  obj-$(CONFIG_BITREVERSE) +=3D bitrev.o
- +obj-$(CONFIG_PACKING)	+=3D packing.o
-- obj-$(CONFIG_RATIONAL)	+=3D rational.o
-  obj-$(CONFIG_CRC_CCITT)	+=3D crc-ccitt.o
-  obj-$(CONFIG_CRC16)	+=3D crc16.o
-  obj-$(CONFIG_CRC_T10DIF)+=3D crc-t10dif.o
 
---Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h
+--Sig_/8=Bp9QV4r5ApqToKC=N9mfu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQD7cACgkQAVBC80lX
-0GxyFQf+Oxeg/myCZnkE2ztvU4e7GB6Gm8qPNwB50TGAVjL4g1CRrdmE6stC1xLr
-Vit2Qrx2qSojaECslnAv4DOf4kPsExXNrHkWCSzzwjfMPtCDFDTLcJulS7FB1xc9
-At47Hzd5dNdi50RRYaZ/FhXw6lMIJ/Ubq6YIFZOQ9Ir9xHiIXg0C1kY1Zou7C1ql
-8axPlPtYxcUeuFIfCiVQojGHdz0NfeZ6q7eQTY0lyY5lkJ9siHXi3KuU975nmj3S
-yRWM+Q4Pb0RH8d4zSqOBwtMYShoMRJr0besO6yx6p22s6PTLx6fit2HqhysjrkIX
-qYfeMoMBvxrZU6hREoeh8kwE8HpZ2A==
-=Lwq0
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQEPgACgkQAVBC80lX
+0GyZOAgAjAojmVaqCoSYf1j9INvLmKxwGDCPoMg2eZC62MLZvJHlyo975XBDPBE4
+Xb4QlaPEraFy5DOUgyCTMEb3yewXUbAzgq0pkxlKJAIXOT5PdOCw2mXECPVo7+IC
+XBwZNYwgI1fZub0TNNIIJ+oNfcjozQ6kJRINCxx1El9N8igahpTxkLhPhkC22ac7
+phmsrizRbtd7CKNbL8QB/5twuAu9vo+3k9rEjD+5R+o5O7YBU1fi5DN1E1FF3Ynk
+JAWqyI697juck1UjISp4Hp23EOYiJ3N7v5vTdnWysIgRbWFaqNfSwk9jrjcuHw1v
+1AP2OGIYA40gyUWu8ae+PIrmu0wVAw==
+=y0Hr
 -----END PGP SIGNATURE-----
 
---Sig_/Z1y9ZGU8tFe9HrqI0FaWe.h--
+--Sig_/8=Bp9QV4r5ApqToKC=N9mfu--
