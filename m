@@ -1,68 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the block tree
-Date: Tue, 7 May 2019 06:43:41 +1000
-Message-ID: <20190507064341.7bbbe26c@canb.auug.org.au>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: linux-next: Fixes tags need some work in the mtd tree
+Date: Mon, 6 May 2019 22:45:10 +0200 (CEST)
+Message-ID: <1062675236.47533.1557175510785.JavaMail.zimbra@nod.at>
+References: <20190507064008.1ecba58b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/inYG87=b/69BKOYy3wOn2zC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190507064008.1ecba58b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Igor Konopko <igor.j.konopko@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/inYG87=b/69BKOYy3wOn2zC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Stephen,
 
-Hi all,
+----- Ursprüngliche Mail -----
+> In commit
+> 
+>  d41970097f10 ("mtd: maps: Allow MTD_PHYSMAP with MTD_RAM")
+> 
+> Fixes tag
+> 
+>  Fixes: commit 642b1e8dbed7 ("mtd: maps: Merge physmap_of.c into physmap-core.c")
+> 
+> has these problem(s):
+> 
+>  - leading word 'commit' unexpected
+> 
+> In commit
+> 
+>  64d14c6fe040 ("mtd: maps: physmap: Store gpio_values correctly")
+> 
+> Fixes tag
+> 
+>  Fixes: commit ba32ce95cbd9 ("mtd: maps: Merge gpio-addr-flash.c into
+>  physmap-core.c")
+> 
+> has these problem(s):
+> 
+>  - leading word 'commit' unexpected
 
-In commit
+What is the suggest approach to fix that?
+Rebase and force-push?
 
-  486b5aac85f6 ("lightnvm: pblk: fix lock order in pblk_rb_tear_down_check")
-
-Fixes tag
-
-  Fixes: a4bd217 ("lightnvm: physical block device (pblk) target")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-In commit
-
-  4ca885241950 ("lightnvm: pblk: fix race during put line")
-
-Fixes tag
-
-  Fixes: a4bd217 ("lightnvm: physical block device (pblk) target")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/inYG87=b/69BKOYy3wOn2zC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzQnH0ACgkQAVBC80lX
-0GzpQAgAo+XRRC6UT+Ne1Ll0wqxSd/6z4u4udN6kp/378IMCS1fpPlTGWI4opXFh
-+A6n9Dtbwlo+y+qSurUqN+6gcAnWHttguuiP0AvXfqN/BkN0eB0Gr204n99QQBK2
-jKI920utHfbelirY6XMEyGj5l1YOvFiOowMO1xKxovFqdgsf7tGuYqlgunggo2aV
-u/q7s21DQm+3mgU+ZqXK+cvXtoiwJccfEO7aQ/05hDZr6exE7Igbiuw+t4TmOvV+
-gsbc3pbmy/aFltdO57gbBrioW0o854DYzfaAjEp/daU6t1x4g012lzCc6vYAB9SF
-XUlySFf+zRwmxjFA8FuSpbvDjRoLdA==
-=g2D4
------END PGP SIGNATURE-----
-
---Sig_/inYG87=b/69BKOYy3wOn2zC--
+Thanks,
+//richard
