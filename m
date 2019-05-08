@@ -1,39 +1,104 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
-Date: Tue, 7 May 2019 23:03:38 -0500
-Message-ID: <CAH2r5mtrZ9K9H_d6PV1_zx1gvnWbq5J=gJ0EY_XbKBRA+kLyqQ@mail.gmail.com>
-References: <20190508073238.6a5f4cd7@canb.auug.org.au>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: Fwd: linux-next: build failure after merge of the kbuild tree
+Date: Wed, 8 May 2019 13:31:39 +0900
+Message-ID: <CAK7LNAQXg_3-ka8QHDJi=svnDz1rEA6Yx7Oy_=TXTFYXRBJaeQ@mail.gmail.com>
+References: <20190506094609.08e930f2@canb.auug.org.au> <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
+ <20190506033151.GB2649@windriver.com> <CAK7LNAS=D96B_OgnRu-NK0-G+y8itvhe3qvwfYxZUCSqdC0gEA@mail.gmail.com>
+ <20190506142010.GC2649@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190508073238.6a5f4cd7@canb.auug.org.au>
+In-Reply-To: <20190506142010.GC2649@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: CIFS <linux-cifs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Probst <kernel@probst.it>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-fixed
-
-On Tue, May 7, 2019 at 4:32 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   b00c40f57bd5 ("cifs: fix strcat buffer overflow and reduce raciness in smb21_set_oplock_level()")
->
-> is missing a Signed-off-by from its author.
->
-> Actually it looks like you were just tripped up by the mailing list's
-> DMARC workaround.  :-(
->
-> --
-> Cheers,
-> Stephen Rothwell
+Hi Paul,
 
 
+On Mon, May 6, 2019 at 11:23 PM Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+>
+> [Re: Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 21:07) Masahiro Yamada wrote:
+>
+> > Hi Paul,
+> >
+> >
+> > On Mon, May 6, 2019 at 12:34 PM Paul Gortmaker
+> > <paul.gortmaker@windriver.com> wrote:
+> > >
+> > > [Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 11:19) Masahiro Yamada wrote:
+> > >
+> > > > Hi Paul,
+> > > >
+> > > > In today's linux-next build testing,
+> > > > more "make ... explicitly non-modular"
+> > > > candidates showed up.
+> > > >
+> > >
+> > > Hi Masahiro,
+> > >
+> > > I am not 100% clear on what you are asking me.  There are lots and lots
+> > > of these in the kernel.... many fixed, and many remain unfortunately.
+> > >
+> > > > arch/arm/plat-omap/dma.c
+> > > > drivers/clocksource/timer-ti-dm.c
+> > > > drivers/mfd/omap-usb-host.c
+> > > > drivers/mfd/omap-usb-tll.c
+> > >
+> > > None of these are "new".  I just checked, and I have had patches for all
+> > > these for a long time, in my personal queue, found by my audits.
+> >
+> >
+> > OK, I saw many patches from you
+> > addressing this issue,
+> > so I just thought you might be motivated to
+> > fix them.
+> >
+> > Anyway, I have a reason to fix them
+> > because a patch in my tree is causing build errors.
+>
+> I understand now.  I missed the connection between these drivers and the
+> Kbuild change when I read this last night.  Sorry about that.
+>
+> I can send the changes to those four files, but since I can't guarantee
+> they will be merged quickly (or at all!) - that will leave the commit in
+> the Kbuild tree causing build regressions for days or likely even weeks.
+>
+> > So, I will do something for them
+> > if you do not have a plan to send patches soon.
+>
+> I will be happy to send them, but we just opened the two week merge
+> window, and a lot of maintainers don't like getting sent new patches
+> until the two week merge window has closed - so we should avoid that.
+>
+> I'm not sure how you would like to proceed - one way would be that we
+> get the drivers above changed in 5.2 and you delay your kbuild change
+> until we start v5.3 - to that end I'd be happy to add the Kbuild change
+> to my internal build testing in the meantime, if you would like.
+>
+> Now that I understand the problem, let me know what you would like to
+> do, and I'll do what I can to help out.
 
--- 
-Thanks,
 
-Steve
+I decided to merge minimal changes to my kbuild tree
+since I did not want to delay the kbuild patch.
+
+I got some Ack tags, so I applied this patch:
+https://patchwork.kernel.org/patch/10931673/
+
+I appreciate if you could fix those files in a complete way,
+but there is no more reason to rush.
+
+
+
+> Thanks,
+> Paul.
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
