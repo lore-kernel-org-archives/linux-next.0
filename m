@@ -1,41 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the staging tree with the block
+Subject: Re: linux-next: manual merge of the staging tree with the imx-mxs
  tree
-Date: Wed, 8 May 2019 13:44:13 +1000
-Message-ID: <20190508134413.26a13d00@canb.auug.org.au>
-References: <20190501170528.2d86d133@canb.auug.org.au>
+Date: Wed, 8 May 2019 13:47:27 +1000
+Message-ID: <20190508134727.7ca1e390@canb.auug.org.au>
+References: <20190412144921.3a152478@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PTiqtRjs/NzDhQUMKyeXWF="; protocol="application/pgp-signature"
+ boundary="Sig_/1V1pV/zWcmIrgm4TFnFSdey"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190501170528.2d86d133@canb.auug.org.au>
+In-Reply-To: <20190412144921.3a152478@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Greg KH <greg@kroah.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Gao Xiang <gaoxiang25@huawei.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Greg KH <greg@kroah.com>, Shawn Guo <shawn.guo@linaro.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robert Yang <decatf@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Jonathan =?UTF-8?B?TmV1c2Now6Rm?= =?UTF-8?B?ZXI=?= <j.neuschaefer@gmx.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PTiqtRjs/NzDhQUMKyeXWF=
+--Sig_/1V1pV/zWcmIrgm4TFnFSdey
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 1 May 2019 17:05:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Fri, 12 Apr 2019 14:49:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Today's linux-next merge of the staging tree got conflicts in:
+> Today's linux-next merge of the staging tree got a conflict in:
 >=20
->   drivers/staging/erofs/data.c
->   drivers/staging/erofs/unzip_vle.c
+>   Documentation/devicetree/bindings/vendor-prefixes.txt
 >=20
 > between commit:
 >=20
->   2b070cfe582b ("block: remove the i argument to bio_for_each_segment_all=
-")
+>   189733b0a7e4 ("dt-bindings: Add vendor prefix for Rakuten Kobo, Inc.")
 >=20
-> from the block tree and commit:
+> from the imx-mxs tree and commit:
 >=20
->   14a56ec65bab ("staging: erofs: support IO read error injection")
+>   2e5cee6c7622 ("dt-bindings: Add vendor prefix for Kionix, Inc.")
 >=20
 > from the staging tree.
 >=20
@@ -50,75 +48,40 @@ rote:
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc drivers/staging/erofs/data.c
-> index 9f04d7466c55,c64ec76643d4..000000000000
-> --- a/drivers/staging/erofs/data.c
-> +++ b/drivers/staging/erofs/data.c
-> @@@ -17,11 -17,18 +17,17 @@@
->  =20
->   static inline void read_endio(struct bio *bio)
->   {
-> + 	struct super_block *const sb =3D bio->bi_private;
->  -	int i;
->   	struct bio_vec *bvec;
-> - 	const blk_status_t err =3D bio->bi_status;
-> + 	blk_status_t err =3D bio->bi_status;
->   	struct bvec_iter_all iter_all;
->  =20
-> + 	if (time_to_inject(EROFS_SB(sb), FAULT_READ_IO)) {
-> + 		erofs_show_injection_info(FAULT_READ_IO);
-> + 		err =3D BLK_STS_IOERR;
-> + 	}
-> +=20
->  -	bio_for_each_segment_all(bvec, bio, i, iter_all) {
->  +	bio_for_each_segment_all(bvec, bio, iter_all) {
->   		struct page *page =3D bvec->bv_page;
->  =20
->   		/* page is already locked */
-> diff --cc drivers/staging/erofs/unzip_vle.c
-> index 59b9f37d5c00,a2e03c932102..000000000000
-> --- a/drivers/staging/erofs/unzip_vle.c
-> +++ b/drivers/staging/erofs/unzip_vle.c
-> @@@ -843,14 -844,13 +844,12 @@@ static void z_erofs_vle_unzip_kickoff(v
->  =20
->   static inline void z_erofs_vle_read_endio(struct bio *bio)
->   {
-> - 	const blk_status_t err =3D bio->bi_status;
-> + 	struct erofs_sb_info *sbi =3D NULL;
-> + 	blk_status_t err =3D bio->bi_status;
->  -	unsigned int i;
->   	struct bio_vec *bvec;
-> - #ifdef EROFS_FS_HAS_MANAGED_CACHE
-> - 	struct address_space *mc =3D NULL;
-> - #endif
->   	struct bvec_iter_all iter_all;
->  =20
->  -	bio_for_each_segment_all(bvec, bio, i, iter_all) {
->  +	bio_for_each_segment_all(bvec, bio, iter_all) {
->   		struct page *page =3D bvec->bv_page;
->   		bool cachemngd =3D false;
->  =20
+> diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 5f2b185a04e6,93753f447c20..000000000000
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@@ -211,7 -210,7 +211,8 @@@ kiebackpeter    Kieback & Peter Gmb
+>   kinetic Kinetic Technologies
+>   kingdisplay	King & Display Technology Co., Ltd.
+>   kingnovel	Kingnovel Technology Co., Ltd.
+> + kionix	Kionix, Inc.
+>  +kobo	Rakuten Kobo Inc.
+>   koe	Kaohsiung Opto-Electronics Inc.
+>   kosagi	Sutajio Ko-Usagi PTE Ltd.
+>   kyo	Kyocera Corporation
 
-This conflict is now between the block tree and Linus' tree.
+This is now a conflict between the arm-soc tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/PTiqtRjs/NzDhQUMKyeXWF=
+--Sig_/1V1pV/zWcmIrgm4TFnFSdey
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzSUI0ACgkQAVBC80lX
-0GznYgf+PLM8FVE3+eBJHgcShX3cPz6dCuWcOYWHXHcCWT5gnmOqutY1Xrbn1NFG
-l0XjkULZPCPJOgsWoVqKA/bJzav17VCR/ArGToeGP3YzCe6COuYSP7tq5WtFiZT7
-JktCqCSOWcmQBkXDWcNkv8Ie84cUOR738hX2CG45tUvhYYw+6sVrlJ7NWtoF7n2d
-3WuZufHUryMyJ9NKWlnUpIHu2G0R83nCsyUYEl5qsHgfTDi7ZJkPXDdMksq6tIfl
-kBM1JZs+WqecuP6kUtRNlUai9sBl/iOkSnQk84KnrrVJSn8GzHL8+I0Zbx2YJuqn
-ySO/viGKh+18hUQrv85y758ZVwWmeA==
-=aat7
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzSUU8ACgkQAVBC80lX
+0GwTPAf/cEVh8RWOnK9RS7qYoOibc+Ud8w21cx8GoOiArXG95S1BgP+HUekZMS/m
+gy13w1VEqM1L391i+d/lrBuEQR/D5dQCXkIF6DzjBqmSUZ2X4D6y9IIFjXde5+21
+Fq8F0bShBq8XI4zKbaUGT5BpbEEq/7Z+PU63tPL5jTuIdoA4666mMRUFPhcCoHj4
+ajRQORxZsEdLv6MsTGQ6LLnTcfzbPMKT/B2M/aPFp8NolcHIvSt2lk+HjOeD5MJo
+ltA1BMt6Tgwguq44o9IZIMGrfMwVYZNm3fY55zc8+jINsj+Ysb7gsLGAjwbEvQHB
+PSrvQNm/09DAs+ziVUOhB3/uGroe9A==
+=cTIR
 -----END PGP SIGNATURE-----
 
---Sig_/PTiqtRjs/NzDhQUMKyeXWF=--
+--Sig_/1V1pV/zWcmIrgm4TFnFSdey--
