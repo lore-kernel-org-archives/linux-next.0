@@ -1,104 +1,127 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: Fwd: linux-next: build failure after merge of the kbuild tree
-Date: Wed, 8 May 2019 13:31:39 +0900
-Message-ID: <CAK7LNAQXg_3-ka8QHDJi=svnDz1rEA6Yx7Oy_=TXTFYXRBJaeQ@mail.gmail.com>
-References: <20190506094609.08e930f2@canb.auug.org.au> <CAK7LNASH4CuVBjfEJsT+aBx4aLrj9j2=aOD3B4f9+Tdcm=x2pg@mail.gmail.com>
- <20190506033151.GB2649@windriver.com> <CAK7LNAS=D96B_OgnRu-NK0-G+y8itvhe3qvwfYxZUCSqdC0gEA@mail.gmail.com>
- <20190506142010.GC2649@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the char-misc tree with the arm-soc
+ tree
+Date: Wed, 8 May 2019 15:01:44 +1000
+Message-ID: <20190508150144.76426cfd@canb.auug.org.au>
+References: <20190430174051.038c77c8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8cPpKA4fRiq1UK1fHbuMCvQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190506142010.GC2649@windriver.com>
+In-Reply-To: <20190430174051.038c77c8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Greg KH <greg@kroah.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrick Venture <venture@google.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+--Sig_/8cPpKA4fRiq1UK1fHbuMCvQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Mon, May 6, 2019 at 11:23 PM Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Tue, 30 Apr 2019 17:40:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> [Re: Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 21:07) Masahiro Yamada wrote:
->
-> > Hi Paul,
-> >
-> >
-> > On Mon, May 6, 2019 at 12:34 PM Paul Gortmaker
-> > <paul.gortmaker@windriver.com> wrote:
-> > >
-> > > [Fwd: linux-next: build failure after merge of the kbuild tree] On 06/05/2019 (Mon 11:19) Masahiro Yamada wrote:
-> > >
-> > > > Hi Paul,
-> > > >
-> > > > In today's linux-next build testing,
-> > > > more "make ... explicitly non-modular"
-> > > > candidates showed up.
-> > > >
-> > >
-> > > Hi Masahiro,
-> > >
-> > > I am not 100% clear on what you are asking me.  There are lots and lots
-> > > of these in the kernel.... many fixed, and many remain unfortunately.
-> > >
-> > > > arch/arm/plat-omap/dma.c
-> > > > drivers/clocksource/timer-ti-dm.c
-> > > > drivers/mfd/omap-usb-host.c
-> > > > drivers/mfd/omap-usb-tll.c
-> > >
-> > > None of these are "new".  I just checked, and I have had patches for all
-> > > these for a long time, in my personal queue, found by my audits.
-> >
-> >
-> > OK, I saw many patches from you
-> > addressing this issue,
-> > so I just thought you might be motivated to
-> > fix them.
-> >
-> > Anyway, I have a reason to fix them
-> > because a patch in my tree is causing build errors.
->
-> I understand now.  I missed the connection between these drivers and the
-> Kbuild change when I read this last night.  Sorry about that.
->
-> I can send the changes to those four files, but since I can't guarantee
-> they will be merged quickly (or at all!) - that will leave the commit in
-> the Kbuild tree causing build regressions for days or likely even weeks.
->
-> > So, I will do something for them
-> > if you do not have a plan to send patches soon.
->
-> I will be happy to send them, but we just opened the two week merge
-> window, and a lot of maintainers don't like getting sent new patches
-> until the two week merge window has closed - so we should avoid that.
->
-> I'm not sure how you would like to proceed - one way would be that we
-> get the drivers above changed in 5.2 and you delay your kbuild change
-> until we start v5.3 - to that end I'd be happy to add the Kbuild change
-> to my internal build testing in the meantime, if you would like.
->
-> Now that I understand the problem, let me know what you would like to
-> do, and I'll do what I can to help out.
+> Today's linux-next merge of the char-misc tree got conflicts in:
+>=20
+>   drivers/misc/Kconfig
+>   drivers/misc/Makefile
+>=20
+> between commit:
+>=20
+>   524feb799408 ("soc: add aspeed folder and misc drivers")
+>=20
+> from the arm-soc tree and commit:
+>=20
+>   01c60dcea9f7 ("drivers/misc: Add Aspeed P2A control driver")
+>=20
+> from the char-misc tree.
+>=20
+> I fixed it up (see below - though the additions probably want to be
+> moved as in the arm-soc commit) and can carry the fix as necessary.
+> This is now fixed as far as linux-next is concerned, but any non
+> trivial conflicts should be mentioned to your upstream maintainer when
+> your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/misc/Kconfig
+> index b80cb6af0cb4,3209ee020b15..000000000000
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@@ -496,6 -496,30 +496,14 @@@ config VEXPRESS_SYSCF
+>   	  bus. System Configuration interface is one of the possible means
+>   	  of generating transactions on this bus.
+>  =20
+> + config ASPEED_P2A_CTRL
+> + 	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
+> + 	tristate "Aspeed ast2400/2500 HOST P2A VGA MMIO to BMC bridge control"
+> + 	help
+> + 	  Control Aspeed ast2400/2500 HOST P2A VGA MMIO to BMC mappings through
+> + 	  ioctl()s, the driver also provides an interface for userspace mappin=
+gs to
+> + 	  a pre-defined region.
+> +=20
+>  -config ASPEED_LPC_CTRL
+>  -	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
+>  -	tristate "Aspeed ast2400/2500 HOST LPC to BMC bridge control"
+>  -	---help---
+>  -	  Control Aspeed ast2400/2500 HOST LPC to BMC mappings through
+>  -	  ioctl()s, the driver also provides a read/write interface to a BMC r=
+am
+>  -	  region where the host LPC read/write region can be buffered.
+>  -
+>  -config ASPEED_LPC_SNOOP
+>  -	tristate "Aspeed ast2500 HOST LPC snoop support"
+>  -	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
+>  -	help
+>  -	  Provides a driver to control the LPC snoop interface which
+>  -	  allows the BMC to listen on and save the data written by
+>  -	  the host to an arbitrary LPC I/O port.
+>  -
+>   config PCI_ENDPOINT_TEST
+>   	depends on PCI
+>   	select CRC32
+> diff --cc drivers/misc/Makefile
+> index b9affcdaa3d6,c36239573a5c..000000000000
+> --- a/drivers/misc/Makefile
+> +++ b/drivers/misc/Makefile
+> @@@ -54,6 -54,9 +54,7 @@@ obj-$(CONFIG_GENWQE)		+=3D genwqe
+>   obj-$(CONFIG_ECHO)		+=3D echo/
+>   obj-$(CONFIG_VEXPRESS_SYSCFG)	+=3D vexpress-syscfg.o
+>   obj-$(CONFIG_CXL_BASE)		+=3D cxl/
+>  -obj-$(CONFIG_ASPEED_LPC_CTRL)	+=3D aspeed-lpc-ctrl.o
+>  -obj-$(CONFIG_ASPEED_LPC_SNOOP)	+=3D aspeed-lpc-snoop.o
+> + obj-$(CONFIG_ASPEED_P2A_CTRL)	+=3D aspeed-p2a-ctrl.o
+>   obj-$(CONFIG_PCI_ENDPOINT_TEST)	+=3D pci_endpoint_test.o
+>   obj-$(CONFIG_OCXL)		+=3D ocxl/
+>   obj-y				+=3D cardreader/
 
+This is now a conflict between the arm-soc tree and Linus' tree.
 
-I decided to merge minimal changes to my kbuild tree
-since I did not want to delay the kbuild patch.
+--=20
+Cheers,
+Stephen Rothwell
 
-I got some Ack tags, so I applied this patch:
-https://patchwork.kernel.org/patch/10931673/
+--Sig_/8cPpKA4fRiq1UK1fHbuMCvQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-I appreciate if you could fix those files in a complete way,
-but there is no more reason to rush.
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzSYrgACgkQAVBC80lX
+0GxcaQf/cAZtLueodL+eLkGlJ1HPgreyNpVRFcXvPPG43uF6ReydrQ10G+3wr5Kx
+wE0lN7G+HXU0IUCTNAHTL0ygsl5RfAaMdxjQpDRfkcb88e/ynTLUtMjU5dDEQUaE
+4TR2M48ZAz3rWAeqQSikGztYKfpXY47CLOlQHpKL8qPo2+baV1ThpzveIjiRH5rG
+TBhLOqvFCp9wOsT/TJRPscEAtCUVjg/23YfuR60tkDydyNdkA8n3Ai5z1MhR3fgs
+9uZBDrj2OTXCViIUajZItgKiFhZqFZr2fWgbLfRQaTP4UYSDqPIOgg3lWk+8CCeS
+v5lVoUssXIA1HnhBCWQIN0hvxhECuQ==
+=WsjF
+-----END PGP SIGNATURE-----
 
-
-> Thanks,
-> Paul.
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+--Sig_/8cPpKA4fRiq1UK1fHbuMCvQ--
