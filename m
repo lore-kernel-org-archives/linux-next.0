@@ -1,40 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the fuse tree
-Date: Wed, 8 May 2019 11:01:37 +1000
-Message-ID: <20190508110137.28f23b3a@canb.auug.org.au>
-References: <20190507095323.4ec2d3f7@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vfs tree with the orangefs tree
+Date: Wed, 8 May 2019 11:02:55 +1000
+Message-ID: <20190508110255.52ce2558@canb.auug.org.au>
+References: <20190503111510.6e866e3b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sD7QpNiwQHF4aCFs.UCn0qx"; protocol="application/pgp-signature"
+ boundary="Sig_/mFKah/s06g_pbu_IdFbkSiv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190507095323.4ec2d3f7@canb.auug.org.au>
+In-Reply-To: <20190503111510.6e866e3b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, zhangliguang <zhangliguang@linux.alibaba.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Mike Marshall <hubcap@omnibond.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Brandenburg <martin@omnibond.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/sD7QpNiwQHF4aCFs.UCn0qx
+--Sig_/mFKah/s06g_pbu_IdFbkSiv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 7 May 2019 09:53:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+On Fri, 3 May 2019 11:15:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
 >
-> Hi all,
->=20
 > Today's linux-next merge of the vfs tree got a conflict in:
 >=20
->   fs/fuse/inode.c
+>   fs/orangefs/super.c
 >=20
 > between commit:
 >=20
->   829f949b6e06 ("fuse: clean up fuse_alloc_inode")
+>   77becb76042a ("orangefs: implement xattr cache")
 >=20
-> from the fuse tree and commit:
+> from the orangefs tree and commit:
 >=20
->   9baf28bbfea1 ("fuse: switch to ->free_inode()")
+>   f276ae0dd6d0 ("orangefs: make use of ->free_inode()")
 >=20
 > from the vfs tree.
 >=20
@@ -49,61 +47,82 @@ rote:
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc fs/fuse/inode.c
-> index bc02bad1be7c,f485d09d14df..000000000000
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@@ -102,25 -104,16 +102,16 @@@ static struct inode *fuse_alloc_inode(s
->   		return NULL;
->   	}
->  =20
->  -	return inode;
->  +	return &fi->inode;
+> diff --cc fs/orangefs/super.c
+> index 8fa30c13b7ed,3784f7e8b603..000000000000
+> --- a/fs/orangefs/super.c
+> +++ b/fs/orangefs/super.c
+> @@@ -125,20 -124,9 +125,19 @@@ static struct inode *orangefs_alloc_ino
+>   	return &orangefs_inode->vfs_inode;
 >   }
 >  =20
-> - static void fuse_i_callback(struct rcu_head *head)
-> - {
-> - 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
-> - 	kmem_cache_free(fuse_inode_cachep, get_fuse_inode(inode));
-> - }
-> -=20
-> - static void fuse_destroy_inode(struct inode *inode)
-> + static void fuse_free_inode(struct inode *inode)
+> - static void orangefs_i_callback(struct rcu_head *head)
+> + static void orangefs_free_inode(struct inode *inode)
 >   {
->   	struct fuse_inode *fi =3D get_fuse_inode(inode);
-> - 	if (S_ISREG(inode->i_mode) && !is_bad_inode(inode)) {
-> - 		WARN_ON(!list_empty(&fi->write_files));
-> - 		WARN_ON(!list_empty(&fi->queued_writes));
-> - 	}
-> +=20
->   	mutex_destroy(&fi->mutex);
->   	kfree(fi->forget);
-> - 	call_rcu(&inode->i_rcu, fuse_i_callback);
-> + 	kmem_cache_free(fuse_inode_cachep, fi);
+> - 	struct inode *inode =3D container_of(head, struct inode, i_rcu);
+>  -	kmem_cache_free(orangefs_inode_cache, ORANGEFS_I(inode));
+>  +	struct orangefs_inode_s *orangefs_inode =3D ORANGEFS_I(inode);
+>  +	struct orangefs_cached_xattr *cx;
+>  +	struct hlist_node *tmp;
+>  +	int i;
+>  +
+>  +	hash_for_each_safe(orangefs_inode->xattr_cache, i, tmp, cx, node) {
+>  +		hlist_del(&cx->node);
+>  +		kfree(cx);
+>  +	}
+>  +
+>  +	kmem_cache_free(orangefs_inode_cache, orangefs_inode);
 >   }
 >  =20
->   static void fuse_evict_inode(struct inode *inode)
+>   static void orangefs_destroy_inode(struct inode *inode)
+> @@@ -148,17 -136,8 +147,15 @@@
+>   	gossip_debug(GOSSIP_SUPER_DEBUG,
+>   			"%s: deallocated %p destroying inode %pU\n",
+>   			__func__, orangefs_inode, get_khandle_from_ino(inode));
+> -=20
+> - 	call_rcu(&inode->i_rcu, orangefs_i_callback);
+>   }
+>  =20
+>  +static int orangefs_write_inode(struct inode *inode,
+>  +				struct writeback_control *wbc)
+>  +{
+>  +	gossip_debug(GOSSIP_SUPER_DEBUG, "orangefs_write_inode\n");
+>  +	return orangefs_inode_setattr(inode);
+>  +}
+>  +
+>   /*
+>    * NOTE: information filled in here is typically reflected in the
+>    * output of the system command 'df'
+> @@@ -316,8 -295,8 +313,9 @@@ void fsid_key_table_finalize(void
+>  =20
+>   static const struct super_operations orangefs_s_ops =3D {
+>   	.alloc_inode =3D orangefs_alloc_inode,
+> + 	.free_inode =3D orangefs_free_inode,
+>   	.destroy_inode =3D orangefs_destroy_inode,
+>  +	.write_inode =3D orangefs_write_inode,
+>   	.drop_inode =3D generic_delete_inode,
+>   	.statfs =3D orangefs_statfs,
+>   	.remount_fs =3D orangefs_remount_fs,
 
-This is now a conflict between the fuse tree and Linus' tree.
+This is now a conflict between the orangefs tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/sD7QpNiwQHF4aCFs.UCn0qx
+--Sig_/mFKah/s06g_pbu_IdFbkSiv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzSKnEACgkQAVBC80lX
-0GwcoQgAnegk0Y1z9VKvek8GxxiQW+0PnWxE0f9YqU1QGbhs5EApVqu85jBK9ft5
-lLY+bmRfoNDhH4yj+hZ6IUJ0l84hvyHUj92CiABw7yE4hOVrxTKZl83nGLRu9jax
-7aU4FhQD1Gx1BO2aRQIytlBElKAx8gTwG1s5n0PAMtXrHQDDC8WsVjiBKqpg9tTr
-xJc0Pf8i7umKNcDhDUOpUKJoqpjErShuqo4tAb8YhnNoNzefKIkrn3z+NKdyDkB3
-cqHIuw8pT/EtqzGhZaIKaxUIMsD8+u8Oa2oakoVCzYEZFXxK7W+iMXAuE9H69ZSP
-W6wUmWfj/7hmxzfFhp/liWOJiwyryA==
-=kQjJ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzSKr8ACgkQAVBC80lX
+0GwrAAf9FtwBBdi03JFGG9l2IjjjJf9pOinYs92SKyDIPizWAqc01T2kafzGDhgY
+wYZNk9ZAvlODZk10z4Zk1r1KEFVBqcRsB3Enp8oQx14RRjI3d9vB1XLGHE7R3ahS
+lgpQIYmAljQpNy5tYPwO7pk8gMPAHVL1YukCWUUcY67rj9LB3xUD5C0ctzRjhDxb
+1N486Cd/7tzLoIPsYDo5VyCq2BMdlLX79URxcvX9y5WsF5Do1MtOt7Cez6SlA9T7
+AAgJ3AMM0XS8dK3XeyctNqZZCTrcUDNpsqF3OUK2oyvEag3jNJtEaTGrPT+b+XFW
+KjNjB8AYxTd8HpAkuIhjuh8V31ZZOw==
+=UUIB
 -----END PGP SIGNATURE-----
 
---Sig_/sD7QpNiwQHF4aCFs.UCn0qx--
+--Sig_/mFKah/s06g_pbu_IdFbkSiv--
