@@ -1,102 +1,85 @@
-From: Rajat Jain <rajatja@google.com>
-Subject: Re: linux-next: Tree for May 8 (drivers/platform/x86/intel_pmc_core_plat_drv.c)
-Date: Wed, 8 May 2019 16:15:21 -0700
-Message-ID: <CACK8Z6F2v8nyUYcnOrkp81WfK2D2NEmK=pcWybn1annrtqRwew@mail.gmail.com>
-References: <20190508173403.6088d0db@canb.auug.org.au> <fa0e68b2-b839-b187-150c-13391c197b99@infradead.org>
- <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com>
+From: Roman Gushchin <guro@fb.com>
+Subject: Re: [next-20190507][powerpc] WARN kernel/cgroup/cgroup.c:6008 with
+ LTP ptrace01 test case
+Date: Wed, 8 May 2019 23:23:43 +0000
+Message-ID: <20190508232338.GB1104@tower.DHCP.thefacebook.com>
+References: <A8995C41-9A8F-468C-89B2-AB6E44C7EADC@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>, Vishwanath Somayaji <vishwanath.somayaji@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <A8995C41-9A8F-468C-89B2-AB6E44C7EADC@linux.vnet.ibm.com>
+Content-Language: en-US
+Content-ID: <D6B81B6E0B27A043BA6B677A90CDEE32@namprd15.prod.outlook.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Cc: Tejun Heo <tj@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Oleg Nesterov <oleg@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, May 8, 2019 at 2:22 PM
-To: Randy Dunlap
-Cc: Stephen Rothwell, Linux Next Mailing List, Linux Kernel Mailing
-List, Rajat Jain, Platform Driver, Rajneesh Bhardwaj, Vishwanath
-Somayaji
-
-> On Wed, May 8, 2019 at 11:45 PM Randy Dunlap <rdunlap@infradead.org> wrot=
-e:
-> >
-> > On 5/8/19 12:34 AM, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > Changes since 20190507:
-> > >
-> > > The ubifs tree gained a conflict against Linus' tree.
-> > >
-> >
-> > on i386 or x86_64:
->
-> Thank you for report. Can you provide what is the config option for
-> this module? I suppose it's built-in.
-> Rajat, I will drop this from the repo, because I don't see it would
-> have a chance to be tested in time.
-
-
-OK, NP. Just to be sure I understand,
-
-1) Please let me know if I should send in a fix (it would be
-#include/linux/module.h and also add MODULE_LICENSE() I believe)?
-2) Would this be lined up for next version though?
-
-Thanks,
-Rajat
-
-
->
->
-> >
-> >
-> >   CC      drivers/platform/x86/intel_pmc_core_plat_drv.o
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:40:1: warning: data d=
-efinition has no type or storage class [enabled by default]
-> >  MODULE_DEVICE_TABLE(x86cpu, intel_pmc_core_platform_ids);
-> >  ^
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:40:1: error: type def=
-aults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98MODULE_DEVICE_TAB=
-LE=E2=80=99 [-Werror=3Dimplicit-int]
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:40:1: warning: parame=
-ter names (without types) in function declaration [enabled by default]
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:59:1: warning: data d=
-efinition has no type or storage class [enabled by default]
-> >  module_init(pmc_core_platform_init);
-> >  ^
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:59:1: error: type def=
-aults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98module_init=E2=80=
-=99 [-Werror=3Dimplicit-int]
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:59:1: warning: parame=
-ter names (without types) in function declaration [enabled by default]
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:60:1: warning: data d=
-efinition has no type or storage class [enabled by default]
-> >  module_exit(pmc_core_platform_exit);
-> >  ^
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:60:1: error: type def=
-aults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98module_exit=E2=80=
-=99 [-Werror=3Dimplicit-int]
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:60:1: warning: parame=
-ter names (without types) in function declaration [enabled by default]
-> > ../drivers/platform/x86/intel_pmc_core_plat_drv.c:42:19: warning: =E2=
-=80=98pmc_core_platform_init=E2=80=99 defined but not used [-Wunused-functi=
-on]
-> >  static int __init pmc_core_platform_init(void)
-> >                    ^
-> >
-> > and
-> > WARNING: modpost: missing MODULE_LICENSE() in drivers/platform/x86/inte=
-l_pmc_core_plat_drv.o
-> >
-> > --
-> > ~Randy
->
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+T24gV2VkLCBNYXkgMDgsIDIwMTkgYXQgMDM6MDY6MzBQTSArMDUzMCwgU2FjaGluIFNhbnQgd3Jv
+dGU6DQo+IFdoaWxlIHJ1bm5pbmcgTFRQIHRlc3RzKHNwZWNpZmljYWxseSBwdHJhY2UwMSkgZm9s
+bG93aW5nIFdBUk5JTkcgaXMgb2JzZXJ2ZWQNCj4gb24gUE9XRVI4IExQQVIgcnVubmluZyBuZXh0
+LTIwMTkwNTA3IGJ1aWx0IHVzaW5nIDRLIHBhZ2Ugc2l6ZS4NCj4gDQo+IFsgMzk2OS45Nzk0OTJd
+IG1zZ3JjdjA0ICg0MzMpIHVzZWQgZ3JlYXRlc3Qgc3RhY2sgZGVwdGg6IDkzMjggYnl0ZXMgbGVm
+dA0KPiBbIDM5ODEuNDUyOTExXSBtYWR2aXNlMDYgKDUxNSk6IGRyb3BfY2FjaGVzOiAzDQo+IFsg
+NDAwNC41NzU3NTJdIFdBUk5JTkc6IENQVTogNSBQSUQ6IDcyMSBhdCBrZXJuZWwvY2dyb3VwL2Nn
+cm91cC5jOjYwMDggY2dyb3VwX2V4aXQrMHgyYWMvMHgyYzANCj4gWyA0MDA0LjU3NTc4MV0gTW9k
+dWxlcyBsaW5rZWQgaW46IG92ZXJsYXkgcnBhZGxwYXJfaW8gcnBhcGhwIGlwdGFibGVfbWFuZ2xl
+IHh0X01BU1FVRVJBREUgaXB0YWJsZV9uYXQgbmZfbmF0IHh0X2Nvbm50cmFjayBuZl9jb25udHJh
+Y2sgbmZfZGVmcmFnX2lwdjQgaXB0X1JFSkVDVCBuZl9yZWplY3RfaXB2NCB4dF90Y3B1ZHAgdHVu
+IGJyaWRnZSBzdHAgbGxjIGt2bSBpcHRhYmxlX2ZpbHRlciBwc2VyaWVzX3JuZyBybmdfY29yZSB2
+bXhfY3J5cHRvIGlwX3RhYmxlcyB4X3RhYmxlcyBhdXRvZnM0IFtsYXN0IHVubG9hZGVkOiBkdW1t
+eV9kZWxfbW9kXQ0KPiBbIDQwMDQuNTc1ODM3XSBDUFU6IDUgUElEOiA3MjEgQ29tbTogcHRyYWNl
+MDEgVGFpbnRlZDogRyAgICAgICAgICAgTyAgICAgIDUuMS4wLW5leHQtMjAxOTA1MDctYXV0b3Rl
+c3QgIzENCj4gWyA0MDA0LjU3NTg0Nl0gTklQOiAgYzAwMDAwMDAwMWIzMDI2YyBMUjogYzAwMDAw
+MDAwMWIzMDA1NCBDVFI6IGMwMDAwMDAwMDFjOWYwMjANCj4gWyA0MDA0LjU3NTg1NV0gUkVHUzog
+YzAwMDAwMDE3MWZmZjg0MCBUUkFQOiAwNzAwICAgVGFpbnRlZDogRyAgICAgICAgICAgTyAgICAg
+ICAoNS4xLjAtbmV4dC0yMDE5MDUwNy1hdXRvdGVzdCkNCj4gWyA0MDA0LjU3NTg2M10gTVNSOiAg
+ODAwMDAwMDEwMjgyYjAzMyA8U0YsVkVDLFZTWCxFRSxGUCxNRSxJUixEUixSSSxMRSxUTVtFXT4g
+IENSOiA0NDAwNDgyNCAgWEVSOiAyMDAwMDAwMA0KPiBbIDQwMDQuNTc1ODg1XSBDRkFSOiBjMDAw
+MDAwMDAxYjMwMDc4IElSUU1BU0s6IDEgDQo+IFsgNDAwNC41NzU4ODVdIEdQUjAwOiBjMDAwMDAw
+MDAxYjMwMDU0IGMwMDAwMDAxNzFmZmZhZDAgYzAwMDAwMDAwMzkzODcwMCBjMDAwMDAwMjdiMDJm
+YTE4IA0KPiBbIDQwMDQuNTc1ODg1XSBHUFIwNDogYzAwMDAwMDI3YjAyZmEwMCAwMDAwMDAwMDAw
+MDAwMDAwIGMwMDAwMDAwMDNhZTg3MDAgMDAwMDAwMDAwMDFjMTgwYSANCj4gWyA0MDA0LjU3NTg4
+NV0gR1BSMDg6IDAwMDAwMDAwMDAwMDAwMDEgMDAwMDAwMDAwMDAwMDAwMSBjMDAwMDAwMDAzYWU4
+NzAwIDAwMDAwMDAwMDAwMDAwMDEgDQo+IFsgNDAwNC41NzU4ODVdIEdQUjEyOiAwMDAwMDAwMDAw
+MDA0NDAwIGMwMDAwMDAwMWVjN2VhODAgYzAwMDAwMDAwM2E0ZDY3MCAwMDAwMDAwMDAwMDAwMDA5
+IA0KPiBbIDQwMDQuNTc1ODg1XSBHUFIxNjogMDAwMDAwMDAwMDAwMDAwMCAwMDAwMDAwMDAwMDQw
+MTAwIDAwMDAwMDAwNDE4MDA0ZmMgMDAwMDAwMDAwODQzMDAwMCANCj4gWyA0MDA0LjU3NTg4NV0g
+R1BSMjA6IDAwMDAwMDAwMDAwMDAwMDkgMDAwMDAwMDAwMDAwMDAwMSBjMDAwMDAwMTcxNWU5MjAw
+IGMwMDAwMDAxNmQ4ZjRkMDAgDQo+IFsgNDAwNC41NzU4ODVdIEdQUjI0OiBjMDAwMDAwMTcxZmZm
+ZDkwIDAwMDAwMDAwMDAwMDAxMDAgYzAwMDAwMDE2ODY5MjQ3OCBjMDAwMDAwMTcxZmZmYjk4IA0K
+PiBbIDQwMDQuNTc1ODg1XSBHUFIyODogYzAwMDAwMDE2ODY5MjQwMCBjMDAwMDAwMTZkOGY0ZDAw
+IGMwMDAwMDAwMDM2NDIwZDAgYzAwMDAwMDI3YjAyZmEwMCANCj4gWyA0MDA0LjU3NTk1OF0gTklQ
+IFtjMDAwMDAwMDAxYjMwMjZjXSBjZ3JvdXBfZXhpdCsweDJhYy8weDJjMA0KPiBbIDQwMDQuNTc1
+OTY2XSBMUiBbYzAwMDAwMDAwMWIzMDA1NF0gY2dyb3VwX2V4aXQrMHg5NC8weDJjMA0KPiBbIDQw
+MDQuNTc1OTcyXSBDYWxsIFRyYWNlOg0KPiBbIDQwMDQuNTc1OTc5XSBbYzAwMDAwMDE3MWZmZmFk
+MF0gW2MwMDAwMDAwMDFiMzAwNTRdIGNncm91cF9leGl0KzB4OTQvMHgyYzAgKHVucmVsaWFibGUp
+DQo+IFsgNDAwNC41NzU5OTBdIFtjMDAwMDAwMTcxZmZmYjMwXSBbYzAwMDAwMDAwMTljZWE5OF0g
+ZG9fZXhpdCsweDg3OC8weDFhZTANCj4gWyA0MDA0LjU3NTk5OV0gW2MwMDAwMDAxNzFmZmZjMDBd
+IFtjMDAwMDAwMDAxOWNmZTRjXSBkb19ncm91cF9leGl0KzB4YWMvMHgxZDANCj4gWyA0MDA0LjU3
+NjAwOV0gW2MwMDAwMDAxNzFmZmZjNDBdIFtjMDAwMDAwMDAxOWVkMDBjXSBnZXRfc2lnbmFsKzB4
+MmJjLzB4MTFjMA0KPiBbIDQwMDQuNTc2MDE5XSBbYzAwMDAwMDE3MWZmZmQzMF0gW2MwMDAwMDAw
+MDE4NjdiMTRdIGRvX25vdGlmeV9yZXN1bWUrMHgzODQvMHg5MDANCj4gWyA0MDA0LjU3NjAyOV0g
+W2MwMDAwMDAxNzFmZmZlMjBdIFtjMDAwMDAwMDAxODNlODQ0XSByZXRfZnJvbV9leGNlcHRfbGl0
+ZSsweDcwLzB4NzQNCj4gWyA0MDA0LjU3NjAzN10gSW5zdHJ1Y3Rpb24gZHVtcDoNCj4gWyA0MDA0
+LjU3NjA0M10gMzE0YTAwMDEgN2Q0MDQ5MmQgNDBjMmZmZjQgM2Q0MjAwMWIgZTkyYTcyODggMzky
+OTAwMDEgZjkyYTcyODggNGJmZmZlNWMgDQo+IFsgNDAwNC41NzYwNTZdIDNkNDIwMDFiIGU5MmE3
+MjU4IDM5MjkwMDAxIGY5MmE3MjU4IDwwZmUwMDAwMD4gNGJmZmZlMGMgNGJlOTFlNDUgNjAwMDAw
+MDAgDQo+IFsgNDAwNC41NzYwNzFdIC0tLVsgZW5kIHRyYWNlIDgyYTFhN2MxOTAwNWViZDYgXeKA
+lA0KPiANCj4gVGhlIFdBUk5fT05DRSB3YXMgYWRkZWQgYnkgZm9sbG93aW5nIGNvbW1pdCANCj4g
+OTZiOWM1OTJkZWY1ICgiY2dyb3VwOiBnZXQgcmlkIG9mIGNncm91cF9mcmVlemVyX2Zyb3plbl9l
+eGl0KCnigJ0pLiANCj4gDQo+IFJldmVydGluZyB0aGUgcGF0Y2ggaGVscHMgYXZvaWQgdGhlIHdh
+cm5pbmcuDQoNCkhpIFNhY2hpbiENCg0KVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0IQ0KDQpDYW4g
+eW91LCBwbGVhc2UsIGNoZWNrIHRoYXQgdGhlIHBhdGNoIGF0IGh0dHBzOi8vbGttbC5vcmcvbGtt
+bC8yMDE5LzUvOC85MzgNCnNvbHZlcyB0aGUgcHJvYmxlbT8NCg0KSSdsbCBhcHByZWNpYXRlIGl0
+IQ0KDQpUaGFua3MhDQoNClJvbWFuDQo=
