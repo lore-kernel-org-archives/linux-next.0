@@ -1,72 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tags need some work in the net tree
-Date: Thu, 9 May 2019 07:43:08 +1000
-Message-ID: <20190509074308.7c0ade7d@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the risc-v tree
+Date: Thu, 9 May 2019 07:47:45 +1000
+Message-ID: <20190509074745.65336288@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zd_DhxPtPy7N5zeooSkhzkt"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vladimir Oltean <olteanv@gmail.com>, Hangbin Liu <liuhangbin@gmail.com>
+ boundary="Sig_/JuVz_E.gihc1z=sUgwxe/Hl"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/zd_DhxPtPy7N5zeooSkhzkt
+--Sig_/JuVz_E.gihc1z=sUgwxe/Hl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commits
 
-  3b2c4f4d63a5 ("net: dsa: sja1105: Don't return a negative in u8 sja1105_s=
-tp_state_get")
+  da8e7c379659 ("riscv: Support BUG() in kernel module")
+  564bd22ea4e5 ("riscv: Add the support for c.ebreak check in is_valid_buga=
+ddr()")
+  67363778b72c ("riscv: support trap-based WARN()")
+  efd48cf0b393 ("riscv: fix sbi_remote_sfence_vma{,_asid}.")
+  89f7840cf346 ("riscv: move switch_mm to its own file")
+  8c0e1593f15d ("riscv: move flush_icache_{all,mm} to cacheflush.c")
 
-Fixes tag
-
-  Fixes: 640f763f98c2: ("net: dsa: sja1105: Add support for Spanning Tree P=
-rotocol")
-
-has these problem(s):
-
-  - the ':' after the SHA1 is unexpected
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
-In commit
-
-  e9919a24d302 ("fib_rules: return 0 directly if an exactly same rule exist=
-s when NLM_F_EXCL not supplied")
-
-Fixes tag
-
-  Fixes: 153380ec4b9 ("fib_rules: Added NLM_F_EXCL support to fib_nl_newrul=
-e")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/zd_DhxPtPy7N5zeooSkhzkt
+--Sig_/JuVz_E.gihc1z=sUgwxe/Hl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTTWwACgkQAVBC80lX
-0GxlCgf/b5yD/Wnlo5qm4dcDRcTmKTnt9HgRU7xWAPTZto5fDLbiUsRkyx4+bZHb
-Z+6+drXkIQxh68OIKmpyA/6NItK7GukC5AwaXwz3cwOu6FbWwjSqw2Jbmc3zr1P1
-BWbiKZd9nZtCer+lobMox4aWMOqXjt8XQLaoXABNhsMSMe/NP4/B0YoyHyuVdBDy
-d2IEdL19ReyQeAMGUjQTBE0QgSsfTP2R933BsoFaODw8ApGMBLIij42M74SuIWs+
-eIt2a+Y0nAVjy2uBZ7sjQfVuhz5s36h5xeweaq70vbdteD0eC2u9tNQENjfblxwB
-HsShBhEhqRPsiCGD0LyavIguYLrAeg==
-=G0pe
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTToEACgkQAVBC80lX
+0GwWjwf4wB2YFLNTSbr42lg6yvdodtwSa1b1gHnaFmD8hyc652cB3pgpoZ0fXR8o
+284nZ1WomaqkemWG8hysMSJ6cEM8wU7aTWPkDkI+LdVAoGcsTuPMgTjT+cd09Eac
+cRZTO8YQ9H5nUfmka5yOrUKCvkTUhBdQBJafOo9hZx56lkcojI7utGS0kSfeCDvN
+P0jfDXdZNsqNTzys6lhCiwcZxD0+nmbn2Vh6CTNdH7o3OVOqm/XEy4EPQcpLSXZB
+XYsEjANDK3W2VSZ1RY6mQ48Eaz3k5x+MTxAUZIFsjch9c6FOUk+nyE5lQROPoIoF
+cOW51aynJXYlsUT0onQyXH58AUht
+=ca2D
 -----END PGP SIGNATURE-----
 
---Sig_/zd_DhxPtPy7N5zeooSkhzkt--
+--Sig_/JuVz_E.gihc1z=sUgwxe/Hl--
