@@ -1,95 +1,85 @@
-From: Roman Gushchin <guro@fb.com>
-Subject: Re: [next-20190507][powerpc] WARN kernel/cgroup/cgroup.c:6008 with
- LTP ptrace01 test case
-Date: Thu, 9 May 2019 16:27:02 +0000
-Message-ID: <20190509162656.GA14595@tower.DHCP.thefacebook.com>
-References: <A8995C41-9A8F-468C-89B2-AB6E44C7EADC@linux.vnet.ibm.com>
- <20190508232338.GB1104@tower.DHCP.thefacebook.com>
- <B292CCEE-B9ED-4227-A6F7-ADAD93011F1A@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the netfilter tree with Linus' tree
+Date: Fri, 10 May 2019 08:34:35 +1000
+Message-ID: <20190510083435.68faecf5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <B292CCEE-B9ED-4227-A6F7-ADAD93011F1A@linux.vnet.ibm.com>
-Content-Language: en-US
-Content-ID: <01668A48E493E44389877B03F7C30DD3@namprd15.prod.outlook.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Cc: Tejun Heo <tj@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/h7S8YNgI927TIl05dJJy0b6"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Brett Mastbergen <bmastbergen@untangle.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gVGh1LCBNYXkgMDksIDIwMTkgYXQgMTE6MzU6MzZBTSArMDUzMCwgU2FjaGluIFNhbnQgd3Jv
-dGU6DQo+IA0KPiANCj4gPiBPbiAwOS1NYXktMjAxOSwgYXQgNDo1MyBBTSwgUm9tYW4gR3VzaGNo
-aW4gPGd1cm9AZmIuY29tPiB3cm90ZToNCj4gPiANCj4gPiBPbiBXZWQsIE1heSAwOCwgMjAxOSBh
-dCAwMzowNjozMFBNICswNTMwLCBTYWNoaW4gU2FudCB3cm90ZToNCj4gPj4gV2hpbGUgcnVubmlu
-ZyBMVFAgdGVzdHMoc3BlY2lmaWNhbGx5IHB0cmFjZTAxKSBmb2xsb3dpbmcgV0FSTklORyBpcyBv
-YnNlcnZlZA0KPiA+PiBvbiBQT1dFUjggTFBBUiBydW5uaW5nIG5leHQtMjAxOTA1MDcgYnVpbHQg
-dXNpbmcgNEsgcGFnZSBzaXplLg0KPiA+PiANCj4gPj4gWyAzOTY5Ljk3OTQ5Ml0gbXNncmN2MDQg
-KDQzMykgdXNlZCBncmVhdGVzdCBzdGFjayBkZXB0aDogOTMyOCBieXRlcyBsZWZ0DQo+ID4+IFsg
-Mzk4MS40NTI5MTFdIG1hZHZpc2UwNiAoNTE1KTogZHJvcF9jYWNoZXM6IDMNCj4gPj4gWyA0MDA0
-LjU3NTc1Ml0gV0FSTklORzogQ1BVOiA1IFBJRDogNzIxIGF0IGtlcm5lbC9jZ3JvdXAvY2dyb3Vw
-LmM6NjAwOCBjZ3JvdXBfZXhpdCsweDJhYy8weDJjMA0KPiA+PiBbIDQwMDQuNTc1NzgxXSBNb2R1
-bGVzIGxpbmtlZCBpbjogb3ZlcmxheSBycGFkbHBhcl9pbyBycGFwaHAgaXB0YWJsZV9tYW5nbGUg
-eHRfTUFTUVVFUkFERSBpcHRhYmxlX25hdCBuZl9uYXQgeHRfY29ubnRyYWNrIG5mX2Nvbm50cmFj
-ayBuZl9kZWZyYWdfaXB2NCBpcHRfUkVKRUNUIG5mX3JlamVjdF9pcHY0IHh0X3RjcHVkcCB0dW4g
-YnJpZGdlIHN0cCBsbGMga3ZtIGlwdGFibGVfZmlsdGVyIHBzZXJpZXNfcm5nIHJuZ19jb3JlIHZt
-eF9jcnlwdG8gaXBfdGFibGVzIHhfdGFibGVzIGF1dG9mczQgW2xhc3QgdW5sb2FkZWQ6IGR1bW15
-X2RlbF9tb2RdDQo+ID4+IFsgNDAwNC41NzU4MzddIENQVTogNSBQSUQ6IDcyMSBDb21tOiBwdHJh
-Y2UwMSBUYWludGVkOiBHICAgICAgICAgICBPICAgICAgNS4xLjAtbmV4dC0yMDE5MDUwNy1hdXRv
-dGVzdCAjMQ0KPiA+PiBbIDQwMDQuNTc1ODQ2XSBOSVA6ICBjMDAwMDAwMDAxYjMwMjZjIExSOiBj
-MDAwMDAwMDAxYjMwMDU0IENUUjogYzAwMDAwMDAwMWM5ZjAyMA0KPiA+PiBbIDQwMDQuNTc1ODU1
-XSBSRUdTOiBjMDAwMDAwMTcxZmZmODQwIFRSQVA6IDA3MDAgICBUYWludGVkOiBHICAgICAgICAg
-ICBPICAgICAgICg1LjEuMC1uZXh0LTIwMTkwNTA3LWF1dG90ZXN0KQ0KPiA+PiBbIDQwMDQuNTc1
-ODYzXSBNU1I6ICA4MDAwMDAwMTAyODJiMDMzIDxTRixWRUMsVlNYLEVFLEZQLE1FLElSLERSLFJJ
-LExFLFRNW0VdPiAgQ1I6IDQ0MDA0ODI0ICBYRVI6IDIwMDAwMDAwDQo+ID4+IFsgNDAwNC41NzU4
-ODVdIENGQVI6IGMwMDAwMDAwMDFiMzAwNzggSVJRTUFTSzogMSANCj4gPj4gWyA0MDA0LjU3NTg4
-NV0gR1BSMDA6IGMwMDAwMDAwMDFiMzAwNTQgYzAwMDAwMDE3MWZmZmFkMCBjMDAwMDAwMDAzOTM4
-NzAwIGMwMDAwMDAyN2IwMmZhMTggDQo+ID4+IFsgNDAwNC41NzU4ODVdIEdQUjA0OiBjMDAwMDAw
-MjdiMDJmYTAwIDAwMDAwMDAwMDAwMDAwMDAgYzAwMDAwMDAwM2FlODcwMCAwMDAwMDAwMDAwMWMx
-ODBhIA0KPiA+PiBbIDQwMDQuNTc1ODg1XSBHUFIwODogMDAwMDAwMDAwMDAwMDAwMSAwMDAwMDAw
-MDAwMDAwMDAxIGMwMDAwMDAwMDNhZTg3MDAgMDAwMDAwMDAwMDAwMDAwMSANCj4gPj4gWyA0MDA0
-LjU3NTg4NV0gR1BSMTI6IDAwMDAwMDAwMDAwMDQ0MDAgYzAwMDAwMDAxZWM3ZWE4MCBjMDAwMDAw
-MDAzYTRkNjcwIDAwMDAwMDAwMDAwMDAwMDkgDQo+ID4+IFsgNDAwNC41NzU4ODVdIEdQUjE2OiAw
-MDAwMDAwMDAwMDAwMDAwIDAwMDAwMDAwMDAwNDAxMDAgMDAwMDAwMDA0MTgwMDRmYyAwMDAwMDAw
-MDA4NDMwMDAwIA0KPiA+PiBbIDQwMDQuNTc1ODg1XSBHUFIyMDogMDAwMDAwMDAwMDAwMDAwOSAw
-MDAwMDAwMDAwMDAwMDAxIGMwMDAwMDAxNzE1ZTkyMDAgYzAwMDAwMDE2ZDhmNGQwMCANCj4gPj4g
-WyA0MDA0LjU3NTg4NV0gR1BSMjQ6IGMwMDAwMDAxNzFmZmZkOTAgMDAwMDAwMDAwMDAwMDEwMCBj
-MDAwMDAwMTY4NjkyNDc4IGMwMDAwMDAxNzFmZmZiOTggDQo+ID4+IFsgNDAwNC41NzU4ODVdIEdQ
-UjI4OiBjMDAwMDAwMTY4NjkyNDAwIGMwMDAwMDAxNmQ4ZjRkMDAgYzAwMDAwMDAwMzY0MjBkMCBj
-MDAwMDAwMjdiMDJmYTAwIA0KPiA+PiBbIDQwMDQuNTc1OTU4XSBOSVAgW2MwMDAwMDAwMDFiMzAy
-NmNdIGNncm91cF9leGl0KzB4MmFjLzB4MmMwDQo+ID4+IFsgNDAwNC41NzU5NjZdIExSIFtjMDAw
-MDAwMDAxYjMwMDU0XSBjZ3JvdXBfZXhpdCsweDk0LzB4MmMwDQo+ID4+IFsgNDAwNC41NzU5NzJd
-IENhbGwgVHJhY2U6DQo+ID4+IFsgNDAwNC41NzU5NzldIFtjMDAwMDAwMTcxZmZmYWQwXSBbYzAw
-MDAwMDAwMWIzMDA1NF0gY2dyb3VwX2V4aXQrMHg5NC8weDJjMCAodW5yZWxpYWJsZSkNCj4gPj4g
-WyA0MDA0LjU3NTk5MF0gW2MwMDAwMDAxNzFmZmZiMzBdIFtjMDAwMDAwMDAxOWNlYTk4XSBkb19l
-eGl0KzB4ODc4LzB4MWFlMA0KPiA+PiBbIDQwMDQuNTc1OTk5XSBbYzAwMDAwMDE3MWZmZmMwMF0g
-W2MwMDAwMDAwMDE5Y2ZlNGNdIGRvX2dyb3VwX2V4aXQrMHhhYy8weDFkMA0KPiA+PiBbIDQwMDQu
-NTc2MDA5XSBbYzAwMDAwMDE3MWZmZmM0MF0gW2MwMDAwMDAwMDE5ZWQwMGNdIGdldF9zaWduYWwr
-MHgyYmMvMHgxMWMwDQo+ID4+IFsgNDAwNC41NzYwMTldIFtjMDAwMDAwMTcxZmZmZDMwXSBbYzAw
-MDAwMDAwMTg2N2IxNF0gZG9fbm90aWZ5X3Jlc3VtZSsweDM4NC8weDkwMA0KPiA+PiBbIDQwMDQu
-NTc2MDI5XSBbYzAwMDAwMDE3MWZmZmUyMF0gW2MwMDAwMDAwMDE4M2U4NDRdIHJldF9mcm9tX2V4
-Y2VwdF9saXRlKzB4NzAvMHg3NA0KPiA+PiBbIDQwMDQuNTc2MDM3XSBJbnN0cnVjdGlvbiBkdW1w
-Og0KPiA+PiBbIDQwMDQuNTc2MDQzXSAzMTRhMDAwMSA3ZDQwNDkyZCA0MGMyZmZmNCAzZDQyMDAx
-YiBlOTJhNzI4OCAzOTI5MDAwMSBmOTJhNzI4OCA0YmZmZmU1YyANCj4gPj4gWyA0MDA0LjU3NjA1
-Nl0gM2Q0MjAwMWIgZTkyYTcyNTggMzkyOTAwMDEgZjkyYTcyNTggPDBmZTAwMDAwPiA0YmZmZmUw
-YyA0YmU5MWU0NSA2MDAwMDAwMCANCj4gPj4gWyA0MDA0LjU3NjA3MV0gLS0tWyBlbmQgdHJhY2Ug
-ODJhMWE3YzE5MDA1ZWJkNiBd4oCUDQo+ID4+IA0KPiA+PiBUaGUgV0FSTl9PTkNFIHdhcyBhZGRl
-ZCBieSBmb2xsb3dpbmcgY29tbWl0IA0KPiA+PiA5NmI5YzU5MmRlZjUgKCJjZ3JvdXA6IGdldCBy
-aWQgb2YgY2dyb3VwX2ZyZWV6ZXJfZnJvemVuX2V4aXQoKeKAnSkuIA0KPiA+PiANCj4gPj4gUmV2
-ZXJ0aW5nIHRoZSBwYXRjaCBoZWxwcyBhdm9pZCB0aGUgd2FybmluZy4NCj4gPiANCj4gPiBIaSBT
-YWNoaW4hDQo+ID4gDQo+ID4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0IQ0KPiA+IA0KPiA+IENh
-biB5b3UsIHBsZWFzZSwgY2hlY2sgdGhhdCB0aGUgcGF0Y2ggYXQgaHR0cHM6Ly9sa21sLm9yZy9s
-a21sLzIwMTkvNS84LzkzOCA8aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvNS84LzkzOD4NCj4g
-PiBzb2x2ZXMgdGhlIHByb2JsZW0/DQo+ID4gDQo+IFRoaXMgcGF0Y2ggZml4ZXMgdGhlIHByb2Js
-ZW0gZm9yIG1lLg0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb25maXJtYXRpb24hDQoNClRoZSBwYXRj
-aCBoYXMganVzdCBiZWVuIHB1bGxlZCBpbnRvIHRoZSBjZ3JvdXAgdHJlZSwNCmFuZCB3aWxsIGFw
-cGVhciBpbiBuZXh0IHNvb24uDQoNCg0KVGhhbmtzIQ0K
+--Sig_/h7S8YNgI927TIl05dJJy0b6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the netfilter tree got a conflict in:
+
+  include/uapi/linux/netfilter/nf_tables.h
+
+between commit:
+
+  3087c3f7c23b ("netfilter: nft_ct: Add ct id support")
+
+from Linus' tree and commit:
+
+  c6c9c0596c21 ("netfilter: nf_tables: remove NFT_CT_TIMEOUT")
+
+from the netfilter tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/uapi/linux/netfilter/nf_tables.h
+index f0cf7b0f4f35,92bb1e2b2425..000000000000
+--- a/include/uapi/linux/netfilter/nf_tables.h
++++ b/include/uapi/linux/netfilter/nf_tables.h
+@@@ -966,8 -966,6 +966,7 @@@ enum nft_socket_keys=20
+   * @NFT_CT_DST_IP: conntrack layer 3 protocol destination (IPv4 address)
+   * @NFT_CT_SRC_IP6: conntrack layer 3 protocol source (IPv6 address)
+   * @NFT_CT_DST_IP6: conntrack layer 3 protocol destination (IPv6 address)
+-  * @NFT_CT_TIMEOUT: connection tracking timeout policy assigned to conntr=
+ack
+ + * @NFT_CT_ID: conntrack id
+   */
+  enum nft_ct_keys {
+  	NFT_CT_STATE,
+@@@ -993,8 -991,6 +992,7 @@@
+  	NFT_CT_DST_IP,
+  	NFT_CT_SRC_IP6,
+  	NFT_CT_DST_IP6,
+- 	NFT_CT_TIMEOUT,
+ +	NFT_CT_ID,
+  	__NFT_CT_MAX
+  };
+  #define NFT_CT_MAX		(__NFT_CT_MAX - 1)
+
+--Sig_/h7S8YNgI927TIl05dJJy0b6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzUqvsACgkQAVBC80lX
+0GxnZAf/SdTlpbKzDuxhI5RBK2yQNcTv6GgKfwVURQRdDOIjqr4jpzkRcd3zbVCh
+mFX+mAR1xmJ13MeSZ1Cis7o58GfkZuNV/i3GxKl4l7GSEtU6gAscrqqXnZ66wdd/
+oAlNyJLpmIpsL/rs9E5MWK/ZavrsYU4eQLLzqZvO63wx8zTYlhvyVpr3IF2pCyjb
+wUZgxUz4i1blraY756ULGw1G/vWHbWmbZEVbTubXzugYgqTfZqi1xSA3BjYM6Hvs
+yRRj1AZ4qOlhzyFe2UwUHXWJv+TgECO9iBpELW7IsUOsNqJaAZnQZ6WH5WxF9IwC
+FD/5SCnPAXGFHY6/CQf4Fu9wwdjuPA==
+=sJiz
+-----END PGP SIGNATURE-----
+
+--Sig_/h7S8YNgI927TIl05dJJy0b6--
