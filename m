@@ -1,125 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
-Date: Thu, 9 May 2019 10:44:09 +1000
-Message-ID: <20190509104409.68446da2@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
+ tree
+Date: Thu, 9 May 2019 11:07:24 +1000
+Message-ID: <20190509110724.6694d991@canb.auug.org.au>
+References: <20190430135846.0c17df6e@canb.auug.org.au>
+        <20190506140147.23d41ac1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/y.FCpf7A_lHx=q1IALCGru4"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Kitt <steve@sk2.org>, Ingo Molnar <mingo@kernel.org>, Changbin Du <changbin.du@gmail.com>
+ boundary="Sig_/n5dCGEwjrWyPV6gM/vr=LWj"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190506140147.23d41ac1@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Networking <netdev@vger.kernel.org>
+Cc: Leon Romanovsky <leon@kernel.org>, David Miller <davem@davemloft.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vu Pham <vuhuong@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Mark Bloch <markb@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/y.FCpf7A_lHx=q1IALCGru4
+--Sig_/n5dCGEwjrWyPV6gM/vr=LWj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jon,
+Hi all,
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+On Mon, 6 May 2019 14:01:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Hi all,
+>=20
+> On Tue, 30 Apr 2019 13:58:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Hi Leon,
+> >=20
+> > Today's linux-next merge of the mlx5-next tree got a conflict in:
+> >=20
+> >   drivers/infiniband/hw/mlx5/main.c
+> >=20
+> > between commit:
+> >=20
+> >   35b0aa67b298 ("RDMA/mlx5: Refactor netdev affinity code")
+> >=20
+> > from the rdma tree and commit:
+> >=20
+> >   c42260f19545 ("net/mlx5: Separate and generalize dma device from pci =
+device")
+> >=20
+> > from the mlx5-next tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> >=20
+> > --=20
+> > Cheers,
+> > Stephen Rothwell
+> >=20
+> > diff --cc drivers/infiniband/hw/mlx5/main.c
+> > index 6135a0b285de,fae6a6a1fbea..000000000000
+> > --- a/drivers/infiniband/hw/mlx5/main.c
+> > +++ b/drivers/infiniband/hw/mlx5/main.c
+> > @@@ -200,12 -172,18 +200,12 @@@ static int mlx5_netdev_event(struct not
+> >  =20
+> >   	switch (event) {
+> >   	case NETDEV_REGISTER:
+> >  +		/* Should already be registered during the load */
+> >  +		if (ibdev->is_rep)
+> >  +			break;
+> >   		write_lock(&roce->netdev_lock);
+> > - 		if (ndev->dev.parent =3D=3D &mdev->pdev->dev)
+> >  -		if (ibdev->rep) {
+> >  -			struct mlx5_eswitch *esw =3D ibdev->mdev->priv.eswitch;
+> >  -			struct net_device *rep_ndev;
+> >  -
+> >  -			rep_ndev =3D mlx5_ib_get_rep_netdev(esw,
+> >  -							  ibdev->rep->vport);
+> >  -			if (rep_ndev =3D=3D ndev)
+> >  -				roce->netdev =3D ndev;
+> >  -		} else if (ndev->dev.parent =3D=3D mdev->device) {
+> > ++		if (ndev->dev.parent =3D=3D mdev->device)
+> >   			roce->netdev =3D ndev;
+> >  -		}
+> >   		write_unlock(&roce->netdev_lock);
+> >   		break;
+> >    =20
+>=20
+> This is now a conflict between the net-next tree and the rdma tree.
 
-  Documentation/x86/x86_64/mm.txt
-
-between commit:
-
-  89502a019790 ("x86/mm: Fix the 56-bit addresses memory map in Documentati=
-on/x86/x86_64/mm.txt")
-
-from Linus' tree and commit:
-
-  b88679d2f2b9 ("Documentation: x86: convert x86_64/mm.txt to reST")
-
-from the jc_docs tree.
-
-I fixed it up (I deleted the file and added teh following patch) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 9 May 2019 10:39:31 +1000
-Subject: [PATCH] Documentation: x86: update for "x86/mm: Fix the 56-bit
- addresses memory map in Documentation/x86/x86_64/mm.txt"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- Documentation/x86/x86_64/mm.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/x86/x86_64/mm.rst b/Documentation/x86/x86_64/mm.=
-rst
-index 52020577b8de..267fc4808945 100644
---- a/Documentation/x86/x86_64/mm.rst
-+++ b/Documentation/x86/x86_64/mm.rst
-@@ -78,7 +78,7 @@ Complete virtual memory map with 5-level page tables
- .. note::
-=20
-  - With 56-bit addresses, user-space memory gets expanded by a factor of 5=
-12x,
--   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PT st=
-arting
-+   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PB st=
-arting
-    offset and many of the regions expand to support the much larger physic=
-al
-    memory supported.
-=20
-@@ -91,7 +91,7 @@ Complete virtual memory map with 5-level page tables
-    0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space=
- virtual memory, different per mm
-   __________________|____________|__________________|_________|___________=
-________________________________________________
-                     |            |                  |         |
--   0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, =
-still almost 64 bits wide hole of non-canonical
-+   0100000000000000 |  +64    PB | feffffffffffffff | ~16K PB | ... huge, =
-still almost 64 bits wide hole of non-canonical
-                     |            |                  |         |     virtua=
-l memory addresses up to the -64 PB
-                     |            |                  |         |     starti=
-ng offset of kernel mappings.
-   __________________|____________|__________________|_________|___________=
-________________________________________________
-@@ -107,7 +107,7 @@ Complete virtual memory map with 5-level page tables
-    ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused=
- hole
-    ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual me=
-mory map (vmemmap_base)
-    ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused=
- hole
--   ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shad=
-ow memory
-+   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
-ow memory
-   __________________|____________|__________________|_________|___________=
-_________________________________________________
-                                                               |
-                                                               | Identical =
-layout to the 47-bit one from here on:
---=20
-2.20.1
+And now between the rdma tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/y.FCpf7A_lHx=q1IALCGru4
+--Sig_/n5dCGEwjrWyPV6gM/vr=LWj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTd9kACgkQAVBC80lX
-0GxfGAf7BBWJrE0RI4QacHN00po1z2E42QcpgQ+VqkgLIyMxjjU/CD+TUfalLoLR
-gsOH1/U5jhxsltyf4V04CGoBCGHMK3557doSJDL9b8MGXLgtT4mAsPgT0twQ10TA
-teYdpHvgdJNimsQCuuCc08Xj7cdGCQk9yQ4aOvQ1D6MjW9GtNkjSdJoSwthQlgtx
-mvoeJc08tAi6lfz3Ggv+4S5/PsMjuVIOIrbqC97GNmjovHVRHg2eZYAgCbfaEbfU
-9E5zknJHxT4alxlYql5SZd6hiP8WrLsuniHkqXhZC/1L17moV/y+ZfT9lDGfGCZi
-Jixvn+LIsR4PSX2z4nVUCaixqRmN4w==
-=MxAi
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTfUwACgkQAVBC80lX
+0GwMrQf/VkAhwibKjn27GJoRox74VtVB3guRMFjw+TsMO5fCNIdGkRtROoHV7Fgi
+AtbKH6CQXw54+q+2sHbPqBvOb9tmsPshuDJ8jvwzp989QNGHrbIshDLvOJLhRUhl
+XLjf+jIHazXYa5w/7JIELz9JOGgJ6ySOvFjwrpvjGDEUtWcxzWMvzDhq9cOYDf/n
+szEpKMRvAo9UgTqCzEVW/HMypUfJp7c/yESFz5iildGt91IR0t62aLZC9u4rBPij
+NAlXWQyHewIcp5bJFgIxwn4cJeIXanpB4ax8MGuHhdHrj864eo6AeRNPuEXoLVvD
+Y7mG1T8oFfei+wr6/NP+P0TSdBVugw==
+=VkZ9
 -----END PGP SIGNATURE-----
 
---Sig_/y.FCpf7A_lHx=q1IALCGru4--
+--Sig_/n5dCGEwjrWyPV6gM/vr=LWj--
