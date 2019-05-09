@@ -1,85 +1,125 @@
-From: Roman Gushchin <guro@fb.com>
-Subject: Re: [next-20190507][powerpc] WARN kernel/cgroup/cgroup.c:6008 with
- LTP ptrace01 test case
-Date: Wed, 8 May 2019 23:23:43 +0000
-Message-ID: <20190508232338.GB1104@tower.DHCP.thefacebook.com>
-References: <A8995C41-9A8F-468C-89B2-AB6E44C7EADC@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
+Date: Thu, 9 May 2019 10:44:09 +1000
+Message-ID: <20190509104409.68446da2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <A8995C41-9A8F-468C-89B2-AB6E44C7EADC@linux.vnet.ibm.com>
-Content-Language: en-US
-Content-ID: <D6B81B6E0B27A043BA6B677A90CDEE32@namprd15.prod.outlook.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Cc: Tejun Heo <tj@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/y.FCpf7A_lHx=q1IALCGru4"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Kitt <steve@sk2.org>, Ingo Molnar <mingo@kernel.org>, Changbin Du <changbin.du@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gV2VkLCBNYXkgMDgsIDIwMTkgYXQgMDM6MDY6MzBQTSArMDUzMCwgU2FjaGluIFNhbnQgd3Jv
-dGU6DQo+IFdoaWxlIHJ1bm5pbmcgTFRQIHRlc3RzKHNwZWNpZmljYWxseSBwdHJhY2UwMSkgZm9s
-bG93aW5nIFdBUk5JTkcgaXMgb2JzZXJ2ZWQNCj4gb24gUE9XRVI4IExQQVIgcnVubmluZyBuZXh0
-LTIwMTkwNTA3IGJ1aWx0IHVzaW5nIDRLIHBhZ2Ugc2l6ZS4NCj4gDQo+IFsgMzk2OS45Nzk0OTJd
-IG1zZ3JjdjA0ICg0MzMpIHVzZWQgZ3JlYXRlc3Qgc3RhY2sgZGVwdGg6IDkzMjggYnl0ZXMgbGVm
-dA0KPiBbIDM5ODEuNDUyOTExXSBtYWR2aXNlMDYgKDUxNSk6IGRyb3BfY2FjaGVzOiAzDQo+IFsg
-NDAwNC41NzU3NTJdIFdBUk5JTkc6IENQVTogNSBQSUQ6IDcyMSBhdCBrZXJuZWwvY2dyb3VwL2Nn
-cm91cC5jOjYwMDggY2dyb3VwX2V4aXQrMHgyYWMvMHgyYzANCj4gWyA0MDA0LjU3NTc4MV0gTW9k
-dWxlcyBsaW5rZWQgaW46IG92ZXJsYXkgcnBhZGxwYXJfaW8gcnBhcGhwIGlwdGFibGVfbWFuZ2xl
-IHh0X01BU1FVRVJBREUgaXB0YWJsZV9uYXQgbmZfbmF0IHh0X2Nvbm50cmFjayBuZl9jb25udHJh
-Y2sgbmZfZGVmcmFnX2lwdjQgaXB0X1JFSkVDVCBuZl9yZWplY3RfaXB2NCB4dF90Y3B1ZHAgdHVu
-IGJyaWRnZSBzdHAgbGxjIGt2bSBpcHRhYmxlX2ZpbHRlciBwc2VyaWVzX3JuZyBybmdfY29yZSB2
-bXhfY3J5cHRvIGlwX3RhYmxlcyB4X3RhYmxlcyBhdXRvZnM0IFtsYXN0IHVubG9hZGVkOiBkdW1t
-eV9kZWxfbW9kXQ0KPiBbIDQwMDQuNTc1ODM3XSBDUFU6IDUgUElEOiA3MjEgQ29tbTogcHRyYWNl
-MDEgVGFpbnRlZDogRyAgICAgICAgICAgTyAgICAgIDUuMS4wLW5leHQtMjAxOTA1MDctYXV0b3Rl
-c3QgIzENCj4gWyA0MDA0LjU3NTg0Nl0gTklQOiAgYzAwMDAwMDAwMWIzMDI2YyBMUjogYzAwMDAw
-MDAwMWIzMDA1NCBDVFI6IGMwMDAwMDAwMDFjOWYwMjANCj4gWyA0MDA0LjU3NTg1NV0gUkVHUzog
-YzAwMDAwMDE3MWZmZjg0MCBUUkFQOiAwNzAwICAgVGFpbnRlZDogRyAgICAgICAgICAgTyAgICAg
-ICAoNS4xLjAtbmV4dC0yMDE5MDUwNy1hdXRvdGVzdCkNCj4gWyA0MDA0LjU3NTg2M10gTVNSOiAg
-ODAwMDAwMDEwMjgyYjAzMyA8U0YsVkVDLFZTWCxFRSxGUCxNRSxJUixEUixSSSxMRSxUTVtFXT4g
-IENSOiA0NDAwNDgyNCAgWEVSOiAyMDAwMDAwMA0KPiBbIDQwMDQuNTc1ODg1XSBDRkFSOiBjMDAw
-MDAwMDAxYjMwMDc4IElSUU1BU0s6IDEgDQo+IFsgNDAwNC41NzU4ODVdIEdQUjAwOiBjMDAwMDAw
-MDAxYjMwMDU0IGMwMDAwMDAxNzFmZmZhZDAgYzAwMDAwMDAwMzkzODcwMCBjMDAwMDAwMjdiMDJm
-YTE4IA0KPiBbIDQwMDQuNTc1ODg1XSBHUFIwNDogYzAwMDAwMDI3YjAyZmEwMCAwMDAwMDAwMDAw
-MDAwMDAwIGMwMDAwMDAwMDNhZTg3MDAgMDAwMDAwMDAwMDFjMTgwYSANCj4gWyA0MDA0LjU3NTg4
-NV0gR1BSMDg6IDAwMDAwMDAwMDAwMDAwMDEgMDAwMDAwMDAwMDAwMDAwMSBjMDAwMDAwMDAzYWU4
-NzAwIDAwMDAwMDAwMDAwMDAwMDEgDQo+IFsgNDAwNC41NzU4ODVdIEdQUjEyOiAwMDAwMDAwMDAw
-MDA0NDAwIGMwMDAwMDAwMWVjN2VhODAgYzAwMDAwMDAwM2E0ZDY3MCAwMDAwMDAwMDAwMDAwMDA5
-IA0KPiBbIDQwMDQuNTc1ODg1XSBHUFIxNjogMDAwMDAwMDAwMDAwMDAwMCAwMDAwMDAwMDAwMDQw
-MTAwIDAwMDAwMDAwNDE4MDA0ZmMgMDAwMDAwMDAwODQzMDAwMCANCj4gWyA0MDA0LjU3NTg4NV0g
-R1BSMjA6IDAwMDAwMDAwMDAwMDAwMDkgMDAwMDAwMDAwMDAwMDAwMSBjMDAwMDAwMTcxNWU5MjAw
-IGMwMDAwMDAxNmQ4ZjRkMDAgDQo+IFsgNDAwNC41NzU4ODVdIEdQUjI0OiBjMDAwMDAwMTcxZmZm
-ZDkwIDAwMDAwMDAwMDAwMDAxMDAgYzAwMDAwMDE2ODY5MjQ3OCBjMDAwMDAwMTcxZmZmYjk4IA0K
-PiBbIDQwMDQuNTc1ODg1XSBHUFIyODogYzAwMDAwMDE2ODY5MjQwMCBjMDAwMDAwMTZkOGY0ZDAw
-IGMwMDAwMDAwMDM2NDIwZDAgYzAwMDAwMDI3YjAyZmEwMCANCj4gWyA0MDA0LjU3NTk1OF0gTklQ
-IFtjMDAwMDAwMDAxYjMwMjZjXSBjZ3JvdXBfZXhpdCsweDJhYy8weDJjMA0KPiBbIDQwMDQuNTc1
-OTY2XSBMUiBbYzAwMDAwMDAwMWIzMDA1NF0gY2dyb3VwX2V4aXQrMHg5NC8weDJjMA0KPiBbIDQw
-MDQuNTc1OTcyXSBDYWxsIFRyYWNlOg0KPiBbIDQwMDQuNTc1OTc5XSBbYzAwMDAwMDE3MWZmZmFk
-MF0gW2MwMDAwMDAwMDFiMzAwNTRdIGNncm91cF9leGl0KzB4OTQvMHgyYzAgKHVucmVsaWFibGUp
-DQo+IFsgNDAwNC41NzU5OTBdIFtjMDAwMDAwMTcxZmZmYjMwXSBbYzAwMDAwMDAwMTljZWE5OF0g
-ZG9fZXhpdCsweDg3OC8weDFhZTANCj4gWyA0MDA0LjU3NTk5OV0gW2MwMDAwMDAxNzFmZmZjMDBd
-IFtjMDAwMDAwMDAxOWNmZTRjXSBkb19ncm91cF9leGl0KzB4YWMvMHgxZDANCj4gWyA0MDA0LjU3
-NjAwOV0gW2MwMDAwMDAxNzFmZmZjNDBdIFtjMDAwMDAwMDAxOWVkMDBjXSBnZXRfc2lnbmFsKzB4
-MmJjLzB4MTFjMA0KPiBbIDQwMDQuNTc2MDE5XSBbYzAwMDAwMDE3MWZmZmQzMF0gW2MwMDAwMDAw
-MDE4NjdiMTRdIGRvX25vdGlmeV9yZXN1bWUrMHgzODQvMHg5MDANCj4gWyA0MDA0LjU3NjAyOV0g
-W2MwMDAwMDAxNzFmZmZlMjBdIFtjMDAwMDAwMDAxODNlODQ0XSByZXRfZnJvbV9leGNlcHRfbGl0
-ZSsweDcwLzB4NzQNCj4gWyA0MDA0LjU3NjAzN10gSW5zdHJ1Y3Rpb24gZHVtcDoNCj4gWyA0MDA0
-LjU3NjA0M10gMzE0YTAwMDEgN2Q0MDQ5MmQgNDBjMmZmZjQgM2Q0MjAwMWIgZTkyYTcyODggMzky
-OTAwMDEgZjkyYTcyODggNGJmZmZlNWMgDQo+IFsgNDAwNC41NzYwNTZdIDNkNDIwMDFiIGU5MmE3
-MjU4IDM5MjkwMDAxIGY5MmE3MjU4IDwwZmUwMDAwMD4gNGJmZmZlMGMgNGJlOTFlNDUgNjAwMDAw
-MDAgDQo+IFsgNDAwNC41NzYwNzFdIC0tLVsgZW5kIHRyYWNlIDgyYTFhN2MxOTAwNWViZDYgXeKA
-lA0KPiANCj4gVGhlIFdBUk5fT05DRSB3YXMgYWRkZWQgYnkgZm9sbG93aW5nIGNvbW1pdCANCj4g
-OTZiOWM1OTJkZWY1ICgiY2dyb3VwOiBnZXQgcmlkIG9mIGNncm91cF9mcmVlemVyX2Zyb3plbl9l
-eGl0KCnigJ0pLiANCj4gDQo+IFJldmVydGluZyB0aGUgcGF0Y2ggaGVscHMgYXZvaWQgdGhlIHdh
-cm5pbmcuDQoNCkhpIFNhY2hpbiENCg0KVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0IQ0KDQpDYW4g
-eW91LCBwbGVhc2UsIGNoZWNrIHRoYXQgdGhlIHBhdGNoIGF0IGh0dHBzOi8vbGttbC5vcmcvbGtt
-bC8yMDE5LzUvOC85MzgNCnNvbHZlcyB0aGUgcHJvYmxlbT8NCg0KSSdsbCBhcHByZWNpYXRlIGl0
-IQ0KDQpUaGFua3MhDQoNClJvbWFuDQo=
+--Sig_/y.FCpf7A_lHx=q1IALCGru4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jon,
+
+Today's linux-next merge of the jc_docs tree got a conflict in:
+
+  Documentation/x86/x86_64/mm.txt
+
+between commit:
+
+  89502a019790 ("x86/mm: Fix the 56-bit addresses memory map in Documentati=
+on/x86/x86_64/mm.txt")
+
+from Linus' tree and commit:
+
+  b88679d2f2b9 ("Documentation: x86: convert x86_64/mm.txt to reST")
+
+from the jc_docs tree.
+
+I fixed it up (I deleted the file and added teh following patch) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 9 May 2019 10:39:31 +1000
+Subject: [PATCH] Documentation: x86: update for "x86/mm: Fix the 56-bit
+ addresses memory map in Documentation/x86/x86_64/mm.txt"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ Documentation/x86/x86_64/mm.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/x86/x86_64/mm.rst b/Documentation/x86/x86_64/mm.=
+rst
+index 52020577b8de..267fc4808945 100644
+--- a/Documentation/x86/x86_64/mm.rst
++++ b/Documentation/x86/x86_64/mm.rst
+@@ -78,7 +78,7 @@ Complete virtual memory map with 5-level page tables
+ .. note::
+=20
+  - With 56-bit addresses, user-space memory gets expanded by a factor of 5=
+12x,
+-   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PT st=
+arting
++   from 0.125 PB to 64 PB. All kernel mappings shift down to the -64 PB st=
+arting
+    offset and many of the regions expand to support the much larger physic=
+al
+    memory supported.
+=20
+@@ -91,7 +91,7 @@ Complete virtual memory map with 5-level page tables
+    0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space=
+ virtual memory, different per mm
+   __________________|____________|__________________|_________|___________=
+________________________________________________
+                     |            |                  |         |
+-   0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, =
+still almost 64 bits wide hole of non-canonical
++   0100000000000000 |  +64    PB | feffffffffffffff | ~16K PB | ... huge, =
+still almost 64 bits wide hole of non-canonical
+                     |            |                  |         |     virtua=
+l memory addresses up to the -64 PB
+                     |            |                  |         |     starti=
+ng offset of kernel mappings.
+   __________________|____________|__________________|_________|___________=
+________________________________________________
+@@ -107,7 +107,7 @@ Complete virtual memory map with 5-level page tables
+    ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused=
+ hole
+    ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual me=
+mory map (vmemmap_base)
+    ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused=
+ hole
+-   ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shad=
+ow memory
++   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
+ow memory
+   __________________|____________|__________________|_________|___________=
+_________________________________________________
+                                                               |
+                                                               | Identical =
+layout to the 47-bit one from here on:
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/y.FCpf7A_lHx=q1IALCGru4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTd9kACgkQAVBC80lX
+0GxfGAf7BBWJrE0RI4QacHN00po1z2E42QcpgQ+VqkgLIyMxjjU/CD+TUfalLoLR
+gsOH1/U5jhxsltyf4V04CGoBCGHMK3557doSJDL9b8MGXLgtT4mAsPgT0twQ10TA
+teYdpHvgdJNimsQCuuCc08Xj7cdGCQk9yQ4aOvQ1D6MjW9GtNkjSdJoSwthQlgtx
+mvoeJc08tAi6lfz3Ggv+4S5/PsMjuVIOIrbqC97GNmjovHVRHg2eZYAgCbfaEbfU
+9E5zknJHxT4alxlYql5SZd6hiP8WrLsuniHkqXhZC/1L17moV/y+ZfT9lDGfGCZi
+Jixvn+LIsR4PSX2z4nVUCaixqRmN4w==
+=MxAi
+-----END PGP SIGNATURE-----
+
+--Sig_/y.FCpf7A_lHx=q1IALCGru4--
