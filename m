@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the
- parisc-hd tree
-Date: Thu, 9 May 2019 15:33:56 +1000
-Message-ID: <20190509153356.2b70fd73@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the rdma
+ tree
+Date: Thu, 9 May 2019 15:38:05 +1000
+Message-ID: <20190509153805.6dfbb8ef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QjPicI=x3mHS9imXhZXvRJN"; protocol="application/pgp-signature"
+ boundary="Sig_/N6r_ntWNktjFpZVHC1q.JuC"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>, Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/QjPicI=x3mHS9imXhZXvRJN
+--Sig_/N6r_ntWNktjFpZVHC1q.JuC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,16 +20,16 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/parisc/mm/init.c
+  drivers/infiniband/core/umem.c
 
 between commit:
 
-  98429dded340 ("parisc: Enable SPARSEMEM_VMEMMAP")
+  db6c6774af0d ("RDMA/umem: Remove hugetlb flag")
 
-from the parisc-hd tree and commit:
+from the rdma tree and commit:
 
-  2e5adbd9e97a ("initramfs: provide a generic free_initrd_mem implementatio=
-n")
+  c041ba1a3294 ("mm/gup: replace get_user_pages_longterm() with FOLL_LONGTE=
+RM")
 
 from the akpm-current tree.
 
@@ -44,44 +44,40 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/parisc/mm/init.c
-index 6fa6d3b1d3f4,437d4c35c562..000000000000
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@@ -928,18 -921,3 +928,11 @@@ void flush_tlb_all(void
-  	spin_unlock(&sid_lock);
-  }
-  #endif
- +
-- #ifdef CONFIG_BLK_DEV_INITRD
-- void free_initrd_mem(unsigned long start, unsigned long end)
-- {
-- 	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-- }
-- #endif
--=20
- +#if defined(CONFIG_SPARSEMEM) && defined(CONFIG_SPARSEMEM_VMEMMAP)
- +int __meminit vmemmap_populate(unsigned long vstart, unsigned long vend,
- +			       int node, struct vmem_altmap *altmap)
- +{
- +	return vmemmap_populate_basepages(vstart, vend, node);
- +}
- +#endif
+diff --cc drivers/infiniband/core/umem.c
+index 0a23048db523,31191f098e73..000000000000
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@@ -295,10 -189,11 +295,11 @@@ struct ib_umem *ib_umem_get(struct ib_u
+ =20
+  	while (npages) {
+  		down_read(&mm->mmap_sem);
+- 		ret =3D get_user_pages_longterm(cur_base,
++ 		ret =3D get_user_pages(cur_base,
+  				     min_t(unsigned long, npages,
+  					   PAGE_SIZE / sizeof (struct page *)),
+- 				     gup_flags, page_list, NULL);
++ 				     gup_flags | FOLL_LONGTERM,
+ -				     page_list, vma_list);
+++				     page_list, NULL);
+  		if (ret < 0) {
+  			up_read(&mm->mmap_sem);
+  			goto umem_release;
 
---Sig_/QjPicI=x3mHS9imXhZXvRJN
+--Sig_/N6r_ntWNktjFpZVHC1q.JuC
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTu8QACgkQAVBC80lX
-0GwSLwf+NA/WKMZENE+LkwTWsh+yMyZ4yH/WElavw9yW1CNQBR4+n2UPoCV3VWb+
-VGw37VOcUtK3R8ho7mvnq8UY7qXLU8J9UQrui6B4VpG2+na9LgPK/Bva4xvJVUm5
-u0CKTuwxG4VyOrWH2zJR8YmocnIn4yu+1MXKQ+SSBOdNoGihDLb6hUF5OVVj5Sna
-3P7uP3lDEZVbs1I68414MzMfZkFeTjsdDmRMWnD4fzwZeNXT5hIjOg3ZktqcIXgO
-Y+ZkBNH5SLY5mJmTdrvitZnAE9v0Xbg04D51dCNBenAD4by7z4pUUSRFod3C1mcs
-wLawNhPu7QU3Q6oDj+JNHdULuGGneQ==
-=rE2q
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTvL0ACgkQAVBC80lX
+0GzYdgf+NxNeHbwWOAcxbKB8cTD8a0wOTgWJkq0xlwxRVf7I6r1vfD3CA3gcrgD8
+Mc+OfxE7roMfUTmSzIWw+zRffnC+yZoxt2xntOxH8+qA+qwfp6vFLCOp65wFYDsB
++3h6J5kv58Eu3+WRtu0/2aU/3Nv1JCVvONhv/cj/+8e3UjuwmyA71YtvwfeFla8R
+dB853U3wstWXgYG7rbnZarfkkIeXU2AZSud8sO1YE7/QhDI6PYQ9CF7rlvSaQf57
+Rzo/TAlhBwNWr3ZNTATqSp9OSzWg4rYtVWvPlN42VlvBjCE32FUuzKPrUCnE5nff
+GldaAGipKirhMxn22nDicA2TRKqyIQ==
+=ouBp
 -----END PGP SIGNATURE-----
 
---Sig_/QjPicI=x3mHS9imXhZXvRJN--
+--Sig_/N6r_ntWNktjFpZVHC1q.JuC--
