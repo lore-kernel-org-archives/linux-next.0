@@ -1,43 +1,95 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: the merge window is open
-Date: Thu, 9 May 2019 16:39:42 +1000
-Message-ID: <20190509163942.6a233bf4@canb.auug.org.au>
+From: Roman Gushchin <guro@fb.com>
+Subject: Re: [next-20190507][powerpc] WARN kernel/cgroup/cgroup.c:6008 with
+ LTP ptrace01 test case
+Date: Thu, 9 May 2019 16:27:02 +0000
+Message-ID: <20190509162656.GA14595@tower.DHCP.thefacebook.com>
+References: <A8995C41-9A8F-468C-89B2-AB6E44C7EADC@linux.vnet.ibm.com>
+ <20190508232338.GB1104@tower.DHCP.thefacebook.com>
+ <B292CCEE-B9ED-4227-A6F7-ADAD93011F1A@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3ys0XM_FdcHI52m8E1ExmQU"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <B292CCEE-B9ED-4227-A6F7-ADAD93011F1A@linux.vnet.ibm.com>
+Content-Language: en-US
+Content-ID: <01668A48E493E44389877B03F7C30DD3@namprd15.prod.outlook.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Cc: Tejun Heo <tj@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Oleg Nesterov <oleg@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3ys0XM_FdcHI52m8E1ExmQU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Please do not add any v5.3 material to your linux-next included
-trees/branches until after v5.2-rc1 has been released.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3ys0XM_FdcHI52m8E1ExmQU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzTyy8ACgkQAVBC80lX
-0GyK+AgAiMiumY9MMQzlqX7AWpUsxiSqJi0LJP+qIAW8ZtdP7Mzy8k0B94hJgpk/
-zNzt1gPYEQoopZsn7do0Aww0uRK642q1DAVORR+qddlrujn/I18EBCDCXutft5PD
-sfzEM9cWL35kl8Qhrc7iTTaNdN9W4Bn7RdnDhkh1tL/B/EL1GmBo+u1QUHfKY/Fd
-HQsST5CIn1hW4FJI5bnvY3bobN8d99gIPpk/KsOyJsPIOp1IMGeurVjm4W4PSg2e
-y2OUv2QKnTguCo8GyKkmPCvNC13t8lR55T04f2+xmvlAscfksytq/uv/BldbOpNE
-3uiUdTIn2p+2HRRRreI2aj/h8atyag==
-=slrH
------END PGP SIGNATURE-----
-
---Sig_/3ys0XM_FdcHI52m8E1ExmQU--
+T24gVGh1LCBNYXkgMDksIDIwMTkgYXQgMTE6MzU6MzZBTSArMDUzMCwgU2FjaGluIFNhbnQgd3Jv
+dGU6DQo+IA0KPiANCj4gPiBPbiAwOS1NYXktMjAxOSwgYXQgNDo1MyBBTSwgUm9tYW4gR3VzaGNo
+aW4gPGd1cm9AZmIuY29tPiB3cm90ZToNCj4gPiANCj4gPiBPbiBXZWQsIE1heSAwOCwgMjAxOSBh
+dCAwMzowNjozMFBNICswNTMwLCBTYWNoaW4gU2FudCB3cm90ZToNCj4gPj4gV2hpbGUgcnVubmlu
+ZyBMVFAgdGVzdHMoc3BlY2lmaWNhbGx5IHB0cmFjZTAxKSBmb2xsb3dpbmcgV0FSTklORyBpcyBv
+YnNlcnZlZA0KPiA+PiBvbiBQT1dFUjggTFBBUiBydW5uaW5nIG5leHQtMjAxOTA1MDcgYnVpbHQg
+dXNpbmcgNEsgcGFnZSBzaXplLg0KPiA+PiANCj4gPj4gWyAzOTY5Ljk3OTQ5Ml0gbXNncmN2MDQg
+KDQzMykgdXNlZCBncmVhdGVzdCBzdGFjayBkZXB0aDogOTMyOCBieXRlcyBsZWZ0DQo+ID4+IFsg
+Mzk4MS40NTI5MTFdIG1hZHZpc2UwNiAoNTE1KTogZHJvcF9jYWNoZXM6IDMNCj4gPj4gWyA0MDA0
+LjU3NTc1Ml0gV0FSTklORzogQ1BVOiA1IFBJRDogNzIxIGF0IGtlcm5lbC9jZ3JvdXAvY2dyb3Vw
+LmM6NjAwOCBjZ3JvdXBfZXhpdCsweDJhYy8weDJjMA0KPiA+PiBbIDQwMDQuNTc1NzgxXSBNb2R1
+bGVzIGxpbmtlZCBpbjogb3ZlcmxheSBycGFkbHBhcl9pbyBycGFwaHAgaXB0YWJsZV9tYW5nbGUg
+eHRfTUFTUVVFUkFERSBpcHRhYmxlX25hdCBuZl9uYXQgeHRfY29ubnRyYWNrIG5mX2Nvbm50cmFj
+ayBuZl9kZWZyYWdfaXB2NCBpcHRfUkVKRUNUIG5mX3JlamVjdF9pcHY0IHh0X3RjcHVkcCB0dW4g
+YnJpZGdlIHN0cCBsbGMga3ZtIGlwdGFibGVfZmlsdGVyIHBzZXJpZXNfcm5nIHJuZ19jb3JlIHZt
+eF9jcnlwdG8gaXBfdGFibGVzIHhfdGFibGVzIGF1dG9mczQgW2xhc3QgdW5sb2FkZWQ6IGR1bW15
+X2RlbF9tb2RdDQo+ID4+IFsgNDAwNC41NzU4MzddIENQVTogNSBQSUQ6IDcyMSBDb21tOiBwdHJh
+Y2UwMSBUYWludGVkOiBHICAgICAgICAgICBPICAgICAgNS4xLjAtbmV4dC0yMDE5MDUwNy1hdXRv
+dGVzdCAjMQ0KPiA+PiBbIDQwMDQuNTc1ODQ2XSBOSVA6ICBjMDAwMDAwMDAxYjMwMjZjIExSOiBj
+MDAwMDAwMDAxYjMwMDU0IENUUjogYzAwMDAwMDAwMWM5ZjAyMA0KPiA+PiBbIDQwMDQuNTc1ODU1
+XSBSRUdTOiBjMDAwMDAwMTcxZmZmODQwIFRSQVA6IDA3MDAgICBUYWludGVkOiBHICAgICAgICAg
+ICBPICAgICAgICg1LjEuMC1uZXh0LTIwMTkwNTA3LWF1dG90ZXN0KQ0KPiA+PiBbIDQwMDQuNTc1
+ODYzXSBNU1I6ICA4MDAwMDAwMTAyODJiMDMzIDxTRixWRUMsVlNYLEVFLEZQLE1FLElSLERSLFJJ
+LExFLFRNW0VdPiAgQ1I6IDQ0MDA0ODI0ICBYRVI6IDIwMDAwMDAwDQo+ID4+IFsgNDAwNC41NzU4
+ODVdIENGQVI6IGMwMDAwMDAwMDFiMzAwNzggSVJRTUFTSzogMSANCj4gPj4gWyA0MDA0LjU3NTg4
+NV0gR1BSMDA6IGMwMDAwMDAwMDFiMzAwNTQgYzAwMDAwMDE3MWZmZmFkMCBjMDAwMDAwMDAzOTM4
+NzAwIGMwMDAwMDAyN2IwMmZhMTggDQo+ID4+IFsgNDAwNC41NzU4ODVdIEdQUjA0OiBjMDAwMDAw
+MjdiMDJmYTAwIDAwMDAwMDAwMDAwMDAwMDAgYzAwMDAwMDAwM2FlODcwMCAwMDAwMDAwMDAwMWMx
+ODBhIA0KPiA+PiBbIDQwMDQuNTc1ODg1XSBHUFIwODogMDAwMDAwMDAwMDAwMDAwMSAwMDAwMDAw
+MDAwMDAwMDAxIGMwMDAwMDAwMDNhZTg3MDAgMDAwMDAwMDAwMDAwMDAwMSANCj4gPj4gWyA0MDA0
+LjU3NTg4NV0gR1BSMTI6IDAwMDAwMDAwMDAwMDQ0MDAgYzAwMDAwMDAxZWM3ZWE4MCBjMDAwMDAw
+MDAzYTRkNjcwIDAwMDAwMDAwMDAwMDAwMDkgDQo+ID4+IFsgNDAwNC41NzU4ODVdIEdQUjE2OiAw
+MDAwMDAwMDAwMDAwMDAwIDAwMDAwMDAwMDAwNDAxMDAgMDAwMDAwMDA0MTgwMDRmYyAwMDAwMDAw
+MDA4NDMwMDAwIA0KPiA+PiBbIDQwMDQuNTc1ODg1XSBHUFIyMDogMDAwMDAwMDAwMDAwMDAwOSAw
+MDAwMDAwMDAwMDAwMDAxIGMwMDAwMDAxNzE1ZTkyMDAgYzAwMDAwMDE2ZDhmNGQwMCANCj4gPj4g
+WyA0MDA0LjU3NTg4NV0gR1BSMjQ6IGMwMDAwMDAxNzFmZmZkOTAgMDAwMDAwMDAwMDAwMDEwMCBj
+MDAwMDAwMTY4NjkyNDc4IGMwMDAwMDAxNzFmZmZiOTggDQo+ID4+IFsgNDAwNC41NzU4ODVdIEdQ
+UjI4OiBjMDAwMDAwMTY4NjkyNDAwIGMwMDAwMDAxNmQ4ZjRkMDAgYzAwMDAwMDAwMzY0MjBkMCBj
+MDAwMDAwMjdiMDJmYTAwIA0KPiA+PiBbIDQwMDQuNTc1OTU4XSBOSVAgW2MwMDAwMDAwMDFiMzAy
+NmNdIGNncm91cF9leGl0KzB4MmFjLzB4MmMwDQo+ID4+IFsgNDAwNC41NzU5NjZdIExSIFtjMDAw
+MDAwMDAxYjMwMDU0XSBjZ3JvdXBfZXhpdCsweDk0LzB4MmMwDQo+ID4+IFsgNDAwNC41NzU5NzJd
+IENhbGwgVHJhY2U6DQo+ID4+IFsgNDAwNC41NzU5NzldIFtjMDAwMDAwMTcxZmZmYWQwXSBbYzAw
+MDAwMDAwMWIzMDA1NF0gY2dyb3VwX2V4aXQrMHg5NC8weDJjMCAodW5yZWxpYWJsZSkNCj4gPj4g
+WyA0MDA0LjU3NTk5MF0gW2MwMDAwMDAxNzFmZmZiMzBdIFtjMDAwMDAwMDAxOWNlYTk4XSBkb19l
+eGl0KzB4ODc4LzB4MWFlMA0KPiA+PiBbIDQwMDQuNTc1OTk5XSBbYzAwMDAwMDE3MWZmZmMwMF0g
+W2MwMDAwMDAwMDE5Y2ZlNGNdIGRvX2dyb3VwX2V4aXQrMHhhYy8weDFkMA0KPiA+PiBbIDQwMDQu
+NTc2MDA5XSBbYzAwMDAwMDE3MWZmZmM0MF0gW2MwMDAwMDAwMDE5ZWQwMGNdIGdldF9zaWduYWwr
+MHgyYmMvMHgxMWMwDQo+ID4+IFsgNDAwNC41NzYwMTldIFtjMDAwMDAwMTcxZmZmZDMwXSBbYzAw
+MDAwMDAwMTg2N2IxNF0gZG9fbm90aWZ5X3Jlc3VtZSsweDM4NC8weDkwMA0KPiA+PiBbIDQwMDQu
+NTc2MDI5XSBbYzAwMDAwMDE3MWZmZmUyMF0gW2MwMDAwMDAwMDE4M2U4NDRdIHJldF9mcm9tX2V4
+Y2VwdF9saXRlKzB4NzAvMHg3NA0KPiA+PiBbIDQwMDQuNTc2MDM3XSBJbnN0cnVjdGlvbiBkdW1w
+Og0KPiA+PiBbIDQwMDQuNTc2MDQzXSAzMTRhMDAwMSA3ZDQwNDkyZCA0MGMyZmZmNCAzZDQyMDAx
+YiBlOTJhNzI4OCAzOTI5MDAwMSBmOTJhNzI4OCA0YmZmZmU1YyANCj4gPj4gWyA0MDA0LjU3NjA1
+Nl0gM2Q0MjAwMWIgZTkyYTcyNTggMzkyOTAwMDEgZjkyYTcyNTggPDBmZTAwMDAwPiA0YmZmZmUw
+YyA0YmU5MWU0NSA2MDAwMDAwMCANCj4gPj4gWyA0MDA0LjU3NjA3MV0gLS0tWyBlbmQgdHJhY2Ug
+ODJhMWE3YzE5MDA1ZWJkNiBd4oCUDQo+ID4+IA0KPiA+PiBUaGUgV0FSTl9PTkNFIHdhcyBhZGRl
+ZCBieSBmb2xsb3dpbmcgY29tbWl0IA0KPiA+PiA5NmI5YzU5MmRlZjUgKCJjZ3JvdXA6IGdldCBy
+aWQgb2YgY2dyb3VwX2ZyZWV6ZXJfZnJvemVuX2V4aXQoKeKAnSkuIA0KPiA+PiANCj4gPj4gUmV2
+ZXJ0aW5nIHRoZSBwYXRjaCBoZWxwcyBhdm9pZCB0aGUgd2FybmluZy4NCj4gPiANCj4gPiBIaSBT
+YWNoaW4hDQo+ID4gDQo+ID4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0IQ0KPiA+IA0KPiA+IENh
+biB5b3UsIHBsZWFzZSwgY2hlY2sgdGhhdCB0aGUgcGF0Y2ggYXQgaHR0cHM6Ly9sa21sLm9yZy9s
+a21sLzIwMTkvNS84LzkzOCA8aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvNS84LzkzOD4NCj4g
+PiBzb2x2ZXMgdGhlIHByb2JsZW0/DQo+ID4gDQo+IFRoaXMgcGF0Y2ggZml4ZXMgdGhlIHByb2Js
+ZW0gZm9yIG1lLg0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb25maXJtYXRpb24hDQoNClRoZSBwYXRj
+aCBoYXMganVzdCBiZWVuIHB1bGxlZCBpbnRvIHRoZSBjZ3JvdXAgdHJlZSwNCmFuZCB3aWxsIGFw
+cGVhciBpbiBuZXh0IHNvb24uDQoNCg0KVGhhbmtzIQ0K
