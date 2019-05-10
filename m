@@ -1,85 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the netfilter tree with Linus' tree
-Date: Fri, 10 May 2019 08:34:35 +1000
-Message-ID: <20190510083435.68faecf5@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the amdgpu tree
+Date: Fri, 10 May 2019 10:59:13 +1000
+Message-ID: <20190510105913.357c15e3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/h7S8YNgI927TIl05dJJy0b6"; protocol="application/pgp-signature"
+ boundary="Sig_/wjdZqcrecLj/0QnYLKM3.fn"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Brett Mastbergen <bmastbergen@untangle.com>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Kim <jonathan.kim@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/h7S8YNgI927TIl05dJJy0b6
+--Sig_/wjdZqcrecLj/0QnYLKM3.fn
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the netfilter tree got a conflict in:
+After merging the amdgpu tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  include/uapi/linux/netfilter/nf_tables.h
+In file included from drivers/gpu/drm/amd/amdgpu/df_v3_6.c:23:
+drivers/gpu/drm/amd/amdgpu/df_v3_6.c: In function 'df_v3_6_pmc_start':
+drivers/gpu/drm/amd/amdgpu/amdgpu.h:1010:29: warning: 'lo_val' may be used =
+uninitialized in this function [-Wmaybe-uninitialized]
+ #define WREG32_PCIE(reg, v) adev->pcie_wreg(adev, (reg), (v))
+                             ^~~~
+drivers/gpu/drm/amd/amdgpu/df_v3_6.c:334:39: note: 'lo_val' was declared he=
+re
+  uint32_t lo_base_addr, hi_base_addr, lo_val, hi_val;
+                                       ^~~~~~
 
-between commit:
+Introduced by commit
 
-  3087c3f7c23b ("netfilter: nft_ct: Add ct id support")
-
-from Linus' tree and commit:
-
-  c6c9c0596c21 ("netfilter: nf_tables: remove NFT_CT_TIMEOUT")
-
-from the netfilter tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  a6ac0b44bab9 ("drm/amdgpu: add df perfmon regs and funcs for xgmi")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/uapi/linux/netfilter/nf_tables.h
-index f0cf7b0f4f35,92bb1e2b2425..000000000000
---- a/include/uapi/linux/netfilter/nf_tables.h
-+++ b/include/uapi/linux/netfilter/nf_tables.h
-@@@ -966,8 -966,6 +966,7 @@@ enum nft_socket_keys=20
-   * @NFT_CT_DST_IP: conntrack layer 3 protocol destination (IPv4 address)
-   * @NFT_CT_SRC_IP6: conntrack layer 3 protocol source (IPv6 address)
-   * @NFT_CT_DST_IP6: conntrack layer 3 protocol destination (IPv6 address)
--  * @NFT_CT_TIMEOUT: connection tracking timeout policy assigned to conntr=
-ack
- + * @NFT_CT_ID: conntrack id
-   */
-  enum nft_ct_keys {
-  	NFT_CT_STATE,
-@@@ -993,8 -991,6 +992,7 @@@
-  	NFT_CT_DST_IP,
-  	NFT_CT_SRC_IP6,
-  	NFT_CT_DST_IP6,
-- 	NFT_CT_TIMEOUT,
- +	NFT_CT_ID,
-  	__NFT_CT_MAX
-  };
-  #define NFT_CT_MAX		(__NFT_CT_MAX - 1)
-
---Sig_/h7S8YNgI927TIl05dJJy0b6
+--Sig_/wjdZqcrecLj/0QnYLKM3.fn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzUqvsACgkQAVBC80lX
-0GxnZAf/SdTlpbKzDuxhI5RBK2yQNcTv6GgKfwVURQRdDOIjqr4jpzkRcd3zbVCh
-mFX+mAR1xmJ13MeSZ1Cis7o58GfkZuNV/i3GxKl4l7GSEtU6gAscrqqXnZ66wdd/
-oAlNyJLpmIpsL/rs9E5MWK/ZavrsYU4eQLLzqZvO63wx8zTYlhvyVpr3IF2pCyjb
-wUZgxUz4i1blraY756ULGw1G/vWHbWmbZEVbTubXzugYgqTfZqi1xSA3BjYM6Hvs
-yRRj1AZ4qOlhzyFe2UwUHXWJv+TgECO9iBpELW7IsUOsNqJaAZnQZ6WH5WxF9IwC
-FD/5SCnPAXGFHY6/CQf4Fu9wwdjuPA==
-=sJiz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzUzOEACgkQAVBC80lX
+0Gw1TAf/ai35uQnY98yR9OeNyjhZGsvBCLPPvchvu4uUkyfQC8hcfPNMK6KGUB9f
+wc3ncmFVMHkawM0qXR34LZk3yvIXABUoUjT3BNuEgVbGbufSzT5f99P8eWD+MYxv
+Bjit6j/peEdr1C0AUysOnqfkdse3Zj4mrnbGIXEzmKYr1fwCwsQaEHxjTt7zFTdf
+TQg8A5zoGUOQ0ySa4BiukWEGKfIzdjER1LC18mn5ZhwOYtjCfOg3ZI75XeM4d75Q
+TO2iH+YVL9ldjkKM44aDLjuWiwawzeGqs85yuMMCgUDFWNfLsGFfw45gKV2j+ztD
+OQqEIZzDk2BghSrbRMXcp4SftkiICg==
+=UIhV
 -----END PGP SIGNATURE-----
 
---Sig_/h7S8YNgI927TIl05dJJy0b6--
+--Sig_/wjdZqcrecLj/0QnYLKM3.fn--
