@@ -1,43 +1,59 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: manual merge of the vhost tree with the iommu tree
-Date: Sun, 12 May 2019 13:16:26 -0400
-Message-ID: <20190512131410-mutt-send-email-mst@kernel.org>
-References: <20190227152506.4696a59f@canb.auug.org.au>
- <2370af99-9dc1-b694-9f1c-1951d1e70435@arm.com>
- <20190227085546-mutt-send-email-mst@kernel.org>
- <20190228100442.GB1594@8bytes.org>
+From: Carlo Pisani <carlojpisani@gmail.com>
+Subject: C3600, sata controller
+Date: Sun, 12 May 2019 22:44:31 +0200
+Message-ID: <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+References: <20190502074519.61272b42@canb.auug.org.au> <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190228100442.GB1594@8bytes.org>
+In-Reply-To: <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lan Tianyu <Tianyu.Lan@microsoft.com>
+Cc: Parisc List <linux-parisc@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 28, 2019 at 11:04:42AM +0100, Joerg Roedel wrote:
-> On Wed, Feb 27, 2019 at 08:58:36AM -0500, Michael S. Tsirkin wrote:
-> > Even though it's not going into 5.1 I feel it's helpful to keep it in
-> > the vhost tree until the next cycle, it helps make sure unrelated
-> > changes don't break it.
-> 
-> It is not going to 5.1, so it shouldn't be in linux-next, no? And when
-> it is going upstream, it should do so through the iommu tree. If you
-> keep it separatly in the vhost tree for testing purposes, please make
-> sure it is not included into your linux-next branch.
-> 
-> Regards,
-> 
-> 	Joerg
+guys,
+I asked a friend to lend us his card, which is the card2 listed below
+and not things are becoming really weird
 
-Joerg, what are we doing with these patches?
-It was tested in next with no bad effects.
-I sent an ack - do you want to pick it up?
-Or have me include it in my pull?
+card1, Silicon Image, Inc. Adaptec AAR-1210SA
+card2, Silicon Image, Inc. SiI 3124 PCI-X Serial ATA
 
-Thanks!
+the card1 is a PCI32 bit card, and uses the "sata_sil" driver
+the card2 is a PCI64 bit card, and uses the "sata_sil24" driver
 
+card1 is installed in a PCI32 slot, and it's moving 32Gbyte in a loop
+without any issue
 
--- 
-MST
+I have just tested card2 in each of the PCI-X slot (including the 3.3V
+one) and ... it has always triggered the HPMC unit, crashing the
+machine
+
+the hardware is different, and drivers are also different, but  ....
+maybe the problem is related to 32 vs 64bit?
+
+I am going to repeat the test with card2 installed in a PCI32 slot.
+This should force it to 32bit: will it work correctly?
+(hope this makes sense)
+
+---
+
+we have also checked if the kernel is correctly handling the ram
+we have a C3600 with 8Gbyte of ram
+
+mount -t tmpfs -o size=7G tmpfs /mnt/ramdrive/
+dd if=/dev/zero of=/mnt/ramdrive/test.bin
+badblocks -swv /mnt/ramdrive/test.bin
+
+checking for bad blocks in read-write mode
+>From block 0 to 7340031
+Testing with pattern 0xaa: done
+Reading and comparing: done
+Testing with pattern 0x55: done
+Reading and comparing: done
+Testing with pattern 0xff: done
+Reading and comparing: done
+Testing with pattern 0x00: done
+Reading and comparing: done
+Pass completed, 0 bad blocks found.
+
+no problems found
