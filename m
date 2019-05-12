@@ -1,54 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the thermal-soc tree
-Date: Sun, 12 May 2019 11:06:03 +1000
-Message-ID: <20190512110603.767286b1@canb.auug.org.au>
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: linux-next: manual merge of the vhost tree with the iommu tree
+Date: Sun, 12 May 2019 13:16:26 -0400
+Message-ID: <20190512131410-mutt-send-email-mst@kernel.org>
+References: <20190227152506.4696a59f@canb.auug.org.au>
+ <2370af99-9dc1-b694-9f1c-1951d1e70435@arm.com>
+ <20190227085546-mutt-send-email-mst@kernel.org>
+ <20190228100442.GB1594@8bytes.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/URt6mAOff+2C4Lc0Y_moRZ6"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190228100442.GB1594@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiada Wang <jiada_wang@mentor.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lan Tianyu <Tianyu.Lan@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/URt6mAOff+2C4Lc0Y_moRZ6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 28, 2019 at 11:04:42AM +0100, Joerg Roedel wrote:
+> On Wed, Feb 27, 2019 at 08:58:36AM -0500, Michael S. Tsirkin wrote:
+> > Even though it's not going into 5.1 I feel it's helpful to keep it in
+> > the vhost tree until the next cycle, it helps make sure unrelated
+> > changes don't break it.
+> 
+> It is not going to 5.1, so it shouldn't be in linux-next, no? And when
+> it is going upstream, it should do so through the iommu tree. If you
+> keep it separatly in the vhost tree for testing purposes, please make
+> sure it is not included into your linux-next branch.
+> 
+> Regards,
+> 
+> 	Joerg
 
-Hi Eduardo,
+Joerg, what are we doing with these patches?
+It was tested in next with no bad effects.
+I sent an ack - do you want to pick it up?
+Or have me include it in my pull?
 
-In commit
+Thanks!
 
-  201f0534b335 ("thermal: rcar_gen3_thermal: fix interrupt type")
 
-Fixes tag
-
-  Fixes: 7d4b269776ec6 ("enable hardware interrupts for trip points")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/URt6mAOff+2C4Lc0Y_moRZ6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzXcXsACgkQAVBC80lX
-0GyEJggAoHu7bgeOYAMmFkS17O/82MTuiOP9Mx1tspbvJ0SGLshJ56fkGc1zFoIN
-dMuw4vZXcV917W2daahGgcYXNGwQ1aATTPU6lOwzuyDZOB6tXUz52FpEWhv7bIxx
-DuOdxIC3Vm1r2Jlcs4rlfStE2uhsYlog7WN/hvpb0GZ7xgNuwQFvxCkybWripA6R
-MNEdFGtmDNkKVYHXYPpGxxmOVb5GggDVOP37m/FQQ48ADmObFnc4r/vY2VqmC0Zi
-DQie1zS10lDEY0W00IgBowhtDARXKNrocHVoRubi8PI0v6EPPrzwLZ4uqawH71SD
-E+hAH+JPgmmG19ZAY5/6pMuo3MOeIQ==
-=rny1
------END PGP SIGNATURE-----
-
---Sig_/URt6mAOff+2C4Lc0Y_moRZ6--
+-- 
+MST
