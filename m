@@ -1,24 +1,76 @@
-From: Carlo Pisani <carlojpisani@gmail.com>
+From: John David Anglin <dave.anglin@bell.net>
 Subject: Re: C3600, sata controller
-Date: Sun, 12 May 2019 23:15:40 +0200
-Message-ID: <CA+QBN9AZHQHTGFVc21UfROHObKxAZz+bwCPeMf-Tpjn2UHmDNg@mail.gmail.com>
-References: <20190502074519.61272b42@canb.auug.org.au> <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
- <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com> <f52cf203-c48a-fd04-5827-19903c3a192f@bell.net>
+Date: Sun, 12 May 2019 17:10:05 -0400
+Message-ID: <f52cf203-c48a-fd04-5827-19903c3a192f@bell.net>
+References: <20190502074519.61272b42@canb.auug.org.au>
+ <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
+ <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f52cf203-c48a-fd04-5827-19903c3a192f@bell.net>
+In-Reply-To: <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: John David Anglin <dave.anglin@bell.net>
+To: Carlo Pisani <carlojpisani@gmail.com>
 Cc: Parisc List <linux-parisc@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-> The c3600 doesn't have any PCI-X slots (only PCI) as far as I can tell from user manuals.
+The c3600 doesn't have any PCI-X slots (only PCI) as far as I can tell from user manuals.
 
-PCI-32/33 device I/O bus
-PCI-64/33 high-performance device I/O bus <----------------- this is
-PCI-X, 64bit 5V
-PCI-64/66 high-performance graphics I/O bus <----------------- this is
-PCI-X, 64bit 3.3V
+The SY-PCX40009 PCI-X card that I have says it supports two models: 32-bit at 66 MHz and 64-bit
+at 133 MHz.  The 32-bit slots in c3600 are 33 MHz.  Whether the card will work at 33 MHz is not
+clear.  The card says it's backward compatible to PCI 2.3.
 
-https://www.openpa.net/systems/hp-visualize_b1000_c3000_c3600.html
+On 2019-05-12 4:44 p.m., Carlo Pisani wrote:
+> guys,
+> I asked a friend to lend us his card, which is the card2 listed below
+> and not things are becoming really weird
+>
+> card1, Silicon Image, Inc. Adaptec AAR-1210SA
+> card2, Silicon Image, Inc. SiI 3124 PCI-X Serial ATA
+>
+> the card1 is a PCI32 bit card, and uses the "sata_sil" driver
+> the card2 is a PCI64 bit card, and uses the "sata_sil24" driver
+>
+> card1 is installed in a PCI32 slot, and it's moving 32Gbyte in a loop
+> without any issue
+>
+> I have just tested card2 in each of the PCI-X slot (including the 3.3V
+> one) and ... it has always triggered the HPMC unit, crashing the
+> machine
+>
+> the hardware is different, and drivers are also different, but  ....
+> maybe the problem is related to 32 vs 64bit?
+>
+> I am going to repeat the test with card2 installed in a PCI32 slot.
+> This should force it to 32bit: will it work correctly?
+> (hope this makes sense)
+>
+> ---
+>
+> we have also checked if the kernel is correctly handling the ram
+> we have a C3600 with 8Gbyte of ram
+>
+> mount -t tmpfs -o size=7G tmpfs /mnt/ramdrive/
+> dd if=/dev/zero of=/mnt/ramdrive/test.bin
+> badblocks -swv /mnt/ramdrive/test.bin
+>
+> checking for bad blocks in read-write mode
+> >From block 0 to 7340031
+> Testing with pattern 0xaa: done
+> Reading and comparing: done
+> Testing with pattern 0x55: done
+> Reading and comparing: done
+> Testing with pattern 0xff: done
+> Reading and comparing: done
+> Testing with pattern 0x00: done
+> Reading and comparing: done
+> Pass completed, 0 bad blocks found.
+>
+> no problems found
+>
+
+
+-- 
+John David Anglin  dave.anglin@bell.net
