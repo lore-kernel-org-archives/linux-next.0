@@ -1,76 +1,87 @@
-From: John David Anglin <dave.anglin@bell.net>
-Subject: Re: C3600, sata controller
-Date: Sun, 12 May 2019 17:10:05 -0400
-Message-ID: <f52cf203-c48a-fd04-5827-19903c3a192f@bell.net>
-References: <20190502074519.61272b42@canb.auug.org.au>
- <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
- <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the input tree with the arm-soc
+ tree
+Date: Mon, 13 May 2019 09:28:06 +1000
+Message-ID: <20190513092756.0eb03c72@canb.auug.org.au>
+References: <20190501134054.4271616e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1Ut8vlM/tSGq=IsIjYTN6gG"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190501134054.4271616e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Carlo Pisani <carlojpisani@gmail.com>
-Cc: Parisc List <linux-parisc@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Jeff LaBundy <jeff@labundy.com>
 List-Id: linux-next.vger.kernel.org
 
-The c3600 doesn't have any PCI-X slots (only PCI) as far as I can tell from user manuals.
+--Sig_/1Ut8vlM/tSGq=IsIjYTN6gG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The SY-PCX40009 PCI-X card that I have says it supports two models: 32-bit at 66 MHz and 64-bit
-at 133 MHz.  The 32-bit slots in c3600 are 33 MHz.  Whether the card will work at 33 MHz is not
-clear.  The card says it's backward compatible to PCI 2.3.
+Hi all,
 
-On 2019-05-12 4:44 p.m., Carlo Pisani wrote:
-> guys,
-> I asked a friend to lend us his card, which is the card2 listed below
-> and not things are becoming really weird
+On Wed, 1 May 2019 13:40:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> card1, Silicon Image, Inc. Adaptec AAR-1210SA
-> card2, Silicon Image, Inc. SiI 3124 PCI-X Serial ATA
->
-> the card1 is a PCI32 bit card, and uses the "sata_sil" driver
-> the card2 is a PCI64 bit card, and uses the "sata_sil24" driver
->
-> card1 is installed in a PCI32 slot, and it's moving 32Gbyte in a loop
-> without any issue
->
-> I have just tested card2 in each of the PCI-X slot (including the 3.3V
-> one) and ... it has always triggered the HPMC unit, crashing the
-> machine
->
-> the hardware is different, and drivers are also different, but  ....
-> maybe the problem is related to 32 vs 64bit?
->
-> I am going to repeat the test with card2 installed in a PCI32 slot.
-> This should force it to 32bit: will it work correctly?
-> (hope this makes sense)
->
-> ---
->
-> we have also checked if the kernel is correctly handling the ram
-> we have a C3600 with 8Gbyte of ram
->
-> mount -t tmpfs -o size=7G tmpfs /mnt/ramdrive/
-> dd if=/dev/zero of=/mnt/ramdrive/test.bin
-> badblocks -swv /mnt/ramdrive/test.bin
->
-> checking for bad blocks in read-write mode
-> >From block 0 to 7340031
-> Testing with pattern 0xaa: done
-> Reading and comparing: done
-> Testing with pattern 0x55: done
-> Reading and comparing: done
-> Testing with pattern 0xff: done
-> Reading and comparing: done
-> Testing with pattern 0x00: done
-> Reading and comparing: done
-> Pass completed, 0 bad blocks found.
->
-> no problems found
->
+> Today's linux-next merge of the input tree got a conflict in:
+>=20
+>   Documentation/devicetree/bindings/vendor-prefixes.txt
+>=20
+> between commit:
+>=20
+>   2c98d9e47533 ("dt-bindings: vendor-prefixes: add AZW")
+>=20
+> from the arm-soc tree and commit:
+>=20
+>   7b5bb55d0dad ("Input: add support for Azoteq IQS550/572/525")
+>=20
+> from the input tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 5f2b185a04e6,51f99549161e..000000000000
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@@ -54,7 -53,7 +54,8 @@@ avic	Shanghai AVIC Optoelectronics Co.
+>   avnet	Avnet, Inc.
+>   axentia	Axentia Technologies AB
+>   axis	Axis Communications AB
+> + azoteq	Azoteq (Pty) Ltd
+>  +azw     Shenzhen AZW Technology Co., Ltd.
+>   bananapi BIPAI KEJI LIMITED
+>   bhf	Beckhoff Automation GmbH & Co. KG
+>   bitmain	Bitmain Technologies
 
+Thie is now a conflict between the arm-soc tree and Linus' tree.
 
--- 
-John David Anglin  dave.anglin@bell.net
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1Ut8vlM/tSGq=IsIjYTN6gG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzYrAYACgkQAVBC80lX
+0GxLUgf/TPvpX9Qyf51e5o+3yuVhTPB/uirCiqJYU1bRIO1fKDPYvNJR9p0jvYQk
+UKK0tj7AbhRaAsHumme0mXwU5fc5QYX0/XpQrtL/CVHxk7ua1FmtFIwDcI3bFY48
+Tub91jqGMQSJtg8KdPHC5vs/B/6xf/YmLO6PBItiaQtiktN2ZAI3B4erVt4lij55
++/Yx3J5Qg735hUCpAM1FaK3swlHGCIOgl9c20xHlu75u59osFIpEAqeaD1tCHrqi
+9sPGAFX8y/VtDfbPtVt1PS6TXLAttDWimk+MbntOJ7EctgbVcVZ1Ayf4A6nIZ7ou
+RzsPGMCTB930djEoKWqmEKMVRs4J1g==
+=JkKI
+-----END PGP SIGNATURE-----
+
+--Sig_/1Ut8vlM/tSGq=IsIjYTN6gG--
