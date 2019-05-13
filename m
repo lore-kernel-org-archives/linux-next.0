@@ -1,48 +1,56 @@
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: linux-next: manual merge of the vhost tree with the iommu tree
-Date: Mon, 13 May 2019 15:29:01 +0100
-Message-ID: <7b10be49-f379-c586-d8fd-d67bb932fabd@arm.com>
-References: <20190227152506.4696a59f@canb.auug.org.au>
- <2370af99-9dc1-b694-9f1c-1951d1e70435@arm.com>
- <20190227085546-mutt-send-email-mst@kernel.org>
- <20190228100442.GB1594@8bytes.org>
- <20190512131410-mutt-send-email-mst@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
+Date: Tue, 14 May 2019 01:00:54 +1000
+Message-ID: <20190514010054.5ab84a56@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/00XKta0_obGgJC=tRojAR=4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190512131410-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Michael S. Tsirkin" <mst@redhat.com>, Joerg Roedel <joro@8bytes.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lan Tianyu <Tianyu.Lan@microsoft.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On 12/05/2019 18:16, Michael S. Tsirkin wrote:
-> On Thu, Feb 28, 2019 at 11:04:42AM +0100, Joerg Roedel wrote:
->> On Wed, Feb 27, 2019 at 08:58:36AM -0500, Michael S. Tsirkin wrote:
->>> Even though it's not going into 5.1 I feel it's helpful to keep it in
->>> the vhost tree until the next cycle, it helps make sure unrelated
->>> changes don't break it.
->>
->> It is not going to 5.1, so it shouldn't be in linux-next, no? And when
->> it is going upstream, it should do so through the iommu tree. If you
->> keep it separatly in the vhost tree for testing purposes, please make
->> sure it is not included into your linux-next branch.
->>
->> Regards,
->>
->> 	Joerg
-> 
-> Joerg, what are we doing with these patches?
-> It was tested in next with no bad effects.
-> I sent an ack - do you want to pick it up?
-> Or have me include it in my pull?
+--Sig_/00XKta0_obGgJC=tRojAR=4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll resend the driver for v5.3 with some changes. They should be minor
-but one of the changes (domain bits -> domain range) touches UAPI and
-isn't backward compatible, so it would be better not to merge it this
-time around.
+Hi all,
 
-Thanks,
-Jean
+In commit
+
+  7df8e234449a ("ASoC: pcm: fix error handling when try_module_get() fails.=
+")
+
+Fixes tag
+
+  Fixes: 52034add7 (ASoC: pcm: update module refcount if
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+  - Please do not split Fixes tags over more than one line
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/00XKta0_obGgJC=tRojAR=4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzZhqcACgkQAVBC80lX
+0GzOyQf9EUlQwT2PGd5j/mRjB7SMtOV9hVhk7bzj8rxE/7F9i08M48c9k4lCRK4K
+hTF/fMryO7pxldkKtE8FR86SQRu200o89N2X4+81rNniXs61MTWezo1yzbfUPRZI
+ciQDMjA5ij1bdCOc76xLpfYnIQWH9cwhVhOZZ19ldzZcAR3QBFEWDPxX6b2O8Ksn
+tTDRFyJdRczeM+rwftRdQqVt7yAxyDFXmP6Lcej2Jq3FLduEZdliCdJzDi1fiZdV
+IHBDQRKMdCMrbflLM9G06ALkVkN1qnAXnE2oj19lJD0uGqCp8jlnK8mwRaPkEGNo
+aae7XyShZbaIkirqJLE3+9RD1WPFVQ==
+=6KL4
+-----END PGP SIGNATURE-----
+
+--Sig_/00XKta0_obGgJC=tRojAR=4--
