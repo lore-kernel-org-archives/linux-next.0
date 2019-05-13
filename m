@@ -1,88 +1,291 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the thermal-soc tree with Linus' tree
-Date: Mon, 13 May 2019 10:49:28 +1000
-Message-ID: <20190513104928.0265b40f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the thermal-soc tree
+Date: Mon, 13 May 2019 11:02:44 +1000
+Message-ID: <20190513110244.0a0dc431@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/guncOVbWEmKuoXHJ+5r=YwH"; protocol="application/pgp-signature"
+ boundary="Sig_/m_dtFm01sMQ2bfcj.Jz6mZj"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gal Pressman <galpress@amazon.com>, Jason Gunthorpe <jgg@mellanox.com>, Talel Shenhar <talel@amazon.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/guncOVbWEmKuoXHJ+5r=YwH
+--Sig_/m_dtFm01sMQ2bfcj.Jz6mZj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the thermal-soc tree got a conflict in:
+After merging the thermal-soc tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  MAINTAINERS
+ld: drivers/infiniband/hw/cxgb4/cm.o: in function `.devm_thermal_of_cooling=
+_device_register':
+(.text+0x23f0): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined =
+here
+ld: drivers/infiniband/hw/cxgb4/cm.o:(.opd+0x2e8): multiple definition of `=
+devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/devic=
+e.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/provider.o: in function `.devm_thermal_of_c=
+ooling_device_register':
+(.text+0xf90): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined h=
+ere
+ld: drivers/infiniband/hw/cxgb4/provider.o:(.opd+0x198): multiple definitio=
+n of `devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4=
+/device.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/mem.o: in function `.devm_thermal_of_coolin=
+g_device_register':
+(.text+0x11c0): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined =
+here
+ld: drivers/infiniband/hw/cxgb4/mem.o:(.opd+0xa8): multiple definition of `=
+devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/devic=
+e.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/cq.o: in function `.devm_thermal_of_cooling=
+_device_register':
+(.text+0x1750): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined =
+here
+ld: drivers/infiniband/hw/cxgb4/cq.o:(.opd+0x90): multiple definition of `d=
+evm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/device=
+.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/qp.o: in function `.devm_thermal_of_cooling=
+_device_register':
+(.text+0x1550): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined =
+here
+ld: drivers/infiniband/hw/cxgb4/qp.o:(.opd+0x108): multiple definition of `=
+devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/devic=
+e.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/resource.o: in function `.devm_thermal_of_c=
+ooling_device_register':
+(.text+0x0): multiple definition of `.devm_thermal_of_cooling_device_regist=
+er'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined here
+ld: drivers/infiniband/hw/cxgb4/resource.o:(.opd+0x0): multiple definition =
+of `devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/d=
+evice.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/ev.o: in function `.devm_thermal_of_cooling=
+_device_register':
+(.text+0x0): multiple definition of `.devm_thermal_of_cooling_device_regist=
+er'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined here
+ld: drivers/infiniband/hw/cxgb4/ev.o:(.opd+0x18): multiple definition of `d=
+evm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/device=
+.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/id_table.o: in function `.devm_thermal_of_c=
+ooling_device_register':
+(.text+0x0): multiple definition of `.devm_thermal_of_cooling_device_regist=
+er'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined here
+ld: drivers/infiniband/hw/cxgb4/id_table.o:(.opd+0x0): multiple definition =
+of `devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/d=
+evice.o:(.opd+0x198): first defined here
+ld: drivers/infiniband/hw/cxgb4/restrack.o: in function `.devm_thermal_of_c=
+ooling_device_register':
+(.text+0x1590): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined =
+here
+ld: drivers/infiniband/hw/cxgb4/restrack.o:(.opd+0xc0): multiple definition=
+ of `devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/=
+device.o:(.opd+0x198): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/l2t.o: in function `.devm_thermal_of=
+_cooling_device_register':
+(.text+0x1220): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/l2t.o:(.opd+0x120): multiple definit=
+ion of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/chel=
+sio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/smt.o: in function `.devm_thermal_of=
+_cooling_device_register':
+(.text+0x4d0): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/smt.o:(.opd+0x30): multiple definiti=
+on of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/chels=
+io/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/t4_hw.o: in function `.devm_thermal_=
+of_cooling_device_register':
+(.text+0x21f0): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/t4_hw.o:(.opd+0x198): multiple defin=
+ition of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/ch=
+elsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/sge.o: in function `.devm_thermal_of=
+_cooling_device_register':
+(.text+0x3a60): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/sge.o:(.opd+0x270): multiple definit=
+ion of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/chel=
+sio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/clip_tbl.o: in function `.devm_therm=
+al_of_cooling_device_register':
+(.text+0x990): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/clip_tbl.o:(.opd+0x90): multiple def=
+inition of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/=
+chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.o: in function `.devm_=
+thermal_of_cooling_device_register':
+(.text+0x2f80): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.o:(.opd+0x390): multip=
+le definition of `devm_thermal_of_cooling_device_register'; drivers/net/eth=
+ernet/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.o: in function `.devm_ther=
+mal_of_cooling_device_register':
+(.text+0x1f60): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.o:(.opd+0x138): multiple d=
+efinition of `devm_thermal_of_cooling_device_register'; drivers/net/etherne=
+t/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/srq.o: in function `.devm_thermal_of=
+_cooling_device_register':
+(.text+0x1b0): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/srq.o:(.opd+0x18): multiple definiti=
+on of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/chels=
+io/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/sched.o: in function `.devm_thermal_=
+of_cooling_device_register':
+(.text+0x250): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/sched.o:(.opd+0x18): multiple defini=
+tion of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet/che=
+lsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.o: in function `.devm_t=
+hermal_of_cooling_device_register':
+(.text+0xf10): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.o:(.opd+0xc0): multiple=
+ definition of `devm_thermal_of_cooling_device_register'; drivers/net/ether=
+net/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.o: in function `.devm_t=
+hermal_of_cooling_device_register':
+(.text+0x430): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.o:(.opd+0x198): multipl=
+e definition of `devm_thermal_of_cooling_device_register'; drivers/net/ethe=
+rnet/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.o: in function `.devm_ther=
+mal_of_cooling_device_register':
+(.text+0x570): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_ptp.o:(.opd+0x78): multiple de=
+finition of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet=
+/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.o: in function `.dev=
+m_thermal_of_cooling_device_register':
+(.text+0x9a0): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.o:(.opd+0x78): multi=
+ple definition of `devm_thermal_of_cooling_device_register'; drivers/net/et=
+hernet/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.o: in function `.devm_th=
+ermal_of_cooling_device_register':
+(.text+0xb00): multiple definition of `.devm_thermal_of_cooling_device_regi=
+ster'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): firs=
+t defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.o:(.opd+0x30): multiple =
+definition of `devm_thermal_of_cooling_device_register'; drivers/net/ethern=
+et/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cudbg_common.o: in function `.devm_t=
+hermal_of_cooling_device_register':
+(.text+0x0): multiple definition of `.devm_thermal_of_cooling_device_regist=
+er'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): first =
+defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cudbg_common.o:(.opd+0x0): multiple =
+definition of `devm_thermal_of_cooling_device_register'; drivers/net/ethern=
+et/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.o: in function `.devm_ther=
+mal_of_cooling_device_register':
+(.text+0x1ae0): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.o:(.opd+0xd8): multiple de=
+finition of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet=
+/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cudbg_zlib.o: in function `.devm_the=
+rmal_of_cooling_device_register':
+(.text+0x0): multiple definition of `.devm_thermal_of_cooling_device_regist=
+er'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): first =
+defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cudbg_zlib.o:(.opd+0x0): multiple de=
+finition of `devm_thermal_of_cooling_device_register'; drivers/net/ethernet=
+/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.o: in function `.devm_=
+thermal_of_cooling_device_register':
+(.text+0xed00): multiple definition of `.devm_thermal_of_cooling_device_reg=
+ister'; drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.o:(.text+0x79a0): fir=
+st defined here
+ld: drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.o:(.opd+0x8d0): multip=
+le definition of `devm_thermal_of_cooling_device_register'; drivers/net/eth=
+ernet/chelsio/cxgb4/cxgb4_main.o:(.opd+0x708): first defined here
 
-between commit:
+Caused by commit
 
-  f23afd75fc99 ("RDMA/efa: Add driver to Kconfig/Makefile")
+  4e211e068ae9 ("thermal: Introduce devm_thermal_of_cooling_device_register=
+")
 
-from Linus' tree and commit:
+I applied the following patch for today:
 
-  7e34eb7dd067 ("thermal: Introduce Amazon's Annapurna Labs Thermal Driver")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 13 May 2019 10:55:00 +1000
+Subject: [PATCH] thermal: use "static inline" for stub function
 
-from the thermal-soc tree.
+Fixes: 4e211e068ae9 ("thermal: Introduce devm_thermal_of_cooling_device_reg=
+ister")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/thermal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 6f78fa9238da..15a4ca5d7099 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -508,7 +508,7 @@ static inline struct thermal_cooling_device *
+ thermal_of_cooling_device_register(struct device_node *np,
+ 	char *type, void *devdata, const struct thermal_cooling_device_ops *ops)
+ { return ERR_PTR(-ENODEV); }
+-struct thermal_cooling_device *
++static inline struct thermal_cooling_device *
+ devm_thermal_of_cooling_device_register(struct device *dev,
+ 				struct device_node *np,
+ 				char *type, void *devdata,
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index 2ff031b5e620,7defe065470d..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -745,15 -744,12 +745,21 @@@ S:	Supporte
-  F:	Documentation/networking/device_drivers/amazon/ena.txt
-  F:	drivers/net/ethernet/amazon/
- =20
-+ AMAZON ANNAPURNA LABS THERMAL MMIO DRIVER
-+ M:	Talel Shenhar <talel@amazon.com>
-+ S:	Maintained
-+ F:	Documentation/devicetree/bindings/thermal/amazon,al-thermal.txt
-+ F:	drivers/thermal/thermal_mmio.c
-+=20
- +AMAZON RDMA EFA DRIVER
- +M:	Gal Pressman <galpress@amazon.com>
- +R:	Yossi Leybovich <sleybo@amazon.com>
- +L:	linux-rdma@vger.kernel.org
- +Q:	https://patchwork.kernel.org/project/linux-rdma/list/
- +S:	Supported
- +F:	drivers/infiniband/hw/efa/
- +F:	include/uapi/rdma/efa-abi.h
- +
-  AMD CRYPTOGRAPHIC COPROCESSOR (CCP) DRIVER
-  M:	Tom Lendacky <thomas.lendacky@amd.com>
-  M:	Gary Hook <gary.hook@amd.com>
-
---Sig_/guncOVbWEmKuoXHJ+5r=YwH
+--Sig_/m_dtFm01sMQ2bfcj.Jz6mZj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzYvxgACgkQAVBC80lX
-0GyvtAf/cZ+z0g02uhGdK2xyMyYYXeQpeXq54Mwf1Rib2a9aiyUC+L9H2KyE3Oc8
-+AftI2g1oL4jkY8iEnnKsZ+weWzD4wNtTW8MTnTw98v5Pb2AHUxsY10eyVkrvDQR
-8TVXQK9Bpst6OdebVjortGVAUMbzEn/GkH+EJhlBY5+nNc9smzon9CjaoWwagXF+
-gbq4nvhUHQC1HBX+VCJZuh1l7dqYhp8MfD8Nuf33aI6YjFJF6plefHQ8AvoAEwqC
-gfLKGwpvERmWHT5oK8AXzOPeCkNkXzQPVOtTKivpYlNkYoQPIxtXe9v6JDut+j5c
-Z6HMftc6xcGsCW14Z+w8nmB/bOPxzg==
-=ja3g
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzYwjQACgkQAVBC80lX
+0GwbNQf8C3pVhWdy1/uW5jDFt8LDTHvxYZpLLPBs3r6LgAnSdLkoenxUA/FYr1s3
+lB0MuDt8QbsEXWUF2BTr2BBMXkBQBmBQw01cOER1LOSq4s3fQYNxB1jXkMgTekIs
+aIrq8V1iNVggjfmqD5Gm336ocVj+LqrHTXlU3NEVvlCy7mwn7Z3yHXhu7qVTRD1j
+/FD5HwQUVum/Jd0tQGR9sjbvoBzVcoOvVHKDJBotSzfzAluBeDUx9Oy0TtXroELF
+ibnCbbvvdgDH81G5leFNxHb0p3mVYfUKgnz42Ov8S4tMqd5mqqvk+UhrA1UtReEJ
+Zu4/xjMBGpO88+qNAu2YUggUO82Lhw==
+=DdEk
 -----END PGP SIGNATURE-----
 
---Sig_/guncOVbWEmKuoXHJ+5r=YwH--
+--Sig_/m_dtFm01sMQ2bfcj.Jz6mZj--
