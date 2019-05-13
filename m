@@ -1,56 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
-Date: Tue, 14 May 2019 01:00:54 +1000
-Message-ID: <20190514010054.5ab84a56@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the kselftest tree
+Date: Tue, 14 May 2019 01:05:40 +1000
+Message-ID: <20190514010540.6fbe70e0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/00XKta0_obGgJC=tRojAR=4"; protocol="application/pgp-signature"
+ boundary="Sig_/42zB5IixV86pkMF=x7h5+V1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/00XKta0_obGgJC=tRojAR=4
+--Sig_/42zB5IixV86pkMF=x7h5+V1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shuah,
 
 In commit
 
-  7df8e234449a ("ASoC: pcm: fix error handling when try_module_get() fails.=
-")
+  e64ee1f5dc1a ("selftests: fix bpf build/test workflow regression when KBU=
+ILD_OUTPUT is set")
 
 Fixes tag
 
-  Fixes: 52034add7 (ASoC: pcm: update module refcount if
+  Fixes: commit 8ce72dc32578 ("selftests: fix headers_install circular depe=
+ndency")
 
 has these problem(s):
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-  - Please do not split Fixes tags over more than one line
+  - leading word 'commit' unexpected
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/00XKta0_obGgJC=tRojAR=4
+--Sig_/42zB5IixV86pkMF=x7h5+V1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzZhqcACgkQAVBC80lX
-0GzOyQf9EUlQwT2PGd5j/mRjB7SMtOV9hVhk7bzj8rxE/7F9i08M48c9k4lCRK4K
-hTF/fMryO7pxldkKtE8FR86SQRu200o89N2X4+81rNniXs61MTWezo1yzbfUPRZI
-ciQDMjA5ij1bdCOc76xLpfYnIQWH9cwhVhOZZ19ldzZcAR3QBFEWDPxX6b2O8Ksn
-tTDRFyJdRczeM+rwftRdQqVt7yAxyDFXmP6Lcej2Jq3FLduEZdliCdJzDi1fiZdV
-IHBDQRKMdCMrbflLM9G06ALkVkN1qnAXnE2oj19lJD0uGqCp8jlnK8mwRaPkEGNo
-aae7XyShZbaIkirqJLE3+9RD1WPFVQ==
-=6KL4
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzZh8QACgkQAVBC80lX
+0Gw33Af7BwLykcsFSxaJ4zhM0iYij121ix2a15JOsKMlKLJXEi8IGOd+8vw1CeWQ
+z65oEGTieWwIqp0j4YAXiDeRTVKYRV3X0ndcl3zLLW7bz4dKGcK7SRzfrs+nSVOH
+y+X/pHke+fQ63bful+d52Os3SSBdjslqq92AxtrJVqIKXkOnDxc2waZqqde/K8Jf
+LjlQ7KZ7cMZtLZWq1ZAcWg4LZVMWO7yzhbmnjIWeji+weIwHTYQyBFsLXKwe3ZVz
+UhIRDgfJ9WCUvaYai7VrT2jnxCAkxQ0YxKmZGhecfgSv5k04E8bxYQZF9qcnp9zD
+5JKQvhknM9OCkD5sM94JmO+MRxrE2Q==
+=SyBd
 -----END PGP SIGNATURE-----
 
---Sig_/00XKta0_obGgJC=tRojAR=4--
+--Sig_/42zB5IixV86pkMF=x7h5+V1--
