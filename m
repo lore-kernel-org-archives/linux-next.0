@@ -1,41 +1,42 @@
-From: Carlo Pisani <carlojpisani@gmail.com>
-Subject: Re: C3600, sata controller
-Date: Mon, 13 May 2019 17:10:13 +0200
-Message-ID: <CA+QBN9CN=n556f0KYj2LZ4q9wY+wx9mbWpaMcC44GufUqbsgEg@mail.gmail.com>
-References: <20190502074519.61272b42@canb.auug.org.au> <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
- <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: build failure after merge of the thermal-soc tree
+Date: Mon, 13 May 2019 08:57:21 -0700
+Message-ID: <20190513155721.GA26559@roeck-us.net>
+References: <20190513110244.0a0dc431@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190513110244.0a0dc431@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Parisc List <linux-parisc@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-hi, good news!
-after a burn-in test of 8hours, we can affirm that Adaptec 1210SA does work
-The chip is "Silicon Image Sil31122", so the kernel module is
-"sata_sil" (not sata_sil24)
+On Mon, May 13, 2019 at 11:02:44AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the thermal-soc tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ld: drivers/infiniband/hw/cxgb4/cm.o: in function `.devm_thermal_of_cooling_device_register':
+> (.text+0x23f0): multiple definition of `.devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/device.o:(.text+0x28c0): first defined here
+> ld: drivers/infiniband/hw/cxgb4/cm.o:(.opd+0x2e8): multiple definition of `devm_thermal_of_cooling_device_register'; drivers/infiniband/hw/cxgb4/device.o:(.opd+0x198): first defined here
 
-while [ 1 ]
-do
-for item in `ls *.bin`
-    do
-        rm -f $copy.out
-        echo -n "$item ... "
-        mycp $item $copy.out
-        echo "done"
-    done
-done
+[...]
 
-*.bin are giant files, 1GB, 2GB, 4GB, 8GB, 16GB, 32GB
+> @@ -508,7 +508,7 @@ static inline struct thermal_cooling_device *
+>  thermal_of_cooling_device_register(struct device_node *np,
+>  	char *type, void *devdata, const struct thermal_cooling_device_ops *ops)
+>  { return ERR_PTR(-ENODEV); }
+> -struct thermal_cooling_device *
+> +static inline struct thermal_cooling_device *
+>  devm_thermal_of_cooling_device_register(struct device *dev,
+>  				struct device_node *np,
+>  				char *type, void *devdata,
 
-it has been tested on a PCI 32bit lost of a C3600
-with kernel /v4.16!!!
+Ah, I had wondered where that was coming from. Eduardo, can you pick up the
+fix, or even better merge it into the original patch ?
 
-"mycp" does a copy and then checks the md5 checksum
-
-I think this card can be added to the list!
-
-Our list has been already updated
-http://www.downthebunker.com/reloaded/space/viewtopic.php?f=50&p=1632
+Thanks,
+Guenter
