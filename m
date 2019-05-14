@@ -1,14 +1,16 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 Subject: Re: Kernel OOPS followed by a panic on next20190507 with 4K page size
-Date: Tue, 14 May 2019 20:24:39 +1000
-Message-ID: <87v9yds594.fsf@concordia.ellerman.id.au>
+Date: Tue, 14 May 2019 13:05:15 +0200
+Message-ID: <fb4c0e92-ef29-c26e-9e24-602203edd45a@c-s.fr>
 References: <A4247410-7C78-4E52-AB56-1C33A6C27FF3@linux.vnet.ibm.com>
  <0414d06e-1c4e-e9ec-e265-fd9662308df8@linux.ibm.com>
  <4465D9C6-BE89-4215-9730-21CD40ABEA50@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
 In-Reply-To: <4465D9C6-BE89-4215-9730-21CD40ABEA50@linux.vnet.ibm.com>
+Content-Language: fr
 List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
  <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
@@ -23,9 +25,13 @@ To: Sachin Sant <sachinp@linux.vnet.ibm.com>, "Aneesh Kumar K.V" <aneesh.kumar@l
 Cc: linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
-Sachin Sant <sachinp@linux.vnet.ibm.com> writes:
+
+
+Le 14/05/2019 à 10:57, Sachin Sant a écrit :
+> 
+> 
 >> On 14-May-2019, at 7:00 AM, Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com> wrote:
->> 
+>>
 >> On 5/8/19 4:30 PM, Sachin Sant wrote:
 >>> While running LTP tests (specifically futex_wake04) against next-20199597
 >>> build with 4K page size on a POWER8 LPAR following crash is observed.
@@ -62,16 +68,32 @@ Sachin Sant <sachinp@linux.vnet.ibm.com> writes:
 >>> [ 4233.215135] Instruction dump:
 >>> [ 4233.215139] 39290001 f92ac1b0 419e009c 3ce20027 3ba00000 e927c1f0 39290001 f927c1f0
 >>> [ 4233.215149] 3d420027 e92ac290 39290001 f92ac290 <8359001c> 83390018 60000000 3ce20027
->> 
+>>
 >> I did send a patch to the list to handle page allocation failures in this patch. But i guess what we are finding here is get_current() crashing. Any chance to bisect this?
->> 
->
+>>
+> 
 > Following commit seems to have introduced this problem.
->
+> 
 > 723f268f19 - powerpc/mm: cleanup ifdef mess in add_huge_page_size()
->
+> 
 > Reverting this patch allows the test case to execute properly without a crash.
 
-I think I see the bug, let me test.
+Oops ...
 
-cheers
+Can you check by replacing
+
+mmu_psize = check_and_get_huge_psize(size);
+
+by
+
+mmu_psize = check_and_get_huge_psize(shift);
+
+in add_huge_page_size()
+
+Thanks
+Christophe
+
+> 
+> Thanks
+> -Sachin
+> 
