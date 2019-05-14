@@ -1,53 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the thermal-soc tree with Linus'
- tree
-Date: Tue, 14 May 2019 14:40:06 +1000
-Message-ID: <20190514144006.60df13bb@canb.auug.org.au>
-References: <20190513104928.0265b40f@canb.auug.org.au>
-        <20190514034409.GA5691@localhost.localdomain>
+Subject: Re: linux-next: build failure after merge of the ecryptfs tree
+Date: Tue, 14 May 2019 14:49:42 +1000
+Message-ID: <20190514144942.403f0e96@canb.auug.org.au>
+References: <20190514100910.6996d2f5@canb.auug.org.au>
+        <CAK7LNAT_aJ4-abaNXe5VwvAYa2TOprjFL-vcUc730EDwHq80kw@mail.gmail.com>
+        <20190514110334.424cf0be@canb.auug.org.au>
+        <CAK7LNAS-KDO0Cuq34T5MZvJjxZ-A3HaG3qnJi3v4P9xS=4fRQA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2EkBLwMj1P8kge3EWnSyVJG"; protocol="application/pgp-signature"
+ boundary="Sig_/caDE/H.1YQjykSJJ7NW76NM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190514034409.GA5691@localhost.localdomain>
+In-Reply-To: <CAK7LNAS-KDO0Cuq34T5MZvJjxZ-A3HaG3qnJi3v4P9xS=4fRQA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gal Pressman <galpress@amazon.com>, Jason Gunthorpe <jgg@mellanox.com>, Talel Shenhar <talel@amazon.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2EkBLwMj1P8kge3EWnSyVJG
+--Sig_/caDE/H.1YQjykSJJ7NW76NM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eduardo,
+Hi Masahiro,
 
-On Mon, 13 May 2019 20:44:11 -0700 Eduardo Valentin <edubezval@gmail.com> w=
-rote:
+On Tue, 14 May 2019 13:16:37 +0900 Masahiro Yamada <yamada.masahiro@socione=
+xt.com> wrote:
 >
-> Thanks for spotting this. I am re-doing the branch based off v5.1-rc7,
-> where the last conflict went in with my current queue.
+> If you are talking about the rebuild of
+> .tmp_versions/*.mod files,
+> yes, they are cleaned up every time.
+>=20
+> # Create temporary dir for module support files
+> # clean it up only when building all modules
+> cmd_crmodverdir =3D $(Q)mkdir -p $(MODVERDIR) \
+>                   $(if $(KBUILD_MODULES),; rm -f $(MODVERDIR)/*)
+>=20
+>=20
+> I think the reason is that
+> we want to make sure stale modules are not remaining
+> when CONFIG_MY_DRIVER=3Dm is turned into CONFIG_MY_DRIVER=3Dn
+>=20
+>=20
+> Rebuilding .mod files is not expensive.
+>=20
+> I think this behavior can be improved, but
+> that is how it has been working for a long time.
 
-Its really not worth the rebase.  Just fix the build problem and send it
-all to Linus.
+when you say "not expensive", how long is that?  Because an x86_64
+allmodconfig build currently produces 7313 of those files, so at .01
+seconds each (for example) that would add over a minute to each of my
+builds ... and I do lots of builds every day.  OK, so it may not be
+that significant (so a millisecond each is obviously not a problem),
+but just wondering if it can be avoided.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/2EkBLwMj1P8kge3EWnSyVJG
+--Sig_/caDE/H.1YQjykSJJ7NW76NM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzaRqYACgkQAVBC80lX
-0GxmzAf+OnMWPR/PLV6gW4+7P0DgN4H8+d6uMwOlG5XPsTAqH7IwFFj9HQNjtsRM
-GNMme0P2d3HRc9M9cIUAkZca29knRKS6lvE8QJPna3FDv5ma3T0Mjt5QE0EGCber
-Z+mXUPksD+qgyZ6TyOmj8v7Ih+38+4wzMRzW1DPF4bl4feyO6G4m3Lbcqg7EqplS
-3Peo7QW1s/l0vDJk3Ai6h7D0usNpW2ku8ba7geDPK2CyyaS9dWi4v72s2f2lt8M/
-hT2PL3XrM/qrRzR7qC0+V2T6SLT81F4J21hUNRjGndP7yziybuHG2vLJu0lWQDjg
-3CMRX+RT3RDRV1/6MfPmB466+o2/0Q==
-=8J15
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzaSOYACgkQAVBC80lX
+0GwsKgf/SSRx5sD4e36x/UZq9x39Q5HP3h3xDj3LZ/ouhU+uPqF8jwAM2LOw1rrF
+DOWE3LZ87R1CkIGxgqup5F3D8nrn7DXcIak9xYOkGceIcL1cR0ZXFEOr+ov5rq4a
+ftdpKuAtl/l4rF5FrcVjQFPwWsN04MHvvlZQyF4e1snO7LikYQCIW/xH8VXwoJy1
+FiM4lfkfF5GyohEbktG/hLiBlK5rLgI8p2ESjFWoXi7fXnnjO5ji4RUgisLitYXq
+cLLygqiKwmjGbNVnlBZs2uLTApQE483LqQP/NnJWazSyJZqKHVobtpwqgXa+5e3F
+tuSee73joKe4qGHAQcISZQHcDjdkGw==
+=hgY+
 -----END PGP SIGNATURE-----
 
---Sig_/2EkBLwMj1P8kge3EWnSyVJG--
+--Sig_/caDE/H.1YQjykSJJ7NW76NM--
