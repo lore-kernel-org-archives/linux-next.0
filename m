@@ -1,47 +1,117 @@
-From: John David Anglin <dave.anglin@bell.net>
-Subject: Re: C3600, sata controller
-Date: Mon, 13 May 2019 19:14:03 -0400
-Message-ID: <66bf0e79-16a4-a411-19ba-cd7d5a232976@bell.net>
-References: <20190502074519.61272b42@canb.auug.org.au>
- <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
- <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
- <f52cf203-c48a-fd04-5827-19903c3a192f@bell.net>
- <CA+QBN9AZHQHTGFVc21UfROHObKxAZz+bwCPeMf-Tpjn2UHmDNg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ecryptfs tree
+Date: Tue, 14 May 2019 10:15:18 +1000
+Message-ID: <20190514100910.6996d2f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GsNMvU2qEo9mMflr5OjEJ0k"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+QBN9AZHQHTGFVc21UfROHObKxAZz+bwCPeMf-Tpjn2UHmDNg@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Carlo Pisani <carlojpisani@gmail.com>
-Cc: Parisc List <linux-parisc@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Tyler Hicks <tyhicks@canonical.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2019-05-12 5:15 p.m., Carlo Pisani wrote:
->> The c3600 doesn't have any PCI-X slots (only PCI) as far as I can tell from user manuals.
-> PCI-32/33 device I/O bus
-> PCI-64/33 high-performance device I/O bus <----------------- this is
-> PCI-X, 64bit 5V
-> PCI-64/66 high-performance graphics I/O bus <----------------- this is
-> PCI-X, 64bit 3.3V
->
-> https://www.openpa.net/systems/hp-visualize_b1000_c3000_c3600.html
-I think that you are wrong.  HP would have said the slots were PCI-X compatible if they were.
-They did in c8000.
+--Sig_/GsNMvU2qEo9mMflr5OjEJ0k
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The issue is probably the signalling voltage and clock rate capability.  33 MHz always uses 5V
-signalling whereas PCX-X cards typically support 66 and 133 MHz.  Thus, I think PCI-X cards use
-CMOS 3.3V signalling although they may accept 5V on their inputs.  If the c3600 uses older
-TTL logic, it is likely that 3.3V CMOS logic can't provide the high level for 5V TTL logic.
+Hi all,
 
-I suspect the only slot that might work with a PCI-X card is the 3.3V SL2.  However, if you see I/O errors
-in the PIM dump following a HPMC, then it's not compatible.
+I don't know why this suddenly appeared after mergeing the ecryptfs tree
+since nothin has changed in that tree for some time (and nothing in that
+tree seems relevant).
 
-So, probably you would have better luck with the PCI Syba SD-SATA150R in c3600.  However, it is similar
-to the Adaptec 1210SA which works.  Maybe they differ in RAID capability.
+After merging the ecryptfs tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Dave
+scripts/Makefile.modpost:112: target '.tmp_versions/asix.mod' doesn't match=
+ the target pattern
+scripts/Makefile.modpost:113: warning: overriding recipe for target '.tmp_v=
+ersions/asix.mod'
+scripts/Makefile.modpost:100: warning: ignoring old recipe for target '.tmp=
+_versions/asix.mod'
+scripts/Makefile.modpost:127: target '.tmp_versions/asix.mod' doesn't match=
+ the target pattern
+scripts/Makefile.modpost:128: warning: overriding recipe for target '.tmp_v=
+ersions/asix.mod'
+scripts/Makefile.modpost:113: warning: ignoring old recipe for target '.tmp=
+_versions/asix.mod'
+make[2]: Circular .tmp_versions/asix.mod <- __modpost dependency dropped.
+Binary file .tmp_versions/asix.mod matches: No such file or directory
+make[2]: *** [scripts/Makefile.modpost:91: __modpost] Error 1
+make[1]: *** [Makefile:1290: modules] Error 2
 
--- 
-John David Anglin  dave.anglin@bell.net
+The only clue I can see is that asix.o gets built in two separate
+directories (drivers/net/{phy,usb}).
+
+I have the following files in the object directory:
+
+./.tmp_versions/asix.mod
+./drivers/net/usb/asix.ko
+./drivers/net/usb/asix.mod.o
+./drivers/net/usb/asix.o
+./drivers/net/usb/asix_common.o
+./drivers/net/usb/asix_devices.o
+./drivers/net/usb/.asix.ko.cmd
+./drivers/net/usb/.asix.mod.o.cmd
+./drivers/net/usb/.asix.o.cmd
+./drivers/net/usb/asix.mod.c
+./drivers/net/usb/.asix_common.o.cmd
+./drivers/net/usb/.asix_devices.o.cmd
+./drivers/net/phy/asix.ko
+./drivers/net/phy/asix.o
+./drivers/net/phy/.asix.ko.cmd
+./drivers/net/phy/.asix.mod.o.cmd
+./drivers/net/phy/asix.mod.o
+./drivers/net/phy/asix.mod.c
+./drivers/net/phy/.asix.o.cmd
+
+./.tmp_versions/asix.mod
+
+Looks like this:
+
+------------------------------------------
+drivers/net/phy/asix.ko
+drivers/net/phy/asix.o
+
+
+------------------------------------------
+
+What you can't see above are the 256 NUL bytes at the end of the file
+(followed by a NL).
+
+This is from a -j 80 build.  Surely there is a race condition here if the
+file in .tmp_versions is only named for the base name of the module and
+we have 2 modules with the same base name.
+
+I removed that file and redid the build and it succeeded.
+
+Mind you, I have no itdea why this file was begin rebuilt, the merge
+only touched these files:
+
+fs/ecryptfs/crypto.c
+fs/ecryptfs/keystore.c
+
+Puzzled ... :-(
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/GsNMvU2qEo9mMflr5OjEJ0k
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzaCJYACgkQAVBC80lX
+0GwlwQf9Gj9wz73uyo5re6z+nQHohC1vGzloekz15OIqF5RmdKpSqIF99rFJYE2k
+1O6LUj+zVLOPN2h6NBFMX7XHRw4I5h7IXPp7VVTiVcptnsalQ12Ehjv9N+tZaNII
+PMX6oZdNDAG9GtwShSKuUGHLMiFVvhf1TNyDfmCSRT72KytN6/eYchSDkqGNOBUi
+rSu2+4aytF6UE8WHcf7EUmG0kfoN3bUCsKvrQe3KyHyo+b9fcbI9Fsisv/rUuI6m
+Q8NRE25pzrL49YFLiZG506gyUBsorBHdT1wp+Qo1A1MtHwI2439Zuv5el7QLSVll
+jsaBXyrZvpJ/3dC6UFwJza/3vx1fag==
+=Cwco
+-----END PGP SIGNATURE-----
+
+--Sig_/GsNMvU2qEo9mMflr5OjEJ0k--
