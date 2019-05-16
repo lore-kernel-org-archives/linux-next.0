@@ -1,156 +1,96 @@
-From: Michael Schmitz <schmitzmic@gmail.com>
-Subject: Re: linux-next: build failure after merge of the ecryptfs tree
-Date: Wed, 15 May 2019 16:28:03 +1200
-Message-ID: <b1271af4-42c7-42c2-44ef-8f47b9f5a145@gmail.com>
-References: <20190514100910.6996d2f5@canb.auug.org.au>
- <CAK7LNAT_aJ4-abaNXe5VwvAYa2TOprjFL-vcUc730EDwHq80kw@mail.gmail.com>
- <20190514105649.512267cd@canb.auug.org.au>
- <c8f0cdf9-7236-30e0-fa11-b6c261bd3250@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ftrace tree with Linus' tree
+Date: Thu, 16 May 2019 11:00:18 +1000
+Message-ID: <20190516110018.4e85254e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7DYV1ZLNDZ1kZ/LMGOb=0jE"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c8f0cdf9-7236-30e0-fa11-b6c261bd3250@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Masahiro Yamada <yamada.masahiro@socionext.com>, "David S. Miller" <davem@davemloft.net>
-Cc: Tyler Hicks <tyhicks@canonical.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+--Sig_/7DYV1ZLNDZ1kZ/LMGOb=0jE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Am 14.05.2019 um 13:22 schrieb Michael Schmitz:
-> Stephen,
->
-> I wasn't aware of the other asix module when submitting the phy driver.
-> The phy module gets autoloaded based on the PHY ID, so there's no reason
-> why it couldn't be renamed.
->
-> May I suggest ax88796b for the new module name?
+Hi all,
 
-I've got a patch series ready to go for this (compile tested).
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-I suppose this is meant to go through the net tree, Dave?
+  arch/x86/entry/entry_64.S
 
+between commits:
+
+  8f34c5b5afce ("x86/exceptions: Make IST index zero based")
+  3207426925d2 ("x86/exceptions: Disconnect IST index and stack order")
+  2a594d4ccf3f ("x86/exceptions: Split debug IST stack")
+
+from Linus' tree and commit:
+
+  2700fefdb2d9 ("x86_64: Add gap to int3 to allow for call emulation")
+
+from the ftrace tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
 Cheers,
+Stephen Rothwell
 
-	Michael
+diff --cc arch/x86/entry/entry_64.S
+index 20e45d9b4e15,27fcc6fbdd52..000000000000
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@@ -878,7 -879,7 +878,7 @@@ apicinterrupt IRQ_WORK_VECTOR			irq_wor
+   * @paranoid =3D=3D 2 is special: the stub will never switch stacks.  Thi=
+s is for
+   * #DF: if the thread stack is somehow unusable, we'll still get a useful=
+ OOPS.
+   */
+- .macro idtentry sym do_sym has_error_code:req paranoid=3D0 shift_ist=3D-1=
+ ist_offset=3D0
+ -.macro idtentry sym do_sym has_error_code:req paranoid=3D0 shift_ist=3D-1=
+ create_gap=3D0
+++.macro idtentry sym do_sym has_error_code:req paranoid=3D0 shift_ist=3D-1=
+ ist_offset=3D0 create_gap=3D0
+  ENTRY(\sym)
+  	UNWIND_HINT_IRET_REGS offset=3D\has_error_code*8
+ =20
+@@@ -1128,8 -1143,8 +1142,8 @@@ apicinterrupt3 HYPERV_STIMER0_VECTOR=20
+  	hv_stimer0_callback_vector hv_stimer0_vector_handler
+  #endif /* CONFIG_HYPERV */
+ =20
+ -idtentry debug			do_debug		has_error_code=3D0	paranoid=3D1 shift_ist=3DDE=
+BUG_STACK
+ +idtentry debug			do_debug		has_error_code=3D0	paranoid=3D1 shift_ist=3DIS=
+T_INDEX_DB ist_offset=3DDB_STACK_OFFSET
+- idtentry int3			do_int3			has_error_code=3D0
++ idtentry int3			do_int3			has_error_code=3D0	create_gap=3D1
+  idtentry stack_segment		do_stack_segment	has_error_code=3D1
+ =20
+  #ifdef CONFIG_XEN_PV
 
+--Sig_/7DYV1ZLNDZ1kZ/LMGOb=0jE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->
-> Cheers,
->
->     Michael
->
->
->
-> On 14/05/19 12:56 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> [excessive quoting for new CC's]
->>
->> On Tue, 14 May 2019 09:40:53 +0900 Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> On Tue, May 14, 2019 at 9:16 AM Stephen Rothwell
->>> <sfr@canb.auug.org.au> wrote:
->>>> I don't know why this suddenly appeared after mergeing the ecryptfs
->>>> tree
->>>> since nothin has changed in that tree for some time (and nothing in
->>>> that
->>>> tree seems relevant).
->>>>
->>>> After merging the ecryptfs tree, today's linux-next build (x86_64
->>>> allmodconfig) failed like this:
->>>>
->>>> scripts/Makefile.modpost:112: target '.tmp_versions/asix.mod'
->>>> doesn't match the target pattern
->>>> scripts/Makefile.modpost:113: warning: overriding recipe for target
->>>> '.tmp_versions/asix.mod'
->>>> scripts/Makefile.modpost:100: warning: ignoring old recipe for
->>>> target '.tmp_versions/asix.mod'
->>>> scripts/Makefile.modpost:127: target '.tmp_versions/asix.mod'
->>>> doesn't match the target pattern
->>>> scripts/Makefile.modpost:128: warning: overriding recipe for target
->>>> '.tmp_versions/asix.mod'
->>>> scripts/Makefile.modpost:113: warning: ignoring old recipe for
->>>> target '.tmp_versions/asix.mod'
->>>> make[2]: Circular .tmp_versions/asix.mod <- __modpost dependency
->>>> dropped.
->>>> Binary file .tmp_versions/asix.mod matches: No such file or directory
->>>> make[2]: *** [scripts/Makefile.modpost:91: __modpost] Error 1
->>>> make[1]: *** [Makefile:1290: modules] Error 2
->>>>
->>>> The only clue I can see is that asix.o gets built in two separate
->>>> directories (drivers/net/{phy,usb}).
->>> Module name should be unique.
->>>
->>> If both are compiled as a module,
->>> they have the same module names:
->>>
->>> drivers/net/phy/asix.ko
->>> drivers/net/usb/asix.ko
->>>
->>> If you see .tmp_version directory,
->>> you will see asix.mod
->>>
->>> Perhaps, one overwrote the other,
->>> or it already got broken somehow.
->> So, the latter of these drivers (drivers/net/phy/asix.c) was added in
->> v4.18-rc1 by commit
->>
->>    31dd83b96641 ("net-next: phy: new Asix Electronics PHY driver")
->>
->> If we can't have 2 modules with the same base name, is it too late to
->> change its name?
->>
->> I am sort of suprised that noone else has hit this in the past year.
->>
->>>> I have the following files in the object directory:
->>>>
->>>> ./.tmp_versions/asix.mod
->>>> ./drivers/net/usb/asix.ko
->>>> ./drivers/net/usb/asix.mod.o
->>>> ./drivers/net/usb/asix.o
->>>> ./drivers/net/usb/asix_common.o
->>>> ./drivers/net/usb/asix_devices.o
->>>> ./drivers/net/usb/.asix.ko.cmd
->>>> ./drivers/net/usb/.asix.mod.o.cmd
->>>> ./drivers/net/usb/.asix.o.cmd
->>>> ./drivers/net/usb/asix.mod.c
->>>> ./drivers/net/usb/.asix_common.o.cmd
->>>> ./drivers/net/usb/.asix_devices.o.cmd
->>>> ./drivers/net/phy/asix.ko
->>>> ./drivers/net/phy/asix.o
->>>> ./drivers/net/phy/.asix.ko.cmd
->>>> ./drivers/net/phy/.asix.mod.o.cmd
->>>> ./drivers/net/phy/asix.mod.o
->>>> ./drivers/net/phy/asix.mod.c
->>>> ./drivers/net/phy/.asix.o.cmd
->>>>
->>>> ./.tmp_versions/asix.mod
->>>>
->>>> Looks like this:
->>>>
->>>> ------------------------------------------
->>>> drivers/net/phy/asix.ko
->>>> drivers/net/phy/asix.o
->>>>
->>>>
->>>> ------------------------------------------
->>>>
->>>> What you can't see above are the 256 NUL bytes at the end of the file
->>>> (followed by a NL).
->>>>
->>>> This is from a -j 80 build.  Surely there is a race condition here
->>>> if the
->>>> file in .tmp_versions is only named for the base name of the module and
->>>> we have 2 modules with the same base name.
->>>>
->>>> I removed that file and redid the build and it succeeded.
->>>>
->>>> Mind you, I have no itdea why this file was begin rebuilt, the merge
->>>> only touched these files:
->>>>
->>>> fs/ecryptfs/crypto.c
->>>> fs/ecryptfs/keystore.c
->>>>
->>>> Puzzled ... :-(
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzctiIACgkQAVBC80lX
+0GwWZggAorC5X+xTH+vP9/QFuHBmrJvruuWSXPm0WKd4nH6x3AlHt+EgtPGqAT52
+VR+ASjIv0p6xxCbNOG87cp5Iff3GECPWrkjYsbBVx7EJukiQbpywARr7S46rMbbe
+q/wdqaRQOr7IZj8hsyt8LXhaTSaQq+zuCKN17FXyugd8cEu0MQwHl0XL5skZNthB
+47S2xpUSOHJJmfFDkRtj9TW4/psHdEuVxE80/4ArU78zw1hNCaMTwtGJdC2gEXSB
+WW4Zt/eM/Ro+NVtrdXsj2RUpFfDR7qFGOUDenksTXtgHX77MBZWeDNQmRXGNt1g8
+IVJdMzZvlk0L+vMKV57ekIRKe2HQvg==
+=40U7
+-----END PGP SIGNATURE-----
+
+--Sig_/7DYV1ZLNDZ1kZ/LMGOb=0jE--
