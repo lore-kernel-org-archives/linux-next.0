@@ -1,71 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 17
-Date: Fri, 17 May 2019 19:53:40 +1000
-Message-ID: <20190517195340.269ba527@canb.auug.org.au>
-References: <20190517142152.588edb6e@canb.auug.org.au>
-        <a119ca58-6771-cc36-fe5a-187ba500010a@virtuozzo.com>
-        <07e1a10a-5348-2d2e-fb6a-c9ef837185fe@virtuozzo.com>
+Subject: linux-next: Fixes tag needs some work in the crypto-current tree
+Date: Fri, 17 May 2019 21:09:22 +1000
+Message-ID: <20190517210922.70a51b83@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/x30sYicc=Trq=q+7RRhjQSu"; protocol="application/pgp-signature"
+ boundary="Sig_/fhNqN8siC+gvfEhd1u78a5."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <07e1a10a-5348-2d2e-fb6a-c9ef837185fe@virtuozzo.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: atish.patra@wdc.com, palmer@sifive.com, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Iuliana Prodan <iuliana.prodan@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/x30sYicc=Trq=q+7RRhjQSu
+--Sig_/fhNqN8siC+gvfEhd1u78a5.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 17 May 2019 12:43:08 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrot=
-e:
->
-> On 17.05.2019 12:41, Kirill Tkhai wrote:
-> > On 17.05.2019 07:21, Stephen Rothwell wrote: =20
-> >> Hi all,
-> >>
-> >> Please do not add any v5.3 material to your linux-next included
-> >> trees/branches until after v5.2-rc1 has been released.
-> >>
-> >> Changes since 20190516:
-> >>
-> >> The kvm tree gained conflicts against Linus' tree.
-> >>
-> >> Non-merge commits (relative to Linus' tree): 1023
-> >>  1119 files changed, 27058 insertions(+), 7629 deletions(-) =20
-> >=20
-> > Binary file was added:
-> >=20
-> > ~/linux-next$ git log --oneline ./modules.builtin.modinfo
-> > 4cbb0d07b4d1 RISC-V: Support nr_cpus command line option. =20
->=20
-> CC Palmer.
+In commit
 
-It's been fixed in the risc-v tree since it was included in linux-next
-today.
+  4fa0b1f971fc ("crypto: caam - fix typo in i.MX6 devices list for errata")
+
+Fixes tag
+
+  Fixes: 33d69455e402 ("crypto: caam - limit AXI pipeline to a depth of
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please don't split Fixes tags over more than one line.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/x30sYicc=Trq=q+7RRhjQSu
+--Sig_/fhNqN8siC+gvfEhd1u78a5.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzehKQACgkQAVBC80lX
-0Gw1WggAjoBLD0Ea9Npr3UG0H/u07ONi1zuf4U7kYTpaNgETz9eizPAw2P7c8hXb
-fp8hLZkJ7169QSei02HiIHL80hwxfsxY8rz9ZRVwGV47oZHhuO+XRwkvFC28S3e7
-k7c3RkU/1rKQdEKoY6H1fMS5VF7J2Uls96sddQq5nQAdxs7fr+aBpIEHxapk9qjl
-F2Cl8mj5nfDMeeR8iNeapVEQlrUGv2t+zncBrT/WJN0AnubD9ufQO4Eyv21GayWA
-9u2urrEWRW5qsRLvMZDEzKLoaGzMCKSZxZibTnVXoo4wWNwTkXLcugq2Ybaam3Fj
-zyB5nnPoSOIf5UvgeUBr52v2Pi6Bkw==
-=lRvW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzelmIACgkQAVBC80lX
+0GxatAgAm+FtYL5tBLB+70elBaeisaAg66l8kbgzrk1MvfUTH0kregdykejfqlem
+ioXbvn2bSLYCKgP4+yC9PGET9Od91qnzbFkTKW3fw/eRhVjQbDAsbPlqS+9w5m48
+dUdtTwOt+55kxZZjsStnYFe/BADQZbio/tZTP+lZ9xP7TrF6QX0Hx6S+3ApvyQ8h
+AQ0XUtgjEz2//EfE3y/Nw5xJloZFNJB9I4BLzzYvvth7Tn1QSveUf4mwoK/bZd7g
+YN4lE5zcIBqjMLwBqzFqoNEPUMmpsXyBfC7e6ywhjNV9CHXZxQtwFcXjgx+u8tI0
+DRnruLjuwiEcRgmjG/Uo0aD3zzkJXw==
+=14pw
 -----END PGP SIGNATURE-----
 
---Sig_/x30sYicc=Trq=q+7RRhjQSu--
+--Sig_/fhNqN8siC+gvfEhd1u78a5.--
