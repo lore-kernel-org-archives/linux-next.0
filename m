@@ -1,148 +1,174 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: stats
-Date: Mon, 20 May 2019 13:37:51 +1000
-Message-ID: <20190520133751.5e47cde8@canb.auug.org.au>
-References: <CAHk-=wgxi6fnxZ+p5Zdqr-i4s=xhOCBJL6s_RauYkjxM2CpXeA@mail.gmail.com>
+From: Bharata B Rao <bharata@linux.ibm.com>
+Subject: Re: PROBLEM: Power9: kernel oops on memory hotunplug from ppc64le
+ guest
+Date: Mon, 20 May 2019 09:55:33 +0530
+Message-ID: <20190520042533.GB22939@in.ibm.com>
+References: <16a7a635-c592-27e2-75b4-d02071833278@linux.vnet.ibm.com>
+ <20190518141434.GA22939@in.ibm.com>
+ <878sv1993k.fsf@concordia.ellerman.id.au>
+Reply-To: bharata@linux.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Dlg4REijNlevxIC6yrJ+w7o"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHk-=wgxi6fnxZ+p5Zdqr-i4s=xhOCBJL6s_RauYkjxM2CpXeA@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <878sv1993k.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: srikanth <sraithal@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, bharata@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, npiggin@gmail.com, aneesh.kumar@linux.ibm.com
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Dlg4REijNlevxIC6yrJ+w7o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 20, 2019 at 12:02:23PM +1000, Michael Ellerman wrote:
+> Bharata B Rao <bharata@linux.ibm.com> writes:
+> > On Thu, May 16, 2019 at 07:44:20PM +0530, srikanth wrote:
+> >> Hello,
+> >> 
+> >> On power9 host, performing memory hotunplug from ppc64le guest results in
+> >> kernel oops.
+> >> 
+> >> Kernel used : https://github.com/torvalds/linux/tree/v5.1 built using
+> >> ppc64le_defconfig for host and ppc64le_guest_defconfig for guest.
+> >> 
+> >> Recreation steps:
+> >> 
+> >> 1. Boot a guest with below mem configuration:
+> >>   <maxMemory slots='32' unit='KiB'>33554432</maxMemory>
+> >>   <memory unit='KiB'>8388608</memory>
+> >>   <currentMemory unit='KiB'>4194304</currentMemory>
+> >>   <cpu>
+> >>     <numa>
+> >>       <cell id='0' cpus='0-31' memory='8388608' unit='KiB'/>
+> >>     </numa>
+> >>   </cpu>
+> >> 
+> >> 2. From host hotplug 8G memory -> verify memory hotadded succesfully -> now
+> >> reboot guest -> once guest comes back try to unplug 8G memory
+> >> 
+> >> mem.xml used:
+> >> <memory model='dimm'>
+> >> <target>
+> >> <size unit='GiB'>8</size>
+> >> <node>0</node>
+> >> </target>
+> >> </memory>
+> >> 
+> >> Memory attach and detach commands used:
+> >>     virsh attach-device vm1 ./mem.xml --live
+> >>     virsh detach-device vm1 ./mem.xml --live
+> >> 
+> >> Trace seen inside guest after unplug, guest just hangs there forever:
+> >> 
+> >> [   21.962986] kernel BUG at arch/powerpc/mm/pgtable-frag.c:113!
+> >> [   21.963064] Oops: Exception in kernel mode, sig: 5 [#1]
+> >> [   21.963090] LE PAGE_SIZE=64K MMU=Radix MMU=Hash SMP NR_CPUS=2048 NUMA
+> >> pSeries
+> >> [   21.963131] Modules linked in: xt_tcpudp iptable_filter squashfs fuse
+> >> vmx_crypto ib_iser rdma_cm iw_cm ib_cm ib_core libiscsi scsi_transport_iscsi
+> >> ip_tables x_tables autofs4 btrfs zstd_decompress zstd_compress lzo_compress
+> >> raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx
+> >> xor raid6_pq multipath crc32c_vpmsum
+> >> [   21.963281] CPU: 11 PID: 316 Comm: kworker/u64:5 Kdump: loaded Not
+> >> tainted 5.1.0-dirty #2
+> >> [   21.963323] Workqueue: pseries hotplug workque pseries_hp_work_fn
+> >> [   21.963355] NIP:  c000000000079e18 LR: c000000000c79308 CTR:
+> >> 0000000000008000
+> >> [   21.963392] REGS: c0000003f88034f0 TRAP: 0700   Not tainted (5.1.0-dirty)
+> >> [   21.963422] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR:
+> >> 28002884  XER: 20040000
+> >> [   21.963470] CFAR: c000000000c79304 IRQMASK: 0
+> >> [   21.963470] GPR00: c000000000c79308 c0000003f8803780 c000000001521000
+> >> 0000000000fff8c0
+> >> [   21.963470] GPR04: 0000000000000001 00000000ffe30005 0000000000000005
+> >> 0000000000000020
+> >> [   21.963470] GPR08: 0000000000000000 0000000000000001 c00a000000fff8e0
+> >> c0000000016d21a0
+> >> [   21.963470] GPR12: c0000000016e7b90 c000000007ff2700 c00a000000a00000
+> >> c0000003ffe30100
+> >> [   21.963470] GPR16: c0000003ffe30000 c0000000014aa4de c00a0000009f0000
+> >> c0000000016d21b0
+> >> [   21.963470] GPR20: c0000000014de588 0000000000000001 c0000000016d21b8
+> >> c00a000000a00000
+> >> [   21.963470] GPR24: 0000000000000000 ffffffffffffffff c00a000000a00000
+> >> c0000003ffe96000
+> >> [   21.963470] GPR28: c00a000000a00000 c00a000000a00000 c0000003fffec000
+> >> c00a000000fff8c0
+> >> [   21.963802] NIP [c000000000079e18] pte_fragment_free+0x48/0xd0
+> >> [   21.963838] LR [c000000000c79308] remove_pagetable+0x49c/0x5b4
+> >> [   21.963873] Call Trace:
+> >> [   21.963890] [c0000003f8803780] [c0000003ffe997f0] 0xc0000003ffe997f0
+> >> (unreliable)
+> >> [   21.963933] [c0000003f88037b0] [0000000000000000] (null)
+> >> [   21.963969] [c0000003f88038c0] [c00000000006f038]
+> >> vmemmap_free+0x218/0x2e0
+> >> [   21.964006] [c0000003f8803940] [c00000000036f100]
+> >> sparse_remove_one_section+0xd0/0x138
+> >> [   21.964050] [c0000003f8803980] [c000000000383a50]
+> >> __remove_pages+0x410/0x560
+> >> [   21.964093] [c0000003f8803a90] [c000000000c784d8]
+> >> arch_remove_memory+0x68/0xdc
+> >> [   21.964136] [c0000003f8803ad0] [c000000000385d74]
+> >> __remove_memory+0xc4/0x110
+> >> [   21.964180] [c0000003f8803b10] [c0000000000d44e4]
+> >> dlpar_remove_lmb+0x94/0x140
+> >> [   21.964223] [c0000003f8803b50] [c0000000000d52b4]
+> >> dlpar_memory+0x464/0xd00
+> >> [   21.964259] [c0000003f8803be0] [c0000000000cd5c0]
+> >> handle_dlpar_errorlog+0xc0/0x190
+> >> [   21.964303] [c0000003f8803c50] [c0000000000cd6bc]
+> >> pseries_hp_work_fn+0x2c/0x60
+> >> [   21.964346] [c0000003f8803c80] [c00000000013a4a0]
+> >> process_one_work+0x2b0/0x5a0
+> >> [   21.964388] [c0000003f8803d10] [c00000000013a818]
+> >> worker_thread+0x88/0x610
+> >> [   21.964434] [c0000003f8803db0] [c000000000143884] kthread+0x1a4/0x1b0
+> >> [   21.964468] [c0000003f8803e20] [c00000000000bdc4]
+> >> ret_from_kernel_thread+0x5c/0x78
+> >> [   21.964506] Instruction dump:
+> >> [   21.964527] fbe1fff8 f821ffd1 78638502 78633664 ebe90000 7fff1a14
+> >> 395f0020 813f0020
+> >> [   21.964569] 7d2907b4 7d2900d0 79290fe0 69290001 <0b090000> 7c0004ac
+> >> 7d205028 3129ffff
+> >> [   21.964613] ---[ end trace aaa571aa1636fee6 ]---
+> >> [   21.966349]
+> >> [   21.966383] Sending IPI to other CPUs
+> >> [   21.978335] IPI complete
+> >> [   21.981354] kexec: Starting switchover sequence.
+> >> I'm in purgatory
+> >
+> > git bisect points to
+> >
+> > commit 4231aba000f5a4583dd9f67057aadb68c3eca99d
+> > Author: Nicholas Piggin <npiggin@gmail.com>
+> > Date:   Fri Jul 27 21:48:17 2018 +1000
+> >
+> >     powerpc/64s: Fix page table fragment refcount race vs speculative references
+> >
+> >     The page table fragment allocator uses the main page refcount racily
+> >     with respect to speculative references. A customer observed a BUG due
+> >     to page table page refcount underflow in the fragment allocator. This
+> >     can be caused by the fragment allocator set_page_count stomping on a
+> >     speculative reference, and then the speculative failure handler
+> >     decrements the new reference, and the underflow eventually pops when
+> >     the page tables are freed.
+> >
+> >     Fix this by using a dedicated field in the struct page for the page
+> >     table fragment allocator.
+> >
+> >     Fixes: 5c1f6ee9a31c ("powerpc: Reduce PTE table memory wastage")
+> >     Cc: stable@vger.kernel.org # v3.10+
+> 
+> That's the commit that added the BUG_ON(), so prior to that you won't
+> see the crash.
 
-Hi all,
+Right, but the commit says it fixes page table page refcount underflow by
+introducing a new field &page->pt_frag_refcount. Now we are hitting the underflow
+for this pt_frag_refcount.
 
-As usual, the executive friendly graph is at
-http://neuling.org/linux-next-size.html :-)
+BTW, if I go below this commit, I don't hit the pagecount
 
-(No merge commits counted, next-20190507 was the first linux-next after
-the merge window opened.)
+VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
 
-Commits in v5.2-rc1 (relative to v5.1):            12064
-Commits in next-20190507:                          11388
-Commits with the same SHA1:                        10638
-Commits with the same patch_id:                      350 (1)
-Commits with the same subject line:                   61 (1)
+which is in pte_fragment_free() path.
 
-(1) not counting those in the lines above.
-
-So commits in -rc1 that were in next-20190507:     11049 91%
-
-Some breakdown of the list of extra commits (relative to next-20190507)
-in -rc1:
-
-Top ten first word of commit summary:
-
-     58 net
-     46 afs
-     44 perf
-     35 kvm
-     35 drm
-     34 x86
-     34 tools
-     33 documentation
-     25 thermal
-     23 drivers
-
-Top ten authors:
-
-     50 dhowells@redhat.com
-     28 yamada.masahiro@socionext.com
-     28 tstoyanov@vmware.com
-     27 changbin.du@intel.com
-     21 amit.kucheria@linaro.org
-     20 jlayton@kernel.org
-     16 hch@lst.de
-     15 bgolaszewski@baylibre.com
-     14 deller@gmx.de
-     13 yuehaibing@huawei.com
-
-Top ten commiters:
-
-    105 davem@davemloft.net
-     73 acme@redhat.com
-     59 edubezval@gmail.com
-     50 lee.jones@linaro.org
-     50 dhowells@redhat.com
-     42 pbonzini@redhat.com
-     31 yamada.masahiro@socionext.com
-     31 jgg@ziepe.ca
-     31 corbet@lwn.net
-     29 idryomov@gmail.com
-
-There are also 339 commits in next-20190507 that didn't make it into
-v5.2-rc1.
-
-Top ten first word of commit summary:
-
-     27 drm
-     20 xtensa
-     20 mm
-     20 arm
-     19 nvmem
-     19 i2c
-     15 selftests
-     14 ntb
-     11 nfc
-     10 arm64
-
-Top ten authors:
-
-     18 jcmvbkbc@gmail.com
-     17 akpm@linux-foundation.org
-     12 wsa+renesas@sang-engineering.com
-     12 evan.quan@amd.com
-     10 stefan.wahren@i2se.com
-     10 linux@rasmusvillemoes.dk
-      9 zohar@linux.ibm.com
-      9 logang@deltatee.com
-      7 jean-philippe.brucker@arm.com
-      6 tadeusz.struk@intel.com
-
-Some of Andrew's patches are fixes for other patches in his tree (and
-have been merged into those).
-
-Top ten commiters:
-
-    103 sfr@canb.auug.org.au
-     23 jcmvbkbc@gmail.com
-     23 alexander.deucher@amd.com
-     22 srinivas.kandagatla@linaro.org
-     15 wsa@the-dreams.de
-     15 jarkko.sakkinen@linux.intel.com
-     14 jdmason@kudzu.us
-     12 stefan.wahren@i2se.com
-     11 sameo@linux.intel.com
-     11 mst@redhat.com
-
-Those commits by me are from the quilt series (mainly Andrew's mmotm
-tree).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Dlg4REijNlevxIC6yrJ+w7o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlziIQ8ACgkQAVBC80lX
-0GyOQgf/YUoXTvaZGZwRATywOYhHagZDDl2GHSe9N9lJMOxdzSzFdYK0ydsAMk/x
-T9FGQBWSj0FO6UxkQ7vVVpLZ7Xe7MCjkRkkQqqwUqnkqEMkkM7ESQz/uecVSZLCn
-LjqGKIY7ZAO4ZeX64N8tD2wWlhHDkUp8V0rrchT5jO4I9SskfwPDx6+fBn7gTyhk
-m/ld1DcnvT/qT4uAtP3h5H7YY8/7PcisnOALXcmo1FKlsRUsGPjp3yC9+o/SHf3W
-MyeBHGhgYO7R6hG5u5HYsHGmN+8ZGYWQt06rGSLRqMkTmEBtxPNLO/kDylx72our
-WlGXzldIQZjNPXqCgXR47gIYMSqnkQ==
-=uKbi
------END PGP SIGNATURE-----
-
---Sig_/Dlg4REijNlevxIC6yrJ+w7o--
+Regards,
+Bharata.
