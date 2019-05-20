@@ -1,95 +1,76 @@
-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: PROBLEM: Power9: kernel oops on memory hotunplug from ppc64le
- guest
-Date: Mon, 20 May 2019 20:50:17 +0530
-Message-ID: <3ec09ffa-e3d8-5ba2-cf1e-c0d47cfc2332@linux.ibm.com>
-References: <16a7a635-c592-27e2-75b4-d02071833278@linux.vnet.ibm.com>
- <20190518141434.GA22939@in.ibm.com> <878sv1993k.fsf@concordia.ellerman.id.au>
- <20190520042533.GB22939@in.ibm.com> <1558327521.633yjtl8ki.astroid@bobo.none>
- <20190520055622.GC22939@in.ibm.com> <1558335484.9inx69a7ea.astroid@bobo.none>
- <20190520082035.GD22939@in.ibm.com> <20190520142922.GE22939@in.ibm.com>
- <1558363500.jsgl4a2lfa.astroid@bobo.none>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 20 (amdgpu)
+Date: Mon, 20 May 2019 08:32:18 -0700
+Message-ID: <9e9c29f2-bb6e-572e-5486-7ddde2982ba0@infradead.org>
+References: <20190520115530.46cf100d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1558363500.jsgl4a2lfa.astroid@bobo.none>
+In-Reply-To: <20190520115530.46cf100d@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Piggin <npiggin@gmail.com>, bharata@linux.ibm.com
-Cc: bharata@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>, srikanth <sraithal@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Oded Gabbay <oded.gabbay@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On 5/20/19 8:25 PM, Nicholas Piggin wrote:
-> Bharata B Rao's on May 21, 2019 12:29 am:
->> On Mon, May 20, 2019 at 01:50:35PM +0530, Bharata B Rao wrote:
->>> On Mon, May 20, 2019 at 05:00:21PM +1000, Nicholas Piggin wrote:
->>>> Bharata B Rao's on May 20, 2019 3:56 pm:
->>>>> On Mon, May 20, 2019 at 02:48:35PM +1000, Nicholas Piggin wrote:
->>>>>>>>> git bisect points to
->>>>>>>>>
->>>>>>>>> commit 4231aba000f5a4583dd9f67057aadb68c3eca99d
->>>>>>>>> Author: Nicholas Piggin <npiggin@gmail.com>
->>>>>>>>> Date:   Fri Jul 27 21:48:17 2018 +1000
->>>>>>>>>
->>>>>>>>>      powerpc/64s: Fix page table fragment refcount race vs speculative references
->>>>>>>>>
->>>>>>>>>      The page table fragment allocator uses the main page refcount racily
->>>>>>>>>      with respect to speculative references. A customer observed a BUG due
->>>>>>>>>      to page table page refcount underflow in the fragment allocator. This
->>>>>>>>>      can be caused by the fragment allocator set_page_count stomping on a
->>>>>>>>>      speculative reference, and then the speculative failure handler
->>>>>>>>>      decrements the new reference, and the underflow eventually pops when
->>>>>>>>>      the page tables are freed.
->>>>>>>>>
->>>>>>>>>      Fix this by using a dedicated field in the struct page for the page
->>>>>>>>>      table fragment allocator.
->>>>>>>>>
->>>>>>>>>      Fixes: 5c1f6ee9a31c ("powerpc: Reduce PTE table memory wastage")
->>>>>>>>>      Cc: stable@vger.kernel.org # v3.10+
->>>>>>>>
->>>>>>>> That's the commit that added the BUG_ON(), so prior to that you won't
->>>>>>>> see the crash.
->>>>>>>
->>>>>>> Right, but the commit says it fixes page table page refcount underflow by
->>>>>>> introducing a new field &page->pt_frag_refcount. Now we are hitting the underflow
->>>>>>> for this pt_frag_refcount.
->>>>>>
->>>>>> The fixed underflow is caused by a bug (race on page count) that got
->>>>>> fixed by that patch. You are hitting a different underflow here. It's
->>>>>> not certain my patch caused it, I'm just trying to reproduce now.
->>>>>
->>>>> Ok.
->>>>
->>>> Can't reproduce I'm afraid, tried adding and removing 8GB memory from a
->>>> 4GB guest (via host adding / removing memory device), and it just works.
->>>
->>> Boot, add 8G, reboot, remove 8G is the sequence to reproduce.
->>>
->>>>
->>>> It's likely to be an edge case like an off by one or rounding error
->>>> that just happens to trigger in your config. Might be easiest if you
->>>> could test with a debug patch.
->>>
->>> Sure, I will continue debugging.
->>
->> When the guest is rebooted after hotplug, the entire memory (which includes
->> the hotplugged memory) gets remapped again freshly. However at this time
->> since no slab is available yet, pt_frag_refcount never gets initialized as we
->> never do pte_fragment_alloc() for these mappings. So we right away hit the
->> underflow during the first unplug itself, it looks like.
+On 5/19/19 6:55 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Nice catch, good debugging work.
+> Changes since 20190517:
 > 
->> I will check how this can be fixed.
+> Non-merge commits (relative to Linus' tree): 553
+>  519 files changed, 11723 insertions(+), 3396 deletions(-)
 > 
-> Tricky problem. What do you think? You might be able to make the early
-> page table allocations in the same pattern as the frag allocations, and
-> then fill in the struct page metadata when you have those.
+> ----------------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" and checkout or reset to the new
+> master.
+> 
+> You can see which trees have been included by looking in the Next/Trees
+> file in the source.  There are also quilt-import.log and merge.log
+> files in the Next directory.  Between each merge, the tree was built
+> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
+> multi_v7_defconfig for arm and a native build of tools/perf. After
+> the final fixups (if any), I do an x86_64 modules_install followed by
+> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
+> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
+> and sparc64 defconfig. And finally, a simple boot test of the powerpc
+> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+> 
+> Below is a summary of the state of the merge.
+> 
+> I am currently merging 298 trees (counting Linus' and 69 trees of bug
+> fix patches pending for the current merge release).
+> 
+> Stats about the size of the tree over time can be seen at
+> http://neuling.org/linux-next-size.html .
+> 
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
+> 
+> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+> Gortmaker for triage and bug fixes.
+> 
+
+on i386, when built as loadable module:
+
+in amdgpu_ras_sysfs_badpages_read():
+ERROR: "__divdi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+
+or when builtin:
+ld: drivers/gpu/drm/amd/amdgpu/amdgpu_ras.o: in function `amdgpu_ras_sysfs_badpages_read':
+amdgpu_ras.c:(.text+0x9ec): undefined reference to `__divdi3'
+ld: amdgpu_ras.c:(.text+0xa0a): undefined reference to `__divdi3'
 
 
-I guess we need to do something similar to what x86 does. We need to 
-walk the init_mm page table again and re-init struct page and other data 
-structures backing the tables?
 
--aneesh
+-- 
+~Randy
