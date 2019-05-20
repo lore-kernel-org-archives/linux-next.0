@@ -1,75 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sunxi tree with the imx-mxs tree
-Date: Tue, 21 May 2019 09:18:30 +1000
-Message-ID: <20190521091830.25a6cc27@canb.auug.org.au>
+Subject: linux-next: removed trees
+Date: Tue, 21 May 2019 09:37:43 +1000
+Message-ID: <20190521093743.5afaaadf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qOlJ1zMtDwGZkVziBHNfKg3"; protocol="application/pgp-signature"
+ boundary="Sig_/qV4__MSYD94jb/_zn_wgk+5"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yangtao Li <tiny.windzz@gmail.com>, Leonard Crestez <leonard.crestez@nxp.com>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Antoine Tenart <antoine.tenart@bootlin.com>, Kukjin Kim <kgene.kim@samsung.com>, Rich Felker <dalias@libc.org>, Luis de Bethencourt <luisbg@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, David Woodhouse <dwmw2@infradead.org>, Jiri Kosina <jikos@kernel.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Bart Van Assche <bart.vanassche@gmail.com>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/qOlJ1zMtDwGZkVziBHNfKg3
+--Sig_/qV4__MSYD94jb/_zn_wgk+5
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the sunxi tree got a conflict in:
+The following trees have been removed from linux-next since they have
+not been updated in more than a year.  All the contacts for these trees
+are cc'd to this email.  If you want a tree reinstated, just let me
+know.
 
-  arch/arm64/configs/defconfig
-
-between commit:
-
-  4aaa1c7a05db ("arm64: defconfig: NVMEM_IMX_OCOTP=3Dy for imx8m")
-
-from the imx-mxs tree and commit:
-
-  296bcfa05640 ("arm64: defconfig: add allwinner sid support")
-
-from the sunxi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+alpine
+samsung
+sh
+befs
+kconfig
+dwmw2-iommu
+trivial
+target-updates
+target-bva
+init_task
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index 33fac4e62a16,f981a882c546..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -762,7 -741,7 +762,8 @@@ CONFIG_PHY_TEGRA_XUSB=3D
-  CONFIG_HISI_PMU=3Dy
-  CONFIG_QCOM_L2_PMU=3Dy
-  CONFIG_QCOM_L3_PMU=3Dy
- +CONFIG_NVMEM_IMX_OCOTP=3Dy
-+ CONFIG_NVMEM_SUNXI_SID=3Dy
-  CONFIG_QCOM_QFPROM=3Dy
-  CONFIG_ROCKCHIP_EFUSE=3Dy
-  CONFIG_UNIPHIER_EFUSE=3Dy
-
---Sig_/qOlJ1zMtDwGZkVziBHNfKg3
+--Sig_/qV4__MSYD94jb/_zn_wgk+5
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjNcYACgkQAVBC80lX
-0Gz0Kwf9GQoooOHnEQBjKHSRnhPfmUaeVynYsAbKyrvfOZtRhDMf8lSGAdZxErpT
-ULA4PyA+Dgs36+Px4/U+4tKk4mF7xXVpfwPm2oSmu4yVz+C89JkbP8W6Mkke5rgz
-rUk4FvZyC3FcpbTaDenv8e/W27HAc7vOkjUvF2VDludd0AH/Z0dVtZ0gBXFf7W3g
-B46zH/xdPwjrTTlsyH0zbE2p6fVizGY8ySIPyIwX2aADeKScJ6rFlt/9wTOiiFm2
-Dr9i00HuEXVtZbgkikxfcku9GWcaVJgGX/xI7Im37Q/dOleyM9JqWvaSGl9qHL2X
-aqLCaoNlBAXpk5XMKS7N08v+sKc0+Q==
-=jz9e
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjOkcACgkQAVBC80lX
+0GydLQf8D7+63Nd52glmAydK9CJpfUEr3D0PvktazS5wpUjmxyt1iqB5Ohq7YkZE
+/2ib1WYbIAqEgFfwbW2z+gY2A8qRU6vA05+5QjV0HwLOO763o/GQ2Lujmp7KMqmF
++vpIoGxM56O+m/qLggKL7SZBdhbwX70r9Pwlj8qf59jGzVwkkySsNqVd4ZeG6roD
+afzin133cQsMKo4FjOlzUNFjIxtUy3rDXhlzHMBQraw5BXLesYaVFZVMCOu51dWU
+BXc2w27NsRvEDXMCdiqykv43pvu3krxaPDaIR4SLeRYzMYkgc9CRB4vd864M0HyX
+lOKD1xl4alpb8b4Hr+iZBp5a6SAxiw==
+=bxw7
 -----END PGP SIGNATURE-----
 
---Sig_/qOlJ1zMtDwGZkVziBHNfKg3--
+--Sig_/qV4__MSYD94jb/_zn_wgk+5--
