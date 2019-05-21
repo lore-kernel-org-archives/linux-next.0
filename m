@@ -1,47 +1,63 @@
-From: Anson Huang <anson.huang@nxp.com>
-Subject: RE: linux-next: build failure after merge of the imx-mxs tree
-Date: Tue, 21 May 2019 02:16:47 +0000
-Message-ID: <DB3PR0402MB39165C5944880EA0B0A37F91F5070@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the imx-mxs tree
+Date: Tue, 21 May 2019 12:43:22 +0800
+Message-ID: <20190521044321.GX15856@dragon>
 References: <20190521083756.4c8aee8a@canb.auug.org.au>
+ <DB3PR0402MB39165C5944880EA0B0A37F91F5070@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521083756.4c8aee8a@canb.auug.org.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <DB3PR0402MB39165C5944880EA0B0A37F91F5070@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Shawn Guo <shawnguo@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>
+To: Anson Huang <anson.huang@nxp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-SGksIFN0ZXBoZW4vU2hhd24NCglJIHJlYWxpemVkIHRoaXMgaXNzdWUgbGFzdCB3ZWVrIHdoZW4g
-SSB1cGRhdGVkIG15IExpbnV4LW5leHQgdHJlZSAoTk9UIHN1cmUgd2h5IEkgZGlkIE5PVCBtZWV0
-IHN1Y2ggaXNzdWUgd2hlbiBJIGRpZCB0aGUgcGF0Y2gpLCBzbyBJIHJlc2VudCB0aGUgcGF0Y2gg
-c2VyaWVzIG9mIGFkZGluZyBoZWFkIGZpbGUgImlvLmgiIHRvIGZpeCB0aGlzIGlzc3VlLCBwbGVh
-c2UgYXBwbHkgYmVsb3cgVjIgcGF0Y2ggc2VyaWVzIGluc3RlYWQsIHNvcnJ5IGZvciB0aGUgaW5j
-b252ZW5pZW5jZS4NCg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDk0NDY4
-MS8NCg0KdGhhbmtzLA0KQW5zb24uDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-RnJvbTogU3RlcGhlbiBSb3Rod2VsbCBbbWFpbHRvOnNmckBjYW5iLmF1dWcub3JnLmF1XQ0KPiBT
-ZW50OiBUdWVzZGF5LCBNYXkgMjEsIDIwMTkgNjozOCBBTQ0KPiBUbzogU2hhd24gR3VvIDxzaGF3
-bmd1b0BrZXJuZWwub3JnPg0KPiBDYzogTGludXggTmV4dCBNYWlsaW5nIExpc3QgPGxpbnV4LW5l
-eHRAdmdlci5rZXJuZWwub3JnPjsgTGludXggS2VybmVsIE1haWxpbmcNCj4gTGlzdCA8bGludXgt
-a2VybmVsQHZnZXIua2VybmVsLm9yZz47IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29t
-PjsNCj4gQWlzaGVuZyBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gU3ViamVjdDogbGlu
-dXgtbmV4dDogYnVpbGQgZmFpbHVyZSBhZnRlciBtZXJnZSBvZiB0aGUgaW14LW14cyB0cmVlDQo+
-IA0KPiBIaSBTaGF3biwNCj4gDQo+IEFmdGVyIG1lcmdpbmcgdGhlIGlteC1teHMgdHJlZSwgdG9k
-YXkncyBsaW51eC1uZXh0IGJ1aWxkIChhcm0NCj4gbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQg
-bGlrZSB0aGlzOg0KPiANCj4gZHJpdmVycy9jbGsvaW14L2Nsay5jOiBJbiBmdW5jdGlvbiAnaW14
-X21tZGNfbWFza19oYW5kc2hha2UnOg0KPiBkcml2ZXJzL2Nsay9pbXgvY2xrLmM6MjA6ODogZXJy
-b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uDQo+ICdyZWFkbF9yZWxheGVkJzsg
-ZGlkIHlvdSBtZWFuICd4Y2hnX3JlbGF4ZWQnPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi0N
-Cj4gZGVjbGFyYXRpb25dDQo+ICAgcmVnID0gcmVhZGxfcmVsYXhlZChjY21fYmFzZSArIENDTV9D
-Q0RSKTsNCj4gICAgICAgICBefn5+fn5+fn5+fn5+DQo+ICAgICAgICAgeGNoZ19yZWxheGVkDQo+
-IGRyaXZlcnMvY2xrL2lteC9jbGsuYzoyMjoyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24g
-b2YgZnVuY3Rpb24NCj4gJ3dyaXRlbF9yZWxheGVkJzsgZGlkIHlvdSBtZWFuICd4Y2hnX3JlbGF4
-ZWQnPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi0NCj4gZGVjbGFyYXRpb25dDQo+ICAgd3Jp
-dGVsX3JlbGF4ZWQocmVnLCBjY21fYmFzZSArIENDTV9DQ0RSKTsNCj4gICBefn5+fn5+fn5+fn5+
-fg0KPiAgIHhjaGdfcmVsYXhlZA0KPiANCj4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiANCj4gICAwZGM2
-YjQ5MmI2ZTAgKCJjbGs6IGlteDogQWRkIGNvbW1vbiBBUEkgZm9yIG1hc2tpbmcgTU1EQyBoYW5k
-c2hha2UiKQ0KPiANCj4gSSBoYXZlIHVzZWQgdGhlIGlteC1teHMgdHJlZSBmcm9tIG5leHQtMjAx
-OTA1MjAgZm9yIHRvZGF5Lg0KPiANCj4gLS0NCj4gQ2hlZXJzLA0KPiBTdGVwaGVuIFJvdGh3ZWxs
-DQo=
+On Tue, May 21, 2019 at 02:16:47AM +0000, Anson Huang wrote:
+> Hi, Stephen/Shawn
+> 	I realized this issue last week when I updated my Linux-next tree (NOT sure why I did NOT meet such issue when I did the patch), so I resent the patch series of adding head file "io.h" to fix this issue, please apply below V2 patch series instead, sorry for the inconvenience.
+> 
+> https://patchwork.kernel.org/patch/10944681/
+
+Okay, fixed.  Sorry for the breakage, Stephen.
+
+Shawn
+
+> > -----Original Message-----
+> > From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> > Sent: Tuesday, May 21, 2019 6:38 AM
+> > To: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Mailing
+> > List <linux-kernel@vger.kernel.org>; Anson Huang <anson.huang@nxp.com>;
+> > Aisheng Dong <aisheng.dong@nxp.com>
+> > Subject: linux-next: build failure after merge of the imx-mxs tree
+> > 
+> > Hi Shawn,
+> > 
+> > After merging the imx-mxs tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > drivers/clk/imx/clk.c: In function 'imx_mmdc_mask_handshake':
+> > drivers/clk/imx/clk.c:20:8: error: implicit declaration of function
+> > 'readl_relaxed'; did you mean 'xchg_relaxed'? [-Werror=implicit-function-
+> > declaration]
+> >   reg = readl_relaxed(ccm_base + CCM_CCDR);
+> >         ^~~~~~~~~~~~~
+> >         xchg_relaxed
+> > drivers/clk/imx/clk.c:22:2: error: implicit declaration of function
+> > 'writel_relaxed'; did you mean 'xchg_relaxed'? [-Werror=implicit-function-
+> > declaration]
+> >   writel_relaxed(reg, ccm_base + CCM_CCDR);
+> >   ^~~~~~~~~~~~~~
+> >   xchg_relaxed
+> > 
+> > Caused by commit
+> > 
+> >   0dc6b492b6e0 ("clk: imx: Add common API for masking MMDC handshake")
+> > 
+> > I have used the imx-mxs tree from next-20190520 for today.
+> > 
+> > --
+> > Cheers,
+> > Stephen Rothwell
