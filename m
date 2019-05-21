@@ -1,55 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Date: Wed, 22 May 2019 07:31:41 +1000
-Message-ID: <20190522073141.1cd226e6@canb.auug.org.au>
+Subject: Re: Comments in Fixes: line (Was: Re: linux-next: Fixes tag needs
+ some work in the drm-intel tree)
+Date: Wed, 22 May 2019 07:43:13 +1000
+Message-ID: <20190522074313.347f039a@canb.auug.org.au>
+References: <20190520221526.0e103916@canb.auug.org.au>
+        <155844385673.15761.3434506339174536733@jlahtine-desk.ger.corp.intel.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ilG6zk7VSWYdOFLvo=3vW__"; protocol="application/pgp-signature"
+ boundary="Sig_/=1dxdUJ9WnawpF7=6CXdUXL"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <155844385673.15761.3434506339174536733@jlahtine-desk.ger.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiaxin Yu <jiaxin.yu@mediatek.com>
+To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ilG6zk7VSWYdOFLvo=3vW__
+--Sig_/=1dxdUJ9WnawpF7=6CXdUXL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Joonas,
 
-In commit
+On Tue, 21 May 2019 16:04:16 +0300 Joonas Lahtinen <joonas.lahtinen@linux.i=
+ntel.com> wrote:
+>
+> We also have an incoming patch where the Fixes: line has a comment in
+> it. Does your tooling account for this when checking the Fixes: line?
 
-  e355d3de196f ("ASoC: Mediatek: MT8183: fix compile error")
-
-Fixes tag
-
-  Fixes: 1628fc3f4771 ("ASoC: Mediatek: MT8183: add memory interface data a=
-lign")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
+I will make sure mine does.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ilG6zk7VSWYdOFLvo=3vW__
+--Sig_/=1dxdUJ9WnawpF7=6CXdUXL
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzkbj0ACgkQAVBC80lX
-0GxFbwgAi6217xPl21htkDiW2HAY4ypDvx1bt9MmaEjK43JOx9n4iWfWNrX266jF
-wboK/DJpHbYORoE0pU4GkIpMI4a8m9H3U0KM9bxxgbjmz3U6pvHvuM8+AvFQaUsc
-edYj+h8+sz5Lf01u/F7NEtQt7vJePgaQnxmT6Z4lG83fQjwh3tJVRpO7mVL77H4/
-xq2CC5J8rf6KwExQoZy4b0u/F6ETnrp6kjAMXLiyJ+Zaq4cjDhf6yJMqER6DcD7L
-EjeFjhRcgYBJVTOBT4KR6DaWLdlj8pmsetcL+fnxxG0K+go8tSYtgBvpm5xqPds5
-fUHj+LdHA6KPwcg/4IhWKlPWVh+aZg==
-=GDsa
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzkcPEACgkQAVBC80lX
+0GzFlwf+MRLCmFgKUnLP3fJYw0qVudP2JJ2+wXN3AJcl4p302jwHHLs34RTTSeN7
+pxoR0xFFeaAIqytLYGfizowqX86Qv6dxiRTckoPuE3uw+SH76lcwQtZzgDTppYgo
+axsQxTaRStKFYun8p8SNZdFfZF8BuI9kTl8OhUcrysVs+57v8etyZ+XyZspvzVQN
+XR9Z4bIb1aufYEVJq0ygaQ0iCXzvfZOoeZdqrAJ+YWVwaG5D2G/JruOuDOU62E/D
+tcYcQmFSO9Ry3hsbOWAgzAL4nU8XR9Xwem2gJmg+1rqBRIOhCj3/ZTtR5ODnFA8Q
+IV3Uyqjc277gqQaOeVjGG8KCP+x4cQ==
+=fjIr
 -----END PGP SIGNATURE-----
 
---Sig_/ilG6zk7VSWYdOFLvo=3vW__--
+--Sig_/=1dxdUJ9WnawpF7=6CXdUXL--
