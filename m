@@ -1,65 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 21
-Date: Tue, 21 May 2019 16:18:51 +1000
-Message-ID: <20190521161851.49dbcf95@canb.auug.org.au>
-References: <20190521151402.19f22667@canb.auug.org.au>
-        <CAK7LNARngiQTT2-Y0pFFbENiqAHsy0_6AvWsMRhL9Fqwo=gb-A@mail.gmail.com>
+From: Sven Eckelmann <sven@narfation.org>
+Subject: Re: linux-next: Fixes tag needs some work in the jc_docs tree
+Date: Tue, 21 May 2019 09:12:08 +0200
+Message-ID: <4248928.C8WpLz62KC@bentobox>
+References: <20190521074435.7a277fd6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Hg6h6SYoJ4msJF0GufiSt7s"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart2630576.59dGvNmJpf"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNARngiQTT2-Y0pFFbENiqAHsy0_6AvWsMRhL9Fqwo=gb-A@mail.gmail.com>
+In-Reply-To: <20190521074435.7a277fd6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Hg6h6SYoJ4msJF0GufiSt7s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--nextPart2630576.59dGvNmJpf
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Masahiro,
+On Monday, 20 May 2019 23:44:35 CEST Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   9eaa65e8aad5 ("scripts/spdxcheck.py: Add dual license subdirectory")
+> 
+> Fixes tag
+> 
+>   Fixes: 99871f2f9a4d ("scripts/spdxcheck.py: Fix path to deprecated licenses")
+[...]
 
-On Tue, 21 May 2019 14:48:21 +0900 Masahiro Yamada <yamada.masahiro@socione=
-xt.com> wrote:
->
-> FYI.
-> Commit 15e57a12d4df3c662f6cceaec6d1efa98a3d70f8
-> is equivalent to commit ecebc5ce59a003163eb608ace38a01d7ffeb0a95
-> which is already in the mainline.
->=20
-> The former should be dropped, shouldn't it?
+Sorry, my fault. I actually meant 8ea8814fcdcb ("LICENSES: Clearly mark dual 
+license only licenses") at both places in the commit message.
 
-I have dropped it.  I assume andrew will take it out of his patch queue in =
-due course.
+Anything which can be done from my site?
 
-Andrew, this is:
-
-  15e57a12d4df ("kdb: det rid of broken attempt to print CCVERSION in kdb s=
-ummary")
-
-I dropped most (all?) of the rest that you have sent to Linus, but this
-hit Linus' tree via another tree.
-
-BTW, Masahiro, please trim your quoting to just the relevant bits,
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Hg6h6SYoJ4msJF0GufiSt7s
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Kind regards,
+	Sven
+--nextPart2630576.59dGvNmJpf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjmEsACgkQAVBC80lX
-0GxBjAf+Lfpbc1nCiMviu5YVgp/1C8ZUE1lBN4B1Pv6eDB6RUy7EoKd09Owr9/a8
-jF0hEcwGtB8zx2lUIvxfwFnZAJomRD4Yif1TNHI5yyuf1hH45ddjI+4ZkmTIBmN/
-vkJHDEq4sYgUxcy8RSVWhYufYC4DRAI/kXnjbqOkc7T1gzLDzOiswsMyw047YkPi
-QJgoRQg4rDFLZCGJjO/3MqIWIx3y2lsZS0Tm+gxHRBqL1YTpR8AviunwXkhwmJAJ
-QhBshQssvkRdF+YyxJMfHG2wZxHbT2FJOYGvk6VVRLPrOPlFfwRB5Iy3N5BQ1W6K
-JWLADeQK2USVxFrG2L0XSkrjW6rPyA==
-=kCQP
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlzjpMgACgkQXYcKB8Em
+e0bFWhAAqmrN6fpYzrZd/fk+XNW4xx5h+ZKMaoXAfWxnpBhVpCOuwIUQC4euAeQd
+ZXT8eefVRmbEmwXEsE3nEmc/srHqmzJu5Zjl2X9ArBYXzKwveYb1pKsuNSemvXx7
+jgsaX212te1E4JDdWCnQlH4NgN8JgW42lY1E9W35lYqWBZqyW0Hh7QTG0dCfKmLg
+Sd1TqWd4IXZSVaPr09TBZi+tirHdkEwCoe/eDvgKt0f0D4j88vH8YXIsDIpxv0t+
+0Nge9BJ6uThhpLyNxeyO9L2WlsPx5jJjzZazDvNkKYupokKXhoc8LchMr3Em6EtM
+QOab4cr93pw3sgdMxWLiKsKjhatkSn2qjNwxidqTGgDIFHVdtQjERp5H4NZGpGVj
+d4pDmvaJfz9yTebYHfI6GtULX6oShh2NGI3DV+p+VGZQ7/wWnZ3jwFYSB+TdnM9i
+R+YLdHjNZCDRY5qA497n7HXzOrDkiW+d1ks4rcnLWWhPOzY3n26EfXvLB+bTEIH1
+f8K+isYSDWi3UMfgJtMH++WnmMgHKnE/5iBcrj3ojaXmmXDM3N/3XjpcgvlbBgTm
+CkjKoOUcpGS9kVhT6EI/t7YAqBIevXFQM+txZO/gR7OKmYaVUaZyniqd2MumHupO
+cdg9LHwHYH0KrzxrHwlYZw5FSLzI1MiwdtKron5U8Qs8Oda/rvM=
+=NL74
 -----END PGP SIGNATURE-----
 
---Sig_/Hg6h6SYoJ4msJF0GufiSt7s--
+--nextPart2630576.59dGvNmJpf--
