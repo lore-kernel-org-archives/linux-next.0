@@ -1,108 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
-Date: Tue, 21 May 2019 10:51:51 +1000
-Message-ID: <20190521105151.51ffa942@canb.auug.org.au>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: linux-next: build failure after merge of the imx-mxs tree
+Date: Tue, 21 May 2019 02:16:47 +0000
+Message-ID: <DB3PR0402MB39165C5944880EA0B0A37F91F5070@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190521083756.4c8aee8a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/G6L+=B.XzszjFbhvzmL2hFN"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190521083756.4c8aee8a@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Fabio Estevam <festevam@gmail.com>, Thierry Reding <treding@nvidia.com>, Jyri Sarha <jsarha@ti.com>, Marco Felsch <m.felsch@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Shawn Guo <shawnguo@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/G6L+=B.XzszjFbhvzmL2hFN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the drm-misc tree got a conflict in:
-
-  Documentation/devicetree/bindings/vendor-prefixes.txt
-
-between commit:
-
-  8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
-
-from Linus' tree and commits:
-
-  b4a2c0055a4f ("dt-bindings: Add vendor prefix for VXT Ltd")
-  b1b0d36bdb15 ("dt-bindings: drm/panel: simple: Add binding for TFC S9700R=
-TWV43TR-01B")
-  fbd8b69ab616 ("dt-bindings: Add vendor prefix for Evervision Electronics")
-
-from the drm-misc tree.
-
-I fixed it up (I deleted the file and added the patch below) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 21 May 2019 10:48:36 +1000
-Subject: [PATCH] dt-bindings: fix up for vendor prefixes file conversion
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Docum=
-entation/devicetree/bindings/vendor-prefixes.yaml
-index 83ca4816a78b..749e3c3843d0 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -287,6 +287,8 @@ patternProperties:
-     description: Everest Semiconductor Co. Ltd.
-   "^everspin,.*":
-     description: Everspin Technologies, Inc.
-+  "^evervision,.*":
-+    description: Evervision Electronics Co. Ltd.
-   "^exar,.*":
-     description: Exar Corporation
-   "^excito,.*":
-@@ -851,6 +853,8 @@ patternProperties:
-     description: Shenzhen Techstar Electronics Co., Ltd.
-   "^terasic,.*":
-     description: Terasic Inc.
-+  "^tfc,.*":
-+    description: Three Five Corp
-   "^thine,.*":
-     description: THine Electronics, Inc.
-   "^ti,.*":
-@@ -925,6 +929,8 @@ patternProperties:
-     description: Voipac Technologies s.r.o.
-   "^vot,.*":
-     description: Vision Optical Technology Co., Ltd.
-+  "^vxt,.*"
-+    description: VXT Ltd
-   "^wd,.*":
-     description: Western Digital Corp.
-   "^wetek,.*":
---=20
-2.20.1
-
---Sig_/G6L+=B.XzszjFbhvzmL2hFN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjS6cACgkQAVBC80lX
-0GxxWAf/U1Bd2c5IorrbBJ3GkYu19Jh6K5qnUcxJYTTKlhemqW0P9KsDtQe2fvsH
-EUIsYjeHhlAUsohXmD7LMada75LSwqESAWY2nO9hCyOk4Mf6VU68oiEOGg+PI1s5
-Ex8sCpW5SmJj4NUnOBVCFuQLde/8baqC/l7PN6NQ/aetKRSXvw51OK2JzbWrmqFQ
-f9/sGKu2HUBbsbkZhbs2FZt+ZfMQlA3RtKn8Kt4R/h0joo1gkVvztAO+PsOYhZL0
-HIMpwg4o972YQYhLdUjqX088+mFQ2ck4d9iazQxcycIhVRgQl6EcAuWr3AzA5UcW
-Ii58xvlIbU1Uqb2AtEAocPkXyup2lQ==
-=C1+W
------END PGP SIGNATURE-----
-
---Sig_/G6L+=B.XzszjFbhvzmL2hFN--
+SGksIFN0ZXBoZW4vU2hhd24NCglJIHJlYWxpemVkIHRoaXMgaXNzdWUgbGFzdCB3ZWVrIHdoZW4g
+SSB1cGRhdGVkIG15IExpbnV4LW5leHQgdHJlZSAoTk9UIHN1cmUgd2h5IEkgZGlkIE5PVCBtZWV0
+IHN1Y2ggaXNzdWUgd2hlbiBJIGRpZCB0aGUgcGF0Y2gpLCBzbyBJIHJlc2VudCB0aGUgcGF0Y2gg
+c2VyaWVzIG9mIGFkZGluZyBoZWFkIGZpbGUgImlvLmgiIHRvIGZpeCB0aGlzIGlzc3VlLCBwbGVh
+c2UgYXBwbHkgYmVsb3cgVjIgcGF0Y2ggc2VyaWVzIGluc3RlYWQsIHNvcnJ5IGZvciB0aGUgaW5j
+b252ZW5pZW5jZS4NCg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDk0NDY4
+MS8NCg0KdGhhbmtzLA0KQW5zb24uDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
+RnJvbTogU3RlcGhlbiBSb3Rod2VsbCBbbWFpbHRvOnNmckBjYW5iLmF1dWcub3JnLmF1XQ0KPiBT
+ZW50OiBUdWVzZGF5LCBNYXkgMjEsIDIwMTkgNjozOCBBTQ0KPiBUbzogU2hhd24gR3VvIDxzaGF3
+bmd1b0BrZXJuZWwub3JnPg0KPiBDYzogTGludXggTmV4dCBNYWlsaW5nIExpc3QgPGxpbnV4LW5l
+eHRAdmdlci5rZXJuZWwub3JnPjsgTGludXggS2VybmVsIE1haWxpbmcNCj4gTGlzdCA8bGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZz47IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29t
+PjsNCj4gQWlzaGVuZyBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gU3ViamVjdDogbGlu
+dXgtbmV4dDogYnVpbGQgZmFpbHVyZSBhZnRlciBtZXJnZSBvZiB0aGUgaW14LW14cyB0cmVlDQo+
+IA0KPiBIaSBTaGF3biwNCj4gDQo+IEFmdGVyIG1lcmdpbmcgdGhlIGlteC1teHMgdHJlZSwgdG9k
+YXkncyBsaW51eC1uZXh0IGJ1aWxkIChhcm0NCj4gbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQg
+bGlrZSB0aGlzOg0KPiANCj4gZHJpdmVycy9jbGsvaW14L2Nsay5jOiBJbiBmdW5jdGlvbiAnaW14
+X21tZGNfbWFza19oYW5kc2hha2UnOg0KPiBkcml2ZXJzL2Nsay9pbXgvY2xrLmM6MjA6ODogZXJy
+b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uDQo+ICdyZWFkbF9yZWxheGVkJzsg
+ZGlkIHlvdSBtZWFuICd4Y2hnX3JlbGF4ZWQnPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi0N
+Cj4gZGVjbGFyYXRpb25dDQo+ICAgcmVnID0gcmVhZGxfcmVsYXhlZChjY21fYmFzZSArIENDTV9D
+Q0RSKTsNCj4gICAgICAgICBefn5+fn5+fn5+fn5+DQo+ICAgICAgICAgeGNoZ19yZWxheGVkDQo+
+IGRyaXZlcnMvY2xrL2lteC9jbGsuYzoyMjoyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24g
+b2YgZnVuY3Rpb24NCj4gJ3dyaXRlbF9yZWxheGVkJzsgZGlkIHlvdSBtZWFuICd4Y2hnX3JlbGF4
+ZWQnPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi0NCj4gZGVjbGFyYXRpb25dDQo+ICAgd3Jp
+dGVsX3JlbGF4ZWQocmVnLCBjY21fYmFzZSArIENDTV9DQ0RSKTsNCj4gICBefn5+fn5+fn5+fn5+
+fg0KPiAgIHhjaGdfcmVsYXhlZA0KPiANCj4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiANCj4gICAwZGM2
+YjQ5MmI2ZTAgKCJjbGs6IGlteDogQWRkIGNvbW1vbiBBUEkgZm9yIG1hc2tpbmcgTU1EQyBoYW5k
+c2hha2UiKQ0KPiANCj4gSSBoYXZlIHVzZWQgdGhlIGlteC1teHMgdHJlZSBmcm9tIG5leHQtMjAx
+OTA1MjAgZm9yIHRvZGF5Lg0KPiANCj4gLS0NCj4gQ2hlZXJzLA0KPiBTdGVwaGVuIFJvdGh3ZWxs
+DQo=
