@@ -1,22 +1,40 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: removed trees
-Date: Tue, 21 May 2019 09:10:50 +0100
-Message-ID: <16207.1558426250@warthog.procyon.org.uk>
-References: <20190521093743.5afaaadf@canb.auug.org.au>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: Re: linux-next: Fixes tag needs some work in the drm-intel tree
+Date: Tue, 21 May 2019 16:02:09 +0300
+Message-ID: <155844372974.15761.3182313807995451625@jlahtine-desk.ger.corp.intel.com>
+References: <20190520221526.0e103916@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521093743.5afaaadf@canb.auug.org.au>
-Content-ID: <16206.1558426250.1@warthog.procyon.org.uk>
+In-Reply-To: <20190520221526.0e103916@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Antoine Tenart <antoine.tenart@bootlin.com>, Kukjin Kim <kgene.kim@samsung.com>, Rich Felker <dalias@libc.org>, Luis de Bethencourt <luisbg@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, David Woodhouse <dwmw2@infradead.org>, Jiri Kosina <jikos@kernel.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Bart Van Assche <bart.vanassche@gmail.com>
+To: DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Quoting Stephen Rothwell (2019-05-20 15:15:38)
+> Hi all,
+> 
+> In commit
+> 
+>   0d90ccb70211 ("drm/i915: Delay semaphore submission until the start of the signaler")
+> 
+> Fixes tag
+> 
+>   Fixes: e88619646971 ("drm/i915: Use HW semaphores for inter-engine synchroni
+> 
+> has these problem(s):
+> 
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+> 
+> Please don't split Fixes tags across more than one line.
 
-> init_task
+Thanks for the report.
 
-Yeah - that went upstream, thanks.
+This was a copy'n paste mishap, detected by our tooling (and fixed by
+me) at the time of creating a PR. Unfortunately the check was not being
+enforced by tooling at commit time. We'll fix that.
 
-David
+Regards, Joonas
