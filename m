@@ -1,46 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the block tree
-Date: Thu, 23 May 2019 07:50:59 +1000
-Message-ID: <20190523075059.31a2cdc4@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma-fixes tree with Linus'
+ tree
+Date: Thu, 23 May 2019 08:32:02 +1000
+Message-ID: <20190523083202.7b3df878@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LIZWS5j/XxlFzDtoGghY3+j"; protocol="application/pgp-signature"
+ boundary="Sig_/Y0mm32AOd6uAGO7GIF.9Izl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ed Cashin <ed.cashin@acm.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Long Cheng <long.cheng@mediatek.com>, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/LIZWS5j/XxlFzDtoGghY3+j
+--Sig_/Y0mm32AOd6uAGO7GIF.9Izl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+Today's linux-next merge of the slave-dma-fixes tree got a conflict in:
 
-  04bc2bcccbd5 ("aoe: list new maintainer for aoe driver")
+  drivers/dma/mediatek/Makefile
 
-is missing a Signed-off-by from its author.
+between commit:
+
+  ec8f24b7faaf ("treewide: Add SPDX license identifier - Makefile/Kconfig")
+
+from Linus' tree and commit:
+
+  e8b3ba1e38a2 ("dmaengine: mediatek: Add MediaTek UART APDMA support")
+
+from the slave-dma-fixes tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/LIZWS5j/XxlFzDtoGghY3+j
+diff --cc drivers/dma/mediatek/Makefile
+index 13b144594510,61a6d29c8e8c..000000000000
+--- a/drivers/dma/mediatek/Makefile
++++ b/drivers/dma/mediatek/Makefile
+@@@ -1,3 -1,3 +1,4 @@@
+ +# SPDX-License-Identifier: GPL-2.0-only
++ obj-$(CONFIG_MTK_UART_APDMA) +=3D mtk-uart-apdma.o
+  obj-$(CONFIG_MTK_HSDMA) +=3D mtk-hsdma.o
+  obj-$(CONFIG_MTK_CQDMA) +=3D mtk-cqdma.o
+
+--Sig_/Y0mm32AOd6uAGO7GIF.9Izl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzlxEMACgkQAVBC80lX
-0Gz5yQf/ei9KczpoZLw/w1uK4hlvB33M/ZvGbdIF3luqZ2+XvCXcAN44G5f6szO8
-/gnR1qTUt0fT+z4NUPb39FtvC4kmLUjsVWyKr7v+RKjPcTrwThVpcoqBuTslhRrD
-ZaaXLMjKptvRwHUUEFtZbQMnB453CgVlLS7YwKUqIaq0G3jqKS6fSjchjp4RL19R
-0Bd9DZPzBvTsk1BkLRMDcj0jzACl0ukYd1gLskUiD8lxT8sKOMZFe9pBwRGZe12x
-PfjJRnhbv0AKays+zIvG5koLxYZbELh9P6EK5S42w7dYKlsuPM0isYVChHs8aTHi
-ng9XSAWP6HP5gqcOx6LDQ/WDyy29tA==
-=zFN1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzlzeIACgkQAVBC80lX
+0GxoEwf/b+3YUGsq6AM1xX1m5GiKTgWrMfZpl/xszpdVYOi60C7YAr1cBcXDvVuT
+h0ExyCSsfrp3HS7/0KH7r81rrn0c5sZsgijcbhaIbaMR+D7VnmfepYhwGu8Nt/Zz
+5sV3IEwNjORM1/blnB/XmyGuh87howOZgN1NCU/h6nmNbA5F+7ajdT/EX50W9ID1
+Bs1VSVk5xEUoeliHj1CQzlK0q7bBFL+LuC263bM3vuF9gboFhgANjac4YcrHIopE
+bIBOEi1RMu9NeAYE/6CuVmZOhNeIheNhULe3tekbXb9TNcdo+B3gSzV5ZvXRnMuK
+dainXT1r07E4pQrPvXS2dCXAaAVGbQ==
+=K++D
 -----END PGP SIGNATURE-----
 
---Sig_/LIZWS5j/XxlFzDtoGghY3+j--
+--Sig_/Y0mm32AOd6uAGO7GIF.9Izl--
