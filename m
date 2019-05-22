@@ -1,62 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with Linus' tree
-Date: Wed, 22 May 2019 10:11:38 +1000
-Message-ID: <20190522101138.3797b3d0@canb.auug.org.au>
+Subject: linux-next: manual merge of the pidfd tree with Linus' tree
+Date: Wed, 22 May 2019 11:01:15 +1000
+Message-ID: <20190522110115.7350be3e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SWqY30olTy+T8neXG.DkgSr"; protocol="application/pgp-signature"
+ boundary="Sig_/9FpqtZ5yD8iO3LD4WECjyjC"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hannes Reinece <hare@suse.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Joel Fernandes (Google)" <joel@joelfernandes.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/SWqY30olTy+T8neXG.DkgSr
+--Sig_/9FpqtZ5yD8iO3LD4WECjyjC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the scsi tree got a conflict in:
+Today's linux-next merge of the pidfd tree got a conflict in:
 
-  drivers/scsi/osst.c
+  tools/testing/selftests/pidfd/Makefile
 
 between commit:
 
-  09c434b8a004 ("treewide: Add SPDX license identifier for more missed file=
-s")
+  ec8f24b7faaf ("treewide: Add SPDX license identifier - Makefile/Kconfig")
 
 from Linus' tree and commit:
 
-  70841904d909 ("scsi: osst: kill obsolete driver")
+  233ad92edbea ("pidfd: add polling selftests")
 
-from the scsi tree.
+from the pidfd tree.
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/SWqY30olTy+T8neXG.DkgSr
+diff --cc tools/testing/selftests/pidfd/Makefile
+index 443fedbd6231,8d97cb35fca4..000000000000
+--- a/tools/testing/selftests/pidfd/Makefile
++++ b/tools/testing/selftests/pidfd/Makefile
+@@@ -1,7 -1,6 +1,7 @@@
+ +# SPDX-License-Identifier: GPL-2.0-only
+- CFLAGS +=3D -g -I../../../../usr/include/
++ CFLAGS +=3D -g -I../../../../usr/include/ -lpthread
+ =20
+- TEST_GEN_PROGS :=3D pidfd_test
++ TEST_GEN_PROGS :=3D pidfd_test pidfd_open_test
+ =20
+  include ../lib.mk
+ =20
+
+--Sig_/9FpqtZ5yD8iO3LD4WECjyjC
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzkk7oACgkQAVBC80lX
-0Gz8igf/eIWVE3LL64EJmtlG73TBlNTQgiqQn3T2eBRPnFpbtNbyqIyhtMG1Uxja
-3TscbjJkuBYLZw2r/gMKtqJlZJQiRoS5M5/+sV7iHrXhkbkBpe1h5+tQX5PC3FX4
-PG9VKacU0cudMnO+vCKYlm46XIP1RCPD/wNPY+oEqrXpiaer/24MU/PpVL2rkmZT
-nfOn6k/7kqBNMnR7AiRZKF54gkeyCUPB0VnHhLrbrRUSlDqVs6S/31EUCBMWNNdO
-fYMY27AVnZ5j23ONTjuesbNfOn4iur66Q9BWfuxZvt2/gQvzkr5pwpGv8lJXCL/m
-+VsvQiBNEFM85+Rlaq7A17A7F3vI9Q==
-=GMpd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzkn1sACgkQAVBC80lX
+0Gzw9Af9E8+ptOFJWEcj9CvgKhaBwlug3cjhqiEcxYdTnLmbKU6B9vlyYvSEnnn+
+hVm4Z0TZnXThT3bQcUo+euYoa5zXiTckwjjFW4zHwM0VXO/hhmI74d6d8RiVGzqQ
+2tOn0X+wN+MagiE/E/tSh7aKBiQtX4r80Bq2u+hbZccRcI191QtdH6QsMPl7usYY
+wVNP/fWo9iQaqOw4QRJ8aoTo9eqGQU/QEaUaXRaHJ6HW+MoclVfBCvxbZm22EhgI
+u7tWOYAsxH7dQmUIRHi7TmzLLpJ2ULJd8e4E8tyA23Ro5FW4xpgPhdSVo/lUpmVf
+Vros2xs/BUn1i0OivT2cNIRbKxvOiw==
+=4Q4U
 -----END PGP SIGNATURE-----
 
---Sig_/SWqY30olTy+T8neXG.DkgSr--
+--Sig_/9FpqtZ5yD8iO3LD4WECjyjC--
