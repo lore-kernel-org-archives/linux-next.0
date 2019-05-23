@@ -1,43 +1,73 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: Signed-off-by missing for commits in the block tree
-Date: Thu, 23 May 2019 16:54:01 -0600
-Message-ID: <9eb52b2c-2148-8f87-dea9-15df4d50e9de@kernel.dk>
-References: <20190524074500.1fde68d6@canb.auug.org.au>
- <20190523215206.GA15192@localhost.localdomain>
- <20190524083321.7ada6382@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Fri, 24 May 2019 09:21:25 +1000
+Message-ID: <20190524092125.4ebc4d28@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//vSvU6n/=OcUnbshppgiivd"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190524083321.7ada6382@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Keith Busch <kbusch@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Keith Busch <keith.busch@intel.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 List-Id: linux-next.vger.kernel.org
 
-On 5/23/19 4:33 PM, Stephen Rothwell wrote:
-> Hi Keith,
-> 
-> On Thu, 23 May 2019 15:52:07 -0600 Keith Busch <kbusch@kernel.org> wrote:
->>
->> On Fri, May 24, 2019 at 07:45:00AM +1000, Stephen Rothwell wrote:
->>> Commits
->>>
->>>    5fb4aac756ac ("nvme: release namespace SRCU protection before performing controller ioctls")
->>>    90ec611adcf2 ("nvme: merge nvme_ns_ioctl into nvme_ioctl")
->>>    3f98bcc58cd5 ("nvme: remove the ifdef around nvme_nvm_ioctl")
->>>    100c815cbd56 ("nvme: fix srcu locking on error return in nvme_get_ns_from_disk")
->>>
->>> are missing a Signed-off-by from their committer.
->>
->> Oops, I'd only added my Reviewed-by. Do I need to update the commit
->> messages and resend, or is this just putting me on notice for next time?
-> 
-> That depends on Jens ...
+--Sig_//vSvU6n/=OcUnbshppgiivd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Since they at least have a reviewed-by from the committer, I say we let
-it slide this time.
+Hi all,
 
--- 
-Jens Axboe
+Today's linux-next merge of the v4l-dvb tree got a conflict in:
+
+  drivers/media/platform/coda/Makefile
+
+between commit:
+
+  ec8f24b7faaf ("treewide: Add SPDX license identifier - Makefile/Kconfig")
+
+from Linus' tree and commit:
+
+  94b7ddb91c16 ("media: coda: remove -I$(src) header search path")
+
+from the v4l-dvb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/media/platform/coda/Makefile
+index f13adacd924e,3eed82137257..000000000000
+--- a/drivers/media/platform/coda/Makefile
++++ b/drivers/media/platform/coda/Makefile
+@@@ -1,6 -1,3 +1,5 @@@
+ +# SPDX-License-Identifier: GPL-2.0-only
+- ccflags-y +=3D -I$(src)
+ +
+  coda-objs :=3D coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-jpeg.o
+ =20
+  obj-$(CONFIG_VIDEO_CODA) +=3D coda.o
+
+--Sig_//vSvU6n/=OcUnbshppgiivd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznKvUACgkQAVBC80lX
+0GzAzgf+Jeyk59jpqszwjhCVdTLAfx9dp9f8GwJ1yy5pC5WItANJtp6pA6ej90Tu
+8aNwVnYCmaVbwSpImDdSJz6QfhaYzdjKf+aD3u527eL6Ip1elO+cCgKyCbhr8MaI
+qio+/KjJgJv01HmfPsBpcxE3dX+/4JfITkT9DmLm2WbHOsONQZi65UPRLP8lfsGR
+VQ4pP++9+7kcbaHeRM7GD26+qDhAlxlr+5uBni56DCEIKUTYexKjwDava7KkEKxE
+U34sDRWPpLCP7H7ms3yL8cfIQrmfVmLBHyCjUoh3w1FlJMk5lxyrRv1ApDQ+7pZZ
+jsl5jN3fHQQ6I7swYZKQJzxx7H6Z6g==
+=8ai2
+-----END PGP SIGNATURE-----
+
+--Sig_//vSvU6n/=OcUnbshppgiivd--
