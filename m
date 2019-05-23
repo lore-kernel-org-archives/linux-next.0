@@ -1,48 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
-Date: Fri, 24 May 2019 00:05:00 +1000
-Message-ID: <20190524000500.61cacf9e@canb.auug.org.au>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
+Date: Thu, 23 May 2019 17:10:05 +0300
+Message-ID: <20190523141004.cfbuymuykjew4tyr@kekkonen.localdomain>
+References: <20190524000500.61cacf9e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O8P95TJW9lavI20hcLXF0XM"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190524000500.61cacf9e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shawnx Tu <shawnx.tu@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, Shawnx Tu <shawnx.tu@intel.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/O8P95TJW9lavI20hcLXF0XM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen, Mauro,
 
-Hi all,
+On Fri, May 24, 2019 at 12:05:00AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   eeabf6320e2f ("media: Revert "[media] marvell-ccic: reset ccic phy when stop streaming for stability"")
+>   bbf83ed40252c ("media: ov8856: modify register to fix test pattern")
+> 
+> are missing a Signed-off-by from their authors.
 
-Commits
+Ouch.
 
-  eeabf6320e2f ("media: Revert "[media] marvell-ccic: reset ccic phy when s=
-top streaming for stability"")
-  bbf83ed40252c ("media: ov8856: modify register to fix test pattern")
+Mauro, what do you prefer, reset the tree or what?
 
-are missing a Signed-off-by from their authors.
+Shawn, Lubomir: please read "Developer's Certificate of Origin 1.1" in
+Documentation/process/submitting-patches.rst and then resend with
+appropriate SoB lines.
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+Regards,
 
---Sig_/O8P95TJW9lavI20hcLXF0XM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzmqIwACgkQAVBC80lX
-0Gw1pQgApMEALJonkcF2jt9Vipi+s2PqtfmkE+Y5BheSOn39v4/NsfL42leXTiGg
-PohNjO1nLUtz27FE7mxhT03Cdzftl66EpNpiZnzIyRtRfzAqnhN4t6pOHGM2XK6r
-xT8Eyn84tpZGzd8xreCHu77Y83Hrp3z2IKOGi+hrD1JZCkneLalk6b55UB4Crs2c
-1wOUkc1xuegN7hxmwHPcpM+8XnXxsRoWuUlEI6BbxApUd2psxYGyDA2h3OJQ28hH
-3Yh+/BjflHTA/67klKqgmpuU+9hS08tZSmwxIaWVEV8S/CLDBjo526ZMYGHW//xH
-tQQcKX5cyHUdKd2FvQRUoGp3LVcLiw==
-=HoPq
------END PGP SIGNATURE-----
-
---Sig_/O8P95TJW9lavI20hcLXF0XM--
+Sakari Ailus
+sakari.ailus@linux.intel.com
