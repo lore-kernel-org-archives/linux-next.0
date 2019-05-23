@@ -1,49 +1,55 @@
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the v4l-dvb
- tree
-Date: Thu, 23 May 2019 11:20:51 -0300
-Message-ID: <20190523112051.20418ef4@coco.lan>
-References: <20190524000500.61cacf9e@canb.auug.org.au>
-        <20190523141004.cfbuymuykjew4tyr@kekkonen.localdomain>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: manual merge of the drm-misc tree with
+ Linus' tree
+Date: Thu, 23 May 2019 11:10:39 -0500
+Message-ID: <CAL_JsqKN6+f5FXUVs03VSv2AKvqaS0XemKFSYFthaxPoHJVwEg@mail.gmail.com>
+References: <20190521105151.51ffa942@canb.auug.org.au>
+ <20190523115355.joyeqlmbjkufueyn@flea>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190523141004.cfbuymuykjew4tyr@kekkonen.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lubomir Rintel <lkundrak@v3.sk>, Shawnx Tu <shawnx.tu@intel.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20190523115355.joyeqlmbjkufueyn@flea>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Marco Felsch <m.felsch@pengutronix.de>, Jyri Sarha <jsarha@ti.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-next.vger.kernel.org
 
-Em Thu, 23 May 2019 17:10:05 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
-
-> Hi Stephen, Mauro,
-> 
-> On Fri, May 24, 2019 at 12:05:00AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Commits
-> > 
-> >   eeabf6320e2f ("media: Revert "[media] marvell-ccic: reset ccic phy when stop streaming for stability"")
-> >   bbf83ed40252c ("media: ov8856: modify register to fix test pattern")
-> > 
-> > are missing a Signed-off-by from their authors.  
-> 
-> Ouch.
-> 
-> Mauro, what do you prefer, reset the tree or what?
-
-I'll drop bbf83ed40252c and the marvel-ccic patches after eeabf6320e2f,
-rebasing my tree.
-
-> 
-> Shawn, Lubomir: please read "Developer's Certificate of Origin 1.1" in
-> Documentation/process/submitting-patches.rst and then resend with
-> appropriate SoB lines.
-> 
-
-
-
-Thanks,
-Mauro
+T24gVGh1LCBNYXkgMjMsIDIwMTkgYXQgNjo1NCBBTSBNYXhpbWUgUmlwYXJkIDxtYXhpbWUucmlw
+YXJkQGJvb3RsaW4uY29tPiB3cm90ZToKPgo+IE9uIFR1ZSwgTWF5IDIxLCAyMDE5IGF0IDEwOjUx
+OjUxQU0gKzEwMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPiBIaSBhbGwsCj4gPgo+ID4g
+VG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdvdCBhIGNvbmZs
+aWN0IGluOgo+ID4KPiA+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZlbmRv
+ci1wcmVmaXhlcy50eHQKPiA+Cj4gPiBiZXR3ZWVuIGNvbW1pdDoKPiA+Cj4gPiAgIDgxMjJkZTU0
+NjAyZSAoImR0LWJpbmRpbmdzOiBDb252ZXJ0IHZlbmRvciBwcmVmaXhlcyB0byBqc29uLXNjaGVt
+YSIpCj4gPgo+ID4gZnJvbSBMaW51cycgdHJlZSBhbmQgY29tbWl0czoKPiA+Cj4gPiAgIGI0YTJj
+MDA1NWE0ZiAoImR0LWJpbmRpbmdzOiBBZGQgdmVuZG9yIHByZWZpeCBmb3IgVlhUIEx0ZCIpCj4g
+PiAgIGIxYjBkMzZiZGIxNSAoImR0LWJpbmRpbmdzOiBkcm0vcGFuZWw6IHNpbXBsZTogQWRkIGJp
+bmRpbmcgZm9yIFRGQyBTOTcwMFJUV1Y0M1RSLTAxQiIpCj4gPiAgIGZiZDhiNjlhYjYxNiAoImR0
+LWJpbmRpbmdzOiBBZGQgdmVuZG9yIHByZWZpeCBmb3IgRXZlcnZpc2lvbiBFbGVjdHJvbmljcyIp
+Cj4gPgo+ID4gZnJvbSB0aGUgZHJtLW1pc2MgdHJlZS4KPiA+Cj4gPiBJIGZpeGVkIGl0IHVwIChJ
+IGRlbGV0ZWQgdGhlIGZpbGUgYW5kIGFkZGVkIHRoZSBwYXRjaCBiZWxvdykgYW5kIGNhbgo+ID4g
+Y2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMgaXMgbm93IGZpeGVkIGFzIGZhciBhcyBs
+aW51eC1uZXh0IGlzCj4gPiBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwgY29uZmxpY3Rz
+IHNob3VsZCBiZSBtZW50aW9uZWQgdG8geW91cgo+ID4gdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVu
+IHlvdXIgdHJlZSBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5Cj4gPiBhbHNvIHdh
+bnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcgd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29u
+ZmxpY3RpbmcKPiA+IHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseSBjb21wbGV4IGNv
+bmZsaWN0cy4KPgo+IEkganVzdCB0b29rIHlvdXIgcGF0Y2ggYW5kIHB1c2hlZCBhIHRlbXAgYnJh
+bmNoIHRoZXJlOgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwv
+Z2l0L21yaXBhcmQvbGludXguZ2l0L2NvbW1pdC8/aD1kcm0tbWlzYy1uZXh0JmlkPTM4MzJmMmNh
+ZDUzMDdlYmNlZGVlYWQxM2ZiZDhkM2NmMDZiYTVlOTAKPgo+IFJvYiwgU3RlcGhlbiwgYXJlIHlv
+dSBvayB3aXRoIHRoZSBjaGFuZ2U/IElmIHNvLCBJJ2xsIHB1c2ggaXQuCgpUaGUgJ3RmYycgbGlu
+ZSBpcyBtaXNzaW5nIGEgJzonIG9uIHRoZSBlbmQuIERvZXMgdGhlIGZpbGUgcGFzcwpkdF9iaW5k
+aW5nX2NoZWNrIGxpa2UgdGhhdD8KClJvYgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9pbnRlbC1nZng=
