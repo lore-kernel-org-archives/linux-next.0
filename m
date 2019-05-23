@@ -1,87 +1,122 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with the drm-intel
- tree
-Date: Thu, 23 May 2019 09:58:16 +1000
-Message-ID: <20190523095816.2fd950f6@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the drm-misc tree with Linus' tree
+Date: Thu, 23 May 2019 10:27:36 +1000
+Message-ID: <20190523102736.4845a80b@canb.auug.org.au>
+References: <20190521105151.51ffa942@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/iqoc+GgWuISAZa6f0roKMrT"; protocol="application/pgp-signature"
+ boundary="Sig_/0WxK/Zy6Cs5iCL1+uPRs7QG"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190521105151.51ffa942@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ramalingam C <ramalingam.c@intel.com>, Uma Shankar <uma.shankar@intel.com>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Fabio Estevam <festevam@gmail.com>, Thierry Reding <treding@nvidia.com>, Jyri Sarha <jsarha@ti.com>, Marco Felsch <m.felsch@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/iqoc+GgWuISAZa6f0roKMrT
+--Sig_/0WxK/Zy6Cs5iCL1+uPRs7QG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Sean,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+On Tue, 21 May 2019 10:51:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Today's linux-next merge of the drm-misc tree got a conflict in:
+>=20
+>   Documentation/devicetree/bindings/vendor-prefixes.txt
+>=20
+> between commit:
+>=20
+>   8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
+>=20
+> from Linus' tree and commits:
+>=20
+>   b4a2c0055a4f ("dt-bindings: Add vendor prefix for VXT Ltd")
+>   b1b0d36bdb15 ("dt-bindings: drm/panel: simple: Add binding for TFC S970=
+0RTWV43TR-01B")
+>   fbd8b69ab616 ("dt-bindings: Add vendor prefix for Evervision Electronic=
+s")
+>=20
+> from the drm-misc tree.
+>=20
+> I fixed it up (I deleted the file and added the patch below) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 21 May 2019 10:48:36 +1000
+> Subject: [PATCH] dt-bindings: fix up for vendor prefixes file conversion
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
+umentation/devicetree/bindings/vendor-prefixes.yaml
+> index 83ca4816a78b..749e3c3843d0 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -287,6 +287,8 @@ patternProperties:
+>      description: Everest Semiconductor Co. Ltd.
+>    "^everspin,.*":
+>      description: Everspin Technologies, Inc.
+> +  "^evervision,.*":
+> +    description: Evervision Electronics Co. Ltd.
+>    "^exar,.*":
+>      description: Exar Corporation
+>    "^excito,.*":
+> @@ -851,6 +853,8 @@ patternProperties:
+>      description: Shenzhen Techstar Electronics Co., Ltd.
+>    "^terasic,.*":
+>      description: Terasic Inc.
+> +  "^tfc,.*":
+> +    description: Three Five Corp
+>    "^thine,.*":
+>      description: THine Electronics, Inc.
+>    "^ti,.*":
+> @@ -925,6 +929,8 @@ patternProperties:
+>      description: Voipac Technologies s.r.o.
+>    "^vot,.*":
+>      description: Vision Optical Technology Co., Ltd.
+> +  "^vxt,.*"
+> +    description: VXT Ltd
+>    "^wd,.*":
+>      description: Western Digital Corp.
+>    "^wetek,.*":
+> --=20
+> 2.20.1
 
-  include/drm/drm_mode_config.h
-
-between commit:
-
-  585b000de23b ("drm: move content protection property to mode_config")
-
-from the drm-intel tree and commit:
-
-  fbb5d0353c62 ("drm: Add HDR source metadata property")
-
-from the drm-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+In doing a back merge of Linus' tree into the drm-misc tree, you seem
+to have missed the above merge fixup and so lost some of the changes
+from the above commits.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/drm/drm_mode_config.h
-index 5764ee3c7453,c031b5a9d8d1..000000000000
---- a/include/drm/drm_mode_config.h
-+++ b/include/drm/drm_mode_config.h
-@@@ -836,12 -836,13 +836,19 @@@ struct drm_mode_config=20
-  	 */
-  	struct drm_property *writeback_out_fence_ptr_property;
- =20
- +	/**
- +	 * @content_protection_property: DRM ENUM property for content
- +	 * protection. See drm_connector_attach_content_protection_property().
- +	 */
- +	struct drm_property *content_protection_property;
- +
-+ 	/**
-+ 	 * hdr_output_metadata_property: Connector property containing hdr
-+ 	 * metatda. This will be provided by userspace compositors based
-+ 	 * on HDR content
-+ 	 */
-+ 	struct drm_property *hdr_output_metadata_property;
-+=20
-  	/* dumb ioctl parameters */
-  	uint32_t preferred_depth, prefer_shadow;
- =20
-
---Sig_/iqoc+GgWuISAZa6f0roKMrT
+--Sig_/0WxK/Zy6Cs5iCL1+uPRs7QG
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzl4hgACgkQAVBC80lX
-0GwvNAf/e7CBkRU+Cwrf5MF74yDaDjYq1i+q6cdNZgWm1pjYAHtD+2QarsztG3fI
-8Ln3ug+xGjuoWWDSWQ4kkDWRg2L//Viqt5EmUrQFKrvxvOBBWE4936f1kfJg9JGp
-neOdvZEGjRgQo8xcKW/5KP7WQvNw+yelYPZ1p3IdQ2oigr7y0SewpICvWnIPEeUa
-MAqY9sBmCp+S326XWvjlPoAnMZUbzzsnnUZUYMt3yzUui1k8UaYAG9WGPyx2WNgs
-Qxi+1CsuV9GVpoAao+4s1QsLJDUZ9nCjT/GgN56mQR+NBFyfTTtfY/yBxyzAkxu/
-kfA2Tk1W5TcIrEbrf3/mX/OifV3dgA==
-=xKAU
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzl6PgACgkQAVBC80lX
+0Gzo8ggAnX6lqBzN0XJKHIrMGP1dj1RyPS+AJu3T9HxPBag2M6JYPaW57qYtd9g2
+laMr4Bwp7PDFVC3UmEJkmVZ05NDEHGvOrzecYrib596tF8FpjK6WciJjYKyMO1+7
+cHwbU7kCcLGeVtIkvIzKtyn1wnZafScYwCNZxKiXlyZFOLYI0fqcL2rXyVIXGUeS
+7T1x559NFyNJT3vDqlajTmavzQPTYQiHTjhol8EI0GCY8qZYE+9xR7CxTDS0ZbDI
+MU11OdnFzxQASyCoqjOve46O3yDO6vh5d8L141MtRkr4bMQhh4Z1YilcEbM1WMC1
+QWTuS2pny6GTDcJgvj0+ABKQUkH33w==
+=tAtR
 -----END PGP SIGNATURE-----
 
---Sig_/iqoc+GgWuISAZa6f0roKMrT--
+--Sig_/0WxK/Zy6Cs5iCL1+uPRs7QG--
