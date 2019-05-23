@@ -1,58 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-fixes tree
-Date: Fri, 24 May 2019 08:29:26 +1000
-Message-ID: <20190524082926.6e1a7d8f@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commits in the block tree
+Date: Fri, 24 May 2019 08:33:21 +1000
+Message-ID: <20190524083321.7ada6382@canb.auug.org.au>
+References: <20190524074500.1fde68d6@canb.auug.org.au>
+        <20190523215206.GA15192@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3/vL9jhrSoegPrs8wupWN73"; protocol="application/pgp-signature"
+ boundary="Sig_/bH4wz8EXsUVjijbXawieSEI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190523215206.GA15192@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Harry Wentland <harry.wentland@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3/vL9jhrSoegPrs8wupWN73
+--Sig_/bH4wz8EXsUVjijbXawieSEI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Keith,
 
-After merging the drm-fixes tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Thu, 23 May 2019 15:52:07 -0600 Keith Busch <kbusch@kernel.org> wrote:
+>
+> On Fri, May 24, 2019 at 07:45:00AM +1000, Stephen Rothwell wrote:
+> > Commits
+> >=20
+> >   5fb4aac756ac ("nvme: release namespace SRCU protection before perform=
+ing controller ioctls")
+> >   90ec611adcf2 ("nvme: merge nvme_ns_ioctl into nvme_ioctl")
+> >   3f98bcc58cd5 ("nvme: remove the ifdef around nvme_nvm_ioctl")
+> >   100c815cbd56 ("nvme: fix srcu locking on error return in nvme_get_ns_=
+from_disk")
+> >=20
+> > are missing a Signed-off-by from their committer. =20
+>=20
+> Oops, I'd only added my Reviewed-by. Do I need to update the commit
+> messages and resend, or is this just putting me on notice for next time?
 
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'l=
-oad_dmcu_fw':
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:667:7: error: i=
-mplicit declaration of function 'ASICREV_IS_PICASSO'; did you mean 'ASICREV=
-_IS_VEGA12_P'? [-Werror=3Dimplicit-function-declaration]
-   if (ASICREV_IS_PICASSO(adev->external_rev_id))
-       ^~~~~~~~~~~~~~~~~~
-       ASICREV_IS_VEGA12_P
-
-Caused by commit
-
-  55143dc23ca4 ("drm/amd/display: Don't load DMCU for Raven 1")
-
-I have reverted that commit for today.
+That depends on Jens ...
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/3/vL9jhrSoegPrs8wupWN73
+--Sig_/bH4wz8EXsUVjijbXawieSEI
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznHsYACgkQAVBC80lX
-0Gxiqgf/TX+jNEffQfpsZ0K5DEdyod6S5jH6C3F8/4luruSvyxWOVsJkfo3n7+eY
-G3FgBMxNkwfk/gNzHujp7JwZ1cyONguMQhUd/MgTWdLtu8tj0sELLLxrLecDJtJA
-ru1k5stROtvFEFJBt7ttqyQyqUQTCIH29WPrmnRDOlspkhVC9nnY1EaHhIjGJZkq
-4Z1AmffQnv4BI0riIg+6EDgM8GlzkopAqn0JkSLXqXrlYyN7o9SyNoh/JsunmF02
-+ySAqwq7WO3aAxGUAx24aO8MCJbFw6ZfwAZk+tF6h/28sV0Mkqs9p91uFmxFMqB/
-d00p8y1eDXWFDmkJpd+l+HIXXMEP7w==
-=XBe4
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznH7EACgkQAVBC80lX
+0GzBnQf/dI0C/I6VfskUrct9z8/c/UiS7V4TOegHThOyh+n+WRFgZH/Pm7mezScA
+uwqHlNd9CI9qIoQatQHg93I6tjtcB/hYSMDQEqTEvaBz39NqFZJuJWY4z+9Uk4YR
+4QJRKSi99ABMrc4RtNQUFrk8fBW49M/uBpZ2McY0TheR4m/6Lom90a7WQyCyeqbz
+w3CTOAP3UAd/KkMgEHYGKH1GI4XmdB15fstbGtd1XCTw0VjTWOu8r7d5IWYrSJWQ
+Pkh8t1q2osTZFbe3Yti9iobdsbcF2oXt+EqyrZEGxaqMBbcw5uglQuS0t8gPhkAh
+ls19SIdwHf4skdZraAqcipgaFH+K2A==
+=D15q
 -----END PGP SIGNATURE-----
 
---Sig_/3/vL9jhrSoegPrs8wupWN73--
+--Sig_/bH4wz8EXsUVjijbXawieSEI--
