@@ -1,56 +1,48 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: manual merge of the drm-misc tree with Linus' tree
-Date: Thu, 23 May 2019 15:11:15 +0200
-Message-ID: <CAKMK7uHvUFtRNn5j6TnmBrs5ndkSuNwJWzB026j2zczaV9O_Tg@mail.gmail.com>
-References: <20190521105151.51ffa942@canb.auug.org.au> <20190523115355.joyeqlmbjkufueyn@flea>
- <20190523230409.31da92b9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
+Date: Fri, 24 May 2019 00:05:00 +1000
+Message-ID: <20190524000500.61cacf9e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/O8P95TJW9lavI20hcLXF0XM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190523230409.31da92b9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jyri Sarha <jsarha@ti.com>, Marco Felsch <m.felsch@pengutronix.de>, Linux Next Mailing List <linux-next@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Sean Paul <seanpaul@chromium.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shawnx Tu <shawnx.tu@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, May 23, 2019 at 3:04 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Maxime,
->
-> On Thu, 23 May 2019 13:53:55 +0200 Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Tue, May 21, 2019 at 10:51:51AM +1000, Stephen Rothwell wrote:
-> > >
-> > > Today's linux-next merge of the drm-misc tree got a conflict in:
-> > >
-> > >   Documentation/devicetree/bindings/vendor-prefixes.txt
-> > >
-> > > between commit:
-> > >
-> > >   8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
-> > >
-> > > from Linus' tree and commits:
-> > >
-> > >   b4a2c0055a4f ("dt-bindings: Add vendor prefix for VXT Ltd")
-> > >   b1b0d36bdb15 ("dt-bindings: drm/panel: simple: Add binding for TFC S9700RTWV43TR-01B")
-> > >   fbd8b69ab616 ("dt-bindings: Add vendor prefix for Evervision Electronics")
-> > >
-> > > from the drm-misc tree.
-> >
-> > I just took your patch and pushed a temp branch there:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git/commit/?h=drm-misc-next&id=3832f2cad5307ebcedeead13fbd8d3cf06ba5e90
-> >
-> > Rob, Stephen, are you ok with the change? If so, I'll push it.
->
-> All that needs to be done is for my patch (slightly corrected) needs to
-> be applied to the drm-misc tree.  That tree already has the back merge
-> of Linus' tree and the txt file has been removed (my patch should have
-> been applied as part of the merge resolution but doing it later is fine).
+--Sig_/O8P95TJW9lavI20hcLXF0XM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That commit is on top of drm-misc, and somehow the .txt version has
-been resurrect in drm-misc-next (so needs to be re-deleted too).
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Hi all,
+
+Commits
+
+  eeabf6320e2f ("media: Revert "[media] marvell-ccic: reset ccic phy when s=
+top streaming for stability"")
+  bbf83ed40252c ("media: ov8856: modify register to fix test pattern")
+
+are missing a Signed-off-by from their authors.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/O8P95TJW9lavI20hcLXF0XM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzmqIwACgkQAVBC80lX
+0Gw1pQgApMEALJonkcF2jt9Vipi+s2PqtfmkE+Y5BheSOn39v4/NsfL42leXTiGg
+PohNjO1nLUtz27FE7mxhT03Cdzftl66EpNpiZnzIyRtRfzAqnhN4t6pOHGM2XK6r
+xT8Eyn84tpZGzd8xreCHu77Y83Hrp3z2IKOGi+hrD1JZCkneLalk6b55UB4Crs2c
+1wOUkc1xuegN7hxmwHPcpM+8XnXxsRoWuUlEI6BbxApUd2psxYGyDA2h3OJQ28hH
+3Yh+/BjflHTA/67klKqgmpuU+9hS08tZSmwxIaWVEV8S/CLDBjo526ZMYGHW//xH
+tQQcKX5cyHUdKd2FvQRUoGp3LVcLiw==
+=HoPq
+-----END PGP SIGNATURE-----
+
+--Sig_/O8P95TJW9lavI20hcLXF0XM--
