@@ -1,54 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Date: Fri, 24 May 2019 07:35:14 +1000
-Message-ID: <20190524073514.3268aca5@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the block tree
+Date: Fri, 24 May 2019 07:45:00 +1000
+Message-ID: <20190524074500.1fde68d6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kRdE4Ta3LViRT=kTfWkTf8n"; protocol="application/pgp-signature"
+ boundary="Sig_/y52rQ8z3mv4S7FteBgWEXIL"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Raju Rangoju <rajur@chelsio.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kRdE4Ta3LViRT=kTfWkTf8n
+--Sig_/y52rQ8z3mv4S7FteBgWEXIL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commits
 
-  b5730061d105 ("cxgb4: offload VLAN flows regardless of VLAN ethtype")
+  5fb4aac756ac ("nvme: release namespace SRCU protection before performing =
+controller ioctls")
+  90ec611adcf2 ("nvme: merge nvme_ns_ioctl into nvme_ioctl")
+  3f98bcc58cd5 ("nvme: remove the ifdef around nvme_nvm_ioctl")
+  100c815cbd56 ("nvme: fix srcu locking on error return in nvme_get_ns_from=
+_disk")
 
-Fixes tag
-
-  Fixes: ad9af3e09c (cxgb4: add tc flower match support for vlan)
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/kRdE4Ta3LViRT=kTfWkTf8n
+--Sig_/y52rQ8z3mv4S7FteBgWEXIL
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznEhIACgkQAVBC80lX
-0GzI1wgAnQDk1wDw/CMHmhlyRTVeKRVfbq7l6LGUlVa5L1RgFYXtsb1QhUt+xJ+z
-nxgKtp65pcbZ0SI7PBVTnVa08mCxxeomsW0ghb8aOTu4YCq/Ovvay+QDvX6HDk4g
-sZUdqrsbm2/bHypyT1/h/RkLv3TCzWLrYtsUNV5OhQloSiuLm0TljDwU6YcWWbnO
-mrcqE9V6khYYKCKvf2SzCJc6VLzxjH+LcKecLKGUSNG9ow+xOlRAYmDwVYjE6k3c
-ufO9BSUPQtjuqRcezkxib9Ms8MQSlaJQjA8VchHgc5UNjxcJ6Mh96iKtf4IP5/k8
-Hc/b9Mi7tNuUFyXYsB+xyn8Xprenqg==
-=/gOf
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznFFwACgkQAVBC80lX
+0GxJDwf+LIxpoR/eFcibFlWjjBAc2m0IQd6BX0EANi8555org0lHg3NcfLOaWpOZ
+zppotatVeqqhFv2prL/VbWPnkM9GsMIS+HRvln6m57rPw2l2L1a5WOBsLmToqUpP
++YToAqakRbAWJ9EuU041AMoDyc8kbOLohDsgIYBpxM9gKKhT1g8jjSEmHE9/3sBM
+gI2/d7DZhcxO0jCvGFoxqzAIRpwCGk+TnQUwRz30C2ywxcaSxlnk7IWrIb17gPSg
+Ro9C5n0FzwsJCmQSzPD1RQvwqQQmUZnSLga+2TDvnCHE234Q289KCarioshTQH/5
+MbmENvJTYnL/douFsSfAZcHuvp7Fig==
+=OivL
 -----END PGP SIGNATURE-----
 
---Sig_/kRdE4Ta3LViRT=kTfWkTf8n--
+--Sig_/y52rQ8z3mv4S7FteBgWEXIL--
