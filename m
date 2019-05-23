@@ -1,37 +1,43 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the input-current tree
-Date: Thu, 23 May 2019 15:52:31 -0700
-Message-ID: <20190523225231.GD176265@dtor-ws>
-References: <20190524082446.7d5bc21c@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: Signed-off-by missing for commits in the block tree
+Date: Thu, 23 May 2019 16:54:01 -0600
+Message-ID: <9eb52b2c-2148-8f87-dea9-15df4d50e9de@kernel.dk>
+References: <20190524074500.1fde68d6@canb.auug.org.au>
+ <20190523215206.GA15192@localhost.localdomain>
+ <20190524083321.7ada6382@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190524082446.7d5bc21c@canb.auug.org.au>
+In-Reply-To: <20190524083321.7ada6382@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fabien Parent <fparent@baylibre.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Keith Busch <kbusch@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 24, 2019 at 08:24:46AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 5/23/19 4:33 PM, Stephen Rothwell wrote:
+> Hi Keith,
 > 
-> After merging the input-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> On Thu, 23 May 2019 15:52:07 -0600 Keith Busch <kbusch@kernel.org> wrote:
+>>
+>> On Fri, May 24, 2019 at 07:45:00AM +1000, Stephen Rothwell wrote:
+>>> Commits
+>>>
+>>>    5fb4aac756ac ("nvme: release namespace SRCU protection before performing controller ioctls")
+>>>    90ec611adcf2 ("nvme: merge nvme_ns_ioctl into nvme_ioctl")
+>>>    3f98bcc58cd5 ("nvme: remove the ifdef around nvme_nvm_ioctl")
+>>>    100c815cbd56 ("nvme: fix srcu locking on error return in nvme_get_ns_from_disk")
+>>>
+>>> are missing a Signed-off-by from their committer.
+>>
+>> Oops, I'd only added my Reviewed-by. Do I need to update the commit
+>> messages and resend, or is this just putting me on notice for next time?
 > 
-> drivers/input/keyboard/mtk-pmic-keys.c:21:10: fatal error: linux/mfd/mt6392/registers.h: No such file or directory
->  #include <linux/mfd/mt6392/registers.h>
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   78094276ca6a ("Input: mtk-pmic-keys - add support for MT6392")
-> 
-> I have reverted that commit for today.
+> That depends on Jens ...
 
-Sorry about that, I dropped the patch from the tree.
-
-Thanks.
+Since they at least have a reviewed-by from the committer, I say we let
+it slide this time.
 
 -- 
-Dmitry
+Jens Axboe
