@@ -1,110 +1,52 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: linux-next: manual merge of the drm-misc tree with
- Linus' tree
-Date: Fri, 24 May 2019 09:12:53 +0200
-Message-ID: <20190524071253.xfimg5mlvzevj2nk@flea>
-References: <20190521105151.51ffa942@canb.auug.org.au>
- <20190523115355.joyeqlmbjkufueyn@flea>
- <CAL_JsqKN6+f5FXUVs03VSv2AKvqaS0XemKFSYFthaxPoHJVwEg@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the drm-fixes tree
+Date: Fri, 24 May 2019 10:09:28 +0200
+Message-ID: <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
+References: <20190524082926.6e1a7d8f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0339705149=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <CAL_JsqKN6+f5FXUVs03VSv2AKvqaS0XemKFSYFthaxPoHJVwEg@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Marco Felsch <m.felsch@pengutronix.de>, Jyri Sarha <jsarha@ti.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190524082926.6e1a7d8f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 List-Id: linux-next.vger.kernel.org
 
-
---===============0339705149==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hfshwxlp636xi7sx"
-Content-Disposition: inline
-
-
---hfshwxlp636xi7sx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, May 23, 2019 at 11:10:39AM -0500, Rob Herring wrote:
-> On Thu, May 23, 2019 at 6:54 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Tue, May 21, 2019 at 10:51:51AM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > Today's linux-next merge of the drm-misc tree got a conflict in:
-> > >
-> > >   Documentation/devicetree/bindings/vendor-prefixes.txt
-> > >
-> > > between commit:
-> > >
-> > >   8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
-> > >
-> > > from Linus' tree and commits:
-> > >
-> > >   b4a2c0055a4f ("dt-bindings: Add vendor prefix for VXT Ltd")
-> > >   b1b0d36bdb15 ("dt-bindings: drm/panel: simple: Add binding for TFC S9700RTWV43TR-01B")
-> > >   fbd8b69ab616 ("dt-bindings: Add vendor prefix for Evervision Electronics")
-> > >
-> > > from the drm-misc tree.
-> > >
-> > > I fixed it up (I deleted the file and added the patch below) and can
-> > > carry the fix as necessary. This is now fixed as far as linux-next is
-> > > concerned, but any non trivial conflicts should be mentioned to your
-> > > upstream maintainer when your tree is submitted for merging.  You may
-> > > also want to consider cooperating with the maintainer of the conflicting
-> > > tree to minimise any particularly complex conflicts.
-> >
-> > I just took your patch and pushed a temp branch there:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git/commit/?h=drm-misc-next&id=3832f2cad5307ebcedeead13fbd8d3cf06ba5e90
-> >
-> > Rob, Stephen, are you ok with the change? If so, I'll push it.
+On Fri, May 24, 2019 at 12:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> The 'tfc' line is missing a ':' on the end.
+> Hi all,
+>
+> After merging the drm-fixes tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'load_dmcu_fw':
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:667:7: error: implicit declaration of function 'ASICREV_IS_PICASSO'; did you mean 'ASICREV_IS_VEGA12_P'? [-Werror=implicit-function-declaration]
+>    if (ASICREV_IS_PICASSO(adev->external_rev_id))
+>        ^~~~~~~~~~~~~~~~~~
+>        ASICREV_IS_VEGA12_P
+>
+> Caused by commit
+>
+>   55143dc23ca4 ("drm/amd/display: Don't load DMCU for Raven 1")
+>
+> I have reverted that commit for today.
 
-That's on me, sorry.
+Seems to compile fine here, and Dave just sent out the pull so I guess
+works for him too. What's your .config?
+-Daniel
 
-> Does the file pass dt_binding_check like that?
+>
+> --
+> Cheers,
+> Stephen Rothwell
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-No, it didn't but I overlooked it somehow. I've pushed that patch with
-the extra semi-column.
 
-Maxime
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---hfshwxlp636xi7sx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOeZdQAKCRDj7w1vZxhR
-xZr9AP9GA2LoSNSb8Aw3lEDA0VSIAbX2AciLEGPTA/XJg9DJNQEAjA43h9VqiTXF
-qjCOtN/i2lxT8YXjFbrhoaQuY7/4yQU=
-=kgcI
------END PGP SIGNATURE-----
-
---hfshwxlp636xi7sx--
-
---===============0339705149==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
-
---===============0339705149==--
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
