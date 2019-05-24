@@ -1,87 +1,70 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 24 (leds-lm3697)
-Date: Fri, 24 May 2019 08:42:42 -0700
-Message-ID: <f8300d14-972d-1c03-3266-836b94c1ec9a@infradead.org>
-References: <20190524140727.19d1e349@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the drm-fixes tree
+Date: Fri, 24 May 2019 18:19:22 +0200
+Message-ID: <20190524161922.GB21222@phenom.ffwll.local>
+References: <20190524082926.6e1a7d8f@canb.auug.org.au>
+ <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
+ <20190524201548.2e8594a2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190524140727.19d1e349@canb.auug.org.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190524201548.2e8594a2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 List-Id: linux-next.vger.kernel.org
 
-On 5/23/19 9:07 PM, Stephen Rothwell wrote:
-> Hi all,
+On Fri, May 24, 2019 at 08:15:48PM +1000, Stephen Rothwell wrote:
+> Hi Daniel,
 > 
-> News: there will be no linux-next release on Monday.
+> On Fri, 24 May 2019 10:09:28 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Fri, May 24, 2019 at 12:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the drm-fixes tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'load_dmcu_fw':
+> > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:667:7: error: implicit declaration of function 'ASICREV_IS_PICASSO'; did you mean 'ASICREV_IS_VEGA12_P'? [-Werror=implicit-function-declaration]
+> > >    if (ASICREV_IS_PICASSO(adev->external_rev_id))
+> > >        ^~~~~~~~~~~~~~~~~~
+> > >        ASICREV_IS_VEGA12_P
+> > >
+> > > Caused by commit
+> > >
+> > >   55143dc23ca4 ("drm/amd/display: Don't load DMCU for Raven 1")
+> > >
+> > > I have reverted that commit for today.  
+> > 
+> > Seems to compile fine here, and Dave just sent out the pull so I guess
+> > works for him too. What's your .config?
 > 
-> Changes since 20190523:
+> See above "x86_64 allmodconfig"
 > 
-> The input-current tree gained a build failure so I reverted a commit.
+> Looking at it closely now, I can't see how that error comes about.
 > 
-> The drm-fixes tree gained a build failure so I reverted a commit.
+> Ah, in the drm-fixes tree, the definition of  is protected by
 > 
-> The v4l-dvb tree gained a conflict against Linus' tree.
+>   #if defined(CONFIG_DRM_AMD_DC_DCN1_01)
 > 
-> Non-merge commits (relative to Linus' tree): 1814
->  1870 files changed, 61172 insertions(+), 32723 deletions(-)
+> which gets removed in the amdgpu tree (merged later).  So I can only
+> presume that CONFIG_DRM_AMD_DC_DCN1_01 was not set for the build I did.
 > 
-> ----------------------------------------------------------------------------
+> config DRM_AMD_DC
+>         bool "AMD DC - Enable new display engine"
+>         default y
+>         select DRM_AMD_DC_DCN1_0 if X86 && !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_
+> COMPARISONS)KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS
+>         select DRM_AMD_DC_DCN1_01 if X86 && !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS)
 > 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-> multi_v7_defconfig for arm and a native build of tools/perf. After
-> the final fixups (if any), I do an x86_64 modules_install followed by
-> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-> and sparc64 defconfig. And finally, a simple boot test of the powerpc
-> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-> 
-> Below is a summary of the state of the merge.
-> 
-> I am currently merging 290 trees (counting Linus' and 70 trees of bug
-> fix patches pending for the current merge release).
-> 
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-> Gortmaker for triage and bug fixes.
-> 
+> So maybe KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS are set for
+> allmodconfig.  I no longer have the actual .config file any more, sorry.
 
-seen on i386:
-
-ld: drivers/leds/leds-lm3697.o: in function `lm3697_probe':
-leds-lm3697.c:(.text+0x451): undefined reference to `devm_of_led_classdev_register'
-
-CONFIG_LEDS_CLASS=m
-CONFIG_LEDS_TI_LMU_COMMON=y
-CONFIG_LEDS_LM3697=y
-
-
-It looks to me like this is needed:
-
-	depends on LEDS_CLASS && I2C && OF
-?
-
+Ah yes. Dave figured it out too and added a revert on top and redid the
+pull to Linus. Thanks for spotting&reporting this.
+-Daniel
 -- 
-~Randy
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
