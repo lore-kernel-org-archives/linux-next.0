@@ -1,54 +1,110 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the cifs tree
-Date: Fri, 24 May 2019 14:27:13 +1000
-Message-ID: <20190524142713.360c0c10@canb.auug.org.au>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: linux-next: manual merge of the drm-misc tree with
+ Linus' tree
+Date: Fri, 24 May 2019 09:12:53 +0200
+Message-ID: <20190524071253.xfimg5mlvzevj2nk@flea>
+References: <20190521105151.51ffa942@canb.auug.org.au>
+ <20190523115355.joyeqlmbjkufueyn@flea>
+ <CAL_JsqKN6+f5FXUVs03VSv2AKvqaS0XemKFSYFthaxPoHJVwEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/onC+sUfs3YQg2TItGbXTUJg"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Murphy Zhou <jencce.kernel@gmail.com>
+Content-Type: multipart/mixed; boundary="===============0339705149=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <CAL_JsqKN6+f5FXUVs03VSv2AKvqaS0XemKFSYFthaxPoHJVwEg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Marco Felsch <m.felsch@pengutronix.de>, Jyri Sarha <jsarha@ti.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/onC+sUfs3YQg2TItGbXTUJg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--===============0339705149==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hfshwxlp636xi7sx"
+Content-Disposition: inline
 
-In commit
 
-  f875253b5fe6 ("fs/cifs/smb2pdu.c: fix buffer free in SMB2_ioctl_free")
+--hfshwxlp636xi7sx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes tag
+On Thu, May 23, 2019 at 11:10:39AM -0500, Rob Herring wrote:
+> On Thu, May 23, 2019 at 6:54 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Tue, May 21, 2019 at 10:51:51AM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Today's linux-next merge of the drm-misc tree got a conflict in:
+> > >
+> > >   Documentation/devicetree/bindings/vendor-prefixes.txt
+> > >
+> > > between commit:
+> > >
+> > >   8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
+> > >
+> > > from Linus' tree and commits:
+> > >
+> > >   b4a2c0055a4f ("dt-bindings: Add vendor prefix for VXT Ltd")
+> > >   b1b0d36bdb15 ("dt-bindings: drm/panel: simple: Add binding for TFC S9700RTWV43TR-01B")
+> > >   fbd8b69ab616 ("dt-bindings: Add vendor prefix for Evervision Electronics")
+> > >
+> > > from the drm-misc tree.
+> > >
+> > > I fixed it up (I deleted the file and added the patch below) and can
+> > > carry the fix as necessary. This is now fixed as far as linux-next is
+> > > concerned, but any non trivial conflicts should be mentioned to your
+> > > upstream maintainer when your tree is submitted for merging.  You may
+> > > also want to consider cooperating with the maintainer of the conflicting
+> > > tree to minimise any particularly complex conflicts.
+> >
+> > I just took your patch and pushed a temp branch there:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git/commit/?h=drm-misc-next&id=3832f2cad5307ebcedeead13fbd8d3cf06ba5e90
+> >
+> > Rob, Stephen, are you ok with the change? If so, I'll push it.
+>
+> The 'tfc' line is missing a ':' on the end.
 
-  Fixes: 2c87d6a ("cifs: Allocate memory for all iovs in smb2_ioctl")
+That's on me, sorry.
 
-has these problem(s):
+> Does the file pass dt_binding_check like that?
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+No, it didn't but I overlooked it somehow. I've pushed that patch with
+the extra semi-column.
 
---=20
-Cheers,
-Stephen Rothwell
+Maxime
 
---Sig_/onC+sUfs3YQg2TItGbXTUJg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--hfshwxlp636xi7sx
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzncqEACgkQAVBC80lX
-0Gx3PQf/ZW8ZQSBngy86/4u4M3SvsJhOkPdIQ0xNaoMx7m4fC6QpINDluenVLQ5p
-9pqXPanFi0N91DrdFxut3oRJaVR8RfV4AyHU5tFiXVZRzBEEhjTQcbWtIGINBNkH
-fFjhC4KHo8muVthr7IIhfn2eVzwhYB74H9w+LOfREjIo9ih6GN9Ep/22TETZ7BND
-YYoSbUrwhtQAeBpnkOFCK2qrMK8CGpY1b+UjfZliHcp3nWJPIuARhX8le2YfOlTL
-ZXoSfpiSM5dMvbE6EN7VHSnmpH5FFwKcEPhm62fwmrqKoYoyT/BnG3EG28sDPfkh
-LTrZiHKzpdLIagXzAW5WJohrK9UmAQ==
-=2Z21
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOeZdQAKCRDj7w1vZxhR
+xZr9AP9GA2LoSNSb8Aw3lEDA0VSIAbX2AciLEGPTA/XJg9DJNQEAjA43h9VqiTXF
+qjCOtN/i2lxT8YXjFbrhoaQuY7/4yQU=
+=kgcI
 -----END PGP SIGNATURE-----
 
---Sig_/onC+sUfs3YQg2TItGbXTUJg--
+--hfshwxlp636xi7sx--
+
+--===============0339705149==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
+
+--===============0339705149==--
