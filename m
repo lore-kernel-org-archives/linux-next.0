@@ -1,52 +1,61 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the drm-fixes tree
-Date: Fri, 24 May 2019 10:09:28 +0200
-Message-ID: <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
-References: <20190524082926.6e1a7d8f@canb.auug.org.au>
+From: Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the pidfd tree
+Date: Fri, 24 May 2019 11:15:17 +0300
+Message-ID: <CAEXW_YR99jkobkTUJLKjX-swR_AVYrjFzQcaD8j1JuZZ=dK9Qw@mail.gmail.com>
+References: <20190522114314.515b410d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190524082926.6e1a7d8f@canb.auug.org.au>
+In-Reply-To: <20190522114314.515b410d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <christian@brauner.io>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 24, 2019 at 12:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, May 22, 2019 at 4:43 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
 > Hi all,
 >
-> After merging the drm-fixes tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the akpm-current tree got a conflict in:
 >
-> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'load_dmcu_fw':
-> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:667:7: error: implicit declaration of function 'ASICREV_IS_PICASSO'; did you mean 'ASICREV_IS_VEGA12_P'? [-Werror=implicit-function-declaration]
->    if (ASICREV_IS_PICASSO(adev->external_rev_id))
->        ^~~~~~~~~~~~~~~~~~
->        ASICREV_IS_VEGA12_P
+>   kernel/pid.c
 >
-> Caused by commit
+> between commit:
 >
->   55143dc23ca4 ("drm/amd/display: Don't load DMCU for Raven 1")
->
-> I have reverted that commit for today.
+>   99e9da7f2796 ("pid: add pidfd_open()")
 
-Seems to compile fine here, and Dave just sent out the pull so I guess
-works for him too. What's your .config?
--Daniel
+Fix LGTM. Thank you.
 
+
+>
+> from the pidfd tree and commit:
+>
+>   51c59c914840 ("kernel/pid.c: convert struct pid:count to refcount_t")
+>
+> from the akpm-current tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 >
 > --
 > Cheers,
 > Stephen Rothwell
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>
+> diff --cc kernel/pid.c
+> index 39181ccca846,b59681973dd6..000000000000
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@@ -37,8 -36,7 +37,8 @@@
+>   #include <linux/init_task.h>
+>   #include <linux/syscalls.h>
+>   #include <linux/proc_ns.h>
+> - #include <linux/proc_fs.h>
+> + #include <linux/refcount.h>
+>  +#include <linux/sched/signal.h>
+>   #include <linux/sched/task.h>
+>   #include <linux/idr.h>
+>
