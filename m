@@ -1,51 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm-fixes tree
-Date: Fri, 24 May 2019 20:41:30 +1000
-Message-ID: <20190524204130.35fd2b63@canb.auug.org.au>
-References: <20190524082926.6e1a7d8f@canb.auug.org.au>
-        <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
-        <20190524201548.2e8594a2@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the cifs tree
+Date: Fri, 24 May 2019 09:14:07 -0500
+Message-ID: <CAH2r5msm9TfC8f5WNOyD-9g01u9m-UNPuk_XPp3Ykhc4u7+Rtg@mail.gmail.com>
+References: <20190524142713.360c0c10@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=wMrdjYPpv2SAVt7Y0+ABtL"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190524201548.2e8594a2@canb.auug.org.au>
+In-Reply-To: <20190524142713.360c0c10@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Murphy Zhou <jencce.kernel@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=wMrdjYPpv2SAVt7Y0+ABtL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+fixed and repushed to cifs-2.6.git for-next
 
-Hi all,
-
-On Fri, 24 May 2019 20:15:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Thu, May 23, 2019 at 11:27 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Ah, in the drm-fixes tree, the definition of  is protected by
-                                               ^
-ASICREV_IS_PICASSO
+> Hi all,
+>
+> In commit
+>
+>   f875253b5fe6 ("fs/cifs/smb2pdu.c: fix buffer free in SMB2_ioctl_free")
+>
+> Fixes tag
+>
+>   Fixes: 2c87d6a ("cifs: Allocate memory for all iovs in smb2_ioctl")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/=wMrdjYPpv2SAVt7Y0+ABtL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+-- 
+Thanks,
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznyloACgkQAVBC80lX
-0GxJbQgAj0dhFiXefIMEVotDJekVsFhb6aKrghhuZ5tUdUEO2J3VmCpA/kRwUPQj
-NgfgVp3d6uOl8WKJvzKxmeH8XUQ+fr13I2rO6ltRKIODWW5Hs+iAHd5lp3EkWF9M
-OFNuM2HuUFV+HIymiD6Nq1Jx8uElzK0lwlCi1LarO3Zeo4orB1B6/TdxQvXuOVTD
-xXLaAM5hvuFF0e8SicPturJ16laxlfH1snCI8gtjmxol7KG1QGWQyUi+Bf3MfQQk
-9tOWZ9Y5Yz3Kz8SOInDpvrEXm14nQ7OWP/n6FLVxCo0UGsL3vkJdaOyCqcr1ojMb
-ZIndbfGIyM2VomQ8oZhTaC3kAjc0ow==
-=rVue
------END PGP SIGNATURE-----
-
---Sig_/=wMrdjYPpv2SAVt7Y0+ABtL--
+Steve
