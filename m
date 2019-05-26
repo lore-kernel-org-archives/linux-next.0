@@ -1,50 +1,54 @@
-From: Carlo Pisani <carlojpisani@gmail.com>
-Subject: Re: C3600, sata controller
-Date: Sat, 25 May 2019 10:59:27 +0200
-Message-ID: <CA+QBN9BPbTHojQcSQZM1KmfsUMkajhLhmJ6jye4PdK8uXO9NcQ@mail.gmail.com>
-References: <20190502074519.61272b42@canb.auug.org.au> <a645ff18-4c55-6b4c-0913-5b397ab83e03@gmx.de>
- <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the clk tree
+Date: Sun, 26 May 2019 20:35:03 +1000
+Message-ID: <20190526203503.174d0d80@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3oRiTfHo_l//pMeWmoC70a3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+QBN9A4PhPZ36otsk0TRaO9KKnKL=hfnskfFJGQJEbtb3=i=Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Parisc List <linux-parisc@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-guys?
-yahoooooooooooooooo, SYBA-SY-PCX40009 does woooork :D :D
+--Sig_/3oRiTfHo_l//pMeWmoC70a3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-02:03.0 RAID bus controller: Silicon Image, Inc. SiI 3124 PCI-X Serial
-ATA Controller (rev 01)
+Hi all,
 
-10 hours burn-in test passed!!!!
+In commit
 
-while [ 1 ]
-do
-for item in `ls *.bin`
-    do
-        rm -f $copy.out
-        echo -n "$item ... "
-        time cp_and_check_md5sum $item $copy.out
-        echo "done"
-    done
-done
+  b3fddd5b100e ("clk: imx: imx8mm: fix int pll clk gate")
 
-kernel 5.1, from the git repository, compiled with SMP
+Fixes tag
 
-dmesg | grep altern
-[    2.551002] alternatives: applied 156 out of 175 patches
+  Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
 
-only applied this patch:
+has these problem(s):
 
---- a/arch/parisc/include/asm/cache.h
-+++ b/arch/parisc/include/asm/cache.h
-@@ -52,7 +52,6 @@ void parisc_setup_cache_timing(void);
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
- #define asm_io_fdc(addr) asm volatile("fdc %%r0(%0)" \
-                        ALTERNATIVE(ALT_COND_NO_DCACHE, INSN_NOP) \
--                       ALTERNATIVE(ALT_COND_NO_IOC_FDC, INSN_NOP) \
-                        : : "r" (addr) : "memory")
- #define asm_io_sync()  asm volatile("sync" \
-                        ALTERNATIVE(ALT_COND_NO_DCACHE, INSN_NOP) \
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3oRiTfHo_l//pMeWmoC70a3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzqa9cACgkQAVBC80lX
+0Gy7Pgf/SpxBmyJz4pO5N5hIl98MKbG2oP+938MrCAv1b/I8vQNK7lmDUAA1A8Ue
+XzPndx5l0USn1jpXs3AWJIsu2HgXIKuELexzrGwH2JstMmueoT6sMhBXuTiwPMd/
+RDe1SEieyiV/5c0yLfbJeJqe8dSdSk2so+3pE6SvvXwXi62hcRyCdaqleanlcldS
+1M8/rDIS2BEaXXGRSbN2n+6IsK/IhVaGjGXs6Xp3/XeehEt5jrcK9cfYip2XqlP/
+ykvY3OC5T1/ZhatUt6h2pdxWEbuVX3jO6n0vavIlGCR2bf/W399yMqPZ2VkvA9uF
+ZAJ7O+yqhNLsbgtXaP5IRlkJN9TYaA==
+=1maZ
+-----END PGP SIGNATURE-----
+
+--Sig_/3oRiTfHo_l//pMeWmoC70a3--
