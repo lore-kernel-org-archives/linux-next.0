@@ -1,37 +1,68 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: manual merge of the vhost tree with the iommu tree
-Date: Mon, 27 May 2019 11:16:06 -0400
-Message-ID: <20190527111543-mutt-send-email-mst@kernel.org>
-References: <20190227152506.4696a59f@canb.auug.org.au>
- <2370af99-9dc1-b694-9f1c-1951d1e70435@arm.com>
- <20190227085546-mutt-send-email-mst@kernel.org>
- <20190228100442.GB1594@8bytes.org>
- <20190512131410-mutt-send-email-mst@kernel.org>
- <20190527092718.GC21613@8bytes.org>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: Fixes tag needs some work in the wireless-drivers-next
+ tree
+Date: Tue, 28 May 2019 07:48:13 +1000
+Message-ID: <20190528074813.122bdddb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190527092718.GC21613@8bytes.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lan Tianyu <Tianyu.Lan@microsoft.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/BrxpA.sp=dhLlqfhF1hlmg/"; protocol="application/pgp-signature"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Surabhi Vishnoi <svishnoi-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pradeep kumar Chitrapu <pradeepc-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Zhi Chen <zhichen-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 27, 2019 at 11:27:18AM +0200, Joerg Roedel wrote:
-> On Sun, May 12, 2019 at 01:16:26PM -0400, Michael S. Tsirkin wrote:
-> > Joerg, what are we doing with these patches?
-> > It was tested in next with no bad effects.
-> > I sent an ack - do you want to pick it up?
-> > Or have me include it in my pull?
-> 
-> I'd prefer it in my tree, if you are fine with the spec.
-> 
-> Regards,
-> 
-> 	Joerg
+--Sig_/BrxpA.sp=dhLlqfhF1hlmg/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-OK let me just check spec status.
+Hi all,
 
--- 
-MST
+In commit
+
+  9280f4fc06f4 ("ath10k: Fix the wrong value of enums for wmi tlv stats id")
+
+Fixes tag
+
+  Fixes: f40a307eb92c ("ath10k: Fill rx duration for each peer in fw_stats =
+for WCN3990)
+
+has these problem(s):
+
+  - Subject has leading but no trailing quotes
+
+In commit
+
+  93ee3d108fc7 ("ath10k: fix incorrect multicast/broadcast rate setting")
+
+Fixes tag
+
+  Fixes: cd93b83ad92 ("ath10k: support for multicast rate control")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BrxpA.sp=dhLlqfhF1hlmg/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzsWx0ACgkQAVBC80lX
+0Gzg+Af+Lb89BcVA/rGFGnEEurc2Q7yTKeOJdfirGZEvGWUfNG+u1Rnpvjk26PDo
++F6glbpYfjrNuNyv/9+a/DPUKndL+7eNBojV/sK2Za406DpFxkeEho+15wWByg88
+h1rt/k2DlhFjV8izI/lYOpfI0NU0bhzvwdZoVQ8CTlKuRvsDNqILL+AhusOLUBrs
+mW+veapxaGMJk/YKSuw082n3EgoCn3bRTxR2IpBfv+8AhM0qHzcBHZBfhaCrg5Nq
+xW7Eh1HhoDLYSMr3IWG4fchRe3vrmyWiX3wD3LioCstqLWOmwg7G48hY/PzYw8AR
+Yav5nf1CPxs8/NEnTif0/hG70EZvBA==
+=8IXb
+-----END PGP SIGNATURE-----
+
+--Sig_/BrxpA.sp=dhLlqfhF1hlmg/--
