@@ -1,57 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the random tree
-Date: Sun, 26 May 2019 20:58:51 +1000
-Message-ID: <20190526205851.48679169@canb.auug.org.au>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: linux-next: manual merge of the vhost tree with the iommu tree
+Date: Mon, 27 May 2019 11:27:18 +0200
+Message-ID: <20190527092718.GC21613@8bytes.org>
+References: <20190227152506.4696a59f@canb.auug.org.au>
+ <2370af99-9dc1-b694-9f1c-1951d1e70435@arm.com>
+ <20190227085546-mutt-send-email-mst@kernel.org>
+ <20190228100442.GB1594@8bytes.org>
+ <20190512131410-mutt-send-email-mst@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9TiOUxuDquE3YUtIei3ko7p"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190512131410-mutt-send-email-mst@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lan Tianyu <Tianyu.Lan@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/9TiOUxuDquE3YUtIei3ko7p
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, May 12, 2019 at 01:16:26PM -0400, Michael S. Tsirkin wrote:
+> Joerg, what are we doing with these patches?
+> It was tested in next with no bad effects.
+> I sent an ack - do you want to pick it up?
+> Or have me include it in my pull?
 
-Hi Ted,
+I'd prefer it in my tree, if you are fine with the spec.
 
-In commit
+Regards,
 
-  58be0106c530 ("random: fix soft lockup when trying to read from an uninit=
-ialized blocking pool")
-
-Fixes tag
-
-  Fixes: eb9d1bf079bb: "random: only read from /dev/random after its pool h=
-as received 128 bits"
-
-has these problem(s):
-
-  - the ':' after the SHA1 is unexpected
-  - the subject is usually surrounded by '("")'
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9TiOUxuDquE3YUtIei3ko7p
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzqcWsACgkQAVBC80lX
-0Gy5nAgAhHJswXVcZV94a/e4bTys4MhF6LQsBWvb6AvWAcLBt3ht4btH74KxINjA
-0LHdHnQbt9+abudMI0fhoVd20PCwkHvDAoAwjR1al2YYGOoCBNLPyFrNNjPK026F
-j12m+iRoyVKtUi4IgyXKp0iWLW9WqZVGkLlxmdoNzsXgKfFOl/0bkMD9O03zkzyf
-1qsSl4M0frgNtjW5hJmMkNv1+62yBQJC1Bm1ZLqaKXq1sA6icVqc/VENYiQ9iYCl
-gkmwnTap+T0oaJnmb837qwRr+JphpCKUgiQxPaN8pT3CBqpbhfYLM4TYEjovT6SR
-Sus6G06+48l/qc2H1TK7L5H2hxXk7Q==
-=xa14
------END PGP SIGNATURE-----
-
---Sig_/9TiOUxuDquE3YUtIei3ko7p--
+	Joerg
