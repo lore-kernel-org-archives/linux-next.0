@@ -1,58 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the v4l-dvb tree
-Date: Wed, 29 May 2019 08:04:54 +1000
-Message-ID: <20190529080454.6d62a7fd@canb.auug.org.au>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: linux-next: Fixes tags need some work in the sound-asoc tree
+Date: Tue, 28 May 2019 17:22:40 -0500
+Message-ID: <44bbb3f1-5674-6431-5818-d8b5cca708dd@linux.intel.com>
+References: <20190529075614.150b1877@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.d=BWJoTy6lPfZL4/CmtHiY"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190529075614.150b1877@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund+renesas@ragnatech.se>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhu Yingjiang <yingjiang.zhu@linux.intel.com>, Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>, Keyon Jie <yang.jie@linux.intel.com>, Libin Yang <libin.yang@intel.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.d=BWJoTy6lPfZL4/CmtHiY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/28/19 4:56 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>    be1b577d0178 ("ASoC: SOF: Intel: hda: fix the hda init chip")
+> 
+> Fixes tag
+> 
+>    Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel DSP")
 
-Hi Mauro,
-
-In commit
-
-  0c310868826e ("media: rcar-csi2: Fix coccinelle warning for PTR_ERR_OR_ZE=
-RO()")
-
-Fixes tag
-
-  Fixes: 3ae854cafd76 ("rcar-csi2: Use standby mode instead of resetting")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: d245a940d97b ("media: rcar-csi2: Use standby mode instead of resetti=
-ng")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.d=BWJoTy6lPfZL4/CmtHiY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlztsIYACgkQAVBC80lX
-0Gz+/gf/T31KoLazyjEW89krmzM2wgc40Sab/m3NnCGPtDAzT4itrTJbP7xHwKts
-R+MpjXiHQ5CtUdZnaBT9o4jsHQYR0gZNiqCxAC2gTok1tZkZHRzsU18LzRHcwLCE
-bV4QzTxH4JJJwNZCeG90AsZsG2NLvE3M/DRneZ48TcstMk1rOqrp+C/8SX5Af6Qx
-vovVBPfg5KokPSd76NnTZSJT+r8GV67CmoYXfVLsEiCOnAhFPkDAPLe7rhXjl8bg
-lwDJuxDk/lSzfZqr9Q+zeeU1qucx5SLx1jMYB1CMMl3c/8+lamlnn/w8iPNar+Y6
-MGnT8yyWWd5tAESGkM7wD9agYrJfBQ==
-=Y/Qv
------END PGP SIGNATURE-----
-
---Sig_/.d=BWJoTy6lPfZL4/CmtHiY--
+Sorry about that, not sure how I managed to add an off-by-one in all 
+these tags. Checkpatch.pl --strict did not report any issues, something 
+must be broken either in my setup or the script.
+Not sure how I can fix this now?
