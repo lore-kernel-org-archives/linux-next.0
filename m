@@ -1,62 +1,55 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 28 (platform/olpc/olpc-xo175-ec)
-Date: Tue, 28 May 2019 11:05:09 -0700
-Message-ID: <68b2b71a-970b-8e0e-1ee3-e05a51c3bdf2@infradead.org>
-References: <20190528145838.23b73e25@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the ipsec tree
+Date: Wed, 29 May 2019 07:48:12 +1000
+Message-ID: <20190529074812.00c8df44@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/t68a.7rqE3KQABLBwq1dh39"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190528145838.23b73e25@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Lennert Buytenhek <buytenh@wantstofly.org>, Lubomir Rintel <lkundrak@v3.sk>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jeremy Sowden <jeremy@azazel.net>
 List-Id: linux-next.vger.kernel.org
 
-On 5/27/19 9:58 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190524:
-> 
+--Sig_/t68a.7rqE3KQABLBwq1dh39
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on x86, there are some issues with drivers/platform/olpc/olpc-xo175-ec.c:
+Hi Steffen,
 
-a. when CONFIG_SPI is not set/enabled:
+In commit
 
-WARNING: unmet direct dependencies detected for SPI_SLAVE
-  Depends on [n]: SPI [=n]
-  Selected by [y]:
-  - OLPC_XO175_EC [=y] && (ARCH_MMP || COMPILE_TEST [=y])
+  7c80eb1c7e2b ("af_key: fix leaks in key_pol_get_resp and dump_sp.")
 
-ld: drivers/platform/olpc/olpc-xo175-ec.o: in function `olpc_xo175_ec_remove':
-olpc-xo175-ec.c:(.text+0x79): undefined reference to `spi_slave_abort'
-ld: drivers/platform/olpc/olpc-xo175-ec.o: in function `olpc_xo175_ec_send_command':
-olpc-xo175-ec.c:(.text+0x24d): undefined reference to `spi_async'
-ld: drivers/platform/olpc/olpc-xo175-ec.o: in function `olpc_xo175_ec_cmd':
-olpc-xo175-ec.c:(.text+0xb3c): undefined reference to `spi_slave_abort'
-ld: drivers/platform/olpc/olpc-xo175-ec.o: in function `olpc_xo175_ec_spi_driver_init':
-olpc-xo175-ec.c:(.init.text+0xa): undefined reference to `__spi_register_driver'
+Fixes tag
 
-b. when CONFIG_INPUT is not set/enabled:
+  Fixes: 55569ce256ce ("Fix conversion between IPSEC_MODE_xxx and XFRM_MODE=
+_xxx.")
 
-ERROR: "input_register_device" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
-ERROR: "input_set_capability" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
-ERROR: "devm_input_allocate_device" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
-ERROR: "input_event" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
+has these problem(s):
 
-c. when some power mgt. Kconfig symbol is not set/enabled:
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
 
-ERROR: "power_supply_put" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
-ERROR: "power_supply_changed" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
-ERROR: "power_supply_get_by_name" [drivers/platform/olpc/olpc-xo175-ec.ko] undefined!
+--=20
+Cheers,
+Stephen Rothwell
 
-d. drivers/platform/olpc/Kconfig needs to use "menuconfig" like all of the other
-   Kconfig files in drivers/platform/ so that its menu is listed in the correct
-   place in *config interfaces.
+--Sig_/t68a.7rqE3KQABLBwq1dh39
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
-:(
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlztrJwACgkQAVBC80lX
+0GxuXAf9Hh415uZ2vKeIAQ4ICsK3TgMdgl6omZ92f3gE0vTerrGpw9weux9qf18o
+JR10zdcusb1hVJ8BReB+h8j5yyQqsRIgtVvjvNDubknk4gr/LIh3fkvnIY9eX3cm
+D/1O2hfie0Z6Xk9an1RkHq8WuTLjnoGUamv21OxDBVJQ7z+LwceZp43E+kHCVqYd
+llrgDPCu/9xJ0DOEghfxGOfviDGcJnVP8Tph+BKq0ArYcEdhINmS/GV/aJpA29gH
+LkTL9cyd2g73jN6J3ncHj+PzvoRtgbDj67Rx87xNQZa2VjCF1tUGqG8QhKekY+zp
+mvC9jlcaYFtnJvo6erw5FqGcMCUV+Q==
+=2q9e
+-----END PGP SIGNATURE-----
 
--- 
-~Randy
+--Sig_/t68a.7rqE3KQABLBwq1dh39--
