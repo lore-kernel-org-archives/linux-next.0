@@ -1,56 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Date: Thu, 30 May 2019 14:55:25 +1000
-Message-ID: <20190530145525.3cca17cb@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the userns tree
+Date: Thu, 30 May 2019 15:33:16 +1000
+Message-ID: <20190530153316.60907d8f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8aSEcKm1n18JLWopbjCv0hG"; protocol="application/pgp-signature"
+ boundary="Sig_/5kYuec8EBjVawDMYkqOfsSD"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matteo Croce <mcroce@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8aSEcKm1n18JLWopbjCv0hG
+--Sig_/5kYuec8EBjVawDMYkqOfsSD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Eric,
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the userns tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
-net/tipc/sysctl.c:42:12: warning: 'one' defined but not used [-Wunused-vari=
-able]
- static int one =3D 1;
-            ^~~
-net/tipc/sysctl.c:41:12: warning: 'zero' defined but not used [-Wunused-var=
-iable]
- static int zero;
-            ^~~~
+arch/x86/mm/fault.c: In function 'do_sigbus':
+arch/x86/mm/fault.c:1017:22: warning: unused variable 'tsk' [-Wunused-varia=
+ble]
+  struct task_struct *tsk =3D current;
+                      ^~~
 
 Introduced by commit
 
-  6a33853c5773 ("proc/sysctl: add shared variables for range check")
+  351b6825b3a9 ("signal: Explicitly call force_sig_fault on current")
+
+The remaining used of "tsk" are protected by CONFIG_MEMORY_FAILURE.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/8aSEcKm1n18JLWopbjCv0hG
+--Sig_/5kYuec8EBjVawDMYkqOfsSD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzvYj0ACgkQAVBC80lX
-0GwB6wgAmmW1oDLUmcW6Jc2Q79FQC0TF/nrsmwrnrFajk64ae3ZfZYJpfRZn++9p
-QyqqPNyEIKbIeFEZ2TG30LPZ6NgKStitxF4MhgnUr25NEmp1WjoCbniZhxNy4YG/
-7VezifgRRiWkaTEHWutSDvdyiq3y6lR9K6flYYr2oQhpCnvqlAWLVyn6gJNTh9Vu
-boELoEuJsePyiayxjK/Hryp4QW2b2QVMlU3uooueo7mVRUsxzeNd/nwiEgLFmmEO
-e/3rDYA8yhCNKSy2zWw+40bSjpVY5MTm0moLBOM9Gnw4aTZcVyPtG+Pq4fpnED+T
-w8ClR4AEddix/9uKLHAAw4mDvuSQFA==
-=kH6a
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzvaxwACgkQAVBC80lX
+0Gykxgf8DSGyhXKHKnG8MV3Iv/w2yd0SppFLsSAqvXWZHNtfPi8p/ftjtZ3Zp3Ja
+y+o7czQJCz8kULN5kd1SG3caLCRxtF1YqCwYUlWo4z61X1ZSpWosV1Y6Rj5YgJF1
+drX1BCu+nH0RX5D0YaKO9Z47fTGbBWregDEiPAaTDjqc5KeTX8YaHPaL8kZCicGz
+QQ3h91LWfmumpE1BBJx6AverzIrC6ieKu2zt6VHcXx1wROrnTTpG6xkEbFRLZNUn
+fGiCi3XGkYkHz0/wHgT5lFKCBoaVXYVhw6Rj0JNhMcEF1N9WIe9c/BFTKwbYFmgL
+poT4KVuWp7I3mJkTydIbhRLMp4jEIw==
+=xeiI
 -----END PGP SIGNATURE-----
 
---Sig_/8aSEcKm1n18JLWopbjCv0hG--
+--Sig_/5kYuec8EBjVawDMYkqOfsSD--
