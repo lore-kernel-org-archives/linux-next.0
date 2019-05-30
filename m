@@ -1,37 +1,33 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: build warning after merge of the userns tree
-Date: Thu, 30 May 2019 06:34:31 -0500
-Message-ID: <87lfyoxjjs.fsf@xmission.com>
-References: <20190530153316.60907d8f@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 30 (firmware_loader)
+Date: Thu, 30 May 2019 09:10:13 -0700
+Message-ID: <28716a14-772d-bc82-5111-34cd38cfda54@infradead.org>
+References: <20190530162132.6081d246@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530153316.60907d8f@canb.auug.org.au> (Stephen Rothwell's
-        message of "Thu, 30 May 2019 15:33:16 +1000")
+In-Reply-To: <20190530162132.6081d246@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On 5/29/19 11:21 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190529:
+> 
 
-> Hi Eric,
->
-> After merging the userns tree, today's linux-next build (i386 defconfig)
-> produced this warning:
->
-> arch/x86/mm/fault.c: In function 'do_sigbus':
-> arch/x86/mm/fault.c:1017:22: warning: unused variable 'tsk' [-Wunused-variable]
->   struct task_struct *tsk = current;
->                       ^~~
->
-> Introduced by commit
->
->   351b6825b3a9 ("signal: Explicitly call force_sig_fault on current")
->
-> The remaining used of "tsk" are protected by CONFIG_MEMORY_FAILURE.
+on i386 or x86_64:
+when CONFIG_PROC_SYSCTL is not set/enabled:
 
-Yes.  Thank you.  I will add a commit to move tsk inside
-CONFIG_MEMORY_FAILURE.
+ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x1c): undefined reference to `sysctl_vals'
+ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x20): undefined reference to `sysctl_vals'
+ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x40): undefined reference to `sysctl_vals'
+ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x44): undefined reference to `sysctl_vals'
 
-Eric
+
+-- 
+~Randy
