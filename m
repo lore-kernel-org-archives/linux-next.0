@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Date: Fri, 31 May 2019 07:52:41 +1000
-Message-ID: <20190531075241.63c45a9a@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
+Date: Fri, 31 May 2019 08:02:12 +1000
+Message-ID: <20190531080212.234f5149@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/APS2ye.u3t/PPPabyavOeAO"; protocol="application/pgp-signature"
+ boundary="Sig_/xwFiduZFtHNxIq6+IWrFOX8"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Parav Pandit <parav@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhu Yingjiang <yingjiang.zhu@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/APS2ye.u3t/PPPabyavOeAO
+--Sig_/xwFiduZFtHNxIq6+IWrFOX8
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,40 +19,36 @@ Hi all,
 
 In commit
 
-  9414277a5df3 ("net/mlx5: Avoid double free in fs init error unwinding pat=
-h")
+  970c43d17835 ("ASoC: SOF: Intel: hda: use the defined ppcap functions")
 
 Fixes tag
 
-  Fixes: 40c3eebb49e51 ("net/mlx5: Add support in RDMA RX steering")
+  Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel DSP")
 
 has these problem(s):
 
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: 905f6bd30bb6 ("net/mlx5: Avoid double free of root ns in the error f=
-low path")
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/APS2ye.u3t/PPPabyavOeAO
+--Sig_/xwFiduZFtHNxIq6+IWrFOX8
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUKkACgkQAVBC80lX
-0Gwb6Qf/WbXbNdJOvEKybT0z9SB+Ts6v8F2pQ3rKuW3RpXSwxg1qKSHfJc7To/rg
-VEdinIe7DURap+dkR5LzWHl/nN28iAENzCSPSXaAlGoMl3Rag3XDG94H7TEF8s9G
-vPQ4YX98Yl2GySnO60gMPxcPRVj6AKMBk/MNtwE/0kXKy9xeUwf/bd9F7FOcQoCv
-eWZv8MreB8o4CA/dYYalShE4hx+UyB8O39nv5uYa3hUZ+jjc8Hc/mQEJTIID9JVl
-Qd4F85ZmdO/Cknvd4K75TRdIKjd3r8xINQez6727buS4yH4HxLEJhy9F7mOylVGe
-KYBKrJM/J2fi1F7UpGkb0NudTzZRxQ==
-=Iy6v
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUuQACgkQAVBC80lX
+0GzVRwgAmyt/mf9wP3UCFmKzhD6E1U3i67ofU3ZBR/QMjdZhjrbwy7cA5uaiSIjZ
+u4eQj0C0uzwYfHk7wBhksk4u1Z5Lr4Gvg9lWxd1Q7KR4GUJd5aQoZEeID9lLQ6vI
+Xv20PUr7KhpiCfT5oWfdxx/zQfGUPBcXjJv93ZCq/UifX3TNuK0ALXcT9HwsXr1N
+bRYz85g03PTDtT9hfUQXzQW6To8lZavwvhO3lLPlcYkVereeVEYz40VU6ojlV7zo
+Mp6zs6p/EmTWtNQv0mspARQwY6Td0ehZgam1lxJOOhM4YAqqb25vb3ovcI/deK2O
+fiQKx9Y+snzykRoGCUAzvzxVkfMhFw==
+=hKvK
 -----END PGP SIGNATURE-----
 
---Sig_/APS2ye.u3t/PPPabyavOeAO--
+--Sig_/xwFiduZFtHNxIq6+IWrFOX8--
