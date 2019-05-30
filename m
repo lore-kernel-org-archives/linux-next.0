@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the nfs-anna tree
-Date: Fri, 31 May 2019 07:58:34 +1000
-Message-ID: <20190531075834.78bbdeaf@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Date: Fri, 31 May 2019 07:52:41 +1000
+Message-ID: <20190531075241.63c45a9a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/G=V4Jqd3sQno0kV7pCsaf5B"; protocol="application/pgp-signature"
+ boundary="Sig_/APS2ye.u3t/PPPabyavOeAO"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Olga Kornievskaia <kolga@netapp.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Parav Pandit <parav@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/G=V4Jqd3sQno0kV7pCsaf5B
+--Sig_/APS2ye.u3t/PPPabyavOeAO
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,37 +19,40 @@ Hi all,
 
 In commit
 
-  ec6017d90359 ("SUNRPC fix regression in umount of a secure mount")
+  9414277a5df3 ("net/mlx5: Avoid double free in fs init error unwinding pat=
+h")
 
 Fixes tag
 
-  Fixes: c8485e4d63 ("SUNRPC: Handle ECONNREFUSED correctly in xprt_transmi=
-t()")
+  Fixes: 40c3eebb49e51 ("net/mlx5: Add support in RDMA RX steering")
 
 has these problem(s):
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: 905f6bd30bb6 ("net/mlx5: Avoid double free of root ns in the error f=
+low path")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/G=V4Jqd3sQno0kV7pCsaf5B
+--Sig_/APS2ye.u3t/PPPabyavOeAO
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUgoACgkQAVBC80lX
-0Gw/XggAkpbAg9ArAfpP3jcqqudkDXSoWQkbTb4SnGRQm8LD3f8lIjdf8fifk++J
-3r4WNXOaRxkw9CbClcPENnWfrMAOziIzW5hN2XLqcDGTSOGTeYpIQHkbvW4V4FUW
-RJw/vDjygqiZPohs6/QadMdePOyw6qT9ODTxrPVfl3SEbsY9m/9mJtMZeXZTpQr9
-FbJNST9MDLgwq//ZUa9TdBo561CJ8xnE7NBnHPD32U0UJ1RlWiK6Hp/BfKF26R83
-P1H8ew/1YOxYVO7Uko1EcoWqyoByJwoANzTX3v/yR33biIIiLYHcp9fAipKTRnMZ
-vHtSejahWOtsrOl6rKL92fdwax1hMQ==
-=N/Lv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUKkACgkQAVBC80lX
+0Gwb6Qf/WbXbNdJOvEKybT0z9SB+Ts6v8F2pQ3rKuW3RpXSwxg1qKSHfJc7To/rg
+VEdinIe7DURap+dkR5LzWHl/nN28iAENzCSPSXaAlGoMl3Rag3XDG94H7TEF8s9G
+vPQ4YX98Yl2GySnO60gMPxcPRVj6AKMBk/MNtwE/0kXKy9xeUwf/bd9F7FOcQoCv
+eWZv8MreB8o4CA/dYYalShE4hx+UyB8O39nv5uYa3hUZ+jjc8Hc/mQEJTIID9JVl
+Qd4F85ZmdO/Cknvd4K75TRdIKjd3r8xINQez6727buS4yH4HxLEJhy9F7mOylVGe
+KYBKrJM/J2fi1F7UpGkb0NudTzZRxQ==
+=Iy6v
 -----END PGP SIGNATURE-----
 
---Sig_/G=V4Jqd3sQno0kV7pCsaf5B--
+--Sig_/APS2ye.u3t/PPPabyavOeAO--
