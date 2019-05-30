@@ -1,54 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Date: Fri, 31 May 2019 08:02:12 +1000
-Message-ID: <20190531080212.234f5149@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls)
+Date: Thu, 30 May 2019 15:28:46 -0700
+Message-ID: <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xwFiduZFtHNxIq6+IWrFOX8"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhu Yingjiang <yingjiang.zhu@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xwFiduZFtHNxIq6+IWrFOX8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
 
-Hi all,
+on i386 or x86_64:
 
-In commit
+when CONFIG_PROC_SYSCTL is not set/enabled:
 
-  970c43d17835 ("ASoC: SOF: Intel: hda: use the defined ppcap functions")
+ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
 
-Fixes tag
 
-  Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel DSP")
 
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xwFiduZFtHNxIq6+IWrFOX8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUuQACgkQAVBC80lX
-0GzVRwgAmyt/mf9wP3UCFmKzhD6E1U3i67ofU3ZBR/QMjdZhjrbwy7cA5uaiSIjZ
-u4eQj0C0uzwYfHk7wBhksk4u1Z5Lr4Gvg9lWxd1Q7KR4GUJd5aQoZEeID9lLQ6vI
-Xv20PUr7KhpiCfT5oWfdxx/zQfGUPBcXjJv93ZCq/UifX3TNuK0ALXcT9HwsXr1N
-bRYz85g03PTDtT9hfUQXzQW6To8lZavwvhO3lLPlcYkVereeVEYz40VU6ojlV7zo
-Mp6zs6p/EmTWtNQv0mspARQwY6Td0ehZgam1lxJOOhM4YAqqb25vb3ovcI/deK2O
-fiQKx9Y+snzykRoGCUAzvzxVkfMhFw==
-=hKvK
------END PGP SIGNATURE-----
-
---Sig_/xwFiduZFtHNxIq6+IWrFOX8--
+-- 
+~Randy
