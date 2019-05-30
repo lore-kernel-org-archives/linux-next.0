@@ -1,46 +1,37 @@
-From: Matteo Croce <mcroce@redhat.com>
-Subject: [PATCH] tipc: remove two unused variables
-Date: Thu, 30 May 2019 11:19:52 +0200
-Message-ID: <20190530091952.4108-1-mcroce@redhat.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build warning after merge of the userns tree
+Date: Thu, 30 May 2019 06:34:31 -0500
+Message-ID: <87lfyoxjjs.fsf@xmission.com>
+References: <20190530153316.60907d8f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190530153316.60907d8f@canb.auug.org.au> (Stephen Rothwell's
+        message of "Thu, 30 May 2019 15:33:16 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Remove two variables which are unused after merging 6a33853c5773 and
-generate the following warnings:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-      CC [M]  net/tipc/sysctl.o
-    net/tipc/sysctl.c:42:12: warning: ‘one’ defined but not used [-Wunused-variable]
-       42 | static int one = 1;
-          |            ^~~
-    net/tipc/sysctl.c:41:12: warning: ‘zero’ defined but not used [-Wunused-variable]
-       41 | static int zero;
-          |            ^~~~
+> Hi Eric,
+>
+> After merging the userns tree, today's linux-next build (i386 defconfig)
+> produced this warning:
+>
+> arch/x86/mm/fault.c: In function 'do_sigbus':
+> arch/x86/mm/fault.c:1017:22: warning: unused variable 'tsk' [-Wunused-variable]
+>   struct task_struct *tsk = current;
+>                       ^~~
+>
+> Introduced by commit
+>
+>   351b6825b3a9 ("signal: Explicitly call force_sig_fault on current")
+>
+> The remaining used of "tsk" are protected by CONFIG_MEMORY_FAILURE.
 
-Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- net/tipc/sysctl.c | 2 --
- 1 file changed, 2 deletions(-)
+Yes.  Thank you.  I will add a commit to move tsk inside
+CONFIG_MEMORY_FAILURE.
 
-diff --git a/net/tipc/sysctl.c b/net/tipc/sysctl.c
-index 9df82a573aa7..180574ff3a3f 100644
---- a/net/tipc/sysctl.c
-+++ b/net/tipc/sysctl.c
-@@ -38,8 +38,6 @@
- 
- #include <linux/sysctl.h>
- 
--static int zero;
--static int one = 1;
- static struct ctl_table_header *tipc_ctl_hdr;
- 
- static struct ctl_table tipc_table[] = {
--- 
-2.21.0
+Eric
