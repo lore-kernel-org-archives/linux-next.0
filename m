@@ -1,75 +1,55 @@
-From: Matteo Croce <mcroce@redhat.com>
-Subject: Re: [PATCH] firmware_loader: fix build without sysctl
-Date: Fri, 31 May 2019 11:12:39 +0200
-Message-ID: <CAGnkfhwJm0N2WvLv9o+DZeL9JjDsDp3-TB-G6iS_6mhTyzYRHQ@mail.gmail.com>
-References: <20190531012649.31797-1-mcroce@redhat.com> <dbc00eaa-c6e9-45b2-7232-5af35fdea113@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <dbc00eaa-c6e9-45b2-7232-5af35fdea113@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
+From: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Subject: [next-20190530] Boot failure on PowerPC
+Date: Fri, 31 May 2019 18:30:28 +0530
+Message-ID: <79EEB945-661A-41AD-8B26-2FD3B3F84697@linux.vnet.ibm.com>
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 31, 2019 at 4:15 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 5/30/19 6:26 PM, Matteo Croce wrote:
-> > firmware_config_table has references to the sysctl code which
-> > triggers a build failure when CONFIG_PROC_SYSCTL is not set:
-> >
-> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x30): undefined reference to `sysctl_vals'
-> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x38): undefined reference to `sysctl_vals'
-> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x70): undefined reference to `sysctl_vals'
-> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x78): undefined reference to `sysctl_vals'
-> >
-> > Put the firmware_config_table struct under #ifdef CONFIG_PROC_SYSCTL.
-> >
-> > Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
->
-> Works for me.
->
-> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
->
-> Thanks.
->
-> > ---
-> >  drivers/base/firmware_loader/fallback_table.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
-> > index 58d4a1263480..18d646777fb9 100644
-> > --- a/drivers/base/firmware_loader/fallback_table.c
-> > +++ b/drivers/base/firmware_loader/fallback_table.c
-> > @@ -23,6 +23,8 @@ struct firmware_fallback_config fw_fallback_config = {
-> >  };
-> >  EXPORT_SYMBOL_GPL(fw_fallback_config);
-> >
-> > +#ifdef CONFIG_PROC_SYSCTL
-> > +
-> >  struct ctl_table firmware_config_table[] = {
-> >       {
-> >               .procname       = "force_sysfs_fallback",
-> > @@ -45,3 +47,5 @@ struct ctl_table firmware_config_table[] = {
-> >       { }
-> >  };
-> >  EXPORT_SYMBOL_GPL(firmware_config_table);
-> > +
-> > +#endif
-> >
->
->
-> --
-> ~Randy
+Latest next fails to boot with a kernel panic on POWER9.
 
-Hi,
+[   33.689332] Kernel panic - not syncing: stack-protector: Kernel stack =
+is corrupted in: write_irq_affinity.isra.5+0x15c/0x160
+[   33.689346] CPU: 35 PID: 4907 Comm: irqbalance Not tainted =
+5.2.0-rc2-next-20190530-autotest-autotest #1
+[   33.689352] Call Trace:
+[   33.689356] [c0000018d974bab0] [c000000000b5328c] =
+dump_stack+0xb0/0xf4 (unreliable)
+[   33.689364] [c0000018d974baf0] [c000000000120694] panic+0x16c/0x408
+[   33.689370] [c0000018d974bb80] [c00000000012010c] =
+__stack_chk_fail+0x2c/0x30
+[   33.689376] [c0000018d974bbe0] [c0000000001b859c] =
+write_irq_affinity.isra.5+0x15c/0x160
+[   33.689383] [c0000018d974bd30] [c0000000004d6f30] =
+proc_reg_write+0x90/0x110
+[   33.689388] [c0000018d974bd60] [c00000000041453c] =
+__vfs_write+0x3c/0x70
+[   33.689394] [c0000018d974bd80] [c000000000418650] =
+vfs_write+0xd0/0x250
+[   33.689399] [c0000018d974bdd0] [c000000000418a2c] =
+ksys_write+0x7c/0x130
+[   33.689405] [c0000018d974be20] [c00000000000b688] =
+system_call+0x5c/0x70
 
-please correct the Fixes tag if possible.
-It seems that the hash of the offending commit now is d91bff3011cf
+Machine boots till login prompt and then panics few seconds later.
 
-Regards,
--- 
-Matteo Croce
-per aspera ad upstream
+Last known next build was May 24th. Will attempt few builds till May 30 =
+to
+narrow down this problem.
+
+Thanks
+-Sachin=
