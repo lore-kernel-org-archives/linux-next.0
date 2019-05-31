@@ -1,53 +1,63 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls)
-Date: Thu, 30 May 2019 15:28:46 -0700
-Message-ID: <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
-References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 30 (firmware_loader)
+Date: Fri, 31 May 2019 10:06:46 +1000
+Message-ID: <20190531100646.212b065f@canb.auug.org.au>
+References: <20190530162132.6081d246@canb.auug.org.au>
+        <28716a14-772d-bc82-5111-34cd38cfda54@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PWONkdadaEC6ybOc1SCPBQ4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
-Content-Language: en-US
+In-Reply-To: <28716a14-772d-bc82-5111-34cd38cfda54@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Matteo Croce <mcroce@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
+--Sig_/PWONkdadaEC6ybOc1SCPBQ4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on i386 or x86_64:
+Hi all,
 
-when CONFIG_PROC_SYSCTL is not set/enabled:
+On Thu, 30 May 2019 09:10:13 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> on i386 or x86_64:
+> when CONFIG_PROC_SYSCTL is not set/enabled:
+>=20
+> ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x1c): undefined=
+ reference to `sysctl_vals'
+> ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x20): undefined=
+ reference to `sysctl_vals'
+> ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x40): undefined=
+ reference to `sysctl_vals'
+> ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x44): undefined=
+ reference to `sysctl_vals'
 
-ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
-af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
-ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
-ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
-ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
+Caused by commit
 
+  6a33853c5773 ("proc/sysctl: add shared variables for range check")
 
+Added some more cc's
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-~Randy
+--Sig_/PWONkdadaEC6ybOc1SCPBQ4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwcBYACgkQAVBC80lX
+0Gxtegf/Qph5FzdyfJGZyjn0oChmSq959oJsCpiVzFEHiCERPRIauHX+L1OQL9nD
+ByRaXZejxUJsK0zNqICBwPlvhKGVZ7sxl7h6JVLCAZS4SEF3CuMa5tTU2WFHfPbB
+7EKPBiE+3elRLHEsCrI71UVwPIDJR7/ryul/7k85tU5qXq6i83JQpRjyURBDemue
+cqG6sYrRI+o55scQjkQR6lwIIsadcSvajgr/cGNsUvl5HRzhvwXQvksOtY28C1lR
++x//HM4rx8Gjog4iSlnqOf3/+fTtlxaC0yr+ZixACNCSX9bfJpTyNO645NkHKODu
+WKAkI3bxb1uSz2JOwmORRm4KUUpQtw==
+=uahV
+-----END PGP SIGNATURE-----
+
+--Sig_/PWONkdadaEC6ybOc1SCPBQ4--
