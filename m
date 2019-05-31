@@ -1,63 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot failure after merge of the akpm tree
-Date: Fri, 31 May 2019 13:41:03 +1000
-Message-ID: <20190531134103.6fc980d9@canb.auug.org.au>
-References: <20190530161741.0b4c3e92@canb.auug.org.au>
-        <1559269507.z7w3zfjexi.astroid@bobo.none>
+Subject: Re: mmotm 2019-05-29-20-52 uploaded
+Date: Fri, 31 May 2019 13:50:15 +1000
+Message-ID: <20190531135015.6a898d26@canb.auug.org.au>
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+        <CAA25o9RFhS=qm=B_mYAdQeAUAi7pLbXttWJfw7yKMWQQAXhhAw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PlQLemxBvR/fwW+Gj/sMO9m"; protocol="application/pgp-signature"
+ boundary="Sig_/1ISJy/USqL3uKe+N6QGnZgM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559269507.z7w3zfjexi.astroid@bobo.none>
+In-Reply-To: <CAA25o9RFhS=qm=B_mYAdQeAUAi7pLbXttWJfw7yKMWQQAXhhAw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: Luigi Semenzato <semenzato@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Linux Memory Management List <linux-mm@kvack.org>, linux-next@vger.kernel.org, Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PlQLemxBvR/fwW+Gj/sMO9m
+--Sig_/1ISJy/USqL3uKe+N6QGnZgM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 31 May 2019 12:27:58 +1000 Nicholas Piggin <npiggin@gmail.com> wrot=
-e:
+On Wed, 29 May 2019 21:43:36 -0700 Luigi Semenzato <semenzato@google.com> w=
+rote:
 >
-> > I have reverted
-> >=20
-> >   c353e2997976 ("mm/vmalloc: hugepage vmalloc mappings")
-> >   a826492f28d9 ("mm: move ioremap page table mapping function to mm/")
-> >=20
-> > (and my fix up) for today and things seem to work (if only because the
-> > BUG() has been removed :-)). =20
+> My apologies but the patch
 >=20
-> Good to know, maybe I didn't test powerpc without later enabling=20
-> patches...
+> mm-smaps-split-pss-into-components.patch
 >=20
-> The series also has a compile bug on ARM I have to work out, so
-> yeah drop those for now, I'll post a v2. The large system map patches
-> that I posted in that series can stay I think.
+> has a bug (does not update private_clean and private_dirty).  Please
+> do not include it.  I will resubmit a corrected version.
 
-OK, I have removed them from the akpm-current tree today.
+I have dropped that from linux-next today.
 
+P.S. in the future please trim your replies to relevant bits, thanks.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/PlQLemxBvR/fwW+Gj/sMO9m
+--Sig_/1ISJy/USqL3uKe+N6QGnZgM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwok8ACgkQAVBC80lX
-0Gw9yggAiBpwmM3Sfbs6LzWUB+rlFP9IQi6z8R9JbCdzAp2Fs/6WVlKtdSR5WJil
-gNl55rQxGvsq0qnKRplDswk7AFFS2ruqlfJ6ZPYMnTrgy6KwFq9M+spGeQJcuPqd
-lxGNxp/k/K+6KNi2Z9gJiXYQj0zvqib4VTSFtUozLXUrfRzvTOaqVcbfY7Qb8PtR
-gKjeQxHxV6blptZJhkixqxjQdhKiv0WQxwXN9Z6K0GHml/8amyAJHCUdj2d1LakJ
-IF9jGQviN6jyDOQoPHGDjqs9nPaqca3nglfdZdIw8Ssllfp4/qJsD/JJiJHk2CRg
-JE4FUi/cuUfaRE2fjUhWKGx4aQ2xRQ==
-=+FzF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwpHcACgkQAVBC80lX
+0GzTMwf+P79ZCniPZu4298eDmJPDDV5hrSNugRpBpF7wLOr72Nm/RbueUfGnpM7e
+JlSehMtkCyaJkCW7uW+N6Ior1ep747lrkVCtg95G/yB6vrIu5oUlLG2sGxlWlh1D
+pAXCHg3T1BB0/8dRvJXr7YmDOLakwpKf+4nN6V0PZwwEctN4ZvcuCWuHnj2lGTnR
+BVlrJe4EDfB/sDUSm9i1gd3Dgx5ClUSk7gG8RrYRezNlOS7pCPEOwEgmQ62KUaeD
+qncMOV1g6xhllddSxA97HEyf8C6eA+5tDR2kj1EmDu9hZNR+gLHXgyGUg7QWSGEW
+dtHgXURwm3m/7VmP4N+fqpqyzkMF2g==
+=ImAe
 -----END PGP SIGNATURE-----
 
---Sig_/PlQLemxBvR/fwW+Gj/sMO9m--
+--Sig_/1ISJy/USqL3uKe+N6QGnZgM--
