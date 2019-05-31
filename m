@@ -1,56 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the drm-fixes tree
-Date: Fri, 31 May 2019 16:11:02 +1000
-Message-ID: <20190531161102.4d0b2c97@canb.auug.org.au>
+From: Matteo Croce <mcroce@redhat.com>
+Subject: Re: [PATCH] firmware_loader: fix build without sysctl
+Date: Fri, 31 May 2019 11:12:39 +0200
+Message-ID: <CAGnkfhwJm0N2WvLv9o+DZeL9JjDsDp3-TB-G6iS_6mhTyzYRHQ@mail.gmail.com>
+References: <20190531012649.31797-1-mcroce@redhat.com> <dbc00eaa-c6e9-45b2-7232-5af35fdea113@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UapcH+QXdAMGnKLiDJYuPms"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <dbc00eaa-c6e9-45b2-7232-5af35fdea113@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UapcH+QXdAMGnKLiDJYuPms
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 31, 2019 at 4:15 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 5/30/19 6:26 PM, Matteo Croce wrote:
+> > firmware_config_table has references to the sysctl code which
+> > triggers a build failure when CONFIG_PROC_SYSCTL is not set:
+> >
+> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x30): undefined reference to `sysctl_vals'
+> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x38): undefined reference to `sysctl_vals'
+> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x70): undefined reference to `sysctl_vals'
+> >     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x78): undefined reference to `sysctl_vals'
+> >
+> > Put the firmware_config_table struct under #ifdef CONFIG_PROC_SYSCTL.
+> >
+> > Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+>
+> Works for me.
+>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+>
+> Thanks.
+>
+> > ---
+> >  drivers/base/firmware_loader/fallback_table.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+> > index 58d4a1263480..18d646777fb9 100644
+> > --- a/drivers/base/firmware_loader/fallback_table.c
+> > +++ b/drivers/base/firmware_loader/fallback_table.c
+> > @@ -23,6 +23,8 @@ struct firmware_fallback_config fw_fallback_config = {
+> >  };
+> >  EXPORT_SYMBOL_GPL(fw_fallback_config);
+> >
+> > +#ifdef CONFIG_PROC_SYSCTL
+> > +
+> >  struct ctl_table firmware_config_table[] = {
+> >       {
+> >               .procname       = "force_sysfs_fallback",
+> > @@ -45,3 +47,5 @@ struct ctl_table firmware_config_table[] = {
+> >       { }
+> >  };
+> >  EXPORT_SYMBOL_GPL(firmware_config_table);
+> > +
+> > +#endif
+> >
+>
+>
+> --
+> ~Randy
 
-Hi all,
+Hi,
 
-In commit
+please correct the Fixes tag if possible.
+It seems that the hash of the offending commit now is d91bff3011cf
 
-  137caa702f23 ("drm/imx: ipuv3-plane: fix atomic update status query for n=
-on-plus i.MX6Q")
-
-Fixes tag
-
-  Fixes: 70e8a0c71e9 ("drm/imx: ipuv3-plane: add function to query atomic u=
-pdate status")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UapcH+QXdAMGnKLiDJYuPms
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwxXYACgkQAVBC80lX
-0GwAJAf9EZ4F+IIwdZgVNyjEgLVKZbCJaJCYG6klilNRKDn+LpUeAudzXvxr5BnD
-OVvt/z3EGsnkEcnbLnMNxNNfl3GBDr5oLMOBWyoJcRmG2dlpYnh2A5OVBezvRLlO
-G9/OnmM/b7Az6QKNvTC9GyneIviCOhyLculeOjjskqAZE1N6k8n7n+3Y3hFdxq3V
-RaINsrVHP6icyLGb/VzuSqva/WZGETQwRyeizhmdJ66jWbHFi2vUtwp5ePn5X3XV
-UGtIucKXbE93oksslaHh7yyPSO7drGQOKG183aJFPyqudle8l0PhT4PDe/LDrGUX
-DGsqz0YLYvkpaOCL4nh4bq+r0I8e1A==
-=PFWD
------END PGP SIGNATURE-----
-
---Sig_/UapcH+QXdAMGnKLiDJYuPms--
+Regards,
+-- 
+Matteo Croce
+per aspera ad upstream
