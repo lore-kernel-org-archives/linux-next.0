@@ -1,51 +1,57 @@
-From: "Huang\, Ying" <ying.huang@intel.com>
-Subject: Re: mmotm 2019-05-29-20-52 uploaded
-Date: Fri, 31 May 2019 10:42:35 +0800
-Message-ID: <87h89b5opw.fsf@yhuang-dev.intel.com>
-References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
-        <fac5f029-ef20-282e-b0d2-2357589839e8@oracle.com>
-        <87lfyn5rgu.fsf@yhuang-dev.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Fri, 31 May 2019 13:36:12 +1000
+Message-ID: <20190531133612.35276ad9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PzGjbrYAwJiDIyGlEKhqImh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87lfyn5rgu.fsf@yhuang-dev.intel.com> (Ying Huang's message of
-        "Fri, 31 May 2019 09:43:13 +0800")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-"Huang, Ying" <ying.huang@intel.com> writes:
+--Sig_/PzGjbrYAwJiDIyGlEKhqImh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi, Mike,
->
-> Mike Kravetz <mike.kravetz@oracle.com> writes:
->
->> On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
->>> 
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>> 
->>
->> With this kernel, I seem to get many messages such as:
->>
->> get_swap_device: Bad swap file entry 1400000000000001
->>
->> It would seem to be related to commit 3e2c19f9bef7e
->>> * mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
->
-> Hi, Mike,
->
-> Thanks for reporting!  I find an issue in my patch and I can reproduce
-> your problem now.  The reason is total_swapcache_pages() will call
-> get_swap_device() for invalid swap device.  So we need to find a way to
-> silence the warning.  I will post a fix ASAP.
+Hi all,
 
-I have sent out a fix patch in another thread with title
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-"[PATCH -mm] mm, swap: Fix bad swap file entry warning"
+drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_work':
+drivers/scsi/ibmvscsi/ibmvscsi.c:2151:5: warning: 'rc' may be used uninitia=
+lized in this function [-Wmaybe-uninitialized]
+  if (rc) {
+     ^
+drivers/scsi/ibmvscsi/ibmvscsi.c:2121:6: note: 'rc' was declared here
+  int rc;
+      ^~
 
-Can you try it?
+Introduced by commit
 
-Best Regards,
-Huang, Ying
+  035a3c4046b5 ("scsi: ibmvscsi: redo driver work thread to use enum action=
+ states")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PzGjbrYAwJiDIyGlEKhqImh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwoSwACgkQAVBC80lX
+0Gxn/gf9FlLUU9ikAUgDlMtJ/iwMNIAVIgV/ln5dZu9OiAVUwZVt27mSHvggZT15
+xNVKD7BbzI5wRt3KbdEDXgvWRlmIYwwMR4ZmlqItLrEi4iYPIRE+pI0pBgfF5/hu
+WTedkH1L8OG4Yt45Ty3kgLxkH2U2gdx0MM4lxa5FWtgkqwUOh+vXVTKB/MrpX2Kx
+i369MQwbSdR+EFD2TPJokBqxrYjsQeHN+YYSTgCtldW/idNP4fxMuYkbcaLxF4yS
+X4cuTQwC77E8h/eMhIEC6avEkoY4HYda4vIlHSjFycZ5CnoBw29d+O5YGJ0Py0/5
+AeN1N0+/LHFXX3evKKzYPWPT+4rjKw==
+=a1s0
+-----END PGP SIGNATURE-----
+
+--Sig_/PzGjbrYAwJiDIyGlEKhqImh--
