@@ -1,60 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Fri, 31 May 2019 10:35:08 +1000
-Message-ID: <20190531103508.1bfc06db@canb.auug.org.au>
+From: Matteo Croce <mcroce@redhat.com>
+Subject: Re: linux-next: Tree for May 30 (firmware_loader)
+Date: Fri, 31 May 2019 02:52:32 +0200
+Message-ID: <1D63F878-8B7D-4BE4-9FB7-F523C7F473BE@redhat.com>
+References: <20190530162132.6081d246@canb.auug.org.au> <28716a14-772d-bc82-5111-34cd38cfda54@infradead.org> <20190531100646.212b065f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/W.Z4eGjR4oT3n1RNXpkMYJa"; protocol="application/pgp-signature"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190531100646.212b065f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/W.Z4eGjR4oT3n1RNXpkMYJa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On May 31, 2019 2:06:46 AM GMT+02:00, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+> 
+> On Thu, 30 May 2019 09:10:13 -0700 Randy Dunlap
+> <rdunlap@infradead.org> wrote:
+> >
+> > on i386 or x86_64:
+> > when CONFIG_PROC_SYSCTL is not set/enabled:
+> > 
+> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x1c):
+> undefined reference to `sysctl_vals'
+> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x20):
+> undefined reference to `sysctl_vals'
+> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x40):
+> undefined reference to `sysctl_vals'
+> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x44):
+> undefined reference to `sysctl_vals'
+> 
+> Caused by commit
+> 
+>   6a33853c5773 ("proc/sysctl: add shared variables for range check")
+> 
+> Added some more cc's
 
-Hi all,
+Hi,
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Probably the whole firmware_config_table declaration should be under #ifdef CONFIG_PROC_SYSCTL?
 
-In file included from net/netfilter/utils.c:5:
-include/linux/netfilter_ipv6.h: In function 'nf_ipv6_br_defrag':
-include/linux/netfilter_ipv6.h:110:9: error: implicit declaration of functi=
-on 'nf_ct_frag6_gather'; did you mean 'nf_ct_attach'? [-Werror=3Dimplicit-f=
-unction-declaration]
-  return nf_ct_frag6_gather(net, skb, user);
-         ^~~~~~~~~~~~~~~~~~
-         nf_ct_attach
-
-Caused by commit
-
-  764dd163ac92 ("netfilter: nf_conntrack_bridge: add support for IPv6")
-
-CONFIG_IPV6 is not set for this build.
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/W.Z4eGjR4oT3n1RNXpkMYJa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwdrwACgkQAVBC80lX
-0GymwQf/d4wXf91KoGIB7ydQiSpx7yRSRdw2moG9XUV0oidKP3RZF17p9wOjQXp7
-kGWuPdykRUIsJNNVzWUfQXRSKaYthcMVG3bJRoj/63GQLKfKR7rhocfihPMPc2uI
-YATaDoHCz1fAy5hOgOLY4fkpuW3Pynuo8eRMhcUVsHs0Dkw/r1iPRQ7Bc8vCYOod
-SUflPO3jWNMiKPd4965BkDQDMBPz75B/d9UbXSKtA9esqFW5J7VET7y27zVXPc2n
-DhM8j93WERysFLRJpn3ns9ZqLi0JBBSmdn3Kn7Xg8ORP7Ul4uynPA3gDWsn3EyMJ
-f0bnj9l4G7XN14FXVFzULgih62VUeA==
-=a/FF
------END PGP SIGNATURE-----
-
---Sig_/W.Z4eGjR4oT3n1RNXpkMYJa--
+I'll look into it, thanks.
+-- 
+Matteo Croce
+per aspera ad upstream
