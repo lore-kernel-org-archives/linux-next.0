@@ -1,42 +1,65 @@
-From: "Huang\, Ying" <ying.huang@intel.com>
-Subject: Re: mmotm 2019-05-29-20-52 uploaded
-Date: Fri, 31 May 2019 09:43:13 +0800
-Message-ID: <87lfyn5rgu.fsf@yhuang-dev.intel.com>
-References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
-        <fac5f029-ef20-282e-b0d2-2357589839e8@oracle.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] firmware_loader: fix build without sysctl
+Date: Thu, 30 May 2019 19:15:15 -0700
+Message-ID: <dbc00eaa-c6e9-45b2-7232-5af35fdea113@infradead.org>
+References: <20190531012649.31797-1-mcroce@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fac5f029-ef20-282e-b0d2-2357589839e8@oracle.com> (Mike Kravetz's
-        message of "Thu, 30 May 2019 13:54:07 -0700")
+In-Reply-To: <20190531012649.31797-1-mcroce@redhat.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+To: Matteo Croce <mcroce@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi, Mike,
+On 5/30/19 6:26 PM, Matteo Croce wrote:
+> firmware_config_table has references to the sysctl code which
+> triggers a build failure when CONFIG_PROC_SYSCTL is not set:
+> 
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x30): undefined reference to `sysctl_vals'
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x38): undefined reference to `sysctl_vals'
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x70): undefined reference to `sysctl_vals'
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x78): undefined reference to `sysctl_vals'
+> 
+> Put the firmware_config_table struct under #ifdef CONFIG_PROC_SYSCTL.
+> 
+> Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-Mike Kravetz <mike.kravetz@oracle.com> writes:
+Works for me.
 
-> On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
->> 
->>    http://www.ozlabs.org/~akpm/mmotm/
->> 
->
-> With this kernel, I seem to get many messages such as:
->
-> get_swap_device: Bad swap file entry 1400000000000001
->
-> It would seem to be related to commit 3e2c19f9bef7e
->> * mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-Hi, Mike,
+Thanks.
 
-Thanks for reporting!  I find an issue in my patch and I can reproduce
-your problem now.  The reason is total_swapcache_pages() will call
-get_swap_device() for invalid swap device.  So we need to find a way to
-silence the warning.  I will post a fix ASAP.
+> ---
+>  drivers/base/firmware_loader/fallback_table.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+> index 58d4a1263480..18d646777fb9 100644
+> --- a/drivers/base/firmware_loader/fallback_table.c
+> +++ b/drivers/base/firmware_loader/fallback_table.c
+> @@ -23,6 +23,8 @@ struct firmware_fallback_config fw_fallback_config = {
+>  };
+>  EXPORT_SYMBOL_GPL(fw_fallback_config);
+>  
+> +#ifdef CONFIG_PROC_SYSCTL
+> +
+>  struct ctl_table firmware_config_table[] = {
+>  	{
+>  		.procname	= "force_sysfs_fallback",
+> @@ -45,3 +47,5 @@ struct ctl_table firmware_config_table[] = {
+>  	{ }
+>  };
+>  EXPORT_SYMBOL_GPL(firmware_config_table);
+> +
+> +#endif
+> 
 
-Best Regards,
-Huang, Ying
+
+-- 
+~Randy
