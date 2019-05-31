@@ -1,65 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the amdgpu tree
-Date: Fri, 31 May 2019 11:27:52 +1000
-Message-ID: <20190531112752.7f3ca857@canb.auug.org.au>
-References: <20190510105913.357c15e3@canb.auug.org.au>
+Subject: Re: [PATCH] firmware_loader: fix build without sysctl
+Date: Fri, 31 May 2019 11:32:16 +1000
+Message-ID: <20190531113216.796bb933@canb.auug.org.au>
+References: <20190531012649.31797-1-mcroce@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SgjzKMuKXe4areELDBT3g40"; protocol="application/pgp-signature"
+ boundary="Sig_/TPqHE_Oa=ZmOD5cJXg/Xd=E"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190510105913.357c15e3@canb.auug.org.au>
+In-Reply-To: <20190531012649.31797-1-mcroce@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: Alex Deucher <alexdeucher@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Kim <jonathan.kim@amd.com>
+To: Matteo Croce <mcroce@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/SgjzKMuKXe4areELDBT3g40
+--Sig_/TPqHE_Oa=ZmOD5cJXg/Xd=E
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 10 May 2019 10:59:13 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the amdgpu tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> In file included from drivers/gpu/drm/amd/amdgpu/df_v3_6.c:23:
-> drivers/gpu/drm/amd/amdgpu/df_v3_6.c: In function 'df_v3_6_pmc_start':
-> drivers/gpu/drm/amd/amdgpu/amdgpu.h:1010:29: warning: 'lo_val' may be use=
-d uninitialized in this function [-Wmaybe-uninitialized]
->  #define WREG32_PCIE(reg, v) adev->pcie_wreg(adev, (reg), (v))
->                              ^~~~
-> drivers/gpu/drm/amd/amdgpu/df_v3_6.c:334:39: note: 'lo_val' was declared =
-here
->   uint32_t lo_base_addr, hi_base_addr, lo_val, hi_val;
->                                        ^~~~~~
->=20
-> Introduced by commit
->=20
->   a6ac0b44bab9 ("drm/amdgpu: add df perfmon regs and funcs for xgmi")
+[Just cc'ing Andrew who is currently carrying the patch that this fixes.]
 
-I now get this warning after merging the drm tree ...
+On Fri, 31 May 2019 03:26:49 +0200 Matteo Croce <mcroce@redhat.com> wrote:
+>
+> firmware_config_table has references to the sysctl code which
+> triggers a build failure when CONFIG_PROC_SYSCTL is not set:
+>=20
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x30): undef=
+ined reference to `sysctl_vals'
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x38): undef=
+ined reference to `sysctl_vals'
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x70): undef=
+ined reference to `sysctl_vals'
+>     ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x78): undef=
+ined reference to `sysctl_vals'
+>=20
+> Put the firmware_config_table struct under #ifdef CONFIG_PROC_SYSCTL.
+>=20
+> Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> ---
+>  drivers/base/firmware_loader/fallback_table.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base=
+/firmware_loader/fallback_table.c
+> index 58d4a1263480..18d646777fb9 100644
+> --- a/drivers/base/firmware_loader/fallback_table.c
+> +++ b/drivers/base/firmware_loader/fallback_table.c
+> @@ -23,6 +23,8 @@ struct firmware_fallback_config fw_fallback_config =3D {
+>  };
+>  EXPORT_SYMBOL_GPL(fw_fallback_config);
+> =20
+> +#ifdef CONFIG_PROC_SYSCTL
+> +
+>  struct ctl_table firmware_config_table[] =3D {
+>  	{
+>  		.procname	=3D "force_sysfs_fallback",
+> @@ -45,3 +47,5 @@ struct ctl_table firmware_config_table[] =3D {
+>  	{ }
+>  };
+>  EXPORT_SYMBOL_GPL(firmware_config_table);
+> +
+> +#endif
+> --=20
+> 2.21.0
+>=20
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/SgjzKMuKXe4areELDBT3g40
+--Sig_/TPqHE_Oa=ZmOD5cJXg/Xd=E
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwgxgACgkQAVBC80lX
-0Gx1DAf+Pbrqe4MgGO3fK7UnBMZtCpEGsyMA27mNVq3S6DRwluPK0S8cnySYNENL
-2xiTU6Jwtzh89REYEtpgDpHXYMZDuB4iZWMr9gm3gUXFrtjKJg4DNRy8J6NOIthJ
-IQSaW6zDPtdglhTi/w83FCDIiYljb3nqVpTjCn2Rh38SyQXmJOlGS/QeW/NgaH6y
-exnRzZDA/UmVffKoEWf9B3wyLpfagRaRoTecSiprDp+Ka7NwIFrUiqdHOlj5FItf
-mKLq8Lzz/wPlZDLGA5CEK9Rvc1t28H+NSFuLddLhnAs6TVjHWQzGW5z7uyGcuX+1
-2dGlLN50+N0zzj4YD1DA0/sG4hVzAw==
-=70m1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwhCAACgkQAVBC80lX
+0Gw0qQf/evM65VBHkhgx3KVeMRBmdSccZ9FHYEeofJFXMPJwh2vm4AEAws/PYLRH
+RL529NygtdmzuK6f/+GKNvbRVXWR2KA2/iBxPFvQOq1aAQDeomLVGrgIXTApy/5D
+44ddPNZaVDLToM894A+DKetLxq8p1+ir9KAa+ZEM5EbZbd34vWJkC8u0HtMscmFW
+zyvpA8d2YBZ+okjdI89AHFbhYnD7x81+ukkNxTkU3Xiy6syyuit5c/JIjHDzTP4a
+nlHygjsJjVXusYBJVHS+HU2hN6s6+NCVtFCaLeIdp8SJvki/OXsvJuZPMZuxVbgk
+pzZDpKGs3wSJxfyOqvyZET0wdWNyOg==
+=MEoS
 -----END PGP SIGNATURE-----
 
---Sig_/SgjzKMuKXe4areELDBT3g40--
+--Sig_/TPqHE_Oa=ZmOD5cJXg/Xd=E--
