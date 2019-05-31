@@ -1,48 +1,50 @@
 From: Matteo Croce <mcroce@redhat.com>
-Subject: Re: linux-next: Tree for May 30 (firmware_loader)
-Date: Fri, 31 May 2019 02:52:32 +0200
-Message-ID: <1D63F878-8B7D-4BE4-9FB7-F523C7F473BE@redhat.com>
-References: <20190530162132.6081d246@canb.auug.org.au> <28716a14-772d-bc82-5111-34cd38cfda54@infradead.org> <20190531100646.212b065f@canb.auug.org.au>
+Subject: [PATCH] firmware_loader: fix build without sysctl
+Date: Fri, 31 May 2019 03:26:49 +0200
+Message-ID: <20190531012649.31797-1-mcroce@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190531100646.212b065f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On May 31, 2019 2:06:46 AM GMT+02:00, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
-> 
-> On Thu, 30 May 2019 09:10:13 -0700 Randy Dunlap
-> <rdunlap@infradead.org> wrote:
-> >
-> > on i386 or x86_64:
-> > when CONFIG_PROC_SYSCTL is not set/enabled:
-> > 
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x1c):
-> undefined reference to `sysctl_vals'
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x20):
-> undefined reference to `sysctl_vals'
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x40):
-> undefined reference to `sysctl_vals'
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x44):
-> undefined reference to `sysctl_vals'
-> 
-> Caused by commit
-> 
->   6a33853c5773 ("proc/sysctl: add shared variables for range check")
-> 
-> Added some more cc's
+firmware_config_table has references to the sysctl code which
+triggers a build failure when CONFIG_PROC_SYSCTL is not set:
 
-Hi,
+    ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x30): undefined reference to `sysctl_vals'
+    ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x38): undefined reference to `sysctl_vals'
+    ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x70): undefined reference to `sysctl_vals'
+    ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x78): undefined reference to `sysctl_vals'
 
-Probably the whole firmware_config_table declaration should be under #ifdef CONFIG_PROC_SYSCTL?
+Put the firmware_config_table struct under #ifdef CONFIG_PROC_SYSCTL.
 
-I'll look into it, thanks.
+Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ drivers/base/firmware_loader/fallback_table.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+index 58d4a1263480..18d646777fb9 100644
+--- a/drivers/base/firmware_loader/fallback_table.c
++++ b/drivers/base/firmware_loader/fallback_table.c
+@@ -23,6 +23,8 @@ struct firmware_fallback_config fw_fallback_config = {
+ };
+ EXPORT_SYMBOL_GPL(fw_fallback_config);
+ 
++#ifdef CONFIG_PROC_SYSCTL
++
+ struct ctl_table firmware_config_table[] = {
+ 	{
+ 		.procname	= "force_sysfs_fallback",
+@@ -45,3 +47,5 @@ struct ctl_table firmware_config_table[] = {
+ 	{ }
+ };
+ EXPORT_SYMBOL_GPL(firmware_config_table);
++
++#endif
 -- 
-Matteo Croce
-per aspera ad upstream
+2.21.0
