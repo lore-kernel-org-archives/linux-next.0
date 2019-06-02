@@ -1,75 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch the drm-intel-fixes tree
-Date: Mon, 3 Jun 2019 08:20:51 +1000
-Message-ID: <20190603082051.273a014c@canb.auug.org.au>
+Subject: linux-next: unable to fetch the mvebu tree
+Date: Mon, 3 Jun 2019 08:23:46 +1000
+Message-ID: <20190603082346.7bd1d7a4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0362050316=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Content-Type: multipart/mixed; boundary="===============4738705737107779314=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, ARM <linux-arm-kernel@lists.infradead.org>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---===============0362050316==
+--===============4738705737107779314==
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1_9rLO0/J=YT2o1Opl+PJ50"; protocol="application/pgp-signature"
+ boundary="Sig_/lo5m9qPDu4oiX33meWAzxx2"; protocol="application/pgp-signature"
 
---Sig_/1_9rLO0/J=YT2o1Opl+PJ50
+--Sig_/lo5m9qPDu4oiX33meWAzxx2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Trying to fetch the drm-intel-fixes tree today gives me this error:
+Tyring to fetch the mvebu tree
+(git://git.infradead.org/linux-mvebu.git#for-next) for the past several
+days produces this error message:
 
------------------------------------------------------------------
-fatal: Could not read from remote repository.
-
-Please make sure you have the correct access rights
-and the repository exists.
------------------------------------------------------------------
-
-The same for drm-misc-fixes, drm-intel and drm-misc.  These are all
-hosted on git://anongit.freedesktop.org/ .
+fatal: Couldn't find remote ref refs/heads/for-next
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/1_9rLO0/J=YT2o1Opl+PJ50
+--Sig_/lo5m9qPDu4oiX33meWAzxx2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0S8MACgkQAVBC80lX
-0Gz3UQf9E0cKzaW8f5StW3DTvDdZiWjw1QyXRHKf8WQoEXoPZwtJ+0sJ64rdgg5N
-5ohpavRBGdD3FScFgbbCQw5O1Sq2yUVp328M+Er7LgqYrjr0CVrdRWnETC/Opujq
-7/Vpq33iyAqSsNH00H0cdU9Rj0CaTcQE1K2OlYmZucqXPldsT2UWTli3+SufoiUL
-ygs4VwVjBfld47TKB+xJF/ucl6b5egXv+Wnk5QR42FwkKSdFyLXxeVLnyZ60LerE
-583IymIdHjMOlg4j8iZ3vZw6mpbGKveoGo1FNh5O9ziNgqXXP2H69EyfAWyirvU3
-5rXk2jci4jM9RCzU6bxf4JtV9gFYbQ==
-=leUS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0THIACgkQAVBC80lX
+0Gwsmgf/V9gzhu05NqlOLJkYaYO9nMmyYG530vlRb7UFezZH/01F88EoDHRkPZyX
+/vSJV0KJZIII+hQYMpu0yTN2+RQZekxFgyA2cGrW/hqrtu6t4ZU8iJn7jpIUZx3u
+BBKKozRC8CkmUvY1tLA338/ynwqtKilIwDzQBJjxcEF/ACeS7lkOqImkozGDVHiQ
++CKDvBkfMCEqNb4Nj5BWcW1MVlFNUBd+8poHvomGY9H47VgNoxx/qDn5EBXPiICX
+lfUInXWb1Hfs5X+ZHF476VgJE7GeHeMFhAXp3bdDtjch9cBhjHCP4PHJ0dQxVIsd
+BjNDhSQtBECbo4DapXK7m7A3pOIPEg==
+=7xX9
 -----END PGP SIGNATURE-----
 
---Sig_/1_9rLO0/J=YT2o1Opl+PJ50--
+--Sig_/lo5m9qPDu4oiX33meWAzxx2--
 
---===============0362050316==
-Content-Type: text/plain; charset="utf-8"
+
+--===============4738705737107779314==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============0362050316==--
+--===============4738705737107779314==--
