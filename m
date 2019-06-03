@@ -1,78 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unable to fetch the drm-intel-fixes tree
-Date: Mon, 3 Jun 2019 19:50:18 +1000
-Message-ID: <20190603195018.2b7d5650@canb.auug.org.au>
-References: <20190603082051.273a014c@canb.auug.org.au>
- <20190603110403.0412ed22@canb.auug.org.au>
- <20190603073103.GC21222@phenom.ffwll.local>
+Subject: linux-next: Fixes tag needs some work in the phy tree
+Date: Tue, 4 Jun 2019 00:02:55 +1000
+Message-ID: <20190604000255.38c084e3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1513706369=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20190603073103.GC21222@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.k/a7L63NBkov+bwl0D_R_N"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 List-Id: linux-next.vger.kernel.org
 
---===============1513706369==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//JwQn17N9SqUiY8Nnw9PZsD"; protocol="application/pgp-signature"
-
---Sig_//JwQn17N9SqUiY8Nnw9PZsD
+--Sig_/.k/a7L63NBkov+bwl0D_R_N
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi all,
 
-On Mon, 3 Jun 2019 09:31:03 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> drm.git too I guess?
+In commit
 
-No, I fetch that from git://git.freedesktop.org/ which seems to answer.
+  3ddc3f3057ff ("phy: renesas: rcar-gen2: Fix memory leak at error paths")
 
-> But yeah fd.o anongit keeled over over the w/e :-( Admins not yet awake,
-> so can't tell you what's up.
+Fixes tag
 
-No worries, I will just keep using what I have previously fetched.
+  Fixes: 1233f59f745 ("phy: Renesas R-Car Gen2 PHY driver")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//JwQn17N9SqUiY8Nnw9PZsD
+--Sig_/.k/a7L63NBkov+bwl0D_R_N
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz07VoACgkQAVBC80lX
-0GzFTgf+IsAiY4vcv67JmXh8J250uxzWfqRZnd+JaMvMMjoe+z170eoKbfTn4f95
-jsYo+OaQfET7cvpoeeWO8CcF3IJDIE2Q+Z0/yARzvwvoIInN9ddwZ4U+zUwutBQm
-Ij1j14Ct+mGmGWwyWI7u9PVnMZTsgV5hrNOMbB86NEYbWr/GcfgcmLkX/uQTcBfp
-jLDZfkBCJ0maM8HeeHH83gEWoDG3/VY4gTcbMoFamcfsLUAoWEW3RVJdrvEN37En
-XIx+EsGZ6H35DqingsPw/SJ+T7NAavXgFevVSNE7b/z3aP2bfJTHdeZyAKzwZAXP
-1XSnbB8I6J5F4ISJ+Zn7NTHO5yiOQg==
-=QKuk
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz1KI8ACgkQAVBC80lX
+0GwVdgf6AgnZzXI0Tsoy83ah8JTi/GgbIvsitDcjcKwY/pblvYx2aL1VMtFOP+m+
+NtIZdRxwH6Sn6msGEeq5JEst2chVWWqDRAbzPm3ANT7rH88meORasAgPLLP0HzDv
+f1kenI5bDjti/eC2PUch6Rdpn5Ey7qAUXYJmJFEo0Nz72lSQUUSwBuHoX+r6UQAS
+H3GExOPpMO05u1vh2ZJ2s7HLQsQcVXT5Cj/uptPTJxqzvdjPDGizS2C9Y38eQqc9
+fBR4FuZzAalPOytImTLWOiqb2jyUbCb/MIUAFMPDoNZ4vnk/3xRsj42NZZ5R1/pm
+J+Z5ghCs3rEyzVuPx52gYhulUv5LLw==
+=AcrJ
 -----END PGP SIGNATURE-----
 
---Sig_//JwQn17N9SqUiY8Nnw9PZsD--
-
---===============1513706369==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
-
---===============1513706369==--
+--Sig_/.k/a7L63NBkov+bwl0D_R_N--
