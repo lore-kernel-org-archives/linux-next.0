@@ -1,54 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the phy tree
-Date: Tue, 4 Jun 2019 00:02:55 +1000
-Message-ID: <20190604000255.38c084e3@canb.auug.org.au>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: Re: linux-next: unable to fetch the mvebu tree
+Date: Mon, 03 Jun 2019 16:11:51 +0200
+Message-ID: <87y32ikbbs.fsf@FE-laptop>
+References: <20190603082346.7bd1d7a4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.k/a7L63NBkov+bwl0D_R_N"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190603082346.7bd1d7a4@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.k/a7L63NBkov+bwl0D_R_N
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+> Hi all,
+>
+> Tyring to fetch the mvebu tree
+> (git://git.infradead.org/linux-mvebu.git#for-next) for the past several
+> days produces this error message:
+>
+> fatal: Couldn't find remote ref refs/heads/for-next
 
-In commit
+Sorry for this, the main reason was that I didn't create a for-next
+branch for this new cycle.
 
-  3ddc3f3057ff ("phy: renesas: rcar-gen2: Fix memory leak at error paths")
+I was waiting for 5.2-rc1 and then didn't take time to merge our current
+branches in the for-next branch.
 
-Fixes tag
+But now it should be available.
 
-  Fixes: 1233f59f745 ("phy: Renesas R-Car Gen2 PHY driver")
+Gregory
 
-has these problem(s):
+>
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.k/a7L63NBkov+bwl0D_R_N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz1KI8ACgkQAVBC80lX
-0GwVdgf6AgnZzXI0Tsoy83ah8JTi/GgbIvsitDcjcKwY/pblvYx2aL1VMtFOP+m+
-NtIZdRxwH6Sn6msGEeq5JEst2chVWWqDRAbzPm3ANT7rH88meORasAgPLLP0HzDv
-f1kenI5bDjti/eC2PUch6Rdpn5Ey7qAUXYJmJFEo0Nz72lSQUUSwBuHoX+r6UQAS
-H3GExOPpMO05u1vh2ZJ2s7HLQsQcVXT5Cj/uptPTJxqzvdjPDGizS2C9Y38eQqc9
-fBR4FuZzAalPOytImTLWOiqb2jyUbCb/MIUAFMPDoNZ4vnk/3xRsj42NZZ5R1/pm
-J+Z5ghCs3rEyzVuPx52gYhulUv5LLw==
-=AcrJ
------END PGP SIGNATURE-----
-
---Sig_/.k/a7L63NBkov+bwl0D_R_N--
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
