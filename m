@@ -1,126 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the
- dma-mapping tree
-Date: Mon, 3 Jun 2019 15:01:18 +1000
-Message-ID: <20190603150118.73e2c3b4@canb.auug.org.au>
+Subject: linux-next: runtime failure of next-20190603
+Date: Mon, 3 Jun 2019 16:22:15 +1000
+Message-ID: <20190603162215.6390707f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jeuklPm=Sjw9bTY1hdmFu_M"; protocol="application/pgp-signature"
+ boundary="Sig_/+TiVC.xekiq4xkQ7ICT.F+4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fredrik Noring <noring@nocrew.org>, Dan Williams <dan.j.williams@intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jeuklPm=Sjw9bTY1hdmFu_M
+--Sig_/+TiVC.xekiq4xkQ7ICT.F+4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+My qemu powerpc_pseries_le_defconfig boots failed today with the following
+output at shutdown time:
 
-  include/linux/genalloc.h
+# halt
+# Stopping network...[   32.109495] watchdog: BUG: soft lockup - CPU#0 stuc=
+k for 22s! [ifdown:97]
+[   32.109794] Modules linked in:
+[   32.110367] CPU: 0 PID: 97 Comm: ifdown Not tainted 5.2.0-rc3 #2
+[   32.110577] NIP:  c000000000bbeb38 LR: c000000000bbf0a0 CTR: 00000000000=
+00000
+[   32.110732] REGS: c00000007c50f4d0 TRAP: 0901   Not tainted  (5.2.0-rc3)
+[   32.110813] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 24422422 =
+ XER: 20000000
+[   32.111162] CFAR: c000000000bbf09c IRQMASK: 0=20
+[   32.111162] GPR00: c0000000002fa540 c00000007c50f760 c00000000119c100 c0=
+0000007c50f7b8=20
+[   32.111162] GPR04: ffffffffffffffff 000000000000000f c00000007c50f8f0 00=
+00000000000003=20
+[   32.111162] GPR08: c00000007d468450 0000000000000003 c00c000000006834 c0=
+0000007ffe7000=20
+[   32.111162] GPR12: c000000001268a90 c000000001380000=20
+[   32.112430] NIP [c000000000bbeb38] xas_load+0x8/0xd0
+[   32.112506] LR [c000000000bbf0a0] xas_find+0x1b0/0x260
+[   32.112737] Call Trace:
+[   32.112859] [c00000007c50f760] [c000000000bbf0a0] xas_find+0x1b0/0x260 (=
+unreliable)
+[   32.113082] [c00000007c50f790] [c0000000002fa540] find_get_entries+0x2e0=
+/0x350
+[   32.113204] [c00000007c50f840] [c00000000031fe08] shmem_undo_range+0x2d8=
+/0xa90
+[   32.113292] [c00000007c50f9f0] [c0000000003205ec] shmem_truncate_range+0=
+x2c/0x60
+[   32.113381] [c00000007c50fa20] [c000000000320ca4] shmem_setattr+0x3a4/0x=
+3e0
+[   32.113467] [c00000007c50fa80] [c00000000040e600] notify_change+0x2d0/0x=
+5c0
+[   32.113596] [c00000007c50fae0] [c0000000003d8f7c] do_truncate+0x9c/0x140
+[   32.113672] [c00000007c50fb70] [c0000000003f66d8] path_openat+0x848/0x16=
+60
+[   32.113747] [c00000007c50fc70] [c0000000003f900c] do_filp_open+0x8c/0x120
+[   32.113816] [c00000007c50fda0] [c0000000003da9e8] do_sys_open+0x248/0x350
+[   32.113956] [c00000007c50fe20] [c00000000000bce4] system_call+0x5c/0x70
+[   32.114123] Instruction dump:
+[   32.114508] 4e800020 60000000 3900c005 7fa94040 409dff60 7d291674 2f8900=
+00 419eff54=20
+[   32.114651] 38600000 4e800020 3c4c005e 3842d5d0 <7c0802a6> fbe1fff8 7c7f=
+1b78 f8010010=20
 
-between commit:
+Reverting commit
 
-  3334e1dc5d71 ("lib/genalloc: add gen_pool_dma_zalloc() for zeroed DMA all=
-ocations")
+  fa858b6eec3f ("XArray: Add xas_replace")
 
-from the dma-mapping tree and commit:
-
-  1c6b703cba18 ("lib/genalloc: introduce chunk owners")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+made the failure go away.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/genalloc.h
-index 6c62eeca754f,b0ab64879ccb..000000000000
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@@ -116,13 -124,47 +124,48 @@@ static inline int gen_pool_add(struct g
-  	return gen_pool_add_virt(pool, addr, -1, size, nid);
-  }
-  extern void gen_pool_destroy(struct gen_pool *);
-- extern unsigned long gen_pool_alloc(struct gen_pool *, size_t);
-- extern unsigned long gen_pool_alloc_algo(struct gen_pool *, size_t,
-- 		genpool_algo_t algo, void *data);
-+ unsigned long gen_pool_alloc_algo_owner(struct gen_pool *pool, size_t siz=
-e,
-+ 		genpool_algo_t algo, void *data, void **owner);
-+=20
-+ static inline unsigned long gen_pool_alloc_owner(struct gen_pool *pool,
-+ 		size_t size, void **owner)
-+ {
-+ 	return gen_pool_alloc_algo_owner(pool, size, pool->algo, pool->data,
-+ 			owner);
-+ }
-+=20
-+ static inline unsigned long gen_pool_alloc_algo(struct gen_pool *pool,
-+ 		size_t size, genpool_algo_t algo, void *data)
-+ {
-+ 	return gen_pool_alloc_algo_owner(pool, size, algo, data, NULL);
-+ }
-+=20
-+ /**
-+  * gen_pool_alloc - allocate special memory from the pool
-+  * @pool: pool to allocate from
-+  * @size: number of bytes to allocate from the pool
-+  *
-+  * Allocate the requested number of bytes from the specified pool.
-+  * Uses the pool allocation function (with first-fit algorithm by default=
-).
-+  * Can not be used in NMI handler on architectures without
-+  * NMI-safe cmpxchg implementation.
-+  */
-+ static inline unsigned long gen_pool_alloc(struct gen_pool *pool, size_t =
-size)
-+ {
-+ 	return gen_pool_alloc_algo(pool, size, pool->algo, pool->data);
-+ }
-+=20
-  extern void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size,
-  		dma_addr_t *dma);
- +void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t =
-*dma);
-- extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
-+ extern void gen_pool_free_owner(struct gen_pool *pool, unsigned long addr,
-+ 		size_t size, void **owner);
-+ static inline void gen_pool_free(struct gen_pool *pool, unsigned long add=
-r,
-+                 size_t size)
-+ {
-+ 	gen_pool_free_owner(pool, addr, size, NULL);
-+ }
-+=20
-  extern void gen_pool_for_each_chunk(struct gen_pool *,
-  	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
-  extern size_t gen_pool_avail(struct gen_pool *);
-
---Sig_/jeuklPm=Sjw9bTY1hdmFu_M
+--Sig_/+TiVC.xekiq4xkQ7ICT.F+4
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0qZ4ACgkQAVBC80lX
-0Gww3Af7BfIy8PAMS8/X58GYqmvxTsxE9AEP9trbAhPCoWFAj/EJupkDeRk64Bqm
-lTMBDazfe2pRDL7on963n07SUMWvdAD+/EjyiMXAb9/IU2jQXpTpI5ILH4x//IEc
-Cz5+iut8k9CnLduTnlko5+WeRyAXRNQxG4TLfu3+xLXtssOgIZjG4xvZcgf1GS3f
-CO/8wCo3R2aCB4A3RXC5cMTEe5dhQiv3WMO+52dQFXZ7dl4c6H6mZU/8cAxLkx85
-NNFG9ZErLmHP8Db/i+W4ZchEO4eoMjCnX54oYy8snzFuXya0ohB6qyzQYFg3OS0o
-G1EBpFQwfPVELEsbTJnCx9nc33HycA==
-=3jKI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0vJcACgkQAVBC80lX
+0Gxj8gf/VjZVL3NuxGCcA/fQWIZi2QUrNTpQVsVn7/XpqL5ylaAoRCVtsqKvtJ2i
+opCS8iyYyun/S8HOqxe6Su0LCBoeb3gXXo6Vj79hdWkjK5AN49NGpQoZWLd+O7Dw
+Jx4yjHOb9RrLOBHpZFoeJqsjaneRqk3XLgT40TcCgmNF+O9Kr51nPFrbodPan3hY
+R/OzBGrascS0yaK6JQbiIL+iII55G7UgSbtups3u84kOxCJ2ysDpRjNAgsNQAMDl
+TfJ0mIkDMaUnMo6niRoOn1n1ikgWQ2gRA7aUFcjVpAjrLYkRh6ME69WFtGuUrrOY
+TwlcOgW3dwUv3gi6nz+Bgpw9ZIY9aQ==
+=3mjZ
 -----END PGP SIGNATURE-----
 
---Sig_/jeuklPm=Sjw9bTY1hdmFu_M--
+--Sig_/+TiVC.xekiq4xkQ7ICT.F+4--
