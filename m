@@ -1,75 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the clockevents tree
-Date: Mon, 3 Jun 2019 12:13:50 +1000
-Message-ID: <20190603121350.653cacce@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uiNiVsT1gh9W9UsmKqw3sG."; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Subject: Re: [next-20190530] Boot failure on PowerPC
+Date: Mon, 3 Jun 2019 08:41:50 +0530
+Message-ID: <D8C9598F-4A51-4402-9344-894EC6B6CE47@linux.vnet.ibm.com>
+References: <79EEB945-661A-41AD-8B26-2FD3B3F84697@linux.vnet.ibm.com>
+ <87h89aohnu.fsf@concordia.ellerman.id.au>
+ <CAA42JLYcPi4ypvX=Ma8yWzUCF=B=FkDrzLex=bJiLyryuWTE2g@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <CAA42JLYcPi4ypvX=Ma8yWzUCF=B=FkDrzLex=bJiLyryuWTE2g@mail.gmail.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Dexuan-Linux Cui <dexuan.linux@gmail.com>
+Cc: linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, v-lide@microsoft.com, Dexuan Cui <decui@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/uiNiVsT1gh9W9UsmKqw3sG.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
 
-After merging the clockevents tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> On 31-May-2019, at 11:43 PM, Dexuan-Linux Cui <dexuan.linux@gmail.com> =
+wrote:
+>=20
+> On Fri, May 31, 2019 at 6:52 AM Michael Ellerman <mpe@ellerman.id.au> =
+wrote:
+>>>=20
+>>> Machine boots till login prompt and then panics few seconds later.
+>>>=20
+>>> Last known next build was May 24th. Will attempt few builds till May =
+30 to
+>>> narrow down this problem.
+>>=20
+>> My CI was fine with next-20190529 (9a15d2e3fd03e3).
+>>=20
+>> cheers
+>=20
+> Hi Sachin,
+> It looks this patch may fix the issue:
+> https://lkml.org/lkml/2019/5/30/1630 , but I'm not sure.
 
-drivers/clocksource/timer-atmel-tcb.c: In function 'tcb_clksrc_init':
-drivers/clocksource/timer-atmel-tcb.c:448:17: error: invalid use of undefin=
-ed type 'struct delay_timer'
-   tc_delay_timer.read_current_timer =3D tc_delay_timer_read32;
-                 ^
-drivers/clocksource/timer-atmel-tcb.c:461:17: error: invalid use of undefin=
-ed type 'struct delay_timer'
-   tc_delay_timer.read_current_timer =3D tc_delay_timer_read;
-                 ^
-drivers/clocksource/timer-atmel-tcb.c:476:16: error: invalid use of undefin=
-ed type 'struct delay_timer'
-  tc_delay_timer.freq =3D divided_rate;
-                ^
-drivers/clocksource/timer-atmel-tcb.c:477:2: error: implicit declaration of=
- function 'register_current_timer_delay'; did you mean 'read_current_timer'=
-? [-Werror=3Dimplicit-function-declaration]
-  register_current_timer_delay(&tc_delay_timer);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  read_current_timer
-drivers/clocksource/timer-atmel-tcb.c: At top level:
-drivers/clocksource/timer-atmel-tcb.c:129:27: error: storage size of 'tc_de=
-lay_timer' isn't known
- static struct delay_timer tc_delay_timer;
-                           ^~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
+It does not help fix the kernel panic issue, but it fixes the =
+get_swap_device warning
+messages during the boot.
 
-Caused by commit
-
-  dd40f5020581 ("clocksource/drivers/tcb_clksrc: Register delay timer")
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uiNiVsT1gh9W9UsmKqw3sG.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0gl4ACgkQAVBC80lX
-0GymIAf6Am/0TmqRiFkcEGVXjoVYebQ0q9Oufbjgztq39uLYcVx/l/k4lZigNAMG
-RFHwh+Q9M4qZ7Zo/6E5Fo3LUqGMVQehgcd2oQRRCel4Sh3PrVCCvGWPiCoctQ7HQ
-jftHQr1u89MPuv0kHkh/bcpQBJRj0d7JTvPnyzBvcWQGxL70eBtRMX1SyIoFtFus
-z4GsO/sir6pY92ef0UWmhIiFOPm5HFtW5qu6zDOjhorLlaVwTfdz21U1++GyVydU
-tgQoij4cNnUa5zPj7sVsifFpGucTRhejpIlq/mpWdGVmcrHyELCjLphjKuk+KuW+
-IibTnBJbpeUaEJjcRr+1LMqY+RMhQQ==
-=69wL
------END PGP SIGNATURE-----
-
---Sig_/uiNiVsT1gh9W9UsmKqw3sG.--
+Thanks
+-Sachin
