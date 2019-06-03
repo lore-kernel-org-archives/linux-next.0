@@ -1,71 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch the mvebu tree
-Date: Mon, 3 Jun 2019 08:23:46 +1000
-Message-ID: <20190603082346.7bd1d7a4@canb.auug.org.au>
+Subject: linux-next: manual merge of the crypto tree with Linus' tree
+Date: Mon, 3 Jun 2019 10:52:21 +1000
+Message-ID: <20190603105221.44e5bf16@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4738705737107779314=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P7kxKd8cxCDnKvEUNQEvqgt"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-next.vger.kernel.org
 
---===============4738705737107779314==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lo5m9qPDu4oiX33meWAzxx2"; protocol="application/pgp-signature"
-
---Sig_/lo5m9qPDu4oiX33meWAzxx2
+--Sig_/P7kxKd8cxCDnKvEUNQEvqgt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Herbert,
 
-Tyring to fetch the mvebu tree
-(git://git.infradead.org/linux-mvebu.git#for-next) for the past several
-days produces this error message:
+Today's linux-next merge of the crypto tree got a conflict in:
 
-fatal: Couldn't find remote ref refs/heads/for-next
+  crypto/crypto_wq.c
+
+between commit:
+
+  2874c5fd2842 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 152")
+
+from Linus' tree and commit:
+
+  3e56e168638b ("crypto: cryptd - move kcrypto_wq into cryptd")
+
+from the crypto tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/lo5m9qPDu4oiX33meWAzxx2
+--Sig_/P7kxKd8cxCDnKvEUNQEvqgt
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0THIACgkQAVBC80lX
-0Gwsmgf/V9gzhu05NqlOLJkYaYO9nMmyYG530vlRb7UFezZH/01F88EoDHRkPZyX
-/vSJV0KJZIII+hQYMpu0yTN2+RQZekxFgyA2cGrW/hqrtu6t4ZU8iJn7jpIUZx3u
-BBKKozRC8CkmUvY1tLA338/ynwqtKilIwDzQBJjxcEF/ACeS7lkOqImkozGDVHiQ
-+CKDvBkfMCEqNb4Nj5BWcW1MVlFNUBd+8poHvomGY9H47VgNoxx/qDn5EBXPiICX
-lfUInXWb1Hfs5X+ZHF476VgJE7GeHeMFhAXp3bdDtjch9cBhjHCP4PHJ0dQxVIsd
-BjNDhSQtBECbo4DapXK7m7A3pOIPEg==
-=7xX9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0b0UACgkQAVBC80lX
+0GyJFAf8CMAi51jWQxhk6UgyFU3r5H5fjO3psXVEwcEFrkYxf6jKobG5mh4+xulm
++V3QMHO/lx3qkAfm3EkeAWtJ7U2YIrZpmVjbWcFvZ2QHqOkXbehTtWLj8ZDF/ATp
+8Hnwg3mu8636DzCsGiMQ2pBQhW8uc0j57YAYqN+xdi2QjnVpQqg6Bla/u5lzXhnc
+VpnqY4jAzExMMJe1T9Ofl2aYNuvYhVskcmyfPG276INeQF11ZD6NgOh5UuBObvCH
+h3nCZe4uOI4V9KiNtquPlKHOdKWk4QsX6h15+z6YrkHIT0oPtczJGaIuRa1wb1Qy
+qmCr0SQ1lAH2yTGVK+TNH73+muaziA==
+=KRyQ
 -----END PGP SIGNATURE-----
 
---Sig_/lo5m9qPDu4oiX33meWAzxx2--
-
-
---===============4738705737107779314==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============4738705737107779314==--
+--Sig_/P7kxKd8cxCDnKvEUNQEvqgt--
