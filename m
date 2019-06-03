@@ -1,74 +1,126 @@
-From: "Lili Deng (Wicresoft North America Ltd)" <v-lide@microsoft.com>
-Subject: RE: [next-20190530] Boot failure on PowerPC
-Date: Mon, 3 Jun 2019 03:23:34 +0000
-Message-ID: <KL1P15301MB02948DA3C780A2DC4A145E0F9E140@KL1P15301MB0294.APCP153.PROD.OUTLOOK.COM>
-References: <79EEB945-661A-41AD-8B26-2FD3B3F84697@linux.vnet.ibm.com>
- <87h89aohnu.fsf@concordia.ellerman.id.au>
- <CAA42JLYcPi4ypvX=Ma8yWzUCF=B=FkDrzLex=bJiLyryuWTE2g@mail.gmail.com>
- <D8C9598F-4A51-4402-9344-894EC6B6CE47@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ dma-mapping tree
+Date: Mon, 3 Jun 2019 15:01:18 +1000
+Message-ID: <20190603150118.73e2c3b4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <D8C9598F-4A51-4402-9344-894EC6B6CE47@linux.vnet.ibm.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>, Dexuan-Linux Cui <dexuan.linux@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Dexuan Cui <decui@microsoft.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jeuklPm=Sjw9bTY1hdmFu_M"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fredrik Noring <noring@nocrew.org>, Dan Williams <dan.j.williams@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Sachin,
+--Sig_/jeuklPm=Sjw9bTY1hdmFu_M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I verified below patch against Ubuntu 18.04, didn't hit the kernel panic an=
-y more, could you please let know how did you verify?
+Hi all,
 
-Thanks,
-Lili
------Original Message-----
-From: Sachin Sant <sachinp@linux.vnet.ibm.com>=20
-Sent: Monday, June 3, 2019 11:12 AM
-To: Dexuan-Linux Cui <dexuan.linux@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>; linuxppc-dev@lists.ozlabs.org; l=
-inux-next@vger.kernel.org; Dexuan Cui <decui@microsoft.com>; Lili Deng (Wic=
-resoft North America Ltd) <v-lide@microsoft.com>
-Subject: Re: [next-20190530] Boot failure on PowerPC
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
+  include/linux/genalloc.h
 
+between commit:
 
-> On 31-May-2019, at 11:43 PM, Dexuan-Linux Cui <dexuan.linux@gmail.com> wr=
-ote:
->=20
-> On Fri, May 31, 2019 at 6:52 AM Michael Ellerman <mpe@ellerman.id.au> wro=
-te:
->>>=20
->>> Machine boots till login prompt and then panics few seconds later.
->>>=20
->>> Last known next build was May 24th. Will attempt few builds till May=20
->>> 30 to narrow down this problem.
->>=20
->> My CI was fine with next-20190529 (9a15d2e3fd03e3).
->>=20
->> cheers
->=20
-> Hi Sachin,
-> It looks this patch may fix the issue:
-> https://nam06.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flkml.=
-org%2Flkml%2F2019%2F5%2F30%2F1630&amp;data=3D02%7C01%7Cv-lide%40microsoft.c=
-om%7C66e1ef6017aa461703f808d6e7d148cd%7C72f988bf86f141af91ab2d7cd011db47%7C=
-1%7C1%7C636951283393233385&amp;sdata=3DIJFhtvL2Bd87HCoMZ7oWL%2Bar6NY%2FfPbm=
-dCZMT%2BJz5t4%3D&amp;reserved=3D0 , but I'm not sure.
+  3334e1dc5d71 ("lib/genalloc: add gen_pool_dma_zalloc() for zeroed DMA all=
+ocations")
 
-It does not help fix the kernel panic issue, but it fixes the get_swap_devi=
-ce warning messages during the boot.
+from the dma-mapping tree and commit:
 
-Thanks
--Sachin
+  1c6b703cba18 ("lib/genalloc: introduce chunk owners")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/genalloc.h
+index 6c62eeca754f,b0ab64879ccb..000000000000
+--- a/include/linux/genalloc.h
++++ b/include/linux/genalloc.h
+@@@ -116,13 -124,47 +124,48 @@@ static inline int gen_pool_add(struct g
+  	return gen_pool_add_virt(pool, addr, -1, size, nid);
+  }
+  extern void gen_pool_destroy(struct gen_pool *);
+- extern unsigned long gen_pool_alloc(struct gen_pool *, size_t);
+- extern unsigned long gen_pool_alloc_algo(struct gen_pool *, size_t,
+- 		genpool_algo_t algo, void *data);
++ unsigned long gen_pool_alloc_algo_owner(struct gen_pool *pool, size_t siz=
+e,
++ 		genpool_algo_t algo, void *data, void **owner);
++=20
++ static inline unsigned long gen_pool_alloc_owner(struct gen_pool *pool,
++ 		size_t size, void **owner)
++ {
++ 	return gen_pool_alloc_algo_owner(pool, size, pool->algo, pool->data,
++ 			owner);
++ }
++=20
++ static inline unsigned long gen_pool_alloc_algo(struct gen_pool *pool,
++ 		size_t size, genpool_algo_t algo, void *data)
++ {
++ 	return gen_pool_alloc_algo_owner(pool, size, algo, data, NULL);
++ }
++=20
++ /**
++  * gen_pool_alloc - allocate special memory from the pool
++  * @pool: pool to allocate from
++  * @size: number of bytes to allocate from the pool
++  *
++  * Allocate the requested number of bytes from the specified pool.
++  * Uses the pool allocation function (with first-fit algorithm by default=
+).
++  * Can not be used in NMI handler on architectures without
++  * NMI-safe cmpxchg implementation.
++  */
++ static inline unsigned long gen_pool_alloc(struct gen_pool *pool, size_t =
+size)
++ {
++ 	return gen_pool_alloc_algo(pool, size, pool->algo, pool->data);
++ }
++=20
+  extern void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size,
+  		dma_addr_t *dma);
+ +void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t =
+*dma);
+- extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
++ extern void gen_pool_free_owner(struct gen_pool *pool, unsigned long addr,
++ 		size_t size, void **owner);
++ static inline void gen_pool_free(struct gen_pool *pool, unsigned long add=
+r,
++                 size_t size)
++ {
++ 	gen_pool_free_owner(pool, addr, size, NULL);
++ }
++=20
+  extern void gen_pool_for_each_chunk(struct gen_pool *,
+  	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
+  extern size_t gen_pool_avail(struct gen_pool *);
+
+--Sig_/jeuklPm=Sjw9bTY1hdmFu_M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0qZ4ACgkQAVBC80lX
+0Gww3Af7BfIy8PAMS8/X58GYqmvxTsxE9AEP9trbAhPCoWFAj/EJupkDeRk64Bqm
+lTMBDazfe2pRDL7on963n07SUMWvdAD+/EjyiMXAb9/IU2jQXpTpI5ILH4x//IEc
+Cz5+iut8k9CnLduTnlko5+WeRyAXRNQxG4TLfu3+xLXtssOgIZjG4xvZcgf1GS3f
+CO/8wCo3R2aCB4A3RXC5cMTEe5dhQiv3WMO+52dQFXZ7dl4c6H6mZU/8cAxLkx85
+NNFG9ZErLmHP8Db/i+W4ZchEO4eoMjCnX54oYy8snzFuXya0ohB6qyzQYFg3OS0o
+G1EBpFQwfPVELEsbTJnCx9nc33HycA==
+=3jKI
+-----END PGP SIGNATURE-----
+
+--Sig_/jeuklPm=Sjw9bTY1hdmFu_M--
