@@ -1,62 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with Linus' tree
-Date: Mon, 3 Jun 2019 10:52:21 +1000
-Message-ID: <20190603105221.44e5bf16@canb.auug.org.au>
+Subject: Re: linux-next: unable to fetch the drm-intel-fixes tree
+Date: Mon, 3 Jun 2019 11:04:03 +1000
+Message-ID: <20190603110403.0412ed22@canb.auug.org.au>
+References: <20190603082051.273a014c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/P7kxKd8cxCDnKvEUNQEvqgt"; protocol="application/pgp-signature"
+ boundary="Sig_/5W7rw6vAer0=o7AaXUmcNmr"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190603082051.273a014c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eric Biggers <ebiggers@google.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/P7kxKd8cxCDnKvEUNQEvqgt
+--Sig_/5W7rw6vAer0=o7AaXUmcNmr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Stephen,
 
-Today's linux-next merge of the crypto tree got a conflict in:
+On Mon, 3 Jun 2019 08:20:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Hi all,
+>=20
+> Trying to fetch the drm-intel-fixes tree today gives me this error:
+>=20
+> -----------------------------------------------------------------
+> fatal: Could not read from remote repository.
+>=20
+> Please make sure you have the correct access rights
+> and the repository exists.
+> -----------------------------------------------------------------
+>=20
+> The same for drm-misc-fixes, drm-intel and drm-misc.  These are all
+> hosted on git://anongit.freedesktop.org/ .
 
-  crypto/crypto_wq.c
-
-between commit:
-
-  2874c5fd2842 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 152")
-
-from Linus' tree and commit:
-
-  3e56e168638b ("crypto: cryptd - move kcrypto_wq into cryptd")
-
-from the crypto tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+Also the drm-tegra tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/P7kxKd8cxCDnKvEUNQEvqgt
+--Sig_/5W7rw6vAer0=o7AaXUmcNmr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0b0UACgkQAVBC80lX
-0GyJFAf8CMAi51jWQxhk6UgyFU3r5H5fjO3psXVEwcEFrkYxf6jKobG5mh4+xulm
-+V3QMHO/lx3qkAfm3EkeAWtJ7U2YIrZpmVjbWcFvZ2QHqOkXbehTtWLj8ZDF/ATp
-8Hnwg3mu8636DzCsGiMQ2pBQhW8uc0j57YAYqN+xdi2QjnVpQqg6Bla/u5lzXhnc
-VpnqY4jAzExMMJe1T9Ofl2aYNuvYhVskcmyfPG276INeQF11ZD6NgOh5UuBObvCH
-h3nCZe4uOI4V9KiNtquPlKHOdKWk4QsX6h15+z6YrkHIT0oPtczJGaIuRa1wb1Qy
-qmCr0SQ1lAH2yTGVK+TNH73+muaziA==
-=KRyQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0cgMACgkQAVBC80lX
+0GyutggAkt963tpYucPsS7tkFsqUNexKruuFUV3lneI2aaDDOXLIv0H1j9lR9Rze
+SJADEGvKHTn4tKSScsBSo0R+h67eTpaTg7TEvKwX6Le1zHWPRWpScsYh1pXCQpSu
+uf8OSZ48VRyFpxYR8+HGupbAEi6bXURdkxLfxpH3sqBrCzHxMHaKixBX4VxORsKX
+JprO+cTlKokWFlRgKIo2UXvTOJjrFsT89uvcwC4zh26vBPcoAueAh23rrZdS79mA
+wu0+TrGsgX31O2YMnDCfwvePWvV+LG7u7KTPyAoQ5etpt9plvc+HN3oRbDbTq+NF
+jL5PqgH4emtjWvX/IbKbjgXEMWq58g==
+=95C5
 -----END PGP SIGNATURE-----
 
---Sig_/P7kxKd8cxCDnKvEUNQEvqgt--
+--Sig_/5W7rw6vAer0=o7AaXUmcNmr--
