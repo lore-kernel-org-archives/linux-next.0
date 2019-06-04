@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Tue, 4 Jun 2019 10:29:08 +1000
-Message-ID: <20190604102908.7d2b6556@canb.auug.org.au>
+Date: Tue, 4 Jun 2019 10:30:52 +1000
+Message-ID: <20190604103052.056719cc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jpZYh4wHWoERUCfofU4DMv3"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+ boundary="Sig_/AbInN0eAngnG=.GdErjR.Yy"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
 Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jpZYh4wHWoERUCfofU4DMv3
+--Sig_/AbInN0eAngnG=.GdErjR.Yy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,16 +19,16 @@ Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/isdn/gigaset/i4l.c
+  drivers/isdn/hisax/hfc_usb.c
 
 between commit:
 
-  2874c5fd2842 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 152")
+  de6cc6515a44 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 153")
 
 from Linus' tree and commit:
 
-  8e6c8aa3b52e ("isdn: gigaset: remove i4l support")
+  85993b8c9786 ("isdn: remove hisax driver")
 
 from the net-next tree.
 
@@ -43,20 +43,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/jpZYh4wHWoERUCfofU4DMv3
+--Sig_/AbInN0eAngnG=.GdErjR.Yy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz1u1QACgkQAVBC80lX
-0GwPzQgAlnF5YvEEPMkB2NN7pzDvxx551Dc2d5raOASREKdPyoH7OJ5fCgVXjJpj
-pB+6VbEJj70kZxSN3XeSTpnDFtdGCVVS5dz130WJCrkpNL408G64zRgvFG7ysAA/
-/9BkaqUs7bsNnUfGwkicLpbxxf6YZf8oA9UesfFAg7sUtscAbheQ59szgulo1XEG
-YVPHynlDqGZL745gp+WerU2MKgRghC9o1PIXraOj7lY25tPkREHu1cWryc3MDOwZ
-+cXBz5h/JFQEFR3J637hw1lWSMi6w4s45vSMoK/biYxIWVkF1yW0aD7B4md6QQwc
-KYaDf6pCTL7KT44v3Xbc0A4+r7qQTA==
-=SagT
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz1u7wACgkQAVBC80lX
+0GzE2ggAoX66HrO4SIyBxmtx83Aww/8eFqofGeUC1za6LOtj1hvZ99Aa2eKVrnyK
+0SWwgd9dxVYDXO0Fte/BcZsOV6Tm8kBncHWcAQOMemJU/fkhQZAbKEkk5fenwWHV
+0qA2nV368Q/kCmo/XnIhzQfM7wyHNUn3osz1w6HlqX3elZMrvtvMOoRfvozK3Nsz
+oajuKzvQbaolKo4lb0blWMhoYURLkRJkUfHmAnFpRvE7PQ3BoUwK6ribbb1fpXZK
+mepaAy5W2hYOBWtS0AqfKhuZFWU0oCiEP3UhxDPoZdU8RKePgzoCATmNBPeheOw3
+AJo9fyguGNImmgXv4t5l7ulGmTJrPQ==
+=1wTv
 -----END PGP SIGNATURE-----
 
---Sig_/jpZYh4wHWoERUCfofU4DMv3--
+--Sig_/AbInN0eAngnG=.GdErjR.Yy--
