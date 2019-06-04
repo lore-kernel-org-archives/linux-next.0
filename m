@@ -1,48 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the chrome-platform
- tree
-Date: Wed, 5 Jun 2019 07:53:30 +1000
-Message-ID: <20190605075330.79a4725d@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls) +linux-next
+Date: Tue, 4 Jun 2019 15:28:23 -0700
+Message-ID: <2b1e5628-cc36-5a33-9259-08100a01d579@infradead.org>
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+ <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/un..cX/b10_C=VlA+JHf84O"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benson Leung <bleung@google.com>, Guenter Roeck <groeck@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/un..cX/b10_C=VlA+JHf84O
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/30/19 3:28 PM, Randy Dunlap wrote:
+> On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+>> You will need quilt to apply these patches to the latest Linus release (5.x
+>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>> http://ozlabs.org/~akpm/mmotm/series
+>>
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>>
+> 
+> on i386 or x86_64:
+> 
+> when CONFIG_PROC_SYSCTL is not set/enabled:
+> 
+> ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+> af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+> ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+> ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+> ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
+> 
 
-Hi all,
+Hi,
+This now happens in linux-next 20190604.
 
-Commit
 
-  4c1bd8b0e181 ("platform/chrome: wilco_ec: Add telemetry char device inter=
-face")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/un..cX/b10_C=VlA+JHf84O
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz26FoACgkQAVBC80lX
-0GyYRQgAjUyXj7QxTT/MRJDPEt2YlXkC9JAXiSGE/tkj/mzpB1FUpu990OmwCd9c
-lKU1B0omKGxnKC84cvnt1N4YSu6WQNDaaOkOCB3qIu/mb8Zn8b5WcocYQUq/yafp
-5+gD+Tl+ZZV0myVGRN1eDxtSNw2TMev9kcnwGJRAhdGwNss1nwUI9iyYb0f0igFC
-l98oov21u6QGO2MvUhNW9cRyeqrY+7a1Y6z415RJyAV6HJdh+MqKYyvlkoedRtd/
-fUO2543RDNhEzW+3Eu4oVgYXr2Dgl1V9YhK3g7Efw108yZM6+qMwQcJCYccw1b8C
-VF5U/dE+BZrbQV3l8m+4/r93aODTAQ==
-=19ng
------END PGP SIGNATURE-----
-
---Sig_/un..cX/b10_C=VlA+JHf84O--
+-- 
+~Randy
