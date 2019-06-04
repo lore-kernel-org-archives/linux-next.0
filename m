@@ -1,11 +1,11 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next/master boot: 257 boots: 11 failed, 229 passed with 16
  offline, 1 conflict (next-20190604)
-Date: Tue, 4 Jun 2019 17:00:18 +0100
-Message-ID: <20190604160018.GI2456@sirena.org.uk>
+Date: Tue, 4 Jun 2019 17:23:53 +0100
+Message-ID: <20190604162353.GJ2456@sirena.org.uk>
 References: <5cf685d0.1c69fb81.e3d89.43ae@mx.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6948661190777777510=="
+Content-Type: multipart/mixed; boundary="===============7191685414016622897=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <5cf685d0.1c69fb81.e3d89.43ae@mx.google.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
@@ -17,56 +17,64 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
 
---===============6948661190777777510==
+--===============7191685414016622897==
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="boT9Oj39GmgPxYhu"
+	protocol="application/pgp-signature"; boundary="ihETVmeDfwOC2qSl"
 Content-Disposition: inline
 
 
---boT9Oj39GmgPxYhu
+--ihETVmeDfwOC2qSl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Tue, Jun 04, 2019 at 07:53:04AM -0700, kernelci.org bot wrote:
 
-Today's -next fails to boot omap2plus_defconfig on Beagle XM:
+The past week of -next has been failing to boot on the h2 and h3 plus
+boards:
 
->     omap2plus_defconfig:
+>     sunxi_defconfig:
 >         gcc-8:
->           omap3-beagle-xm:
->               lab-baylibre: failing since 1 day (last pass: next-20190531 - first fail: next-20190603)
+>           sun8i-h2-plus-libretech-all-h3-cc:
+>               lab-baylibre: failing since 7 days (last pass: next-20190523 - first fail: next-20190528)
+>           sun8i-h3-libretech-all-h3-cc:
+>               lab-baylibre: failing since 7 days (last pass: next-20190524 - first fail: next-20190528)
 
-The boot fails silently with no output after the bootloader:
+In both cases it seems like it boots quite a way through but hangs at
+some point trying to get userspace:
 
-    https://kernelci.org/boot/id/5cf655fc59b5149acad51504/
+    https://kernelci.org/boot/id/5cf6569859b5149b53d514fd/
+    https://kernelci.org/boot/id/5cf6569959b5149b53d514fe/
 
-which isn't much to go on, it does seem to have been OK in
-multi_v7_defconfig though.
+multi_v7_defconfig comes up fine on those systems, looking at the boot
+reports for them it jumps out at me that the regulators never appear and
+things like MMC that use them don't either:
 
---boT9Oj39GmgPxYhu
+    https://kernelci.org/boot/id/5cf6550659b514995fd51538/
+
+--ihETVmeDfwOC2qSl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz2lZEACgkQJNaLcl1U
-h9BmWQf6AoY5VMMkCTmC1WC0Xuomm1kiC7szNoyymcavNs7I8BPlfTssjnJMZTQP
-JOCRjldsXBmPY8PF4YTpuBK6ANNTWE1n0WgbNgZEuOPWt2nCOT1QRvfHagOE31Eb
-OAvG19faDLlh3ivrj32ACTXd/bbBudESyYXsKBC/P2JJ7KyYmSf99cPw1bqeDm49
-7FAHWdODlE86i3VxYGjFseO2WLatjOf55opyVmUhsL65dX8vyssf1kWmq4iDGCgs
-p4a6btnaVbHdYUBmSMuhlevIHRJAubRAaxG70XP+cnNsvTO1hUM5ITNVHemNUIPB
-gAs7N1rUmpjROjkN+QGwRNN1wECBSg==
-=3tvl
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz2mxgACgkQJNaLcl1U
+h9Ddhwf/SLih1gCHTGrvjYaoyeL4fpvDoxfbhQ4TV0UAvoZSp+hQUkbGIe632vmz
+6QUmtKaep4t91JFDk8qzEBLceLdJ94UjuBuotyPTvdnsNZE+tVA0h3mUHlWqufLv
+FbEQIU6/IRBxdMCe2ypKzURObf2rXmgXj0FiLfjJhuq2zqWtLbBG7UZb7RJIbGpP
+4+w3iLT5n0XroFrcswDsuwoBdZ9gDEyX4JSb1FiqEIKhy5w46NUQNSKujDHPnSdm
+EbXuRPPGcOX98fR7KVvvN1RnqZeIrt8AY2w/kvpnoMA6ILYvTVVbD6Lw79LIsVH+
+LM7eTii1ZUuc5V6GOlTjkf6Ez0P2Fg==
+=KVlZ
 -----END PGP SIGNATURE-----
 
---boT9Oj39GmgPxYhu--
+--ihETVmeDfwOC2qSl--
 
 
---===============6948661190777777510==
+--===============7191685414016622897==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -77,4 +85,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============6948661190777777510==--
+--===============7191685414016622897==--
