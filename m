@@ -1,88 +1,163 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next/master boot: 257 boots: 11 failed, 229 passed with 16
- offline, 1 conflict (next-20190604)
-Date: Tue, 4 Jun 2019 17:23:53 +0100
-Message-ID: <20190604162353.GJ2456@sirena.org.uk>
-References: <5cf685d0.1c69fb81.e3d89.43ae@mx.google.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: BUG: kernel NULL pointer dereference, address: 00000000: memcpy+0x1d/0x30
+Date: Tue, 4 Jun 2019 22:41:01 +0530
+Message-ID: <CA+G9fYu1qT44USvLGed=K2F=x8NAh8sgosw5KrS=THhLsrcxtw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7191685414016622897=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5cf685d0.1c69fb81.e3d89.43ae@mx.google.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Netdev <netdev@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Stanislav Fomichev <sdf@google.com>, Yonghong Song <yhs@fb.com>, alan.maguire@oracle.com, alexei.starovoitov@gmail.com
+Cc: lkft-triage@lists.linaro.org, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+While running selftest bpf: test_maps the kernel BUG found on i386 kernel
+running on x86_64 machine Linux version 5.2.0-rc3-next-20190604
 
---===============7191685414016622897==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ihETVmeDfwOC2qSl"
-Content-Disposition: inline
+Full test log can be found in the below link [1]
+
+# helper_fill_hashmap(261)FAILfailed to create hashmap err Cannot
+allocate memory, flags 0x0
+to: create_hashmap #
+# Fork 1024 tasks to 'test_update_delete'
+1024: tasks_to #
+# Fork 1024 tasks to 'test_update_delete'
+1024: tasks_to #
+# Fork 100 tasks to 'test_hashmap'
+100: tasks_to #
+# Fork 100 tasks to 'test_hashmap_percpu'
+100: tasks_to #
+# Fork 100 tasks to 'test_hashmap_sizes'
+[   93.249753] BUG: kernel NULL pointer dereference, address: 00000000
+[   93.256586] #PF: supervisor read access in kernel mode
+[   93.261714] #PF: error_code(0x0000) - not-present page
+[   93.266846] *pde = 00000000
+[   93.269722] Oops: 0000 [#1] SMP
+[   93.272859] CPU: 0 PID: 4354 Comm: test_sockmap Not tainted
+5.2.0-rc3-next-20190604 #1
+[   93.280763] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[   93.288235] EIP: memcpy+0x1d/0x30
+[   93.291547] Code: 59 58 eb 85 90 90 90 90 90 90 90 90 90 3e 8d 74
+26 00 55 89 e5 57 56 89 c7 53 89 d6 89 cb c1 e9 02 f3 a5 89 d9 83 e1
+03 74 02 <f3> a4 5b 5e 5f 5d c3 8d b6 00 00 00 00 8d bf 00 00 00 00 3e
+8d 74
+[   93.310291] EAX: e2ca9000 EBX: 00000001 ECX: 00000001 EDX: 00000000
+[   93.316548] ESI: 00000000 EDI: e2ca9000 EBP: e3d8799c ESP: e3d87990
+[   93.322806] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010202
+[   93.329582] CR0: 80050033 CR2: 00000000 CR3: 20d21000 CR4: 003406d0
+[   93.335841] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+[   93.342097] DR6: fffe0ff0 DR7: 00000400
+[   93.345929] Call Trace:
+[   93.348391]  bpf_msg_push_data+0x635/0x660
+[   93.352492]  ___bpf_prog_run+0xa0d/0x15a0
+[   93.356529]  ? __lock_acquire+0x1fe/0x1360
+[   93.360626]  __bpf_prog_run32+0x4b/0x70
+[   93.364461]  ? sk_psock_msg_verdict+0x5/0x290
+[   93.368842]  sk_psock_msg_verdict+0xad/0x290
+[   93.373105]  ? sk_psock_msg_verdict+0xad/0x290
+[   93.377543]  ? lockdep_hardirqs_on+0xec/0x1a0
+[   93.381896]  ? __local_bh_enable_ip+0x78/0xf0
+[   93.386255]  tcp_bpf_send_verdict+0x29c/0x3b0
+[   93.390615]  tcp_bpf_sendpage+0x233/0x3d0
+[   93.394629]  ? __lock_acquire+0x1fe/0x1360
+[   93.398754]  ? __lock_acquire+0x1fe/0x1360
+[   93.402850]  ? lock_release+0x8b/0x280
+[   93.406593]  ? find_get_entry+0x136/0x300
+[   93.410599]  ? touch_atime+0x34/0xd0
+[   93.414177]  ? copy_page_to_iter+0x245/0x400
+[   93.418441]  ? lockdep_hardirqs_on+0xec/0x1a0
+[   93.422793]  ? tcp_bpf_send_verdict+0x3b0/0x3b0
+[   93.427325]  inet_sendpage+0x53/0x1f0
+[   93.430981]  ? inet_recvmsg+0x1e0/0x1e0
+[   93.434812]  ? kernel_sendpage+0x40/0x40
+[   93.438728]  kernel_sendpage+0x1e/0x40
+[   93.442474]  sock_sendpage+0x24/0x30
+[   93.446054]  pipe_to_sendpage+0x59/0xa0
+[   93.449894]  ? direct_splice_actor+0x40/0x40
+[   93.454166]  __splice_from_pipe+0xde/0x1c0
+[   93.458264]  ? direct_splice_actor+0x40/0x40
+[   93.462535]  ? direct_splice_actor+0x40/0x40
+[   93.466801]  splice_from_pipe+0x59/0x80
+[   93.470641]  ? splice_from_pipe+0x80/0x80
+[   93.474652]  ? generic_splice_sendpage+0x20/0x20
+[   93.479262]  generic_splice_sendpage+0x18/0x20
+[   93.483701]  ? direct_splice_actor+0x40/0x40
+[   93.487971]  direct_splice_actor+0x2d/0x40
+[   93.492065]  splice_direct_to_actor+0x127/0x240
+[   93.496597]  ? generic_pipe_buf_nosteal+0x10/0x10
+[   93.501302]  do_splice_direct+0x7e/0xc0
+[   93.505134]  do_sendfile+0x20d/0x3e0
+[   93.508739]  sys_sendfile+0xac/0xd0
+[   93.512232]  ? lock_release+0x8b/0x280
+[   93.515984]  do_fast_syscall_32+0x8e/0x320
+[   93.520084]  entry_SYSENTER_32+0x70/0xc8
+[   93.524009] EIP: 0xb7f9d7a1
+[   93.526807] Code: 8b 98 60 cd ff ff 85 d2 89 c8 74 02 89 0a 5b 5d
+c3 8b 04 24 c3 8b 14 24 c3 8b 1c 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f
+34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90
+8d 76
+[   93.545542] EAX: ffffffda EBX: 0000001a ECX: 0000001e EDX: 00000000
+[   93.551799] ESI: 00000001 EDI: 0000001a EBP: 00000001 ESP: bfa67a64
+[   93.558057] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000206
+[   93.564836] Modules linked in: tun algif_hash af_alg
+x86_pkg_temp_thermal fuse
+[   93.572082] CR2: 0000000000000000
+[   93.575411] ---[ end trace c106584042e12a8d ]---
+[   93.580046] EIP: memcpy+0x1d/0x30
+[   93.583355] Code: 59 58 eb 85 90 90 90 90 90 90 90 90 90 3e 8d 74
+26 00 55 89 e5 57 56 89 c7 53 89 d6 89 cb c1 e9 02 f3 a5 89 d9 83 e1
+03 74 02 <f3> a4 5b 5e 5f 5d c3 8d b6 00 00 00 00 8d bf 00 00 00 00 3e
+8d 74
+[   93.602092] EAX: e2ca9000 EBX: 00000001 ECX: 00000001 EDX: 00000000
+[   93.608349] ESI: 00000000 EDI: e2ca9000 EBP: e3d8799c ESP: d967e49c
+[   93.614607] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010202
+[   93.621408] CR0: 80050033 CR2: 00000000 CR3: 20d21000 CR4: 003406d0
+[   93.627694] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+[   93.633951] DR6: fffe0ff0 DR7: 00000400
+[   93.637783] BUG: sleeping function called from invalid context at
+/usr/src/kernel/include/linux/percpu-rwsem.h:34
+[   93.648035] in_atomic(): 1, irqs_disabled(): 1, pid: 4354, name: test_sockmap
+[   93.655156] INFO: lockdep is turned off.
+[   93.659074] irq event stamp: 1538
+[   93.662408] hardirqs last  enabled at (1537): [<d902cadf>]
+_raw_spin_unlock_irqrestore+0x2f/0x50
+[   93.671200] hardirqs last disabled at (1538): [<d840182c>]
+trace_hardirqs_off_thunk+0xc/0x10
+[   93.679624] softirqs last  enabled at (1532): [<d8d1b849>]
+lock_sock_nested+0x39/0x90
+[   93.687465] softirqs last disabled at (1530): [<d8d1b83f>]
+lock_sock_nested+0x2f/0x90
+[   93.695284] CPU: 0 PID: 4354 Comm: test_sockmap Tainted: G      D
+        5.2.0-rc3-next-20190604 #1
+[   93.704573] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[   93.712043] Call Trace:
+[   93.714490]  dump_stack+0x66/0x96
+[   93.717800]  ___might_sleep+0x13e/0x230
+[   93.721629]  __might_sleep+0x33/0x80
+[   93.725200]  exit_signals+0x2a/0x200
+[   93.728771]  do_exit+0x8e/0xbb0
+[   93.731910]  ? do_fast_syscall_32+0x8e/0x320
+[   93.736182]  rewind_stack_do_exit+0x11/0x13
+[   93.740356] EIP: 0xb7f9d7a1
+[   93.743150] Code: 8b 98 60 cd ff ff 85 d2 89 c8 74 02 89 0a 5b 5d
+c3 8b 04 24 c3 8b 14 24 c3 8b 1c 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f
+34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90
+8d 76
+[   93.761887] EAX: ffffffda EBX: 0000001a ECX: 0000001e EDX: 00000000
+[   93.768142] ESI: 00000001 EDI: 0000001a EBP: 00000001 ESP: bfa67a64
+[   93.774406] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000206
+
+100: tasks_to [   93.781266] note: test_sockmap[4354] exited with
+preempt_count 2
+#
+# Fork 100 tasks to 'test_hashmap_walk'
+100: tasks_to #
+# helper_fill_hashmap(261)FAILfailed to create hashmap err Cannot
+allocate memory, flags 0x0
 
 
---ihETVmeDfwOC2qSl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[1] https://lkft.validation.linaro.org/scheduler/job/760391#L13640
 
-On Tue, Jun 04, 2019 at 07:53:04AM -0700, kernelci.org bot wrote:
-
-The past week of -next has been failing to boot on the h2 and h3 plus
-boards:
-
->     sunxi_defconfig:
->         gcc-8:
->           sun8i-h2-plus-libretech-all-h3-cc:
->               lab-baylibre: failing since 7 days (last pass: next-20190523 - first fail: next-20190528)
->           sun8i-h3-libretech-all-h3-cc:
->               lab-baylibre: failing since 7 days (last pass: next-20190524 - first fail: next-20190528)
-
-In both cases it seems like it boots quite a way through but hangs at
-some point trying to get userspace:
-
-    https://kernelci.org/boot/id/5cf6569859b5149b53d514fd/
-    https://kernelci.org/boot/id/5cf6569959b5149b53d514fe/
-
-multi_v7_defconfig comes up fine on those systems, looking at the boot
-reports for them it jumps out at me that the regulators never appear and
-things like MMC that use them don't either:
-
-    https://kernelci.org/boot/id/5cf6550659b514995fd51538/
-
---ihETVmeDfwOC2qSl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz2mxgACgkQJNaLcl1U
-h9Ddhwf/SLih1gCHTGrvjYaoyeL4fpvDoxfbhQ4TV0UAvoZSp+hQUkbGIe632vmz
-6QUmtKaep4t91JFDk8qzEBLceLdJ94UjuBuotyPTvdnsNZE+tVA0h3mUHlWqufLv
-FbEQIU6/IRBxdMCe2ypKzURObf2rXmgXj0FiLfjJhuq2zqWtLbBG7UZb7RJIbGpP
-4+w3iLT5n0XroFrcswDsuwoBdZ9gDEyX4JSb1FiqEIKhy5w46NUQNSKujDHPnSdm
-EbXuRPPGcOX98fR7KVvvN1RnqZeIrt8AY2w/kvpnoMA6ILYvTVVbD6Lw79LIsVH+
-LM7eTii1ZUuc5V6GOlTjkf6Ez0P2Fg==
-=KVlZ
------END PGP SIGNATURE-----
-
---ihETVmeDfwOC2qSl--
-
-
---===============7191685414016622897==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7191685414016622897==--
+Best regards
+Naresh Kamboju
