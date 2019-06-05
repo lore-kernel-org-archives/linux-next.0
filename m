@@ -1,55 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Fixes tag needs some work in the ceph tree
-Date: Thu, 6 Jun 2019 07:48:53 +1000
-Message-ID: <20190606074853.69a7b07b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the hwmon-fixes tree
+Date: Thu, 6 Jun 2019 08:30:34 +1000
+Message-ID: <20190606083034.196219f0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.obmgY=Il4.cZZcJjqKbo+y"; protocol="application/pgp-signature"
+ boundary="Sig_/m0o70mjk2qUo7JMK./TCke/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sage Weil <sage@newdream.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Yan, Zheng" <zyan@redhat.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Krzysztof Adamski <krzysztof.adamski@nokia.com>, Alexander Sverdlin <alexander.sverdlin@nokia.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.obmgY=Il4.cZZcJjqKbo+y
+--Sig_/m0o70mjk2qUo7JMK./TCke/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sage,
+Hi Guenter,
 
-In commit
+After merging the hwmon-fixes tree, today's linux-next build
+(x86_64 allmodconfig) failed like this:
 
-  7b2f936fc828 ("ceph: fix error handling in ceph_get_caps()")
+In file included from include/linux/notifier.h:14,
+                 from arch/x86/include/asm/uprobes.h:13,
+                 from include/linux/uprobes.h:49,
+                 from include/linux/mm_types.h:14,
+                 from include/linux/mmzone.h:21,
+                 from include/linux/gfp.h:6,
+                 from include/linux/xarray.h:14,
+                 from include/linux/radix-tree.h:18,
+                 from include/linux/fs.h:15,
+                 from include/linux/debugfs.h:15,
+                 from drivers/hwmon/pmbus/pmbus_core.c:9:
+drivers/hwmon/pmbus/pmbus_core.c: In function 'pmbus_set_samples':
+drivers/hwmon/pmbus/pmbus_core.c:1975:14: error: 'data' undeclared (first u=
+se in this function); did you mean '_data'?
+  mutex_lock(&data->update_lock);
+              ^~~~
+include/linux/mutex.h:166:44: note: in definition of macro 'mutex_lock'
+ #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+                                            ^~~~
+drivers/hwmon/pmbus/pmbus_core.c:1975:14: note: each undeclared identifier =
+is reported only once for each function it appears in
+  mutex_lock(&data->update_lock);
+              ^~~~
+include/linux/mutex.h:166:44: note: in definition of macro 'mutex_lock'
+ #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+                                            ^~~~
 
-Fixes tag
+Caused by commit
 
-  Fixes: 1199d7da2d ("ceph: simplify arguments and return semantics of try_=
-get_cap_refs")
+  8d719d6f3e97 ("hwmon: (pmbus/core) mutex_lock write in pmbus_set_samples")
 
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+I have reverted that commit for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/.obmgY=Il4.cZZcJjqKbo+y
+--Sig_/m0o70mjk2qUo7JMK./TCke/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz4OMUACgkQAVBC80lX
-0GyEtQf9G0PMBiXfNt9LB1+AgGgRk9+BVIZup9stxuIbY9qoJr/112B25NESkWWu
-JuCKNNKlKuI+f79Sqxi73Avelad/BXDlPurjFlLEfTCeaCIAvR6VcC/i7OPXpA5K
-HJrSqJ6Tei4HLwrc8ODDDoP+hM7Z/bXa+VvL/Us2S7rAdOUwDV7NpswFyoQjP8Df
-SnpFZxETXiLZGN/waTr2mxlX44NSU7siv0+DLaf03NQjhrhQrQk9VlrPOXNvflT9
-8DF8v+5Jv5SWcZ7+oHAclLSJWsLHL/m2+nvUZ9Mas4S/fZXsanMh0VK3y6D6O5Ya
-Tqp5QvqpoIuUJ/oZSLscdyynhH4N/w==
-=dIMC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz4QooACgkQAVBC80lX
+0GySfQgAkiwS8dok8dNR3tdhI222YRvfJ+hSHENnT7bHokekA14PlpW6Nskfb13B
+1uRx31U7RUHssowIB+PueZyaBnfJuPx1DpI0wwyhB+I5NRFoL9ixsRmJNUmLoxDf
+rtWmTNIY+J8S8nCd5Qt573kXNMG6i1uUISe/RVVnNJ/lCEtsoX/Nwlx2FRYGjSjI
+kj7QgToOYRPd/D44HHEXVO+GdRCn0JEhsL7NevmqJ67o3iBwL4x8SwN6ZIgHTIFS
+FPMcdahwLGgA9eF20ISRbilYS8TnUrxNy9Rjhi+hN47V9E59XZhUCrTR6gwTRGkh
+7Ic6tgWDCTJuqmKPV/VPW8WhzFWu0g==
+=hq3o
 -----END PGP SIGNATURE-----
 
---Sig_/.obmgY=Il4.cZZcJjqKbo+y--
+--Sig_/m0o70mjk2qUo7JMK./TCke/--
