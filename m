@@ -1,88 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hwmon-staging tree with Linus' tree
-Date: Thu, 6 Jun 2019 10:25:06 +1000
-Message-ID: <20190606102506.1c282b9f@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the hwmon-staging tree
+Date: Thu, 6 Jun 2019 10:32:20 +1000
+Message-ID: <20190606103220.1168317e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=VdmdnMjiu6kW+BZHgPX0gx"; protocol="application/pgp-signature"
+ boundary="Sig_/jp2IeK1cPImbdQNeyy9X1hn"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "amy.shih" <amy.shih@advantech.com.tw>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "amy.shih" <amy.shih@advantech.com.tw>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=VdmdnMjiu6kW+BZHgPX0gx
+--Sig_/jp2IeK1cPImbdQNeyy9X1hn
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the hwmon-staging tree got a conflict in:
+After merging the hwmon-staging tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  drivers/hwmon/nct7904.c
+drivers/hwmon/nct7904.c: In function 'nct7904_in_is_visible':
+drivers/hwmon/nct7904.c:313:6: warning: this statement may fall through [-W=
+implicit-fallthrough=3D]
+   if (channel > 0 && (data->vsen_mask & BIT(index)))
+      ^
+drivers/hwmon/nct7904.c:315:2: note: here
+  case hwmon_in_min:
+  ^~~~
+drivers/hwmon/nct7904.c: In function 'nct7904_fan_is_visible':
+drivers/hwmon/nct7904.c:230:6: warning: this statement may fall through [-W=
+implicit-fallthrough=3D]
+   if (data->fanin_mask & (1 << channel))
+      ^
+drivers/hwmon/nct7904.c:232:2: note: here
+  case hwmon_fan_min:
+  ^~~~
+drivers/hwmon/nct7904.c: In function 'nct7904_temp_is_visible':
+drivers/hwmon/nct7904.c:443:6: warning: this statement may fall through [-W=
+implicit-fallthrough=3D]
+   if (channel < 5) {
+      ^
+drivers/hwmon/nct7904.c:450:2: note: here
+  case hwmon_temp_max:
+  ^~~~
 
-between commit:
+Introduced by commit
 
-  c942fddf8793 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 157")
+  af55ab0b0792 ("hwmon: (nct7904) Add extra sysfs support for fan, voltage =
+and temperature.")
 
-from Linus' tree and commit:
-
-  7394ec51cf51 ("hwmon: (nct7904) Fix the incorrect value of tcpu_mask in n=
-ct7904_data struct.")
-
-from the hwmon-staging tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I get these warnings because I am building with -Wimplicit-fallthrough
+in attempt to catch new additions early.  The gcc warning can be turned
+off by adding a /* fall through */ comment at the point the fall through
+happens (assuming that the fall through is intentional).
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/hwmon/nct7904.c
-index 58a957445484,91d1eb822707..000000000000
---- a/drivers/hwmon/nct7904.c
-+++ b/drivers/hwmon/nct7904.c
-@@@ -4,6 -3,19 +4,9 @@@
-   *
-   * Copyright (c) 2015 Kontron
-   * Author: Vadim V. Vlasov <vvlasov@dev.rtsoft.ru>
-+  *
-+  * Copyright (c) 2019 Advantech
-+  * Author: Amy.Shih <amy.shih@advantech.com.tw>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License as published by
- - * the Free Software Foundation; either version 2 of the License, or
- - * (at your option) any later version.
- - *
- - * This program is distributed in the hope that it will be useful,
- - * but WITHOUT ANY WARRANTY; without even the implied warranty of
- - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- - * GNU General Public License for more details.
-   */
- =20
-  #include <linux/module.h>
-
---Sig_/=VdmdnMjiu6kW+BZHgPX0gx
+--Sig_/jp2IeK1cPImbdQNeyy9X1hn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz4XWIACgkQAVBC80lX
-0Gyn7ggAgW2GKvePdG00SrnsyWfR0jx3d3zKPZkOGy6F7qxnC/gJoWTorUl3u5ub
-WBjCnardgQZCTLuThWNO7atZQLGSCdV3uv9UT7XB1otqZ2ty45f8w5wG5x9N2QA4
-oeoPpz6KssKpswEXTT5t78pzSjFb2mAlKWGjzLEG3ucxjpTV20F9gQpPS5HV/YZ4
-E3iK0TtSwIu6qIHz7vdZU/6Lky4AVhK3kkuJvUo4R51XPqwTmmm8qg3/4NMmkcjC
-Ej+5Xn9to1Kjz52T2WXLhUFCwjdHUVvQpVyx7Ye+OMciJB3iWbNVlehEu5+gWY37
-/rDzZglL38r6U9Dyt2zj2BuArHEQPQ==
-=05w+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz4XxQACgkQAVBC80lX
+0GxHrwf/b52AhBEkP/dSy+wGbsZhpjUGSUeC6kHyqPyMrRMdf1DUSP15WdD9cfGr
+ByAPjvP+UMZcz/+/bEwCSPobhgXRekE+CpEzIRTPudNcTspq0tTCWVnTLKLfjOx7
+Fy/VJOsbq0oRGs7+V5YyxO2IR1ECNVbg906I2RKB2fSjCnJmY+a4f/frSkRgqnON
++UWufptun4ri8kvt4ab/IhFZc/dTaZzpuZr/AIVbxR5MBVXMAPdVhvyAMqYBXn7n
+GWptCTJUvG0jdMEtBxkHNUAz9L2oVe+j1BdC5qOXxbZPZZE3slU0KEdKolurlW7H
+cDiDTw3f65nUx3G/wZboyGfrmEgMLA==
+=GsH5
 -----END PGP SIGNATURE-----
 
---Sig_/=VdmdnMjiu6kW+BZHgPX0gx--
+--Sig_/jp2IeK1cPImbdQNeyy9X1hn--
