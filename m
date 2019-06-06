@@ -6,75 +6,74 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA69C04AB5
-	for <linux-next@archiver.kernel.org>; Thu,  6 Jun 2019 23:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F96DC04AB5
+	for <linux-next@archiver.kernel.org>; Thu,  6 Jun 2019 23:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E690B206DF
-	for <linux-next@archiver.kernel.org>; Thu,  6 Jun 2019 23:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21F18208E4
+	for <linux-next@archiver.kernel.org>; Thu,  6 Jun 2019 23:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L3+4xlHF"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FtwT/aVY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfFFXGQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 6 Jun 2019 19:06:16 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:56749 "EHLO ozlabs.org"
+        id S1727029AbfFFXNR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 6 Jun 2019 19:13:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:55483 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbfFFXGQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 6 Jun 2019 19:06:16 -0400
+        id S1726964AbfFFXNR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 6 Jun 2019 19:13:17 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Kh9J1MNJz9s7h;
-        Fri,  7 Jun 2019 09:06:11 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45KhKQ2MJfz9s7h;
+        Fri,  7 Jun 2019 09:13:14 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559862373;
-        bh=pLn2a/qW8IdhhMvswPDoSSBPx38lhu9GUG7Gp8C0eWM=;
+        s=201702; t=1559862794;
+        bh=5t2oQc6s+V43RQb10WwGr/fOTSIUUuBYwks8rlJztTU=;
         h=Date:From:To:Cc:Subject:From;
-        b=L3+4xlHFrYI5lg8BiLW3lssC2pO0jQZa0fR4wIEHc2D++7DCuMmYC1AslPXKMNMv4
-         2IrSWPF7uTH0gq5x9BRIlf1T5w9in3bdDEF1qgDYP1iusgx//wnSVyayosKSsa/U2q
-         O4CrNSBQkIt9pSZWMOee9s+iQJdwUAJssZtPk57tAntrd9ZJJbtPOBYRX5nMI4SJir
-         OrEy8IeEKfjOR4hM5FUEMjqwN9VWRdy+hWko24C2+B6HeLVDcoAWf+ibV/mWWKNY7t
-         nXdUK1T4j1WLfzJNYlDVXPOmYyijLkKJRrAWgbb1HhbbJgcn2xX/vobZDPiFChEcmr
-         m9GGccMIsxhJA==
-Date:   Fri, 7 Jun 2019 09:06:06 +1000
+        b=FtwT/aVYHwYEVJjH/XYZAn+00QxuGkmS6g9kGAYH5ObQBfZcgzSaW85LBI7n22Q66
+         zmBpd7bCyJ6Edx49ZHGW27v64TpDwZFtoRrbGyyNrGAxJC8JQLihv3m07ffwjzONOU
+         ijcIBCRwSkga7RYZWZQxIdstoqPKd6tdN4K62EtZkIMlXiCfYvAH1QTkM0ZhT0LAtg
+         my82gMJ/6u/FaAQ2Mjxa2AGTRKmJGObYmpiNrK9HVO4WkoGppb74FoyESxJ61NWsbn
+         4pXOerOWoJfqYugUFa4CmsTAKnTyKp5+OMp+GchTV4ouATt6VGPc2Qbf5pQhwW1qTE
+         5VQrkr/CUkS3w==
+Date:   Fri, 7 Jun 2019 09:13:09 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Shawn Guo <shawnguo@kernel.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: linux-next: manual merge of the sunxi tree with the imx-xms tree
-Message-ID: <20190607090606.75fd6e85@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: linux-next: manual merge of the clk tree with Linus' tree
+Message-ID: <20190607091309.7410c584@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JYebIKNd66KgcYw8U3+oRV/"; protocol="application/pgp-signature"
+ boundary="Sig_/93V4mXoVrrmFNr+q3NtUspS"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/JYebIKNd66KgcYw8U3+oRV/
+--Sig_/93V4mXoVrrmFNr+q3NtUspS
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the sunxi tree got a conflict in:
+Today's linux-next merge of the clk tree got a conflict in:
 
-  arch/arm64/configs/defconfig
+  drivers/clk/bcm/Kconfig
 
-between commits:
+between commit:
 
-  0a64ef2d28d1 ("arm64: defconfig: NVMEM_IMX_OCOTP=3Dy for imx8m")
-  c6b1ccce88ae ("defconfig: arm64: enable i.MX8 SCU octop driver")
+  ec8f24b7faaf ("treewide: Add SPDX license identifier - Makefile/Kconfig")
 
-from the imx-xms tree and commit:
+from Linus' tree and commit:
 
-  296bcfa05640 ("arm64: defconfig: add allwinner sid support")
+  5d59f12a19e6 ("clk: bcm: Make BCM2835 clock drivers selectable")
 
-from the sunxi tree.
+from the clk tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -87,45 +86,40 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index fa5752a950eb,0dc34e0d4cbc..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -426,8 -420,8 +426,9 @@@ CONFIG_UNIPHIER_THERMAL=3D
-  CONFIG_WATCHDOG=3Dy
-  CONFIG_ARM_SP805_WATCHDOG=3Dy
-  CONFIG_S3C2410_WATCHDOG=3Dy
-+ CONFIG_SUNXI_WATCHDOG=3Dm
-  CONFIG_IMX2_WDT=3Dy
- +CONFIG_IMX_SC_WDT=3Dm
-  CONFIG_MESON_GXBB_WATCHDOG=3Dm
-  CONFIG_MESON_WATCHDOG=3Dm
-  CONFIG_RENESAS_WDT=3Dy
-@@@ -757,8 -742,7 +758,9 @@@ CONFIG_PHY_TEGRA_XUSB=3D
-  CONFIG_HISI_PMU=3Dy
-  CONFIG_QCOM_L2_PMU=3Dy
-  CONFIG_QCOM_L3_PMU=3Dy
- +CONFIG_NVMEM_IMX_OCOTP=3Dy
- +CONFIG_NVMEM_IMX_OCOTP_SCU=3Dy
-+ CONFIG_NVMEM_SUNXI_SID=3Dy
-  CONFIG_QCOM_QFPROM=3Dy
-  CONFIG_ROCKCHIP_EFUSE=3Dy
-  CONFIG_UNIPHIER_EFUSE=3Dy
+diff --cc drivers/clk/bcm/Kconfig
+index 29ee7b776cd4,0eb281d597fc..000000000000
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@@ -1,4 -1,12 +1,14 @@@
+ +# SPDX-License-Identifier: GPL-2.0-only
+++
++ config CLK_BCM2835
++ 	bool "Broadcom BCM2835 clock support"
++ 	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
++ 	depends on COMMON_CLK
++ 	default ARCH_BCM2835 || ARCH_BRCMSTB
++ 	help
++ 	  Enable common clock framework support for Broadcom BCM2835
++ 	  SoCs.
++=20
+  config CLK_BCM_63XX
+  	bool "Broadcom BCM63xx clock support"
+  	depends on ARCH_BCM_63XX || COMPILE_TEST
 
---Sig_/JYebIKNd66KgcYw8U3+oRV/
+--Sig_/93V4mXoVrrmFNr+q3NtUspS
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz5nF4ACgkQAVBC80lX
-0Gymagf/TJX0zbjTN+3mkVwUolL4X25gDXnE5kOTjese1KsQTve0hXl7zmTfSfCS
-7c7IrcdTVyIiSJVEbV0XstsM9gRXQB0SJ0n8maAxV2efC3xT0j+p8X0hjX1Y+Tdm
-KZwtfmUpRF4RydEpQ5oVPvuSUWcflevTrZoLMKuYjjGZcsMQjfURBHX2smDnCRlY
-ladjjq6ew/htBgwXjSgILj56nDW/GN6eadmY4WhXkCs1TTNCXkK2xDbDz9D97TDw
-aR+Dw8YJAd3opm6xa6bPuq+JE5EIDSGs08R7PnIDJWRazEz55tSK/ujfMgpwyaMm
-uBNROA758bKOJcYUqQw02YC4K8ML/A==
-=+iG3
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz5ngUACgkQAVBC80lX
+0GyQDgf+LGuzQdp70VRYdrIcUfsg5dDLlS6YY4xflac7gVJXy3w+W+P4XGCxF+nB
+eP6fYlHmATP5yJMA2nmukpX/2unUHcDhrbKKo0hMZenhrkJsjRevNuHG/GuerjbJ
+gicOJR80/VtaFy7fIFPKp2eUfppPqL5MSV7MFZ3k+4/ITT9qcZHCuECxLVVOdZ30
+NAlqNEfKJbA+VGDZ5nt437kMdqy7IoLVJQt1OaVI0ecHambPCCHQrFP/N4Vx6/3d
++XkWRvQSJNzRl7yUNWdHtcLEPtpqtvQW3bN69Cyp2JnQlrzHrs5i+U2S/KnoLekG
+XoN0VqiOa1pZK7StmVf14E5aq/2LRA==
+=q05B
 -----END PGP SIGNATURE-----
 
---Sig_/JYebIKNd66KgcYw8U3+oRV/--
+--Sig_/93V4mXoVrrmFNr+q3NtUspS--
