@@ -2,94 +2,88 @@ Return-Path: <SRS0=26vq=UG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA21CC468BC
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 18:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A72C2BCA1
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 18:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A4020868
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 18:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87E8208C0
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 18:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXVFD4Sn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731628AbfFGSVT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 7 Jun 2019 14:21:19 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38824 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731454AbfFGSVT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 14:21:19 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b11so2320053lfa.5
-        for <linux-next@vger.kernel.org>; Fri, 07 Jun 2019 11:21:17 -0700 (PDT)
+        id S1730535AbfFGSqV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 7 Jun 2019 14:46:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45075 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728873AbfFGSqV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 14:46:21 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w34so1589163pga.12;
+        Fri, 07 Jun 2019 11:46:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=z4R/A+c7peE9kIyceAe4LW8kI17iOhPfKiTxuGTvFbY=;
+        b=WXVFD4SniiQTHxsMMnzHf4YxH3jkD3TbVbIj9A71Hn+NpbxejpDtqXTrtn50E/+l5f
+         LT7UPXxWQflrHAurUnAgMV0+dpuWY0tkeicdMqIaey/dqWpY39aAiiqRCUmxSgSc2xc1
+         kOLOZMdU4D1RvgaQ2sXIg9p548OFbx9TkXWKuIMdAvmM1t/lTMLxOEQYjr6XSj2veL6D
+         0EIcScKvLqQVQqNda0uFyFlQWhlTuZBFn7xLqJdYmdtT+SZLEPWzwD6GJFx/T0c5mEMu
+         VWXv7Bz4yMUn6ePZNZK/o2clj0jsJj/uePBA0tYkFeefNOqXCBomhau6yYWBeONiVDVY
+         sclg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kcUcDDcC5mC90UP39oOfydyRccLWkfoYEANrC6Q5vzo=;
-        b=Pp8ElYwRAZ1JiAFiBuhH3vO4CaOQXDbnXEeFH8Npv+/5RrDFe5YHTzztCutNZQrweA
-         0YgTig82p/6ZYEE9s2Qoj5ghnFlqLELMqNia1Zqb1SPI+BENQLxfLDUUP1QnT6EodyUt
-         xLu8TU5ZXdGzvBDqq5g2/n/kL+2A8L9fDv5OmT0EA6vHMAEl9SWuB3jZD/mnm4vRU+wV
-         4BgKbDcDZ8rCjR6EAgcS9wRx8SypC4CrQv23UGj3gWoea0twF5zCCVM5pF+5GLpbyry2
-         sZnJJlka6pHYBUgUoHRBy8l3Fw2A0OJl+otpc0JKvgyHzO60G56rVHB0KCMLqANxbsYn
-         T59A==
-X-Gm-Message-State: APjAAAUEIm4XSGJ5KIRz/PCi5vP0PIjUZyS12n7oiihhEt543wjz4jcw
-        5N3A+4NvgwuOFUUO8Q8t2nJu7M1swEhqo09C5odLiw==
-X-Google-Smtp-Source: APXvYqxS5uzW3XR5kdyFjRpxOZreggJNwlHKkhL6Tmcr675Z5ilYvHwgYSkiUD3WZM5T1zybdCcFiR7fD7A9J2bVdkU=
-X-Received: by 2002:a19:22d8:: with SMTP id i207mr25716706lfi.97.1559931677223;
- Fri, 07 Jun 2019 11:21:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190607003646.10411-1-mcroce@redhat.com> <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
-In-Reply-To: <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Fri, 7 Jun 2019 20:20:40 +0200
-Message-ID: <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z4R/A+c7peE9kIyceAe4LW8kI17iOhPfKiTxuGTvFbY=;
+        b=SUkF1qiJtERqHX4BCy2kpA9gZTkfd4TcRhG/p6+LfpSuHogUKqd0zzBGvqW+5U2Ey4
+         bbw6sgjU4OCaNvZVOiNGeBddewJo5YOnPoa7GllE9WmSe/xR2Okd6pIaCUyBUzoN8Qyr
+         1Dbm6rrETc+Lzp/MfQkmkJHuYwk5gjNqvnLdBZra8HSAjkKJOSrLzXOfq21NLFBlchq3
+         9zzI+o8lwDzQswrVl7FIMM2fp2EUiNIQmakdnwtbNJR4rx9RPi2HCj8fOVbj1yoONBUT
+         FyLe0F8XUUk2H0OF69eLCUmqauEof74rrdnnXTbE2F3Whuw0ELPrFegZr8dM8Jn4yANc
+         t91A==
+X-Gm-Message-State: APjAAAXtKNF20FTZaQsdweK2wjOEnFCgD6wuTa/vlryhREFZrMyTmj9d
+        yzLGIIGWpg3M6bmOmTn6pgE5QckwdQI=
+X-Google-Smtp-Source: APXvYqzxUUOczQlFQk080F3RPgI6vBdOsB4jni2YUcIV01O1vCjRDDK19TNf84AfKB68VP5Dz3sbhw==
+X-Received: by 2002:aa7:83d4:: with SMTP id j20mr62285296pfn.90.1559933180050;
+        Fri, 07 Jun 2019 11:46:20 -0700 (PDT)
+Received: from [172.27.227.254] ([216.129.126.118])
+        by smtp.googlemail.com with ESMTPSA id l23sm7423762pgh.68.2019.06.07.11.46.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 11:46:18 -0700 (PDT)
 Subject: Re: [PATCH linux-next v2] mpls: don't build sysctl related code when
  sysctl is disabled
-To:     David Ahern <dsahern@gmail.com>
+To:     Matteo Croce <mcroce@redhat.com>
 Cc:     netdev <netdev@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20190607003646.10411-1-mcroce@redhat.com>
+ <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
+ <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <3dd078f1-c8a7-6b9f-b14c-444b48eda3ab@gmail.com>
+Date:   Fri, 7 Jun 2019 12:46:16 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 7:14 PM David Ahern <dsahern@gmail.com> wrote:
->
-> On 6/6/19 6:36 PM, Matteo Croce wrote:
-> > Some sysctl related code and data structures is never referenced
-> > when CONFIG_SYSCTL is not set.
-> > While this is usually harmless, it produces a build failure since sysctl
-> > shared variables exists, due to missing sysctl_vals symbol:
-> >
-> >     ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
-> >     af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
-> >     ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
-> >     ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
-> >     ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
-> >
-> > Fix this by moving all sysctl related code under #ifdef CONFIG_SYSCTL
-> >
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
-> > ---
-> >
-> > v1 -> v2: fix a crash on netns destroy
-> >
-> >  net/mpls/af_mpls.c | 393 ++++++++++++++++++++++++---------------------
-> >  1 file changed, 207 insertions(+), 186 deletions(-)
-> >
->
-> As I recall you need to set platform_labels for the mpls code to even
-> work, so building mpls_router without sysctl is pointless.
+On 6/7/19 12:20 PM, Matteo Croce wrote:
+> This would explain why so much code went under the #ifdef.
+> Should we select or depend on sysctl maybe?
 
-This would explain why so much code went under the #ifdef.
-Should we select or depend on sysctl maybe?
-
-Regards,
--- 
-Matteo Croce
-per aspera ad upstream
+I think so
