@@ -2,88 +2,70 @@ Return-Path: <SRS0=26vq=UG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A72C2BCA1
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 18:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AA6C2BCA1
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 19:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87E8208C0
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 18:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXVFD4Sn"
+	by mail.kernel.org (Postfix) with ESMTP id 4882F208E3
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 19:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1559937126;
+	bh=CKLLB0IehvJ2iGhsAurK55vlbBDbJQaRBiXaVhl7haw=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=APKeGSSpLOO4y5/ar+lktphbe8TCkbyoC2bPz7O30e2mtF/yfNuUtuW2L6y4rD0hI
+	 Pn7i6SZZUxz7K1jtQv46RnJb7VhXTFIuartMA9W+lFzotjeqXqq7xpvlZ9jST3dXbE
+	 zSyn6Xu9tuIxoDh1jBodmvqfooyYEIKsUMmg9r9U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbfFGSqV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 7 Jun 2019 14:46:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45075 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbfFGSqV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 14:46:21 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w34so1589163pga.12;
-        Fri, 07 Jun 2019 11:46:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z4R/A+c7peE9kIyceAe4LW8kI17iOhPfKiTxuGTvFbY=;
-        b=WXVFD4SniiQTHxsMMnzHf4YxH3jkD3TbVbIj9A71Hn+NpbxejpDtqXTrtn50E/+l5f
-         LT7UPXxWQflrHAurUnAgMV0+dpuWY0tkeicdMqIaey/dqWpY39aAiiqRCUmxSgSc2xc1
-         kOLOZMdU4D1RvgaQ2sXIg9p548OFbx9TkXWKuIMdAvmM1t/lTMLxOEQYjr6XSj2veL6D
-         0EIcScKvLqQVQqNda0uFyFlQWhlTuZBFn7xLqJdYmdtT+SZLEPWzwD6GJFx/T0c5mEMu
-         VWXv7Bz4yMUn6ePZNZK/o2clj0jsJj/uePBA0tYkFeefNOqXCBomhau6yYWBeONiVDVY
-         sclg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z4R/A+c7peE9kIyceAe4LW8kI17iOhPfKiTxuGTvFbY=;
-        b=SUkF1qiJtERqHX4BCy2kpA9gZTkfd4TcRhG/p6+LfpSuHogUKqd0zzBGvqW+5U2Ey4
-         bbw6sgjU4OCaNvZVOiNGeBddewJo5YOnPoa7GllE9WmSe/xR2Okd6pIaCUyBUzoN8Qyr
-         1Dbm6rrETc+Lzp/MfQkmkJHuYwk5gjNqvnLdBZra8HSAjkKJOSrLzXOfq21NLFBlchq3
-         9zzI+o8lwDzQswrVl7FIMM2fp2EUiNIQmakdnwtbNJR4rx9RPi2HCj8fOVbj1yoONBUT
-         FyLe0F8XUUk2H0OF69eLCUmqauEof74rrdnnXTbE2F3Whuw0ELPrFegZr8dM8Jn4yANc
-         t91A==
-X-Gm-Message-State: APjAAAXtKNF20FTZaQsdweK2wjOEnFCgD6wuTa/vlryhREFZrMyTmj9d
-        yzLGIIGWpg3M6bmOmTn6pgE5QckwdQI=
-X-Google-Smtp-Source: APXvYqzxUUOczQlFQk080F3RPgI6vBdOsB4jni2YUcIV01O1vCjRDDK19TNf84AfKB68VP5Dz3sbhw==
-X-Received: by 2002:aa7:83d4:: with SMTP id j20mr62285296pfn.90.1559933180050;
-        Fri, 07 Jun 2019 11:46:20 -0700 (PDT)
-Received: from [172.27.227.254] ([216.129.126.118])
-        by smtp.googlemail.com with ESMTPSA id l23sm7423762pgh.68.2019.06.07.11.46.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 11:46:18 -0700 (PDT)
-Subject: Re: [PATCH linux-next v2] mpls: don't build sysctl related code when
- sysctl is disabled
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20190607003646.10411-1-mcroce@redhat.com>
- <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
- <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <3dd078f1-c8a7-6b9f-b14c-444b48eda3ab@gmail.com>
-Date:   Fri, 7 Jun 2019 12:46:16 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        id S1731144AbfFGTwF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 7 Jun 2019 15:52:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729944AbfFGTwF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 7 Jun 2019 15:52:05 -0400
+Received: from localhost (107-207-74-175.lightspeed.austtx.sbcglobal.net [107.207.74.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C03C720868;
+        Fri,  7 Jun 2019 19:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559937125;
+        bh=CKLLB0IehvJ2iGhsAurK55vlbBDbJQaRBiXaVhl7haw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=w/TJOLn+W+T1irr4LNybfZLooYAmCbxRJzBheHUa9BtUwkmddo/2y7JBzgCNWQpeK
+         fLsoe0vvt2fDagYoPkkFJ2uzu5bYAIbwEyA2/0xVFDbNpcq6pAUGq8WFtQBN3xaha4
+         uIqT0GmDSqRDSyFn7wy3xkaInQWhhnNVXpODkx1Y=
+Date:   Fri, 7 Jun 2019 14:52:03 -0500
+From:   Andy Gross <agross@kernel.org>
+To:     sfr@canb.auug.org.au
+Cc:     khilman@baylibre.com, bjorn.andersson@linaro.org,
+        linux-next@vger.kernel.org
+Subject: Change of repo location for QCOM
+Message-ID: <20190607195203.GB4984@hector.attlocal.net>
 MIME-Version: 1.0
-In-Reply-To: <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/7/19 12:20 PM, Matteo Croce wrote:
-> This would explain why so much code went under the #ifdef.
-> Should we select or depend on sysctl maybe?
+Stephen / Kevin,
 
-I think so
+We've updated the location of our for-next and ci-next branches.  Can you
+update the repo from:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+
+to:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
+
+
+Thanks!
+
+Andy Gross
