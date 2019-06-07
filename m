@@ -2,207 +2,104 @@ Return-Path: <SRS0=26vq=UG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F7CC2BCA1
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 13:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE09C2BCA1
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 17:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7B520840
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 13:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 427BF2146E
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 17:14:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="R6e89J7z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJvoYzeZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbfFGNFY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 7 Jun 2019 09:05:24 -0400
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:38433 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbfFGNFY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 09:05:24 -0400
-Received: by mail-wr1-f43.google.com with SMTP id d18so2109475wrs.5
-        for <linux-next@vger.kernel.org>; Fri, 07 Jun 2019 06:05:23 -0700 (PDT)
+        id S1730202AbfFGROp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 7 Jun 2019 13:14:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43948 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729632AbfFGROp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 13:14:45 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so1477157pgv.10;
+        Fri, 07 Jun 2019 10:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=WvUC+h4eXU9OV57AoesRmfTXgpcCIMNqX8xrDeVkfFs=;
-        b=R6e89J7ziu9iTAXQryyjyL6R6aLfTH5YZEefe3av7/Scz87+EPyJv14nGNVFyLBj8Y
-         bkT2d2l61xmATkX40gCMxAg0wPq+kGZd2ytfjSz7cOqqzE+89+GBDmCGdpRAqhbGduSq
-         POqXwka72yK2cRwuc/j6sbjlnKJTS5iXA603KBv4AVd+G6FY80oWfRm2I69FY68O9Joe
-         tnNjdrYjQ9xh21en6jYfh/9sQwe65pyHzAo1lMx89WpMf5ibyxR7L5f54FJj0FTVAmdi
-         BhhMt7nlDyT+1TbwB/S0ySKXb2vtkiPt3Qcs73C+hDhbY3F0FSV+wniPRBEP8GvEQMBQ
-         v3EQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dhu7ls2KxQ8QU/rN48Qc+UuKg6SARArc79RMxUBdLhg=;
+        b=gJvoYzeZoCPM/XqMnfJFv1IalZWCl8N+pxJ9sKCjMIsTbd4AXAvdEa6K4magaXu/Yu
+         8AuletlbFiZNPsomLDaf/yr1UmBffYRpFAjT3RcEUHR6bT2FmNsSGt45m2IOAWyXZEjU
+         UB9WtFUWaztxuNP4AU9QkJdgbCqKeXRLK7WKRguMRAqw4bYfd3BfKNmk9TjmrcHEvbY6
+         fi9dIdtpbMLkhldXnVw/fF+zy4QEe6EmW5Jx7UiLhctOd7j9iLucyR3zNoW+6ZAzCPUg
+         oL/fCorGNksWg+8u4nzO1X3DbPJdfdAzAqk0kN4/XpYs6W9wClf3rz7HWj9ylnbpDmRg
+         Dk1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=WvUC+h4eXU9OV57AoesRmfTXgpcCIMNqX8xrDeVkfFs=;
-        b=tg15BE/azvAxNiSsEA8lgujnfkBIc8NCHn1dLMLPQNRzO38CNLI5yz2QrtBw1FhVMG
-         /gFxf6UCdBwcTumWC8XC89OB0PQCMz5wyux1bdmSShd2JhE7I+ZsJAV7P4GFxWWYOmjp
-         nex6RuggIcJ/T6qPACNLI0uJ5xmjSYm/XEavcefgjculxvcXB6RjBPvfCnUYJF5TFhcF
-         h0LZHTbDlAoH5DCN18NCFUkFaIqLzswKO8oz1vpGlvRRMwW85DeOpEYztVlawyoBvr0T
-         7p1FK9gh8FAZohZBozqXOOl/8v0J96f5cZn5xzxaRs9KAKfoyqymsT1/Wv8KkKLDUlq9
-         2HLA==
-X-Gm-Message-State: APjAAAXmogVxdiEPknKNqHIX/+tT+WvLZQgGyoZfQkvz5COTljZ6JgGM
-        4HqIA0macZ73MsO2nqeepM7CN7I1hnW1Yw==
-X-Google-Smtp-Source: APXvYqzzw8bgBKGg5lUC5OWxp5LnGMQA4argZ3O+OSpTAFzakHYMxVEubL6aygwB9O5y2wVsUZCplw==
-X-Received: by 2002:a5d:4311:: with SMTP id h17mr34655757wrq.9.1559912722237;
-        Fri, 07 Jun 2019 06:05:22 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id s63sm2100295wme.17.2019.06.07.06.05.20
-        for <linux-next@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dhu7ls2KxQ8QU/rN48Qc+UuKg6SARArc79RMxUBdLhg=;
+        b=nsBpcCveL0o9qvRYAeX67m2xwm+RhIU5QK3wxphSqqz+v43MOX11o0c+yR4HP13KNF
+         3FbzCNAQjRlFUCkxzVTqMjmTULf62QRLNZryDEjL7ir89v7CmRnLj2oONu/TszpOBNMD
+         pzAEu/abblvvJM5fRifJkboj7y4JGwPsDZ/IWPLWlsEyOp+QXF8R5FcV6yDOWNTcc9hL
+         NUsXR+fx9ikbGGvk8cnHkmB7R9arDVIks9S6oluSS+eCIfwee3LNlQ8uFC6vmhzCVvBn
+         z9XX/MZqogmveCHKZ4AnGQplvSuURsG9/AVd3Ndy5XRjsEr+eOqu27RJlDLHznvA5BXk
+         futQ==
+X-Gm-Message-State: APjAAAUb5p/SZyvyL4IEEEYllEjVDTmklv0aBTf6cGQGtkfxsAozom/W
+        3ZIf5qmewHlyqm/VgWme1A2no3W2zpo=
+X-Google-Smtp-Source: APXvYqxMHSUGdCBGfb1AcstvB0brl/MCNX+/DnEPN4AAQpGYch+7JOv+AxxtFJsDHktR2gf7D2nPiQ==
+X-Received: by 2002:a62:304:: with SMTP id 4mr60126177pfd.186.1559927684362;
+        Fri, 07 Jun 2019 10:14:44 -0700 (PDT)
+Received: from [172.27.227.254] ([216.129.126.118])
+        by smtp.googlemail.com with ESMTPSA id p6sm2850294pfp.88.2019.06.07.10.14.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 06:05:21 -0700 (PDT)
-Message-ID: <5cfa6111.1c69fb81.ccdb9.d0f2@mx.google.com>
-Date:   Fri, 07 Jun 2019 06:05:21 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 07 Jun 2019 10:14:42 -0700 (PDT)
+Subject: Re: [PATCH linux-next v2] mpls: don't build sysctl related code when
+ sysctl is disabled
+To:     Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, akpm@linux-foundation.org,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20190607003646.10411-1-mcroce@redhat.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
+Date:   Fri, 7 Jun 2019 11:14:41 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: next-20190607
-X-Kernelci-Branch: master
-X-Kernelci-Tree: next
-Subject: next/master boot: 215 boots: 12 failed, 183 passed with 19 offline,
- 1 untried/unknown (next-20190607)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <20190607003646.10411-1-mcroce@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 215 boots: 12 failed, 183 passed with 19 offline, 1 untri=
-ed/unknown (next-20190607)
+On 6/6/19 6:36 PM, Matteo Croce wrote:
+> Some sysctl related code and data structures is never referenced
+> when CONFIG_SYSCTL is not set.
+> While this is usually harmless, it produces a build failure since sysctl
+> shared variables exists, due to missing sysctl_vals symbol:
+> 
+>     ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+>     af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+>     ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+>     ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+>     ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
+> 
+> Fix this by moving all sysctl related code under #ifdef CONFIG_SYSCTL
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> ---
+> 
+> v1 -> v2: fix a crash on netns destroy
+> 
+>  net/mpls/af_mpls.c | 393 ++++++++++++++++++++++++---------------------
+>  1 file changed, 207 insertions(+), 186 deletions(-)
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190607/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190607/
-
-Tree: next
-Branch: master
-Git Describe: next-20190607
-Git Commit: 3f310e51ceb146cfdd4c8872452a1f7fa059af1c
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 81 unique boards, 24 SoC families, 20 builds out of 231
-
-Boot Regressions Detected:
-
-arm:
-
-    exynos_defconfig:
-        gcc-8:
-          exynos5800-peach-pi:
-              lab-collabora: new failure (last pass: next-20190606)
-              lab-baylibre-seattle: new failure (last pass: next-20190606)
-
-    imx_v6_v7_defconfig:
-        gcc-8:
-          imx53-qsrb:
-              lab-pengutronix: new failure (last pass: next-20190606)
-          imx6dl-riotboard:
-              lab-pengutronix: new failure (last pass: next-20190606)
-          imx6dl-wandboard_dual:
-              lab-baylibre-seattle: new failure (last pass: next-20190606)
-          imx6dl-wandboard_solo:
-              lab-baylibre-seattle: new failure (last pass: next-20190606)
-          imx6q-wandboard:
-              lab-baylibre-seattle: new failure (last pass: next-20190606)
-          imx6ul-pico-hobbit:
-              lab-pengutronix: new failure (last pass: next-20190606)
-
-    sunxi_defconfig:
-        gcc-8:
-          sun8i-h2-plus-libretech-all-h3-cc:
-              lab-baylibre: failing since 10 days (last pass: next-20190523=
- - first fail: next-20190528)
-          sun8i-h3-libretech-all-h3-cc:
-              lab-baylibre: failing since 10 days (last pass: next-20190524=
- - first fail: next-20190528)
-
-arm64:
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-          rk3399-firefly:
-              lab-baylibre-seattle: new failure (last pass: next-20190606)
-
-Boot Failures Detected:
-
-arm:
-    exynos_defconfig:
-        gcc-8:
-            exynos5800-peach-pi: 2 failed labs
-
-    sunxi_defconfig:
-        gcc-8:
-            sun8i-h2-plus-libretech-all-h3-cc: 1 failed lab
-            sun8i-h3-libretech-all-h3-cc: 1 failed lab
-
-    multi_v7_defconfig:
-        gcc-8:
-            bcm4708-smartrg-sr400ac: 1 failed lab
-
-    imx_v6_v7_defconfig:
-        gcc-8:
-            imx53-qsrb: 1 failed lab
-            imx6dl-riotboard: 1 failed lab
-            imx6dl-wandboard_dual: 1 failed lab
-            imx6dl-wandboard_solo: 1 failed lab
-            imx6q-wandboard: 1 failed lab
-            imx6ul-pico-hobbit: 1 failed lab
-
-arm64:
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            rk3399-firefly: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    bcm2835_defconfig:
-        gcc-8
-            bcm2835-rpi-b: 1 offline lab
-
-    sama5_defconfig:
-        gcc-8
-            at91-sama5d4_xplained: 1 offline lab
-            at91-sama5d4ek: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            alpine-db: 1 offline lab
-            at91-sama5d4_xplained: 1 offline lab
-            at91-sama5d4ek: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-
-arm64:
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            juno-r2: 1 offline lab
-            meson-gxl-s905x-khadas-vim: 1 offline lab
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            juno-r2: 1 offline lab
-            meson-gxl-s905x-khadas-vim: 1 offline lab
-            mt7622-rfb1: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            juno-r2: 1 offline lab
-            meson-gxl-s905x-khadas-vim: 1 offline lab
-            mt7622-rfb1: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+As I recall you need to set platform_labels for the mpls code to even
+work, so building mpls_router without sysctl is pointless.
