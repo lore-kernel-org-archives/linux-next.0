@@ -2,221 +2,197 @@ Return-Path: <SRS0=26vq=UG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2584C2BCA1
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 11:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A37C2BCA1
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 13:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6289E2080C
-	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 11:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559906495;
-	bh=vgsQ34as36QGZClhpLQeueNjb6Vj/KcyevL+h13KMJc=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=OGsfHy+D1tZsTzLYyWWF+a/YUW1Tb+iwQQMEM0lqPnMwDJuVi9LQyndinLxiSLbmr
-	 9DHRrkjxR1ju6EE1Ixp/jejOuwbNKq3f4xOGjdK/JGpf4Br+mngG+l1QfnMjH5zGuQ
-	 PuUSNagJpZ1iWdQOdamaCyLYLanXWhzm8AIUAXi0=
+	by mail.kernel.org (Postfix) with ESMTP id 27E1920840
+	for <linux-next@archiver.kernel.org>; Fri,  7 Jun 2019 13:03:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="zZRfkvFG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfFGLVf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 7 Jun 2019 07:21:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47970 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbfFGLVe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 07:21:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:Subject:To:From:
-        Sender:Reply-To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ydm5E3eeuD7wWpznzd4mzuVybjvBZQ2rG2FHuriQRoA=; b=guPUvUvXu7UFX4+clwJDf7I2X
-        Pv73QxhqGtuTe9R5m4VJRVgs4bQuxSjM4TnvoxhsNMby6Y13K0jsg4uSyczofwLHG4GdoalghvrON
-        zfBz0QMuf4rMPaxysfBD1f7pg/UfdRAwhFlo+X70JiETx+jHm93Lq476W31YTdvEoFmXk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=optimist)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hZCw7-0001kC-MY; Fri, 07 Jun 2019 11:21:31 +0000
-Received: from broonie by optimist with local (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hZCw6-0006hO-J4; Fri, 07 Jun 2019 12:21:31 +0100
-From:   Build bot for Mark Brown <broonie@kernel.org>
-To:     kernel-build-reports@lists.linaro.org,
-        linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-Subject: pending-fixes build: 0 failures 18 warnings (v5.2-rc3-336-gfd5c57db249c)
-Message-Id: <E1hZCw6-0006hO-J4@optimist>
-Date:   Fri, 07 Jun 2019 12:21:30 +0100
+        id S1728667AbfFGNDd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 7 Jun 2019 09:03:33 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:35916 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbfFGNDd (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2019 09:03:33 -0400
+Received: by mail-wr1-f49.google.com with SMTP id n4so2108558wrs.3
+        for <linux-next@vger.kernel.org>; Fri, 07 Jun 2019 06:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=vkZqTLvWdbWmlCO2PR6nT5OynkEZivUair+qYuHOt/U=;
+        b=zZRfkvFGLt5Q7M1Ds+n7vLYDitE0jlZczgTOXkf7rqeb82J5r4CcJHClKb27s0GhxR
+         5m1G4jMVAKoRa6Y/JER3UrqzWW2MkOa9tms+AP+KYjnzMoXzojzYhL5nKvEtR2g3/C5k
+         lZjcAmez6pv/uZ3laVzFCxVDZIpIb4Acwa2StfwJgv74tm8L3u4KJ4sYco4BM1TGsJ2I
+         RnJ9RJ+l67a9uBOytHZWiZtZFGYbR3PBdnyhQYoEkPgummeEbf5mYIhC2aXcOEwkXkAU
+         ++k613qb917BK1Y6JsSi6wP94XIUj3daURyzwvtPUjYoWCCng68UAJiu9M8DQcmWlpJr
+         3u3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=vkZqTLvWdbWmlCO2PR6nT5OynkEZivUair+qYuHOt/U=;
+        b=NTIplVPcJpyXq2w0TcHAphea1sFdwXZRLvJ2vm+vjAe4iwmG96C32y6MEFcJVYJw+N
+         MV01rrH14qVSNtw1Y0QzvStN3FO+vwVIzlpUfaNiPD7eAWUTKFQ/mzzq7nLSE8FRR4sy
+         YAEGrVS3PcOLqpRis8iahNaVyNyU09IGw64k4YddxUpD/mw+8K6feaAs9FX+gaCDLd3D
+         6IXpnJ4HmtxrbXGB6KfkI9wdWW/9uo3cSshDMBZ/Pl7NOA5pV8Y2EaAX/VL7VkcP1byL
+         nyEALK++F+j9NXanOmxzf2Z6CQWgYTt2hJxiyEY7u+Spvt5Qb1tTNVRzCnZZb4QjTe83
+         3+rg==
+X-Gm-Message-State: APjAAAVobz0iZ8b0OEmZCUZNN3yFrMEzp2zS9LeNgk/VdCS2rDEaCtUB
+        xBKQHnMFyde3w9JI+I6c8Tm/65CEZLiupA==
+X-Google-Smtp-Source: APXvYqwunJQUaG5IjQB50I6pVVorag9pEQIKlYmf9L7+95+lqbtixoHolzq5Ektmkl8JStH586iXkg==
+X-Received: by 2002:adf:c982:: with SMTP id f2mr5377850wrh.235.1559912611335;
+        Fri, 07 Jun 2019 06:03:31 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id h200sm2322564wme.11.2019.06.07.06.03.29
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 06:03:30 -0700 (PDT)
+Message-ID: <5cfa60a2.1c69fb81.b1d03.e073@mx.google.com>
+Date:   Fri, 07 Jun 2019 06:03:30 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v5.2-rc3-429-gaa494f467cc3
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+Subject: next/pending-fixes boot: 215 boots: 3 failed,
+ 193 passed with 16 offline, 3 conflicts (v5.2-rc3-429-gaa494f467cc3)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Tree/Branch: pending-fixes
-Git describe: v5.2-rc3-336-gfd5c57db249c
-Commit: fd5c57db24 Merge remote-tracking branch 'drm-misc-fixes/for-linux-next-fixes'
+next/pending-fixes boot: 215 boots: 3 failed, 193 passed with 16 offline, 3=
+ conflicts (v5.2-rc3-429-gaa494f467cc3)
 
-Build Time: 192 min 5 sec
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.2-rc3-429-gaa494f467cc3/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.2-rc3-429-gaa494f467cc3/
 
-Passed:   11 / 11   (100.00 %)
-Failed:    0 / 11   (  0.00 %)
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.2-rc3-429-gaa494f467cc3
+Git Commit: aa494f467cc326f3aa8f6316644d61b7e33fd45b
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 81 unique boards, 24 SoC families, 20 builds out of 223
 
-Errors: 0
-Warnings: 18
-Section Mismatches: 0
+Boot Regressions Detected:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     16 warnings    0 mismatches  : arm64-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     28 warnings    0 mismatches  : arm-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v4t_defconfig
-     13 warnings    0 mismatches  : x86_64-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
+arm:
 
--------------------------------------------------------------------------------
+    sunxi_defconfig:
+        gcc-8:
+          sun8i-h2-plus-libretech-all-h3-cc:
+              lab-baylibre: failing since 10 days (last pass: v5.2-rc1-444-=
+g4ef1cc845da3 - first fail: v5.2-rc2-257-gb0251876abbf2)
+          sun8i-h3-libretech-all-h3-cc:
+              lab-baylibre: failing since 10 days (last pass: v5.2-rc1-444-=
+g4ef1cc845da3 - first fail: v5.2-rc2-257-gb0251876abbf2)
 
-Warnings Summary: 18
-	 36 warning: same module names found:
-	  8 ../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	  5 ../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  4 ../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-	  3 ../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	  3 ../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	  2 ../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	  2 ../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	  1 ../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	  1 ../net/ipv4/fib_semantics.c:1023:12: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
-	  1 ../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
-	  1 ../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+arm64:
 
+    defconfig:
+        gcc-8:
+          meson-gxl-s905x-khadas-vim:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2-rc=
+3-298-gefd8de4f40d0 - first fail: v5.2-rc3-336-gfd5c57db249c)
 
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-gxl-s905x-khadas-vim:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2-rc=
+3-298-gefd8de4f40d0 - first fail: v5.2-rc3-336-gfd5c57db249c)
 
-===============================================================================
-Detailed per-defconfig build reports below:
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+          meson-gxl-s905x-khadas-vim:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2-rc=
+3-298-gefd8de4f40d0 - first fail: v5.2-rc3-336-gfd5c57db249c)
 
+Boot Failures Detected:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 16 warnings, 0 section mismatches
+arm:
+    sunxi_defconfig:
+        gcc-8:
+            sun8i-h2-plus-libretech-all-h3-cc: 1 failed lab
+            sun8i-h3-libretech-all-h3-cc: 1 failed lab
 
-Warnings:
-	../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
+    multi_v7_defconfig:
+        gcc-8:
+            bcm4708-smartrg-sr400ac: 1 failed lab
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+Offline Platforms:
 
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+arm:
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+    bcm2835_defconfig:
+        gcc-8
+            bcm2835-rpi-b: 1 offline lab
 
-Warnings:
-	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+    sama5_defconfig:
+        gcc-8
+            at91-sama5d4_xplained: 1 offline lab
+            at91-sama5d4ek: 1 offline lab
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 28 warnings, 0 section mismatches
+    multi_v7_defconfig:
+        gcc-8
+            alpine-db: 1 offline lab
+            at91-sama5d4_xplained: 1 offline lab
+            at91-sama5d4ek: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
 
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
-	../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
 
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+arm64:
 
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
 
--------------------------------------------------------------------------------
-x86_64-allmodconfig : PASS, 0 errors, 13 warnings, 0 section mismatches
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
+            mt7622-rfb1: 1 offline lab
 
-Warnings:
-	../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
+            mt7622-rfb1: 1 offline lab
 
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+Conflicting Boot Failures Detected: (These likely are not failures as other=
+ labs are reporting PASS. Needs review.)
 
-Warnings:
-	../net/ipv4/fib_semantics.c:1023:12: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
+arm64:
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        meson-gxl-s905x-khadas-vim:
+            lab-baylibre-seattle: FAIL (gcc-8)
+            lab-baylibre: PASS (gcc-8)
 
-Passed with no errors, warnings or mismatches:
+    defconfig:
+        meson-gxl-s905x-khadas-vim:
+            lab-baylibre-seattle: FAIL (gcc-8)
+            lab-baylibre: PASS (gcc-8)
 
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        meson-gxl-s905x-khadas-vim:
+            lab-baylibre-seattle: FAIL (gcc-8)
+            lab-baylibre: PASS (gcc-8)
+
+---
+For more info write to <info@kernelci.org>
