@@ -6,138 +6,106 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89A8C4321A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 01:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D4CC4321A
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 02:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8950420652
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 01:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44FFC20896
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 02:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ajuzvxq1"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PGu+9+pJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390717AbfFKBhr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 10 Jun 2019 21:37:47 -0400
-Received: from ozlabs.org ([203.11.71.1]:41077 "EHLO ozlabs.org"
+        id S1728685AbfFKCHd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 10 Jun 2019 22:07:33 -0400
+Received: from ozlabs.org ([203.11.71.1]:47545 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390721AbfFKBhr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Jun 2019 21:37:47 -0400
+        id S1728892AbfFKCHd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 10 Jun 2019 22:07:33 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NCLG4dpPz9sNT;
-        Tue, 11 Jun 2019 11:37:42 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ND0f3knRz9sNC;
+        Tue, 11 Jun 2019 12:07:30 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560217063;
-        bh=LEOXqMuOHS2LA/cnmJMRJ7jSXtfuT+TEE6bdqoeclC0=;
+        s=201702; t=1560218851;
+        bh=m2FWhHME3XZj5STQwESX5Nb6gzcHzgfOilHsf4Im6nA=;
         h=Date:From:To:Cc:Subject:From;
-        b=Ajuzvxq1hnrwQN6rmDPfF+EKLFst46z9s4lN0MFdY8uuvOxR7dsbMHSaLXlj8tBeQ
-         4iSTgyiaIW/kZPXaDE4emoT58gVODPzrCoilwGCyLLU8AG6TxU+Q4mftQhUQkmcQcU
-         HG+W7BdAOia17C3IfWofSvxm2VGfkrg56g7QQn1jnFrvgbuN9J215qWVCrlfTpRG2n
-         gLM1kWND67PSBSrD890KDjv3g63kxybcj2ZLHrKJuvzIb92p9MpClKmChchM4d4cjD
-         j0Dan/HpA5JMfQe+LrEW0u2AP7W7rxpThNBdNB3SC2mNRP2fWTn+G88aB5D1jpxQiX
-         6lBx5c0Dn69yA==
-Date:   Tue, 11 Jun 2019 11:37:41 +1000
+        b=PGu+9+pJaco/mZuRkz3ReylE50zAvS/z7OxeX2QAYhsUsiMmHLqAvDOEmctFFopmT
+         tpxSQsVo6x5KKq1kTccPLlONwkDQdNgAbOqXERMP/DgUANxXv30ZIKxqk1jdppjFOC
+         xL6ZTg46yzyQ5Bo8J9mBnLKTvGG85MH51hYTVw2Plc0mF5YKQSVzuNH6rcNNEPDKjF
+         JwiY7P7bv2SdFcnwGD08oVqpCYwMy0fUglF+ib2a7nvBcDmaC75QQbWk3suueUM31L
+         m0wwX2p3bu3PVUnSpAKd/9OZ8W5g0pBjAYMtJY0V1aTnMAarpr3Ao4QoyKM4Lh3Hhk
+         45aV7bddn9jDQ==
+Date:   Tue, 11 Jun 2019 12:07:28 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Lawrence Brakmo <brakmo@fb.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190611113741.366093ba@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>
+Subject: linux-next: manual merge of the crypto tree with Linus' tree
+Message-ID: <20190611120728.287af1f6@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/v=mIhK8JgwY4S9K1YwYlg.2"; protocol="application/pgp-signature"
+ boundary="Sig_/8czFThpdyTCucr7DXBCF+JB"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/v=mIhK8JgwY4S9K1YwYlg.2
+--Sig_/8czFThpdyTCucr7DXBCF+JB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the crypto tree got conflicts in:
 
-  kernel/bpf/verifier.c
+  drivers/crypto/vmx/aes.c
+  drivers/crypto/vmx/aes_cbc.c
+  drivers/crypto/vmx/aes_ctr.c
+  drivers/crypto/vmx/aes_xts.c
+  drivers/crypto/vmx/vmx.c
 
-between commit:
+between commits:
 
-  983695fa6765 ("bpf: fix unconnected udp hooks")
+  64d85cc99980 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 299")
+  27ba4deb4e26 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 442")
 
-from the net tree and commit:
+from Linus' tree and commit:
 
-  5cf1e9145630 ("bpf: cgroup inet skb programs can return 0 to 3")
+  1fa0a7dcf759 ("crypto: vmx - convert to SPDX license identifiers")
 
-from the net-next tree.
+from the crypto tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This is
-now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your
-tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (I just used the SPDX tags from Linus' tree) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc kernel/bpf/verifier.c
-index a5c369e60343,5c2cb5bd84ce..000000000000
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@@ -5353,12 -5513,13 +5505,16 @@@ static int check_return_code(struct bpf
-  	struct tnum range =3D tnum_range(0, 1);
- =20
-  	switch (env->prog->type) {
- +	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
- +		if (env->prog->expected_attach_type =3D=3D BPF_CGROUP_UDP4_RECVMSG ||
- +		    env->prog->expected_attach_type =3D=3D BPF_CGROUP_UDP6_RECVMSG)
- +			range =3D tnum_range(1, 1);
-  	case BPF_PROG_TYPE_CGROUP_SKB:
-+ 		if (env->prog->expected_attach_type =3D=3D BPF_CGROUP_INET_EGRESS) {
-+ 			range =3D tnum_range(0, 3);
-+ 			enforce_attach_type_range =3D tnum_range(2, 3);
-+ 		}
-  	case BPF_PROG_TYPE_CGROUP_SOCK:
- -	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-  	case BPF_PROG_TYPE_SOCK_OPS:
-  	case BPF_PROG_TYPE_CGROUP_DEVICE:
-  	case BPF_PROG_TYPE_CGROUP_SYSCTL:
-@@@ -5385,9 -5546,13 +5541,13 @@@
-  			verbose(env, "has unknown scalar value");
-  		}
-  		tnum_strn(tn_buf, sizeof(tn_buf), range);
- -		verbose(env, " should have been %s\n", tn_buf);
- +		verbose(env, " should have been in %s\n", tn_buf);
-  		return -EINVAL;
-  	}
-+=20
-+ 	if (!tnum_is_unknown(enforce_attach_type_range) &&
-+ 	    tnum_in(enforce_attach_type_range, reg->var_off))
-+ 		env->prog->enforce_expected_attach_type =3D 1;
-  	return 0;
-  }
- =20
-
---Sig_/v=mIhK8JgwY4S9K1YwYlg.2
+--Sig_/8czFThpdyTCucr7DXBCF+JB
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/BeUACgkQAVBC80lX
-0GxZ0gf/X1ty+iSl/RyRPkDHBjW72t/r0ovp1qii6DzPG/0GFCnQehj1jLn/uhQc
-WxgXqyuAK1tAtbj0tLadC+Byalyx0SLLC8Yo1atTtfKhttPyAAvKUJcZzC9EgKQu
-IOqXxNTegMtzY/24iVzjZWPTw8GXxIBIsfIsBeTLR1i4w5zYgASXECr3XbLXtTc/
-oFlrtUgNECWJws/qkX/ocr5VRTcxId2ChxOF9n9K4qDrylc1CtnJyF7QgfWxsmfh
-7Qi9ISppY6b5vJ07Ov52HBdYpVz85tTsFYJBCICWsX6XHk3zKWjzIBgqviLvJVq/
-ojwyzCafG1HeK9oolqaK4fa7vtWEWw==
-=EPPT
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/DOAACgkQAVBC80lX
+0GzJCgf+PSJjayUlkgOfTY9r8nDNsfZUlCnZs/EklT3rshOc9d37ov5W0vwyxA/n
+01T+yjNtUAr3Y9HPNjlPcsGFPOkOPkOxDYINfxOvclwzDW4FXZdt72XTjXahHBdU
+woksA/uuWxYQ65XBGKRDWrUDpHutgvOXuO3LMsYsXC9Sat1b8scM0RyOugQDojLb
+kxu9W0iH7GJ2YVM+TDxULuIGKqpJQ4Tlt6QkvbZB67V5jMYAq+OFYjrNcvppWPYm
+HHXKjSAEwxMCe6pL20U8jPyNxpjtGoMAtoyGxMNui8XRTyNugouSQwy/FVyKEdMu
+KzGDV46hzEL5VZHP0ycm4L6+K6AW6Q==
+=UrW1
 -----END PGP SIGNATURE-----
 
---Sig_/v=mIhK8JgwY4S9K1YwYlg.2--
+--Sig_/8czFThpdyTCucr7DXBCF+JB--
