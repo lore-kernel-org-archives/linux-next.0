@@ -2,135 +2,105 @@ Return-Path: <SRS0=lqV3=UK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296A4C4321A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 03:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A166C43218
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 04:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D7F20820
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 03:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B1520896
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 04:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q5TYlxbV"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kuy7lMgU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390972AbfFKDwI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 10 Jun 2019 23:52:08 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:42089 "EHLO ozlabs.org"
+        id S1726385AbfFKEbo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 00:31:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:54131 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390941AbfFKDwH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Jun 2019 23:52:07 -0400
+        id S1726146AbfFKEbo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Jun 2019 00:31:44 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NGKJ07Knz9sND;
-        Tue, 11 Jun 2019 13:52:03 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NHC12PXnz9s4Y;
+        Tue, 11 Jun 2019 14:31:41 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560225124;
-        bh=6kjthrPOTPWNQKlDGL3hQSGhKE1EZEUyQV+BEUTX/uQ=;
+        s=201702; t=1560227501;
+        bh=AdCCbWYS8wIxzvqOOIihi4/d78PPt00vkrmvnznb5Dk=;
         h=Date:From:To:Cc:Subject:From;
-        b=q5TYlxbV/yk36cmEt8Cq5Uq29SkAYK5S+IeBicjJcTS9JPs3B6J7GrO53k0MGARjm
-         MkN2i7goAvrnWiWBT7mCe+FaPZ/9Tb9mNm3jn1zLAy54fkhhIWLiornH1P/kkbEc6A
-         NoH+AUGVuCiOWVlzjnyvQ65eE9n+Uw93TPImcFyDx3Sp0y6gOt6H6VQpNARgTjk/ew
-         flvgbQeanJK//42/c1W67lHVrsZh66L3we6PVvSV+nxzPNWoQd1GKSad2PHFS0Ux+k
-         3N9qLEay6vVVEmck1v9jQ3f2rlUzVaYBXNi96ipt2pJPVWuoyt+1ed0cmKA3NJ/2Ls
-         cLf3r3tJAGx0g==
-Date:   Tue, 11 Jun 2019 13:52:02 +1000
+        b=kuy7lMgUJFwVZgzPAk201y2cniRiWaY5m0Pzol8MyWEqSzsJMtT6e0/qgpWg15KYb
+         +a10BYgj+ACK0GHALE2zlcbZkwEM6HQ/W5TJb2gXKPFYjvbK7J9hNybQSgwaOoiS+y
+         oE8z/wGNQfBYvJqhePLE8INtMS44WCtDfE+8WUVeHnqBZDYmTzJI9iByoK3MCNTLkG
+         l4g+zo/CKKNiYPUFahXar2olp60/edtZJ0PZu2ZINKlYltiwuhYBsH32qAlKbEWGQ8
+         N97EWGJlw5juiRb5L6r33ghaU7vK/OE5dMqfUdfkBXbbRBUYQXeJAJ0UzizNgOrneS
+         EYq7pP7kPntoA==
+Date:   Tue, 11 Jun 2019 14:31:39 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>
+To:     Lee Jones <lee.jones@linaro.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: linux-next: manual merge of the drm-misc tree with the drm tree
-Message-ID: <20190611135202.145424e5@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gwendal Grignou <gwendal@chromium.org>
+Subject: linux-next: manual merge of the mfd tree with Linus' tree
+Message-ID: <20190611143139.174e3eec@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jfim9.VH5cOFoRzquBp6qyc"; protocol="application/pgp-signature"
+ boundary="Sig_/5umunqededOQoV7r75zUz7/"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/jfim9.VH5cOFoRzquBp6qyc
+--Sig_/5umunqededOQoV7r75zUz7/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+Today's linux-next merge of the mfd tree got a conflict in:
 
-  drivers/gpu/drm/amd/display/dc/dce/dce_clk_mgr.c
+  include/linux/mfd/cros_ec_commands.h
 
 between commit:
 
-  9b93eb475aa9 ("drm/amd/display: move clk_mgr files to right place")
+  9c92ab619141 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 282")
 
-from the drm tree and commit:
+from Linus' tree and commit:
 
-  4fc4dca8320e ("drm/amd: drop use of drmp.h in os_types.h")
+  2769bd79a915 ("mfd: cros_ec: Update license term")
 
-from the drm-misc tree.
+from the mfd tree.
 
-I fixed it up (I deleted the file and added the following patch) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
-I am not sure if this is actually needed but it seemed prudent with the
-addition of the kzalloc/kfree calls in this file.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 11 Jun 2019 13:48:08 +1000
-Subject: [PATCH] drm/amd/display: merge fix for "drm/amd: drop use of drmp.=
-h in os_types.h"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c b/drivers/gpu=
-/drm/amd/display/dc/clk_mgr/clk_mgr.c
-index eb2204d42337..cb3f6a74d9e3 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c
-@@ -23,6 +23,8 @@
-  *
-  */
-=20
-+#include <linux/slab.h>
-+
- #include "dal_asic_id.h"
- #include "dc_types.h"
- #include "dccg.h"
---=20
-2.20.1
+I fixed it up (I use the SPDX tag from the former and the later change
+to the comment from the latter) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/jfim9.VH5cOFoRzquBp6qyc
+--Sig_/5umunqededOQoV7r75zUz7/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/JWIACgkQAVBC80lX
-0GxNRwgApUmTX5kjEA+cNRAn68/Axad9xBwda1Zu4g/kvsT/rNgtT6X1OaArVK/i
-KX72++Kyo1bggwxeINKmH1Y6PsbnlIHKLD7FcdV0us4Ab43jeB00xU9ENp27OuXb
-5cuxkliKZFh7RaFwIyrmNLZaaq0aI6Ciwt+X+EsD1hl5tgyV5wniHERIKO+Qjh9C
-OsuiafBoxg7hdXKKcSGNq2tw0PHuYJ10iBduylvmXPOHm81S9JJ8Of13vrfFzJye
-W9U6OzTxuu5qsyKPiGulVOPBGMO8SrCs0XedHbiUtvnTK69CfE0bytnyTmLDVamL
-IxNmUS+bhE8U4qkJjeGMN5a8PyvMXA==
-=QHva
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/LqsACgkQAVBC80lX
+0Gyipwf/TG3CER5ZZi0mDfQLl3i/+fCIAntcXgf8Uk72mMSNDPQMU++y92Idx3P6
+SwC3yO9lR2hFzIBIMlJZFCktwStVklV4grNf6K2vD2sVuWoSkNYJDR/Ve0eJXp3C
+0vxeefnrtnp4VGE6Lr/eLe0c9FoS+4LtNr3mwZH3Bk9Z83fzYfMhmqMysjAD1XRI
+lfthvUpjWPWoB9ziLBCWr3l+XckgmLXxs9OE0NfaNgAojYQwuBokBOo1zbEnb9hh
+6c51S9/9VxWUNGYCOLHdjt769ZBKmPnmJxexkBrAXHjS2qoMhab4XgkhsbeUkkwe
+JNE3a30qUsJ/Z8/njo1gCIWmkrxE4g==
+=SuZT
 -----END PGP SIGNATURE-----
 
---Sig_/jfim9.VH5cOFoRzquBp6qyc--
+--Sig_/5umunqededOQoV7r75zUz7/--
