@@ -2,93 +2,213 @@ Return-Path: <SRS0=lqV3=UK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84930C31E44
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 21:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB70C31E44
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 22:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5AC20872
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 21:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="B/qRcf5e"
+	by mail.kernel.org (Postfix) with ESMTP id 3CB98205ED
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 22:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560290798;
+	bh=UcgG0bobyGwq6cj0xyTSXmfpeJH4IfZPxyl5jp5rFVs=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=EtAHOjmp2AlNusrcNw9kPKu+pgyS/4+iYH0O1+2p5ih58zENtd4irC0gVn5nwcKfv
+	 V/l/m12iYpdGubwVhWGh9GKRDzeSkOvsZUF63y/2Cfi00a5UyIgVzoHGya6znUYEz+
+	 xHq5KZbJSH+jmaPDSEnwBhhwN9mjNfOUHzrQH7+c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389885AbfFKVnw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 17:43:52 -0400
-Received: from ozlabs.org ([203.11.71.1]:50351 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387764AbfFKVnw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 11 Jun 2019 17:43:52 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Nk5x1XxRz9s6w;
-        Wed, 12 Jun 2019 07:43:48 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560289430;
-        bh=vR5G2PkEdx54l7qTKjqKlDqGmK5wzFj5OnrDN/P1DAA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=B/qRcf5ePowZm6hnvOO6GZQmDCqkDFYRZqxDOoZNyr2Q1Bsxjd80R0M3vGbSHm4Qr
-         SNOy/oVpbRg3nMY48nHJHSJAF0aiM1MF7OFriig5yz/RGGQ5S0Bly8WJ+Z3awZs8Y7
-         xTbR9T/eBhZ5Qj2PMgsu0Lu/OJ2mBZkBbtWzvGYytUVH4M9SkDqscs1voLzdSWtnXr
-         jyU67ECy8A0ZkN76Mc0V85D6DiQMryPS2tA6D97NTh2O/Ug28mL8pi2O9ANqvUa/hZ
-         luhvAilxvQvdPPl45tL+S7mrVFNHPafWwjAqu4tjCP0pSrqrjvVLpHzqanaI4okCpi
-         8CrRYQWLJO9NA==
-Date:   Wed, 12 Jun 2019 07:43:48 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: linux-next: Fixes tag needs some work in the drivers-x86 tree
-Message-ID: <20190612074348.664fe003@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XREcIEPxcpzFuWZa3Rjbk+J"; protocol="application/pgp-signature"
+        id S2436729AbfFKWGh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 18:06:37 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49284 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436708AbfFKWGh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Jun 2019 18:06:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:Subject:To:From:
+        Sender:Reply-To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=X8nEkrWtThl157t9x45ADlLnwPPN8mitqqH5AwEjcgc=; b=QWbOAzA3o5nZ8t9yQzcs0Yu/i
+        dTe+dGrbcyiXEW6X6g5+r75xG31K98dkxrnKYkyIAxyjuWy8tltFVZPXW5ptB8VN4r8xif0jcInDI
+        +u/ftKnN0iyErwWmLEHaaVcj24fO70kz3I4dDgFrSiBpXJcF7XyKzTd8TLZSOBNA4qJ6I=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=optimist)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1haouZ-0000lQ-Co; Tue, 11 Jun 2019 22:06:35 +0000
+Received: from broonie by optimist with local (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1haouY-00070c-H3; Tue, 11 Jun 2019 23:06:34 +0100
+From:   Build bot for Mark Brown <broonie@kernel.org>
+To:     kernel-build-reports@lists.linaro.org,
+        linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+Subject: pending-fixes build: 0 failures 17 warnings (v5.2-rc4-257-g875653b27b69)
+Message-Id: <E1haouY-00070c-H3@optimist>
+Date:   Tue, 11 Jun 2019 23:06:34 +0100
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/XREcIEPxcpzFuWZa3Rjbk+J
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Tree/Branch: pending-fixes
+Git describe: v5.2-rc4-257-g875653b27b69
+Commit: 875653b27b Merge remote-tracking branch 'drm-misc-fixes/for-linux-next-fixes'
 
-Hi all,
+Build Time: 139 min 42 sec
 
-In commit
+Passed:   11 / 11   (100.00 %)
+Failed:    0 / 11   (  0.00 %)
 
-  097d45dd45d8 ("Platform: OLPC: Fix olpc_xo175_ec_cmd() return value")
+Errors: 0
+Warnings: 17
+Section Mismatches: 0
 
-Fixes tag
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     14 warnings    0 mismatches  : arm64-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v5_defconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+     26 warnings    0 mismatches  : arm-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v4t_defconfig
+     11 warnings    0 mismatches  : x86_64-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-  Fixes: commit 0c3d931b3ab9 ("Platform: OLPC: Add XO-1.75 EC driver")
+-------------------------------------------------------------------------------
 
-has these problem(s):
+Warnings Summary: 17
+	 30 warning: same module names found:
+	  8 ../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	  5 ../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  4 ../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	  3 ../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	  3 ../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	  2 ../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	  2 ../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	  1 ../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	  1 ../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	  1 ../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
+	  1 ../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
+	  1 ../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
 
-  - leading word 'commit' unexpected
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/XREcIEPxcpzFuWZa3Rjbk+J
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+===============================================================================
+Detailed per-defconfig build reports below:
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0AIJQACgkQAVBC80lX
-0Gw7RQf/USof1eFTJz4WtQd8DME5BRG4w2g2ZNWjHqAqT4d3n5PIet5uRpXXTHGw
-wbBgaWj40OwvaV4k+t1FMJ6t9VxNouLqiH9zQMfYM1ZoKmY2LCTAj7HCWGxF/Jd+
-K0fZDAE5NzWc9538BlnGfrEU7vBcw2FC7VKat1RK8YiWKlCKShwuEXy//hcDympU
-Q2gXyxDZ75ZZdsNL5KVZ+CqXvIAZs4YR2QXREu2Bi8jOY+Hyah1cuqAXGoGmSPDe
-7Hijqo8Owr5V0kFAgD2iYuTe/Y/773402sbTRbrHmMjLsWYLaudNby8jPgCclIJk
-3+EWgtx7QbG8Qe4w3y2dDcfJ+AmCrg==
-=+EHm
------END PGP SIGNATURE-----
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
 
---Sig_/XREcIEPxcpzFuWZa3Rjbk+J--
+Warnings:
+	../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 26 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
+	../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+
+-------------------------------------------------------------------------------
+x86_64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
+
+Warnings:
+	../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+x86_64-defconfig
