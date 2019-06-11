@@ -2,98 +2,96 @@ Return-Path: <SRS0=lqV3=UK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489DEC4321A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 10:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C723C43218
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 10:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB2E2086A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 10:06:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TYyrZ/Rn"
+	by mail.kernel.org (Postfix) with ESMTP id 6800D212F5
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 10:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560247885;
+	bh=+ZDyPqWTovVVGCJsjzfmYX4FIQawCX/JqLFetsqmSfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TQwzrZLbDi4Q11xzDxPej41Zo3mPWL8yKKXj56NT08SfRccbIjmczOfFLmL4K9YuO
+	 muyWoAbzz8BVRCefwzvXQDHYP0IIK3tutP6YwWukqt0YtLavuNlG86tIn5dzYWtCjs
+	 k+V9OkDi+hkY5Rz/4VZGyn4/5aeDnXibVMN4lB+8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfFKKGB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 06:06:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:57065 "EHLO ozlabs.org"
+        id S2405178AbfFKKLY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 06:11:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728937AbfFKKGB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:06:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S2404572AbfFKKLY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:11:24 -0400
+Received: from localhost (unknown [171.76.113.157])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NQcj5fd0z9sDX;
-        Tue, 11 Jun 2019 20:05:57 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560247558;
-        bh=7U/XVQfmfn8ksgJsWS+ntJglSV9GfB0NOkUJ1PR2ASU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TYyrZ/RnmVdu8hnXhHmtS6Yw2EJ8C2Gsoiwha8KT+17ar9qtTPkN83ccTxdsTBDwo
-         EtRD00u1vRBtP+bkHD3EgbFx5XCbs+7Pvm7IQqzd+OP3XXKpli1MrkppVqhqepXaEZ
-         iLCkQ4rnaUG9y0w/26CrFiWedDmazHtMVlvy5cKOrbkbfWBII7uisz5I/eb7d3uXLx
-         tGnpB9zF5eI7+HxX1AW1sjIQRGTrIRWH0dQFP5GU+lrPQ3wDhE5eXt01U5OA3T3M85
-         z/LkQ6oDWnV4Y5MrrPaMpgaarb+XmDnbZSdjWTvYOuEPuVv85R5+qHLIpM4AombThv
-         JdWSjm8XmUf0g==
-Date:   Tue, 11 Jun 2019 20:05:56 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EEE82089E;
+        Tue, 11 Jun 2019 10:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560247884;
+        bh=+ZDyPqWTovVVGCJsjzfmYX4FIQawCX/JqLFetsqmSfg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sgXAMefrK5tfJhn0TOTRwbPA3aPeRGKpC8Os+Rlcj+vtaJfBtA8lKezFqTP0zXHUX
+         Ojr8Ehpv20U2ow20OElGsDZjlzZCcO16+7l8cyh9GMcNG5PK0X6dNgaNg/0oaZxqVi
+         ppDUpsAnIv+BySPEPbCZ8YttALi0guNheJRr9KuI=
+Date:   Tue, 11 Jun 2019 15:38:15 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>
-Subject: linux-next: Fixes tag needs some work in the bpf tree
-Message-ID: <20190611200556.4a09514d@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: linux-next: manual merge of the slave-dma tree with Linus' tree
+Message-ID: <20190611100815.GX9160@vkoul-mobl.Dlink>
+References: <20190611163246.6f90fba6@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7xsX+2aY0ikNJvTtDD9/vld"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611163246.6f90fba6@canb.auug.org.au>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/7xsX+2aY0ikNJvTtDD9/vld
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11-06-19, 16:32, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the slave-dma tree got a conflict in:
+> 
+>   include/linux/sudmac.h
+> 
+> between commit:
+> 
+>   49833cbeafa4 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - rule 311")
+> 
+> from Linus' tree and commit:
+> 
+>   9a0f780958bb ("dmaengine: sudmac: remove unused driver")
+> 
+> from the slave-dma tree.
+> 
+> I fixed it up (I removed the file) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
 
-Hi all,
+Thanks Stephen,
 
-In commit
+I will keep this in mind before I send this to Linus
 
-  605465dd0c27 ("bpf: lpm_trie: check left child of last leftmost node for =
-NULL")
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Fixes tag
 
-  Fixes: b471f2f1de8 ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE=
-")
 
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7xsX+2aY0ikNJvTtDD9/vld
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/fQQACgkQAVBC80lX
-0Gw7Wgf+NtaIzPwZpz/rKY47PD9aCIfaKCLRcxWh1n6vDHtaVi9uVFDOI3GTkO0z
-vffYFAo5iVot9EEt0kA4sgPs2s6dMXzD2BHpTuxeHb5hpX8twkOoFqTOSfjoINvz
-fCRzX6EgJ2z3ympwYDvDZ+PdEj5sAYOg7xF2su4qCAbTM9CBmTgMLIrlnvaURPUF
-ayTypYQ3OMzm4A4oop9McAnn+ku7/xIUfyLrMfOgY+sXZGCE/hQrEZvjAvVYX/1E
-hluUVGmdHmba/fCzsPIUorFrGVCEbI8nKOpo3axeBdhnaWTlDTncYmnu7TqOPq6e
-D/guwtPY9vuzOfIFuJsxEofV1N36Ng==
-=oDUu
------END PGP SIGNATURE-----
-
---Sig_/7xsX+2aY0ikNJvTtDD9/vld--
+-- 
+~Vinod
