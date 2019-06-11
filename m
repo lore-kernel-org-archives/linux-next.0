@@ -4,123 +4,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE28C4321A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 05:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A407C4321A
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 06:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A4D20820
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 05:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 220652086D
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 06:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LOWBtZ0p"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Btz5wTJR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391074AbfFKFYH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 01:24:07 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:38921 "EHLO ozlabs.org"
+        id S2391075AbfFKGcw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 02:32:52 -0400
+Received: from ozlabs.org ([203.11.71.1]:50097 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391044AbfFKFYH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:24:07 -0400
+        id S2391045AbfFKGcw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Jun 2019 02:32:52 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NJMS5CLLz9s6w;
-        Tue, 11 Jun 2019 15:24:04 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NKtm5z4Yz9s3l;
+        Tue, 11 Jun 2019 16:32:48 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560230644;
-        bh=QJPDp6hkCDquK5eksgMhI6xqZ1XaNY2awH4ssjTacHA=;
+        s=201702; t=1560234769;
+        bh=XCaHli6O4cB8u4MOhcBBw2PeyV9cd8jTGqbDtKaB1ak=;
         h=Date:From:To:Cc:Subject:From;
-        b=LOWBtZ0pX4QsMm1RFXu46/TTlTcvvmiIcYfrQiGC6wfDMSjcQZQ3bWXfHajFp4i6W
-         nEJ6FAx5NZtlY2j45/SrHKftaDM/HUS3GlUF+8JILHmztQUlQ4VVKbIzUQtVE6tNRK
-         wxKTRij/W9WykefNDuaEdcArnuxwGdCE5F350s6A6xFSLpR/e0RDp/DhzEhsTOaVk5
-         xffzoTy/eYKMTOOppocDQqnFH50oFtEFI2Sb8sVfQ8qTR8wstI/uT5UgZtA2MC66J7
-         +3nBS+luIouKg9+UETB8/R1qugOmLrQvF0a0674w4yZW8P5tLetRrKRqUmOf28OPfA
-         SPJvQyALDBSbw==
-Date:   Tue, 11 Jun 2019 15:24:02 +1000
+        b=Btz5wTJRuEQTYBCimYrOlfI7QI2D5j2Tf+4k5R1wcmJyinP4xlDkv6sp+HocbWyRN
+         SUjHwLTQLMGexDfLE7ds3Ku1e2CVyhHzw4GHFCFCre0yKEv0xZL9jea3RGjrzgt+bH
+         GwJcHUql6coru5wJTy4BGJOXsKodZaJM3ssxZFP3AWFEOmS3M/5iv4cdUrsa+QWT8V
+         3RJLfgpv9tLF9VKY2CqH9u9y9hVcje1BTbxaKiZGr1HiCIdLTQiRWquEDwZEZE2FmU
+         P3A9Jw66mX7I9CvjuTVjwX5cFYqrnG7QsdwC1AVDSLD7/02z/8WCJ1yO06WuJLtr8n
+         0hgSUlaZDU4sQ==
+Date:   Tue, 11 Jun 2019 16:32:46 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: linux-next: manual merge of the clockevents tree with Linus' tree
-Message-ID: <20190611152402.59f9cc0b@canb.auug.org.au>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
+Message-ID: <20190611163246.6f90fba6@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/A/PEMEyF/YNGD3rvZWCai7K"; protocol="application/pgp-signature"
+ boundary="Sig_/zT+_=bmZ96yjIPQLyX.Zbae"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/A/PEMEyF/YNGD3rvZWCai7K
+--Sig_/zT+_=bmZ96yjIPQLyX.Zbae
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the clockevents tree got a conflict in:
+Today's linux-next merge of the slave-dma tree got a conflict in:
 
-  drivers/clocksource/timer-tegra.c
+  include/linux/sudmac.h
 
 between commit:
 
-  9c92ab619141 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 282")
+  49833cbeafa4 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 311")
 
 from Linus' tree and commit:
 
-  75e9f7c6dca8 ("clocksource/drivers/tegra: Use SPDX identifier")
+  9a0f780958bb ("dmaengine: sudmac: remove unused driver")
 
-from the clockevents tree.
+from the slave-dma tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/clocksource/timer-tegra.c
-index 1e7ece279730,9406855781ff..000000000000
---- a/drivers/clocksource/timer-tegra.c
-+++ b/drivers/clocksource/timer-tegra.c
-@@@ -1,11 -1,11 +1,11 @@@
- -// SPDX-License-Identifier: GPL-2.0
- +// SPDX-License-Identifier: GPL-2.0-only
-  /*
-   * Copyright (C) 2010 Google, Inc.
--  *
--  * Author:
--  *	Colin Cross <ccross@google.com>
-+  * Author: Colin Cross <ccross@google.com>
-   */
- =20
-+ #define pr_fmt(fmt)	"tegra-timer: " fmt
-+=20
-  #include <linux/clk.h>
-  #include <linux/clockchips.h>
-  #include <linux/cpu.h>
-
---Sig_/A/PEMEyF/YNGD3rvZWCai7K
+--Sig_/zT+_=bmZ96yjIPQLyX.Zbae
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/OvIACgkQAVBC80lX
-0GwOhAf/TAU1T095cbsc5y2wFoB9A5ttQhV/LgY5Y/271/OoB/5yxBahB0CfF4TY
-1OEF7ngf5yjoHjKxwWrAGXuCvJZUfWlg6rzmGOA88aSvG2jWjgvF2dNtkL+SiP/y
-PzB+oGYzSYz9I8UaKJXRMw5HuqsbY1M9eNk8Eyiz3uCGJOPimyJBJRkK8O3hGcDd
-wXmVh6mMRQv5BitMmbNzIVc++dcQRCmUSUvISLRxSgGNCAdUD7hXocyYEpXBvpIg
-A3RfsnAvC9lSikKNznVjVI/DJD5erIlWrKBxgTi9MTycT1gW+CyCo2ezwy7ohtLC
-n3BCk+o98WIBXSQnPOV0FKNCbhv1Ww==
-=VtU5
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/Sw4ACgkQAVBC80lX
+0GwCigf/dnsq+HSsjyWyGUotVxgg18xFqgiCu8SOZWG2k7dTlpfCqTcjaNcy/wq/
+opfkp0dd9nWIRYcCbfcQ/JYXecarH03ztDEyR1gcYG3dF7tMvwSDqnhVD1K0TtNs
+HWmqgGNH+VM4zkK6eoFQGt7Pm8vqF3JRLCOC3pAjfI2fRwED2xm5lztdUBFn7pn+
+O7XnhO4zdNmOiA8tn470Bzf9SNI4KrnmhBA5o2wGE23sXnX4DcOycXshXUHKIBrs
+6zUTTIFv/M1X2+cKFFQmB+2aUEaqVDiitp8p6hOlPs/nz6vTux9jz+UtIzZBufFr
+Mzct5XeYM8a8Uff71XW3iRuaQCTQaw==
+=i+gD
 -----END PGP SIGNATURE-----
 
---Sig_/A/PEMEyF/YNGD3rvZWCai7K--
+--Sig_/zT+_=bmZ96yjIPQLyX.Zbae--
