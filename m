@@ -2,98 +2,87 @@ Return-Path: <SRS0=lqV3=UK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B39BC4321A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 18:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4921C06508
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 19:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71DB21744
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 18:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF4B22183E
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 19:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwLWaZmu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5Olom/a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392061AbfFKSsG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 14:48:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52204 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392060AbfFKSsG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Jun 2019 14:48:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so4041832wma.1;
-        Tue, 11 Jun 2019 11:48:04 -0700 (PDT)
+        id S2407440AbfFKTG1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 15:06:27 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40912 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406995AbfFKTG1 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Jun 2019 15:06:27 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a93so5515000pla.7;
+        Tue, 11 Jun 2019 12:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=DxPgzH7JmzfidJ4UnyHoyfbbx6kdh98v9wymlp4AUqk=;
-        b=LwLWaZmu5HuVedTxkD7GZN90TxdMTTacKvHGGUODRDIYPtxtbKlgmuQZxK1XEblKBH
-         2H7mfrgZlAt/FztR69wqmzTv15Qc8lxM1R+UKrkz+u/lHD+G6oxjZuLFnsOZxWl2otZL
-         ZnpA0pIEJLhKsUW+pXxJC2u3ihVC0W7AZI+3VjNlwI7XAK0lLhY7l7jYAIKqwwQRpTGJ
-         vAnRkAJcHcvUhC7jFBXMQsHJQn1D6zlcK40d06mxPIKOF4HAHWVTyUh2DVvrfhJx/Um+
-         39zFdlGQ1MSJNjVt7+qR1efrKgwEmtoOEwKkJz5U+0JAanuIiqtEknxwbXuqm646Kgfk
-         O6QQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3JZoAuRN+dQJFvqjiWMObWkX3snfaRON9kU780Nfc80=;
+        b=N5Olom/a8uFFm4PubhWxMt99kaR7gf+b3J5IcNw7IK18tC0pMmxPBJ2/52lI6I6IG6
+         0zuoU659YQGv6hsev5yyr7NHxfvFHkP1zhdnun8I5XHM2gLqzjxAA+3y7rfe06Tf7DAm
+         UGZDsi/V2OEPRukCESO+aJTZ7CncoHhhDHkcgrdtFlb+8qdRRSJTfhER02bE2GgQBCDM
+         A4bdKa05HeI3zvldIKzxLEUF+52zWlqw30iSnejKTt9BtWw5EgC6uBisO2wmUKrb4ldT
+         /J4RpkVeruE+Tezflzwbxl24Q9fNA910w4Ghs5uDaAqBGAgRGplWKp+8xKZ/0z9lyveP
+         br+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DxPgzH7JmzfidJ4UnyHoyfbbx6kdh98v9wymlp4AUqk=;
-        b=tHRRBCiX1PbHK3hzb/pXAuzzYVP1ZXA22RRHh4sPACMEat6Q/br2McCliqZ1+qtYTS
-         43OkpHRx91r2spv0oxbeV2RyPxf4jZxTCo/KfvuCPFXXMEFJldZnrMF7hwjDdcdXcQ8c
-         CcfLj+9knlB72EPUaL2mPED+N4e5djk0EmbfULxd0SjN3LRFniEv+uLtK4imYEpL4xUc
-         Rv91BzlStrxzlfbsgkKCcAXKWOQV1mWinqv9oWSB+jJ2EDRG6tkGtdgzGwIs9wb1xkTN
-         Xs7AWq6AWItrL6G7x9gA05pyPQ/kj8qDKR8JrQeyGLI8xnLWXhO3C6eEWHqQ+QMX6hMt
-         Gh2w==
-X-Gm-Message-State: APjAAAWm87zuCDeCx9VtVFz5LggsS0nkwc9egYRlL4SMgpWPg75j9J2y
-        wf4o+mu3X7iFlgD1sEWAnHo=
-X-Google-Smtp-Source: APXvYqwbyObToAW8Km9r5qKriKBBaEXn+rcKOuoHpcF2P3H1s7GPnB74jTzka0u6DteFTPMPMrvSXw==
-X-Received: by 2002:a7b:cd8e:: with SMTP id y14mr18811496wmj.155.1560278883705;
-        Tue, 11 Jun 2019 11:48:03 -0700 (PDT)
-Received: from localhost.localdomain ([188.26.252.192])
-        by smtp.gmail.com with ESMTPSA id x83sm3252909wmb.42.2019.06.11.11.48.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 11:48:03 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
-        rdunlap@infradead.org, sfr@canb.auug.org.au, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        Vladimir Oltean <olteanv@gmail.com>
-Subject: [PATCH net-next] net: dsa: tag_sja1105: Select CONFIG_PACKING
-Date:   Tue, 11 Jun 2019 21:47:45 +0300
-Message-Id: <20190611184745.6104-1-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3JZoAuRN+dQJFvqjiWMObWkX3snfaRON9kU780Nfc80=;
+        b=Q19IR9UOY9GMco5LB3SSkkOmv0PtGeGVVDerGtsJKysT08+cR2lWyrH+/DzO5bY6Og
+         +OcTJhr5A3NDEP2qGH0pmTBX4/15ktWYh9m2AXkw7SumbmYxOn5F7L2XmavZDCOLwnKb
+         WmUbj99UMGhob+14gDRlXhyWQyhJSYwFOmO+UsrvxG3dSDV6l+8gBj7XTwvrhweH88ym
+         B4mcGwE3VfvENDRK6gklO7SQoL9c92pBF7cn/2OLFj8aXOikDp1p/rTwlhSHVKARRDp/
+         4LV4LP8tG28D6taUXRV20CkTNPPkoHzcNx24gldo51lh69N1AxQRMI9bNo5L6fsPXQOT
+         E1kQ==
+X-Gm-Message-State: APjAAAXou6XLD0fP0PwHs92uq/YAvPmQOWTw146UVYiKix2x63gkFeWe
+        ZnAY5QW5bDW/icdmpLHjagkhQvcPY69lDgRRuSk=
+X-Google-Smtp-Source: APXvYqzvTWDm8W9aZG/57fKfGCOTuPY9ZUxtdsJvoLUWPQO6Pz+3gESDxSCGbqD7DNjiVoKPSI/3+aHwEGQdVyYRmGY=
+X-Received: by 2002:a17:902:934a:: with SMTP id g10mr66852970plp.18.1560279986322;
+ Tue, 11 Jun 2019 12:06:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190508173403.6088d0db@canb.auug.org.au> <fa0e68b2-b839-b187-150c-13391c197b99@infradead.org>
+ <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com> <CACK8Z6F2v8nyUYcnOrkp81WfK2D2NEmK=pcWybn1annrtqRwew@mail.gmail.com>
+In-Reply-To: <CACK8Z6F2v8nyUYcnOrkp81WfK2D2NEmK=pcWybn1annrtqRwew@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 11 Jun 2019 22:06:15 +0300
+Message-ID: <CAHp75Ver=TNKxh8rdJs1xQYSLNsRLfEoFtcGG6hViug=cF6s_g@mail.gmail.com>
+Subject: Re: linux-next: Tree for May 8 (drivers/platform/x86/intel_pmc_core_plat_drv.c)
+To:     Rajat Jain <rajatja@google.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-The packing facility is needed to decode Ethernet meta frames containing
-source port and RX timestamping information.
+On Thu, May 9, 2019 at 2:15 AM Rajat Jain <rajatja@google.com> wrote:
 
-The DSA driver selects CONFIG_PACKING, but the tagger did not, and since
-taggers can be now compiled as modules independently from the drivers
-themselves, this is an issue now, as CONFIG_PACKING is disabled by
-default on all architectures.
+> OK, NP. Just to be sure I understand,
+>
+> 1) Please let me know if I should send in a fix (it would be
+> #include/linux/module.h and also add MODULE_LICENSE() I believe)?
+> 2) Would this be lined up for next version though?
 
-Fixes: e53e18a6fe4d ("net: dsa: sja1105: Receive and decode meta frames")
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
----
- net/dsa/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Resend a complete series based on the latest stuff we have in our
+for-next branch.
 
-diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
-index d449f78c1bd0..6e942dda1bcd 100644
---- a/net/dsa/Kconfig
-+++ b/net/dsa/Kconfig
-@@ -106,6 +106,7 @@ config NET_DSA_TAG_LAN9303
- config NET_DSA_TAG_SJA1105
- 	tristate "Tag driver for NXP SJA1105 switches"
- 	select NET_DSA_TAG_8021Q
-+	select PACKING
- 	help
- 	  Say Y or M if you want to enable support for tagging frames with the
- 	  NXP SJA1105 switch family. Both the native tagging protocol (which
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
