@@ -4,100 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5342BC43218
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 04:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE28C4321A
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 05:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4F22086D
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 04:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A4D20820
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 05:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VlJzJMTC"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LOWBtZ0p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390387AbfFKEw7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 00:52:59 -0400
-Received: from ozlabs.org ([203.11.71.1]:52693 "EHLO ozlabs.org"
+        id S2391074AbfFKFYH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 01:24:07 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:38921 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390229AbfFKEw7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 11 Jun 2019 00:52:59 -0400
+        id S2391044AbfFKFYH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Jun 2019 01:24:07 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NHgX4x3Zz9s4Y;
-        Tue, 11 Jun 2019 14:52:56 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NJMS5CLLz9s6w;
+        Tue, 11 Jun 2019 15:24:04 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560228777;
-        bh=NxT9Po6P2dh2KWTTjv4NqvZafUGmR2kz7Eh+QY6FbBw=;
+        s=201702; t=1560230644;
+        bh=QJPDp6hkCDquK5eksgMhI6xqZ1XaNY2awH4ssjTacHA=;
         h=Date:From:To:Cc:Subject:From;
-        b=VlJzJMTCb7+aqgBP+MEO4f4M6uvIjxlThlBQ5S7a8JMIeTHmDE4PqkX8qmKw1deTM
-         JDka1R02UVIk9aqaF3DTVXeG7q05su3WqphFlBKyQ9q7tOfeEVy3tGckwGH34duKMX
-         KI5Lhlap+qvYiOlOI4iKmB42XmvDvToneZ5reGOVfJR0uH5V7sS8qJ4KVJD1hMFTUP
-         PFurD+kRKWc+QKE1Q4vLv40mByC7cH4h3tVqBBCxU7XBqmpU+pr2f/kN6rkwF8GSIz
-         mgYJmjmDiBsW30wKWpSP1eMg4Dk9gxNpIHIFQ1uVRk6ftvTfZ4RlUoDfSNB0zUdk/M
-         0s+qzPj4OZiLQ==
-Date:   Tue, 11 Jun 2019 14:52:55 +1000
+        b=LOWBtZ0pX4QsMm1RFXu46/TTlTcvvmiIcYfrQiGC6wfDMSjcQZQ3bWXfHajFp4i6W
+         nEJ6FAx5NZtlY2j45/SrHKftaDM/HUS3GlUF+8JILHmztQUlQ4VVKbIzUQtVE6tNRK
+         wxKTRij/W9WykefNDuaEdcArnuxwGdCE5F350s6A6xFSLpR/e0RDp/DhzEhsTOaVk5
+         xffzoTy/eYKMTOOppocDQqnFH50oFtEFI2Sb8sVfQ8qTR8wstI/uT5UgZtA2MC66J7
+         +3nBS+luIouKg9+UETB8/R1qugOmLrQvF0a0674w4yZW8P5tLetRrKRqUmOf28OPfA
+         SPJvQyALDBSbw==
+Date:   Tue, 11 Jun 2019 15:24:02 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>
-Subject: linux-next: build warning after merge of the tpmdd tree
-Message-ID: <20190611145255.68682629@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: linux-next: manual merge of the clockevents tree with Linus' tree
+Message-ID: <20190611152402.59f9cc0b@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Fo4sukQFr7Es.fHMTnZiiX="; protocol="application/pgp-signature"
+ boundary="Sig_/A/PEMEyF/YNGD3rvZWCai7K"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Fo4sukQFr7Es.fHMTnZiiX=
+--Sig_/A/PEMEyF/YNGD3rvZWCai7K
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tpmdd tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Today's linux-next merge of the clockevents tree got a conflict in:
 
-drivers/firmware/efi/tpm.c: In function 'efi_tpm_eventlog_init':
-drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_calc=
-_event_log_size' makes pointer from integer without a cast [-Wint-conversio=
-n]
-  tbl_size =3D tpm2_calc_event_log_size(efi.tpm_final_log
-                                      ~~~~~~~~~~~~~~~~~
-          + sizeof(final_tbl->version)
-          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          + sizeof(final_tbl->nr_events),
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/firmware/efi/tpm.c:19:43: note: expected 'void *' but argument is o=
-f type 'long unsigned int'
- static int tpm2_calc_event_log_size(void *data, int count, void *size_info)
-                                     ~~~~~~^~~~
+  drivers/clocksource/timer-tegra.c
 
-Introduced by commit
+between commit:
 
-  a537b15c54a3 ("tpm: Reserve the TPM final events table")
+  9c92ab619141 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 282")
+
+from Linus' tree and commit:
+
+  75e9f7c6dca8 ("clocksource/drivers/tegra: Use SPDX identifier")
+
+from the clockevents tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Fo4sukQFr7Es.fHMTnZiiX=
+diff --cc drivers/clocksource/timer-tegra.c
+index 1e7ece279730,9406855781ff..000000000000
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@@ -1,11 -1,11 +1,11 @@@
+ -// SPDX-License-Identifier: GPL-2.0
+ +// SPDX-License-Identifier: GPL-2.0-only
+  /*
+   * Copyright (C) 2010 Google, Inc.
+-  *
+-  * Author:
+-  *	Colin Cross <ccross@google.com>
++  * Author: Colin Cross <ccross@google.com>
+   */
+ =20
++ #define pr_fmt(fmt)	"tegra-timer: " fmt
++=20
+  #include <linux/clk.h>
+  #include <linux/clockchips.h>
+  #include <linux/cpu.h>
+
+--Sig_/A/PEMEyF/YNGD3rvZWCai7K
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/M6cACgkQAVBC80lX
-0Gy7oAgAgHOWIaqHWtNFZSc9uxqpAoo1ih+uRWdRRGYVfCPRdh+JaBHJU2Rkf7Pu
-s/JD7G0l9Ca4hQEnowfkcF1fkcTEMV17NbSDvpvBzlSxH/Q14vrBlY0LiwRRP66p
-1sqW1Z7wEcSPoqyMaY1fSgVS2yqAVF4zAaNSg7ytxxErOvpU6n7FzSDcS4dV5LIc
-oXwbshV0nVGIq1peFAiuWYxvaBdn5ogaWq4iJXMWXO4s4lhAdSEqAkj70wETaIxI
-hd6W7Psp0EuXqoX3QwKr/y2UkKST13uYe4oj/eMTgsEklLxUu2pAGxxsklfA+9y+
-qLpNMgqrWKMZKWlBP49Aw3UFXdnvHg==
-=ofY6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/OvIACgkQAVBC80lX
+0GwOhAf/TAU1T095cbsc5y2wFoB9A5ttQhV/LgY5Y/271/OoB/5yxBahB0CfF4TY
+1OEF7ngf5yjoHjKxwWrAGXuCvJZUfWlg6rzmGOA88aSvG2jWjgvF2dNtkL+SiP/y
+PzB+oGYzSYz9I8UaKJXRMw5HuqsbY1M9eNk8Eyiz3uCGJOPimyJBJRkK8O3hGcDd
+wXmVh6mMRQv5BitMmbNzIVc++dcQRCmUSUvISLRxSgGNCAdUD7hXocyYEpXBvpIg
+A3RfsnAvC9lSikKNznVjVI/DJD5erIlWrKBxgTi9MTycT1gW+CyCo2ezwy7ohtLC
+n3BCk+o98WIBXSQnPOV0FKNCbhv1Ww==
+=VtU5
 -----END PGP SIGNATURE-----
 
---Sig_/Fo4sukQFr7Es.fHMTnZiiX=--
+--Sig_/A/PEMEyF/YNGD3rvZWCai7K--
