@@ -6,107 +6,100 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD91C4321A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 00:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7659C43218
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 00:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F5F32086A
-	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 00:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88238206BA
+	for <linux-next@archiver.kernel.org>; Tue, 11 Jun 2019 00:37:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hse6Mnlk"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hzZ44tv8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389725AbfFKAZg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 10 Jun 2019 20:25:36 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:53843 "EHLO ozlabs.org"
+        id S1728651AbfFKAhy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 10 Jun 2019 20:37:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:47859 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389362AbfFKAZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Jun 2019 20:25:36 -0400
+        id S1728645AbfFKAhx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 10 Jun 2019 20:37:53 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45N9l05HPNz9s4V;
-        Tue, 11 Jun 2019 10:25:32 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NB1B5yz4z9s6w;
+        Tue, 11 Jun 2019 10:37:50 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560212734;
-        bh=+pjp9tVwLHzqbgYi/uUfHPvnEWCcuFtRtQJA6NxxeN8=;
+        s=201702; t=1560213471;
+        bh=LApRJ/z+bE9As444VerdrsONXsMGcN0MCgEVQHgZHgA=;
         h=Date:From:To:Cc:Subject:From;
-        b=hse6MnlkUZ2KuXzFjV5185JJSPaPhPPaAgEa+BCb+a0KYtOWxrLyInOZFDDxJamvE
-         P7snWhty1w9s7cZICncoKbbrZ/JwxOtUKdgIMKoQHIfTtFbt6EKBODU3qDdqbDLaN2
-         zJP7PpALgSUEsNhOFAJHTdr2LFZiS7/OGdjhz3w6hZEVtwD+tjUxB1uV2sYRnPNGu1
-         QJ3dN40a9UKRZ8+sRUYe1KlN7r965VXxG/zYydFAPqcOmIk+fzp97m9ILreif5KBhP
-         5XMxYl4fyHHvV6nXYroGstu2JibYI+SOYK/7T5s49iw3djcpeAS7l5WowWZ4LuSQmH
-         wjWzPuju9tAhQ==
-Date:   Tue, 11 Jun 2019 10:25:28 +1000
+        b=hzZ44tv8l7xbSx+urUhZgOTIXtzGMwdZW9ymKYNm73ug1afLKnj9E3IipGkNOOs9o
+         CpUpwhjD8C32rJSjc/da0SOn0M/RjkzF4R1J1dwYTtfhXga1gYoxc4coaeBxmmhIDi
+         qFKG6tQJLeBQRHYvnkb0/XjfVuw70yz8jy+Hp0eUwVs1PVVc2VJYfC1El5PJm1a14O
+         gc2GU4CXKwhBMRDUdek/T3ZGeXyJXaSIDPTl4ohx903QIE23yoUuYLbX1qC0EMC6cN
+         asfHfNw03p6snqT64GbHjFxrvjNu3RXq19OfbgkmS8wJnYBeQNkXKfUcU4URMBSMCb
+         i82jKz1SoUaFA==
+Date:   Tue, 11 Jun 2019 10:37:49 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Wolfram Sang <wsa@the-dreams.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ruslan Babayev <ruslan@babayev.com>,
-        Andrew de Quincey <adq_dvb@lidskialf.net>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: linux-next: build warning after merge of the i2c tree
-Message-ID: <20190611102528.44ad5783@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fabio Estevam <festevam@gmail.com>
+Subject: linux-next: manual merge of the fbdev tree with Linus' tree
+Message-ID: <20190611103749.01b1f922@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rcpwq3iNIji=dyHbg3r+3Dg"; protocol="application/pgp-signature"
+ boundary="Sig_/Z4fE.w_vLjwIZ6T2Vb52IiE"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/rcpwq3iNIji=dyHbg3r+3Dg
+--Sig_/Z4fE.w_vLjwIZ6T2Vb52IiE
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+Hi all,
 
-After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+Today's linux-next merge of the fbdev tree got a conflict in:
 
-drivers/media/dvb-frontends/tua6100.c: In function 'tua6100_set_params':
-drivers/media/dvb-frontends/tua6100.c:71: warning: "_P" redefined
- #define _P 32
-=20
-In file included from include/acpi/platform/aclinux.h:54,
-                 from include/acpi/platform/acenv.h:152,
-                 from include/acpi/acpi.h:22,
-                 from include/linux/acpi.h:21,
-                 from include/linux/i2c.h:17,
-                 from drivers/media/dvb-frontends/tua6100.h:22,
-                 from drivers/media/dvb-frontends/tua6100.c:24:
-include/linux/ctype.h:14: note: this is the location of the previous defini=
-tion
- #define _P 0x10 /* punct */
+  drivers/video/fbdev/mxsfb.c
 
-Exposed by commit
+between commit:
 
-  5213d7efc8ec ("i2c: acpi: export i2c_acpi_find_adapter_by_handle")
+  c942fddf8793 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 157")
 
-Since that included <linux/acpi.h> from <linux/i2c.h>
+from Linus' tree and commit:
 
-Originally introduced by commit
+  f225f1393f03 ("video: fbdev: mxsfb: Remove driver")
 
-  00be2e7c6415 ("V4L/DVB (4606): Add driver for TUA6100")
+from the fbdev tree.
 
-The _P in <linux/ctype.h> has existed since before git.
+I fixed it up (I removed the file) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/rcpwq3iNIji=dyHbg3r+3Dg
+--Sig_/Z4fE.w_vLjwIZ6T2Vb52IiE
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz+9PgACgkQAVBC80lX
-0GxZxQf7BUg/1oUdaJ2UcGAlyvb+0s7mMxJApFnoLBA9sC/ao2awXCbuyGy8BA7k
-Ff4AhQoHu5q/FOaUquOBftuRZ0JZVbhw6dVOY5ulmUXnUcdlNFFroKUfVD4UU3g1
-F8U9xYGeQ4ewGMzPsrMjPL5e9CAg7J0pfY7V7f/IjF48aJ/EFi4uA2rz4sCc2aoG
-Co2QQXHbsJ8fG/MrL6cyTYIWg8trHh5if6fukFHJeSS73DOH/2nDn9e6MquzCnSG
-daYXFeiJNyJDKOudw32+zbSQU4qH38p1hPvhUIpoKGKAHILAD20DK4gjd9It+nw9
-6c2JsRZSBau1PNnWSrAUHAgGrzTREQ==
-=u22Y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz+990ACgkQAVBC80lX
+0Gyadgf9HgVSEMSbwgwG6QGeWoIEGU1Vjkav8JI4k4xrVlrgXoUce+w5rpXYPXGK
+m9AXJ3pgqJwcyYoUWTAHeUhb8yK8LVC6dK4UcHUFED0v/SAdEZMf2ydElqB+uUkA
+8G9id8tyNyYVkAbVeJ77NhaRMkcVpPp296x4XvMATQ6SFz0Uwc8QCL5McjWaFagJ
+y2G8kpCwi0dPiRj7sJ0RdcamcDaQh6hNNZVaI9kWB0Z6iZ+nHty0CfRJ58A7Tw4P
+umKx6heptIw6jOHqrDQoc7fs31FdfJRG2dbk2HcmreHF4BXZFKQ4ILJ5NWVKKrBg
+bOntckzVRJyac2haE2KVLwqVf3PCYg==
+=JfG9
 -----END PGP SIGNATURE-----
 
---Sig_/rcpwq3iNIji=dyHbg3r+3Dg--
+--Sig_/Z4fE.w_vLjwIZ6T2Vb52IiE--
