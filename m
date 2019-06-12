@@ -2,83 +2,73 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BE5C31E46
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 14:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3C9C31E48
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 14:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB8120866
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 14:15:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s0SjHp+6"
+	by mail.kernel.org (Postfix) with ESMTP id 07C4720866
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 14:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439492AbfFLOPj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 12 Jun 2019 10:15:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54316 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407745AbfFLOPj (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 10:15:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LeP6TwcOzXjrNratAgB9CTHzJxD6E/7uL3lYkwID07Q=; b=s0SjHp+66yKDoLfqPmmTR9A1x
-        xcTi4R2hpEoWWXwekhD5QflpARm+Oj8OycE3A0RX9F5OXU4F+rUF2YQJr+wCY3xpXZUKIBQUn5Cc3
-        5jQ/ySl8nFb1AaAQgSLxazJEoPy5Zyh6Yc4p84fmbTTcXaT9RtJcBFUw/F/OpU8oaN0dD/JqWgEmu
-        SXjUyP2xKcRyyNx6Uw5TKxSO99+0TFJSHQVUb8Sucrtj5Jd/sjblXbbcUwekshFd4F4N0bq/klJMn
-        czCGeNBi6g04ppweLr8qrgGe/gmzQWJ5uvUrbUK9Gdp7wDd+s35xv6RDK1BW2e9jbHipenRJNW7/P
-        a5hzYJ3TA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb42I-00012U-17; Wed, 12 Jun 2019 14:15:34 +0000
-Subject: Re: mmotm 2019-06-11-16-59 uploaded (ocfs2)
-To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20190611235956.4FZF6%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
-Date:   Wed, 12 Jun 2019 07:15:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2439856AbfFLO6q (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 12 Jun 2019 10:58:46 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48238 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436945AbfFLO6q (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 10:58:46 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hb4i1-0000HS-S9; Wed, 12 Jun 2019 16:58:41 +0200
+Received: from [178.199.41.31] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hb4i1-000P53-Ml; Wed, 12 Jun 2019 16:58:41 +0200
+Subject: Re: linux-next: Fixes tag needs some work in the bpf tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>
+References: <20190611200556.4a09514d@canb.auug.org.au>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <0918037f-bc79-394a-bdbc-88e70989436b@iogearbox.net>
+Date:   Wed, 12 Jun 2019 16:58:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190611235956.4FZF6%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190611200556.4a09514d@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25478/Wed Jun 12 10:14:54 2019)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
+On 06/11/2019 12:05 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
+> In commit
 > 
-> mmotm-readme.txt says
+>   605465dd0c27 ("bpf: lpm_trie: check left child of last leftmost node for NULL")
 > 
-> README for mm-of-the-moment:
+> Fixes tag
 > 
-> http://www.ozlabs.org/~akpm/mmotm/
+>   Fixes: b471f2f1de8 ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE")
 > 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
+> 
 
-
-on i386:
-
-ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
-dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
-
-
--- 
-~Randy
+Fyi, fixed this up yesterday in bpf tree, thanks.
