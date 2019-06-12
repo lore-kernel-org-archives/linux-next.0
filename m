@@ -2,135 +2,116 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC94DC31E44
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 02:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD5FC31E44
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 02:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B7B207E0
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 02:40:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="juH7/uOY"
+	by mail.kernel.org (Postfix) with ESMTP id BC95B20644
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 02:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408474AbfFLCkA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 22:40:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37130 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406202AbfFLCkA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Jun 2019 22:40:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yvy/gkrIuOAqW1aZMYOf3AGFTiXylWG+oKPZyKjIo4w=; b=juH7/uOYpZ8jrItAQ7kbO3cWF
-        t2fmGc+ksnS3y/SXiuvQqTb5NklWSxrFgXXQqRQJBtZuS6QRqiZHTPq9vlQg6cjARtYfByfwJlBLR
-        kcj2xXFRseqw4IJnSFvuZrvQmLORk+DHSNqOzXJi+mUdIWusr4FOXjaDoZWOrlGYciRlbNQglynUX
-        743DguT32rU6j1hOn0ql6TVad55xC17RcI54BJgfyEslIfGMPjDx/ZzpMt3HLV0RHad2QERo47mSG
-        4JabUXwBWYCbBwT3MM/PtaiQ/lEhqv0D9WNmZo7V2YXhrAbwVHXJWQqDz+JdNlJTOVJykIWAa/ZSi
-        4kx41DZbA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hatB9-0006Wi-L2; Wed, 12 Jun 2019 02:39:59 +0000
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Ahern <dsahern@gmail.com>,
+        id S2405430AbfFLCwo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 22:52:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60858 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404957AbfFLCwo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Jun 2019 22:52:44 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D1965307D849;
+        Wed, 12 Jun 2019 02:52:33 +0000 (UTC)
+Received: from treble (ovpn-120-37.rdu2.redhat.com [10.10.120.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AFB3D68B23;
+        Wed, 12 Jun 2019 02:52:30 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 21:52:27 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20190608125019.417-1-mcroce@redhat.com>
- <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
- <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
-Date:   Tue, 11 Jun 2019 19:39:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Peter Zijlstra <peterz@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>
+Subject: Re: linux-next 20190611: objtool warning
+Message-ID: <20190612025227.lxumqqtqao6iqms3@treble>
+References: <a9ceb8f8-f2fd-e57d-3428-aaf50e011a43@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <a9ceb8f8-f2fd-e57d-3428-aaf50e011a43@infradead.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 12 Jun 2019 02:52:43 +0000 (UTC)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/11/19 5:08 PM, Matteo Croce wrote:
-> On Wed, Jun 12, 2019 at 1:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> On 6/9/19 7:57 PM, David Miller wrote:
->>> From: Matteo Croce <mcroce@redhat.com>
->>> Date: Sat,  8 Jun 2019 14:50:19 +0200
->>>
->>>> MPLS routing code relies on sysctl to work, so let it select PROC_SYSCTL.
->>>>
->>>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->>>> Suggested-by: David Ahern <dsahern@gmail.com>
->>>> Signed-off-by: Matteo Croce <mcroce@redhat.com>
->>>
->>> Applied, thanks.
->>>
->>
->> This patch causes build errors when
->> # CONFIG_PROC_FS is not set
->> because PROC_SYSCTL depends on PROC_FS.  The build errors are not
->> in fs/proc/ but in other places in the kernel that never expect to see
->> PROC_FS not set but PROC_SYSCTL=y.
->>
-> 
+On Tue, Jun 11, 2019 at 06:59:22PM -0700, Randy Dunlap wrote:
 > Hi,
 > 
-> Maybe I'm missing something, if PROC_SYSCTL depends on PROC_FS, how is
-> possible to have PROC_FS not set but PROC_SYSCTL=y?
-
-When MPLS=y and MPLS_ROUTING=[y|m], MPLS_ROUTING selects PROC_SYSCTL.
-That enables PROC_SYSCTL, whether PROC_FS is set/enabled or not.
-
-There is a warning about this in Documentation/kbuild/kconfig-language.rst:
-
-  Note:
-	select should be used with care. select will force
-	a symbol to a value without visiting the dependencies.
-	By abusing select you are able to select a symbol FOO even
-	if FOO depends on BAR that is not set.
-	In general use select only for non-visible symbols
-	(no prompts anywhere) and for symbols with no dependencies.
-	That will limit the usefulness but on the other hand avoid
-	the illegal configurations all over.
-
-
-> I tried it by manually editing .config. but make oldconfig warns:
+> New warning AFAIK:
 > 
-> WARNING: unmet direct dependencies detected for PROC_SYSCTL
->   Depends on [n]: PROC_FS [=n]
->   Selected by [m]:
->   - MPLS_ROUTING [=m] && NET [=y] && MPLS [=y] && (NET_IP_TUNNEL [=n]
-> || NET_IP_TUNNEL [=n]=n)
+> drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0x11f: sibling call from callable instruction with modified stack frame
 
-Yes, I get this also.
+I'm getting a different warning:
 
-> *
-> * Restart config...
-> *
-> *
-> * Configure standard kernel features (expert users)
-> *
-> Configure standard kernel features (expert users) (EXPERT) [Y/?] y
->   Multiple users, groups and capabilities support (MULTIUSER) [Y/n/?] y
->   sgetmask/ssetmask syscalls support (SGETMASK_SYSCALL) [N/y/?] n
->   Sysfs syscall support (SYSFS_SYSCALL) [N/y/?] n
->   Sysctl syscall support (SYSCTL_SYSCALL) [N/y/?] (NEW)
+  drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0xb6: can't find jump dest instruction at .text+0x93a
 
-So I still say that MPLS_ROUTING should depend on PROC_SYSCTL,
-not select it.
+But I bet the root cause is the same.
 
+This fixes it for me:
+
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] hwmon/smsc47m1: Fix objtool warning caused by undefined behavior
+
+Objtool is reporting the following warning:
+
+  drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0xb6: can't find jump dest instruction at .text+0x93a
+
+It's apparently caused by
+
+  2cf6745e69d1 ("hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings")
+
+which is somehow convincing GCC to add a jump past the end of the
+function:
+
+  793:   45 85 ed                test   %r13d,%r13d
+  796:   0f 88 9e 01 00 00       js     93a <fan_div_store+0x25a>
+  ...
+  930:   e9 5e fe ff ff          jmpq   793 <fan_div_store+0xb3>
+  935:   e8 00 00 00 00          callq  93a <fan_div_store+0x25a>
+			936: R_X86_64_PLT32     __stack_chk_fail-0x4
+  <function end>
+
+I suppose this falls under the category of undefined behavior, so we
+probably can't call it a GCC bug.  But if the value of "nr" were out of
+range somehow then it would start executing random code.  Use a runtime
+BUG() assertion to avoid undefined behavior.
+
+Fixes: 2cf6745e69d1 ("hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ drivers/hwmon/smsc47m1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
+index 6d366c9cb906..b637836b58a1 100644
+--- a/drivers/hwmon/smsc47m1.c
++++ b/drivers/hwmon/smsc47m1.c
+@@ -352,7 +352,7 @@ static ssize_t fan_div_store(struct device *dev,
+ 		smsc47m1_write_value(data, SMSC47M2_REG_FANDIV3, tmp);
+ 		break;
+ 	default:
+-		unreachable();
++		BUG();
+ 	}
+ 
+ 	/* Preserve fan min */
 -- 
-~Randy
+2.20.1
+
