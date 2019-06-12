@@ -2,73 +2,88 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3C9C31E48
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 14:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1F6C31E46
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 15:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C4720866
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 14:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F119C208CA
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 15:02:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439856AbfFLO6q (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 12 Jun 2019 10:58:46 -0400
-Received: from www62.your-server.de ([213.133.104.62]:48238 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436945AbfFLO6q (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 10:58:46 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hb4i1-0000HS-S9; Wed, 12 Jun 2019 16:58:41 +0200
-Received: from [178.199.41.31] (helo=linux.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hb4i1-000P53-Ml; Wed, 12 Jun 2019 16:58:41 +0200
-Subject: Re: linux-next: Fixes tag needs some work in the bpf tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>
-References: <20190611200556.4a09514d@canb.auug.org.au>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <0918037f-bc79-394a-bdbc-88e70989436b@iogearbox.net>
-Date:   Wed, 12 Jun 2019 16:58:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S2439906AbfFLPCu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 12 Jun 2019 11:02:50 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46590 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408269AbfFLPCu (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 11:02:50 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 73A4B260D9A
+Subject: Re: next/master baseline: 278 tests, 0 regressions (next-20190612)
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+References: <5d00ff67.1c69fb81.878d4.023d@mx.google.com>
+Cc:     kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <b42f62a3-44aa-5963-3ae5-6e922c7d1300@collabora.com>
+Date:   Wed, 12 Jun 2019 16:02:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190611200556.4a09514d@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <5d00ff67.1c69fb81.878d4.023d@mx.google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25478/Wed Jun 12 10:14:54 2019)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 06/11/2019 12:05 PM, Stephen Rothwell wrote:
-> Hi all,
+On 12/06/2019 14:34, kernelci.org bot wrote:
+> next/master baseline: 278 tests, 0 regressions (next-20190612)
 > 
-> In commit
+> Test results summary
+> --------------------
 > 
->   605465dd0c27 ("bpf: lpm_trie: check left child of last leftmost node for NULL")
+>   Test:    baseline
+>   Tree:    next
+>   Branch:  master
+>   Kernel:  next-20190612
+>   URL:     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   Commit:  81a72c79224f83af18e26dc0c599f917312e6c78
 > 
-> Fixes tag
 > 
->   Fixes: b471f2f1de8 ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE")
+> 1  | rk3399-gru-kevin       | gcc-8    | arm64 |  78 total:  78 PASS   0 FAIL   0 SKIP
+> 2  | rk3399-gru-kevin       | gcc-8    | arm64 |  78 total:  78 PASS   0 FAIL   0 SKIP
+> 3  | rk3288-veyron-jaq      | gcc-8    | arm   |  61 total:  60 PASS   1 FAIL   0 SKIP
+> 4  | rk3288-veyron-jaq      | gcc-8    | arm   |  61 total:  60 PASS   1 FAIL   0 SKIP  
+>   
+>   
+>     
 > 
-> has these problem(s):
+> Test failures
+> ------------- 
+> 3  | rk3288-veyron-jaq      | gcc-8    | arm   |  61 total:  60 PASS   1 FAIL   0 SKIP
 > 
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
+>   Config:      multi_v7_defconfig
+>   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+>   Lab Name:    lab-collabora
+>   Plain log:   https://storage.kernelci.org//next/master/next-20190612/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-rk3288-veyron-jaq.txt
+>   HTML log:    https://storage.kernelci.org//next/master/next-20190612/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-rk3288-veyron-jaq.html
+>   Rootfs:      https://storage.kernelci.org/images/rootfs/buildroot/kci-2019.02-2-gefc755ba4a02/armel/baseline/rootfs.cpio.gz
+>       
 > 
+>     bootrr - 61 tests: 60  PASS, 1 FAIL, 0 SKIP
+>       * rk3x-i2c5-probed: never passed   
 
-Fyi, fixed this up yesterday in bpf tree, thanks.
+It says it never passed, but it's passing in mainline.  So this
+failure is not reported as a regression here because the baseline
+test plan was enabled very recently and this never passed in
+linux-next indeed.
+
+In other words, this does look like a regression that's about to
+get merged into mainline.  Probably worth a look?
+
+Guillaume
+
