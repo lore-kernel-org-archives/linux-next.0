@@ -2,108 +2,105 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E671C31E46
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 00:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17985C31E44
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 00:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CF121734
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 00:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D95E421721
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 00:55:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GRfIjh5q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392165AbfFLAIv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Jun 2019 20:08:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34124 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392152AbfFLAIv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Jun 2019 20:08:51 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y198so10647458lfa.1
-        for <linux-next@vger.kernel.org>; Tue, 11 Jun 2019 17:08:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h7bjlWA9RPjCrQknFfrxGmOZfe86lgEMXjZF4z0CIJc=;
-        b=mpnY6OGDP0XineY+CYHatNA3ZzRC9gLcaBWvMx32J5fqw1VynA+kTxqQNlSYw/K+Eu
-         bQrBQsXtlflBqDkR+2C3OeLSgORArdq/KhTOCUkxNwfOcvOR6Gd5Wz3Li8Py2opUJ2rT
-         b9ZqVreJC6kpk63pw2ekm39N2U6npPXUv29qyLen2fRsl1j3O1iR93sUkNLdXFLaiz59
-         HWpErg3R1hCEgvaiJUBM+iCKBBOD9PY2ZgVQTDkXR3P52RhEDX8PkrQxTd6GcCEDVBxy
-         VyMuZAVsW4HEWJDToT8pC1Tgt7FQmo9RfgNFigl2ZI8wOoluP4lTzW2bSsL8ACsyp3kk
-         gNqQ==
-X-Gm-Message-State: APjAAAWd9/Ng+tjS5Y9vYDehx+no7beU24UJn5Wxm/Ov8cBJNoahKBN6
-        v+NZasOQcnT+qMlYL9KHjgLAdJd+Ik5MCPcxWqTh1g==
-X-Google-Smtp-Source: APXvYqxFzgjcCWfgMQCGnFILHZZZFt+K2PbIk6ee1UmnlWOWCRs6XovMn177R/Z1IbC6Jj1CsbPXegUVXlXEWHtGkDc=
-X-Received: by 2002:a19:ed07:: with SMTP id y7mr41426226lfy.56.1560298129355;
- Tue, 11 Jun 2019 17:08:49 -0700 (PDT)
+        id S2406193AbfFLAy5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Jun 2019 20:54:57 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33145 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406117AbfFLAy5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Jun 2019 20:54:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NpLP2K5tz9s00;
+        Wed, 12 Jun 2019 10:54:53 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560300894;
+        bh=jJVvQRYv+RNct+AwT6tYADRT40DSB6dPMv1XUCrWfrQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GRfIjh5qO9TFHNI6LP9yAJ+evoY6UDmuBo/eJPcDq47EE/3P/6Y7Hh/O98St9VyuH
+         Xgmz51MjoE/Aqxz9qyrw4gdZjBl+VYOUu3lBl98r+XQSA3ZRU53kWgP0dCRLssonnH
+         y3GGqJBtaM1cJAPJRhq4BjoRKykv07tqDrfxSggWgxuwnSz4Tx62ouOvuGZmnI7ZiO
+         lP8U6VbaLGqWbjo7IDXk++gJ4Ek8VUlLFo6LZW83dGv0sn3egQ36wSzZm3dLuCf4LH
+         YiHXm23S+L2pnPHK/LnsWbN54EjUX29x/y9ySKlIbfaijgfMlHwpz/FizpKKztibuk
+         BaHtOMH00Zh9w==
+Date:   Wed, 12 Jun 2019 10:54:51 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-next@vger.kernel.org>
+Subject: Re: [RESEND PATCH net-next] net: ethernet: ti: cpts: fix build
+ failure for powerpc
+Message-ID: <20190612105451.4d2e9aa3@canb.auug.org.au>
+In-Reply-To: <20190611111632.9444-1-grygorii.strashko@ti.com>
+References: <20190611111632.9444-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-References: <20190608125019.417-1-mcroce@redhat.com> <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
-In-Reply-To: <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Wed, 12 Jun 2019 02:08:13 +0200
-Message-ID: <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Ahern <dsahern@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2bUUK0tUc_lYIUql4YF9vie"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 1:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+--Sig_/2bUUK0tUc_lYIUql4YF9vie
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Tue, 11 Jun 2019 14:16:32 +0300 Grygorii Strashko <grygorii.strashko@ti.=
+com> wrote:
 >
-> On 6/9/19 7:57 PM, David Miller wrote:
-> > From: Matteo Croce <mcroce@redhat.com>
-> > Date: Sat,  8 Jun 2019 14:50:19 +0200
-> >
-> >> MPLS routing code relies on sysctl to work, so let it select PROC_SYSCTL.
-> >>
-> >> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> >> Suggested-by: David Ahern <dsahern@gmail.com>
-> >> Signed-off-by: Matteo Croce <mcroce@redhat.com>
-> >
-> > Applied, thanks.
-> >
->
-> This patch causes build errors when
-> # CONFIG_PROC_FS is not set
-> because PROC_SYSCTL depends on PROC_FS.  The build errors are not
-> in fs/proc/ but in other places in the kernel that never expect to see
-> PROC_FS not set but PROC_SYSCTL=y.
->
+> Add dependency to TI CPTS from Common CLK framework COMMON_CLK to fix
+> allyesconfig build for Powerpc:
+>=20
+> drivers/net/ethernet/ti/cpts.c: In function 'cpts_of_mux_clk_setup':
+> drivers/net/ethernet/ti/cpts.c:567:2: error: implicit declaration of func=
+tion 'of_clk_parent_fill'; did you mean 'of_clk_get_parent_name'? [-Werror=
+=3Dimplicit-function-declaration]
+>   of_clk_parent_fill(refclk_np, parent_names, num_parents);
+>   ^~~~~~~~~~~~~~~~~~
+>   of_clk_get_parent_name
+>=20
+> Fixes: a3047a81ba13 ("net: ethernet: ti: cpts: add support for ext rftclk=
+ selection")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Hi,
+I have applied this to linu-next today instead of reverting a3047a81ba13.
 
-Maybe I'm missing something, if PROC_SYSCTL depends on PROC_FS, how is
-possible to have PROC_FS not set but PROC_SYSCTL=y?
-I tried it by manually editing .config. but make oldconfig warns:
+--=20
+Cheers,
+Stephen Rothwell
 
-WARNING: unmet direct dependencies detected for PROC_SYSCTL
-  Depends on [n]: PROC_FS [=n]
-  Selected by [m]:
-  - MPLS_ROUTING [=m] && NET [=y] && MPLS [=y] && (NET_IP_TUNNEL [=n]
-|| NET_IP_TUNNEL [=n]=n)
-*
-* Restart config...
-*
-*
-* Configure standard kernel features (expert users)
-*
-Configure standard kernel features (expert users) (EXPERT) [Y/?] y
-  Multiple users, groups and capabilities support (MULTIUSER) [Y/n/?] y
-  sgetmask/ssetmask syscalls support (SGETMASK_SYSCALL) [N/y/?] n
-  Sysfs syscall support (SYSFS_SYSCALL) [N/y/?] n
-  Sysctl syscall support (SYSCTL_SYSCALL) [N/y/?] (NEW)
+--Sig_/2bUUK0tUc_lYIUql4YF9vie
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Regards,
--- 
-Matteo Croce
-per aspera ad upstream
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ATVsACgkQAVBC80lX
+0GxUiQf8DC0a5Zd5gWjOT5FiuKW9u3jmojquQB/VqM7zhVpf/34wTw93JvoiIAd1
+I59WfIfDCzPwFE3bFMjxeReBhZStQocz5ADc5lGleJ0qHX7z3rbEcbgGILSWOEsm
+r10tVBmqphIvQdQLzkL2WIYdE0fVC931lkcUf1UV/qc7MdsKrAi3wG72YWNjfMXM
+zYlhw6DI3nrwlUaiiAbo3FhdeIVmlUdaEBJI6BDDB/dPjo4u8YFj9OGeNldl4+2L
+3L3q5ZPggrEF4VbF/CBnL3uEMzGHU2PhkMxAexpzCZmUpNzF2MDbsN6RqjgN+KpX
+5DO2V/Uv91jWR4z8BmxK/rwXZoQAsw==
+=Cbkw
+-----END PGP SIGNATURE-----
+
+--Sig_/2bUUK0tUc_lYIUql4YF9vie--
