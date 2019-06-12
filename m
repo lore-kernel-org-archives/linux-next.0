@@ -2,81 +2,116 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65813C31E46
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 12:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BEAC31E46
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 13:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 309ED20874
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 12:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9555D208C2
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 13:15:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kN2+DuXF"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OeGdVBad"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438924AbfFLMcg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 12 Jun 2019 08:32:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45266 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436805AbfFLMcg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 08:32:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=y2uhk9OglV5fFk4/ZrfPdWhvtB806R6hS4P/DXRIWCw=; b=kN2+DuXF1HfUzhPRcH63m9hjC
-        RGYiploiRLDP6L9YPs8+ApNj0wMNpOOsRU7c2UOX0p0TYBvXlu5QQxvY/DagnaWMNcLuLBnAPOpb3
-        ISlF0H8638X4AjSXFw2gD69P4tzg1KROtyiTqTyk5FohX0eI9I8ZUkB2Yzyu81jZL6qv4DCOU41c6
-        JlY7BkJ3n8O6gfsFWt0Vf/FYKWq72AJ4GwuNlQvuSXwtVfy68kfT9ZCl8c2u3/5gX25YW5jvlzL7s
-        jg99YvS45pOsPwYNI82mosW6wWuNrHegPDkiBXKbE49Ks1H4P6HVaPDgJCrobINVEcNROiv7iUFTV
-        /qXXT3wqQ==;
-Received: from 177.41.119.178.dynamic.adsl.gvt.net.br ([177.41.119.178] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb2Qb-0003A7-6Y; Wed, 12 Jun 2019 12:32:33 +0000
-Date:   Wed, 12 Jun 2019 09:32:29 -0300
-From:   Mauro Carvalho Chehab <mchehab@infradead.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S1729244AbfFLNPp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 12 Jun 2019 09:15:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:40037 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729231AbfFLNPo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 12 Jun 2019 09:15:44 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45P6n72c4Fz9s7h;
+        Wed, 12 Jun 2019 23:15:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560345341;
+        bh=m3ulouF3seJudKzCN91mGBHIDhKeg6NrhQEyoc7Uu6A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OeGdVBadpLkeHc6WDmaemrvgCxAtc8E/v2k+b8BWyBH9NUqyDzHI2H3l+pIsSnxrV
+         jSzbXue3OAgKS7uI/SuWV270Sz2k8QwhsFbgXsbDAan05XPwoaNoJuPqnRor72VEfA
+         tgsRcCbWvDuc3GDY8DR7xNovwoeFNuAzV2KF2n1d6615QG9tSW8D3t4ej6N0l5Ahti
+         JrNSZeoV5FjkT1dAIF2Gb4OwTE9lri4BFQzYYkhhUt4J7NPgN5oo4gayCwEvMxj+5A
+         bmLtmz36ORVVfaZ3/8mo8jj5PXQ0NcIY5+NZU5Vq+/7K/wq7fyGDtVCtipUhh8ObjM
+         4lUN0R7NP7KCA==
+Date:   Wed, 12 Jun 2019 23:15:35 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ruslan Babayev <ruslan@babayev.com>,
         Andrew de Quincey <adq_dvb@lidskialf.net>
 Subject: Re: linux-next: build warning after merge of the i2c tree
-Message-ID: <20190612093229.7f14a1e2@coco.lan>
-In-Reply-To: <20190612120439.GB2805@kunai>
+Message-ID: <20190612231535.253a8a20@canb.auug.org.au>
+In-Reply-To: <20190612093229.7f14a1e2@coco.lan>
 References: <20190611102528.44ad5783@canb.auug.org.au>
         <20190612081929.GA1687@kunai>
         <20190612080226.45d2115a@coco.lan>
         <20190612110904.qhuoxyljgoo76yjj@ninjato>
         <20190612084824.16671efa@coco.lan>
         <20190612120439.GB2805@kunai>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        <20190612093229.7f14a1e2@coco.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <mchehab@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/D_X6Efm71FC9C3REMQXnZ/e"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Em Wed, 12 Jun 2019 14:04:39 +0200
-Wolfram Sang <wsa@the-dreams.de> escreveu:
+--Sig_/D_X6Efm71FC9C3REMQXnZ/e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > > OK, so that means I should send my pull request after yours in the next
-> > > merge window? To avoid the build breakage?  
-> > 
-> > Either that or you can apply my patch on your tree before the
-> > patch that caused the breakage. 
-> > 
-> > Just let me know what works best for you.  
-> 
-> Hmm, the offending patch is already in -next and I don't rebase my tree.
-> So, I guess it's the merge window dependency then.
-> 
-Ok, I'll merge it through my tree then.
+Hi all,
 
-Thanks,
-Mauro
+On Wed, 12 Jun 2019 09:32:29 -0300 Mauro Carvalho Chehab <mchehab@infradead=
+.org> wrote:
+>
+> Em Wed, 12 Jun 2019 14:04:39 +0200
+> Wolfram Sang <wsa@the-dreams.de> escreveu:
+>=20
+> > > > OK, so that means I should send my pull request after yours in the =
+next
+> > > > merge window? To avoid the build breakage?   =20
+> > >=20
+> > > Either that or you can apply my patch on your tree before the
+> > > patch that caused the breakage.=20
+> > >=20
+> > > Just let me know what works best for you.   =20
+> >=20
+> > Hmm, the offending patch is already in -next and I don't rebase my tree.
+> > So, I guess it's the merge window dependency then.
+> >  =20
+> Ok, I'll merge it through my tree then.
+
+It should go into the i2c tree (since that is where the *warning* was
+introduced).  It is only a warning and there won't be many patches
+between the patch that introduced the warning and this one that fixes
+it.  This patch could then have a Fixes tag that makes sense i.e. it
+will reference a previous commit.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/D_X6Efm71FC9C3REMQXnZ/e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0A+vcACgkQAVBC80lX
+0GwkiQf+PSLLJ32HJwYk/tNmjjZMB7vvinDaqj/Xk9IS92cD0vviuO4RKMOQSvZ2
+Lr7Bzlpr4gNX+rrvXfD9sdawTKV6G0/RFaWboCso1Y/nPiEmJymp9G1PAfQDHNMu
+fF6SGhbQNM2F7rc+vuq35f7D6+YFMhZB0WlrrwZoqOGh8h8ph7t56dktt0rD0s6O
+AKUwIpeM+jNIoSxtJgwRVEvVgQR4MYfzdyeyXHR49s8zyF6/LYjiDk1KVHA74reU
+70USaIxD3qu6NA75JDig8sTe7kgasLiV+rP5PvxNW5aEadCz7+9YhOO78+J5kf6f
+FhXdH43qRgg2mQOZ/UoDNx+b07++EQ==
+=9yjZ
+-----END PGP SIGNATURE-----
+
+--Sig_/D_X6Efm71FC9C3REMQXnZ/e--
