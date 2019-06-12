@@ -2,93 +2,133 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449E6C31E46
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 10:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1498C31E46
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 11:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B2F820874
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 10:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560336694;
-	bh=5jRu86QAzs8zA/gs6Ny1LZmMgOJJIteMCKmKfzBwhHw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NZ0NZObX5VltpgHwDdOjFEujjqa+IJPsH/G3fNscvMrvsiBAo1RFpk2beqMHBl4W7
-	 iv8sAoMEVLKGxxWCwjvDkQSg/MMmuNWf5182DCGQME7KbVr2UJwqAOz4NCa+zh4TyU
-	 gdN2k+7o0ZNqs4b61A5bxfHanqdUOelm2kYKyQhg=
+	by mail.kernel.org (Postfix) with ESMTP id 86D802080A
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 11:02:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oMHCRrVC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408074AbfFLKvd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 12 Jun 2019 06:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408073AbfFLKvd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:51:33 -0400
-Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FA2B2082C;
-        Wed, 12 Jun 2019 10:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560336693;
-        bh=5jRu86QAzs8zA/gs6Ny1LZmMgOJJIteMCKmKfzBwhHw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p0ls4eEvZEtUNYXQwDlIQ4pDBNaY2f40S56gTpQwSvu0MSqD38juSsqmRfqKf1KnW
-         2ysxeCtP8pcQv9OpTLgAtGTR8X0fjCiDCTBJwxM6YHYOuw+bTJq17DCwCisAUFtqh2
-         4MxqM16t3QM1jduhmlQY9N9RHdhYruyUm5hoqV50=
-Date:   Wed, 12 Jun 2019 18:51:00 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
+        id S2405901AbfFLLCe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 12 Jun 2019 07:02:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58282 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405826AbfFLLCe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 07:02:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GyQvzVCRfx2rfSnJth+Ru0ibUKt+HtIeQExiXWplh8A=; b=oMHCRrVClCH7w4MftWKSBm1Xp
+        nWqAVapuqvKgC16niIy9kv/HuL8HtzPt8ULFienbDrBOojMdk8+VWGRAeQMavwOqXiA6On+aZFNzm
+        4DcZPAG2lD8GVopdAjdkiMMnXj0x5kD7iVJ/iTWV7KYP2H9hHavsXOuuQZ/x9iG+1iJLE2YmZpkc5
+        Q+PLGZ4IP82HLaRLeovvSXZrcqSy+grCUuetcHfvnTACjtUyPnQJzlQj22PUUI54QyeIEWnu3SMUU
+        usinM2Z9nF8Ve7/PrY8WQef0gC87c/dRpo+5QrHCiYNmC9tanSXE03sBUnoJn/U/oCWcq2TanXTeO
+        uxM+AA+XA==;
+Received: from 177.41.119.178.dynamic.adsl.gvt.net.br ([177.41.119.178] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hb11S-0000xB-Mu; Wed, 12 Jun 2019 11:02:30 +0000
+Date:   Wed, 12 Jun 2019 08:02:26 -0300
+From:   Mauro Carvalho Chehab <mchehab@infradead.org>
+To:     Wolfram Sang <wsa@the-dreams.de>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the imx-mxs tree
-Message-ID: <20190612105059.GG11086@dragon>
-References: <20190607074652.4b3d0c97@canb.auug.org.au>
- <20190607002407.GY29853@dragon>
- <AM0PR04MB44817EB65913F29630453E1A88ED0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ruslan Babayev <ruslan@babayev.com>,
+        Andrew de Quincey <adq_dvb@lidskialf.net>
+Subject: Re: linux-next: build warning after merge of the i2c tree
+Message-ID: <20190612080226.45d2115a@coco.lan>
+In-Reply-To: <20190612081929.GA1687@kunai>
+References: <20190611102528.44ad5783@canb.auug.org.au>
+        <20190612081929.GA1687@kunai>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB44817EB65913F29630453E1A88ED0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <mchehab@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 08:36:52AM +0000, Peng Fan wrote:
-> Hi Shawn, Stephen
-> > Subject: Re: linux-next: Fixes tag needs some work in the imx-mxs tree
+Em Wed, 12 Jun 2019 10:19:29 +0200
+Wolfram Sang <wsa@the-dreams.de> escreveu:
+
+> On Tue, Jun 11, 2019 at 10:25:28AM +1000, Stephen Rothwell wrote:
+> > Hi Wolfram,
 > > 
-> > On Fri, Jun 07, 2019 at 07:46:52AM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > In commit
-> > >
-> > >   f6a8ff82ce68 ("clk: imx: imx8mm: correct audio_pll2_clk to
-> > > audio_pll2_out")
-> > >
-> > > Fixes tag
-> > >
-> > >   Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
-> > >
-> > > has these problem(s):
-> > >
-> > >   - SHA1 should be at least 12 digits long
-> > >     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-> > >     or later) just making sure it is not set (or set to "auto").
+> > After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
+> > produced this warning:
 > > 
-> > Hi Stephen,
+> > drivers/media/dvb-frontends/tua6100.c: In function 'tua6100_set_params':
+> > drivers/media/dvb-frontends/tua6100.c:71: warning: "_P" redefined
+> >  #define _P 32
+> >  
+> > In file included from include/acpi/platform/aclinux.h:54,
+> >                  from include/acpi/platform/acenv.h:152,
+> >                  from include/acpi/acpi.h:22,
+> >                  from include/linux/acpi.h:21,
+> >                  from include/linux/i2c.h:17,
+> >                  from drivers/media/dvb-frontends/tua6100.h:22,
+> >                  from drivers/media/dvb-frontends/tua6100.c:24:
+> > include/linux/ctype.h:14: note: this is the location of the previous definition
+> >  #define _P 0x10 /* punct */
 > > 
-> > Thanks for reporting.  I just got it fixed, will be more careful about that in the
-> > future.
+> > Exposed by commit
 > > 
-> > @Peng, please check your git configuration as suggested above, thanks.
+> >   5213d7efc8ec ("i2c: acpi: export i2c_acpi_find_adapter_by_handle")
+> > 
+> > Since that included <linux/acpi.h> from <linux/i2c.h>
+> > 
+> > Originally introduced by commit
+> > 
+> >   00be2e7c6415 ("V4L/DVB (4606): Add driver for TUA6100")
+> > 
+> > The _P in <linux/ctype.h> has existed since before git.  
 > 
-> Sorry for this. Do I need to resend the patch?
+> I suggest to fix the driver by adding a TUA6100_ prefix to the defines.
+> I can cook up a patch for that.
+> 
 
-No.  I have fixed it on my branch.
+That entire use of _P, _R and _ri looks weird into my eyes. The code there
+do things like:
 
-Shawn
+#define _P 32
+
+...
+
+        if (_P == 64)
+                reg1[1] |= 0x40;
+
+
+It sounds to me that _P and _R are actually some sort of setup
+with depends on how the device is wired. 
+
+A quick read on its datasheet at page 19 - downloaded from:
+
+	http://www.datasheetcatalog.com/datasheets_pdf/T/U/A/6/TUA6100.shtml
+
+Shows that:
+	P:  divide ratio of the prescaler.
+	R:  divide ratio of the R-counter.
+	ri: reference frequency input (XTAL osc).
+
+IMO, the right fix would be to change struct tua6100_priv, in order to
+add those  parameters, and initialize them with the current values
+at tua6100_attach.
+
+That would allow changing those values during device initialization,
+in the case we ever need to support a hardware with the same chipset,
+with, for example, a different XTAL.
+
+I'll work on a patch to address it.
+
+Thanks,
+Mauro
