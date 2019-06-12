@@ -2,213 +2,59 @@ Return-Path: <SRS0=4G8J=UL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04056C31E46
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 16:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A4FC31E46
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 16:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C246E21019
-	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 16:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560357026;
-	bh=2daVDkIjZ9rNDTUx5Q+ZQZ/t1DKk2F9N10vEwHq+Wvg=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=Cbyj94OhgKcHvArTpc9tUO9+L+qC9LpBc8w09MYPNocQJFRPWw+gfxFadGvIHSjfG
-	 Tz60F9lze6bbiO9hYjzpIOMw3YFpgMJHifvX83dp8dL001HxeBuTJIaguTALlESKAm
-	 eZLiyMU8hbCJwzgt5Ms+DsU6M9XAKynH14ybfm1U=
+	by mail.kernel.org (Postfix) with ESMTP id 2011B208C2
+	for <linux-next@archiver.kernel.org>; Wed, 12 Jun 2019 16:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408097AbfFLQa0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 12 Jun 2019 12:30:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39536 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405901AbfFLQa0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 12:30:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:Subject:To:From:
-        Sender:Reply-To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IVQd6ix8Yn1WJyLRzay6DZykMcwTLytSDPv/Q0jQNu0=; b=V9BH7PQuEF8VTMY2hqC3RWXl6
-        lSnjAQBwPcImzWXrtHloSIUV6b+FMgo4eVDtEVAI386MBIvchVdVaiOdiHNXZ6tAtc/znfv/cI9/c
-        IgZwppUi9tOTmUjbEXafrjeUUkc+sry57b9ED9uJ7wikcbMp0Kv8RDZ/lSHqHEMPNsleA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=optimist)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hb68k-0003AG-QD; Wed, 12 Jun 2019 16:30:22 +0000
-Received: from broonie by optimist with local (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hb68k-0003bi-1I; Wed, 12 Jun 2019 17:30:22 +0100
-From:   Build bot for Mark Brown <broonie@kernel.org>
-To:     kernel-build-reports@lists.linaro.org,
-        linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-Subject: pending-fixes build: 0 failures 17 warnings (v5.2-rc4-273-g26c91f14d441)
-Message-Id: <E1hb68k-0003bi-1I@optimist>
-Date:   Wed, 12 Jun 2019 17:30:22 +0100
+        id S1730637AbfFLQnB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 12 Jun 2019 12:43:01 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37880 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730601AbfFLQmv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 12:42:51 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id EB81715224139;
+        Wed, 12 Jun 2019 09:42:50 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 09:42:50 -0700 (PDT)
+Message-Id: <20190612.094250.1851652194156222564.davem@davemloft.net>
+To:     mcroce@redhat.com
+Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
+        rdunlap@infradead.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] mpls: fix af_mpls dependencies for real
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190612095037.6472-1-mcroce@redhat.com>
+References: <20190612095037.6472-1-mcroce@redhat.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 12 Jun 2019 09:42:51 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Tree/Branch: pending-fixes
-Git describe: v5.2-rc4-273-g26c91f14d441
-Commit: 26c91f14d4 Merge remote-tracking branch 'drm-misc-fixes/for-linux-next-fixes'
+From: Matteo Croce <mcroce@redhat.com>
+Date: Wed, 12 Jun 2019 11:50:37 +0200
 
-Build Time: 139 min 50 sec
+> Randy reported that selecting MPLS_ROUTING without PROC_FS breaks
+> the build, because since commit c1a9d65954c6 ("mpls: fix af_mpls
+> dependencies"), MPLS_ROUTING selects PROC_SYSCTL, but Kconfig's select
+> doesn't recursively handle dependencies.
+> Change the select into a dependency.
+> 
+> Fixes: c1a9d65954c6 ("mpls: fix af_mpls dependencies")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-Passed:   11 / 11   (100.00 %)
-Failed:    0 / 11   (  0.00 %)
-
-Errors: 0
-Warnings: 17
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     14 warnings    0 mismatches  : arm64-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     26 warnings    0 mismatches  : arm-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v4t_defconfig
-     11 warnings    0 mismatches  : x86_64-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 17
-	 30 warning: same module names found:
-	  8 ../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	  5 ../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  4 ../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-	  3 ../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	  3 ../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	  2 ../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	  2 ../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	  1 ../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	  1 ../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
-	  1 ../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
-	  1 ../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
-
-Warnings:
-	../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 26 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
-	../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
-
--------------------------------------------------------------------------------
-x86_64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-	warning: same module names found:
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+Applied.
