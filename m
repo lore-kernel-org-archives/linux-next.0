@@ -2,106 +2,142 @@ Return-Path: <SRS0=xExw=UM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BF9C31E4A
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75015C31E4A
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1D1215EA
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EB2120673
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Ls6aBDLI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MKLJMkWt"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KFFB0qfK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbfFMQpM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:45:12 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:57977 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730379AbfFMGK3 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:10:29 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7E3BB2099D;
-        Thu, 13 Jun 2019 02:10:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 13 Jun 2019 02:10:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=/cACM9Ddbiw1D+hTEKwzTopFWpx
-        8KO4E+LJszIQsNdc=; b=Ls6aBDLI1AmVMF60LseXTW+24p0XqbmMFOMQelPOwS3
-        /uiGop6DYdFW2Jkt6y1ZnphCXBicbcgYgNkuZSWm9emPWEE6Wad0nuymzJPNdDJ4
-        LjctQLXYLXEmVRWeDKN3izE6MfqTP4VAsutpB/2qPwXCnKTWOuJO6A8ChRTtKOxo
-        L6oFyNp146mLAqWen+c3yBkL9u8/5RFUZ/VU1IuEDfCHcCQ0P15XzgRxYXMQlZ6u
-        L3v2eIJzz44tMlQrmjM3KwQT+quvBnb+maRhijK1QFW/NbxsUonemLl2JFHOICog
-        Rql3y9iLutOwAoMfOQ69Fq4nPKmQVKPrHLW/8/BdI6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/cACM9
-        Ddbiw1D+hTEKwzTopFWpx8KO4E+LJszIQsNdc=; b=MKLJMkWts6ZeCZVfR60UIY
-        NVvZ5dJ5dTkGcFR070AiljDgvALU7VcSrVONIwveT1UHeGTfByYtnE0ck9yD7i32
-        r1UJFNjQ+YVcIGG2SOH/5ox9tgULneo9/0QKvUPPSnRFwKvUo0ijjv44jAs/dEct
-        53j5VINHNRRjR/OdQQE9giWKEjSk9hw1WPzJGPMfHXKt9knZC+0XqQIG+66VntQa
-        dHEUmQML6ESlQ27ntStdZvWS34LmqbRq6I7/BH4fsGwm9aRzrJLBNyvoDOqJT67d
-        kneBb+11WRQhgc+uCHYUE+zoOKHovKFLTIj6NzFqm1fhQqe+BocpfEY7RPRTGvyQ
-        ==
-X-ME-Sender: <xms:1OgBXbkyMoKyP65la4dal43mf2JvCUIf_NgasfBqALjMoU_6g2AksA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehkedguddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
-    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:1OgBXRcOc005a4vwDT_DIDC7XOV2MCXYeuQit5jwQtk-fhsx9os42g>
-    <xmx:1OgBXRJY86HdsAMo3mC0J3tjpa6atXxktvS95MV33jOUfdP2EhtrEg>
-    <xmx:1OgBXU6f2hFCHYn6hAGPmfgAsGu3UvjL2zMjFDbSVnBIXKBnboN6yw>
-    <xmx:1OgBXTdODUoflkwg0g_OBn6A4XopngURSUyaTACpM3BySsLoH-2J2g>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BE89A8005B;
-        Thu, 13 Jun 2019 02:10:27 -0400 (EDT)
-Date:   Thu, 13 Jun 2019 08:10:26 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        id S2392922AbfFMQpk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:45:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:48185 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729815AbfFMFxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 13 Jun 2019 01:53:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45PXwm2j90z9s5c;
+        Thu, 13 Jun 2019 15:53:44 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560405224;
+        bh=XFQvhiLejuLfZHZHzD4qIdC0evQEitD0UMR+TBNmrDQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KFFB0qfKhX/dJwzPzGr+n/DMV/sIp3f7L+FcoVzFY8AG/tghV5n04tcw0WNeboPWa
+         Rq7JMLgzQEhno4YhgHmrGnOhPXdSjWFEEHt22gswO3ny4s/A+FlaxoK0ii3fZ2oSpl
+         ASgqPCR2bEBsT3A/ldlbIYTyJxbaor9xTSXwqlMH8jBr0BKVqJlKNclZzLE1Os1Fc+
+         w4Jf+w/wShS8e/oUAeTDu8tNuKNq0eUBX1Dpl/E1zZmYBiwH31d4C0H8jCahxQsvVA
+         xfzfc//lAsVc7OrexUCa1Krm+joaQ/Tdw2KrEvlsvuZ5Teskji4XA9Kw+YkLVoMC+J
+         b/Lt/x9D9auFA==
+Date:   Thu, 13 Jun 2019 15:53:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bich Hemon <bich.hemon@st.com>,
-        Erwan Le Ray <erwan.leray@st.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Message-ID: <20190613061026.GB27058@kroah.com>
-References: <20190613153215.0c99f252@canb.auug.org.au>
+        Nadav Amit <namit@vmware.com>
+Subject: linux-next: manual merge of the char-misc tree with the driver-core
+ tree
+Message-ID: <20190613155344.64fce8b9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613153215.0c99f252@canb.auug.org.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/U4N4kI9k/xWKLnuuvxrCEXi"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 03:32:15PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the tty tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_suspend':
-> drivers/tty/serial/stm32-usart.c:1298:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
->   pinctrl_pm_select_sleep_state(dev);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_resume':
-> drivers/tty/serial/stm32-usart.c:1307:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
->   pinctrl_pm_select_default_state(dev);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   c70669ecef4e ("serial: stm32: select pinctrl state in each suspend/resume function")
+--Sig_/U4N4kI9k/xWKLnuuvxrCEXi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I think I need to just go revert that patch now, thanks.
+Hi all,
 
-greg k-h
+Today's linux-next merge of the char-misc tree got a conflict in:
+
+  drivers/misc/vmw_balloon.c
+
+between commit:
+
+  225afca60b8a ("vmw_balloon: no need to check return value of debugfs_crea=
+te functions")
+
+from the driver-core tree and commits:
+
+  83a8afa72e9c ("vmw_balloon: Compaction support")
+  5d1a86ecf328 ("vmw_balloon: Add memory shrinker")
+
+from the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/misc/vmw_balloon.c
+index fdf5ad757226,043eed845246..000000000000
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@@ -1553,15 -1942,26 +1932,24 @@@ static int __init vmballoon_init(void
+  	if (x86_hyper_type !=3D X86_HYPER_VMWARE)
+  		return -ENODEV;
+ =20
+- 	for (page_size =3D VMW_BALLOON_4K_PAGE;
+- 	     page_size <=3D VMW_BALLOON_LAST_SIZE; page_size++)
+- 		INIT_LIST_HEAD(&balloon.page_sizes[page_size].pages);
+-=20
+-=20
+  	INIT_DELAYED_WORK(&balloon.dwork, vmballoon_work);
+ =20
++ 	error =3D vmballoon_register_shrinker(&balloon);
++ 	if (error)
++ 		goto fail;
++=20
+ -	error =3D vmballoon_debugfs_init(&balloon);
+ -	if (error)
+ -		goto fail;
+ +	vmballoon_debugfs_init(&balloon);
+ =20
++ 	/*
++ 	 * Initialization of compaction must be done after the call to
++ 	 * balloon_devinfo_init() .
++ 	 */
++ 	balloon_devinfo_init(&balloon.b_dev_info);
++ 	error =3D vmballoon_compaction_init(&balloon);
++ 	if (error)
++ 		goto fail;
++=20
++ 	INIT_LIST_HEAD(&balloon.huge_pages);
+  	spin_lock_init(&balloon.comm_lock);
+  	init_rwsem(&balloon.conf_sem);
+  	balloon.vmci_doorbell =3D VMCI_INVALID_HANDLE;
+
+--Sig_/U4N4kI9k/xWKLnuuvxrCEXi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0B5OgACgkQAVBC80lX
+0GxkTgf/RYWZ6v9hX/MnklSXgcgWAgzRuGzVzUfYl9gfy3bW0KZI4wxdqbummx5m
+F/+Y6QsnOuLSwGjUBlR/Nk1bCAKTV7qPqY1SBJD9sFjt5Z5pGEAkDzI/flatV5tv
+jB96Wr3Z/5dkqDIycEeoAdM2241iSZx0rxYo1tUwWlBfoJ3xdC+7/rcJweoSvhgd
+c9DIDstLJJuHO82AcLqwYK+LdCRemVbywVU25LxgxVVcoEZQburqmpBv6BEmzXF3
+uiSdXBD68z583JYiZD5DN8Rtajzvdq96XDWxRxXTkjb4pcYO3EUMKRmYNWaIPKKv
+l4o8AbVhboykwOlx3/IgxDRTjwiqPw==
+=vazS
+-----END PGP SIGNATURE-----
+
+--Sig_/U4N4kI9k/xWKLnuuvxrCEXi--
