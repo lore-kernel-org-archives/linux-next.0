@@ -2,58 +2,51 @@ Return-Path: <SRS0=xExw=UM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5168C31E45
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DE5C31E45
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B59020665
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DDAB20665
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:54:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gf4dv7WU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GWw1XCUe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725863AbfFMQwr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:52:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47294 "EHLO
+        id S1729883AbfFMQyB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:54:01 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47274 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730102AbfFMDFy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 23:05:54 -0400
+        with ESMTP id S1730070AbfFMC56 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2019 22:57:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5347sLkcqdCaDr4KbIIf3bKPXQaQU7AVUw40AwlLk0E=; b=gf4dv7WU5lUnCVxWX1b/VbhuEP
-        RpAMKwYyUlhgcAdDBmtQ/bz/ehU3elbdJn89YliwF//sPf0+wbq8mbjoMZbkAAQy3GEUTYilX4iSj
-        k/MtsOknTvg2JkzcbSuGPMoJIAd1IqE+0bhPaUj7Ck/jBLsepF1XEmo5T3V4WLhxVkr261JgfaI+q
-        kJdtOMZfu7WKBScGQVBpA4dS8b+VasmQTV9rhm1DmyISlPeT+ImRMVI4LVCJpBHXKH56hgyQZ+xL8
-        8Mm8BTD5aVCrnkDcvN3rqEi+H2BBxYlZt6vaok0WqL/4pL/2cGXo4h4qLmCehl6qYrFBo+IjcXnE5
-        8GXZHODg==;
+        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6MX8OED4iPuMUzZoWjHnMMsbyE6LcGoKSFwbgfasOio=; b=GWw1XCUedIoJbJcs7FUZ8an9a0
+        0s9R3NG9C9M6fMUKdEQAoDR5zyQerx6o6AEUC/WYsSt9TGPmBMul5NgSAH/Zwnxqri/zCiByTfoLu
+        0a73I2qMmJBbSas6+SNifAogFpvsegGVHQEwYC2Mh7LFwtaqFCIFavvWV/ixg5BWZRU/SHmsZoGeb
+        tM7RnFfg5YI2I8UM9EeIKvE733CyGRQWdFNvY2t6F4qfJEOnO0+mcmBiRmmdTcFlJjq9R/f7XKsMX
+        ElrP8QtekP4u+Fa0FJ26LK9XvUnq+RJ94ZuGsJcJWP6ZO8Y7Z4zfQYoLMn0Hp9THkyhAmgJB3KHNr
+        Eubx9G0g==;
 Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbG3Y-0006L6-IB; Thu, 13 Jun 2019 03:05:40 +0000
-Subject: Re: mmotm 2019-06-11-16-59 uploaded (ocfs2)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20190611235956.4FZF6%akpm@linux-foundation.org>
- <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
- <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+        id 1hbFvw-0006F7-La; Thu, 13 Jun 2019 02:57:48 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a412fca5-7204-7001-cc1a-f620ea6f64bd@infradead.org>
-Date:   Wed, 12 Jun 2019 20:05:36 -0700
+Subject: mmotm: objtool warning
+Message-ID: <5baaf9ec-8ea7-544c-49d1-dde519d919ca@infradead.org>
+Date:   Wed, 12 Jun 2019 19:57:43 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,49 +55,9 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/12/19 6:18 PM, Andrew Morton wrote:
-> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>
->>
->> on i386:
->>
->> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
->> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
-> 
-> Thanks.  This, I guess:
-> 
-> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
-> +++ a/fs/ocfs2/dlmglue.c
-> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
->  		 * otherwise, only dump the last N seconds active lock
->  		 * resources.
->  		 */
-> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
-> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
->  			return 0;
->  	}
->  #endif
-> 
-> review and test, please?
-> 
+In yesterday's mmotm, I see this objtool warning:
 
-Builds for me.  Thanks.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+arch/x86/entry/entry_64.o: warning: objtool: .entry.text+0x908: unreachable instruction
 
 
 -- 
