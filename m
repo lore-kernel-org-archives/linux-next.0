@@ -2,66 +2,66 @@ Return-Path: <SRS0=xExw=UM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8934C31E45
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 15:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153B4C31E45
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F4120B7C
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 15:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2684217D7
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:02:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zoB+I1qM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSkroNIt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731725AbfFMPsv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:48:51 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34770 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731720AbfFMJQq (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Jun 2019 05:16:46 -0400
-Received: by mail-wm1-f67.google.com with SMTP id w9so6147565wmd.1
-        for <linux-next@vger.kernel.org>; Thu, 13 Jun 2019 02:16:44 -0700 (PDT)
+        id S1732569AbfFMQCP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:02:15 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46783 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731409AbfFMQCO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Jun 2019 12:02:14 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so21335056wrw.13;
+        Thu, 13 Jun 2019 09:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=P4N1UtPKJVcelijw7QBQ1XLSRt7ridPaKRyOBmFmp0w=;
-        b=zoB+I1qMrXW5msQjRKnTgAM/Hh9auE47o+cxvqiEVcyurJ9wsx1RAYtZBDnCaKqDof
-         m1Ka4fuQ842iFh57kWp7h+yZO+dKcLrZpYRtQolBfQ39M/3DG3mCMDtqhEsHLr6dNRla
-         y/Uc11TrqvR08utOekpguuKCeTIWNQmbKCYf+sSd2FAqk+FEFwpdJVTvb+qSjd7GAa/s
-         kBpbAdqYwmGMqkkI3YhCUFXD8oa+rDgIdLyeq5ym0FbmIKsEItDizEy0cX6vyncJePWp
-         BZ7zlU7oGjUbfvuB7MiLU354VdrVer90caAiU3wh9nfbR3emhxaBGhOhkrpW/MC3+Qus
-         KRYA==
+        bh=Nd6aCrSjzkm1aMj9lM4ssykkYiRccO6zWy49Uehvbco=;
+        b=CSkroNIttf5ygpwSln0gQNWe5WrdTUnKsWGQygY3KEMqhMwh3P134Gc2auf/eb4mBx
+         LisWgeOU85BPWmvQPgkxLPQFf1rHZtl/OuOJIFDzgNf4DOff+pVvSFehTEd5EaHF92fo
+         tr/YC+MER9kS+oAnHJsy92hT+BeBXsKIY+w1lXfG+V300DwROLHFa8/AF4EcgAFmuldZ
+         6efyDI9zq5ja1+FWDA1zIvC5VHAzEeFBQapVtTHLLAa4+IDEbMSA1/kcoOo3Ldbqeqts
+         Om8CvV5KGB2rbs8My7Vod1OlIkxH8gTecLwfDYIJLspPGjtO0NPQiL/iddPgQfcD37ZN
+         6P3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=P4N1UtPKJVcelijw7QBQ1XLSRt7ridPaKRyOBmFmp0w=;
-        b=tFL0zoWVW5eZpzTMIW/yFdf9ihz63B7BcbdoGtisSbVGJV5ejwdyqShEE9MgO9kVFd
-         JIgnxEEj2Ju0+18VkvA3nWWeDuSu2y2l5Lu6fFY8D51CA9J37z9oIsERXJV3564i2n0V
-         6DmobpoHO4u/eoZnt2diAB7F4QoPcL5bpTGq2ZLokvRn8h3q86tIC8YXyna5gCPeQ4to
-         z5hsUNVfjY/bp5KuXz4gZWW8Jna01anySyMG3VZmitFX2ubQPDtmc6UWBtZh2hTiISn8
-         zt9nYkZyBobU1OhbwkqkSXBPuyv7N58ALsVuBsaTstOZOJae0iXSDtAb1ZCRGXuBztfe
-         +rjQ==
-X-Gm-Message-State: APjAAAXBrpzx0/xcvlq2OVuN0rHbPFV/+Xox5fO5RPRZ61w1qV9tKDv0
-        ANyBCVShv03DBthYnqPznSJx/NtmyMvNX0eHqTk1FA==
-X-Google-Smtp-Source: APXvYqya9k5qn89YYNprL6zry6x5KHz6UoRI9nvUtHBgDzPVPTHE/ALR4XfG2GiQ1hwNRfaH+VxDHQlRLeGVdjjdK7k=
-X-Received: by 2002:a1c:700b:: with SMTP id l11mr2827093wmc.106.1560417403085;
- Thu, 13 Jun 2019 02:16:43 -0700 (PDT)
+        bh=Nd6aCrSjzkm1aMj9lM4ssykkYiRccO6zWy49Uehvbco=;
+        b=lEHwJ7/MZxdePV/b18QyGSm7qzF/5TKRaLMJd/0fUzysL9+UN3X+ZnaOQjxQqwOqZ2
+         8vGSAe3qzHw2O/23T9fpfB+LNGyazZUoKD9IBH67rI970OoZMIcvRU3E0U4DvWqkcdXN
+         1KxxiyqO/wvcb99wlLeWdG6KVeo7wYiaJ9NqVtsqHpY4XBuR80L/gSPCadBpB7dHAzpH
+         kx8kOc7kS5lLJ6d4u2HM1XjSAWt15gOOE+Ve7texGT4Pqc9pbkeNtupR/njU7+QsUBXn
+         HK0PgnWFaPm2tZAftID3aY2HwuGKNIcb8/ZEtSFUzoOUdyx7vPs5YRx8ZMBL125ye1gF
+         ttLQ==
+X-Gm-Message-State: APjAAAWIUMuJDBjE1nuYgffNmsYxvpEUe7KZE4JnUbWEptD/UB4/A6Lf
+        VDFBMTGUrisymnSWZ4vPUnfCEHoI9d/hb0gYpFgLdZeS+fs=
+X-Google-Smtp-Source: APXvYqxklstUrCVZEl1VUef3v/R6i7njg2hNjeLXXhKtOb8qhxhCjhXDazqTZogY3rUjkKvHqdX1ZOlDh6IiYA968oU=
+X-Received: by 2002:adf:f68f:: with SMTP id v15mr10246252wrp.4.1560441732659;
+ Thu, 13 Jun 2019 09:02:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190612170027.13dbb84b@canb.auug.org.au> <c526a510-a08f-8b99-a396-4274590e904f@infradead.org>
-In-Reply-To: <c526a510-a08f-8b99-a396-4274590e904f@infradead.org>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Thu, 13 Jun 2019 11:16:31 +0200
-Message-ID: <CAMO6nazLss_4cfAJZZLA+Ydrx0wPCxMYrZM2NQKDw1AmvSj_0Q@mail.gmail.com>
-Subject: Re: linux-next: Tree for Jun 12 (staging/media/meson/)
+References: <20190612170027.13dbb84b@canb.auug.org.au> <9b4f8e15-8f9f-51d9-c355-9c2e453921e3@infradead.org>
+In-Reply-To: <9b4f8e15-8f9f-51d9-c355-9c2e453921e3@infradead.org>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 13 Jun 2019 12:02:00 -0400
+Message-ID: <CADnq5_PRoeCdriQgzV6yKUpFHxpWfHL2Xwd9VW=FRoNYj7H_kQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jun 12 (amdgpu: dcn10_hw_sequencer)
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-next-owner@vger.kernel.org
@@ -69,9 +69,7 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Randy,
-On Wed, Jun 12, 2019 at 11:50 PM Randy Dunlap <rdunlap@infradead.org> wrote=
-:
+On Thu, Jun 13, 2019 at 3:27 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
 > On 6/12/19 12:00 AM, Stephen Rothwell wrote:
 > > Hi all,
@@ -79,47 +77,25 @@ On Wed, Jun 12, 2019 at 11:50 PM Randy Dunlap <rdunlap@infradead.org> wrote=
 > > Changes since 20190611:
 > >
 >
+> on x86_64:
 >
-> on i386:
->
-> ../drivers/staging/media/meson/vdec/vdec.c: In function =E2=80=98vdec_rec=
-ycle_thread=E2=80=99:
-> ../drivers/staging/media/meson/vdec/vdec.c:59:2: error: implicit declarat=
-ion of function =E2=80=98kthread_should_stop=E2=80=99 [-Werror=3Dimplicit-f=
-unction-declaration]
->   while (!kthread_should_stop()) {
->   ^
-> ../drivers/staging/media/meson/vdec/vdec.c: In function =E2=80=98vdec_sta=
-rt_streaming=E2=80=99:
-> ../drivers/staging/media/meson/vdec/vdec.c:324:3: error: implicit declara=
-tion of function =E2=80=98kthread_run=E2=80=99 [-Werror=3Dimplicit-function=
--declaration]
->    sess->recycle_thread =3D kthread_run(vdec_recycle_thread, sess,
+> ../drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: I=
+n function =E2=80=98dcn10_apply_ctx_for_surface=E2=80=99:
+> ../drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:23=
+78:3: error: implicit declaration of function =E2=80=98udelay=E2=80=99 [-We=
+rror=3Dimplicit-function-declaration]
+>    udelay(underflow_check_delay_us);
 >    ^
-> ../drivers/staging/media/meson/vdec/vdec.c:324:24: warning: assignment ma=
-kes pointer from integer without a cast [enabled by default]
->    sess->recycle_thread =3D kthread_run(vdec_recycle_thread, sess,
->                         ^
-> ../drivers/staging/media/meson/vdec/vdec.c: In function =E2=80=98vdec_sto=
-p_streaming=E2=80=99:
-> ../drivers/staging/media/meson/vdec/vdec.c:389:4: error: implicit declara=
-tion of function =E2=80=98kthread_stop=E2=80=99 [-Werror=3Dimplicit-functio=
-n-declaration]
->     kthread_stop(sess->recycle_thread);
->     ^
+
+Fixed with:
+https://patchwork.freedesktop.org/patch/310016/
+
 >
-> Full randconfig file is attached.
 >
-
-This is fixed with "media: meson: vdec: Add missing kthread.h" from
-Yue Haibing [0]. The patch is sitting in media_tree/master.
-
-[0] https://patchwork.kernel.org/patch/10989333/
-
-Regards,
-Maxime
-
 >
 > --
 > ~Randy
->
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
