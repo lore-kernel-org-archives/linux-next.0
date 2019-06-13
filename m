@@ -6,52 +6,47 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63462C46477
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7615CC31E4B
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D22120665
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F25020665
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560445012;
-	bh=t8ziDUjGRatmX8RI2sR6uyYMindRv5VWtp1mspyO4HE=;
+	s=default; t=1560445180;
+	bh=3RW4ZL44OOyTLO9aMA8OLP0G8v0dfCC/xXm6TXHDWbo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=OQEfyCR9/GbTs0EAT5xLZoiyNNc7t8IBdW1KNVvp7d0yAyPC37GGmccOK32cU4gf2
-	 zHYpZswz740g3S2bJeHkRrhfvt4imZHxc50HShdiJbJ0aVfxXs8yCP7D6vbNCXjMNw
-	 Pqs3A8iw4l42Vmg8h9v54/n0mFA8Quhlnitv/D2Q=
+	b=OeuJSVLH3P4zvUvP/8xYKfN5H6pFquR0j/RWPsDEfFo9nxJyOeBSQMeusSXUlCzj4
+	 LTcUc8xX5sVK5N+9EuTFuD5vQzwNPyE8mDSYsV1/xZpS5Yb8S289XKc18GXAktAiva
+	 gG6UPrpmTmzjrb+T+UTGSglC7cMmzL/yMfVpjcWg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729957AbfFMQ4q (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:56:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37046 "EHLO mail.kernel.org"
+        id S1730065AbfFMQ7U (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:59:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729956AbfFMBSO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:18:14 -0400
+        id S1729820AbfFMAQx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 12 Jun 2019 20:16:53 -0400
 Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CE68208CA;
-        Thu, 13 Jun 2019 01:18:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0164120B7C;
+        Thu, 13 Jun 2019 00:16:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560388694;
-        bh=t8ziDUjGRatmX8RI2sR6uyYMindRv5VWtp1mspyO4HE=;
+        s=default; t=1560385013;
+        bh=3RW4ZL44OOyTLO9aMA8OLP0G8v0dfCC/xXm6TXHDWbo=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B6QwZ4EL/RBtMxQBQ2C4dYwyr9DAJ+Z2Z3aJYcMQaieNiGU59KS/u8/xtLLpUbW7T
-         m8OVV9+d3Wy/w/AD79mktyWQ9phS4xvdMROxkLy5tWqzeIv5KZdGBnmd8Y37PQfYMW
-         8g+LcA6tVIJiZ3F672gNG+5F6YHn3ViB+XbeCa+A=
-Date:   Wed, 12 Jun 2019 18:18:13 -0700
+        b=lLT1tf/lBAgc9gaM7UNXCbnkWeZ3Z63UxIfuweXQwHi8wgYjIPL4QCEFUx5dcfSML
+         0VyFRRIpU+ezOoce9s8KpxL7vdTAL6MtaihiW7By8qV+4CvF71b0LHbJkp5B/lSvBp
+         pMb8yQLeDX/0IiK4I3HorwRUcMSKeICfZjiDPoSc=
+Date:   Wed, 12 Jun 2019 17:16:52 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: Re: mmotm 2019-06-11-16-59 uploaded (ocfs2)
-Message-Id: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
-In-Reply-To: <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
-References: <20190611235956.4FZF6%akpm@linux-foundation.org>
-        <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     linux-next@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Aaron Tomlin <atomlin@redhat.com>
+Subject: Re: [PATCH linux-next] sysctl: fix build error
+Message-Id: <20190612171652.b8ba1f05d835e3fc870829e4@linux-foundation.org>
+In-Reply-To: <20190612220120.31312-1-mcroce@redhat.com>
+References: <20190612220120.31312-1-mcroce@redhat.com>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -61,40 +56,16 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+On Thu, 13 Jun 2019 00:01:20 +0200 Matteo Croce <mcroce@redhat.com> wrote:
 
-> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> 
-> 
-> on i386:
-> 
-> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
-> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
+> Commit cefdca0a86be ("userfaultfd/sysctl: add vm.unprivileged_userfaultfd")
+> reintroduces a reference to 'zero' and 'one'.
+> Use the SYSCTL_{ZERO,ONE} symbols instead.
 
-Thanks.  This, I guess:
+proc-sysctl-add-shared-variables-for-range-check-fix.patch (which has
+been in linux-next for over a week) already fixed that.
 
---- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
-+++ a/fs/ocfs2/dlmglue.c
-@@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
- 		 * otherwise, only dump the last N seconds active lock
- 		 * resources.
- 		 */
--		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
-+		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
- 			return 0;
- 	}
- #endif
+> Reported-by: kbuild test robot <lkp@intel.com>
 
-review and test, please?
+Some robot glitch I guess?
+
