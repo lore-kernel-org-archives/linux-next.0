@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EBEC31E45
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 15:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310F0C31E4A
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 15:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6606420B7C
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 15:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6EAD20B7C
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 15:14:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="V8GfUE87"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="LTjE4npX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbfFMPMB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:12:01 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52547 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732288AbfFMNuG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Jun 2019 09:50:06 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so10312527wms.2
-        for <linux-next@vger.kernel.org>; Thu, 13 Jun 2019 06:49:56 -0700 (PDT)
+        id S1732642AbfFMPN0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Jun 2019 11:13:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35792 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732262AbfFMNbf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Jun 2019 09:31:35 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m3so1830738wrv.2
+        for <linux-next@vger.kernel.org>; Thu, 13 Jun 2019 06:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=sy/KDKTD1Lnv0Emxs/t1ocCmTB3eylzzj6N4dnSIuuQ=;
-        b=V8GfUE87Net9FSoegkaxd0j2sn8gvsVpBrMIFw5UZ4JIgiCrjNLA4QenVoEg+Zdu4Y
-         i42L6g/TSkuamuetmyWM3A3nBP85uNYRW9DKywCMcyxODQuR3COK8yTHunvHru2kOlIl
-         Z7DovrT9nb0xxucjMJqTQpfJveKI2sjOLJPLrHUOcS1C+OFL5tf6OG3fGIPNRpXdzdbB
-         o8C4NuzuK7+oxCFu2uKavAKxDOd5pKMQevCgjnk0P7+iiqR++fQKTiMlZxndCoPC7DDj
-         TZ70LbfxLNe3MWxfb2zedlGXrO/iKrwDsijOk1kcDrpOl0CaNQrPTcH/ZgIgF3eJAIU3
-         Kbqg==
+        bh=z/1El8cwlhlwpdR3/bOe1tQzRHQP88h8ieIkLvLXXRM=;
+        b=LTjE4npXB5fvm9mgi2OrLxM0bAJTqyWFGzM39OikISJaDIoxvraPoQzG8GvNpxkMw+
+         HOiwBLdxyMxbIw2gU7dNLAMhUgYE3UuGBfhihTKhy/qlU3ERAIICG7r7gnjauEmIlqTn
+         4NKh0ZW3fvp7xRvVNAIgjQ5wv+HSTZKOXyn5LnYMOlLapEtp8eWJ2BkhbF1dydok8Pyf
+         ErEIVlcJGfUH2f3JLOMlgzrwpnjvx0JD6dT8iH1DsIp8urvwHfZ+4EyTh1L9y4gWjmfj
+         XoVh6krbLMUyEtG0s1ymtDeA/a7W0yWMTOnP0rV7iKQFgFXjOIir0ImIMJYIREuKNBnw
+         sJ+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=sy/KDKTD1Lnv0Emxs/t1ocCmTB3eylzzj6N4dnSIuuQ=;
-        b=InBRo2grAMY+qHeHVUtD2fhLztBVH1sQaYyURDGuEx/40Bpwnu+9m4M4B1BnqnF+uh
-         OaHFcE2X2Y6Y1/ggMnEPFWZffBxYBjuD0L9piSzhA5VQX+FgbmuyyyzjhL5vrb0xqZxX
-         vb8U82bbx59rx6oWkYCyfpJtKsv+G/5rH0qfbD5yylTIQrda13rOdLF0P7qE+Vr5sheW
-         urCfFvzUpxcEcsMuate72QQY8sM40YoPMc4gYR3oULWMUlYaapXpyg2IYWiYUq4UIpEU
-         MbIx8MAbKv4E7xHDnzH2aj146Kt9b45WsFS2s8Q1J7+uTR1OWloFWPe91U+7W5tNwtRq
-         JZhg==
-X-Gm-Message-State: APjAAAUZewBXJ3arO5QvKnF3aDfRZuu+BV/4JA91UZJSwxcVjz6V5VS5
-        ANZ65JQudQ5ar9o+KSYdedKU6P0KeZaAfw==
-X-Google-Smtp-Source: APXvYqwKJ+IUmZnzjrcQ3Qw8vliwd5LLpAKvGhfPSNXYqB+5fOKqsG0l+x0QUVEnQXHwddyGQOM5+w==
-X-Received: by 2002:a7b:c444:: with SMTP id l4mr3898045wmi.15.1560433793736;
-        Thu, 13 Jun 2019 06:49:53 -0700 (PDT)
+        bh=z/1El8cwlhlwpdR3/bOe1tQzRHQP88h8ieIkLvLXXRM=;
+        b=Ooe+S081pu2KkHTrVWPMK+yxcJIMBCCGcTpINOQMHjhHG0W8N8JETMYmJpIvwZEZru
+         QUgUkpBmy1biHWYpgs2Ch4e7Uav/u+EsBwiWbLY83uEE0Sq65NqUkiQDo8MTRR70OWhe
+         FcPjjaa4CLwWwuLKwMV/n3BXblJgKO2e3eMzArt/10eKsLckzsHTUDtOhUN9tVvs3csN
+         hnvXDvl4oWOB6g9fUjqZE0apqQAfboWkk5T3f7WETxHKApj52S2EDDCmOcPJw23iLqCJ
+         zGpIsZBHgw1SUpoNU5M3zGTj9c3i5teGdwLLCInbo3TDnHzWKmtaYvOF07O1RRBZgP2f
+         EfNw==
+X-Gm-Message-State: APjAAAVtXYddKdpWiy1RgneKQNY+T9q9BpXmEV5Bdz5+SZmIu7+aTyA0
+        88FaYiyIvq8r2J7ogMOtzKaSCyX5HZgQIg==
+X-Google-Smtp-Source: APXvYqx4I8YobrDaRyqxf29aWxycd3qzMkUH7oPqE9tG2Sht1mElLCemukIR7ERZJM1rCTWY5sgIWg==
+X-Received: by 2002:a5d:4bd0:: with SMTP id l16mr30145908wrt.141.1560432685873;
+        Thu, 13 Jun 2019 06:31:25 -0700 (PDT)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f13sm5424341wrt.27.2019.06.13.06.49.52
+        by smtp.gmail.com with ESMTPSA id v67sm3368740wme.24.2019.06.13.06.31.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 06:49:53 -0700 (PDT)
-Message-ID: <5d025481.1c69fb81.7f22f.deff@mx.google.com>
-Date:   Thu, 13 Jun 2019 06:49:53 -0700 (PDT)
+        Thu, 13 Jun 2019 06:31:25 -0700 (PDT)
+Message-ID: <5d02502d.1c69fb81.ba54c.254b@mx.google.com>
+Date:   Thu, 13 Jun 2019 06:31:25 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: next-20190613
-X-Kernelci-Branch: master
+X-Kernelci-Kernel: v5.2-rc4-333-gafcfc783dad1
+X-Kernelci-Branch: pending-fixes
 X-Kernelci-Tree: next
-Subject: next/master build: 231 builds: 11 failed, 220 passed, 16 errors,
- 486 warnings (next-20190613)
+Subject: next/pending-fixes build: 223 builds: 0 failed, 223 passed,
+ 124 warnings (v5.2-rc4-333-gafcfc783dad1)
 To:     linux-next@vger.kernel.org, clang-built-linux@googlegroups.com
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
@@ -72,363 +72,246 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master build: 231 builds: 11 failed, 220 passed, 16 errors, 486 warnin=
-gs (next-20190613)
+next/pending-fixes build: 223 builds: 0 failed, 223 passed, 124 warnings (v=
+5.2-rc4-333-gafcfc783dad1)
 
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190613/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.2-rc4-333-gafcfc783dad1/
 
 Tree: next
-Branch: master
-Git Describe: next-20190613
-Git Commit: da151e650328dcd37176cf49fc626a7f42bfbe17
+Branch: pending-fixes
+Git Describe: v5.2-rc4-333-gafcfc783dad1
+Git Commit: afcfc783dad1939a4cf73c53877b28a15a97f2db
 Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 Built: 7 unique architectures
 
-Build Failures Detected:
+Warnings Detected:
 
 arc:
-    haps_hs_defconfig: (gcc-8) FAIL
-    haps_hs_smp_defconfig: (gcc-8) FAIL
-    nsim_hs_defconfig: (gcc-8) FAIL
-    nsim_hs_smp_defconfig: (gcc-8) FAIL
-    nsimosci_hs_defconfig: (gcc-8) FAIL
-    nsimosci_hs_smp_defconfig: (gcc-8) FAIL
-
-arm64:
-    allmodconfig: (clang-8) FAIL
-    allmodconfig: (gcc-8) FAIL
-
-arm:
-    allmodconfig: (gcc-8) FAIL
-    xcep_defconfig: (gcc-8) FAIL
-
-mips:
-    mpc30x_defconfig: (gcc-8) FAIL
-
-Errors and Warnings Detected:
-
-arc:
-    haps_hs_defconfig (gcc-8): 2 errors
-    haps_hs_smp_defconfig (gcc-8): 2 errors
-    nsim_hs_defconfig (gcc-8): 2 errors
-    nsim_hs_smp_defconfig (gcc-8): 2 errors
-    nsimosci_hs_defconfig (gcc-8): 2 errors
-    nsimosci_hs_smp_defconfig (gcc-8): 2 errors
     vdk_hs38_defconfig (gcc-8): 1 warning
     vdk_hs38_smp_defconfig (gcc-8): 1 warning
 
 arm64:
-    allmodconfig (clang-8): 43 warnings
-    allmodconfig (gcc-8): 1 warning
-    defconfig (clang-8): 44 warnings
-    defconfig (gcc-8): 1 warning
-    defconfig (clang-8): 44 warnings
-    defconfig (gcc-8): 1 warning
-    defconfig (clang-8): 44 warnings
-    defconfig (clang-8): 44 warnings
-    defconfig (gcc-8): 1 warning
+    allmodconfig (gcc-8): 49 warnings
 
 arm:
-    allmodconfig (gcc-8): 2 errors, 8 warnings
-    aspeed_g4_defconfig (gcc-8): 1 warning
-    aspeed_g5_defconfig (gcc-8): 1 warning
     integrator_defconfig (gcc-8): 2 warnings
-    milbeaut_m10v_defconfig (gcc-8): 1 warning
     multi_v4t_defconfig (gcc-8): 2 warnings
     multi_v5_defconfig (gcc-8): 2 warnings
-    multi_v7_defconfig (gcc-8): 1 warning
-    multi_v7_defconfig (gcc-8): 1 warning
-    multi_v7_defconfig (gcc-8): 1 warning
-    multi_v7_defconfig (gcc-8): 1 warning
-    oxnas_v6_defconfig (gcc-8): 1 warning
     realview_defconfig (gcc-8): 2 warnings
     s3c6400_defconfig (gcc-8): 2 warnings
     u300_defconfig (gcc-8): 2 warnings
-    xcep_defconfig (gcc-8): 1 error
 
 i386:
-    i386_defconfig (gcc-8): 1 warning
-    i386_defconfig (gcc-8): 1 warning
 
 mips:
-    32r2el_defconfig (gcc-8): 3 warnings
-    32r2el_defconfig (gcc-8): 3 warnings
-    allnoconfig (gcc-8): 1 warning
-    ar7_defconfig (gcc-8): 2 warnings
-    ath25_defconfig (gcc-8): 2 warnings
-    ath79_defconfig (gcc-8): 2 warnings
-    bcm47xx_defconfig (gcc-8): 2 warnings
-    bcm63xx_defconfig (gcc-8): 1 warning
-    bigsur_defconfig (gcc-8): 6 warnings
-    bmips_be_defconfig (gcc-8): 1 warning
-    bmips_stb_defconfig (gcc-8): 1 warning
-    capcella_defconfig (gcc-8): 2 warnings
-    cavium_octeon_defconfig (gcc-8): 6 warnings
-    ci20_defconfig (gcc-8): 1 warning
-    cobalt_defconfig (gcc-8): 2 warnings
-    db1xxx_defconfig (gcc-8): 2 warnings
-    decstation_64_defconfig (gcc-8): 6 warnings
-    decstation_defconfig (gcc-8): 2 warnings
-    decstation_r4k_defconfig (gcc-8): 2 warnings
-    e55_defconfig (gcc-8): 2 warnings
-    fuloong2e_defconfig (gcc-8): 6 warnings
-    gcw0_defconfig (gcc-8): 1 warning
-    gpr_defconfig (gcc-8): 2 warnings
-    ip22_defconfig (gcc-8): 2 warnings
-    ip27_defconfig (gcc-8): 6 warnings
-    ip28_defconfig (gcc-8): 6 warnings
-    ip32_defconfig (gcc-8): 6 warnings
-    jazz_defconfig (gcc-8): 2 warnings
-    jmr3927_defconfig (gcc-8): 1 warning
-    lasat_defconfig (gcc-8): 1 warning
-    lemote2f_defconfig (gcc-8): 6 warnings
-    loongson1b_defconfig (gcc-8): 2 warnings
-    loongson1c_defconfig (gcc-8): 2 warnings
-    loongson3_defconfig (gcc-8): 6 warnings
-    malta_defconfig (gcc-8): 2 warnings
-    malta_kvm_defconfig (gcc-8): 2 warnings
-    malta_kvm_guest_defconfig (gcc-8): 2 warnings
-    malta_qemu_32r6_defconfig (gcc-8): 4 warnings
-    maltaaprp_defconfig (gcc-8): 2 warnings
-    maltasmvp_defconfig (gcc-8): 2 warnings
-    maltasmvp_eva_defconfig (gcc-8): 2 warnings
-    maltaup_defconfig (gcc-8): 2 warnings
-    maltaup_xpa_defconfig (gcc-8): 2 warnings
-    markeins_defconfig (gcc-8): 2 warnings
-    mips_paravirt_defconfig (gcc-8): 6 warnings
-    mpc30x_defconfig (gcc-8): 1 error, 1 warning
-    msp71xx_defconfig (gcc-8): 2 warnings
-    mtx1_defconfig (gcc-8): 2 warnings
-    nlm_xlp_defconfig (gcc-8): 6 warnings
-    nlm_xlr_defconfig (gcc-8): 2 warnings
-    omega2p_defconfig (gcc-8): 1 warning
-    pic32mzda_defconfig (gcc-8): 2 warnings
-    pistachio_defconfig (gcc-8): 2 warnings
-    pnx8335_stb225_defconfig (gcc-8): 2 warnings
-    qi_lb60_defconfig (gcc-8): 2 warnings
-    rb532_defconfig (gcc-8): 3 warnings
-    rbtx49xx_defconfig (gcc-8): 2 warnings
-    rm200_defconfig (gcc-8): 2 warnings
-    rt305x_defconfig (gcc-8): 2 warnings
-    sb1250_swarm_defconfig (gcc-8): 4 warnings
-    tb0219_defconfig (gcc-8): 2 warnings
-    tb0226_defconfig (gcc-8): 2 warnings
-    tb0287_defconfig (gcc-8): 2 warnings
-    tinyconfig (gcc-8): 1 warning
-    vocore2_defconfig (gcc-8): 1 warning
-    workpad_defconfig (gcc-8): 2 warnings
-    xway_defconfig (gcc-8): 2 warnings
+    db1xxx_defconfig (gcc-8): 1 warning
+    malta_qemu_32r6_defconfig (gcc-8): 1 warning
+    rb532_defconfig (gcc-8): 1 warning
 
 riscv:
     rv32_defconfig (gcc-8): 4 warnings
 
 x86_64:
-    allmodconfig (gcc-8): 51 warnings
+    allmodconfig (gcc-8): 53 warnings
     tinyconfig (gcc-8): 1 warning
-    x86_64_defconfig (gcc-8): 1 warning
-    x86_64_defconfig (gcc-8): 1 warning
 
-Errors summary:
-
-    6    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahas=
-h'
-    6    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `c=
-rypto_has_ahash'
-    1    xfrm_algo.c:(.text+0x344): undefined reference to `crypto_has_ahas=
-h'
-    1    drivers/gpu/drm/arm/display/komeda/d71/d71_component.c:385:32: err=
-or: passing argument 3 of 'd71_layer_update_fb' from incompatible pointer t=
-ype [-Werror=3Dincompatible-pointer-types]
-    1    drivers/gpu/drm/arm/display/komeda/d71/d71_component.c:206:32: err=
-or: passing argument 3 of 'd71_layer_update_fb' from incompatible pointer t=
-ype [-Werror=3Dincompatible-pointer-types]
-    1    (.text+0x43c): undefined reference to `crypto_has_ahash'
 
 Warnings summary:
 
-    169  <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
--Wcpp]
-    15   drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is =
-negative [-Wshift-count-negative]
-    15   drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    15   drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is =
-negative [-Wshift-count-negative]
-    15   drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is =
-negative [-Wshift-count-negative]
-    14   drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of '=
-tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-=
-conversion]
-    10   drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    10   drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    7    arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-W=
+    13   warning: same module names found:
+    6    arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-W=
 unused-variable]
-    7    arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-W=
+    6    arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-W=
 unused-variable]
-    5    drivers/soc/rockchip/pm_domains.c:747:21: warning: shift count is =
-negative [-Wshift-count-negative]
-    5    41 warnings generated.
-    4    warning: same module names found:
-    4    drivers/firmware/efi/tpm.c:78:38: warning: incompatible integer to=
- pointer conversion passing 'unsigned long' to parameter of type 'void *' [=
--Wint-conversion]
-    4    1 warning generated.
-    2    kernel/trace/bpf_trace.c:581:13: warning: 'do_bpf_send_signal' def=
-ined but not used [-Wunused-function]
+    2    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:431:1: wa=
+rning: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larg=
+er-than=3D]
+    2    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame s=
+ize of 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame s=
+ize of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame s=
+ize of 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame=
+ size of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size o=
+f 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     2    arch/arc/kernel/unwind.c:187:14: warning: 'unw_hdr_alloc' defined =
 but not used [-Wunused-function]
-    2    WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version gener=
-ation failed, symbol will not be versioned.
     2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
 -Wcpp]
     2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
 d [-Wcpp]
-    1    {standard input}:134: Warning: macro instruction expanded into mul=
-tiple instructions
     1    {standard input}:131: Warning: macro instruction expanded into mul=
 tiple instructions
+    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 b=
+ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 b=
 ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 by=
 tes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: =
 call to stackleak_track_stack() with UACCESS enabled
+    1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2616 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 =
+bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 =
 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/dir.c:3080:1: warning: the frame size of 2056 bytes is la=
 rger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is l=
+arger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is l=
 arger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val'=
- defined but not used [-Wunused-function]
-    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2764:1: warning: t=
+    1    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitial=
+ized in this function [-Wmaybe-uninitialized]
+    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
 he frame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=
 =3D]
-    1    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:431:1: wa=
-rning: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larg=
-er-than=3D]
+    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
+he frame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=
+=3D]
     1    drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the =
 frame size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the=
  frame size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26023=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
+:1: warning: the frame size of 2528 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
 :1: warning: the frame size of 2440 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16894=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
+:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
 :1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
+:1: warning: the frame size of 3168 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
 :1: warning: the frame size of 3152 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:560:1: warning: the fra=
+    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
 me size of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
+me size of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/mtd/nand/raw/au1550nd.c:447:57: warning: pointer type mism=
 atch in conditional expression
     1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
+48 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
 40 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the fra=
+me size of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the fra=
 me size of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968=
+ bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952=
+ bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096=
  bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame s=
 ize of 2104 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame s=
 ize of 2808 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame s=
-ize of 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame s=
+ize of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame s=
+ize of 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame s=
 ize of 5880 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame s=
 ize of 2328 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame s=
-ize of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame s=
+ize of 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame s=
+ize of 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame s=
 ize of 2568 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame s=
 ize of 3288 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame s=
+ize of 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame s=
 ize of 3016 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame s=
+ize of 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame s=
 ize of 5320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame s=
+ize of 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame s=
 ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame s=
 ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame s=
 ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame s=
-ize of 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame=
- size of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
+ size of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
  size of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size o=
-f 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable '=
+i' [-Wunused-variable]
+    1    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable =
+'i' [-Wunused-variable]
+    1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
+frame size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
 frame size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: war=
-ning: format '%lx' expects argument of type 'long unsigned int', but argume=
-nt 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=3D]
-    1    drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:140:18: wa=
-rning: format '%ld' expects argument of type 'long int', but argument 4 has=
- type 'size_t' {aka 'unsigned int'} [-Wformat=3D]
-    1    drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: warning: l=
-eft shift count >=3D width of type [-Wshift-count-overflow]
     1    drivers/ata/pata_rb532_cf.c:165:24: warning: unused variable 'info=
 ' [-Wunused-variable]
-    1    cc1: some warnings being treated as errors
-    1    arch/x86/kvm/x86.c:4300:1: warning: the frame size of 2168 bytes i=
+    1    arch/x86/kvm/x86.c:4299:1: warning: the frame size of 2168 bytes i=
 s larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    arch/x86/kernel/cpu/mshyperv.c:342:1: warning: the frame size of 2=
+    1    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2=
 856 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    /tmp/ccGNpYu1.s:18191: Warning: using r15 results in unpredictable=
- behaviour
-    1    /tmp/ccGNpYu1.s:18119: Warning: using r15 results in unpredictable=
- behaviour
-    1    .config:1162:warning: override: UNWINDER_GUESS changes choice state
+    1    .config:1167:warning: override: UNWINDER_GUESS changes choice state
 
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
@@ -439,23 +322,13 @@ Detailed per-defconfig build reports:
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sect=
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnin=
+32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnin=
 gs, 0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -469,147 +342,118 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allmodconfig (arm64, clang-8) =E2=80=94 FAIL, 0 errors, 43 warnings, 0 sect=
-ion mismatches
+allmodconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 49 warnings, 0 sectio=
+n mismatches
 
 Warnings:
-    drivers/soc/rockchip/pm_domains.c:747:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    41 warnings generated.
-    WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version generation=
- failed, symbol will not be versioned.
+    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitialized =
+in this function [-Wmaybe-uninitialized]
+    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 bytes=
+ is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is larger=
+ than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 bytes i=
+s larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [=
+-Wunused-variable]
+    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-=
+Wunused-variable]
+    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 bytes =
+is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
+ size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
+0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
+f 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
+f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
+f 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
+f 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
+f 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
+f 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
+f 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
+f 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
+f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
+f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
+ of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
+ of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
+ze of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2848 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
+arning: the frame size of 3168 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
+arning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
+arning: the frame size of 2528 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:431:1: warning=
+: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
+an=3D]
+    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
+ze of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
+ame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
 
 ---------------------------------------------------------------------------=
 -----
-allmodconfig (arm64, gcc-8) =E2=80=94 FAIL, 0 errors, 1 warning, 0 section =
-mismatches
-
-Warnings:
-    WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version generation=
- failed, symbol will not be versioned.
-
----------------------------------------------------------------------------=
------
-allmodconfig (arm, gcc-8) =E2=80=94 FAIL, 2 errors, 8 warnings, 0 section m=
-ismatches
-
-Errors:
-    drivers/gpu/drm/arm/display/komeda/d71/d71_component.c:206:32: error: p=
-assing argument 3 of 'd71_layer_update_fb' from incompatible pointer type [=
--Werror=3Dincompatible-pointer-types]
-    drivers/gpu/drm/arm/display/komeda/d71/d71_component.c:385:32: error: p=
-assing argument 3 of 'd71_layer_update_fb' from incompatible pointer type [=
--Werror=3Dincompatible-pointer-types]
-
-Warnings:
-    arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
-    /tmp/ccGNpYu1.s:18119: Warning: using r15 results in unpredictable beha=
-viour
-    /tmp/ccGNpYu1.s:18191: Warning: using r15 results in unpredictable beha=
-viour
-    drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: warning:=
- format '%lx' expects argument of type 'long unsigned int', but argument 3 =
-has type 'size_t' {aka 'unsigned int'} [-Wformat=3D]
-    drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:140:18: warning=
-: format '%ld' expects argument of type 'long int', but argument 4 has type=
- 'size_t' {aka 'unsigned int'} [-Wformat=3D]
-    drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: warning: left s=
-hift count >=3D width of type [-Wshift-count-overflow]
-    cc1: some warnings being treated as errors
-
----------------------------------------------------------------------------=
------
-allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 51 warnings, 0 secti=
+allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 53 warnings, 0 secti=
 on mismatches
 
 Warnings:
-    arch/x86/kvm/x86.c:4300:1: warning: the frame size of 2168 bytes is lar=
-ger than 2048 bytes [-Wframe-larger-than=3D]
-    arch/x86/kernel/cpu/mshyperv.c:342:1: warning: the frame size of 2856 b=
+    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2856 b=
 ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    arch/x86/kvm/x86.c:4299:1: warning: the frame size of 2168 bytes is lar=
+ger than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 bytes=
  is larger than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is larger=
@@ -622,15 +466,12 @@ r than 2048 bytes [-Wframe-larger-than=3D]
 r than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
-    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: call =
-to stackleak_track_stack() with UACCESS enabled
     net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 bytes i=
 s larger than 2048 bytes [-Wframe-larger-than=3D]
     net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
+    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: call =
+to stackleak_track_stack() with UACCESS enabled
     net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 bytes =
 is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
@@ -643,6 +484,10 @@ is larger than 2048 bytes [-Wframe-larger-than=3D]
  larger than 2048 bytes [-Wframe-larger-than=3D]
     net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
+0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
 f 3016 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
@@ -675,36 +520,34 @@ f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
  of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
  of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952 byte=
-s is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
-0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
 ze of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2840 by=
 tes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/ethernet/rocker/rocker_ofdpa.c:560:1: warning: the frame si=
-ze of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552:1: w=
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
 arning: the frame size of 3152 bytes is larger than 2048 bytes [-Wframe-lar=
 ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16894:1: w=
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
 arning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-lar=
 ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26023:1: w=
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
 arning: the frame size of 2440 bytes is larger than 2048 bytes [-Wframe-lar=
 ger-than=3D]
+    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
+ze of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:431:1: warning=
+: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
+an=3D]
     drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the fram=
 e size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the frame=
  size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:431:1: warning=
-: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
-an=3D]
-    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2764:1: warning: the fr=
+    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
 ame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defi=
-ned but not used [-Wunused-function]
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
     warning: same module names found:
     warning: same module names found:
     warning: same module names found:
@@ -732,16 +575,8 @@ mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-allnoconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -760,30 +595,18 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
  mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+---------------------------------------------------------------------------=
+-----
+aspeed_g4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-aspeed_g4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    kernel/trace/bpf_trace.c:581:13: warning: 'do_bpf_send_signal' defined =
-but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-aspeed_g5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    kernel/trace/bpf_trace.c:581:13: warning: 'do_bpf_send_signal' defined =
-but not used [-Wunused-function]
+aspeed_g5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -797,21 +620,13 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
+ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
+ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -840,71 +655,38 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
+bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+---------------------------------------------------------------------------=
+-----
+bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+---------------------------------------------------------------------------=
+-----
+bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
+capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
+cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
  0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -913,11 +695,8 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -941,12 +720,8 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -975,44 +750,27 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
-ion mismatches
+db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
 
 Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     drivers/mtd/nand/raw/au1550nd.c:447:57: warning: pointer type mismatch =
 in conditional expression
 
 ---------------------------------------------------------------------------=
 -----
-decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
+decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
  0 section mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings=
+decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
 , 0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1021,107 +779,8 @@ smatches
 
 ---------------------------------------------------------------------------=
 -----
-defconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 44 warnings, 0 section=
- mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:78:38: warning: incompatible integer to poin=
-ter conversion passing 'unsigned long' to parameter of type 'void *' [-Wint=
--conversion]
-    1 warning generated.
-    drivers/soc/rockchip/pm_domains.c:747:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    41 warnings generated.
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mis=
-matches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1130,201 +789,8 @@ defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
 
 ---------------------------------------------------------------------------=
 -----
-defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, clang-8) =E2=80=94 PASS, 0 erro=
-rs, 44 warnings, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:78:38: warning: incompatible integer to poin=
-ter conversion passing 'unsigned long' to parameter of type 'void *' [-Wint=
--conversion]
-    1 warning generated.
-    drivers/soc/rockchip/pm_domains.c:747:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    41 warnings generated.
-
----------------------------------------------------------------------------=
------
 defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
-, 1 warning, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
-
----------------------------------------------------------------------------=
------
-defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, clang-8) =E2=80=94 PASS, 0 erro=
-rs, 44 warnings, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:78:38: warning: incompatible integer to poin=
-ter conversion passing 'unsigned long' to parameter of type 'void *' [-Wint=
--conversion]
-    1 warning generated.
-    drivers/soc/rockchip/pm_domains.c:747:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    41 warnings generated.
+, 0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1333,107 +799,8 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-defconfig+kselftest (arm64, clang-8) =E2=80=94 PASS, 0 errors, 44 warnings,=
- 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:78:38: warning: incompatible integer to poin=
-ter conversion passing 'unsigned long' to parameter of type 'void *' [-Wint=
--conversion]
-    1 warning generated.
-    drivers/soc/rockchip/pm_domains.c:747:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:752:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:790:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:793:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:794:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:795:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:796:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:818:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:819:22: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:820:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:821:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:822:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:832:20: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:833:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    drivers/soc/rockchip/pm_domains.c:834:21: warning: shift count is negat=
-ive [-Wshift-count-negative]
-    41 warnings generated.
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+defconfig+kselftest (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1442,12 +809,8 @@ dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
  mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1491,24 +854,13 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 s=
+fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1517,12 +869,8 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
  mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1541,23 +889,13 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-haps_hs_defconfig (arc, gcc-8) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 sect=
+haps_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahash'
-    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto=
-_has_ahash'
 
 ---------------------------------------------------------------------------=
 -----
-haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 =
+haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahash'
-    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto=
-_has_ahash'
 
 ---------------------------------------------------------------------------=
 -----
@@ -1571,23 +909,13 @@ hsdk_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-i386_defconfig+kselftest (i386, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning,=
- 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+i386_defconfig+kselftest (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1632,51 +960,23 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
+ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
+ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
+ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
+ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1685,20 +985,13 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
+jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1722,55 +1015,28 @@ lart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 se=
+lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-loongson3_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 s=
+loongson3_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1804,107 +1070,62 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
+malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+---------------------------------------------------------------------------=
+-----
+malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warning=
+s, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warning=
-s, 0 section mismatches
+malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning=
+, 0 section mismatches
 
 Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 4 warning=
-s, 0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     {standard input}:131: Warning: macro instruction expanded into multiple=
  instructions
-    {standard input}:134: Warning: macro instruction expanded into multiple=
- instructions
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings,=
+maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
  0 section mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0=
+maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
  section mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
+markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-milbeaut_m10v_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0=
- section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+milbeaut_m10v_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1913,16 +1134,8 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
+mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
  0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1936,14 +1149,8 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mpc30x_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 sectio=
-n mismatches
-
-Errors:
-    (.text+0x43c): undefined reference to `crypto_has_ahash'
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1952,21 +1159,13 @@ mps2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
+mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1992,13 +1191,8 @@ d-variable]
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2008,32 +1202,17 @@ multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm, gcc-8) =E2=80=94 PASS, 0=
 ---------------------------------------------------------------------------=
 -----
 multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
-=94 PASS, 0 errors, 1 warning, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+=94 PASS, 0 errors, 0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 =
-warning, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 =
+warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warni=
-ng, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warni=
+ngs, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2077,35 +1256,18 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sec=
+nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-nsim_hs_defconfig (arc, gcc-8) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 sect=
+nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahash'
-    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto=
-_has_ahash'
 
 ---------------------------------------------------------------------------=
 -----
@@ -2114,33 +1276,18 @@ gs, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-nsim_hs_smp_defconfig (arc, gcc-8) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 =
+nsim_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahash'
-    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto=
-_has_ahash'
 
 ---------------------------------------------------------------------------=
 -----
-nsimosci_hs_defconfig (arc, gcc-8) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 =
+nsimosci_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahash'
-    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto=
-_has_ahash'
 
 ---------------------------------------------------------------------------=
 -----
-nsimosci_hs_smp_defconfig (arc, gcc-8) =E2=80=94 FAIL, 2 errors, 0 warnings=
+nsimosci_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
 , 0 section mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto_has_ahash'
-    arc-elf32-ld: xfrm_algo.c:(.text+0x1e6): undefined reference to `crypto=
-_has_ahash'
 
 ---------------------------------------------------------------------------=
 -----
@@ -2169,11 +1316,8 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2182,13 +1326,8 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-oxnas_v6_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+oxnas_v6_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2202,21 +1341,13 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2225,12 +1356,8 @@ pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings=
+pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
 , 0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2269,32 +1396,22 @@ qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
 ---------------------------------------------------------------------------=
 -----
-rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 secti=
-on mismatches
+rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
 
 Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     drivers/ata/pata_rb532_cf.c:165:24: warning: unused variable 'info' [-W=
 unused-variable]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
+rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2309,12 +1426,8 @@ d-variable]
 
 ---------------------------------------------------------------------------=
 -----
-rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
+rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2323,12 +1436,8 @@ mismatches
 
 ---------------------------------------------------------------------------=
 -----
-rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2371,14 +1480,8 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 4 warnings, =
+sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
 0 section mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2437,30 +1540,18 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -2479,16 +1570,16 @@ smatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 tinyconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
 ismatches
 
 Warnings:
-    .config:1162:warning: override: UNWINDER_GUESS changes choice state
+    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2497,21 +1588,13 @@ matches
 
 ---------------------------------------------------------------------------=
 -----
+tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
 tinyconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mis=
-matches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-tinyconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2579,11 +1662,8 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -2592,49 +1672,28 @@ vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
 
 ---------------------------------------------------------------------------=
 -----
-workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+x86_64_defconfig+kselftest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warn=
+ings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-x86_64_defconfig+kselftest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warn=
-ing, 0 section mismatches
-
-Warnings:
-    drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_=
-calc_event_log_size' makes pointer from integer without a cast [-Wint-conve=
-rsion]
+xcep_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
 
 ---------------------------------------------------------------------------=
 -----
-xcep_defconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section =
-mismatches
-
-Errors:
-    xfrm_algo.c:(.text+0x344): undefined reference to `crypto_has_ahash'
-
----------------------------------------------------------------------------=
------
-xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
+xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
