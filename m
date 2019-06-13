@@ -2,103 +2,108 @@ Return-Path: <SRS0=xExw=UM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6437C31E45
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DFAC31E45
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8917420673
-	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HRNcwqMf"
+	by mail.kernel.org (Postfix) with ESMTP id 4BB7A2082C
+	for <linux-next@archiver.kernel.org>; Thu, 13 Jun 2019 16:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730309AbfFMQqT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:46:19 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37939 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730306AbfFMFcU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:32:20 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45PXS00jprz9s9y;
-        Thu, 13 Jun 2019 15:32:15 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560403937;
-        bh=v8IFBTO5V5TY7KGBZV751LEQxf/CeoT/DotZWwmhsSY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HRNcwqMfb95iDhut86ckDdIsIgvxHm6kZqCQq+zR8QyC/B+5cxPTVsj47Ru2+oq7v
-         Dyd/j0L2tL8Rou0Gyb2vzTKmFnh5lTabxJXu0vHneoGazhoeZW2eqi+3ZVhSsm6gBE
-         kgXHHHPZN9TSVeJVm/eEH6pnwkSP/QseBtl4OgxNA5SMGbFpmwU8RazxyZTvkQhALd
-         RhoRX/Ca4SPe0UNPT88n9UwYwfTyCMbDUv8cKZ7kiPJPVYMr3fW/JuljO6mva0g4+y
-         zuQHwOcbTj5HTcgkH+Xa8V8FW7/djYj454RZSqvIndJ99ibzVV9qqdOKxon4uwqpRF
-         MoOUwGj9zg0PA==
-Date:   Thu, 13 Jun 2019 15:32:15 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bich Hemon <bich.hemon@st.com>,
-        Erwan Le Ray <erwan.leray@st.com>
-Subject: linux-next: build failure after merge of the tty tree
-Message-ID: <20190613153215.0c99f252@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S+Fa5fHjAM9HT=SW.URaEjA"; protocol="application/pgp-signature"
+        id S1730157AbfFMQvI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Jun 2019 12:51:08 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:42669 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730154AbfFMDgz (ORCPT
+        <rfc822;groupwise-linux-next@vger.kernel.org:9:3>);
+        Wed, 12 Jun 2019 23:36:55 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Wed, 12 Jun 2019 21:36:53 -0600
+Message-Id: <5D01C4CD020000F90006C06A@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.1 
+Date:   Wed, 12 Jun 2019 21:36:45 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     "Randy Dunlap" <rdunlap@infradead.org>, <akpm@linux-foundation.org>
+Cc:     <sfr@canb.auug.org.au>, <broonie@kernel.org>, <linux-mm@kvack.org>,
+        "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+        <ocfs2-devel@oss.oracle.com>, <mhocko@suse.cz>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-next@vger.kernel.org>, <mm-commits@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] mmotm 2019-06-11-16-59 uploaded (ocfs2)
+References: <20190611235956.4FZF6%akpm@linux-foundation.org>
+ <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
+ <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/S+Fa5fHjAM9HT=SW.URaEjA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Randy and Andrew,
 
-Hi Greg,
+>>> On 6/13/2019 at  9:18 am, in message
+<20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
+>> > The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
+>> > 
+>> >    
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_ 
+> mmotm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0
+> vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYme
+> DBOk3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
+>> > 
+>> > mmotm-readme.txt says
+>> > 
+>> > README for mm-of-the-moment:
+>> > 
+>> > 
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_mmo 
+> tm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU
+> 6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYmeDBO
+> k3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
+>> > 
+>> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> > more than once a week.
+>> 
+>> 
+>> on i386:
+>> 
+>> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
+>> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
+> 
+> Thanks.  This, I guess:
+> 
+> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
+> +++ a/fs/ocfs2/dlmglue.c
+> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
+>  		 * otherwise, only dump the last N seconds active lock
+>  		 * resources.
+>  		 */
+> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
+> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
+>  			return 0;
+>  	}
+>  #endif
+> 
+> review and test, please?
+Thank for this fix, the change is OK for my testing on x86_64.
 
-After merging the tty tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Thanks
+Gang
 
-drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_suspend':
-drivers/tty/serial/stm32-usart.c:1298:2: error: implicit declaration of fun=
-ction 'pinctrl_pm_select_sleep_state' [-Werror=3Dimplicit-function-declarat=
-ion]
-  pinctrl_pm_select_sleep_state(dev);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_resume':
-drivers/tty/serial/stm32-usart.c:1307:2: error: implicit declaration of fun=
-ction 'pinctrl_pm_select_default_state' [-Werror=3Dimplicit-function-declar=
-ation]
-  pinctrl_pm_select_default_state(dev);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> _______________________________________________
+> Ocfs2-devel mailing list
+> Ocfs2-devel@oss.oracle.com 
+> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
 
-Caused by commit
-
-  c70669ecef4e ("serial: stm32: select pinctrl state in each suspend/resume=
- function")
-
-I have used the tty tree from next-20190612 for today.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/S+Fa5fHjAM9HT=SW.URaEjA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0B398ACgkQAVBC80lX
-0Gx8tAf+PbjxRIDVuW7/k9dlVEjJhGcbkXxePLiv5QzLBDt/O/AvO3ukdCKLK+jE
-RptwbGs+Vz+tZ13cvpvZurPAZ5PFbgTP2T+1ufhjFdVZP0irHHeQE0svHTyweltb
-DqpsYfeJKrV++rMHbGNQbPxsO+qhBxPGt/ZPKUObbi9MPUHa3Yh7P0kLAAxDIwLS
-zAr8B7QpC2iWP/APByW288RVSfVJZPWS6aktVPPkM5qVcl8oXuBzAtFWztinlV3q
-Z1GjPy1uF4psVSH+tzJOg/sdRupTW5gKI3oXG4HwAgXSNVoybxObzOvGie/YNNeE
-YgYxLIcFmJ2tX7E/NN6vhMhYzk3Zow==
-=AftU
------END PGP SIGNATURE-----
-
---Sig_/S+Fa5fHjAM9HT=SW.URaEjA--
