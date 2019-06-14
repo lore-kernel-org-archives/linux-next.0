@@ -2,140 +2,145 @@ Return-Path: <SRS0=e2RY=UN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD44C31E45
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 03:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E75C31E44
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 04:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D70222147A
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 03:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F90420851
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 04:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JOAyb+WX"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ebM/DX4z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725777AbfFNDAs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Jun 2019 23:00:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:57793 "EHLO ozlabs.org"
+        id S1725775AbfFNEli (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 14 Jun 2019 00:41:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:39483 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbfFNDAs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 13 Jun 2019 23:00:48 -0400
+        id S1725767AbfFNEli (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 14 Jun 2019 00:41:38 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Q52f6kgHz9sBb;
-        Fri, 14 Jun 2019 13:00:42 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Q7H15S2fz9s4Y;
+        Fri, 14 Jun 2019 14:41:33 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560481243;
-        bh=m5X7GsQjj0dXlpKQUTPtE8A9eyH0F52zKw87lwG2hI0=;
+        s=201702; t=1560487295;
+        bh=/d+ryYV/vaMZn5qaMRIajjQqgkaOkU1+4KD1BOAynSs=;
         h=Date:From:To:Cc:Subject:From;
-        b=JOAyb+WXUCCeOFSBUbYupotwV4ebSFtNAJP3Wvps6OvboKnaHVVleHJzuln+m7a1e
-         4pzzLz2JhxPeTqEU+H6LpkTm6BHMh+DD34SpjTWhFSkMvfGY5O8A6WjEvYgcclp26L
-         DEkz3NiewpNG+N7txc4rnZDab9Erz6p+1rG3STWgSC2AP+0q5rv2n6NCu7BKPijBMg
-         t1i4x7Dg85m4qD6RXenlVSr7WsIjsQKscG+z877difF3dIX7JwMbxDHk9a0ddLf8zG
-         vNRFhX+I0loruqPjOPJEJx9p19zgca0dRcxRnlTy+uoX4rczE+TjktGkm91kSpt4h7
-         uYBzOxyi2D7mQ==
-Date:   Fri, 14 Jun 2019 13:00:33 +1000
+        b=ebM/DX4zLGPWz7/mr0RvODiffTm/dcL/MPUPUpk+LC6wNRIk3kjJGJoglIScrpqCy
+         r/M+e4hgy/ZIawLiYi53HZ/Xur/igR5L8pyMLV6InoUHvp00VivhbnvCImLZpANVXQ
+         9zhff4W4bqkCVjZwGcEsZ7CQZVFQO8e7BLU41UIo8CzYTmsoMHxjugddxnpjrbMvoD
+         twVFzcCycM2XKD7PKoSKN6ibJe90uACbnVbXwBw8o/cIWqhX0p7Z6JubFO7Bhm3zgU
+         1tx0JNTyFDC02/I1l3oRKGgwz/N4sqp+s6zp/IG8SU+u6CrBDtOVzGrTlALeynp3IU
+         pScU0mZe71oWw==
+Date:   Fri, 14 Jun 2019 14:41:33 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>
-Subject: linux-next: manual merge of the rdma tree with Linus' tree
-Message-ID: <20190614130033.2d50bc2e@canb.auug.org.au>
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20190614144133.5dbea6bf@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EPAqQI1YF8isUvvVdnEK_20"; protocol="application/pgp-signature"
+ boundary="Sig_//+.8RdugmHQfla=VfC_BGU/"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/EPAqQI1YF8isUvvVdnEK_20
+--Sig_//+.8RdugmHQfla=VfC_BGU/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the rdma tree got conflicts in:
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/infiniband/core/uverbs_cmd.c
-  drivers/infiniband/core/uverbs_std_types_cq.c
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4031:18: error:=
+ initialization of 'int (*)(struct drm_connector *, struct drm_atomic_state=
+ *)' from incompatible pointer type 'int (*)(struct drm_connector *, struct=
+ drm_connector_state *)' [-Werror=3Dincompatible-pointer-types]
+  .atomic_check =3D amdgpu_dm_connector_atomic_check,
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4031:18: note: =
+(near initialization for 'amdgpu_dm_connector_helper_funcs.atomic_check')
 
-between commit:
+Caused by commit
 
-  6876aaedc8a1 ("RDMA/uverbs: Pass udata on uverbs error unwind")
+  6f3b62781bbd ("drm: Convert connector_helper_funcs->atomic_check to accep=
+t drm_atomic_state")
 
-from Linus' tree and commit:
+interacting with commit
 
-  e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibili=
-ty")
+  88694af9e4d1 ("drm/amd/display: Expose HDR output metadata for supported =
+connectors")
 
-from the rdma tree.
+from the drm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 14 Jun 2019 14:27:12 +1000
+Subject: [PATCH] fixup for "drm: Convert connector_helper_funcs->atomic_che=
+ck
+ to accept drm_atomic_state"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gp=
+u/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 413bf22e9585..b3a083c9a11c 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3976,9 +3976,10 @@ is_hdr_metadata_different(const struct drm_connector=
+_state *old_state,
+=20
+ static int
+ amdgpu_dm_connector_atomic_check(struct drm_connector *conn,
+-				 struct drm_connector_state *new_con_state)
++				 struct drm_atomic_state *state)
+ {
+-	struct drm_atomic_state *state =3D new_con_state->state;
++	struct drm_connector_state *new_con_state =3D
++		drm_atomic_get_new_connector_state(state, conn);
+ 	struct drm_connector_state *old_con_state =3D
+ 		drm_atomic_get_old_connector_state(state, conn);
+ 	struct drm_crtc *crtc =3D new_con_state->crtc;
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/infiniband/core/uverbs_cmd.c
-index 63fe14c7c68f,5c00d9a5698a..000000000000
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@@ -1053,8 -1045,10 +1056,10 @@@ static struct ib_ucq_object *create_cq(
-  	return obj;
- =20
-  err_cb:
- -	ib_destroy_cq(cq);
- +	ib_destroy_cq_user(cq, uverbs_get_cleared_udata(attrs));
--=20
-+ 	cq =3D NULL;
-+ err_free:
-+ 	kfree(cq);
-  err_file:
-  	if (ev_file)
-  		ib_uverbs_release_ucq(attrs->ufile, ev_file, obj);
-diff --cc drivers/infiniband/core/uverbs_std_types_cq.c
-index 07ea4e3c4566,06b8c7d017b7..000000000000
---- a/drivers/infiniband/core/uverbs_std_types_cq.c
-+++ b/drivers/infiniband/core/uverbs_std_types_cq.c
-@@@ -135,8 -140,10 +140,10 @@@ static int UVERBS_HANDLER(UVERBS_METHOD
- =20
-  	return 0;
-  err_cq:
- -	ib_destroy_cq(cq);
- +	ib_destroy_cq_user(cq, uverbs_get_cleared_udata(attrs));
--=20
-+ 	cq =3D NULL;
-+ err_free:
-+ 	kfree(cq);
-  err_event_file:
-  	if (ev_file)
-  		uverbs_uobject_put(ev_file_uobj);
-
---Sig_/EPAqQI1YF8isUvvVdnEK_20
+--Sig_//+.8RdugmHQfla=VfC_BGU/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0DDdEACgkQAVBC80lX
-0GzZrwgAoJBhYFviY55t2R8SCHHVHhCeQeA16nGse9fCe1xU1qZpGg3eNPHd+IJ4
-Q/+HGWrCL+99CG8cLl6jZoH7E3OCx2x0drlwIXGbLH+Gg7WN66r7DJpkDD6yBGpu
-cNeZbH3DD7DBZRN5M6YSyyzQgMVPwOvHcob4XKCTyoYqudM7OQMcj9vl5ZeytkcF
-9QgQv5gG7M9wt3up4RKytL8xSkIZuq2skhlFAzRlTSYuvhupyyiPq5U9AGJavVk1
-u0hat8mkpOMY7CkvXWQmOQN4ksNj2nIgT6F/fGl1YZsuD13i1O9PooaIE6zjtqqs
-QHYCA3CIS0k4d6Ii7x+d8b2Mp+8Tiw==
-=fwNT
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0DJX0ACgkQAVBC80lX
+0GxcLAgAljvrK6Ifl9wqiaYaz9OxA/w0ZH1f0ia1PUmQSyjwkPD5cYLtWrpvIjpy
+b9CuAwupRZuY8mjiygi/S0PMdUUEarl3/l2C2daY5BM5US23Vtt5g9g1LEmzbmru
+6L0Ya+tmjHgq7K8hQBNnRShoZhG5k1C+Mx02WFQ+EacdaRdo6lmMRclMihGbeOGs
+JmBE+Q8M0xN8XLuhqWF4sm69DXCKMmojWDiYmhfGyd9XbhYHENIVFiyWHGSRlc3R
+6zsyH+QENQIEo1/5c+UnAKRilOho8au0+aLfRxQh0Dg21Q5ytv4ii4DHu9n/R3VM
+KuEb7sBzmVu0AYkQnultJTy2cm6Nbg==
+=IVWq
 -----END PGP SIGNATURE-----
 
---Sig_/EPAqQI1YF8isUvvVdnEK_20--
+--Sig_//+.8RdugmHQfla=VfC_BGU/--
