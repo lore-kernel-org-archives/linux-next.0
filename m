@@ -2,106 +2,220 @@ Return-Path: <SRS0=e2RY=UN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13176C31E4D
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 15:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B88BC31E4B
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 16:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE3AA20866
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 15:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC8642133D
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 16:36:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FnqdDZiJ"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="asOknm1W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725859AbfFNPKw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 14 Jun 2019 11:10:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbfFNPKw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 14 Jun 2019 11:10:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mE9NtdIMLtRYrJYsPVWIdYlP8QGELtHjDgLDViKfFl8=; b=FnqdDZiJoa/hEZr3Y2wAtAUvW
-        RwDKcxBcqFY2c4fPRp6dSp+IE8gwtLiBGpdqJHcJmQvP+4Ydz77mape5I6u1BOJPd61R25r3sE1Uq
-        Wsu8q691aQtts8MORMHhDzbud0v3H9nwLCsJZQ9FeadiPcbNDKVkGJkTUgMY27NGkZwebeaGufkjc
-        FYFyjqmMpwzysLyHIAAogDRhsHYoQ+Gifq4FFht8alnljAOYi/gKzwpdRNMAaaZ+9Ea6vwAjo3KZC
-        +A+uix0ZXF6suPpy6TiGQsXZeuTTHRG0i2hNhQR9tuor/hc3xiQYTTfy4JEylUiV4lzI7oUjXqisS
-        5KamCY3rg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbnqt-00089R-Jx; Fri, 14 Jun 2019 15:10:51 +0000
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>
-Cc:     Matteo Croce <mcroce@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-References: <20190608125019.417-1-mcroce@redhat.com>
- <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
- <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
- <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
- <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
- <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
- <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dd09f750-5001-d7e4-8ef7-15bfcb29ee10@infradead.org>
-Date:   Fri, 14 Jun 2019 08:10:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1725809AbfFNQgY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 14 Jun 2019 12:36:24 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:34348 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfFNQgY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 14 Jun 2019 12:36:24 -0400
+Received: by mail-wm1-f52.google.com with SMTP id w9so9277334wmd.1
+        for <linux-next@vger.kernel.org>; Fri, 14 Jun 2019 09:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=K6akyVPWPm23t1GmcPvK2NVh19csAbGq1G2oHY4whmU=;
+        b=asOknm1WpaV9Y+gSa8LwXGMZ77X9BSc8PA6A9MyW9yO50YBFJ4ckClQSd9UT1WMwL/
+         3FyYg+hsLb3oNBIWmacv8Bgtre+wFPiD3EZkxHte/DVrTX12HFLJ/X2uUoCzrWe0P6LX
+         k05xMeqtdW48HNZ5s9IU2LLOTF4nWLjf/wbYzrZUD6eArp3Wixh7aLDstKozXOnFNwfl
+         EQQOoUKzcKoDIcV9QpyLdQwsdtZpJHsMf8wihTsyGogyfTl0g/CB/PcwZair9hrMFhVF
+         5dDTuj1v4GAbFzJ6NV6ZHMgFRUQ0/iiDL/SRzYRURuVlfwMTiB1dIJaXdmnq7zrE4bxT
+         BYXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=K6akyVPWPm23t1GmcPvK2NVh19csAbGq1G2oHY4whmU=;
+        b=MihMHaSiRBdLXS3JIJYujyb87xXK/5hOGmgqSVqwQsONvX8cxZVjTCEdesZ/RPQFLr
+         VAY+1mnoIHYoypSsYGFQBS5yShEK+L/7yWj/30Pd3Y3N9Fcf5/aRH2gmgw3KfhaiZldx
+         QpXvTV3kcUrxGJ5xusVYa2aG5vDvQpa20Z/0AhUFDcgo1XL014rxw8sKQ/3vyP7M9DQm
+         1pN8u3/xneeOl5+571M6RooVPV+s7rSqD9BelgW9qtuiGn/DfgsWpsYx6XNVqkJdAx4j
+         Y90u/f6ySMkYkkSeJZsYGR5JAGsvKtQv/Gk1IrOiFZx2FqMNfUA5LeIyfIT4QQzqAyBB
+         8J4g==
+X-Gm-Message-State: APjAAAU+qeBphRfdX+md1nSW02N29xBz+HokyOlNm2/GOG/VO2KHCW2O
+        DSifmj7fwJjcnfysKvcjsWi7Hsf4oxBoeQ==
+X-Google-Smtp-Source: APXvYqxNpqZaWzubigbVWbbe3lkmE4dbJKq2xGLarfr4ISfyu/7401NYncb7QEZIjgPsSDGYeZieHg==
+X-Received: by 2002:a1c:e109:: with SMTP id y9mr8194508wmg.35.1560530180936;
+        Fri, 14 Jun 2019 09:36:20 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id 67sm3921470wmd.38.2019.06.14.09.36.20
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 09:36:20 -0700 (PDT)
+Message-ID: <5d03cd04.1c69fb81.62e76.51fd@mx.google.com>
+Date:   Fri, 14 Jun 2019 09:36:20 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v5.2-rc4-392-g79cf6427bda8
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+Subject: next/pending-fixes boot: 193 boots: 8 failed,
+ 144 passed with 41 offline (v5.2-rc4-392-g79cf6427bda8)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/14/19 7:26 AM, Arnd Bergmann wrote:
-> On Fri, Jun 14, 2019 at 4:07 PM David Ahern <dsahern@gmail.com> wrote:
->> On 6/14/19 8:01 AM, Arnd Bergmann wrote:
->>> On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>>> On 6/11/19 5:08 PM, Matteo Croce wrote:
->>>
->>> It clearly shouldn't select PROC_SYSCTL, but I think it should not
->>> have a 'depends on' statement either. I think the correct fix for the
->>> original problem would have been something like
->>>
->>> --- a/net/mpls/af_mpls.c
->>> +++ b/net/mpls/af_mpls.c
->>> @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
->>>         net->mpls.ip_ttl_propagate = 1;
->>>         net->mpls.default_ttl = 255;
->>>
->>> +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
->>> +               return 0;
->>> +
->>>         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
->>>         if (table == NULL)
->>>                 return -ENOMEM;
->>>
->>
->> Without sysctl, the entire mpls_router code is disabled. So if sysctl is
->> not enabled there is no point in building this file.
-> 
-> Ok, I see.
-> 
-> There are a couple of other drivers that use 'depends on SYSCTL',
-> which may be the right thing to do here. In theory, one can still
-> build a kernel with CONFIG_SYSCTRL_SYSCALL=y and no
-> procfs.
+next/pending-fixes boot: 193 boots: 8 failed, 144 passed with 41 offline (v=
+5.2-rc4-392-g79cf6427bda8)
 
-Yes, that makes sense.
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.2-rc4-392-g79cf6427bda8/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.2-rc4-392-g79cf6427bda8/
 
--- 
-~Randy
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.2-rc4-392-g79cf6427bda8
+Git Commit: 79cf6427bda8c8a643367a8018a1eaf480d3c229
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 77 unique boards, 24 SoC families, 20 builds out of 223
+
+Boot Regressions Detected:
+
+arm:
+
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+          sun8i-h2-plus-libretech-all-h3-cc:
+              lab-baylibre: failing since 1 day (last pass: v5.2-rc4-273-g2=
+6c91f14d441 - first fail: v5.2-rc4-333-gafcfc783dad1)
+          sun8i-h3-libretech-all-h3-cc:
+              lab-baylibre: failing since 1 day (last pass: v5.2-rc4-273-g2=
+6c91f14d441 - first fail: v5.2-rc4-333-gafcfc783dad1)
+
+arm64:
+
+    defconfig:
+        gcc-8:
+          meson-gxm-khadas-vim2:
+              lab-baylibre: failing since 1 day (last pass: v5.2-rc4-257-g8=
+75653b27b69 - first fail: v5.2-rc4-333-gafcfc783dad1)
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-gxl-s905x-khadas-vim:
+              lab-baylibre: new failure (last pass: v5.2-rc4-333-gafcfc783d=
+ad1)
+          meson-gxm-khadas-vim2:
+              lab-baylibre: failing since 1 day (last pass: v5.2-rc4-257-g8=
+75653b27b69 - first fail: v5.2-rc4-333-gafcfc783dad1)
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+          sun50i-h5-libretech-all-h3-cc:
+              lab-baylibre: new failure (last pass: v5.2-rc4-333-gafcfc783d=
+ad1)
+
+Boot Failures Detected:
+
+arm:
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+            sun8i-h2-plus-libretech-all-h3-cc: 1 failed lab
+            sun8i-h3-libretech-all-h3-cc: 1 failed lab
+
+    multi_v7_defconfig:
+        gcc-8:
+            bcm4708-smartrg-sr400ac: 1 failed lab
+
+arm64:
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            meson-gxl-s905x-khadas-vim: 1 failed lab
+            meson-gxm-khadas-vim2: 1 failed lab
+
+    defconfig:
+        gcc-8:
+            meson-gxm-khadas-vim2: 1 failed lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            meson-gxm-khadas-vim2: 1 failed lab
+            sun50i-h5-libretech-all-h3-cc: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            bcm72521-bcm97252sffe: 1 offline lab
+            bcm7445-bcm97445c: 1 offline lab
+            imx7s-warp: 1 offline lab
+            meson8b-odroidc1: 1 offline lab
+            vf610-colibri-eval-v3: 1 offline lab
+
+    imx_v6_v7_defconfig:
+        gcc-8
+            imx7s-warp: 1 offline lab
+            vf610-colibri-eval-v3: 1 offline lab
+
+arm64:
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+            meson-g12a-sei510: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+
+    defconfig:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+            meson-g12a-sei510: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+            meson-gxm-nexbox-a1: 1 offline lab
+            rk3399-firefly: 1 offline lab
+            sun50i-a64-pine64-plus: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+            meson-g12a-sei510: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+            meson-gxm-nexbox-a1: 1 offline lab
+            rk3399-firefly: 1 offline lab
+            sun50i-a64-pine64-plus: 1 offline lab
+
+mips:
+
+    pistachio_defconfig:
+        gcc-8
+            pistachio_marduk: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
