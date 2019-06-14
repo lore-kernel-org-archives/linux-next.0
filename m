@@ -2,121 +2,112 @@ Return-Path: <SRS0=e2RY=UN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FECAC31E4B
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 14:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF22C31E4B
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 14:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3602021537
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 14:07:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJy/6Mns"
+	by mail.kernel.org (Postfix) with ESMTP id 6CBA821537
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 14:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbfFNOHK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 14 Jun 2019 10:07:10 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43485 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbfFNOHK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 14 Jun 2019 10:07:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so1520525pfg.10;
-        Fri, 14 Jun 2019 07:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LJg9268+LDPIRhGrkFTLGpEAlX1lCnLtO8bJQ4QN05M=;
-        b=QJy/6MnsHsECy1HYz/rqZ3HHq3OQroAc6nX9BCwm9YFf2YbvaicxGQ6bvxsH5aqSZa
-         6yEn9yuIgjL95131ax2bk6Pe0PoU3AeVPdqf2QS1c19ftcVhh5zHh1wq7wvqwGxu4MvP
-         O4s1ytatGdrM1WwgTMFFgxxyEVplOnOrE3ydAcx+o9F1Dw3n5E4uHMbJqtLK8zKEJjmY
-         42i0Umlo3Z+ig8IkvNchp8izRNDzR4Mr6YoT9wb5iO+PuscND4uR+e/Fq6S8mKsFykpB
-         bInllyf25qaS7Vgi5WvgHtvepVsxg+HmjvOEycPObi0biMGp1BsUEqhg0MSF2oaKEN8V
-         hpOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LJg9268+LDPIRhGrkFTLGpEAlX1lCnLtO8bJQ4QN05M=;
-        b=rRQfi4eOIYRHtLcmGARFp/JWGvoHqxOQRTz86tUVhFb+u4Qcrg3pMLjDcYQbW33Yy7
-         ZbOA4fyGxmcFwGSTh1oLMOFUnNuIqJESZWJS80zwsiY+ojaOojy0RijuqCJO0JUTaSpE
-         jD+hjQ5RLW1n5ANg0dR0UhRMBP85kQEfmNJDd3qUC2LOKKb4FZcEzUwCUGg/ne8ANJuy
-         NUKGl7Dch5/doIInl0fpBAyk+u4eSO+jLr8xFNmSONIKnkjTnrJZZiY4xN6DQfTbuj54
-         RdE8v8j8UMtvRINRp6l6aIaiD4BPGcI3Rq0T3CTeerX5d4o/KhcEjARjvBX9t1JiayGC
-         IZLg==
-X-Gm-Message-State: APjAAAVX8iLJT+MShvgQ3lgQbOPReFpzKupXw13BNhUXCUi89dkCea6x
-        SyryCSsUjuzbTnttIVdwMH+SXWoZQ9U=
-X-Google-Smtp-Source: APXvYqzcEOiZIn73KTG+EBoUQLrcnli4yGKqfYpCbo2WD10sB9flhtjQ3YZWE5gdb0osUBpoEcTbUA==
-X-Received: by 2002:a62:1ec1:: with SMTP id e184mr8001336pfe.185.1560521229311;
-        Fri, 14 Jun 2019 07:07:09 -0700 (PDT)
-Received: from [172.27.227.167] ([216.129.126.118])
-        by smtp.googlemail.com with ESMTPSA id i3sm3418766pfo.138.2019.06.14.07.07.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:07:08 -0700 (PDT)
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>
-Cc:     Matteo Croce <mcroce@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-References: <20190608125019.417-1-mcroce@redhat.com>
- <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
- <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
- <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
- <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
-Date:   Fri, 14 Jun 2019 08:07:06 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728537AbfFNOJ0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 14 Jun 2019 10:09:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37686 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728492AbfFNOJZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:09:25 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5EE7XHt008630
+        for <linux-next@vger.kernel.org>; Fri, 14 Jun 2019 10:09:24 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t4c5f2uju-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Fri, 14 Jun 2019 10:09:24 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 14 Jun 2019 15:09:22 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Jun 2019 15:09:20 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5EE9JIx34341126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Jun 2019 14:09:19 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0AC1DA405B;
+        Fri, 14 Jun 2019 14:09:19 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 36580A4054;
+        Fri, 14 Jun 2019 14:09:18 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.199])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Jun 2019 14:09:18 +0000 (GMT)
+Subject: Re: linux-next: build failure after merge of the integrity tree
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Fri, 14 Jun 2019 10:09:07 -0400
+In-Reply-To: <20190614153459.49c3d075@canb.auug.org.au>
+References: <20190614153459.49c3d075@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061414-0028-0000-0000-0000037A52F7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061414-0029-0000-0000-0000243A5037
+Message-Id: <1560521347.4072.2.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906140121
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/14/19 8:01 AM, Arnd Bergmann wrote:
-> On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 6/11/19 5:08 PM, Matteo Croce wrote:
->>> On Wed, Jun 12, 2019 at 1:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>> * Configure standard kernel features (expert users)
->>> *
->>> Configure standard kernel features (expert users) (EXPERT) [Y/?] y
->>>   Multiple users, groups and capabilities support (MULTIUSER) [Y/n/?] y
->>>   sgetmask/ssetmask syscalls support (SGETMASK_SYSCALL) [N/y/?] n
->>>   Sysfs syscall support (SYSFS_SYSCALL) [N/y/?] n
->>>   Sysctl syscall support (SYSCTL_SYSCALL) [N/y/?] (NEW)
->>
->> So I still say that MPLS_ROUTING should depend on PROC_SYSCTL,
->> not select it.
-> 
-> It clearly shouldn't select PROC_SYSCTL, but I think it should not
-> have a 'depends on' statement either. I think the correct fix for the
-> original problem would have been something like
-> 
-> --- a/net/mpls/af_mpls.c
-> +++ b/net/mpls/af_mpls.c
-> @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
->         net->mpls.ip_ttl_propagate = 1;
->         net->mpls.default_ttl = 255;
-> 
-> +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
-> +               return 0;
-> +
->         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
->         if (table == NULL)
->                 return -ENOMEM;
-> 
+Hi Stephen,
 
-Without sysctl, the entire mpls_router code is disabled. So if sysctl is
-not enabled there is no point in building this file.
+On Fri, 2019-06-14 at 15:34 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the integrity tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/infiniband/core/device.c: In function 'ib_core_init':
+> drivers/infiniband/core/device.c:2531:8: error: implicit declaration of function 'register_blocking_lsm_notifier'; did you mean 'register_lsm_notifier'? [-Werror=implicit-function-declaration]
+>   ret = register_blocking_lsm_notifier(&ibdev_lsm_nb);
+>         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>         register_lsm_notifier
+> drivers/infiniband/core/device.c:2550:2: error: implicit declaration of function 'unregister_blocking_lsm_notifier'; did you mean 'unregister_lsm_notifier'? [-Werror=implicit-function-declaration]
+>   unregister_blocking_lsm_notifier(&ibdev_lsm_nb);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   unregister_lsm_notifier
+> 
+> Caused by commit
+> 
+>   bafe78e69508 ("LSM: switch to blocking policy update notifiers")
+> 
+> CONFIG_SECURITY is not set for this build and the !CONFIG_SECURITY
+> declarations were not fixed up in linux/security.h.
+> 
+> I have used the integrity tree from next-20190613 for today.
+
+Thank you!  A new version of the patch has been push to the next-
+integrity branch.
+
+Mimi
+
