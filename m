@@ -2,145 +2,107 @@ Return-Path: <SRS0=e2RY=UN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E75C31E44
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 04:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B0BC31E44
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 05:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F90420851
-	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 04:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DE5021473
+	for <linux-next@archiver.kernel.org>; Fri, 14 Jun 2019 05:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ebM/DX4z"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AUez3GFQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725775AbfFNEli (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 14 Jun 2019 00:41:38 -0400
-Received: from ozlabs.org ([203.11.71.1]:39483 "EHLO ozlabs.org"
+        id S1726105AbfFNFfB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 14 Jun 2019 01:35:01 -0400
+Received: from ozlabs.org ([203.11.71.1]:37113 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbfFNEli (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 14 Jun 2019 00:41:38 -0400
+        id S1725836AbfFNFfB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 14 Jun 2019 01:35:01 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Q7H15S2fz9s4Y;
-        Fri, 14 Jun 2019 14:41:33 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Q8Sf3Pwjz9sBb;
+        Fri, 14 Jun 2019 15:34:58 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560487295;
-        bh=/d+ryYV/vaMZn5qaMRIajjQqgkaOkU1+4KD1BOAynSs=;
+        s=201702; t=1560490498;
+        bh=h0CJvH5c+33+Ehq+hkgxp6meel343fWZ2RepqdMfLdA=;
         h=Date:From:To:Cc:Subject:From;
-        b=ebM/DX4zLGPWz7/mr0RvODiffTm/dcL/MPUPUpk+LC6wNRIk3kjJGJoglIScrpqCy
-         r/M+e4hgy/ZIawLiYi53HZ/Xur/igR5L8pyMLV6InoUHvp00VivhbnvCImLZpANVXQ
-         9zhff4W4bqkCVjZwGcEsZ7CQZVFQO8e7BLU41UIo8CzYTmsoMHxjugddxnpjrbMvoD
-         twVFzcCycM2XKD7PKoSKN6ibJe90uACbnVbXwBw8o/cIWqhX0p7Z6JubFO7Bhm3zgU
-         1tx0JNTyFDC02/I1l3oRKGgwz/N4sqp+s6zp/IG8SU+u6CrBDtOVzGrTlALeynp3IU
-         pScU0mZe71oWw==
-Date:   Fri, 14 Jun 2019 14:41:33 +1000
+        b=AUez3GFQ2fwhBKOR4r59/lWYMWYyhy0zWLiA65nMFQ6rDxBuK5yWhOJb4flbCsnLS
+         RrceAy02kdiS+wV3WT++lQGk8NhSS8z0p7egmTlEQZSSHp4cnUCKi1JC3ZPVTUGPbJ
+         lDidO3f4ovZXWyVxfy+Non1ynLHh+HFIV6G4s1R4pNWx5a4zXD3SvshMKyb/k5Ckh1
+         gkE2VX7rjQ9i4CRwHoGFeHqD0CMd4B6X4zV5JxI2zOG/bO+H9d3oRAQcq3D6PzFbtk
+         z+6UNZAVrl4AZOWUC6a+SibeBfXyOF3R4m79j0mXh5ygxviLGDQt3ztnUTxuMMskDx
+         U/h5ogDq1Surw==
+Date:   Fri, 14 Jun 2019 15:34:59 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20190614144133.5dbea6bf@canb.auug.org.au>
+        Janne Karhunen <janne.karhunen@gmail.com>
+Subject: linux-next: build failure after merge of the integrity tree
+Message-ID: <20190614153459.49c3d075@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//+.8RdugmHQfla=VfC_BGU/"; protocol="application/pgp-signature"
+ boundary="Sig_/zCu2Pfsbp_z8xj0M7kihiBQ"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//+.8RdugmHQfla=VfC_BGU/
+--Sig_/zCu2Pfsbp_z8xj0M7kihiBQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the integrity tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4031:18: error:=
- initialization of 'int (*)(struct drm_connector *, struct drm_atomic_state=
- *)' from incompatible pointer type 'int (*)(struct drm_connector *, struct=
- drm_connector_state *)' [-Werror=3Dincompatible-pointer-types]
-  .atomic_check =3D amdgpu_dm_connector_atomic_check,
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4031:18: note: =
-(near initialization for 'amdgpu_dm_connector_helper_funcs.atomic_check')
+drivers/infiniband/core/device.c: In function 'ib_core_init':
+drivers/infiniband/core/device.c:2531:8: error: implicit declaration of fun=
+ction 'register_blocking_lsm_notifier'; did you mean 'register_lsm_notifier=
+'? [-Werror=3Dimplicit-function-declaration]
+  ret =3D register_blocking_lsm_notifier(&ibdev_lsm_nb);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        register_lsm_notifier
+drivers/infiniband/core/device.c:2550:2: error: implicit declaration of fun=
+ction 'unregister_blocking_lsm_notifier'; did you mean 'unregister_lsm_noti=
+fier'? [-Werror=3Dimplicit-function-declaration]
+  unregister_blocking_lsm_notifier(&ibdev_lsm_nb);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  unregister_lsm_notifier
 
 Caused by commit
 
-  6f3b62781bbd ("drm: Convert connector_helper_funcs->atomic_check to accep=
-t drm_atomic_state")
+  bafe78e69508 ("LSM: switch to blocking policy update notifiers")
 
-interacting with commit
+CONFIG_SECURITY is not set for this build and the !CONFIG_SECURITY
+declarations were not fixed up in linux/security.h.
 
-  88694af9e4d1 ("drm/amd/display: Expose HDR output metadata for supported =
-connectors")
-
-from the drm tree.
-
-I added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 14 Jun 2019 14:27:12 +1000
-Subject: [PATCH] fixup for "drm: Convert connector_helper_funcs->atomic_che=
-ck
- to accept drm_atomic_state"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gp=
-u/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 413bf22e9585..b3a083c9a11c 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -3976,9 +3976,10 @@ is_hdr_metadata_different(const struct drm_connector=
-_state *old_state,
-=20
- static int
- amdgpu_dm_connector_atomic_check(struct drm_connector *conn,
--				 struct drm_connector_state *new_con_state)
-+				 struct drm_atomic_state *state)
- {
--	struct drm_atomic_state *state =3D new_con_state->state;
-+	struct drm_connector_state *new_con_state =3D
-+		drm_atomic_get_new_connector_state(state, conn);
- 	struct drm_connector_state *old_con_state =3D
- 		drm_atomic_get_old_connector_state(state, conn);
- 	struct drm_crtc *crtc =3D new_con_state->crtc;
---=20
-2.20.1
+I have used the integrity tree from next-20190613 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//+.8RdugmHQfla=VfC_BGU/
+--Sig_/zCu2Pfsbp_z8xj0M7kihiBQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0DJX0ACgkQAVBC80lX
-0GxcLAgAljvrK6Ifl9wqiaYaz9OxA/w0ZH1f0ia1PUmQSyjwkPD5cYLtWrpvIjpy
-b9CuAwupRZuY8mjiygi/S0PMdUUEarl3/l2C2daY5BM5US23Vtt5g9g1LEmzbmru
-6L0Ya+tmjHgq7K8hQBNnRShoZhG5k1C+Mx02WFQ+EacdaRdo6lmMRclMihGbeOGs
-JmBE+Q8M0xN8XLuhqWF4sm69DXCKMmojWDiYmhfGyd9XbhYHENIVFiyWHGSRlc3R
-6zsyH+QENQIEo1/5c+UnAKRilOho8au0+aLfRxQh0Dg21Q5ytv4ii4DHu9n/R3VM
-KuEb7sBzmVu0AYkQnultJTy2cm6Nbg==
-=IVWq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0DMgMACgkQAVBC80lX
+0GyFuQf/Z3dl+ET12LfU+IuPUAtLhWL+rGZ6OTzW4loBYLcIwTI0ncGjRB15e54s
+LzZ7MPbAnl1jmU7HFGPMBOi6F3MoJ3Gbugu1ztAKZFdZYyP2JfGtytfZdFNTw2ER
+hSg1XE5xR14+35m/gDRjXmXRUqz7VupeQDfjzdwGQYuu1VMgR5uQWXvrWaFJHWrv
+PhwWofpSpVDzTm7Ao8xzkKwBf86T7YgyUQXWUhdbiS7e26YpzmO55of1+YKLLwEk
+mIjzPk6tqmuqj5aNM4N111In49r4M69s9RQXS5UfVu6TyEN2QnQjbHJvPhzHRcDd
+i6EW9ZujftwXNoe8c7WZCyXHH2doow==
+=EIUP
 -----END PGP SIGNATURE-----
 
---Sig_//+.8RdugmHQfla=VfC_BGU/--
+--Sig_/zCu2Pfsbp_z8xj0M7kihiBQ--
