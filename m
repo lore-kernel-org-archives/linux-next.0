@@ -2,158 +2,225 @@ Return-Path: <SRS0=t6Jm=UQ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT,
-	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5366BC31E5B
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 21:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0092C31E5B
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 23:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB652063F
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 21:49:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vrs1M6PV"
+	by mail.kernel.org (Postfix) with ESMTP id 9998F2084A
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 23:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560814825;
+	bh=8zEx/vz0o9GLSpIR2XX6aqn6PGp0oavugDzBPsgqrUU=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=mvmRiXWwxSEcGGHXvlWt+EUIBiEYByYErhAvkZCebozIIHiihYAr/HbUR6EQiLC1U
+	 g3TGvUmiUthH9Eg5azA2F7AUY5jmL4wwaA54HhTCP3L0heBUVl/WL3BMiwCrLFLuFy
+	 EVrs87qAKyQVVGjVso+zQ9elNayS5WuTC/7lHhe8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfFQVtf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 17 Jun 2019 17:49:35 -0400
-Received: from mail-pl1-f169.google.com ([209.85.214.169]:35974 "EHLO
-        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbfFQVtf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2019 17:49:35 -0400
-Received: by mail-pl1-f169.google.com with SMTP id k8so3749520plt.3
-        for <linux-next@vger.kernel.org>; Mon, 17 Jun 2019 14:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H3Fszt1Y3AdZpnj+WeH9b+vUaOMqgjk8732ory9O+K0=;
-        b=vrs1M6PVEXsz5PXr9KQC1LoqGXYZtiab2IXzFvTgr5PXWbkPlSebojHfZXmUvWKY2z
-         zC2gGqt+JVArV9H0h5Ea+8Y6pKHmDMZeNZ5fdGxvVaF+Qw+pYlEfmNisDUdP60jWQTv/
-         Vmk8MeP3NpSubvbIvWVyzORaBXVZ8FzaF/FNDfD3YtH7jcRw+mrQ1zQeQWKarCCfWbTQ
-         6x56iYpwX+sl7PBjyUzAST/xCjzJ+8QkbLAR4oRCAqyt0rAysDbRl+WAFe1thY2zIKGh
-         sVPlbmwSe3o4lexCJ8ysWruS6Z3eoWN8qOBtZNGXdyG5u/wtxhqd3aa+gsrkuQSZ/93Y
-         UKQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H3Fszt1Y3AdZpnj+WeH9b+vUaOMqgjk8732ory9O+K0=;
-        b=Fyxrt1Kz9y0eomNdj2jJp0aHxCbS//v81ioY9NKjIby+ON3ZIWZW3mdDv0omx0rvOx
-         ZVTGGbkPWibNDSYy8H2EchJuRYsvDguFGNj0iNv46Q7aD7yImEvADLZdRa3eWy8CJpVz
-         FFgdiwd3KtfFGMmL7F+92b/7ode5QJco5nAfseZuisNNzy8wUwMhR8ytCVSMpvwVkZ30
-         FxnrXnJLHnFv3kqS+DKpMaIakyE+DKfVv2Pzy/NlUz68HS1l1+cj85tTi7WO2Om4izSf
-         fUv9QQOyBLN2cxx5UpnajgAgC1un9wygc6/J5iW681XzindesgWrjvEIqjmUmEf2Hg15
-         lCBg==
-X-Gm-Message-State: APjAAAXRgqfa1jUdoO4k0HUEZEN4aQILIPXe+9dEG9Xy6UGZeCp+svQg
-        /ILUyOond6oceyNa81QUerE4cM1tb1rmHQ==
-X-Google-Smtp-Source: APXvYqzqOG8fr9aMqSVtoSub025NpBTqrwdZo5nVujwuZepuTyZ6FcTQBRkNyY0aIW/l3qsLSfE+Sg==
-X-Received: by 2002:a17:902:e6:: with SMTP id a93mr67857206pla.175.1560808173712;
-        Mon, 17 Jun 2019 14:49:33 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id b15sm12350703pfi.141.2019.06.17.14.49.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 14:49:32 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 14:49:27 -0700
-From:   Benson Leung <bleung@google.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Guenter Roeck <groeck@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, bleung@google.com
-Subject: Re: linux-next: Signed-off-by missing for commits in the
- chrome-platform tree
-Message-ID: <20190617214927.GA68491@google.com>
-References: <20190618074607.09dfcdbd@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
-In-Reply-To: <20190618074607.09dfcdbd@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727233AbfFQXkZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 17 Jun 2019 19:40:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36732 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbfFQXkZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2019 19:40:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:Subject:To:From:
+        Sender:Reply-To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hmgwtBxJYEwn0veImTtJtmgOlIGaiG7k1Wv5PbtbniQ=; b=L92VkbG+WPy1fUA7wtEtlHb0/
+        JW9p1mXFb4d+K2KYh7tuMjQon+fQDikIblLvONorn/ETexaZjYDcJGbsTgN3LuTzjgN/4eAG/WrfG
+        LlRIbJZw2vz1QPnInhY0ixiXoapmpZYY4c8puCLSES2sdTbKWG6yyedEHeC4UjZBlpk6Q=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=optimist)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hd1Ec-0002r5-BP; Mon, 17 Jun 2019 23:40:22 +0000
+Received: from broonie by optimist with local (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hd1Eb-0002Tq-Ke; Tue, 18 Jun 2019 00:40:21 +0100
+From:   Build bot for Mark Brown <broonie@kernel.org>
+To:     kernel-build-reports@lists.linaro.org,
+        linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+Subject: next-20190617 build: 1 failures 21 warnings (next-20190617)
+Message-Id: <E1hd1Eb-0002Tq-Ke@optimist>
+Date:   Tue, 18 Jun 2019 00:40:21 +0100
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+Tree/Branch: next-20190617
+Git describe: next-20190617
+Commit: a125097c84 Add linux-next specific files for 20190617
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Build Time: 141 min 40 sec
 
-Hi Stephen,
+Passed:   10 / 11   ( 90.91 %)
+Failed:    1 / 11   (  9.09 %)
 
-On Tue, Jun 18, 2019 at 07:46:07AM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Commits
->=20
->   0ac39915c00e ("mfd: cros_ec: Update I2S API")
->   273e4a83784f ("mfd: cros_ec: Add Management API entry points")
->   5fb684b28ddf ("mfd: cros_ec: Add SKU ID and Secure storage API")
->   fa1edb8224c9 ("mfd: cros_ec: Add API for rwsig")
->   a5a60125c987 ("mfd: cros_ec: Add API for Fingerprint support")
->   ff5599529a19 ("mfd: cros_ec: Add API for Touchpad support")
->   a97c5892c8cf ("mfd: cros_ec: Add API for EC-EC communication")
->   381041521d3a ("mfd: cros_ec: Add I2C passthru protection API")
->   d18e0cde8705 ("mfd: cros_ec: Add Smart Battery Firmware update API")
->   e4de049a3892 ("mfd: cros_ec: Add Hibernate API")
->   44f251dc6e69 ("mfd: cros_ec: Add API for keyboard testing")
->   03dc9f7cdc8a ("mfd: cros_ec: Complete Power and USB PD API")
->   a704e1450f07 ("mfd: cros_ec: Fix temperature API")
->   fa5a714e9d54 ("mfd: cros_ec: Add fingerprint API")
->   cbc1d3b7c5a4 ("mfd: cros_ec: Fix event processing API")
->   b841c3496d0d ("mfd: cros_ec: Complete MEMS sensor API")
->   b4e686e9eecd ("mfd: cros_ec: Add EC transport protocol v4")
->   743875b6af81 ("mfd: cros_ec: Expand hash API")
->   051cf1f83491 ("mfd: cros_ec: Add lightbar v2 API")
->   b1bd73c9e90f ("mfd: cros_ec: Add PWM_SET_DUTY API")
->   998b37cad349 ("mfd: cros_ec: Add Flash V2 commands API")
->   d8064663d3c4 ("mfd: cros_ec: Remove zero-size structs")
->   036957c19978 ("mfd: cros_ec: move HDMI CEC API definition")
->   0ee2b17ec310 ("mfd: cros_ec: Update ACPI interface definition")
->   6f6db199e544 ("mfd: cros_ec: use BIT macro")
->   a5f0ac50978b ("mfd: cros_ec: Define commands as 4-digit UPPER CASE hex =
-values")
->   de18e8beadcc ("mfd: cros_ec: add ec_align macros")
->   bf96c5f1276c ("mfd: cros_ec: set comments properly")
->   6b854d5fbda9 ("mfd: cros_ec: Zero BUILD_ macro")
->   5a0d32c91830 ("mfd: cros_ec: Update license term")
->=20
-> are missing a Signed-off-by from their committer.
->=20
-> These were all rebased.
->=20
+Errors: 2
+Warnings: 21
+Section Mismatches: 0
 
-Yup, Enric and I caught this this morning. You're right, this was an inadve=
-rtent
-rebase. We'll fix the for-next branch for tomorrow.
+Failed defconfigs:
+	arm-allmodconfig
 
-Thanks,
-Benson
+Errors:
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+	arm-allmodconfig
+ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlxsw/mlxsw_spectrum.ko] undefined!
+ERROR: "__bad_udelay" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
 
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      7 warnings    0 mismatches  : arm64-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v5_defconfig
+      8 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+     18 warnings    0 mismatches  : arm-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      7 warnings    0 mismatches  : x86_64-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
 
------BEGIN PGP SIGNATURE-----
+-------------------------------------------------------------------------------
 
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXQgK5wAKCRBzbaomhzOw
-wkObAQD7eW5bRJ4Ak1XaVa/kycxF5ihB2pyEY6COzEZIueyJxAD/VwiNMIajYfsF
-G2gEpF3zaWdQ7JiRR89Ln9/xcTXKSAg=
-=NHpQ
------END PGP SIGNATURE-----
+Errors summary: 2
+	  1 ERROR: "__bad_udelay" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+	  1 ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlxsw/mlxsw_spectrum.ko] undefined!
 
---/04w6evG8XlLl3ft--
+Warnings Summary: 21
+	  8 ../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	  5 ../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  4 warning: same module names found:
+	  4 ../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	  4 ../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
+	  4 ../arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+	  3 ../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
+	  3 ../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	  3 ../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	  2 ../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	  2 ../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	  1 ../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	  1 ../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	  1 ../fs/cifs/smb2pdu.c:2580:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c:90:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:140:18: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: warning: left shift count >= width of type [-Wshift-count-overflow]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	../fs/cifs/smb2pdu.c:2580:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+	../arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 18 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlxsw/mlxsw_spectrum.ko] undefined!
+	ERROR: "__bad_udelay" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+	../arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:140:18: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: warning: left shift count >= width of type [-Wshift-count-overflow]
+	../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c:90:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+
+-------------------------------------------------------------------------------
+x86_64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
