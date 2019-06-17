@@ -2,132 +2,89 @@ Return-Path: <SRS0=t6Jm=UQ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D52C31E44
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB6CC31E44
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B342183F
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:36:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ntPi1qAn"
+	by mail.kernel.org (Postfix) with ESMTP id 3311F2183F
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560743592;
+	bh=2QIQNZai0AZQXkrqFUKN5Sn183NHfvqV8A3b+hNasZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=w4jBmqTJ7Avi4A2bWwEY7f5blbqJu6nYZm1wIhjO2+Va+pFUv5+Yy+PCt+e+s3qVR
+	 WEXKbYQGHa5QrsQvtjnO5xr9BcZkXeLKVcuXzinBI3tTyS8xRijZEDE8wdXykTEpSh
+	 Mytz3YYZWWZE2jSGFcTY4th8pyHvQ/z+MDDM6DXY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfFQDge (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 16 Jun 2019 23:36:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:46449 "EHLO ozlabs.org"
+        id S1727648AbfFQDxL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 16 Jun 2019 23:53:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbfFQDge (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:36:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1727625AbfFQDxL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 16 Jun 2019 23:53:11 -0400
+Received: from localhost (unknown [37.142.3.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Rxhb0gc9z9sBp;
-        Mon, 17 Jun 2019 13:36:30 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560742592;
-        bh=LowPzVDsxLqs/C3kR5JDANavRyAIxtOAT539ZcPPyZQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ntPi1qAnPvfrzZtNQRv/UNA55KCjBeBmVKeh4C5HSJNbl7WWVJtNu0zdII8na+3sS
-         rnIL++ATvJo0e+D7N6bQq/jsEX1K/3EMnOynYXZgeMBVutpl9/akwE84/N0yx6tBYv
-         91mCy+2YfHn3oqF829XYDp86SrzGD1XW2CqBgliOBbLhvcUf6i0SnvQ1ntTCN60TT0
-         UuJNKn60j/3IcCJwUDpbBTK/CsEqLO+huLHT1HBQ0k0JGj/+oBzMmYcSRSukojrRdd
-         Ws2KxW4lyhnn0psloZ3xiPt9ZBMsGZ33Fpe3mIh7L1g8H/JnlMDjrlF+GK+7afMPms
-         tduBur6RHbDIg==
-Date:   Mon, 17 Jun 2019 13:36:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 30E6A2147A;
+        Mon, 17 Jun 2019 03:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560743590;
+        bh=2QIQNZai0AZQXkrqFUKN5Sn183NHfvqV8A3b+hNasZM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZPeN51CyF3QDUWHh5nxxEtKa55nkIpUBKb3OZY/yNlv9JaFpiEl7bbjERzHxXv2Cs
+         VmsEiYXRrx3d3iFFzM8wx6D0yw9iTLEzvroh4XqBhzRAWLrC+LDcbCJV9sgm2rcxaK
+         QTmmsXurSKlmEMxgt/qPUrROs9vq0LXDoD7beRW4=
+Date:   Mon, 17 Jun 2019 06:53:06 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: manual merge of the imx-drm tree with the v4l-vdb tree
-Message-ID: <20190617133629.7c276a67@canb.auug.org.au>
+        Parav Pandit <parav@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Maor Gottlieb <maorg@mellanox.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with Linus' tree
+Message-ID: <20190617035306.GB4690@mtr-leonro.mtl.com>
+References: <20190617121959.55976690@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gdQjnfksCTf=EUManH2KJQC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617121959.55976690@canb.auug.org.au>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/gdQjnfksCTf=EUManH2KJQC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 17, 2019 at 12:19:59PM +1000, Stephen Rothwell wrote:
+> Hi Leon,
+>
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>
+>   include/linux/mlx5/eswitch.h
+>
+> between commit:
+>
+>   02f3afd97556 ("net/mlx5: E-Switch, Correct type to u16 for vport_num and int for vport_index")
+>
+> from Linus' tree and commit:
+>
+>   82b11f071936 ("net/mlx5: Expose eswitch encap mode")
+>
+> from the mlx5-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
 
-Hi all,
-
-Today's linux-next merge of the imx-drm tree got a conflict in:
-
-  drivers/staging/media/imx/imx-ic-prpencvf.c
-
-between commits:
-
-  6d01b7ff5233 ("media: staging/imx: Switch to sync registration for IPU su=
-bdevs")
-  34ff38745b16 ("media: staging/imx: Pass device to alloc/free_dma_buf")
-
-from the v4l-vdb tree and commit:
-
-  f208b26e61df ("gpu: ipu-v3: ipu-ic: Fully describe colorspace conversions=
-")
-
-from the imx-drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/staging/media/imx/imx-ic-prpencvf.c
-index 82bba68c554e,f2fe3c11c70e..000000000000
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@@ -460,7 -465,18 +461,18 @@@ static int prp_setup_rotation(struct pr
-  	incc =3D priv->cc[PRPENCVF_SINK_PAD];
-  	outcc =3D vdev->cc;
- =20
-+ 	ret =3D ipu_ic_calc_csc(&csc,
-+ 			      infmt->ycbcr_enc, infmt->quantization,
-+ 			      incc->cs,
-+ 			      outfmt->ycbcr_enc, outfmt->quantization,
-+ 			      outcc->cs);
-+ 	if (ret) {
-+ 		v4l2_err(&ic_priv->sd, "ipu_ic_calc_csc failed, %d\n",
-+ 			 ret);
-+ 		return ret;
-+ 	}
-+=20
- -	ret =3D imx_media_alloc_dma_buf(priv->md, &priv->rot_buf[0],
- +	ret =3D imx_media_alloc_dma_buf(ic_priv->ipu_dev, &priv->rot_buf[0],
-  				      outfmt->sizeimage);
-  	if (ret) {
-  		v4l2_err(&ic_priv->sd, "failed to alloc rot_buf[0], %d\n", ret);
-
---Sig_/gdQjnfksCTf=EUManH2KJQC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HCr0ACgkQAVBC80lX
-0GwE1wf/c+7+zpXahMO3i71+2SqwJ0Tqo+/OyPG/cNDOcCsPTP4k7KLp4J3KD//r
-6kfJ1StR2g22xkBwILN7Kj5yiirCa+/CQ2hgolTzILd2ai9GgCRYpPiNEOglc0oA
-FG71QZC5xMVxbAdbiJE82P5ffC0xrzhUP4YUWMiAgac4uIV0bDQbY3WzRw+g/ffC
-I7Usx+vYEwrbZmKV3NU5cCFCP6WgNZbBIZuTY9kU8d0A5AjYNQaIrQlgxn7WQDcE
-mAUHxMrBWfvmy4ijYgYjp8lI6AgDy2hpgld9cN6EzgvYYGOh0114ZOUP7s8CUiWF
-zsGgKjV39aEhzZ3TC7c4OFif93UVaA==
-=QW6x
------END PGP SIGNATURE-----
-
---Sig_/gdQjnfksCTf=EUManH2KJQC--
+Thanks
