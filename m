@@ -2,94 +2,91 @@ Return-Path: <SRS0=t6Jm=UQ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCF7C31E57
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 09:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAEEC31E57
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 11:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288662089E
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 09:49:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YbmA7fSX"
+	by mail.kernel.org (Postfix) with ESMTP id C7712205ED
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 11:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfFQJtD (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 17 Jun 2019 05:49:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:46445 "EHLO ozlabs.org"
+        id S1726207AbfFQLrh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 17 Jun 2019 07:47:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:46772 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbfFQJtD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:49:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45S5yP0DPLz9sDX;
-        Mon, 17 Jun 2019 19:49:00 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560764941;
-        bh=A3gq5DWaBnsG+nyNgGh44hy1hkBKp2cGfOnCCsFC/Fk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YbmA7fSXiGhkk5KU/CztidRKXCVIlhobEQG94+gEmajCLLkMMTQEZoxlitqGIRFDq
-         R6sMxjccV4GS9bwqJN8rdA8id2TZTQIvuKdpgwcSONcmOqhFwXaCd7Yg4dvj5+vbOE
-         neleRcN0DOOi6kmSXeVIslmQzJ83Kj8qJa938gaPsPFD9Z1M7qun0k5B//dDM53p3T
-         RXJKPIkz/ppyt6lshvhW2mPTYv0sh6NtiMmsDrnrjhztGum6DJoMy+ucdjqyaRML9f
-         BzaZDFPJ0OzJx3yaUZzSFWJRQT3kkirIPDsFHJgmFc/gyQ9ayXC8lyzvolHyMsNNXq
-         I64fslW98VigA==
-Date:   Mon, 17 Jun 2019 19:49:00 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Westphal <fw@strlen.de>
-Subject: linux-next: Fixes tag needs some work in the ipsec-next tree
-Message-ID: <20190617194900.02d13c09@canb.auug.org.au>
+        id S1725971AbfFQLrh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 17 Jun 2019 07:47:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5F51344;
+        Mon, 17 Jun 2019 04:47:36 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 831763F246;
+        Mon, 17 Jun 2019 04:49:21 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 12:47:34 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH] clocksource/arm_arch_timer: remove unused return type
+Message-ID: <20190617114734.GK20984@e119886-lin.cambridge.arm.com>
+References: <20190617093601.34511-1-andrew.murray@arm.com>
+ <eb9532ff-8365-4287-ff43-045834dacdce@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//OMI5uG7L7sng0Tdf2Qoq4k"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb9532ff-8365-4287-ff43-045834dacdce@arm.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//OMI5uG7L7sng0Tdf2Qoq4k
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 17, 2019 at 10:45:24AM +0100, Marc Zyngier wrote:
+> On 17/06/2019 10:36, Andrew Murray wrote:
+> > The function 'arch_timer_set_evtstrm_feature' has no return statement
+> > despite its prototype - let's change the function prototype to return
+> > void. This matches the equivalent arm64 implementation.
+> > 
+> > fixes: 11e34eca5d0a ("clocksource/arm_arch_timer: Extract elf_hwcap use to arch-helper")
+> 
+> nit: tags start with a capital letter.
 
-Hi all,
+Thanks - I'll remember next time.
 
-In commit
+Andrew Murray
 
-  1be451d99317 ("xfrm: fix bogus WARN_ON with ipv6")
-
-Fixes tag
-
-  Fixes: 4c203b0454b ("xfrm: remove eth_proto value from xfrm_state_afinfo")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//OMI5uG7L7sng0Tdf2Qoq4k
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HYgwACgkQAVBC80lX
-0GxVygf/QlOYSK0D+ZEZLH2SoUzAeastCjWRDekFanVDuaxdMBKWOle/q3OxuVI0
-dOLhgAZQCD2ZzlzWo9OXkNZK9SBZSTpk3X6X4NWiAgFi4n3GlvxA/JVUug9gtJas
-6zx7YBChXmsyTfW15Bf7oZQfIvrLRV58b7LxFG9P1hDks03APPoxiF3ijAwOYTyC
-MdBCcTiPxVKNQnu3GOZRjgpGUGOQv4P3bxENG+JZM7E4y5UgXgvRMniMWkhKKODc
-jEmkcdsphw94Hc5AZJpVbnzZ+Sx/pglJ9KwzHIlcSAF9BJWYsQkosS2yfSxgQARO
-sDVj37ZhlQzKol9b4Er2ihW+I4f1nw==
-=o1gT
------END PGP SIGNATURE-----
-
---Sig_//OMI5uG7L7sng0Tdf2Qoq4k--
+> 
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > ---
+> >  arch/arm/include/asm/arch_timer.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/include/asm/arch_timer.h b/arch/arm/include/asm/arch_timer.h
+> > index ae533caec1e9..99175812d903 100644
+> > --- a/arch/arm/include/asm/arch_timer.h
+> > +++ b/arch/arm/include/asm/arch_timer.h
+> > @@ -125,7 +125,7 @@ static inline void arch_timer_set_cntkctl(u32 cntkctl)
+> >  	isb();
+> >  }
+> >  
+> > -static inline bool arch_timer_set_evtstrm_feature(void)
+> > +static inline void arch_timer_set_evtstrm_feature(void)
+> >  {
+> >  	elf_hwcap |= HWCAP_EVTSTRM;
+> >  }
+> > 
+> 
+> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny...
