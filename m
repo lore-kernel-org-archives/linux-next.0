@@ -6,108 +6,106 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A01C31E49
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FD3C31E44
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34062147A
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 150FC2147A
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:20:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kP0QHqRi"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fu4WLvm4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfFQDNC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 16 Jun 2019 23:13:02 -0400
-Received: from ozlabs.org ([203.11.71.1]:53021 "EHLO ozlabs.org"
+        id S1727520AbfFQDUd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 16 Jun 2019 23:20:33 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37417 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727383AbfFQDNC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:13:02 -0400
+        id S1727413AbfFQDUd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 16 Jun 2019 23:20:33 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Rx9R2VJ5z9s7h;
-        Mon, 17 Jun 2019 13:12:59 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45RxL44gKHz9sBp;
+        Mon, 17 Jun 2019 13:20:28 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560741179;
-        bh=dii/HBw3ZnI4e+hFv439RvrNBRhuS3jfce2LXRNFDRs=;
+        s=201702; t=1560741630;
+        bh=E/UjMzzNWzIgmLLzo+hdSHFAPtSWXV8GhaxPEJkzphk=;
         h=Date:From:To:Cc:Subject:From;
-        b=kP0QHqRiJeq6VP6/hfMI0Aeoz/JwTg15jiDBwKjgxjvk+VgCGgd2SC21YTTSP3yV/
-         eNA/GVhMT4HnuMa0FaoVLzKsMsGej4PLTFP+Osex8GAiEh8WUV5cNIKgQD35O2q24t
-         f6Z5L03dzGICk2KSA7GGPkl46D7uC0umgYPlZ4WHsKGCkufTIz60jeC+3/TGpxCWCQ
-         +5GFtqJ/leUMdsTXPQdLTyn4D5CdW8V4sX8Ho3iEBJRLWGDi1fNdCG1Jl1QvclamNR
-         VlQipglFayAB/yrkoPNY7zetWht7sQbE+tmqMyDRZAdThbLItR7Rja52t2nyaqB6HO
-         fDVaojAR5IKFg==
-Date:   Mon, 17 Jun 2019 13:12:58 +1000
+        b=fu4WLvm4Mw5YKmAtHV/Y3TXcMt8Pl/ZTQPTUWZRRDLQkh032RrbvwH76tKvs66agi
+         SzIcbze6nzd3Z7a5Yi2YQmCwZjUFxqjugGbiItQpJ824VMdJqK761e5iO0D51ojyHh
+         D0sgy/pPop3ZpjvpsBT1DmFRWoBqbBj3H8dSmvneicfGlKlBo6yM2qU2wKwODxT5zi
+         jIy8PhVQ80ZQekLqKmrWX7hohMRGQkngSPVgZPGvgAyjKoTBMcpJOH5Mk52cc9f/Tc
+         BU0KIA0b/jama+2c8BD5lAVPvq137q2WOj2bw/8fOWEndYYia4HqaP22pcjr6jgzgG
+         /04RExVHDmCzg==
+Date:   Mon, 17 Jun 2019 13:20:27 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yintian Tao <yttao@amd.com>, Prike Liang <Prike.Liang@amd.com>,
-        Trigger Huang <Trigger.Huang@amd.com>
-Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
-Message-ID: <20190617131258.323a4a90@canb.auug.org.au>
+        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: linux-next: manual merge of the drm-intel tree with the pci tree
+Message-ID: <20190617132027.3e34597d@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/w.oAuHCOhQJq8XNheooQ4HH"; protocol="application/pgp-signature"
+ boundary="Sig_/9kndnzh67+Mx8fK+8VeLJRh"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/w.oAuHCOhQJq8XNheooQ4HH
+--Sig_/9kndnzh67+Mx8fK+8VeLJRh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+Hi all,
 
-Today's linux-next merge of the amdgpu tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+  drivers/gpu/drm/i915/i915_drv.h
 
-between commits:
+between commit:
 
-  192905989302 ("drm/amd/amdgpu: add RLC firmware to support raven1 refresh=
-")
-  f3a5231c8f14 ("drm/amdgpu: return 0 by default in amdgpu_pm_load_smu_firm=
-ware")
+  151f4e2bdc7a ("docs: power: convert docs to ReST and rename to *.rst")
 
-from Linus' tree and commits:
+from the pci tree and commit:
 
-  80f41f84ae2c ("drm/amd/amdgpu: add RLC firmware to support raven1 refresh=
-")
-  4a39ec6ac5f3 ("drm/amdgpu: fix pm_load_smu_firmware for SR-IOV")
-  e9bc1bf7916e ("drm/amdgpu: register pm sysfs for sriov (v2)")
-  0079f82e710c ("drm/amdgpu: return 0 by default in amdgpu_pm_load_smu_firm=
-ware")
+  1bf676cc2dba ("drm/i915: move and rename i915_runtime_pm")
 
-from the amdgpu tree.
+from the drm-intel tree.
 
-I fixed it up (I used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-
+I fixed it up (I just removed the struct definition form this files as
+the latter did - its comment will need to be fixed up in its new file)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/w.oAuHCOhQJq8XNheooQ4HH
+--Sig_/9kndnzh67+Mx8fK+8VeLJRh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HBToACgkQAVBC80lX
-0Gzslwf9GupTS+jmfa7PlhO6ZMsEWqHasNXT3zRsMT3QUKYadrC6JhfJm7uDLq6H
-rcHjkvhc7VCVjZxcM8DpHTXtx3YNuVwr+Ctx7onzf5i8nR84BrczCtLOAOK2aJ0P
-cptHzW1nRxTLQL6yn/d8qkVUdgaXhx8r/zoVoPsbmTMaMj75x9IaXdqWBAGInQYM
-bdUIOt3XySZ+hxTttKRMqJcyDMMR8D4roxUh0sefibiun4IRodjRu7qFNOFJN187
-uxvCUTswzgnpHOL9ZqwkUNdBplEp/Ekvx+uCbuJybXMJPilG5z0wjXPVIvHn1sjK
-dEYTbFPROJZUUdRhxMJ2Ii9gSP0JBA==
-=eU9y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HBvsACgkQAVBC80lX
+0Gyk1ggAiwbMletwQoXyZZsEPGev6xTTFAiXKTVhxWibzPjsgFPeDzPPU8avptjH
+vfQrvA5n+D1cxIhUBFZ9GtDqg3/tb1/pbwFinOqrCM5kmprNl4UjzeGbi705YWm1
+OKY2GphAh/lhAB8cSIvjKcEOy54QBOgfkzoSgRNnhRUbgUSEDs5PYEaehocqpxxK
+Z91kCr2QuH4ehARKWcPOog9rMNp2R/XzZy00C1vjboK4W3BPtpsIZR/R4Y9Rb3sF
+QyCnyuhr+YpZKQxZwLwIqZn2raxkNe03UG/eKKQHhov+VLA5KgasT3hIbWHaCVTk
+XFQC3TTTn1XvFV2jRXIIJkN+yoM8qA==
+=hw7+
 -----END PGP SIGNATURE-----
 
---Sig_/w.oAuHCOhQJq8XNheooQ4HH--
+--Sig_/9kndnzh67+Mx8fK+8VeLJRh--
