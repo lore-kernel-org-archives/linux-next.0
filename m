@@ -2,89 +2,108 @@ Return-Path: <SRS0=t6Jm=UQ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB6CC31E44
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3F6C31E44
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 04:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3311F2183F
-	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 03:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560743592;
-	bh=2QIQNZai0AZQXkrqFUKN5Sn183NHfvqV8A3b+hNasZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=w4jBmqTJ7Avi4A2bWwEY7f5blbqJu6nYZm1wIhjO2+Va+pFUv5+Yy+PCt+e+s3qVR
-	 WEXKbYQGHa5QrsQvtjnO5xr9BcZkXeLKVcuXzinBI3tTyS8xRijZEDE8wdXykTEpSh
-	 Mytz3YYZWWZE2jSGFcTY4th8pyHvQ/z+MDDM6DXY=
+	by mail.kernel.org (Postfix) with ESMTP id 6C18320820
+	for <linux-next@archiver.kernel.org>; Mon, 17 Jun 2019 04:52:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="W92Essvi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfFQDxL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 16 Jun 2019 23:53:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46594 "EHLO mail.kernel.org"
+        id S1725863AbfFQEwu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 17 Jun 2019 00:52:50 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54535 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727625AbfFQDxL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:53:11 -0400
-Received: from localhost (unknown [37.142.3.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725778AbfFQEwt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 17 Jun 2019 00:52:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30E6A2147A;
-        Mon, 17 Jun 2019 03:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560743590;
-        bh=2QIQNZai0AZQXkrqFUKN5Sn183NHfvqV8A3b+hNasZM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZPeN51CyF3QDUWHh5nxxEtKa55nkIpUBKb3OZY/yNlv9JaFpiEl7bbjERzHxXv2Cs
-         VmsEiYXRrx3d3iFFzM8wx6D0yw9iTLEzvroh4XqBhzRAWLrC+LDcbCJV9sgm2rcxaK
-         QTmmsXurSKlmEMxgt/qPUrROs9vq0LXDoD7beRW4=
-Date:   Mon, 17 Jun 2019 06:53:06 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45RzNZ4TK9z9s3C;
+        Mon, 17 Jun 2019 14:52:46 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560747167;
+        bh=NhWQOXJCvrlQJpYKQREYcFcqGfZTQWzqVfbAUlxCZ+w=;
+        h=Date:From:To:Cc:Subject:From;
+        b=W92Essvi66xi3pPghCdvPvgCHzqIEywmR318CSspX3kSPxmBjf3JdLSx6Y5bqtptP
+         buYPotSjk6l5utFgyMCtVcSF7j1/kbnExtZSZB+Y4hshJZv6Eup2e0AFJQHP6d1kA2
+         QwS7oGoiMr/k06TG2KMUxek71FVgE5NS98Qt3ATQu2i3Pg2+ph9EegVvz40RoIXET0
+         6iF4dB+OwPbvGVlXZuKvsVI42w2rIJSHwZv2MM29kGdZqbZDETb9wNDz7oDLuJJzpq
+         Ywo8BSdsmDBG9IkmF8erUQ5jBQEq6uK7UT/i6D+Yd3QllehmklKobWouLL6AwVdECE
+         G1CwZeGGJuO/g==
+Date:   Mon, 17 Jun 2019 14:52:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Maor Gottlieb <maorg@mellanox.com>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with Linus' tree
-Message-ID: <20190617035306.GB4690@mtr-leonro.mtl.com>
-References: <20190617121959.55976690@canb.auug.org.au>
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: linux-next: build warnings after merge of the clockevents tree
+Message-ID: <20190617145245.0e03163d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617121959.55976690@canb.auug.org.au>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sK4IR13dSP4hPGCWXaZZwlK"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 12:19:59PM +1000, Stephen Rothwell wrote:
-> Hi Leon,
->
-> Today's linux-next merge of the mlx5-next tree got a conflict in:
->
->   include/linux/mlx5/eswitch.h
->
-> between commit:
->
->   02f3afd97556 ("net/mlx5: E-Switch, Correct type to u16 for vport_num and int for vport_index")
->
-> from Linus' tree and commit:
->
->   82b11f071936 ("net/mlx5: Expose eswitch encap mode")
->
-> from the mlx5-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
+--Sig_/sK4IR13dSP4hPGCWXaZZwlK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
+Hi all,
+
+After merging the clockevents tree, today's linux-next build (arm
+multi_v7_defconfig) produced these warnings:
+
+In file included from arch/arm/kernel/vdso.c:30:
+arch/arm/include/asm/arch_timer.h: In function 'arch_timer_set_evtstrm_feat=
+ure':
+arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in fu=
+nction returning non-void [-Wreturn-type]
+ }
+ ^
+In file included from drivers/clocksource/arm_arch_timer.c:31:
+arch/arm/include/asm/arch_timer.h: In function 'arch_timer_set_evtstrm_feat=
+ure':
+arch/arm/include/asm/arch_timer.h:131:1: warning: no return statement in fu=
+nction returning non-void [-Wreturn-type]
+ }
+ ^
+
+Introduced by commit
+
+  11e34eca5d0a ("clocksource/arm_arch_timer: Extract elf_hwcap use to arch-=
+helper")
+
+Look like a missed "return".
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sK4IR13dSP4hPGCWXaZZwlK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HHJ0ACgkQAVBC80lX
+0GwwsggAgkI1Nc1Kj3evTFOhrhWkag7pLz7gSJzaOjOLsJaNampSbm28c/L+XuPT
+8jpnHG0Q+ZwTIzFqsoCSleOLMPfQW9HWvC/e/zdo3+/N7eSb5NRyjfkQPAgPFw7w
+9DLC6cRs0KzB1/SYgFW7ThbE20Y+IXW3RUxRx1WlmdwmxY2S+hSU1OuuzFX3eWhc
+PWrm8RQIQcTqrN7DgyHb8sz4XuFUoljM58XsSVgNK7Gf6TYQN0atCKzJXXBlzfmS
+smVR204vS7pYXGPseDaa+UqJbbCXXaLEuNEAuTqKrGyZFKWuaWIsWJEMHskcCSkn
+6xKzCSC7ONbZi+ojbMXiPx5Ha4PWRg==
+=LDBG
+-----END PGP SIGNATURE-----
+
+--Sig_/sK4IR13dSP4hPGCWXaZZwlK--
