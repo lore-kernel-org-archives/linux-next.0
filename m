@@ -2,124 +2,94 @@ Return-Path: <SRS0=kTZn=UR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A74C31E51
-	for <linux-next@archiver.kernel.org>; Tue, 18 Jun 2019 11:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F4BC31E5D
+	for <linux-next@archiver.kernel.org>; Tue, 18 Jun 2019 12:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD802070B
-	for <linux-next@archiver.kernel.org>; Tue, 18 Jun 2019 11:51:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78ECD2085A
+	for <linux-next@archiver.kernel.org>; Tue, 18 Jun 2019 12:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="pEx6jeAU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UOp3IzG9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OzFHA/sk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbfFRLvh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 18 Jun 2019 07:51:37 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:50621 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729712AbfFRLvh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 18 Jun 2019 07:51:37 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 84220754;
-        Tue, 18 Jun 2019 07:51:35 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 18 Jun 2019 07:51:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=DC9V7nZigwULy1vXQzkKAfN8Y81
-        PyCPnn1G5PFEEkWs=; b=pEx6jeAUlu1KEq3LJcLdHwKFkgEzcJsQzyYkZEL++np
-        wCmnL29+7hit1h1cim3TQxlLNTRd93PqUF+odnsv1RGghB1V/BXS73SMRHYDv5Fb
-        SVTIqNy6L650QF3saKqN0E7Wsk6wN+iLhVk0RVNNlLXCPY5jL7yCc+1c8JD6fDVK
-        mXL00vaQH58aTy95YodXO9k+W3NQ3+hQMYItnnmoHABEAfBUALR8QMWNSJ66ACZ1
-        PXCxw9tONOFKVFhy7jmXs8bCyOJerqy7qWFrBkuVGbU/mSa0RdPTeH3iX4e+tAAh
-        lDquW+sEaPVNe3cindpijtw8e1LA2AvDXCH7llsKLhg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=DC9V7n
-        ZigwULy1vXQzkKAfN8Y81PyCPnn1G5PFEEkWs=; b=UOp3IzG99VID2tkE3N9AAG
-        G+66LMK6ep2PTHdsqzNNSYg3zpsU1fzjN6ctjH0HW/xs/1oBNU2xjXTHw1FvduwO
-        nFoddJBZSY+NxShvPQGZHF09uuqvpkxWON1Z+5ar03J2S6eleJ86a4dW7eGlm+79
-        vVgFcBu0zRdJjjEr6H1l/9Jr6AVr8lKEWT8woWlmUvrjxmZhLQQ0XRWN1j8F8jJl
-        7fqF0OOr+GZZGR0+9Yo0nAn6Colp5X5lpM/s9oHqF4dS9f7bL9tQhLu1Ul+8EhrN
-        VKGapQs38PMns4SdaLD/beILDWmVLhVFH7fpxtrRq1bwmfG/O8q3OH4Pdy/tT17g
-        ==
-X-ME-Sender: <xms:RtAIXQDSdVfjb8-bjMHZlvCN1MemiEsf6z9I04UvqPlglDkGGwanXw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrtddtgddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:RtAIXdun1X8KGtREfWcXtAdrdDhL_M0EmpqThnLlpUuQaNGKSHvATA>
-    <xmx:RtAIXXa440YQGHt3UsMG2Z4GEkGEUodjZ2JAf4K9aRcBRqWA8gd1lg>
-    <xmx:RtAIXRGUJAYYHv2hvrbC9UYU75ekSW2VHEeznKPVs4EV_aXqCjkLbA>
-    <xmx:R9AIXfPmfvhfHD9fN2kQWAckSn79O9eO8p8azkp84D3ryyphHBU2jA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AE5FD38008B;
-        Tue, 18 Jun 2019 07:51:33 -0400 (EDT)
-Date:   Tue, 18 Jun 2019 13:51:31 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Patrick Havelange <patrick.havelange@essensium.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>
-Subject: Re: linux-next: Fixes tags need some work in the staging.current tree
-Message-ID: <20190618115131.GB21419@kroah.com>
-References: <20190618073618.0682627e@canb.auug.org.au>
+        id S1727584AbfFRMGE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 18 Jun 2019 08:06:04 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34778 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbfFRMGD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2019 08:06:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p17so12872679ljg.1
+        for <linux-next@vger.kernel.org>; Tue, 18 Jun 2019 05:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=eViPuB4mPRtq99GLUYp5aCnnWrpv2fPxaUrqbtshaow=;
+        b=OzFHA/skb+Cd3TvWb0I7U3fqoUbEdeAqdN4ud+HZoRnMK7mDQ/vDiz2gc8bfTm+QTg
+         oeqqo6aT01GA6E5/kqnmzskzYTF8tBSW8k17FIKLDlQS+5YI2eGyQfgYK29K3shxEUzz
+         O4ckLDcVheu7R0/1qdxRgcwXxvoWYbN+8p85sQbLGqoSIIh0MNmhHyWAWBZPZzLfwUvy
+         9FTigcgftBfssg9DERYI8X1JJc3SiGtqwT07bDp/iZb+I477c4fnrpgXrqyE1cC+jfoi
+         Qzx4J9FPnRKGo4YGVqFJWuhuuWPGdGa/lJlpLIzvJ9HUe+hapnsISe1qzXNxuasMRcaW
+         nZMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=eViPuB4mPRtq99GLUYp5aCnnWrpv2fPxaUrqbtshaow=;
+        b=nbMzyfygLwaAfjk6m1scgTNIeu4mL1XUm/vHRBU20im9svRNIiaPjiVrzt+meHfFD+
+         FIXPSKiddJ+O0dJGVnYHvYRWAFF/5bXJ3Jd9IxprCNigL+NSDBU8h91kIVC0BhLE13mt
+         iHt/Fgj/ZgJfpmZ3V9d/NVSdFBahr09jbIivSY8DfOero/Cfb4V0ErmABEeZ9emLzp5/
+         cYdkj0hF1GmbqqyIkpEcxB4WtImEPzaT+EOjyPM7AbkpOYSJKtbd6yc/T8M8Llwpa2cE
+         bGqCyieKboO5FGGUkEouaLOwzzC2qDQRUyUKFpefaOCA9T9ha+Sk0IkLfKWuO4c1v6ki
+         jsjw==
+X-Gm-Message-State: APjAAAXc4wwy0ZDmz4thO1G91nirLysAukcLLHC2g6QQfjkYpT6+SWIm
+        BoncD68hxgwbWP/SSZcNF7ku8KVtNo/HjSDq+Si+BbqvJ4U=
+X-Google-Smtp-Source: APXvYqynedWWS6RMfN+pXeWLkf2H5DM5H4yMJ5FcjVlUXuJ+N1JPU/Ap4AsjrjX3+umUXW+mGzRZGfQvvOr3ws24C8w=
+X-Received: by 2002:a2e:8495:: with SMTP id b21mr21465480ljh.149.1560859561469;
+ Tue, 18 Jun 2019 05:06:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618073618.0682627e@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 18 Jun 2019 17:35:50 +0530
+Message-ID: <CA+G9fYufHb5N_NMd4RQnr3jJjqQ8b4Nj1CZXecWvDQPohFUewA@mail.gmail.com>
+Subject: next: arm64: build error: implicit declaration of function '__cookie_v6_init_sequence'
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, ast@kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>, kafai@fb.com,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 07:36:18AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   0c75376fa395 ("counter/ftm-quaddec: Add missing dependencies in Kconfig")
-> 
-> Fixes tag
-> 
->   Fixes: a3b9a99 ("counter: add FlexTimer Module Quadrature decoder counter driver")
-> 
-> has these problem(s):
-> 
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
-> 
-> In commit
-> 
->   bce0d57db388 ("iio: imu: st_lsm6dsx: fix PM support for st_lsm6dsx i2c controller")
-> 
-> Fixes tag
-> 
->   Fixes: c91c1c844ebd ("imu: st_lsm6dsx: add i2c embedded controller support")
-> 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h ("%s")'
+Linux -next build failed on arm64 and arm.
 
-Ugh.
+In file included from net/ipv6/af_inet6.c:41:0:
+include/linux/netfilter_ipv6.h: In function 'nf_ipv6_cookie_init_sequence':
+include/linux/netfilter_ipv6.h:174:9: error: implicit declaration of
+function '__cookie_v6_init_sequence'; did you mean
+'cookie_init_sequence'? [-Werror=implicit-function-declaration]
+  return __cookie_v6_init_sequence(iph, th, mssp);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~
+         cookie_init_sequence
+include/linux/netfilter_ipv6.h: In function 'nf_cookie_v6_check':
+include/linux/netfilter_ipv6.h:189:9: error: implicit declaration of
+function '__cookie_v6_check'; did you mean '__cookie_v4_check'?
+[-Werror=implicit-function-declaration]
+  return __cookie_v6_check(iph, th, cookie);
+         ^~~~~~~~~~~~~~~~~
+         __cookie_v4_check
+  CC      net/core/net-traces.o
+  CC      drivers/char/tpm/eventlog/acpi.o
+  CC      fs/proc/page.o
+cc1: some warnings being treated as errors
+scripts/Makefile.build:278: recipe for target 'net/ipv6/af_inet6.o' failed
+make[3]: *** [net/ipv6/af_inet6.o] Error 1
+scripts/Makefile.build:489: recipe for target 'net/ipv6' failed
+make[2]: *** [net/ipv6] Error 2
 
-I blame Jonathan for all of these as they came in through his tree :)
-
-thanks,
-
-greg k-h
+Best regards
+Naresh Kamboju
