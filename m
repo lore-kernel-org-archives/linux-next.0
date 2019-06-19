@@ -2,145 +2,171 @@ Return-Path: <SRS0=1ly7=US=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F5FC31E5D
-	for <linux-next@archiver.kernel.org>; Wed, 19 Jun 2019 04:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2C6C31E49
+	for <linux-next@archiver.kernel.org>; Wed, 19 Jun 2019 04:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1389B2082C
-	for <linux-next@archiver.kernel.org>; Wed, 19 Jun 2019 04:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640572082C
+	for <linux-next@archiver.kernel.org>; Wed, 19 Jun 2019 04:19:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ch+ctMIk"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="io9j1o88"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725800AbfFSEOy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 19 Jun 2019 00:14:54 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:48715 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfFSEOy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2019 00:14:54 -0400
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x5J4EgaU020701;
-        Wed, 19 Jun 2019 13:14:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x5J4EgaU020701
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1560917683;
-        bh=QX44iii4P2UFmWqWLSZMenrivHB0MmnMCrYU3gNIPx4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ch+ctMIkdk25F6gzZwKALUFenoSqbgauELK4ifFnyH4MQ17Sfb9nZL6//0M4Ao3gH
-         v7M7zIxrIbrHcespNKYDo/hF2zYmhmWqKQCZ/eHTDpzVmMn1KCMfhm/m+aIK2DzQcK
-         gk5S5c+++YAizb9zVCFQaP2zrvt9lyriCY8J16G/PghxGMAR9MyUi6ZoD0FkLNF+jL
-         DmiR6d5RCGnSLlusH1zUnHO0pJygaSXvcBPY5OGqoUOkvXZgN5GDS/5/qKH2+S4qbo
-         OQDLLxW2YKlRhQbbOqxfbN9JckNCtjq6LJYzP8wfAE7tlI5ZvlTGirSXX1MCwshBU1
-         cLXRPqEK8rMsA==
-X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id f20so8409476ual.0;
-        Tue, 18 Jun 2019 21:14:43 -0700 (PDT)
-X-Gm-Message-State: APjAAAUJ+66aOng1LdDPmd8kiFjCBK2VXhB6zC2sAHqJSOZHNsHFNvOl
-        p0mB+8QKTvdbPiQg8s5CpBEK2UcJTM0s/UTnEs8=
-X-Google-Smtp-Source: APXvYqxBotwh1SQcA96UGGzZy8r+gUOgx7aQvw27NlrCOkCpgVAmjGEbonICt0MXByl4qSQeU0pO/1xGh5cwGP03Fww=
-X-Received: by 2002:a9f:366b:: with SMTP id s40mr37751624uad.121.1560917682204;
- Tue, 18 Jun 2019 21:14:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190619132326.1846345b@canb.auug.org.au> <CAK7LNAQCe0APJ3ggJYRDf_DjYg=dH9+2nNsYoygiFKhTa=givg@mail.gmail.com>
-In-Reply-To: <CAK7LNAQCe0APJ3ggJYRDf_DjYg=dH9+2nNsYoygiFKhTa=givg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 19 Jun 2019 13:14:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARVfXySZK_Wzmww=UeFwpWu+vjbctK33zX9KW8w_adexw@mail.gmail.com>
-Message-ID: <CAK7LNARVfXySZK_Wzmww=UeFwpWu+vjbctK33zX9KW8w_adexw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1725800AbfFSET6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 19 Jun 2019 00:19:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:55701 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbfFSET5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 19 Jun 2019 00:19:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TBYf35Zlz9s5c;
+        Wed, 19 Jun 2019 14:19:49 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560917994;
+        bh=g6BHo34pUX0+bJ8ZlovsR9z8dAhrs6fACHHPO6QK9y4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=io9j1o88CHlJEueVOt9s6av7KEt0qMoYDINMNNniZKW9as5JvkLSSlGcDXAets7eG
+         wLmBk4jbLuiUTetuKZb34isHF8j4G+28qqKAwwKUTzAiNWjp6CylzMQ7JbgpuNNGPF
+         hYdwgw5ZVXty0qPSwU0sAGNvVCemunwRblhVpq+LB2BYbajkaTph+kuVkTYiFldLJY
+         vuLVEM8Th+5w5XPUM3NRJLExKDoniWylW+X0rkWXfGX1rGXbpJ5dIlMVTn7dVQ9guM
+         J5ERJeZcXNJSrKe9kbiRplFPKz6Hd2XLTc388rzcmw6qUXukmpRHEsHYUi1NwEtroU
+         ZqhkDrqW0AXHQ==
+Date:   Wed, 19 Jun 2019 14:19:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Jani Nikula <jani.nikula@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: linux-next: manual merge of the drm tree with the kbuild tree
+Message-ID: <20190619141949.38e661e6@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/OFXYsSUCIef=lutNjM1jqkt"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 1:02 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Hi.
->
->
-> On Wed, Jun 19, 2019 at 12:23 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi all,
-> >
-> > After merging the net-next tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > In file included from usr/include/linux/tc_act/tc_ctinfo.hdrtest.c:1:
-> > ./usr/include/linux/tc_act/tc_ctinfo.h:30:21: error: implicit declaration of function 'BIT' [-Werror=implicit-function-declaration]
-> >   CTINFO_MODE_DSCP = BIT(0),
-> >                      ^~~
-> > ./usr/include/linux/tc_act/tc_ctinfo.h:30:2: error: enumerator value for 'CTINFO_MODE_DSCP' is not an integer constant
-> >   CTINFO_MODE_DSCP = BIT(0),
-> >   ^~~~~~~~~~~~~~~~
-> > ./usr/include/linux/tc_act/tc_ctinfo.h:32:1: error: enumerator value for 'CTINFO_MODE_CPMARK' is not an integer constant
-> >  };
-> >  ^
-> >
-> > Caused by commit
-> >
-> >   24ec483cec98 ("net: sched: Introduce act_ctinfo action")
-> >
-> > Presumably exposed by commit
-> >
-> >   b91976b7c0e3 ("kbuild: compile-test UAPI headers to ensure they are self-contained")
-> >
-> > from the kbuild tree.
->
->
-> My commit correctly blocked the broken UAPI header, Hooray!
->
-> People export more and more headers that
-> are never able to compile in user-space.
->
-> We must block new breakages from coming in.
->
->
-> BIT() is not exported to user-space
-> since it is not prefixed with underscore.
->
->
-> You can use _BITUL() in user-space,
-> which is available in include/uapi/linux/const.h
->
->
+--Sig_/OFXYsSUCIef=lutNjM1jqkt
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-I just took a look at
-include/uapi/linux/tc_act/tc_ctinfo.h
+Today's linux-next merge of the drm tree got a conflict in:
 
+  drivers/gpu/drm/i915/Makefile.header-test
 
-I just wondered why the following can be compiled:
+between commit:
 
-struct tc_ctinfo {
-        tc_gen;
-};
+  e846f0dc57f4 ("kbuild: add support for ensuring headers are self-containe=
+d")
 
+from the kbuild tree and commits:
 
-Then, I found 'tc_gen' is a macro.
+  112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
+  d91e657876a9 ("drm/i915: Introduce struct intel_wakeref")
+  aab30b85c97a ("drm/i915: ensure more headers remain self-contained")
+  b375d0ef2589 ("drm/i915: extract intel_vdsc.h from intel_drv.h and i915_d=
+rv.h")
 
-#define tc_gen \
-        __u32                 index; \
-        __u32                 capab; \
-        int                   action; \
-        int                   refcnt; \
-        int                   bindcnt
+from the drm tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-What a hell.
+diff --cc drivers/gpu/drm/i915/Makefile.header-test
+index 639b596a06a9,3a9663002d4a..000000000000
+--- a/drivers/gpu/drm/i915/Makefile.header-test
++++ b/drivers/gpu/drm/i915/Makefile.header-test
+@@@ -2,18 -2,28 +2,28 @@@
+  # Copyright =C2=A9 2019 Intel Corporation
+ =20
+  # Test the headers are compilable as standalone units
+ -header_test :=3D \
+ +header-test-$(CONFIG_DRM_I915_WERROR) :=3D \
+  	i915_active_types.h \
++ 	i915_debugfs.h \
++ 	i915_drv.h \
+  	i915_gem_context_types.h \
++ 	i915_gem_pm.h \
++ 	i915_irq.h \
++ 	i915_params.h \
+  	i915_priolist_types.h \
++ 	i915_reg.h \
+  	i915_scheduler_types.h \
+  	i915_timeline_types.h \
++ 	i915_utils.h \
++ 	intel_acpi.h \
++ 	intel_atomic.h \
+  	intel_atomic_plane.h \
+  	intel_audio.h \
++ 	intel_bios.h \
+  	intel_cdclk.h \
+  	intel_color.h \
++ 	intel_combo_phy.h \
+  	intel_connector.h \
+- 	intel_context_types.h \
+  	intel_crt.h \
+  	intel_csr.h \
+  	intel_ddi.h \
+@@@ -31,7 -54,22 +54,12 @@@
+  	intel_pipe_crc.h \
+  	intel_pm.h \
+  	intel_psr.h \
++ 	intel_quirks.h \
++ 	intel_runtime_pm.h \
+  	intel_sdvo.h \
++ 	intel_sideband.h \
+  	intel_sprite.h \
+  	intel_tv.h \
+- 	intel_workarounds_types.h
++ 	intel_uncore.h \
++ 	intel_vdsc.h \
++ 	intel_wakeref.h
+ -
+ -quiet_cmd_header_test =3D HDRTEST $@
+ -      cmd_header_test =3D echo "\#include \"$(<F)\"" > $@
+ -
+ -header_test_%.c: %.h
+ -	$(call cmd,header_test)
+ -
+ -i915-$(CONFIG_DRM_I915_WERROR) +=3D $(foreach h,$(header_test),$(patsubst=
+ %.h,header_test_%.o,$(h)))
+ -
+ -clean-files +=3D $(foreach h,$(header_test),$(patsubst %.h,header_test_%.=
+c,$(h)))
 
+--Sig_/OFXYsSUCIef=lutNjM1jqkt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Best Regards
-Masahiro Yamada
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Jt+UACgkQAVBC80lX
+0Gx+uQf+L8n3u5sfawCr66p/2odPMstJFLPc8WDFbPTrUzA0EkMogFFF9N4qSX99
+jK/JEsqhY3gFNOqLYFJfFmQlzOe4ImpsoGX+dFk0y3LZXXw6yMOCinXrxZ/mYlwH
+y2EOsPV2679Fnw9DyZWkGoRykM07d7hTkdKBmYQbA32zFudw0NUBpiBg2NGZtNWa
+NU8Eo331pfp6ppyHCLHObpbQgOB1m02zGDSh2DsO6FVzIrTK85hcAlOFBykIwUlZ
+BrwzqrywRzDNuMctR0NzFnAFcOurqu4bPn80QZIhMIXxHHhUNtx+CK58Cz3HQuQ+
+oPqA1jo/aZKODh7fRm71VKXbfeNPcg==
+=d5sv
+-----END PGP SIGNATURE-----
+
+--Sig_/OFXYsSUCIef=lutNjM1jqkt--
