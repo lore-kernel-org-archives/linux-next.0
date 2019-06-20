@@ -2,131 +2,107 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40C5C43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5C5C43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7CD92085A
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91EB22070B
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:58:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="yfYfB9+5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfFTQof (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 12:44:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54276 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbfFTQof (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 12:44:35 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7CD8A307D91F;
-        Thu, 20 Jun 2019 16:44:29 +0000 (UTC)
-Received: from [10.36.116.54] (ovpn-116-54.ams2.redhat.com [10.36.116.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66AA15C21E;
-        Thu, 20 Jun 2019 16:44:27 +0000 (UTC)
-Subject: Re: mmotm 2019-06-19-20-32 uploaded (drivers/base/memory.c)
-To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-References: <20190620033253.hao9i0PFT%akpm@linux-foundation.org>
- <bbc205e3-f947-ad46-6b62-afb72af7791e@infradead.org>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <20f6cca9-42f7-848f-e782-2c9240ec84f6@redhat.com>
-Date:   Thu, 20 Jun 2019 18:44:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726620AbfFTQ61 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 12:58:27 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:41120 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFTQ61 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 12:58:27 -0400
+Received: by mail-wr1-f42.google.com with SMTP id c2so3761805wrm.8
+        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2019 09:58:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=jtIWJUMM+bByoYstZhibQZ9+I8rOkuJPg1b0D7QbqaY=;
+        b=yfYfB9+5xVoFiu2uuXQOOCv87PKQqId9LF8eotHIXuPKI8tbOL28PtckOY9p1MMvW3
+         IjQ/wW+S23DEgZqo9W24P44KUE4RYFeJdzd90uipnZeWt0l3PKrYCV4/fFi5MHYDj7A7
+         dXfnLUtafd2rg8LgwpyXsgxNagnxG2FHxOSkNdMjmbCmbI4TX46ZmZdGU1zq/YgcglMq
+         2DxN+WkeMOQRy5HrmYH4CUJ+vjts4Lz+3F3pnokU/gMRf9lU34qJeLchzfPi+MVuSt0W
+         vAKl2S+qKL4+0IhsjIL9JxzSqr/7ma8mBjqmR9maeHHqvDjWgyDgJHYSiPad1rT2lPxf
+         lY1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=jtIWJUMM+bByoYstZhibQZ9+I8rOkuJPg1b0D7QbqaY=;
+        b=CkrvbY2a42XMHhlEqDQ3CSgLgl20BkCX4L8S8yBBU17ptYbIbyw22LD7jkql6D6Oh6
+         8sy9jdyr8sh0EHRAo/vr8Q7hAr0wtPMWLSX4ZjTMcSmcHmxSDg6Pl8ttMXZoxyzMHMl8
+         wkqgvS8YisihUYAws2BcFGoM6qj3zlj5jWpsJmCmsTdB1HO52OSdUyBA2QO29yWbIlsG
+         UjKJCkargQV7K+HUmVVzcT68TZyw1JTzZX5xpV5MB089q0wJxKEXK3PUnlrO08Sfw6ay
+         bZhFIuVRccERm+aRK0bk63DNHUKGJS7wneq41FOtTFj9HRonpHjSiudLzkCO4WySdLTx
+         GxRw==
+X-Gm-Message-State: APjAAAXQRbc4N2fwQrHH3a2NDcEFJ2xZx0lLCrC+csh96G3IzDtlaT7u
+        QMe/rG3Y/KLIyZqiYO9pFsXO6gO1Sy15xA==
+X-Google-Smtp-Source: APXvYqySzVhaxLZOEOfYQs03LT7DCd1a5WEUpfi+br7+ftI6FDnVtWV03iM8by8CzpFcMSrgFzdhwA==
+X-Received: by 2002:adf:dcc2:: with SMTP id x2mr52311079wrm.55.1561049904692;
+        Thu, 20 Jun 2019 09:58:24 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id g71sm156023wmg.7.2019.06.20.09.58.23
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 09:58:24 -0700 (PDT)
+Message-ID: <5d0bbb30.1c69fb81.13600.1130@mx.google.com>
+Date:   Thu, 20 Jun 2019 09:58:24 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <bbc205e3-f947-ad46-6b62-afb72af7791e@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 20 Jun 2019 16:44:34 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v5.2-rc5-413-gd10f6f2d3e41
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+Subject: next/pending-fixes boot: 120 boots: 1 failed,
+ 119 passed (v5.2-rc5-413-gd10f6f2d3e41)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 20.06.19 17:48, Randy Dunlap wrote:
-> On 6/19/19 8:32 PM, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2019-06-19-20-32 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> http://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
-> 
-> on i386 or x86_64:
-> 
-> ../drivers/base/memory.c: In function 'find_memory_block':
-> ../drivers/base/memory.c:621:43: error: 'hint' undeclared (first use in this function); did you mean 'uint'?
->   return find_memory_block_by_id(block_id, hint);
->                                            ^~~~
-> 
-> 
+next/pending-fixes boot: 120 boots: 1 failed, 119 passed (v5.2-rc5-413-gd10=
+f6f2d3e41)
 
-Thanks, see
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.2-rc5-413-gd10f6f2d3e41/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.2-rc5-413-gd10f6f2d3e41/
 
-[PATCH v2 0/6] mm: Further memory block device cleanups
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.2-rc5-413-gd10f6f2d3e41
+Git Commit: d10f6f2d3e4102b57d7d01d149622ad46c382ff7
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 42 unique boards, 17 SoC families, 17 builds out of 223
 
--- 
+Boot Regressions Detected:
 
-Thanks,
+arm64:
 
-David / dhildenb
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-gxl-s905x-khadas-vim:
+              lab-baylibre: new failure (last pass: v5.2-rc5-374-gae1b7dafe=
+f4c)
+
+Boot Failure Detected:
+
+arm64:
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            meson-gxl-s905x-khadas-vim: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
