@@ -2,96 +2,109 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A90AC48BE4
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 14:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC9FC48BE4
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 14:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66EA72084A
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 14:17:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QMlKdFnJ"
+	by mail.kernel.org (Postfix) with ESMTP id BEAD12084A
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 14:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732111AbfFTOQ4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 10:16:56 -0400
-Received: from ozlabs.org ([203.11.71.1]:58517 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731773AbfFTOQz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:16:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45V3m33SGhz9s5c;
-        Fri, 21 Jun 2019 00:16:51 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561040212;
-        bh=vdja2ap0jXe0YFwNWLNtjkfL4tYpQ+TI45RHxPMuGDc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QMlKdFnJPWwbxgZeuxJtNM70ggOfFCt3hxwZ4u2jtIrWpIwb0kEPPrZbDLl7X/jBH
-         UTMxcH18qH7moX9fxTJvNl9ktpZUYGMKE+owxy7xaPtCx+87feLBCTmjPURWavirib
-         aX3C+26puhlHrakpxkDhVx92ZYgX3SaHlCT3nuKOjEDCZQqoiZrtJrSfJykiF0II5m
-         BScYSmTd3FIM00yCv5gIRKOba5HZTyM6CabpgbVE3ivo8oGbpHKcIjMIZ052dNc8lY
-         frM1Ps1MilvF8uyIBmttgFs/PImBZGOCJEVFiUalLLt1Bqi/Jyv5CBQMMn5IILXNuA
-         sBs1GB5yYGzFw==
-Date:   Fri, 21 Jun 2019 00:16:49 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>
-Subject: Re: linux-next: build failure after merge of the netfilter-next
- tree
-Message-ID: <20190621001649.4954df45@canb.auug.org.au>
-In-Reply-To: <20190620135703.aiv62n6fhzf6wjwv@salvia>
-References: <20190620234743.42e9d3e8@canb.auug.org.au>
-        <20190620135703.aiv62n6fhzf6wjwv@salvia>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SZk4yP0hckaUr/ULND1Dk+/"; protocol="application/pgp-signature"
+        id S1726404AbfFTOiG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 10:38:06 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41810 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfFTOiG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 10:38:06 -0400
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id T2e3200063XaVaC012e3bi; Thu, 20 Jun 2019 16:38:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hdyCR-0000xm-0o; Thu, 20 Jun 2019 16:38:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hdyCQ-0005Ng-VN; Thu, 20 Jun 2019 16:38:02 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Qiuyang Sun <sunqiuyang@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
+Date:   Thu, 20 Jun 2019 16:38:00 +0200
+Message-Id: <20190620143800.20640-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/SZk4yP0hckaUr/ULND1Dk+/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 32-bit (e.g. m68k):
 
-Hi Pablo,
+    fs/f2fs/gc.o: In function `f2fs_resize_fs':
+    gc.c:(.text+0x3056): undefined reference to `__umoddi3'
+    gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
 
-On Thu, 20 Jun 2019 15:57:03 +0200 Pablo Neira Ayuso <pablo@netfilter.org> =
-wrote:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git/commit/=
-?id=3D8527fa6cc68a489f735823e61b31ec6cb266274a
+Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
+division operations.
 
-Good timing :-)
+Reported-by: noreply@ellerman.id.au
+Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+This assumes BLKS_PER_SEC(sbi) is 32-bit.
 
-Thanks.
+    #define BLKS_PER_SEC(sbi)                                       \
+	    ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
 
---=20
-Cheers,
-Stephen Rothwell
+Notes:
+  1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
+     unsigned int,
+  2. The multiplication is done in 32-bit arithmetic, hence the result
+     is of type unsigned int.
+  3. Is it guaranteed that the result will always fit in 32-bit, or can
+     this overflow?
+  4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
+     unsigned long long blks_per_sec, anticipating a 64-bit value.
+---
+ fs/f2fs/gc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---Sig_/SZk4yP0hckaUr/ULND1Dk+/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 5b1076505ade9f84..c65f87f11de029f4 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+ 	unsigned int secs;
+ 	int gc_mode, gc_type;
+ 	int err = 0;
++	__u32 rem;
+ 
+ 	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
+ 	if (block_count > old_block_count)
+ 		return -EINVAL;
+ 
+ 	/* new fs size should align to section size */
+-	if (block_count % BLKS_PER_SEC(sbi))
++	div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
++	if (rem)
+ 		return -EINVAL;
+ 
+ 	if (block_count == old_block_count)
+@@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+ 	freeze_bdev(sbi->sb->s_bdev);
+ 
+ 	shrunk_blocks = old_block_count - block_count;
+-	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
++	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
+ 	spin_lock(&sbi->stat_lock);
+ 	if (shrunk_blocks + valid_user_blocks(sbi) +
+ 		sbi->current_reserved_blocks + sbi->unusable_block_count +
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LlVEACgkQAVBC80lX
-0GxrvAgAlz07KK18OGLbKh42QR1OTkWWQ7FThdF98Wn6qyXTzzQakCXjxoyXxKNM
-9kl6fIkixj+WDn/UdVL8aq12x91e4RCwAiKzAbyG2SsCB9zPm65apUsWCnCFliCq
-lRTwE5AGD5WLyDGxI/GD3VRv/qAZQrkq93rkeK12sh64HLXwqAtKzkpkd1tZnqxM
-7Sv7ipWd7KxhsEE+z0xE7ocU19OXEaRSnZrx2GZCDt2QAyvcvyFOATlcXJyhnA18
-vaXGzgks/zlO4YzeytYSYlnBih5bsaYVZGax4wbJlpuoZZ5CsR97MDaC4Mjj9d28
-iQxZORJr+3JjRZ/PglH6IHGi0/oICQ==
-=czsd
------END PGP SIGNATURE-----
-
---Sig_/SZk4yP0hckaUr/ULND1Dk+/--
