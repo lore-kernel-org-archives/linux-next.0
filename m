@@ -2,142 +2,115 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF9DC43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 03:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EAEC43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 03:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4365A20B1F
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 03:05:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SblfIPUm"
+	by mail.kernel.org (Postfix) with ESMTP id 3409920861
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 03:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfFTDF2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 19 Jun 2019 23:05:28 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43439 "EHLO ozlabs.org"
+        id S1726603AbfFTDYh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 19 Jun 2019 23:24:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60724 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726370AbfFTDF2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 19 Jun 2019 23:05:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726133AbfFTDYh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 19 Jun 2019 23:24:37 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TmsJ0ZLQz9s4Y;
-        Thu, 20 Jun 2019 13:05:24 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560999924;
-        bh=QaFCNX3OUowNfBv/P8OXlaNhXbceCmWNBURqyz3+3vk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SblfIPUmgcDiTRpZ6z6MK4oxViUQ6bAsWSKakSVmbZbNdP8mn5dJb/ntKwr3kKx8S
-         Y4nIxOoh6aML54HxAGaLwLXwDsKYbfi+9A3/iLW5OsswJJsW/6J5MVS6NaXL/eVorz
-         2NbC2sOy2Y4Y12rr4zQaPiVXXbZn3a1GGgbyOiPP4i4ATbnXn3998+ULTiJpg6SbBb
-         OiVnbOo3nfztkND4YeNWxnUMcy3qlNeZ5nXF+7F91JCJn3n8kWbFaoksgyyxWktTki
-         UbL/iz7Lc5y4fR/Qhpl3gNGSjQSXVRz0h2+/pQ8JPKUAqVKcPiNE37WqyQKI8+jg/V
-         CXdur/htfM+8g==
-Date:   Thu, 20 Jun 2019 13:05:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C38830872F5;
+        Thu, 20 Jun 2019 03:24:37 +0000 (UTC)
+Received: from linux-ws.nc.xsintricity.com (ovpn-112-50.rdu2.redhat.com [10.10.112.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 621E71001E67;
+        Thu, 20 Jun 2019 03:24:36 +0000 (UTC)
+Message-ID: <2443017de714630058322853d4fff5213f039e56.camel@redhat.com>
+Subject: Re: linux-next: manual merge of the rdma tree with Linus' tree
+From:   Doug Ledford <dledford@redhat.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Maor Gottlieb <maorg@mellanox.com>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with Linus' tree
-Message-ID: <20190620130523.176d4ca5@canb.auug.org.au>
-In-Reply-To: <20190617121959.55976690@canb.auug.org.au>
-References: <20190617121959.55976690@canb.auug.org.au>
+        Leon Romanovsky <leonro@mellanox.com>
+Date:   Wed, 19 Jun 2019 23:24:33 -0400
+In-Reply-To: <20190620120640.5dbcc599@canb.auug.org.au>
+References: <20190620120640.5dbcc599@canb.auug.org.au>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-bpAVpBoi9B+tzNPPGyT1"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/euKSa5GIot+P+XpVrVMRuyU"; protocol="application/pgp-signature"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 20 Jun 2019 03:24:37 +0000 (UTC)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/euKSa5GIot+P+XpVrVMRuyU
-Content-Type: text/plain; charset=US-ASCII
+
+--=-bpAVpBoi9B+tzNPPGyT1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 17 Jun 2019 12:19:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi Leon,
+On Thu, 2019-06-20 at 12:06 +1000, Stephen Rothwell wrote:
+> Hi all,
 >=20
-> Today's linux-next merge of the mlx5-next tree got a conflict in:
+> Today's linux-next merge of the rdma tree got a conflict in:
 >=20
->   include/linux/mlx5/eswitch.h
+>   include/rdma/ib_verbs.h
 >=20
 > between commit:
 >=20
->   02f3afd97556 ("net/mlx5: E-Switch, Correct type to u16 for vport_num an=
-d int for vport_index")
+>   dc1435c00fcd ("RDMA/srp: Rename SRP sysfs name after IB device
+> rename trigger")
 >=20
 > from Linus' tree and commit:
 >=20
->   82b11f071936 ("net/mlx5: Expose eswitch encap mode")
+>   0e2d00eb6fd4 ("RDMA: Add NLDEV_GET_CHARDEV to allow char dev
+> discovery and autoload")
 >=20
-> from the mlx5-next tree.
+> from the rdma tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
+> conflicts should be mentioned to your upstream maintainer when your
+> tree
 > is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
+> with the maintainer of the conflicting tree to minimise any
+> particularly
 > complex conflicts.
 >=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc include/linux/mlx5/eswitch.h
-> index e9a55c0d50fd,174eec0871d9..000000000000
-> --- a/include/linux/mlx5/eswitch.h
-> +++ b/include/linux/mlx5/eswitch.h
-> @@@ -61,5 -62,16 +62,16 @@@ void *mlx5_eswitch_uplink_get_proto_dev
->   u8 mlx5_eswitch_mode(struct mlx5_eswitch *esw);
->   struct mlx5_flow_handle *
->   mlx5_eswitch_add_send_to_vport_rule(struct mlx5_eswitch *esw,
->  -				    int vport, u32 sqn);
->  +				    u16 vport_num, u32 sqn);
-> +=20
-> + #ifdef CONFIG_MLX5_ESWITCH
-> + enum devlink_eswitch_encap_mode
-> + mlx5_eswitch_get_encap_mode(const struct mlx5_core_dev *dev);
-> + #else  /* CONFIG_MLX5_ESWITCH */
-> + static inline enum devlink_eswitch_encap_mode
-> + mlx5_eswitch_get_encap_mode(const struct mlx5_core_dev *dev)
-> + {
-> + 	return DEVLINK_ESWITCH_ENCAP_MODE_NONE;
-> + }
-> + #endif /* CONFIG_MLX5_ESWITCH */
->   #endif
 
-This is now a conflict between Linus' tree and the rdma tree.
+Yep, this one was expected.  Thanks.
 
 --=20
-Cheers,
-Stephen Rothwell
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
---Sig_/euKSa5GIot+P+XpVrVMRuyU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--=-bpAVpBoi9B+tzNPPGyT1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0K9/MACgkQAVBC80lX
-0GzcpwgAkRzLJxsJ9PEtIuB/1ndwzOu8ff49Df/KyvUOkvAXs0zTtEEpVDgUoYyd
-raRa3uBPZzHOY5WxiJ6wQ7FLSf048agh4x2wT30WXp1NuHqdowW03J/+7onhc2YK
-RDkXXXZqWLIcyKieIegVjaEXdTrJayYs62pJZlUh8bRrLHyMR1HDACjArOhdPrlT
-zmU2HX1325OKVeXDkK/LS1aXdhTF3qxf/4At4LICkDBtuHfZvu8BCazmEwUP/w5b
-rDtzYkmplSWkcNrj1O27NSRjtvl/7Gly96hrpS1nnjdMs3Ic1LAxGmR0bfPWkQpQ
-HPZwCSfYHcPD+HBl5dYWwkrnlXb+zQ==
-=gqPH
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl0K/HEACgkQuCajMw5X
+L90mdxAAubZeH+lhdxVlGNgymiPHJ5yD2LVDDeNbhL7KZbJRUtoYmQdQ7MRnjCy5
+ZZasrxR7/MSp8y3H0srbzIuMGlCFjg1/HugZR99he/eXfVuZBRldBkaHRcFWkM77
+PuAAoPgRL2uKOucZUs8/SQAFfzEkN+//b/ONrWnRCY6FGgbOKiaLbrx27uvF02ML
+bU+waW585AWr+vLhMDajLHbPQI1hbsVlZ/KepSfosCTBA8CTa+V/37h0FT7t152h
+EWmPW/IX5Cosk90ATKKq2s2LmqJH37CBqKo9Yise+wJLXDn3W1RazEiYaU8CTgx8
+DQXcM8mqhxa08dJiekhzYFlhEY0RkUvrsyiDUegQxZx1PDfMNaBZqGdraEbrhFgL
+sXO5BWVd68RsOWVF6tJtLou/K1GB+m0KMMhillbilIiYzM+vubXAf+qtSxH6qaV2
+N3JxP6RDlWQQYzuUxUGu72rmUyJqE7qCHDjdT9k6VEyhhb59SBG+bUsa5lH6hODc
+uMWsn1d+X3kIz6qM6T7SFOKOleNrfKoXW77FP7hqTdpkZnUKvfjrmIWYVp4lToGv
+JdCBiHJD/yRyujjT9qucaQh0nVAsi92WpvMh1EE8E9oeCBBX6eTZPSMrbBOOh4GN
+O6Hd3V/6S/pjk7Q7UqdVSj/Ke3rizurALJx4z8UeaOqUbk+Jc1c=
+=wPue
 -----END PGP SIGNATURE-----
 
---Sig_/euKSa5GIot+P+XpVrVMRuyU--
+--=-bpAVpBoi9B+tzNPPGyT1--
+
