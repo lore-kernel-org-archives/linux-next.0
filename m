@@ -2,185 +2,116 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89E3C43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 06:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D27C43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 06:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C21214AF
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 06:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 494E920665
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 06:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="FWFagoGW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NH2ynAJp"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bhc+KLrN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbfFTGUJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 02:20:09 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:47807 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725889AbfFTGUJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:20:09 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4521B22474;
-        Thu, 20 Jun 2019 02:20:08 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 20 Jun 2019 02:20:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=gobjRewc4RKw7NYE7kGu3NAWpJz
-        CZXN3bcZC1ebFokw=; b=FWFagoGWRbU7EyW0KCrHfGdVQzoXAIh9EFHyOQt5Tti
-        QaGg2p8vMeAQ7KQSbLYno5ORQTMwEdTVIK9o34WitabBxXxzaeNXObNzKdVd3uxB
-        ikjV1Ya7xG2p+hSaeAkvyurUQlphTO19LbVKWpleTOTjQsoCe1oKizdpVqAe0W+c
-        r1dduNA3sPpmFoDHDkt5kO0nhDApuQK2o3a6i665WUixC7MhHJnNk+/6KI1mrq/8
-        oiqECmQsLIAA/+UfFIciPhIJvnZcqfvxMijEWmxQwuk4E25FKs1HgrupJ65AvW5p
-        HetXPSFmJTps2Est+T0fiOOAiRv4742a7Fs8gvhETtQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=gobjRe
-        wc4RKw7NYE7kGu3NAWpJzCZXN3bcZC1ebFokw=; b=NH2ynAJpzefd0TmAR9NDwU
-        7hbJaJSxFDpq1lIY2QXx/ItXS6STprkJ1LrSz8GrVBX6fQ+1wiBrIglcbBm5jXXl
-        OyLSGUe20JL6fX085mFiwQExouMse4j7wo54iThn2IEK0SmTuezuCnNuXiLuGe3S
-        19L/rgoZZpqF+DWi1toh0hPr+vKJQyCvvdag4KUNvsmx1uZjeCuJnZeSVsGbPu7Q
-        lurZidX+rlouY7HKjVY7W6eoGBVd/Huc9f5aNuGKUmHC/VzPAcUuM41sOiKvgYy+
-        hFU2utq3L7eKelYd2HTOx6K04RUZu2QK1A2dLbzKGKxCkTVMLCX18UHOhGmjeIvw
-        ==
-X-ME-Sender: <xms:lyULXZEFjkq2XkAulaPB8duEeNrIFyEbJA8PPFnzFIUKiHhKMEDXeg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrtdefgddutdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
-    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:lyULXRHxbl9sItHKXS4-KsDCeN-gG-uCoxiEuggR69qjsce9Mi5_Gw>
-    <xmx:lyULXYCF2ttfqoyU1iWW-h_eAB-ZAOwnwp64hs1HVMAz7OiY-ejqZQ>
-    <xmx:lyULXWmI-v4Aelcrbfzz4vFKVJ8RCX9kR2RM7HhaLklXBoJPHydzHQ>
-    <xmx:mCULXasIgXDGgkkbkWdCXPaeTWgQHKjAOaSjHJCf0V_MI0_U0QWCmw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C035280059;
-        Thu, 20 Jun 2019 02:20:06 -0400 (EDT)
-Date:   Thu, 20 Jun 2019 08:20:04 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726309AbfFTGjy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 02:39:54 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47677 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726290AbfFTGjy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:39:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Tsck3gDBz9s5c;
+        Thu, 20 Jun 2019 16:39:50 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561012790;
+        bh=2GFOGkgGbiLZECffsT8YZZyzO0l3qx/sbv+hYZz1p38=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bhc+KLrN3RyDfztjatZqYzycUVaARoAZ1XMhGpyj494NCVu7AsWcP9aQBVxcbCOYe
+         wg53YVxgeckXsaj/GvV/8GW7A/5Af652RfO7azdYvomIxJSYth0kH75+h2qWN1j4Ij
+         3OAf9WQZEkH32lL18Jht5jtqmmvIXMnpDz4SUT+o3/1G09gfn2KinMVY/Z4RV4d5c1
+         73/OePN9eWOgwMcLN/d1dFaYJZxa3MF65uP1zltdFgroL5+Cnxm/tCercqo4cTbEuC
+         QyA+KHcrst3AWgyY/qmkRLU+WuM8ZPi2BMBWdM5zpb6Hf/xU5GXdm1GYOHpmdgLJvM
+         F5xKLjLq5qDeA==
+Date:   Thu, 20 Jun 2019 16:39:48 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitaly Lubart <vitaly.lubart@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- driver-core tree
-Message-ID: <20190620062004.GA5485@kroah.com>
-References: <20190620153552.1392079c@canb.auug.org.au>
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Pankaj Gupta <pagupta@redhat.com>
+Subject: linux-next: manual merge of the nvdimm tree with the vhost tree
+Message-ID: <20190620163948.0cfdc7c8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620153552.1392079c@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nExES/9MyiZFREjqxRg_dJg"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 03:35:52PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   drivers/misc/mei/debugfs.c
-> 
-> between commit:
-> 
->   5666d896e838 ("mei: no need to check return value of debugfs_create functions")
-> 
-> from the driver-core tree and commit:
-> 
->   b728ddde769c ("mei: Convert to use DEFINE_SHOW_ATTRIBUTE macro")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/misc/mei/debugfs.c
-> index df6bf8b81936,47cfd5005e1b..000000000000
-> --- a/drivers/misc/mei/debugfs.c
-> +++ b/drivers/misc/mei/debugfs.c
-> @@@ -233,22 -154,46 +154,21 @@@ void mei_dbgfs_deregister(struct mei_de
->    *
->    * @dev: the mei device structure
->    * @name: the mei device name
->  - *
->  - * Return: 0 on success, <0 on failure.
->    */
->  -int mei_dbgfs_register(struct mei_device *dev, const char *name)
->  +void mei_dbgfs_register(struct mei_device *dev, const char *name)
->   {
->  -	struct dentry *dir, *f;
->  +	struct dentry *dir;
->   
->   	dir = debugfs_create_dir(name, NULL);
->  -	if (!dir)
->  -		return -ENOMEM;
->  -
->   	dev->dbgfs_dir = dir;
->   
->  -	f = debugfs_create_file("meclients", S_IRUSR, dir,
->  -				dev, &mei_dbgfs_meclients_fops);
->  -	if (!f) {
->  -		dev_err(dev->dev, "meclients: registration failed\n");
->  -		goto err;
->  -	}
->  -	f = debugfs_create_file("active", S_IRUSR, dir,
->  -				dev, &mei_dbgfs_active_fops);
->  -	if (!f) {
->  -		dev_err(dev->dev, "active: registration failed\n");
->  -		goto err;
->  -	}
->  -	f = debugfs_create_file("devstate", S_IRUSR, dir,
->  -				dev, &mei_dbgfs_devstate_fops);
->  -	if (!f) {
->  -		dev_err(dev->dev, "devstate: registration failed\n");
->  -		goto err;
->  -	}
->  -	f = debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
->  -				&dev->allow_fixed_address,
->  -				&mei_dbgfs_allow_fa_fops);
->  -	if (!f) {
->  -		dev_err(dev->dev, "allow_fixed_address: registration failed\n");
->  -		goto err;
->  -	}
->  -	return 0;
->  -err:
->  -	mei_dbgfs_deregister(dev);
->  -	return -ENODEV;
->  +	debugfs_create_file("meclients", S_IRUSR, dir, dev,
-> - 			    &mei_dbgfs_fops_meclients);
-> ++			    &mei_dbgfs_meclients_fops);
->  +	debugfs_create_file("active", S_IRUSR, dir, dev,
-> - 			    &mei_dbgfs_fops_active);
-> ++			    &mei_dbgfs_active_fops);
->  +	debugfs_create_file("devstate", S_IRUSR, dir, dev,
-> - 			    &mei_dbgfs_fops_devstate);
-> ++			    &mei_dbgfs_devstate_fops);
->  +	debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
->  +			    &dev->allow_fixed_address,
-> - 			    &mei_dbgfs_fops_allow_fa);
-> ++			    &mei_dbgfs_allow_fa_fops);
->   }
-> - 
+--Sig_/nExES/9MyiZFREjqxRg_dJg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Dan,
 
-Looks good to me, thanks!
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-greg k-h
+  include/uapi/linux/virtio_ids.h
+
+between commit:
+
+  edcd69ab9a32 ("iommu: Add virtio-iommu driver")
+
+from the vhost tree and commit:
+
+  5990fce9c50e ("virtio-pmem: Add virtio pmem driver")
+
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/uapi/linux/virtio_ids.h
+index cfe47c5d9a56,32b2f94d1f58..000000000000
+--- a/include/uapi/linux/virtio_ids.h
++++ b/include/uapi/linux/virtio_ids.h
+@@@ -43,6 -43,6 +43,7 @@@
+  #define VIRTIO_ID_INPUT        18 /* virtio input */
+  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
+  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
+ +#define VIRTIO_ID_IOMMU        23 /* virtio IOMMU */
++ #define VIRTIO_ID_PMEM         27 /* virtio pmem */
+ =20
+  #endif /* _LINUX_VIRTIO_IDS_H */
+
+--Sig_/nExES/9MyiZFREjqxRg_dJg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LKjQACgkQAVBC80lX
+0Gzv3AgAkbqCtQ1tex3/mg4AWhSVb60nLI6AMLsfCvvhwCluPyyNPamZB7vgrZkg
+b7J32SkWdZ2//ol0mzHBB/UhPe+6dYQX31b6u7Oupy6BR+/7FIbpyZ3EJra6n/mo
+4ttNkaXZzcGdz8zu7qs7HxeW2dzbDUcxAh+X3X9kcgW17terEl7LQ2DXL0jqNsBv
+dA3wWRkcpU/TWtlLYryuBUFX0BNaYp0CrbXzTaa0VxQK9ik68DctRdChbFgesBKw
+RjXO4S9CFMSICcMxZoxuM0CZMn3WPOoQkdfiMMadO4nVsXHI0X7sBi7F/OMe5qhf
+38iqBEQKe0rG78vkyXPTdk6M3LyFSw==
+=hcK+
+-----END PGP SIGNATURE-----
+
+--Sig_/nExES/9MyiZFREjqxRg_dJg--
