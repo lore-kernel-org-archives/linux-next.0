@@ -2,238 +2,114 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF58BC43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 04:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E34AC43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 04:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696F220B1F
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 04:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561005104;
-	bh=ggtv+I+YghI5rPJMbd3k7NPXJSBpiNvkrtd5DyMS+Wo=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=cZ3GwfiZ0muW+q8Q09qh1pld7ymOXC1Vw4whkVzzFfFKcCQt0MmcEecHf8N/B2H73
-	 wrvYRPbGE4xuoZpumJRFpSZ9tS4Q3sS6FQeXOdwxep3rYNdrUWnsGDdw/g+aRXapsQ
-	 0N6mFruUQEz8bW258Lmv38mRHnR64HboKZaqizyk=
+	by mail.kernel.org (Postfix) with ESMTP id C04DF20B1F
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 04:33:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HjzA0sXG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725872AbfFTEbn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 00:31:43 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54766 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfFTEbn (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 00:31:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:Subject:To:From:
-        Sender:Reply-To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=O8eC7wANJxkXn0muRe/ngcbO/KGh+LTbyZkdO+dflWk=; b=eE4bNLBFOalxq0q9cPHCF/w2U
-        lPwKFsgzVbAX6e60ILMBd7wioqq5F3XyMYzFyAloffvP/qGyPf4HxxvpwgjxangGPN5TMDhDWacMz
-        YrfPYYB0YS/1Migvkw7jJA4lyLXqPyp5NayCnlrsQVzPKHEHfgAGd/OLuYeC7qMtyJFG4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=optimist)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hdojc-0008Tn-Im; Thu, 20 Jun 2019 04:31:40 +0000
-Received: from broonie by optimist with local (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hdojb-00060Z-Sr; Thu, 20 Jun 2019 05:31:39 +0100
-From:   Build bot for Mark Brown <broonie@kernel.org>
-To:     kernel-build-reports@lists.linaro.org,
-        linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-Subject: next-20190619 build: 2 failures 25 warnings (next-20190619)
-Message-Id: <E1hdojb-00060Z-Sr@optimist>
-Date:   Thu, 20 Jun 2019 05:31:39 +0100
+        id S1725875AbfFTEd6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 00:33:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:59903 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbfFTEd6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Jun 2019 00:33:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TpqR30LBz9s00;
+        Thu, 20 Jun 2019 14:33:55 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561005235;
+        bh=nct7F0FjO8LwJgjN7g0osADsaNMzm2I9wrABE2yt5R8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HjzA0sXGD90kYovtwyP7Yn0/MPKCSorfO7lUlg2iDd97IaQuZhXhSPH+q4SV5SGUW
+         uXBXGglR4o0vDgKY6Olw/JkueNnmgLL4V73EnlgzUBC9TgLUT+DVxgLbPLCriLpJfK
+         wXXzSefYppIOih1FdlvqgYyXWCDMAGKMIXfu17QHMbdEOAodpyYeBxXxhhYup0l/XK
+         j34mzlTw4rD9JgSD0UwtGi1RAF+GUhZei67zpEGt0DZMOdtk0BtSKj02/gs9M8kPF3
+         o+FvQJ3G3n983qIAJ2uqz8NJhn0MC/w3orXyckVvJQiwTOkqfB5l9BcE/0JM0Urub3
+         sAMCfg8B00dZw==
+Date:   Thu, 20 Jun 2019 14:33:54 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: adding some trees to linux-next
+Message-ID: <20190620143354.6f9daff0@canb.auug.org.au>
+In-Reply-To: <18975.1560956941@warthog.procyon.org.uk>
+References: <18975.1560956941@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0IBaTnRMS94QDbr25rslXLB"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Tree/Branch: next-20190619
-Git describe: next-20190619
-Commit: c0e4c41afe Add linux-next specific files for 20190619
+--Sig_/0IBaTnRMS94QDbr25rslXLB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Build Time: 134 min 16 sec
+Hi David,
 
-Passed:    9 / 11   ( 81.82 %)
-Failed:    2 / 11   ( 18.18 %)
+On Wed, 19 Jun 2019 16:09:01 +0100 David Howells <dhowells@redhat.com> wrot=
+e:
+>
+> Could you add my keys-next and afs-next branches to linux-next?  They can=
+ be
+> found here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#keys-=
+next
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#afs-n=
+ext
 
-Errors: 3
-Warnings: 25
-Section Mismatches: 0
+Added from today.
 
-Failed defconfigs:
-	arm-allmodconfig
-	arm64-defconfig
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Errors:
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-	arm-allmodconfig
-ERROR: "__bad_udelay" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-	arm64-defconfig
-../net/ipv6/netfilter.c:237:26: error: '__cookie_v6_init_sequence' undeclared here (not in a function)
-../net/ipv6/netfilter.c:238:21: error: '__cookie_v6_check' undeclared here (not in a function)
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      7 warnings    0 mismatches  : arm64-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v5_defconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-     21 warnings    0 mismatches  : arm-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      7 warnings    0 mismatches  : x86_64-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
+--Sig_/0IBaTnRMS94QDbr25rslXLB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--------------------------------------------------------------------------------
+-----BEGIN PGP SIGNATURE-----
 
-Errors summary: 3
-	  1 ERROR: "__bad_udelay" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-	  1 ../net/ipv6/netfilter.c:238:21: error: '__cookie_v6_check' undeclared here (not in a function)
-	  1 ../net/ipv6/netfilter.c:237:26: error: '__cookie_v6_init_sequence' undeclared here (not in a function)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LDLIACgkQAVBC80lX
+0Gw8tQf/Uwo+5lvHcBzmM1bs+Z2WIWWnFBV6rQhjDP6dIJN/R+w42uAlGvAugd84
+J7kwsvWRLYWC55f3KzGbPnrX4bD9oZzfmPVIjzc7jFVwFaREnX8I1EVxlQryGPLn
+G1aoDoTsGeYwXmaJbAc4t+KB84FiZyIgrvCwRsxkci1nnl+hPex7eylQTVmvgcfI
+biqc+aTqzXYjs4I39bnISkM2BiRdkDMzo1fukGMYSaP0Z1dXe5YA1w3SrrJIwzOF
+joIIzpZpZekL1XybZyM5/OKomVtueXPd1uAP16A2Tg3246HtfOs56iEImxSQ/oGq
+onDI8zachwk1lBlglCRDh60yUX2mag==
+=3uOV
+-----END PGP SIGNATURE-----
 
-Warnings Summary: 25
-	  8 ../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	  5 ../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  4 warning: same module names found:
-	  4 ../drivers/regulator/core.c:4758:38: warning: array subscript is above array bounds [-Warray-bounds]
-	  4 ../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
-	  3 ../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
-	  3 ../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	  3 ../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	  2 ../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	  2 ../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	  1 ../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	  1 ../include/drm/drm_print.h:366:2: warning: 'real_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/drm/drm_print.h:366:2: warning: 'real_clk_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/cifs/smb2pdu.c:2580:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
-	  1 ../drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c:90:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/gpu/drm/armada/armada_crtc.c:892:11: warning: 'div' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/armada/armada_crtc.c:891:11: warning: 'clk' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/armada/armada_crtc.c:890:22: warning: 'desired_clk_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:140:18: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: warning: left shift count >= width of type [-Wshift-count-overflow]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../fs/cifs/smb2pdu.c:2580:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
-	warning: same module names found:
-	warning: same module names found:
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4758:38: warning: array subscript is above array bounds [-Warray-bounds]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
-	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4758:38: warning: array subscript is above array bounds [-Warray-bounds]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 21 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__bad_udelay" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
-	../drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:140:18: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Wformat=]
-	../drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: warning: left shift count >= width of type [-Wshift-count-overflow]
-	../drivers/gpu/drm/armada/armada_crtc.c:892:11: warning: 'div' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpu/drm/armada/armada_crtc.c:891:11: warning: 'clk' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/drm/drm_print.h:366:2: warning: 'real_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/drm/drm_print.h:366:2: warning: 'real_clk_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpu/drm/armada/armada_crtc.c:890:22: warning: 'desired_clk_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4758:38: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c:90:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
-	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:228:45: warning: array subscript is above array bounds [-Warray-bounds]
-	../drivers/regulator/core.c:4758:38: warning: array subscript is above array bounds [-Warray-bounds]
-
--------------------------------------------------------------------------------
-x86_64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/video/fbdev/pvr2fb.c:726:12: warning: 'pvr2_get_param_val' defined but not used [-Wunused-function]
-	warning: same module names found:
-	warning: same module names found:
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 2 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../net/ipv6/netfilter.c:237:26: error: '__cookie_v6_init_sequence' undeclared here (not in a function)
-	../net/ipv6/netfilter.c:238:21: error: '__cookie_v6_check' undeclared here (not in a function)
-
-Warnings:
-	../drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
-	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
+--Sig_/0IBaTnRMS94QDbr25rslXLB--
