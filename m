@@ -2,172 +2,140 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AD3C43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 05:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAACC43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 05:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8501A2147A
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 05:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9E5020B1F
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 05:57:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pC4+y7YC"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="is4/9pgh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ta22z7RO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726122AbfFTFgA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 01:36:00 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48939 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfFTFf7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 01:35:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TrBz584Hz9s9y;
-        Thu, 20 Jun 2019 15:35:55 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561008955;
-        bh=BAOsWHXplhcuCubfT/o1yBKF/KCS9Illdvf1ACDj3Bs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pC4+y7YCRKkwruqlY7wAyuqryJZfl4tcfQX3L+PPloekb1WCl3TtX6Qr5cELc22FK
-         KbzoqYoNgBVDT5i80A4A0ElpNTRE/S5TmBaLKhDlKuqNtn81UZmQYIB3NdnF5vhpzZ
-         P1aYf1x5cOWdC3NK9/hHgWMuP+s8dlkjqordM6zGBpaulMsN8NAbvFZU6cVr4BavsX
-         dknI196yA3oe21Bd22yY8tJTLoasFCsBOViPu/bDQA2KK5HqTMXOBClZt35tHSCD8t
-         gj9QncIvC5fTHpX7u+xblzkWIc85scKQwmV+4iIrTB6ye+5ua4viHTnYWynrK6g2tP
-         EIrlPytbXTxTA==
-Date:   Thu, 20 Jun 2019 15:35:52 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726084AbfFTF5d (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 01:57:33 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56053 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725857AbfFTF5d (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Jun 2019 01:57:33 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4B6212249A;
+        Thu, 20 Jun 2019 01:57:32 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 20 Jun 2019 01:57:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=mfAr9uMdunoQvxL5y+8TcMkrYaL
+        5Rs/TXMM5I4YUAg8=; b=is4/9pghbtMyQHLl3Gcygop7Msu9w6aGtM+835GHweX
+        01HeHGBO4Q7VrSCPKMc6lvUAI/aLiPNbWBZ6P5e2GpqoNu1MEvW2Xs2oIWTVsnQ8
+        i373AGD5kfXrYVRDboQQZEwA47bXRI3RxDfbvWhmN6uZcSBxyuVu+tcu9l/EJ0Hx
+        74WV0OwyDz+61gbwiQP5+3HJr8nOmU4LmaMtEd8rvl45QvoG+VaeuDYgD9DGhJgC
+        N+Ht6GZEXBB5pZvyY++bgwRgF8p6f8ws5K6gVDLOJRQOErgCBLGkaQvkK/HgE93L
+        06xEfdqQdJyR0pg8RRy4Z22v9Kquc6d+F3duASOAEFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=mfAr9u
+        MdunoQvxL5y+8TcMkrYaL5Rs/TXMM5I4YUAg8=; b=Ta22z7RO7wGgm3DbeTAWZL
+        NTGPfe0sg7SWlNWkDWJUfM/+1RLxfpA39a4pbDHtrKex4uWeazesfroULf1U8hl+
+        BQkiRwwi598N5NhBGtlblDhi0QSO+otQ2B0kPHJZ/xV4aVnFFL3icx/QiZxjs/nd
+        lNBKxSBwg+IsCDINIruFfMkWSvActO8J2xZ6CBrnZNY80FiED1WcDdDSQETVxB/9
+        +GQq+O18UQx6gxUD4EukBRkp5V6/8BW28Xnshuf7q/j3GsJtebsSNzYif7UVMER3
+        w0zAI6r1YzgQHlGEytvuRLSNbjEgB9qrjXcHwquKPwMFeeJ7DhOa6+w3Nvxu5gCA
+        ==
+X-ME-Sender: <xms:SyALXbiCHkThrBpFzPD9uNyiua34NlH9s5U1td7_L-L13rKOzXhCzQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrtdefgddutddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:SyALXcTtMx139kWfhflfongOjy-ZW8MaQ5gI0jBmrjvnJ_1Q7Q1MHw>
+    <xmx:SyALXWFBFQGvfVTle3FigZ1xEfiWKiaRvkXyFB9P0THiuolb9Na7oQ>
+    <xmx:SyALXckFNQF5EAI2hCIrdGv9KC17bFZMPHSYFfeFo-f90HKKyWaE3Q>
+    <xmx:TCALXZL2OVaEvrZHHFjKiXi7fG6YlAV3HRNeHFa01X9DXFrL-F1AJQ>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DD45C80064;
+        Thu, 20 Jun 2019 01:57:30 -0400 (EDT)
+Date:   Thu, 20 Jun 2019 07:57:28 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitaly Lubart <vitaly.lubart@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: linux-next: manual merge of the char-misc tree with the driver-core
- tree
-Message-ID: <20190620153552.1392079c@canb.auug.org.au>
+        Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: linux-next: manual merge of the jc_docs tree with the
+ char-misc.current tree
+Message-ID: <20190620055728.GA17149@kroah.com>
+References: <20190620111128.7599af5a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/s4hH9bWg9WYbiPbQg4cMoeu"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620111128.7599af5a@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/s4hH9bWg9WYbiPbQg4cMoeu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 20, 2019 at 11:11:28AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the jc_docs tree got a conflict in:
+> 
+>   Documentation/fb/fbcon.rst
+> 
+> between commit:
+> 
+>   fce677d7e8f0 ("docs: fb: Add TER16x32 to the available font names")
+> 
+> from the char-misc.current tree and commit:
+> 
+>   ab42b818954c ("docs: fb: convert docs to ReST and rename to *.rst")
+> 
+> from the jc_docs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc Documentation/fb/fbcon.rst
+> index 5a865437b33f,cfb9f7c38f18..000000000000
+> --- a/Documentation/fb/fbcon.rst
+> +++ b/Documentation/fb/fbcon.rst
+> @@@ -77,12 -80,12 +80,12 @@@ C. Boot option
+>   
+>   1. fbcon=font:<name>
+>   
+> -         Select the initial font to use. The value 'name' can be any of the
+> -         compiled-in fonts: 10x18, 6x10, 7x14, Acorn8x8, MINI4x6,
+> -         PEARL8x8, ProFont6x11, SUN12x22, SUN8x16, TER16x32, VGA8x16, VGA8x8.
+> + 	Select the initial font to use. The value 'name' can be any of the
+> + 	compiled-in fonts: 10x18, 6x10, 7x14, Acorn8x8, MINI4x6,
+>  -	PEARL8x8, ProFont6x11, SUN12x22, SUN8x16, VGA8x16, VGA8x8.
+> ++	PEARL8x8, ProFont6x11, SUN12x22, SUN8x16, TER16x32, VGA8x16, VGA8x8.
+>   
+>   	Note, not all drivers can handle font with widths not divisible by 8,
+> -         such as vga16fb.
+> + 	such as vga16fb.
+>   
+>   2. fbcon=scrollback:<value>[k]
+>   
 
-Hi all,
+Fix looks good to me, thanks!
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+greg k-h
 
-  drivers/misc/mei/debugfs.c
-
-between commit:
-
-  5666d896e838 ("mei: no need to check return value of debugfs_create funct=
-ions")
-
-from the driver-core tree and commit:
-
-  b728ddde769c ("mei: Convert to use DEFINE_SHOW_ATTRIBUTE macro")
-
-from the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/misc/mei/debugfs.c
-index df6bf8b81936,47cfd5005e1b..000000000000
---- a/drivers/misc/mei/debugfs.c
-+++ b/drivers/misc/mei/debugfs.c
-@@@ -233,22 -154,46 +154,21 @@@ void mei_dbgfs_deregister(struct mei_de
-   *
-   * @dev: the mei device structure
-   * @name: the mei device name
- - *
- - * Return: 0 on success, <0 on failure.
-   */
- -int mei_dbgfs_register(struct mei_device *dev, const char *name)
- +void mei_dbgfs_register(struct mei_device *dev, const char *name)
-  {
- -	struct dentry *dir, *f;
- +	struct dentry *dir;
- =20
-  	dir =3D debugfs_create_dir(name, NULL);
- -	if (!dir)
- -		return -ENOMEM;
- -
-  	dev->dbgfs_dir =3D dir;
- =20
- -	f =3D debugfs_create_file("meclients", S_IRUSR, dir,
- -				dev, &mei_dbgfs_meclients_fops);
- -	if (!f) {
- -		dev_err(dev->dev, "meclients: registration failed\n");
- -		goto err;
- -	}
- -	f =3D debugfs_create_file("active", S_IRUSR, dir,
- -				dev, &mei_dbgfs_active_fops);
- -	if (!f) {
- -		dev_err(dev->dev, "active: registration failed\n");
- -		goto err;
- -	}
- -	f =3D debugfs_create_file("devstate", S_IRUSR, dir,
- -				dev, &mei_dbgfs_devstate_fops);
- -	if (!f) {
- -		dev_err(dev->dev, "devstate: registration failed\n");
- -		goto err;
- -	}
- -	f =3D debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
- -				&dev->allow_fixed_address,
- -				&mei_dbgfs_allow_fa_fops);
- -	if (!f) {
- -		dev_err(dev->dev, "allow_fixed_address: registration failed\n");
- -		goto err;
- -	}
- -	return 0;
- -err:
- -	mei_dbgfs_deregister(dev);
- -	return -ENODEV;
- +	debugfs_create_file("meclients", S_IRUSR, dir, dev,
-- 			    &mei_dbgfs_fops_meclients);
-++			    &mei_dbgfs_meclients_fops);
- +	debugfs_create_file("active", S_IRUSR, dir, dev,
-- 			    &mei_dbgfs_fops_active);
-++			    &mei_dbgfs_active_fops);
- +	debugfs_create_file("devstate", S_IRUSR, dir, dev,
-- 			    &mei_dbgfs_fops_devstate);
-++			    &mei_dbgfs_devstate_fops);
- +	debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
- +			    &dev->allow_fixed_address,
-- 			    &mei_dbgfs_fops_allow_fa);
-++			    &mei_dbgfs_allow_fa_fops);
-  }
--=20
-
---Sig_/s4hH9bWg9WYbiPbQg4cMoeu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LGzgACgkQAVBC80lX
-0Gx+/Qf/S15uY6Nn5ycxBmC3UidN6Uf+3Pj/x4SMY2uGl7t0VgNceWCt0jw3ltbA
-q8j2KbhW7Qb0exvqptpwllSfmURa58UVBmJKZtM4KSOUCBCEGf1hfSebhjSrLjSE
-PIt/1w8wkImag0yJEKYQUKQf6fy6L2USTYJUUl+02igmha+vw05+wFuQMBsbG36G
-1sHUiCRosU3ZVvlnGVniFhcVOsAV4up7rckKop2iwQ8AmjgaKBDqJ89qh/ry12uA
-4QYU9N6KdGzNvCsldDH5eyRX16lKAuXCZ7G4WdB2Oquo+oOvQCPY3E2kmhgtzscm
-Y/ZivqOFhflKtmvT88WAS2tkU0Nqig==
-=r+OW
------END PGP SIGNATURE-----
-
---Sig_/s4hH9bWg9WYbiPbQg4cMoeu--
