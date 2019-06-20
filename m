@@ -2,109 +2,83 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC9FC48BE4
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 14:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C6AC43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 15:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAD12084A
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 14:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA6232083B
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 15:49:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q8dvbg7Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbfFTOiG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 10:38:06 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41810 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfFTOiG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 10:38:06 -0400
-Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id T2e3200063XaVaC012e3bi; Thu, 20 Jun 2019 16:38:03 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hdyCR-0000xm-0o; Thu, 20 Jun 2019 16:38:03 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hdyCQ-0005Ng-VN; Thu, 20 Jun 2019 16:38:02 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Qiuyang Sun <sunqiuyang@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
-Date:   Thu, 20 Jun 2019 16:38:00 +0200
-Message-Id: <20190620143800.20640-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726661AbfFTPtR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 11:49:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44070 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFTPtR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 11:49:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=DEHl/heRoFE3pmtAOs3jRbe+EMJIxlq4+fAPJDAKNqA=; b=Q8dvbg7Y3KEguFux87Tlx8c4nI
+        TzRU0UFrSH0P5s98Ir4S7dS3oFK63/wyKX/EX9awC86Z4Lp/RmiDXdS/rWlSXwuz8FpMlJqT97jzE
+        8BgOhI3ManVmb4M15/4DF851rnD+ujzuR7FcZVkUKPU4StnexKlSXhp3F7yX9fifgd9BHu9mgc/l9
+        Rm8jaiQ+3L1+e4ExkTlf0yQ8G8NiOS9o537wp1iWcdguBUqtBW1oUSLtGWdPNvKqMmHIcOMG/h1Me
+        jU/P1a3P6/0bgnpPWPJGSXH3yUdmgSVkoc+q+jL0vmermx/de1lRLpX4Fny6RGoDoaYx/WOfOHylU
+        v94QgEpQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdzJ5-0000MQ-Ia; Thu, 20 Jun 2019 15:48:59 +0000
+Subject: Re: mmotm 2019-06-19-20-32 uploaded (drivers/base/memory.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        David Hildenbrand <david@redhat.com>
+References: <20190620033253.hao9i0PFT%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <bbc205e3-f947-ad46-6b62-afb72af7791e@infradead.org>
+Date:   Thu, 20 Jun 2019 08:48:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190620033253.hao9i0PFT%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 32-bit (e.g. m68k):
+On 6/19/19 8:32 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-06-19-20-32 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
 
-    fs/f2fs/gc.o: In function `f2fs_resize_fs':
-    gc.c:(.text+0x3056): undefined reference to `__umoddi3'
-    gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
+on i386 or x86_64:
 
-Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
-division operations.
+../drivers/base/memory.c: In function 'find_memory_block':
+../drivers/base/memory.c:621:43: error: 'hint' undeclared (first use in this function); did you mean 'uint'?
+  return find_memory_block_by_id(block_id, hint);
+                                           ^~~~
 
-Reported-by: noreply@ellerman.id.au
-Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-This assumes BLKS_PER_SEC(sbi) is 32-bit.
 
-    #define BLKS_PER_SEC(sbi)                                       \
-	    ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
-
-Notes:
-  1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
-     unsigned int,
-  2. The multiplication is done in 32-bit arithmetic, hence the result
-     is of type unsigned int.
-  3. Is it guaranteed that the result will always fit in 32-bit, or can
-     this overflow?
-  4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
-     unsigned long long blks_per_sec, anticipating a 64-bit value.
----
- fs/f2fs/gc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5b1076505ade9f84..c65f87f11de029f4 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
- 	unsigned int secs;
- 	int gc_mode, gc_type;
- 	int err = 0;
-+	__u32 rem;
- 
- 	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
- 	if (block_count > old_block_count)
- 		return -EINVAL;
- 
- 	/* new fs size should align to section size */
--	if (block_count % BLKS_PER_SEC(sbi))
-+	div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
-+	if (rem)
- 		return -EINVAL;
- 
- 	if (block_count == old_block_count)
-@@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
- 	freeze_bdev(sbi->sb->s_bdev);
- 
- 	shrunk_blocks = old_block_count - block_count;
--	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
-+	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
- 	spin_lock(&sbi->stat_lock);
- 	if (shrunk_blocks + valid_user_blocks(sbi) +
- 		sbi->current_reserved_blocks + sbi->unusable_block_count +
 -- 
-2.17.1
-
+~Randy
