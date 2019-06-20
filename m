@@ -4,101 +4,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB7FC43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 09:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC2DC43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 10:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7698208CB
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 09:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C41AA2147A
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 10:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KjdMkESu"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Us8FuvMV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731388AbfFTJmt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 05:42:49 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49447 "EHLO ozlabs.org"
+        id S1726392AbfFTKAE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 06:00:04 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:52727 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbfFTJmt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:42:49 -0400
+        id S1726175AbfFTKAE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:00:04 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Txgp5M9zz9s3l;
-        Thu, 20 Jun 2019 19:42:46 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Ty3h16TBz9s4V;
+        Thu, 20 Jun 2019 19:59:59 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561023766;
-        bh=BnWu035yer0Ose+3iL8DXlaSET5VRns6Pd3E+LOltjc=;
+        s=201702; t=1561024800;
+        bh=IipggBUwCm8dG12BaaBdSFNwAisAMU72LTzcB1dN14I=;
         h=Date:From:To:Cc:Subject:From;
-        b=KjdMkESukwjUSnxFl6p2jcFLOM6qGW7HnGqsvxlbXqyBAWf161K1/S6UIuwoV2xg7
-         Xr5Cwy3yvBxXuFkr5ucHmTwpxBzdDEYiSqvT23st5CJIfBxjKUzDliu5vQuSAc+a6R
-         GmC+TCetO3vwFE1ezEfcaalPnutbzdjRiepWJ4o3c82s2uR10OMq9q7Tbj1dcu9Vrp
-         xkyUL2aWm/fsdBfawjJrAhnUPpuBZImGDixNclx8mccBjqkFjnloA80U0nSAx4PECb
-         IkVPWX5XjpYNx2T26O3VkP4cE+e+jnTX5IHsH4XaLC5FkxCXZhoSGsr7LYddO90yHd
-         jfkr0Q3Tqx7pw==
-Date:   Thu, 20 Jun 2019 19:42:44 +1000
+        b=Us8FuvMV8tLgi5WXoX0bXJURl8e7PbGPhEcUaxa2Ea5zL0IEf5l5Vv20O6pNMdydx
+         dMEI0tF9RjJ2JqgN9ouJV5D658zmEkLgiVxHpIw0ZLkiY1iNZYD8/sDtPk5PYFw1L5
+         JUhuAgme/XbgtMN3E2xE94Q0jqLFLgdFna+MUEmhvX7iRB+1v09fU24bLWJ1nZT3Ek
+         9Lfbbpfzrvl6OUBtx3BJDb/iH6m3BvL9jcKkTkeqz9iDyDP4rLoDUzOIoZaj8/2gqf
+         k7pyEj3jX+X7aUoVb/5HLTtxFJZAvJiuKhnAwjjrKtDugD8mjW8+ML1Ykk7B+WCL3S
+         l2gi2Te1vDhyw==
+Date:   Thu, 20 Jun 2019 19:59:58 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20190620194244.474a83e8@canb.auug.org.au>
+        Matteo Croce <mcroce@redhat.com>
+Subject: linux-next: manual merge of the akpm tree with the s390 tree
+Message-ID: <20190620195958.44841896@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GmjbN.zEeNy_F7a4Pi8p9zb"; protocol="application/pgp-signature"
+ boundary="Sig_/gQ=SzubxHMkTfaRKs_V7Ny6"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/GmjbN.zEeNy_F7a4Pi8p9zb
+--Sig_/gQ=SzubxHMkTfaRKs_V7Ny6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in:
 
-drivers/base/memory.c: In function 'find_memory_block':
-drivers/base/memory.c:621:43: error: 'hint' undeclared (first use in this f=
-unction); did you mean 'uint'?
-  return find_memory_block_by_id(block_id, hint);
-                                           ^~~~
-                                           uint
-drivers/base/memory.c:621:43: note: each undeclared identifier is reported =
-only once for each function it appears in
-drivers/base/memory.c:622:1: warning: control reaches end of non-void funct=
-ion [-Wreturn-type]
- }
- ^
+  drivers/s390/char/sclp_async.c
 
-Caused by commit
+between commit:
 
-  29be27f12cc8 ("drivers/base/memory.c: Get rid of find_memory_block_hinted=
-()")
+  191fa92b3448 ("s390/sclp: remove call home support")
 
-I have reverted that commit for today.
+from the s390 tree and patch:
+
+   proc/sysctl: add shared variables for range check
+
+from the akpm tree.
+
+I fixed it up (I removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/GmjbN.zEeNy_F7a4Pi8p9zb
+--Sig_/gQ=SzubxHMkTfaRKs_V7Ny6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LVRQACgkQAVBC80lX
-0GxWxAf+P8Opt9Xr27NriFBGKoLNBakqhKlgZrTWQ30uTIUgr0KqcrgmYij642pi
-yVHz61M9epU5ZQfv7gtAgD8ikUbRmjUeiThqXvlvZtEbJFeOtcnhgEf1exq5Fc0b
-G5x6PL4H0EaHCjDm3zS3HNyGycYfcqgHciyCPpgLdA4Om5Y3U7kc7DsPt7s+/c5+
-agUXoocujuj7ZmH7QK64BezQeGUPOluyq/TPf2TT6kvI1+nw4T/Sic5XtDFKTFwT
-cFfdFlRBVPWGDGPpr5H4LS2RpP+Aj7XK2b/HvDXq+xMSDZnV6WrgUnXaBT2iTr5m
-4Y2JCeN/2WBAAMPWWXvGPWztHu/gPw==
-=1t42
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LWR4ACgkQAVBC80lX
+0GyB7Qf/Tani1A7xx/mSXffQ8membEuKI+vLA3o1IWWZG3fTC9NKMjcwDLEvrbrj
++/xRsdeHpIqlxh0/9CKcMpqY9ArFSlRj9EJkPYtSlfE/hWVl1b7S7/rZ9Qfy9hM0
+tZcaPp4kMoUfsV8RfbT8rXE/4B0ftYgKyUrAA+JIH2UsIfgWbc8cOkr3wSeqvfbj
+eIud8a9urAHCd02DL/iLNwOh+mxYmDcxMDZnfp36B4qTqAvyLQ1nCz12uthQZhiE
+ZW1LRbJs4wTIA9nGeORgK6cS8g8F80/At7ztVkt7Qp1Og20DKyIKy5GgbovIjJwA
+4ECqL72qzuw62ARpuKK3/u9Gi0SrlA==
+=ntpj
 -----END PGP SIGNATURE-----
 
---Sig_/GmjbN.zEeNy_F7a4Pi8p9zb--
+--Sig_/gQ=SzubxHMkTfaRKs_V7Ny6--
