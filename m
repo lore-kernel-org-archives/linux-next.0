@@ -2,95 +2,106 @@ Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A5CC43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E5BC43613
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD9B12070B
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F192085A
+	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 16:42:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="QgR2ID4V"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="UGnmmnFv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfFTQVC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 12:21:02 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:26484 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfFTQVC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 12:21:02 -0400
-X-Greylist: delayed 130677 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Jun 2019 12:21:00 EDT
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x5KGKwJA010137;
-        Fri, 21 Jun 2019 01:20:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x5KGKwJA010137
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561047659;
-        bh=vH/H/amVrIF6dYZOdR3bYRn8UJN8aLBCmB8vORY1UnU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QgR2ID4VWc+MB7aRJ0NTLb11Mu1qwsQSTYkOSQzUnbgBvUUwHX/WjxuRzWNWUPKYp
-         qqZL8Y5ydmrWBl1APS3s8tfTk3LC8KIWU82jRB/dzOPIpBVsyCWF6K8WdEeGJOgxWF
-         2nEcbxKy0dfnPfzwSKB+3K1ThTBYvpZoYXQh89zsX93sM/8DhqrU47FZIurvDNDK5h
-         2P1cYpk1tmZKwHTL5bUYPHTq6nYVDGKV2R3Hc8kbjfdhj39h7FmV8dNzXw5WXMHTVL
-         kEXZ79zHMT4RjygyxCvjQ7gj7n0ySPE3N23LvJmZAY4jlADlA0fZOvDPdwZloUstx5
-         0exXA0VV/yPzg==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id u124so1903026vsu.2;
-        Thu, 20 Jun 2019 09:20:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAV0FBUfr39ygBOa8VutEJc3JCOe5jSGtpFqExAA1gmzVNqeXT8+
-        U7Xi9l0LfP4Pcqx7cD9kx9ilq3lyQJlvRlMqXNo=
-X-Google-Smtp-Source: APXvYqxHO4/4z7w3TznBnMVgkBmgxFvlR0vphCbWHsju4uthPADyWcsnbIecx2JYf1blOnODMg+ueVEz8sQk+7tEpDM=
-X-Received: by 2002:a67:ed04:: with SMTP id l4mr4891433vsp.179.1561047657639;
- Thu, 20 Jun 2019 09:20:57 -0700 (PDT)
+        id S1726740AbfFTQmR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 12:42:17 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:54491 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfFTQmQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 12:42:16 -0400
+Received: by mail-wm1-f51.google.com with SMTP id g135so3722159wme.4
+        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2019 09:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=aVVARl+PJWiEixXNhzypuF4Ycp9H/zLHWfF671TJGd0=;
+        b=UGnmmnFv57Yi+snyTKTWYPScZBW3uTU+1Quwq7VBDD9UUWu5ao9bPZ3PTVjl+iQMwj
+         VtgHrOHxVIMg7k/uPeNLl8+RMRG4z1XasTj8xCBUeQXTK+ik368QZg9ktIpIaGbkvqcp
+         FsJjUYAVLZvgE129BG+CVbEQpDtDwu92vi+gx++ngD9JXh4GbGv4Jr3OWiy4dg1Xi8GG
+         zZlGvRiTUjdY96CqBylXrEXj9O/LS4h59vaZZF4wb7km8pHUtX4Ps35wFkPObhe2O7LC
+         T7sOkAGhhEkeIiJVkcQjSAKRd+xHIMpHW5OiDrZXu7jLM4sxXYpaGR3LuTZ+btt2/5h5
+         iRSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=aVVARl+PJWiEixXNhzypuF4Ycp9H/zLHWfF671TJGd0=;
+        b=bYaNjBZx3W9VmgyU3fDbjEdoAPYUq+lHl7oP8O8GLQkSEJIKOZiLfLWKmRa8C14qum
+         A4yvxHJA1054RctLVpgk+Bjz0pVi/uT3PH7LalfK4PMSSX5kJlmFv6pOmjFHBYJZzdh9
+         164ExtZe1QYfxbPk+AfMAZZs+gJI9WqKywUKSY0LHPx1b8hRvHpdY4djpde7RRZ4WmPx
+         gT0fdw30HcOll+81NTdmHrkTUp/lmX/AwzkJzbXw5V0KfT4Euht5oTD0jNvaIymfvqfS
+         qOhQtDGR/qgymY+/vRH3eb9EZiLIzSARm3cFssj5ieHVO5kTKlT7ss1KGn9BrPccckzb
+         avcg==
+X-Gm-Message-State: APjAAAXYXA2uRwZ4OE+5Yl/K5BY+zkcV+OD+kjol1D6ScxZ5lutlA9go
+        6f6NA7+zgwLhYQH99UZAiFxgn96VuYmHAQ==
+X-Google-Smtp-Source: APXvYqzv8kbhXwZs28gqKigD0+qKO3G+g5sqxyWRqs/6pnoWAo/FWLJtDpLW2pHI6q8qbCaklpU3Ww==
+X-Received: by 2002:a1c:a848:: with SMTP id r69mr365695wme.12.1561048934749;
+        Thu, 20 Jun 2019 09:42:14 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id h23sm25212wmb.46.2019.06.20.09.42.13
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 09:42:13 -0700 (PDT)
+Message-ID: <5d0bb765.1c69fb81.f8ff5.025a@mx.google.com>
+Date:   Thu, 20 Jun 2019 09:42:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190619200608.69474286@canb.auug.org.au>
-In-Reply-To: <20190619200608.69474286@canb.auug.org.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 21 Jun 2019 01:20:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQc14aYc_cHAYQNxKX_uY5Ssm1aWRRQE1ERaqV8qjUoXg@mail.gmail.com>
-Message-ID: <CAK7LNAQc14aYc_cHAYQNxKX_uY5Ssm1aWRRQE1ERaqV8qjUoXg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: next-20190620
+X-Kernelci-Branch: master
+X-Kernelci-Tree: next
+Subject: next/master boot: 65 boots: 1 failed, 64 passed (next-20190620)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 7:06 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> In file included from usr/include/linux/byteorder/big_endian.hdrtest.c:1:
-> ./usr/include/linux/byteorder/big_endian.h:6:2: error: #error "Unsupported endianness, check your toolchain"
->  #error "Unsupported endianness, check your toolchain"
->   ^~~~~
->
-> Caused by commit
->
->   1ac94caaee11 ("byteorder: sanity check toolchain vs kernel endianness")
->
-> Presumably exposed by commit
->
->   b91976b7c0e3 ("kbuild: compile-test UAPI headers to ensure they are self-contained")
->
-> from the kbuild tree.
->
-> I have reverted 1ac94caaee11 (and its following fixup) for today.
+next/master boot: 65 boots: 1 failed, 64 passed (next-20190620)
 
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20190620/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190620/
 
-I can exclude big_endian.h and little_endian.h
-from the header test.
+Tree: next
+Branch: master
+Git Describe: next-20190620
+Git Commit: dc636f5d78de487ec493a9cc455c9eb595749470
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 24 unique boards, 12 SoC families, 10 builds out of 230
 
+Boot Regressions Detected:
 
--- 
-Best Regards
-Masahiro Yamada
+arm:
+
+    qcom_defconfig:
+        gcc-8:
+          qcom-msm8974-sony-xperia-castor:
+              lab-bjorn: failing since 1 day (last pass: next-20190617 - fi=
+rst fail: next-20190618)
+
+Boot Failure Detected:
+
+arm:
+    qcom_defconfig:
+        gcc-8:
+            qcom-msm8974-sony-xperia-castor: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
