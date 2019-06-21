@@ -2,151 +2,161 @@ Return-Path: <SRS0=K3uQ=UU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CEFC43613
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 15:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AA4C43613
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 16:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A87CC20673
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 15:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1CC620665
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 16:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ielkvWlT"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="ndzAK+9j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbfFUPt1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 21 Jun 2019 11:49:27 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35250 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbfFUPt1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2019 11:49:27 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w20so3125835edd.2
-        for <linux-next@vger.kernel.org>; Fri, 21 Jun 2019 08:49:25 -0700 (PDT)
+        id S1726062AbfFUQpX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 21 Jun 2019 12:45:23 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:33774 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfFUQpX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2019 12:45:23 -0400
+Received: by mail-wm1-f46.google.com with SMTP id h19so9526287wme.0
+        for <linux-next@vger.kernel.org>; Fri, 21 Jun 2019 09:45:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=urFcwKCOqXsZhsF5Qjs/RceQdsW1nEHCAXTfADLNqxU=;
-        b=ielkvWlTL0ttOEF6UkQ2aRv8QOg5eo2l1cwqbFchmDdczzyt1yp6/+Bk4VEkLiQH8o
-         U5WipBNtan5McZWNxE98M/PsPKEocjgjUhOp0NmFqET9YqV46O1NzStnGng8buN3F1Lt
-         JB8mZ+PmxSllHtucPLQj838mqAuDs6n4NKpA8=
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=XC8ZDyuKfL+WWJuHQ9inRW5dQmWUpMYvN1Z7VkZugf8=;
+        b=ndzAK+9jGsFuMh4jlsRvbfd4G5mWvXqiiCTndcvbXsu8P2tXMd2C/xtW8y00iDWHPk
+         dOAhY6/tWkKjds7hRAGbgwuaoOD4qztMTzH68lGnRcGqVr7uZ+PSaQ345mdkDyX/ZLBO
+         PECFoLeEJ+6h1CoMnod10twEVL7sGrsgLryMWkNMXix/P9ctUGrKVdhwgfc2FHS1bg/+
+         uUji0lkA8R/+zHfus3JD9h3ShXEOiVgAV42pgcpq+vo8q4w6Fy2irCzCPbVhqdUa9iKP
+         AgkL54jNhkEMDNVPaqXYmNLuIvojbNeNyoIZZEx3NDQ5X4Y28Ny9UCq/fDnG+x+r/MD3
+         st8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=urFcwKCOqXsZhsF5Qjs/RceQdsW1nEHCAXTfADLNqxU=;
-        b=Hb8NXz6Dzdbq03RzBj5z+zDUKQJ8+9kvywQM59L4zPs/PiWfAtl7Od5sUMXZQnohUc
-         0rrV/KcU4dbhx87yJu3/N3hPzFRuRblQn2jN/eFI5qU5stGnoRKLJSpnA2Id1A0QFXwX
-         17g356l9ZYP5DizM51FarPNd5/cQJoE8+nVGotANlE0b4r0ZzcIzumQZOh2yt5HCofb4
-         Lor7n8FVZFgMGGbEyTQEwXoCEN+EDswQGHqpG6kdYF/3EHgZE8T5T0GvRESUq/SmM4v2
-         A37+FkDFx1VNwZGHGhbheTUXzMcxEEuvgtEwo4cy7S6Bq0aihz/qXE2DR/rX2RdAiWer
-         gERQ==
-X-Gm-Message-State: APjAAAW9N7QXr+b6l46k9ys+J0OWfhqzaCEoM1czqBYbppYAS0PsAlYP
-        2bMO9YmmxuFEImrrjwHW5zARZg==
-X-Google-Smtp-Source: APXvYqz5U9SAoGOPhwyuOMIVZmwVpEK1glb2QXE2/hXQ0Pcs/rm8eZCcsNfwYVlJyv50y+baFiVliw==
-X-Received: by 2002:a05:6402:1801:: with SMTP id g1mr54351512edy.262.1561132165340;
-        Fri, 21 Jun 2019 08:49:25 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id f36sm930355ede.47.2019.06.21.08.49.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 08:49:24 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 17:49:17 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>
-Subject: Re: linux-next: Fixes tags need some work in the drm-fixes tree
-Message-ID: <20190621154917.GG12905@phenom.ffwll.local>
-Mail-Followup-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>
-References: <20190621214125.6fb68eee@canb.auug.org.au>
- <1561121145.3149.7.camel@pengutronix.de>
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=XC8ZDyuKfL+WWJuHQ9inRW5dQmWUpMYvN1Z7VkZugf8=;
+        b=na1bjedjt9dDqL/WsTXZLucTnGNwrpHEKdHkxFdmMzN4EHewvcHI/tVtLsLbwqJVdg
+         mcei2XicyuiFx1BJpTgb/LNkad7gOgTcZm1DCgEyG30C1uSfdQ+qUAse6Q8X6rndOiIS
+         67m9DnuisElAXf35gVHOfsP6wR5WctBzJDlxj6d1UFy/lVLsiaxANrv+dLfr3HExvrQh
+         HvB9xq7x63v1nc7fclLGV7PiMzy/pLfukcYU4GL2m67kzKR2WIu5bQBpld5xbnLjcJiD
+         8eGEh9IpTSBUlxUIUuePhUpVpzW8bbmEv0EEAqRrJtIsZOu6IItsWyG26uPJvzzsp+tV
+         BheA==
+X-Gm-Message-State: APjAAAWOz9dQsBHkwJ/6lsfce9KijJSKI/WJ0N5FKE5IbANkGTE9Mnsd
+        BcR31iFvdUvdORUqbRWrOcKiXmmEiRvcWA==
+X-Google-Smtp-Source: APXvYqy7cMmgO6fdavI+hB1t2xaZ2nNO3c0mSnIIHu2orJME3vPbTt2Ku0SSun2AHIvKw89rhmDY5g==
+X-Received: by 2002:a1c:9ac9:: with SMTP id c192mr5114068wme.0.1561135520682;
+        Fri, 21 Jun 2019 09:45:20 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id w23sm3364832wmi.45.2019.06.21.09.45.19
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Jun 2019 09:45:19 -0700 (PDT)
+Message-ID: <5d0d099f.1c69fb81.b562.3aa6@mx.google.com>
+Date:   Fri, 21 Jun 2019 09:45:19 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561121145.3149.7.camel@pengutronix.de>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v5.2-rc5-463-gca1a9d7e4d17
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+Subject: next/pending-fixes boot: 202 boots: 2 failed,
+ 186 passed with 13 offline, 1 untried/unknown (v5.2-rc5-463-gca1a9d7e4d17)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 02:45:45PM +0200, Philipp Zabel wrote:
-> On Fri, 2019-06-21 at 21:41 +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > In commit
-> > 
-> >   912bbf7e9ca4 ("gpu: ipu-v3: image-convert: Fix image downsize coefficients")
-> > 
-> > Fixes tag
-> > 
-> >   Fixes: 70b9b6b3bcb21 ("gpu: ipu-v3: image-convert: calculate per-tile
-> > 
-> > has these problem(s):
-> > 
-> >   - Please don't split Fixes tags across more than one line
-> > 
-> > In commit
-> > 
-> >   bca4d70cf1b8 ("gpu: ipu-v3: image-convert: Fix input bytesperline for packed formats")
-> > 
-> > Fixes tag
-> > 
-> >   Fixes: d966e23d61a2c ("gpu: ipu-v3: image-convert: fix bytesperline
-> > 
-> > has these problem(s):
-> > 
-> >   - Please don't split Fixes tags across more than one line
-> > 
-> > In commit
-> > 
-> >   ff391ecd65a1 ("gpu: ipu-v3: image-convert: Fix input bytesperline width/height align")
-> > 
-> > Fixes tag
-> > 
-> >   Fixes: d966e23d61a2c ("gpu: ipu-v3: image-convert: fix bytesperline
-> > 
-> > has these problem(s):
-> > 
-> >   - Please don't split Fixes tags across more than one line
-> > 
-> 
-> I was under the impression that dim would have found those, but I only
-> just realized that "dim checkpatch" doesn't actually do any additional
-> checks beyond scripts/checkpatch.pl. Fixes tags are checked only as a
-> part of "dim push". I wonder if this could be changed [1].
-> 
-> [1] https://gitlab.freedesktop.org/drm/maintainer-tools/merge_requests/5
+next/pending-fixes boot: 202 boots: 2 failed, 186 passed with 13 offline, 1=
+ untried/unknown (v5.2-rc5-463-gca1a9d7e4d17)
 
-Officially we don't yet take pull requests (could try to change that, but
-last time around it got nacked by Jani). Can you pls submit to dim-tools@
-as patch?
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.2-rc5-463-gca1a9d7e4d17/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.2-rc5-463-gca1a9d7e4d17/
 
-Also, would be nice to run all the same checks we run at dim push time,
-not just checking for Fixes tags.
--Daniel
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.2-rc5-463-gca1a9d7e4d17
+Git Commit: ca1a9d7e4d179bd3a6691457eab23d182b4a948d
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 82 unique boards, 25 SoC families, 21 builds out of 223
 
-> 
-> regards
-> Philipp
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Boot Regressions Detected:
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+arm:
+
+    multi_v7_defconfig:
+        gcc-8:
+          omap3-beagle-xm:
+              lab-baylibre: new failure (last pass: v5.2-rc5-413-gd10f6f2d3=
+e41)
+
+arm64:
+
+    defconfig:
+        gcc-8:
+          rk3399-firefly:
+              lab-baylibre-seattle: new failure (last pass: v5.2-rc5-413-gd=
+10f6f2d3e41)
+
+Boot Failures Detected:
+
+arm:
+    multi_v7_defconfig:
+        gcc-8:
+            omap3-beagle-xm: 1 failed lab
+
+arm64:
+    defconfig:
+        gcc-8:
+            rk3399-firefly: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    exynos_defconfig:
+        gcc-8
+            exynos5250-arndale: 1 offline lab
+
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+    multi_v7_defconfig:
+        gcc-8
+            exynos5250-arndale: 1 offline lab
+            qcom-apq8064-cm-qs600: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+arm64:
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
