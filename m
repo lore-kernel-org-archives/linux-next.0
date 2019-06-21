@@ -2,147 +2,205 @@ Return-Path: <SRS0=K3uQ=UU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5952C43613
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 18:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E954C43613
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 20:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE819208C3
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 18:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0767820652
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 20:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561140128;
-	bh=g79cNV6mf95ZmNPYnM1FB01DX5LPgZqiGUD7akF6G6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=J6GNUnbF7PiaH0+g0RP1kClFTKYrxHP+HpUuAxZXzeo3DqlgbNyuxCMyPYnfn1RB+
-	 lGbnztj1YTXpHXv0Dwelt6AYtU0pnX/z4rzopl7VJCMW0vz5qcqS0QddodPY4D9l6c
-	 pImz6mzPzEiIfAmoyfL1RC5Od9v6UpFc7OY2ZByc=
+	s=default; t=1561150663;
+	bh=wnMhBBa4yS2N0iyTLNgO8i/CCfX9JZjvAUex3EfLNi0=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=kZvC5Oj7Y5WLbkMT1ro74KvvToo00vqK3eX29DXJ7kvWD8xzoelGNjQVNVuwTGh8i
+	 jxEeT8m1KfWcbwpiM/BIDtuXTa1SIuvWRmggGHyxtY7fuRlX/ICAnzU1svF/I839W1
+	 Kcw2qQPuuHvhtaK8BsLWdiYJEOoDAH7boTvutZtE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfFUSCI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 21 Jun 2019 14:02:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbfFUSCI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 21 Jun 2019 14:02:08 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1BA22070B;
-        Fri, 21 Jun 2019 18:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561140126;
-        bh=g79cNV6mf95ZmNPYnM1FB01DX5LPgZqiGUD7akF6G6E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ox4m1w+PS7vUV8r9TxOITAt1Szi7NPEgyksJHkf2lyp999RYb4j+gqL+htr6gvvTW
-         QazJsF8LbXmELHinQXJOlt0BjQSv+FOidYA2eimQ2cMJWFn7R/Qa6tTaSNx+f4o0tA
-         wDn4Za7mziYVpYox27i7qI7VGqf3WHjWxwylpif8=
-Date:   Fri, 21 Jun 2019 11:02:06 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Chao Yu <yuchao0@huawei.com>, Qiuyang Sun <sunqiuyang@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
-Message-ID: <20190621180206.GD79502@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190620143800.20640-1-geert@linux-m68k.org>
- <dd980fec-d507-6969-cd86-971bafb401c2@huawei.com>
- <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S1726017AbfFUU5m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 21 Jun 2019 16:57:42 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35228 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUU5m (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2019 16:57:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:Subject:To:From:
+        Sender:Reply-To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uwsmbWOwvrJreHwM+DGM03dBcJBJfuzee64bx86KgGE=; b=iSzXQBKLRGpbCIHVSuXBh1gnX
+        a9SLmscmwusja+BOMqjoUzxMY5CiXe+zwJlwpOoh1xSAO5JxqNVBz23uRWXELOAxdJtCvqf8Zh4MH
+        a3yFeWMDuX3a+myU/dq5xwwr80vEPiq+rfUexoFvV3AcQTEu0dnPxdX2JK/BU4t7kI+ro=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=optimist)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1heQbL-00033G-Ee; Fri, 21 Jun 2019 20:57:39 +0000
+Received: from broonie by optimist with local (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1heQbK-0003ld-Ei; Fri, 21 Jun 2019 21:57:38 +0100
+From:   Build bot for Mark Brown <broonie@kernel.org>
+To:     kernel-build-reports@lists.linaro.org,
+        linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+Subject: pending-fixes build: 0 failures 16 warnings (v5.2-rc5-463-gca1a9d7e4d17)
+Message-Id: <E1heQbK-0003ld-Ei@optimist>
+Date:   Fri, 21 Jun 2019 21:57:38 +0100
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 06/21, Geert Uytterhoeven wrote:
-> Hi Chao,
-> 
-> On Fri, Jun 21, 2019 at 11:54 AM Chao Yu <yuchao0@huawei.com> wrote:
-> > Since the original patch hasn't been merged to upstream, I think we can merge
-> > this into original patch, how do you think?
-> 
-> Thanks, that's fine for me.
+Tree/Branch: pending-fixes
+Git describe: v5.2-rc5-463-gca1a9d7e4d17
+Commit: ca1a9d7e4d Merge remote-tracking branch 'drm-misc-fixes/for-linux-next-fixes'
 
-Merged the fix.
-Thank you so much.
+Build Time: 139 min 52 sec
 
-> 
-> > On 2019/6/20 22:38, Geert Uytterhoeven wrote:
-> > > On 32-bit (e.g. m68k):
-> > >
-> > >     fs/f2fs/gc.o: In function `f2fs_resize_fs':
-> > >     gc.c:(.text+0x3056): undefined reference to `__umoddi3'
-> > >     gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
-> > >
-> > > Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
-> > > division operations.
-> > >
-> > > Reported-by: noreply@ellerman.id.au
-> > > Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > ---
-> > > This assumes BLKS_PER_SEC(sbi) is 32-bit.
-> > >
-> > >     #define BLKS_PER_SEC(sbi)                                       \
-> > >           ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
-> > >
-> > > Notes:
-> > >   1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
-> > >      unsigned int,
-> > >   2. The multiplication is done in 32-bit arithmetic, hence the result
-> > >      is of type unsigned int.
-> > >   3. Is it guaranteed that the result will always fit in 32-bit, or can
-> > >      this overflow?
-> > >   4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
-> > >      unsigned long long blks_per_sec, anticipating a 64-bit value.
-> > > ---
-> > >  fs/f2fs/gc.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > > index 5b1076505ade9f84..c65f87f11de029f4 100644
-> > > --- a/fs/f2fs/gc.c
-> > > +++ b/fs/f2fs/gc.c
-> > > @@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
-> > >       unsigned int secs;
-> > >       int gc_mode, gc_type;
-> > >       int err = 0;
-> > > +     __u32 rem;
-> > >
-> > >       old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
-> > >       if (block_count > old_block_count)
-> > >               return -EINVAL;
-> > >
-> > >       /* new fs size should align to section size */
-> > > -     if (block_count % BLKS_PER_SEC(sbi))
-> > > +     div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
-> > > +     if (rem)
-> > >               return -EINVAL;
-> > >
-> > >       if (block_count == old_block_count)
-> > > @@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
-> > >       freeze_bdev(sbi->sb->s_bdev);
-> > >
-> > >       shrunk_blocks = old_block_count - block_count;
-> > > -     secs = shrunk_blocks / BLKS_PER_SEC(sbi);
-> > > +     secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
-> > >       spin_lock(&sbi->stat_lock);
-> > >       if (shrunk_blocks + valid_user_blocks(sbi) +
-> > >               sbi->current_reserved_blocks + sbi->unusable_block_count +
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Passed:   11 / 11   (100.00 %)
+Failed:    0 / 11   (  0.00 %)
+
+Errors: 0
+Warnings: 16
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     12 warnings    0 mismatches  : arm64-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v5_defconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+     23 warnings    0 mismatches  : arm-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      9 warnings    0 mismatches  : x86_64-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 16
+	 24 warning: same module names found:
+	  8 ../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	  5 ../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  4 ../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	  3 ../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	  3 ../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	  2 ../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	  2 ../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	  1 ../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	  1 ../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	  1 ../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
+	  1 ../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
+
+Warnings:
+	../fs/cifs/smb2pdu.c:2581:19: warning: 'in_data_buf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 23 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-Wunused-variable]
+	../drivers/i2c/busses/i2c-sh_mobile.c:399:26: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/erofs/unzip_vle.c:263:29: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/staging/kpc2000/kpc2000/core.c:149:36: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat=]
+	../drivers/staging/kpc2000/kpc2000/fileops.c:75:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/staging/kpc2000/kpc_dma/fileops.c:58:35: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+	../arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:229:45: warning: array subscript is above array bounds [-Warray-bounds]
+	../drivers/regulator/core.c:4759:38: warning: array subscript is above array bounds [-Warray-bounds]
+
+-------------------------------------------------------------------------------
+x86_64-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	../samples/seccomp/user-trap.c:50:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	../samples/seccomp/user-trap.c:83:2: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+	warning: same module names found:
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/spinlock.h:288:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+x86_64-defconfig
