@@ -2,167 +2,147 @@ Return-Path: <SRS0=K3uQ=UU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B856C43613
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 16:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5952C43613
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 18:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5E82089E
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 16:56:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="JMbr5clr"
+	by mail.kernel.org (Postfix) with ESMTP id AE819208C3
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 18:02:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561140128;
+	bh=g79cNV6mf95ZmNPYnM1FB01DX5LPgZqiGUD7akF6G6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=J6GNUnbF7PiaH0+g0RP1kClFTKYrxHP+HpUuAxZXzeo3DqlgbNyuxCMyPYnfn1RB+
+	 lGbnztj1YTXpHXv0Dwelt6AYtU0pnX/z4rzopl7VJCMW0vz5qcqS0QddodPY4D9l6c
+	 pImz6mzPzEiIfAmoyfL1RC5Od9v6UpFc7OY2ZByc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbfFUQ43 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 21 Jun 2019 12:56:29 -0400
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:38419 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfFUQ42 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2019 12:56:28 -0400
-Received: by mail-wr1-f43.google.com with SMTP id d18so7271457wrs.5
-        for <linux-next@vger.kernel.org>; Fri, 21 Jun 2019 09:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=4fQxFLQNut5uwfg44FXTvVaIB5oMSMovpr+wQmkpXYc=;
-        b=JMbr5clrp9hctgsODk9PXZwrIM1gZUB7FxG5XS1pcmaSt4VfoSjxWEqepMGD7HCI7k
-         xQq0NfjXTLR4c3RX1I/sVx226tvYaQZtsd0u5qFtpdqr1KIVtaM+bhvTBugJiY+vEZ+d
-         LJir04Fh7mzMdlBdqPZaY/qVUeMjvMykM9FpakeOV/cuV5+JE0S8dM12eQxNv7gMW0f3
-         XxiXpYj5D1YUOXjYCBBbAdB7C4PRlN7zM3gAuPjzykme4m5OLtMkzpsrNj7qYO3L2Q6H
-         VVFU5jjGJqagY4etVyFy5Amop2A8b1PMiRnAHsRmmkdVb4RNJtOo1p9ekdBcXP21pGFT
-         urwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=4fQxFLQNut5uwfg44FXTvVaIB5oMSMovpr+wQmkpXYc=;
-        b=pDSyGuFakTrK6sMvCsXWD9q1G9XLvAsrr7f2fVZ3EWenKIcXqvqmBjMAtnFzoGKOo5
-         31VuK9D+VHPj/ndjXn2jqgyfwWHITni4MNveiaV1XLCPlvvMdj2cUpfdB1dO3JYHHA4Q
-         NdlKO6aKdkRS1rI0wIhtHQdQx1PbtY/70tE+UxGw9E8Ilj9RQVX29Qm6VuMTGRSjXRtv
-         o2XSvnORH4CeiMF5NNMaXUzam+Pru44AHdXuu8k1kkyFlpwNl8MQBLJ+QgWcvFmddnr5
-         FbPEK1YKDX9aTDNiiT3GiRW/nR1qb1mDY0YZ2AImVrbSbJzWbdEPjjHpEtNMYGvsMDR9
-         zLGw==
-X-Gm-Message-State: APjAAAUguMvX7ddiyP9ic6UDd7KF2ZUBQRbZzjL6BVoa9W+JDrsqb0xZ
-        R9nLRU/ynUKXToKLfXG5rcTKHsvLZQPTRw==
-X-Google-Smtp-Source: APXvYqxXy3RhPSLTMAqgRFfdQY8IoQO7nBHwIXcvV1iJ+wqUqaUIFBjhZ2BTCWART8VjlPC5XaPyDQ==
-X-Received: by 2002:a5d:6583:: with SMTP id q3mr105399369wru.184.1561136186439;
-        Fri, 21 Jun 2019 09:56:26 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id m9sm4066067wrr.14.2019.06.21.09.56.25
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 09:56:25 -0700 (PDT)
-Message-ID: <5d0d0c39.1c69fb81.f9db.77fc@mx.google.com>
-Date:   Fri, 21 Jun 2019 09:56:25 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1726174AbfFUSCI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 21 Jun 2019 14:02:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbfFUSCI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 21 Jun 2019 14:02:08 -0400
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1BA22070B;
+        Fri, 21 Jun 2019 18:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561140126;
+        bh=g79cNV6mf95ZmNPYnM1FB01DX5LPgZqiGUD7akF6G6E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ox4m1w+PS7vUV8r9TxOITAt1Szi7NPEgyksJHkf2lyp999RYb4j+gqL+htr6gvvTW
+         QazJsF8LbXmELHinQXJOlt0BjQSv+FOidYA2eimQ2cMJWFn7R/Qa6tTaSNx+f4o0tA
+         wDn4Za7mziYVpYox27i7qI7VGqf3WHjWxwylpif8=
+Date:   Fri, 21 Jun 2019 11:02:06 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Qiuyang Sun <sunqiuyang@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
+Message-ID: <20190621180206.GD79502@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190620143800.20640-1-geert@linux-m68k.org>
+ <dd980fec-d507-6969-cd86-971bafb401c2@huawei.com>
+ <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: next-20190621
-X-Kernelci-Branch: master
-X-Kernelci-Tree: next
-Subject: next/master boot: 252 boots: 12 failed,
- 229 passed with 11 offline (next-20190621)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 252 boots: 12 failed, 229 passed with 11 offline (next-20=
-190621)
+On 06/21, Geert Uytterhoeven wrote:
+> Hi Chao,
+> 
+> On Fri, Jun 21, 2019 at 11:54 AM Chao Yu <yuchao0@huawei.com> wrote:
+> > Since the original patch hasn't been merged to upstream, I think we can merge
+> > this into original patch, how do you think?
+> 
+> Thanks, that's fine for me.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190621/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190621/
+Merged the fix.
+Thank you so much.
 
-Tree: next
-Branch: master
-Git Describe: next-20190621
-Git Commit: e2d28c40292bdc35553d599e5bbbeaefbab49416
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 85 unique boards, 24 SoC families, 17 builds out of 230
-
-Boot Regressions Detected:
-
-arm:
-
-    qcom_defconfig:
-        gcc-8:
-          qcom-msm8974-sony-xperia-castor:
-              lab-bjorn: failing since 3 days (last pass: next-20190617 - f=
-irst fail: next-20190618)
-
-arm64:
-
-    defconfig:
-        gcc-8:
-          rk3399-firefly:
-              lab-baylibre-seattle: new failure (last pass: next-20190617)
-
-Boot Failures Detected:
-
-arm:
-    qcom_defconfig:
-        gcc-8:
-            qcom-msm8974-sony-xperia-castor: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
-
-arm64:
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-
-    defconfig:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-            rk3399-firefly: 1 failed lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    exynos_defconfig:
-        gcc-8
-            exynos5250-arndale: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            exynos5250-arndale: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-arm64:
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+> 
+> > On 2019/6/20 22:38, Geert Uytterhoeven wrote:
+> > > On 32-bit (e.g. m68k):
+> > >
+> > >     fs/f2fs/gc.o: In function `f2fs_resize_fs':
+> > >     gc.c:(.text+0x3056): undefined reference to `__umoddi3'
+> > >     gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
+> > >
+> > > Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
+> > > division operations.
+> > >
+> > > Reported-by: noreply@ellerman.id.au
+> > > Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
+> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > ---
+> > > This assumes BLKS_PER_SEC(sbi) is 32-bit.
+> > >
+> > >     #define BLKS_PER_SEC(sbi)                                       \
+> > >           ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
+> > >
+> > > Notes:
+> > >   1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
+> > >      unsigned int,
+> > >   2. The multiplication is done in 32-bit arithmetic, hence the result
+> > >      is of type unsigned int.
+> > >   3. Is it guaranteed that the result will always fit in 32-bit, or can
+> > >      this overflow?
+> > >   4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
+> > >      unsigned long long blks_per_sec, anticipating a 64-bit value.
+> > > ---
+> > >  fs/f2fs/gc.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > > index 5b1076505ade9f84..c65f87f11de029f4 100644
+> > > --- a/fs/f2fs/gc.c
+> > > +++ b/fs/f2fs/gc.c
+> > > @@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> > >       unsigned int secs;
+> > >       int gc_mode, gc_type;
+> > >       int err = 0;
+> > > +     __u32 rem;
+> > >
+> > >       old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
+> > >       if (block_count > old_block_count)
+> > >               return -EINVAL;
+> > >
+> > >       /* new fs size should align to section size */
+> > > -     if (block_count % BLKS_PER_SEC(sbi))
+> > > +     div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
+> > > +     if (rem)
+> > >               return -EINVAL;
+> > >
+> > >       if (block_count == old_block_count)
+> > > @@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> > >       freeze_bdev(sbi->sb->s_bdev);
+> > >
+> > >       shrunk_blocks = old_block_count - block_count;
+> > > -     secs = shrunk_blocks / BLKS_PER_SEC(sbi);
+> > > +     secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
+> > >       spin_lock(&sbi->stat_lock);
+> > >       if (shrunk_blocks + valid_user_blocks(sbi) +
+> > >               sbi->current_reserved_blocks + sbi->unusable_block_count +
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
