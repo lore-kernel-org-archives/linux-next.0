@@ -1,196 +1,102 @@
-Return-Path: <SRS0=ROA6=UT=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=K3uQ=UU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B88C43613
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 23:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F12CC43613
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 00:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7945E206BF
-	for <linux-next@archiver.kernel.org>; Thu, 20 Jun 2019 23:59:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S5zY1mcX"
+	by mail.kernel.org (Postfix) with ESMTP id 7334F2085A
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 00:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561075661;
+	bh=F0RJup2dvaTl58+4clVYeHCpyFz0GuLGSTYU0fqgXvI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=rWx2KwIrdJhaBykuWPn9QyKyPRmCSsyM3PG/Ps7V++GSm+8t2gYoEj2Zy/ZL0thmf
+	 QDfWAClSErqtoDWCqi68up0ko+zzkLqYBm8SxFmOoKsnCNn8Mbd8oYWAO43p3GRXTJ
+	 G3eANXE778uWM14lik1L3mhoAbN4c11P0Ffv8dB0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbfFTX7N (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 19:59:13 -0400
-Received: from ozlabs.org ([203.11.71.1]:55257 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbfFTX7M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 19:59:12 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45VJgw1xDXz9s4Y;
-        Fri, 21 Jun 2019 09:59:07 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561075150;
-        bh=dRKv1gpAuFaHe14KD9u3aF0D2BZrlR4R94W900TEatU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S5zY1mcXiVQk/idgHhGWbaZ13+bMLzLSmaw6eaibs1QzTyr87dTROWuyplLHZ+Ck6
-         qubPVPMHPYfL2h7coUVvb68VqNL9zJwUrB1Ut9nSERRzrpAHBbJCLWhXZzlW9DYv1l
-         v8X7ne7lIoriZWwHaVebkTodWTvMP6pSN+6KxzgHvaaGVtiiFnN+WpOE5fvud+ZGqO
-         X8yXOyiDjTjOINMCSv1BddiaUlqVHC2vHNcCkMFDSXTd9n/AQF+yANHT5LqJmKdi2X
-         YTlm0k5ebzSM93yuWZsh2mMQiSz9LrWyS79vPj3PGk9PDcp0ZWVE4Rj8Oaqn/EuJoE
-         Yn5B84r2sM7Og==
-Date:   Fri, 21 Jun 2019 09:59:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726029AbfFUAHl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 20:07:41 -0400
+Received: from mail-lf1-f52.google.com ([209.85.167.52]:42059 "EHLO
+        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfFUAHk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 20:07:40 -0400
+Received: by mail-lf1-f52.google.com with SMTP id y13so3662978lfh.9
+        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2019 17:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2z2u574W9H71BioYVxLQ0ozgxvmOVS9ZyuXKTynCQ8I=;
+        b=eOYdft4VCOo1FjwQ83dZ9VZGvR/D+h+ysV8dTzc6d3lCPpwPy4PFUttAcLDdDTNmtV
+         5wENLEbsDTZAkJzA7xaOEBCxkFvMReHYVkdBdeUIC8ba/5mU9mSYbDhp9jGLS6WOz8nr
+         P4fPq8bVR1aMtzI71pdeWLxLHYJHDCFgdOR4Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2z2u574W9H71BioYVxLQ0ozgxvmOVS9ZyuXKTynCQ8I=;
+        b=ig4ac/d0fA0xECbqBb7dINIv8xDGLfLjVIj5NQEIGtD1f1TR/gBwx9MiIYxUErMTMB
+         qe3frR8rqT8Raznf/iDnRSIUgkpHfACUvIevooCZFy5tzg1OK98h/3ubEiPwcUvhQT7T
+         2YhLnKGt12zYd/9kProEDnYcCuIwIlpf2omxXmIjPTMWqUiC8n2f148szpUw5V/jgrme
+         O34pgnAErb3gqOrQDc25hIN5jsaoQPau4tnaP8Ohlom1NKxQ9TgBLvVIhokop0d3F7Lw
+         uA49fNiK3rFlVlK/Ch7FtxJLLXHLsqVxMhrikhpQHPdeFPL99+kAbZWyvVDBzyrfDnpW
+         7tYA==
+X-Gm-Message-State: APjAAAXxIk8z0Dd9ouW3SHTq91h6WdDDACF0szWaVd4DKDfcawicMNkj
+        238+K/WQ0KJfrS59VhCXbkw9hr+F2x4=
+X-Google-Smtp-Source: APXvYqxgOBbC1dVH0kXLxrnKFi9G2orkv0ZUkN86BKeebNXKURC39o4im+guKXk14fowZ4N/RW+Gyg==
+X-Received: by 2002:a19:2247:: with SMTP id i68mr65230586lfi.174.1561075658109;
+        Thu, 20 Jun 2019 17:07:38 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id z12sm157454lfe.2.2019.06.20.17.07.36
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id m23so4284423lje.12
+        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr7451510ljm.180.1561075656161;
+ Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190522100808.66994f6b@canb.auug.org.au> <20190528114320.30637398@canb.auug.org.au>
+ <20190621095907.4a6a50fa@canb.auug.org.au>
+In-Reply-To: <20190621095907.4a6a50fa@canb.auug.org.au>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 20 Jun 2019 17:07:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+Message-ID: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christoph Hellwig <hch@lst.de>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Linus <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
-Message-ID: <20190621095907.4a6a50fa@canb.auug.org.au>
-In-Reply-To: <20190528114320.30637398@canb.auug.org.au>
-References: <20190522100808.66994f6b@canb.auug.org.au>
-        <20190528114320.30637398@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ruxyLRDQ16ai9vFSC7QYoe6"; protocol="application/pgp-signature"
+        Hannes Reinecke <hare@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ruxyLRDQ16ai9vFSC7QYoe6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Tue, 28 May 2019 11:43:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Thu, Jun 20, 2019 at 4:59 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> On Wed, 22 May 2019 10:08:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > Today's linux-next merge of the scsi tree got conflicts in:
-> >=20
-> >   drivers/scsi/hosts.c
+> At what point does it become worth while to do a back merge of v5.2-rc4
+> (I think the last of the SPDX changes went into there) to take care of
+> all these (rather than Linus having to edit each of these files himself
+> during the merge window)?
 
-	...
+For just trivial conflicts like this that have no code, I really would
+prefer no backmerges.
 
-> > between commits:
-> >=20
-> >   457c89965399 ("treewide: Add SPDX license identifier for missed files=
-")
-> >   09c434b8a004 ("treewide: Add SPDX license identifier for more missed =
-files")
-> >=20
-> > from Linus' tree and commits:
-> >=20
-> >   026104bfa591 ("scsi: core: add SPDX tags to scsi midlayer files missi=
-ng licensing information")
-> >   5502239e73e6 ("scsi: libsas: add a SPDX tag to sas_task.c")
-> >   5897b844b7f9 ("scsi: sd: add a SPDX tag to sd.c")
-> >   95b04a2ff9c7 ("scsi: sr: add a SPDX tag to sr.c")
-> >   50a1ea5bebbc ("scsi: st: add a SPDX tag to st.c") =20
->=20
-> I have now got more of these conflicts in
->=20
-> drivers/scsi/libsas/sas_init.c
+That said, I would tend to trust the due diligence that Thomas, Greg &
+co have done, and am wondering why the scsi tree ends up having
+different SPDX results in the first place..
 
-	...
-
-OK, so here is the complete list (so far) of files in the scsi tree
-that conflict with the SPDX updates in Linus' tree:
-
-drivers/scsi/fcoe/fcoe.c
-drivers/scsi/fcoe/fcoe.h
-drivers/scsi/fcoe/fcoe_ctlr.c
-drivers/scsi/fcoe/fcoe_sysfs.c
-drivers/scsi/fcoe/fcoe_transport.c
-drivers/scsi/hosts.c
-drivers/scsi/libfc/fc_disc.c
-drivers/scsi/libfc/fc_elsct.c
-drivers/scsi/libfc/fc_exch.c
-drivers/scsi/libfc/fc_fcp.c
-drivers/scsi/libfc/fc_frame.c
-drivers/scsi/libfc/fc_libfc.c
-drivers/scsi/libfc/fc_libfc.h
-drivers/scsi/libfc/fc_lport.c
-drivers/scsi/libfc/fc_npiv.c
-drivers/scsi/libfc/fc_rport.c
-drivers/scsi/libiscsi.c
-drivers/scsi/libiscsi_tcp.c
-drivers/scsi/libsas/sas_ata.c
-drivers/scsi/libsas/sas_host_smp.c
-drivers/scsi/libsas/sas_init.c
-drivers/scsi/libsas/sas_internal.h
-drivers/scsi/libsas/sas_scsi_host.c
-drivers/scsi/libsas/sas_task.c
-drivers/scsi/osst.c
-drivers/scsi/scsi.c
-drivers/scsi/scsi_error.c
-drivers/scsi/scsi_ioctl.c
-drivers/scsi/scsi_lib.c
-drivers/scsi/scsi_logging.c
-drivers/scsi/scsi_pm.c
-drivers/scsi/scsi_sysctl.c
-drivers/scsi/scsi_sysfs.c
-drivers/scsi/scsi_trace.c
-drivers/scsi/scsi_transport_fc.c
-drivers/scsi/scsi_transport_iscsi.c
-drivers/scsi/scsi_transport_sas.c
-drivers/scsi/scsi_transport_spi.c
-drivers/scsi/sd.c
-drivers/scsi/sd_dif.c
-drivers/scsi/sd_zbc.c
-drivers/scsi/ses.c
-drivers/scsi/sg.c
-drivers/scsi/sr.c
-drivers/scsi/st.c
-include/scsi/fc/fc_encaps.h
-include/scsi/fc/fc_fc2.h
-include/scsi/fc/fc_fcoe.h
-include/scsi/fc/fc_fcp.h
-include/scsi/fc/fc_ms.h
-include/scsi/iscsi_if.h
-include/scsi/iscsi_proto.h
-include/scsi/libfc.h
-include/scsi/libfcoe.h
-include/scsi/libiscsi.h
-include/scsi/libiscsi_tcp.h
-include/scsi/libsas.h
-include/scsi/sas.h
-include/scsi/sas_ata.h
-include/scsi/scsi_bsg_iscsi.h
-include/scsi/scsi_transport.h
-include/scsi/scsi_transport_fc.h
-include/scsi/scsi_transport_iscsi.h
-include/scsi/scsi_transport_spi.h
-
-At what point does it become worth while to do a back merge of v5.2-rc4
-(I think the last of the SPDX changes went into there) to take care of
-all these (rather than Linus having to edit each of these files himself
-during the merge window)?
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ruxyLRDQ16ai9vFSC7QYoe6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0MHcsACgkQAVBC80lX
-0Gz0Kwf/UtAP44k2jBLhnFZ3zojgA8TIB2uIlzOGUfABRubQgdAGEA0XZqsyh+83
-lNuq22D7sfeCwt6/FHOtXWq8xIAqSguKcGm4DkxkHq6E9RvIfPWSViNLrEw1hUZn
-hos4RB62OQWTupkttpBmaoUtfo2flKSw799uVGqFpjJd/sYKR7DsGkOhYodCfa5R
-5G9by5AUSfmuVZ6Xoo3nbHDAGmFPwRQdNMQdF1z9/PyAdKwJ/qRVKptBvWng/RZi
-YQOvoVjcfhMADt1enNZxwhEEUKFHzVd6fLQERDvRK6lZZCKdSrYbsEezP79bIUhV
-OclE+2Fo/uPyVec7c+Db5zpipjCYJg==
-=lySb
------END PGP SIGNATURE-----
-
---Sig_/ruxyLRDQ16ai9vFSC7QYoe6--
+             Linus
