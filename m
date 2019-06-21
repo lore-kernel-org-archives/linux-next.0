@@ -2,101 +2,117 @@ Return-Path: <SRS0=K3uQ=UU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F92EC43613
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 08:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6E3C48BE0
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 09:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB78208C3
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 08:36:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BrskgRFT"
+	by mail.kernel.org (Postfix) with ESMTP id 9C98F20665
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 09:54:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbfFUIgt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 21 Jun 2019 04:36:49 -0400
-Received: from ozlabs.org ([203.11.71.1]:47631 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbfFUIgt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 21 Jun 2019 04:36:49 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45VX994m0Fz9s3l;
-        Fri, 21 Jun 2019 18:36:45 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561106206;
-        bh=ZlhWhI4DfW1N6bmx8poJ/T6Z6DiwcVEOB8XO8Mu/ruo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BrskgRFT8quZnsC5nJzlwIRCiJ7WDzODd0kKqWUZDdgWqWS5HAmI5gcPuULc3PlbR
-         vOFP7y6Th620AGQqR1ncPLvexiGHurH8UTejZ8DMNGjfZHa/mG5qUV8urDAhiGDngl
-         GhWCMTAnM0MAR0EaZA/QcT7n5dX9JaSldqsos8gLvvrU4HWEwdHvTYwI3fimEIBiFO
-         uOXtkxJhxL6yJH8+Tc/MeGpeet4q8L91FK0/mdHb/jueFCWsl0ETGkCYN08UzmhkVz
-         7p9i/v6ktRGtei4FbNwDNcm/2v3EEdQisOdzWNmidFTAAPiyL90HaUNM+LQFs/CxPW
-         81foCDv2byyrw==
-Date:   Fri, 21 Jun 2019 18:36:43 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the block tree
-Message-ID: <20190621183643.0e9f3fbd@canb.auug.org.au>
-In-Reply-To: <20190621081836.GB17718@lst.de>
-References: <20190621135616.20299058@canb.auug.org.au>
-        <20190621081836.GB17718@lst.de>
+        id S1726832AbfFUJyu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 21 Jun 2019 05:54:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19054 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727253AbfFUJyt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:54:49 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CE75F25CFA34DA6EF421;
+        Fri, 21 Jun 2019 17:54:46 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 21 Jun
+ 2019 17:54:39 +0800
+Subject: Re: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Qiuyang Sun <sunqiuyang@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-next@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190620143800.20640-1-geert@linux-m68k.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <dd980fec-d507-6969-cd86-971bafb401c2@huawei.com>
+Date:   Fri, 21 Jun 2019 17:54:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t_mFD+sROxCPJ=pV27kzbzz"; protocol="application/pgp-signature"
+In-Reply-To: <20190620143800.20640-1-geert@linux-m68k.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/t_mFD+sROxCPJ=pV27kzbzz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Geert,
 
-Hi Christoph,
+Since the original patch hasn't been merged to upstream, I think we can merge
+this into original patch, how do you think?
 
-On Fri, 21 Jun 2019 10:18:36 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> On Fri, Jun 21, 2019 at 01:56:16PM +1000, Stephen Rothwell wrote:
-> > Hi Jens,
-> >=20
-> > After merging the block tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > ERROR: "css_next_descendant_pre" [block/bfq.ko] undefined! =20
->=20
-> I think the culprit is "bfq-iosched: move bfq_stat_recursive_sum into the=
- only
-> caller" as that starts using css_next_descendant_pre in bfq.
->=20
-> I'll send a patch to export it.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/t_mFD+sROxCPJ=pV27kzbzz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0MlxsACgkQAVBC80lX
-0GwWswf/eJZbR3bc56RwbI8GYx87fxwAg6ggyAQMAG2Lazt5yD9bsMT4HVwwpArK
-US93+lcBfQfN/5BDEyegFyDc/F0uMBRAeGBWWSzjENesUIMZ4D22wMBMZj/LzQJm
-H1jBBVxt+OISoVp8pQJFNPoGW1aZYwpQ4tderJOJ8Tq+dnKaeJYQMoJTnTjlnhpR
-GlX5zLyJq7RuQf4LhcX8t5xSsMLgqTt5q6nJz7OMKTcjidYLPmBqPHTHh2M8K01g
-5cMC6k3eySpISYC0/LK7Pi+XRkEM3GyVWF0VE+HnwPYPsffm6MyDJ7JgVfk8zVMe
-Zy1nSiLrq0jhSvNCtbnDBnph+fS+fA==
-=gusO
------END PGP SIGNATURE-----
-
---Sig_/t_mFD+sROxCPJ=pV27kzbzz--
+On 2019/6/20 22:38, Geert Uytterhoeven wrote:
+> On 32-bit (e.g. m68k):
+> 
+>     fs/f2fs/gc.o: In function `f2fs_resize_fs':
+>     gc.c:(.text+0x3056): undefined reference to `__umoddi3'
+>     gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
+> 
+> Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
+> division operations.
+> 
+> Reported-by: noreply@ellerman.id.au
+> Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> This assumes BLKS_PER_SEC(sbi) is 32-bit.
+> 
+>     #define BLKS_PER_SEC(sbi)                                       \
+> 	    ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
+> 
+> Notes:
+>   1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
+>      unsigned int,
+>   2. The multiplication is done in 32-bit arithmetic, hence the result
+>      is of type unsigned int.
+>   3. Is it guaranteed that the result will always fit in 32-bit, or can
+>      this overflow?
+>   4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
+>      unsigned long long blks_per_sec, anticipating a 64-bit value.
+> ---
+>  fs/f2fs/gc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 5b1076505ade9f84..c65f87f11de029f4 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+>  	unsigned int secs;
+>  	int gc_mode, gc_type;
+>  	int err = 0;
+> +	__u32 rem;
+>  
+>  	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
+>  	if (block_count > old_block_count)
+>  		return -EINVAL;
+>  
+>  	/* new fs size should align to section size */
+> -	if (block_count % BLKS_PER_SEC(sbi))
+> +	div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
+> +	if (rem)
+>  		return -EINVAL;
+>  
+>  	if (block_count == old_block_count)
+> @@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+>  	freeze_bdev(sbi->sb->s_bdev);
+>  
+>  	shrunk_blocks = old_block_count - block_count;
+> -	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
+> +	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
+>  	spin_lock(&sbi->stat_lock);
+>  	if (shrunk_blocks + valid_user_blocks(sbi) +
+>  		sbi->current_reserved_blocks + sbi->unusable_block_count +
+> 
