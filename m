@@ -6,88 +6,150 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 924C5C43613
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 03:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B1AC43613
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 05:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF5320675
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 03:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CC3D20665
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 05:43:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AAwQsW5D"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WVg9EafK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725948AbfFUD4V (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 23:56:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33271 "EHLO ozlabs.org"
+        id S1726027AbfFUFnV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 21 Jun 2019 01:43:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:38949 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbfFUD4V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jun 2019 23:56:21 -0400
+        id S1725989AbfFUFnV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 21 Jun 2019 01:43:21 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45VPxZ0GD0z9s4V;
-        Fri, 21 Jun 2019 13:56:16 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45VSK11HTHz9s5c;
+        Fri, 21 Jun 2019 15:43:17 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561089378;
-        bh=T49oJThNAqg4VC+1Nc2pJIUqqDnxAZAKozmYg6nR75c=;
+        s=201702; t=1561095797;
+        bh=OfLNpJ2uc2JmVNb9tH8U2cqr9Ecuo7xcTm/Vb1dr5H8=;
         h=Date:From:To:Cc:Subject:From;
-        b=AAwQsW5DdEAAOtKp0Wah9pnHy27ZH0W7uNkAhS+1p6uRNLztFkDXnLWwmpqyeePjO
-         Vju0+acdkhUEaxqV9difvs2Po7OG53M4wwajFOPJOnHYrBxL3OCzGWr3rjuLr0mq0i
-         ZdS8/+UBfvWJOqqpy0BN1Hww9x18gZLTJeuo46XZXP1FSjHDstE32U8bJGtnueI7r5
-         QddxubpR17sxnH1EbzwNRJyPR6jz4ZDT6suU66hO4XEEh1AJ/Lwn4h3xZj0sd7Su4X
-         l95v0ewR6OsgfgoopYoxQYED9aHYwxAtqpstuHIcNOMo9YxlfDx88mOcxy9ujdG7gx
-         ABWsucvChshWw==
-Date:   Fri, 21 Jun 2019 13:56:16 +1000
+        b=WVg9EafK6jG9AdMhaUvvaYqwCHhf8zlKAQ0LVAxH5WuER3FOxCaOHs4EQJqLQeRyd
+         nTNyDYyw9xoR031ZfhCmlB0jA3giQWDgjYWZcFkOpCs8d+0lIWRE65bbOQV9EhIQrN
+         HC9pzejOJIg8M1h9A+esBf4L18PYs/wN5xS8NxbMF0j7+bZCbHXZHg4ZiOcw85w099
+         CIziBVefb+RioVTZVm4KNHETD1eucJ3EUzOMK2jL8I4Brw39x2Ryrc+BHIqYsYjodK
+         tXUfTQFIEtZiyFbCo5XsyrDrnT7NPzhQmTdHjiLm45rpmwgkkgc07SFdHpH5AOq+lL
+         YfEzK6Lf54JAw==
+Date:   Fri, 21 Jun 2019 15:43:15 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: build failure after merge of the block tree
-Message-ID: <20190621135616.20299058@canb.auug.org.au>
+        Aaron Lewis <aaronlewis@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Huth <thuth@redhat.com>
+Subject: linux-next: manual merge of the kvms390 tree with Linus' tree
+Message-ID: <20190621154315.0a4d5f54@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//CvIe62J8Or=KdtE5_1Awk0"; protocol="application/pgp-signature"
+ boundary="Sig_/h+_WOTV7xAxJJvsyE3eXxS4"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//CvIe62J8Or=KdtE5_1Awk0
+--Sig_/h+_WOTV7xAxJJvsyE3eXxS4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the kvms390 tree got a conflict in:
 
-ERROR: "css_next_descendant_pre" [block/bfq.ko] undefined!
+  tools/testing/selftests/kvm/Makefile
 
-Probably caused by commit
+between commit:
 
-  8060c47ba853 ("block: rename CONFIG_DEBUG_BLK_CGROUP to CONFIG_BFQ_CGROUP=
-_DEBUG")
+  61cfcd545e42 ("kvm: tests: Sort tests in the Makefile alphabetically")
 
-I have used the block tree from next-20190620 for today.
+from Linus' tree and commits:
+
+  ee1563f42856 ("KVM: selftests: Add the sync_regs test for s390x")
+  49fe9a5d1638 ("KVM: selftests: Move kvm_create_max_vcpus test to generic =
+code")
+
+from the kvms390 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//CvIe62J8Or=KdtE5_1Awk0
+diff --cc tools/testing/selftests/kvm/Makefile
+index 62afd0b43074,0d7265da1583..000000000000
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@@ -10,25 -10,29 +10,30 @@@ UNAME_M :=3D $(shell uname -m
+  LIBKVM =3D lib/assert.c lib/elf.c lib/io.c lib/kvm_util.c lib/ucall.c lib=
+/sparsebit.c
+  LIBKVM_x86_64 =3D lib/x86_64/processor.c lib/x86_64/vmx.c
+  LIBKVM_aarch64 =3D lib/aarch64/processor.c
++ LIBKVM_s390x =3D lib/s390x/processor.c
+ =20
+ -TEST_GEN_PROGS_x86_64 =3D x86_64/platform_info_test
+ -TEST_GEN_PROGS_x86_64 +=3D x86_64/set_sregs_test
+ -TEST_GEN_PROGS_x86_64 +=3D x86_64/sync_regs_test
+ -TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_tsc_adjust_test
+ -TEST_GEN_PROGS_x86_64 +=3D x86_64/cr4_cpuid_sync_test
+ -TEST_GEN_PROGS_x86_64 +=3D x86_64/state_test
+ +TEST_GEN_PROGS_x86_64 =3D x86_64/cr4_cpuid_sync_test
+  TEST_GEN_PROGS_x86_64 +=3D x86_64/evmcs_test
+  TEST_GEN_PROGS_x86_64 +=3D x86_64/hyperv_cpuid
+- TEST_GEN_PROGS_x86_64 +=3D x86_64/kvm_create_max_vcpus
+ -TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_close_while_nested_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/mmio_warning_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/platform_info_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/set_sregs_test
+  TEST_GEN_PROGS_x86_64 +=3D x86_64/smm_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/state_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/sync_regs_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_close_while_nested_test
+  TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_set_nested_state_test
+ -TEST_GEN_PROGS_x86_64 +=3D kvm_create_max_vcpus
+ -TEST_GEN_PROGS_x86_64 +=3D dirty_log_test
+ +TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_tsc_adjust_test
+  TEST_GEN_PROGS_x86_64 +=3D clear_dirty_log_test
+ +TEST_GEN_PROGS_x86_64 +=3D dirty_log_test
+++TEST_GEN_PROGS_x86_64 +=3D kvm_create_max_vcpus
+ =20
+ -TEST_GEN_PROGS_aarch64 +=3D dirty_log_test
+  TEST_GEN_PROGS_aarch64 +=3D clear_dirty_log_test
+ +TEST_GEN_PROGS_aarch64 +=3D dirty_log_test
++ TEST_GEN_PROGS_aarch64 +=3D kvm_create_max_vcpus
++=20
++ TEST_GEN_PROGS_s390x +=3D s390x/sync_regs_test
++ TEST_GEN_PROGS_s390x +=3D kvm_create_max_vcpus
+ =20
+  TEST_GEN_PROGS +=3D $(TEST_GEN_PROGS_$(UNAME_M))
+  LIBKVM +=3D $(LIBKVM_$(UNAME_M))
+
+--Sig_/h+_WOTV7xAxJJvsyE3eXxS4
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0MVWAACgkQAVBC80lX
-0GxALAf/ekDm3cV+cRRAqR1ZSokpv8VXJKHzRkqYQ/SFIOCxYWW8euN54tUZZ9VT
-xZo0JDvvqL/j5mxGQFzKkBTP8ycnayqzLn9+qeiXbiTHYrJLuv/N9TNhwh+SWEYD
-JjLhxbGRKBCPVpwVjBjNUaUhe/Rn0fOybCh3Z0zGKB0rarTMjzWrDDZGk+rUyhp1
-eVzqLIs8k4VnzO6nzoPz5N9eB2ynSQGcNZAyApc5u1W2vxArRI+IMgKFWBSmz2Jm
-E9RHVMGQuXddMqI9hBwdrWnN+bwhVUFVgyCauhYtFvB8NjZzVe3aAaCOudcWSPG8
-ULINEliaRHgaD/E6xXGyUVn7bdu9lg==
-=X4Hh
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0MbnMACgkQAVBC80lX
+0Gy53Af+IvuY6eyfQRRB0rsegLHvOHxnQ1pOcGZSLv4DX6xwO/cHwlAnt2I6m9Ue
+380yTzUn1isZVd4jyHmwaQdbG/MonlodGmrU4XBuRbDWrowdCSV7mWqAuVF3CI3t
+G4s+z3iYSeTr/H7Cvvnk4LsjmgcdF7OqRC/6zUjL8/DEw2xgzxz4vNPaboJEKa28
+Z+82KhNpVNxQrQ+XOK5anTnR+tmSZynEVX7/HESjSKU4cgn91qMCHKFz/NFD2z0S
+Bv4jq1f83ojCR+ou7GdSJZivrpDZWr3Sja8yiDmQ4qseWoprosTnRwBYpSeA0O5N
+kfNTnx/W20BjYzdni7EO18uDRNlDOg==
+=v9PH
 -----END PGP SIGNATURE-----
 
---Sig_//CvIe62J8Or=KdtE5_1Awk0--
+--Sig_/h+_WOTV7xAxJJvsyE3eXxS4--
