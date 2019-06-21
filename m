@@ -2,101 +2,119 @@ Return-Path: <SRS0=K3uQ=UU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F12CC43613
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 00:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F37C43613
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 00:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7334F2085A
-	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 00:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561075661;
-	bh=F0RJup2dvaTl58+4clVYeHCpyFz0GuLGSTYU0fqgXvI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=rWx2KwIrdJhaBykuWPn9QyKyPRmCSsyM3PG/Ps7V++GSm+8t2gYoEj2Zy/ZL0thmf
-	 QDfWAClSErqtoDWCqi68up0ko+zzkLqYBm8SxFmOoKsnCNn8Mbd8oYWAO43p3GRXTJ
-	 G3eANXE778uWM14lik1L3mhoAbN4c11P0Ffv8dB0=
+	by mail.kernel.org (Postfix) with ESMTP id 0B5872070B
+	for <linux-next@archiver.kernel.org>; Fri, 21 Jun 2019 00:35:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tw4tco25";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QU4p2pKf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfFUAHl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Jun 2019 20:07:41 -0400
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:42059 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFUAHk (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2019 20:07:40 -0400
-Received: by mail-lf1-f52.google.com with SMTP id y13so3662978lfh.9
-        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2019 17:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2z2u574W9H71BioYVxLQ0ozgxvmOVS9ZyuXKTynCQ8I=;
-        b=eOYdft4VCOo1FjwQ83dZ9VZGvR/D+h+ysV8dTzc6d3lCPpwPy4PFUttAcLDdDTNmtV
-         5wENLEbsDTZAkJzA7xaOEBCxkFvMReHYVkdBdeUIC8ba/5mU9mSYbDhp9jGLS6WOz8nr
-         P4fPq8bVR1aMtzI71pdeWLxLHYJHDCFgdOR4Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2z2u574W9H71BioYVxLQ0ozgxvmOVS9ZyuXKTynCQ8I=;
-        b=ig4ac/d0fA0xECbqBb7dINIv8xDGLfLjVIj5NQEIGtD1f1TR/gBwx9MiIYxUErMTMB
-         qe3frR8rqT8Raznf/iDnRSIUgkpHfACUvIevooCZFy5tzg1OK98h/3ubEiPwcUvhQT7T
-         2YhLnKGt12zYd/9kProEDnYcCuIwIlpf2omxXmIjPTMWqUiC8n2f148szpUw5V/jgrme
-         O34pgnAErb3gqOrQDc25hIN5jsaoQPau4tnaP8Ohlom1NKxQ9TgBLvVIhokop0d3F7Lw
-         uA49fNiK3rFlVlK/Ch7FtxJLLXHLsqVxMhrikhpQHPdeFPL99+kAbZWyvVDBzyrfDnpW
-         7tYA==
-X-Gm-Message-State: APjAAAXxIk8z0Dd9ouW3SHTq91h6WdDDACF0szWaVd4DKDfcawicMNkj
-        238+K/WQ0KJfrS59VhCXbkw9hr+F2x4=
-X-Google-Smtp-Source: APXvYqxgOBbC1dVH0kXLxrnKFi9G2orkv0ZUkN86BKeebNXKURC39o4im+guKXk14fowZ4N/RW+Gyg==
-X-Received: by 2002:a19:2247:: with SMTP id i68mr65230586lfi.174.1561075658109;
-        Thu, 20 Jun 2019 17:07:38 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id z12sm157454lfe.2.2019.06.20.17.07.36
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id m23so4284423lje.12
-        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr7451510ljm.180.1561075656161;
- Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522100808.66994f6b@canb.auug.org.au> <20190528114320.30637398@canb.auug.org.au>
- <20190621095907.4a6a50fa@canb.auug.org.au>
-In-Reply-To: <20190621095907.4a6a50fa@canb.auug.org.au>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 20 Jun 2019 17:07:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
-Message-ID: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+        id S1726059AbfFUAfp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Jun 2019 20:35:45 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48054 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725936AbfFUAfp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Jun 2019 20:35:45 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4B6D18EE109;
+        Thu, 20 Jun 2019 17:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1561077344;
+        bh=4SybJ64WRzbF81D+u3E9E1lNdPTnhgguApMd3wSkw38=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tw4tco25cgbnb+/WKfb8+z2HKiGks93PhclKKf5NdrelPDYy44Q4RwZgfvH3TvKq3
+         0z/uaAv/y4xlAIKH+DGJT72I1+LIrpXA4jFjEPw3af/fLExbI7dzmLIzWCsnI6znpg
+         DmhQuvQbaIH/xnJnwKvAGcRoNVYZQ8sUV7uEwAFk=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id UMYu4CxO6Nxh; Thu, 20 Jun 2019 17:35:44 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7D9CF8EE0CF;
+        Thu, 20 Jun 2019 17:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1561077343;
+        bh=4SybJ64WRzbF81D+u3E9E1lNdPTnhgguApMd3wSkw38=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=QU4p2pKft3QyAscZ7C2T5smYqAWqaxb2ax2/Thov2rf1hr91Biv+hgDa1WfQEMcnh
+         OVH7Rk74TYnC2vfAa/SGCzZ3rje2HugUo9Pav0oCrOwwMtQSgWIERznHtoMXywV3gG
+         L7ch6tfa0GaKSL3ua1yDr2SOZxHm8jcvIm2XuPNo=
+Message-ID: <1561077341.7970.47.camel@HansenPartnership.com>
 Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christoph Hellwig <hch@lst.de>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Hannes Reinecke <hare@suse.com>
+Date:   Thu, 20 Jun 2019 17:35:41 -0700
+In-Reply-To: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+References: <20190522100808.66994f6b@canb.auug.org.au>
+         <20190528114320.30637398@canb.auug.org.au>
+         <20190621095907.4a6a50fa@canb.auug.org.au>
+         <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 4:59 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> At what point does it become worth while to do a back merge of v5.2-rc4
-> (I think the last of the SPDX changes went into there) to take care of
-> all these (rather than Linus having to edit each of these files himself
-> during the merge window)?
+On Thu, 2019-06-20 at 17:07 -0700, Linus Torvalds wrote:
+> On Thu, Jun 20, 2019 at 4:59 PM Stephen Rothwell <sfr@canb.auug.org.a
+> u> wrote:
+> > 
+> > At what point does it become worth while to do a back merge of
+> > v5.2-rc4 (I think the last of the SPDX changes went into there) to
+> > take care of all these (rather than Linus having to edit each of
+> > these files himself during the merge window)?
+> 
+> For just trivial conflicts like this that have no code, I really
+> would prefer no backmerges.
+> 
+> That said, I would tend to trust the due diligence that Thomas, Greg
+> & co have done, and am wondering why the scsi tree ends up having
+> different SPDX results in the first place..
 
-For just trivial conflicts like this that have no code, I really would
-prefer no backmerges.
+There's two problems.  One is simple terminology: the
+Documentation/process/licence-rules.rst say:
 
-That said, I would tend to trust the due diligence that Thomas, Greg &
-co have done, and am wondering why the scsi tree ends up having
-different SPDX results in the first place..
+GPL-2.0 means GPL 2 only
+GPL-2.0+ means GPL 2 or later
 
-             Linus
+I believe RMS made a fuss about this and he finally agreed to 
+
+GPL-2.0-only
+GPL-2.0-or-later
+
+It's just the kernel doc hasn't been updated so Christoph did what the
+doc says when making the change and Thomas did what we've apparently
+agreed to with RMS, hence textual discrepencies.
+
+The other problem is actually substantive: In the libsas code Luben
+Tuikov originally specified gpl 2.0 only by dint of stating:
+
+* This file is licensed under GPLv2.
+
+In all the libsas files, but then muddied the water by quoting GPLv2
+verbatim (which includes the or later than language).  So for these
+files Christoph did the conversion to v2 only SPDX tags and Thomas
+converted to v2 or later tags.  Based on somewhat distant recollections
+of history, I believe Christoph is right on this one.
+
+James
+
