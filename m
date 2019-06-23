@@ -6,101 +6,102 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7918EC43613
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 02:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DAFC43613
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 02:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E1E20673
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 02:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4683D204EC
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 02:37:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OPPnWLes"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VkG2AWeC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfFXCc0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 23 Jun 2019 22:32:26 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48711 "EHLO ozlabs.org"
+        id S1727193AbfFXChZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 23 Jun 2019 22:37:25 -0400
+Received: from ozlabs.org ([203.11.71.1]:60631 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfFXCc0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:32:26 -0400
+        id S1726307AbfFXChZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:37:25 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X76d2fsSz9sND;
-        Mon, 24 Jun 2019 08:55:05 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X5cV0C1qz9s5c;
+        Mon, 24 Jun 2019 07:47:22 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561330508;
-        bh=CfQNGmyRCYuEzDMKXQ9cnOE6ZWSd1jrKEmYS1i0ftMY=;
+        s=201702; t=1561326442;
+        bh=VkBXuv7fVGNt+d2zUDjCDYOwbWse739pBe2u/5BhT/4=;
         h=Date:From:To:Cc:Subject:From;
-        b=OPPnWLest3qGwfakF/bUj22KshAxAKvJEZ0TvgYF5uvuSBZGz/y6stgy+9T9dbQbR
-         Q6TxIhic6rQNA3YkEEUzDlY9HLwZoY7in3lpLZXOHuZ4ou63g1TVccUu5L6ATd6iup
-         n+4FXtfPBWEWphTMfMcZGy9/GKOoEkdpPfauvfsknPMGWwRkggdulx3z5UxoFXAPMj
-         u637IiT4Zw+C/33wHl4r1qLk53b3xh0cPHvl5BNzGZlOiifsAUyhaBkWqqi9CTzODp
-         +SPxnLIjZs+nAFzHIj0jTqkFq+0MkcjMnnErRverJJdvM6c5GljDY0BrVrg/gWhV8w
-         W09yR2nk+4Ykw==
-Date:   Mon, 24 Jun 2019 08:54:58 +1000
+        b=VkG2AWeCHJlfrD5pp+YEYXrGqA7/v/xmsgATu72h5xaqQdgJ/iUXbBPZd6S1YGfJT
+         qRqtd4D0SiIbj4xWVNtv3GLjbpLMXkZmtZ5p/JzOnuvh8pzsDpF2bRO8lWi8vXjHP5
+         J6Zqg+ibI4jg/eKcrSTlNYsupL2zY6I5DBoE3irMgX4IAZHcc0zoi86paQPCcrX3Bu
+         k1Sw4WSv5ih2H8eSXQvh/lC27+/cMfYoXFx7JLalWp0Axd6eA4ixhPv2Xk6cF9cNcl
+         fs/nRMwCfxmuD7jcjzJm+jvOrqmkdEN6t+tJtQFVqZB3G+4k8tXKiQxHh3kO2Md2Sd
+         EKOUh9aUUnAjQ==
+Date:   Mon, 24 Jun 2019 07:47:16 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Message-ID: <20190624085444.7b4a01a5@canb.auug.org.au>
+        Roland Hii <roland.king.guan.hii@intel.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Voon Weifeng <weifeng.voon@intel.com>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Message-ID: <20190624074716.44b749d3@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TvkKorMsiA0+QoO2/asEuNP"; protocol="application/pgp-signature"
+ boundary="Sig_/Na9+/O=gek0KognWqCqb/n3"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/TvkKorMsiA0+QoO2/asEuNP
+--Sig_/Na9+/O=gek0KognWqCqb/n3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+In commit
 
-  arch/arm/include/debug/netx.S
+  d0bb82fd6018 ("net: stmmac: set IC bit when transmitting frames with HW t=
+imestamp")
 
-between commit:
+Fixes tag
 
-  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 500")
+  Fixes: f748be531d70 ("net: stmmac: Rework coalesce timer and fix multi-qu=
+eue races")
 
-from Linus' tree and commit:
+has these problem(s):
 
-  ceb02dcf676f ("ARM: delete netx machine")
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
 
-from the arm-soc tree.
+Fixes: f748be531d70 ("stmmac: support new GMAC4")
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+or did you mean
+
+Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-queu=
+e races")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/TvkKorMsiA0+QoO2/asEuNP
+--Sig_/Na9+/O=gek0KognWqCqb/n3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QA0IACgkQAVBC80lX
-0GwUQwf/cvz09njduHbXOnvqgqpXjuwRlTlJVpRWy9/ThE0Q4jDgn7nlVqGXWJyV
-sHC6yPf5D3d4VWbcXhEt6rj1Nu5FiSUvPfS+4FGHpvCXQ76sDZIr2nMms6Y9kJ31
-D7wyipX+LWmd7LsTLGq06X0LMZbVEg5g8SjK/bvc4nzhM8yLhMazzFHh1fAYXG6n
-Vv7/KyDmUDosCC+Pas2adNx0XwyU5vWjAC9znJsMrZW/057g13iohKR67nImJKpw
-RB3SU6LPR1dpWHCtVbnlJjRZyXC3RccdkMDntccB+E8Sx3c/czVyCbm/nUmd4Uka
-zYJOk+AQkp3YtXBhcxQ1mjoy/1GMnA==
-=vLqH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0P82QACgkQAVBC80lX
+0GzOpAf9F/VT4UgXO75BenZ0s4eht/5MSb6+HByvDuP5GyXkYOi+yl4lteWBrUFg
+tiBQvw3cq/j7aHcPs+x7NHhNHiMuFovU2g11GMGkG11hEAPAJ5CfQLmqJK2NiOwm
+Eala+LJs+CjbgBpWVQeqdJQZMQEe438y0LTyJG1YtRzSxP8/pmbOpJSEN7kP4h2X
+MPUCGd+dlAfHsilXpcg18Kg4svDD9SWk0y/j5rYS9XLcLGL8sPjsiEUZIxoDaOIU
+dukVL/9BtN75lseVL6Y87EMPS4Cuv2ahsEdaTRYpqSGcPkRN7DsNXygLITyno++A
+cjs07J5aKrvC8ejQ6GUoEvSnbBw5FA==
+=ygt7
 -----END PGP SIGNATURE-----
 
---Sig_/TvkKorMsiA0+QoO2/asEuNP--
+--Sig_/Na9+/O=gek0KognWqCqb/n3--
