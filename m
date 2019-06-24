@@ -2,154 +2,162 @@ Return-Path: <SRS0=r9su=UX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 024E1C48BE9
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 17:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFA2C48BE8
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 17:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D844520657
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 17:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6730B20657
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 17:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbfFXRJr convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 13:09:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62254 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731061AbfFXRJr (ORCPT
+        id S1732649AbfFXRwT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 13:52:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34390 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728407AbfFXRwT (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 13:09:47 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OH2Whq038537
-        for <linux-next@vger.kernel.org>; Mon, 24 Jun 2019 13:09:46 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb1vjhsn7-1
+        Mon, 24 Jun 2019 13:52:19 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OHqDrg126094
+        for <linux-next@vger.kernel.org>; Mon, 24 Jun 2019 13:52:17 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tb1y6kw84-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Mon, 24 Jun 2019 13:09:45 -0400
+        for <linux-next@vger.kernel.org>; Mon, 24 Jun 2019 13:52:16 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <sachinp@linux.vnet.ibm.com>;
-        Mon, 24 Jun 2019 18:09:43 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 24 Jun 2019 18:52:14 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Jun 2019 18:09:40 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OH9d9G42402044
+        Mon, 24 Jun 2019 18:52:12 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OHqB5m34603022
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 17:09:39 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ACDF24C044;
-        Mon, 24 Jun 2019 17:09:39 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C9ACC4C040;
-        Mon, 24 Jun 2019 17:09:37 +0000 (GMT)
-Received: from [9.85.121.109] (unknown [9.85.121.109])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Jun 2019 17:09:37 +0000 (GMT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [next][PowerPC] RCU stalls while booting linux-next on PowerVM
- LPAR
-From:   Sachin Sant <sachinp@linux.vnet.ibm.com>
-In-Reply-To: <83a31209-68cb-3e60-6b50-322154e6dcea@redhat.com>
-Date:   Mon, 24 Jun 2019 22:39:36 +0530
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-References: <0F3EAC10-0EA8-4097-99F2-BC42D92291FE@linux.vnet.ibm.com>
- <83a31209-68cb-3e60-6b50-322154e6dcea@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        Mon, 24 Jun 2019 17:52:11 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 583535206B;
+        Mon, 24 Jun 2019 17:52:10 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.49.160])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 05DA752054;
+        Mon, 24 Jun 2019 17:52:09 +0000 (GMT)
+Subject: Re: linux-next: manual merge of the kvms390 tree with Linus' tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Aaron Lewis <aaronlewis@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Huth <thuth@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>
+References: <20190621154315.0a4d5f54@canb.auug.org.au>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Mon, 24 Jun 2019 19:52:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190621154315.0a4d5f54@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 19062417-0016-0000-0000-0000028BF2F8
+x-cbid: 19062417-0008-0000-0000-000002F69D64
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062417-0017-0000-0000-000032E960A1
-Message-Id: <0D14734F-0402-434E-936C-C9213ABA7CCC@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_11:,,
+x-cbparentid: 19062417-0009-0000-0000-00002263CA5C
+Message-Id: <bf7a7b6d-649d-66d1-f9b7-6c0cf279b043@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240135
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240142
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+Stephen, 
 
+can you replace Conny with
 
-> On 24-Jun-2019, at 8:12 PM, David Hildenbrand <david@redhat.com> wrote:
-> 
-> On 24.06.19 16:09, Sachin Sant wrote:
->> Latest -next fails to boot on POWER9 PowerVM LPAR due to RCU stalls.
->> 
->> This problem was introduced with next-20190620 (dc636f5d78).
->> next-20190619 was last good kernel.
->> 
->> Reverting following commit allows the kernel to boot.
->> 2fd4aeea6b603 : mm/memory_hotplug: move and simplify walk_memory_blocks()
->> 
->> 
->> [    0.014409] Using shared cache scheduler topology
->> [    0.016302] devtmpfs: initialized
->> [    0.031022] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
->> [    0.031034] futex hash table entries: 16384 (order: 5, 2097152 bytes, linear)
->> [    0.031575] NET: Registered protocol family 16
->> [    0.031724] audit: initializing netlink subsys (disabled)
->> [    0.031796] audit: type=2000 audit(1561344029.030:1): state=initialized audit_enabled=0 res=1
->> [    0.032249] cpuidle: using governor menu
->> [    0.032403] pstore: Registered nvram as persistent store backend
->> [   60.061246] rcu: INFO: rcu_sched self-detected stall on CPU
->> [   60.061254] rcu: 	0-....: (5999 ticks this GP) idle=1ea/1/0x4000000000000002 softirq=5/5 fqs=2999 
->> [   60.061261] 	(t=6000 jiffies g=-1187 q=0)
->> [   60.061265] NMI backtrace for cpu 0
->> [   60.061269] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc5-next-20190621-autotest-autotest #1
->> [   60.061275] Call Trace:
->> [   60.061280] [c0000018ee85f380] [c000000000b624ec] dump_stack+0xb0/0xf4 (unreliable)
->> [   60.061287] [c0000018ee85f3c0] [c000000000b6d464] nmi_cpu_backtrace+0x144/0x150
->> [   60.061293] [c0000018ee85f450] [c000000000b6d61c] nmi_trigger_cpumask_backtrace+0x1ac/0x1f0
->> [   60.061300] [c0000018ee85f4f0] [c0000000000692c8] arch_trigger_cpumask_backtrace+0x28/0x40
->> [   60.061306] [c0000018ee85f510] [c0000000001c5f90] rcu_dump_cpu_stacks+0x10c/0x16c
->> [   60.061313] [c0000018ee85f560] [c0000000001c4fe4] rcu_sched_clock_irq+0x744/0x990
->> [   60.061318] [c0000018ee85f630] [c0000000001d5b58] update_process_times+0x48/0x90
->> [   60.061325] [c0000018ee85f660] [c0000000001ea03c] tick_periodic+0x4c/0x120
->> [   60.061330] [c0000018ee85f690] [c0000000001ea150] tick_handle_periodic+0x40/0xe0
->> [   60.061336] [c0000018ee85f6d0] [c00000000002b5cc] timer_interrupt+0x10c/0x2e0
->> [   60.061342] [c0000018ee85f730] [c000000000009204] decrementer_common+0x134/0x140
->> [   60.061350] --- interrupt: 901 at replay_interrupt_return+0x0/0x4
->> [   60.061350]     LR = arch_local_irq_restore+0x84/0x90
->> [   60.061357] [c0000018ee85fa30] [c0000018ee85fbac] 0xc0000018ee85fbac (unreliable)
->> [   60.061364] [c0000018ee85fa50] [c000000000b88300] _raw_spin_unlock_irqrestore+0x50/0x80
->> [   60.061369] [c0000018ee85fa70] [c000000000b69da4] klist_next+0xb4/0x150
->> [   60.061376] [c0000018ee85fac0] [c000000000766ea0] subsys_find_device_by_id+0xf0/0x1a0
->> [   60.061382] [c0000018ee85fb20] [c000000000797a94] walk_memory_blocks+0x84/0x100
->> [   60.061388] [c0000018ee85fb80] [c000000000795ea0] link_mem_sections+0x40/0x60
->> [   60.061395] [c0000018ee85fbb0] [c000000000f28c28] topology_init+0xa0/0x268
->> [   60.061400] [c0000018ee85fc10] [c000000000010448] do_one_initcall+0x68/0x2c0
->> [   60.061406] [c0000018ee85fce0] [c000000000f247dc] kernel_init_freeable+0x318/0x47c
->> [   60.061411] [c0000018ee85fdb0] [c0000000000107c4] kernel_init+0x24/0x150
->> [   60.061417] [c0000018ee85fe20] [c00000000000ba54] ret_from_kernel_thread+0x5c/0x68
->> [   88.016563] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:1]
->> [   88.016569] Modules linked in:
->> 
-> 
-> Hi, thanks! Please see
-> 
-> https://lkml.org/lkml/2019/6/21/600
-> 
-> and especially
-> 
-> https://lkml.org/lkml/2019/6/21/908
-> 
-> Does this fix your problem? The fix is on its way to next.
-
-Yes, this patch fixes the problem for me.
+Janosch Frank <frankja@linux.ibm.com>
+as contact fot kvms390-next?
 
 Thanks
--Sachin
+
+Christian
+
+On 21.06.19 07:43, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kvms390 tree got a conflict in:
+> 
+>   tools/testing/selftests/kvm/Makefile
+> 
+> between commit:
+> 
+>   61cfcd545e42 ("kvm: tests: Sort tests in the Makefile alphabetically")
+> 
+> from Linus' tree and commits:
+> 
+>   ee1563f42856 ("KVM: selftests: Add the sync_regs test for s390x")
+>   49fe9a5d1638 ("KVM: selftests: Move kvm_create_max_vcpus test to generic code")
+> 
+> from the kvms390 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
