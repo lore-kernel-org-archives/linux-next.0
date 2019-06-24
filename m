@@ -2,88 +2,73 @@ Return-Path: <SRS0=r9su=UX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2E0C48BE8
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 12:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB519C43613
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 13:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43F72133F
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 12:24:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RgsJzCOt"
+	by mail.kernel.org (Postfix) with ESMTP id 7FE20213F2
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 13:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561382475;
+	bh=uKlCQRGXXA9YPfkpvOBY9ttO0cZxrzJGnbw1r6VZnMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wIt3/iywNPGYJVPIOFTSVRMcO9/iczxGQdss4wRZrrXQv23BtCXeG69y+R+sgFgYw
+	 pvcxLj7/Bz8HGyEAiG304rMSvpr4+ppOsdTPAvwiDzStC02CmZbDF2NZGKSB4eCld5
+	 H4OqjAZaWI+u7cEYhC9AY5nM4elPRxa/xf/62f6s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfFXMYF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 08:24:05 -0400
-Received: from ozlabs.org ([203.11.71.1]:48301 "EHLO ozlabs.org"
+        id S1726274AbfFXNVO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 09:21:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbfFXMYF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:24:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726179AbfFXNVN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Jun 2019 09:21:13 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XT414Z2Fz9s7h;
-        Mon, 24 Jun 2019 22:24:01 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561379042;
-        bh=xxfRItH2391U7dMXmVvgDsDPes1u3Th6qKL0oNxkGUE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=RgsJzCOtMbTN2QGsuF6PRJ7w2qC0saKv3TGPxVkzfZBNHFGz5ChO7WZh6qHbsIfUH
-         EVEVYarbcEOGSZDY/fPtIGTNUDVNcqRedXgDeNWuDLzVY7vqtFWVkmvV40/MRGm8E1
-         ESa/tjgvoHJKS49X+hxp9Jq9vavUpTKXSCVzjzJKxVvTDnmtCLdVb3FzDBPsLo6soc
-         ifTpduTubFbjPg/iHO0VPYa5YO6/JXCOS7D8ZV/M5ykT31Qv+P0X4y3hJlBu6Lgf5C
-         vLMjhXq/1ztVhD2IqBradoEi2DVi/ZnHcTYZ0Shg/oWSpKZm1P9hvJh9MZopGSalSe
-         puiMWYiRT89HQ==
-Date:   Mon, 24 Jun 2019 22:23:59 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Shawn Guo <shawnguo@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 01B9A20820;
+        Mon, 24 Jun 2019 13:21:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561382472;
+        bh=uKlCQRGXXA9YPfkpvOBY9ttO0cZxrzJGnbw1r6VZnMc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f5lH0uZvw8BkIHG188VL+ST9jbasC1wQ0K2sJIzFZLneGFIYFvMW3P/GAeLUpQQCn
+         NkDhvX8ulbWbYdZFaTG/4uuJVIJro3Ob1NSt9eVJH3OdykWxwNm/8D7xoqVR2yzi/o
+         mu5tKbw/US+kMCKfawNd81c+5ga6vt8grmCs6bj4=
+Date:   Mon, 24 Jun 2019 21:20:57 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
         Marco Felsch <m.felsch@pengutronix.de>
-Subject: linux-next: Signed-off-by missing for commit in the imx-mxs tree
-Message-ID: <20190624222359.62e92a15@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the imx-mxs tree
+Message-ID: <20190624132056.GC16146@dragon>
+References: <20190624222359.62e92a15@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K_EFrc3yKf0FARXxVJBIcj8"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624222359.62e92a15@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/K_EFrc3yKf0FARXxVJBIcj8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 24, 2019 at 10:23:59PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   9b5800c21b4d ("ARM: dts: imx6qdl-kontron-samx6i: add Kontron SMARC SoM Support")
+> 
+> is missing a Signed-off-by from its author.
 
-Hi all,
+Thanks for spotting it, Stephen.
 
-Commit
+@Michael, would you please give your SoB?  Otherwise, I will have to
+back out the patch.
 
-  9b5800c21b4d ("ARM: dts: imx6qdl-kontron-samx6i: add Kontron SMARC SoM Su=
-pport")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/K_EFrc3yKf0FARXxVJBIcj8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QwN8ACgkQAVBC80lX
-0GxKLwf/Uy/szCPIFgX8Zs/45tByhJ4lCdJWSlxkgK5VudQJiIx5cvFwhSArAVlf
-EXK3zxebL8Oll2Pl3PhUhM5tXFa2GHNhRfF9hRLJ6bXj/jy6MNt4qMPRc7PMvW3z
-m8Ko4yHJljrkaAv6GzFwF51BLTsB/CM9GqYrjR3B8LuX+eHf9e+V2FhvGWBptcTT
-E7tixVha2aaDyGp4BdPYiMOADNmU22kkyZY+G/GPHXyT5gAfj1hoIITKLyk1BO00
-YcjftzbtFXocmsJBT0DWzYYv0eZIPov0tdUOQUNR7F8roMo1jNhhvodA86scnha/
-K6RNXKZ431O/z0lmxLfaUhhO+W0bqQ==
-=/gE6
------END PGP SIGNATURE-----
-
---Sig_/K_EFrc3yKf0FARXxVJBIcj8--
+Shawn
