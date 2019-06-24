@@ -6,79 +6,78 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B02C43613
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 03:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993D6C43613
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 03:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B03320679
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 03:23:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F27A208CA
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 03:41:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QF0oV63M"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="l5hKRq1c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfFXDXq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 23 Jun 2019 23:23:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:37979 "EHLO ozlabs.org"
+        id S1726834AbfFXDl4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 23 Jun 2019 23:41:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:58317 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726502AbfFXDXq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:23:46 -0400
+        id S1727591AbfFXDlz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 23 Jun 2019 23:41:55 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XF4Z0wy9z9s4Y;
-        Mon, 24 Jun 2019 13:23:41 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XFTT53Ppz9s4Y;
+        Mon, 24 Jun 2019 13:41:48 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561346623;
-        bh=Ld51LDvZP5MLJdlUGJjSgMBhQwTnBRPHw/iDQzFTbA0=;
+        s=201702; t=1561347711;
+        bh=cgZrHxNz9vn4rcX8WT5IEz3w+4jbHRYMfWBxIvIlDjM=;
         h=Date:From:To:Cc:Subject:From;
-        b=QF0oV63MZSkWDnakhYVD3xnb7VcUtkw8rAdMkDWwZ8JDMgFSdapMBlpIGx9Dx3oi3
-         Ug1Fd1nJwZ9/PkGa6YiLlff1wvvKR2g3d/XcYtmoJAZioJV618+pNBgTpWAA/NPKpW
-         gExi8z3D4pIiApU9XFDhB6wJSYcwBar57DT8lcofRXBS/+Gm+hPgYduKuYyN0xs3vt
-         rVflnV7pnwc20sT3Ji5+npjFuEeQDO2+nEcN/tyuw6BRAXeLSnnnvYTLIOfVi5Jgan
-         VwzYTDZsXoXAjCWx2oVLyAixcSAftd7IeZOJQOUMBNxEtGWvN4BR8LIxFSss3f6zLE
-         FT/ctlHrmla6w==
-Date:   Mon, 24 Jun 2019 13:23:41 +1000
+        b=l5hKRq1c5WEyAM3WF2Ec5V02VUf4077RvAXNlWq/5W9ywXUIHsoYOOfTjdT4W+2NA
+         T4L8UCev1xw2dZdv9xPo6DBIqZMLrgc0G/qboeKWm9Sh02OIkETpNfbvUVFz2yfX1z
+         BUiMmdfhEwOVqHUEJFrNnc3sYY3s1RmWC65qF5IZf23yc35m2iXwZ2paNuYWAwzRK5
+         7kBQmPLae7gzGK+Rw1j4KUWZgFU9L6UAnDpu96xcua26ZcOSZ8IeKGV8xMd9h5KXgr
+         etJF/N4H8ZcSbqIKtwB66xDVy9j5yZheITsVHyt0mKVQ/dVcyZ9ZeC10DDRmG1+56b
+         51fj4squ4n6Vw==
+Date:   Mon, 24 Jun 2019 13:41:47 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Jonathan Corbet <corbet@lwn.net>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: linux-next: manual merge of the spi-nor tree with Linus' tree
-Message-ID: <20190624132341.7cdf1214@canb.auug.org.au>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: linux-next: manual merge of the drm tree with the jc_docs tree
+Message-ID: <20190624134147.4950d388@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CsJE6n9rHzX00k4CQHfkzhe"; protocol="application/pgp-signature"
+ boundary="Sig_/E6I3n5WWx4soXp1+CCk8fqA"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/CsJE6n9rHzX00k4CQHfkzhe
+--Sig_/E6I3n5WWx4soXp1+CCk8fqA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the spi-nor tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/mtd/spi-nor/stm32-quadspi.c
+  Documentation/fb/modedb.rst
 
 between commit:
 
-  caab277b1de0 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 234")
+  ab42b818954c ("docs: fb: convert docs to ReST and rename to *.rst")
 
-from Linus' tree and commit:
+from the jc_docs tree and commit:
 
-  df6bd6c002a4 ("mtd: spi-nor: stm32: remove the driver as it was replaced =
-by spi-stm32-qspi.c")
+  1bf4e09227c3 ("drm/modes: Allow to specify rotation and reflection on the=
+ commandline")
 
-from the spi-nor tree.
+from the drm tree.
 
-I fixed it up (I removed the file) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
@@ -88,20 +87,69 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/CsJE6n9rHzX00k4CQHfkzhe
+diff --cc Documentation/fb/modedb.rst
+index 3c2397293977,1dd5a52f9390..000000000000
+--- a/Documentation/fb/modedb.rst
++++ b/Documentation/fb/modedb.rst
+@@@ -45,18 -45,29 +45,32 @@@ signals (e.g. HDMI and DVI-I). For othe
+  is specified the output is disabled.
+ =20
+  You can additionally specify which output the options matches to.
+ -To force the VGA output to be enabled and drive a specific mode say:
+ +To force the VGA output to be enabled and drive a specific mode say::
+ +
+      video=3DVGA-1:1280x1024@60me
+ =20
+ -Specifying the option multiple times for different ports is possible, e.g=
+.:
+ +Specifying the option multiple times for different ports is possible, e.g=
+.::
+ +
+      video=3DLVDS-1:d video=3DHDMI-1:D
+ =20
++ Options can also be passed after the mode, using commas as separator.
++=20
++        Sample usage: 720x480,rotate=3D180 - 720x480 mode, rotated by 180 =
+degrees
++=20
++ Valid options are:
++=20
++   - margin_top, margin_bottom, margin_left, margin_right (integer):
++     Number of pixels in the margins, typically to deal with overscan on T=
+Vs
++   - reflect_x (boolean): Perform an axial symmetry on the X axis
++   - reflect_y (boolean): Perform an axial symmetry on the Y axis
++   - rotate (integer): Rotate the initial framebuffer by x
++     degrees. Valid values are 0, 90, 180 and 270.
++=20
++=20
+ -***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***=
+**
+ +-------------------------------------------------------------------------=
+----
+ =20
+  What is the VESA(TM) Coordinated Video Timings (CVT)?
+ +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+ =20
+  From the VESA(TM) Website:
+ =20
+
+--Sig_/E6I3n5WWx4soXp1+CCk8fqA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QQj0ACgkQAVBC80lX
-0Gyk8Af+KoY3oPRcY/pacom9JBsnThTy4deUQQ/D5Er7/NWm2T6LKFm3kdVPiuzw
-TLXULV7BB6iXO01ENcE6joZwKe2BBQHbhIg3LSZv5kCrwak7y1vaFi37SSca0Md9
-tGkmG76WSN7Ab2AUKLWKUYxmg20R5So5GB+p0qqUJmENrSTnJYD/fOPRpWc8QSdY
-UDTMHuqmakOPP9osBCWGlj5lBFavyMYRwc6HitrHFx8H8smuZcqs9yNsiBQ0a+AZ
-mfJyanphRHNBh+h2P0VXwG6AZSJQvXgkfmHbd25t2XTj8jE/dqFeYC0PvU8zxKtA
-4YbwbjfiNVNgsqlXGkPjXBS8eM0PIw==
-=/yQ1
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QRnsACgkQAVBC80lX
+0Gx0cwf3fCk0CQmL2h2Rgzc6JZL2t9sBQDJbkWLPJVPZGyxnZ0D+TcCPlTWftKvI
+2peumOz0dWq8p7TQxyfqIPCNwTQoCWRTV73N2EpIpq5auz6TVD5b6joRj1e7avqi
+Dqt9bc7SImm0yzq/LI+/5+lNV4vmKi4ZWeadx4R1xzKj1el1T9tMEyHCAf8kKmTt
+gU0GTgyrNfiHtxqpmRazNkqC6eMZWiZJjs9I6AD3tauwWOxEP5JVrPo8MtK3o0N0
+lQrhzlZM/GVCweKT3qnf7qs0kP2o9wffUyb7DNQzRH1p02wKNLrhONcx6wH76kGo
+yOOuwXims8FCK7AkbT/Sj56I90U1
+=1y4c
 -----END PGP SIGNATURE-----
 
---Sig_/CsJE6n9rHzX00k4CQHfkzhe--
+--Sig_/E6I3n5WWx4soXp1+CCk8fqA--
