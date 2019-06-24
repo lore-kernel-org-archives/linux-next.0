@@ -2,73 +2,113 @@ Return-Path: <SRS0=r9su=UX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB519C43613
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 13:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694B9C43613
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 14:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FE20213F2
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 13:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561382475;
-	bh=uKlCQRGXXA9YPfkpvOBY9ttO0cZxrzJGnbw1r6VZnMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wIt3/iywNPGYJVPIOFTSVRMcO9/iczxGQdss4wRZrrXQv23BtCXeG69y+R+sgFgYw
-	 pvcxLj7/Bz8HGyEAiG304rMSvpr4+ppOsdTPAvwiDzStC02CmZbDF2NZGKSB4eCld5
-	 H4OqjAZaWI+u7cEYhC9AY5nM4elPRxa/xf/62f6s=
+	by mail.kernel.org (Postfix) with ESMTP id 4C4C720820
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 14:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbfFXNVO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 09:21:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbfFXNVN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:21:13 -0400
-Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01B9A20820;
-        Mon, 24 Jun 2019 13:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561382472;
-        bh=uKlCQRGXXA9YPfkpvOBY9ttO0cZxrzJGnbw1r6VZnMc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f5lH0uZvw8BkIHG188VL+ST9jbasC1wQ0K2sJIzFZLneGFIYFvMW3P/GAeLUpQQCn
-         NkDhvX8ulbWbYdZFaTG/4uuJVIJro3Ob1NSt9eVJH3OdykWxwNm/8D7xoqVR2yzi/o
-         mu5tKbw/US+kMCKfawNd81c+5ga6vt8grmCs6bj4=
-Date:   Mon, 24 Jun 2019 21:20:57 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726334AbfFXOAJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 10:00:09 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47503 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfFXOAJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2019 10:00:09 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1hfPVs-00064e-Ph; Mon, 24 Jun 2019 16:00:04 +0200
+Received: from mgr by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1hfPVq-00043X-LZ; Mon, 24 Jun 2019 16:00:02 +0200
+Date:   Mon, 24 Jun 2019 16:00:02 +0200
+From:   Michael Grzeschik <mgr@pengutronix.de>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Marco Felsch <m.felsch@pengutronix.de>
 Subject: Re: linux-next: Signed-off-by missing for commit in the imx-mxs tree
-Message-ID: <20190624132056.GC16146@dragon>
+Message-ID: <20190624140002.s3au65gbsx6mtfkf@pengutronix.de>
 References: <20190624222359.62e92a15@canb.auug.org.au>
+ <20190624132056.GC16146@dragon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y4z6ot536bqzjjir"
 Content-Disposition: inline
-In-Reply-To: <20190624222359.62e92a15@canb.auug.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190624132056.GC16146@dragon>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 15:59:26 up 37 days, 20:17, 97 users,  load average: 0.17, 0.18,
+ 0.15
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-next@vger.kernel.org
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 10:23:59PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   9b5800c21b4d ("ARM: dts: imx6qdl-kontron-samx6i: add Kontron SMARC SoM Support")
-> 
-> is missing a Signed-off-by from its author.
 
-Thanks for spotting it, Stephen.
+--y4z6ot536bqzjjir
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-@Michael, would you please give your SoB?  Otherwise, I will have to
-back out the patch.
+On Mon, Jun 24, 2019 at 09:20:57PM +0800, Shawn Guo wrote:
+> On Mon, Jun 24, 2019 at 10:23:59PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Commit
+> >=20
+> >   9b5800c21b4d ("ARM: dts: imx6qdl-kontron-samx6i: add Kontron SMARC So=
+M Support")
+> >=20
+> > is missing a Signed-off-by from its author.
+>=20
+> Thanks for spotting it, Stephen.
+>=20
+> @Michael, would you please give your SoB?  Otherwise, I will have to
+> back out the patch.
 
-Shawn
+Sure!
+
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--y4z6ot536bqzjjir
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAl0Q11wACgkQC+njFXoe
+LGTO+xAAoPqAWT2BExJub9eYcvbVPICjIkbbOJnzN672YZYWo37PratlGciyqv8r
+kS/qj27eHHtPytBd0gq77urfn9B/PYA/uDTiGUmPIKiYLyuZsASSadRnvrwjD0ke
+exHEOR+MoIkKRarCGr2Ir/mExiq3fb0r/11nJ7B7w2s6ska9ypXk7tL5d+fEa5Qe
+iNF5idfqJNoInqcDlRrzgv9fZ0B6aEEBMYIn3IXNBBuqjbziBJuWYi5qAdjCp/d4
+dHQTS9Jy5hHqW86D/G5mOuzGfLbf24ks3WK/KbKNWtoblQP1PWMRG5IT08pkqSKH
+RaYHjrBtCiae+Q73odZm9BXE/o33lJ+8LdADTKhcWdPG1Ksdm7lw/En64vrFhA8u
+m54CHj/s4wFYhTHyM2UOetf22AUeMyfpOEAV2swEFVg5KULaxLXKl96kma2kbvwI
+Aj4uqj+2Vh5tEqAfTMJvXC+fsUcQAo84DvCa27YfaEnXrgwx1amrab8TFiO73kV+
+5jmU4bhVGlmHBeiUO2Q/FG5M/1yZXO34TKodGbUWY52eJh8YSCudFoh+6i7N9sxC
+SP4vUJx4JbuX8+hfBK3SWtHS0XTDpUlLhZZpDnmOlVh/LxrTByoj7fNUyrKdxdD/
+RKGapGY/Y//1gZtQe3DpPyXrSYOIGPyRCEctsmxnDD8o6tFNcCQ=
+=Lah3
+-----END PGP SIGNATURE-----
+
+--y4z6ot536bqzjjir--
