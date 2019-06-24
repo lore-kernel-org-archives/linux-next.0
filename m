@@ -6,74 +6,73 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF5BC4646C
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 23:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5895C4646B
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 23:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8197720665
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 23:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DAAB2077C
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 23:59:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="adMZa+qP"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CMaJmjXU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbfFXXcB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 19:32:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:56761 "EHLO ozlabs.org"
+        id S1728865AbfFXX7K (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 19:59:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:48289 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbfFXXcA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 19:32:00 -0400
+        id S1728804AbfFXX7K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Jun 2019 19:59:10 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Xlth4H1sz9s3l;
-        Tue, 25 Jun 2019 09:31:56 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XmV32DlRz9s8m;
+        Tue, 25 Jun 2019 09:59:07 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561419116;
-        bh=NElVkcs7Bo8coH7xUUrQR63+ACAWkHBl1JeWQSI9KSg=;
+        s=201702; t=1561420747;
+        bh=Hen2snqqpEObpSAq2c6bshrMW+1cGI3PPwZNjQakpws=;
         h=Date:From:To:Cc:Subject:From;
-        b=adMZa+qPdBedM/hq4O60FSIy4xbypwg38g92kQYU5yZ5hD4gcH8HneQyWiHmrI8BV
-         v4xYuBQWpN3fLr3B/kgexFB6lfqlxkshQH0TiwX8yYVkAfsuZc+bnxNgC4ZD95ueiW
-         mYoPCqDWkFI8PSAGrfxAbtDYd7EsUeoSeey5ez0tfWn67ytXmV6PP+LLaFn0eRVY2r
-         6I0Udz623hFqx3UKoJ6gcRykAQWsbaD9guO5LechvlwavcLdSVRXJTSOue0doE5GLm
-         C53EcAorhxN9McmVwq6540JqWMPYYGdk0IHoA1QIgGOWxENyrrOsmKXnVBhIyouq6K
-         EfqV86TcErNAw==
-Date:   Tue, 25 Jun 2019 09:31:50 +1000
+        b=CMaJmjXUhWZSH3G7ZF7TucJBfxTCoVOgmwW80GXCHgGM6Nfc8AS8Ds63ea7gLdhyu
+         NcBa9GATEILZC+EPTZ6JYIXKReSBPN97knyzJPnRN4p/n3kNTTEXoQxmvD6xQBLNHf
+         Rt/P1rS9IgyYNGDZ8uNUDbhkvWOGNPcN0HbJraEG+XoviP2oBZRs4AwlmLJxzKr0G+
+         ZlSvvNg7kuTQ3A8C+X4biPK1oKa1G0jiJVcCo4bXbgTvjBkUKfxzuXFSEtwkRVmuDt
+         3EvKjdwTdeI5CxEWb9vDm4Brl70PE2Z47B9q4Ob9OoOh81ZpZAh6rSwkXaq0g3wG6p
+         fb5K32jp9BqAw==
+Date:   Tue, 25 Jun 2019 09:59:06 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@arm.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Message-ID: <20190625093150.05ed44bf@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the samsung-krzk tree with the arm-soc
+ tree
+Message-ID: <20190625095906.06c97e0c@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DeOjKe.nyb8=QR_HMF4wUB8"; protocol="application/pgp-signature"
+ boundary="Sig_/DYAqH5VtESGNex_VbQzPLet"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/DeOjKe.nyb8=QR_HMF4wUB8
+--Sig_/DYAqH5VtESGNex_VbQzPLet
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+Today's linux-next merge of the samsung-krzk tree got a conflict in:
 
-  mm/vmalloc.c
+  arch/arm/configs/s3c6400_defconfig
 
 between commit:
 
-  8e41f8726dcf ("mm/vmalloc: Fix calculation of direct map addr range")
+  6c48edcc955a ("ARM: configs: Remove useless UEVENT_HELPER_PATH")
 
-from Linus' tree and commit:
+from the arm-soc tree and commit:
 
-  4739d53fcd1d ("arm64/mm: wire up CONFIG_ARCH_HAS_SET_DIRECT_MAP")
+  5a96019ce5cd ("ARM: defconfig: samsung: Cleanup with savedefconfig")
 
-from the arm64 tree.
+from the samsung-krzk tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -82,54 +81,26 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
+
+
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc mm/vmalloc.c
-index 4c9e150e5ad3,6bd7b515995c..000000000000
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@@ -2123,22 -2123,11 +2123,11 @@@ static inline void set_area_direct_map(
-  /* Handle removing and resetting vm mappings related to the vm_struct. */
-  static void vm_remove_mappings(struct vm_struct *area, int deallocate_pag=
-es)
-  {
- -	unsigned long addr =3D (unsigned long)area->addr;
-  	unsigned long start =3D ULONG_MAX, end =3D 0;
-  	int flush_reset =3D area->flags & VM_FLUSH_RESET_PERMS;
- +	int flush_dmap =3D 0;
-  	int i;
- =20
-- 	/*
-- 	 * The below block can be removed when all architectures that have
-- 	 * direct map permissions also have set_direct_map_() implementations.
-- 	 * This is concerned with resetting the direct map any an vm alias with
-- 	 * execute permissions, without leaving a RW+X window.
-- 	 */
-- 	if (flush_reset && !IS_ENABLED(CONFIG_ARCH_HAS_SET_DIRECT_MAP)) {
-- 		set_memory_nx((unsigned long)area->addr, area->nr_pages);
-- 		set_memory_rw((unsigned long)area->addr, area->nr_pages);
-- 	}
--=20
-  	remove_vm_area(area->addr);
- =20
-  	/* If this is not VM_FLUSH_RESET_PERMS memory, no need for the below. */
-
---Sig_/DeOjKe.nyb8=QR_HMF4wUB8
+--Sig_/DYAqH5VtESGNex_VbQzPLet
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RXWYACgkQAVBC80lX
-0GzUYggAjFOBeVTNx8yqkGdZFxuUIAUUDQXCf721+9o8xvC0plrhYr2iLRKjQZrL
-aRv3wRVdO1FV2dLbp9bwu8kf4inGlQm7UhoxDMmvcDXQgr66CPo126viVNdupclk
-mjKugWCVb+LvkXv+AR+KMk/vMS7BPq7AV24LIW4ENGvevTX7PuL1kE/RmUlEeUFx
-/0ui4cynCOsr9NsVJRIoVM26Rj/81280u3uQtTAE3gcBhNHTCsbmtYRmLoUifiI+
-3dsUOkaptYZ/u2ibn3DEMf72IjT4SWAKlZ7v71mMBpMcNDHbIuILDSc+kPGAJA9Z
-UNoGeGA/Vb45LyCD9ZFhoGi/9gh7jQ==
-=tnwC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RY8oACgkQAVBC80lX
+0GwGPAf+PNcyQkEMDRMVNk1uGZdsRY8sHdbhNGKJU2euhikT1WZiVamOhWrRTnfj
+UZBBGAlM7JqKZJ39qGzk5yvEPFUKiVOGeg7Xx3xT8febF+S9vKYN3XnOcPMjrMxe
+S8RD4vF0WtLpFzFCRu/hd1GdL78TL1LtNtvIy20Ph7Z9Q/aO8VwPxsHE7BYGxSsA
+IHfs5YOjlSCZxZdUbZK3rXceTXO553EM6H9sn/Xr9O0brG2VJmJ6XcAZAcybB4Oh
+E+pMCl5gHD1Kl/dhMxPn5qQkte9u3Kgvf8WNDVUOxJL+3JEXZ5qFtdjh4NREXE1v
+0dyp3bnna0+DkCDuyMym/FiQclr2cQ==
+=N9qa
 -----END PGP SIGNATURE-----
 
---Sig_/DeOjKe.nyb8=QR_HMF4wUB8--
+--Sig_/DYAqH5VtESGNex_VbQzPLet--
