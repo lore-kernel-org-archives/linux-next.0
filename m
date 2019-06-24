@@ -2,114 +2,105 @@ Return-Path: <SRS0=r9su=UX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AA5C43613
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 07:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003ECC43613
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 07:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 862422089F
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 07:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73E72089F
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 07:39:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="g3K+3sQD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T24kO8Yn"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dcmAsoE3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbfFXHhK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 03:37:10 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:46281 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726077AbfFXHhK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:37:10 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 8F0133F8;
-        Mon, 24 Jun 2019 03:37:08 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 24 Jun 2019 03:37:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=1+J5C2HWzRAWGr9qUi/dV7VOWB/
-        lXXCZf4VWBdCbOxE=; b=g3K+3sQDn4c+WQ7BN/Yf4iqSFAz7JeF62Y4qIKWKKP8
-        K/HCVktH3QNaiWY9FqoIk8EuPRvCRaSZZwJsVP4qY/xZWEIxtpA2BCG4EpXErQ+p
-        g8vRbb4zqg3VxbsAuZ8KVOPDM/22O0sJJ1AMwhRkhWvFqgASksdnTqen1Ul0sM4F
-        kTBPbPmd5vJ2IWV8HjR7qzoIyrvE7GvQsqkF5VvVDMFh76ZUaq9wOdFo6iHitq28
-        uiEqGztL9PLua0hjB1Ysgu+SccZ+1/hSYwBYUJDZsZdoYGqtKmMYdR4ujqUPF3Nq
-        cNCi3DSkhC5W7+IoRg/oorzQd+oCfKhZHSmh6EGJWyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=1+J5C2
-        HWzRAWGr9qUi/dV7VOWB/lXXCZf4VWBdCbOxE=; b=T24kO8Ynmc/MMjAOj4hhOj
-        IDuIVgpVAXkT2XaGkzoeMbl17mHQN7MYMU1XNrFi9eMPzWpnohauDClfU0y6y2V4
-        tw+uPDVsJBm1smL1gIcSAjyWvA4eJBABq7QJiorvLJWGcZ1ALgCMzlKy9suAWiql
-        H9iQ2JkGA9Y9rR2lNkP5pjqRTnpjcJPdEohgwdVQVNRqTrZMTHuhxFvHxdVkFH73
-        TGl2jA9wdNtOcJisHzSusaUp2q59FaSmNR7eLKTFOtQgi9IsNUR16GOM2uuKKx5W
-        dODG4KQcEAqZIQc6mhIQw7APa5Wx3Kv87TxmaG+FdvmJMoDwIwUWZoenV/iyDwQg
-        ==
-X-ME-Sender: <xms:o30QXbleGP7Hx66krWKlv_allmqAP1f7ya7ChKI0SDKWFNLcoGfByA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddruddugdduvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppedujedvrddutdegrddvge
-    ekrdeggeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-    necuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:o30QXTGAK3c5LrdHsb-EQ8r4ss3kEO79j9kYTI51qescz8Rg3ozatw>
-    <xmx:o30QXcqHiD9l23zn63Lmslgc-TxBSBEUDygWsXmwRfz-wFrRx775bQ>
-    <xmx:o30QXX5WWCBWCyIOILJmborWroz4ycwM5Wz7AsmmwUnoYZHIc7JxXQ>
-    <xmx:pH0QXZ0lKSu-QcedHo4lnr2K49mtL7tK0dCMxUE6UX7Agc7UeOxSbA>
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2AA83380083;
-        Mon, 24 Jun 2019 03:37:05 -0400 (EDT)
-Date:   Mon, 24 Jun 2019 15:34:43 +0800
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727106AbfFXHjB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 03:39:01 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:51103 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726834AbfFXHjB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:39:01 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XLl568T1z9s4Y;
+        Mon, 24 Jun 2019 17:38:57 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561361937;
+        bh=Oqr9VoGz+H8jU7f/XIrLkeTzjqIaQSafjkzl8YOhV38=;
+        h=Date:From:To:Cc:Subject:From;
+        b=dcmAsoE3wE6sxEBKxRgtdhUrf9MneoOPjpaBjDvJBPTyOY6dtGdn1i/G9j31rotfm
+         DUAbH0aS2dzHy6pOoVnTchmvjmrXwg8dQrYxHJxDtfZjNXgRfjeF127yfKSvE4na+b
+         S48j47uIjZ7Bf2eqLGC6j/bpf26Dxr7hdGec+NCCEW2nCfnUeTvg97Egk8IIYaeFVX
+         a2h4z5obwQFzaY+6WiACdxGGPqAt98Unpde3/Zsv2bZ21Sdd5D8zmxDno5cTL2U3rP
+         /twFr3SMX74O+8evCTsz7rEgHBFLkRohAhV5MdfhqXDaQ763JekGfJ8bjm/CsrkDIB
+         Zzh0EQAnA59DQ==
+Date:   Mon, 24 Jun 2019 17:38:55 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: linux-next: manual merge of the usb tree with the pci tree
-Message-ID: <20190624073443.GA13830@kroah.com>
-References: <20190624171229.6415ca4f@canb.auug.org.au>
+        YueHaibing <yuehaibing@huawei.com>
+Subject: linux-next: build failure after merge of the staging tree
+Message-ID: <20190624173855.3c188955@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624171229.6415ca4f@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9SW7r59S7rwskzNWbdJmoBt"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 05:12:29PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the usb tree got a conflict in:
-> 
->   Documentation/index.rst
-> 
-> between commit:
-> 
->   c42eaffa1656 ("Documentation: add Linux PCI to Sphinx TOC tree")
-> 
-> from the pci tree and commit:
-> 
->   ecefae6db042 ("docs: usb: rename files to .rst and add them to drivers-api")
-> 
-> from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+--Sig_/9SW7r59S7rwskzNWbdJmoBt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No patch "below", but I'm sure the fixup is fine :)
+Hi all,
 
-thanks,
+After merging the staging tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-greg k-h
+lib/Kconfig:132:error: recursive dependency detected!
+lib/Kconfig:132:        symbol CRC32 is selected by XZ_DEC
+lib/xz/Kconfig:2:       symbol XZ_DEC is selected by FW_LOADER_COMPRESS
+drivers/base/firmware_loader/Kconfig:158:       symbol FW_LOADER_COMPRESS d=
+epends on FW_LOADER
+drivers/base/firmware_loader/Kconfig:4: symbol FW_LOADER is selected by KS7=
+010
+drivers/staging/ks7010/Kconfig:2:       symbol KS7010 depends on CRYPTO_HASH
+crypto/Kconfig:65:      symbol CRYPTO_HASH is selected by CRYPTO_CRC32_ARM_=
+CE
+arch/arm/crypto/Kconfig:123:    symbol CRYPTO_CRC32_ARM_CE depends on CRC32
+For a resolution refer to Documentation/kbuild/kconfig-language.rst
+subsection "Kconfig recursive dependency limitations"
+
+This is just while doing the "make multi_v7_defconfig".
+
+Caused by commit
+
+  3e5bc68fa596 ("staging: ks7010: Fix build error")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9SW7r59S7rwskzNWbdJmoBt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Qfg8ACgkQAVBC80lX
+0GzU6Af/Yk5/1ayGEFjMSZJt8rqJc6Z4IP4BqTY0EpUEi2KXgb5doSlOxMDCqYIi
+RzS4pk+TZiBQr2khAxuFMEN9dCxP1inL/YhAQ+RaiC8/WluFtWz2Enii+pgxkctN
+9a6Yl8Q9IhemJcKlezgqdNP/4pzAZI/rkR+XcBmzfoWvTOPfiK1JWe3ic4GVXpnt
+yGhImdF7hjrKVh6cKAATjXRiWP+6gTs+PW+zzDD7hxzkk8fSmcZHSNDEGRDyzP8s
+v1ueNsoOcYsRdF2rU5hLUlVP36sFvV24M7W48EszLsGRne0g48CzJyIh3bX7ycZY
+6gEQwpVtianhWVw/tDZvhpfMp/RtOA==
+=2Stc
+-----END PGP SIGNATURE-----
+
+--Sig_/9SW7r59S7rwskzNWbdJmoBt--
