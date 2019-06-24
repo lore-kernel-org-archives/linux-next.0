@@ -2,104 +2,96 @@ Return-Path: <SRS0=r9su=UX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ABFC4646C
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 21:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEE5C4646C
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 22:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9F720820
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 21:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561413582;
-	bh=wkXd8LvsRDQsmIsQI1DMB/m6N5fb+f+VDdAigOle070=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=YU7NeJxuCOY5NdUqMUrNdt/C/p9MEqbDXNY3VHYCnpuoBZlEd/TN8uO3mzXNWXEH7
-	 FxJ7PnvdZEI3ns2dXZ7HYCmm3VcfayiHyAlExlZe03yzxN3UwiHsAbA20sExjedf9L
-	 CAcKi3LUhHxdjWItkCdHNaNumVq/BxkCjtamz9xE=
+	by mail.kernel.org (Postfix) with ESMTP id B146420663
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 22:08:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rGR20+Go"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbfFXV7g (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 17:59:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53482 "EHLO mail.kernel.org"
+        id S1726376AbfFXWIM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 18:08:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:47833 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfFXV7g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:59:36 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726313AbfFXWIM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:08:12 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 822DE20665;
-        Mon, 24 Jun 2019 21:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561413575;
-        bh=wkXd8LvsRDQsmIsQI1DMB/m6N5fb+f+VDdAigOle070=;
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Xk203WCzz9s4Y;
+        Tue, 25 Jun 2019 08:08:08 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561414089;
+        bh=fTgDXJ1bVWmrdYcKduTJMKlqock7C6EN7aDxhgdiJtM=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FG9EtLCSkYGjdJmYxQbSShBk/IghxUE5O9kTJzVcelMAZzKAsdYFrsyxawgpty8ox
-         vymL2hcpUMZLg3rLtDADZOh6FncBGexh2/l0jY+zGBavC04bRRsC9zKQYybDhrmKuA
-         kaCU3FeX7BXum0WAQBJzzUM4Fw3XX/jEdMgXQttM=
-Date:   Mon, 24 Jun 2019 14:59:35 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        b=rGR20+GokEJgEMz37nIknsr3e37vbBkml8Bi1WSV5/j1924gawO+jQ+amlBWmidUG
+         vvapVlK2ypwJWWCO+Xp4aXL58k14XLUimB+5/2nnrpUNaqOv7f8+mTNHKZuKyXc+LV
+         WzU1+RFZOEAr4V+z7MG81Fy2wKIcJcfQwU1GWDVbqJHf7iRNUv1KhYQ6x68YNNP9to
+         lXJGcv7H9E6r+zHTM3cP9YlW7DhzkycCyXaxYvDHnv4odJgx8VVjHx+w2Kr0ywn4Wv
+         VpEeX640Uufkla/A9QQD6vEyskigEU59Q9OIuUYpbyqKCYZ5AeXmdwp83s4Wiv30fx
+         bOhq87BsDNhRQ==
+Date:   Tue, 25 Jun 2019 08:08:06 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Cornelia Huck <cohuck@redhat.com>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Message-Id: <20190624145935.b9516f0316953057c76fff69@linux-foundation.org>
-In-Reply-To: <20190624210043.13c924f1@canb.auug.org.au>
-References: <20190624210043.13c924f1@canb.auug.org.au>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Aaron Lewis <aaronlewis@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Huth <thuth@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>
+Subject: Re: linux-next: manual merge of the kvms390 tree with Linus' tree
+Message-ID: <20190625080806.11e99e71@canb.auug.org.au>
+In-Reply-To: <bf7a7b6d-649d-66d1-f9b7-6c0cf279b043@de.ibm.com>
+References: <20190621154315.0a4d5f54@canb.auug.org.au>
+        <bf7a7b6d-649d-66d1-f9b7-6c0cf279b043@de.ibm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/y4N59u/QqNSLzmSjUaS3NVg"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, 24 Jun 2019 21:00:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/y4N59u/QqNSLzmSjUaS3NVg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> mm/util.c: In function '__account_locked_vm':
-> mm/util.c:372:2: error: implicit declaration of function 'lockdep_assert_held_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=implicit-function-declaration]
->   lockdep_assert_held_exclusive(&mm->mmap_sem);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   lockdep_assert_held_once
-> cc1: some warnings being treated as errors
-> 
-> Caused by commit
-> 
->   610509219f27 ("mm-add-account_locked_vm-utility-function-v3")
-> 
-> interacting with commit
-> 
->   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() -> lockdep_assert_held_write()")
-> 
-> from the tip tree.
-> 
-> I have applied the following merge fix patch.
-> 
-> ...
+Hi Christian,
+
+On Mon, 24 Jun 2019 19:52:09 +0200 Christian Borntraeger <borntraeger@de.ib=
+m.com> wrote:
 >
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -369,7 +369,7 @@ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
->  	unsigned long locked_vm, limit;
->  	int ret = 0;
->  
-> -	lockdep_assert_held_exclusive(&mm->mmap_sem);
-> +	lockdep_assert_held_write(&mm->mmap_sem);
->  
->  	locked_vm = mm->locked_vm;
->  	if (inc) {
+> can you replace Conny with
+>=20
+> Janosch Frank <frankja@linux.ibm.com>
+> as contact fot kvms390-next?
 
-OK, thanks, I'll stage mm-add-account_locked_vm-utility-function.patch
-behind linux-next and shall fix this up.
+Done.
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/y4N59u/QqNSLzmSjUaS3NVg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RScYACgkQAVBC80lX
+0Gz08wf8Cd/3Bd9YLGQTUGsGC3PJIsLaA7t0x8MeYDyyzYzJYr8spoqqUIqiNjow
+L6UJHzVLyRVOlZcoSoacLkhhoxDr7WPWJjmFEDXvEQkG5HEJSNT6mrlsKmyp5CzJ
+JMZTsck76t9o2WK1bUo+g5KWsvHUNCNZdZBAA33eENRMtZP6RZxzr2uod0o5A0UN
+AtU4yMJhRrAvXejQxj3d1aFIc7Mbr8w6RO8AlqR+Eh8Q067UzyDXmu2I284Qs0TP
+XYbs1tH2K6kml8bis/9OHrx8CuiiqO+l1pvPfynMygJ+1+KS7bk9NOrMjYJu3zrv
+5mJlUmnVNFjnuA3Zih8Oloj6KFBTWQ==
+=xjGW
+-----END PGP SIGNATURE-----
+
+--Sig_/y4N59u/QqNSLzmSjUaS3NVg--
