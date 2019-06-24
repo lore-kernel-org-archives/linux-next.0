@@ -1,4 +1,4 @@
-Return-Path: <SRS0=CEZG=UV=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=r9su=UX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,113 +6,100 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B03C43613
-	for <linux-next@archiver.kernel.org>; Sat, 22 Jun 2019 14:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6E7C48BE4
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 01:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8812206B7
-	for <linux-next@archiver.kernel.org>; Sat, 22 Jun 2019 14:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15450205ED
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jun 2019 01:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nXGuwGjp"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Nu0HwoT4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfFVOGx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 22 Jun 2019 10:06:53 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57943 "EHLO ozlabs.org"
+        id S1726372AbfFXBm1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 23 Jun 2019 21:42:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:41179 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726136AbfFVOGx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 22 Jun 2019 10:06:53 -0400
+        id S1726988AbfFXBm0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:42:26 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45WHRQ5csGz9s00;
-        Sun, 23 Jun 2019 00:06:42 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XBhl16qxz9sPH;
+        Mon, 24 Jun 2019 11:36:22 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561212404;
-        bh=nyyZNKPjdAVEfM3o+DcLOT4yBfjBHhyr55uRD/kVHRQ=;
+        s=201702; t=1561340183;
+        bh=mXfAPd4wEewFFVOAb8egEK6h14/2g9IBvmSgUITDhvc=;
         h=Date:From:To:Cc:Subject:From;
-        b=nXGuwGjppXK4Bqr7DhLwzIvqwt71TcUQR9bwCej25A15/5pdIPKYIZfWw/6VJRAgr
-         z8iRooGrmTVPZ8I2skZa2uLNzGD0J5dHJAG7e7nFvUY22KAzLYcJ3Jii+FBf58Z/nZ
-         QqbEhNh8LRRZvLYPDFPYT7DwW95TxBR5VighRjR8/MMnxIKWTZoDEcbLn+ZYWUp8Xr
-         lmi8NRmlhhA4RkvpZXTFSJZ/tFWEZdt69n4TH4Uv3OD1yHjjC7adAHzronNBNIwvMf
-         h6q20DryOqMicjN+J14Klfg5qINaQwhOvsQAmDJzQmV56c3pPQL4Aq0lb9Vu8jcjmh
-         KKYBRaqhGmlSA==
-Date:   Sun, 23 Jun 2019 00:06:41 +1000
+        b=Nu0HwoT4bQjzu21IfZevvglyxYd051dcE8LNfM04ruhmhGOTjYYHC4sqIu7rk9qGW
+         3P1YsnJUXlW3uIid1RbqwmT0tU71QfP7CXMT3i44idkb6RRh9zudx1vDDTPje0+kt6
+         LtPGswW7R37bQGsIV/20HHx64aDoItHhwGp7aAJ61D3H3HrJuKYwGFMP+fyiPdwpdo
+         ZJtvlWBVt0a8bVs6ccqDdeKVFvGZRbimcJ3t2f2IDLVpQlVISdS6eCHZ8hps9+olKB
+         gbYv3Q5rBPJ5sVWr0vrdfyUKsece4rO4pne5Wat1tYvjGUt200vC/XKAt7JcjnLKPh
+         6cUHjcfhY81kQ==
+Date:   Mon, 24 Jun 2019 11:36:22 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Message-ID: <20190623000641.0aa61abf@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Message-ID: <20190624113622.5c1abcb8@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.SjaB+vDItcgt.MR10ESk94"; protocol="application/pgp-signature"
+ boundary="Sig_/NX_RlpezVxPMk3jUESTSkqh"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/.SjaB+vDItcgt.MR10ESk94
+--Sig_/NX_RlpezVxPMk3jUESTSkqh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
-In commit
+Today's linux-next merge of the v4l-dvb tree got a conflict in:
 
-  5f4318c1b1d2 ("perf/x86: Add Intel Ice Lake NNPI uncore support")
+  drivers/media/v4l2-core/videobuf-vmalloc.c
 
-Fixes tag
+between commit:
 
-  Fixes: e39875d15ad6 ("perf/x86: add Intel Icelake uncore support")
+  77512baaea9a ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 237")
 
-has these problem(s):
+from Linus' tree and commit:
 
-  - Target SHA1 does not exist.
+  513dbd35b5d9 ("media: add SPDX headers to some files")
 
-Did you mean
+from the v4l-dvb tree.
 
-Fixes: 6e394376ee89 ("perf/x86/intel/uncore: Add Intel Icelake uncore suppo=
-rt")
-
-In commit
-
-  36edfb940195 ("perf data: Fix perf.data documentation for HEADER_CPU_TOPO=
-LOGY")
-
-Fixes tag
-
-  Fixes: c9cb12c5ba08 ("perf header: Add die information in CPU topology")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: acae8b36cded ("perf header: Add die information in CPU topology")
+I fixed it up (I used the former's SPDX line (GPL-2.0-only v. GPL-2.0),
+but the latter's Copyright line) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/.SjaB+vDItcgt.MR10ESk94
+--Sig_/NX_RlpezVxPMk3jUESTSkqh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ONfEACgkQAVBC80lX
-0Gxa9QgAlz6GyUKe4OibyBVL6Ry2cmo6B+RJuMdLBy0KJNsG5yLwzdJDerrTiQdJ
-9+UNItn0ZjVmRIMc0GDZdTyXXGpXtubvXm2dMrhO0SFPrqaOeo+pDuu2UguXK/6n
-m1nxXERluHcN5JLFRG6ca130jYzWB5LdbyqBy8yCfV/rYC/zVcrA6Mm9lbALyAoP
-3xXiFkQkJIxVt5nuxSjlUSbKqip6zH0xxDmyXVfGNL5hDtNIEo78RuFBwcLaiVQ3
-+nDvi1ggwBPa/SovObxyiqtQF+5N3i1G9TpusDyM/Wr9m/qZbxQF3SMT2fNIOmev
-9uRjSH2OSdPg0ZUdvJqt/kllsjWdsg==
-=2CpO
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QKRYACgkQAVBC80lX
+0GzQzwf/VVHFUMGafQhmY+8XtJKUM7HfEtO8yv+TGbx8U226+PKHvg47xbbc/uyo
+vEJ0A4S2kAN96XB+EAOnD2XivXflUozdnnEY2MwAMhpTVz+ilOrgCHR/sF5s4i8Z
+shAGbYDF2ECxxrdleCF7HCdmXbILXU8dR6/zsGgxfZhSoI+mqlMGgRHukJz3d213
+pVJ9LZ7/LyzRAekrNv1f1cqDNrnWa92SjJqIOCWltpYWVQ+PxrC9egGAQR/FFkto
+N3Vm/XbqziKUOwoPF66NtZd+aQj2NqjOQ6QzvWL/9b7LCpeb86XKEgep1QtXrM6A
+3eqfSdd9pZWGWSkkYHFIufE66kFUNA==
+=QLNw
 -----END PGP SIGNATURE-----
 
---Sig_/.SjaB+vDItcgt.MR10ESk94--
+--Sig_/NX_RlpezVxPMk3jUESTSkqh--
