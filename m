@@ -2,149 +2,451 @@ Return-Path: <SRS0=z0z5=UY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802CDC48BD6
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 22:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F585C48BD5
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 23:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487942086D
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 22:15:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmIcMZ8x"
+	by mail.kernel.org (Postfix) with ESMTP id 0473C208CA
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 23:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561504858;
+	bh=TRnByr+NhTFBys54vwKQ9frkZg71oOGeZ7DycANrqkI=;
+	h=Date:From:To:Subject:List-ID:From;
+	b=Ou7JAqhPp52Kddk7xZY0tVVfb/QAkVwze4BzJ9A37cyrGNvUto5HM0KeYnReMafTx
+	 3v0ijIX1E6FmnS/BrDRgoJOBQq85kA9M/Ui95a/KjJ+RsgdryK8Id7MeyYTzcqdJmz
+	 Ueg8p3d2qLkJUX31e0JxBct5flC1ub8hzckK0tAg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfFYWPy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jun 2019 18:15:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45330 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbfFYWPy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2019 18:15:54 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f9so320692wre.12;
-        Tue, 25 Jun 2019 15:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tk94vpwFVjKpSQf3/vCwVI/UMfaKLAiQG8WWVD7E9y4=;
-        b=jmIcMZ8xvcJMLEivDyYQ3C2WtjP+I0+f8emcCN8XLLs6aPViAeav4LeZ0JXmvZxtJp
-         crR0XphQS2xHgMaOhJqPYgJuVx683WUrn7lE8eoWn9Zlxj/A6nW2bbqIQ6n/NL0qXLf2
-         PLIVngUW5ozLfWYfA81c6DCz+wwGYSxiXy4Aj9tKnmzxCU3D5CACjFLh1efBdEawocIj
-         X4VtIUU7KqcuGJW13oDoVGU6MBIwAXoT8IKD5AweUwlgbNSWJI1znrSZ0PjmknC4/DF1
-         MSCyuYLyliPHszRSBVJeVslmMywUv3oYXt70/NCE+1gqRa6P6fsxwtF7Vhpx4B72rjNG
-         cYQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=tk94vpwFVjKpSQf3/vCwVI/UMfaKLAiQG8WWVD7E9y4=;
-        b=QduboGlBdwLtNXlXvCXKiGkgPiF16Xl6/Yv4htEGndlb+E+KPT0yeHZE9zNufiEWhn
-         SNyWRlivdrbTjGU8xiu/scU3xca1Md5GS+p8pkyPQfnCY/b2aGfBULAsYeK0UsOus6MS
-         cAPTa0CzsXzTBLZo4rdR/yE563ppujhLZswAtvKDbf8EBCayH/vh/faUgPZU82zMH7E3
-         /xe54flYLyP93ygy2sWWL5HWEK6GJ9SUKdqQc9pvBLc+qKVi77uTtQStUvi6RnuhLr3C
-         gLqg3699OFrlPL2MokYg5M0DllJM0Yr86Yxlt1FkrPXWSC+A+iDt7Ao04Ky+dvFYZJF2
-         jCxQ==
-X-Gm-Message-State: APjAAAWo3p6eNgvhSYYnaZU5K43QyPvxoK9f9fBY1j5wPk9p1H5aPxZp
-        Kg3NLHdyaSsDaJGbpSz1klA=
-X-Google-Smtp-Source: APXvYqxrWAJNTq9MQy/UJQyKccsF0w1ja5JmnvYtjrEaVVcKp6+HWAlt/L86S/l6GWXk++hqfrCjmA==
-X-Received: by 2002:a5d:5510:: with SMTP id b16mr279102wrv.267.1561500951670;
-        Tue, 25 Jun 2019 15:15:51 -0700 (PDT)
-Received: from [10.67.50.91] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id h14sm13046166wrs.66.2019.06.25.15.15.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 15:15:51 -0700 (PDT)
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Lukas Wunner <lukas@wunner.de>
-References: <20190626081216.4b8f48cb@canb.auug.org.au>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <626be862-a3f5-1cf8-24e3-3f0e42276943@gmail.com>
-Date:   Tue, 25 Jun 2019 15:15:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190626081216.4b8f48cb@canb.auug.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726077AbfFYXUx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jun 2019 19:20:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725782AbfFYXUx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Jun 2019 19:20:53 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FED020657;
+        Tue, 25 Jun 2019 23:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561504850;
+        bh=TRnByr+NhTFBys54vwKQ9frkZg71oOGeZ7DycANrqkI=;
+        h=Date:From:To:Subject:From;
+        b=2ik9E/oBGEbsbrU7C8w0rzWP6XtgGZTJ8C49OuMJu0BvHpfRSDfn7Sk2n6J/jLY3Z
+         bNbqBbJtWthwUdlUXdJOzBem2A/Ga19x0/pTTdIOU9V/pf7p+3z8dycD5opOw4UjB/
+         iDvF00BbDAJgYHSyjGZOkwFrthr/gy0gxBqIY7FM=
+Date:   Tue, 25 Jun 2019 16:20:49 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2019-06-25-16-20 uploaded
+Message-ID: <20190625232049.1CsMY%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.10
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/25/19 3:12 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   cbbe88333062 ("ARM: bcm283x: Enable DMA support for SPI controller")
-> 
-> is missing a Signed-off-by from its committer.
+The mm-of-the-moment snapshot 2019-06-25-16-20 has been uploaded to
 
-Yes, had to rebase and missed adding my SoB back onto the commit. Olof
-already warned me a bout this.
--- 
-Florian
+   http://www.ozlabs.org/~akpm/mmotm/
+
+mmotm-readme.txt says
+
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 5.2-rc6:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-dev_pfn-exclude-memory_device_private-while-computing-virtual-address.patch
+* fs-proc-allow-reporting-eip-esp-for-all-coredumping-threads.patch
+* mm-mempolicy-fix-an-incorrect-rebind-node-in-mpol_rebind_nodemask.patch
+* binfmt_flat-make-load_flat_shared_library-work.patch
+* signal-remove-the-wrong-signal_pending-check-in-restore_user_sigmask.patch
+* mm-soft-offline-return-ebusy-if-set_hwpoison_free_buddy_page-fails.patch
+* mm-hugetlb-soft-offline-dissolve_free_huge_page-return-zero-on-pagehuge.patch
+* mm-hugetlb-soft-offline-dissolve_free_huge_page-return-zero-on-pagehuge-v3.patch
+* mm-oom_kill-fix-uninitialized-oc-constraint.patch
+* initramfs-fix-populate_initrd_image-section-mismatch.patch
+* mm-idle-page-fix-oops-because-end_pfn-is-larger-than-max_pfn.patch
+* mm-vmalloc-avoid-bogus-wmaybe-uninitialized-warning.patch
+* mm-vmalloc-avoid-bogus-wmaybe-uninitialized-warning-fix.patch
+* maintainers-add-clang-llvm-build-support-info.patch
+* mm-vmscan-fix-not-scanning-anonymous-pages-when-detecting-file-refaults.patch
+* forkmemcg-alloc_thread_stack_node-needs-to-set-tsk-stack.patch
+* mm-swap-fix-thp-swap-out.patch
+* linux-kernelh-fix-overflow-for-div_round_up_ull.patch
+* linux-kernelh-fix-overflow-for-div_round_up_ull-fix.patch
+* iommu-replace-single-char-identifiers-in-macros.patch
+* lib-test_kasan-add-bitops-tests.patch
+* x86-use-static_cpu_has-in-uaccess-region-to-avoid-instrumentation.patch
+* asm-generic-x86-add-bitops-instrumentation-for-kasan.patch
+* scripts-decode_stacktrace-match-basepath-using-shell-prefix-operator-not-regex.patch
+* scripts-decode_stacktrace-look-for-modules-with-kodebug-extension.patch
+* scripts-decode_stacktrace-look-for-modules-with-kodebug-extension-v2.patch
+* scripts-spellingtxt-drop-sepc-from-the-misspelling-list.patch
+* scripts-spellingtxt-drop-sepc-from-the-misspelling-list-fix.patch
+* scripts-spellingtxt-add-spelling-fix-for-prohibited.patch
+* scripts-decode_stacktrace-accept-dash-underscore-in-modules.patch
+* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
+* sh-configs-remove-config_logfs-from-defconfig.patch
+* sh-config-remove-left-over-backlight_lcd_support.patch
+* sh-prevent-warnings-when-using-iounmap.patch
+* fs-ocfs-fix-spelling-mistake-hearbeating-heartbeat.patch
+* ocfs2-dlm-use-struct_size-helper.patch
+* ocfs2-add-last-unlock-times-in-locking_state.patch
+* ocfs2-add-locking-filter-debugfs-file.patch
+* ocfs2-add-locking-filter-debugfs-file-fix.patch
+* ocfs2-add-first-lock-wait-time-in-locking_state.patch
+* ocfs-no-need-to-check-return-value-of-debugfs_create-functions.patch
+* ocfs-no-need-to-check-return-value-of-debugfs_create-functions-v2.patch
+* ocfs2-clear-zero-in-unaligned-direct-io.patch
+* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
+* ocfs2-wait-for-recovering-done-after-direct-unlock-request.patch
+* ocfs2-checkpoint-appending-truncate-log-transaction-before-flushing.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-slab-validate-cache-membership-under-freelist-hardening.patch
+* mm-slab-sanity-check-page-type-when-looking-up-cache.patch
+* mm-slab-sanity-check-page-type-when-looking-up-cache-fix.patch
+* lkdtm-heap-add-tests-for-freelist-hardening.patch
+* mm-slub-avoid-double-string-traverse-in-kmem_cache_flags.patch
+* slub-dont-panic-for-memcg-kmem-cache-creation-failure.patch
+* kmemleak-fix-check-for-softirq-context.patch
+* mm-kmemleak-change-error-at-_write-when-kmemleak-is-disabled.patch
+* docs-kmemleak-add-more-documentation-details.patch
+* mm-kasan-print-frame-description-for-stack-bugs.patch
+* device-dax-fix-memory-and-resource-leak-if-hotplug-fails.patch
+* mm-hotplug-make-remove_memory-interface-useable.patch
+* device-dax-hotremove-persistent-memory-that-is-used-like-normal-ram.patch
+* mm-move-map_sync-to-asm-generic-mman-commonh.patch
+* include-linux-pfn_th-remove-pfn_t_to_virt.patch
+* arm-remove-arch_select_memory_model.patch
+* s390-remove-arch_select_memory_model.patch
+* sparc-remove-arch_select_memory_model.patch
+* mm-gupc-make-follow_page_mask-static.patch
+* mm-migrate-remove-unused-mode-argument.patch
+* mm-trivial-clean-up-in-insert_page.patch
+* mm-make-config_huge_page-wrappers-into-static-inlines.patch
+* swap-ifdef-struct-vm_area_struct-swap_readahead_info.patch
+* mm-remove-the-account_page_dirtied-export.patch
+* mm-failslab-by-default-do-not-fail-allocations-with-direct-reclaim-only.patch
+* mm-debug_pagelloc-use-static-keys-to-enable-debugging.patch
+* mm-page_alloc-more-extensive-free-page-checking-with-debug_pagealloc.patch
+* mm-debug_pagealloc-use-a-page-type-instead-of-page_ext-flag.patch
+* mm-page_owner-store-page_owners-gfp_mask-in-stackdepot-itself.patch
+* mm-fix-an-overly-long-line-in-read_cache_page.patch
+* mm-dont-cast-readpage-to-filler_t-for-do_read_cache_page.patch
+* jffs2-pass-the-correct-prototype-to-read_cache_page.patch
+* 9p-pass-the-correct-prototype-to-read_cache_page.patch
+* mm-filemap-correct-the-comment-about-vm_fault_retry.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-simplify-total_swapcache_pages-with-get_swap_device.patch
+* mm-swap-simplify-total_swapcache_pages-with-get_swap_device-fix.patch
+* mm-swap-use-rbtree-for-swap_extent.patch
+* mm-swap-use-rbtree-for-swap_extent-fix.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* memcg-oom-no-oom-kill-for-__gfp_retry_mayfail.patch
+* memcg-fsnotify-no-oom-kill-for-remote-memcg-charging.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-memcg-introduce-memoryeventslocal.patch
+* mm-memcontrol-dump-memorystat-during-cgroup-oom.patch
+* mm-memcontrol-dump-memorystat-during-cgroup-oom-fix.patch
+* mm-postpone-kmem_cache-memcg-pointer-initialization-to-memcg_link_cache.patch
+* mm-rename-slab-delayed-deactivation-functions-and-fields.patch
+* mm-generalize-postponed-non-root-kmem_cache-deactivation.patch
+* mm-introduce-__memcg_kmem_uncharge_memcg.patch
+* mm-unify-slab-and-slub-page-accounting.patch
+* mm-dont-check-the-dying-flag-on-kmem_cache-creation.patch
+* mm-synchronize-access-to-kmem_cache-dying-flag-using-a-spinlock.patch
+* mm-rework-non-root-kmem_cache-lifecycle-management.patch
+* mm-rework-non-root-kmem_cache-lifecycle-management-fix.patch
+* mm-stop-setting-page-mem_cgroup-pointer-for-slab-pages.patch
+* mm-reparent-memcg-kmem_caches-on-cgroup-removal.patch
+* mm-reparent-memcg-kmem_caches-on-cgroup-removal-fix.patch
+* mm-memcg-add-a-memcg_slabinfo-debugfs-file.patch
+* mm-memcg-add-deact-tag-for-reparented-kmem-caches-in-memcg_slabinfo.patch
+* mm-use-untagged_addr-for-get_user_pages_fast-addresses.patch
+* mm-simplify-gup_fast_permitted.patch
+* mm-lift-the-x86_32-pae-version-of-gup_get_pte-to-common-code.patch
+* mips-use-the-generic-get_user_pages_fast-code.patch
+* sh-add-the-missing-pud_page-definition.patch
+* sh-use-the-generic-get_user_pages_fast-code.patch
+* sparc64-add-the-missing-pgd_page-definition.patch
+* sparc64-define-untagged_addr.patch
+* sparc64-use-the-generic-get_user_pages_fast-code.patch
+* mm-rename-config_have_generic_gup-to-config_have_fast_gup.patch
+* mm-reorder-code-blocks-in-gupc.patch
+* mm-consolidate-the-get_user_pages-implementations.patch
+* mm-validate-get_user_pages_fast-flags.patch
+* mm-move-the-powerpc-hugepd-code-to-mm-gupc.patch
+* mm-switch-gup_hugepte-to-use-try_get_compound_head.patch
+* mm-mark-the-page-referenced-in-gup_hugepte.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* asm-generic-x86-introduce-generic-pte_allocfree_one.patch
+* alpha-switch-to-generic-version-of-pte-allocation.patch
+* arm-switch-to-generic-version-of-pte-allocation.patch
+* arm64-switch-to-generic-version-of-pte-allocation.patch
+* arm64-switch-to-generic-version-of-pte-allocation-fix.patch
+* csky-switch-to-generic-version-of-pte-allocation.patch
+* m68k-sun3-switch-to-generic-version-of-pte-allocation.patch
+* mips-switch-to-generic-version-of-pte-allocation.patch
+* nds32-switch-to-generic-version-of-pte-allocation.patch
+* nios2-switch-to-generic-version-of-pte-allocation.patch
+* parisc-switch-to-generic-version-of-pte-allocation.patch
+* riscv-switch-to-generic-version-of-pte-allocation.patch
+* um-switch-to-generic-version-of-pte-allocation.patch
+* unicore32-switch-to-generic-version-of-pte-allocation.patch
+* mm-memremap-rename-and-consolidate-section_size.patch
+* mm-clean-up-is_device__page-definitions.patch
+* mm-introduce-arch_has_pte_devmap.patch
+* arm64-mm-implement-pte_devmap-support.patch
+* arm64-mm-implement-pte_devmap-support-fix.patch
+* mm-pgtable-drop-pgtable_t-variable-from-pte_fn_t-functions.patch
+* mm-fail-when-offset-==-num-in-first-check-of-vm_map_pages_zero.patch
+* mm-mmap-move-common-defines-to-mman-commonh.patch
+* mm-swap-fix-release_pages-when-releasing-devmap-pages.patch
+* mm-swap-fix-release_pages-when-releasing-devmap-pages-v2.patch
+* mm-swap-fix-release_pages-when-releasing-devmap-pages-v3.patch
+* mm-swap-fix-release_pages-when-releasing-devmap-pages-v4.patch
+* mm-mmu_notifier-use-hlist_add_head_rcu.patch
+* mm-memory_hotplug-simplify-and-fix-check_hotplug_memory_range.patch
+* s390x-mm-fail-when-an-altmap-is-used-for-arch_add_memory.patch
+* s390x-mm-implement-arch_remove_memory.patch
+* arm64-mm-add-temporary-arch_remove_memory-implementation.patch
+* drivers-base-memory-pass-a-block_id-to-init_memory_block.patch
+* drivers-base-memory-pass-a-block_id-to-init_memory_block-fix.patch
+* mm-memory_hotplug-allow-arch_remove_pages-without-config_memory_hotremove.patch
+* mm-memory_hotplug-create-memory-block-devices-after-arch_add_memory.patch
+* mm-memory_hotplug-drop-mhp_memblock_api.patch
+* mm-memory_hotplug-remove-memory-block-devices-before-arch_remove_memory.patch
+* mm-memory_hotplug-make-unregister_memory_block_under_nodes-never-fail.patch
+* mm-memory_hotplug-remove-zone-parameter-from-sparse_remove_one_section.patch
+* mm-section-numbers-use-the-type-unsigned-long.patch
+* mm-section-numbers-use-the-type-unsigned-long-fix.patch
+* mm-section-numbers-use-the-type-unsigned-long-v3.patch
+* drivers-base-memory-use-unsigned-long-for-block-ids.patch
+* mm-make-register_mem_sect_under_node-static.patch
+* mm-memory_hotplug-rename-walk_memory_range-and-pass-startsize-instead-of-pfns.patch
+* mm-memory_hotplug-move-and-simplify-walk_memory_blocks.patch
+* drivers-base-memoryc-get-rid-of-find_memory_block_hinted.patch
+* drivers-base-memoryc-get-rid-of-find_memory_block_hinted-v3.patch
+* drivers-base-memoryc-get-rid-of-find_memory_block_hinted-v3-fix.patch
+* mm-sparse-set-section-nid-for-hot-add-memory.patch
+* mm-sparsemem-introduce-struct-mem_section_usage.patch
+* mm-sparsemem-introduce-a-section_is_early-flag.patch
+* mm-sparsemem-add-helpers-track-active-portions-of-a-section-at-boot.patch
+* mm-hotplug-prepare-shrink_zone-pgdat_span-for-sub-section-removal.patch
+* mm-sparsemem-convert-kmalloc_section_memmap-to-populate_section_memmap.patch
+* mm-hotplug-kill-is_dev_zone-usage-in-__remove_pages.patch
+* mm-kill-is_dev_zone-helper.patch
+* mm-sparsemem-prepare-for-sub-section-ranges.patch
+* mm-sparsemem-support-sub-section-hotplug.patch
+* mm-document-zone_device-memory-model-implications.patch
+* mm-document-zone_device-memory-model-implications-fix.patch
+* mm-devm_memremap_pages-enable-sub-section-remap.patch
+* libnvdimm-pfn-fix-fsdax-mode-namespace-info-block-zero-fields.patch
+* libnvdimm-pfn-stop-padding-pmem-namespaces-to-section-alignment.patch
+* mm-sparsemem-cleanup-section-number-data-types.patch
+* mm-sparsemem-cleanup-section-number-data-types-fix.patch
+* mm-vmallocc-remove-node-argument.patch
+* mm-vmallocc-preload-a-cpu-with-one-object-for-split-purpose.patch
+* mm-vmallocc-get-rid-of-one-single-unlink_va-when-merge.patch
+* mm-vmallocc-switch-to-warn_on-and-move-it-under-unlink_va.patch
+* mm-vmalloc-spelling-s-configuraion-configuration.patch
+* mm-large-system-hash-use-vmalloc-for-size-max_order-when-hashdist.patch
+* mm-large-system-hash-clear-hashdist-when-only-one-node-with-memory-is-booted.patch
+* mm-security-introduce-init_on_alloc=1-and-init_on_free=1-boot-options.patch
+* mm-security-introduce-init_on_alloc=1-and-init_on_free=1-boot-options-fix.patch
+* mm-security-introduce-init_on_alloc=1-and-init_on_free=1-boot-options-fix-2.patch
+* mm-init-report-memory-auto-initialization-features-at-boot-time.patch
+* mm-vmscan-remove-double-slab-pressure-by-incing-sc-nr_scanned.patch
+* mm-vmscan-correct-some-vmscan-counters-for-thp-swapout.patch
+* mm-vmscan-add-a-new-member-reclaim_state-in-struct-shrink_control.patch
+* mm-vmscan-add-a-new-member-reclaim_state-in-struct-shrink_control-fix.patch
+* mm-vmscan-calculate-reclaimed-slab-caches-in-all-reclaim-paths.patch
+* mm-vmscanc-add-checks-for-incorrect-handling-of-current-reclaim_state.patch
+* tools-vm-slabinfo-order-command-line-options.patch
+* tools-vm-slabinfo-add-partial-slab-listing-to-x.patch
+* tools-vm-slabinfo-add-option-to-sort-by-partial-slabs.patch
+* tools-vm-slabinfo-add-sorting-info-to-help-menu.patch
+* proc-use-down_read_killable-mmap_sem-for-proc-pid-maps.patch
+* proc-use-down_read_killable-mmap_sem-for-proc-pid-smaps_rollup.patch
+* proc-use-down_read_killable-mmap_sem-for-proc-pid-pagemap.patch
+* proc-use-down_read_killable-mmap_sem-for-proc-pid-clear_refs.patch
+* proc-use-down_read_killable-mmap_sem-for-proc-pid-map_files.patch
+* proc-use-down_read_killable-mmap_sem-for-proc-pid-map_files-fix.patch
+* mm-use-down_read_killable-for-locking-mmap_sem-in-access_remote_vm.patch
+* z3fold-add-inter-page-compaction.patch
+* z3fold-add-inter-page-compaction-fix.patch
+* z3fold-add-inter-page-compaction-fix-2.patch
+* mm-memory-failure-clarify-error-message.patch
+* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified.patch
+* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind.patch
+* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill.patch
+* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix.patch
+* mm-memcontrol-use-css_task_iter_procs-at-mem_cgroup_scan_tasks.patch
+* mm-memcontrol-use-css_task_iter_procs-at-mem_cgroup_scan_tasks-fix.patch
+* mm-oom-refactor-dump_tasks-for-memcg-ooms.patch
+* mm-oom-remove-redundant-task_in_mem_cgroup-check.patch
+* oom-decouple-mems_allowed-from-oom_unkillable_task.patch
+* mm-oom-remove-redundant-oom-score-normalization-at-select_bad_process.patch
+* mm-thp-make-transhuge_vma_suitable-available-for-anonymous-thp.patch
+* mm-thp-make-transhuge_vma_suitable-available-for-anonymous-thp-fix.patch
+* mm-thp-fix-false-negative-of-shmem-vmas-thp-eligibility.patch
+* cma-fail-if-fixed-declaration-cant-be-honored.patch
+* mm-proportional-memorylowmin-reclaim.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* proc-hide-segfault-at-ffffffffff600000-dmesg-spam.patch
+* vmcore-add-a-kernel-parameter-novmcoredd.patch
+* vmcore-add-a-kernel-parameter-novmcoredd-fix.patch
+* vmcore-add-a-kernel-parameter-novmcoredd-fix-fix.patch
+* add-typeof_member-macro.patch
+* proc-use-typeof_member-macro.patch
+* kernel-fix-typos-and-some-coding-style-in-comments.patch
+* linux-bitsh-make-bit-genmask-and-friends-available-in-assembly.patch
+* arch-replace-_bitul-in-kernel-space-headers-with-bit.patch
+* drop-unused-isa_page_to_bus.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* tweak-list_poison2-for-better-code-generation-on-x86_64.patch
+* lib-string-allow-searching-for-nul-with-strnchr.patch
+* lib-test_string-avoid-masking-memset16-32-64-failures.patch
+* lib-test_string-add-some-testcases-for-strchr-and-strnchr.patch
+* lib-test_overflow-avoid-tainting-the-kernel-and-fix-wrap-size.patch
+* lib-introduce-test_meminit-module.patch
+* mm-ioremap-check-virtual-address-alignment-while-creating-huge-mappings.patch
+* mm-ioremap-probe-platform-for-p4d-huge-map-support.patch
+* lib-string_helpers-fix-some-kerneldoc-warnings.patch
+* lib-test_meminit-fix-wmaybe-uninitialized-false-positive.patch
+* checkpatchpl-warn-on-duplicate-sysctl-local-variable.patch
+* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
+* checkpatch-fix-something.patch
+* binfmt_flat-remove-set-but-not-used-variable-inode.patch
+* elf-delete-stale-comment.patch
+* mm-kconfig-fix-neighboring-typos.patch
+* mm-generalize-and-rename-notify_page_fault-as-kprobe_page_fault.patch
+* mm-generalize-and-rename-notify_page_fault-as-kprobe_page_fault-fix.patch
+* coda-pass-the-host-file-in-vma-vm_file-on-mmap.patch
+* uapi-linux-codah-use-__kernel_pid_t-for-userspace.patch
+* uapi-linux-coda_psdevh-move-upc_req-definition-from-uapi-to-kernel-side-headers.patch
+* coda-add-error-handling-for-fget.patch
+* coda-potential-buffer-overflow-in-coda_psdev_write.patch
+* coda-fix-build-using-bare-metal-toolchain.patch
+* coda-dont-try-to-print-names-that-were-considered-too-long.patch
+* uapi-linux-coda_psdevh-move-coda_req_-from-uapi-to-kernel-side-headers.patch
+* coda-clean-up-indentation-replace-spaces-with-tab.patch
+* coda-stop-using-struct-timespec-in-user-api.patch
+* coda-change-codas-user-api-to-use-64-bit-time_t-in-timespec.patch
+* coda-get-rid-of-coda_alloc.patch
+* coda-get-rid-of-coda_free.patch
+* coda-bump-module-version.patch
+* coda-move-internal-defs-out-of-include-linux.patch
+* coda-remove-uapi-linux-coda_psdevh.patch
+* coda-destroy-mutex-in-put_super.patch
+* coda-use-size-for-stat.patch
+* coda-add-__init-to-init_coda_psdev.patch
+* coda-remove-sysctl-object-from-module-when-unused.patch
+* coda-remove-sb-test-in-coda_fid_to_inode.patch
+* coda-ftoc-validity-check-integration.patch
+* coda-add-hinting-support-for-partial-file-caching.patch
+* coda-add-hinting-support-for-partial-file-caching-fix.patch
+* hfsplus-replace-strncpy-with-memcpy.patch
+* ufs-remove-set-but-not-used-variable-usb3.patch
+* nds32-fix-asm-syscallh.patch
+* hexagon-define-syscall_get_error-and-syscall_get_return_value.patch
+* mips-define-syscall_get_error.patch
+* parisc-define-syscall_get_error.patch
+* powerpc-define-syscall_get_error.patch
+* ptrace-add-ptrace_get_syscall_info-request.patch
+* selftests-ptrace-add-a-test-case-for-ptrace_get_syscall_info.patch
+* selftests-ptrace-add-a-test-case-for-ptrace_get_syscall_info-checkpatch-fixes.patch
+* signal-reorder-struct-sighand_struct.patch
+* signal-simplify-set_user_sigmask-restore_user_sigmask.patch
+* select-change-do_poll-to-return-erestartnohand-rather-than-eintr.patch
+* select-shift-restore_saved_sigmask_unless-into-poll_select_copy_remaining.patch
+* coredump-split-pipe-command-whitespace-before-expanding-template.patch
+* rapidio-mport_cdev-nul-terminate-some-strings.patch
+* aio-simplify-read_events.patch
+* scripts-gdb-add-lx-genpd-summary-command.patch
+* scripts-gdb-add-helpers-to-find-and-list-devices.patch
+* resource-fix-locking-in-find_next_iomem_res.patch
+* resource-fix-locking-in-find_next_iomem_res-fix.patch
+* resource-avoid-unnecessary-lookups-in-find_next_iomem_res.patch
+* bug-fix-cut-here-for-warn_on-for-__warn_taint-architectures.patch
+* ipc-mqueue-only-perform-resource-calculation-if-user-valid.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+* lz4-fix-spelling-and-copy-paste-errors-in-documentation.patch
+  linux-next.patch
+  linux-next-rejects.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* mm-add-account_locked_vm-utility-function.patch
+* mm-add-account_locked_vm-utility-function-v3.patch
+* mm-add-account_locked_vm-utility-function-v3-fix.patch
+* proc-sysctl-add-shared-variables-for-range-check.patch
+* proc-sysctl-add-shared-variables-for-range-check-fix-2.patch
+* proc-sysctl-add-shared-variables-for-range-check-fix-2-fix.patch
+* proc-sysctl-add-shared-variables-for-range-check-fix-3.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fs-select-use-struct_size-in-kmalloc.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
