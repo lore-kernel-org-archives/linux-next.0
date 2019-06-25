@@ -4,77 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E8CC48BD3
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 00:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B4FC4646C
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 02:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02825205ED
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 00:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6C8D20644
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 02:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cp3t67y8"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="t8pGBM6N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfFYAMs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 20:12:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:34719 "EHLO ozlabs.org"
+        id S1730430AbfFYC2X (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 22:28:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:36197 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbfFYAMs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 20:12:48 -0400
+        id S1726774AbfFYC2W (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Jun 2019 22:28:22 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Xmnl2h1kz9s8m;
-        Tue, 25 Jun 2019 10:12:43 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XqpB6qXWz9sCJ;
+        Tue, 25 Jun 2019 12:28:18 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561421565;
-        bh=RF29SwNLX4Zp9qVZfkr5djvyTLxzcCy+4KGrM+1AKnI=;
+        s=201702; t=1561429700;
+        bh=MSMkoQR214F5Kca8JxEJY32zLgsawr1UmWDfz49laZU=;
         h=Date:From:To:Cc:Subject:From;
-        b=cp3t67y8c8l/r4Jag48reE22yUnEvjnaaX6jknHDb6CUA0Pe9I6s5k/zeuIKGWvtU
-         /OHxlSIXMtIWWQylErpcngefKTIbmU59oMrUBzLlUvHe4YlzdQ7fBCZlK6DWqns3n/
-         65l+TfOGexQt8N9a2afBUe9vMjEm24kWUC+8f1WUu7vNp/UFx6CV5rD0fyWgBuUMVI
-         Kz8KNehD8U76S4QvqDYgIdcdjmJt45hwMqPzKQwNnmPrPtLwju1STRZxcEDFi7c4lp
-         ZsNOdm3n2THJwSlKKb45vt0SOeGrmiQItgi+itaPTkz7iv0louHkmiHiXRiEnO9laX
-         +ldf8kOGAs8tg==
-Date:   Tue, 25 Jun 2019 10:12:42 +1000
+        b=t8pGBM6N4uNqXsemgg4zyIuouia1h9QSXTAHuAvR7vQBSRkJ0oYmmxSXU2YJzwQEb
+         7yOuO7478BYs4UHd9eFU/e3Ral0ipfznrfV5Q6alUmgasu0OMNPbtkMZWDd+iRTe2G
+         dT2UtkohRcRpA9CsI8lkAwDuuTIdtZRhABJvIgAZ91tmpNC/OzB4UrX9QVV8OFqnXm
+         2VA/Yx1MbgStBrUY/oCG+c0GNDy8JTld1OX51Eim3JEW+d84Pwby+83ETCvxJgdzNo
+         qrZQjo7biD7nLscOpes4Mcpp8/uy8FxJPEBEB6BSn5hv6nlP0YzLqqBDQEX8pZI8l5
+         m/WHzkavm510Q==
+Date:   Tue, 25 Jun 2019 12:28:17 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>,
-        Thierry Reding <treding@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vidya Sagar <vidyas@nvidia.com>
-Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
-Message-ID: <20190625101242.2eb0e418@canb.auug.org.au>
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: linux-next: manual merge of the fbdev tree with the v4l-dvb tree
+Message-ID: <20190625122817.1f6657c7@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/j/50enT86+rbCHdAEI3eYmM"; protocol="application/pgp-signature"
+ boundary="Sig_/ujqgfZAwnPLv8RKeU_TJR54"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/j/50enT86+rbCHdAEI3eYmM
+--Sig_/ujqgfZAwnPLv8RKeU_TJR54
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tegra tree got a conflict in:
+Today's linux-next merge of the fbdev tree got a conflict in:
 
-  arch/arm64/configs/defconfig
+  drivers/media/pci/ivtv/ivtvfb.c
 
 between commit:
 
-  39bab7bfb7d9 ("arm64: configs: Remove useless UEVENT_HELPER_PATH")
+  2161536516ed ("media: media/pci: set device_caps in struct video_device")
 
-from the arm-soc tree and commit:
+from the v4l-dvb tree and commit:
 
-  01d6fb565b4a ("arm64: defconfig: Add Tegra194 PCIe driver")
+  deb00d2785be ("fbdev: make unregister/unlink functions not fail")
 
-from the tegra tree.
+from the fbdev tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -87,34 +85,43 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index 3fb84219817a,6a9dc67bbfac..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -192,6 -191,8 +192,7 @@@ CONFIG_PCIE_QCOM=3D
-  CONFIG_PCIE_ARMADA_8K=3Dy
-  CONFIG_PCIE_KIRIN=3Dy
-  CONFIG_PCIE_HISI_STB=3Dy
-+ CONFIG_PCIE_TEGRA194=3Dm
- -CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
-  CONFIG_DEVTMPFS=3Dy
-  CONFIG_DEVTMPFS_MOUNT=3Dy
-  CONFIG_HISILICON_LPC=3Dy
+diff --cc drivers/media/pci/ivtv/ivtvfb.c
+index 800b3654cac5,299ff032f528..000000000000
+--- a/drivers/media/pci/ivtv/ivtvfb.c
++++ b/drivers/media/pci/ivtv/ivtvfb.c
+@@@ -1251,16 -1246,7 +1251,12 @@@ static int ivtvfb_callback_cleanup(stru
+  	struct osd_info *oi =3D itv->osd_info;
+ =20
+  	if (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT) {
+ +		itv->streams[IVTV_DEC_STREAM_TYPE_YUV].vdev.device_caps &=3D
+ +			~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
+ +		itv->streams[IVTV_DEC_STREAM_TYPE_MPG].vdev.device_caps &=3D
+ +			~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
+ +		itv->v4l2_cap &=3D ~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
+- 		if (unregister_framebuffer(&itv->osd_info->ivtvfb_info)) {
+- 			IVTVFB_WARN("Framebuffer %d is in use, cannot unload\n",
+- 				       itv->instance);
+- 			return 0;
+- 		}
++ 		unregister_framebuffer(&itv->osd_info->ivtvfb_info);
+  		IVTVFB_INFO("Unregister framebuffer %d\n", itv->instance);
+  		itv->ivtvfb_restore =3D NULL;
+  		ivtvfb_blank(FB_BLANK_VSYNC_SUSPEND, &oi->ivtvfb_info);
 
---Sig_/j/50enT86+rbCHdAEI3eYmM
+--Sig_/ujqgfZAwnPLv8RKeU_TJR54
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RZvoACgkQAVBC80lX
-0GyVIggAmVr73GQ81DwKSfIkq5h/1I8FVxzB15jIuKSJe868pBbsapfalgxBPqmN
-mHU1B1F/pi+QOzHwu9g1aJOfVhSER4xGMmvRs7d3JMEvcuUqQUs9HTee24XnnUZr
-m7ozG8h2o1D3tjs03ZlIJPKHv4UXZ2c+07y55UvazAUJdXBzSrBJOu6wg4LGtSxr
-eLv338Tp9M/y86OhGpWw6C1ZLtQ7rgzD0kNnC8fM5ABdsKIl6/fs/XisCPqkCxj7
-cL1/7DMD6lTqHUex6wPidEpH7gn8Db9TovLmcbO2bn6X54oIymb0x+3XgG9PMQ0/
-b14+mH6qzYZNU9keacK+Nrm8fRThAg==
-=ReDA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RhsEACgkQAVBC80lX
+0Gy8Ngf/U+gW1i/a3cwGmh294qAvV4VjmZLIoRCehie6fvs5vU/EWYsFocqf6o3f
+rs+Mq1NRPovdNiRyKo2oT8pPoGm76hhtwxXotyV8xFR4ePbA0C2LTlh6spoGaE8u
+qZqLelU6tvbu7MpqeS2sGBcEZlkr4ivIFklJXNtgUNYrVm4i4IufgUYsxxLpuEXT
+Ve8YHofQC9iykfHQ+CQER6o+Yiuqa8zq2+lNLX34fvIdhlr97Y7n6n8GEMuW5m5x
+SBMgTecgO/+ric+If+XEkbq8SYcJAy6rjNx1F2IALihf3ZKzwHfyCJwHmOkKJmiy
++xGXdF+VZXn5sw/9rKUNtoO//gLgjw==
+=xZfT
 -----END PGP SIGNATURE-----
 
---Sig_/j/50enT86+rbCHdAEI3eYmM--
+--Sig_/ujqgfZAwnPLv8RKeU_TJR54--
