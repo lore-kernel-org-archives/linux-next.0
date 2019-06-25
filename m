@@ -6,122 +6,97 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B4FC4646C
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 02:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C75C48BD4
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 04:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C8D20644
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 02:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0404620863
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 04:27:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="t8pGBM6N"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X/uP253e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbfFYC2X (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 22:28:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:36197 "EHLO ozlabs.org"
+        id S1726712AbfFYE1M (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jun 2019 00:27:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:33595 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfFYC2W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 22:28:22 -0400
+        id S1725881AbfFYE1M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Jun 2019 00:27:12 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XqpB6qXWz9sCJ;
-        Tue, 25 Jun 2019 12:28:18 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XtRJ1kFVz9sDn;
+        Tue, 25 Jun 2019 14:27:08 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561429700;
-        bh=MSMkoQR214F5Kca8JxEJY32zLgsawr1UmWDfz49laZU=;
+        s=201702; t=1561436829;
+        bh=3Kt8+u+vvL1+jVvTKbfvb1dMHr6BhniMOgROfNlSmCQ=;
         h=Date:From:To:Cc:Subject:From;
-        b=t8pGBM6N4uNqXsemgg4zyIuouia1h9QSXTAHuAvR7vQBSRkJ0oYmmxSXU2YJzwQEb
-         7yOuO7478BYs4UHd9eFU/e3Ral0ipfznrfV5Q6alUmgasu0OMNPbtkMZWDd+iRTe2G
-         dT2UtkohRcRpA9CsI8lkAwDuuTIdtZRhABJvIgAZ91tmpNC/OzB4UrX9QVV8OFqnXm
-         2VA/Yx1MbgStBrUY/oCG+c0GNDy8JTld1OX51Eim3JEW+d84Pwby+83ETCvxJgdzNo
-         qrZQjo7biD7nLscOpes4Mcpp8/uy8FxJPEBEB6BSn5hv6nlP0YzLqqBDQEX8pZI8l5
-         m/WHzkavm510Q==
-Date:   Tue, 25 Jun 2019 12:28:17 +1000
+        b=X/uP253eFt/zw/of9f21iXEcpAuQQYIIEoDLFxJiL6vvlkkVChfI1o/PtMx2OYTni
+         A5EEadHkWwH2B318iHDAx5YXtnn7KK63zEAPgi4MKC4FoquN4ODdaOdPLateKXbeZL
+         QU1Yu1eV+fDnamhEK9j6hGAWCSFcOzcC6FoXAjHgL476yLvzRfX6cfWOn4/l2xMtKm
+         VtwSo4V4Lcp0llUPc82yb80l6jqSObagwkWBazcSlVFqWAkIrypO8xl3x7auzBjcdR
+         DxpGnHdbqTTgcAiIRmR2gn28VJ3En+JYIJWvza/sdRjloF3skZd6h5xXnLhd3Ni9IO
+         29F6F5fQagDXA==
+Date:   Tue, 25 Jun 2019 14:27:07 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Jessica Yu <jeyu@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: linux-next: manual merge of the fbdev tree with the v4l-dvb tree
-Message-ID: <20190625122817.1f6657c7@canb.auug.org.au>
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: linux-next: build failure after merge of the modules tree
+Message-ID: <20190625142707.00e8e9b1@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ujqgfZAwnPLv8RKeU_TJR54"; protocol="application/pgp-signature"
+ boundary="Sig_/c8ggg1/YX6MNrIzXEYXQX8O"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ujqgfZAwnPLv8RKeU_TJR54
+--Sig_/c8ggg1/YX6MNrIzXEYXQX8O
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jessica,
 
-Today's linux-next merge of the fbdev tree got a conflict in:
+After merging the modules tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  drivers/media/pci/ivtv/ivtvfb.c
+kernel/module.c: In function 'module_enable_x':
+kernel/module.c:2030:2: error: implicit declaration of function 'frob_text'=
+; did you mean 'rb_next'? [-Werror=3Dimplicit-function-declaration]
+  frob_text(&mod->core_layout, set_memory_x);
+  ^~~~~~~~~
+  rb_next
 
-between commit:
+Caused by commit
 
-  2161536516ed ("media: media/pci: set device_caps in struct video_device")
+  2eef1399a866 ("modules: fix BUG when load module with rodata=3Dn")
 
-from the v4l-dvb tree and commit:
+frob_text() only exists when CONFIG_STRICT_MODULE_RWX is defined.
 
-  deb00d2785be ("fbdev: make unregister/unlink functions not fail")
+I have used the modules tree from next-20190624 for today.
 
-from the fbdev tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/media/pci/ivtv/ivtvfb.c
-index 800b3654cac5,299ff032f528..000000000000
---- a/drivers/media/pci/ivtv/ivtvfb.c
-+++ b/drivers/media/pci/ivtv/ivtvfb.c
-@@@ -1251,16 -1246,7 +1251,12 @@@ static int ivtvfb_callback_cleanup(stru
-  	struct osd_info *oi =3D itv->osd_info;
- =20
-  	if (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT) {
- +		itv->streams[IVTV_DEC_STREAM_TYPE_YUV].vdev.device_caps &=3D
- +			~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
- +		itv->streams[IVTV_DEC_STREAM_TYPE_MPG].vdev.device_caps &=3D
- +			~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
- +		itv->v4l2_cap &=3D ~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
-- 		if (unregister_framebuffer(&itv->osd_info->ivtvfb_info)) {
-- 			IVTVFB_WARN("Framebuffer %d is in use, cannot unload\n",
-- 				       itv->instance);
-- 			return 0;
-- 		}
-+ 		unregister_framebuffer(&itv->osd_info->ivtvfb_info);
-  		IVTVFB_INFO("Unregister framebuffer %d\n", itv->instance);
-  		itv->ivtvfb_restore =3D NULL;
-  		ivtvfb_blank(FB_BLANK_VSYNC_SUSPEND, &oi->ivtvfb_info);
-
---Sig_/ujqgfZAwnPLv8RKeU_TJR54
+--Sig_/c8ggg1/YX6MNrIzXEYXQX8O
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RhsEACgkQAVBC80lX
-0Gy8Ngf/U+gW1i/a3cwGmh294qAvV4VjmZLIoRCehie6fvs5vU/EWYsFocqf6o3f
-rs+Mq1NRPovdNiRyKo2oT8pPoGm76hhtwxXotyV8xFR4ePbA0C2LTlh6spoGaE8u
-qZqLelU6tvbu7MpqeS2sGBcEZlkr4ivIFklJXNtgUNYrVm4i4IufgUYsxxLpuEXT
-Ve8YHofQC9iykfHQ+CQER6o+Yiuqa8zq2+lNLX34fvIdhlr97Y7n6n8GEMuW5m5x
-SBMgTecgO/+ric+If+XEkbq8SYcJAy6rjNx1F2IALihf3ZKzwHfyCJwHmOkKJmiy
-+xGXdF+VZXn5sw/9rKUNtoO//gLgjw==
-=xZfT
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RopsACgkQAVBC80lX
+0Gy28Qf/evTa3Xjw5Zqzb4C5HNeiXHofkqN8M/FBIOC53wTCpgCtHD9dan9P6Run
+/D7YCr+PVehcaa64ug1yd8evCzFE5RFoIloUUoVgrA3tfTRlzkxeBTow9vAqkaak
+U8RiEjzqEuKCwUGwxwQAqEuPvLl2R+K8faAvHQTB4MlT7u5PKpsX5fcrlfglQaUw
+uayHK+YFfmCmHJmTH0KXdi3FrKIQekFjVwqwd8mPcnHGweGeZlVXiMq/PFOLvTvS
+jTfmWvMQc1zwW18V8YzfTBYPiYHG8cAyPVx9oaVOK0OeVwizw6TwHTU1B38OWw/3
+xmGCmXqQfGV/KZODnRoK6xdFzeGS5g==
+=9v8p
 -----END PGP SIGNATURE-----
 
---Sig_/ujqgfZAwnPLv8RKeU_TJR54--
+--Sig_/c8ggg1/YX6MNrIzXEYXQX8O--
