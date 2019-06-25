@@ -4,77 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97AEC4646B
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 00:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E8CC48BD3
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 00:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D0D7206DD
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 00:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02825205ED
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 00:14:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fzQ1ADNO"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cp3t67y8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfFYADo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 24 Jun 2019 20:03:44 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37437 "EHLO ozlabs.org"
+        id S1729327AbfFYAMs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 24 Jun 2019 20:12:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:34719 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfFYADn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Jun 2019 20:03:43 -0400
+        id S1729253AbfFYAMs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:12:48 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XmbJ1K0Cz9s3l;
-        Tue, 25 Jun 2019 10:03:40 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Xmnl2h1kz9s8m;
+        Tue, 25 Jun 2019 10:12:43 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561421020;
-        bh=uxYIaPA9Islapamk5gE3dQb+BvPV85TXC7/AYf6Ybrw=;
+        s=201702; t=1561421565;
+        bh=RF29SwNLX4Zp9qVZfkr5djvyTLxzcCy+4KGrM+1AKnI=;
         h=Date:From:To:Cc:Subject:From;
-        b=fzQ1ADNOhGg2RdorKsEf1hdVUwI6MmArO7Z7j0IzEXiy/dmJs2DxkOMtDpnYBI/E8
-         3Hxuaq9BpUBtN7HQvP/8nh7uK4hItmJtDCP8lzrJWxYxvdCKPmCjhdUAw8kFr4zoBL
-         G+/9+Y+5Q4Fe+M1piesfl24xXnnbGEDOamfB3HuV3+SHKp46xRVe175ut6ujvlfSxt
-         nVYSeucWeKbfvqxi9BsyjoQqwbiynBe/TeiJqZ5meNI1tnM0lQl+flVj2WMYHmvQuk
-         +kPxuS46Jvo8guSCNV0orat0I1C6opIQkjEXkrfAxnoUuIBA7jlceeOgQK6yZfKFDh
-         xJgqAMMCC0YJw==
-Date:   Tue, 25 Jun 2019 10:03:39 +1000
+        b=cp3t67y8c8l/r4Jag48reE22yUnEvjnaaX6jknHDb6CUA0Pe9I6s5k/zeuIKGWvtU
+         /OHxlSIXMtIWWQylErpcngefKTIbmU59oMrUBzLlUvHe4YlzdQ7fBCZlK6DWqns3n/
+         65l+TfOGexQt8N9a2afBUe9vMjEm24kWUC+8f1WUu7vNp/UFx6CV5rD0fyWgBuUMVI
+         Kz8KNehD8U76S4QvqDYgIdcdjmJt45hwMqPzKQwNnmPrPtLwju1STRZxcEDFi7c4lp
+         ZsNOdm3n2THJwSlKKb45vt0SOeGrmiQItgi+itaPTkz7iv0louHkmiHiXRiEnO9laX
+         +ldf8kOGAs8tg==
+Date:   Tue, 25 Jun 2019 10:12:42 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+To:     Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>,
+        Thierry Reding <treding@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         ARM <linux-arm-kernel@lists.infradead.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>
-Subject: linux-next: manual merge of the samsung-krzk tree with the arm-soc
- tree
-Message-ID: <20190625100339.6d7c1bd9@canb.auug.org.au>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Vidya Sagar <vidyas@nvidia.com>
+Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
+Message-ID: <20190625101242.2eb0e418@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4YZKzyDAPHNnn/eu/Wz9c4q"; protocol="application/pgp-signature"
+ boundary="Sig_/j/50enT86+rbCHdAEI3eYmM"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/4YZKzyDAPHNnn/eu/Wz9c4q
+--Sig_/j/50enT86+rbCHdAEI3eYmM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the samsung-krzk tree got a conflict in:
+Today's linux-next merge of the tegra tree got a conflict in:
 
-  arch/arm/mach-exynos/Makefile
+  arch/arm64/configs/defconfig
 
 between commit:
 
-  3fe1ee40b2a2 ("ARM: use arch_extension directive instead of arch argument=
-")
+  39bab7bfb7d9 ("arm64: configs: Remove useless UEVENT_HELPER_PATH")
 
 from the arm-soc tree and commit:
 
-  24d2c73ff28b ("ARM: exynos: Only build MCPM support if used")
+  01d6fb565b4a ("arm64: defconfig: Add Tegra194 PCIe driver")
 
-from the samsung-krzk tree.
+from the tegra tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -87,36 +87,34 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/mach-exynos/Makefile
-index 5ccf9d7e58d4,5abf3db23912..000000000000
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@@ -14,5 -14,9 +14,5 @@@ obj-$(CONFIG_PM_SLEEP)		+=3D suspend.
- =20
-  obj-$(CONFIG_SMP)		+=3D platsmp.o headsmp.o
- =20
-- obj-$(CONFIG_MCPM)		+=3D mcpm-exynos.o
- -plus_sec :=3D $(call as-instr,.arch_extension sec,+sec)
- -AFLAGS_exynos-smc.o		:=3D-Wa,-march=3Darmv7-a$(plus_sec)
- -AFLAGS_sleep.o			:=3D-Wa,-march=3Darmv7-a$(plus_sec)
- -
-+ obj-$(CONFIG_EXYNOS_MCPM)	+=3D mcpm-exynos.o
-  CFLAGS_mcpm-exynos.o		+=3D -march=3Darmv7-a
+diff --cc arch/arm64/configs/defconfig
+index 3fb84219817a,6a9dc67bbfac..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -192,6 -191,8 +192,7 @@@ CONFIG_PCIE_QCOM=3D
+  CONFIG_PCIE_ARMADA_8K=3Dy
+  CONFIG_PCIE_KIRIN=3Dy
+  CONFIG_PCIE_HISI_STB=3Dy
++ CONFIG_PCIE_TEGRA194=3Dm
+ -CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
+  CONFIG_DEVTMPFS=3Dy
+  CONFIG_DEVTMPFS_MOUNT=3Dy
+  CONFIG_HISILICON_LPC=3Dy
 
---Sig_/4YZKzyDAPHNnn/eu/Wz9c4q
+--Sig_/j/50enT86+rbCHdAEI3eYmM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RZNsACgkQAVBC80lX
-0Gzlnwf9GTpkLoUj3f/7R596jf/Jd1cry48ctgJ+Ykd28zaHeYs0U3MLbgpM8mKg
-RPHDp1mnmJO1KfJQrs4Pb3j+EirGFIWzZe1IjU/86g/Ysz6n7KmUtpyw9y5D/yPk
-TChuM2ycVT0vNwRntFrnHkT9AbbWqo9UUN5agkqLaRbryqGpQDdtlFXkYO7CdGRw
-8d2lrDf4h94RZ1FIHjKDvOKUuHLF2Bz/TBmrq2ucMnB53VDPQtD6abCP0V9vRiGQ
-Ew4FaFZWlcD4w5YcRMRRmTgZoqa8H8duGmTzhmPcwMiQ/+T8N5uyPaBESHMri3At
-mpPyg0TmQVhNKtKU5qgRjc5KLeLHkQ==
-=UYiD
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RZvoACgkQAVBC80lX
+0GyVIggAmVr73GQ81DwKSfIkq5h/1I8FVxzB15jIuKSJe868pBbsapfalgxBPqmN
+mHU1B1F/pi+QOzHwu9g1aJOfVhSER4xGMmvRs7d3JMEvcuUqQUs9HTee24XnnUZr
+m7ozG8h2o1D3tjs03ZlIJPKHv4UXZ2c+07y55UvazAUJdXBzSrBJOu6wg4LGtSxr
+eLv338Tp9M/y86OhGpWw6C1ZLtQ7rgzD0kNnC8fM5ABdsKIl6/fs/XisCPqkCxj7
+cL1/7DMD6lTqHUex6wPidEpH7gn8Db9TovLmcbO2bn6X54oIymb0x+3XgG9PMQ0/
+b14+mH6qzYZNU9keacK+Nrm8fRThAg==
+=ReDA
 -----END PGP SIGNATURE-----
 
---Sig_/4YZKzyDAPHNnn/eu/Wz9c4q--
+--Sig_/j/50enT86+rbCHdAEI3eYmM--
