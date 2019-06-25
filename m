@@ -2,178 +2,148 @@ Return-Path: <SRS0=z0z5=UY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA641C48BD5
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 17:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C90FAC48BD6
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 19:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A349520644
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 17:36:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="r5yIK16H"
+	by mail.kernel.org (Postfix) with ESMTP id 947DC208CB
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 19:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561490493;
+	bh=KQU6DtRDo3hq69qYXaCabKvz0AFsLEo4Om+nW8Oe1pA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lx5eUzWb3O2nSRMGH5Tzl0B1uLE/wEQ0UhPwJQ/rAU77EOvlfgW8+5ltID1XAmhGe
+	 4cNUkaWsWi1cjm0c128I5jRCatqJEspQz1ibcWuTvDGf2SiCG/9uKMkWv4OpmzCwCo
+	 9LHPRqGeMW8SUwvZd11HzR62Egxb7PfVnSgLyazM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731856AbfFYRgi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jun 2019 13:36:38 -0400
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:35104 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728825AbfFYRgi (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2019 13:36:38 -0400
-Received: by mail-wm1-f45.google.com with SMTP id c6so3844185wml.0
-        for <linux-next@vger.kernel.org>; Tue, 25 Jun 2019 10:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=Iqc9QFR1IK0JGj/oVoochUySlicQaNdSjIMbGcqsnQU=;
-        b=r5yIK16HGXbIiY3izqFBW8gmxXPHDzqqz1iEN9fu0LPucgF/DyQOqy9jQw+94vxlbG
-         2zjMMSpEAwIPzalls4r/sBAoXcM/o9SE29rCt75lrV4lNvybiWOx7YF+JNnhGAXjF2IO
-         pGHo0cjk1qZmIyJ4XIrxxnY7z8Bsu+wrh44JdhLao60CUfpGCVF/1GdnaPHv8xWD6oZB
-         oEpA2F8NmXabVs87UEsRkZHDttxSammQkxYNRbQZ70gZZ2s2C31ZALlDPfVfBDClqGCV
-         +oAnZln0PHGlvm26a23wDyZN/j2N/c7WcqrXnAXUkfHDs75I8H0SGZP6fNUPTcyuAzBb
-         /ERA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=Iqc9QFR1IK0JGj/oVoochUySlicQaNdSjIMbGcqsnQU=;
-        b=ngLmEtcBvG35eCVpXJqQVxCmOkZbUfgZBnQrsLuV0TZ2sjGj/9pB7XKAWmQ5OEWdkx
-         UB5ozDshIzrahoYPg2xBfsRiMHjhe4kqnRFzXIw5dpCnG+0DdWrbyZeQwWkzNHlGMKx5
-         UAgz9Z6s2wV6M2s0mLv11XdO//YcOv2z6SPyxn2Rw08q7hVZFhH4XXZPyKGyJjxQ8748
-         Em2RWcJ5zBH/spoAUiFaNJddyTxwgOS8NkEe6VjLgDV5AS82vW1mk59wloqWO0FCvuO/
-         jGjgbWJqqzC9vOZwrsVNWwOSuZZcCCpqy7GH6yfQoL+t2Co3ByePBi7Qy3lsZ5bE4xc2
-         cfXQ==
-X-Gm-Message-State: APjAAAX1YzV013w/05iXhqdb3ujhmLx4sEw6qLp+FIhSGrysNP0751F4
-        8gryz46tuVPfeCbfFvY1ngKPFGCPibGdNg==
-X-Google-Smtp-Source: APXvYqyecmdXSeNvmxRiROvG126xT38lXustDksm7hTM8x/yAMOI9SITm/2uFBtQy5Ita4U8lQ042w==
-X-Received: by 2002:a1c:3587:: with SMTP id c129mr21793202wma.90.1561484195929;
-        Tue, 25 Jun 2019 10:36:35 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id 32sm28749460wra.35.2019.06.25.10.36.35
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 10:36:35 -0700 (PDT)
-Message-ID: <5d125ba3.1c69fb81.84578.f860@mx.google.com>
-Date:   Tue, 25 Jun 2019 10:36:35 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1726857AbfFYTVd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jun 2019 15:21:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbfFYTVd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Jun 2019 15:21:33 -0400
+Received: from linux-8ccs (ip5f5ade86.dynamic.kabel-deutschland.de [95.90.222.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDCE12086D;
+        Tue, 25 Jun 2019 19:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561490491;
+        bh=KQU6DtRDo3hq69qYXaCabKvz0AFsLEo4Om+nW8Oe1pA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FBbgI3b93JMMPtrCQg3sda3rEmd/fqazCAnYhjEGRmTmHCkbVfpuuRhlQCuGIMpnP
+         xxEECwHI1lzT35MlOfAWxqVt5tR5TYdsrIzWB+UW6vPN4ludYROqnrWD2McjhTTblu
+         zfx+7fp8CVJ8dUoW1ltjmKj4/QaQBr1TcWzReWRM=
+Date:   Tue, 25 Jun 2019 21:21:15 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        namit@vmware.com, cj.chengjian@huawei.com, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org
+Subject: Re: [PATCH] modules: fix compile error if don't have strict module
+ rwx
+Message-ID: <20190625192115.GA27913@linux-8ccs>
+References: <1561455628-50795-1-git-send-email-yangyingliang@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: next-20190625
-X-Kernelci-Branch: master
-X-Kernelci-Tree: next
-Subject: next/master boot: 299 boots: 19 failed, 280 passed (next-20190625)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1561455628-50795-1-git-send-email-yangyingliang@huawei.com>
+X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 299 boots: 19 failed, 280 passed (next-20190625)
++++ Yang Yingliang [25/06/19 17:40 +0800]:
+>If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is not defined,
+>we need stub for module_enable_nx() and module_enable_x().
+>
+>If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is defined, but
+>CONFIG_STRICT_MODULE_RWX is disabled, we need stub for
+>module_enable_nx.
+>
+>Move frob_text() outside of the CONFIG_STRICT_MODULE_RWX,
+>because it is needed anyway.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190625/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190625/
+Maybe include a fixes tag?
 
-Tree: next
-Branch: master
-Git Describe: next-20190625
-Git Commit: 902031767aec2eaa529fdbf3daf77615e3bc3a62
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 93 unique boards, 26 SoC families, 21 builds out of 229
+Fixes: 2eef1399a866 ("modules: fix BUG when load module with rodata=n")
 
-Boot Regressions Detected:
+>Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>---
+> kernel/module.c | 13 +++++++++----
+> 1 file changed, 9 insertions(+), 4 deletions(-)
+>
+>diff --git a/kernel/module.c b/kernel/module.c
+>index c3ae34c..cfff441 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -1875,7 +1875,7 @@ static void mod_sysfs_teardown(struct module *mod)
+> 	mod_sysfs_fini(mod);
+> }
+>
+>-#ifdef CONFIG_STRICT_MODULE_RWX
+>+#ifdef CONFIG_ARCH_HAS_STRICT_MODULE_RWX
 
-arm:
+Could you please explain why you introduced a new
+CONFIG_ARCH_HAS_STRICT_MODULE_RWX #ifdef block instead of just moving
+frob_text() and module_enable_x() outside of CONFIG_STRICT_MODULE_RWX?
 
-    imx_v6_v7_defconfig:
-        gcc-8:
-          vf610-colibri-eval-v3:
-              lab-baylibre-seattle: new failure (last pass: next-20190624)
+I do not have anything against it, although the nested #ifdef's are a
+bit painful to read. But I could not find a better way to do it :/
+It's awkward because we need module_enable_x() and frob_text()
+regardless of of CONFIG_STRICT_MODULE_RWX for x86, but other arches
+don't need to call module_enable_x(), they usually just call the empty stub.
 
-    multi_v7_defconfig:
-        gcc-8:
-          sun7i-a20-bananapi:
-              lab-baylibre-seattle: new failure (last pass: next-20190624)
-          vf610-colibri-eval-v3:
-              lab-baylibre-seattle: new failure (last pass: next-20190624)
+But I think having the CONFIG_ARCH_HAS_STRICT_MODULE_RWX block is OK,
+for the reason of limiting the scope of the calls rather than
+blanketly calling frob_text() andd module_enable_x() for arches that
+don't need to call them. Was that your reasoning as well?
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          armada-xp-openblocks-ax3-4:
-              lab-baylibre-seattle: new failure (last pass: next-20190624)
+Thanks,
 
-    qcom_defconfig:
-        gcc-8:
-          qcom-apq8064-cm-qs600:
-              lab-baylibre-seattle: failing since 4 days (last pass: next-2=
-0190619 - first fail: next-20190621)
-          qcom-apq8064-ifc6410:
-              lab-baylibre-seattle: failing since 4 days (last pass: next-2=
-0190618 - first fail: next-20190620)
+Jessica
 
-    sunxi_defconfig:
-        gcc-8:
-          sun7i-a20-bananapi:
-              lab-baylibre-seattle: new failure (last pass: next-20190624)
 
-arm64:
-
-    defconfig:
-        gcc-8:
-          meson-gxm-khadas-vim2:
-              lab-baylibre: new failure (last pass: next-20190624)
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        clang-8:
-          meson-gxm-khadas-vim2:
-              lab-baylibre: new failure (last pass: next-20190624)
-
-Boot Failures Detected:
-
-arm:
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
-            qcom-apq8064-ifc6410: 1 failed lab
-
-    imx_v6_v7_defconfig:
-        gcc-8:
-            vf610-colibri-eval-v3: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
-
-    sunxi_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-            vf610-colibri-eval-v3: 1 failed lab
-
-arm64:
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-
-    defconfig:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-            meson-gxm-khadas-vim2: 1 failed lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-
----
-For more info write to <info@kernelci.org>
+> /*
+>  * LKM RO/NX protection: protect module's text/ro-data
+>  * from modification and any data from execution.
+>@@ -1898,6 +1898,7 @@ static void frob_text(const struct module_layout *layout,
+> 		   layout->text_size >> PAGE_SHIFT);
+> }
+>
+>+#ifdef CONFIG_STRICT_MODULE_RWX
+> static void frob_rodata(const struct module_layout *layout,
+> 			int (*set_memory)(unsigned long start, int num_pages))
+> {
+>@@ -2010,15 +2011,19 @@ void set_all_modules_text_ro(void)
+> 	}
+> 	mutex_unlock(&module_mutex);
+> }
+>-#else
+>+#else /* !CONFIG_STRICT_MODULE_RWX */
+> static void module_enable_nx(const struct module *mod) { }
+>-#endif
+>-
+>+#endif /*  CONFIG_STRICT_MODULE_RWX */
+> static void module_enable_x(const struct module *mod)
+> {
+> 	frob_text(&mod->core_layout, set_memory_x);
+> 	frob_text(&mod->init_layout, set_memory_x);
+> }
+>+#else /* !CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
+>+static void module_enable_nx(const struct module *mod) { }
+>+static void module_enable_x(const struct module *mod) { }
+>+#endif /* CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
+>+
+>
+> #ifdef CONFIG_LIVEPATCH
+> /*
+>-- 
+>1.8.3
+>
