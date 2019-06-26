@@ -2,94 +2,95 @@ Return-Path: <SRS0=Vtnz=UZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB685C48BD6
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 13:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F53FC48BD6
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 13:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D10214DA
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 13:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C969121670
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 13:42:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ndWUXuJa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfFZNVc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 26 Jun 2019 09:21:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:32828 "EHLO foss.arm.com"
+        id S1727146AbfFZNm7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 26 Jun 2019 09:42:59 -0400
+Received: from ozlabs.org ([203.11.71.1]:50815 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbfFZNVc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:21:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D595360;
-        Wed, 26 Jun 2019 06:21:31 -0700 (PDT)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.40.140])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4550F3F71E;
-        Wed, 26 Jun 2019 06:21:25 -0700 (PDT)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org
-Subject: [PATCH] powerpc/64s/radix: Define arch_ioremap_p4d_supported()
-Date:   Wed, 26 Jun 2019 18:51:00 +0530
-Message-Id: <1561555260-17335-1-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726462AbfFZNm7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:42:59 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Ykk80tZrz9s3Z;
+        Wed, 26 Jun 2019 23:42:55 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561556576;
+        bh=WdWMbczdBClsn1CpVDEcIgMMCcotjBk6HNGVtmqrSsI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ndWUXuJah2xCKMlgROMIRhyxu2HzcfKZW4Ojh1XlkAm2+bA80eV+goiQiMvqddtF5
+         7Pgjn5ZJLbf+SabCMMsVS/JvjC0S3K2LnaFrm7u5thjR/VXqziQb4z9euoj/05UO/b
+         Aq7dnw+g6Kt+16LqxWjZ0xHpJQvc6a45OnfPozJ5T3neVdfgKUL0NYuHbQSFVK4Nli
+         iUiXelmi12M8Yk3reouflT8NUjiN5+Ky4EFz0WSK2DGZs3KnpGMo+c64dqJrxyoohU
+         M+Z7zfQ8q74yYVp8vev/LG6ByvujO3ZDRWky3/nHDEgkdBv2Fcfk3KSfJiWbyQon+b
+         uRHVIdNkwo85g==
+Date:   Wed, 26 Jun 2019 23:42:51 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
+Message-ID: <20190626234251.67acfe79@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Vg_=Hw1pb4_qzWk1n/toyOx"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Recent core ioremap changes require HAVE_ARCH_HUGE_VMAP subscribing archs
-provide arch_ioremap_p4d_supported() failing which will result in a build
-failure like the following.
+--Sig_/Vg_=Hw1pb4_qzWk1n/toyOx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-ld: lib/ioremap.o: in function `.ioremap_huge_init':
-ioremap.c:(.init.text+0x3c): undefined reference to
-`.arch_ioremap_p4d_supported'
+Hi all,
 
-This defines a stub implementation for arch_ioremap_p4d_supported() keeping
-it disabled for now to fix the build problem.
+In commit
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org
+  e3303268f9cf ("ASoC: soc-core: don't use soc_find_component() at snd_soc_=
+find_dai()")
 
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This has been just build tested and fixes the problem reported earlier.
+Fixes tag
 
- arch/powerpc/mm/book3s64/radix_pgtable.c | 5 +++++
- 1 file changed, 5 insertions(+)
+  Fixes: commit b9f2e25c599bb ("ASoC: soc-core: use soc_find_component() at=
+ snd_soc_find_dai()")
 
-diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
-index 8904aa1..c81da88 100644
---- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-+++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-@@ -1124,6 +1124,11 @@ void radix__ptep_modify_prot_commit(struct vm_area_struct *vma,
- 	set_pte_at(mm, addr, ptep, pte);
- }
- 
-+int __init arch_ioremap_p4d_supported(void)
-+{
-+	return 0;
-+}
-+
- int __init arch_ioremap_pud_supported(void)
- {
- 	/* HPT does not cope with large pages in the vmalloc area */
--- 
-2.7.4
+has these problem(s):
 
+  - leading word 'commit' unexpected
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Vg_=Hw1pb4_qzWk1n/toyOx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TdlsACgkQAVBC80lX
+0Gyduwf+PNrVL23wQxF6ABFSZsELxiz14FGmenDxR8uY0lD+gs1a4hQZJocR6vhd
+Ce9Bv04cbc6ezXSSX/66lMAuY27N1TiaHIxVGJ3B0l+7j2v2YIYQ/5EBHfiq6dc2
+6oNVfQBhkIxJqtTe6MWtpLZmBXl2Hu58lBiOpdXh8lYArpsG2AgMdXuCJ9e1IOlS
+U1PL/M0ULo13ofedLhFB+myi2Zt+Nb7Xy68ajlv5ibzpwFXjht42nNjDKVJE1NQG
+GuY8VNJ5UdaD+ND9LKvT+FqxfXw3iHfeDeItwvYvJWsUSLg8Ejudy/hKkSf2himS
+OwopZQM5BcC98Ztuv1Bt7uClOZ4gAg==
+=usu0
+-----END PGP SIGNATURE-----
+
+--Sig_/Vg_=Hw1pb4_qzWk1n/toyOx--
