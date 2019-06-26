@@ -1,92 +1,138 @@
-Return-Path: <SRS0=z0z5=UY=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=Vtnz=UZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFABC48BD6
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 23:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4D0C48BD5
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 01:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8FE20657
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jun 2019 23:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E74922086D
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 01:10:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fkb9QrRb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xsAnA6we"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfFYXdS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jun 2019 19:33:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:42747 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbfFYXdS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 25 Jun 2019 19:33:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YMsl1ysYz9s3Z;
-        Wed, 26 Jun 2019 09:33:15 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561505595;
-        bh=y1eG32qua6PhqAiVuAO6P1kOZFtVSk/MwLtTyC8MGsE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fkb9QrRbj//LRsIu9lXOvOrUiRoYIiFQsZPa6pgCLWNYPOp2dnEXnEZPzUiUKGeqQ
-         yimmxbMVdCiYo2XAR5lu+a6/w9HUk5dTFDcqNkZzC1LOqLsK15NS438bPUGUPOCUOi
-         CfKRf6J+blJVUs33h22MPwYdkZOr8ll6+xnrOIruD7Q9ei5RcuQuvov+G+7z2xlCwy
-         lGjyKbCEKAIw8X/jZ2mfpu56q/z+CjyRmO3lBPEyGey8DvQ1GlvgNZt5treR4xInI1
-         /p4wDeaOtA5cKhV0Lpv15cBCjPEQSk5OfcJQAonYj9BGY8V3zZLnbn4LRafRRN+Xm8
-         zOeRcedZyjTGg==
-Date:   Wed, 26 Jun 2019 09:32:50 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the tip tree
-Message-ID: <20190626093250.5c7cc243@canb.auug.org.au>
+        id S1726287AbfFZBKt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jun 2019 21:10:49 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37158 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfFZBKt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2019 21:10:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UtW5OvMCSjQYk0vQjDM8NYHUQEBuLOBRls0IoB2nKTs=; b=xsAnA6weNkKTfYGnYr65dpdaI0
+        IowfByeZt/ku9RrguyPceaIexJ4vtqnZGbqKx1+1cpwAVxkNt46HoYucOCKRWgu/GlykISrhxQr0r
+        s7FS3+vjwjB2DRbaBR0v/oTzKUOAL/mKXzjjs4YwQ4EvTcOlj8GuJsPwCz9h1we9G/8ppsxr0/vUx
+        62PSjolrNJIr/rrwJJyeJabZKFu1wXyrdmk/+HLc5DDsejRhK4LieK3WDT2JFKEkZQ80SWIMsG68G
+        0VVpU01ii5XAnZe2K7MqB4WQtSHOKs1ya8IILXlK0MkMku2eWM5EPG/NJX/lzxD/N9ZSHajbYh0EZ
+        oZCp2GFA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hfwSQ-0002pd-J8; Wed, 26 Jun 2019 01:10:43 +0000
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] extcon: fix fsa9480 Kconfig warning and build errors
+Message-ID: <1075ea60-6657-ce8d-b527-639b4fc896ec@infradead.org>
+Date:   Tue, 25 Jun 2019 18:10:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_cU8wxQxL6QxmCi4sLWZT8C"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/_cU8wxQxL6QxmCi4sLWZT8C
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Hi all,
+Fix Kconfig dependency warning and subsequent build errors caused by
+the Kconfig entry for EXTCON-FSA9480.  It should not select
+REGMAP_I2C unless I2C is already set/enabled.
 
-Commits
+WARNING: unmet direct dependencies detected for REGMAP_I2C
+  Depends on [n]: I2C [=n]
+  Selected by [y]:
+  - EXTCON_FSA9480 [=y] && EXTCON [=y] && INPUT [=y]
 
-  53d87b37a2a4 ("arm64: compat: No need for pre-ARMv7 barriers on an ARMv8 =
-system")
-  b4b12aca00d5 ("arm64: vdso: Remove unnecessary asm-offsets.c definitions")
-  4d33ebb02c45 ("vdso: Remove superfluous #ifdef __KERNEL__ in vdso/datapag=
-e.h")
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_byte_reg_read’:
+../drivers/base/regmap/regmap-i2c.c:25:2: error: implicit declaration of function ‘i2c_smbus_read_byte_data’ [-Werror=implicit-function-declaration]
+  ret = i2c_smbus_read_byte_data(i2c, reg);
+  ^
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_byte_reg_write’:
+../drivers/base/regmap/regmap-i2c.c:43:2: error: implicit declaration of function ‘i2c_smbus_write_byte_data’ [-Werror=implicit-function-declaration]
+  return i2c_smbus_write_byte_data(i2c, reg, val);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_reg_read’:
+../drivers/base/regmap/regmap-i2c.c:61:2: error: implicit declaration of function ‘i2c_smbus_read_word_data’ [-Werror=implicit-function-declaration]
+  ret = i2c_smbus_read_word_data(i2c, reg);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_reg_write’:
+../drivers/base/regmap/regmap-i2c.c:79:2: error: implicit declaration of function ‘i2c_smbus_write_word_data’ [-Werror=implicit-function-declaration]
+  return i2c_smbus_write_word_data(i2c, reg, val);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_read_swapped’:
+../drivers/base/regmap/regmap-i2c.c:97:2: error: implicit declaration of function ‘i2c_smbus_read_word_swapped’ [-Werror=implicit-function-declaration]
+  ret = i2c_smbus_read_word_swapped(i2c, reg);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_write_swapped’:
+../drivers/base/regmap/regmap-i2c.c:115:2: error: implicit declaration of function ‘i2c_smbus_write_word_swapped’ [-Werror=implicit-function-declaration]
+  return i2c_smbus_write_word_swapped(i2c, reg, val);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_write’:
+../drivers/base/regmap/regmap-i2c.c:129:2: error: implicit declaration of function ‘i2c_master_send’ [-Werror=implicit-function-declaration]
+  ret = i2c_master_send(i2c, data, count);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_gather_write’:
+../drivers/base/regmap/regmap-i2c.c:150:2: error: implicit declaration of function ‘i2c_check_functionality’ [-Werror=implicit-function-declaration]
+  if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_NOSTART))
+../drivers/base/regmap/regmap-i2c.c:163:2: error: implicit declaration of function ‘i2c_transfer’ [-Werror=implicit-function-declaration]
+  ret = i2c_transfer(i2c->adapter, xfer, 2);
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_smbus_i2c_write’:
+../drivers/base/regmap/regmap-i2c.c:218:2: error: implicit declaration of function ‘i2c_smbus_write_i2c_block_data’ [-Werror=implicit-function-declaration]
+  return i2c_smbus_write_i2c_block_data(i2c, ((u8 *)data)[0], count,
+../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_smbus_i2c_read’:
+../drivers/base/regmap/regmap-i2c.c:233:2: error: implicit declaration of function ‘i2c_smbus_read_i2c_block_data’ [-Werror=implicit-function-declaration]
+  ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
 
-are missing a Signed-off-by from their committer.
+../drivers/extcon/extcon-fsa9480.c: In function ‘fsa9480_module_init’:
+../drivers/extcon/extcon-fsa9480.c:383:2: error: implicit declaration of function ‘i2c_add_driver’ [-Werror=implicit-function-declaration]
+  return i2c_add_driver(&fsa9480_i2c_driver);
+../drivers/extcon/extcon-fsa9480.c: In function ‘fsa9480_module_exit’:
+../drivers/extcon/extcon-fsa9480.c:389:2: error: implicit declaration of function ‘i2c_del_driver’ [-Werror=implicit-function-declaration]
+  i2c_del_driver(&fsa9480_i2c_driver);
 
---=20
-Cheers,
-Stephen Rothwell
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+---
+Found in mmotm; applies to linux-next.
 
---Sig_/_cU8wxQxL6QxmCi4sLWZT8C
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+To extcon maintainers:  there are a few more extcon driver Kconfig
+entries that seem to have this same problem of selecting REGMAP_I2C
+without checking that I2C is set/enabled.
 
------BEGIN PGP SIGNATURE-----
+ drivers/extcon/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0SryIACgkQAVBC80lX
-0GzxMQf/eUQTd1yP/D/HkdDSZaDGjSCXKjoIYk2l85WVbYglhdqFQgI7hjhCHKNT
-tQb2pZSFVQR22LTrk0ijvbo6s2bvc5rO6aBm2GQI/Wrp99PcTIEga07ZEwlcpddt
-QR0Re+b9Bf2RxquSBVh4KgdvdOKaZF9N17gKJRys9wIyyklAVXkvDtkyeEIkvdS3
-yNzd/eVKNya+v8JSdBmz/0WRsI0DaGj1IWDqBWU6eJZFD+cSliVdsduA6oQB3xsi
-jTn5wuW98xJDygXHWS/PxyEPQwN5+roQ1vgeQ5AOnnr4BkTd9xxOAaL22U8IQ7gk
-wEfrU7r5INEvlRvXYPKESM/DjwBPLA==
-=M3K1
------END PGP SIGNATURE-----
+--- mmotm-2019-0625-1620.orig/drivers/extcon/Kconfig
++++ mmotm-2019-0625-1620/drivers/extcon/Kconfig
+@@ -39,7 +39,7 @@ config EXTCON_AXP288
+ 
+ config EXTCON_FSA9480
+ 	tristate "FSA9480 EXTCON Support"
+-	depends on INPUT
++	depends on INPUT && I2C
+ 	select IRQ_DOMAIN
+ 	select REGMAP_I2C
+ 	help
 
---Sig_/_cU8wxQxL6QxmCi4sLWZT8C--
+
