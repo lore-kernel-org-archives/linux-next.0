@@ -2,123 +2,110 @@ Return-Path: <SRS0=Vtnz=UZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89900C48BD3
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 12:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C16C48BD6
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 12:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E842080C
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 12:02:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BA1B2086D
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 12:34:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aYeWvHgh"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fVrQtcmR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfFZMCt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 26 Jun 2019 08:02:49 -0400
-Received: from ozlabs.org ([203.11.71.1]:55759 "EHLO ozlabs.org"
+        id S1726778AbfFZMe6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 26 Jun 2019 08:34:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:44945 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbfFZMCs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:02:48 -0400
+        id S1726723AbfFZMe5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:34:57 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YhVX2Y9jz9s3C;
-        Wed, 26 Jun 2019 22:02:44 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YjCf3X9Sz9s3l;
+        Wed, 26 Jun 2019 22:34:54 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561550565;
-        bh=w+QRbv9L2/ZXmnp052EBNEJxLhRrtzCyrMYK4G+/uqU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=aYeWvHghTT7MDezFGVvdSsdRo3/VfdVPeSzVrHCh8vXL+ncKzR/3DS+uX0/LrIUMK
-         FRigKjrMiVHZZfBx37rexsaz/ouZRUMmLgGJwYUVtw9gKMiTlyQtG07bgXxj4azP/l
-         2RpubkVDYAV4wc7xj/rFMrNm/TiXMs7vX6dwPhV6a9cXFWM5qa+V28A/jxHk0tM+uq
-         W/5R9+K5J7PaSPnkbCwMVuSXGYi1gktv2f5xg8bZLNN1hQO2yYslCXagUDYvtIDrcf
-         ZeUZcyYXxtXiW9mrbB4zDfi/HjB0jsSw9Nbs9J7cckmGxmgzvaftXIgwwZcYfBgMcf
-         lDowXfPhYlnhQ==
-Date:   Wed, 26 Jun 2019 22:02:42 +1000
+        s=201702; t=1561552494;
+        bh=J5PDmh6SRrKgp6sEYtERooHfMpzUiWLuB1ZBRLYUfIU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fVrQtcmRPrIzaYqWZEBexxFqXI4UGsfoVYY4+0cuAArY5im1qOy5EZI/npYXBmxnb
+         ggPCK+NMDRJPa0LQ2VKcvyyhcFZMaxCwDAJZXIJg1CnrQT369xHmtu+NC0oyd2ys2M
+         Hor4oWld5F1g5WdV/UD4bSffjAV6TuSSjd5pHNutXnrKbS2fuc4j05v2niVvGnP/wt
+         y+h91wxS2UcjBdiuQQzzyagfDNpV3rr9ITSuu6ii3uxiwGvo11gp+ekHVupapPUM3j
+         HMxno2TFFAxIiFDxGlauQWVrYMxc+RhW9JlherbKQTNqWeCUZwoBN0HbdGGM4BfvG9
+         4nOeuaBU9C+hw==
+Date:   Wed, 26 Jun 2019 22:34:52 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eiichi Tsukata <devel@etsukata.com>,
-        Matteo Croce <mcroce@redhat.com>
-Subject: linux-next: manual merge of the akpm tree with the net tree
-Message-ID: <20190626220242.26fc2d3e@canb.auug.org.au>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20190626223452.5a7deab1@canb.auug.org.au>
+In-Reply-To: <9e850319-8564-5b1f-2e1b-7d327215043f@arm.com>
+References: <20190626214125.6d313c15@canb.auug.org.au>
+        <9e850319-8564-5b1f-2e1b-7d327215043f@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IAiEFUnBd=9XVVSDEnGhKa6"; protocol="application/pgp-signature"
+ boundary="Sig_/OgO43uiXAj7MuO2GCk80S.I"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/IAiEFUnBd=9XVVSDEnGhKa6
+--Sig_/OgO43uiXAj7MuO2GCk80S.I
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Anshuman,
 
-Today's linux-next merge of the akpm tree got a conflict in:
+On Wed, 26 Jun 2019 17:32:18 +0530 Anshuman Khandual <anshuman.khandual@arm=
+.com> wrote:
+>
+> I believe this might be caused by a patch for powerpc enabling HAVE_ARCH_=
+HUGE_VMAP
+> without an arch_ioremap_p4d_supported() definition.
 
-  net/ipv6/route.c
+Ah, OK.
 
-between commit:
+> All it needs is a powerpc definition for arch_ioremap_p4d_supported() whi=
+ch can just
+> return false if it is not supported. Shall I send a patch for the powerpc=
+ fix or just
+> re-spin the original patch which added arch_ioremap_p4d_supported(). Plea=
+se suggest.
 
-  b8e8a86337c2 ("net/ipv6: Fix misuse of proc_dointvec "skip_notify_on_dev_=
-down"")
+I'll add a merge fix patch tomorrow.  Though if you can send that patch,
+that would be nice :-)
 
-from the net tree and patch:
+> Today's linux-next (next-20190625) does not have powerpc subscribing HAVE=
+_ARCH_HUGE_VMAP.
+> Could you please point to the branch I should pull for this failure. Than=
+ks !
 
-  "proc/sysctl: add shared variables for range check"
-
-from the akpm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git branch next
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/ipv6/route.c
-index a0994415484e,c5125cdff32c..000000000000
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@@ -6077,9 -6074,9 +6074,9 @@@ static struct ctl_table ipv6_route_tabl
-  		.data		=3D	&init_net.ipv6.sysctl.skip_notify_on_dev_down,
-  		.maxlen		=3D	sizeof(int),
-  		.mode		=3D	0644,
- -		.proc_handler	=3D	proc_dointvec,
- +		.proc_handler	=3D	proc_dointvec_minmax,
-- 		.extra1		=3D	&zero,
-- 		.extra2		=3D	&one,
-+ 		.extra1		=3D	SYSCTL_ZERO,
-+ 		.extra2		=3D	SYSCTL_ONE,
-  	},
-  	{ }
-  };
-
---Sig_/IAiEFUnBd=9XVVSDEnGhKa6
+--Sig_/OgO43uiXAj7MuO2GCk80S.I
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TXuIACgkQAVBC80lX
-0GzVGQgAi6KpMwwYvxK6TZnE4Xv4rKpUNWLM+tX4+Z02jY4ue7Igt3X2IRURmt7J
-2jJx0UlDRsExYucQdAQQHwnaKzZ9nFQPGezGoc6KsoYrry9adJkZ2FZeoHj/ZPJ8
-VSsG4hf3pdhHcFoV53bnY0V1Ai0/TXgg80LdXOSY+TdQNtDj9hkIznS3vTOaQ4ar
-dqhoLtKPz4lJr+9unfUACWR1r2TGiZ5tywc3j9/XEo0KLx/yPB0nE+zTVCjX0I65
-dSKLZpo+g3sWrEb77E9Alokj2OXx4qBtnpXzkXXlXjgRUOM2shFDCAUUH9gjRqnx
-RUFR153oJ89iXTbWGO9+FCWZExL+8Q==
-=CNIh
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TZmwACgkQAVBC80lX
+0GwbvggAmeOxSKwcEb5rsdNxfdUpUYLhDvPlFPZcqPofaMS2laFfVK35iuv40TXB
+gxlU0t21jckOaVkkLl30bGTrmCRgfx/rrtDkDknMK4JJCIk8qaCzkAhCu2htB19r
+mS5Zlph3feMt4md2YoWliS6BRqrIOP8TySs2D6t51fEz906c/81Ldr1+E4L5Qkm5
+ng14uHDLFdYhXU92OctX5ps/MsAAJKHHXeHZQkoZRzmFHqjvgifuTsPjBw9M3zSN
+Aj/RW+mj1Pje2jXBPoeACVKlbHZwEQ9IKM0prj1cIn6aMGyX7AJ1bfahUqgsCXt0
+m2GC0pWSpgxM1DBBDbNsvaJXcz2a9A==
+=viRL
 -----END PGP SIGNATURE-----
 
---Sig_/IAiEFUnBd=9XVVSDEnGhKa6--
+--Sig_/OgO43uiXAj7MuO2GCk80S.I--
