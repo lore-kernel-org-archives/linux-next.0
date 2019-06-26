@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE38EC4646B
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 04:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8046AC4646B
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 04:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9B0208CB
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 04:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E695208CB
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 04:33:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uRtIXozc"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gGTTMbeA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbfFZE2m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 26 Jun 2019 00:28:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:38487 "EHLO ozlabs.org"
+        id S1725804AbfFZEdh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 26 Jun 2019 00:33:37 -0400
+Received: from ozlabs.org ([203.11.71.1]:59323 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726076AbfFZE2m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 26 Jun 2019 00:28:42 -0400
+        id S1725308AbfFZEdg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 26 Jun 2019 00:33:36 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YVQb1WZNz9s4V;
-        Wed, 26 Jun 2019 14:28:39 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YVXF5TgTz9s4V;
+        Wed, 26 Jun 2019 14:33:33 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561523319;
-        bh=gFfeXbLG/ItocsX/m5ahD7HVvSfQilzaK0UbPwO26vM=;
+        s=201702; t=1561523613;
+        bh=GnKZEBSZpJW2XWCODba6I/alezaYiCwHX7DTAsgReQ4=;
         h=Date:From:To:Cc:Subject:From;
-        b=uRtIXozcHqpFEUln+8F6aziRdUNvkRvMrhjpUI9+oPvJia24BluLTL+idPkdxgYFC
-         8w11NDeIEU/ZH24mg15M0bbgyFWkj1CRVA7uvY/CxrYjGzYgA3zDWBvFdSpdaw4OUD
-         N9n5pC2VKN2z8vn5fjoyXIQHXJppqX3/QE+RLII4XmbsQjyxZAxOPY9EF5Wmtqjpqf
-         RPJuH8Wnhyf8Bx0QSAF5mlD3SWv9zR0n6fCLRgpyi9A0HkaOs2qJvQnClltOQw82oQ
-         mueumNqT7ct5USi53zsMTsw20f72Rwgyv5zyOLXbmnR8AVceibpxES4OYy3t3WSnna
-         TlBmQ762F3seQ==
-Date:   Wed, 26 Jun 2019 14:28:38 +1000
+        b=gGTTMbeA9SOHI94p5sI2zKkhh8ykhyOFENgn3IXPJ2ZVLRpYDSEeY1N05g0fosvxm
+         BSOY1Tyh3FrCmTporKikJBh25YHPaNuWOM+sVQSaZJJtJ6ZO6s1F5kQQdg3OFNowMi
+         TA3PSwU3z4D7K0b7QpYJ4b0i2CjHNafwlRdioflXlw+5i9iQ2oLcNOBSIAs6hyNF7U
+         oEn/QuIN1nTF7KkjMrrA1yj+Ikd/IeBjROsxSdMdqONqVZTPzOYUQ4Jmhyjt3J4j0e
+         5zfD6+HJOipU3ymGw12yb0O8xl0LiUExxrmnHzWzGZrAlElhZJViYjf7p6Vay7NWa/
+         ET1cpYe1RE8xg==
+Date:   Wed, 26 Jun 2019 14:33:33 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     David Howells <dhowells@redhat.com>,
-        Tyler Hicks <tyhicks@canonical.com>
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: linux-next: manual merge of the keys tree with the ecryptfs tree
-Message-ID: <20190626142838.0f9bb5d6@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the keys tree with the integrity tree
+Message-ID: <20190626143333.7ee527ca@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FLu3G8RQm6nxi1B=Q=_TPaS"; protocol="application/pgp-signature"
+ boundary="Sig_/AzL_04kP1980wy1=bN/TNtr"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/FLu3G8RQm6nxi1B=Q=_TPaS
+--Sig_/AzL_04kP1980wy1=bN/TNtr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -61,14 +61,14 @@ Hi all,
 
 Today's linux-next merge of the keys tree got a conflict in:
 
-  fs/ecryptfs/keystore.c
+  security/integrity/digsig.c
 
 between commit:
 
-  29a51df0609c ("ecryptfs: remove unnessesary null check in ecryptfs_keyrin=
-g_auth_tok_for_sig")
+  8c655784e2cf ("integrity: Fix __integrity_init_keyring() section mismatch=
+")
 
-from the ecryptfs tree and commit:
+from the integrity tree and commit:
 
   79512db59dc8 ("keys: Replace uid/gid/perm permissions checking with an AC=
 L")
@@ -86,39 +86,39 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/ecryptfs/keystore.c
-index 216fbe6a4837,ba382f135918..000000000000
---- a/fs/ecryptfs/keystore.c
-+++ b/fs/ecryptfs/keystore.c
-@@@ -1611,10 -1610,10 +1611,10 @@@ int ecryptfs_keyring_auth_tok_for_sig(s
-  {
-  	int rc =3D 0;
+diff --cc security/integrity/digsig.c
+index 868ade3e8970,e432900c00b9..000000000000
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@@ -69,9 -70,8 +70,9 @@@ int integrity_digsig_verify(const unsig
+  	return -EOPNOTSUPP;
+  }
  =20
-- 	(*auth_tok_key) =3D request_key(&key_type_user, sig, NULL);
-+ 	(*auth_tok_key) =3D request_key(&key_type_user, sig, NULL, NULL);
- -	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
- +	if (IS_ERR(*auth_tok_key)) {
-  		(*auth_tok_key) =3D ecryptfs_get_encrypted_key(sig);
- -		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
- +		if (IS_ERR(*auth_tok_key)) {
-  			printk(KERN_ERR "Could not find key with description: [%s]\n",
-  			      sig);
-  			rc =3D process_request_key_err(PTR_ERR(*auth_tok_key));
+ -static int __integrity_init_keyring(const unsigned int id, struct key_acl=
+ *acl,
+ -				    struct key_restriction *restriction)
+ +static int __init __integrity_init_keyring(const unsigned int id,
+- 					   key_perm_t perm,
+++					   struct key_acl *acl,
+ +					   struct key_restriction *restriction)
+  {
+  	const struct cred *cred =3D current_cred();
+  	int err =3D 0;
 
---Sig_/FLu3G8RQm6nxi1B=Q=_TPaS
+--Sig_/AzL_04kP1980wy1=bN/TNtr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0S9HYACgkQAVBC80lX
-0GyktAgAmlOsnZ667Y1vZXSTAOUSHw1/nk9euAZz+qdTxqKuLDfaNESQBj1GmHe+
-0OtNnZnxz1CmP8ISUZyotLeuM158xwu3jbij8na6/yMvP0B1J28uBvLWcKp019Zi
-XEMERzWeeLuIF/sP5Xv6qUAmtVnhstAI71uiFOR0kpuKFIprhGOH/nzEY1yHV60c
-jrBBzcxDDwZfq6KN8kmrG9gWad+epbyLOJ5ESkqSWKza+ggabOt6urGIyUY0QGQ3
-Mn3a+aV1KEA8gooLzuceq8bUje9OyaHEt107ClAGONcrhH/TlI7aVXzzHTstotqG
-sjsE4EaPH2ymlSFZKukLWQOUlaMe2A==
-=7mAc
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0S9Z0ACgkQAVBC80lX
+0GxLyQf7BkYLYN+hcxGgNyEap6vda6zNXLzt17WnCAgbaSTJ2GE6/Z2DbUZ1Z9/F
+ggLO0oP/e/PY2KLpYnqzMplFK7ZwL3+oe5gHfaUSbF1rAAIxNBpUXq+59UgDvMOP
+F1mL4REEuNTn9IMH+glG9veKkxVFkQTpIK+IfXz/EcgrkXgadgacw7k+PUVVVjg2
+CPKec0kFccjv88nlQdEUZENWai4rPCjSrrw9+ypKvnT56+OLHQcTPgDL40uxdBlN
+W5aMrOIHBnJ8hIC1AiUwEpOmwzr4gRE85YKCyseCcT4T4977SfosiVnP/klUNzqB
+M3nNmr2gSOMIvbLqDOgvo6WBfRxH4w==
+=9B8o
 -----END PGP SIGNATURE-----
 
---Sig_/FLu3G8RQm6nxi1B=Q=_TPaS--
+--Sig_/AzL_04kP1980wy1=bN/TNtr--
