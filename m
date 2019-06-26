@@ -4,94 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60BEC48BD6
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 13:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42D1C48BD3
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 14:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B97D21670
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 13:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89403208CB
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 14:11:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YWnn41//"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j76bodnB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfFZNuQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 26 Jun 2019 09:50:16 -0400
-Received: from ozlabs.org ([203.11.71.1]:32887 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbfFZNuP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:50:15 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YktX4q3Zz9s3Z;
-        Wed, 26 Jun 2019 23:50:12 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561557012;
-        bh=CgFVAxLBBoJNkTiZPu52i39tbpv4zdhD2FMfBFNNmxI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YWnn41//Gs/iCFZMtwMZdMM6UtI+r2DjT9cy8AAifiKOAh2GznGMvMAmFtoSs5N7j
-         AXGF+BWqReftkVsEMImoLD75/ZzRMUgUFTKnInGumPc4iYE5NmhRYMtYs0en0XDM93
-         KoiNVk2lSLZSFh8BU/yAK5CHDceahkgxQHi+BmBPNCg81PdFmZF7dbDO8yXwafgD+9
-         l176Aq52oESwmWUwSDkMAO/RwyuPIJQJnJYgXNX3WO5AxEnYp2jM2VG8BY2U5beX+p
-         Q0kli/lVcBPtBVDYcJ0q0ZxAX+p+TOIt3TWOnGBFd6P/kUCfCvPbYEfmSTm7dqU09m
-         lgwOuCWy6haLw==
-Date:   Wed, 26 Jun 2019 23:50:11 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
+        id S1726468AbfFZOLL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 26 Jun 2019 10:11:11 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41864 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfFZOLL (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2019 10:11:11 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 205so2360444ljj.8
+        for <linux-next@vger.kernel.org>; Wed, 26 Jun 2019 07:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZgFMa9Y26kQCWHNOMiCF1qTPzlaDQuATgwwzmRwsuO8=;
+        b=j76bodnB5J0pEQD7YCCdT+lcMefBQm3vIuqwobKnnGnPbxOmDElj//6NotynhdX8U2
+         K0JFu2W+90LrnMfwQEdwGYWHd14P3beVyR4qQby97mEBtBpV/iluRSwOBr6LjlAevFh6
+         VH0StCUrKKckkzZNu/Hfh8NHBQzoIUqaQvhTklvYMEalXQBvggF4jqMovkGJ5Bw91Mv6
+         ts3173Q83nCFybDvVWbttJ1dhg0elmsugM69fHWtZoCFcFCSoP+xfj5Ly7y0OQ+fmucp
+         Nc/AfWWS2Kgmb2STnlETIrDnfz9UYfnpvHpuxPlhBk5LjEIumuObs7j9W4VGPDQwmojI
+         aUNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZgFMa9Y26kQCWHNOMiCF1qTPzlaDQuATgwwzmRwsuO8=;
+        b=b439pmb5Ppk2yn9hG1IElxxKFBzhb+LLD20fG1har894AdKRsV6NB118Et8Av3D6xd
+         D0hUGOIGf7GxegStfjoILP0dCk/yG7Obqn64N0huE8LU0/hG5S2ifUbn7RDrDISCN47J
+         I6zpbQ204bbdtjDJVPCR+efdS8c3V+KnzzOmg9qXdxTUIxw7Cl9469rJLWw1AKlG2SSY
+         cWF1xJfV/m6NSWlXblNAyvNzRC/1TUY2LK/9FwKYROpZ6V6YhRRNM+wUicTcgHOnV51N
+         U6ZuDbHT6FGikoBKNpIfrgLDvo8BSo4xOFme6OfbLqWXQhhIqHdr4SaxGzlSgjZ/KxyE
+         AR5w==
+X-Gm-Message-State: APjAAAXa4knJvre65TLNRM26aUI56DlSy2juWjeN1S673OE4ZomMOZKt
+        bhWdi+JG9RyEcqYr/iWu4I5OYx1oTwEGgNDo9zUbaA==
+X-Google-Smtp-Source: APXvYqzMnWdtbJcUq8EUwMWYCTDwVph/PVgkZMkdDc2sOwi2XRH4GT/0UaU1fJ6GixYV5fCVdWOf8+4XDJzn4k27zGA=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr3170958ljm.180.1561558268960;
+ Wed, 26 Jun 2019 07:11:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190626235011.7b449eb0@canb.auug.org.au>
+In-Reply-To: <20190626235011.7b449eb0@canb.auug.org.au>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 26 Jun 2019 16:10:56 +0200
+Message-ID: <CACRpkdaHyb=o=9YzSvKWRbbyPCbsOUxC=zoz+acnTWNvp=vu5w@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>
-Subject: linux-next: Fixes tag needs some work in the pinctrl tree
-Message-ID: <20190626235011.7b449eb0@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/guC+oxRqAXQQC6UWwHorbL3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/guC+oxRqAXQQC6UWwHorbL3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 26, 2019 at 3:50 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Linus,
+> In commit
+>
+>   99fd24aa4a45 ("pinctrl: mediatek: Ignore interrupts that are wake only during resume")
+>
+> Fixes tag
+>
+>   Fixes: bf22ff45bed ("genirq: Avoid unnecessary low level irq function calls")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-In commit
+Thanks Stephen, fixed this.
 
-  99fd24aa4a45 ("pinctrl: mediatek: Ignore interrupts that are wake only du=
-ring resume")
-
-Fixes tag
-
-  Fixes: bf22ff45bed ("genirq: Avoid unnecessary low level irq function cal=
-ls")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/guC+oxRqAXQQC6UWwHorbL3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TeBMACgkQAVBC80lX
-0GxSQwgApiDxRMm6wi3XwcKZMTfIGRWkrSxyH6mqr4A5Nzl6jSx9NX9xu9qJM5Wa
-w+lD29RU6MTUsGwJGkbu6gvG65mcnrYCP0ZUr7vyOqc54PqDrGk2wGhAVDmVWagg
-73bOfNCS0VJnHNDnBilyat4UjA+2GojVg1pzMYqPbx93nRjF+cxGm77Qkl7o0DOm
-nacwcIH74qUOCmEzH93wI2bcRbCQEZsMgIrEh7mCVrR4LDsyLrcp/29TrEMacl37
-P4JK3dur3xMqn9rmoz2AMHErbIaR9jBOMgViykPn4YKUgmxkWg2xqX6Mn84/1Rh9
-IDR8W+DNLEp3B7cxxodUowHZygq4uQ==
-=5JVO
------END PGP SIGNATURE-----
-
---Sig_/guC+oxRqAXQQC6UWwHorbL3--
+Yours,
+Linus Walleij
