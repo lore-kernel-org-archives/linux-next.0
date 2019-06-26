@@ -2,137 +2,173 @@ Return-Path: <SRS0=Vtnz=UZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4D0C48BD5
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 01:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFDBC4646B
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 03:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E74922086D
-	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 01:10:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xsAnA6we"
+	by mail.kernel.org (Postfix) with ESMTP id AA31220645
+	for <linux-next@archiver.kernel.org>; Wed, 26 Jun 2019 03:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfFZBKt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jun 2019 21:10:49 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37158 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfFZBKt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2019 21:10:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UtW5OvMCSjQYk0vQjDM8NYHUQEBuLOBRls0IoB2nKTs=; b=xsAnA6weNkKTfYGnYr65dpdaI0
-        IowfByeZt/ku9RrguyPceaIexJ4vtqnZGbqKx1+1cpwAVxkNt46HoYucOCKRWgu/GlykISrhxQr0r
-        s7FS3+vjwjB2DRbaBR0v/oTzKUOAL/mKXzjjs4YwQ4EvTcOlj8GuJsPwCz9h1we9G/8ppsxr0/vUx
-        62PSjolrNJIr/rrwJJyeJabZKFu1wXyrdmk/+HLc5DDsejRhK4LieK3WDT2JFKEkZQ80SWIMsG68G
-        0VVpU01ii5XAnZe2K7MqB4WQtSHOKs1ya8IILXlK0MkMku2eWM5EPG/NJX/lzxD/N9ZSHajbYh0EZ
-        oZCp2GFA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfwSQ-0002pd-J8; Wed, 26 Jun 2019 01:10:43 +0000
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] extcon: fix fsa9480 Kconfig warning and build errors
-Message-ID: <1075ea60-6657-ce8d-b527-639b4fc896ec@infradead.org>
-Date:   Tue, 25 Jun 2019 18:10:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726320AbfFZDgi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jun 2019 23:36:38 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43570 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfFZDgi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:36:38 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C40E1D7433C33B160F3E;
+        Wed, 26 Jun 2019 11:36:35 +0800 (CST)
+Received: from [127.0.0.1] (10.133.205.80) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 26 Jun 2019
+ 11:36:27 +0800
+Subject: Re: [PATCH] modules: fix compile error if don't have strict module
+ rwx
+To:     Jessica Yu <jeyu@kernel.org>
+References: <1561455628-50795-1-git-send-email-yangyingliang@huawei.com>
+ <20190625192115.GA27913@linux-8ccs>
+CC:     <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <namit@vmware.com>, <cj.chengjian@huawei.com>,
+        <sfr@canb.auug.org.au>, <linux-next@vger.kernel.org>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5D12E83B.9000209@huawei.com>
+Date:   Wed, 26 Jun 2019 11:36:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190625192115.GA27913@linux-8ccs>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.205.80]
+X-CFilter-Loop: Reflected
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
 
-Fix Kconfig dependency warning and subsequent build errors caused by
-the Kconfig entry for EXTCON-FSA9480.  It should not select
-REGMAP_I2C unless I2C is already set/enabled.
 
-WARNING: unmet direct dependencies detected for REGMAP_I2C
-  Depends on [n]: I2C [=n]
-  Selected by [y]:
-  - EXTCON_FSA9480 [=y] && EXTCON [=y] && INPUT [=y]
+On 2019/6/26 3:21, Jessica Yu wrote:
+> +++ Yang Yingliang [25/06/19 17:40 +0800]:
+>> If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is not defined,
+>> we need stub for module_enable_nx() and module_enable_x().
+>>
+>> If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is defined, but
+>> CONFIG_STRICT_MODULE_RWX is disabled, we need stub for
+>> module_enable_nx.
+>>
+>> Move frob_text() outside of the CONFIG_STRICT_MODULE_RWX,
+>> because it is needed anyway.
+>
+> Maybe include a fixes tag?
+>
+> Fixes: 2eef1399a866 ("modules: fix BUG when load module with rodata=n")
+OK, I will add it in v2.
+>
+>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>> ---
+>> kernel/module.c | 13 +++++++++----
+>> 1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/kernel/module.c b/kernel/module.c
+>> index c3ae34c..cfff441 100644
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+>> @@ -1875,7 +1875,7 @@ static void mod_sysfs_teardown(struct module *mod)
+>>     mod_sysfs_fini(mod);
+>> }
+>>
+>> -#ifdef CONFIG_STRICT_MODULE_RWX
+>> +#ifdef CONFIG_ARCH_HAS_STRICT_MODULE_RWX
+>
+> Could you please explain why you introduced a new
+> CONFIG_ARCH_HAS_STRICT_MODULE_RWX #ifdef block instead of just moving
+> frob_text() and module_enable_x() outside of CONFIG_STRICT_MODULE_RWX?
+If CONFIG_STRICT_MODULE_RWX is not defined, it has two reasons, one is 
+that the
+arch don't have strict module rwx and the other reason is that 
+CONFIG_STRICT_MODULE_RWX
+is disabled. So I introduce CONFIG_ARCH_HAS_STRICT_MODULE_RWX #ifdef 
+block to
+distinguish this two cases.
 
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_byte_reg_read’:
-../drivers/base/regmap/regmap-i2c.c:25:2: error: implicit declaration of function ‘i2c_smbus_read_byte_data’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_byte_data(i2c, reg);
-  ^
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_byte_reg_write’:
-../drivers/base/regmap/regmap-i2c.c:43:2: error: implicit declaration of function ‘i2c_smbus_write_byte_data’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_byte_data(i2c, reg, val);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_reg_read’:
-../drivers/base/regmap/regmap-i2c.c:61:2: error: implicit declaration of function ‘i2c_smbus_read_word_data’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_word_data(i2c, reg);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_reg_write’:
-../drivers/base/regmap/regmap-i2c.c:79:2: error: implicit declaration of function ‘i2c_smbus_write_word_data’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_word_data(i2c, reg, val);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_read_swapped’:
-../drivers/base/regmap/regmap-i2c.c:97:2: error: implicit declaration of function ‘i2c_smbus_read_word_swapped’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_word_swapped(i2c, reg);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_write_swapped’:
-../drivers/base/regmap/regmap-i2c.c:115:2: error: implicit declaration of function ‘i2c_smbus_write_word_swapped’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_word_swapped(i2c, reg, val);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_write’:
-../drivers/base/regmap/regmap-i2c.c:129:2: error: implicit declaration of function ‘i2c_master_send’ [-Werror=implicit-function-declaration]
-  ret = i2c_master_send(i2c, data, count);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_gather_write’:
-../drivers/base/regmap/regmap-i2c.c:150:2: error: implicit declaration of function ‘i2c_check_functionality’ [-Werror=implicit-function-declaration]
-  if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_NOSTART))
-../drivers/base/regmap/regmap-i2c.c:163:2: error: implicit declaration of function ‘i2c_transfer’ [-Werror=implicit-function-declaration]
-  ret = i2c_transfer(i2c->adapter, xfer, 2);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_smbus_i2c_write’:
-../drivers/base/regmap/regmap-i2c.c:218:2: error: implicit declaration of function ‘i2c_smbus_write_i2c_block_data’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_i2c_block_data(i2c, ((u8 *)data)[0], count,
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_smbus_i2c_read’:
-../drivers/base/regmap/regmap-i2c.c:233:2: error: implicit declaration of function ‘i2c_smbus_read_i2c_block_data’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
+>
+> I do not have anything against it, although the nested #ifdef's are a
+> bit painful to read. But I could not find a better way to do it :/
+> It's awkward because we need module_enable_x() and frob_text()
+> regardless of of CONFIG_STRICT_MODULE_RWX for x86, but other arches
+> don't need to call module_enable_x(), they usually just call the empty 
+> stub.
+Yes, you are right.
+Actually, I was thinking moving all frob_* outside of 
+CONFIG_STRICT_MODULE_RWX,
+because they all should be regardless of of CONFIG_STRICT_MODULE_RWX. 
+But current
+only frob_next() is used, move other frob_* outside of 
+CONFIG_STRICT_MODULE_RWX
+will cause a compile warning if CONFIG_STRICT_MODULE_RWX is disabled, so 
+I left them
+in CONFIG_STRICT_MODULE_RWX.  We can move them outside of 
+CONFIG_STRICT_MODULE_RWX
+if they are used in future.
+>
+> But I think having the CONFIG_ARCH_HAS_STRICT_MODULE_RWX block is OK,
+> for the reason of limiting the scope of the calls rather than
+> blanketly calling frob_text() andd module_enable_x() for arches that
+> don't need to call them. Was that your reasoning as well?
+Yes,  it's my reasoning.
 
-../drivers/extcon/extcon-fsa9480.c: In function ‘fsa9480_module_init’:
-../drivers/extcon/extcon-fsa9480.c:383:2: error: implicit declaration of function ‘i2c_add_driver’ [-Werror=implicit-function-declaration]
-  return i2c_add_driver(&fsa9480_i2c_driver);
-../drivers/extcon/extcon-fsa9480.c: In function ‘fsa9480_module_exit’:
-../drivers/extcon/extcon-fsa9480.c:389:2: error: implicit declaration of function ‘i2c_del_driver’ [-Werror=implicit-function-declaration]
-  i2c_del_driver(&fsa9480_i2c_driver);
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
----
-Found in mmotm; applies to linux-next.
-
-To extcon maintainers:  there are a few more extcon driver Kconfig
-entries that seem to have this same problem of selecting REGMAP_I2C
-without checking that I2C is set/enabled.
-
- drivers/extcon/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- mmotm-2019-0625-1620.orig/drivers/extcon/Kconfig
-+++ mmotm-2019-0625-1620/drivers/extcon/Kconfig
-@@ -39,7 +39,7 @@ config EXTCON_AXP288
- 
- config EXTCON_FSA9480
- 	tristate "FSA9480 EXTCON Support"
--	depends on INPUT
-+	depends on INPUT && I2C
- 	select IRQ_DOMAIN
- 	select REGMAP_I2C
- 	help
+Thanks,
+Yang
+>
+> Thanks,
+>
+> Jessica
+>
+>
+>> /*
+>>  * LKM RO/NX protection: protect module's text/ro-data
+>>  * from modification and any data from execution.
+>> @@ -1898,6 +1898,7 @@ static void frob_text(const struct 
+>> module_layout *layout,
+>>            layout->text_size >> PAGE_SHIFT);
+>> }
+>>
+>> +#ifdef CONFIG_STRICT_MODULE_RWX
+>> static void frob_rodata(const struct module_layout *layout,
+>>             int (*set_memory)(unsigned long start, int num_pages))
+>> {
+>> @@ -2010,15 +2011,19 @@ void set_all_modules_text_ro(void)
+>>     }
+>>     mutex_unlock(&module_mutex);
+>> }
+>> -#else
+>> +#else /* !CONFIG_STRICT_MODULE_RWX */
+>> static void module_enable_nx(const struct module *mod) { }
+>> -#endif
+>> -
+>> +#endif /*  CONFIG_STRICT_MODULE_RWX */
+>> static void module_enable_x(const struct module *mod)
+>> {
+>>     frob_text(&mod->core_layout, set_memory_x);
+>>     frob_text(&mod->init_layout, set_memory_x);
+>> }
+>> +#else /* !CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
+>> +static void module_enable_nx(const struct module *mod) { }
+>> +static void module_enable_x(const struct module *mod) { }
+>> +#endif /* CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
+>> +
+>>
+>> #ifdef CONFIG_LIVEPATCH
+>> /*
+>> -- 
+>> 1.8.3
+>>
+>
+> .
+>
 
 
