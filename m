@@ -2,112 +2,78 @@ Return-Path: <SRS0=JB9f=U2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3150FC48BD7
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 13:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 341B6C48BD6
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 13:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7A32085A
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 13:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10C42208CB
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 13:29:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfF0NCe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 27 Jun 2019 09:02:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12758 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726431AbfF0NCe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:02:34 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RCx4Su018975
-        for <linux-next@vger.kernel.org>; Thu, 27 Jun 2019 09:02:33 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tcw0um388-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Thu, 27 Jun 2019 09:02:32 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 27 Jun 2019 14:02:30 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Jun 2019 14:02:26 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RD2PTH58589308
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 13:02:25 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B5EF6A4064;
-        Thu, 27 Jun 2019 13:02:25 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A5D16A406D;
-        Thu, 27 Jun 2019 13:02:24 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.82.20])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jun 2019 13:02:24 +0000 (GMT)
-Subject: Re: linux-next: Tree for Jun 26 (security/integrity/ima/)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
+        id S1726785AbfF0N3O convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 27 Jun 2019 09:29:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfF0N3O (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 27 Jun 2019 09:29:14 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F3C5A83F3C;
+        Thu, 27 Jun 2019 13:29:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 113C2600CC;
+        Thu, 27 Jun 2019 13:29:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1561640534.4101.124.camel@linux.ibm.com>
+References: <1561640534.4101.124.camel@linux.ibm.com> <20190626231617.1e858da3@canb.auug.org.au> <ee503bc1-a588-81f5-47e0-1762f590662f@infradead.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     dhowells@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-integrity@vger.kernel.org,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-security-module <linux-security-module@vger.kernel.org>
-Date:   Thu, 27 Jun 2019 09:02:14 -0400
-In-Reply-To: <ee503bc1-a588-81f5-47e0-1762f590662f@infradead.org>
-References: <20190626231617.1e858da3@canb.auug.org.au>
-         <ee503bc1-a588-81f5-47e0-1762f590662f@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062713-0012-0000-0000-0000032CEC7D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062713-0013-0000-0000-000021662A98
-Message-Id: <1561640534.4101.124.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906270152
+Subject: Re: linux-next: Tree for Jun 26 (security/integrity/ima/)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 27 Jun 2019 14:29:05 +0100
+Message-ID: <9446.1561642145@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 27 Jun 2019 13:29:14 +0000 (UTC)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-[Cc'ing David Howells]
+Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-On Wed, 2019-06-26 at 11:35 -0700, Randy Dunlap wrote:
-> On 6/26/19 6:16 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > The sparc64 builds are broken in this tree, sorry.
-> > 
-> > Changes since 20190625:
-> > 
+> >   CC      security/integrity/ima/ima_fs.o
+> > In file included from ../security/integrity/ima/ima.h:25:0,
+> >                  from ../security/integrity/ima/ima_fs.c:26:
+> > ../security/integrity/ima/../integrity.h:170:18: warning: ‘struct key_acl’ declared inside parameter list [enabled by default]
+> >            struct key_acl *acl)
+> >                   ^
+> > ../security/integrity/ima/../integrity.h:170:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
 > 
-> on x86_64:
-> 
-> 11 warnings like this one (in a randconfig build):
-> 
->   CC      security/integrity/ima/ima_fs.o
-> In file included from ../security/integrity/ima/ima.h:25:0,
->                  from ../security/integrity/ima/ima_fs.c:26:
-> ../security/integrity/ima/../integrity.h:170:18: warning: ‘struct key_acl’ declared inside parameter list [enabled by default]
->            struct key_acl *acl)
->                   ^
-> ../security/integrity/ima/../integrity.h:170:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+> David, CONFIG_INTEGRITY_SIGNATURE is dependent on KEYS being enabled,
+> but the stub functions are not.  There's now a dependency on
+> key_acl().
 
-David, CONFIG_INTEGRITY_SIGNATURE is dependent on KEYS being enabled,
-but the stub functions are not.  There's now a dependency on
-key_acl().
+I added a forward declaration for struct key_acl into
+security/integrity/integrity.h as you can see here:
 
-Mimi
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/diff/security/integrity/integrity.h?h=keys-acl&id=75ce113a1d56880e5abd37fa664ea9af399d2bcd
 
+which might not have made it into linux-next before you used it.
+
+David
