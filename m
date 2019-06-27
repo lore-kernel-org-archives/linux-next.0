@@ -2,107 +2,97 @@ Return-Path: <SRS0=JB9f=U2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFA3C48BD7
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 04:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6762DC48BD6
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 05:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1667720828
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 04:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3662020B1F
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 05:59:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qX8ruqVM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfF0EsF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 27 Jun 2019 00:48:05 -0400
-Received: from ozlabs.org ([203.11.71.1]:53313 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbfF0EsF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 27 Jun 2019 00:48:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Z6pW1Pl7z9sCJ;
-        Thu, 27 Jun 2019 14:48:02 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org
-Subject: Re: [PATCH] powerpc/64s/radix: Define arch_ioremap_p4d_supported()
-In-Reply-To: <1561555260-17335-1-git-send-email-anshuman.khandual@arm.com>
-References: <1561555260-17335-1-git-send-email-anshuman.khandual@arm.com>
-Date:   Thu, 27 Jun 2019 14:48:00 +1000
-Message-ID: <87d0iztz0f.fsf@concordia.ellerman.id.au>
+        id S1725787AbfF0F7F (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 27 Jun 2019 01:59:05 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39364 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfF0F7F (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2019 01:59:05 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5R5wiw6071608;
+        Thu, 27 Jun 2019 00:58:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561615124;
+        bh=JpTyLfC5naSgajqi/FjcBNEx9ClOWA9kiWZADHuBcq4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=qX8ruqVMYvwC4JFrEM1Gl5E6VxjVfOh1gsLjBjqm0fnn+8saHLS9sJ1rngUu4tSoy
+         aVyMRpk+cLuNkPBeN1ELkxif3n53RQUW87BxI+p9quYraObrYEBA2oUsPF6By62XVb
+         2A0XbZNGyCY6VttsMp3LI9AbH5GZwcPP8pV375Po=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5R5wi6D013628
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Jun 2019 00:58:44 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
+ Jun 2019 00:58:44 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 27 Jun 2019 00:58:44 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5R5wfEa086784;
+        Thu, 27 Jun 2019 00:58:42 -0500
+Subject: Re: linux-next: build warning after merge of the mfd tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Lee Jones <lee.jones@linaro.org>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <gustavo@embeddedor.com>, <keescook@chromium.org>
+References: <20190627151140.232a87e2@canb.auug.org.au>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <1b5aa183-6e33-ee15-4c65-5b4cdf7655af@ti.com>
+Date:   Thu, 27 Jun 2019 11:29:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190627151140.232a87e2@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Anshuman Khandual <anshuman.khandual@arm.com> writes:
-> Recent core ioremap changes require HAVE_ARCH_HUGE_VMAP subscribing archs
-> provide arch_ioremap_p4d_supported() failing which will result in a build
-> failure like the following.
->
-> ld: lib/ioremap.o: in function `.ioremap_huge_init':
-> ioremap.c:(.init.text+0x3c): undefined reference to
-> `.arch_ioremap_p4d_supported'
->
-> This defines a stub implementation for arch_ioremap_p4d_supported() keeping
-> it disabled for now to fix the build problem.
 
-The easiest option is for this to be folded into your patch that creates
-the requirement for arch_ioremap_p4d_supported().
 
-Andrew might do that for you, or you could send a v2.
+On 27/06/19 10:41 AM, Stephen Rothwell wrote:
+> Hi Lee,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> drivers/regulator/lp87565-regulator.c: In function 'lp87565_regulator_probe':
+> drivers/regulator/lp87565-regulator.c:182:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     max_idx = LP87565_BUCK_3210;
 
-This looks fine from a powerpc POV:
+Missed adding a break here. Can i send a patch on top of linux-next?
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-
-cheers
-
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-next@vger.kernel.org
->
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This has been just build tested and fixes the problem reported earlier.
->
->  arch/powerpc/mm/book3s64/radix_pgtable.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
-> index 8904aa1..c81da88 100644
-> --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-> +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-> @@ -1124,6 +1124,11 @@ void radix__ptep_modify_prot_commit(struct vm_area_struct *vma,
->  	set_pte_at(mm, addr, ptep, pte);
->  }
->  
-> +int __init arch_ioremap_p4d_supported(void)
-> +{
-> +	return 0;
-> +}
-> +
->  int __init arch_ioremap_pud_supported(void)
->  {
->  	/* HPT does not cope with large pages in the vmalloc area */
-> -- 
-> 2.7.4
+>     ~~~~~~~~^~~~~~~~~~~~~~~~~~~
+> drivers/regulator/lp87565-regulator.c:183:2: note: here
+>    default:
+>    ^~~~~~~
+> 
+> Introduced by commit
+> 
+>    7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
+> 
+> I get these warnings because I am building with -Wimplicit-fallthrough
+> in attempt to catch new additions early.  The gcc warning can be turned
+> off by adding a /* fall through */ comment at the point the fall through
+> happens (assuming that the fall through is intentional).
+> 
