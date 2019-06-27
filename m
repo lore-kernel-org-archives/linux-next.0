@@ -2,97 +2,101 @@ Return-Path: <SRS0=JB9f=U2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6762DC48BD6
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 05:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A16AC48BD6
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 08:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3662020B1F
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 05:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FAE920656
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 08:20:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qX8ruqVM"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kN7pKH35"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725787AbfF0F7F (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 27 Jun 2019 01:59:05 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39364 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfF0F7F (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2019 01:59:05 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5R5wiw6071608;
-        Thu, 27 Jun 2019 00:58:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561615124;
-        bh=JpTyLfC5naSgajqi/FjcBNEx9ClOWA9kiWZADHuBcq4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qX8ruqVMYvwC4JFrEM1Gl5E6VxjVfOh1gsLjBjqm0fnn+8saHLS9sJ1rngUu4tSoy
-         aVyMRpk+cLuNkPBeN1ELkxif3n53RQUW87BxI+p9quYraObrYEBA2oUsPF6By62XVb
-         2A0XbZNGyCY6VttsMp3LI9AbH5GZwcPP8pV375Po=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5R5wi6D013628
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Jun 2019 00:58:44 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
- Jun 2019 00:58:44 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 27 Jun 2019 00:58:44 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5R5wfEa086784;
-        Thu, 27 Jun 2019 00:58:42 -0500
-Subject: Re: linux-next: build warning after merge of the mfd tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Lee Jones <lee.jones@linaro.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726370AbfF0IUC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 27 Jun 2019 04:20:02 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:46633 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726539AbfF0IUC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 27 Jun 2019 04:20:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ZCW273B7z9sCJ;
+        Thu, 27 Jun 2019 18:19:58 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561623599;
+        bh=rZRtC35dTZyajk6qe/MkHpr18BsNPivaoNvodamU3es=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kN7pKH351+2ozC5lN9t3EmBwPHPwerYQ6h+cdluz8Xp+JIIudCEBKRiQXvsDUyPLt
+         bF7nD876FtfGil265PkznvXiNwsYCUOVwZpc1DTmJ3+fQW2EH1OT4NCGxPv/nV9BBV
+         mEYrkNJXh0EgZ3Pp+2V1jN3kE5Br6aH+nOvXeN+JwHyfu5KtFIynwqawWBlSX6ecua
+         6jFdNGLBF2ISwE14wREbp7Sce9nwaASx6Khc6bWu6HLtRNxsi0/UBLf5t0bZvBVlU2
+         U9J8L1HlXCpOzvlHGjmmbB/gPoyL7Ttjuv01Dk/AbMiUIe6IWqVucS84GM2JSCH3E8
+         kdJVTV2NxO8mg==
+Date:   Thu, 27 Jun 2019 18:19:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <gustavo@embeddedor.com>, <keescook@chromium.org>
-References: <20190627151140.232a87e2@canb.auug.org.au>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <1b5aa183-6e33-ee15-4c65-5b4cdf7655af@ti.com>
-Date:   Thu, 27 Jun 2019 11:29:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Enrico Weigelt <info@metux.net>
+Subject: linux-next: build warning after merge of the gpio tree
+Message-ID: <20190627181941.1222cb9c@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190627151140.232a87e2@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eYESiSBjIFD9pDcUJ1F12Ae"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/eYESiSBjIFD9pDcUJ1F12Ae
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 27/06/19 10:41 AM, Stephen Rothwell wrote:
-> Hi Lee,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/regulator/lp87565-regulator.c: In function 'lp87565_regulator_probe':
-> drivers/regulator/lp87565-regulator.c:182:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
->     max_idx = LP87565_BUCK_3210;
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Missed adding a break here. Can i send a patch on top of linux-next?
+drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
+drivers/gpio/gpio-amd-fch.c:171:49: warning: passing argument 2 of 'devm_io=
+remap_resource' discards 'const' qualifier from pointer target type [-Wdisc=
+arded-qualifiers]
+  priv->base =3D devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
+                                                 ^~~~~~~~~~~~~~~~~~~
+In file included from include/linux/platform_device.h:13,
+                 from drivers/gpio/gpio-amd-fch.c:15:
+include/linux/device.h:708:15: note: expected 'struct resource *' but argum=
+ent is of type 'const struct resource *'
+ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *r=
+es);
+               ^~~~~~~~~~~~~~~~~~~~~
 
->     ~~~~~~~~^~~~~~~~~~~~~~~~~~~
-> drivers/regulator/lp87565-regulator.c:183:2: note: here
->    default:
->    ^~~~~~~
-> 
-> Introduced by commit
-> 
->    7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
-> 
-> I get these warnings because I am building with -Wimplicit-fallthrough
-> in attempt to catch new additions early.  The gcc warning can be turned
-> off by adding a /* fall through */ comment at the point the fall through
-> happens (assuming that the fall through is intentional).
-> 
+Introduced by commit
+
+  9bb2e0452508 ("gpio: amd: Make resource struct const")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eYESiSBjIFD9pDcUJ1F12Ae
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0UfB0ACgkQAVBC80lX
+0GyfjQgAoEvg0Gzp0+SpBdL3yMOkzOo2TBUKKUnT6EGAyI4CeKwWEQx0jBGYTZop
+EOOVwSOcTZm/t3fr1hajF2rgmpFbtQOd9T0BcphNjKrUV6bPbY4cIF1U8yxTuHuk
+KviR1OrmMHQw7muu2PvsUveBAyPDJY6TCYh0T4xfFS0NWfgc9X8YBXqjGSHVzViG
+AsVvJHxNzTzZNhoC6HesyGUi9x79jNRfhdtLmyYsLWN3qySjV3shSvmMpHOfkAUp
+K+APHXrEYzFWJg4jG+NqO1Br7vDA/gWYDuyCiKg12KdhXBUomKj5kU5ivCf5rxD/
+TvMllhRlJ2jvZ85OiyUAewz6UrNIiQ==
+=sWCI
+-----END PGP SIGNATURE-----
+
+--Sig_/eYESiSBjIFD9pDcUJ1F12Ae--
