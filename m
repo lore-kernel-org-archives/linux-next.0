@@ -2,73 +2,128 @@ Return-Path: <SRS0=JB9f=U2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4717AC48BD3
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 00:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620F4C48BD3
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 01:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E071208E3
-	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 00:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561596229;
-	bh=cfCOpi8KsQzsG8pIhY5vKFm9xYtkwvLnUKwVstIjLbU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=a7oGPfQQgrhH/8s8w7UUde5OozxO6ALujK0PPZmd4T4pzKR8gqbbmLlAnkMJYJ3dX
-	 1n0yXoB6yNOET7npB2bxFQYqno8lv+jepYGiCkGkUZthPCyVE1GeLt9latAfPjp37B
-	 3/ErqsHL/wjdM0R04t5o5Y17v7itg5q4Hmg7qEoc=
+	by mail.kernel.org (Postfix) with ESMTP id 33ADE217D9
+	for <linux-next@archiver.kernel.org>; Thu, 27 Jun 2019 01:45:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h6+/Ds+T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbfF0Ann (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 26 Jun 2019 20:43:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47452 "EHLO mail.kernel.org"
+        id S1726687AbfF0Bpk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 26 Jun 2019 21:45:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:57969 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbfF0An3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:43:29 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726677AbfF0Bpk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:45:40 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 664F4216E3;
-        Thu, 27 Jun 2019 00:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561596208;
-        bh=cfCOpi8KsQzsG8pIhY5vKFm9xYtkwvLnUKwVstIjLbU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZxLM1pZtWw3JP1mhbpjvsyHwqEeWoayVJ0zvyaXInB8J3qrVntyVUbckL4tYWyarZ
-         PRu/eXYmti7j69c+jKkxxGsoieAxUAaUPMWGPrU72owfIQ/0Rf4vQ52sbexEx8umKO
-         lKtP+Nivz5GJUS/xvtoR+cUAhkSK56fUkfQ/GrRE=
-Date:   Wed, 26 Jun 2019 17:43:27 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Z2m11dlfz9sCJ;
+        Thu, 27 Jun 2019 11:45:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561599937;
+        bh=81FSZHDgH28AVa4MeUVlcelNCGqVcxfM0/bSKVPs9ec=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=h6+/Ds+TV3xmRNYImuUdT8vJq7WYBxOZVqat7KMasdshUkVhYP6Mapcw1iGwtttl9
+         IEYP6fTawKj6m46pzDEkYqfhRV5hawe8mTorcHW6TMUOQBQvVxgcB4j/wgCtSolYl4
+         //aSKfuFp3IvxovjgNtCskC55wxzqKQ6ssuVJO8Jff6uD6SBTiYg9NhW8N2ad8qdCd
+         rRPFB0C2IHv7EX8W9ftWPYTl8OZK0hKiVTY5Uhn8lzgvwz+S/WA+Dtd/o9IiocToTh
+         7U4rq0276UHtgNQ7ixHzbr3K4hyF6Iqbqn4O/uud0TQIn0hxu3WTBFxDbOK8l92vvb
+         cA2bGr4/wI/8A==
+Date:   Thu, 27 Jun 2019 11:45:36 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the f2fs tree
-Message-ID: <20190627004327.GA43824@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190627095522.457b7511@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the bpf tree
+Message-ID: <20190627114536.09c08f5d@canb.auug.org.au>
+In-Reply-To: <CAADnVQJiMH=jfuD0FGpr2JmzyQsMKHJ4pM1kfQ8jhSxrAe0XWg@mail.gmail.com>
+References: <20190627080521.5df8ccfc@canb.auug.org.au>
+        <20190626221347.GA17762@tower.DHCP.thefacebook.com>
+        <CAADnVQJiMH=jfuD0FGpr2JmzyQsMKHJ4pM1kfQ8jhSxrAe0XWg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627095522.457b7511@canb.auug.org.au>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7u90A+dZmO=x5m+8WaV.bo8"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 06/27, Stephen Rothwell wrote:
-> Hi Jaegeuk,
-> 
-> Commit
-> 
->   dfc06c892ea3 ("f2fs: fix is_idle() check for discard type")
-> 
-> is missing a Signed-off-by from its committer.
+--Sig_/7u90A+dZmO=x5m+8WaV.bo8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. I've added and uploaded it.
+Hi all,
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+On Wed, 26 Jun 2019 16:36:50 -0700 Alexei Starovoitov <alexei.starovoitov@g=
+mail.com> wrote:
+>
+> On Wed, Jun 26, 2019 at 3:14 PM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > On Thu, Jun 27, 2019 at 08:05:21AM +1000, Stephen Rothwell wrote: =20
+> > >
+> > > In commit
+> > >
+> > >   12771345a467 ("bpf: fix cgroup bpf release synchronization")
+> > >
+> > > Fixes tag
+> > >
+> > >   Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from
+> > >
+> > > has these problem(s):
+> > >
+> > >   - Subject has leading but no trailing parentheses
+> > >   - Subject has leading but no trailing quotes
+> > >
+> > > Please don't split Fixes tags across more than one line. =20
+> >
+> > Oops, sorry.
+> >
+> > Alexei, can you fix this in place?
+> > Or should I send an updated version? =20
+>=20
+> I cannot easily do it since -p and --signoff are incompatible flags.
+> I need to use -p to preserve merge commits,
+> but I also need to use --signoff to add my sob to all
+> other commits that were committed by Daniel
+> after your commit.
+>=20
+> Daniel, can you fix Roman's patch instead?
+> you can do:
+> git rebase -i -p  12771345a467^
+> fix Roman's, add you sob only to that one
+> and re-push the whole thing.
 
+It's probably not worth fixing, just use this as a learning
+experience ...
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7u90A+dZmO=x5m+8WaV.bo8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0UH8AACgkQAVBC80lX
+0GzJ0Qf/ajJwCOWDbYQEf7IpMsA/fgyGl9ocfvMMJxPvVBl7p1ApAgXv+BVbkewh
+hxEHSEMikoY3UYzkb5B8yz7EtRbh10h8a9trdmlmWW3mKqNSp5H3CjMkJUJDz6Ob
+HQ6h+iiijHozutoa65mVPa5GkKwR00cuY0dvu/trghiSgx2wGWkaq8rhYPezIbTw
+P/zWzYrg2T+Hdll7+KDVEizhb40JhQIM8gycHr+lR7srsKEJ1kj6mSm2rJQbJDVS
+HQDKmbV65WawDlw1jkdfM1OIVB3PcvvfpKjZFHfURQ5sy+zBFSD40sdpMQEkF71O
+wkx/IoqyGQlzuHi9KR8DbbrJPFtbbw==
+=3WPY
+-----END PGP SIGNATURE-----
+
+--Sig_/7u90A+dZmO=x5m+8WaV.bo8--
