@@ -2,110 +2,86 @@ Return-Path: <SRS0=YJ6U=U3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDA2C4321A
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 03:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8284C5B579
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 03:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42412214AF
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 03:38:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnAq9wWe"
+	by mail.kernel.org (Postfix) with ESMTP id 95E632147A
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 03:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfF1DiO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 27 Jun 2019 23:38:14 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33443 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfF1DiM (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2019 23:38:12 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y17so3008351lfe.0
-        for <linux-next@vger.kernel.org>; Thu, 27 Jun 2019 20:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PFAR1VyfRz8u+8JtXBWHxsN9qbzCO9vgXJys4jNPevE=;
-        b=DnAq9wWeUF4/tJ3xd3/E9iDEp59E1DKVpfYYqcNoRE5ld6ONQQVSXKRfVv8MwTIztr
-         pPKNz/8t16wutRg1tu9CGKqaTYhkfLeZbJQ3bd79Z32xN8k+MblNR37mKCk4OutG7fRr
-         23GdKdtowzQcjVaKAHLqU3KZ2UrpmnLSAtCH7ubUagYI1/yuOcw6IjNQAjb+ksr1tMrT
-         SmvrYAemTbPAKMKM3x3S9NFI//CpXPF6AnmQybzEoLJmFdOEyKR1K9kQepsLBUNc/DJN
-         weCD9AuNxwE9DoKFa9ZVOt/s8+oeDOdkMlQjZAdy6nkwsSf7EEvSQFbkCQb1XaOOmhEb
-         Sdtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PFAR1VyfRz8u+8JtXBWHxsN9qbzCO9vgXJys4jNPevE=;
-        b=tEWMD7IkGTo3Gj2d1DG56xPfTg9xToLMRV+XJyGl/8oog0Ec7lDYW2L4VE4VIRT6Qc
-         LuTyaSrzJRO63hzMfOmonOPb9+qQZEVf6llJ+UUuqPweL/GliTRNMk+CFu7PQTqg4H7j
-         d2b45AcfjqiPrVedX1KvMndr2ARhyj7pGouqhXc1rLLoIt73RCs7ZKVF8cv6ECP9AzmW
-         jSPexmHN7vHHzFhi3An/x7BK+szSOkUBkUwJ8WsfJ+9RyoXBPohrDt2fQu9bz4PNiUgP
-         /htN5SXByQ9r6r3VETflx0q9VJ4we1B71kziteAfk2uTyfOLqnFfrbUejInXcaCBpFqu
-         kYmQ==
-X-Gm-Message-State: APjAAAW1D78HOTSQy+HSBXX8IBA+xrDETC2bRv2fM4fE/ep5HZ3h2x0N
-        3udR+uYNm5b9bBEEQDWQiDHBOgZb7WLy68xHAEYuow==
-X-Google-Smtp-Source: APXvYqzx4zeAdw9gJozkJfqZ8idmtP4uO628k0/UGSICcNueyN6ahlH9h046vJEG/h4JYKM/NJ/Oulviun3B640f9P0=
-X-Received: by 2002:a19:ed07:: with SMTP id y7mr3996030lfy.56.1561693089958;
- Thu, 27 Jun 2019 20:38:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190508173403.6088d0db@canb.auug.org.au> <fa0e68b2-b839-b187-150c-13391c197b99@infradead.org>
- <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com>
- <CACK8Z6F2v8nyUYcnOrkp81WfK2D2NEmK=pcWybn1annrtqRwew@mail.gmail.com> <CAHp75Ver=TNKxh8rdJs1xQYSLNsRLfEoFtcGG6hViug=cF6s_g@mail.gmail.com>
-In-Reply-To: <CAHp75Ver=TNKxh8rdJs1xQYSLNsRLfEoFtcGG6hViug=cF6s_g@mail.gmail.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Thu, 27 Jun 2019 20:37:33 -0700
-Message-ID: <CACK8Z6FN62e041-dwri6S+-34wSOxSsTAPjRmSw44uVJhtRz-A@mail.gmail.com>
-Subject: Re: linux-next: Tree for May 8 (drivers/platform/x86/intel_pmc_core_plat_drv.c)
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        id S1727148AbfF1Do0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 27 Jun 2019 23:44:26 -0400
+Received: from foss.arm.com ([217.140.110.172]:39698 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbfF1DoZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:44:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC1A92B;
+        Thu, 27 Jun 2019 20:44:24 -0700 (PDT)
+Received: from [10.162.40.144] (p8cg001049571a15.blr.arm.com [10.162.40.144])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BE923F706;
+        Thu, 27 Jun 2019 20:44:20 -0700 (PDT)
+Subject: Re: [PATCH] powerpc/64s/radix: Define arch_ioremap_p4d_supported()
+To:     Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Vishwanath Somayaji <vishwanath.somayaji@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+References: <1561555260-17335-1-git-send-email-anshuman.khandual@arm.com>
+ <87d0iztz0f.fsf@concordia.ellerman.id.au>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <6d201cb8-4c39-b7ea-84e6-f84607cc8b4f@arm.com>
+Date:   Fri, 28 Jun 2019 09:14:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <87d0iztz0f.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Andy,
 
-On Tue, Jun 11, 2019 at 12:06 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Thu, May 9, 2019 at 2:15 AM Rajat Jain <rajatja@google.com> wrote:
->
-> > OK, NP. Just to be sure I understand,
-> >
-> > 1) Please let me know if I should send in a fix (it would be
-> > #include/linux/module.h and also add MODULE_LICENSE() I believe)?
-> > 2) Would this be lined up for next version though?
->
-> Resend a complete series based on the latest stuff we have in our
-> for-next branch.
 
-My apologies for the delay in resending. I just sent a v7 of the patch
-that was dropped:
-https://lkml.org/lkml/2019/6/27/1264
+On 06/27/2019 10:18 AM, Michael Ellerman wrote:
+> Anshuman Khandual <anshuman.khandual@arm.com> writes:
+>> Recent core ioremap changes require HAVE_ARCH_HUGE_VMAP subscribing archs
+>> provide arch_ioremap_p4d_supported() failing which will result in a build
+>> failure like the following.
+>>
+>> ld: lib/ioremap.o: in function `.ioremap_huge_init':
+>> ioremap.c:(.init.text+0x3c): undefined reference to
+>> `.arch_ioremap_p4d_supported'
+>>
+>> This defines a stub implementation for arch_ioremap_p4d_supported() keeping
+>> it disabled for now to fix the build problem.
+> 
+> The easiest option is for this to be folded into your patch that creates
+> the requirement for arch_ioremap_p4d_supported().
+> 
+> Andrew might do that for you, or you could send a v2.
+> 
+> This looks fine from a powerpc POV:
+> 
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+> 
+> cheers
 
-Only 2 changes from the v6:
+Hello Stephen/Michael/Andrew,
 
-#include <linux/module.h>
+On linux-next (next-20190627) this change has already been applied though a
+merge commit 153083a99fe431 ("Merge branch 'akpm-current/current'"). So we
+are good on this ? Or shall I send out a V2 for the original patch. Please
+suggest. Thank you.
 
-and
-
-MODULE_LICENSE()
-
-Thanks & Best Regards,
-
-Rajat
-
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+- Anshuman
