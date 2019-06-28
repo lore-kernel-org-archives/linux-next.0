@@ -2,100 +2,1705 @@ Return-Path: <SRS0=YJ6U=U3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EF2C4321A
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 16:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBFBC4321A
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 17:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49766215EA
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 16:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E192086D
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 17:31:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="qzM5fdc9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbfF1Q5C (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 28 Jun 2019 12:57:02 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57278 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbfF1Q5C (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2019 12:57:02 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 24204260E01
-Subject: Re: linux-next: build failure after merge of the battery tree
-To:     Sebastian Reichel <sre@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Crews <ncrews@chromium.org>
-References: <20190628140304.76caf572@canb.auug.org.au>
- <20190628153146.c2lh4y55qvcmqhry@earth.universe>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <d3515009-c922-7aa6-2ded-4ca39ed324f2@collabora.com>
-Date:   Fri, 28 Jun 2019 18:56:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726586AbfF1Rba (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 28 Jun 2019 13:31:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35431 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbfF1Rba (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2019 13:31:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f15so7134206wrp.2
+        for <linux-next@vger.kernel.org>; Fri, 28 Jun 2019 10:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=ITKqQw+FBjFI0bz/HdYKNfLw9PhAxMfw2AxKGia4Kb4=;
+        b=qzM5fdc9XsUocxUdplxHaYY5roxe+NcPbeYq2J7pwjGvXHKnYE5FEXX01Nw8gnIRRw
+         FAmii7ZYcYWoV3C74X4dvh+Gkl/6QtJc0+/l/xuoqoaSCGTqYHOYWy/q+KSHabMTXlOg
+         lK3uF9T+3rsuTySw/yhpSWZIWTacawMwKXYH0xLci7zMxBpXfvoqTkQETdUJNiBqCJ1o
+         NicniHC0kjwg7kWXz73VTaTVLCTVigL6uNY5+wAqEPsL2dx6L9E0QKzC7or1gCiVORLG
+         /Ugcp7W1NlT1bvh5peL7qvpBdUBOZDTSAORAMi1U8q/7aWlwQJLFEm56GZgWFl3geHf6
+         pNCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=ITKqQw+FBjFI0bz/HdYKNfLw9PhAxMfw2AxKGia4Kb4=;
+        b=Oy3fC0+VhMwFr4QRKHR3c0/C+WT3dH970jduDfzd/zmU7Afv+RxuHebVvcCLa6gbn+
+         bkTw5LkljQz8PsRpMkCnz2mhYxZiILQtSHqe9OkNJMIr/JUr/g+UasFsHRcYfnU2u+NR
+         fe9Nx7aEphAWzccsnbNXHaW3xq0n/nrm36++KYk9af9p4I5Vzu77G5TF7UIPqQfBdlvu
+         5UxdW+iAUAoCbuGjuN597QGV4tvh/7wUouH0iQs5262t3TbqddJtagIdRbYTalak+9nB
+         n77L2/OoSKHKbI14XeFE1wneXmpfnw7jAhfBOpAVmSC0gTqGJB57jEu7siwiK1MEH6Sd
+         VpHg==
+X-Gm-Message-State: APjAAAUpvSv+imVSgsxr5E+BOuxr1mADB6EY5SM0Bi3RZiPX0dOnxOwB
+        vIzV3ufjzLjCCTaI2WUOPuKAArShuYhOtA==
+X-Google-Smtp-Source: APXvYqxaCDUPSO70AD0OjoR43FJOitVabIC65/eCWQpiyR74NrobKY0PEpgnLSfCT7JatziWKFmwvw==
+X-Received: by 2002:adf:afe8:: with SMTP id y40mr8233956wrd.328.1561743084373;
+        Fri, 28 Jun 2019 10:31:24 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id e11sm5676185wrc.9.2019.06.28.10.31.23
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 10:31:23 -0700 (PDT)
+Message-ID: <5d164eeb.1c69fb81.120e0.21ee@mx.google.com>
+Date:   Fri, 28 Jun 2019 10:31:23 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190628153146.c2lh4y55qvcmqhry@earth.universe>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: build
+X-Kernelci-Kernel: v5.2-rc6-190-gd8fb83281cfd
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+Subject: next/pending-fixes build: 223 builds: 0 failed, 223 passed,
+ 121 warnings (v5.2-rc6-190-gd8fb83281cfd)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi,
+next/pending-fixes build: 223 builds: 0 failed, 223 passed, 121 warnings (v=
+5.2-rc6-190-gd8fb83281cfd)
 
-On 28/6/19 17:31, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Fri, Jun 28, 2019 at 02:03:04PM +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the battery tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/power/supply/wilco-charger.c: In function 'wilco_charge_get_property':
->> drivers/power/supply/wilco-charger.c:104:8: error: implicit declaration of function 'wilco_ec_get_byte_property'; did you mean 'wilco_charge_get_property'? [-Werror=implicit-function-declaration]
->>   ret = wilco_ec_get_byte_property(ec, property_id, &raw);
->>         ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>         wilco_charge_get_property
->> drivers/power/supply/wilco-charger.c: In function 'wilco_charge_set_property':
->> drivers/power/supply/wilco-charger.c:130:10: error: implicit declaration of function 'wilco_ec_set_byte_property'; did you mean 'wilco_charge_set_property'? [-Werror=implicit-function-declaration]
->>    return wilco_ec_set_byte_property(ec, PID_CHARGE_MODE, mode);
->>           ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>           wilco_charge_set_property
->>
->> Caused by commit
->>
->>   0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
->>
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.2-rc6-190-gd8fb83281cfd/
 
-Hmm, I just applied this patch on top of linux-next and it build with
-allmodconfig on x86_64
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.2-rc6-190-gd8fb83281cfd
+Git Commit: d8fb83281cfd7506390190a416beeac4c8f66833
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Built: 7 unique architectures
 
-I am wondering if the build was done without this commit, which is in
-chrome-platform for-next branch. Could be this the problem?
+Warnings Detected:
 
-commit 0c0b7ea23aed0b55ef2f9803f13ddaae1943713d
-Author: Nick Crews <ncrews@chromium.org>
-Date:   Wed Apr 24 10:56:50 2019 -0600
+arc:
+    vdk_hs38_defconfig (gcc-8): 1 warning
+    vdk_hs38_smp_defconfig (gcc-8): 1 warning
 
-    platform/chrome: wilco_ec: Add property helper library
+arm64:
+    allmodconfig (gcc-8): 48 warnings
 
+arm:
+    integrator_defconfig (gcc-8): 2 warnings
+    multi_v4t_defconfig (gcc-8): 2 warnings
+    multi_v5_defconfig (gcc-8): 2 warnings
+    realview_defconfig (gcc-8): 2 warnings
+    s3c6400_defconfig (gcc-8): 2 warnings
+    u300_defconfig (gcc-8): 2 warnings
 
-Anyway, I think the proper way to do it is create an immutable branch for
-Sebastian as the patch he picked depends on the above commit. I'll create one,
-sorry about that missing dependency.
+i386:
 
-Thanks,
-~ Enric
+mips:
+    db1xxx_defconfig (gcc-8): 1 warning
+    malta_qemu_32r6_defconfig (gcc-8): 1 warning
+    rb532_defconfig (gcc-8): 1 warning
+
+riscv:
+    rv32_defconfig (gcc-8): 4 warnings
+
+x86_64:
+    allmodconfig (gcc-8): 51 warnings
+    tinyconfig (gcc-8): 1 warning
 
 
->> I have reverted that commit for today.
-> 
-> Oops, thanks for the hint. I did not notice this with ARM
-> allmodconfig. I dropped the patch for this cycle.
-> 
-> -- Sebastian
-> 
+Warnings summary:
+
+    10   warning: same module names found:
+    6    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-W=
+unused-variable]
+    6    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-W=
+unused-variable]
+    2    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: wa=
+rning: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larg=
+er-than=3D]
+    2    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame s=
+ize of 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame s=
+ize of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame s=
+ize of 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame=
+ size of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size o=
+f 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    arch/arc/kernel/unwind.c:184:14: warning: 'unw_hdr_alloc' defined =
+but not used [-Wunused-function]
+    2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
+-Wcpp]
+    2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
+d [-Wcpp]
+    1    {standard input}:131: Warning: macro instruction expanded into mul=
+tiple instructions
+    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 byt=
+es is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 b=
+ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 b=
+ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: =
+call to stackleak_track_stack() with UACCESS enabled
+    1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2616 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is =
+larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 =
+bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 =
+bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/dir.c:3080:1: warning: the frame size of 2056 bytes is la=
+rger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is l=
+arger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is l=
+arger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitial=
+ized in this function [-Wmaybe-uninitialized]
+    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
+he frame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=
+=3D]
+    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
+he frame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=
+=3D]
+    1    drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the =
+frame size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the=
+ frame size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
+:1: warning: the frame size of 2528 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
+:1: warning: the frame size of 2440 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
+:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
+:1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
+:1: warning: the frame size of 3168 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
+:1: warning: the frame size of 3152 bytes is larger than 2048 bytes [-Wfram=
+e-larger-than=3D]
+    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
+me size of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
+me size of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/mtd/nand/raw/au1550nd.c:443:57: warning: pointer type mism=
+atch in conditional expression
+    1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
+48 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
+40 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the fra=
+me size of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the fra=
+me size of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968=
+ bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952=
+ bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096=
+ bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame s=
+ize of 2104 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame s=
+ize of 2808 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame s=
+ize of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame s=
+ize of 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame s=
+ize of 5880 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame s=
+ize of 2328 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame s=
+ize of 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame s=
+ize of 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame s=
+ize of 2568 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame s=
+ize of 3288 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame s=
+ize of 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame s=
+ize of 3016 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame s=
+ize of 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame s=
+ize of 5320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame s=
+ize of 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame s=
+ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame s=
+ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame s=
+ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame s=
+ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
+ size of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
+ size of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable '=
+i' [-Wunused-variable]
+    1    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable =
+'i' [-Wunused-variable]
+    1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
+frame size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
+frame size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable 'info=
+' [-Wunused-variable]
+    1    arch/x86/kvm/x86.c:4296:1: warning: the frame size of 2168 bytes i=
+s larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2=
+856 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnin=
+gs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+acs5k_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+acs5k_tiny_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 48 warnings, 0 sectio=
+n mismatches
+
+Warnings:
+    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitialized =
+in this function [-Wmaybe-uninitialized]
+    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 bytes i=
+s larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 bytes =
+is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 bytes=
+ is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is larger=
+ than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [=
+-Wunused-variable]
+    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-=
+Wunused-variable]
+    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
+ size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
+0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
+f 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
+f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
+f 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
+f 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
+f 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
+f 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
+f 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
+f 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
+f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
+f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
+ of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
+ of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
+ze of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2848 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
+arning: the frame size of 3168 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
+arning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
+arning: the frame size of 2528 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
+ze of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
+: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
+an=3D]
+    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
+ame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 51 warnings, 0 secti=
+on mismatches
+
+Warnings:
+    arch/x86/kvm/x86.c:4296:1: warning: the frame size of 2168 bytes is lar=
+ger than 2048 bytes [-Wframe-larger-than=3D]
+    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2856 b=
+ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 bytes=
+ is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is larger=
+ than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/dir.c:3080:1: warning: the frame size of 2056 bytes is larger =
+than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2616 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 bytes i=
+s larger than 2048 bytes [-Wframe-larger-than=3D]
+    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: call =
+to stackleak_track_stack() with UACCESS enabled
+    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 bytes =
+is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
+ size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
+0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
+f 3016 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
+f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
+f 2328 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
+f 2104 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
+f 3288 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
+f 5320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
+f 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
+f 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
+f 2808 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
+f 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
+f 2568 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
+f 5880 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
+f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
+f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
+ of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
+ of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
+ze of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2840 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
+arning: the frame size of 3152 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
+arning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
+arning: the frame size of 2440 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
+: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
+an=3D]
+    drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the fram=
+e size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the frame=
+ size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
+ze of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
+ame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+    warning: same module names found:
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+assabet_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+at91_dt_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axs103_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+axs103_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+badge4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cerfcube_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+clps711x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x2xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cns3420vb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    drivers/mtd/nand/raw/au1550nd.c:443:57: warning: pointer type mismatch =
+in conditional expression
+
+---------------------------------------------------------------------------=
+-----
+decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
+, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
+, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+kselftest (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+kselftest (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+ebsa110_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+efm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+em_x270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ep93xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+exynos_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ezx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+footbridge_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+gemini_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+hisi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+hsdk_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig+kselftest (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+imote2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v4_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
+d-variable]
+    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
+d-variable]
+
+---------------------------------------------------------------------------=
+-----
+iop13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop32x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop33x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ks8695_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+lart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson3_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc18xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc32xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpd270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+lubbock_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mainstone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warning=
+s, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning=
+, 0 section mismatches
+
+Warnings:
+    {standard input}:131: Warning: macro instruction expanded into multiple=
+ instructions
+
+---------------------------------------------------------------------------=
+-----
+maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+milbeaut_m10v_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+mmp2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+moxart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mps2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
+ction mismatches
+
+Warnings:
+    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
+d-variable]
+    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
+d-variable]
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+tion mismatches
+
+Warnings:
+    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
+d-variable]
+    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
+d-variable]
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm, gcc-8) =E2=80=94 PASS, 0=
+ errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
+=94 PASS, 0 errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 =
+warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warni=
+ngs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+mv78xx0_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+neponset_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+netx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+nhk8815_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsim_hs_defconfig+kselftest (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnin=
+gs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsim_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsimosci_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsimosci_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc950_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc960_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap1_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+oxnas_v6_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+palmz72_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pcm027_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+prima2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa168_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable 'info' [-W=
+unused-variable]
+
+---------------------------------------------------------------------------=
+-----
+rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+tion mismatches
+
+Warnings:
+    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
+d-variable]
+    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
+d-variable]
+
+---------------------------------------------------------------------------=
+-----
+rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+rpc_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rv32_defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 4 warnings, 0 secti=
+on mismatches
+
+Warnings:
+    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
+    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
+cpp]
+    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
+    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
+cpp]
+
+---------------------------------------------------------------------------=
+-----
+s3c2410_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
+d-variable]
+    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
+d-variable]
+
+---------------------------------------------------------------------------=
+-----
+s5pv210_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+sama5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+shannon_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+shmobile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+socfpga_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spitz_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+tango4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+tegra_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+ismatches
+
+Warnings:
+    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mis=
+matches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mis=
+matches
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+ mismatches
+
+Warnings:
+    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
+d-variable]
+    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
+d-variable]
+
+---------------------------------------------------------------------------=
+-----
+u8500_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+vdk_hs38_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    arch/arc/kernel/unwind.c:184:14: warning: 'unw_hdr_alloc' defined but n=
+ot used [-Wunused-function]
+
+---------------------------------------------------------------------------=
+-----
+vdk_hs38_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
+section mismatches
+
+Warnings:
+    arch/arc/kernel/unwind.c:184:14: warning: 'unw_hdr_alloc' defined but n=
+ot used [-Wunused-function]
+
+---------------------------------------------------------------------------=
+-----
+versatile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+vf610m4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+viper_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+kselftest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warn=
+ings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+xcep_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+zeus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+zx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---
+For more info write to <info@kernelci.org>
