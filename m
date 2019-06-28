@@ -2,69 +2,70 @@ Return-Path: <SRS0=YJ6U=U3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBFBC4321A
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 17:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F069C4321A
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 18:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E192086D
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 17:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96993205F4
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 18:18:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="qzM5fdc9"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="jvo7+RdP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfF1Rba (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 28 Jun 2019 13:31:30 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35431 "EHLO
+        id S1725783AbfF1SSV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 28 Jun 2019 14:18:21 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32859 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfF1Rba (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2019 13:31:30 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f15so7134206wrp.2
-        for <linux-next@vger.kernel.org>; Fri, 28 Jun 2019 10:31:26 -0700 (PDT)
+        with ESMTP id S1726056AbfF1SSV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2019 14:18:21 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n9so7262462wru.0
+        for <linux-next@vger.kernel.org>; Fri, 28 Jun 2019 11:18:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=ITKqQw+FBjFI0bz/HdYKNfLw9PhAxMfw2AxKGia4Kb4=;
-        b=qzM5fdc9XsUocxUdplxHaYY5roxe+NcPbeYq2J7pwjGvXHKnYE5FEXX01Nw8gnIRRw
-         FAmii7ZYcYWoV3C74X4dvh+Gkl/6QtJc0+/l/xuoqoaSCGTqYHOYWy/q+KSHabMTXlOg
-         lK3uF9T+3rsuTySw/yhpSWZIWTacawMwKXYH0xLci7zMxBpXfvoqTkQETdUJNiBqCJ1o
-         NicniHC0kjwg7kWXz73VTaTVLCTVigL6uNY5+wAqEPsL2dx6L9E0QKzC7or1gCiVORLG
-         /Ugcp7W1NlT1bvh5peL7qvpBdUBOZDTSAORAMi1U8q/7aWlwQJLFEm56GZgWFl3geHf6
-         pNCA==
+        bh=LVJ9Z9qRBJ2e5bC1c44PzcYtnDPeUHUINt1MeRk5Enc=;
+        b=jvo7+RdP66FrzVKahYo1NrDMJE1Y3MtDDAHemlSZOcoSMkY/gzgAqE8Eu5ejP60cRT
+         /waj2ucqrQRDBbOtKWCqu47tRadf1Tgiap63p+Y4MYqht75q4HFCMJ1J7wIRwDLB2qx3
+         GDX2SrpcDzqIa5y8rfmIqg451fStjsKWmF1LH56hEXu7dUthXUtcrCjrsKWd0zjwD2xp
+         QZjNEAzxfGkMhllsKNilziKdIr3MiNjmWxTMkBmPO9A5rwuCSOdxsumMlCezqBmSLotH
+         Wj7EO+ey+BUbwM+OpdN1dUI5OUbe+p5JBLy2eig5s0d8Nr+J3OqXqMfL0N45AoSo2irr
+         paNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=ITKqQw+FBjFI0bz/HdYKNfLw9PhAxMfw2AxKGia4Kb4=;
-        b=Oy3fC0+VhMwFr4QRKHR3c0/C+WT3dH970jduDfzd/zmU7Afv+RxuHebVvcCLa6gbn+
-         bkTw5LkljQz8PsRpMkCnz2mhYxZiILQtSHqe9OkNJMIr/JUr/g+UasFsHRcYfnU2u+NR
-         fe9Nx7aEphAWzccsnbNXHaW3xq0n/nrm36++KYk9af9p4I5Vzu77G5TF7UIPqQfBdlvu
-         5UxdW+iAUAoCbuGjuN597QGV4tvh/7wUouH0iQs5262t3TbqddJtagIdRbYTalak+9nB
-         n77L2/OoSKHKbI14XeFE1wneXmpfnw7jAhfBOpAVmSC0gTqGJB57jEu7siwiK1MEH6Sd
-         VpHg==
-X-Gm-Message-State: APjAAAUpvSv+imVSgsxr5E+BOuxr1mADB6EY5SM0Bi3RZiPX0dOnxOwB
-        vIzV3ufjzLjCCTaI2WUOPuKAArShuYhOtA==
-X-Google-Smtp-Source: APXvYqxaCDUPSO70AD0OjoR43FJOitVabIC65/eCWQpiyR74NrobKY0PEpgnLSfCT7JatziWKFmwvw==
-X-Received: by 2002:adf:afe8:: with SMTP id y40mr8233956wrd.328.1561743084373;
-        Fri, 28 Jun 2019 10:31:24 -0700 (PDT)
+        bh=LVJ9Z9qRBJ2e5bC1c44PzcYtnDPeUHUINt1MeRk5Enc=;
+        b=DsWCwPSUcLGhRMVYqY0SZP5n+S7vtnKYCOzdsJ0I+lPGztMydmuD4KIvjtqz78DWEt
+         rY/U8l/sUpvRuaSRpthqL+aReFTnxWmoFaDE9dwYEkWHqFu16g/s5/7Dv9lZGxsuVE8g
+         90WthA6hk6f0Dxh39XaNP6Yhg4jJwQZw1OIM8ktWLEDW7Y8TIRXpulKMUPkJKvlLCMIp
+         +/dZrSPTPydjwIsjsulIc9UvMPfvR/+RAxiVHsKLVSyURo0fZeYsrNoPymz3cqjvHe2V
+         Z2ySba1RKpnkW8ve5LFpfDH+/ni7/6eX0rfwO+EQxCM0o7CC2HNV1+7dCotssxVtC9bQ
+         7/9g==
+X-Gm-Message-State: APjAAAXEhvYqedyjK7Ran/Wyr6dyzh6fMwrbSUdkVnoEBUTqZ7k6H6XH
+        cffVTbWtS5hIofyEePQKvCtAiYxSzVyZMw==
+X-Google-Smtp-Source: APXvYqwEDdWGZbX0MpYUlL/r6TSXbGq5/xFnTxnCu4D8TWlfTChVEE7e90MXlM/Y9EVcodd6TiYh+Q==
+X-Received: by 2002:adf:afd0:: with SMTP id y16mr8952463wrd.22.1561745888502;
+        Fri, 28 Jun 2019 11:18:08 -0700 (PDT)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id e11sm5676185wrc.9.2019.06.28.10.31.23
+        by smtp.gmail.com with ESMTPSA id l1sm1990015wmg.13.2019.06.28.11.18.06
         for <linux-next@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2019 10:31:23 -0700 (PDT)
-Message-ID: <5d164eeb.1c69fb81.120e0.21ee@mx.google.com>
-Date:   Fri, 28 Jun 2019 10:31:23 -0700 (PDT)
+        Fri, 28 Jun 2019 11:18:07 -0700 (PDT)
+Message-ID: <5d1659df.1c69fb81.a4537.b0c4@mx.google.com>
+Date:   Fri, 28 Jun 2019 11:18:07 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.2-rc6-190-gd8fb83281cfd
-X-Kernelci-Branch: pending-fixes
+X-Kernelci-Kernel: next-20190628
+X-Kernelci-Branch: master
 X-Kernelci-Tree: next
-Subject: next/pending-fixes build: 223 builds: 0 failed, 223 passed,
- 121 warnings (v5.2-rc6-190-gd8fb83281cfd)
+Subject: next/master build: 228 builds: 18 failed, 210 passed, 488 errors,
+ 614 warnings (next-20190628)
 To:     linux-next@vger.kernel.org
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
@@ -72,58 +73,331 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes build: 223 builds: 0 failed, 223 passed, 121 warnings (v=
-5.2-rc6-190-gd8fb83281cfd)
+next/master build: 228 builds: 18 failed, 210 passed, 488 errors, 614 warni=
+ngs (next-20190628)
 
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.2-rc6-190-gd8fb83281cfd/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190628/
 
 Tree: next
-Branch: pending-fixes
-Git Describe: v5.2-rc6-190-gd8fb83281cfd
-Git Commit: d8fb83281cfd7506390190a416beeac4c8f66833
+Branch: master
+Git Describe: next-20190628
+Git Commit: 48568d8c7f479ec45b9c3d02b4b1895f3ef61a03
 Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 Built: 7 unique architectures
 
-Warnings Detected:
+Build Failures Detected:
+
+arm:
+    cm_x2xx_defconfig: (gcc-8) FAIL
+    em_x270_defconfig: (gcc-8) FAIL
+    ezx_defconfig: (gcc-8) FAIL
+    imote2_defconfig: (gcc-8) FAIL
+    nhk8815_defconfig: (gcc-8) FAIL
+
+mips:
+    bigsur_defconfig: (gcc-8) FAIL
+    cavium_octeon_defconfig: (gcc-8) FAIL
+    ip27_defconfig: (gcc-8) FAIL
+    loongson3_defconfig: (gcc-8) FAIL
+    malta_qemu_32r6_defconfig: (gcc-8) FAIL
+    maltaaprp_defconfig: (gcc-8) FAIL
+    maltasmvp_defconfig: (gcc-8) FAIL
+    maltasmvp_eva_defconfig: (gcc-8) FAIL
+    maltaup_defconfig: (gcc-8) FAIL
+    mips_paravirt_defconfig: (gcc-8) FAIL
+    nlm_xlp_defconfig: (gcc-8) FAIL
+    nlm_xlr_defconfig: (gcc-8) FAIL
+    sb1250_swarm_defconfig: (gcc-8) FAIL
+
+Errors and Warnings Detected:
 
 arc:
     vdk_hs38_defconfig (gcc-8): 1 warning
     vdk_hs38_smp_defconfig (gcc-8): 1 warning
 
 arm64:
-    allmodconfig (gcc-8): 48 warnings
+    allmodconfig (gcc-8): 44 warnings
+    defconfig (clang-8): 44 warnings
+    defconfig (clang-8): 44 warnings
+    defconfig (clang-8): 44 warnings
+    defconfig (clang-8): 44 warnings
 
 arm:
-    integrator_defconfig (gcc-8): 2 warnings
-    multi_v4t_defconfig (gcc-8): 2 warnings
-    multi_v5_defconfig (gcc-8): 2 warnings
-    realview_defconfig (gcc-8): 2 warnings
-    s3c6400_defconfig (gcc-8): 2 warnings
-    u300_defconfig (gcc-8): 2 warnings
+    allmodconfig (gcc-8): 15 warnings
+    cm_x2xx_defconfig (gcc-8): 48 errors, 15 warnings
+    em_x270_defconfig (gcc-8): 48 errors, 15 warnings
+    ezx_defconfig (gcc-8): 48 errors, 15 warnings
+    imote2_defconfig (gcc-8): 48 errors, 15 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    nhk8815_defconfig (gcc-8): 48 errors, 15 warnings
+    pxa_defconfig (gcc-8): 1 warning
 
 i386:
 
 mips:
-    db1xxx_defconfig (gcc-8): 1 warning
-    malta_qemu_32r6_defconfig (gcc-8): 1 warning
-    rb532_defconfig (gcc-8): 1 warning
+    32r2el_defconfig (gcc-8): 3 warnings
+    32r2el_defconfig (gcc-8): 3 warnings
+    allnoconfig (gcc-8): 1 warning
+    ar7_defconfig (gcc-8): 2 warnings
+    ath25_defconfig (gcc-8): 2 warnings
+    ath79_defconfig (gcc-8): 2 warnings
+    bcm47xx_defconfig (gcc-8): 2 warnings
+    bcm63xx_defconfig (gcc-8): 1 warning
+    bigsur_defconfig (gcc-8): 1 error, 3 warnings
+    bmips_be_defconfig (gcc-8): 1 warning
+    bmips_stb_defconfig (gcc-8): 1 warning
+    capcella_defconfig (gcc-8): 2 warnings
+    cavium_octeon_defconfig (gcc-8): 1 error, 3 warnings
+    ci20_defconfig (gcc-8): 1 warning
+    cobalt_defconfig (gcc-8): 2 warnings
+    db1xxx_defconfig (gcc-8): 2 warnings
+    decstation_64_defconfig (gcc-8): 6 warnings
+    decstation_defconfig (gcc-8): 2 warnings
+    decstation_r4k_defconfig (gcc-8): 2 warnings
+    e55_defconfig (gcc-8): 2 warnings
+    fuloong2e_defconfig (gcc-8): 6 warnings
+    gcw0_defconfig (gcc-8): 1 warning
+    gpr_defconfig (gcc-8): 2 warnings
+    ip22_defconfig (gcc-8): 2 warnings
+    ip27_defconfig (gcc-8): 1 error, 3 warnings
+    ip28_defconfig (gcc-8): 6 warnings
+    ip32_defconfig (gcc-8): 6 warnings
+    jazz_defconfig (gcc-8): 2 warnings
+    jmr3927_defconfig (gcc-8): 1 warning
+    lasat_defconfig (gcc-8): 1 warning
+    lemote2f_defconfig (gcc-8): 6 warnings
+    loongson1b_defconfig (gcc-8): 2 warnings
+    loongson1c_defconfig (gcc-8): 2 warnings
+    loongson3_defconfig (gcc-8): 1 error, 3 warnings
+    malta_defconfig (gcc-8): 2 warnings
+    malta_kvm_defconfig (gcc-8): 2 warnings
+    malta_kvm_guest_defconfig (gcc-8): 2 warnings
+    malta_qemu_32r6_defconfig (gcc-8): 48 errors, 16 warnings
+    maltaaprp_defconfig (gcc-8): 48 errors, 16 warnings
+    maltasmvp_defconfig (gcc-8): 48 errors, 16 warnings
+    maltasmvp_eva_defconfig (gcc-8): 48 errors, 16 warnings
+    maltaup_defconfig (gcc-8): 48 errors, 16 warnings
+    maltaup_xpa_defconfig (gcc-8): 2 warnings
+    markeins_defconfig (gcc-8): 2 warnings
+    mips_paravirt_defconfig (gcc-8): 1 error, 3 warnings
+    mpc30x_defconfig (gcc-8): 2 warnings
+    msp71xx_defconfig (gcc-8): 2 warnings
+    mtx1_defconfig (gcc-8): 2 warnings
+    nlm_xlp_defconfig (gcc-8): 1 error, 3 warnings
+    nlm_xlr_defconfig (gcc-8): 1 error, 1 warning
+    omega2p_defconfig (gcc-8): 1 warning
+    pic32mzda_defconfig (gcc-8): 2 warnings
+    pistachio_defconfig (gcc-8): 2 warnings
+    pnx8335_stb225_defconfig (gcc-8): 2 warnings
+    qi_lb60_defconfig (gcc-8): 2 warnings
+    rb532_defconfig (gcc-8): 3 warnings
+    rbtx49xx_defconfig (gcc-8): 2 warnings
+    rm200_defconfig (gcc-8): 2 warnings
+    rt305x_defconfig (gcc-8): 2 warnings
+    sb1250_swarm_defconfig (gcc-8): 1 error, 2 warnings
+    tb0219_defconfig (gcc-8): 2 warnings
+    tb0226_defconfig (gcc-8): 2 warnings
+    tb0287_defconfig (gcc-8): 2 warnings
+    tinyconfig (gcc-8): 1 warning
+    vocore2_defconfig (gcc-8): 1 warning
+    workpad_defconfig (gcc-8): 2 warnings
+    xway_defconfig (gcc-8): 2 warnings
 
 riscv:
     rv32_defconfig (gcc-8): 4 warnings
 
 x86_64:
-    allmodconfig (gcc-8): 51 warnings
+    allmodconfig (gcc-8): 45 warnings
     tinyconfig (gcc-8): 1 warning
 
+Errors summary:
+
+    60   fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'st=
+ruct key_type'
+    60   fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'st=
+ruct key_type'
+    20   include/linux/refcount.h:23:26: error: extra brace group at end of=
+ initializer
+    10   fs/cifs/cifsacl.c:537:2: error: implicit declaration of function '=
+unregister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit=
+-function-declaration]
+    10   fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named =
+'jit_keyring'
+    10   fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named =
+'thread_keyring'
+    10   fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undecla=
+red (first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    10   fs/cifs/cifsacl.c:512:8: error: implicit declaration of function '=
+register_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-fun=
+ction-declaration]
+    10   fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclare=
+d (first use in this function)
+    10   fs/cifs/cifsacl.c:503:12: error: implicit declaration of function =
+'keyring_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-de=
+claration]
+    10   fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member name=
+d 'aces'
+    10   fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initia=
+lizer
+    10   fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member name=
+d 'nr_ace'
+    10   fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member name=
+d 'usage'
+    10   fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyrin=
+g_acl' isn't known
+    10   fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' =
+has initializer but incomplete type
+    10   fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'K=
+EY_POSSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-funct=
+ion-declaration]
+    10   fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member name=
+d 'aces'
+    10   fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initia=
+lizer
+    10   fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member name=
+d 'possessor_viewable'
+    10   fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member name=
+d 'nr_ace'
+    10   fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member name=
+d 'usage'
+    10   fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_ac=
+l' isn't known
+    10   fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has =
+initializer but incomplete type
+    10   fs/cifs/cifsacl.c:320:11: error: implicit declaration of function =
+'request_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-dec=
+laration]
+    10   fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member na=
+med 'describe'
+    10   fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (=
+not in a function); did you mean 'seq_escape'?
+    10   fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member na=
+med 'destroy'
+    10   fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member na=
+med 'instantiate'
+    10   fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member na=
+med 'name'
+    10   fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_t=
+ype' isn't known
+    10   fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' ha=
+s initializer but incomplete type
+    10   fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomple=
+te type 'struct key'
+    10   fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomple=
+te type 'struct key_preparsed_payload'
+    10   arch/mips/include/asm/atomic.h:36:26: error: extra brace group at =
+end of initializer
+    10   arch/arm/include/asm/atomic.h:18:24: error: extra brace group at e=
+nd of initializer
+    5    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'K=
+EY_OWNER_ACE'; did you mean 'KEY_USR_ALL'? [-Werror=3Dimplicit-function-dec=
+laration]
+    5    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'K=
+EY_OWNER_ACE'; did you mean 'KEY_OTH_ALL'? [-Werror=3Dimplicit-function-dec=
+laration]
+    2    /home/buildslave/workspace/workspace/kernel-build@4/linux/build/..=
+/kernel/dma/direct.c:144: undefined reference to `arch_dma_prep_coherent'
+    2    /home/buildslave/workspace/kernel-build@2/linux/build/../kernel/dm=
+a/direct.c:144: undefined reference to `arch_dma_prep_coherent'
+    2    (.text+0xafc): undefined reference to `arch_dma_prep_coherent'
+    1    direct.c:(.text+0x934): undefined reference to `arch_dma_prep_cohe=
+rent'
+    1    (.text+0xb84): undefined reference to `arch_dma_prep_coherent'
 
 Warnings summary:
 
-    10   warning: same module names found:
-    6    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-W=
-unused-variable]
-    6    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-W=
-unused-variable]
+    144  <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
+-Wcpp]
+    20   include/linux/refcount.h:23:26: warning: excess elements in struct=
+ initializer
+    12   drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is =
+negative [-Wshift-count-negative]
+    12   drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    12   drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is =
+negative [-Wshift-count-negative]
+    12   drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is =
+negative [-Wshift-count-negative]
+    10   fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' d=
+eclared inside parameter list will not be visible outside of this definitio=
+n or declaration
+    10   fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initia=
+lizer
+    10   fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initia=
+lizer
+    10   fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' fro=
+m 'int' makes pointer from integer without a cast [-Wint-conversion]
+    10   fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initia=
+lizer
+    10   fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initia=
+lizer
+    10   fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initia=
+lizer
+    10   fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' fro=
+m 'int' makes pointer from integer without a cast [-Wint-conversion]
+    10   fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initi=
+alizer
+    10   fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initi=
+alizer
+    10   fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initi=
+alizer
+    10   fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initi=
+alizer
+    10   cc1: some warnings being treated as errors
+    8    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    8    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    6    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning =
+(reg_format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 by=
+tes) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    6    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+size-cells value
+    6    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+address-cells value
+    6    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_=
+reg): Failed prerequisite 'reg_format'
+    6    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_devi=
+ce_bus_num): Failed prerequisite 'reg_format'
+    6    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_=
+reg): Failed prerequisite 'reg_format'
+    4    drivers/soc/rockchip/pm_domains.c:744:21: warning: shift count is =
+negative [-Wshift-count-negative]
+    4    drivers/gpu/drm/drm_connector.c:144:15: warning: address of array =
+'mode->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
+    4    41 warnings generated.
+    4    1 warning generated.
     2    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: wa=
 rning: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larg=
 er-than=3D]
@@ -135,6 +409,10 @@ ize of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
 ize of 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     2    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame=
  size of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    2    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable '=
+i' [-Wunused-variable]
+    2    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable =
+'i' [-Wunused-variable]
     2    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size o=
 f 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     2    arch/arc/kernel/unwind.c:184:14: warning: 'unw_hdr_alloc' defined =
@@ -143,23 +421,22 @@ but not used [-Wunused-function]
 -Wcpp]
     2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
 d [-Wcpp]
-    1    {standard input}:131: Warning: macro instruction expanded into mul=
-tiple instructions
-    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 byt=
+    1    warning: same module names found:
+    1    net/wireless/nl80211.c:6481:1: warning: the frame size of 2128 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 byt=
+    1    net/wireless/nl80211.c:6481:1: warning: the frame size of 2112 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 byt=
+    1    net/wireless/nl80211.c:5117:1: warning: the frame size of 2784 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 byt=
+    1    net/wireless/nl80211.c:5117:1: warning: the frame size of 2776 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 byt=
+    1    net/wireless/nl80211.c:2363:1: warning: the frame size of 4640 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 byt=
+    1    net/wireless/nl80211.c:2363:1: warning: the frame size of 4584 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 byt=
+    1    net/wireless/nl80211.c:1732:1: warning: the frame size of 2280 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 byt=
+    1    net/wireless/nl80211.c:1732:1: warning: the frame size of 2272 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 b=
 ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
@@ -175,13 +452,19 @@ tes is larger than 2048 bytes [-Wframe-larger-than=3D]
 tes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: =
 call to stackleak_track_stack() with UACCESS enabled
+    1    include/drm/drm_print.h:366:2: warning: 'real_hz' may be used unin=
+itialized in this function [-Wmaybe-uninitialized]
+    1    include/drm/drm_print.h:366:2: warning: 'real_clk_hz' may be used =
+uninitialized in this function [-Wmaybe-uninitialized]
+    1    include/drm/drm_print.h:366:2: warning: 'div' may be used uninitia=
+lized in this function [-Wmaybe-uninitialized]
     1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is =
+    1    fs/ocfs2/super.c:1186:1: warning: the frame size of 3184 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is =
+    1    fs/ocfs2/super.c:1186:1: warning: the frame size of 3176 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
@@ -201,38 +484,40 @@ arger than 2048 bytes [-Wframe-larger-than=3D]
 arger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitial=
 ized in this function [-Wmaybe-uninitialized]
-    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
+    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2764:1: warning: t=
 he frame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=
 =3D]
-    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
+    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2764:1: warning: t=
 he frame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=
 =3D]
     1    drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the =
 frame size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the=
  frame size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26023=
 :1: warning: the frame size of 2528 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26023=
 :1: warning: the frame size of 2440 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16894=
 :1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16894=
 :1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552=
 :1: warning: the frame size of 3168 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
+    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552=
 :1: warning: the frame size of 3152 bytes is larger than 2048 bytes [-Wfram=
 e-larger-than=3D]
-    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
+    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:560:1: warning: the fra=
 me size of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
+    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:560:1: warning: the fra=
 me size of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/net/ethernet/cadence/macb_main.c:48:39: warning: 'mgmt' de=
+fined but not used [-Wunused-variable]
     1    drivers/mtd/nand/raw/au1550nd.c:443:57: warning: pointer type mism=
 atch in conditional expression
     1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
@@ -297,21 +582,23 @@ ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
  size of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
  size of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable '=
-i' [-Wunused-variable]
-    1    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable =
-'i' [-Wunused-variable]
     1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
 frame size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
 frame size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/gpu/drm/armada/armada_crtc.c:887:22: warning: 'desired_clk=
+_hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
     1    drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable 'info=
 ' [-Wunused-variable]
-    1    arch/x86/kvm/x86.c:4296:1: warning: the frame size of 2168 bytes i=
+    1    arch/x86/kvm/x86.c:4323:1: warning: the frame size of 2160 bytes i=
 s larger than 2048 bytes [-Wframe-larger-than=3D]
     1    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2=
 856 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+    1    /tmp/cc4WnMsC.s:18191: Warning: using r15 results in unpredictable=
+ behaviour
+    1    /tmp/cc4WnMsC.s:18119: Warning: using r15 results in unpredictable=
+ behaviour
+    1    .config:1173:warning: override: UNWINDER_GUESS changes choice state
 
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
@@ -322,13 +609,23 @@ Detailed per-defconfig build reports:
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnin=
+32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnin=
 gs, 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -342,117 +639,20 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allmodconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 48 warnings, 0 sectio=
-n mismatches
-
-Warnings:
-    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitialized =
-in this function [-Wmaybe-uninitialized]
-    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 bytes i=
-s larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 bytes =
-is larger than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 bytes=
- is larger than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is larger=
- than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [=
--Wunused-variable]
-    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-=
-Wunused-variable]
-    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
- size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
-0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
-f 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
-f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
-f 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
-f 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
-f 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
-f 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
-f 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
-f 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
-f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
-f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
- of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
- of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968 byte=
-s is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096 byte=
-s is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
-ze of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2848 by=
-tes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
-arning: the frame size of 3168 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
-arning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
-arning: the frame size of 2528 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
-ze of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
-: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
-an=3D]
-    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
-ame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-
----------------------------------------------------------------------------=
------
-allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 51 warnings, 0 secti=
+allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 45 warnings, 0 secti=
 on mismatches
 
 Warnings:
-    arch/x86/kvm/x86.c:4296:1: warning: the frame size of 2168 bytes is lar=
-ger than 2048 bytes [-Wframe-larger-than=3D]
     arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2856 b=
 ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    arch/x86/kvm/x86.c:4323:1: warning: the frame size of 2160 bytes is lar=
+ger than 2048 bytes [-Wframe-larger-than=3D]
+    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 bytes i=
+s larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 bytes =
+is larger than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 bytes=
  is larger than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is larger=
@@ -461,30 +661,22 @@ ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
 than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/namei.c:1677:1: warning: the frame size of 2616 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is large=
+    fs/ocfs2/super.c:1186:1: warning: the frame size of 3176 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
-    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 bytes i=
-s larger than 2048 bytes [-Wframe-larger-than=3D]
     lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: call =
 to stackleak_track_stack() with UACCESS enabled
-    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 bytes =
-is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
  size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 bytes is=
+    net/wireless/nl80211.c:1732:1: warning: the frame size of 2280 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 bytes is=
+    net/wireless/nl80211.c:6481:1: warning: the frame size of 2112 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 bytes is=
+    net/wireless/nl80211.c:2363:1: warning: the frame size of 4584 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 bytes is=
+    net/wireless/nl80211.c:5117:1: warning: the frame size of 2776 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
-0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952 byte=
 s is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
@@ -519,17 +711,19 @@ f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
  of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
  of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
+0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
 ze of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2840 by=
 tes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552:1: w=
 arning: the frame size of 3152 bytes is larger than 2048 bytes [-Wframe-lar=
 ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16894:1: w=
 arning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-lar=
 ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26023:1: w=
 arning: the frame size of 2440 bytes is larger than 2048 bytes [-Wframe-lar=
 ger-than=3D]
     drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
@@ -539,25 +733,152 @@ an=3D]
 e size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
     drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the frame=
  size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
+    drivers/net/ethernet/rocker/rocker_ofdpa.c:560:1: warning: the frame si=
 ze of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
+    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2764:1: warning: the fr=
 ame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 15 warnings, 0 section =
+mismatches
+
+Warnings:
+    /tmp/cc4WnMsC.s:18119: Warning: using r15 results in unpredictable beha=
+viour
+    /tmp/cc4WnMsC.s:18191: Warning: using r15 results in unpredictable beha=
+viour
+    include/drm/drm_print.h:366:2: warning: 'div' may be used uninitialized=
+ in this function [-Wmaybe-uninitialized]
+    include/drm/drm_print.h:366:2: warning: 'real_hz' may be used uninitial=
+ized in this function [-Wmaybe-uninitialized]
+    include/drm/drm_print.h:366:2: warning: 'real_clk_hz' may be used unini=
+tialized in this function [-Wmaybe-uninitialized]
+    drivers/gpu/drm/armada/armada_crtc.c:887:22: warning: 'desired_clk_hz' =
+may be used uninitialized in this function [-Wmaybe-uninitialized]
+    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [=
+-Wunused-variable]
+    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-=
+Wunused-variable]
     warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 44 warnings, 0 sectio=
+n mismatches
+
+Warnings:
+    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitialized =
+in this function [-Wmaybe-uninitialized]
+    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 bytes i=
+s larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 bytes =
+is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 bytes=
+ is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is larger=
+ than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/super.c:1186:1: warning: the frame size of 3184 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is large=
+r than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [=
+-Wunused-variable]
+    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-=
+Wunused-variable]
+    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
+ size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:1732:1: warning: the frame size of 2272 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:6481:1: warning: the frame size of 2128 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:2363:1: warning: the frame size of 4640 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    net/wireless/nl80211.c:5117:1: warning: the frame size of 2784 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
+f 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
+f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
+f 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
+f 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
+f 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
+f 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
+f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
+f 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
+f 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
+f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
+0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096 byte=
+s is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
+f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
+ of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
+ of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
+ze of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2848 by=
+tes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/ethernet/rocker/rocker_ofdpa.c:560:1: warning: the frame si=
+ze of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2764:1: warning: the fr=
+ame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16552:1: w=
+arning: the frame size of 3168 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16894:1: w=
+arning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26023:1: w=
+arning: the frame size of 2528 bytes is larger than 2048 bytes [-Wframe-lar=
+ger-than=3D]
+    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
+: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
+an=3D]
 
 ---------------------------------------------------------------------------=
 -----
 allnoconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
 
 ---------------------------------------------------------------------------=
@@ -567,13 +888,26 @@ mismatches
 
 ---------------------------------------------------------------------------=
 -----
+allnoconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
 allnoconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
 mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
+allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -592,8 +926,12 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
  mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -617,13 +955,21 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -652,38 +998,72 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
 ion mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+bigsur_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 3 warnings, 0 secti=
+on mismatches
+
+Errors:
+    (.text+0xafc): undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
+tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
 ction mismatches
 
----------------------------------------------------------------------------=
------
-bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
 ction mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
+cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 3 warnings, =
+0 section mismatches
+
+Errors:
+    /home/buildslave/workspace/workspace/kernel-build@4/linux/build/../kern=
+el/dma/direct.c:144: undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -692,8 +1072,11 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -702,8 +1085,133 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-cm_x2xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
+cm_x2xx_defconfig (arm, gcc-8) =E2=80=94 FAIL, 48 errors, 15 warnings, 0 se=
+ction mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_USR_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
@@ -717,8 +1225,12 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -747,32 +1259,142 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
+db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+ion mismatches
 
 Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     drivers/mtd/nand/raw/au1550nd.c:443:57: warning: pointer type mismatch =
 in conditional expression
 
 ---------------------------------------------------------------------------=
 -----
-decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
  0 section mismatches
 
----------------------------------------------------------------------------=
------
-decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings=
 , 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
 defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 44 warnings, 0 section=
+ mismatches
+
+Warnings:
+    drivers/soc/rockchip/pm_domains.c:744:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    41 warnings generated.
+    drivers/gpu/drm/drm_connector.c:144:15: warning: address of array 'mode=
+->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
+    1 warning generated.
 
 ---------------------------------------------------------------------------=
 -----
@@ -786,13 +1408,292 @@ defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
 
 ---------------------------------------------------------------------------=
 -----
+defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, clang-8) =E2=80=94 PASS, 0 erro=
+rs, 44 warnings, 0 section mismatches
+
+Warnings:
+    drivers/soc/rockchip/pm_domains.c:744:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    41 warnings generated.
+    drivers/gpu/drm/drm_connector.c:144:15: warning: address of array 'mode=
+->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
+    1 warning generated.
+
+---------------------------------------------------------------------------=
+-----
 defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
 , 0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, clang-8) =E2=80=94 PASS, 0 erro=
+rs, 44 warnings, 0 section mismatches
+
+Warnings:
+    drivers/soc/rockchip/pm_domains.c:744:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    41 warnings generated.
+    drivers/gpu/drm/drm_connector.c:144:15: warning: address of array 'mode=
+->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
+    1 warning generated.
+
+---------------------------------------------------------------------------=
+-----
 defconfig+kselftest (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+kselftest (arm64, clang-8) =E2=80=94 PASS, 0 errors, 44 warnings,=
+ 0 section mismatches
+
+Warnings:
+    drivers/soc/rockchip/pm_domains.c:744:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:749:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:785:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:786:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:787:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:788:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:789:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:790:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:791:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:792:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:793:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:815:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:816:22: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:817:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:818:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:819:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:829:20: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:830:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    drivers/soc/rockchip/pm_domains.c:831:21: warning: shift count is negat=
+ive [-Wshift-count-negative]
+    41 warnings generated.
+    drivers/gpu/drm/drm_connector.c:144:15: warning: address of array 'mode=
+->name' will always evaluate to 'true' [-Wpointer-bool-conversion]
+    1 warning generated.
 
 ---------------------------------------------------------------------------=
 -----
@@ -806,8 +1707,12 @@ dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
  mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -821,8 +1726,133 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-em_x270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
+em_x270_defconfig (arm, gcc-8) =E2=80=94 FAIL, 48 errors, 15 warnings, 0 se=
+ction mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_USR_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
@@ -841,8 +1871,133 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ezx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
+ezx_defconfig (arm, gcc-8) =E2=80=94 FAIL, 48 errors, 15 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_USR_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
@@ -851,13 +2006,24 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -866,8 +2032,12 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
  mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -916,8 +2086,133 @@ i386_defconfig+kselftest (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
 
 ---------------------------------------------------------------------------=
 -----
-imote2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
+imote2_defconfig (arm, gcc-8) =E2=80=94 FAIL, 48 errors, 15 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_USR_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
@@ -931,14 +2226,8 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
-
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -957,23 +2246,51 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+ip27_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 3 warnings, 0 section=
+ mismatches
+
+Errors:
+    direct.c:(.text+0x934): undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -982,13 +2299,20 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1012,28 +2336,55 @@ lart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
+lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 se=
 ction mismatches
 
----------------------------------------------------------------------------=
------
-loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-loongson3_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+loongson3_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 3 warnings, 0 se=
+ction mismatches
+
+Errors:
+    (.text+0xb84): undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1067,57 +2418,703 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warning=
-s, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning=
-, 0 section mismatches
 
 Warnings:
-    {standard input}:131: Warning: macro instruction expanded into multiple=
- instructions
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warning=
+s, 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 FAIL, 48 errors, 16 warni=
+ngs, 0 section mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_USR_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
-maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+maltaaprp_defconfig (mips, gcc-8) =E2=80=94 FAIL, 48 errors, 16 warnings, 0=
  section mismatches
 
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_OTH_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
+
 ---------------------------------------------------------------------------=
 -----
-markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+maltasmvp_defconfig (mips, gcc-8) =E2=80=94 FAIL, 48 errors, 16 warnings, 0=
+ section mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_OTH_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 FAIL, 48 errors, 16 warning=
+s, 0 section mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_OTH_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
+
+---------------------------------------------------------------------------=
+-----
+maltaup_defconfig (mips, gcc-8) =E2=80=94 FAIL, 48 errors, 16 warnings, 0 s=
+ection mismatches
+
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_OTH_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/mips/include/asm/atomic.h:36:26: error: extra brace group at end o=
+f initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
+
+---------------------------------------------------------------------------=
+-----
+maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0=
+ section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
 ction mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1131,8 +3128,17 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
+mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 3 warnings, =
+0 section mismatches
+
+Errors:
+    /home/buildslave/workspace/workspace/kernel-build@4/linux/build/../kern=
+el/dma/direct.c:144: undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1146,8 +3152,12 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1156,60 +3166,141 @@ mps2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
+multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sec=
 tion mismatches
 
 Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
 multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm, gcc-8) =E2=80=94 PASS, 0=
- errors, 0 warnings, 0 section mismatches
+ errors, 6 warnings, 0 section mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
 multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
-=94 PASS, 0 errors, 0 warnings, 0 section mismatches
+=94 PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 =
+multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 =
 warnings, 0 section mismatches
 
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
+
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warni=
+multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 warni=
 ngs, 0 section mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
@@ -1238,28 +3329,159 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-netwinder_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+nhk8815_defconfig (arm, gcc-8) =E2=80=94 FAIL, 48 errors, 15 warnings, 0 se=
 ction mismatches
 
----------------------------------------------------------------------------=
------
-netx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
+Errors:
+    fs/cifs/cifsacl.c:36:15: error: variable 'cifs_idmap_key_acl' has initi=
+alizer but incomplete type
+    fs/cifs/cifsacl.c:37:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:38:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:39:3: error: 'struct key_acl' has no member named 'po=
+ssessor_viewable'
+    fs/cifs/cifsacl.c:40:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:40:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:41:3: error: implicit declaration of function 'KEY_PO=
+SSESSOR_ACE'; did you mean 'KEY_POS_SEARCH'? [-Werror=3Dimplicit-function-d=
+eclaration]
+    fs/cifs/cifsacl.c:42:3: error: implicit declaration of function 'KEY_OW=
+NER_ACE'; did you mean 'KEY_OTH_ALL'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:46:15: error: variable 'cifs_idmap_keyring_acl' has i=
+nitializer but incomplete type
+    fs/cifs/cifsacl.c:47:3: error: 'struct key_acl' has no member named 'us=
+age'
+    include/linux/refcount.h:23:26: error: extra brace group at end of init=
+ializer
+    arch/arm/include/asm/atomic.h:18:24: error: extra brace group at end of=
+ initializer
+    fs/cifs/cifsacl.c:48:3: error: 'struct key_acl' has no member named 'nr=
+_ace'
+    fs/cifs/cifsacl.c:49:3: error: 'struct key_acl' has no member named 'ac=
+es'
+    fs/cifs/cifsacl.c:49:10: error: extra brace group at end of initializer
+    fs/cifs/cifsacl.c:108:10: error: dereferencing pointer to incomplete ty=
+pe 'struct key_preparsed_payload'
+    fs/cifs/cifsacl.c:108:33: error: dereferencing pointer to incomplete ty=
+pe 'struct key'
+    fs/cifs/cifsacl.c:129:15: error: variable 'cifs_idmap_key_type' has ini=
+tializer but incomplete type
+    fs/cifs/cifsacl.c:130:3: error: 'struct key_type' has no member named '=
+name'
+    fs/cifs/cifsacl.c:131:3: error: 'struct key_type' has no member named '=
+instantiate'
+    fs/cifs/cifsacl.c:132:3: error: 'struct key_type' has no member named '=
+destroy'
+    fs/cifs/cifsacl.c:133:3: error: 'struct key_type' has no member named '=
+describe'
+    fs/cifs/cifsacl.c:133:17: error: 'user_describe' undeclared here (not i=
+n a function); did you mean 'seq_escape'?
+    fs/cifs/cifsacl.c:320:11: error: implicit declaration of function 'requ=
+est_key'; did you mean 'request_nmi'? [-Werror=3Dimplicit-function-declarat=
+ion]
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:491:23: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:503:12: error: implicit declaration of function 'keyr=
+ing_alloc'; did you mean 'warn_alloc'? [-Werror=3Dimplicit-function-declara=
+tion]
+    fs/cifs/cifsacl.c:506:5: error: 'KEY_ALLOC_NOT_IN_QUOTA' undeclared (fi=
+rst use in this function)
+    fs/cifs/cifsacl.c:512:8: error: implicit declaration of function 'regis=
+ter_key_type'; did you mean 'register_netdev'? [-Werror=3Dimplicit-function=
+-declaration]
+    fs/cifs/cifsacl.c:518:10: error: 'KEY_FLAG_ROOT_CAN_CLEAR' undeclared (=
+first use in this function); did you mean 'KEY_ACE_CLEAR'?
+    fs/cifs/cifsacl.c:519:6: error: 'struct cred' has no member named 'thre=
+ad_keyring'
+    fs/cifs/cifsacl.c:520:6: error: 'struct cred' has no member named 'jit_=
+keyring'
+    fs/cifs/cifsacl.c:537:2: error: implicit declaration of function 'unreg=
+ister_key_type'; did you mean 'unregister_netdev'? [-Werror=3Dimplicit-func=
+tion-declaration]
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:539:65: error: invalid use of undefined type 'struct =
+key_type'
+    fs/cifs/cifsacl.c:36:23: error: storage size of 'cifs_idmap_key_acl' is=
+n't known
+    fs/cifs/cifsacl.c:46:23: error: storage size of 'cifs_idmap_keyring_acl=
+' isn't known
+    fs/cifs/cifsacl.c:129:24: error: storage size of 'cifs_idmap_key_type' =
+isn't known
+
+Warnings:
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:38:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:39:24: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:40:10: warning: excess elements in struct initializer
+    include/linux/refcount.h:23:26: warning: excess elements in struct init=
+ializer
+    fs/cifs/cifsacl.c:48:12: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:49:10: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:96:52: warning: 'struct key_preparsed_payload' declar=
+ed inside parameter list will not be visible outside of this definition or =
+declaration
+    fs/cifs/cifsacl.c:130:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:131:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:132:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:133:17: warning: excess elements in struct initializer
+    fs/cifs/cifsacl.c:320:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    fs/cifs/cifsacl.c:426:9: warning: assignment to 'struct key *' from 'in=
+t' makes pointer from integer without a cast [-Wint-conversion]
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
-nhk8815_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 3 warnings, 0 sect=
 ion mismatches
 
----------------------------------------------------------------------------=
------
-nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+Errors:
+    /home/buildslave/workspace/kernel-build@2/linux/build/../kernel/dma/dir=
+ect.c:144: undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 secti=
+on mismatches
+
+Errors:
+    /home/buildslave/workspace/kernel-build@2/linux/build/../kernel/dma/dir=
+ect.c:144: undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1313,8 +3535,11 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1338,13 +3563,21 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1353,8 +3586,12 @@ pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings=
 , 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1383,8 +3620,12 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
+pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+ismatches
+
+Warnings:
+    drivers/net/ethernet/cadence/macb_main.c:48:39: warning: 'mgmt' defined=
+ but not used [-Wunused-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1393,38 +3634,46 @@ qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
+rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 secti=
+on mismatches
 
 Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable 'info' [-W=
 unused-variable]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
 ction mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
-
 ---------------------------------------------------------------------------=
 -----
-rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1433,8 +3682,12 @@ mismatches
 
 ---------------------------------------------------------------------------=
 -----
-rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1456,14 +3709,8 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1477,8 +3724,15 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
+sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 2 warnings, 0=
+ section mismatches
+
+Errors:
+    (.text+0xafc): undefined reference to `arch_dma_prep_coherent'
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1537,18 +3791,30 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1571,7 +3837,7 @@ tinyconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
 ismatches
 
 Warnings:
-    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+    .config:1173:warning: override: UNWINDER_GUESS changes choice state
 
 ---------------------------------------------------------------------------=
 -----
@@ -1585,13 +3851,21 @@ matches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
+tinyconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
+tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mis=
+matches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1605,14 +3879,8 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
  mismatches
-
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1659,8 +3927,11 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1669,8 +3940,12 @@ vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
 
 ---------------------------------------------------------------------------=
 -----
-workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1689,8 +3964,12 @@ xcep_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
