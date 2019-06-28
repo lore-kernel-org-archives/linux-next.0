@@ -2,134 +2,110 @@ Return-Path: <SRS0=YJ6U=U3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807E3C4321A
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 01:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDA2C4321A
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 03:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A102205F4
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 01:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42412214AF
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 03:38:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FTihH1TC"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnAq9wWe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfF1BpK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 27 Jun 2019 21:45:10 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:58969 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbfF1BpK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 27 Jun 2019 21:45:10 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Zfhx4QTcz9s3Z;
-        Fri, 28 Jun 2019 11:45:05 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561686305;
-        bh=4aAH+l1+X6slCnnOWZAlgZ4hfMF/p/4CgqBa64BdBdg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FTihH1TCGpy9WKHLi3K5cMZdGcxDG2AOj8ASRNNxt11FtW0R/IFYTShPOFIs02TwS
-         YKyqK23OVmYVz1nsPemfcETk9qjU9swhLnIgXOPRsVR5p5CyV8RvV4jp4v8d8ka0R6
-         ZWGZOQNq9spzSRpjTiO8duWYJbYzUqyL7EwTtUN1TQUJ+VTJLrt/1zq1ufy4LAY4Tq
-         2PvzjhxhmTde/pGmOWNYgFRi7CsE5ph7VRzW328WAhbGXIaLIOptt9zhPIU+oPlfRn
-         m0N+VoLR9feb8JrH3NX4UCAdE7DDeTHxqivRP6jOAjD0eVesqe3NSt0aZx9twAUFcT
-         rrIhHXomSmJjQ==
-Date:   Fri, 28 Jun 2019 11:45:04 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190628114504.52d3fe65@canb.auug.org.au>
+        id S1727186AbfF1DiO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 27 Jun 2019 23:38:14 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33443 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbfF1DiM (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2019 23:38:12 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y17so3008351lfe.0
+        for <linux-next@vger.kernel.org>; Thu, 27 Jun 2019 20:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PFAR1VyfRz8u+8JtXBWHxsN9qbzCO9vgXJys4jNPevE=;
+        b=DnAq9wWeUF4/tJ3xd3/E9iDEp59E1DKVpfYYqcNoRE5ld6ONQQVSXKRfVv8MwTIztr
+         pPKNz/8t16wutRg1tu9CGKqaTYhkfLeZbJQ3bd79Z32xN8k+MblNR37mKCk4OutG7fRr
+         23GdKdtowzQcjVaKAHLqU3KZ2UrpmnLSAtCH7ubUagYI1/yuOcw6IjNQAjb+ksr1tMrT
+         SmvrYAemTbPAKMKM3x3S9NFI//CpXPF6AnmQybzEoLJmFdOEyKR1K9kQepsLBUNc/DJN
+         weCD9AuNxwE9DoKFa9ZVOt/s8+oeDOdkMlQjZAdy6nkwsSf7EEvSQFbkCQb1XaOOmhEb
+         Sdtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PFAR1VyfRz8u+8JtXBWHxsN9qbzCO9vgXJys4jNPevE=;
+        b=tEWMD7IkGTo3Gj2d1DG56xPfTg9xToLMRV+XJyGl/8oog0Ec7lDYW2L4VE4VIRT6Qc
+         LuTyaSrzJRO63hzMfOmonOPb9+qQZEVf6llJ+UUuqPweL/GliTRNMk+CFu7PQTqg4H7j
+         d2b45AcfjqiPrVedX1KvMndr2ARhyj7pGouqhXc1rLLoIt73RCs7ZKVF8cv6ECP9AzmW
+         jSPexmHN7vHHzFhi3An/x7BK+szSOkUBkUwJ8WsfJ+9RyoXBPohrDt2fQu9bz4PNiUgP
+         /htN5SXByQ9r6r3VETflx0q9VJ4we1B71kziteAfk2uTyfOLqnFfrbUejInXcaCBpFqu
+         kYmQ==
+X-Gm-Message-State: APjAAAW1D78HOTSQy+HSBXX8IBA+xrDETC2bRv2fM4fE/ep5HZ3h2x0N
+        3udR+uYNm5b9bBEEQDWQiDHBOgZb7WLy68xHAEYuow==
+X-Google-Smtp-Source: APXvYqzx4zeAdw9gJozkJfqZ8idmtP4uO628k0/UGSICcNueyN6ahlH9h046vJEG/h4JYKM/NJ/Oulviun3B640f9P0=
+X-Received: by 2002:a19:ed07:: with SMTP id y7mr3996030lfy.56.1561693089958;
+ Thu, 27 Jun 2019 20:38:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KTqn5qH3d8uD5y73ynfmeX="; protocol="application/pgp-signature"
+References: <20190508173403.6088d0db@canb.auug.org.au> <fa0e68b2-b839-b187-150c-13391c197b99@infradead.org>
+ <CAHp75Veq2=XA124rG8urt3eVE3pcaUm0VdsV7Mxr9zjMpa7mjg@mail.gmail.com>
+ <CACK8Z6F2v8nyUYcnOrkp81WfK2D2NEmK=pcWybn1annrtqRwew@mail.gmail.com> <CAHp75Ver=TNKxh8rdJs1xQYSLNsRLfEoFtcGG6hViug=cF6s_g@mail.gmail.com>
+In-Reply-To: <CAHp75Ver=TNKxh8rdJs1xQYSLNsRLfEoFtcGG6hViug=cF6s_g@mail.gmail.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Thu, 27 Jun 2019 20:37:33 -0700
+Message-ID: <CACK8Z6FN62e041-dwri6S+-34wSOxSsTAPjRmSw44uVJhtRz-A@mail.gmail.com>
+Subject: Re: linux-next: Tree for May 8 (drivers/platform/x86/intel_pmc_core_plat_drv.c)
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/KTqn5qH3d8uD5y73ynfmeX=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Andy,
 
-Hi all,
+On Tue, Jun 11, 2019 at 12:06 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Thu, May 9, 2019 at 2:15 AM Rajat Jain <rajatja@google.com> wrote:
+>
+> > OK, NP. Just to be sure I understand,
+> >
+> > 1) Please let me know if I should send in a fix (it would be
+> > #include/linux/module.h and also add MODULE_LICENSE() I believe)?
+> > 2) Would this be lined up for next version though?
+>
+> Resend a complete series based on the latest stuff we have in our
+> for-next branch.
 
-Today's linux-next merge of the net-next tree got conflicts in:
+My apologies for the delay in resending. I just sent a v7 of the patch
+that was dropped:
+https://lkml.org/lkml/2019/6/27/1264
 
-  drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-  drivers/net/ethernet/aquantia/atlantic/aq_nic.h
+Only 2 changes from the v6:
 
-between commit:
+#include <linux/module.h>
 
-  48dd73d08d4d ("net: aquantia: fix vlans not working over bridged network")
+and
 
-from the net tree and commit:
+MODULE_LICENSE()
 
-  d3ed7c5cf79b ("net: aquantia: adding fields and device features for vlan =
-offload")
+Thanks & Best Regards,
 
-from the net-next tree.
+Rajat
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-index 41172fbebddd,746f85e6de13..000000000000
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@@ -126,7 -126,8 +126,9 @@@ void aq_nic_cfg_start(struct aq_nic_s *
- =20
-  	cfg->link_speed_msk &=3D cfg->aq_hw_caps->link_speed_msk;
-  	cfg->features =3D cfg->aq_hw_caps->hw_features;
- +	cfg->is_vlan_force_promisc =3D true;
-+ 	cfg->is_vlan_rx_strip =3D !!(cfg->features & NETIF_F_HW_VLAN_CTAG_RX);
-+ 	cfg->is_vlan_tx_insert =3D !!(cfg->features & NETIF_F_HW_VLAN_CTAG_TX);
-  }
- =20
-  static int aq_nic_update_link_status(struct aq_nic_s *self)
-diff --cc drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-index 0f22f5d5691b,26c72f298684..000000000000
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-@@@ -35,7 -35,8 +35,9 @@@ struct aq_nic_cfg_s=20
-  	u32 flow_control;
-  	u32 link_speed_msk;
-  	u32 wol;
- +	bool is_vlan_force_promisc;
-+ 	u8 is_vlan_rx_strip;
-+ 	u8 is_vlan_tx_insert;
-  	u16 is_mc_list_enabled;
-  	u16 mc_list_count;
-  	bool is_autoneg;
-
---Sig_/KTqn5qH3d8uD5y73ynfmeX=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0VcSAACgkQAVBC80lX
-0GwEwgf9F59Mr2vpug7MbUet63z2io8N+oOHPXiygDfcGpDg/UW/OqxucjJi+8PG
-GRgtbMi3iD6WKIwkFYFQ+58OZW9XX5GX6c6FrtXL3l/+HdC78R5exwBDR/DDGHWo
-ewi86VkLvY8AJBc8rQuOAOMfly4lpmMMt7pOoDaubG2eOLuurDKzQ/d+jNXF3a2Z
-4bDLOjQopG3bN4HC+5YwXYwRt9STssRole9nxjm26sFIjqzBqV9P8dfz5r9a0NDr
-FNVAL9HvQZFKEIks7bGzIevleXyVdyfkFfRI+b5uCCKbvfiBDILVVjatPuL6xvUv
-5NWKquzlTbFjObk1mMViRfsUB/PRBg==
-=RNk3
------END PGP SIGNATURE-----
-
---Sig_/KTqn5qH3d8uD5y73ynfmeX=--
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
