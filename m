@@ -4,105 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C790DC4321A
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 04:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99640C4321A
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 04:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8562070D
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 04:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6678220656
+	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 04:10:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OoHZWIRk"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZgAP40Fd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725873AbfF1EDI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 28 Jun 2019 00:03:08 -0400
-Received: from ozlabs.org ([203.11.71.1]:58479 "EHLO ozlabs.org"
+        id S1727080AbfF1EKW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 28 Jun 2019 00:10:22 -0400
+Received: from ozlabs.org ([203.11.71.1]:50073 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbfF1EDI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 28 Jun 2019 00:03:08 -0400
+        id S1725792AbfF1EKW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 28 Jun 2019 00:10:22 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Zjm92mlYz9s7h;
-        Fri, 28 Jun 2019 14:03:05 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ZjwW4qpwz9s3Z;
+        Fri, 28 Jun 2019 14:10:19 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561694585;
-        bh=1xxaUcHXNZx9a9L4jaTe1rLO2EjfRqlBYzQY8OCcWtI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OoHZWIRk/N/E3O1e01DpotdFRqSgWmM/gWPqezDHwWmsUiFUf8dndBJR7/ZtdAMoz
-         ztRZ2b9Wi/hdnpb/51asJFbauMLs6cpiBOtbQLMLY/g1dsamlbXA9QKiZ3P9r+grB1
-         nIOpb1iKe6b0psoBus2KvkEktWNRkUQqT2X7hicm88HE19x53H/bPi9NBGirmzDeX3
-         yxo67Bme57WJwFrXmGy6PUd3jBQxlTIjnQouh3UGXHV8jH9Fcu55xWXcmEq8r910kQ
-         oUNAlpfMBpY2VYqX09YgNhgXWskgIzLv06LA68u0kokuDYP80PSe8UciVCyD8NkiBn
-         z8tl79RvYCk0Q==
-Date:   Fri, 28 Jun 2019 14:03:04 +1000
+        s=201702; t=1561695020;
+        bh=I55zkrMesqKne3KNEzZE8U42iz5xAdNYBrsAy1XmwNg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZgAP40FdlZjb2yEhOECndGyeLh1QfrT2/DbfoBVqZy3lC+bAJCo+Xa28DynCRqdBn
+         EUS89x1QjDGxmVnVe7ZSwoduC5otYHiMeR5FCaZCyJxoRiLzyElm9QP6nbisMT1DA6
+         mrEa5DsH3PUg03A5Q2OOWbBhMGRpHo8Wy4oSV3DJYLttTIfBpFtCAhIAvMCTwCEBHS
+         +RWL7nKUZVjDDh3uYaOytL5fBnRaGws9jyD2r2DPCL3QRFM1/n8qer7OgkUSoY2SYC
+         jSrshrGn+4SJ5ZeN+eZeW0WwppwwSdBvJwETBB3smrnqwEdB2ncwdYCClO5bSk0YN9
+         OtGx6H4eqjorw==
+Date:   Fri, 28 Jun 2019 14:10:18 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Crews <ncrews@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: linux-next: build failure after merge of the battery tree
-Message-ID: <20190628140304.76caf572@canb.auug.org.au>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+Subject: Re: [PATCH] powerpc/64s/radix: Define arch_ioremap_p4d_supported()
+Message-ID: <20190628141018.5ad2603d@canb.auug.org.au>
+In-Reply-To: <6d201cb8-4c39-b7ea-84e6-f84607cc8b4f@arm.com>
+References: <1561555260-17335-1-git-send-email-anshuman.khandual@arm.com>
+        <87d0iztz0f.fsf@concordia.ellerman.id.au>
+        <6d201cb8-4c39-b7ea-84e6-f84607cc8b4f@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+DcRGNVT1eLZ5KLQYd.lr_3"; protocol="application/pgp-signature"
+ boundary="Sig_/wq/1diQb=+V7OS3bGVMftw9"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/+DcRGNVT1eLZ5KLQYd.lr_3
+--Sig_/wq/1diQb=+V7OS3bGVMftw9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Anshuman,
 
-After merging the battery tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Fri, 28 Jun 2019 09:14:46 +0530 Anshuman Khandual <anshuman.khandual@arm=
+.com> wrote:
+>
+> On linux-next (next-20190627) this change has already been applied though=
+ a
+> merge commit 153083a99fe431 ("Merge branch 'akpm-current/current'"). So we
+> are good on this ? Or shall I send out a V2 for the original patch. Please
+> suggest. Thank you.
 
-drivers/power/supply/wilco-charger.c: In function 'wilco_charge_get_propert=
-y':
-drivers/power/supply/wilco-charger.c:104:8: error: implicit declaration of =
-function 'wilco_ec_get_byte_property'; did you mean 'wilco_charge_get_prope=
-rty'? [-Werror=3Dimplicit-function-declaration]
-  ret =3D wilco_ec_get_byte_property(ec, property_id, &raw);
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~
-        wilco_charge_get_property
-drivers/power/supply/wilco-charger.c: In function 'wilco_charge_set_propert=
-y':
-drivers/power/supply/wilco-charger.c:130:10: error: implicit declaration of=
- function 'wilco_ec_set_byte_property'; did you mean 'wilco_charge_set_prop=
-erty'? [-Werror=3Dimplicit-function-declaration]
-   return wilco_ec_set_byte_property(ec, PID_CHARGE_MODE, mode);
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~
-          wilco_charge_set_property
-
-Caused by commit
-
-  0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
-
-I have reverted that commit for today.
+Please send Andrew a v2.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/+DcRGNVT1eLZ5KLQYd.lr_3
+--Sig_/wq/1diQb=+V7OS3bGVMftw9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0VkXgACgkQAVBC80lX
-0GyXFAgAoCNNVdJJBy+QZElB1nIow/MKshUWleBAyuiAgntwnubop5lc2yDDk52n
-BR8DQDvTbOn0IxEKXEawJcQt9RxgECQ28UvdvaeRnXZKR54YQbPEudqrCIrmzTWx
-bVyUMMkTZVi/juXZUnOdOlh95TqTJE0vu3Bt/uGm6ygi5JUBLRdq+nmU2aHmmSUM
-B+Gvot4+/B5zAqYQ4viMEkk5aD12thD1/X5bcqwd2ejhrPmSZ/H4kT/kGa4eSwh6
-wix5qGr0PIDFgnQhVgzszG1cvNPNFC8ZgCul4NXwih1U31k/wWjrpidrdmU7+hZp
-m6TXQskkvPhcPiOw9YN2DOgFeCtuUA==
-=aDy1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0VkyoACgkQAVBC80lX
+0Gw6+gf/Y06x3WT9WXSTWwMk6GeiltDHujuBd130HVkWnVGWvwg8RQc9/VfvqINS
+XV0T6wzeSBWrWx5oPcbhTjvWy6a69nYs6x4gxHE9WUWyg5NVK8qFwhQ7h7oQEgDq
+hHSxZ29YSp8yx1SN/JG7Lsebpkfo8JHbSLI6e7icI4odv/D/p6WeOgJI2cIGvkkb
+PJaw6nO/shGvtqI9VyLHlcut0Ay42x4/jvXwrPyZWYJpdJ6I2ssw2tXFNzMHAiJa
+k5Hj69KXCXolZ7fZlYUmf+zMA0EcMvGIWjoa/rwSZYwnrRc0mYAMburImlu4FnCT
+u+TtTQ6frusmg5BqSfuN3Z7I9nFz7Q==
+=PTBt
 -----END PGP SIGNATURE-----
 
---Sig_/+DcRGNVT1eLZ5KLQYd.lr_3--
+--Sig_/wq/1diQb=+V7OS3bGVMftw9--
