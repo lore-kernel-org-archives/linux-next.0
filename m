@@ -1,94 +1,111 @@
-Return-Path: <SRS0=YJ6U=U3=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=4l/6=U4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31870C5B578
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 23:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37573C4321A
+	for <linux-next@archiver.kernel.org>; Sat, 29 Jun 2019 00:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 083C8208E3
-	for <linux-next@archiver.kernel.org>; Fri, 28 Jun 2019 23:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5C1C2086D
+	for <linux-next@archiver.kernel.org>; Sat, 29 Jun 2019 00:33:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ItA1RAIJ"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OBn1+/ty"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfF1Xq7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 28 Jun 2019 19:46:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49242 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfF1Xq6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2019 19:46:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Q6ZtwkMkJB2wj9e6jMlcIrqBM+LdxiqCoy8WdZ3lBrQ=; b=ItA1RAIJ3lULQInJzm4QIZ2Iar
-        /dNb4IJwa3BMmZLRQbFflMUf/0BAhSaP+hVtYhM8FE5gupwWx8TfTtioKvSapVtGtckyx8BGP+qmG
-        nytSZvNXd+/yU0Xb//JyyVWiovqG4xWQPM1tH/YqJHouBv7gCVRjQ5to+4GfpbUlZNv+d8cSdHOX7
-        2NSrBw8FisJ3deLfn4DQkS8WJukpFBeViAWEGf+f1tPyUd1MO89U7hnLzuCWWnRBmClaifmId7yUV
-        dfbNYcI3Ss2MJMf7EUxLMJ+G5v/wjgFweIb9c7WmWxeDq6bEjUnbQoSGACB0+CuPT4WAdhbl4g/ls
-        ys8S4pJA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hh0Zs-0004UV-N9; Fri, 28 Jun 2019 23:46:49 +0000
-Subject: Re: linux-next: Tree for Jun 28 (power/reset/reboot-mode)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nandor Han <nandor.han@vaisala.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-References: <20190628203840.1f74e739@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <bb7b5d1a-97b5-7f74-4075-eeb290fd9508@infradead.org>
-Date:   Fri, 28 Jun 2019 16:46:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726652AbfF2Ad1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 28 Jun 2019 20:33:27 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45703 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726643AbfF2Ad1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 28 Jun 2019 20:33:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45bF3m2GWVz9s4Y;
+        Sat, 29 Jun 2019 10:33:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561768404;
+        bh=2rnkgoVCNl6T9AFkgEUYGK1CF5Gp3iHLZ1ROdDv2nDg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OBn1+/tysERdPthOZdJuB/A6wcfJvzG8pqtRTo0Df3X4LUoLrxmgkpc5HNkb9IxFb
+         5+pwMyv0heZt00ZADoSkgmq0lHovPmpY0eTZIUY4/mpIDfYV5LKs7VTyseY9vxOHUy
+         yUM7CjN9IF+vTPcleMEo3BxRriSdv0otMgQZGIgYxL1tIWgrrHMBOy9fZ5fiv30DUs
+         FK1ysJwwqCcjTovAO4CqP68LIUHHQwhTU+m++buE7wBdsA2xgsqo+y/+33sR9Myn3n
+         PX0RkMdiA2zWYW1zWLElWmaOrd9X6tL1KwtE9+fdRxfNO3eQ2lybx68uRn479CRtkz
+         HlyIcRylDc3tg==
+Date:   Sat, 29 Jun 2019 10:33:17 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Crews <ncrews@chromium.org>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Message-ID: <20190629103317.421ed4b6@canb.auug.org.au>
+In-Reply-To: <d3515009-c922-7aa6-2ded-4ca39ed324f2@collabora.com>
+References: <20190628140304.76caf572@canb.auug.org.au>
+        <20190628153146.c2lh4y55qvcmqhry@earth.universe>
+        <d3515009-c922-7aa6-2ded-4ca39ed324f2@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20190628203840.1f74e739@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EV3ZVoILqOP7tCULXoI=mx0"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 6/28/19 3:38 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190627:
-> 
+--Sig_/EV3ZVoILqOP7tCULXoI=mx0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on x86_64:
+Hi Enric,
 
-when CONFIG_OF is not set/enabled, but
-CONFIG_NVMEM_REBOOT_MODE=m selects REBOOT_MODE:
+On Fri, 28 Jun 2019 18:56:56 +0200 Enric Balletbo i Serra <enric.balletbo@c=
+ollabora.com> wrote:
+>
+> Hmm, I just applied this patch on top of linux-next and it build with
+> allmodconfig on x86_64
+>=20
+> I am wondering if the build was done without this commit, which is in
+> chrome-platform for-next branch. Could be this the problem?
+>=20
+> commit 0c0b7ea23aed0b55ef2f9803f13ddaae1943713d
+> Author: Nick Crews <ncrews@chromium.org>
+> Date:   Wed Apr 24 10:56:50 2019 -0600
+>=20
+>     platform/chrome: wilco_ec: Add property helper library
 
-  CC [M]  drivers/power/reset/reboot-mode.o
-../drivers/power/reset/reboot-mode.c: In function ‘reboot_mode_register’:
-../drivers/power/reset/reboot-mode.c:72:2: error: implicit declaration of function ‘for_each_property_of_node’ [-Werror=implicit-function-declaration]
-  for_each_property_of_node(np, prop) {
-  ^
-../drivers/power/reset/reboot-mode.c:72:38: error: expected ‘;’ before ‘{’ token
-  for_each_property_of_node(np, prop) {
-                                      ^
-../drivers/power/reset/reboot-mode.c:109:1: warning: label ‘error’ defined but not used [-Wunused-label]
- error:
- ^
-../drivers/power/reset/reboot-mode.c:67:9: warning: unused variable ‘len’ [-Wunused-variable]
-  size_t len = strlen(PREFIX);
-         ^
-../drivers/power/reset/reboot-mode.c: At top level:
-../drivers/power/reset/reboot-mode.c:42:12: warning: ‘reboot_mode_notify’ defined but not used [-Wunused-function]
- static int reboot_mode_notify(struct notifier_block *this,
-            ^
+Exactly since I merge the battery tree before the chrome-platform
+tree ... Cross tree dependencies are a pain.
 
+> Anyway, I think the proper way to do it is create an immutable branch for
+> Sebastian as the patch he picked depends on the above commit. I'll create=
+ one,
+> sorry about that missing dependency.
 
--- 
-~Randy
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EV3ZVoILqOP7tCULXoI=mx0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Wsc0ACgkQAVBC80lX
+0GxE+Qf+LWHhQMfML7/yMhynM0XlpayytjoF8f5fmrFFc4kZzKax2ML6G43B0Umi
+eAPjYaLanaD6XtLwSQ8T0gUSsdW4ery0ScohPs3RGHStpgYkQsx1KEMR3HmHFP8Z
+7Oc2SNNq6I0uPBWo/Gb7Rs8ysL2JqldTD870nFukthLEvrRa21sg3XtR1THmZdD5
+VcDYWzJ1dIGKINimqi6jo+sc9dKzlurMyanVw7ElkXsJ1+mTAQMQ7HcipRdO3Obd
+xSMxBlX9bErTXwkXZ82qfb54KiL7ydUeGSJHJLPLsme25UthY0lW7kzfgmjEwBgt
+N3BjJRzsXwJDTlGgxNe8Z8EEQN4ZdA==
+=xJA6
+-----END PGP SIGNATURE-----
+
+--Sig_/EV3ZVoILqOP7tCULXoI=mx0--
