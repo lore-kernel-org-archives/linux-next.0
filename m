@@ -1,4 +1,4 @@
-Return-Path: <SRS0=AK3j=U5=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=aGcV=U6=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,77 +6,80 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C42C5B576
-	for <linux-next@archiver.kernel.org>; Sun, 30 Jun 2019 22:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2D1C06508
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 01:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9905B2089F
-	for <linux-next@archiver.kernel.org>; Sun, 30 Jun 2019 22:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89085212F5
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 01:06:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f7oqWPVW"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nUFiFLnh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfF3WmT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 30 Jun 2019 18:42:19 -0400
-Received: from ozlabs.org ([203.11.71.1]:44641 "EHLO ozlabs.org"
+        id S1726086AbfGABGJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 30 Jun 2019 21:06:09 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40221 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727131AbfF3WmS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 30 Jun 2019 18:42:18 -0400
+        id S1726040AbfGABGI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 30 Jun 2019 21:06:08 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cQVZ51w3z9s00;
-        Mon,  1 Jul 2019 08:42:14 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cThX3R3cz9s4V;
+        Mon,  1 Jul 2019 11:06:04 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561934535;
-        bh=TvJkK4C8sV44GZEQRZ/lRxWlXQRHrK+ez8nGvd/bK7o=;
+        s=201702; t=1561943165;
+        bh=I10qfJ+8ea8LHMvXkLR3Sm2UqUxEsDLKQNkYrxac6Fc=;
         h=Date:From:To:Cc:Subject:From;
-        b=f7oqWPVWuBSf+N5rotTHfhNaaLrE6AsMiqzrAb+aacjP5hbPYPeE2259UakWC4cSH
-         KJIlgUUIABsc5+85R4tpsEERSz8p8TzJ9qmKqbgBTj/KHxrC7DXnDGR17m5Ve/3P9t
-         INHVIA7lV7VNzEA858ykNNt701McjZZXft3evUBZGfbgu7rSIW84UUjvrEUS4L/I52
-         C/CKo7rqZCd/YUjbBytf47bCajCihJuwh2Q+agCODX8iM5qDjLm2x/8ABfhKU4hfC0
-         Li5gQR6fv029hbZwNiBLW3cxH/o6hHTQR3MoAihPyCix0yqHMnSQvyrHKRQiqrvivu
-         Ljn0qArl5KAag==
-Date:   Mon, 1 Jul 2019 08:42:13 +1000
+        b=nUFiFLnhh3vTSqJTjJX5CW+YZVB0u/RWGzWlV9uPx7K5oS7/nOpvkOjhRJGYubVyj
+         RgnvNA5NDnFf2wOCJco2dm+eeJU5oC2wh8xPGC7FILjiQNAcAKGKUT2/4+jioWC434
+         DeBOj9cC5cYkr7FNllRapjOQ3bbLlV91f74tzVQbqHcyRwO4Y0L+lsQE9T0knJ6aWH
+         hoJ3MjnntoOcMv05cHp5fuWgsuJ8rsF8NWL0PxoSYi4sgHf6TLUvTv66sn5keJ8Onb
+         6YsYFNoRsgXRRk+nkA55N6onE4kLVM3/xJeU5JGRV/MNtxMLv6Ij8/GKtRM01pPHXZ
+         yPoimnRXALC1g==
+Date:   Mon, 1 Jul 2019 11:06:03 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Fredrik Noring <noring@nocrew.org>
-Subject: linux-next: manual merge of the dma-mapping tree with Linus' tree
-Message-ID: <20190701084213.1056beab@canb.auug.org.au>
+        Eric Biggers <ebiggers@google.com>
+Subject: linux-next: manual merge of the xfs tree with the f2fs tree
+Message-ID: <20190701110603.5abcbb2c@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SQL05sKDn7veRWekWBJHbSS"; protocol="application/pgp-signature"
+ boundary="Sig_/WHgTUq_CIxHe8Gi/4qnrMHz"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/SQL05sKDn7veRWekWBJHbSS
+--Sig_/WHgTUq_CIxHe8Gi/4qnrMHz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the dma-mapping tree got a conflict in:
+Today's linux-next merge of the xfs tree got a conflict in:
 
-  include/linux/genalloc.h
+  fs/f2fs/file.c
 
 between commit:
 
-  795ee30648c7 ("lib/genalloc: introduce chunk owners")
+  360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4 i_flags=
+")
 
-from Linus' tree and commit:
+from the f2fs tree and commits:
 
-  cf394fc5f715 ("lib/genalloc.c: Add algorithm, align and zeroed family of =
-DMA allocators")
+  de2baa49bbae ("vfs: create a generic checking and prep function for FS_IO=
+C_SETFLAGS")
+  3dd3ba36a8ee ("vfs: create a generic checking function for FS_IOC_FSSETXA=
+TTR")
 
-from the dma-mapping tree.
+from the xfs tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
+I fixed it up (I think - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
@@ -86,91 +89,165 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/genalloc.h
-index 205f62b8d291,ed641337df87..000000000000
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@@ -122,47 -116,21 +122,56 @@@ static inline int gen_pool_add(struct g
-  	return gen_pool_add_virt(pool, addr, -1, size, nid);
+diff --cc fs/f2fs/file.c
+index e7c368db8185,8799468724f9..000000000000
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@@ -1645,22 -1648,45 +1645,23 @@@ static int f2fs_file_flush(struct file=20
+  	return 0;
   }
-  extern void gen_pool_destroy(struct gen_pool *);
- -extern unsigned long gen_pool_alloc(struct gen_pool *, size_t);
- -extern unsigned long gen_pool_alloc_algo(struct gen_pool *, size_t,
- -		genpool_algo_t algo, void *data);
- +unsigned long gen_pool_alloc_algo_owner(struct gen_pool *pool, size_t siz=
-e,
- +		genpool_algo_t algo, void *data, void **owner);
- +
- +static inline unsigned long gen_pool_alloc_owner(struct gen_pool *pool,
- +		size_t size, void **owner)
- +{
- +	return gen_pool_alloc_algo_owner(pool, size, pool->algo, pool->data,
- +			owner);
- +}
- +
- +static inline unsigned long gen_pool_alloc_algo(struct gen_pool *pool,
- +		size_t size, genpool_algo_t algo, void *data)
- +{
- +	return gen_pool_alloc_algo_owner(pool, size, algo, data, NULL);
- +}
- +
- +/**
- + * gen_pool_alloc - allocate special memory from the pool
- + * @pool: pool to allocate from
- + * @size: number of bytes to allocate from the pool
- + *
- + * Allocate the requested number of bytes from the specified pool.
- + * Uses the pool allocation function (with first-fit algorithm by default=
-).
- + * Can not be used in NMI handler on architectures without
- + * NMI-safe cmpxchg implementation.
- + */
- +static inline unsigned long gen_pool_alloc(struct gen_pool *pool, size_t =
-size)
- +{
- +	return gen_pool_alloc_algo(pool, size, pool->algo, pool->data);
- +}
- +
-  extern void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size,
-  		dma_addr_t *dma);
-+ extern void *gen_pool_dma_alloc_algo(struct gen_pool *pool, size_t size,
-+ 		dma_addr_t *dma, genpool_algo_t algo, void *data);
-+ extern void *gen_pool_dma_alloc_align(struct gen_pool *pool, size_t size,
-+ 		dma_addr_t *dma, int align);
-+ extern void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_=
-addr_t *dma);
-+ extern void *gen_pool_dma_zalloc_algo(struct gen_pool *pool, size_t size,
-+ 		dma_addr_t *dma, genpool_algo_t algo, void *data);
-+ extern void *gen_pool_dma_zalloc_align(struct gen_pool *pool, size_t size,
-+ 		dma_addr_t *dma, int align);
- -extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
- +extern void gen_pool_free_owner(struct gen_pool *pool, unsigned long addr,
- +		size_t size, void **owner);
- +static inline void gen_pool_free(struct gen_pool *pool, unsigned long add=
-r,
- +                size_t size)
- +{
- +	gen_pool_free_owner(pool, addr, size, NULL);
- +}
- +
-  extern void gen_pool_for_each_chunk(struct gen_pool *,
-  	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
-  extern size_t gen_pool_avail(struct gen_pool *);
+ =20
+ -static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ -{
+ -	struct inode *inode =3D file_inode(filp);
+ -	struct f2fs_inode_info *fi =3D F2FS_I(inode);
+ -	unsigned int flags =3D fi->i_flags;
+ -
+ -	if (IS_ENCRYPTED(inode))
+ -		flags |=3D F2FS_ENCRYPT_FL;
+ -	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
+ -		flags |=3D F2FS_INLINE_DATA_FL;
+ -	if (is_inode_flag_set(inode, FI_PIN_FILE))
+ -		flags |=3D F2FS_NOCOW_FL;
+ -
+ -	flags &=3D F2FS_FL_USER_VISIBLE;
+ -
+ -	return put_user(flags, (int __user *)arg);
+ -}
+ -
+ -static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+ +static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+  {
+  	struct f2fs_inode_info *fi =3D F2FS_I(inode);
+ -	unsigned int oldflags;
+ +	u32 oldflags;
++ 	int err;
+ =20
+  	/* Is it quota file? Do not allow user to mess with it */
+  	if (IS_NOQUOTA(inode))
+  		return -EPERM;
+ =20
+ -	flags =3D f2fs_mask_flags(inode->i_mode, flags);
+ -
+  	oldflags =3D fi->i_flags;
+ =20
+- 	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
+- 		if (!capable(CAP_LINUX_IMMUTABLE))
+- 			return -EPERM;
+ -	err =3D vfs_ioc_setflags_prepare(inode, oldflags, flags);
+++	err =3D vfs_ioc_setflags_prepare(inode, oldflags, iflags);
++ 	if (err)
++ 		return err;
+ =20
+ -	flags =3D flags & F2FS_FL_USER_MODIFIABLE;
+ -	flags |=3D oldflags & ~F2FS_FL_USER_MODIFIABLE;
+ -	fi->i_flags =3D flags;
+ +	fi->i_flags =3D iflags | (oldflags & ~mask);
+ =20
+  	if (fi->i_flags & F2FS_PROJINHERIT_FL)
+  		set_inode_flag(inode, FI_PROJ_INHERIT);
+@@@ -2850,53 -2773,35 +2851,33 @@@ static inline u32 f2fs_xflags_to_iflags
+  	return iflags;
+  }
+ =20
+- static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
++ static void f2fs_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
+  {
+- 	struct inode *inode =3D file_inode(filp);
+  	struct f2fs_inode_info *fi =3D F2FS_I(inode);
+- 	struct fsxattr fa;
+ =20
+- 	memset(&fa, 0, sizeof(struct fsxattr));
+- 	fa.fsx_xflags =3D f2fs_iflags_to_xflags(fi->i_flags);
+ -	simple_fill_fsxattr(fa, f2fs_iflags_to_xflags(fi->i_flags &
+ -						      F2FS_FL_USER_VISIBLE));
+++	simple_fill_fsxattr(fa, f2fs_iflags_to_xflags(fi->i_flags));
+ =20
+  	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
+- 		fa.fsx_projid =3D (__u32)from_kprojid(&init_user_ns,
+- 							fi->i_projid);
+-=20
+- 	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
+- 		return -EFAULT;
+- 	return 0;
++ 		fa->fsx_projid =3D from_kprojid(&init_user_ns, fi->i_projid);
+  }
+ =20
+- static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *=
+fa)
++ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+  {
+- 	/*
+- 	 * Project Quota ID state is only allowed to change from within the init
+- 	 * namespace. Enforce that restriction only if we are trying to change
+- 	 * the quota ID state. Everything else is allowed in user namespaces.
+- 	 */
+- 	if (current_user_ns() =3D=3D &init_user_ns)
+- 		return 0;
++ 	struct inode *inode =3D file_inode(filp);
++ 	struct fsxattr fa;
+ =20
+- 	if (__kprojid_val(F2FS_I(inode)->i_projid) !=3D fa->fsx_projid)
+- 		return -EINVAL;
+-=20
+- 	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
+- 		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
+- 			return -EINVAL;
+- 	} else {
+- 		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+- 			return -EINVAL;
+- 	}
++ 	f2fs_fill_fsxattr(inode, &fa);
+ =20
++ 	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
++ 		return -EFAULT;
+  	return 0;
+  }
+ =20
+  static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+  {
+  	struct inode *inode =3D file_inode(filp);
+- 	struct fsxattr fa;
+ -	struct f2fs_inode_info *fi =3D F2FS_I(inode);
++ 	struct fsxattr fa, old_fa;
+ -	unsigned int flags;
+ +	u32 iflags;
+  	int err;
+ =20
+  	if (copy_from_user(&fa, (struct fsxattr __user *)arg, sizeof(fa)))
+@@@ -2918,11 -2823,14 +2899,13 @@@
+  		return err;
+ =20
+  	inode_lock(inode);
+- 	err =3D f2fs_ioctl_check_project(inode, &fa);
++=20
++ 	f2fs_fill_fsxattr(inode, &old_fa);
++ 	err =3D vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
+  	if (err)
+  		goto out;
+ -	flags =3D (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
+ -				(flags & F2FS_FL_XFLAG_VISIBLE);
+ -	err =3D __f2fs_ioc_setflags(inode, flags);
+ +	err =3D f2fs_setflags_common(inode, iflags,
+ +			f2fs_xflags_to_iflags(F2FS_SUPPORTED_XFLAGS));
+  	if (err)
+  		goto out;
+ =20
 
---Sig_/SQL05sKDn7veRWekWBJHbSS
+--Sig_/WHgTUq_CIxHe8Gi/4qnrMHz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ZOsUACgkQAVBC80lX
-0GzVYQf8DzGrgEwhjLgTFBKug6Z25iF4yKlXBPK5jvATA8wHxFiPUQDoANG7Jm4o
-ihnBJsQHN8j9u24MQy+3pWij486+yOA8/5TqPo/TI5mgPD8qJf0bbq0UZCQ5zkax
-8GZYPShvBVGWOEoYb/5uKKamFZhZkDoNJlPbHNU26TBf8pjTxAwr3pMNZqQrIj++
-pnL7ITRs6JQp86fsB5YhUZ/HgPh1eb3a9DLd9M+9uBBB1bYySxZQAHPKD6QGGCC+
-j6Nu58G3MNSeKFlVnqFznoqsTghJYgOADZZqyj5oDz1AK6kmOHzlDYjmcALS5V/y
-8loDXZ2G9zn/HI/df0QdC/hn/Fn8FQ==
-=urcz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ZXHsACgkQAVBC80lX
+0GxP6gf+Pl8lwcBYH5ii6HdOz1bH6Ls00UO1G40zosKUfIRsQGgy086i+AS7C03a
+K6V0FA2ltt3FJFXi3st5jgGgEiuyqsVU5TCOmr4p0izz58IX59LVXOcf90MqEZN8
+md1iBOSmuIJyJ0/j3LrUV1d9xr8bj/vEgzI1HKLJy4LKzRyVx4fmHR4ooYMlQyCc
+HpNPF/4PiH4BHkZckOysU7gZ6TRIEcA2PWQHleIFxepU2SjsZ9YdtTISGqe9PRUY
+nh4l9d3+hQYIUBgg9F5LiuJEfJdWIuBkOAHQrYXJMDKkaPr9c7k3cwaLkD15rSYg
+AZQPzhJ5GrKBmB6azd3xy6KyC3nbiQ==
+=rEt8
 -----END PGP SIGNATURE-----
 
---Sig_/SQL05sKDn7veRWekWBJHbSS--
+--Sig_/WHgTUq_CIxHe8Gi/4qnrMHz--
