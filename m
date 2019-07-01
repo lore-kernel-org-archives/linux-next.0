@@ -2,61 +2,59 @@ Return-Path: <SRS0=aGcV=U6=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD3EC0650E
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 11:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB827C0650E
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 11:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F45206A3
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 11:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E22B2133D
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 11:33:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="obh3DPXJ"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gTyP6v2/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfGALJB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 07:09:01 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48969 "EHLO ozlabs.org"
+        id S1727387AbfGALdM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 07:33:12 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44939 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbfGALJB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:09:01 -0400
+        id S1726967AbfGALdL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jul 2019 07:33:11 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cl48276Lz9sPF;
-        Mon,  1 Jul 2019 21:08:56 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45clc33R99z9sPM;
+        Mon,  1 Jul 2019 21:33:07 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561979337;
-        bh=TsIHxcBzCHhZQDVafpPUKveYRycGCR5XtzfjkPEjZRU=;
+        s=201702; t=1561980789;
+        bh=C8KL78jLCoDFJ1Bb+OIqrAImaLk0QK9iv7sc8TkvVx0=;
         h=Date:From:To:Cc:Subject:From;
-        b=obh3DPXJcRIFLYi1UOmDqNaCNCn6z99jLJR9sybisRxuYYcAIJWS2couB0kgVpKdz
-         G6M8FB8hsaPLhfkMWLRvRNT5UzpDQdFTxST1mC/BYAcArn8YhNrshQ2RFHgMPKQ0sL
-         IJpyETuJ6VBUKVCdMhfO+rfy2TBjAYwLY7yYWnaJZYjYgE8uBq6vE4fDmiTA2pbpv2
-         1sx4EBypVCrMRWxmeSqu2ofQZxgqYlIpJC3aypWcFVonZlgIeEjn6tGkQDexJi/qNm
-         njsFoQnN2rIFu3gxVoMseFNq3tuRHQwzbe/gyABbWcMUkwvB43+3jD+4KN5Jh49DDz
-         NBCB4V7QQZXFA==
-Date:   Mon, 1 Jul 2019 21:08:53 +1000
+        b=gTyP6v2/8pcb2Dz3UJFcp7ZuSvKfY+fzxNdReNZr6bfbHRMlvSjTRIkwx1XFIRVpk
+         kdonvaUwJZaimvau5BLDhDCMFRYQhqQyMMfZGc9hT2fHIBhJTwQaeF0dG0zMPkxlb/
+         8/99N7Ex8jVNArXN+/ZVweaYPJoC5yAAqzQmxFfX7Yccta/5ZpyJlRwlW5SXa78Vvz
+         uFXzwmqJcJ0MMFeogb4gPhFarPCLQSNY37MLnLZzdj592v9DBedYIYhUqSkLDtQJfG
+         QY6i218xlHBAgaH1z675EG8Hih4GTLBj+zIEzfjUNthZPK+woBDQ4pEspbE96SK7SD
+         2Np5CgOksel/g==
+Date:   Mon, 1 Jul 2019 21:33:04 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Gunthorpe <jgg@mellanox.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
+To:     Jason Gunthorpe <jgg@mellanox.com>, Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
+        Philip Yang <Philip.Yang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
 Subject: linux-next: build failure after merge of the hmm tree
-Message-ID: <20190701210853.0c72240b@canb.auug.org.au>
+Message-ID: <20190701213304.34eeaef8@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FKIgdE.+Owqka1kDpKHLUls"; protocol="application/pgp-signature"
+ boundary="Sig_/.ggz7+WEN9pPwWsG36IPyVN"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/FKIgdE.+Owqka1kDpKHLUls
+--Sig_/.ggz7+WEN9pPwWsG36IPyVN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -72,74 +70,51 @@ unction-declaration]
   lockdep_assert_held_exclusive(&mm->mmap_sem);
   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   lockdep_assert_held_once
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_ttm_tt_get_use=
+r_pages':
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:778:28: error: passing argument 2 o=
+f 'hmm_range_register' from incompatible pointer type [-Werror=3Dincompatib=
+le-pointer-types]
+  hmm_range_register(range, mm, start,
+                            ^~
+In file included from drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:35:
+include/linux/hmm.h:464:29: note: expected 'struct hmm_mirror *' but argume=
+nt is of type 'struct mm_struct *'
+          struct hmm_mirror *mirror,
+          ~~~~~~~~~~~~~~~~~~~^~~~~~
 
 Caused by commit
 
-  8a9320b7ec5d ("mm/hmm: Simplify hmm_get_or_create and make it reliable")
+  e36acfe6c86d ("mm/hmm: Use hmm_mirror not mm as an argument for hmm_range=
+_register")
 
 interacting with commit
 
-  9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() ->=
- lockdep_assert_held_write()")
+  66c45500bfdc ("drm/amdgpu: use new HMM APIs and helpers")
 
-from the tip tree.
+from the drm tree.
 
-I have added the following merge fix.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 1 Jul 2019 21:05:59 +1000
-Subject: [PATCH] mm/hmm: fixup for "locking/lockdep: Rename
- lockdep_assert_held_exclusive() -> lockdep_assert_held_write()"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- mm/hmm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/hmm.c b/mm/hmm.c
-index c1bdcef403ee..2ddbd589b207 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -47,7 +47,7 @@ static struct hmm *hmm_get_or_create(struct mm_struct *mm)
- {
- 	struct hmm *hmm;
-=20
--	lockdep_assert_held_exclusive(&mm->mmap_sem);
-+	lockdep_assert_held_write(&mm->mmap_sem);
-=20
- 	/* Abuse the page_table_lock to also protect mm->hmm. */
- 	spin_lock(&mm->page_table_lock);
-@@ -248,7 +248,7 @@ static const struct mmu_notifier_ops hmm_mmu_notifier_o=
-ps =3D {
-  */
- int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm)
- {
--	lockdep_assert_held_exclusive(&mm->mmap_sem);
-+	lockdep_assert_held_write(&mm->mmap_sem);
-=20
- 	/* Sanity check */
- 	if (!mm || !mirror || !mirror->ops)
---=20
-2.20.1
+All I could do for now was to mark the AMDGPU driver broken.  Please
+submit a merge for for me (and later Linus) to use.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/FKIgdE.+Owqka1kDpKHLUls
+--Sig_/.ggz7+WEN9pPwWsG36IPyVN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Z6cUACgkQAVBC80lX
-0Gw/+Af9Env8AG0K0JMrb9vaNnUgMUBVs3sNfcg9nWHC8j6zRtIpiUJNHyp7zUGZ
-MAoPXvRkmhWz+L5pZFh2CJYebrWC0THTpMu5my81MQJJaPphA+lS6qYCTBfi+xHD
-25gmNOt/IEGzLrJrkLOIEO2aag0hpuUkhueUxApKkQzN4xBnLUuFevaAA5mVTnoc
-t8qFYFtkCsZxt/NnWmp1DNllGOSIx5T2HfAu3i3hcM/UJeQUvBhEchpMF+tlI6Nf
-UA8tmYNoiUVd8lUDnU2SHlz9ObTCb4Ral7tbo8aSr9wxGRyGu5bnNtCHq0rBcLvq
-LEKls0F1F6iDij49wT9TC7Ia2PNBOQ==
-=6/YF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Z73AACgkQAVBC80lX
+0GxpLQf+LMHL2mWfHS5YvdE3KHF60hv56K27v0dIs3yDycw9f5yhztFHHogleIUr
+xpVg9DRfLoUlPtCRzP05CWFSGp24bbDsTl+EQrk+sfNbmRmDkWo7zeFd4DUdhe2e
+MgT9FqipJnbFqXSwpyZzstUa8CdnxlRUOZdlJIwqgdRX4u4g+hlE+45YjmE009pV
+lRES1OjZED4t4QcfxQjCNFuLlUoZm+CgppPcp4x+KovYEYSl1iHThGlVYMkbqb1C
+o6LY8LdBK+D1PHpVr23ODTpFL4n25jI8YgQwk/1a8B063GhNz362+oyG3oWY9y7G
+LZC8K+Xam6sbTcaDrUrNrh7ydo5Zww==
+=hKxP
 -----END PGP SIGNATURE-----
 
---Sig_/FKIgdE.+Owqka1kDpKHLUls--
+--Sig_/.ggz7+WEN9pPwWsG36IPyVN--
