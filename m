@@ -2,314 +2,190 @@ Return-Path: <SRS0=aGcV=U6=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB1C06511
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 16:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23522C0650E
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 18:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677D5216F4
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 16:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB17521721
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 18:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tJ4W5Nic"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHbxGEkq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbfGAQrc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 12:47:32 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55600 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728726AbfGAQrb (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2019 12:47:31 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61GY0vg171845;
-        Mon, 1 Jul 2019 16:47:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=8gxkRObKYbMrXDLgGJZlKItu1lvgD7pvqBSu/EBf7k0=;
- b=tJ4W5NicwThgq+LmSAQiHrlkpGltUTl2THNi6lOJ8Pd3BhJMcYMbJcwE7P4Z9l8C/ald
- NHq4kt+GTidTfnfW0HO3G056budSJRIq3B8E6A6X7M12J+10HOJTcPWotKvnh1ndOabL
- CPr163YgWsjqF38QEFZ+QCvKBAIPQQgx4QZj8o1a0ncRSg9z5SyKlX1S+FO5FyP81jQF
- Qt2y1hNvWuGOq0OObDTSLxvqf3F9CZCU1+1mq+xNrPs93UdxsdjURkEUvzgba/XAmR85
- cjx0EgKjwP1u7LHSc7YNpMpCRTH7b8/liHuB8KvSuchqhRrydlmwRg6UWGP5bIwWfh91 Qg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2te61dxrxp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 16:47:10 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61GWUdf119089;
-        Mon, 1 Jul 2019 16:47:10 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2tebqg19dp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 16:47:10 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61Gl7Fv000314;
-        Mon, 1 Jul 2019 16:47:07 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 09:47:07 -0700
-Date:   Mon, 1 Jul 2019 09:47:05 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Eric Biggers <ebiggers@google.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
+        id S1726483AbfGASjq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 14:39:46 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41399 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfGASjq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2019 14:39:46 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p15so24705860eds.8;
+        Mon, 01 Jul 2019 11:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hu0HTmKIn4QBUbDeu1PJZMoa50Wx+eTeneXb2QI48Sg=;
+        b=DHbxGEkq7PH+aNGvyJgwbs0vSW72Zcv76OLhOdPOSXO/w5ZOYGHZULrOP6Oh7TuKrs
+         bA/G0TkOMYAJRUCUOaeg3eOcBk59pSK2lwuAWTVgJXfWDqfHGcZf7hFjGn1S8TGvIhO9
+         hfg96WFsYBRtNf1Ax+vzg/r2iFHWTnRMbH+k3HUuZKwSWA4wAr+OkICZzIiM00dY/osi
+         INBRA89XyI65Z/vsePFmbz2zX2/24whUP3zNFPZU+9Tp8pFu9VXkXzy96FftxH4RMrnn
+         /Dxw55SpE54T+OWTk53pRcPizf9nZUFocIImLBpm/III601f+J5r3p36fSGB4oAN7Dxo
+         B3EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hu0HTmKIn4QBUbDeu1PJZMoa50Wx+eTeneXb2QI48Sg=;
+        b=fnqRHSa2LuRheUzPX9HppR3wnil0d6+ZQPxDsiiLeVthklu0NPPPZV2ZpBE7Lbxlfb
+         BO3BZ6DXuw9mWRnXgKVgttg7Z6Pf4ElAZ4MfsNN3PDrCRybpL4+phJHeFnxaJrYfRHnx
+         AL1lPpmptaZfWigkLyKKcclMl1aHZSsVb1GVN3vRjsEmJR6vo/nL5rHFQY9dslZYImLm
+         eS2pFYfx3VuEp2D1O1r8Ew9bw1pncBw4ihwQ5p6lFb+MkiEolmB7e6EL8bv9bAuQnTaZ
+         ll8H80LdOv3amX/vvhXpi3y6pz8fFxTM1AwNykSWdk2Q6UDa+pMqAI8T6aHNdFr2W/t/
+         f45g==
+X-Gm-Message-State: APjAAAU26yHogdy2e3M+nNh3mAjYtjc2EWyiMHQ0s8Pht4aEjDp0FOow
+        EtW0etYZk3K06u/vJqMqZkA=
+X-Google-Smtp-Source: APXvYqz0Rw7BldmAKuQMbC4OUAMYhRMUbs+3f7CurTumUuaQ4EqRIy8VprbmnZWA7UwiUNZ3jqh0/w==
+X-Received: by 2002:a50:9263:: with SMTP id j32mr30732951eda.121.1562006383316;
+        Mon, 01 Jul 2019 11:39:43 -0700 (PDT)
+Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id r12sm3907610eda.39.2019.07.01.11.39.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 11:39:42 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 11:39:40 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the xfs tree with the f2fs tree
-Message-ID: <20190701164705.GN1404256@magnolia>
-References: <20190701110603.5abcbb2c@canb.auug.org.au>
- <20190701163146.GA195588@google.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Message-ID: <20190701183940.GA67767@archlinux-epyc>
+References: <20190701190940.7f23ac15@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
 Content-Disposition: inline
-In-Reply-To: <20190701163146.GA195588@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010200
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010200
+In-Reply-To: <20190701190940.7f23ac15@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 09:31:46AM -0700, Eric Biggers wrote:
-> [+f2fs mailing list]
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jul 01, 2019 at 07:09:40PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Mon, Jul 01, 2019 at 11:06:03AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the xfs tree got a conflict in:
-> > 
-> >   fs/f2fs/file.c
-> > 
-> > between commit:
-> > 
-> >   360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4 i_flags")
-> > 
-> > from the f2fs tree and commits:
-> > 
-> >   de2baa49bbae ("vfs: create a generic checking and prep function for FS_IOC_SETFLAGS")
-> >   3dd3ba36a8ee ("vfs: create a generic checking function for FS_IOC_FSSETXATTR")
-> > 
-> > from the xfs tree.
-> > 
-> > I fixed it up (I think - see below) and can carry the fix as necessary.
-> > This is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc fs/f2fs/file.c
-> > index e7c368db8185,8799468724f9..000000000000
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@@ -1645,22 -1648,45 +1645,23 @@@ static int f2fs_file_flush(struct file 
-> >   	return 0;
-> >   }
-> >   
-> >  -static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
-> >  -{
-> >  -	struct inode *inode = file_inode(filp);
-> >  -	struct f2fs_inode_info *fi = F2FS_I(inode);
-> >  -	unsigned int flags = fi->i_flags;
-> >  -
-> >  -	if (IS_ENCRYPTED(inode))
-> >  -		flags |= F2FS_ENCRYPT_FL;
-> >  -	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
-> >  -		flags |= F2FS_INLINE_DATA_FL;
-> >  -	if (is_inode_flag_set(inode, FI_PIN_FILE))
-> >  -		flags |= F2FS_NOCOW_FL;
-> >  -
-> >  -	flags &= F2FS_FL_USER_VISIBLE;
-> >  -
-> >  -	return put_user(flags, (int __user *)arg);
-> >  -}
-> >  -
-> >  -static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
-> >  +static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
-> >   {
-> >   	struct f2fs_inode_info *fi = F2FS_I(inode);
-> >  -	unsigned int oldflags;
-> >  +	u32 oldflags;
-> > + 	int err;
-> >   
-> >   	/* Is it quota file? Do not allow user to mess with it */
-> >   	if (IS_NOQUOTA(inode))
-> >   		return -EPERM;
-> >   
-> >  -	flags = f2fs_mask_flags(inode->i_mode, flags);
-> >  -
-> >   	oldflags = fi->i_flags;
-> >   
-> > - 	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
-> > - 		if (!capable(CAP_LINUX_IMMUTABLE))
-> > - 			return -EPERM;
-> >  -	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
-> > ++	err = vfs_ioc_setflags_prepare(inode, oldflags, iflags);
-> > + 	if (err)
-> > + 		return err;
+> Today's linux-next merge of the char-misc tree got a conflict in:
 > 
-> I don't think this is the correct resolution.  Now f2fs_setflags_common() is
-> meant to take the f2fs on-disk i_flags, which aren't necessarily the same as the
-> flags passed to the FS_IOC_SETFLAGS ioctl.  So it's not appropriate to call
-> vfs_ioc_setflags_prepare() in it.  It should be in f2fs_ioc_setflags() instead.
+>   drivers/hwtracing/coresight/of_coresight.c
 > 
-> I've pushed up what I think is the correct resolution to
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=f2fs-setflags-resolved
+> between commit:
 > 
-> Here is my diff of fs/f2fs/file.c from f2fs/dev.  Darrick, can you check that
-> this is what you would have done if you had patched f2fs/dev instead of v5.2?
-
-Yep, that's roughly what I was planning to do to connect f2fs to the
-checking functions.
-
-I withdrew the fs/f2fs/ parts of the setflags/fssetxattr cleanups from
-the branch with the intent to fix it after f2fs-dev lands, because I
-think this is too messy a merge resolution to push through Linus.
-
-Would you mind resending this with a proper subject line and SOB? :)
-
---D
-
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index e7c368db81851f..64f157f2e8d5e4 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1648,19 +1648,12 @@ static int f2fs_file_flush(struct file *file, fl_owner_t id)
->  static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->  {
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -	u32 oldflags;
->  
->  	/* Is it quota file? Do not allow user to mess with it */
->  	if (IS_NOQUOTA(inode))
->  		return -EPERM;
->  
-> -	oldflags = fi->i_flags;
-> -
-> -	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
-> -		if (!capable(CAP_LINUX_IMMUTABLE))
-> -			return -EPERM;
-> -
-> -	fi->i_flags = iflags | (oldflags & ~mask);
-> +	fi->i_flags = iflags | (fi->i_flags & ~mask);
->  
->  	if (fi->i_flags & F2FS_PROJINHERIT_FL)
->  		set_inode_flag(inode, FI_PROJ_INHERIT);
-> @@ -1765,7 +1758,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
->  static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
->  {
->  	struct inode *inode = file_inode(filp);
-> -	u32 fsflags;
-> +	struct f2fs_inode_info *fi = F2FS_I(inode);
-> +	u32 fsflags, old_fsflags;
->  	u32 iflags;
->  	int ret;
->  
-> @@ -1789,8 +1783,14 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
->  
->  	inode_lock(inode);
->  
-> +	old_fsflags = f2fs_iflags_to_fsflags(fi->i_flags);
-> +	ret = vfs_ioc_setflags_prepare(inode, old_fsflags, fsflags);
-> +	if (ret)
-> +		goto out;
-> +
->  	ret = f2fs_setflags_common(inode, iflags,
->  			f2fs_fsflags_to_iflags(F2FS_SETTABLE_FS_FL));
-> +out:
->  	inode_unlock(inode);
->  	mnt_drop_write_file(filp);
->  	return ret;
-> @@ -2850,52 +2850,32 @@ static inline u32 f2fs_xflags_to_iflags(u32 xflags)
->  	return iflags;
->  }
->  
-> -static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
-> +static void f2fs_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
->  {
-> -	struct inode *inode = file_inode(filp);
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -	struct fsxattr fa;
->  
-> -	memset(&fa, 0, sizeof(struct fsxattr));
-> -	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags);
-> +	simple_fill_fsxattr(fa, f2fs_iflags_to_xflags(fi->i_flags));
->  
->  	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
-> -		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
-> -							fi->i_projid);
-> -
-> -	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
-> -		return -EFAULT;
-> -	return 0;
-> +		fa->fsx_projid = from_kprojid(&init_user_ns, fi->i_projid);
->  }
->  
-> -static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
-> +static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
->  {
-> -	/*
-> -	 * Project Quota ID state is only allowed to change from within the init
-> -	 * namespace. Enforce that restriction only if we are trying to change
-> -	 * the quota ID state. Everything else is allowed in user namespaces.
-> -	 */
-> -	if (current_user_ns() == &init_user_ns)
-> -		return 0;
-> +	struct inode *inode = file_inode(filp);
-> +	struct fsxattr fa;
->  
-> -	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
-> -		return -EINVAL;
-> -
-> -	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
-> -		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
-> -			return -EINVAL;
-> -	} else {
-> -		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
-> -			return -EINVAL;
-> -	}
-> +	f2fs_fill_fsxattr(inode, &fa);
->  
-> +	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
-> +		return -EFAULT;
+>   418e3ea157ef ("bus_find_device: Unify the match callback with class_find_device")
+> 
+> from the driver-core tree and commits:
+> 
+>   22aa495a6477 ("coresight: Rename of_coresight to coresight-platform")
+>   20961aea982e ("coresight: platform: Use fwnode handle for device search")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (I removed the file and added the following merge fix patch)
+> and can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 1 Jul 2019 19:07:20 +1000
+> Subject: [PATCH] coresight: fix for "bus_find_device: Unify the match callback
+>  with class_find_device"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/hwtracing/coresight/coresight-platform.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 3c5ceda8db24..fc67f6ae0b3e 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -37,7 +37,7 @@ static int coresight_alloc_conns(struct device *dev,
 >  	return 0;
 >  }
 >  
->  static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+> -int coresight_device_fwnode_match(struct device *dev, void *fwnode)
+> +int coresight_device_fwnode_match(struct device *dev, const void *fwnode)
 >  {
->  	struct inode *inode = file_inode(filp);
-> -	struct fsxattr fa;
-> +	struct fsxattr fa, old_fa;
->  	u32 iflags;
->  	int err;
->  
-> @@ -2918,7 +2898,9 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
->  		return err;
->  
->  	inode_lock(inode);
-> -	err = f2fs_ioctl_check_project(inode, &fa);
-> +
-> +	f2fs_fill_fsxattr(inode, &old_fa);
-> +	err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
->  	if (err)
->  		goto out;
->  	err = f2fs_setflags_common(inode, iflags,
+>  	return dev_fwnode(dev) == fwnode;
+>  }
+> -- 
+> 2.20.1
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+Hi Stephen,
+
+The attached patch is needed in addition to this to avoid a build error
+about incompatible pointer types (in the commit message).
+
+Cheers,
+Nathan
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-coresight-Make-the-coresight_device_fwnode_match-dec.patch"
+
+From 2b2dd836a7370d9b33fb0f70515ecd7bc8462c0a Mon Sep 17 00:00:00 2001
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Mon, 1 Jul 2019 11:28:08 -0700
+Subject: [PATCH] coresight: Make the coresight_device_fwnode_match
+ declaration's fwnode parameter const
+
+drivers/hwtracing/coresight/coresight.c:1051:11: error: incompatible
+pointer types passing 'int (struct device *, void *)' to parameter of
+type 'int (*)(struct device *, const void *)'
+[-Werror,-Wincompatible-pointer-types]
+                                      coresight_device_fwnode_match);
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/device.h:173:17: note: passing argument to parameter 'match' here
+                               int (*match)(struct device *dev, const void *data));
+                                     ^
+1 error generated.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/hwtracing/coresight/coresight-priv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+index 8b07fe55395a..7d401790dd7e 100644
+--- a/drivers/hwtracing/coresight/coresight-priv.h
++++ b/drivers/hwtracing/coresight/coresight-priv.h
+@@ -202,6 +202,6 @@ static inline void *coresight_get_uci_data(const struct amba_id *id)
+ 
+ void coresight_release_platform_data(struct coresight_platform_data *pdata);
+ 
+-int coresight_device_fwnode_match(struct device *dev, void *fwnode);
++int coresight_device_fwnode_match(struct device *dev, const void *fwnode);
+ 
+ #endif
+-- 
+2.22.0
+
+
+--1yeeQ81UyVL57Vl7--
