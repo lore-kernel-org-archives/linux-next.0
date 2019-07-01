@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4337CC0650E
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 15:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F63C46478
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 15:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C8020B7C
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 15:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AB25214AE
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 15:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eVvt+xIP"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L0jw6WvQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbfGAPmV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 11:42:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:58993 "EHLO ozlabs.org"
+        id S1727661AbfGAPtu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 11:49:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:47459 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbfGAPmV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:42:21 -0400
+        id S1727373AbfGAPtu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jul 2019 11:49:50 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cs7Z1L7nz9s3Z;
-        Tue,  2 Jul 2019 01:42:18 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45csJC5Q7Vz9s3Z;
+        Tue,  2 Jul 2019 01:49:47 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561995738;
-        bh=cKjt+D7w0RIO3MeUeoCcq1c6qBlW5HWwqMuUlp3y4L0=;
+        s=201702; t=1561996187;
+        bh=uYN0y0aQlZBTgN0OvRy1quf4Tph3kiuWeHujYKyUaAI=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eVvt+xIPMTC0Js9hFSPelJefZgdDyGTKOkuwzP4PTY+yqVocSd+WJfGJWnPDTCHqg
-         FLIcztyZFcBowSo9vHY9Oh5CiEV6mS2YwdU4xEGITjezfLSWlpHqYn2gQsv5CdVhgL
-         fhKbD7kxkGno9eqm/IEJ2UlvRLVDgmIsp+BDHVZw/Du1zDdGtPPtfzY6y5IWzm78/v
-         aq1M0BYfK9nzZepsLZjwEu/TBMRadaKIz4/jWIKfOVuIcKS93TBmT8ze61MdsdiPOl
-         Ip50JnLaPO09+1lE3qfBpEiCeGoA7gZKus4diqlJFLHuJd6Hv2W9SopzDPGRhYjgAB
-         1S2B6s4BgFQeA==
-Date:   Tue, 2 Jul 2019 01:42:10 +1000
+        b=L0jw6WvQosv77PO5PxCyIFnTxFLX77Lw6t7ErOWGoZjTGUPXHbWgEim0YTp9jgzkQ
+         ABsODXtFxtD9yTOwqDMJb7G5sj2pgmM3v6cLkkdZ0XX2fx/JM/y1yfYadyi+JmcPVA
+         hx7aDzpsC4X1AIq5Ne2vC1OjF6VWzINgg1zCzX67WCE+1rqzbfBF6hP/K/JRSJ1SQ4
+         MW6eCWzD2nsZxLSrknJNoLvQhU99syiPisOpreGSHtfTRk9HS+lxa2v1aRBAkZ3fgq
+         DiOHhmevMkxwizM8NeURxxE0XXRQSMOLmDHB0h0ovMlAaQVv/LXuTO5sMISNnncGCa
+         Hxa4IMOTJSpoQ==
+Date:   Tue, 2 Jul 2019 01:49:44 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-xfs@vger.kernel.org,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: Adding some trees to linux-next?
-Message-ID: <20190702014210.1c95f9f1@canb.auug.org.au>
+Message-ID: <20190702014944.79bd326a@canb.auug.org.au>
 In-Reply-To: <20190701153552.GJ1404256@magnolia>
 References: <20190701110603.5abcbb2c@canb.auug.org.au>
         <20190701153552.GJ1404256@magnolia>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UN5Vxl1AFy.bml=FS8LPM8+"; protocol="application/pgp-signature"
+ boundary="Sig_/fev+fzqjHW.N7FIhhlClsrz"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/UN5Vxl1AFy.bml=FS8LPM8+
+--Sig_/fev+fzqjHW.N7FIhhlClsrz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -75,27 +75,44 @@ m> wrote:
 > branch is too much insanity and splitting them up will help me prevent
 > my head from falling off.
 
-Just out of interest, do you intend to send these directly to Linus, or
-via another tree?
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Sig_/UN5Vxl1AFy.bml=FS8LPM8+
+--Sig_/fev+fzqjHW.N7FIhhlClsrz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0aKdIACgkQAVBC80lX
-0Gznawf9HG3yAIa9ql5EEFzHWdjd0niap4Jw2Djgfi/AQ028W2dQ/j1Q86Vqw8Yi
-enXmApWWoNL+SACY4chSua3MBE3s5VvZaaFbljtZVtUb7q7zAeDQCTG2SKBC99jW
-4NB5XYMQKakDk1cPqmil6i+RrKQVolPPIH5AL/TunugCZ2dBcDPFk1RW4QO/8Vo+
-DpIk1Bg3kWePgnmnmiyA8bx7PRuv9ftL35G/GCjdl2iGxySx/tpVkZONZ+QketqE
-9bJSC5DMEpYE7opI/JBs9R8OSQmGNx0m2aYYaU5GCon60oQChZ97ebga9YME6zjZ
-CSOaZHOZWut8qZSWDlT6HZxOkTkd8Q==
-=cb/6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0aK5gACgkQAVBC80lX
+0GwmMQf8CnI5xnqYrX8x9t5LBtRJq5gPcLukCc+FjM8GkphUoE/T8Xa2yPMyxnGs
+6vpp/nGVX+UyYmvOkRbRNZfnIWY9WlBaXAfxK+If2jHjJy34Dmdm/yTu4WWgcCZu
+Ji+/GSpH02b9J/Zn4DuVYymLtVLEPFgaWEVjWxm5nbYMgwrq6b+wMKvn2ybPHuOU
+IDNFkRv33y1XN1o6m/AiMNK1J0ywcAJX3D4/qkUz4lAReQTPCZmWjAHbEBAVkOaL
+2tdJcV03DFORsoiIzxYqEX5Sict5+r4Dph2nw5ysVPJ8Mz8DrZrj8btjhGJcXUq8
+G+me/aG3McL+Js3NfdbaE/J25d8VqQ==
+=lykB
 -----END PGP SIGNATURE-----
 
---Sig_/UN5Vxl1AFy.bml=FS8LPM8+--
+--Sig_/fev+fzqjHW.N7FIhhlClsrz--
