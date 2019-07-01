@@ -2,121 +2,294 @@ Return-Path: <SRS0=aGcV=U6=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805C9C0650E
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 15:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C29C0650E
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 16:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555F520B7C
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 15:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5FEE20B7C
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 16:31:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Hl//A+Q+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EPOp7aEO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfGAPvw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 11:51:52 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34540 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfGAPvv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2019 11:51:51 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61FnOW5041009;
-        Mon, 1 Jul 2019 15:51:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=v58nZ4sOVzUxsIgxzLPHYMiDCb/PQf8nA8zBdMZYPrM=;
- b=Hl//A+Q++nOy6N2C6J/YeboBCJa9RqC3jBie72QOtCUy1Ovr8FbsyqQLSRdm1hmgZCtm
- KG6N38+KyRFnzqWEMu9ezz4KwaDoq2/uOZHuXolks2GYCt7LXiHxBjVccLLk/FpeVZIw
- mY2nNkDvTbQpAXpAFy9eKfTl3nM0wK9tc6XP3S8hcxZHMon3GiTI7y7x5kLfAPYc4A8b
- yBEdelu0iS6f+r5McYvVvsNZyvmGr6Th8xHBYNcemBWSI5RW2zPnRixPwuOSjs8QZX20
- hWFHGWtAV0QwgNGaXeQgBF0e+wsfHY/JExgfIak7JLoxjvf5SYbYP8D45PZThHaN8SZQ mg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2te5tbehd4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 15:51:46 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61FmBc2126248;
-        Mon, 1 Jul 2019 15:49:46 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2tebak8gvv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 15:49:46 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x61Fnjx4014393;
-        Mon, 1 Jul 2019 15:49:45 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 08:49:45 -0700
-Date:   Mon, 1 Jul 2019 08:49:44 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-xfs@vger.kernel.org,
+        id S1728021AbfGAQbx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 12:31:53 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43975 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728158AbfGAQbx (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2019 12:31:53 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f25so6291419pgv.10
+        for <linux-next@vger.kernel.org>; Mon, 01 Jul 2019 09:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PeLJMgxrA4YpstZ8wIxVzj3g1t2Bf5vkcHaXmsss9u4=;
+        b=EPOp7aEOt2juwtPxPi9d2ctbchUiHUE4GnKSmUhVQrxSvtaeCB6utYsTKwaybvaSK9
+         qroPb1NlOQ9UC2TKZHJNMWkL9pJJzw5cZArWLcEFXBj+aDoKRb+au78f02oSBNlgBJeI
+         E1S/gW7kZ4+XdX5GmHK1SJZWdbrjNGF4DtWGWwjOLJDW5pvB653gxnqrv61YWvhHfTeG
+         CoKw445unpXe3Ws6K4z8Bzy+pU1uFOkFBv7IaSVsgNc2FXxlmOU/FQ4viQ0/Wt5kQYB6
+         M0CT+/5lXMk5h2t6jhwGp45Bc6OwmvjCW3RzMxERgY6x51CCrgSMgpLxES7vNNdvqGni
+         2hdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PeLJMgxrA4YpstZ8wIxVzj3g1t2Bf5vkcHaXmsss9u4=;
+        b=ojpC/ri/zO7OoQvbgrQdz95I8ohy/I2CdVBUsC0PkUeJfB+83Y7s3V9s/O67gXirdq
+         VZMo0MecraZwnwpIviFIkpeidUMLG9wc1oMj7sRhOLMfGF6bwlMzTwXtevNVMv6FzyXa
+         xHU2nYAVo3oHNV7TVkPSvKfNJrSuvwUjxemaoaps8ewW7YAOxsrc9OW/Sttiz+ZVUucW
+         Lo6OsMu6EZzECfTPteRUNZqjo9LqX/1I76SCjcx257EIAff770Ne6wWkwRAZc3YAi6cU
+         zdFXHMMdDDoD7mHQLUKyjfa2A540MEl06AKMR0amSUxwNo/2vv80H+xts2KkjkGvtqFq
+         liyw==
+X-Gm-Message-State: APjAAAUnm+YIrTRLn2MkUxO32T6Vld0kwCjRxBKY+En37LlwigcGcV5R
+        oqWTVe/3eHPjHayYNx8ecrIb1AqByQo=
+X-Google-Smtp-Source: APXvYqzo12xH57HnTbJd+t5cgu1xQCTu+yIxHXDiBpPpIIuCrFSRuenbzleUEWjzjboLxyuuiYdFYg==
+X-Received: by 2002:a63:3d8f:: with SMTP id k137mr20519587pga.337.1561998711760;
+        Mon, 01 Jul 2019 09:31:51 -0700 (PDT)
+Received: from google.com ([2620:15c:201:2:765b:31cb:30c4:166])
+        by smtp.gmail.com with ESMTPSA id k197sm11690980pgc.22.2019.07.01.09.31.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 09:31:50 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 09:31:46 -0700
+From:   Eric Biggers <ebiggers@google.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Adding some trees to linux-next?
-Message-ID: <20190701154944.GL1404256@magnolia>
+Subject: Re: linux-next: manual merge of the xfs tree with the f2fs tree
+Message-ID: <20190701163146.GA195588@google.com>
 References: <20190701110603.5abcbb2c@canb.auug.org.au>
- <20190701153552.GJ1404256@magnolia>
- <20190702014210.1c95f9f1@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190702014210.1c95f9f1@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010190
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010191
+In-Reply-To: <20190701110603.5abcbb2c@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 01:42:10AM +1000, Stephen Rothwell wrote:
-> Hi Darrick,
+[+f2fs mailing list]
+
+On Mon, Jul 01, 2019 at 11:06:03AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Mon, 1 Jul 2019 08:35:52 -0700 "Darrick J. Wong" <darrick.wong@oracle.com> wrote:
-> >
-> > Could you add my iomap-for-next and vfs-for-next branches to linux-next,
-> > please?  They can be found here:
-> > 
-> > git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git#iomap-for-next
-> > git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git#vfs-for-next
-> > 
-> > I've decided that trying to munge all that through the xfs for-next
-> > branch is too much insanity and splitting them up will help me prevent
-> > my head from falling off.
+> Today's linux-next merge of the xfs tree got a conflict in:
 > 
-> Just out of interest, do you intend to send these directly to Linus, or
-> via another tree?
-
-The iomap stuff I'd definitely send directly to Linus.
-
-For vfs stuff, it depends.  For work in the core vfs I'll probably just
-keep sending patches through Al, but for treewide things like ioctl
-cleanups I suspect it'll be easier to let them soak in -next and then
-send them directly.
-
-I also dropped the f2fs parts of the setflags/fssetxattr patches because
-while I think your fix from yesterday's for-next is correct, I prefer to
-let Eric Biggers' cleanup land through the f2fs tree before I try to
-clean up f2fs again.  There shouldn't be any harm in letting that lag a
-little while longer.
-
---D
-
+>   fs/f2fs/file.c
+> 
+> between commit:
+> 
+>   360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4 i_flags")
+> 
+> from the f2fs tree and commits:
+> 
+>   de2baa49bbae ("vfs: create a generic checking and prep function for FS_IOC_SETFLAGS")
+>   3dd3ba36a8ee ("vfs: create a generic checking function for FS_IOC_FSSETXATTR")
+> 
+> from the xfs tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> This is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 > -- 
 > Cheers,
 > Stephen Rothwell
+> 
+> diff --cc fs/f2fs/file.c
+> index e7c368db8185,8799468724f9..000000000000
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@@ -1645,22 -1648,45 +1645,23 @@@ static int f2fs_file_flush(struct file 
+>   	return 0;
+>   }
+>   
+>  -static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+>  -{
+>  -	struct inode *inode = file_inode(filp);
+>  -	struct f2fs_inode_info *fi = F2FS_I(inode);
+>  -	unsigned int flags = fi->i_flags;
+>  -
+>  -	if (IS_ENCRYPTED(inode))
+>  -		flags |= F2FS_ENCRYPT_FL;
+>  -	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
+>  -		flags |= F2FS_INLINE_DATA_FL;
+>  -	if (is_inode_flag_set(inode, FI_PIN_FILE))
+>  -		flags |= F2FS_NOCOW_FL;
+>  -
+>  -	flags &= F2FS_FL_USER_VISIBLE;
+>  -
+>  -	return put_user(flags, (int __user *)arg);
+>  -}
+>  -
+>  -static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+>  +static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>   {
+>   	struct f2fs_inode_info *fi = F2FS_I(inode);
+>  -	unsigned int oldflags;
+>  +	u32 oldflags;
+> + 	int err;
+>   
+>   	/* Is it quota file? Do not allow user to mess with it */
+>   	if (IS_NOQUOTA(inode))
+>   		return -EPERM;
+>   
+>  -	flags = f2fs_mask_flags(inode->i_mode, flags);
+>  -
+>   	oldflags = fi->i_flags;
+>   
+> - 	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
+> - 		if (!capable(CAP_LINUX_IMMUTABLE))
+> - 			return -EPERM;
+>  -	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
+> ++	err = vfs_ioc_setflags_prepare(inode, oldflags, iflags);
+> + 	if (err)
+> + 		return err;
 
+I don't think this is the correct resolution.  Now f2fs_setflags_common() is
+meant to take the f2fs on-disk i_flags, which aren't necessarily the same as the
+flags passed to the FS_IOC_SETFLAGS ioctl.  So it's not appropriate to call
+vfs_ioc_setflags_prepare() in it.  It should be in f2fs_ioc_setflags() instead.
 
+I've pushed up what I think is the correct resolution to
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=f2fs-setflags-resolved
+
+Here is my diff of fs/f2fs/file.c from f2fs/dev.  Darrick, can you check that
+this is what you would have done if you had patched f2fs/dev instead of v5.2?
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e7c368db81851f..64f157f2e8d5e4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1648,19 +1648,12 @@ static int f2fs_file_flush(struct file *file, fl_owner_t id)
+ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	u32 oldflags;
+ 
+ 	/* Is it quota file? Do not allow user to mess with it */
+ 	if (IS_NOQUOTA(inode))
+ 		return -EPERM;
+ 
+-	oldflags = fi->i_flags;
+-
+-	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
+-		if (!capable(CAP_LINUX_IMMUTABLE))
+-			return -EPERM;
+-
+-	fi->i_flags = iflags | (oldflags & ~mask);
++	fi->i_flags = iflags | (fi->i_flags & ~mask);
+ 
+ 	if (fi->i_flags & F2FS_PROJINHERIT_FL)
+ 		set_inode_flag(inode, FI_PROJ_INHERIT);
+@@ -1765,7 +1758,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+-	u32 fsflags;
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	u32 fsflags, old_fsflags;
+ 	u32 iflags;
+ 	int ret;
+ 
+@@ -1789,8 +1783,14 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
+ 
+ 	inode_lock(inode);
+ 
++	old_fsflags = f2fs_iflags_to_fsflags(fi->i_flags);
++	ret = vfs_ioc_setflags_prepare(inode, old_fsflags, fsflags);
++	if (ret)
++		goto out;
++
+ 	ret = f2fs_setflags_common(inode, iflags,
+ 			f2fs_fsflags_to_iflags(F2FS_SETTABLE_FS_FL));
++out:
+ 	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+@@ -2850,52 +2850,32 @@ static inline u32 f2fs_xflags_to_iflags(u32 xflags)
+ 	return iflags;
+ }
+ 
+-static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
++static void f2fs_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
+ {
+-	struct inode *inode = file_inode(filp);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	struct fsxattr fa;
+ 
+-	memset(&fa, 0, sizeof(struct fsxattr));
+-	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags);
++	simple_fill_fsxattr(fa, f2fs_iflags_to_xflags(fi->i_flags));
+ 
+ 	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
+-		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
+-							fi->i_projid);
+-
+-	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
+-		return -EFAULT;
+-	return 0;
++		fa->fsx_projid = from_kprojid(&init_user_ns, fi->i_projid);
+ }
+ 
+-static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
++static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+ {
+-	/*
+-	 * Project Quota ID state is only allowed to change from within the init
+-	 * namespace. Enforce that restriction only if we are trying to change
+-	 * the quota ID state. Everything else is allowed in user namespaces.
+-	 */
+-	if (current_user_ns() == &init_user_ns)
+-		return 0;
++	struct inode *inode = file_inode(filp);
++	struct fsxattr fa;
+ 
+-	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
+-		return -EINVAL;
+-
+-	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
+-		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
+-			return -EINVAL;
+-	} else {
+-		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+-			return -EINVAL;
+-	}
++	f2fs_fill_fsxattr(inode, &fa);
+ 
++	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
++		return -EFAULT;
+ 	return 0;
+ }
+ 
+ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+-	struct fsxattr fa;
++	struct fsxattr fa, old_fa;
+ 	u32 iflags;
+ 	int err;
+ 
+@@ -2918,7 +2898,9 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+ 		return err;
+ 
+ 	inode_lock(inode);
+-	err = f2fs_ioctl_check_project(inode, &fa);
++
++	f2fs_fill_fsxattr(inode, &old_fa);
++	err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
+ 	if (err)
+ 		goto out;
+ 	err = f2fs_setflags_common(inode, iflags,
