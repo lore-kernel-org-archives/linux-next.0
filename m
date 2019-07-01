@@ -6,108 +6,96 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7391C06508
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 01:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B2DC06508
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 02:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DCFE20B7C
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 01:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7899208CA
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 02:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fun4ppSr"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LfGT9tIg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfGABMM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 30 Jun 2019 21:12:12 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49557 "EHLO ozlabs.org"
+        id S1726920AbfGAC1D (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 30 Jun 2019 22:27:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:36579 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbfGABMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 30 Jun 2019 21:12:12 -0400
+        id S1726840AbfGAC1D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 30 Jun 2019 22:27:03 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cTqY4Wc9z9s00;
-        Mon,  1 Jul 2019 11:12:09 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cWTv5Xc1z9s00;
+        Mon,  1 Jul 2019 12:26:59 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561943529;
-        bh=o6gd4NLWj/EtzaylEp5ED6sPC4TTEDVm/KOCAb3wtoY=;
+        s=201702; t=1561948020;
+        bh=zYeGVm+QfOpq4f0m7r1SVlPZPSvW3pDTk4uFnEP7Odo=;
         h=Date:From:To:Cc:Subject:From;
-        b=fun4ppSre3K3LV3/4xj7PXIfux9LZBh6FujyY1LYX0X0DKEyNvHahvZc3xIPWBC4P
-         32tCk0a58cPCZ8tem7XkTR63KVuZ+WP9xrNduwnk0oMg6Ag+X5fw47upO9datbLCHm
-         vkYn8ic+GsyPtV8L5vjpbRyye01MPrKwcAmrE7B0rxvce7geKYeJUEiQKM1J0RYgpN
-         3r7q9lEFjUl190A+Gof7kYI6x88IgO9DYGyX5X0P4gbHcB9Rv5pdlxwY1CrzVKhODB
-         H7hxfGKh0tm4RZ7b+2hQP0bGpJClTbZBDfB2KRK5BjWZF72mM81+mLVeFAhtSI9fyz
-         qFWV9o0T60uWA==
-Date:   Mon, 1 Jul 2019 11:12:09 +1000
+        b=LfGT9tIgocWzkx9EBHaqVy6YgBqakUP0Y8+tXXMql0+8smIwKub99fjFQD+B/5CPp
+         9ZWDFKdDpUQFM8nr7xaDHpT577zu94r0/A2rzBuwe2QL6hMQtzR+fPaEN73oGPnZ4U
+         FaAmskHX39OSZ9JrgclS5H2ti+79uFxGA8Nabx+oTqcpm/bFDJWQMvb0IisQHpRSIv
+         DWt1W8oJawR24CaRoLoJ8kgVzK7DM/Sbwp4B5RHR8l9VGIpPnrFyCX8kRpgIjML/W5
+         ACriHlJIZiNBb4lgrJuWzUHzhjsnGvQor0DAUoGaw76KQj60P3UDjjCGuIKFAQV9lx
+         fhGxZykTWoVxw==
+Date:   Mon, 1 Jul 2019 12:26:58 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
+To:     Guenter Roeck <linux@roeck-us.net>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the xfs tree
-Message-ID: <20190701111209.699082b7@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boyang Yu <byu@arista.com>
+Subject: linux-next: build warning after merge of the hwmon-staging tree
+Message-ID: <20190701122658.03970c9f@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GiBgqkQeV_Fn=xa4769+.=9"; protocol="application/pgp-signature"
+ boundary="Sig_/zuXy+y.BezYQa6yA70cmACh"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/GiBgqkQeV_Fn=xa4769+.=9
+--Sig_/zuXy+y.BezYQa6yA70cmACh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the xfs tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the hwmon-staging tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-fs/orangefs/file.c: In function 'orangefs_getflags':
-fs/orangefs/file.c:372:7: warning: assignment to 'long unsigned int *' from=
- '__u64' {aka 'long long unsigned int'} makes pointer from integer without =
-a cast [-Wint-conversion]
-  uval =3D val;
-       ^
-fs/orangefs/file.c: In function 'orangefs_ioctl':
-fs/orangefs/file.c:381:24: error: implicit declaration of function 'file_io=
-ctl'; did you mean 'file_path'? [-Werror=3Dimplicit-function-declaration]
-  struct inode *inode =3D file_ioctl(file);
-                        ^~~~~~~~~~
-                        file_path
-fs/orangefs/file.c:381:24: warning: initialization of 'struct inode *' from=
- 'int' makes pointer from integer without a cast [-Wint-conversion]
-fs/orangefs/file.c:418:35: error: 'old_uval' undeclared (first use in this =
-function); did you mean 'p4d_val'?
-   ret =3D orangefs_getflags(inode, &old_uval);
-                                   ^~~~~~~~
-                                   p4d_val
-fs/orangefs/file.c:418:35: note: each undeclared identifier is reported onl=
-y once for each function it appears in
+drivers/hwmon/lm90.c: In function 'lm90_write_convrate':
+drivers/hwmon/lm90.c:597:42: warning: 'config_stop' may be used uninitializ=
+ed in this function [-Wmaybe-uninitialized]
+  if (data->flags & LM90_PAUSE_FOR_CONFIG && config_orig !=3D config_stop)
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/hwmon/lm90.c:598:3: warning: 'config_orig' may be used uninitialize=
+d in this function [-Wmaybe-uninitialized]
+   i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        config_orig);
+        ~~~~~~~~~~~~
 
-Caused by commit
+Introduced by commit
 
-  de2baa49bbae ("vfs: create a generic checking and prep function for FS_IO=
-C_SETFLAGS")
-
-I have used the xfs tree from next-20190628 for today.
+  479a503fa073 ("hwmon: (lm90) Fix max6658 sporadic wrong temperature readi=
+ng")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/GiBgqkQeV_Fn=xa4769+.=9
+--Sig_/zuXy+y.BezYQa6yA70cmACh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ZXekACgkQAVBC80lX
-0GwDoAf+ORrfhB4XavC2KJUhXgoqhs75kuRhvoxtnUb0j15p++q00JVuAoKXDF0e
-AGuNMqTt0+nWCBwe0Ds6Vky/m20YsdT0PccVl2V3UXEDUiNShsNSVtEGuaFkqrIW
-4bJUVNji3kU95lox7L8Rm6wMo1xZazCHvaeAMMMi4MmeoP4Y8oZT63MNJE0je21j
-YOq9QEZiZIdeQ/hud8icxUapL8UMPLgpsOLrcV15NqTM9z+vurqRpKLJlFR9421c
-XAbSX5WIlMBIfWbFCPqP2zuSng/fRJwA6/dSvNiFPDOjG8LNXIb1agCfhk/kqZdM
-aNVbi57y4KdLYYHAo9skpCaHbr91AA==
-=NGNr
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Zb3IACgkQAVBC80lX
+0GwURQf/VRm8XALMTVzPiuZ8UmmsPIjVbwHWAS5qxW1CIVNY+MeCCF1/tfawkNLi
+ZR+E546Gxpq4dGsGBx2EnB22BkyZaBaatdrWBFHDlnp1E2th8jnnOBeB1nUP1LbN
+1wnVAH2N+IvHZ7P/u4tb7HCVWRkIyAGFeHzECmgKadI4A94bHkI4w4jJ477329ZU
+8ndtzC/M6CYJhOwIcX4jSUa+hqNhfsZdsoN9KzlZLBVhDjTfteC6ztU6b1qNePfD
+A20KOYrVOEJbviroTFFc6k4PAqZB5qut/EPKbCj7EUlodEZiPY8XVLYSWNRpAUWu
+vFEcUPc3WyQXu+rcWYBMPrq+oCTm7g==
+=wUfV
 -----END PGP SIGNATURE-----
 
---Sig_/GiBgqkQeV_Fn=xa4769+.=9--
+--Sig_/zuXy+y.BezYQa6yA70cmACh--
