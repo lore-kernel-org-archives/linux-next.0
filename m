@@ -6,102 +6,105 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43932C5B578
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 05:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 914D0C5B578
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 07:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B5B208C4
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 05:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4783220652
+	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 07:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WHChn52f"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iOnubJZ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725777AbfGAFXP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 01:23:15 -0400
-Received: from ozlabs.org ([203.11.71.1]:41335 "EHLO ozlabs.org"
+        id S1727534AbfGAHP2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 03:15:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:60319 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfGAFXP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jul 2019 01:23:15 -0400
+        id S1727173AbfGAHP2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jul 2019 03:15:28 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cbPC58wSz9s00;
-        Mon,  1 Jul 2019 15:23:11 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45cdth4Rf3z9s3Z;
+        Mon,  1 Jul 2019 17:15:24 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561958592;
-        bh=AH7WDT+Qq9ffMvO5e7JwxjPzKJnLM/VUqJI5ku+e+Tg=;
+        s=201702; t=1561965326;
+        bh=NQCoMmp1fRfhn8eCaGqip33lfSACdYmYe4GpESB/Ko4=;
         h=Date:From:To:Cc:Subject:From;
-        b=WHChn52fmsnMze2szaoy86htycEq58dElmtdhYcKi5SQ4x1DhaMQHM6BpJqMiBPyX
-         q8nrJOhjBsBrDMMVfQ+RkmFkOMDyiYhYOB2N64l07MAUO/Z6ia6qEY8lsAMVBpADLg
-         8IAymN3r1uBlZg0nc3dAGxghB2GWTrAmYmkybwGIyHSHGkULmuA5B3xl4L9AHfBVTq
-         Abw06v9Q1/tr+CXDyXFjQ+UAfk051hO26qRA0yDuNFmz+uOpMaNKAE1yfyswimRPWh
-         KwELZITBV5eLpsaRAvXJvkZLLVU64jqYULauoWtdqZZbSvESo00Xxt4oAJIwsEYYM4
-         iuSM/zkcZWbmw==
-Date:   Mon, 1 Jul 2019 15:23:09 +1000
+        b=iOnubJZ0VEAkAq6nY1PaIw5UQd8sC+zpy0TBmfC8VNL6iOTuXYJgy+GIy8pArqr72
+         Py0QiF/98+5bd3EdOSiYSQF9yrEFCqhQK0A7mwyqSXOJEK2fwjnU4YLzUDwy/mhnt8
+         GUAhhD0Jtt0Hk3DV9xly0MYo8CDEmjD149IG5ruOUY+Tiq8P6FaWV/i3Ck8Ottv+hL
+         B9LdujG2gdloD0E6wT0AU0jJOmHqnKufOVnqTVyKrcnLiL0h/lZO9qp8X4P27xdb6v
+         X0OUAK/OQVN9lqumYB+7px4SB98fOXFLbfX7OXn1VStKKbX04XQmabvcC73wj1e2pG
+         f7yNwgdbbYKaw==
+Date:   Mon, 1 Jul 2019 17:15:24 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Xiaolei Li <xiaolei.li@mediatek.com>
-Subject: linux-next: manual merge of the nand tree with Linus' tree
-Message-ID: <20190701152309.4023898b@canb.auug.org.au>
+        Fabian Schindlatz <fabian.schindlatz@fau.de>,
+        Len Brown <len.brown@intel.com>
+Subject: linux-next: manual merge of the tip tree with the hwmon-staging
+ tree
+Message-ID: <20190701171524.774dfc75@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HSWM+gjN6zgcZZZzc/Tu=PK"; protocol="application/pgp-signature"
+ boundary="Sig_/HrNCJG3JCzkTk8y_hkyymzc"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/HSWM+gjN6zgcZZZzc/Tu=PK
+--Sig_/HrNCJG3JCzkTk8y_hkyymzc
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the nand tree got a conflict in:
+Today's linux-next merge of the tip tree got a conflict in:
 
-  drivers/mtd/nand/raw/mtk_ecc.h
+  drivers/hwmon/coretemp.c
 
 between commit:
 
-  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 500")
+  601fdf7e6635 ("hwmon: Correct struct allocation style")
 
-from Linus' tree and commit:
+from the hwmon-staging tree and commit:
 
-  b74e6985bfe8 ("mtd: rawnand: mtk: Re-license MTK NAND driver as Dual MIT/=
-GPL")
+  835896a59b95 ("hwmon/coretemp: Cosmetic: Rename internal variables to zon=
+es from packages")
 
-from the nand tree.
+from the tip tree.
 
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (the comment fixed in the latter was also fixed in the
+former) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/HSWM+gjN6zgcZZZzc/Tu=PK
+--Sig_/HrNCJG3JCzkTk8y_hkyymzc
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ZmL0ACgkQAVBC80lX
-0Gy9PAgAgOPjSt3opuiiWqKbDDvN8nTOWqhQjhi+RKsA7XnzkRoVwWowljyQXogC
-rCokK1Utgj4jv2K7+ifedexG+v0LJkb8nh/3InScPV4+SfV87zAEhM2gWiVW6Ov1
-FXvWOSXnTQUqIH8YVi6PvGuPXieg1TeaqYOnKNtWjt2nlbUgh1Y9kM5lznRJAloy
-lOqdY9CHC2t7aTEUT8phe1ithbzcbc2rO1FKYFTlgzUKBXrJccuH6S29J4WCH4Ut
-W5MDWBmVSaZYBOfFEMyfhAKyzi5J38miMgAA6TGbd/YakSMvVC6xn1IsckFCQb6Z
-jfjeS/Puu+xrsS7onrrdo583ZuAnoA==
-=wH4u
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ZswwACgkQAVBC80lX
+0GwZQAf/f5UwVhk2Yx3oPfS1elxVbRN00idMMvrACIO7LTaKDcaNRHE0UVWtRVzL
+OmSo8yXqMxAB1G3DG1oCXQ3pSKUGYBEuKGfP3XmS61IRl/tFw8vbcjArWuXesHbM
+a3t1JJ26DoD+/x8tY/TavraLvOmXfQp5M+Ev5b2zIsrpwXlXr9FEIxYl1f266yq4
+Zhu61/5EZvjjgt6lYVWWTUDih9zU6uZefxrtPm83b8zS9AtYfK0rBsmn2kY5awOb
+j1vOfMNK4aGz4GY7wTEiBUh0Ju1VnSjvSDm8vUwIvHNFevO1n7ZU2XEgYNjxvhe9
+8rmu3Lv2X4byUCwj9esQk5sBKsM6pA==
+=dxoz
 -----END PGP SIGNATURE-----
 
---Sig_/HSWM+gjN6zgcZZZzc/Tu=PK--
+--Sig_/HrNCJG3JCzkTk8y_hkyymzc--
