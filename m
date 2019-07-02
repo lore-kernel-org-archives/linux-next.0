@@ -2,124 +2,140 @@ Return-Path: <SRS0=/iKb=U7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032B2C06510
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 11:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DABBC06510
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 12:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C91782146F
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 11:10:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hSI/B3SJ"
+	by mail.kernel.org (Postfix) with ESMTP id 41CD421721
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 12:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562069008;
+	bh=lYy0biRRuIMTFPxZzKn1vOvJk9GO14ibys/DKnoKX4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=i2AyaiJ10x0ooJqxTQ26d2i1RWmoOd23gF7y6jEWlQcfbH64lZfwOMn3nMHauFAZO
+	 S63oo+xJXI0/c+Rl+q+BDufhhOQhEx9bzyr+46eSC8DKickjwQxSPpB8LqP+9Gay/t
+	 m0/vheXQPqtqyZkber7z0wHnAL6IpiuLN1BJ1Dy4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfGBLKE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 2 Jul 2019 07:10:04 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40831 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfGBLKE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2019 07:10:04 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v19so517255wmj.5
-        for <linux-next@vger.kernel.org>; Tue, 02 Jul 2019 04:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=M9H324FRjdDrfn1BGXOWUaO+bADzpYuWXteAhSQNEJU=;
-        b=hSI/B3SJ9f3PcffRsqmfICqElS4D/1J7CzSsBmvkuaJw2PRnotdeyasfArFdsOXIq6
-         cJgIEeuAgo5NVPOOaaR3NKjmC40YZCiSgoS+wPZlOCu23koM5nk7E1uWY+K+kUojcbwj
-         mH9ozbFgwtETXk8PNOAtj2xNF/yOway+NnzdnLafo/o3VC2es8/XgGjhMvGXtH60CuUJ
-         UPkyHlzqseIsj3r+WbfchZtKazOKHlc3W6CEa/e5UHy45sBu9wIUyP8gExK+GDM5ehRg
-         1Yyo4EH6WUrySydDbhIbH6ajgTDlDHkalA3dKFUXBJEHS3YnkGaWsdvo62BnEq8CIwhG
-         /S2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=M9H324FRjdDrfn1BGXOWUaO+bADzpYuWXteAhSQNEJU=;
-        b=nKwSU4KYxKUrGI6UITGOHEBTyp73W/zyqPcAZbfWEyo4ge/6iAKq8hEAbcrNJRQwSs
-         QR7NL24mRk3xnKUgzP0glc2TJPvDaABVShUlvmYw9M4cayo+1sSAY2ydCsQBLDqfoU+b
-         YwQFzBwIIchdXrNG24sg6wTvOUy6+1aPcfEHbCBda4pC2elm7CcKDEyBzk8SeB2HYdwx
-         /5dTcRRn4WMfeHZzy6qYfJ2we39qJHGIzwix86yJ7m2nPG3kW82qRupoxtb1+N8ZUodn
-         urNG964a2dQb8wWyYYmXdY3xZsk/yUVuWdt297XWh2oX3yC4/Lh1Nu85RX2M6inHXw8T
-         HvJw==
-X-Gm-Message-State: APjAAAWPo0MAkFH2HUFvcXXW3d+nFIpthBO9Vw6Cu44++prhxNNUcYAg
-        5EeLelvPxmlenBAHXg8cZtjVfA==
-X-Google-Smtp-Source: APXvYqx/h/NKywgbs2fPNux/OZHTt4/o6YuD6C3CEv0y+eQOHU7oMXOUIA8dDSI8+luOIUS+dn2Nfw==
-X-Received: by 2002:a1c:e28b:: with SMTP id z133mr2918147wmg.136.1562065801695;
-        Tue, 02 Jul 2019 04:10:01 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id b9sm7342304wrx.57.2019.07.02.04.10.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 04:10:00 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 12:09:59 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Keerthy <j-keerthy@ti.com>,
+        id S1725972AbfGBMD1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 2 Jul 2019 08:03:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbfGBMD1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 2 Jul 2019 08:03:27 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E4E2064B;
+        Tue,  2 Jul 2019 12:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562069006;
+        bh=lYy0biRRuIMTFPxZzKn1vOvJk9GO14ibys/DKnoKX4c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lMEpgyG6/0TGoxHxLutiQ3X8vIzEj/RQA7zp7oGwIadFBGwATD0vzjnJ3rOfaz4qe
+         K3hqrN6iJ3azFUrZcbWV5XvbhqgqaUDmD7jdcNEwPJ7YpSWSPaKO9it2+AV5Z2W2f3
+         nSOiywtaGGPfdtqIxoJ6w4EyOSI+GBho71qBPDks=
+Date:   Tue, 2 Jul 2019 13:03:22 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Zhangshaokun <zhangshaokun@hisilicon.com>, joro@8bytes.org
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gustavo@embeddedor.com, keescook@chromium.org
-Subject: Re: linux-next: build warning after merge of the mfd tree
-Message-ID: <20190702110959.GF4652@dell>
-References: <20190627151140.232a87e2@canb.auug.org.au>
- <1b5aa183-6e33-ee15-4c65-5b4cdf7655af@ti.com>
- <20190702184916.5f0f9e99@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Jul 2
+Message-ID: <20190702120321.v3224ofd4aaxvytk@willie-the-truck>
+References: <20190702195158.79aa5517@canb.auug.org.au>
+ <000f56ac-2abc-bc6a-e2db-5ae38779d276@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190702184916.5f0f9e99@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <000f56ac-2abc-bc6a-e2db-5ae38779d276@hisilicon.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 02 Jul 2019, Stephen Rothwell wrote:
+[+Joerg]
 
-> Hi all,
+On Tue, Jul 02, 2019 at 06:40:45PM +0800, Zhangshaokun wrote:
+> +Cc: Will Deacon
 > 
-> On Thu, 27 Jun 2019 11:29:18 +0530 Keerthy <j-keerthy@ti.com> wrote:
-> >
-> > On 27/06/19 10:41 AM, Stephen Rothwell wrote:
-> > > Hi Lee,
-> > > 
-> > > After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> > > produced this warning:
-> > > 
-> > > drivers/regulator/lp87565-regulator.c: In function 'lp87565_regulator_probe':
-> > > drivers/regulator/lp87565-regulator.c:182:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> > >     max_idx = LP87565_BUCK_3210;  
-> > 
-> > Missed adding a break here. Can i send a patch on top of linux-next?
-> > 
-> > >     ~~~~~~~~^~~~~~~~~~~~~~~~~~~
-> > > drivers/regulator/lp87565-regulator.c:183:2: note: here
-> > >    default:
-> > >    ^~~~~~~
-> > > 
-> > > Introduced by commit
-> > > 
-> > >    7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
-> > > 
-> > > I get these warnings because I am building with -Wimplicit-fallthrough
-> > > in attempt to catch new additions early.  The gcc warning can be turned
-> > > off by adding a /* fall through */ comment at the point the fall through
-> > > happens (assuming that the fall through is intentional).
-> > >   
-> 
-> I am still seeing this warning ...
+> There is a compiler failure on arm64 platform, as follow:
+> In file included from ./include/linux/list.h:9:0,
+>                  from ./include/linux/kobject.h:19,
+>                  from ./include/linux/of.h:17,
+>                  from ./include/linux/irqdomain.h:35,
+>                  from ./include/linux/acpi.h:13,
+>                  from drivers/iommu/arm-smmu-v3.c:12:
+> drivers/iommu/arm-smmu-v3.c: In function ‘arm_smmu_device_hw_probe’:
+> drivers/iommu/arm-smmu-v3.c:194:40: error: ‘CONFIG_CMA_ALIGNMENT’ undeclared (first use in this function)
+>  #define Q_MAX_SZ_SHIFT   (PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
+>                                         ^
+> It's the commit <d25f6ead162e> ("iommu/arm-smmu-v3: Increase maximum size of queues")
 
-Just pushed the fix for this.
+Thanks for the report. I've provided a fix below.
 
-Thank you Stephen.
+Joerg -- please can you take this on top of the SMMUv3 patches queued
+for 5.3?
 
+Cheers,
+
+Will
+
+--->8
+
+From e8f9d8229e3aaa4817bfb72752e804eec97a3d8d Mon Sep 17 00:00:00 2001
+From: Will Deacon <will@kernel.org>
+Date: Tue, 2 Jul 2019 12:53:18 +0100
+Subject: [PATCH] iommu/arm-smmu-v3: Fix compilation when CONFIG_CMA=n
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When compiling a kernel without support for CMA, CONFIG_CMA_ALIGNMENT
+is not defined which results in the following build failure:
+
+In file included from ./include/linux/list.h:9:0
+                 from ./include/linux/kobject.h:19,
+                 from ./include/linux/of.h:17
+                 from ./include/linux/irqdomain.h:35,
+                 from ./include/linux/acpi.h:13,
+                 from drivers/iommu/arm-smmu-v3.c:12:
+drivers/iommu/arm-smmu-v3.c: In function ‘arm_smmu_device_hw_probe’:
+drivers/iommu/arm-smmu-v3.c:194:40: error: ‘CONFIG_CMA_ALIGNMENT’ undeclared (first use in this function)
+ #define Q_MAX_SZ_SHIFT   (PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
+
+Fix the breakage by capping the maximum queue size based on MAX_ORDER
+when CMA is not enabled.
+
+Reported-by: Zhangshaokun <zhangshaokun@hisilicon.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ drivers/iommu/arm-smmu-v3.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 57fb4e080d6b..8e73a7615bf5 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -191,7 +191,13 @@
+ #define Q_BASE_RWA			(1UL << 62)
+ #define Q_BASE_ADDR_MASK		GENMASK_ULL(51, 5)
+ #define Q_BASE_LOG2SIZE			GENMASK(4, 0)
++
++/* Ensure DMA allocations are naturally aligned */
++#ifdef CONFIG_CMA_ALIGNMENT
+ #define Q_MAX_SZ_SHIFT			(PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
++#else
++#define Q_MAX_SZ_SHIFT			(PAGE_SHIFT + MAX_ORDER - 1)
++#endif
+ 
+ /*
+  * Stream table.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
+
