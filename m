@@ -2,86 +2,114 @@ Return-Path: <SRS0=/iKb=U7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2933C5B57D
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 04:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A442C5B57D
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 04:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 857BD216C8
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 04:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562040574;
-	bh=QHIKQYd0C1vDCIQWiTD/imqiXd5i87wp/Cn6DiqKHsQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IYAa/PpmSLLTqO6GqlE2uN9n1slQMyBQ6UQO0EpopjDmdVDIhuCSiPgyMsARQ5da4
-	 HDXNJekXtwN4fJHme7IEgELDiYpYDtpnd151ZWQWYcej4xO4MJI+VTzuc179mrnQ7H
-	 PN/J+I9QgQj4HNrt/aKK6veQ7NGPOuSHKf4oyHE8=
+	by mail.kernel.org (Postfix) with ESMTP id 3A8162173E
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 04:26:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yti+xKcv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yti+xKcv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbfGBEJe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 2 Jul 2019 00:09:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfGBEJd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 2 Jul 2019 00:09:33 -0400
-Received: from localhost (unknown [37.142.3.125])
+        id S1725891AbfGBE0Y (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 2 Jul 2019 00:26:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46812 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbfGBE0Y (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2019 00:26:24 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A0DDE607CA; Tue,  2 Jul 2019 04:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562041583;
+        bh=YSdh6V8PtLxekYrCt+JmLsR1cBK83DOlcHyKX8k+NOA=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=Yti+xKcvmnEYuCCx/AZwzCe2FewT/t2cBTIIVqBlRdwckhPwq0bEDwKITAHYClnRI
+         0jRoAfUP/VD8sMZ+uqS/8WwSptDO+u67ZdP0KwmcBDmwBz4apZtkUu1siLG8R97Zl3
+         kqJczN1VHJL9S6kQkqfyH3FYa2Va8aEXGBR11SKk=
+Received: from dundi (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F91F21479;
-        Tue,  2 Jul 2019 04:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562040572;
-        bh=QHIKQYd0C1vDCIQWiTD/imqiXd5i87wp/Cn6DiqKHsQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jmU7CB9r0vkCCK+CQFBkbfh2n1inubA0uIQiTnPKL4/pDFHEuOe0BpXEunNcBV1RR
-         SlwE9ZIAaLZX6f7oKMkKSlVrbbNonA8Eho8FU7fWbxFJRw7v43JwmO2qSl/RUhbu3x
-         ByeLZBValp11EBI0QCESzQMOvGCH99TZ+l9sH1pc=
-Date:   Tue, 2 Jul 2019 07:09:24 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the mlx5-next tree
-Message-ID: <20190702040924.GP4727@mtr-leonro.mtl.com>
-References: <20190702100533.206ea0df@canb.auug.org.au>
+        (Authenticated sender: dundi@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3AF3E604D4;
+        Tue,  2 Jul 2019 04:26:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1562041583;
+        bh=YSdh6V8PtLxekYrCt+JmLsR1cBK83DOlcHyKX8k+NOA=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=Yti+xKcvmnEYuCCx/AZwzCe2FewT/t2cBTIIVqBlRdwckhPwq0bEDwKITAHYClnRI
+         0jRoAfUP/VD8sMZ+uqS/8WwSptDO+u67ZdP0KwmcBDmwBz4apZtkUu1siLG8R97Zl3
+         kqJczN1VHJL9S6kQkqfyH3FYa2Va8aEXGBR11SKk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AF3E604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=dundi@codeaurora.org
+From:   <dundi@codeaurora.org>
+To:     "'Stephen Rothwell'" <sfr@canb.auug.org.au>,
+        "'Kalle Valo'" <kvalo@codeaurora.org>,
+        "'Wireless'" <linux-wireless@vger.kernel.org>
+Cc:     "'Linux Next Mailing List'" <linux-next@vger.kernel.org>,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>
+References: <20190702073306.3bd439ab@canb.auug.org.au>
+In-Reply-To: <20190702073306.3bd439ab@canb.auug.org.au>
+Subject: RE: linux-next: Fixes tag needs some work in the wireless-drivers-next tree
+Date:   Tue, 2 Jul 2019 09:56:18 +0530
+Message-ID: <000a01d5308e$4dcb0e20$e9612a60$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702100533.206ea0df@canb.auug.org.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain;
+        charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQI9opsM3NZaPdwZufNLc2Z1a/FxMaXl1lxw
+Content-Language: en-us
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 10:05:33AM +1000, Stephen Rothwell wrote:
-> Hi all,
->
-> In commit
->
->   16fff98a7e82 ("net/mlx5: E-Switch, Reg/unreg function changed event at correct stage")
->
-> Fixes tag
->
->   Fixes: 61fc880839e6 ("net/mlx5: E-Switch, Handle representors creation in handler context")
->
-> has these problem(s):
->
->   - Target SHA1 does not exist
->
-> Did you mean
->
-> Fixes: ac35dcd6e4bd ("net/mlx5: E-Switch, Handle representors creation in handler context")
+Hi Stephen,
 
-Right, unfortunately this commit was already merged.
+You are correct, Its
+Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
 
-Thanks
+My bad, I added last 12 digits instead of first 12 digits of SHA1.
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+Regards,
+Dundi
 
+-----Original Message-----
+From: Stephen Rothwell <sfr@canb.auug.org.au> 
+Sent: Tuesday, July 2, 2019 3:03 AM
+To: Kalle Valo <kvalo@codeaurora.org>; Wireless
+<linux-wireless@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel
+Mailing List <linux-kernel@vger.kernel.org>; Dundi Raviteja
+<dundi@codeaurora.org>
+Subject: linux-next: Fixes tag needs some work in the wireless-drivers-next
+tree
+
+Hi all,
+
+In commit
+
+  c709df58832c ("ath10k: Fix memory leak in qmi")
+
+Fixes tag
+
+  Fixes: fda6fee0001e ("ath10k: add QMI message handshake for wcn3990
+client")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
+
+-- 
+Cheers,
+Stephen Rothwell
 
