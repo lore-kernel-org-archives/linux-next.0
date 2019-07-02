@@ -6,101 +6,92 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E161FC5B578
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 03:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89BF9C5B57D
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 03:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97B7205F4
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 03:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F1F920836
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 03:53:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g04EgJQd"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rqWtEOj2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfGBDNb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 23:13:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:33705 "EHLO ozlabs.org"
+        id S1726486AbfGBDxK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 23:53:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:52713 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbfGBDNa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jul 2019 23:13:30 -0400
+        id S1726434AbfGBDxK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jul 2019 23:53:10 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d8T42GZ9z9s4V;
-        Tue,  2 Jul 2019 13:13:28 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d9Lq4dwVz9s4V;
+        Tue,  2 Jul 2019 13:53:07 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562037208;
-        bh=jc8Y+Amgn5i1Y3Rg8MXcVfdSKPs8D1u9eA90xHAITEI=;
+        s=201702; t=1562039587;
+        bh=MkJwD4pjMs/8oJOmOSRghhqAhq5x1w7PSQ8DblZHZXY=;
         h=Date:From:To:Cc:Subject:From;
-        b=g04EgJQdQIDumHBiTzX+PthFRv2QfBa0fTcJv628CvYXLgYVeoXJZWvOpUbUfdb26
-         wIRG3/XSNlftALy1qMluEqxi/0jHNffpQ2TqjqHo07nFVGyBI+xRKXvyMirqW2V1E7
-         mmVjm0cI2HvbGKKUt2zmv4q9BP+OaiiU0q/JBEEnYpJowBcawSUzCWobgmGSaSRgXs
-         khDjGEmg5m13tkWDLysFPcrGUzAaFwQYhLsQA05jqIzFu2sjZYmk1/asMF7GpDJC+g
-         qR52QurHN8y1oy3pOzZoCI3fl41DbMHcVmoqlVsvUGXxDgUFXsVvibmcc+ZezPvurQ
-         sKRsLNcYvLZkA==
-Date:   Tue, 2 Jul 2019 13:13:27 +1000
+        b=rqWtEOj2iCeEi1o0LkgNgneHxxzd2uHjrTuyRul3aF6TvXvmVffN1b5W2x14KO1Fe
+         Leb9pCA2eC+Mk5emaTLj10le7vVMSTcKvN4GFvRMEvzfmEBIUamBDlko2QJWGU3rpL
+         t9kk9gml7HxNJCYTalDSoVC4okPceMsj4rrcLIorr8Ty6KrVluTr3ilfpYQ/7cNjtl
+         6z2BPKItRAco91bgiy9maXYuKhL3skqVk4WC1F6iKkSsNl+24Gj921LgCRVKlg/000
+         hD+h26LH/0cb51OUFH1PJq3QdBSG4aSEQAaK+jKpNFhFYF3CEfOpHPseiO52e5bjCM
+         xc3t9BsLvRKIw==
+Date:   Tue, 2 Jul 2019 13:53:07 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Leon Romanovsky <leon@kernel.org>
+To:     Alex Deucher <alexdeucher@gmail.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eli Britstein <elibr@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Bodong Wang <bodong@mellanox.com>
-Subject: linux-next: manual merge of the mlx5-next tree with Linus' tree
-Message-ID: <20190702131327.65dfdcd9@canb.auug.org.au>
+        Jack Xiao <Jack.Xiao@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>
+Subject: linux-next: build warning after merge of the amdgpu tree
+Message-ID: <20190702135307.43a332a5@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uCtOuwcMaejTz69Axufn4C8"; protocol="application/pgp-signature"
+ boundary="Sig_/B=fJl4k7K8g2/T3B5HdUyEk"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/uCtOuwcMaejTz69Axufn4C8
+--Sig_/B=fJl4k7K8g2/T3B5HdUyEk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mlx5-next tree got a conflict in:
+After merging the amdgpu tree, today's linux-next build (x86_64
+allmodcnofig) produced this warning:
 
-  drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_device.c: In function 'kgd2kfd_pro=
+be':
+drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_device.c:490:6: warning: unused va=
+riable 'ret' [-Wunused-variable]
+  int ret;
+      ^~~
 
-between commit:
+Introduced by commit
 
-  955858009708 ("net/mlx5e: Fix number of vports for ingress ACL configurat=
-ion")
-
-from Linus' tree and commit:
-
-  062f4bf4aab5 ("net/mlx5: E-Switch, Consolidate eswitch function number of=
- VFs")
-
-from the mlx5-next tree.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  aabf3a951c4e ("drm/amdkfd: remove duplicated PCIE atomics request")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/uCtOuwcMaejTz69Axufn4C8
+--Sig_/B=fJl4k7K8g2/T3B5HdUyEk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ay9cACgkQAVBC80lX
-0Gy74AgAna6dU926TPmhdeiySQP+9awZYRtn7970MN17785j87L0P2PxmqfB1LNR
-0W0zyU3uoaorN2/FFbRFxDFUJWiErlCn664PAU3ReYSkHf0ExPGn/0rSse1/8V+x
-PCRzgsqa+f3UaLxW/fLJbAHXHgUqJB309NZ/8X91LyfpN4bJfW02lLh/l3bfN7Es
-wkXuW4EQ0Qm2kcm6i5Dc4ty7IVjEErbLV5gp5iODvrm+oFx43kiIlTleuz/yPfk4
-ZmXONEcn8Ytp9fgpCMuszd3Au5uwIgeQX573FwFAHHw/eKHdzMn7kPhyr+fQks+q
-sYIurnN78kCmbczUC/uu42JxaVLT7Q==
-=Q3tC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0a1SMACgkQAVBC80lX
+0GzghQf+Jar7CYzMM77A1grMh1h9UggttF/24JGLxrHtSPB8R0crv1rVbeBJQAVD
+aZQoeTmloYsxf5ogSjjFF+EXpOZjyG00UVdM4mOjLZHDDIlhZvo49CnLezh2WHHd
+cVPHmmwY+l+7GP0XPUFiNqAGNVAIMqiivf8Ls80V6SZuhfxa9MEuLhyZv0JQw4A1
+wJNpwiU8An65SZUiT14zupMS/WMafcuzluW432Iqrd9bQMRYbAGNqqH3jAA8QNlH
+8AsWFB0RfBB6/DQtz833yfjEvpSADvH6Ak5rKejM8nQrIeRI+AjW/CjOVIkhyT8F
+taZq1/WjPMN9VjNS3ABlumdr51rh/g==
+=oIQU
 -----END PGP SIGNATURE-----
 
---Sig_/uCtOuwcMaejTz69Axufn4C8--
+--Sig_/B=fJl4k7K8g2/T3B5HdUyEk--
