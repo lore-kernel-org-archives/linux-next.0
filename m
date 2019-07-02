@@ -1,149 +1,157 @@
-Return-Path: <SRS0=aGcV=U6=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=/iKb=U7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A047C5B578
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 23:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D9EC5B578
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 00:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F058420B7C
-	for <linux-next@archiver.kernel.org>; Mon,  1 Jul 2019 23:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 853D821721
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 00:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="m3zHg+Xy"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qPqItKzk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfGAXKo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 1 Jul 2019 19:10:44 -0400
-Received: from mail-eopbgr140070.outbound.protection.outlook.com ([40.107.14.70]:37406
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726362AbfGAXKo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jul 2019 19:10:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vBQNw1wABUNAaUxOF7dAFZr3renLsUCBb/+lhNxWbcQ=;
- b=m3zHg+Xy0xSEkkqJo+SIYo9C8wy+nPsJNJyTKm9CSgUzvGFh4EQYVTwy2vzX0oSUrwa8AO65N2q78QJlW1M2O/OOZVX2gbKSgWS1Qaewb5PEFrW9GR/F4CQS0MLuhPgY6yf2gumnGQRmFYni9ZKV6s8c6yNzzulQBhum3Pdnps0=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5695.eurprd05.prod.outlook.com (20.178.121.81) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Mon, 1 Jul 2019 23:10:40 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
- 23:10:40 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: Re: linux-next: build failure after merge of the hmm tree
-Thread-Topic: linux-next: build failure after merge of the hmm tree
-Thread-Index: AQHVMADFlVCZuQtgG0K1dqA/V+XsLaa2ZF8A
-Date:   Mon, 1 Jul 2019 23:10:40 +0000
-Message-ID: <20190701231036.GC23718@mellanox.com>
-References: <20190701213304.34eeaef8@canb.auug.org.au>
-In-Reply-To: <20190701213304.34eeaef8@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR02CA0006.namprd02.prod.outlook.com
- (2603:10b6:208:fc::19) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2f86c71f-9989-4bfc-672a-08d6fe7955a8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5695;
-x-ms-traffictypediagnostic: VI1PR05MB5695:
-x-microsoft-antispam-prvs: <VI1PR05MB5695D45FB5894D118E6B6702CFF90@VI1PR05MB5695.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 00851CA28B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(39860400002)(366004)(346002)(189003)(199004)(53754006)(102836004)(386003)(6506007)(76176011)(25786009)(8936002)(4326008)(476003)(2616005)(486006)(186003)(5660300002)(14454004)(54906003)(316002)(11346002)(26005)(6116002)(2906002)(68736007)(3846002)(52116002)(99286004)(66476007)(73956011)(66556008)(33656002)(7736002)(8676002)(6246003)(64756008)(256004)(36756003)(478600001)(66946007)(86362001)(53936002)(6512007)(66446008)(81166006)(81156014)(71200400001)(6486002)(229853002)(71190400001)(6436002)(1076003)(305945005)(446003)(6916009)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5695;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lCOCP/963DaWTbtI+uY9+nj8dJ/ioTxDE5tMwx0eL8vVw0Lxx7vgoXN1elaG2+POxUKmuSDPbkhvB2oSCit3UejjmHs23GNdCJrhqxS5wrNK/qu5wiEyhdFuB3aWUv5t0lwcbSqmVcMbrITrlpRmbt5TT6YmftWyWL3N+vx4M7vyDvQ+jZGEkFUSycX8R+m9BCLv8enGmphYVWZvxFbiZPckslmBb5d/vtefULRTXxNdsXLSpX9vCnotKWAw48rQf0gJZ+SVEXF2xZxcI89BBIxzPSotjmEpCLCH3+ngC4r1kxdddZqWnvP6V3beXT5r6Egmdatl1ERrMaTu4TiN4m5xFJbiUozUCuSWTjy6t0EuSjqSbYoow9p4IkeSPh0kPIC9+qRTVE608CUvZLVPgybH8+ghwRbdSZwZX7Pbxo0=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <89A8AB12ACF07449851614D76275C3DA@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726962AbfGBABI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 1 Jul 2019 20:01:08 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54485 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726866AbfGBABI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jul 2019 20:01:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d4C43XDPz9s3Z;
+        Tue,  2 Jul 2019 10:01:03 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562025664;
+        bh=YcxBeD6Q4wC1DnqF2UHDQOk3MwaNCpte8xIEjUbQ1dE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qPqItKzkQ/pEKh4b82mnrZfkCF7YfOGYQmKnnatD8cvPsrK2lL/AstdIFAEc9XwrH
+         D8CYchYaeW6XpHRF/y9C7CrJb5hKy686TSqcyQKXpzSlMrYZF9gzqKHU7mQTKX2DaM
+         bp+iVirvn2YhHU0Vy7xL4JSkCa3Fng36YH5kmLWQ46zybTiUiwZ0H7iOfPuNjRwX1t
+         GKIaJXBVlXGTVxQpOqnd4jXfFJWZ33+fVVvJJr8YHWFQzRVnMOrghXqPLyk4GMTPf2
+         d1JEb+xsmMdp7YLO1CGE0vSAxaPpd2hSuWkvvRGHr3hznrpKoHreqoXcbY2dSGrFYp
+         zEeiLQ9MeU7Lg==
+Date:   Tue, 2 Jul 2019 10:01:03 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the clk tree
+Message-ID: <20190702100103.12c132da@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f86c71f-9989-4bfc-672a-08d6fe7955a8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 23:10:40.3440
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5695
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4fPfY4dz.zTw+BW=GF3We/A"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 09:33:04PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the hmm tree, today's linux-next build (x86_64 allmodconfig=
-)
-> failed like this:
->=20
-> mm/hmm.c: In function 'hmm_get_or_create':
-> mm/hmm.c:50:2: error: implicit declaration of function 'lockdep_assert_he=
-ld_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=3Dimplicit=
--function-declaration]
->   lockdep_assert_held_exclusive(&mm->mmap_sem);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   lockdep_assert_held_once
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_ttm_tt_get_u=
-ser_pages':
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:778:28: error: passing argument 2=
- of 'hmm_range_register' from incompatible pointer type [-Werror=3Dincompat=
-ible-pointer-types]
->   hmm_range_register(range, mm, start,
->                             ^~
-> In file included from drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:35:
-> include/linux/hmm.h:464:29: note: expected 'struct hmm_mirror *' but argu=
-ment is of type 'struct mm_struct *'
->           struct hmm_mirror *mirror,
->           ~~~~~~~~~~~~~~~~~~~^~~~~~
->=20
-> Caused by commit
->=20
->   e36acfe6c86d ("mm/hmm: Use hmm_mirror not mm as an argument for hmm_ran=
-ge_register")
->=20
-> interacting with commit
->=20
->   66c45500bfdc ("drm/amdgpu: use new HMM APIs and helpers")
->=20
-> from the drm tree.
->=20
-> All I could do for now was to mark the AMDGPU driver broken.  Please
-> submit a merge for for me (and later Linus) to use.
+--Sig_/4fPfY4dz.zTw+BW=GF3We/A
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This is expected, the AMD guys have the resolution for this from when
-they tested hmm.git..
+Hi all,
 
-I think we are going to have to merge hmm.git into the amdgpu tree and
-push the resolution forward, as it looks kind of complicated to shift
-onto Linus or DRM.
+After merging the clk tree, today's linux-next build (arm omap1_defconfig
+and many others) failed like this:
 
-Probably amdgpu needs to gain a few patches making the hmm_mirror
-visible to amdgpu_ttm.c and then the merge resolution will be simple?
+In file included from drivers/clk/clkdev.c:22:0:
+drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' follow=
+s non-static declaration
+include/linux/clk-provider.h:808:16: note: previous declaration of '__clk_g=
+et_hw' was here
 
-AMD/DRM we have a few days left to decide on how best to handle the
-conflict, thanks.
+Caused by commit
 
-Regards,
-Jason
+  59fcdce425b7 ("clk: Remove ifdef for COMMON_CLK in clk-provider.h")
+
+This commit exposed the CONFIG_COMMON_CLK version of the __clk_get_hw()
+declaration to non CONFIG_COMMON_CLK code (where there is a static
+declaration of  __clk_get_hw() (which is BTW missing an "inline")
+in drivers/clk/clk.h.
+
+We need something like this (untested):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 2 Jul 2019 09:58:18 +1000
+Subject: [PATCH] clk: for up for "clk: Remove ifdef for COMMON_CLK in
+ clk-provider.h"
+
+We were getting errors like:
+
+In file included from drivers/clk/clkdev.c:22:0:
+drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' follow=
+s non
+-static declaration
+include/linux/clk-provider.h:808:16: note: previous declaration of '__clk_g=
+et_hw
+' was here
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/clk/clk.h            | 2 +-
+ include/linux/clk-provider.h | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index d8400d623b34..143acac2ec81 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -33,7 +33,7 @@ clk_hw_create_clk(struct device *dev, struct clk_hw *hw, =
+const char *dev_id,
+ {
+ 	return (struct clk *)hw;
+ }
+-static struct clk_hw *__clk_get_hw(struct clk *clk)
++static inline struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return (struct clk_hw *)clk;
+ }
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0fbf3ccad849..35c8b1c315b4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -805,7 +805,10 @@ void devm_clk_hw_unregister(struct device *dev, struct=
+ clk_hw *hw);
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
++#ifdef CONFIG_COMON_CLK
++/* There is a !CONFIG_COMMON_CLK static inline for this in drivers/clk/clk=
+.h */
+ struct clk_hw *__clk_get_hw(struct clk *clk);
++#endif
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4fPfY4dz.zTw+BW=GF3We/A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0anr8ACgkQAVBC80lX
+0GwnlAgAkaEHrBS5hradZaLJY1asTyVxJNrgn14tKqlPFCVnK14lKAHo7lRD8Czg
+aVkJM4IEGawpZE8RuiuztUZ2Oa8DF3m+2qJu4Sila+GA1RdcKo4EfdM/rvDI5ctz
+RsdRSrHP7WMW/LG8UrE0wzeJfuRKfjujCIJIPlg4hw2eqj1YPeWAGVtlx92tVHLw
+pEICjzIHd+NguM5UHEGNVMTn0o8/q0joCSWuG9Hq42acY5eimYUlXou2bhmnmVPG
+Ikck6juC4r//MKJ4W++Gv4RZBosM7bNUcQspzNEj4QNeIGL53YAN57VWR2HCclEe
+ONLcGpsTv8CnsoVAFSDAW0cig2NqEg==
+=peYP
+-----END PGP SIGNATURE-----
+
+--Sig_/4fPfY4dz.zTw+BW=GF3We/A--
