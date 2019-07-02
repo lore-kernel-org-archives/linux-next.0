@@ -2,114 +2,150 @@ Return-Path: <SRS0=/iKb=U7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A442C5B57D
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 04:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33C9C5B57D
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 05:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8162173E
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 04:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5A7020881
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jul 2019 05:33:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yti+xKcv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yti+xKcv"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JS2dzmpO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbfGBE0Y (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 2 Jul 2019 00:26:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46812 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfGBE0Y (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2019 00:26:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A0DDE607CA; Tue,  2 Jul 2019 04:26:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562041583;
-        bh=YSdh6V8PtLxekYrCt+JmLsR1cBK83DOlcHyKX8k+NOA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=Yti+xKcvmnEYuCCx/AZwzCe2FewT/t2cBTIIVqBlRdwckhPwq0bEDwKITAHYClnRI
-         0jRoAfUP/VD8sMZ+uqS/8WwSptDO+u67ZdP0KwmcBDmwBz4apZtkUu1siLG8R97Zl3
-         kqJczN1VHJL9S6kQkqfyH3FYa2Va8aEXGBR11SKk=
-Received: from dundi (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725780AbfGBFdI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 2 Jul 2019 01:33:08 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59941 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726475AbfGBFdI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 2 Jul 2019 01:33:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: dundi@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3AF3E604D4;
-        Tue,  2 Jul 2019 04:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562041583;
-        bh=YSdh6V8PtLxekYrCt+JmLsR1cBK83DOlcHyKX8k+NOA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=Yti+xKcvmnEYuCCx/AZwzCe2FewT/t2cBTIIVqBlRdwckhPwq0bEDwKITAHYClnRI
-         0jRoAfUP/VD8sMZ+uqS/8WwSptDO+u67ZdP0KwmcBDmwBz4apZtkUu1siLG8R97Zl3
-         kqJczN1VHJL9S6kQkqfyH3FYa2Va8aEXGBR11SKk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AF3E604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=dundi@codeaurora.org
-From:   <dundi@codeaurora.org>
-To:     "'Stephen Rothwell'" <sfr@canb.auug.org.au>,
-        "'Kalle Valo'" <kvalo@codeaurora.org>,
-        "'Wireless'" <linux-wireless@vger.kernel.org>
-Cc:     "'Linux Next Mailing List'" <linux-next@vger.kernel.org>,
-        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>
-References: <20190702073306.3bd439ab@canb.auug.org.au>
-In-Reply-To: <20190702073306.3bd439ab@canb.auug.org.au>
-Subject: RE: linux-next: Fixes tag needs some work in the wireless-drivers-next tree
-Date:   Tue, 2 Jul 2019 09:56:18 +0530
-Message-ID: <000a01d5308e$4dcb0e20$e9612a60$@codeaurora.org>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45dCZ72fldz9sNC;
+        Tue,  2 Jul 2019 15:33:03 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562045584;
+        bh=Py03TsrTSqPZvsAlzC0udbst9os/bFEXC2ckL/F/Bjw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JS2dzmpOuYFT6WD/aV6BwCQhQARNJ9g68KsjukTbG4ezRS1JmUPSpiEbGQededdre
+         sYZYtGxStP1M9eSj+HVIMe6gtOo034JlAUDsMolUgxBPxrJogzYID9nuiN+ddTUlRx
+         oY/Iy9hp12fTNKFCz/D/8PdGGvLltKKQy46Un0fYHYRt2+GW/+zPpiZLQyRkQzm8EP
+         gNqBkv4mQj9TsIdDuWAL177v+OHzO822OAl3IHz5t9l2UmqTfMQAySRH4oMIM/yQIU
+         cuj6RhJ/2i7WmYNY+dxCGydbusAZoi6CdAsXiv8nmm2vVcdz3kfzd2gfeLrD0SVOQR
+         aUHSli9aHeqnA==
+Date:   Tue, 2 Jul 2019 15:33:02 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Sterba <dsterba@suse.cz>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <20190702153302.28e7948d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI9opsM3NZaPdwZufNLc2Z1a/FxMaXl1lxw
-Content-Language: en-us
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/txzI_x0Co6STgMd+jMsmZMm"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
-
-You are correct, Its
-Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
-
-My bad, I added last 12 digits instead of first 12 digits of SHA1.
-
-Regards,
-Dundi
-
------Original Message-----
-From: Stephen Rothwell <sfr@canb.auug.org.au> 
-Sent: Tuesday, July 2, 2019 3:03 AM
-To: Kalle Valo <kvalo@codeaurora.org>; Wireless
-<linux-wireless@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel
-Mailing List <linux-kernel@vger.kernel.org>; Dundi Raviteja
-<dundi@codeaurora.org>
-Subject: linux-next: Fixes tag needs some work in the wireless-drivers-next
-tree
+--Sig_/txzI_x0Co6STgMd+jMsmZMm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  c709df58832c ("ath10k: Fix memory leak in qmi")
+fs/btrfs/ctree.c: In function '__tree_mod_log_insert':
+fs/btrfs/ctree.c:388:2: error: implicit declaration of function 'lockdep_as=
+sert_held_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=3Di=
+mplicit-function-declaration]
+  lockdep_assert_held_exclusive(&fs_info->tree_mod_log_lock);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  lockdep_assert_held_once
 
-Fixes tag
+Caused by commit
 
-  Fixes: fda6fee0001e ("ath10k: add QMI message handshake for wcn3990
-client")
+  9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() ->=
+ lockdep_assert_held_write()")
 
-has these problem(s):
+interacting with commits
 
-  - Target SHA1 does not exist
+  84cd7723de7c ("btrfs: assert tree mod log lock in __tree_mod_log_insert")
+  283d2e443505 ("btrfs: assert extent map tree lock in add_extent_mapping")
 
-Did you mean
+from the btrfs-kdave tree.
 
-Fixes: ba94c753ccb4 ("ath10k: add QMI message handshake for wcn3990 client")
+I have applied the following merge fix patch:
 
--- 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 2 Jul 2019 15:29:27 +1000
+Subject: [PATCH] locking/lockdep: fix up for "Rename
+ lockdep_assert_held_exclusive() -> lockdep_assert_held_write()"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/btrfs/ctree.c      | 2 +-
+ fs/btrfs/extent_map.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+index 99a585ede79d..9d1d0a926cb0 100644
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -385,7 +385,7 @@ __tree_mod_log_insert(struct btrfs_fs_info *fs_info, st=
+ruct tree_mod_elem *tm)
+ 	struct rb_node *parent =3D NULL;
+ 	struct tree_mod_elem *cur;
+=20
+-	lockdep_assert_held_exclusive(&fs_info->tree_mod_log_lock);
++	lockdep_assert_held_write(&fs_info->tree_mod_log_lock);
+=20
+ 	tm->seq =3D btrfs_inc_tree_mod_seq(fs_info);
+=20
+diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+index a73af4159495..9d30acca55e1 100644
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -384,7 +384,7 @@ int add_extent_mapping(struct extent_map_tree *tree,
+ {
+ 	int ret =3D 0;
+=20
+-	lockdep_assert_held_exclusive(&tree->lock);
++	lockdep_assert_held_write(&tree->lock);
+=20
+ 	ret =3D tree_insert(&tree->map, em);
+ 	if (ret)
+--=20
+2.20.1
+
+--=20
 Cheers,
 Stephen Rothwell
 
+--Sig_/txzI_x0Co6STgMd+jMsmZMm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0a7I4ACgkQAVBC80lX
+0Gzy/gf/ZhXMQJT0gs+uX2UFL4s2ttguOUpnJ/rCXLirnhNofrUqD2EhX03nuAqg
+RbZPB6AUCJos6qAcTDon/zAPiAOvNf4PpNeiSX29fqdEL2SMA+NWKaApW4hOG7Qf
+BJB1V+JUMG9dxULNZ0w7e5rOBVYiGTyPMohVnR90NZBK366hiyEXhPKomSIk7HXy
+pLE/bqxeUiGTuUC9CYWD+w59Cs/8MBGcx/UuWQHo4uneHbZ5d8fk5kHOVaaFBr7R
+aAMGjCfo6DaYwQUf8jIK4WpBqpmaMYy3PCuNWsJBi2MbxdsDVY5Dl2benL7dazz5
+h2kep/9zw2AQix05Z3NDK52bgNyo6g==
+=O6jG
+-----END PGP SIGNATURE-----
+
+--Sig_/txzI_x0Co6STgMd+jMsmZMm--
