@@ -2,119 +2,91 @@ Return-Path: <SRS0=JrHm=VA=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C2FC5B578
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 08:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6526CC5B578
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 08:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 217DB218A0
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 08:40:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HINRG2JQ"
+	by mail.kernel.org (Postfix) with ESMTP id 4575F218A0
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 08:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfGCIkV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jul 2019 04:40:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:41477 "EHLO ozlabs.org"
+        id S1727049AbfGCIle (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jul 2019 04:41:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:41344 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727019AbfGCIkV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:40:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45dvgj2YDcz9s8m;
-        Wed,  3 Jul 2019 18:40:17 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562143218;
-        bh=1gdQY+IG37Chq420+xnxxU0x3yvGw0besHVydkYixH4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HINRG2JQoHY9GVjqahdxAuuFzhyzOAo5HhLsFHRB4ZupHGU0BmNpGu8jAtwB67Syg
-         23bbY2+0qxDShlz8mms7EBk9Un5csxOTUQh4z16iNf7v5F6y+BWX60JwGjVwt8uIPA
-         AVzZeCJJUYtfbuKFiyl4vpcgM4Uauspy2E9GwhzBEd0YG4lsHditpdhF5nE7LGqI4I
-         1n94hB0TSiQMAImSaseEX7JAtxp3ZdH/W0HJVgCuxwvKqNsh4Pm7xXlAd7mFMDINoA
-         qyhUtSYTYLeTxhZP1xOtDfwS+ZNnCsc1TH1lrOwB2dlgZtix+wsJHqqQgDUCws27ef
-         4b65rQQa87b7Q==
-Date:   Wed, 3 Jul 2019 18:40:15 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Mahesh Bandewar <maheshb@google.com>
-Subject: linux-next: manual merge of the akpm-current tree with the net-next
- tree
-Message-ID: <20190703184015.61a8f998@canb.auug.org.au>
+        id S1727019AbfGCIle (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jul 2019 04:41:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6D0D344;
+        Wed,  3 Jul 2019 01:41:33 -0700 (PDT)
+Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B4C93F718;
+        Wed,  3 Jul 2019 01:41:32 -0700 (PDT)
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+To:     sfr@canb.auug.org.au, mst@redhat.com, greg@kroah.com
+Cc:     joro@8bytes.org, Jean-Philippe.Brucker@arm.com,
+        natechancellor@gmail.com, arnd@arndb.de,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mathieu.poirier@linaro.org
+References: <20190701190940.7f23ac15@canb.auug.org.au>
+ <20190701200418.GA72724@archlinux-epyc>
+ <20190702141803.GA13685@ostrya.localdomain>
+ <20190702151817.GD3310@8bytes.org>
+ <20190702112125-mutt-send-email-mst@kernel.org>
+ <20190702155851.GF3310@8bytes.org>
+ <20190702130511-mutt-send-email-mst@kernel.org>
+ <20190703074109.4b2ca5bc@canb.auug.org.au>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <7b1b518b-1ca6-3650-a6ed-c2f63859a160@arm.com>
+Date:   Wed, 3 Jul 2019 09:41:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4R+rc6xvUJpW.8x1EQPYfk7"; protocol="application/pgp-signature"
+In-Reply-To: <20190703074109.4b2ca5bc@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/4R+rc6xvUJpW.8x1EQPYfk7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Greg, Stephen, All,
 
-Hi all,
+On 02/07/2019 22:41, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 2 Jul 2019 13:05:59 -0400 "Michael S. Tsirkin" <mst@redhat.com> wrote:
+>>
+>> On Tue, Jul 02, 2019 at 05:58:51PM +0200, Joerg Roedel wrote:
+>>> On Tue, Jul 02, 2019 at 11:23:34AM -0400, Michael S. Tsirkin wrote:
+>>>> I can drop virtio iommu from my tree. Where's yours? I'd like to take a
+>>>> last look and send an ack.
+>>>
+>>> It is not in my tree yet, because I was waiting for your ack on the
+>>> patches wrt. the spec.
+>>>
+>>> Given that the merge window is pretty close I can't promise to take it
+>>> into my tree for v5.3 when you ack it, so if it should go upstream this
+>>> time its better to keep it in your tree.
+>>
+>> Hmm. But then the merge build fails. I guess I will have to include the
+>> patch in the pull request then?
+>>
+> 
+> All you (and the driver-core maintainer) need to do is make sure you
+> tell Linus that the merge requires the fix ... he can then apply it to
+> the merge commit just as I have.  Linus has asked that maintainers do
+> not (in general) cross merge to avoid these (semantic) conflicts.
+> Sometimes, in more complex cases, it may be necessary for maintainers
+> to share a (non changing) subset of their trees, but this case is
+> pretty trivial.
+> 
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Please let me know if there is something I could help with.
 
-  lib/Makefile
-
-between commit:
-
-  509e56b37cc3 ("blackhole_dev: add a selftest")
-
-from the net-next tree and commit:
-
-  c86f3a66de9a ("lib: introduce test_meminit module")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc lib/Makefile
-index 0c3c197a7801,05980c802500..000000000000
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@@ -91,7 -91,7 +91,8 @@@ obj-$(CONFIG_TEST_DEBUG_VIRTUAL) +=3D tes
-  obj-$(CONFIG_TEST_MEMCAT_P) +=3D test_memcat_p.o
-  obj-$(CONFIG_TEST_OBJAGG) +=3D test_objagg.o
-  obj-$(CONFIG_TEST_STACKINIT) +=3D test_stackinit.o
- +obj-$(CONFIG_TEST_BLACKHOLE_DEV) +=3D test_blackhole_dev.o
-+ obj-$(CONFIG_TEST_MEMINIT) +=3D test_meminit.o
- =20
-  obj-$(CONFIG_TEST_LIVEPATCH) +=3D livepatch/
- =20
-
---Sig_/4R+rc6xvUJpW.8x1EQPYfk7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0cae8ACgkQAVBC80lX
-0Gy3AggApB/d89kJt8k4S0magqHTtThobbRxQS/Eokve8980MKdI2SylS1g1SHxk
-b3yXfswf08n8YNr63UlzlBuBTWc6TVWeu4xqz5Mja8jHwHOt9e5OjcnQL2BUDZE5
-XsLipIx8OpUYJLZ2rTgQUuexv3fl4kS8LJfChcnjSR2uqQFGmGT9UPTWHWRq+VeF
-6mEVd2sOC/ljN5J+NSwukifSynMGYNHR8vHb08/KJKzANtG8Fxg4r9WbQCu1EVuk
-6iLhv8y4QjK9QUiDAjMqJZ4S44LdN3K3W72sPnEMRfFCzS01vmxDpFRHSxH+/QO1
-3ors+tI/7ezFS0hT0L5MmGaMnvCd2g==
-=eUEy
------END PGP SIGNATURE-----
-
---Sig_/4R+rc6xvUJpW.8x1EQPYfk7--
+Cheers
+Suzuki
