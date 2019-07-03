@@ -6,81 +6,114 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C973EC5B578
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A09C5B578
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE1A21852
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F4F218A3
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:49:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KqQnIs8M"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YnADNR5a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfGCVoA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jul 2019 17:44:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:58149 "EHLO ozlabs.org"
+        id S1727058AbfGCVtO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jul 2019 17:49:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:56685 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfGCVoA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Jul 2019 17:44:00 -0400
+        id S1726550AbfGCVtO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jul 2019 17:49:14 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fF3y2p5sz9sBp;
-        Thu,  4 Jul 2019 07:43:58 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fF9z1y9kz9s8m;
+        Thu,  4 Jul 2019 07:49:11 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562190238;
-        bh=Ta/mVq55yYgD8k96u5P7ESQsk0sEgaqQnXZMCcskANw=;
+        s=201702; t=1562190551;
+        bh=ogYrAdqmBL5sV/Ifv2mvi7wFD/kypvfY6pwW/9HHGMY=;
         h=Date:From:To:Cc:Subject:From;
-        b=KqQnIs8MZSmiIczpAGFiPCT7scPa7cBLa+37s+NC/rXz1zU6d2dIA/JZBHxLsz7dx
-         gubhrS6DOByf9e0mR6L2QiqukcjMHKDQXmQQeNHR9qE77ZtFKMhKrU6XIsmKWk/RKO
-         b3an3+cwbXlSecOiTdpsX48FgyeAnC66zP/DEvSidbOh9hVFtggvvJKwyF4agzP2FN
-         DLrx3EacuxBf1Veh7iPel/I3BR+KJG9gSksMld+YT7Ul2JOttg2EqdrubFzB3rPZIa
-         5cKdfNCXBLQy/RbL+PPexb7JwwtY/UuK8jKpN0auvhWvPIA6/1kNbApOPs6GnYz79Z
-         S6zfeuIjJuCcA==
-Date:   Thu, 4 Jul 2019 07:43:57 +1000
+        b=YnADNR5aXZq0RBozBxpyZRbBUhE18DQHskZE8/xRalMseUrvh7vA43ympqxzEm348
+         UBrkTnRCkrpl+pDakNk5nStyIHeI80uyW9lqSmWrbF6x2cOo1J+eu9r9cVzvBGMtAT
+         HxWpSZt0jyHwErnXuvnuulUjaYB4/UyIBBTuSO6QmPx49S78f2PTL3J0HVR3RjYzsj
+         9WBHrzV5jq5ubwXCT1/yM/8coPxhR4CDobL17fR1bCzVORjy9T43jC5zRVz+Pt4zWk
+         DrFYwaE9g86F0zAvRQswD8bfXmbZ6xMgSIbjc90ApRApxA16uKmD0BmoTDH4a7KCyo
+         nzwl0bIfG1rDA==
+Date:   Thu, 4 Jul 2019 07:49:08 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the amdgpu tree
-Message-ID: <20190704074357.5dc09442@canb.auug.org.au>
+Subject: linux-next: Fixes tags need some work in the kvm tree
+Message-ID: <20190704074908.5fb3d184@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MW.9nop8aAmhk0S2wC2=atR"; protocol="application/pgp-signature"
+ boundary="Sig_/.bYtCXpIAYKBGltV7yY8X/U"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/MW.9nop8aAmhk0S2wC2=atR
+--Sig_/.bYtCXpIAYKBGltV7yY8X/U
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+In commit
 
-  841e58962647 ("drm/amdgpu/psp: add psp support for navi14")
+  e8a70bd4e925 ("KVM: nVMX: allow setting the VMFUNC controls MSR")
 
-is missing a Signed-off-by from its committer.
+Fixes tag
+
+  Fixes: 27c42a1bb ("KVM: nVMX: Enable VMFUNC for the L1 hypervisor", 2017-=
+08-03)
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+  - The trailing date is unexpected.
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
+
+In commit
+
+  6defc591846d ("KVM: nVMX: include conditional controls in /dev/kvm KVM_GE=
+T_MSRS")
+
+Fixes tag
+
+  Fixes: 1389309c811 ("KVM: nVMX: expose VMX capabilities for nested hyperv=
+isors to userspace", 2018-02-26)
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+  - The trailing date is unexpected.
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/MW.9nop8aAmhk0S2wC2=atR
+--Sig_/.bYtCXpIAYKBGltV7yY8X/U
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dIZ0ACgkQAVBC80lX
-0GxUVQf/fzP7U+28zPbMEJMks9RAQLAkXGOA5iuESXk1txhfJUCO9wyTzI6lu68u
-TEnYJNvmm4v4Cqh5LZkBpR1MEBRg8KDXZctzUmPPHraLLVRSjWjYVNCmY4Cb5ZGS
-S7OA2B64EmWb7Lem8cJXYYVB0vAhueRTnPUfi+jjjLCMZtn4a1FzLlYNIAwLWmeg
-DH2uxUNNGTClGZTD5U4XUsVr5DJ2jSKvzOu8JvAEAJEKc/gYXjQnGs0eLOtRO5iG
-8tWBEGRqD7D5O6qDxN/p5d1/x9F6VAwER1PP4JCKTTfLajtY1j9fLoh/N366lyRd
-SVmYWulk6WHDLKvV3iO/ytRCVBF49Q==
-=EH5v
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dItQACgkQAVBC80lX
+0Gwv5wf9FteVffOioPU1RApnBCZ95sSTsrIv9feDYWWXcAB6wtw7eDLCrczS3Uda
++rT2sPpC9gkgsJXX6BnQ01FjOhbg1I8QTBTp9yJtOWNLxNxTlz94Vwz7YBmwjMCo
+SRPyLE4TUVGnb7v+T9Ge1AWHhQ1EgsU+l5JAGdiGIfzJ1m1NU1c3Xb172DBey1Pk
+VsuOwXbAjDE7YnL5PZF0dGDcqUly1SQ+CkB439DWf5YVutMCQLVP8cvKaHS3gyIS
+eq+po8CUylXVFVB/jjD03FGIyPDXBDAnHmqcgoQryxyQTy5XFnr/uB5GTLxXOZ9A
+kaOBIrrXWuirTQgGdSUYq0QedIq4+g==
+=zY54
 -----END PGP SIGNATURE-----
 
---Sig_/MW.9nop8aAmhk0S2wC2=atR--
+--Sig_/.bYtCXpIAYKBGltV7yY8X/U--
