@@ -2,118 +2,62 @@ Return-Path: <SRS0=JrHm=VA=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A09C5B578
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8BAC5B578
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F4F218A3
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:49:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YnADNR5a"
+	by mail.kernel.org (Postfix) with ESMTP id 7AC2C218A0
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 21:56:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfGCVtO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jul 2019 17:49:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:56685 "EHLO ozlabs.org"
+        id S1726902AbfGCV4l (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jul 2019 17:56:41 -0400
+Received: from fieldses.org ([173.255.197.46]:40126 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfGCVtO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Jul 2019 17:49:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fF9z1y9kz9s8m;
-        Thu,  4 Jul 2019 07:49:11 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562190551;
-        bh=ogYrAdqmBL5sV/Ifv2mvi7wFD/kypvfY6pwW/9HHGMY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YnADNR5aXZq0RBozBxpyZRbBUhE18DQHskZE8/xRalMseUrvh7vA43ympqxzEm348
-         UBrkTnRCkrpl+pDakNk5nStyIHeI80uyW9lqSmWrbF6x2cOo1J+eu9r9cVzvBGMtAT
-         HxWpSZt0jyHwErnXuvnuulUjaYB4/UyIBBTuSO6QmPx49S78f2PTL3J0HVR3RjYzsj
-         9WBHrzV5jq5ubwXCT1/yM/8coPxhR4CDobL17fR1bCzVORjy9T43jC5zRVz+Pt4zWk
-         DrFYwaE9g86F0zAvRQswD8bfXmbZ6xMgSIbjc90ApRApxA16uKmD0BmoTDH4a7KCyo
-         nzwl0bIfG1rDA==
-Date:   Thu, 4 Jul 2019 07:49:08 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
+        id S1726821AbfGCV4l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jul 2019 17:56:41 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 33BC72014; Wed,  3 Jul 2019 17:56:41 -0400 (EDT)
+Date:   Wed, 3 Jul 2019 17:56:41 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Fixes tags need some work in the kvm tree
-Message-ID: <20190704074908.5fb3d184@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: linux-next: Fixes tag needs some work in the nfsd tree
+Message-ID: <20190703215641.GA11243@fieldses.org>
+References: <20190704074048.65556740@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.bYtCXpIAYKBGltV7yY8X/U"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704074048.65556740@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/.bYtCXpIAYKBGltV7yY8X/U
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 04, 2019 at 07:40:48AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   56496758e181 ("nfsd: Fix overflow causing non-working mounts on 1 TB machines")
+> 
+> Fixes tag
+> 
+>   Fixes: 10a68cdf10 (nfsd: fix performance-limiting session calculation)
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Did you mean
+> 
+> Fixes: c54f24e338ed ("nfsd: fix performance-limiting session calculation")
 
-Hi all,
+Thanks, fixed.
 
-In commit
-
-  e8a70bd4e925 ("KVM: nVMX: allow setting the VMFUNC controls MSR")
-
-Fixes tag
-
-  Fixes: 27c42a1bb ("KVM: nVMX: Enable VMFUNC for the L1 hypervisor", 2017-=
-08-03)
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-  - The trailing date is unexpected.
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
-In commit
-
-  6defc591846d ("KVM: nVMX: include conditional controls in /dev/kvm KVM_GE=
-T_MSRS")
-
-Fixes tag
-
-  Fixes: 1389309c811 ("KVM: nVMX: expose VMX capabilities for nested hyperv=
-isors to userspace", 2018-02-26)
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-  - The trailing date is unexpected.
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.bYtCXpIAYKBGltV7yY8X/U
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dItQACgkQAVBC80lX
-0Gwv5wf9FteVffOioPU1RApnBCZ95sSTsrIv9feDYWWXcAB6wtw7eDLCrczS3Uda
-+rT2sPpC9gkgsJXX6BnQ01FjOhbg1I8QTBTp9yJtOWNLxNxTlz94Vwz7YBmwjMCo
-SRPyLE4TUVGnb7v+T9Ge1AWHhQ1EgsU+l5JAGdiGIfzJ1m1NU1c3Xb172DBey1Pk
-VsuOwXbAjDE7YnL5PZF0dGDcqUly1SQ+CkB439DWf5YVutMCQLVP8cvKaHS3gyIS
-eq+po8CUylXVFVB/jjD03FGIyPDXBDAnHmqcgoQryxyQTy5XFnr/uB5GTLxXOZ9A
-kaOBIrrXWuirTQgGdSUYq0QedIq4+g==
-=zY54
------END PGP SIGNATURE-----
-
---Sig_/.bYtCXpIAYKBGltV7yY8X/U--
+--b
