@@ -2,98 +2,106 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E664C0650E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EC8C0650E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7041F218B8
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:24:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="d28ylkG/"
+	by mail.kernel.org (Postfix) with ESMTP id 7FD0021882
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562221679;
+	bh=N2XXHkGwjIDYSWFPldcogFR7T90EltyDN1A8ixT4iAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KDNJzlRd7PmWwV1BvkhdiYH4KqhgXXpiSXw7DL3LynSCJQ9dmhfLxyNTTN8YF7Bn0
+	 9+3om8/ucdwEDzupiaV1aBmIW/Lp+Fg+qiAG7iw7esShSFw0NFkAC3vs14UfVMjNOs
+	 ZPY2j8h+PKCElTtEdbkLt7u4YBgV+FdyCCvqdYWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfGDGYi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 02:24:38 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34007 "EHLO ozlabs.org"
+        id S1726087AbfGDG17 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 02:27:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbfGDGYi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Jul 2019 02:24:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1725879AbfGDG17 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:27:59 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fSch0vTyz9s8m;
-        Thu,  4 Jul 2019 16:24:36 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562221476;
-        bh=Pg+hHwo3P90SWdyoPK+T5JnXAuflVOT3Ua+ayT2IaWs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=d28ylkG/e1CtCgQHs2d5qnIJgPxXjQZoK1AN09BGTzWrlk/lYASu/aKAyDFglH5zt
-         RFCdQ0UdtkYI23r5FxpgEQajslJYPh9xiZPbEFEE1dJA1Dtb7JSUkwZgRv804GmcBn
-         Jgk/TCg3JeLmgk0vC/8Au63GC4Te8ujWCqtn71psYpI2br/aVXWcNbRr6jyAARkZ8l
-         wIr1ZT/Fyz4VSW6DkgDl/mXVcIWFvKH/DaF9efcLT8ASdJ3AvThHj6jWJ3nyPqCYPJ
-         D8ENe+8IMFiXt+B/6urLPWAnT8g09Jdpso/PEYSskvqCbTW4CNCXWx8PcVwGIxnfel
-         +DbmbhXsVkYgQ==
-Date:   Thu, 4 Jul 2019 16:24:35 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warning after merge of the driver-core tree
-Message-ID: <20190704162435.17f405b0@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9992421850;
+        Thu,  4 Jul 2019 06:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562221678;
+        bh=N2XXHkGwjIDYSWFPldcogFR7T90EltyDN1A8ixT4iAs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IajMpTxvQdieihszIioDkhkftkA+GyeaXsmP/AIlIsrIiixrs0z+cXOHwyXLA8C2S
+         ZacrJNI46bYEwLHAoYYeIMIqjFVYER3sRrz6XtdFF2kEA5uDsK9RlDv3iOcjSIIZMA
+         a+5HXDiqWkfwyfUWvUbpRtM0jqtPExxValunROoQ=
+Date:   Thu, 4 Jul 2019 09:27:54 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yishai Hadas <yishaih@mellanox.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
+Message-ID: <20190704062754.GG4727@mtr-leonro.mtl.com>
+References: <20190704124738.1e88cb69@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FqycEoYp6=XAIhAU85_Yojy"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704124738.1e88cb69@canb.auug.org.au>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/FqycEoYp6=XAIhAU85_Yojy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 04, 2019 at 12:47:38PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>
+>   drivers/infiniband/hw/mlx5/cq.c
+>
+> between commit:
+>
+>   e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibility")
+>
+> from the rdma tree and commit:
+>
+>   38164b771947 ("net/mlx5: mlx5_core_create_cq() enhancements")
+>
+> from the mlx5-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/infiniband/hw/mlx5/cq.c
+> index bfe3efdd77d7,4efbbd2fce0c..000000000000
+> --- a/drivers/infiniband/hw/mlx5/cq.c
+> +++ b/drivers/infiniband/hw/mlx5/cq.c
+> @@@ -891,7 -891,8 +891,8 @@@ int mlx5_ib_create_cq(struct ib_cq *ibc
+>   	int entries = attr->cqe;
+>   	int vector = attr->comp_vector;
+>   	struct mlx5_ib_dev *dev = to_mdev(ibdev);
+> + 	u32 out[MLX5_ST_SZ_DW(create_cq_out)];
+>  -	struct mlx5_ib_cq *cq;
+>  +	struct mlx5_ib_cq *cq = to_mcq(ibcq);
+>   	int uninitialized_var(index);
+>   	int uninitialized_var(inlen);
+>   	u32 *cqb = NULL;
 
-Hi all,
+Thanks, it looks good.
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
 
-fs/orangefs/orangefs-debugfs.c: In function 'orangefs_debugfs_init':
-fs/orangefs/orangefs-debugfs.c:193:1: warning: label 'out' defined but not =
-used [-Wunused-label]
- out:
- ^~~
-fs/orangefs/orangefs-debugfs.c: In function 'orangefs_kernel_debug_init':
-fs/orangefs/orangefs-debugfs.c:204:17: warning: unused variable 'ret' [-Wun=
-used-variable]
-  struct dentry *ret;
-                 ^~~
 
-Introduced by commit
-
-  f095adba36bb ("orangefs: no need to check return value of debugfs_create =
-functions")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FqycEoYp6=XAIhAU85_Yojy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dm6MACgkQAVBC80lX
-0Gxy1QgAkxwPQfTPO2fMrkE/7J/WbNZPWQM3rAB3gXp0PpjNOi4GZdjX/lt/TYgL
-VF3n9OIpSTh6zS9+0Bv/G4bR0KF3SvPpzTsMq5ELiv5xTGjm5Kmv54EJ/8oe3FL4
-VouRbJs6ApBTe3hxbkZJf/RlRqMXRiSqs6caVORPD4BEmaMNPg4WqViPInJ1oB6m
-wGQFuTeKiNG3KdSxw7JNBjxpdkkQzt2RFKqOTuox+Ww5dk2278XPuMa8hppDE2dW
-bzJqeC19vkc1bLBYUN1twYwdEkfo/zRX766YbMVCQXSYIxPUpLurAb9XijVXz32b
-3m5SrVa0HmoozP5iQJSMDHV7D3kTbg==
-=zWsG
------END PGP SIGNATURE-----
-
---Sig_/FqycEoYp6=XAIhAU85_Yojy--
