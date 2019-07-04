@@ -2,94 +2,92 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA137C06514
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 07:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C130AC0650E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 07:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A580218A4
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 07:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562225299;
-	bh=xnjoJ5uRKxN2SwJIRmQ3BoiVS3WzaeR7la2IcTjKU6k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2ma+UAfGDvlgzqdeh9kR8e6+Co0DZb+jDRT7C1V/rnpB0ah1yqfEiUBFSyYwrGkeA
-	 ADIBLdRspTF+v56t7vNBohcvw3Qwg5XUlnlSgEr4NFXg60nvEM+g/aT/c7AdSslDKe
-	 lk2kH6DluTa7nXe8ioGlA1OjHIk3tnsk2MI+FqT4=
+	by mail.kernel.org (Postfix) with ESMTP id 948B3218A3
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 07:31:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H7FHmBvQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfGDH2P (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 03:28:15 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43848 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbfGDH2P (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 03:28:15 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p13so5404023wru.10;
-        Thu, 04 Jul 2019 00:28:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yJ2qF6WswaWh96cn5HP5uy/GUcGaruE8FXgQ/WQTJv4=;
-        b=osEXVYsxBy03KybZ7sPbEALbw7zYr/2xdVANwUc3oenqNmgeKcMzUt4mE63UZCFnnE
-         /veMXWKEeA8c+tdJK4l/RVs70vY24A+4mPsDMA5aj+A3ePtqtPc8iLl5oMfSW15hRi2L
-         5VpxqetdRfqn9vLEn3voh8jHpf0r+GOdgD1ylJpaur90bKAJduIGYvMtn00LrI+6lAzp
-         oAyACxbapUec7+lA7Ggw6RLsM5cQ91x8gOKHw/rqJchRijUVGPdoiVSHjI33goMXrvh0
-         xKU3IjVJ1StQsKeZjGj3C2vwZ1+U6x+8VaMHUyHpoYN/l89scBgLI/1jqgT/CGhzUiPR
-         LhIg==
-X-Gm-Message-State: APjAAAXrmeiCPz6E47QCsxgL/b0hx9IIYJEelIE+0UX7xUbABRfIORGG
-        bhMLYSfRQbEkWHt9cIq1+2M5G3E2/T/PZsh7naU=
-X-Google-Smtp-Source: APXvYqyS2u/lE6Z3jB9ospQ0eVycgRKJl0bdmGtr3M8/SxpS3tBKVBAgO7TRgcJ+wGFnscxTUZV1bEYtjz/aTOqPpps=
-X-Received: by 2002:a5d:66ca:: with SMTP id k10mr11033017wrw.61.1562225292427;
- Thu, 04 Jul 2019 00:28:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190704163458.63ed69d2@canb.auug.org.au> <20190704065949.GA32707@kroah.com>
-In-Reply-To: <20190704065949.GA32707@kroah.com>
-From:   Felipe Balbi <balbi@kernel.org>
-Date:   Thu, 4 Jul 2019 10:28:34 +0300
-Message-ID: <CAH8TKc_4ggxOPgii8gLGo2d7nvx08cbTk8_xDUQfA2Ckcxb_Aw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the usb and usb-gadget trees
-To:     Greg KH <greg@kroah.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726964AbfGDHb2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 03:31:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:40375 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbfGDHb1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 03:31:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fV5m4gPFz9sNw;
+        Thu,  4 Jul 2019 17:31:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562225485;
+        bh=q87gVoKRcRIAQlzi5EChTZT/OGMlSSIYaWdvi4yp0Oc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=H7FHmBvQcjDN7fUVtIu2uORseFAX4zI2YtNQlX1wNoSWwmC/Y+6rRv21S+7tNMox1
+         UQ1oOcIWAPeYHhUZ2t8hWtyYtYJIMFBKBiiNTOKItT3bCuvR+9rcZkPJvgAEOwrTEc
+         YPbSwcUnSMPqcFsTIUMs2ieil7TgdKl+pC0B6iL+nvTCvcNXkUmOvetnL5nlg8/jXN
+         jJJ3Q1+0l0qbcbY6ySl+41cA1NDWMSp35/CNN8CKpRaFQtl5RiZ9fIWzebMxtaf3pI
+         HPm1pHVVnuXxQIWmGfeB/BN+Jkg1OzNVxmbT8D8I+tYFuCYqf+BAonmjcGiXh/udpx
+         fUt1Bq/3hoGaQ==
+Date:   Thu, 4 Jul 2019 17:31:15 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pawel Laszczak <pawell@cadence.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Robin Gong <yibin.gong@nxp.com>,
+        Angelo Dureghello <angelo@sysam.it>
+Subject: linux-next: build failure after merge of the slave-dma tree
+Message-ID: <20190704173108.0646eef8@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5Uwy=RftkHFD=8Kb.kRS_pm"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi,
+--Sig_/5Uwy=RftkHFD=8Kb.kRS_pm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 4, 2019 at 9:59 AM Greg KH <greg@kroah.com> wrote:
->
-> On Thu, Jul 04, 2019 at 04:34:58PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > After merging the usb tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> >
-> > arm-linux-gnueabi-ld: drivers/usb/dwc3/trace.o: in function `trace_raw_output_dwc3_log_ctrl':
-> > trace.c:(.text+0x119c): undefined reference to `usb_decode_ctrl'
-> >
-> > Caused by commit
-> >
-> >   3db1b636c07e ("usb:gadget Separated decoding functions from dwc3 driver.")
-> >
-> > I have used the usb tree from next-20190703 for today.
-> >
-> > This also occurs in the usb-gadget tree so I have used the version of
-> > that from next-20190703 as well.
->
-> Odd, I thought I pulled the usb-gadget tree into mine.  Felipe, can you
-> take a look at this to see if I messed something up?
+Hi all,
 
-This looks like it was caused by Pawel's patches.
+After merging the slave-dma tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I'll try to reproduce here and see what's causing it.
+ERROR: "of_irq_count" [drivers/dma/fsl-edma.ko] undefined!
 
--- 
-balbi
+Caused by commit
+
+  7144afd025b2 ("dmaengine: fsl-edma: add i.mx7ulp edma2 version support")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5Uwy=RftkHFD=8Kb.kRS_pm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dq0MACgkQAVBC80lX
+0Gw25QgAlkBcHoKNDsts7uDCb+TIb/+BTdKtIPSjqP0frXooQBUCE+IN3vuiyNXi
+ueJo3wEhJEdptdWnQ9AqlePIFPq+oxoozy19K40EvoJT+NTyvSGaN2q+PEwnis6J
+ONWpVklgmsajuI0QNBV/oeo5xytChtDKXSgq/bnn1Jvbeyi3OnDijrmJBpJF/vEB
+fuT72XdhNTnDRFFL0erV8kS2Pon/WOSNJSL6C5qY0NVOrU8H6nmmjMEWUPjp/WvJ
+5727vIEnyHsDQBPON2jWcfmcty/O3+foKKD/rF+qWVF1jbq38HAxe09u6UwZlfex
+Y6Opxh+s7+a+W72SFH+StwCUEpTY5Q==
+=qnN0
+-----END PGP SIGNATURE-----
+
+--Sig_/5Uwy=RftkHFD=8Kb.kRS_pm--
