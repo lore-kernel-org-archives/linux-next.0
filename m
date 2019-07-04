@@ -1,115 +1,149 @@
-Return-Path: <SRS0=JrHm=VA=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C30C5B578
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 23:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF0BC46478
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8738821881
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jul 2019 23:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02583218A3
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaZ3mUvL"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="N8aEUaSA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfGCXLr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jul 2019 19:11:47 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41468 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbfGCXLq (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2019 19:11:46 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 205so4201779ljj.8
-        for <linux-next@vger.kernel.org>; Wed, 03 Jul 2019 16:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UP+qxKT5rVjcWek7KzsMBfffszv54jR92VkwBR/jGz0=;
-        b=AaZ3mUvL8AP96UyzVBT0wxy8e2SkMqvx50vLcd+2kNzxqNml8a56RhWeDZ8Q5Fc2wl
-         KVqgai+DjYeH0uxdb1Ognc5BPZmL4WZWdPwoU9e/1vsBuhzhe15MUQC2vQ3x6DppiYYz
-         keGu6n4LLGu0Lemc6scDgcDK2s7pVyjXKF1ICSfd81PCtTR04+43X2bbtckqCIgtQabF
-         eve1j/83zkjYW5NYa8HNRPStRAQvookixhnFrvr6KwHgPAoLrwAZkKZg4Z+8+30v+HAZ
-         eeMs9aX8DfP59lB6jGwMLBV4CWUVYTp0o5DmD1U0q7rtvnIXP4lu7165G3Kaz4iUbfda
-         ev0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UP+qxKT5rVjcWek7KzsMBfffszv54jR92VkwBR/jGz0=;
-        b=Hc3HjdsUmbFA43Z7xlD7pt8DVvNbd62Fk2Qw4P1+q9FBwGbv9SKU/i5fTPd9Q1m229
-         /GYbvP6f6vqdoyvpINH/dNwPhNayqLlgE0agqvlH/0EP5Sosduf69N8Zqcm2XgSNgL5M
-         MtxgrslSTkAaR9dhXDl03W2Wt+lHYLc8f3TcXE8asJ4SVSGET7+d09awZWPgvzYU4r24
-         yDRIb/VP4NzI1goGhQMBxuKSOwX/WEgmpn24Fkj0Y0EUVaKjiV6Ug44nxAzeEA9ooTZ5
-         z0SMRnUe6TFcDVJD4Hi0Fnv4Y8pZ5EE6NWj2HgROHfIup+csN5HFv4zJ0JLO83YB8X+I
-         M3FA==
-X-Gm-Message-State: APjAAAXMAdAMwaHyBkY1516jV9hX/YtHFghIbsJjTGuV1g0UR5U9I85g
-        q+MyXX60Y3XIeayR/8Ff97IJmoeie6GC3ZFC3EM=
-X-Google-Smtp-Source: APXvYqzZF2qms9SKK53fAVCvJv1RN+MZtTtgMYoI42VqDQ6BxFVX18oItEruFDL5MuzmBcvvjtk/MtdpSZD4X7Yl4T4=
-X-Received: by 2002:a2e:9a10:: with SMTP id o16mr3126839lji.95.1562195504800;
- Wed, 03 Jul 2019 16:11:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190703015442.11974-1-Felix.Kuehling@amd.com>
- <20190703141001.GH18688@mellanox.com> <a9764210-9401-471b-96a7-b93606008d07@amd.com>
- <CADnq5_M0GREGG73wiu3eb=E+G2iTRmjXELh7m69BRJfVNEiHtw@mail.gmail.com> <20190704073214.266a9c33@canb.auug.org.au>
-In-Reply-To: <20190704073214.266a9c33@canb.auug.org.au>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Thu, 4 Jul 2019 09:11:33 +1000
-Message-ID: <CAPM=9tx+w5ujeaFQ1koqsqV5cTw8M8B=Ws_-wB1Z_Jy-msFtAQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] drm/amdgpu: adopt to hmm_range_register API change
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Alex Deucher <alexdeucher@gmail.com>,
+        id S1727076AbfGDCA1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jul 2019 22:00:27 -0400
+Received: from mail-eopbgr30086.outbound.protection.outlook.com ([40.107.3.86]:19743
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727021AbfGDCA1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jul 2019 22:00:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ME3mN3r/laVGQduCC0GREWkfow/AT6OjaPvOkxvI2NY=;
+ b=N8aEUaSAr9LfwFi/rRWg5qp4oGlvAHg6o8+y111tSsjtuL36/2TgjxPqMV2txpRvmOJ5VBcsDBQ4e5rHwNOgMNRBzvsnhVpjIV8Box9hSTf/dMANb8qLS6LIwH6SB/9aODrduIBEeN7Qdwu0uKvgczqrnq1P/iWnswTu+cJ3lGE=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB5390.eurprd05.prod.outlook.com (20.177.63.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.20; Thu, 4 Jul 2019 02:00:19 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2032.019; Thu, 4 Jul 2019
+ 02:00:19 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Dave Airlie <airlied@gmail.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alex Deucher <alexdeucher@gmail.com>,
         "Yang, Philip" <Philip.Yang@amd.com>,
         Dave Airlie <airlied@linux.ie>,
         "Kuehling, Felix" <Felix.Kuehling@amd.com>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
         "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
         "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 1/1] drm/amdgpu: adopt to hmm_range_register API change
+Thread-Topic: [PATCH 1/1] drm/amdgpu: adopt to hmm_range_register API change
+Thread-Index: AQHVMUJXWs8sf5cAOUS0d/4NvIH/Saa473yAgABzhwCAAAGdAIAABmoAgAAbwICAAC8hAA==
+Date:   Thu, 4 Jul 2019 02:00:19 +0000
+Message-ID: <20190704020014.GA32502@mellanox.com>
+References: <20190703015442.11974-1-Felix.Kuehling@amd.com>
+ <20190703141001.GH18688@mellanox.com>
+ <a9764210-9401-471b-96a7-b93606008d07@amd.com>
+ <CADnq5_M0GREGG73wiu3eb=E+G2iTRmjXELh7m69BRJfVNEiHtw@mail.gmail.com>
+ <20190704073214.266a9c33@canb.auug.org.au>
+ <CAPM=9tx+w5ujeaFQ1koqsqV5cTw8M8B=Ws_-wB1Z_Jy-msFtAQ@mail.gmail.com>
+In-Reply-To: <CAPM=9tx+w5ujeaFQ1koqsqV5cTw8M8B=Ws_-wB1Z_Jy-msFtAQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BL0PR01CA0013.prod.exchangelabs.com (2603:10b6:208:71::26)
+ To VI1PR05MB4141.eurprd05.prod.outlook.com (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [156.34.55.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 88633ecd-415f-49be-9256-08d700235db4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5390;
+x-ms-traffictypediagnostic: VI1PR05MB5390:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VI1PR05MB5390DB7709DB09D561CAA4A1CFFA0@VI1PR05MB5390.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0088C92887
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(39860400002)(366004)(136003)(199004)(189003)(966005)(53936002)(86362001)(256004)(71190400001)(68736007)(6306002)(478600001)(6916009)(8676002)(99286004)(5660300002)(25786009)(4326008)(7416002)(14454004)(6512007)(71200400001)(2906002)(81156014)(81166006)(2616005)(1411001)(8936002)(6506007)(316002)(1076003)(6246003)(66946007)(7736002)(6486002)(66446008)(54906003)(229853002)(66556008)(64756008)(26005)(76176011)(66476007)(73956011)(6436002)(11346002)(476003)(66066001)(446003)(33656002)(386003)(36756003)(3846002)(486006)(305945005)(52116002)(6116002)(102836004)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5390;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: rKELJ694naT5gGDd4kqK5UDxIRL9SdMf7WLMDnUrujLbRaZnRyLZdyVfyYg1vPx8Yy0DJfX8f7wY+1BwTXJx9i+s9CiqrRlOcNDdRLk6Jbfd6AEDKyXV6Tt0amSSM3rvM+Aj3CvENpy/+F2jQ4uOYWUV8HlH1xwccb5PZpEnAkCIY6wRZz3G77WUF9zjoi6iqzGlngZ8mTWrPoMp0yLstiK0R2fx/FZMYUlbvUhkdoq15DQWg1hPyKebad2faC7LlwjT1ZMe9Re35Q3T8pBeOE+UNqCtA4wcWYRoySr8hW+ZY3Q9CY3ec5jcNOfY86cA8KpVF3UDf/vcyI/plhAeWgpjpNahACEC+29xp6R5JzyjQPRpcBUjEpRmPovPcg+Vd9Iq1vbPzYgvAjpa52v84aRXqIZP1HL7dzqDKliRRBU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <67836C539BDF9F479C5FD35E4F835B2D@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88633ecd-415f-49be-9256-08d700235db4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 02:00:19.6612
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5390
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, 4 Jul 2019 at 07:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Alex,
->
-> On Wed, 3 Jul 2019 17:09:16 -0400 Alex Deucher <alexdeucher@gmail.com> wrote:
+On Thu, Jul 04, 2019 at 09:11:33AM +1000, Dave Airlie wrote:
+> On Thu, 4 Jul 2019 at 07:32, Stephen Rothwell <sfr@canb.auug.org.au> wrot=
+e:
 > >
-> > Go ahead and respin your patch as per the suggestion above.  then I
-> > can apply it I can either merge hmm into amd's drm-next or we can just
-> > provide the conflict fix patch whichever is easier.  Which hmm branch
-> > is for 5.3?
-> > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/?h=hmm
->
-> Please do not merge the hmm tree into yours - especially if the
-> conflict comes down to just a few lines.  Linus has addressed this in
-> the past.  There is a possibility that he may take some objection to
-> the hmm tree (for example) and then your tree (and consequently the drm
-> tree) would also not be mergeable.
->
+> > Hi Alex,
+> >
+> > On Wed, 3 Jul 2019 17:09:16 -0400 Alex Deucher <alexdeucher@gmail.com> =
+wrote:
+> > >
+> > > Go ahead and respin your patch as per the suggestion above.  then I
+> > > can apply it I can either merge hmm into amd's drm-next or we can jus=
+t
+> > > provide the conflict fix patch whichever is easier.  Which hmm branch
+> > > is for 5.3?
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/?h=3Dhm=
+m
+> >
+> > Please do not merge the hmm tree into yours - especially if the
+> > conflict comes down to just a few lines.  Linus has addressed this in
+> > the past.  There is a possibility that he may take some objection to
+> > the hmm tree (for example) and then your tree (and consequently the drm
+> > tree) would also not be mergeable.
+> >
+>=20
+> I'm fine with merging the hmm tree if Jason has a stable non-rebasing
+> base. I'd rather merge into drm tree and then have amd backmerge if it
+> we are doing it.
 
-I'm fine with merging the hmm tree if Jason has a stable non-rebasing
-base. I'd rather merge into drm tree and then have amd backmerge if it
-we are doing it.
+Yes, it is a stable non-rebasing tree for this purpose.
 
-But if we can just reduce the conflicts to a small amount it's easier
-for everyone to just do that.
+> But if we can just reduce the conflicts to a small amount it's easier
+> for everyone to just do that.
 
-Dave.
+Yes, I concur with Stephen. hmm.git is setup so we can merge it across
+trees as a feature branch if we need to - but merging to avoid a
+trivial conflict is something Linus has frowned on in the past.
 
+If we can get the resolution down to one line then I would forward it
+to Linus. Since it is a build break only it should be highlighted in
+the DRM PR.
 
-> Just supply Linus with a hint about the conflict resolution.
->
-> --
-> Cheers,
-> Stephen Rothwell
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+For RDMA we often have conflicts and I usually send Linus a 2nd tag
+(ie for-linus-merged) with the conflicts all resolved so he can
+compare his and my resolution as a sanity check. Linus wrote a nice
+email on this topic..
+
+Jason
