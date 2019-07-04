@@ -2,155 +2,135 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE553C06513
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 09:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C3DC06513
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 09:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984C02189E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 09:41:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TT1WrZOH"
+	by mail.kernel.org (Postfix) with ESMTP id E5B5D218B8
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 09:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562233458;
+	bh=W+QdRzxJg0RWKs1MQOT4SIh10aJux9qHAx+nn/mR42s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=ONuNvzQ7IOL9BzLA3d4uw5LVblE9EPTLeuLMa8a8TFv+Y8PHShI4IyKzLMf41NQwm
+	 aHFSaGy/61w4cxn+3ad/mZQJXS2ohhzfBbaWqitnInqqlCbVEzOBepWPM9XvOC7HVJ
+	 B2PNUMfi9YSRCMt1DRNTQwVsw3zdAtq3K1+SVZ10=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfGDJlU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 05:41:20 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:39749 "EHLO ozlabs.org"
+        id S1727365AbfGDJoN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 05:44:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:46969 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727269AbfGDJlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Jul 2019 05:41:19 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fXzc3XCvz9s4Y;
-        Thu,  4 Jul 2019 19:41:15 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562233276;
-        bh=KPBAXAj2VjT/jRC79Sr8QAn/rQoLUXTncM1LjP5awKY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TT1WrZOH40pU6/TSAxu6tEQOqx0gZe/GZkxYTdZEPH3dqQfDDpZloUBK6pRYDVh0Y
-         w4qgwYstT/9SSqp1W9rM99tinlH8cquXhGL+bvUJR+Ap64LHZzaxqTZHgMCmMRm6ND
-         unRDKnMXY3imCKEI/z0lNUDQbP8ucrandlxSsZUGDWdVMfkfd1DtcnAg0xupPlWyTR
-         GGu0UuxBKedgDi9fSxQhMAapEksWoCz2DYFHbP5WqWGhtG7nWzFe78MC+/5uyzK3o3
-         WvomLRxeeATCK8+Hs+oQaLg4a6mZjjTzV0lTs1hHZ08YBjfJ6VtvPLXYXub+VpoIZ1
-         ds8LdDPzXatTA==
-Date:   Thu, 4 Jul 2019 19:41:14 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727349AbfGDJoN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 05:44:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 02:44:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,450,1557212400"; 
+   d="scan'208";a="166789157"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga003.jf.intel.com with ESMTP; 04 Jul 2019 02:44:09 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Pawel Laszczak <pawell@cadence.com>, Greg KH <greg@kroah.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: linux-next: build failure after merge of the pm tree
-Message-ID: <20190704194114.086d6a17@canb.auug.org.au>
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Roger Quadros <rogerq@ti.com>, Nishanth Menon <nm@ti.com>
+Subject: RE: linux-next: build failure after merge of the usb and usb-gadget trees
+In-Reply-To: <BYAPR07MB4709076903F55352193FC78FDDFA0@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <20190704163458.63ed69d2@canb.auug.org.au> <20190704065949.GA32707@kroah.com> <CAH8TKc_4ggxOPgii8gLGo2d7nvx08cbTk8_xDUQfA2Ckcxb_Aw@mail.gmail.com> <BYAPR07MB470946609232100714B3EA29DDFA0@BYAPR07MB4709.namprd07.prod.outlook.com> <87imsiyzo3.fsf@linux.intel.com> <BYAPR07MB4709076903F55352193FC78FDDFA0@BYAPR07MB4709.namprd07.prod.outlook.com>
+Date:   Thu, 04 Jul 2019 12:44:08 +0300
+Message-ID: <877e8y6snr.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PC+IMRzf5QsJ15+ZcDHtYm3"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/PC+IMRzf5QsJ15+ZcDHtYm3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi,
 
-After merging the pm tree, today's linux-next build (x86_64 allnoconfig)
-failed like this:
+Pawel Laszczak <pawell@cadence.com> writes:
 
-In file included from kernel/power/qos.c:33:
-include/linux/pm_qos.h: In function 'dev_pm_qos_read_value':
-include/linux/pm_qos.h:205:9: error: expected '(' before 'type'
-  switch type {
-         ^~~~
-         (
-include/linux/pm_qos.h:205:9: warning: statement with no effect [-Wunused-v=
-alue]
-  switch type {
-         ^~~~
-include/linux/pm_qos.h:216:1: warning: no return statement in function retu=
-rning non-void [-Wreturn-type]
- }
- ^
-include/linux/pm_qos.h: At top level:
-include/linux/pm_qos.h:231:4: error: expected identifier or '(' before '{' =
-token
-    { return 0; }
-    ^
-In file included from kernel/power/qos.c:33:
-include/linux/pm_qos.h:228:19: warning: 'dev_pm_qos_add_notifier' declared =
-'static' but never defined [-Wunused-function]
- static inline int dev_pm_qos_add_notifier(struct device *dev,
-                   ^~~~~~~~~~~~~~~~~~~~~~~
+>>
+>>
+>>Hi,
+>>
+>>Pawel Laszczak <pawell@cadence.com> writes:
+>>
+>>>>
+>>>>Hi,
+>>>>
+>>>>On Thu, Jul 4, 2019 at 9:59 AM Greg KH <greg@kroah.com> wrote:
+>>>>>
+>>>>> On Thu, Jul 04, 2019 at 04:34:58PM +1000, Stephen Rothwell wrote:
+>>>>> > Hi all,
+>>>>> >
+>>>>> > After merging the usb tree, today's linux-next build (arm
+>>>>> > multi_v7_defconfig) failed like this:
+>>>>> >
+>>>>> > arm-linux-gnueabi-ld: drivers/usb/dwc3/trace.o: in function `trace_raw_output_dwc3_log_ctrl':
+>>>>> > trace.c:(.text+0x119c): undefined reference to `usb_decode_ctrl'
+>>>>> >
+>>>>> > Caused by commit
+>>>>> >
+>>>>> >   3db1b636c07e ("usb:gadget Separated decoding functions from dwc3 driver.")
+>>>>> >
+>>>>> > I have used the usb tree from next-20190703 for today.
+>>>>> >
+>>>>> > This also occurs in the usb-gadget tree so I have used the version of
+>>>>> > that from next-20190703 as well.
+>>>>>
+>>>>> Odd, I thought I pulled the usb-gadget tree into mine.  Felipe, can you
+>>>>> take a look at this to see if I messed something up?
+>>>>
+>>>>This looks like it was caused by Pawel's patches.
+>>>>
+>>>>I'll try to reproduce here and see what's causing it.
+>>>
+>>> Problem is in my Patch. I reproduced it, but I don't understand why compiler
+>>> complains about usb_decode_ctrl. It's compiled into libcomposite.ko and
+>>> declaration is in drivers/usb/gadget.h.
+>>
+>>That's because in multi_v7_defconfig dwc3 is built-in while libcomposite
+>>is a module:
+>>
+>>CONFIG_USB_DWC3=y
+>>CONFIG_USB_LIBCOMPOSITE=m
+>>
+>>
+>>I remember that when you were doing this work, I asked you to move
+>>functions to usb/common. Why did you deviate from that suggestion? It's
+>>clear that decoding a ctrl request can be used by peripheral and host
+>>and we wouldn't have to deal with this problem if you had just followed
+>>the suggestion.
+>
+> Some time ago Greg wrote: 
+> " It's nice to have these in a common place, but you just bloated all of
+> the USB-enabled systems in the world for the use of 2 odd-ball system
+> controllers that almost no one has :) "
+>
+> So I moved these functions to gadget directory. 
+>
+> It was mistake that I added debug.c file to libcomposite.ko.
 
-Caused by commits
+The plan is to use this decoding function for xHCI as well. Other host
+controllers can use it as well.
 
-  024a47a2732d ("PM / QOS: Pass request type to dev_pm_qos_{add|remove}_not=
-ifier()")
-  57fa6137402b ("PM / QOS: Pass request type to dev_pm_qos_read_value()")
+The biggest mistake was to put this under gadget. What you should have
+done was create a file under usb/common that only gets compile in if
+tracing is enabled.
 
-I applied the following fix patch for today:
+Then there's no bloating unless you have a kernel purposefuly built for
+debugging and tracing.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 4 Jul 2019 19:36:25 +1000
-Subject: [PATCH] PM / QOS: fix typos
+Greg, does that work for you?
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/pm_qos.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-index 17132b10b233..2aebbc5b9950 100644
---- a/include/linux/pm_qos.h
-+++ b/include/linux/pm_qos.h
-@@ -202,7 +202,7 @@ static inline s32 __dev_pm_qos_resume_latency(struct de=
-vice *dev)
- static inline s32 dev_pm_qos_read_value(struct device *dev,
- 					enum dev_pm_qos_req_type type)
- {
--	switch type {
-+	switch (type) {
- 	case DEV_PM_QOS_RESUME_LATENCY:
- 		return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
- 	case DEV_PM_QOS_MIN_FREQUENCY:
-@@ -227,7 +227,7 @@ static inline int dev_pm_qos_remove_request(struct dev_=
-pm_qos_request *req)
- 			{ return 0; }
- static inline int dev_pm_qos_add_notifier(struct device *dev,
- 					  struct notifier_block *notifier,
--					  enum dev_pm_qos_req_type type);
-+					  enum dev_pm_qos_req_type type)
- 			{ return 0; }
- static inline int dev_pm_qos_remove_notifier(struct device *dev,
- 					     struct notifier_block *notifier,
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/PC+IMRzf5QsJ15+ZcDHtYm3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dyboACgkQAVBC80lX
-0Gys4ggAk14ArElBNaBOoFMMOihbwI5iA25Uk96mHMx9116o/HbQCnrt4dp+eNd+
-mHzHSGV6OOMU4W4reegSJMXSPhQbAMcTJva+mKsJ4NIt5WmjIURM461odtdBtAWt
-lB6ebSTp9MySq7Z/IdmAdZc35Paa49AnY8KNM3WcyMEF4a2DvCFEqMQoRR4YvmVA
-mxbaVd+Ng+f2ASuB1C4dtG9rUw70USnEQrewAtcum/G+7YKWphx8t8LBY8pSpQVa
-i1s0NfMNH3p+LeQFydSZM/k9QHXP2A0S21UDT2rpukFE40khm6hsQ0Y64Lng9SaT
-ZZjMqwO7Pd+Uyv+vjZZ9jcoLZslPuw==
-=z5Ri
------END PGP SIGNATURE-----
-
---Sig_/PC+IMRzf5QsJ15+ZcDHtYm3--
+-- 
+balbi
