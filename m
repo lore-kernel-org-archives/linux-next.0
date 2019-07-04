@@ -2,92 +2,92 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2645EC0650E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56952C0650E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C20CC21882
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086EF20B1F
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 06:17:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="AyQi7k2F"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BiGlo34D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbfGDGDc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 02:03:32 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39042 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbfGDGDc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 02:03:32 -0400
-Received: by mail-qk1-f193.google.com with SMTP id i125so4733466qkd.6;
-        Wed, 03 Jul 2019 23:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zG2Of7qq6RulfRoGA24ViJMIHN/A2MnjJcuk8GFFPiU=;
-        b=AyQi7k2FK19mqnfZWe8DFRAlQoaJ5OBq0zRpGB3BojaSjcjlF4pojGyZmhsQkjnrZ5
-         tBQ50ZL9x+GFTFIYmdOeTBPYzTV07VWfxEBKpMsN9PXMFYTchK854G1xljgKUna8ShVz
-         +Zt7MFZGBkqlpVTxU8VsMwxOvQ3jb5XPwNikE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zG2Of7qq6RulfRoGA24ViJMIHN/A2MnjJcuk8GFFPiU=;
-        b=SmhXfmQwgnXi47C+X+3ntdldEYfk/ClqfdYIaPJXHA0X8IEoa/5n7mqUNd1sy2duJt
-         vc0GaKrJQ2YV0hItHPRhZJYqlKbkJr02+VYjh9lVQschfhfMNjpfSWU28x4fbRqQtgbF
-         fyY5qZAw+8Xx+Kb56N7uGlzeMeGAT0J8UgQ+aRu0akOP6LQm9OvEw+My011bCIx8Q6fA
-         M6kdJcyDDiDwc00bgzPQWP3+XXckwHWQ5LFpPDpvz3BMm2zR+LII75HyeuQCV2YKyXu8
-         6dSgnC0rnZS6RnSccAOyspk76V5s2ljg65NFccmI+yXPepLP1WiijUOVBfiUfZKsqzz/
-         n7+g==
-X-Gm-Message-State: APjAAAWpWcGJWuPTsrUAQIqLFmWgfPLO8FMrOV9BzPtRRRt295vaTe3j
-        WygRINxWNg++el6vk8cDGDk/Q2IzxG59qfgcaDs=
-X-Google-Smtp-Source: APXvYqw+Amd7bjbM6pwFDC0KhTxwoLjTDilYHLUZ6jAkmLyi1Ph6j3gRhhpup2bzVUpZApwWaDIHSZsE2Bir5EmK3D8=
-X-Received: by 2002:a37:a1d6:: with SMTP id k205mr33772264qke.171.1562220210922;
- Wed, 03 Jul 2019 23:03:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <CACPK8XfCpgjAwMeoyhcZqgqtXO=-wtpuB2kwsogvBnd1VzynDg@mail.gmail.com>
- <041ce2ab04d0594accdbf51078906ac116cc0253.camel@kernel.crashing.org>
-In-Reply-To: <041ce2ab04d0594accdbf51078906ac116cc0253.camel@kernel.crashing.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 4 Jul 2019 06:03:18 +0000
-Message-ID: <CACPK8XdGC4V5xs5S=JHk=tUayLGHQkF5eH0pvFnyffpDaUuqQQ@mail.gmail.com>
-Subject: Re: [GIT PULL] FSI changes for 5.3
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, Jeremy Kerr <jk@ozlabs.org>,
-        Alistair Popple <alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        linux-fsi@lists.ozlabs.org,
+        id S1725920AbfGDGRe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 02:17:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:39411 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfGDGRe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 02:17:34 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fSSW1qNQz9s8m;
+        Thu,  4 Jul 2019 16:17:31 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562221051;
+        bh=WLaM3/8Y1UAQHrpmkH7iLNZCc/2/Lx/RkNQH9iNzB0k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BiGlo34DtbnnihgDosUdkjWChRtSitJQ03PJ/sFB+gQlscdEb62FQXiVr+vVeIVGq
+         t6eD0yGyLd9QsgmyFDGkzJnyHijwWJEfLPC5FlMQEuepXnCvVoE7mCnUHMXx3hX+k9
+         v+awzf/xE8YSGWtnd8LWR2EsRUN4leCjhEbu3ayhfbeZUTAmVfMmZC7lNkyJewiX3I
+         62CTFn+IKG5JsWSQZIE5pn/rKewaTjwC7dtwGwyi9dqGxv0dgvg7THNuCfE+KdHe2W
+         tihkU1JOWSPrOVrG6Gd4Z6kqMFTJ0vWQTEig1zGBHJwJOBLDSNZRnKedjX0sDRNvd3
+         VPxuW58aIgDVA==
+Date:   Thu, 4 Jul 2019 16:17:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: linux-next: build warning after merge of the driver-core tree
+Message-ID: <20190704161730.1e0f6046@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/63rvGd2Mj5A+672BLSUGUN="; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 3 Jul 2019 at 05:32, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
->
-> On Wed, 2019-07-03 at 03:39 +0000, Joel Stanley wrote:
-> > Hello Greg,
-> >
-> > We've not had a MAINAINERS entry for drivers/fsi, so this fixes that. It names
-> > Jeremy and I as maintainers, so if it works for you we will send pull requests
-> > to you each cycle.
->
-> Ack. I no longer work for IBM and thus cannot handle that subsystem
-> anymore.
+--Sig_/63rvGd2Mj5A+672BLSUGUN=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen, can you swap out ben's fsi tree in linux-next for this one:
+Hi all,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git
+After merging the driver-core tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-Branch is 'next'.
+fs/ubifs/debug.c: In function 'dbg_debugfs_init_fs':
+fs/ubifs/debug.c:2812:6: warning: unused variable 'err' [-Wunused-variable]
+  int err, n;
+      ^~~
 
+Introduced by commit
+
+  702d6a834b49 ("ubifs: no need to check return value of debugfs_create fun=
+ctions")
+
+--=20
 Cheers,
+Stephen Rothwell
 
-Joel
+--Sig_/63rvGd2Mj5A+672BLSUGUN=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dmfoACgkQAVBC80lX
+0GwXDgf/Xz8NV8nIpSrgQXNzOq/drk8o4ebtcE+OZP0kigBXlS2J8G6yOAkl4ny8
+t6MLplG0hRlsw+yS0UlB6oNzDtR/cSanUyet5b79c4lrLlI/UGMLW8hK3DWAkmnm
+Vy5Urodxb+hJ7o4f4HkWqVLeK4gopi/5HrAUxhhVikPxUeCJKfXygdbTmhiEDG3e
+Q6lMJYWg7sJdq9sCfImtqNiAXOE0AEnzZK0OCfHu1kr/ztOCjJ2wXqa+F3+e5n/5
+oPG5+ZGTk/ecmX00T1HiQ12uWObUJ5H1wy3JynsQVoPBcxIpablDpgyqRPGq4l2h
+hR7snPShigs5TRnJoZPk3O541VlT/A==
+=R4Wl
+-----END PGP SIGNATURE-----
+
+--Sig_/63rvGd2Mj5A+672BLSUGUN=--
