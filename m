@@ -2,119 +2,92 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91690C5B578
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2E7C5B578
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2C42189E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:07:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QPNNxX29"
+	by mail.kernel.org (Postfix) with ESMTP id 6CBCA2189E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfGDCHv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jul 2019 22:07:51 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:40891 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfGDCHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Jul 2019 22:07:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fLwM5YR1z9sBp;
-        Thu,  4 Jul 2019 12:07:47 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562206067;
-        bh=FZC5OmKx87+MlDzcP0uX/EGD8A8QXvO+bKQTAKFNPHQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QPNNxX29URxDDHh6fJqWVzz19YXoS9MEi/tnIqYFwG5ePsYZjALYBKs5qS9gH6rjQ
-         Gi207c+a5eQvJ30KjPyjZxsIASlckitkULavSgyDkDKF3yD9euvy3SESEBk75cxG3N
-         GFtKnPL2kYTFNdL4K+5CXxDr8OWWrqaL8KytdSVKhfLVIPZvMNvtdHcmB9zy+gSxLz
-         QIDx+/CqNaO0cU9kmT9+k7vGxKUaJ1zu8h5Su0sT4Kiv53TtKklvQyfy8CMLtIiqrl
-         dTPOTMLvozIX+aKsk1mNjPLOwt/Lk5NvxfC0q+8fZM0m4FJ7kA0MJgVBDee1txOMDp
-         SgGyBWhFB3KQg==
-Date:   Thu, 4 Jul 2019 12:07:46 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726955AbfGDCK7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jul 2019 22:10:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40654 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726736AbfGDCK6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jul 2019 22:10:58 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C23354D145811D96A48B;
+        Thu,  4 Jul 2019 10:10:55 +0800 (CST)
+Received: from [127.0.0.1] (10.61.25.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 4 Jul 2019
+ 10:10:44 +0800
+Subject: Re: linux-next: build failure after merge of the rdma tree
+To:     Jason Gunthorpe <jgg@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Doug Ledford <dledford@redhat.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Po-Hsu Lin <po-hsu.lin@canonical.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Mahesh Bandewar <maheshb@google.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190704120746.23390c34@canb.auug.org.au>
+        Xi Wang <wangxi11@huawei.com>
+References: <20190701141431.5cba95c3@canb.auug.org.au>
+ <20190704120235.5914499b@canb.auug.org.au>
+ <20190704020418.GC32502@mellanox.com>
+From:   oulijun <oulijun@huawei.com>
+Message-ID: <81ceb2fe-d6c2-a0ee-cbdd-29ae4d86c965@huawei.com>
+Date:   Thu, 4 Jul 2019 10:10:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XidfUzLJcY7Hg=ulE2tv0XA"; protocol="application/pgp-signature"
+In-Reply-To: <20190704020418.GC32502@mellanox.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.61.25.96]
+X-CFilter-Loop: Reflected
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/XidfUzLJcY7Hg=ulE2tv0XA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+在 2019/7/4 10:04, Jason Gunthorpe 写道:
+> On Thu, Jul 04, 2019 at 12:02:35PM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> On Mon, 1 Jul 2019 14:14:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi all,
+>>>
+>>> After merging the rdma tree, today's linux-next build (x86_64
+>>> allmodconfig) failed like this:
+>>>
+>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/infiniband/hw/hns/hns_roce_ah.o
+>>> see include/linux/module.h for more information
+>> 	.
+>> 	.
+>> 	.
+>>> ERROR: "hns_roce_bitmap_cleanup" [drivers/infiniband/hw/hns/hns_roce_srq.ko] undefined!
+>> 	.
+>> 	.
+>> 	.
+>>> ERROR: "hns_roce_ib_destroy_cq" [drivers/infiniband/hw/hns/hns-roce-hw-v1.ko] undefined!
+>>>
+>>> Presumably caused by commit
+>>>
+>>>   e9816ddf2a33 ("RDMA/hns: Cleanup unnecessary exported symbols")
+>>>
+>>> I have used the rdma tree from next-20190628 for today.
+>> I am still getting these errors/warnings.
+> I have not got a fixing patch from HNS team.
+>
+> At this late date I will revert the problematic HNS patch tomorrow.
+>
+> Jason
+Hi， Jason
+  Sorry,  our guys may not see your mail in time. I will fix it and send a email in today.
 
-Hi all,
+Thanks
+Lijun Ou
+> .
+>
 
-Today's linux-next merge of the net-next tree got a conflict in:
 
-  tools/testing/selftests/net/config
-
-between commit:
-
-  ff95bf28c234 ("selftests/net: skip psock_tpacket test if KALLSYMS was not=
- enabled")
-
-from the net tree and commit:
-
-  af5136f95045 ("selftests/net: SO_TXTIME with ETF and FQ")
-  509e56b37cc3 ("blackhole_dev: add a selftest")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/net/config
-index 3dea2cba2325,e4b878d95ba0..000000000000
---- a/tools/testing/selftests/net/config
-+++ b/tools/testing/selftests/net/config
-@@@ -25,4 -25,6 +25,7 @@@ CONFIG_NF_TABLES_IPV6=3D
-  CONFIG_NF_TABLES_IPV4=3Dy
-  CONFIG_NFT_CHAIN_NAT_IPV6=3Dm
-  CONFIG_NFT_CHAIN_NAT_IPV4=3Dm
- +CONFIG_KALLSYMS=3Dy
-+ CONFIG_NET_SCH_FQ=3Dm
-+ CONFIG_NET_SCH_ETF=3Dm
-+ CONFIG_TEST_BLACKHOLE_DEV=3Dm
-
---Sig_/XidfUzLJcY7Hg=ulE2tv0XA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dX3IACgkQAVBC80lX
-0GwskAf+M/f2Jog5t1K6Y0vSyLWCN+X1iASgzbyekBP8Z0AY/7p6hc1UPv0V9Jrc
-WOuZhkteYf34tePR1UyU2sMmKO41pIZaveDAF2fHDRrZ2KSLPD3GuJEQ05AOIUW1
-3gYPHYcGR/u0R1glVFQ70E416iLFakeYhCCCC8UmDtVZri9SZo388kPRxvyia21i
-oeHTNqjuxRRK/JtHNDt0FlQnUIuTylLk4xEOn6TfYXZsZVW/XLE7bmnDhwZLQPa8
-OSmqJGVN0dMz+yQyoxK1aq6tKBUGYwgaSG0JVTr847UT/aMSH6kwEx+zXsJvgRlB
-4i0ILBOhqOUPlE9s1M8w3Oq6Ri+6hA==
-=IL5W
------END PGP SIGNATURE-----
-
---Sig_/XidfUzLJcY7Hg=ulE2tv0XA--
