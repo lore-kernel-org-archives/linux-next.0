@@ -4,139 +4,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62974C0650E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 08:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE80C0650E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 08:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20B8C2189E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 08:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 613CD2189E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 08:44:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="QZAnvdij";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="a1JQwZH6"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kmibXhUA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfGDIjw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 04:39:52 -0400
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:54994 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726805AbfGDIjw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 04:39:52 -0400
-X-Greylist: delayed 1944 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jul 2019 04:39:51 EDT
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x64829cK020557;
-        Thu, 4 Jul 2019 01:07:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=TruY0iE5bTN7MBnx0PzHnBM4nCKHO4VmLyK3JhX9qkE=;
- b=QZAnvdijTUCfTarE4S8P3+daSwzpbMJbkbJwOOfeRuy+C6Vl0fO8JEIgY2iER1CYmG5E
- 5lmsRKRWJkvG106IVO2AByvrHB7UjJjN8nPP6OTYnZBdjtDQMXJWHSei8ZmQkRquArN2
- tqLYfs5zoHEEVVMwT+FF4DREBJzzj86CvxSdl1c/qkPNh6eh5TI8nnyIjDZJk+C6B123
- tnIZsQzhYzbPelJt67nrPaugyd6E80bOZZBfBMfRvdHXm8I9yY2IgmOSbYuDHbhhA5pR
- O2363aBRUHi2MpgFzeVbM43XUbful85/bVuEIWbJYP+JBI9Nx9wEJcU8yr8Cxql2+zC5 MQ== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp2056.outbound.protection.outlook.com [104.47.34.56])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2thby2rdd4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 04 Jul 2019 01:07:08 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TruY0iE5bTN7MBnx0PzHnBM4nCKHO4VmLyK3JhX9qkE=;
- b=a1JQwZH60bjRjfiOqyqtCiiB0Uq+H7WdjHKKG1nAUlNFES0M05KSUTZTZiZzmUNYjSfXlsRrGGh4XRfzIiasjfyZgqp/CaEpT/EMF78jMb42R4VrRczeSx6abTncoJA6wY1BSCLpSvDf7vxJl2A02DPnhAtNZRfpRn2vcAnmyZM=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB4871.namprd07.prod.outlook.com (52.135.205.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Thu, 4 Jul 2019 08:07:06 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::fd8c:399c:929b:33e2]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::fd8c:399c:929b:33e2%6]) with mapi id 15.20.2032.019; Thu, 4 Jul 2019
- 08:07:06 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Felipe Balbi <balbi@kernel.org>, Greg KH <greg@kroah.com>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727122AbfGDIoQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 04:44:16 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:57001 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726805AbfGDIoP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 04:44:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fWjl6KFwz9s4Y;
+        Thu,  4 Jul 2019 18:44:11 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562229853;
+        bh=BfI+aKrKS5+qiB+uztSNAtnY+XmwQbxDCaV5eXuYOE0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kmibXhUAPyicgxFqayHCtnmLyRCrA0GwLTiC8OBvUFiN3P4Q25Bqj74bnpz37WOlM
+         CmHwsRUETndMJCaa7/da4TceBbizVpLc1vEjLUG1BRgAgZxPUnMyavIiArkzucfxNG
+         +qeQkPJMCgPvws0F39T7bp09CyBkp3SMjo+Qt+LLfy7S5kKHDXXyQccPpPrpgikEA5
+         AFmlY6YsSqJgub+HeYpe0sDxr4+czwC1OFRLD+hTLadbXGgQVEYi8gre3ZMcPtn7a9
+         rC766rzrexgWxJQbQG5kPwsIQXg2zb/uzNgcCKAGdajLesRq0eM5Mr5dRQ3c48VI+l
+         B/bcPAFjX4pLQ==
+Date:   Thu, 4 Jul 2019 18:44:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: RE: linux-next: build failure after merge of the usb and usb-gadget
- trees
-Thread-Topic: linux-next: build failure after merge of the usb and usb-gadget
- trees
-Thread-Index: AQHVMjKg7+jonhPbpUSjvye7Qm/1waa6B76AgAAICQCAAAlA8A==
-Date:   Thu, 4 Jul 2019 08:07:06 +0000
-Message-ID: <BYAPR07MB470946609232100714B3EA29DDFA0@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <20190704163458.63ed69d2@canb.auug.org.au>
- <20190704065949.GA32707@kroah.com>
- <CAH8TKc_4ggxOPgii8gLGo2d7nvx08cbTk8_xDUQfA2Ckcxb_Aw@mail.gmail.com>
-In-Reply-To: <CAH8TKc_4ggxOPgii8gLGo2d7nvx08cbTk8_xDUQfA2Ckcxb_Aw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYjRhMjhmYWUtOWUzMi0xMWU5LTg3NDItMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGI0YTI4ZmFmLTllMzItMTFlOS04NzQyLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTMzMCIgdD0iMTMyMDY3MDEyMjM4MDY4NzQ2IiBoPSJnVXh3T2N5Y0t6Qi96Z0RHT0lBd251S2M0ZWM9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fcb5fb3b-ca0c-41e9-fdf6-08d700569b3c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR07MB4871;
-x-ms-traffictypediagnostic: BYAPR07MB4871:
-x-microsoft-antispam-prvs: <BYAPR07MB4871193D659617D68E9F8E9FDDFA0@BYAPR07MB4871.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1201;
-x-forefront-prvs: 0088C92887
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(396003)(346002)(366004)(39860400002)(189003)(199004)(36092001)(53754006)(446003)(68736007)(11346002)(6246003)(8676002)(53936002)(476003)(14454004)(25786009)(7736002)(81166006)(81156014)(33656002)(305945005)(74316002)(6436002)(66066001)(256004)(2906002)(229853002)(55016002)(9686003)(478600001)(4326008)(71190400001)(71200400001)(486006)(186003)(6506007)(86362001)(102836004)(26005)(5660300002)(3846002)(110136005)(54906003)(52536014)(73956011)(66946007)(316002)(66446008)(64756008)(66556008)(66476007)(7696005)(99286004)(6116002)(76176011)(8936002)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4871;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +WDUknoSHtIXUWOKlYJ8zdx3sBAL3p7BbRfFevrgVpYIz8Ynw+CVpG9m6DfS0HjwzJ2hwUIiLTRDoCPHRM3FE9m/oG4Dec9cQUdVmgwZtVLX2nf7DK5kllhpp1JaoNcbNK3ZeFVEUdMiB5ud3JrecA9/Vtpj33vE58XTf5h2zAMUp5Kj/C2lyDaXOsNWHk/qZ81ee1HLq6yXz21PBLB5TeWAJz2KZQUi+qRo24ktH3JBApAUEt+L4T40Sup0qEotoyUIXyWvxDZB8/M1kvxu9obYEXDh5/33IWzVZKRBNHnVbsmv654ZXUse8qsParzgVkMcIbWMY3xUaLVGM6AC5dntH4V3J7d8KDFUH2QF0HcCnKlJSr5yCiZ/xTc1r9A0vVnAxPfSmiP+uB9EiI9JOwamtplj12HGtMIBQT5E5U0=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: linux-next: manual merge of the pidfd tree with Linus' tree
+Message-ID: <20190704184408.30beea65@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcb5fb3b-ca0c-41e9-fdf6-08d700569b3c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2019 08:07:06.6048
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pawell@global.cadence.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4871
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=599 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907040105
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XBT68L92cQ4NHqqdFPdeCxJ"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Pg0KPkhpLA0KPg0KPk9uIFRodSwgSnVsIDQsIDIwMTkgYXQgOTo1OSBBTSBHcmVnIEtIIDxncmVn
-QGtyb2FoLmNvbT4gd3JvdGU6DQo+Pg0KPj4gT24gVGh1LCBKdWwgMDQsIDIwMTkgYXQgMDQ6MzQ6
-NThQTSArMTAwMCwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToNCj4+ID4gSGkgYWxsLA0KPj4gPg0K
-Pj4gPiBBZnRlciBtZXJnaW5nIHRoZSB1c2IgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxk
-IChhcm0NCj4+ID4gbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOg0KPj4gPg0K
-Pj4gPiBhcm0tbGludXgtZ251ZWFiaS1sZDogZHJpdmVycy91c2IvZHdjMy90cmFjZS5vOiBpbiBm
-dW5jdGlvbiBgdHJhY2VfcmF3X291dHB1dF9kd2MzX2xvZ19jdHJsJzoNCj4+ID4gdHJhY2UuYzoo
-LnRleHQrMHgxMTljKTogdW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgdXNiX2RlY29kZV9jdHJsJw0K
-Pj4gPg0KPj4gPiBDYXVzZWQgYnkgY29tbWl0DQo+PiA+DQo+PiA+ICAgM2RiMWI2MzZjMDdlICgi
-dXNiOmdhZGdldCBTZXBhcmF0ZWQgZGVjb2RpbmcgZnVuY3Rpb25zIGZyb20gZHdjMyBkcml2ZXIu
-IikNCj4+ID4NCj4+ID4gSSBoYXZlIHVzZWQgdGhlIHVzYiB0cmVlIGZyb20gbmV4dC0yMDE5MDcw
-MyBmb3IgdG9kYXkuDQo+PiA+DQo+PiA+IFRoaXMgYWxzbyBvY2N1cnMgaW4gdGhlIHVzYi1nYWRn
-ZXQgdHJlZSBzbyBJIGhhdmUgdXNlZCB0aGUgdmVyc2lvbiBvZg0KPj4gPiB0aGF0IGZyb20gbmV4
-dC0yMDE5MDcwMyBhcyB3ZWxsLg0KPj4NCj4+IE9kZCwgSSB0aG91Z2h0IEkgcHVsbGVkIHRoZSB1
-c2ItZ2FkZ2V0IHRyZWUgaW50byBtaW5lLiAgRmVsaXBlLCBjYW4geW91DQo+PiB0YWtlIGEgbG9v
-ayBhdCB0aGlzIHRvIHNlZSBpZiBJIG1lc3NlZCBzb21ldGhpbmcgdXA/DQo+DQo+VGhpcyBsb29r
-cyBsaWtlIGl0IHdhcyBjYXVzZWQgYnkgUGF3ZWwncyBwYXRjaGVzLg0KPg0KPkknbGwgdHJ5IHRv
-IHJlcHJvZHVjZSBoZXJlIGFuZCBzZWUgd2hhdCdzIGNhdXNpbmcgaXQuDQoNClByb2JsZW0gaXMg
-aW4gbXkgUGF0Y2guIEkgcmVwcm9kdWNlZCBpdCwgYnV0IEkgZG9uJ3QgdW5kZXJzdGFuZCB3aHkg
-Y29tcGlsZXIgDQpjb21wbGFpbnMgYWJvdXQgdXNiX2RlY29kZV9jdHJsLiBJdCdzIGNvbXBpbGVk
-IGludG8gbGliY29tcG9zaXRlLmtvIGFuZA0KZGVjbGFyYXRpb24gaXMgaW4gZHJpdmVycy91c2Iv
-Z2FkZ2V0LmguIA0KDQo+DQo+LS0NCj5iYWxiaQ0K
+--Sig_/XBT68L92cQ4NHqqdFPdeCxJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the pidfd tree got a conflict in:
+
+  kernel/fork.c
+
+between commits:
+
+  6fd2fe494b17 ("copy_process(): don't use ksys_close() on cleanups")
+  28dd29c06d0d ("fork: return proper negative error code")
+
+from Linus' tree and commit:
+
+  7f192e3cd316 ("fork: add clone3")
+
+from the pidfd tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/fork.c
+index 847dd147b068,4114a044822c..000000000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -1755,7 -1794,7 +1776,8 @@@ static __latent_entropy struct task_str
+  	int pidfd =3D -1, retval;
+  	struct task_struct *p;
+  	struct multiprocess_signals delayed;
+ +	struct file *pidfile =3D NULL;
++ 	u64 clone_flags =3D args->flags;
+ =20
+  	/*
+  	 * Don't allow sharing the root directory with processes in a different
+@@@ -2030,17 -2070,7 +2050,17 @@@
+  			goto bad_fork_free_pid;
+ =20
+  		pidfd =3D retval;
+ +
+ +		pidfile =3D anon_inode_getfile("[pidfd]", &pidfd_fops, pid,
+ +					      O_RDWR | O_CLOEXEC);
+ +		if (IS_ERR(pidfile)) {
+ +			put_unused_fd(pidfd);
+ +			retval =3D PTR_ERR(pidfile);
+ +			goto bad_fork_free_pid;
+ +		}
+ +		get_pid(pid);	/* held by pidfile now */
+ +
+- 		retval =3D put_user(pidfd, parent_tidptr);
++ 		retval =3D put_user(pidfd, args->pidfd);
+  		if (retval)
+  			goto bad_fork_put_pidfd;
+  	}
+
+--Sig_/XBT68L92cQ4NHqqdFPdeCxJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dvFgACgkQAVBC80lX
+0GwHyQf+JnUv0jiKgw164UD9y36qZy6xVpNaLCQxY0afh1mMrmWZE0MUSff+4O6K
+1TxoO5+3OPlWUQondZgbAK2zUTUe9++HOZF+7t6sTHpwerCQpiTSllCEfpPO8moo
+2u2o0Awalsqm67sJ8qk3pG9jlfkzpD4Jm+HH96lafuZmu9Jpo8LjEcn6oVAHjBsM
+11Z0TOI2LFBLYh0r0U1LV0rwH4UeCjavpF08JYCHTuHeC2piivg3s1p2T2Qouknx
+2Mqd5QzTvqELwntIXObG+Ax9DM0ve4AhgP4cFIhFLSCTGkW1g+FWO4YnwYhVyIzg
+6FghEm7Bm0T4keVshUcJnbXmeIGLbA==
+=W1Vf
+-----END PGP SIGNATURE-----
+
+--Sig_/XBT68L92cQ4NHqqdFPdeCxJ--
