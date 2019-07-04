@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B80CC06513
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65D5C06513
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D38E921882
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:01:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9E432189E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:10:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cLWxkb6a"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Birj6ebV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfGDKBp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 06:01:45 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:53343 "EHLO ozlabs.org"
+        id S1727481AbfGDKKD (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 06:10:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:57273 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727458AbfGDKBp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Jul 2019 06:01:45 -0400
+        id S1727385AbfGDKKC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 06:10:02 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fYRB2XB4z9s4Y;
-        Thu,  4 Jul 2019 20:01:42 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fYcl45xgz9s8m;
+        Thu,  4 Jul 2019 20:09:59 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562234503;
-        bh=T0+7N2k7pCg1r7C05ldU6b0MGchRpIZaW9IbP9QJOYk=;
+        s=201702; t=1562235000;
+        bh=blyyOb94IIVwlpXFZU6A5FCGAdm1fRJWRwE28lb5jSc=;
         h=Date:From:To:Cc:Subject:From;
-        b=cLWxkb6aPM0fWgSjBYkQWaHI3qA5wD1zlMcU6KUAS8GOosS+axnyxwJebkB86xdFU
-         mamGKfRRdVOtzW5DKMaJK/I7gWebY9k7JAyIkTkCcMeaGSSxGjbiKDsj+LIbLsAieC
-         8j3Z7Gtmo+EXC/wH9zcrAmcNsRoEfL1pJdYQOWGs/tcpOSrwBVA/cMZvybrCffmHZa
-         465amo7k14ntH+ye65Moxar5qM1jS2w8oKyTRt+AKGFWAGO27fRYGHjToLCdT7Nnsv
-         9lDWm7MbR0Qr19tyQOAt3FkJojAyAoCWuAyeEcPWLhHm5wlplWDynYJbNOxCMvObFY
-         wBaBNrhUCZCzA==
-Date:   Thu, 4 Jul 2019 20:01:39 +1000
+        b=Birj6ebVqamhFgSPMk3utkGdmAqxqyK07HuEpILDZ3PFklA/uuufX0t4+fOg7EgeN
+         a2lPeNOCtRwqqcxerV/qfCwTnBV+cLkgj//XgH6ubVOuXI/5tkOnmWABZ6MhGGG7+z
+         MCV7FBYsjVAuvaEnHRWvgkQBBjnyxL1DJIsqNArmeSxgGlwCO2Dk9RNyyoWRohOF9u
+         CeEsv4RF6duc0dLCXCml8wZjubWUMGXXIbyhUgaZkOtvHL6rxjmv/++JMpJXTPIFLC
+         mo3r6+62r4fnUPsp5V72xrZDBcjlEpXXP8JFshNDhu/D5z5vMPh7TeApN2Th3Bps2J
+         uMJEBJlRs65Iw==
+Date:   Thu, 4 Jul 2019 20:09:56 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Jason Gunthorpe <jgg@mellanox.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>
 Subject: linux-next: manual merge of the akpm-current tree with the hmm tree
-Message-ID: <20190704200139.696330e8@canb.auug.org.au>
+Message-ID: <20190704200956.016f2297@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fY.s_Ut8h2cNGK1xTp_zhLe"; protocol="application/pgp-signature"
+ boundary="Sig_/Q5_3A=y2kD4X2Kpg60cfmgg"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/fY.s_Ut8h2cNGK1xTp_zhLe
+--Sig_/Q5_3A=y2kD4X2Kpg60cfmgg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -62,16 +62,15 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  drivers/dax/dax-private.h
+  include/linux/mm.h
 
 between commit:
 
-  ea31d5859f58 ("device-dax: use the dev_pagemap internal refcount")
+  25b2995a35b6 ("mm: remove MEMORY_DEVICE_PUBLIC support")
 
 from the hmm tree and commit:
 
-  420a0854e8f2 ("device-dax: "Hotremove" persistent memory that is used lik=
-e normal RAM")
+  0a470a2d114a ("mm: clean up is_device_*_page() definitions")
 
 from the akpm-current tree.
 
@@ -86,45 +85,92 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/dax/dax-private.h
-index c915889d1769,9ee659ed5566..000000000000
---- a/drivers/dax/dax-private.h
-+++ b/drivers/dax/dax-private.h
-@@@ -43,6 -43,9 +43,7 @@@ struct dax_region=20
-   * @target_node: effective numa node if dev_dax memory range is onlined
-   * @dev - device core
-   * @pgmap - pgmap for memmap setup / lifetime (driver owned)
- - * @ref: pgmap reference count (driver owned)
- - * @cmp: @ref final put completion (driver owned)
-+  * @dax_mem_res: physical address range of hotadded DAX memory
-   */
-  struct dev_dax {
-  	struct dax_region *region;
-@@@ -50,6 -53,9 +51,7 @@@
-  	int target_node;
-  	struct device dev;
-  	struct dev_pagemap pgmap;
- -	struct percpu_ref ref;
- -	struct completion cmp;
-+ 	struct resource *dax_kmem_res;
-  };
+diff --cc include/linux/mm.h
+index d405a7cff62a,12980954daf9..000000000000
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@@ -950,27 -953,15 +950,7 @@@ static inline bool put_devmap_managed_p
+  	}
+  	return false;
+  }
+-=20
+- static inline bool is_device_private_page(const struct page *page)
+- {
+- 	return is_zone_device_page(page) &&
+- 		page->pgmap->type =3D=3D MEMORY_DEVICE_PRIVATE;
+- }
+-=20
+- #ifdef CONFIG_PCI_P2PDMA
+- static inline bool is_pci_p2pdma_page(const struct page *page)
+- {
+- 	return is_zone_device_page(page) &&
+- 		page->pgmap->type =3D=3D MEMORY_DEVICE_PCI_P2PDMA;
+- }
+- #else /* CONFIG_PCI_P2PDMA */
+- static inline bool is_pci_p2pdma_page(const struct page *page)
+- {
+- 	return false;
+- }
+- #endif /* CONFIG_PCI_P2PDMA */
+-=20
+  #else /* CONFIG_DEV_PAGEMAP_OPS */
+ -static inline void dev_pagemap_get_ops(void)
+ -{
+ -}
+ -
+ -static inline void dev_pagemap_put_ops(void)
+ -{
+ -}
+ -
+  static inline bool put_devmap_managed_page(struct page *page)
+  {
+  	return false;
+@@@ -978,14 -970,27 +959,19 @@@
  =20
-  static inline struct dev_dax *to_dev_dax(struct device *dev)
+  static inline bool is_device_private_page(const struct page *page)
+  {
+- 	return false;
++ 	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
++ 		IS_ENABLED(CONFIG_DEVICE_PRIVATE) &&
++ 		is_zone_device_page(page) &&
++ 		page->pgmap->type =3D=3D MEMORY_DEVICE_PRIVATE;
+  }
+ =20
+ -static inline bool is_device_public_page(const struct page *page)
+ -{
+ -	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
+ -		IS_ENABLED(CONFIG_DEVICE_PUBLIC) &&
+ -		is_zone_device_page(page) &&
+ -		page->pgmap->type =3D=3D MEMORY_DEVICE_PUBLIC;
+ -}
+ -
+  static inline bool is_pci_p2pdma_page(const struct page *page)
+  {
+- 	return false;
++ 	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
++ 		IS_ENABLED(CONFIG_PCI_P2PDMA) &&
++ 		is_zone_device_page(page) &&
++ 		page->pgmap->type =3D=3D MEMORY_DEVICE_PCI_P2PDMA;
+  }
+- #endif /* CONFIG_DEV_PAGEMAP_OPS */
+ =20
+  /* 127: arbitrary random number, small enough to assemble well */
+  #define page_ref_zero_or_close_to_overflow(page) \
 
---Sig_/fY.s_Ut8h2cNGK1xTp_zhLe
+--Sig_/Q5_3A=y2kD4X2Kpg60cfmgg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dzoMACgkQAVBC80lX
-0Gw2jgf+MW/2gLFzzReQCIJ/9LaEyxKfqRotANdBRXSHmPGJ7XSpGDP86EHbmVGY
-jfZXVrlvcbA+YzcO1yQ7SpchMeVK3UqhpSfurN6xW621DfIqq6HS1FBTmVV2VBvi
-0p4FDxTV2FQF3dUc3hJheYEsl6WWsningFDA4a7jGYItzhg7PEAViIhLO3JtUNjw
-SnREMv4ALUsngSZSzlmMr7b/tLaZDNXP4VuFpux86dvG2mo4xfgQA9dkP/YTEMOo
-MJqV0mXwCmSp0TUxuy26J9/MUCYsqR+LcwxqxCY/JIlFT7xib7J3nTQHcbUHq9Y2
-xgtyNLE/X8fLR28kKt+6WJyqyPBUtw==
-=AI65
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0d0HQACgkQAVBC80lX
+0GzZhgf/TZMB8ASoiZgkLnlRwb3CTJBbFkayZsDZuvg1ibBnfni4lQdQS6aeXui5
+4ei4ELeNqvtL4cy0jPIFvV+uXoUMn3MCDIa6SBYiUg/5Zm3kVX7nu21DwRheZdm0
+EtoehGRmxNuxqttzBNVz2GTadpYOmJNPzBQz+3897s7Zxr0KNSXql7qAcVYOcyNf
+3QsxazsiLGwi5OwlonCTs/jX8lQzGUZjhi4pIxdhOQ9OYX08W4oTJ06bS2U3Vh7q
+5WrbjKzRaRGhionHRd2GXHxd8G77JniLrU1gBar08DnWbQuVger8vmwolRcCY+MI
+gKSH+xuP5CZML5R1ch+GNQB9t6PvOA==
+=KpjQ
 -----END PGP SIGNATURE-----
 
---Sig_/fY.s_Ut8h2cNGK1xTp_zhLe--
+--Sig_/Q5_3A=y2kD4X2Kpg60cfmgg--
