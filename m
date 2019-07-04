@@ -2,93 +2,101 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE396C0650E
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 07:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E1C0650E
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 08:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CEF2133F
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 07:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46903218A3
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 08:21:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n5FnUoA6"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="PXB/uJSB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IGii2rJr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfGDHrR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 03:47:17 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:55449 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726844AbfGDHrR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Jul 2019 03:47:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fVS14Sydz9sBp;
-        Thu,  4 Jul 2019 17:47:13 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562226434;
-        bh=s2EKf/ydzCEbA4PkRn/qUXvR5emdDRx7OrbEOwkhBKs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=n5FnUoA6INCwwU6msFsapsE4MDUk6Wke4sKfSaPziG94YN/KHDJQLEAfOuss90dNz
-         h05MwbJu1bmOp6yFuosmUfUSA6dWe+BTQOHMBVd/dhXXlmLYrIL+3cSW2My2YDX8/Y
-         wIMPiW2TIori9agM5KJHnz0EFxxd1cU+QH+HYGOF+6pAkPVaqoZbXRDi/u8WWOsj8s
-         axHsB9kmREN6BrzIFSG/MlNcPCHLZZJtVoLR40DCHi13E/0lp5yW+3pOEtlyg783Db
-         gjpvJjHv3beYyhiJq35wvfK32Tw63mzeaIqD0L+K1OwOnQNM1YQ8o08gvQNr5CMMc4
-         r7X4LA43F3fWg==
-Date:   Thu, 4 Jul 2019 17:47:11 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pawel Laszczak <pawell@cadence.com>
-Subject: Re: linux-next: build failure after merge of the usb and usb-gadget
- trees
-Message-ID: <20190704174711.0e4a18c5@canb.auug.org.au>
-In-Reply-To: <20190704065949.GA32707@kroah.com>
-References: <20190704163458.63ed69d2@canb.auug.org.au>
-        <20190704065949.GA32707@kroah.com>
+        id S1727046AbfGDIVZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 04:21:25 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:54805 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726877AbfGDIVZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 04:21:25 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4DE2E21B6A;
+        Thu,  4 Jul 2019 04:21:22 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 04 Jul 2019 04:21:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=YzIEmiky+aIfcR8HU5MmgoQm+T8
+        82Wu+zyuXCmi7/e4=; b=PXB/uJSBmDiMg2ZFa979H40MKGVmkp4kyFQsAbMWDif
+        NN60TL2Je8ikKvb16i5q0UeWWfbY5l2WzgcZogx0+giPVuYFbZHuVxg6m0Cuzn8q
+        ONsZfSp0XO6tA5FVVMZM7rRlzNARG8Drm0mDYtPpxPDXkO/32/d1AfKhqS4mIyiv
+        azVVurMyueWBXmEM1Noq9+S/cvCJaiAot8CspY0DmiHa3QwfuPlGje7XWie5KSJY
+        xBBHLalzd1PKtS08jDjh3t2GK+M2wqHUYkIKwvhb3LwDWVvoQW9UvpixWPx4X3/o
+        NRlYwl7GdYXwxyJOf+8mjNDAhXYzTC01AiHiGgbpnkA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=YzIEmi
+        ky+aIfcR8HU5MmgoQm+T882Wu+zyuXCmi7/e4=; b=IGii2rJrsI5fxn7qOE72/7
+        P8kb1v7287kuA0dhQHMKh8IBrF4lBPPHnG9CdjeY0fA84qhhLmMqh2hZfpxPFO/k
+        /1rb2kSOLS89VXq/6a53TFC0sYz2zCVea2LAUy3kS2NYkIGtPBowbdkBZ2HWXevh
+        3gdeSig7qPBUI56D4rH9S/2OyBR4QKhtnuG4BIGyQZKG0puKLQeCCnlzfUIt+EpP
+        BmRNe9+NvSwY4i4JFlmGd3g+Jd6BfPKJsOwPLyzwREftLyNAyPrZt8NyVU/Y7Xbi
+        wiB/cozmfIvGEn8dbTvQGrHOTe119boYrxpA/EWC+/jjAaea2CCBbdlckuFXrUkw
+        ==
+X-ME-Sender: <xms:AbcdXWfQNJ7khS3PMETEh5ZJwDWnWJZYZDpspwc-OubmQZee2b2n2w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrfedvgddtgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
+    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
+    lhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:AbcdXXaLiAOhnpxikECvyJR9lA9qivL85fXkb977Cf9IDRKQA541yQ>
+    <xmx:AbcdXb5blrsiaHGqX2rpOI2S4_rPWBQHv55sGwuXkBA9QAGODQ-hdg>
+    <xmx:AbcdXcotHGf3Y0rN_E2Jj1kZjQnZUezj2Rovsg0FQZTH6PpFuWqhdw>
+    <xmx:ArcdXc4sLEbfndscgl54YYmpYpguWjCI5LXUv2OhwH-bVyv4AoT33A>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6C781380085;
+        Thu,  4 Jul 2019 04:21:21 -0400 (EDT)
+Date:   Thu, 4 Jul 2019 10:21:19 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Message-ID: <20190704082119.GF6438@kroah.com>
+References: <20190704162435.17f405b0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uagndVpPUVtyyYrxZd7H.6V"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704162435.17f405b0@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/uagndVpPUVtyyYrxZd7H.6V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 04, 2019 at 04:24:35PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> fs/orangefs/orangefs-debugfs.c: In function 'orangefs_debugfs_init':
+> fs/orangefs/orangefs-debugfs.c:193:1: warning: label 'out' defined but not used [-Wunused-label]
+>  out:
+>  ^~~
+> fs/orangefs/orangefs-debugfs.c: In function 'orangefs_kernel_debug_init':
+> fs/orangefs/orangefs-debugfs.c:204:17: warning: unused variable 'ret' [-Wunused-variable]
+>   struct dentry *ret;
+>                  ^~~
+> 
+> Introduced by commit
+> 
+>   f095adba36bb ("orangefs: no need to check return value of debugfs_create functions")
 
-Hi Greg,
+Ugh, sorry about that, will fix it up as well...
 
-On Thu, 4 Jul 2019 08:59:49 +0200 Greg KH <greg@kroah.com> wrote:
->=20
-> Odd, I thought I pulled the usb-gadget tree into mine.
-
-You did. So after it failed in your tree and I used yesterday's
-version of your tree, the build then failed after I merged the
-usb-gadget tree (which I do after merging your tree).  The usb-gadget
-tree contains commits that were not there yesterday.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uagndVpPUVtyyYrxZd7H.6V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0drv8ACgkQAVBC80lX
-0Gxx5Af/cuOxN7YELAoCKOwsN1XvyeSQ6mKWUGPspc48KIQ87O2Vfs7+XiA2Ax3o
-pDuaHTyn4xh+LDEIsBvbcBU7olwMlFnMpvX2dlgwIgImZVfFTUsO9bTaNNzHeWSW
-10/O+joga0hinUA1EUBmkNflGH6hSqX8IktzLHzGS/mpHpSfcqao6l8RDztd7xe4
-GYG0VzZYWeYHNxV5rkW3pmcIw1gsNW2P+ktxbzd1/Jkmj9bB6hjDvMmGsQQsfs4w
-kY0ah39/yvwdwDavybpG3k17ezNzHUGbgu1sVx3QwVWkpcbXZeqOWw/Wa/9TPjaN
-AgA1sp/rtOcHXPhgPRGVz2yVZbkWIg==
-=P+ja
------END PGP SIGNATURE-----
-
---Sig_/uagndVpPUVtyyYrxZd7H.6V--
