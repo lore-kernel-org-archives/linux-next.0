@@ -6,74 +6,74 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3022BC5B578
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB08C06510
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 03:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F502187F
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 02:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54E321882
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 03:58:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YiGOffgR"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N5dBp5nq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfGDCrl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jul 2019 22:47:41 -0400
-Received: from ozlabs.org ([203.11.71.1]:49351 "EHLO ozlabs.org"
+        id S1727116AbfGDD6J (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jul 2019 23:58:09 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:39937 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726955AbfGDCrl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Jul 2019 22:47:41 -0400
+        id S1726696AbfGDD6J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jul 2019 23:58:09 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fMpL5xkVz9s8m;
-        Thu,  4 Jul 2019 12:47:38 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fPMf0p9qz9s8m;
+        Thu,  4 Jul 2019 13:58:06 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562208458;
-        bh=GVe4xrn2rOWFVcjZMJTJ2pwArPRGQ7EWoXRAyNj6knY=;
+        s=201702; t=1562212686;
+        bh=+JknrCbseCBQVVRqI76JmSRNZa6J5xmyEX8iMAFeHfM=;
         h=Date:From:To:Cc:Subject:From;
-        b=YiGOffgR/+4nR6IKGpQAxRNzGJG1jxoFiqD/4isKY5EgN4zec40nvKEhchD6t2M0v
-         H/bdAGsif9c3/thrfKLllL9GU3lpihZiUy/Fabx3UXasyVUazkevGZ5u6dBLZJ9MZh
-         zuBBT4sdeqkTKqhQ4xxLQJ8jD8F14dL/gXyrix6AQtOdHt34ruv9YL95jM7yfuIN3D
-         6gVXiXr45xh32W0AxF5BsVP3Z4z17XigtPbaRcC7Yc76zJUaDoPQoym+jBa/Csqydk
-         7B0OGAnVM7xxVVa5+7VYw4TkjWFTs83kdjKMkkNgAiJM0/Tpg5mLjMtJzgCyfKmizG
-         TJwsyMV7i500g==
-Date:   Thu, 4 Jul 2019 12:47:38 +1000
+        b=N5dBp5nqYSDA4MFmyr0AMB1aw9XGTa45iaGkX408/FbF/bQ1JGBO5Y/P2wNAQnq6h
+         Cpokx6VHcnbaCsKbEEOK4+oxMhB9SvCsStKvwe2aZpSuEgk5VFVIEsHyOiVtMBrdY4
+         tQDjsn4EtCdQPzeB4u/EIE1vkedIM7jlz8c5pduviOpAlI0qi5m6LorhDskVjhyTEz
+         wAEBIq7mH9MQeGXo6qTTDjr9dK8N9tBx4G4vfsOqt77ddl5O/c9PdLoYwkYkFL6+tH
+         DWJDtj1h9qy/pBIM+QVNjwUAvkx10gtTrutLaP/eqBM/aXkHFjVAHN/DsB7RdeQzWl
+         45WzRWrYbodnQ==
+Date:   Thu, 4 Jul 2019 13:58:05 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
+To:     Alasdair G Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yishai Hadas <yishaih@mellanox.com>
-Subject: linux-next: manual merge of the mlx5-next tree with the rdma tree
-Message-ID: <20190704124738.1e88cb69@canb.auug.org.au>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: linux-next: manual merge of the device-mapper tree with the jc_docs
+ tree
+Message-ID: <20190704135805.6b077b57@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Kw=JJxg7OagalCIGq8.vbuP"; protocol="application/pgp-signature"
+ boundary="Sig_//GxNH+=keHIH0Nb1xPUa7XL"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Kw=JJxg7OagalCIGq8.vbuP
+--Sig_//GxNH+=keHIH0Nb1xPUa7XL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mlx5-next tree got a conflict in:
+Today's linux-next merge of the device-mapper tree got a conflict in:
 
-  drivers/infiniband/hw/mlx5/cq.c
+  Documentation/device-mapper/snapshot.rst
 
 between commit:
 
-  e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibili=
-ty")
+  f0ba43774cea ("docs: convert docs to ReST and rename to *.rst")
 
-from the rdma tree and commit:
+from the jc_docs tree and commit:
 
-  38164b771947 ("net/mlx5: mlx5_core_create_cq() enhancements")
+  a8a9f1434a86 ("dm snapshot: add optional discard support features")
 
-from the mlx5-next tree.
+from the device-mapper tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -86,35 +86,35 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/infiniband/hw/mlx5/cq.c
-index bfe3efdd77d7,4efbbd2fce0c..000000000000
---- a/drivers/infiniband/hw/mlx5/cq.c
-+++ b/drivers/infiniband/hw/mlx5/cq.c
-@@@ -891,7 -891,8 +891,8 @@@ int mlx5_ib_create_cq(struct ib_cq *ibc
-  	int entries =3D attr->cqe;
-  	int vector =3D attr->comp_vector;
-  	struct mlx5_ib_dev *dev =3D to_mdev(ibdev);
-+ 	u32 out[MLX5_ST_SZ_DW(create_cq_out)];
- -	struct mlx5_ib_cq *cq;
- +	struct mlx5_ib_cq *cq =3D to_mcq(ibcq);
-  	int uninitialized_var(index);
-  	int uninitialized_var(inlen);
-  	u32 *cqb =3D NULL;
+diff --cc Documentation/device-mapper/snapshot.rst
+index 4c53304e72f1,1810833f6dc6..000000000000
+--- a/Documentation/device-mapper/snapshot.rst
++++ b/Documentation/device-mapper/snapshot.rst
+@@@ -31,7 -30,8 +31,8 @@@ original data will be saved in the <CO
+  its visible content unchanged, at least until the <COW device> fills up.
+ =20
+ =20
+ -*) snapshot <origin> <COW device> <persistent?> <chunksize>
+ +-  snapshot <origin> <COW device> <persistent?> <chunksize>
++    [<# feature args> [<arg>]*]
+ =20
+  A snapshot of the <origin> block device is created. Changed chunks of
+  <chunksize> sectors will be stored on the <COW device>.  Writes will
 
---Sig_/Kw=JJxg7OagalCIGq8.vbuP
+--Sig_//GxNH+=keHIH0Nb1xPUa7XL
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0daMoACgkQAVBC80lX
-0Gy14AgAlHFOm16bEAUrmZltrSXr6+Rt2jBud18OPAcIhwSQ1HFmj7L6vVE6pD5Y
-Wnm4xUuwNkaCZAdSWGID6cJjjOCaYwzPL+eZNpYsyvvauQLq/IqJmPTX90zZNGUL
-owSu6JL57Hg2YnBX9qkduS+0qWY64HKZrqaheDNpo0r1qzY6wLk+Qz3LvB9E2FOu
-mCjNf4HOMlaN3SYR8jlggODS4PTPvXqVpxd6qxg5P9fnT/E6mgBPpsDNcAIrZ0w4
-GRlCpYvABoFgmXdooox7o/YDO1HyY4EkHIxpbFa2vhwilhX1LHBy59Q1PbQr6mnw
-73uk32OliVCJpI/v06f6s7HZmvhULg==
-=Nzdt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0deU0ACgkQAVBC80lX
+0Gwbnwf+JKjJyQTyNdobCshf+gPms6olS7MsyBnnxAbB50DUwdAI6BGLQ3PcOHwg
+Y25IilS6hPkXWL77CjEYPXDofU+Lm5/HXOL7fI5kxaKI2ape7ExU6sPX88HQ8nsn
+vN8VtW4yg9c2vcwhvJp3k+L4k76dbcejQkm7mzG5Q0HWuf9f1xhzwBjXRAKbGV11
+2LRZAkhPapVdKw4+uF/McK53LgNCScNDAcdFSdSuWvkpO/bAA+3oGo+ATD4/VTAb
+XAkKPUUDwTvp7V50EAmMvR6eEkncj+bqET5s85rXr0mXloNinRIGswmmP2L6vNCt
+Xl4OX2InjQ+nvT9/6UyeR5w98+TzAQ==
+=a2G7
 -----END PGP SIGNATURE-----
 
---Sig_/Kw=JJxg7OagalCIGq8.vbuP--
+--Sig_//GxNH+=keHIH0Nb1xPUa7XL--
