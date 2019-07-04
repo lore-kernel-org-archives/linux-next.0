@@ -2,111 +2,129 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2BFC06517
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 09:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B80CC06513
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EB1218A3
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 09:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D38E921882
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:01:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GBtS+Uj8"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cLWxkb6a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfGDJsi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 05:48:38 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35873 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbfGDJsi (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 05:48:38 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r7so2704158pfl.3
-        for <linux-next@vger.kernel.org>; Thu, 04 Jul 2019 02:48:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2UH5tf6umNqbdP3ijV0rfOnwSncCADAiCEkGZp99PCQ=;
-        b=GBtS+Uj8Hlp0uUy+wKTCbJgr2FSZRMznVubXFu1V8nEptW7531bQA/wGb8lvEi9OH0
-         Pn+xCtWBAtS0Ex73eTusZH/Zc/HjWpDeqoZtqnBW1CaZ2JYRNrnZW7KIJ54F1I8ia3H9
-         eYcGDweTwkAu3HORZ5om6jY1qlBZjBj2h9yyPHWRkSn7rbQSH3RUTgs2mTezjhMMvVjh
-         ZbvENwM8/O3fxJkPs4HXRdHmt+TafkVThlZNRAMZWcjp0n8a44QN2w/SqW/B/IGz+BmU
-         yeR6ToQrIOowdxRMM2lNeGsFM8+CAw907XrhbIpeF4JAmvzDDM2ytzc2oie86ZdRCMIu
-         qplA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2UH5tf6umNqbdP3ijV0rfOnwSncCADAiCEkGZp99PCQ=;
-        b=f+8M5h+m/2/pLztXKEbM63Ya3X5NmT4E8MzMaLIxC36YcgUldVarIYprWev3NXVcj3
-         QDeRowtLjvbbE9gudxf/g3abV7nzHHhOO2Bmi0OO1s4GHHBv4nViDhOWKyEsPh2f7Fsp
-         jtyQKekrJNyvI+ZejtvVWfWvltu66KOkLs1j/sCrQPlVZ8bYFovSgSZ2FQnTr2BeCXAi
-         iTUEspFXeKhyVnKtP17vjETKseMWrbuquWYA8dcTMLMuRxyMjjH+9JA2WEC+ZldFC1Wg
-         xZnWd6k3XcJA0z7nyGz6flbhJ0/qWSpuie/HPa7f8Sd+BC1fBTpae9F1KuMAXDYfs65k
-         G/eA==
-X-Gm-Message-State: APjAAAWBzsgBQZ6Cb57BS7teTwvorzWJcUpftTcGLrvsG7bfhLR89twR
-        adjVUmxiuVTJxIpgXm0tr42JVg==
-X-Google-Smtp-Source: APXvYqxFAAuQJcoa7vbQx68PaSBO5/fAqpVUsa5FLCOaDp29oElUH+Z7Fp975zsUXBWgRrcfoBh7Hw==
-X-Received: by 2002:a17:90a:22aa:: with SMTP id s39mr18578430pjc.39.1562233717450;
-        Thu, 04 Jul 2019 02:48:37 -0700 (PDT)
-Received: from localhost ([122.172.21.205])
-        by smtp.gmail.com with ESMTPSA id b1sm5188127pfi.91.2019.07.04.02.48.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jul 2019 02:48:36 -0700 (PDT)
-Date:   Thu, 4 Jul 2019 15:18:34 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727468AbfGDKBp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 06:01:45 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:53343 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727458AbfGDKBp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jul 2019 06:01:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fYRB2XB4z9s4Y;
+        Thu,  4 Jul 2019 20:01:42 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562234503;
+        bh=T0+7N2k7pCg1r7C05ldU6b0MGchRpIZaW9IbP9QJOYk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cLWxkb6aPM0fWgSjBYkQWaHI3qA5wD1zlMcU6KUAS8GOosS+axnyxwJebkB86xdFU
+         mamGKfRRdVOtzW5DKMaJK/I7gWebY9k7JAyIkTkCcMeaGSSxGjbiKDsj+LIbLsAieC
+         8j3Z7Gtmo+EXC/wH9zcrAmcNsRoEfL1pJdYQOWGs/tcpOSrwBVA/cMZvybrCffmHZa
+         465amo7k14ntH+ye65Moxar5qM1jS2w8oKyTRt+AKGFWAGO27fRYGHjToLCdT7Nnsv
+         9lDWm7MbR0Qr19tyQOAt3FkJojAyAoCWuAyeEcPWLhHm5wlplWDynYJbNOxCMvObFY
+         wBaBNrhUCZCzA==
+Date:   Thu, 4 Jul 2019 20:01:39 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Message-ID: <20190704094834.xbfjvdmly6maw75b@vireshk-i7>
-References: <20190704194114.086d6a17@canb.auug.org.au>
+        Christoph Hellwig <hch@lst.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>
+Subject: linux-next: manual merge of the akpm-current tree with the hmm tree
+Message-ID: <20190704200139.696330e8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704194114.086d6a17@canb.auug.org.au>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fY.s_Ut8h2cNGK1xTp_zhLe"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 04-07-19, 19:41, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the pm tree, today's linux-next build (x86_64 allnoconfig)
-> failed like this:
-> 
-> In file included from kernel/power/qos.c:33:
-> include/linux/pm_qos.h: In function 'dev_pm_qos_read_value':
-> include/linux/pm_qos.h:205:9: error: expected '(' before 'type'
->   switch type {
->          ^~~~
->          (
-> include/linux/pm_qos.h:205:9: warning: statement with no effect [-Wunused-value]
->   switch type {
->          ^~~~
-> include/linux/pm_qos.h:216:1: warning: no return statement in function returning non-void [-Wreturn-type]
->  }
->  ^
-> include/linux/pm_qos.h: At top level:
-> include/linux/pm_qos.h:231:4: error: expected identifier or '(' before '{' token
->     { return 0; }
->     ^
-> In file included from kernel/power/qos.c:33:
-> include/linux/pm_qos.h:228:19: warning: 'dev_pm_qos_add_notifier' declared 'static' but never defined [-Wunused-function]
->  static inline int dev_pm_qos_add_notifier(struct device *dev,
->                    ^~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commits
-> 
->   024a47a2732d ("PM / QOS: Pass request type to dev_pm_qos_{add|remove}_notifier()")
->   57fa6137402b ("PM / QOS: Pass request type to dev_pm_qos_read_value()")
+--Sig_/fY.s_Ut8h2cNGK1xTp_zhLe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I have already sent the replacement patchset to Rafael.
+Hi all,
 
--- 
-viresh
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  drivers/dax/dax-private.h
+
+between commit:
+
+  ea31d5859f58 ("device-dax: use the dev_pagemap internal refcount")
+
+from the hmm tree and commit:
+
+  420a0854e8f2 ("device-dax: "Hotremove" persistent memory that is used lik=
+e normal RAM")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/dax/dax-private.h
+index c915889d1769,9ee659ed5566..000000000000
+--- a/drivers/dax/dax-private.h
++++ b/drivers/dax/dax-private.h
+@@@ -43,6 -43,9 +43,7 @@@ struct dax_region=20
+   * @target_node: effective numa node if dev_dax memory range is onlined
+   * @dev - device core
+   * @pgmap - pgmap for memmap setup / lifetime (driver owned)
+ - * @ref: pgmap reference count (driver owned)
+ - * @cmp: @ref final put completion (driver owned)
++  * @dax_mem_res: physical address range of hotadded DAX memory
+   */
+  struct dev_dax {
+  	struct dax_region *region;
+@@@ -50,6 -53,9 +51,7 @@@
+  	int target_node;
+  	struct device dev;
+  	struct dev_pagemap pgmap;
+ -	struct percpu_ref ref;
+ -	struct completion cmp;
++ 	struct resource *dax_kmem_res;
+  };
+ =20
+  static inline struct dev_dax *to_dev_dax(struct device *dev)
+
+--Sig_/fY.s_Ut8h2cNGK1xTp_zhLe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0dzoMACgkQAVBC80lX
+0Gw2jgf+MW/2gLFzzReQCIJ/9LaEyxKfqRotANdBRXSHmPGJ7XSpGDP86EHbmVGY
+jfZXVrlvcbA+YzcO1yQ7SpchMeVK3UqhpSfurN6xW621DfIqq6HS1FBTmVV2VBvi
+0p4FDxTV2FQF3dUc3hJheYEsl6WWsningFDA4a7jGYItzhg7PEAViIhLO3JtUNjw
+SnREMv4ALUsngSZSzlmMr7b/tLaZDNXP4VuFpux86dvG2mo4xfgQA9dkP/YTEMOo
+MJqV0mXwCmSp0TUxuy26J9/MUCYsqR+LcwxqxCY/JIlFT7xib7J3nTQHcbUHq9Y2
+xgtyNLE/X8fLR28kKt+6WJyqyPBUtw==
+=AI65
+-----END PGP SIGNATURE-----
+
+--Sig_/fY.s_Ut8h2cNGK1xTp_zhLe--
