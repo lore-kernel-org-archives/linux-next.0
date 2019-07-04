@@ -2,131 +2,204 @@ Return-Path: <SRS0=xL23=VB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F96AC06513
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F291AC06513
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 11:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A3C218A0
-	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 10:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B331A218A0
+	for <linux-next@archiver.kernel.org>; Thu,  4 Jul 2019 11:03:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TxvAdR24"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="jMgP5S4n";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DK4CgGdj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbfGDKzn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 06:55:43 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57779 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbfGDKzn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Jul 2019 06:55:43 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fZdR68Drz9sPB;
-        Thu,  4 Jul 2019 20:55:39 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562237740;
-        bh=VX3OP2vOB4lxDG7NJNe8Z2zhCL88AkDSoq84IfXmnZo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TxvAdR24teojejG9+j487oUI+lWGfVicS0n/o2HyJ5CfckYYEnWpgE51BhaLxo2Na
-         orxK386/D6o9AgBAMPY4fgQo6z4ne1tMOQQFZYr2PmjqmXcIu7Yfa/MZPA2uv5YCdl
-         Gvenu3mCBB0sBffW/T9FIffYlgf4vv9wq426cyWS3qtluKSnFjkc1slXtaVgieks6x
-         yn+mnJcWUgv78fj3O67cCEhyGhlFp+SWFUO47mAXDjpDn6RkHmnuMDHmSUZqrsZNj+
-         KZ4XQ/Fedy03xZ8SfjtKntD2kX6xZr1t+S0Kt4bba/KKVJt10wtuhAQ8Q7XIc++bDZ
-         +matFqSMgXXAg==
-Date:   Thu, 4 Jul 2019 20:55:36 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727519AbfGDLDc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 07:03:32 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:42993 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727499AbfGDLDb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 07:03:31 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9F8A820355;
+        Thu,  4 Jul 2019 07:03:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 04 Jul 2019 07:03:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=0iZYXzwFrmQtPuuQr4Pn9G8zFL3
+        fT36VF37zsMwW3/8=; b=jMgP5S4n2qiSYCBrubBqAYQ561dsYlw5KG0qqbi8BMm
+        sybJfP01GrtXM7a+Rhbj+YMGmh5AGX7IcC2oWGtxsPhiXrJyRYVu7+D1d4Q14ggO
+        0dFLLze53UE98nbp5AYEQodXIWrRKOjQ9SyJHL0Bk/CFbTuxl1W8xmjNQa0r4cDB
+        pDcJUsvbqNbJAoT7t7PJt5MhtOv35WBJVBMu/czLbJK+o39dEZF+9/Ja9oU0bVNC
+        YD189ZWcHh6hdZbo4NC1/uwCexnGmNnadgThDYVA8BElq79LgXT4cPbxO38nWUyZ
+        zoxvvEkttCij19zB0+HJYAcYrkg8UX7biiVEwEex9hA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=0iZYXz
+        wFrmQtPuuQr4Pn9G8zFL3fT36VF37zsMwW3/8=; b=DK4CgGdj8vj4uZ1MjmJDrp
+        MK3B4NcOPeTefwjrWoawexOfPtmXl1oZslogd9uXP405U2uL7/kCj35Z4HAADPfG
+        +n7N9189+05I6us8DhVUsOxUjCYik6onHtqDmxkiEZxyHSmbZutTjPOszfQCez9b
+        OOWKuVtIMqRkn7+7op/K9mqebvY1GSjhCEK44SFcC3Qeuil8HOBXxWaY1H7v6S7z
+        Vt3NRzJBqvRxjDDeWDdKOAPRgUxSkqx/jy+9oOIIAoHUDlL7aICy22J39a4/Sxv/
+        sS0+MoJFyaesrauSMrBtMg8fTXr6u8OIiIo0lxug12bPWkSEG3yNwq8VkdtB/d/A
+        ==
+X-ME-Sender: <xms:Ad0dXSE2HN3-3YYk4eHrEjEGGuu3zQkH3c8SBL6V8EeFxhGNMEMeRQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrfedvgdefjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
+    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
+    lhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:Ad0dXVU5fQFI8JG-QCTsx4oOgT4I5oZ4xIf9j-cE223PGYVRmBFqag>
+    <xmx:Ad0dXQd8amZvY2cVH3EyMgwzt0zcAk-b0qCh6oaxsQPjoV7FsbFccg>
+    <xmx:Ad0dXUQ1HdGrOBustYrld8CtLgECfZB5VVvgNdR7Wu372iIkGdYEuw>
+    <xmx:At0dXbTkiXXkHBm9WAmtrg6fRYcXMF9bfB60RY646XIXdddcqEreeg>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 027E88005B;
+        Thu,  4 Jul 2019 07:03:28 -0400 (EDT)
+Date:   Thu, 4 Jul 2019 13:03:06 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Pawel Laszczak <pawell@cadence.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: linux-next: manual merge of the akpm-current tree with the hmm tree
-Message-ID: <20190704205536.32740b34@canb.auug.org.au>
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Roger Quadros <rogerq@ti.com>, Nishanth Menon <nm@ti.com>
+Subject: Re: linux-next: build failure after merge of the usb and usb-gadget
+ trees
+Message-ID: <20190704110306.GA1404@kroah.com>
+References: <20190704163458.63ed69d2@canb.auug.org.au>
+ <20190704065949.GA32707@kroah.com>
+ <CAH8TKc_4ggxOPgii8gLGo2d7nvx08cbTk8_xDUQfA2Ckcxb_Aw@mail.gmail.com>
+ <BYAPR07MB470946609232100714B3EA29DDFA0@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <87imsiyzo3.fsf@linux.intel.com>
+ <20190704083233.GH6438@kroah.com>
+ <87ftnmyyqw.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YpLR1nSqk3gkTNQK6MF/bnY"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ftnmyyqw.fsf@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/YpLR1nSqk3gkTNQK6MF/bnY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 04, 2019 at 11:45:11AM +0300, Felipe Balbi wrote:
+> 
+> Hi,
+> 
+> Greg KH <greg@kroah.com> writes:
+> 
+> > On Thu, Jul 04, 2019 at 11:25:16AM +0300, Felipe Balbi wrote:
+> >> 
+> >> Hi,
+> >> 
+> >> Pawel Laszczak <pawell@cadence.com> writes:
+> >> 
+> >> >>
+> >> >>Hi,
+> >> >>
+> >> >>On Thu, Jul 4, 2019 at 9:59 AM Greg KH <greg@kroah.com> wrote:
+> >> >>>
+> >> >>> On Thu, Jul 04, 2019 at 04:34:58PM +1000, Stephen Rothwell wrote:
+> >> >>> > Hi all,
+> >> >>> >
+> >> >>> > After merging the usb tree, today's linux-next build (arm
+> >> >>> > multi_v7_defconfig) failed like this:
+> >> >>> >
+> >> >>> > arm-linux-gnueabi-ld: drivers/usb/dwc3/trace.o: in function `trace_raw_output_dwc3_log_ctrl':
+> >> >>> > trace.c:(.text+0x119c): undefined reference to `usb_decode_ctrl'
+> >> >>> >
+> >> >>> > Caused by commit
+> >> >>> >
+> >> >>> >   3db1b636c07e ("usb:gadget Separated decoding functions from dwc3 driver.")
+> >> >>> >
+> >> >>> > I have used the usb tree from next-20190703 for today.
+> >> >>> >
+> >> >>> > This also occurs in the usb-gadget tree so I have used the version of
+> >> >>> > that from next-20190703 as well.
+> >> >>>
+> >> >>> Odd, I thought I pulled the usb-gadget tree into mine.  Felipe, can you
+> >> >>> take a look at this to see if I messed something up?
+> >> >>
+> >> >>This looks like it was caused by Pawel's patches.
+> >> >>
+> >> >>I'll try to reproduce here and see what's causing it.
+> >> >
+> >> > Problem is in my Patch. I reproduced it, but I don't understand why compiler 
+> >> > complains about usb_decode_ctrl. It's compiled into libcomposite.ko and
+> >> > declaration is in drivers/usb/gadget.h. 
+> >> 
+> >> That's because in multi_v7_defconfig dwc3 is built-in while libcomposite
+> >> is a module:
+> >> 
+> >> CONFIG_USB_DWC3=y
+> >> CONFIG_USB_LIBCOMPOSITE=m
+> >> 
+> >> 
+> >> I remember that when you were doing this work, I asked you to move
+> >> functions to usb/common. Why did you deviate from that suggestion? It's
+> >> clear that decoding a ctrl request can be used by peripheral and host
+> >> and we wouldn't have to deal with this problem if you had just followed
+> >> the suggestion.
+> >> 
+> >> Now we have to come up with a way to fix this that doesn't involve
+> >> reverting my part2 tag in its entirety because there are other important
+> >> things there.
+> >> 
+> >> This is what I get for trusting people to do their part. I couldn't even
+> >> compile test this since I don't have ARM compilers anymore (actually,
+> >> just installed to test). Your customer, however, uses ARM cores so I
+> >> would expect you to have at least compile tested this on ARM. How come
+> >> this wasn't verified by anybody at TI?
+> >> 
+> >> TI used to have automated testing for many of the important defconfigs,
+> >> is that completely gone? Are you guys relying entirely on linux-next?
+> >> 
+> >> Greg, if you prefer, please revert my part2 tag. If you do so, please
+> >> let me know so I can drop the tag and commits from my tree as well.
+> >
+> > How do I revert a tag?  How about I just revert individual commits,
+> > which ones should I revert?
+> 
+> Anything from Pawel. Here's the full list:
+> 
+> 573aff747ee3 usb:cdns3 Fix for stuck packets in on-chip OUT buffer.
+> 8bc1901ca7b0 usb:cdns3 Add Cadence USB3 DRD Driver
+> c2af6b07803e usb:gadget Simplify usb_decode_get_set_descriptor function.
+> ca888ce7495e usb:gadget Patch simplify usb_decode_set_clear_feature function.
+> 3db1b636c07e usb:gadget Separated decoding functions from dwc3 driver.
+> e8a8b40cc892 dt-bindings: add binding for USBSS-DRD controller.
+> 
+> I just tested a branch without these patches and it builds fine:
+> 
+> $ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- multi_v7_defconfig
+>   HOSTCC  scripts/kconfig/conf.o
+>   HOSTCC  scripts/kconfig/confdata.o
+>   HOSTCC  scripts/kconfig/expr.o
+>   HOSTCC  scripts/kconfig/lexer.lex.o
+>   HOSTCC  scripts/kconfig/parser.tab.o
+>   HOSTCC  scripts/kconfig/preprocess.o
+>   HOSTCC  scripts/kconfig/symbol.o
+>   HOSTLD  scripts/kconfig/conf
+> #
+> # configuration written to .config
+> #
+> $ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j32 -s
+> $
 
-Hi all,
+All now reverted.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+When these are resent, I want to review them as well as I thought the
+cdns3 driver still needed work before it could be merged...
 
-  mm/memory_hotplug.c
+thanks,
 
-between commit:
-
-  514caf23a70f ("memremap: replace the altmap_valid field with a PGMAP_ALTM=
-AP_VALID flag")
-
-from the hmm tree and commit:
-
-  db30f881e2d7 ("mm/hotplug: kill is_dev_zone() usage in __remove_pages()")
-
-from the akpm-current tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc mm/memory_hotplug.c
-index 6166ba5a15f3,dfab21dc33dc..000000000000
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@@ -549,16 -537,14 +537,13 @@@ static void __remove_section(struct zon
-   * sure that pages are marked reserved and zones are adjust properly by
-   * calling offline_pages().
-   */
-- void __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-+ void __remove_pages(struct zone *zone, unsigned long pfn,
-  		    unsigned long nr_pages, struct vmem_altmap *altmap)
-  {
-- 	unsigned long i;
---	unsigned long map_offset =3D 0;
-- 	int sections_to_remove;
-++	unsigned long map_offset;
-+ 	unsigned long nr, start_sec, end_sec;
- =20
-- 	/* In the ZONE_DEVICE case device driver owns the memory region */
-- 	if (is_dev_zone(zone))
- -	if (altmap)
---		map_offset =3D vmem_altmap_offset(altmap);
-++	map_offset =3D vmem_altmap_offset(altmap);
- =20
-  	clear_zone_contiguous(zone);
- =20
-
---Sig_/YpLR1nSqk3gkTNQK6MF/bnY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0d2ygACgkQAVBC80lX
-0GwxCAf+PSCBsgWB9aTWBqRcLPQNCYvEwLATf/jbUEYQ+sxBADk5vQqnGH/u2JQS
-fFB0keGn9s7V8D0zbSGalbFF9h7hsm9ICJYh7KxBoH7Fil5AmKKAXCSXVcsRMn4Z
-yPekK9f0ZLwDoUJIlBJS+CAhyVZnTJZpTADXuSHptdHa3kcgF96bfKmtoKidXjEb
-SDIEptAgh0ZSL5oYann4FJb1OuolzXO8pZ0c8SzCdQqsYpjBO15US7llmpZ1v8xi
-+bBaNuZiPzl+ta7HJPEo5big0JplgloBGs8n27HIzG52+YEDCogXewa4OLillkLC
-9x/BxOKgC5UGeYnoXwSfiUlcKjXi3w==
-=VWyx
------END PGP SIGNATURE-----
-
---Sig_/YpLR1nSqk3gkTNQK6MF/bnY--
+greg k-h
