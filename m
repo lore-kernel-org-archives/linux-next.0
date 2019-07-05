@@ -6,104 +6,98 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81342C46499
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 10:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D9BC4649B
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 11:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5465D216E3
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 10:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3683216FD
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 11:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bD78ihd5"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="G3MgsvQy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfGEKy1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 5 Jul 2019 06:54:27 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:46943 "EHLO ozlabs.org"
+        id S1726921AbfGELJ4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 5 Jul 2019 07:09:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:49163 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728613AbfGEKy1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 5 Jul 2019 06:54:27 -0400
+        id S1726523AbfGELJ4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 5 Jul 2019 07:09:56 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45gBYY0kwYz9s7T;
-        Fri,  5 Jul 2019 20:54:22 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45gBvN2X9Rz9sNf;
+        Fri,  5 Jul 2019 21:09:52 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562324065;
-        bh=7PEMhm7NSZ8PvoIzAZZwmzsKh78GMgXvg9y4/fhW+Tc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bD78ihd5AksKv3isX7yDX8H/XGiqbR6Jc22dPx14E3bVuXXw7NwW3HeWs8193royp
-         +4UT3Jis/oOR8ztbNzhZgr+ZGRjLlgZNWIvEBuQvDbPSSFztb+F5iO6Ha+1gHBAtS+
-         3H5cKdtDBYbcBPgvn+/sBk8zbc/QgESIoZ90A2ZOq2oKJZx2Y7EdWdF+XOKkIaLH4I
-         Mpepbn1T2LWx32S0h7Te36KAaZMKyf8iUf2EmhanXsQT6/nfIremHT/VUwUQAVs9mC
-         vX8IMJtN8ft+6ETeV8CZDzxZGBAIyZl3MDf8dmCxsiaI68mUfI1h6wiDr7qqh1VIXE
-         n+MEOoP+EgAKg==
-Date:   Fri, 5 Jul 2019 20:54:21 +1000
+        s=201702; t=1562324993;
+        bh=OXtbk1b4fFm1R1JUKIm0/9hTWgjDEdLQvvS+zollgOU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=G3MgsvQyAmYt5urUQ6AzpSDvoKudKW3EWi6fUqBodclkx5xpU/skwj/XwZf29RhnY
+         uAx1dqZp+S8GjBd+GLGf+BhkboqlUqvZS2MiLxsRmQ+B6K1C73U3vk+FZ4M9rhOIYg
+         aaLvRNEuYNpLqWbr/sxB6qWVAVFQlZ185hmyqs/pi1olhrjywUoz2szLQq1jWwvouq
+         wp0Fle6SyxWv/BAqUTdH4QCp6AAslhlDrF1buqdHcohe0kMnH9v1lZhcJzPg6shII9
+         DkC1KV/cUqTwYccq0r51cPTG9VDeCIe5WXzdkHG3tsq5zdYBb7HQiukikd+xpapgPJ
+         xEmbcsgOjVjRw==
+Date:   Fri, 5 Jul 2019 21:09:50 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: Signed-off-bys missing for commits in the vfs tree
-Message-ID: <20190705205421.10846e0a@canb.auug.org.au>
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jakub Staron <jstaron@google.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: linux-next: build failure after merge of the nvdimm tree
+Message-ID: <20190705210950.6b77ec77@canb.auug.org.au>
+In-Reply-To: <616554090.39241752.1562316343431.JavaMail.zimbra@redhat.com>
+References: <20190705172025.46abf71e@canb.auug.org.au>
+        <616554090.39241752.1562316343431.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/k6RMSFLEVAUy55oaR1OQv0q"; protocol="application/pgp-signature"
+ boundary="Sig_/gp22g0z1_Tgphjq1B8VeR1e"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/k6RMSFLEVAUy55oaR1OQv0q
+--Sig_/gp22g0z1_Tgphjq1B8VeR1e
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Pankaj,
 
-Commits
+On Fri, 5 Jul 2019 04:45:43 -0400 (EDT) Pankaj Gupta <pagupta@redhat.com> w=
+rote:
+>
+> Thank you for the report.
 
-  408cbe695350 ("vfs: Convert fuse to use the new mount API")
-  0733dcbaebbd ("vfs: Convert orangefs to use the new mount API")
+That's what I am here for :-)
 
-are missing a Signed-off-by from their author.
+> Can we apply below patch [1] on top to complete linux-next build for toda=
+y.
+> I have tested this locally.
 
-Commits
-
-  023d066a0d0a ("vfs: Kill sget_userns()")
-  ea8157ab2ae5 ("zsfold: Convert zsfold to use the new mount API")
-  31d6d5ce5340 ("vfs: Provide a mount_pseudo-replacement for the new mount =
-API")
-  c80fa7c8301c ("vfs: Provide sb->s_iflags settings in fs_context struct")
-  7cdfa44227b0 ("vfs: Fix refcounting of filenames in fs_parser")
-  96a374a35f82 ("vfs: Convert nfsctl to use the new mount API")
-  b9662f310354 ("vfs: Convert rpc_pipefs to use the new mount API")
-  1a6e9e76b713 ("device-dax: Drop register_filesystem()")
-  7e5f7bb08b8c ("unexport simple_dname()")
-  48b48750c3f9 ("zsmalloc: don't bother with dentry_operations")
-  985f4044871a ("balloon: don't bother with dentry_operations")
-  8b1e058e0f52 ("cxlflash: don't bother with dentry_operations")
-  619a6d167b29 ("cxl: don't bother with dentry_operations")
-  fb9273f2c10d ("drm: don't bother with super_operations and dentry_operati=
-ons")
-
-are missing a Signed-off-by from their committer.
+Its a bit of a pain to go back and linux-next is done for today (after
+13 hours :-)).  You really should do a proper fix patch and get it
+added to the nvdimm tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/k6RMSFLEVAUy55oaR1OQv0q
+--Sig_/gp22g0z1_Tgphjq1B8VeR1e
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0fLF0ACgkQAVBC80lX
-0GyCagf/TzPLv6Xwx85byFLbbNGsvchTr/ojssjlVfZltov0cG56hdkQmERg8emy
-icADW4JJYR0tRVAzJ/YCLsxivQHMqfDWneYZNTH5KJdat5xiTPSRMNzuH7phQO6d
-p3wER6TwY3mBimEPzUZYYa9MILSCO2VxayBf9mu2SAirHjdXAIrKmONhriMqmYlp
-eFlZ+BHrcWWSd0mgHxGUxzQ55RLCBJIMjRcSMlEduElljsUTsX5dE7+E3Cl+krie
-qS9t9ngo0xvXUNhdBlLM47PkBg3C3EQIFRt9f53hhrsMn4ujLkWiiI4Md4KRv182
-5sgnHFrWCuWnzTciqR/B63ijJJAm0Q==
-=UgYS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0fL/4ACgkQAVBC80lX
+0GyG2gf/Xe6VyKK1naUX+/PKN76T06iz58l9CRpjhS40BUeEYwwfWTADN9z/Th2S
+xc1bWUeSIfpOn5mtxGrf0x85QHizUh9Nxt4k0h9lDulpR6/y8DS6ECHf5/X5YwTG
+aIBlqDnDeKARR3/K6yfYW8O9KEKVo9u+tj7F62hrg9tPnVv1AG6jLak8ul4dMM1i
+9Mcv5jFhzpsrBNl01chTayDvdrXD5q3ClwKLJuIDiPscEAIf0/dNog1mPmOg7ivx
+aLE0+4IoSY9T+yXHG9xdM2OED1HV+ohwXRY8Rvl7sX+csGgAPjDRYhvAmMSvIi+B
+A3y/T4Mrwxr0bl69Wvm1LJWS3re9Xw==
+=JDAT
 -----END PGP SIGNATURE-----
 
---Sig_/k6RMSFLEVAUy55oaR1OQv0q--
+--Sig_/gp22g0z1_Tgphjq1B8VeR1e--
