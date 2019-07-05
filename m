@@ -2,103 +2,112 @@ Return-Path: <SRS0=eJvT=VC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2794EC0650E
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 02:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06356C46498
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 03:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A3321852
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 02:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D279A20659
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 03:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GspxrCer"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KxxQ/EOQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbfGECuv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Jul 2019 22:50:51 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45907 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727506AbfGECuv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Jul 2019 22:50:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45fzqT23JJz9sNf;
-        Fri,  5 Jul 2019 12:50:45 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562295048;
-        bh=CwZDWdAbth5jMXxyrhGjRXLrCsjjva+ka1rJPIeETBQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GspxrCerJBkI4HWmoseCoWFshTlm0tHa8iIvKzWu/9rHtGNBL6SxdGH2KdCAtsRXU
-         UuOVgHCDAVFs6qFPGmsbAMIIR/pJE5+a4Q26hPSGtRS4yUAoW8zu0RpKfIQUs/xs4a
-         BILCYzFtKpXYgAHDTbArdYj3i/0uPo5EpY+Bch33wGNF7/M4ftcuH3UI+qjYqj3How
-         AifyIKLkMZpdDfhY2XsSCSYYsFKkgazqvB/lmro1CN+6KS3FZ4DFt7Wa/S3tKcQrC2
-         C2xRegzXbspyDdTxnfl5NRhzsjzs8Gss7oJkh+wSO7aTWJl0C/mwNof+NJw79DwjQq
-         6JIdB8FK/66Sw==
-Date:   Fri, 5 Jul 2019 12:50:44 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trigger Huang <Trigger.Huang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <20190705125044.12c10552@canb.auug.org.au>
+        id S1727348AbfGEDBL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Jul 2019 23:01:11 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57538 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfGEDBL (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2019 23:01:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=clMDBr0VH7M11Amw0B3Ri/sIv+DBHpDPWFocL6b0RWI=; b=KxxQ/EOQrixPXe7WpCSxNyecNu
+        ou7W9wMn/5tSGt9EiUzbFPZmmXzPOlV/lF0IdeZFJsJVc/dwXq8Iw/fPPvCcb+Yg3MDGptSBjJ+cS
+        1IfnAHgJmmclULvexo48g0cubarcVOznsqZHs0UoglMrBPHeUHgRmtcan+WzIonpUSZ1IEcshWQAr
+        P5ielI9z2OAukUBQWXSNGPFVRxCTPWIPE//nlqO8F+lLDa0j0Whf57onB5xYFzoCN3tK+BZJ+sGlb
+        dPgpEPd+Lir60dUQ7L1iFTtdjksURL91i9fSoVwvvFwjz69tGIkHE2Ql9YiMumPw9/jLEN6pagl86
+        WoQnlhXA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hjETE-00077l-Nd; Fri, 05 Jul 2019 03:01:08 +0000
+Subject: Re: mmotm 2019-07-04-15-01 uploaded (mm/vmscan.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+References: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9cbdb785-b51d-9419-6b9a-ec282a4e4fa2@infradead.org>
+Date:   Thu, 4 Jul 2019 20:01:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8gZKdzyZ.MTIruRd3tsn7Vg"; protocol="application/pgp-signature"
+In-Reply-To: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/8gZKdzyZ.MTIruRd3tsn7Vg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/4/19 3:01 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-07-04-15-01 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
 
-Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+on i386:
+CONFIG_SLOB=y <<<<<<<<<<
 
-  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
 
-between commit:
+../mm/vmscan.c: In function ‘prealloc_memcg_shrinker’:
+../mm/vmscan.c:220:3: error: implicit declaration of function ‘memcg_expand_shrinker_maps’ [-Werror=implicit-function-declaration]
+   if (memcg_expand_shrinker_maps(id)) {
+   ^
+In file included from ../include/linux/rbtree.h:22:0,
+                 from ../include/linux/mm_types.h:10,
+                 from ../include/linux/mmzone.h:21,
+                 from ../include/linux/gfp.h:6,
+                 from ../include/linux/mm.h:10,
+                 from ../mm/vmscan.c:17:
+../mm/vmscan.c: In function ‘shrink_slab_memcg’:
+../mm/vmscan.c:608:54: error: ‘struct mem_cgroup_per_node’ has no member named ‘shrinker_map’
+  map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+                                                      ^
+../include/linux/rcupdate.h:321:12: note: in definition of macro ‘__rcu_dereference_protected’
+  ((typeof(*p) __force __kernel *)(p)); \
+            ^
+../mm/vmscan.c:608:8: note: in expansion of macro ‘rcu_dereference_protected’
+  map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+        ^
+../mm/vmscan.c:608:54: error: ‘struct mem_cgroup_per_node’ has no member named ‘shrinker_map’
+  map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+                                                      ^
+../include/linux/rcupdate.h:321:35: note: in definition of macro ‘__rcu_dereference_protected’
+  ((typeof(*p) __force __kernel *)(p)); \
+                                   ^
+../mm/vmscan.c:608:8: note: in expansion of macro ‘rcu_dereference_protected’
+  map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+        ^
 
-  25f09f858835 ("drm/amdgpu/gfx9: use reset default for PA_SC_FIFO_SIZE")
 
-from the drm-fixes tree and commit:
 
-  1bff7f6c679f ("drm/amdgpu: RLC to program regs for Vega10 SR-IOV")
 
-from the drm tree.
-
-I fixed it up (the former removes the code modified by the latter) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8gZKdzyZ.MTIruRd3tsn7Vg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0euwQACgkQAVBC80lX
-0GwLyAf8D4+tM3UyxYIbHzXNp9lsJcqI9EKjnUB2NwnC8c1FqTZA0Bd5HYv12wfT
-UxqGMCmUXZm8r12CFt8b48WFofS2q8sMSGJh0l/IyR+D3xPjxX/OWhXkAzDbiSfL
-OwBwlqDoazWuzfjatt5l4kNYE+R6K756TgHUvf4/PqQ0xhaI0CZ2PsfFPmMER4a7
-5d5Oq9V95vZwI0H1cipa3EvL0nHBB0KWhBRvsLI13ImT0WrC3QOkhWQ54CrpIaL0
-QBcO0ybBRNxeERjb20hYMSzvbaQw4jEolefXdklbxYX66hAwWSYN9Wc3+Exaqflx
-jK4R8KSdDqhBgNX2EHrNQENhzvNazg==
-=Jo7x
------END PGP SIGNATURE-----
-
---Sig_/8gZKdzyZ.MTIruRd3tsn7Vg--
+-- 
+~Randy
