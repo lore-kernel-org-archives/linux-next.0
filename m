@@ -2,138 +2,137 @@ Return-Path: <SRS0=eJvT=VC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E748C5B57D
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 08:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 019E8C5B57D
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 08:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8F5218BB
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 08:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F00218BB
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 08:49:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tAwnOtEU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfGEIpu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 5 Jul 2019 04:45:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54746 "EHLO mx1.redhat.com"
+        id S1727487AbfGEItz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 5 Jul 2019 04:49:55 -0400
+Received: from ozlabs.org ([203.11.71.1]:45599 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbfGEIpu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 5 Jul 2019 04:45:50 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726427AbfGEIty (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 5 Jul 2019 04:49:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B858356F5;
-        Fri,  5 Jul 2019 08:45:44 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8DFA68226B;
-        Fri,  5 Jul 2019 08:45:44 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 2E56241F53;
-        Fri,  5 Jul 2019 08:45:44 +0000 (UTC)
-Date:   Fri, 5 Jul 2019 04:45:43 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45g7nq3Vpwz9sNf;
+        Fri,  5 Jul 2019 18:49:51 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562316591;
+        bh=nyRwtSwtERYZCc5hikUskoW0XV1gf6SCs+FLYgI/+vc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tAwnOtEUsWgdr1s4V3AICsAq9kW8dVi3vmmnMYYR4bSNAL3LhftMzPCiPfHcervwx
+         vtBt4P1osnxi6IUrxP+Wdh4SfFhhhcI0Kci136NuYcL3P65OvbBVyb3ld57D74Oaa4
+         2VnOdsFcGgt5Fk30HBvwRQj1tOYc4KbSm4oGBq/4m+T5X5CKNS9vE971yfUh6VPjPm
+         AvWhiYJw/1YJcpX3HXuOVSe4TYg1erjO9TNG0n8J0AbwiIeZpqPW/gwiAOYg8o1f0o
+         27YtTn8RMYSjlMwygMoMgzRiF6XJs1C5fqq5IDseO6dj94QyqH97tWeufeVZz8G1lO
+         J6qmo+CdJLwOw==
+Date:   Fri, 5 Jul 2019 18:49:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jakub Staron <jstaron@google.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Message-ID: <616554090.39241752.1562316343431.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190705172025.46abf71e@canb.auug.org.au>
-References: <20190705172025.46abf71e@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the nvdimm tree
+        Marco Elver <elver@google.com>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20190705184949.13cdd021@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.94, 10.4.195.8]
-Thread-Topic: linux-next: build failure after merge of the nvdimm tree
-Thread-Index: Op/Rg61sZFtHh9tTxUrITohvbGX3Ig==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 05 Jul 2019 08:45:49 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jEO0gQpIYlIpR9SaOyN4f3t"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/jEO0gQpIYlIpR9SaOyN4f3t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
-> 
-> Hi all,
-> 
-> After merging the nvdimm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> In file included from :32:
-> ./usr/include/linux/virtio_pmem.h:19:2: error: unknown type name 'uint64_t'
->   uint64_t start;
->   ^~~~~~~~
-> ./usr/include/linux/virtio_pmem.h:20:2: error: unknown type name 'uint64_t'
->   uint64_t size;
->   ^~~~~~~~
-> 
-> Caused by commit
-> 
->   403b7f973855 ("virtio-pmem: Add virtio pmem driver")
-> 
-> I have used the nvdimm tree from next-20190704 for today.
+Hi all,
 
-Thank you for the report.
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Can we apply below patch [1] on top to complete linux-next build for today.
-I have tested this locally.
+In file included from include/linux/compiler.h:257,
+                 from arch/arm/kernel/asm-offsets.c:10:
+include/linux/kasan-checks.h:14:15: error: unknown type name 'bool'
+ static inline bool __kasan_check_read(const volatile void *p, unsigned int=
+ size)
+               ^~~~
+include/linux/kasan-checks.h:18:15: error: unknown type name 'bool'
+ static inline bool __kasan_check_write(const volatile void *p, unsigned in=
+t size)
+               ^~~~
+include/linux/kasan-checks.h:38:15: error: unknown type name 'bool'
+ static inline bool kasan_check_read(const volatile void *p, unsigned int s=
+ize)
+               ^~~~
+include/linux/kasan-checks.h:42:15: error: unknown type name 'bool'
+ static inline bool kasan_check_write(const volatile void *p, unsigned int =
+size)
+               ^~~~
 
-Thanks,
-Pankaj
+Caused by commit
 
-========
+  4bb170e54bbd ("mm/kasan: change kasan_check_{read,write} to return boolea=
+n")
 
-[1]
+I have added the following patch for today:
 
-diff --git a/drivers/nvdimm/virtio_pmem.h b/drivers/nvdimm/virtio_pmem.h
-index 998efbc7660c..dbc12dfe8067 100644
---- a/drivers/nvdimm/virtio_pmem.h
-+++ b/drivers/nvdimm/virtio_pmem.h
-@@ -46,8 +46,8 @@ struct virtio_pmem {
-        spinlock_t pmem_lock;
- 
-        /* Memory region information */
--       uint64_t start;
--       uint64_t size;
-+       u64 start;
-+       u64 size;
- };
- 
- void virtio_pmem_host_ack(struct virtqueue *vq);
-diff --git a/include/uapi/linux/virtio_pmem.h b/include/uapi/linux/virtio_pmem.h
-index 379861f114f1..efcd72f2d20d 100644
---- a/include/uapi/linux/virtio_pmem.h
-+++ b/include/uapi/linux/virtio_pmem.h
-@@ -11,25 +11,24 @@
- #define _UAPI_LINUX_VIRTIO_PMEM_H
- 
- #include <linux/types.h>
--#include <linux/virtio_types.h>
- #include <linux/virtio_ids.h>
- #include <linux/virtio_config.h>
- 
- struct virtio_pmem_config {
--       uint64_t start;
--       uint64_t size;
-+       __u64 start;
-+       __u64 size;
- };
- 
- #define VIRTIO_PMEM_REQ_TYPE_FLUSH      0
- 
- struct virtio_pmem_resp {
-        /* Host return status corresponding to flush request */
--       __virtio32 ret;
-+       __u32 ret;
- };
- 
- struct virtio_pmem_req {
-        /* command type */
--       __virtio32 type;
-+       __u32 type;
- };
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 5 Jul 2019 18:44:55 +1000
+Subject: [PATCH] mm/kasan: include types.h for "bool"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/kasan-checks.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/kasan-checks.h b/include/linux/kasan-checks.h
+index 2c7f0b6307b2..53cbf0ae14b5 100644
+--- a/include/linux/kasan-checks.h
++++ b/include/linux/kasan-checks.h
+@@ -2,6 +2,8 @@
+ #ifndef _LINUX_KASAN_CHECKS_H
+ #define _LINUX_KASAN_CHECKS_H
+=20
++#include <linux/types.h>
++
+ /*
+  * __kasan_check_*: Always available when KASAN is enabled. This may be us=
+ed
+  * even in compilation units that selectively disable KASAN, but must use =
+KASAN
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jEO0gQpIYlIpR9SaOyN4f3t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0fDy0ACgkQAVBC80lX
+0GzPVwgAje5eBZwEcQrJp3Vh6/qbD6QqBGH2G/4W830DDYlfqEg7wjejai+AREKL
+aNmqilJpVU0ND4lIIINrN/WjCdmr29ZUYdUMokAJkkuvTwbgiu+Z74JflGQfPk0Z
+O3uJq/+pJyojI8vXewKSSJzHjrpcbEEcky+siblDCUvOyowYTl1lW4AlR3co0Fny
+Umy2QWwBa4xYZnRJM5MaOaDkh8KEDGtM++31Sk9B8SyrhRh7pAOhbeNDvelpZKbI
+qD54crO6lz2QDTSqwJgAMwxMSuOFVO7d1Jprw2tbTEd01jaMIKo62JZN43M6IoDl
+sFros5+uIBXfaUI1Y8Ozwp2kVVktRA==
+=l2qj
+-----END PGP SIGNATURE-----
+
+--Sig_/jEO0gQpIYlIpR9SaOyN4f3t--
