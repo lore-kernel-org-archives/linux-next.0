@@ -2,129 +2,90 @@ Return-Path: <SRS0=eJvT=VC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94D1C46499
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 20:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2857C468AA
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 22:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E4D2133F
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 20:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E1B221738
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 22:23:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="F16EAb3Y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NL++JgxX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbfGEUCK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 5 Jul 2019 16:02:10 -0400
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:39470 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfGEUCK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 5 Jul 2019 16:02:10 -0400
-Received: by mail-wm1-f54.google.com with SMTP id z23so10762645wma.4
-        for <linux-next@vger.kernel.org>; Fri, 05 Jul 2019 13:02:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=ZJ+Ucq7eZdy6NtlGbSDSaHh0v3Gi044Xl/KmOJr3yik=;
-        b=F16EAb3Y4UT3FanO2CpqekW9lj7rev9RUGAEqRf0kzdPUgXMqhhUB+5w7Xj/ErkxCw
-         gZLgutqDcbwB5UtWHGxWTGbU70JUt+Q/SSNUR4Ckrj7YurwIj2v0Zv2GJiK4XET7+zHd
-         o3+qi1/6KtwBhYX+gB/wizUmd8zW0t8tHAM3yPRO5CN/wVu85o1K8kmZYjiPldre0rcL
-         h8LLK7EEu/bahk6osClXpzYbwzfBAxQi11D0KdXv8lwg7uJEttJMcnrntZzePkqOA8yz
-         XDBNdcwHqZe2Rbd/KLn41hn0/VlCfYvLJBP9wEzZmSXoTTdWTDb/P1nmx3eFvnVcUCHP
-         +QdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=ZJ+Ucq7eZdy6NtlGbSDSaHh0v3Gi044Xl/KmOJr3yik=;
-        b=ilypusd8sXMFLF/MhmTcsr6EFdOazu4cxnIKRtW5hoZcGt0aQM6iAhIIACxh5AbZsb
-         TQFa8WHbJH7gCYiyjSom52ia/rPFcMMw0PGWr/W9/x7uDW1ZzBmb26zn94TMXVzBHtPi
-         R48Gugp5nv2YHP6LETvAFItgfKwPg4HbVtw9BVZQ7Qq5aTCJKHrUzSb/dyG+hhfSN/iV
-         VTeFHbbkaJuuXl29R+n6joo8YDSD+1mgXNXwsccbVl2dJj4iRTRAFaD+Xmtw1Q0IFvp/
-         qpe11kkeTyhKj2m/o5Hq/GNERwEtwz+PKoBT+FEUDExUQ0amtb7OI0LrupAbxIde2+tB
-         OKgA==
-X-Gm-Message-State: APjAAAU9iA+x5VaKM/cjCWp4UhEB9MDmBn+bv4WL0DP0JV8kZeIS/DKw
-        9JhhT8Sn01tyiHIN0vYeobr6mIGMDE+e3w==
-X-Google-Smtp-Source: APXvYqySIPliVSRBSYj2TLvANxOwU+tXIRjul5jGiryfLwsrBuFQa80FTqR0NtzVpWUMK+ZAE1LrQQ==
-X-Received: by 2002:a1c:5f09:: with SMTP id t9mr4820479wmb.112.1562356928621;
-        Fri, 05 Jul 2019 13:02:08 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id d7sm5960842wrw.0.2019.07.05.13.02.07
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Jul 2019 13:02:08 -0700 (PDT)
-Message-ID: <5d1facc0.1c69fb81.ae1c0.204a@mx.google.com>
-Date:   Fri, 05 Jul 2019 13:02:08 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1725813AbfGEWX6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 5 Jul 2019 18:23:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38894 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbfGEWX6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 5 Jul 2019 18:23:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=GaF0igJTtDSWaw4oHqNfMc4C4pBtKNjoYsTBMA2zuAc=; b=NL++JgxX7cbuv0Cgtm4zs6QgV3
+        6NjiFNaVJuT+FNDxroI84BmdfJybRai6t45qi3YCTsfqeEThPPjHNNvHltsQtx7s8W7zy+hlbu8HH
+        2l7wR7n8VOcVrCAAQTjdYCjW3fBDwoJZgBSOyJikIpVe72FenKt/BbPloey5izo//czpSV5bNwc8u
+        Z+EwZQ4q+9rnrT4Uxt9tQ1rdaQawQmuj73Fg+Mqu+Ulghec1mvm1nCfXavaMv8zitkEY6aaRzJICd
+        2bTo0KsKoaMieALcVzsaf9DZX21yxLnNMZrTu/Xi/Y/0zAg0KMa118I+zOy7inexALYHYsLyR5keB
+        1cWb52Ow==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hjWcT-0005Ud-CT; Fri, 05 Jul 2019 22:23:53 +0000
+Subject: Re: linux-next: Tree for Jun 28 (kernel/bpf/cgroup.c)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Daniel Mack <zonque@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+References: <20190628203840.1f74e739@canb.auug.org.au>
+ <74534ab8-a397-ac4f-dd02-9b3618d7c4cd@infradead.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a92ec13a-352c-b3cc-8467-a3b6d02aff6d@infradead.org>
+Date:   Fri, 5 Jul 2019 15:23:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v5.2-rc7-267-g92fe1791963c
-X-Kernelci-Branch: pending-fixes
-X-Kernelci-Tree: next
-Subject: next/pending-fixes boot: 231 boots: 5 failed,
- 226 passed (v5.2-rc7-267-g92fe1791963c)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <74534ab8-a397-ac4f-dd02-9b3618d7c4cd@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes boot: 231 boots: 5 failed, 226 passed (v5.2-rc7-267-g92f=
-e1791963c)
+On 6/28/19 1:52 PM, Randy Dunlap wrote:
+> On 6/28/19 3:38 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20190627:
+>>
+> 
+> on i386:
+> 
+> ld: kernel/bpf/cgroup.o: in function `cg_sockopt_func_proto':
+> cgroup.c:(.text+0x2906): undefined reference to `bpf_sk_storage_delete_proto'
+> ld: cgroup.c:(.text+0x2939): undefined reference to `bpf_sk_storage_get_proto'
+> ld: kernel/bpf/cgroup.o: in function `__cgroup_bpf_run_filter_setsockopt':
+> cgroup.c:(.text+0x85e4): undefined reference to `lock_sock_nested'
+> ld: cgroup.c:(.text+0x8af2): undefined reference to `release_sock'
+> ld: kernel/bpf/cgroup.o: in function `__cgroup_bpf_run_filter_getsockopt':
+> cgroup.c:(.text+0x8fd6): undefined reference to `lock_sock_nested'
+> ld: cgroup.c:(.text+0x94e4): undefined reference to `release_sock'
+> 
+> 
+> Full randconfig file is attached.
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
-xes/kernel/v5.2-rc7-267-g92fe1791963c/
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.2-rc7-267-g92fe1791963c/
+These build errors still happen in linux-next of 20190705...
 
-Tree: next
-Branch: pending-fixes
-Git Describe: v5.2-rc7-267-g92fe1791963c
-Git Commit: 92fe1791963c662f86747e8cce47c0b1a81641b8
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 85 unique boards, 28 SoC families, 22 builds out of 223
-
-Boot Regressions Detected:
-
-arm:
-
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          armada-xp-openblocks-ax3-4:
-              lab-baylibre-seattle: failing since 10 days (last pass: v5.2-=
-rc6-99-g690c98f37a5e - first fail: v5.2-rc6-130-gddc352bc91de)
-
-    multi_v7_defconfig+CONFIG_SMP=3Dn:
-        gcc-8:
-          rk3288-veyron-jaq:
-              lab-collabora: new failure (last pass: v5.2-rc7-250-g820e56d0=
-5831)
-
-Boot Failures Detected:
-
-arm:
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
-
-    sunxi_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_SMP=3Dn:
-        gcc-8:
-            rk3288-veyron-jaq: 1 failed lab
-
----
-For more info write to <info@kernelci.org>
+-- 
+~Randy
