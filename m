@@ -2,42 +2,46 @@ Return-Path: <SRS0=eJvT=VC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 598D9C5B57D
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 05:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1700C4649A
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 05:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F8121721
-	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 05:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B102F218A3
+	for <linux-next@archiver.kernel.org>; Fri,  5 Jul 2019 05:29:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562304553;
+	bh=ku9aEp+wapV1jAtHr82zZH6REpuJWRVS+GCf+tHXR7Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=KpWcdOViQAnEgBlQGnXJnyaop00JQS2zrQcwrvLrc3It+vfTnr7iNXeTuZSfAfbKr
+	 zE35ebAiESEXbS8kJD9jKv+k5ztfgLM8pEMaIwY9qyZrieUWB4y1YpTQexNNibV8rm
+	 06K6TFGEJhI4PGIoyfg+kHDrQ36XJhcoskaltdxA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfGEF1x (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 5 Jul 2019 01:27:53 -0400
-Received: from smtprelay0253.hostedemail.com ([216.40.44.253]:42180 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725772AbfGEF1x (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 5 Jul 2019 01:27:53 -0400
-X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Jul 2019 01:27:52 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 7D3E41801530B
-        for <linux-next@vger.kernel.org>; Fri,  5 Jul 2019 05:22:48 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 85F32181D3368;
-        Fri,  5 Jul 2019 05:22:46 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: level75_17cfce2dff144
-X-Filterd-Recvd-Size: 2521
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  5 Jul 2019 05:22:43 +0000 (UTC)
-Message-ID: <5f4680cce78573ecfbbdc0dfca489710581b966f.camel@perches.com>
-Subject: Re: mmotm 2019-07-04-15-01 uploaded (gpu/drm/i915/oa/)
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        id S1725681AbfGEF3J (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 5 Jul 2019 01:29:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725772AbfGEF3I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 5 Jul 2019 01:29:08 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 111B621850;
+        Fri,  5 Jul 2019 05:29:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562304547;
+        bh=ku9aEp+wapV1jAtHr82zZH6REpuJWRVS+GCf+tHXR7Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gpwsyMS6DRC1CwjjTw4nWYbfs5wE2bJ85FBSXW84XxfeYBs6quUOEtr8MLEJ6QcMZ
+         03jv6nY0lDeUSDRQOggVvU24ZcWC8z5wMyc53vkGgU4qbFnuhBeU8cBq+krJtoDFTV
+         5BAl2jqKEoiqIRjP7Qf7cwvYh0pBZRG2A96dQtGc=
+Date:   Thu, 4 Jul 2019 22:29:06 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Mark Brown <broonie@kernel.org>, linux-fsdevel@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -52,50 +56,43 @@ Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         Intel Graphics <intel-gfx@lists.freedesktop.org>,
         DRI <dri-devel@lists.freedesktop.org>,
         Chris Wilson <chris@chris-wilson.co.uk>
-Date:   Thu, 04 Jul 2019 22:22:41 -0700
-In-Reply-To: <20190704220931.f1bd2462907901f9e7aca686@linux-foundation.org>
+Subject: Re: mmotm 2019-07-04-15-01 uploaded (gpu/drm/i915/oa/)
+Message-Id: <20190704222906.f817d02cb248561edd84a669@linux-foundation.org>
+In-Reply-To: <5f4680cce78573ecfbbdc0dfca489710581b966f.camel@perches.com>
 References: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org>
-         <80bf2204-558a-6d3f-c493-bf17b891fc8a@infradead.org>
-         <CAK7LNAQc1xYoet1o8HJVGKuonUV40MZGpK7eHLyUmqet50djLw@mail.gmail.com>
-         <20190705131435.58c2be19@canb.auug.org.au>
-         <20190704220931.f1bd2462907901f9e7aca686@linux-foundation.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
-MIME-Version: 1.0
+        <80bf2204-558a-6d3f-c493-bf17b891fc8a@infradead.org>
+        <CAK7LNAQc1xYoet1o8HJVGKuonUV40MZGpK7eHLyUmqet50djLw@mail.gmail.com>
+        <20190705131435.58c2be19@canb.auug.org.au>
+        <20190704220931.f1bd2462907901f9e7aca686@linux-foundation.org>
+        <5f4680cce78573ecfbbdc0dfca489710581b966f.camel@perches.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, 2019-07-04 at 22:09 -0700, Andrew Morton wrote:
-> diff(1) doesn't seem to know how to handle a zero-length file.
+On Thu, 04 Jul 2019 22:22:41 -0700 Joe Perches <joe@perches.com> wrote:
+
+> > So when comparing a zero-length file with a non-existent file, diff
+> > produces no output.
 > 
-> y:/home/akpm> mkdir foo
-> y:/home/akpm> cd foo
-> y:/home/akpm/foo> touch x
-> y:/home/akpm/foo> diff -uN x y
-> y:/home/akpm/foo> date > x
-> y:/home/akpm/foo> diff -uN x y
-> --- x   2019-07-04 21:58:37.815028211 -0700
-> +++ y   1969-12-31 16:00:00.000000000 -0800
-> @@ -1 +0,0 @@
-> -Thu Jul  4 21:58:37 PDT 2019
+> Why use the -N option ?
 > 
-> So when comparing a zero-length file with a non-existent file, diff
-> produces no output.
+> $ diff --help
+> [...]
+>   -N, --new-file                  treat absent files as empty
+> 
+> otherwise
+> 
+> $ cd $(mktemp -d -p .)
+> $ touch x
+> $ diff -u x y
+> diff: y: No such file or directory
 
-Why use the -N option ?
-
-$ diff --help
-[...]
-  -N, --new-file                  treat absent files as empty
-
-otherwise
-
-$ cd $(mktemp -d -p .)
-$ touch x
-$ diff -u x y
-diff: y: No such file or directory
+Without -N diff fails and exits with an error.  -N does what's desired
+as long as the non-missing file isn't empty.
 
 
