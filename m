@@ -6,135 +6,110 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A99FC0650E
-	for <linux-next@archiver.kernel.org>; Sat,  6 Jul 2019 10:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2FDC0650E
+	for <linux-next@archiver.kernel.org>; Sat,  6 Jul 2019 13:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 401A4214AF
-	for <linux-next@archiver.kernel.org>; Sat,  6 Jul 2019 10:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67DD213F2
+	for <linux-next@archiver.kernel.org>; Sat,  6 Jul 2019 13:43:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b7vHXtwZ"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kgsc629a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbfGFKRf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 6 Jul 2019 06:17:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:55637 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfGFKRf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 6 Jul 2019 06:17:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45gnhW5FR1z9sNH;
-        Sat,  6 Jul 2019 20:17:31 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562408251;
-        bh=AkBkKuvoUszo/2p12KAGs/crBCu2b11bqfRt75EiBdA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=b7vHXtwZJ9ySr6nc4QvNapA1Z8eOwzSVk26y5VjecyWBEeGJfKUgHRDzNWI6M/G9i
-         42tL2U/2oQxtiltY6CHJzeEz7RAMno3XS0SJWaBJSeRFdcehW22CZwxMHhQPifGcve
-         lFfoEytyHZtdTjOc9lY53ltpgBtP0hkqmP5TfQcUQFinxD1pBiyPWYcwqnPiqTopoE
-         ARMKlxXf0Cu7+IqNw7NFZ07MXhoRpggQz+Lh4dNywCTvjRmVTvfZha5Pd7D721Inuq
-         LdkMmzQAU9VRqLh+BBiH5s53b1aZJ0dh+fkxjsBVHjw0kQQfhYL+Se1rOg/1YNkbNs
-         3ZS4KW1RMjSOg==
-Date:   Sat, 6 Jul 2019 20:17:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726362AbfGFNnf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 6 Jul 2019 09:43:35 -0400
+Received: from mail-eopbgr10079.outbound.protection.outlook.com ([40.107.1.79]:36071
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726065AbfGFNnf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 6 Jul 2019 09:43:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q2iz7yaacijSKO9oEt6QqOfXTsgWcAScl2A2PfWskYI=;
+ b=kgsc629aXVixMa93vgJH60agjG2e+InwqgPhGpqybPEYyXyKxjOLHGJciceTOjQi5OnHFBpMJyUrx42Jqphgvrg1GVL35//MWMrxeNStgq9ipJaJR1N6na/bZf3SbHkqtbMWcFpzsy9Lhp1gVSTWS8QChFIwvPeHsUrYSd1gOro=
+Received: from VE1PR04MB6638.eurprd04.prod.outlook.com (20.179.235.81) by
+ VE1PR04MB6383.eurprd04.prod.outlook.com (20.179.232.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.19; Sat, 6 Jul 2019 13:43:31 +0000
+Received: from VE1PR04MB6638.eurprd04.prod.outlook.com
+ ([fe80::a4a8:729f:e664:fa8]) by VE1PR04MB6638.eurprd04.prod.outlook.com
+ ([fe80::a4a8:729f:e664:fa8%2]) with mapi id 15.20.2052.019; Sat, 6 Jul 2019
+ 13:43:31 +0000
+From:   Robin Gong <yibin.gong@nxp.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Vinod Koul <vkoul@kernel.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        John Garry <john.garry@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for Jul 4
-Message-ID: <20190706201729.48548ede@canb.auug.org.au>
-In-Reply-To: <20190706094647.GA17929@kroah.com>
-References: <20190704220945.27728dd9@canb.auug.org.au>
-        <20190704222450.021c9d71@canb.auug.org.au>
-        <20190706083433.GB9249@kroah.com>
-        <20190706194412.64c15c42@canb.auug.org.au>
-        <20190706094647.GA17929@kroah.com>
+        Angelo Dureghello <angelo@sysam.it>
+Subject: RE: linux-next: build failure after merge of the slave-dma tree
+Thread-Topic: linux-next: build failure after merge of the slave-dma tree
+Thread-Index: AQHVMjqAoCw3ift/eE+RdAWMvGtRgaa75B+Q
+Date:   Sat, 6 Jul 2019 13:43:30 +0000
+Message-ID: <VE1PR04MB6638782ADA8BFB8A17BAF19D89F40@VE1PR04MB6638.eurprd04.prod.outlook.com>
+References: <20190704173108.0646eef8@canb.auug.org.au>
+In-Reply-To: <20190704173108.0646eef8@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com; 
+x-originating-ip: [116.232.30.238]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 883d7b9e-8af1-46c7-3963-08d70217ef02
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6383;
+x-ms-traffictypediagnostic: VE1PR04MB6383:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VE1PR04MB6383562C6038269C62748F8389F40@VE1PR04MB6383.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:669;
+x-forefront-prvs: 00909363D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(39860400002)(366004)(346002)(189003)(199004)(53754006)(256004)(74316002)(305945005)(7736002)(476003)(3846002)(229853002)(486006)(6246003)(6116002)(71200400001)(71190400001)(55016002)(9686003)(4744005)(6436002)(2906002)(6306002)(53936002)(64756008)(8676002)(52536014)(66446008)(81156014)(76116006)(8936002)(81166006)(66556008)(66476007)(66946007)(73956011)(5660300002)(86362001)(68736007)(25786009)(478600001)(966005)(4326008)(316002)(110136005)(54906003)(33656002)(99286004)(7696005)(446003)(14454004)(6506007)(186003)(66066001)(102836004)(76176011)(26005)(11346002)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6383;H:VE1PR04MB6638.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: iWzP0QFIFiDrnFPnmSeT9X2CPM//zHBhArQjMqBQNceA6k+/vyF/WwNYiukhOmKMCjVsl7OkWq9rOrqsk9Fbf4UZqI/quta2rjmiKqx158AFIa051dkMVDBuJY82sNb+U4n27Sp8NUT4YPQfHZPbENPOS3AA6THgF3r1IHzjevoe5nbLUXadSa0Ytftv/igVJBC/jJzHB+KAULriShMVJHgQtIUyaoIKKj74owy3MfKdAOk3ZOA3H93mxAPXPy3TKwoZUDxUZZP5P3+k9COy9SnK49g9THv4pNfvJePskYokRUPR8hw5dld76xt1SaEyiuW8L2vR3b8W0F4XUBrZD3ipwoC+RYzKw5mByY5zDtyjypq+iLR3nCUJbMkv0+ntSmzqAeo0PhEb/cScwPrIZ0bf8ncGrctW04x8YSGOT/s=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/P/pgJNsB/CxxTA7Im0mlgh5"; protocol="application/pgp-signature"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 883d7b9e-8af1-46c7-3963-08d70217ef02
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2019 13:43:31.2688
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yibin.gong@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6383
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/P/pgJNsB/CxxTA7Im0mlgh5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
+	That's caused by 'of_irq_count' NOT export to global symbol, and I'm curio=
+us why it has been
+here for so long since Zhangfei found it in 2015. https://patchwork.kernel.=
+org/patch/7404681/
+Hi Rob,
+	Is there something I miss so that Zhangfei's patch not accepted finally?
 
-Hi Greg,
-
-On Sat, 6 Jul 2019 11:46:47 +0200 Greg Kroah-Hartman <gregkh@linuxfoundatio=
-n.org> wrote:
->
-> On Sat, Jul 06, 2019 at 07:44:12PM +1000, Stephen Rothwell wrote:
-> >=20
-> > On Sat, 6 Jul 2019 10:34:33 +0200 Greg Kroah-Hartman <gregkh@linuxfound=
-ation.org> wrote: =20
-> > >
-> > > On Thu, Jul 04, 2019 at 10:24:50PM +1000, Stephen Rothwell wrote: =20
-> > > >=20
-> > > > This release produces a whole lot (over 200) of this message in my =
-qemu
-> > > > boot tests:
-> > > >=20
-> > > > [    1.698497] debugfs: File 'sched' already present!
-> > > >=20
-> > > > Introduced by commit
-> > > >=20
-> > > >   43e23b6c0b01 ("debugfs: log errors when something goes wrong")
-> > > >=20
-> > > > from the driver-core tree.  I assume that the error(?) was already
-> > > > happening, but it is now being reported.   =20
-> > >=20
-> > > What are you passing to qemu to get this?  I just tried it myself and
-> > > see no error reports at all.  Have a .config I can use to try to
-> > > reproduce this? =20
-> >=20
-> > It is a powerpc pseries_le_defconfig kernel and I run qemu like this:
-> >=20
-> > qemu-system-ppc64 -M pseries -m 2G -vga none -nographic -kernel vmlinux=
- -initrd rootfs.cpio.gz =20
+On 04-07-19, 15:31 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >=20
-> Hm, I think my rootfs initrd might be quite simple compared to yours (it
-> drops me into a busybox shell).  Any pointers to where you created yours
-> from?
-
-Michael Ellerman gave it to me.  It is very simple.  Its /init is just
-
-$ cat init
-#!/bin/sh
-# devtmpfs does not get automounted for initramfs
-/bin/mount -t devtmpfs devtmpfs /dev
-exec 0</dev/console
-exec 1>/dev/console
-exec 2>/dev/console
-exec /sbin/init $*
-
-and /sbin/init is a link to /bin/busybox
-
-It is all run by an expect script that just waits for the login:
-prompt, logs in a root and runs "halt".
-
-All the debugfs messages appear before the kernel finished booting.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/P/pgJNsB/CxxTA7Im0mlgh5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0gdTkACgkQAVBC80lX
-0GxtMwgAg65k4ek0yHkqfCBG5PI9RuZtSI0V6Uej7ZTeOsREdXsphNAqdrNdsaaQ
-f1I7g1Myw+HhY/j/NiWC6BNvdc78y3XqkiwhvwWnW5EHto+Fx9qtWEnIY2JB0xEn
-myCBt9EpYCMYVaoMxOZ1RHKUAJ5uavJRoQAHCltiarvJIYrvAIE0vuUqk4Xbd1GK
-tB9WZOQLbC3pvYlW+SFu/RtQmepWDNgv3iq4YJpU2MiYfAXvX1Fotqc3uSWCHaX6
-jRTtCiMFedZvnR1DYyEa1Zk5nh3bY5E5ZdGcXHwvUIwx3EV9BKrk5fAiG9pmj5c4
-k+63Prnj1+XZmElMZO5jNV1/iEpbuA==
-=LkZ1
------END PGP SIGNATURE-----
-
---Sig_/P/pgJNsB/CxxTA7Im0mlgh5--
+> After merging the slave-dma tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> ERROR: "of_irq_count" [drivers/dma/fsl-edma.ko] undefined!
+>=20
+> Caused by commit
+>=20
+>   7144afd025b2 ("dmaengine: fsl-edma: add i.mx7ulp edma2 version
+> support")
+>=20
+> I have reverted that commit for today.
+>=20
+> --
+> Cheers,
+> Stephen Rothwell
