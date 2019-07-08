@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 736F0C606BD
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 17:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA5EC606BD
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 17:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1244D20693
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 17:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26866216FD
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 17:33:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="aw4aSx+N"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="GzlIfLIk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbfGHREf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 13:04:35 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51100 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbfGHREf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2019 13:04:35 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v15so267852wml.0
-        for <linux-next@vger.kernel.org>; Mon, 08 Jul 2019 10:04:30 -0700 (PDT)
+        id S2388322AbfGHRdx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 13:33:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35721 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388360AbfGHRdw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2019 13:33:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y4so9469060wrm.2
+        for <linux-next@vger.kernel.org>; Mon, 08 Jul 2019 10:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=FDecmpUwSuDBazGGGuevCiJrzQ0DwOO/cCZw+pgOTP0=;
-        b=aw4aSx+NiupODloARaaZxrFJXkUphu/7xZQYV9Mj/Ku+fmaIoFZDGf0BfB01Ne6TCx
-         FCKcxHa0oNFlDDfaBovskSW8llMEatafnoNgH9rjUTe4YUe9pal2o+LhmPAmeiHQbrjd
-         Cxkc0IWsoHipiL52U30TdRHt2cmAyCQQhkOo+uHv/CVGlMKhdcc1zi2aXTtxJuFu4ApC
-         d6a+5nLRcpmKBGkYpoORPJvGlOaWAGC5LSv9hQ0jfTbYYujpht4qo2Fws+zB11Kqxa+C
-         Qj5If4YAPG7F3iC7DfXm2TD74JEhkFeZ8bEdyikErPUjNrGWX+wW5RdtLtJsO9EddUFc
-         eh2A==
+        bh=+kLSnFb2hcmIbtBgdjuAixE7Meqra5cCxz03t9Rd4X8=;
+        b=GzlIfLIkxto4RqJyMUq8b0lkyXruVoLLFr72wa8l5QpwX/XVTjBHYus609YuV48spn
+         860CbcBCRo2AJDAt4rVg8Hu2jjpgUM/4EYGcj/IAP3LYenTwBMT4PlXyEotcuKMFUQhZ
+         rCQsF3Isy0Q3ZnZLYxTnVqqagnalTx8fZfs1Blqecg3OBWCnn6ZbGjtfwz5e+ZekVJy/
+         BhYw3s/ItCkdVPHYRvIADvOReAIKgLoeTW+kyBM2AYOYYV4VcZsNOgAy51cD/uQDgqSD
+         hiYe8kY8IRLXXQbNVUrzJxrWlZ4ub1z3LIOh9dCl5wa/EsxunypTkWcC9dSmJ8ttQkfi
+         wvsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=FDecmpUwSuDBazGGGuevCiJrzQ0DwOO/cCZw+pgOTP0=;
-        b=n7ktEFxwb2fvAioLtGSrdNZKFrTxBIs+7IlrMR7j//MEFJy1uIU6+mxzTnlM5fTwip
-         LpTapYDj9skrO6TyiOm+oSvJNFk45RkpRT6KURuhJOhajlwyKYU8bI9CcMM6iw9YRnDt
-         sLA5rRMV5cgGH8ACFNehzDd4hF7WQmt6qS3QQhYPwEiW7IvzftWCw1jiI52278WGw+Q2
-         G03mFeVkU2BiBsjg0CHpCnrRySPcha2NfxQpV0f9LPzLEvy74xzasBrDtUgpEXt6agUZ
-         cN7tJKQF3D8ExlaTlHeRrVGOsbZu+JaIU9z1duQreirbJAWyYwQXeXPoNd53ubkkWJPV
-         j5+g==
-X-Gm-Message-State: APjAAAVhVHWmJe9dmpOGcz5fiiCzzl/6Rz3lii5c6nZeJlVd3WdVyA/p
-        uf9ECbWYdT8KIbJ7JKf/qe0X+qWkByxG+A==
-X-Google-Smtp-Source: APXvYqzBsVKSM+7r1H6FNt2JVrYBCqKafbB+QwSAblNquFOP18HNIttcNHXjJ/X1icB6Ep85aXawEQ==
-X-Received: by 2002:a1c:7e14:: with SMTP id z20mr17162406wmc.83.1562605467865;
-        Mon, 08 Jul 2019 10:04:27 -0700 (PDT)
+        bh=+kLSnFb2hcmIbtBgdjuAixE7Meqra5cCxz03t9Rd4X8=;
+        b=kGkMJWhBespllhSx3DQ1rZUIKyAwpJUqE7bcoCCWAnQTBM3JshADVkLXy9HsG6aZB0
+         uaz5VCzRxdaTYzli7kgaecGiEwI8RwSxyftPvHb1Ec8/1/yc7xAeTMTupZwYRhn+5tzb
+         p9RGxHUjK2w1OihHBSezWp+MpTfhhGFbhE1mcFKEZ1QyY+z6+oVNFbcgTITqFhY0T1Z8
+         Jjj3LHBXR3ipcHhdEHz/3p0A6GZrDXtU9ODAPBrGO75qI4u0PEvacROyPePJVbhDVMi7
+         aGKBbTElLt/W267vQHMQJkRUHXdCjHC1fshrkSvZTzPQPlI38Y3wE45Ynhcn04E2uIch
+         +zrQ==
+X-Gm-Message-State: APjAAAXr887tGdnEMWn0gyTveTICbAuTH18CvZYdM6Gv+FcOs+5mGDqZ
+        ZlfCrNUC1pSjvnc2UbQBHvT2X9r0lKS2xQ==
+X-Google-Smtp-Source: APXvYqwr7fdvmrsNLzdC8hsD7J4JOqo/UIbPIhCXD+xv4cD7ks5xtVf4GZTWAA3vV6iN7GbyJBt/ZA==
+X-Received: by 2002:a5d:62c9:: with SMTP id o9mr18689309wrv.186.1562607224585;
+        Mon, 08 Jul 2019 10:33:44 -0700 (PDT)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id t63sm185499wmt.6.2019.07.08.10.04.26
+        by smtp.gmail.com with ESMTPSA id b15sm17266494wrt.77.2019.07.08.10.33.42
         for <linux-next@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 10:04:27 -0700 (PDT)
-Message-ID: <5d23779b.1c69fb81.f16e2.14e0@mx.google.com>
-Date:   Mon, 08 Jul 2019 10:04:27 -0700 (PDT)
+        Mon, 08 Jul 2019 10:33:42 -0700 (PDT)
+Message-ID: <5d237e76.1c69fb81.241a7.50ee@mx.google.com>
+Date:   Mon, 08 Jul 2019 10:33:42 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.2-rc7-308-g8caf72b14e6d
-X-Kernelci-Branch: pending-fixes
+X-Kernelci-Kernel: next-20190708
+X-Kernelci-Branch: master
 X-Kernelci-Tree: next
-Subject: next/pending-fixes build: 223 builds: 0 failed, 223 passed,
- 119 warnings (v5.2-rc7-308-g8caf72b14e6d)
+Subject: next/master build: 228 builds: 6 failed, 222 passed, 3 errors,
+ 258 warnings (next-20190708)
 To:     linux-next@vger.kernel.org
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
@@ -72,242 +72,259 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes build: 223 builds: 0 failed, 223 passed, 119 warnings (v=
-5.2-rc7-308-g8caf72b14e6d)
+next/master build: 228 builds: 6 failed, 222 passed, 3 errors, 258 warnings=
+ (next-20190708)
 
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.2-rc7-308-g8caf72b14e6d/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190708/
 
 Tree: next
-Branch: pending-fixes
-Git Describe: v5.2-rc7-308-g8caf72b14e6d
-Git Commit: 8caf72b14e6d52d5ff1f19e8a80d854853b7f29b
+Branch: master
+Git Describe: next-20190708
+Git Commit: d58b5ab90ee7528126fd5833df7fc5bda8331ce8
 Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 Built: 7 unique architectures
 
-Warnings Detected:
+Build Failures Detected:
+
+arm64:
+    allmodconfig: (clang-8) FAIL
+    tinyconfig: (clang-8) FAIL
+    allmodconfig: (gcc-8) FAIL
+    tinyconfig: (gcc-8) FAIL
+
+arm:
+    allmodconfig: (gcc-8) FAIL
+
+x86_64:
+    tinyconfig: (gcc-8) FAIL
+
+Errors and Warnings Detected:
 
 arc:
 
 arm64:
-    allmodconfig (gcc-8): 48 warnings
+    allmodconfig (clang-8): 1 error, 23 warnings
+    allmodconfig (gcc-8): 1 error, 13 warnings
+    defconfig (clang-8): 3 warnings
+    defconfig (clang-8): 3 warnings
+    defconfig (clang-8): 3 warnings
+    defconfig (clang-8): 3 warnings
 
 arm:
-    integrator_defconfig (gcc-8): 2 warnings
-    multi_v4t_defconfig (gcc-8): 2 warnings
-    multi_v5_defconfig (gcc-8): 2 warnings
-    realview_defconfig (gcc-8): 2 warnings
-    s3c6400_defconfig (gcc-8): 2 warnings
-    u300_defconfig (gcc-8): 2 warnings
+    allmodconfig (gcc-8): 1 error, 2 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    multi_v7_defconfig (gcc-8): 6 warnings
+    pxa_defconfig (gcc-8): 1 warning
 
 i386:
 
 mips:
-    db1xxx_defconfig (gcc-8): 1 warning
-    malta_qemu_32r6_defconfig (gcc-8): 1 warning
-    rb532_defconfig (gcc-8): 1 warning
+    32r2el_defconfig (gcc-8): 3 warnings
+    32r2el_defconfig (gcc-8): 3 warnings
+    allnoconfig (gcc-8): 1 warning
+    ar7_defconfig (gcc-8): 2 warnings
+    ath25_defconfig (gcc-8): 2 warnings
+    ath79_defconfig (gcc-8): 2 warnings
+    bcm47xx_defconfig (gcc-8): 2 warnings
+    bcm63xx_defconfig (gcc-8): 1 warning
+    bigsur_defconfig (gcc-8): 6 warnings
+    bmips_be_defconfig (gcc-8): 1 warning
+    bmips_stb_defconfig (gcc-8): 1 warning
+    capcella_defconfig (gcc-8): 2 warnings
+    cavium_octeon_defconfig (gcc-8): 6 warnings
+    ci20_defconfig (gcc-8): 1 warning
+    cobalt_defconfig (gcc-8): 2 warnings
+    db1xxx_defconfig (gcc-8): 2 warnings
+    decstation_64_defconfig (gcc-8): 6 warnings
+    decstation_defconfig (gcc-8): 2 warnings
+    decstation_r4k_defconfig (gcc-8): 2 warnings
+    fuloong2e_defconfig (gcc-8): 6 warnings
+    gcw0_defconfig (gcc-8): 1 warning
+    gpr_defconfig (gcc-8): 2 warnings
+    ip22_defconfig (gcc-8): 2 warnings
+    ip27_defconfig (gcc-8): 6 warnings
+    ip28_defconfig (gcc-8): 6 warnings
+    ip32_defconfig (gcc-8): 6 warnings
+    jazz_defconfig (gcc-8): 2 warnings
+    jmr3927_defconfig (gcc-8): 1 warning
+    lasat_defconfig (gcc-8): 1 warning
+    lemote2f_defconfig (gcc-8): 6 warnings
+    loongson1b_defconfig (gcc-8): 2 warnings
+    loongson1c_defconfig (gcc-8): 2 warnings
+    loongson3_defconfig (gcc-8): 6 warnings
+    malta_defconfig (gcc-8): 2 warnings
+    malta_kvm_defconfig (gcc-8): 2 warnings
+    malta_kvm_guest_defconfig (gcc-8): 2 warnings
+    malta_qemu_32r6_defconfig (gcc-8): 4 warnings
+    maltaaprp_defconfig (gcc-8): 2 warnings
+    maltasmvp_defconfig (gcc-8): 2 warnings
+    maltasmvp_eva_defconfig (gcc-8): 2 warnings
+    maltaup_defconfig (gcc-8): 2 warnings
+    maltaup_xpa_defconfig (gcc-8): 2 warnings
+    markeins_defconfig (gcc-8): 2 warnings
+    mips_paravirt_defconfig (gcc-8): 6 warnings
+    mpc30x_defconfig (gcc-8): 2 warnings
+    msp71xx_defconfig (gcc-8): 2 warnings
+    mtx1_defconfig (gcc-8): 2 warnings
+    nlm_xlp_defconfig (gcc-8): 6 warnings
+    nlm_xlr_defconfig (gcc-8): 2 warnings
+    omega2p_defconfig (gcc-8): 1 warning
+    pic32mzda_defconfig (gcc-8): 2 warnings
+    pistachio_defconfig (gcc-8): 2 warnings
+    pnx8335_stb225_defconfig (gcc-8): 2 warnings
+    qi_lb60_defconfig (gcc-8): 2 warnings
+    rb532_defconfig (gcc-8): 3 warnings
+    rbtx49xx_defconfig (gcc-8): 2 warnings
+    rm200_defconfig (gcc-8): 2 warnings
+    rt305x_defconfig (gcc-8): 2 warnings
+    sb1250_swarm_defconfig (gcc-8): 4 warnings
+    tb0219_defconfig (gcc-8): 2 warnings
+    tb0226_defconfig (gcc-8): 2 warnings
+    tb0287_defconfig (gcc-8): 2 warnings
+    tinyconfig (gcc-8): 1 warning
+    vocore2_defconfig (gcc-8): 1 warning
+    workpad_defconfig (gcc-8): 2 warnings
+    xway_defconfig (gcc-8): 2 warnings
 
 riscv:
     rv32_defconfig (gcc-8): 4 warnings
 
 x86_64:
-    allmodconfig (gcc-8): 51 warnings
     tinyconfig (gcc-8): 1 warning
 
+Errors summary:
+
+    2    drivers/gpu/drm/amd/amdgpu/amdgpu_mn.h:69:20: error: field 'mirror=
+' has incomplete type
+    1    drivers/gpu/drm/amd/amdgpu/../amdgpu/amdgpu_mn.h:69:20: error: fie=
+ld has incomplete type 'struct hmm_mirror'
 
 Warnings summary:
 
-    10   warning: same module names found:
-    6    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-W=
-unused-variable]
-    6    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-W=
-unused-variable]
-    2    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: wa=
-rning: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larg=
-er-than=3D]
-    2    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame s=
-ize of 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    2    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame s=
-ize of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    2    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame s=
-ize of 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    2    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame=
- size of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    2    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size o=
-f 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    168  <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
+-Wcpp]
+    12   1 warning generated.
+    5    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning =
+(reg_format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 by=
+tes) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    5    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+size-cells value
+    5    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+address-cells value
+    5    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_=
+reg): Failed prerequisite 'reg_format'
+    5    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_devi=
+ce_bus_num): Failed prerequisite 'reg_format'
+    5    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_=
+reg): Failed prerequisite 'reg_format'
+    4    drivers/net/wireless/ath/ath10k/mac.c:7528:7: warning: variable 'v=
+ht_pfr' is used uninitialized whenever 'if' condition is false [-Wsometimes=
+-uninitialized]
+    4    drivers/net/wireless/ath/ath10k/mac.c:7483:12: note: initialize th=
+e variable 'vht_pfr' to silence this warning
     2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
 -Wcpp]
     2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
 d [-Wcpp]
+    2    2 warnings generated.
+    1    {standard input}:134: Warning: macro instruction expanded into mul=
+tiple instructions
     1    {standard input}:131: Warning: macro instruction expanded into mul=
 tiple instructions
-    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 byt=
+    1    net/wireless/nl80211.c:6481:1: warning: the frame size of 2128 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 byt=
+    1    net/wireless/nl80211.c:5117:1: warning: the frame size of 2784 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 byt=
+    1    net/wireless/nl80211.c:2363:1: warning: the frame size of 4640 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 byt=
-es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 byt=
-es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 byt=
-es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 byt=
-es is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 byt=
+    1    net/wireless/nl80211.c:1732:1: warning: the frame size of 2272 byt=
 es is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 b=
 ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 b=
-ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is =
-larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 by=
-tes is larger than 2048 bytes [-Wframe-larger-than=3D]
     1    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 by=
 tes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: =
-call to stackleak_track_stack() with UACCESS enabled
+    1    mm/shmem.c:2732:35: warning: variable 'shmem_falloc_waitq' is unin=
+itialized when used within its own initialization [-Wuninitialized]
+    1    fs/proc/proc_sysctl.c:701:35: warning: variable 'wq' is uninitiali=
+zed when used within its own initialization [-Wuninitialized]
+    1    fs/proc/base.c:1876:35: warning: variable 'wq' is uninitialized wh=
+en used within its own initialization [-Wuninitialized]
     1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is =
+    1    fs/ocfs2/super.c:1186:1: warning: the frame size of 3184 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is =
+    1    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is =
-larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2064 bytes is =
-larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2616 bytes is =
-larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2576 bytes is =
+    1    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is =
 larger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 =
 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 =
-bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/dir.c:3080:1: warning: the frame size of 2056 bytes is la=
-rger than 2048 bytes [-Wframe-larger-than=3D]
     1    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is l=
 arger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is l=
-arger than 2048 bytes [-Wframe-larger-than=3D]
-    1    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitial=
-ized in this function [-Wmaybe-uninitialized]
-    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
-he frame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=
-=3D]
-    1    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: t=
-he frame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=
-=3D]
-    1    drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the =
-frame size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the=
- frame size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
-:1: warning: the frame size of 2528 bytes is larger than 2048 bytes [-Wfram=
-e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034=
-:1: warning: the frame size of 2440 bytes is larger than 2048 bytes [-Wfram=
-e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
-:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wfram=
-e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905=
-:1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wfram=
-e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
-:1: warning: the frame size of 3168 bytes is larger than 2048 bytes [-Wfram=
-e-larger-than=3D]
-    1    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563=
-:1: warning: the frame size of 3152 bytes is larger than 2048 bytes [-Wfram=
-e-larger-than=3D]
-    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
-me size of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the fra=
-me size of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    fs/nfs/dir.c:455:34: warning: variable 'wq' is uninitialized when =
+used within its own initialization [-Wuninitialized]
+    1    fs/nfs/dir.c:1583:34: warning: variable 'wq' is uninitialized when=
+ used within its own initialization [-Wuninitialized]
+    1    fs/namei.c:3136:34: warning: variable 'wq' is uninitialized when u=
+sed within its own initialization [-Wuninitialized]
+    1    fs/namei.c:1646:34: warning: variable 'wq' is uninitialized when u=
+sed within its own initialization [-Wuninitialized]
+    1    fs/fuse/readdir.c:161:34: warning: variable 'wq' is uninitialized =
+when used within its own initialization [-Wuninitialized]
+    1    fs/cifs/readdir.c:83:34: warning: variable 'wq' is uninitialized w=
+hen used within its own initialization [-Wuninitialized]
+    1    fs/ceph/super.c:850:6: warning: variable 'err' is used uninitializ=
+ed whenever 'if' condition is false [-Wsometimes-uninitialized]
+    1    fs/ceph/super.c:843:9: note: initialize the variable 'err' to sile=
+nce this warning
+    1    fs/afs/dir_silly.c:205:34: warning: variable 'wq' is uninitialized=
+ when used within its own initialization [-Wuninitialized]
+    1    drivers/net/ethernet/cadence/macb_main.c:48:39: warning: 'mgmt' de=
+fined but not used [-Wunused-variable]
     1    drivers/mtd/nand/raw/au1550nd.c:443:57: warning: pointer type mism=
 atch in conditional expression
-    1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
-48 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 28=
-40 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the fra=
-me size of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the fra=
-me size of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968=
- bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952=
- bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096=
- bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame s=
-ize of 2104 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame s=
-ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame s=
-ize of 2808 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame s=
-ize of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame s=
-ize of 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame s=
-ize of 5880 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame s=
-ize of 2328 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame s=
-ize of 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame s=
-ize of 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame s=
-ize of 2568 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame s=
-ize of 3288 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame s=
-ize of 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame s=
-ize of 3016 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame s=
-ize of 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame s=
-ize of 5320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame s=
-ize of 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame s=
-ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame s=
-ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame s=
-ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame s=
-ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame s=
-ize of 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame s=
-ize of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
- size of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame=
- size of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable '=
-i' [-Wunused-variable]
-    1    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable =
-'i' [-Wunused-variable]
-    1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
-frame size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the =
-frame size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
+    1    drivers/bluetooth/bluecard_cs.c:282:36: warning: variable 'wq' is =
+uninitialized when used within its own initialization [-Wuninitialized]
     1    drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable 'info=
 ' [-Wunused-variable]
-    1    arch/x86/kvm/x86.c:4296:1: warning: the frame size of 2168 bytes i=
-s larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2=
-856 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    1    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+    1    /tmp/ccOaxw5c.s:18191: Warning: using r15 results in unpredictable=
+ behaviour
+    1    /tmp/ccOaxw5c.s:18119: Warning: using r15 results in unpredictable=
+ behaviour
+    1    .config:1176:warning: override: UNWINDER_GUESS changes choice state
+
+Section mismatches summary:
+
+    3    FATAL: modpost: Section mismatches detected.
+    1    WARNING: vmlinux.o(.meminit.text+0x5c0): Section mismatch in refer=
+ence from the function sparse_buffer_alloc() to the function .init.text:spa=
+rse_buffer_free()
+    1    WARNING: vmlinux.o(.meminit.text+0x430): Section mismatch in refer=
+ence from the function sparse_buffer_alloc() to the function .init.text:spa=
+rse_buffer_free()
+    1    WARNING: vmlinux.o(.meminit.text+0x33ba): Section mismatch in refe=
+rence from the function sparse_buffer_alloc() to the function .init.text:sp=
+arse_buffer_free()
+    1    WARNING: vmlinux.o(.meminit.text+0x2da4): Section mismatch in refe=
+rence from the function sparse_buffer_alloc() to the function .init.text:sp=
+arse_buffer_free()
+    1    WARNING: vmlinux.o(.meminit.text+0x27e7): Section mismatch in refe=
+rence from the function sparse_buffer_alloc() to the function .init.text:sp=
+arse_buffer_free()
+    1    WARNING: vmlinux.o(.meminit.text+0x2360): Section mismatch in refe=
+rence from the function sparse_buffer_alloc() to the function .init.text:sp=
+arse_buffer_free()
+    1    WARNING: vmlinux.o(.meminit.text+0x1a9f): Section mismatch in refe=
+rence from the function sparse_buffer_alloc() to the function .init.text:sp=
+arse_buffer_free()
 
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
@@ -318,13 +335,23 @@ Detailed per-defconfig build reports:
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnin=
+32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnin=
 gs, 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -338,213 +365,112 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 51 warnings, 0 secti=
+allmodconfig (arm64, clang-8) =E2=80=94 FAIL, 1 error, 23 warnings, 0 secti=
 on mismatches
 
+Errors:
+    drivers/gpu/drm/amd/amdgpu/../amdgpu/amdgpu_mn.h:69:20: error: field ha=
+s incomplete type 'struct hmm_mirror'
+
 Warnings:
-    arch/x86/kernel/cpu/mshyperv.c:340:1: warning: the frame size of 2856 b=
-ytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    arch/x86/kvm/x86.c:4296:1: warning: the frame size of 2168 bytes is lar=
-ger than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2080 bytes=
- is larger than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/aops.c:1892:1: warning: the frame size of 2112 bytes is larger=
- than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/dir.c:3080:1: warning: the frame size of 2056 bytes is larger =
-than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2616 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/super.c:1204:1: warning: the frame size of 3368 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2224 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    net/bridge/br_netlink.c:1505:1: warning: the frame size of 2696 bytes i=
-s larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/caif/cfctrl.c:549:1: warning: the frame size of 2608 bytes is large=
-r than 2048 bytes [-Wframe-larger-than=3D]
-    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2224 bytes =
-is larger than 2048 bytes [-Wframe-larger-than=3D]
-    lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x59: call =
-to stackleak_track_stack() with UACCESS enabled
-    net/wireless/nl80211.c:1729:1: warning: the frame size of 2280 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:6473:1: warning: the frame size of 2112 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:2360:1: warning: the frame size of 4592 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:5109:1: warning: the frame size of 2776 bytes is=
- larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
- size of 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
-0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
-f 3016 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
-f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
-f 2328 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
-f 2104 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
-f 3288 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
-f 5320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
-f 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
-f 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
-f 2808 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
-f 2088 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
-f 2568 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
-f 5880 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
-f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
-f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
- of 2720 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
- of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3952 byte=
-s is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
-ze of 2128 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2840 by=
-tes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
-ze of 2360 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
-arning: the frame size of 3152 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
-arning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
-arning: the frame size of 2440 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
-ame size of 2792 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/ralink/rt2x00/rt2500usb.c:880:1: warning: the fram=
-e size of 2472 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/ralink/rt2x00/rt73usb.c:1283:1: warning: the frame=
- size of 2656 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
-: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
-an=3D]
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
+    mm/shmem.c:2732:35: warning: variable 'shmem_falloc_waitq' is uninitial=
+ized when used within its own initialization [-Wuninitialized]
+    1 warning generated.
+    fs/proc/base.c:1876:35: warning: variable 'wq' is uninitialized when us=
+ed within its own initialization [-Wuninitialized]
+    1 warning generated.
+    fs/proc/proc_sysctl.c:701:35: warning: variable 'wq' is uninitialized w=
+hen used within its own initialization [-Wuninitialized]
+    1 warning generated.
+    fs/namei.c:1646:34: warning: variable 'wq' is uninitialized when used w=
+ithin its own initialization [-Wuninitialized]
+    fs/namei.c:3136:34: warning: variable 'wq' is uninitialized when used w=
+ithin its own initialization [-Wuninitialized]
+    2 warnings generated.
+    fs/afs/dir_silly.c:205:34: warning: variable 'wq' is uninitialized when=
+ used within its own initialization [-Wuninitialized]
+    1 warning generated.
+    fs/ceph/super.c:850:6: warning: variable 'err' is used uninitialized wh=
+enever 'if' condition is false [-Wsometimes-uninitialized]
+    fs/ceph/super.c:843:9: note: initialize the variable 'err' to silence t=
+his warning
+    1 warning generated.
+    fs/cifs/readdir.c:83:34: warning: variable 'wq' is uninitialized when u=
+sed within its own initialization [-Wuninitialized]
+    1 warning generated.
+    drivers/bluetooth/bluecard_cs.c:282:36: warning: variable 'wq' is unini=
+tialized when used within its own initialization [-Wuninitialized]
+    1 warning generated.
+    fs/fuse/readdir.c:161:34: warning: variable 'wq' is uninitialized when =
+used within its own initialization [-Wuninitialized]
+    1 warning generated.
+    fs/nfs/dir.c:455:34: warning: variable 'wq' is uninitialized when used =
+within its own initialization [-Wuninitialized]
+    fs/nfs/dir.c:1583:34: warning: variable 'wq' is uninitialized when used=
+ within its own initialization [-Wuninitialized]
+    2 warnings generated.
+
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x2360): Section mismatch in reference=
+ from the function sparse_buffer_alloc() to the function .init.text:sparse_=
+buffer_free()
 
 ---------------------------------------------------------------------------=
 -----
-allmodconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 48 warnings, 0 sectio=
-n mismatches
+allmodconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 2 warnings, 0 section mi=
+smatches
+
+Errors:
+    drivers/gpu/drm/amd/amdgpu/amdgpu_mn.h:69:20: error: field 'mirror' has=
+ incomplete type
 
 Warnings:
-    fs/btrfs/props.c:389:4: warning: 'num_bytes' may be used uninitialized =
-in this function [-Wmaybe-uninitialized]
+    /tmp/ccOaxw5c.s:18119: Warning: using r15 results in unpredictable beha=
+viour
+    /tmp/ccOaxw5c.s:18191: Warning: using r15 results in unpredictable beha=
+viour
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (arm64, gcc-8) =E2=80=94 FAIL, 1 error, 13 warnings, 0 section=
+ mismatches
+
+Errors:
+    drivers/gpu/drm/amd/amdgpu/amdgpu_mn.h:69:20: error: field 'mirror' has=
+ incomplete type
+
+Warnings:
     net/bridge/br_netlink.c:1505:1: warning: the frame size of 2688 bytes i=
 s larger than 2048 bytes [-Wframe-larger-than=3D]
     net/caif/cfctrl.c:549:1: warning: the frame size of 2512 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/dlm/dlmrecovery.c:737:1: warning: the frame size of 2112 bytes=
  is larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 bytes =
-is larger than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/aops.c:1892:1: warning: the frame size of 2128 bytes is larger=
  than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2064 bytes is large=
+    fs/ocfs2/namei.c:2050:1: warning: the frame size of 2080 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2576 bytes is large=
+    fs/ocfs2/namei.c:1677:1: warning: the frame size of 2592 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
-    fs/ocfs2/super.c:1204:1: warning: the frame size of 3376 bytes is large=
+    net/ieee802154/nl802154.c:548:1: warning: the frame size of 2256 bytes =
+is larger than 2048 bytes [-Wframe-larger-than=3D]
+    fs/ocfs2/super.c:1186:1: warning: the frame size of 3184 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
     fs/ocfs2/xattr.c:3678:1: warning: the frame size of 2352 bytes is large=
 r than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable 'i' [=
--Wunused-variable]
-    drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable 'i' [-=
-Wunused-variable]
-    drivers/gpu/drm/panel/panel-sitronix-st7701.c:198:1: warning: the frame=
- size of 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:1729:1: warning: the frame size of 2272 bytes is=
+    net/wireless/nl80211.c:1732:1: warning: the frame size of 2272 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:6473:1: warning: the frame size of 2128 bytes is=
+    net/wireless/nl80211.c:6481:1: warning: the frame size of 2128 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:2360:1: warning: the frame size of 4640 bytes is=
+    net/wireless/nl80211.c:2363:1: warning: the frame size of 4640 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    net/wireless/nl80211.c:5109:1: warning: the frame size of 2784 bytes is=
+    net/wireless/nl80211.c:5117:1: warning: the frame size of 2784 bytes is=
  larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/gpu/drm/tinydrm/ili9225.c:289:1: warning: the frame size of 272=
-0 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1842:1: warning: the frame size o=
-f 3008 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2125:1: warning: the frame size o=
-f 2096 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2496:1: warning: the frame size o=
-f 2320 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:4568:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1940:1: warning: the frame size o=
-f 3280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1583:1: warning: the frame size o=
-f 5312 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1111:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1195:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:4253:1: warning: the frame size o=
-f 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:1152:1: warning: the frame size o=
-f 2080 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:2057:1: warning: the frame size o=
-f 2576 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:3078:1: warning: the frame size o=
-f 5888 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv090x.c:3419:1: warning: the frame size o=
-f 5280 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/stv0367.c:1902:1: warning: the frame size o=
-f 3296 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/cxd2841er.c:3123:1: warning: the frame size=
- of 2736 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/dvb-frontends/cxd2841er.c:3630:1: warning: the frame size=
- of 2784 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/i2c/tvp5150.c:253:1: warning: the frame size of 3968 byte=
-s is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/i2c/mt9t112.c:480:1: warning: the frame size of 2096 byte=
-s is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/pci/saa7134/saa7134-cards.c:8074:1: warning: the frame si=
-ze of 2144 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/media/tuners/r820t.c:1327:1: warning: the frame size of 2848 by=
-tes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/ethernet/rocker/rocker_ofdpa.c:559:1: warning: the frame si=
-ze of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: w=
-arning: the frame size of 3168 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: w=
-arning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26034:1: w=
-arning: the frame size of 2528 bytes is larger than 2048 bytes [-Wframe-lar=
-ger-than=3D]
-    drivers/net/wireless/realtek/rtl818x/rtl8180/rtl8225se.c:428:1: warning=
-: the frame size of 4208 bytes is larger than 2048 bytes [-Wframe-larger-th=
-an=3D]
-    drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c:2924:1: warning: the fr=
-ame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=3D]
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
-    warning: same module names found:
+
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x2da4): Section mismatch in reference=
+ from the function sparse_buffer_alloc() to the function .init.text:sparse_=
+buffer_free()
 
 ---------------------------------------------------------------------------=
 -----
@@ -568,8 +494,16 @@ mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
+allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -588,8 +522,12 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
  mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -613,13 +551,21 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -648,38 +594,71 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
 ion mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
+tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
 ction mismatches
 
----------------------------------------------------------------------------=
------
-bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
 ction mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
  0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -688,8 +667,11 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -713,8 +695,12 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -743,32 +729,62 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
+db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+ion mismatches
 
 Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     drivers/mtd/nand/raw/au1550nd.c:443:57: warning: pointer type mismatch =
 in conditional expression
 
 ---------------------------------------------------------------------------=
 -----
-decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
  0 section mismatches
 
----------------------------------------------------------------------------=
------
-decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings=
 , 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
 defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, clang-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section =
+mismatches
+
+Warnings:
+    drivers/net/wireless/ath/ath10k/mac.c:7528:7: warning: variable 'vht_pf=
+r' is used uninitialized whenever 'if' condition is false [-Wsometimes-unin=
+itialized]
+    drivers/net/wireless/ath/ath10k/mac.c:7483:12: note: initialize the var=
+iable 'vht_pfr' to silence this warning
+    1 warning generated.
 
 ---------------------------------------------------------------------------=
 -----
@@ -782,13 +798,52 @@ defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
 
 ---------------------------------------------------------------------------=
 -----
+defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, clang-8) =E2=80=94 PASS, 0 erro=
+rs, 3 warnings, 0 section mismatches
+
+Warnings:
+    drivers/net/wireless/ath/ath10k/mac.c:7528:7: warning: variable 'vht_pf=
+r' is used uninitialized whenever 'if' condition is false [-Wsometimes-unin=
+itialized]
+    drivers/net/wireless/ath/ath10k/mac.c:7483:12: note: initialize the var=
+iable 'vht_pfr' to silence this warning
+    1 warning generated.
+
+---------------------------------------------------------------------------=
+-----
 defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
 , 0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, clang-8) =E2=80=94 PASS, 0 erro=
+rs, 3 warnings, 0 section mismatches
+
+Warnings:
+    drivers/net/wireless/ath/ath10k/mac.c:7528:7: warning: variable 'vht_pf=
+r' is used uninitialized whenever 'if' condition is false [-Wsometimes-unin=
+itialized]
+    drivers/net/wireless/ath/ath10k/mac.c:7483:12: note: initialize the var=
+iable 'vht_pfr' to silence this warning
+    1 warning generated.
+
+---------------------------------------------------------------------------=
+-----
 defconfig+kselftest (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+kselftest (arm64, clang-8) =E2=80=94 PASS, 0 errors, 3 warnings, =
+0 section mismatches
+
+Warnings:
+    drivers/net/wireless/ath/ath10k/mac.c:7528:7: warning: variable 'vht_pf=
+r' is used uninitialized whenever 'if' condition is false [-Wsometimes-unin=
+itialized]
+    drivers/net/wireless/ath/ath10k/mac.c:7483:12: note: initialize the var=
+iable 'vht_pfr' to silence this warning
+    1 warning generated.
 
 ---------------------------------------------------------------------------=
 -----
@@ -798,11 +853,6 @@ section mismatches
 ---------------------------------------------------------------------------=
 -----
 dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
  mismatches
 
 ---------------------------------------------------------------------------=
@@ -847,13 +897,24 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -862,8 +923,12 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
  mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -927,14 +992,8 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
-
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -953,23 +1012,51 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -978,13 +1065,20 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1008,28 +1102,55 @@ lart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
+lasat_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 se=
 ction mismatches
 
----------------------------------------------------------------------------=
------
-loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-loongson3_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 =
+section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+loongson3_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1063,57 +1184,97 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warning=
-s, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning=
-, 0 section mismatches
 
 Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warning=
+s, 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 4 warning=
+s, 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     {standard input}:131: Warning: macro instruction expanded into multiple=
  instructions
+    {standard input}:134: Warning: macro instruction expanded into multiple=
+ instructions
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
 
----------------------------------------------------------------------------=
------
-maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings,=
  0 section mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
 
----------------------------------------------------------------------------=
------
-maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+maltaup_xpa_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0=
+ section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+markeins_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
 ction mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1127,8 +1288,16 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+mips_paravirt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings,=
  0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1142,8 +1311,12 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1152,60 +1325,141 @@ mps2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+msp71xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
+multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sec=
 tion mismatches
 
 Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
 multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm, gcc-8) =E2=80=94 PASS, 0=
- errors, 0 warnings, 0 section mismatches
+ errors, 6 warnings, 0 section mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
 multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
-=94 PASS, 0 errors, 0 warnings, 0 section mismatches
+=94 PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 =
+multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 =
 warnings, 0 section mismatches
 
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
+
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warni=
+multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 warni=
 ngs, 0 section mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
 
 ---------------------------------------------------------------------------=
 -----
@@ -1239,23 +1493,30 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-netx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
 nhk8815_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1309,8 +1570,11 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1334,13 +1598,21 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
 ection mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1349,8 +1621,12 @@ pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings=
 , 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1379,8 +1655,12 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
+pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+ismatches
+
+Warnings:
+    drivers/net/ethernet/cadence/macb_main.c:48:39: warning: 'mgmt' defined=
+ but not used [-Wunused-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1389,38 +1669,46 @@ qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
+rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 secti=
+on mismatches
 
 Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
     drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable 'info' [-W=
 unused-variable]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 se=
 ction mismatches
 
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
 ---------------------------------------------------------------------------=
 -----
-realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
+realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
-
 ---------------------------------------------------------------------------=
 -----
-rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 secti=
 on mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1429,8 +1717,12 @@ mismatches
 
 ---------------------------------------------------------------------------=
 -----
-rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1452,14 +1744,8 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1473,8 +1759,14 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
+sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 4 warnings, =
 0 section mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1533,18 +1825,30 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
-tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
 ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1563,16 +1867,28 @@ smatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+tinyconfig (arm64, gcc-8) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section m=
 ismatches
+
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x430): Section mismatch in reference =
+from the function sparse_buffer_alloc() to the function .init.text:sparse_b=
+uffer_free()
+    FATAL: modpost: Section mismatches detected.
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+tinyconfig (x86_64, gcc-8) =E2=80=94 FAIL, 0 errors, 1 warning, 0 section m=
 ismatches
 
 Warnings:
-    .config:1167:warning: override: UNWINDER_GUESS changes choice state
+    .config:1176:warning: override: UNWINDER_GUESS changes choice state
+
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x1a9f): Section mismatch in reference=
+ from the function sparse_buffer_alloc() to the function .init.text:sparse_=
+buffer_free()
+    FATAL: modpost: Section mismatches detected.
 
 ---------------------------------------------------------------------------=
 -----
@@ -1581,13 +1897,27 @@ matches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
+tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mis=
+matches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
 tinyconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm64, clang-8) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x5c0): Section mismatch in reference =
+from the function sparse_buffer_alloc() to the function .init.text:sparse_b=
+uffer_free()
+    FATAL: modpost: Section mismatches detected.
 
 ---------------------------------------------------------------------------=
 -----
@@ -1601,14 +1931,8 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
  mismatches
-
-Warnings:
-    arch/arm/mm/init.c:453:13: warning: unused variable 'itcm_end' [-Wunuse=
-d-variable]
-    arch/arm/mm/init.c:452:13: warning: unused variable 'dtcm_end' [-Wunuse=
-d-variable]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1647,8 +1971,11 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
+vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1657,18 +1984,32 @@ vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
 
 ---------------------------------------------------------------------------=
 -----
-workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
 tion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
 x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x27e7): Section mismatch in reference=
+ from the function sparse_buffer_alloc() to the function .init.text:sparse_=
+buffer_free()
+
 ---------------------------------------------------------------------------=
 -----
 x86_64_defconfig+kselftest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warn=
 ings, 0 section mismatches
+
+Section mismatches:
+    WARNING: vmlinux.o(.meminit.text+0x33ba): Section mismatch in reference=
+ from the function sparse_buffer_alloc() to the function .init.text:sparse_=
+buffer_free()
 
 ---------------------------------------------------------------------------=
 -----
@@ -1677,8 +2018,12 @@ xcep_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
-xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
 n mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
 
 ---------------------------------------------------------------------------=
 -----
