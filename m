@@ -2,85 +2,84 @@ Return-Path: <SRS0=9mSK=VF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37FFC606CF
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 23:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6922BC606B0
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 23:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E2C2082A
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 23:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39CDF21707
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 23:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nz5TC8cs"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Be2aSVix"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725840AbfGHXxY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 19:53:24 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:55225 "EHLO ozlabs.org"
+        id S1726344AbfGHXyX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 19:54:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:34065 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbfGHXxY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Jul 2019 19:53:24 -0400
+        id S1725993AbfGHXyX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jul 2019 19:54:23 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jMhy09TKz9s7T;
-        Tue,  9 Jul 2019 09:53:21 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jMk20xDHz9s7T;
+        Tue,  9 Jul 2019 09:54:17 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562630002;
-        bh=2T2JsOmtRI9BYzCgGS52aR+LQlC+ky3qjxLHPZyECDo=;
+        s=201702; t=1562630058;
+        bh=gOYRu03WWqu7L/f3yQkGINmxsWCd6L335EB9ew580Rk=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nz5TC8csNcNYbfCvNfPZXaqRRneBg0OxZgg8dDOBBa2CvpLe50D+Xta5apuBU6d98
-         rKVCUHjkQU8YHA7RM6k/dkOjbEQUmjKR2/yrfle2/ylZIZRthNgKpX3aGob2Y/WbVC
-         EHhtDelB00nTH43TFby9dPTwLUcw/ZTlCqqO4mcik5Um8azWoYMO+vfkzlw6/BPfp3
-         yglsTiAwSIvYlFQA0hsHO1HpKPyaPgTexzEKoT6iFFwqMyG1uRjBs6Q57m685exWOv
-         bYYmuo3YSsjxB4QnIt/UgOlcpLRAkyqn6J/y+S4W3WxJHrWt/EnNHC1eiVbzsxZFf5
-         WxitGCWLoBF8Q==
-Date:   Tue, 9 Jul 2019 09:53:21 +1000
+        b=Be2aSVix6DOPCOLNTiWbVWlGKyMny0xjLT4kvGujkvFmQ4ozD1GmxLdf9JueCKwBq
+         ZS7oWqJq5vLePh4kF7PFz7EtBVpri5HiYUcj6ddnhxPclUovv1qnYhEzmYoTHI/yVk
+         VMEWl98NPHlEf4NW0H0QLN1C6HhOHA2Ny5VftP2dAlc02l+F/p+lJoFcsHBk7sa7I7
+         DZTd83bLjtmI9junTvpQ4abcuEO3NURSAgiU9poowiTWPNMTBkp4uz976Hxe+FZkJf
+         Dw1a+6DvNN/Nj7hByw541T57Vsi4qlmGPN1AChZeHz/hjjTulAKO6HJjFLNDnv5aMA
+         z1IQ376Q2/AVg==
+Date:   Tue, 9 Jul 2019 09:54:17 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Jonathan Corbet <corbet@lwn.net>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Aaron Lewis <aaronlewis@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Huth <thuth@redhat.com>
-Subject: Re: linux-next: manual merge of the kvms390 tree with Linus' tree
-Message-ID: <20190709095321.79175dfe@canb.auug.org.au>
-In-Reply-To: <20190621154315.0a4d5f54@canb.auug.org.au>
-References: <20190621154315.0a4d5f54@canb.auug.org.au>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: linux-next: manual merge of the drm tree with the jc_docs tree
+Message-ID: <20190709095417.01294540@canb.auug.org.au>
+In-Reply-To: <20190624134147.4950d388@canb.auug.org.au>
+References: <20190624134147.4950d388@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AJIC0XyY/9f0gT_N3IIHmKI"; protocol="application/pgp-signature"
+ boundary="Sig_/NatE95c_++FnJscnxmHTBtt"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/AJIC0XyY/9f0gT_N3IIHmKI
+--Sig_/NatE95c_++FnJscnxmHTBtt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 21 Jun 2019 15:43:15 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Mon, 24 Jun 2019 13:41:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >=20
-> Today's linux-next merge of the kvms390 tree got a conflict in:
+> Today's linux-next merge of the drm tree got a conflict in:
 >=20
->   tools/testing/selftests/kvm/Makefile
+>   Documentation/fb/modedb.rst
 >=20
 > between commit:
 >=20
->   61cfcd545e42 ("kvm: tests: Sort tests in the Makefile alphabetically")
+>   ab42b818954c ("docs: fb: convert docs to ReST and rename to *.rst")
 >=20
-> from Linus' tree and commits:
+> from the jc_docs tree and commit:
 >=20
->   ee1563f42856 ("KVM: selftests: Add the sync_regs test for s390x")
->   49fe9a5d1638 ("KVM: selftests: Move kvm_create_max_vcpus test to generi=
-c code")
+>   1bf4e09227c3 ("drm/modes: Allow to specify rotation and reflection on t=
+he commandline")
 >=20
-> from the kvms390 tree.
+> from the drm tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -93,53 +92,54 @@ c code")
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc tools/testing/selftests/kvm/Makefile
-> index 62afd0b43074,0d7265da1583..000000000000
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@@ -10,25 -10,29 +10,30 @@@ UNAME_M :=3D $(shell uname -m
->   LIBKVM =3D lib/assert.c lib/elf.c lib/io.c lib/kvm_util.c lib/ucall.c l=
-ib/sparsebit.c
->   LIBKVM_x86_64 =3D lib/x86_64/processor.c lib/x86_64/vmx.c
->   LIBKVM_aarch64 =3D lib/aarch64/processor.c
-> + LIBKVM_s390x =3D lib/s390x/processor.c
+> diff --cc Documentation/fb/modedb.rst
+> index 3c2397293977,1dd5a52f9390..000000000000
+> --- a/Documentation/fb/modedb.rst
+> +++ b/Documentation/fb/modedb.rst
+> @@@ -45,18 -45,29 +45,32 @@@ signals (e.g. HDMI and DVI-I). For othe
+>   is specified the output is disabled.
 >  =20
->  -TEST_GEN_PROGS_x86_64 =3D x86_64/platform_info_test
->  -TEST_GEN_PROGS_x86_64 +=3D x86_64/set_sregs_test
->  -TEST_GEN_PROGS_x86_64 +=3D x86_64/sync_regs_test
->  -TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_tsc_adjust_test
->  -TEST_GEN_PROGS_x86_64 +=3D x86_64/cr4_cpuid_sync_test
->  -TEST_GEN_PROGS_x86_64 +=3D x86_64/state_test
->  +TEST_GEN_PROGS_x86_64 =3D x86_64/cr4_cpuid_sync_test
->   TEST_GEN_PROGS_x86_64 +=3D x86_64/evmcs_test
->   TEST_GEN_PROGS_x86_64 +=3D x86_64/hyperv_cpuid
-> - TEST_GEN_PROGS_x86_64 +=3D x86_64/kvm_create_max_vcpus
->  -TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_close_while_nested_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/mmio_warning_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/platform_info_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/set_sregs_test
->   TEST_GEN_PROGS_x86_64 +=3D x86_64/smm_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/state_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/sync_regs_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_close_while_nested_test
->   TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_set_nested_state_test
->  -TEST_GEN_PROGS_x86_64 +=3D kvm_create_max_vcpus
->  -TEST_GEN_PROGS_x86_64 +=3D dirty_log_test
->  +TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_tsc_adjust_test
->   TEST_GEN_PROGS_x86_64 +=3D clear_dirty_log_test
->  +TEST_GEN_PROGS_x86_64 +=3D dirty_log_test
-> ++TEST_GEN_PROGS_x86_64 +=3D kvm_create_max_vcpus
+>   You can additionally specify which output the options matches to.
+>  -To force the VGA output to be enabled and drive a specific mode say:
+>  +To force the VGA output to be enabled and drive a specific mode say::
+>  +
+>       video=3DVGA-1:1280x1024@60me
 >  =20
->  -TEST_GEN_PROGS_aarch64 +=3D dirty_log_test
->   TEST_GEN_PROGS_aarch64 +=3D clear_dirty_log_test
->  +TEST_GEN_PROGS_aarch64 +=3D dirty_log_test
-> + TEST_GEN_PROGS_aarch64 +=3D kvm_create_max_vcpus
+>  -Specifying the option multiple times for different ports is possible, e=
+.g.:
+>  +Specifying the option multiple times for different ports is possible, e=
+.g.::
+>  +
+>       video=3DLVDS-1:d video=3DHDMI-1:D
+>  =20
+> + Options can also be passed after the mode, using commas as separator.
 > +=20
-> + TEST_GEN_PROGS_s390x +=3D s390x/sync_regs_test
-> + TEST_GEN_PROGS_s390x +=3D kvm_create_max_vcpus
+> +        Sample usage: 720x480,rotate=3D180 - 720x480 mode, rotated by 18=
+0 degrees
+> +=20
+> + Valid options are:
+> +=20
+> +   - margin_top, margin_bottom, margin_left, margin_right (integer):
+> +     Number of pixels in the margins, typically to deal with overscan on=
+ TVs
+> +   - reflect_x (boolean): Perform an axial symmetry on the X axis
+> +   - reflect_y (boolean): Perform an axial symmetry on the Y axis
+> +   - rotate (integer): Rotate the initial framebuffer by x
+> +     degrees. Valid values are 0, 90, 180 and 270.
+> +=20
+> +=20
+>  -***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo ***** oOo *=
+****
+>  +-----------------------------------------------------------------------=
+------
 >  =20
->   TEST_GEN_PROGS +=3D $(TEST_GEN_PROGS_$(UNAME_M))
->   LIBKVM +=3D $(LIBKVM_$(UNAME_M))
+>   What is the VESA(TM) Coordinated Video Timings (CVT)?
+>  +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>  =20
+>   From the VESA(TM) Website:
+>  =20
 
 I am still getting this conflict (the commit ids may have changed).
 Just a reminder in case you think Linus may need to know.
@@ -148,20 +148,20 @@ Just a reminder in case you think Linus may need to know.
 Cheers,
 Stephen Rothwell
 
---Sig_/AJIC0XyY/9f0gT_N3IIHmKI
+--Sig_/NatE95c_++FnJscnxmHTBtt
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0j13EACgkQAVBC80lX
-0Gw3FggAkp8Yp06G+AHtkJwgTUEh5zfEcvMHIH7L/w2NcFlv3XrEHEA8G0tnA6AW
-oKb+UjPJz79QCX9q4GAJQBFi9oBBS9VdEZxiKKpfHd6v59xqG54P3IphQ+9//oIl
-ttN/Se9px9TAf2sN09T0kEtvsMDJ9NIPGZ2DCadYkflYGmCnScaQMZ9Xx2rWENjA
-zxPrIxWu9qVr1stYfOIQ3+i36TQCyBD/KrQuGaAwaWr2BuzCRFtFogWKrnXzwz3D
-nJ4r28owSpIl3vJ03RXb3csLse2pEeeAbpSlNarvQ7oexNCwGjGdyTv2n4l5BOjV
-lrQqBtym1TtlhNWcobThceqhUOel6A==
-=bfBh
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0j16kACgkQAVBC80lX
+0GyHugf/cB5q+pSMiS9D1HbmvmkcDZN3tIJrTHqTztcvFVnIlUpWF2ni04Wf5MDP
+Tkjnb83+eXbn0zvdfXNDNN1DJR3qgAB/Kf6yyRoBs197XjFQu/9ixtTt5Bd7NdCs
+uLXciLdxnjTV+PGZ2eUswnwvRTyGckMids+AyPFq08PbA8EulrsLy04bzlVfiVCe
+0d4hO90luHI+mG3FAv1VsJQbX9/hw2ItIhnuT4EBQmKGsic6vXTZVGhUzknLlUnt
+Rj/WA+dPJGgqujkUZIwMHS0c4HRKrVvA5IMy6VqqGo4ROK0NFlB/wLJsm66FyEhZ
+wCM5sRACpJtPh62/zM3e0UlTHfIXuw==
+=gUp1
 -----END PGP SIGNATURE-----
 
---Sig_/AJIC0XyY/9f0gT_N3IIHmKI--
+--Sig_/NatE95c_++FnJscnxmHTBtt--
