@@ -2,108 +2,90 @@ Return-Path: <SRS0=9mSK=VF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F5AC48BE7
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 03:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B433C48BE7
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 04:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C6E20665
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 03:48:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OhbgFB4G"
+	by mail.kernel.org (Postfix) with ESMTP id 6E56120848
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 04:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562559169;
+	bh=Z4vk7mVRT8EztIag0rUhGUeHxNVQ35Bv5DXVMPCwSCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SltJCgJnRNfoHWSue0pg6lZc8p9bKnJD3Ha2bJLrLH6ehoNKTf3BjGNMcC0FERwp9
+	 UvwPTxaoDEqz9e8JeJiJEZj4t5AaYDQn3+zOEkGwzDd5HD5JQ3wA4kY7GcrBCaFkXY
+	 zwtfnXYjcJjeck3uuZEZSnDY81SD6rFexQgzrgVM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfGHDst (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 7 Jul 2019 23:48:49 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:39905 "EHLO ozlabs.org"
+        id S1725993AbfGHEMs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 00:12:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbfGHDss (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 7 Jul 2019 23:48:48 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1725781AbfGHEMs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jul 2019 00:12:48 -0400
+Received: from localhost (unknown [49.207.58.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hryy5RVhz9sN1;
-        Mon,  8 Jul 2019 13:48:42 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562557726;
-        bh=mDrD1Sn4fzfTzidyBGIKFqxSZ2KwSgFmpIydyvvKGVk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OhbgFB4GR7zBvporksGbd4ZLzYKRN5c6Co9heK4GsjTiUk/YPcJqdBFjB1RxakRTM
-         2/wp0ldM9QAcH0m3emVCEsrT000FYyAP2HjJIt+5w9NzgGQO2uydbC0solsNhcyOGJ
-         Jxj0X4DYcfqfUic6ldosKA6ri7eT1OreyOgceniU7KN4zxnqPOYl8rTzmLztIyqenO
-         YoEElT7uC1FSRA6tMIYW9cmhia9eQv8uAa5QuanTtf4+RV7QXjBWoWZXoA7Uch+/F0
-         jmPlo4gqaUjzP8dq3v4Ne+k1IT6ski/3F/y7X8dhYKCO3O9Rx70Nz6yPOmBaJarxF/
-         PKekBsttorJ7Q==
-Date:   Mon, 8 Jul 2019 13:48:42 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id A8C9620659;
+        Mon,  8 Jul 2019 04:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562559167;
+        bh=Z4vk7mVRT8EztIag0rUhGUeHxNVQ35Bv5DXVMPCwSCw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H0S+38m2yKXez1xDC8vjH36iNHJgAnJy1mYZjSaq+Bq53wkAX7PDFYGRp9ZGOOPJk
+         P6GLPc7NV0rk1M+ijQpA2s6UFvhBOqmq5DK10POK1AWxcbNKXeSHn1AlRIHi2HAO6I
+         DpoNEGhCbXNanQCq5OcO1u9U5i9XYzF8n9KWB1EY=
+Date:   Mon, 8 Jul 2019 09:39:31 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        John Garry <john.garry@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Price <anprice@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: linux-next: manual merge of the gfs2 tree with the vfs tree
-Message-ID: <20190708134842.1e947318@canb.auug.org.au>
+        Angelo Dureghello <angelo@sysam.it>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Message-ID: <20190708040931.GJ2911@vkoul-mobl>
+References: <20190704173108.0646eef8@canb.auug.org.au>
+ <VE1PR04MB6638782ADA8BFB8A17BAF19D89F40@VE1PR04MB6638.eurprd04.prod.outlook.com>
+ <20190706144324.GH2911@vkoul-mobl>
+ <VE1PR04MB6638DAA60BE5910113D5DE0E89F60@VE1PR04MB6638.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rAX5HKHynv6BEhQ3eqYwSgn"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VE1PR04MB6638DAA60BE5910113D5DE0E89F60@VE1PR04MB6638.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/rAX5HKHynv6BEhQ3eqYwSgn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 08-07-19, 02:01, Robin Gong wrote:
+> On 06-07-19, 22:43, Vinod Koul <vkoul@kernel.org> wrote:
+> > > 	That's caused by 'of_irq_count' NOT export to global symbol, and I'm
+> > > curious why it has been here for so long since Zhangfei found it in
+> > > 2015.
+> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > >
+> > hwork.kernel.org%2Fpatch%2F7404681%2F&amp;data=02%7C01%7Cyibin.gon
+> > g%40
+> > >
+> > nxp.com%7C6172242dfadd4f71c09a08d70220bf6f%7C686ea1d3bc2b4c6fa92
+> > cd99c5
+> > >
+> > c301635%7C0%7C0%7C636980211986259586&amp;sdata=L8v%2B1o5zfgIAS
+> > go4qr3pu
+> > > cQ%2Byox1irANsvRv5ZNLlLM%3D&amp;reserved=0
+> > 
+> > Yes this does not seem to be applied, perhaps Rob can explain why. But this was
+> > not exported how did you test it?
+> I had no such issue because I built in fsl-edma instead of Stephen's config with building module.
 
-Hi all,
+But you support it as a module, right? I am inclined to revert the patch
+now!
 
-Today's linux-next merge of the gfs2 tree got a conflict in:
-
-  fs/gfs2/super.c
-
-between commit:
-
-  000c8e591016 ("gfs2: Convert gfs2 to fs_context")
-
-from the vfs tree and commit:
-
-  5b3a9f348bc5 ("gfs2: kthread and remount improvements")
-
-from the gfs2 tree.
-
-I fixed it up (I just used the vfs tree version since it removed some of
-the code modified by the latter) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rAX5HKHynv6BEhQ3eqYwSgn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ivRoACgkQAVBC80lX
-0Gw+VAf+PpQ35iJhw5gaiz8VEgvYW3NcTC2QBnxmNFiyKQfE4gq3ludE43XTT8r5
-UJ18rP4u+b7GxwlsYJmzvJxZyteSFB96UNqobzWjHyICF46ovhCbOC/4srOAokbQ
-yRswzXZvpCWhYTpgsX/sjpt9X6yZeA5ImUZjcR6VKQFH7q2cGWLVbefn3VKdLOw1
-5miwxGVJWz9/7X4N5jZgKbushwFtsxrrOvjfQylgmGstq6xmXUgOGwxaH+tik8hi
-2lmFku6tiHg4gE+zGvapTRD5JQIBoyWTB1YAR1GE9GUwdtkG57SNlD+e+5PrzDiL
-9HQIaixJQnFkdk0UTpAHX6889QFN5w==
-=I2b8
------END PGP SIGNATURE-----
-
---Sig_/rAX5HKHynv6BEhQ3eqYwSgn--
+-- 
+~Vinod
