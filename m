@@ -6,74 +6,77 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14DCC48BE7
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 07:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E92CC48BE7
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 07:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925D620861
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 07:01:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5307720861
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 07:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mQGXN5xu"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NZzlhmcu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbfGHHBk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 03:01:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:50681 "EHLO ozlabs.org"
+        id S1728957AbfGHHYV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 03:24:21 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34307 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727163AbfGHHBk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Jul 2019 03:01:40 -0400
+        id S1728949AbfGHHYU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jul 2019 03:24:20 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hxFW0X2dz9s3Z;
-        Mon,  8 Jul 2019 17:01:34 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hxlk2Khnz9sNg;
+        Mon,  8 Jul 2019 17:24:17 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562569298;
-        bh=bMGbYY+lSE5Cbp9Av6xqmzjx/6qiPYjokp+Ycp0jkLw=;
+        s=201702; t=1562570658;
+        bh=s8SgSFIM00NpB+69X3WJ5ZEiPfGeXTcmA8V1PK2fc94=;
         h=Date:From:To:Cc:Subject:From;
-        b=mQGXN5xunPpyWgWK7B4WvaRWwOWb5pe3ZmS8ziNGwwhlGjvUfClALjD9HAjS4CXn3
-         4530pRcSjDhTSuTVc6Xi3Gfc2y5MHzxa3B5/N+sAZrroXkO05oGaFdpGWHnDnMmRtj
-         a1ox+YujmLS97s7zozea0pAC73HXfyNcmqp5v09dISS5EOYBFnCPkAUY06WTLpuwr6
-         zdi8x4l7j9eIaMXHjrzFLU4xYD+kc+JXOdpW/UdJh/OLPMXSo8n6t9h6n0SC5tQVM2
-         78F+yseIgXfzhneRSor2kWO+zcJ2Rw/kslqRe9uWP0isoZjlerAQGbgEbqyyVC9vP5
-         yqZHpKmgm3/rA==
-Date:   Mon, 8 Jul 2019 17:01:34 +1000
+        b=NZzlhmcuUONHM+3gJi6KA6cVGv3qiJIc6lvdd4l0uG3xkUfFkcISZHuH6sxhveZpw
+         8F6mzyqdHYGFW4OsorVI4LMc6enDUsCqgD1drOCrsFcaL9K+R5AgQ6E8qJ3ID+qG2G
+         5ArPOfI/LePpVOyaCgNgSFIzaKC/80x8+SfWDM/wVoLNQRty2oaLZ+GsrMdiqtjx3J
+         6v1X8ZZ0R9fwwGpfQFiMcu+UY7jekHcAVsOlmT5bJggLQfaer2u6ss7ceEmObmGQtv
+         MkmzBbW+3L4zH+5zH0iSI2Sm4sSHegxSjO6GX0uteWJ2bZB1mPktNHvTlSa+M88wSZ
+         G/7++dAXA20Ww==
+Date:   Mon, 8 Jul 2019 17:24:17 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Borislav Petkov <bp@alien8.de>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul@pwsan.com>
+To:     Christoffer Dall <cdall@cs.columbia.edu>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yash Shah <yash.shah@sifive.com>,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: linux-next: manual merge of the edac-amd tree with the risc-v tree
-Message-ID: <20190708170134.15f225ca@canb.auug.org.au>
+        Julien Thierry <julien.thierry@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20190708172417.1d3a34fa@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Dx6LgHkcvDoM2xS/FEnOu3I"; protocol="application/pgp-signature"
+ boundary="Sig_/lYTARTvOyB=0uSljEKI1slV"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Dx6LgHkcvDoM2xS/FEnOu3I
+--Sig_/lYTARTvOyB=0uSljEKI1slV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the edac-amd tree got a conflict in:
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-  arch/riscv/Kconfig
+  arch/arm64/include/asm/cpufeature.h
 
 between commit:
 
-  9e953cda5cdf ("riscv: Introduce huge page support for 32/64bit kernel")
+  48ce8f80f590 ("arm64: irqflags: Introduce explicit debugging for IRQ prio=
+rities")
 
-from the risc-v tree and commit:
+from the arm64 tree and commit:
 
-  a1ee570c831d ("EDAC/sifive: Add EDAC platform driver for SiFive SoCs")
+  c118bbb52743 ("arm64: KVM: Propagate full Spectre v2 workaround state to =
+KVM guests")
 
-from the edac-amd tree.
+from the kvm-arm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -86,35 +89,44 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/riscv/Kconfig
-index 8bf447b36955,4961deaa3b1d..000000000000
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@@ -51,8 -50,7 +51,9 @@@ config RISC
-  	select ARCH_HAS_PTE_SPECIAL
-  	select ARCH_HAS_MMIOWB
-  	select HAVE_EBPF_JIT if 64BIT
- +	select ARCH_HAS_GIGANTIC_PAGE
- +	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
-+ 	select EDAC_SUPPORT
+diff --cc arch/arm64/include/asm/cpufeature.h
+index 3d8db50d9ae2,948427f6b3d9..000000000000
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@@ -614,12 -614,12 +614,18 @@@ static inline bool system_uses_irq_prio
+  	       cpus_have_const_cap(ARM64_HAS_IRQ_PRIO_MASKING);
+  }
  =20
-  config MMU
-  	def_bool y
+ +static inline bool system_has_prio_mask_debugging(void)
+ +{
+ +	return IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) &&
+ +	       system_uses_irq_prio_masking();
+ +}
+ +
++ #define ARM64_BP_HARDEN_UNKNOWN		-1
++ #define ARM64_BP_HARDEN_WA_NEEDED	0
++ #define ARM64_BP_HARDEN_NOT_REQUIRED	1
++=20
++ int get_spectre_v2_workaround_state(void);
++=20
+  #define ARM64_SSBD_UNKNOWN		-1
+  #define ARM64_SSBD_FORCE_DISABLE	0
+  #define ARM64_SSBD_KERNEL		1
 
---Sig_/Dx6LgHkcvDoM2xS/FEnOu3I
+--Sig_/lYTARTvOyB=0uSljEKI1slV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0i6k4ACgkQAVBC80lX
-0GwH2wgAi9+yPQKaDLy9YB+z/0Lmkfle7vlxlItVu10iYdMQ8Oc8H/2wMFQzjpff
-evIJ52L5ANoZYAUsMtoM5wKR6uEA6zbZFYvLr3xmv2qHSxR8/Vi6+bCaGd5ENyT/
-Hc0WWTRq70o1vMzPdvciGNr2XRJWcMnOhI2tNXPYUhA3NIUhqUoh2ZFsKOjQInR+
-FnqtkAFYTwlNTQIaHHEMZ+rjG8Ryilpiis6Zjpn4vNfJRSXLwr0xwf0eG1ztlyFc
-iXVXLUUQQWpnuiZBpSPPi+aXzaNEvjGK9OmbH4WBTJhAys+TKxaZqRaLTP+tLxHP
-Elu1h5NZZz6n4mxX8bDgEBFhToWErg==
-=njlY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0i76EACgkQAVBC80lX
+0GwuyAf/X4XDfpURgS54pYJSE7ivCua9i8r93LDUS8oxViAWT9xvkWiiCAKCV0m3
+tBWrnKpPfvmHgEXR0Nl/CTdn3otAeXns5JSwVADq6WGdp1VNnivThYkSgx8Qo2HQ
+QwEFBr0xJM/4d8jUcFMVzAa/AmoPk/rnR9TSWuch6/kr0he3qZqXzsl4Iupt8UOH
+0dVznUFxXK+7oJhNreYFN2eFeydD6MPOaG8vuDStnlsLr32SUB0KGcsV8/gVAc8v
+/5uKS3XK4fQ/sb1APAwhzCbC+9MK69w3kw5028oRqh2CaHdSiQDIpEKDgdfOBnnY
+SGAdPVA/rgK5N6eaNJrAbMFYyUYdXQ==
+=fjl4
 -----END PGP SIGNATURE-----
 
---Sig_/Dx6LgHkcvDoM2xS/FEnOu3I--
+--Sig_/lYTARTvOyB=0uSljEKI1slV--
