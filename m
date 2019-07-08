@@ -2,82 +2,91 @@ Return-Path: <SRS0=9mSK=VF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FDEC606BD
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C351C606BA
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A034B21670
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076C7216B7
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:09:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="OQ5V2vPw"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="BNXst4q3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbfGHOJH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 10:09:07 -0400
-Received: from mail-eopbgr40055.outbound.protection.outlook.com ([40.107.4.55]:52206
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1731582AbfGHOJp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 10:09:45 -0400
+Received: from mail-eopbgr80051.outbound.protection.outlook.com ([40.107.8.51]:32672
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727401AbfGHOJH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Jul 2019 10:09:07 -0400
+        id S1727401AbfGHOJo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jul 2019 10:09:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eHWLlOWTV5rb+bJl87/UrVVueRKAG5YzqZQQ452E6b8=;
- b=OQ5V2vPw3XGrZijBV/5ZNnCJsoqhJY2wwvXKs1oboE+aZKpYP+2dRQnB+kRaWJP1xk/Q+6UCOt+F1+SbrydKVYpooz0SH6DaYZuq9y7ci0swdj+okaEu0KRtTbFmYZ961glBP7IZBJxlr6cCizWSMWLM+COKv7rzS2MMqOwWS0c=
+ bh=F9SnTdGJOzPh7PEhqpPLkWfo+Z7SasLHzoEWCLSlDVw=;
+ b=BNXst4q3wUJQ7fT6nZR3ltTJdRrhzIuLGZTcemoyOsqqOsacTVtmJ7yTQpwRw9loeaZVYADq1cp7lw/EtDIEr5PGSv/n0e6fvSsJEdc/EaQrv/6hpV20StKRybnZGhioHr2Fr+cJ5qqzIf3zN0utuwb3mVMinZlgEu7u9fSHcS4=
 Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
  VI1PR05MB3311.eurprd05.prod.outlook.com (10.170.238.32) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Mon, 8 Jul 2019 14:09:03 +0000
+ 15.20.2052.18; Mon, 8 Jul 2019 14:09:40 +0000
 Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
  ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
  ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.020; Mon, 8 Jul 2019
- 14:09:03 +0000
+ 14:09:40 +0000
 From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Bernard Metzler <bmt@zurich.ibm.com>
-CC:     Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHVNTnJQ7fo7962E0CZw92tCt9dBKbAwusA
-Date:   Mon, 8 Jul 2019 14:09:02 +0000
-Message-ID: <20190708140858.GC23966@mellanox.com>
-References: <20190708130351.2141a39b@canb.auug.org.au>
-In-Reply-To: <20190708130351.2141a39b@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Alex Deucher <alexdeucher@gmail.com>,
+        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
+        "Yang, Philip" <Philip.Yang@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Subject: Re: [PATCH 1/1] drm/amdgpu: adopt to hmm_range_register API change
+Thread-Topic: [PATCH 1/1] drm/amdgpu: adopt to hmm_range_register API change
+Thread-Index: AQHVMUJXWs8sf5cAOUS0d/4NvIH/Saa473yAgABzhwCAAAGdAIAGcL0AgAD1qgA=
+Date:   Mon, 8 Jul 2019 14:09:40 +0000
+Message-ID: <20190708140936.GD23966@mellanox.com>
+References: <20190703015442.11974-1-Felix.Kuehling@amd.com>
+ <20190703141001.GH18688@mellanox.com>
+ <a9764210-9401-471b-96a7-b93606008d07@amd.com>
+ <CADnq5_M0GREGG73wiu3eb=E+G2iTRmjXELh7m69BRJfVNEiHtw@mail.gmail.com>
+ <20190708093020.676f5b3f@canb.auug.org.au>
+In-Reply-To: <20190708093020.676f5b3f@canb.auug.org.au>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BL0PR0102CA0017.prod.exchangelabs.com
- (2603:10b6:207:18::30) To VI1PR05MB4141.eurprd05.prod.outlook.com
+x-clientproxiedby: BL0PR0102CA0028.prod.exchangelabs.com
+ (2603:10b6:207:18::41) To VI1PR05MB4141.eurprd05.prod.outlook.com
  (2603:10a6:803:4d::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=jgg@mellanox.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [156.34.55.100]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9dccafc6-e9fe-46e7-cb3d-08d703add487
+x-ms-office365-filtering-correlation-id: 8d33c027-b8b8-4829-58f3-08d703adeb28
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB3311;
 x-ms-traffictypediagnostic: VI1PR05MB3311:
-x-microsoft-antispam-prvs: <VI1PR05MB3311659E74DF90DFC4D5C441CFF60@VI1PR05MB3311.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-microsoft-antispam-prvs: <VI1PR05MB33112416FE3452DBE336BC08CFF60@VI1PR05MB3311.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
 x-forefront-prvs: 00922518D8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(376002)(346002)(39860400002)(136003)(53754006)(189003)(199004)(229853002)(68736007)(99286004)(305945005)(6116002)(33656002)(316002)(54906003)(386003)(3846002)(11346002)(4326008)(1076003)(6436002)(6486002)(53936002)(102836004)(446003)(7736002)(14444005)(256004)(110136005)(81156014)(476003)(14454004)(64756008)(478600001)(8676002)(66476007)(86362001)(6246003)(26005)(66946007)(81166006)(5660300002)(66556008)(73956011)(186003)(2616005)(66446008)(486006)(66066001)(52116002)(25786009)(6506007)(36756003)(76176011)(71190400001)(6512007)(8936002)(2906002)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB3311;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(376002)(346002)(39860400002)(136003)(53754006)(189003)(199004)(229853002)(68736007)(99286004)(305945005)(6116002)(33656002)(316002)(54906003)(386003)(3846002)(11346002)(4326008)(6916009)(1076003)(6436002)(6486002)(53936002)(102836004)(446003)(7736002)(14444005)(256004)(81156014)(476003)(14454004)(64756008)(478600001)(8676002)(66476007)(86362001)(6246003)(26005)(66946007)(81166006)(5660300002)(66556008)(73956011)(186003)(2616005)(66446008)(53546011)(486006)(66066001)(52116002)(25786009)(6506007)(36756003)(76176011)(71190400001)(6512007)(8936002)(2906002)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB3311;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 6A3hpSh0F6Wa97ab6AFWIedBy21uqogLmfTGHAOewAiwA5bnxlfE3R9s8MTD+d9wgK0MQBTpBgUONxgmCavGmuP6IFjEq3PJ+Te1QFFq+hov4keKdcvUqVARZu4iLBY6dRjyMHhfz38cHdWrmJLj9X289Ce9vfIBvKRMX6Ht6k80q+tq0Ob8hj+9Px3JeHom0Q747ReCcZze2i/L4+5wC8QdSaAwFIsjvdkEEZMo9KqSwckIwtjoje8Oo9OGKG3xkDLxnUMT8nA14YYx9GSYvYm/pkKiQUlcJmrDrh4F2zSg619EYM1j8etuODqua4n3zaE7925VlnU33qKSAFFoECqB2lxKWXUx4iWUXDjHFU2pmiFSAl9n9UaGJdV3GE7hm+9d1rM92z82bbOe71RRW1v3iFhQTJfGws404JSoO9I=
+x-microsoft-antispam-message-info: My4MtGaj6SQDJGP75ODjDhnPRryt3VphHK9qrPje6tzohAhhucXHsgvmUuXz381ezjD0eGJipwZcsHnWJ7DZWz7Wt1LKgFw+wr0v3MqsXEji/0HeWopoDZ0hz4xGrPdIqhDldt4HmKtdlchzv+v+n1/qtdTCTxuVW7viM2O7D86+W6A5jTYwp7kKA4sg6YHo3ls5OvCdqHuxvx1Gr764cVUhu5M8F9QZ4bOzcJHChQluf3nmq9WHiF77FIBZK88GTg16ssW45xKMw5R/hIdfAhH3O2lXSlJdMHH9nPD9Oy7yLDyfDAwNuF28bwSJUv2/EPGtq4/U7xL6V10LgLaLmaaYCGFbhZPHx7vIQAJKoN24a2a3OXOJ0ZokoMq1lvpCm4tiH54/OCfn7Gb8dXQSVu+v9KEHHWBaVJ4ovIPKrC0=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3B10E9A9134A884C865F5E3C3BB9D284@eurprd05.prod.outlook.com>
+Content-ID: <913C3D0530EA7F4B93FADA01B3279D28@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dccafc6-e9fe-46e7-cb3d-08d703add487
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 14:09:02.8937
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d33c027-b8b8-4829-58f3-08d703adeb28
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2019 14:09:40.7888
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
@@ -89,60 +98,83 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 01:03:51PM +1000, Stephen Rothwell wrote:
+On Mon, Jul 08, 2019 at 09:30:20AM +1000, Stephen Rothwell wrote:
 > Hi all,
 >=20
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> On Wed, 3 Jul 2019 17:09:16 -0400 Alex Deucher <alexdeucher@gmail.com> wr=
+ote:
+> >
+> > On Wed, Jul 3, 2019 at 5:03 PM Kuehling, Felix <Felix.Kuehling@amd.com>=
+ wrote:
+> > >
+> > > On 2019-07-03 10:10 a.m., Jason Gunthorpe wrote: =20
+> > > > On Wed, Jul 03, 2019 at 01:55:08AM +0000, Kuehling, Felix wrote: =20
+> > > >> From: Philip Yang <Philip.Yang@amd.com>
+> > > >>
+> > > >> In order to pass mirror instead of mm to hmm_range_register, we ne=
+ed
+> > > >> pass bo instead of ttm to amdgpu_ttm_tt_get_user_pages because mir=
+ror
+> > > >> is part of amdgpu_mn structure, which is accessible from bo.
+> > > >>
+> > > >> Signed-off-by: Philip Yang <Philip.Yang@amd.com>
+> > > >> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+> > > >> Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+> > > >> CC: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > >> CC: Jason Gunthorpe <jgg@mellanox.com>
+> > > >> CC: Dave Airlie <airlied@linux.ie>
+> > > >> CC: Alex Deucher <alexander.deucher@amd.com>
+> > > >>   drivers/gpu/drm/Kconfig                          |  1 -
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c |  5 ++---
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c           |  2 +-
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c          |  3 +--
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c           |  8 ++++++++
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_mn.h           |  5 +++++
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c          | 12 ++++++++++=
+--
+> > > >>   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h          |  5 +++--
+> > > >>   8 files changed, 30 insertions(+), 11 deletions(-) =20
+> > > > This is too big to use as a conflict resolution, what you could do =
+is
+> > > > apply the majority of the patch on top of your tree as-is (ie keep
+> > > > using the old hmm_range_register), then the conflict resolution for
+> > > > the updated AMD GPU tree can be a simple one line change:
+> > > >
+> > > >   -   hmm_range_register(range, mm, start,
+> > > >   +   hmm_range_register(range, mirror, start,
+> > > >                          start + ttm->num_pages * PAGE_SIZE, PAGE_S=
+HIFT);
+> > > >
+> > > > Which is trivial for everone to deal with, and solves the problem. =
+=20
+> > >
+> > > Good idea.
 >=20
-> In file included from include/asm-generic/percpu.h:7,
->                  from arch/x86/include/asm/percpu.h:544,
->                  from arch/x86/include/asm/preempt.h:6,
->                  from include/linux/preempt.h:78,
->                  from include/linux/spinlock.h:51,
->                  from include/linux/seqlock.h:36,
->                  from include/linux/time.h:6,
->                  from include/linux/ktime.h:24,
->                  from include/linux/timer.h:6,
->                  from include/linux/netdevice.h:24,
->                  from drivers/infiniband/sw/siw/siw_main.c:8:
-> include/linux/percpu-defs.h:92:33: warning: '__pcpu_unique_use_cnt' initi=
-alized and declared 'extern'
->   extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;  \
->                                  ^~~~~~~~~~~~~~
-> include/linux/percpu-defs.h:115:2: note: in expansion of macro 'DEFINE_PE=
-R_CPU_SECTION'
->   DEFINE_PER_CPU_SECTION(type, name, "")
->   ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro '=
-DEFINE_PER_CPU'
->  static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
->         ^~~~~~~~~~~~~~
-> include/linux/percpu-defs.h:93:26: error: redefinition of '__pcpu_unique_=
-use_cnt'
->   __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;   \
->                           ^~~~~~~~~~~~~~
-> include/linux/percpu-defs.h:115:2: note: in expansion of macro 'DEFINE_PE=
-R_CPU_SECTION'
->   DEFINE_PER_CPU_SECTION(type, name, "")
->   ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of macro '=
-DEFINE_PER_CPU'
->  static DEFINE_PER_CPU(atomic_t, use_cnt =3D ATOMIC_INIT(0));
+> With the changes added to the amdgpu tree over the weekend, I will
+> apply the following merge fix patch to the hmm merge today:
+>=20
+> From: Philip Yang <Philip.Yang@amd.com>
+> Sibject: drm/amdgpu: adopt to hmm_range_register API change
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>=20
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_ttm.c
+> @@ -783,7 +783,7 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, =
+struct page **pages)
+>  				0 : range->flags[HMM_PFN_WRITE];
+>  	range->pfn_flags_mask =3D 0;
+>  	range->pfns =3D pfns;
+> -	hmm_range_register(range, mm, start,
+> +	hmm_range_register(range, mirror, start,
+>  			   start + ttm->num_pages * PAGE_SIZE, PAGE_SHIFT);
+> =20
+>  retry:
+>=20
+> And someone just needs to make sure Linus is aware of this needed merge f=
+ix.
 
-Bernard,=20
-
-This looks like the wrong way to use DEFINE_PER_CPU these days. I'm
-not sure why my compiles don't hit it, or why 0-day didn't say
-something
-
-Looking at the other atomic_t PER_CPU users they just rely on
-automatic zero initialization, so this should just be:
-
-  static DEFINE_PER_CPU(atomic_t, use_cnt);
-
-?
-
-Please confirm ASAP.
+Great, thanks everyone
 
 Jason
+
