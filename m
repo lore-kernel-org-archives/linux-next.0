@@ -2,144 +2,134 @@ Return-Path: <SRS0=9mSK=VF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0E2C606A1
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 09:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D407EC606AC
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 11:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 291A820651
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 09:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0AD20665
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 11:20:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b3sqh3jC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfGHJZr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 05:25:47 -0400
-Received: from sauhun.de ([88.99.104.3]:39068 "EHLO pokefinder.org"
+        id S1729474AbfGHLUi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 07:20:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:51465 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727163AbfGHJZr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Jul 2019 05:25:47 -0400
-Received: from localhost (p54B33631.dip0.t-ipconnect.de [84.179.54.49])
-        by pokefinder.org (Postfix) with ESMTPSA id EEA7D2C04C2;
-        Mon,  8 Jul 2019 11:25:43 +0200 (CEST)
-Date:   Mon, 8 Jul 2019 11:25:43 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        id S1728684AbfGHLUh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jul 2019 07:20:37 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45j30K01WRz9sNC;
+        Mon,  8 Jul 2019 21:20:32 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562584833;
+        bh=1TPn9uSS0m8JcqwzvlMOpK6rYAOrtfTPgQZRUVfIi+A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=b3sqh3jCRm8J6cj24+yVU9MXRWHmAPyzSy1gI87xVUhqG1Mf8OFEMStWG0cLUByWq
+         dScizc8JWgVyr3VsaubU65fLyYcBCgRx9uYissW5wWrMsW6rqIr7EiEI3QVNB4ZL3S
+         yS6FGmmaUzWflaGlmIIDXUIvtmzqXLiUS8v71UrhSIuV0y0LsiuB69jnNVQbmL8uDz
+         WfeGFzLJOMyBHtgxydagG8E0V12oABbjcgEzN6fyW+7ziMUD741lhH+QyP3kYIWJJS
+         gtVwEg6O6dc54O+FIhFcCvTC4dc2i3q1lP4Xjru9S6u4m78DaBkyyFCADYDNubmjBs
+         pqm6OrIXD2bDw==
+Date:   Mon, 8 Jul 2019 21:20:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ruslan Babayev <ruslan@babayev.com>,
-        Andrew de Quincey <adq_dvb@lidskialf.net>,
-        Michael Buesch <m@bues.ch>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] media: tua6100: Remove some ugly defines
-Message-ID: <20190708092543.GA1050@kunai>
-References: <20190612081929.GA1687@kunai>
- <fa93fecaa9d8e33f7d3b335872e9082893b775ae.1560338665.git.mchehab+samsung@kernel.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: linux-next: Tree for Jul 4 -> conflict between s390 and
+ driver-core tree
+Message-ID: <20190708212030.4540f81b@canb.auug.org.au>
+In-Reply-To: <e9889ea3-0286-df1c-864c-ba67a0286855@de.ibm.com>
+References: <20190704220945.27728dd9@canb.auug.org.au>
+        <e9889ea3-0286-df1c-864c-ba67a0286855@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
-Content-Disposition: inline
-In-Reply-To: <fa93fecaa9d8e33f7d3b335872e9082893b775ae.1560338665.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/E+fA_B45RM4/Jdz2PL=40nh"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/E+fA_B45RM4/Jdz2PL=40nh
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2019 at 08:25:03AM -0300, Mauro Carvalho Chehab wrote:
-> As reported by Stephen:
+Hi Christian,
+
+On Fri, 5 Jul 2019 10:59:01 +0200 Christian Borntraeger <borntraeger@de.ibm=
+.com> wrote:
+>
+> Linus, Vasily, for your attention in the next merge window. (I would sugg=
+est to apply
+> belows fixup during the merge of whatever tree is merged 2nd).
 >=20
-> > After merging the i2c tree, today's linux-next build (x86_64 allmodconf=
-ig)
-> > produced this warning:
-> >
-> > drivers/media/dvb-frontends/tua6100.c: In function 'tua6100_set_params':
-> > drivers/media/dvb-frontends/tua6100.c:71: warning: "_P" redefined
-> >  #define _P 32
-> >
-> > In file included from include/acpi/platform/aclinux.h:54,
-> >                  from include/acpi/platform/acenv.h:152,
-> >                  from include/acpi/acpi.h:22,
-> >                  from include/linux/acpi.h:21,
-> >                  from include/linux/i2c.h:17,
-> >                  from drivers/media/dvb-frontends/tua6100.h:22,
-> >                  from drivers/media/dvb-frontends/tua6100.c:24:
-> > include/linux/ctype.h:14: note: this is the location of the previous de=
-finition
-> >  #define _P 0x10 /* punct */
-> >
-> > Exposed by commit
-> >
-> >   5213d7efc8ec ("i2c: acpi: export i2c_acpi_find_adapter_by_handle")
-> >
-> > Since that included <linux/acpi.h> from <linux/i2c.h>
-> >
-> > Originally introduced by commit
-> >
-> >   00be2e7c6415 ("V4L/DVB (4606): Add driver for TUA6100")
-> >
-> > The _P in <linux/ctype.h> has existed since before git.
 >=20
-> The addition of include <linux/ctype.h> at the I2C code caused a
-> breakage at the tua6100 driver. The reason is that the code there
-> used defines for 3 parameters used at the calculus for the
-> divide ratio.
+> There is now a build conflict between the s390/features branch and the dr=
+iver-core/driver-core-next
+> especially between
 >=20
-> In thesis, those are board-dependent, but, as there's just one
-> driver using it (ttpci/budget-av), there was no need to make
-> the code more generic. While it sounds unlikely that this old
-> DVB-S frontend would ever be used on new projects, one might
-> some day come with a variant using a different configuration. So,
-> let's do the right thing and store those values at its private
-> struct.
+> commit 92ce7e83b4e5 ("driver_find_device: Unify the match function with c=
+lass_find_device()")
+> and
+> commit ec89b55e3bce ("s390: ap: implement PAPQ AQIC interception in kerne=
+l")
+
+I have applied the suggested fix below to linux-next today and will
+apply it to the driver-core tree merge from now on.
+
+> Stephen, can you maybe add something like this to make linux-next build a=
+gain
+> on s390?
 >=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-Mauro, what do we do here? The merge window is open and I can't send my
-I2C pull request unless the above issue is fixed. I see two options:
-
-1) This patch gets fast-tracked into the media-tree (or I can pick it
-into my I2C tree if you are fine with that)
-
-2) I pick the intermediate fix from David Miller in linux-next into my
-tree, but I'd need your ack for this patch (can be given here):
-
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit/d=
-rivers/media/dvb-frontends/tua6100.c?id=3D621ccc6cc5f8d6730b740d31d48182278=
-66c93c9
-
-Kind regards,
-
-   Wolfram
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio=
+_ap_ops.c
+> index 2c9fb1423a39..7e85ba7c6ef0 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -26,7 +26,7 @@
+> =20
+>  static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev);
+> =20
+> -static int match_apqn(struct device *dev, void *data)
+> +static int match_apqn(struct device *dev, const void *data)
+>  {
+>  	struct vfio_ap_queue *q =3D dev_get_drvdata(dev);
+> =20
+>=20
 
 
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/E+fA_B45RM4/Jdz2PL=40nh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0jDBMACgkQFA3kzBSg
-KbZgmA//Y4Uat5FuqUH5KCIdV4VqRuZxik4xLSUhCDPYBGcukT41EALv9HdMk2nG
-g0ok9znCKmK6rU+tUu2BvpOOpL0T7i2uqylTL7YI2/+v2v1sKJUderDaC1Y0zu7B
-Cx3K+DuxEPN9ShN84eiUL6snlQDu/lVC0n+bJ2kqk3RNF6BjmoHOweQPWBX6oSpE
-MBzlb60ih4fOp5Sq22RglUxbK5KIdp+61aPSArz0DbxlIU9Z5joz4qnG1NABMibv
-AIsLZgifiPtEdx9GHfuNEbrpqHZh3k2G5oGLTTbo3x6S3yd2ab1VrPJVKkB3giSf
-J5aEcs114vCMz+EMi+VJuE91QfxtoYOt+De409qZLA7Xv+DBMnv3HEEFhngLZ0SO
-THf1Z8PeFP48T6puzPZprwljjuEsSyNzuEzbJ0F0YctOR7AeRTU7bVFqlI3PQDKZ
-mJwnRD7345/P8IzI0JwhYLPFFAW5OrbnhMVyKiw7dM3uJm0Qg45YLn91C/9lNc76
-Y2WxbFxKLpfMOGpbHOd7/YQ5iIdCtczyKq37TJN/DcYIHCgFXlOEI4FiChyzw9zv
-+Z5+uyZMjlKAmbAb+2ehOBzw4eBY3ZDYvETaGSzIvGjUKvuwfJYEtgb3t+buyh0U
-4uaO6GWgUMEDwidEDvyuNkJls+OFrP5NI8wXbjwlL9zO0zKssKU=
-=sUUN
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0jJv4ACgkQAVBC80lX
+0Gzj2wgAireRW4yZvEvuHNIGpIEiUp8XMbmrYdVXI3lf9VSTOAleq7vsS4RgX9tl
+0cLg6vbumKyUEB/3DPtQdSobmAaJ16+2jEzOpAl4JYCLprowO5KmT1WfcohiQEhu
+HDyi598H17GAdV1vr6ME2jcp9GzPTJutoU9kTFww3ljAyl4TXs1lHuvqnF5xU61V
+Er2LB0Ki1wcd7yV0B1+uS/bYdMaXQGRGMEWAzD6gTSZzgjE8L2N86FXlfMfw/kPZ
+B4cEey5t7TtnnydGexQEcm7W6eiB93MamYowlUMck+GkAM9NOomQuS7j0AmDnxNy
+xEng27jlup2og3xq/BYL5HJetvJFJw==
+=Rczw
 -----END PGP SIGNATURE-----
 
---NzB8fVQJ5HfG6fxh--
+--Sig_/E+fA_B45RM4/Jdz2PL=40nh--
