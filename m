@@ -3,158 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D36C606BF
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B41C606BF
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543A9216B7
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D564216B7
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 14:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfGHO27 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 10:28:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47626 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729225AbfGHO27 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2019 10:28:59 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x68ESXbO054638
-        for <linux-next@vger.kernel.org>; Mon, 8 Jul 2019 10:28:58 -0400
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [158.85.210.112])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tm5w74pp1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Mon, 08 Jul 2019 10:28:37 -0400
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-next@vger.kernel.org> from <BMT@zurich.ibm.com>;
-        Mon, 8 Jul 2019 14:28:19 -0000
-Received: from us1b3-smtp04.a3dr.sjc01.isc4sb.com (10.122.203.161)
-        by smtp.notes.na.collabserv.com (10.122.47.54) with smtp.notes.na.collabserv.com ESMTP;
-        Mon, 8 Jul 2019 14:28:14 -0000
-Received: from us1b3-mail162.a3dr.sjc03.isc4sb.com ([10.160.174.187])
-          by us1b3-smtp04.a3dr.sjc01.isc4sb.com
-          with ESMTP id 2019070814281388-485737 ;
-          Mon, 8 Jul 2019 14:28:13 +0000 
-In-Reply-To: <20190708140858.GC23966@mellanox.com>
-From:   "Bernard Metzler" <BMT@zurich.ibm.com>
-To:     "Jason Gunthorpe" <jgg@mellanox.com>
-Cc:     "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        "Doug Ledford" <dledford@redhat.com>,
-        "Linux Next Mailing List" <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Date:   Mon, 8 Jul 2019 14:28:13 +0000
+        id S1729946AbfGHO3r (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 10:29:47 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34921 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729179AbfGHO3r (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2019 10:29:47 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p197so11095094lfa.2;
+        Mon, 08 Jul 2019 07:29:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wbaTQs7XVTIjMbPZTFe9Yk64dlMj+blOtmWe+5amVKw=;
+        b=QaXBv86g1J8MMEFr8yFlJevmxd5a0pe5FgM5b3a3ryrCvykMRj1vk/hjn3M2pKE62/
+         zaxD5Ad7LTUVjD4db3ywyAhgGGjpJ1G1ajhp/Mz6Izfuaw5u1b6QduqQsBOb9PWK2tqE
+         qOMpzQN8rGn+2+DWg48I1ykFL7yuw/dlMhsk1EVuYqc16iIdUULVJVgvhRKGKmxbzLVl
+         3sm8AMsHRZPI3efdG61dwLhud3jfj/P2p1l2UmtQF31W/+ljOn1Zwt7dLQfnwEMAqZYT
+         Ls0VcqrdVkUomekJKO0lZ3TXdW6GbTxh/9Q+rHfxZZMACWRN5Fa6R6GH3+peAF80vPtU
+         ca4A==
+X-Gm-Message-State: APjAAAX8c7rMEpIlQQn2jfChCTzXlrzrWeeGRbfJunsWxIETlfgKKCmp
+        onX7c+NgEzyUKfW8pI2udIyk2MqaVRmTDlQuc3w=
+X-Google-Smtp-Source: APXvYqyqi6Z74FgeUmSY/fM6fHVQs+s4VIRWPGZo5CWIqN67oSsfVrFDvhr/it0wDG5JnxulzHk67f7NgX7txaM0q6Y=
+X-Received: by 2002:ac2:46ce:: with SMTP id p14mr9177220lfo.148.1562596184914;
+ Mon, 08 Jul 2019 07:29:44 -0700 (PDT)
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <20190708140858.GC23966@mellanox.com>,<20190708130351.2141a39b@canb.auug.org.au>
-X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
- SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
-X-KeepSent: 8B5D0A35:3AB4C2D3-00258431:004F7CF8;
- type=4; name=$KeepSent
-X-LLNOutbound: False
-X-Disclaimed: 37267
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=UTF-8
-x-cbid: 19070814-0163-0000-0000-000006B23BBB
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.399202; ST=0; TS=0; UL=0; ISC=; MB=0.001805
-X-IBM-SpamModules-Versions: BY=3.00011395; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01229239; UDB=6.00647369; IPR=6.01010498;
- BA=6.00006352; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00027634; XFM=3.00000015;
- UTC=2019-07-08 14:28:18
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-07-08 08:53:28 - 6.00010139
-x-cbparentid: 19070814-0164-0000-0000-0000100845AC
-Message-Id: <OF8B5D0A35.3AB4C2D3-ON00258431.004F7CF8-00258431.004F7D00@notes.na.collabserv.com>
-Subject: Re:  Re: linux-next: build failure after merge of the rdma tree
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-08_05:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+References: <20190707050058.CO3VsTl8T%akpm@linux-foundation.org>
+In-Reply-To: <20190707050058.CO3VsTl8T%akpm@linux-foundation.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 8 Jul 2019 16:29:27 +0200
+Message-ID: <CAK8P3a2KVPsX-3VZdVXAa1yAJDevMwQ9VQdx5j8tyMDydb76FQ@mail.gmail.com>
+Subject: Re: mmotm 2019-07-06-22-00 uploaded
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        mhocko@suse.cz, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
------"Jason Gunthorpe" <jgg@mellanox.com> wrote: -----
+On Sun, Jul 7, 2019 at 7:05 AM <akpm@linux-foundation.org> wrote:
 
->To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Bernard Metzler"
-><bmt@zurich.ibm.com>
->From: "Jason Gunthorpe" <jgg@mellanox.com>
->Date: 07/08/2019 04:09PM
->Cc: "Doug Ledford" <dledford@redhat.com>, "Linux Next Mailing List"
-><linux-next@vger.kernel.org>, "Linux Kernel Mailing List"
-><linux-kernel@vger.kernel.org>
->Subject: [EXTERNAL] Re: linux-next: build failure after merge of the
->rdma tree
->
->On Mon, Jul 08, 2019 at 01:03:51PM +1000, Stephen Rothwell wrote:
->> Hi all,
->> 
->> After merging the rdma tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->> 
->> In file included from include/asm-generic/percpu.h:7,
->>                  from arch/x86/include/asm/percpu.h:544,
->>                  from arch/x86/include/asm/preempt.h:6,
->>                  from include/linux/preempt.h:78,
->>                  from include/linux/spinlock.h:51,
->>                  from include/linux/seqlock.h:36,
->>                  from include/linux/time.h:6,
->>                  from include/linux/ktime.h:24,
->>                  from include/linux/timer.h:6,
->>                  from include/linux/netdevice.h:24,
->>                  from drivers/infiniband/sw/siw/siw_main.c:8:
->> include/linux/percpu-defs.h:92:33: warning: '__pcpu_unique_use_cnt'
->initialized and declared 'extern'
->>   extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;  \
->>                                  ^~~~~~~~~~~~~~
->> include/linux/percpu-defs.h:115:2: note: in expansion of macro
->'DEFINE_PER_CPU_SECTION'
->>   DEFINE_PER_CPU_SECTION(type, name, "")
->>   ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of
->macro 'DEFINE_PER_CPU'
->>  static DEFINE_PER_CPU(atomic_t, use_cnt = ATOMIC_INIT(0));
->>         ^~~~~~~~~~~~~~
->> include/linux/percpu-defs.h:93:26: error: redefinition of
->'__pcpu_unique_use_cnt'
->>   __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;   \
->>                           ^~~~~~~~~~~~~~
->> include/linux/percpu-defs.h:115:2: note: in expansion of macro
->'DEFINE_PER_CPU_SECTION'
->>   DEFINE_PER_CPU_SECTION(type, name, "")
->>   ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/infiniband/sw/siw/siw_main.c:129:8: note: in expansion of
->macro 'DEFINE_PER_CPU'
->>  static DEFINE_PER_CPU(atomic_t, use_cnt = ATOMIC_INIT(0));
->
->Bernard, 
->
->This looks like the wrong way to use DEFINE_PER_CPU these days. I'm
->not sure why my compiles don't hit it, or why 0-day didn't say
->something
->
->Looking at the other atomic_t PER_CPU users they just rely on
->automatic zero initialization, so this should just be:
->
->  static DEFINE_PER_CPU(atomic_t, use_cnt);
->
->?
->
->Please confirm ASAP.
->
+> * mm-move-mem_cgroup_uncharge-out-of-__page_cache_release.patch
+> * mm-shrinker-make-shrinker-not-depend-on-memcg-kmem.patch
+> * mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix.patch
+> * mm-thp-make-deferred-split-shrinker-memcg-aware.patch
 
-Hi Jason,
+mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix.patch fixes
+the compile-time error when memcg_expand_shrinker_maps() is not
+declared, but now we get a linker error instead because the
+function is still not built into the kernel:
 
-Thanks for  bringing this up. Indeed, that explicit
-initialization seem to be inappropriate. Can you please
-fix that as you suggest?
+mm/vmscan.o: In function `prealloc_shrinker':
+vmscan.c:(.text+0x328): undefined reference to `memcg_expand_shrinker_maps'
 
-Thanks very much,
-Bernard.
-
+      Arnd
