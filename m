@@ -2,135 +2,253 @@ Return-Path: <SRS0=9mSK=VF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E89C0650E
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 03:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925F2C48BE7
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 03:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E9A20659
-	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 03:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CF9C20665
+	for <linux-next@archiver.kernel.org>; Mon,  8 Jul 2019 03:40:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hHB5nBuH"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q2TXKGkn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfGHD2m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 7 Jul 2019 23:28:42 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37129 "EHLO ozlabs.org"
+        id S1727411AbfGHDkD (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 7 Jul 2019 23:40:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40829 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfGHD2m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 7 Jul 2019 23:28:42 -0400
+        id S1727286AbfGHDkD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 7 Jul 2019 23:40:03 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hrWp4BFnz9sNF;
-        Mon,  8 Jul 2019 13:28:38 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hrmv5V9Gz9sN1;
+        Mon,  8 Jul 2019 13:39:59 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562556518;
-        bh=CHCn/D8eAiBLkRYmzJoUB3/S5s/rbxlG1ArTgtS9wLo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hHB5nBuHHIwWKBhncKQi1dONJAcF4zmpOXd9iZ2om6K+JJQZWU9uuTzr3iNGn6Ssk
-         uyRYsWFl7uIAZM+RtX3LnrHhedshBzzdxGvpHcAXRaVC1EHs3olADK6Ixs1mjwQEoZ
-         wK3VatSF73ypVR+sfye5/tk1v9st4o/drsDRZmy/VIDDJac38EI0fSdBsUegdXEq/4
-         ewX88pML+O2Z1ZxgR0rFAiafXujNwh/sTFM9usBE07FTPDOMarylgQQ9qXy++ZD3TG
-         i85AB8b/ud+7J/LEch5R5y1dL4WdKqnNMWMddF4BW5ZkRrhuWrIymcQFmXctDkYCut
-         ldN5mVUjhueqg==
-Date:   Mon, 8 Jul 2019 13:28:37 +1000
+        s=201702; t=1562557200;
+        bh=39hnV0Tn7e7+rBTWWb3IWz3qcT1/yKjynR7c6gY2tpM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=q2TXKGknUvxY8o2CSVNwg0T1ZR+2Vu4s+CBh554LpwGqgERmVa68CU/FvaUFgtisB
+         IzjjJX3QSVtY0Vt1dcx8e6WrGxcy+gcY8/lZeU87UJcv8lgom+WOJqdFMcHCLeE1s2
+         gPYVMyzO3/pEnOmiEv9fscnteTqfVsztrM50eKqyiqua2ZrE7/QKAauQx43lHkB1Dy
+         vwPRQb8dUQXTndGNY0ps1wOFrdtMktXJFqaxDH+q9RaDhG+i2mHbjcTgsDiBGidSX0
+         Cv14v2USJenE1tV5EGXbxiH27sPLMjPJaYW0Z2j4m3g7pLGulUczcszcQQBwa1qh2W
+         SC2yAyYkp8MeQ==
+Date:   Mon, 8 Jul 2019 13:39:58 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
- tree
-Message-ID: <20190708132837.5ccb36ed@canb.auug.org.au>
-In-Reply-To: <20190704124738.1e88cb69@canb.auug.org.au>
-References: <20190704124738.1e88cb69@canb.auug.org.au>
+        wenxu <wenxu@ucloud.cn>
+Subject: linux-next: build failure after merge of the netfilter-next tree
+Message-ID: <20190708133958.6a30f5cb@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WFz+iZTScEnSIiQwpXVHD5l"; protocol="application/pgp-signature"
+ boundary="Sig_/h4fLp5t4l=mmg./plMjkz4y"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/WFz+iZTScEnSIiQwpXVHD5l
+--Sig_/h4fLp5t4l=mmg./plMjkz4y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 4 Jul 2019 12:47:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Hi all,
->=20
-> Today's linux-next merge of the mlx5-next tree got a conflict in:
->=20
->   drivers/infiniband/hw/mlx5/cq.c
->=20
-> between commit:
->=20
->   e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibi=
-lity")
->=20
-> from the rdma tree and commit:
->=20
->   38164b771947 ("net/mlx5: mlx5_core_create_cq() enhancements")
->=20
-> from the mlx5-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/infiniband/hw/mlx5/cq.c
-> index bfe3efdd77d7,4efbbd2fce0c..000000000000
-> --- a/drivers/infiniband/hw/mlx5/cq.c
-> +++ b/drivers/infiniband/hw/mlx5/cq.c
-> @@@ -891,7 -891,8 +891,8 @@@ int mlx5_ib_create_cq(struct ib_cq *ibc
->   	int entries =3D attr->cqe;
->   	int vector =3D attr->comp_vector;
->   	struct mlx5_ib_dev *dev =3D to_mdev(ibdev);
-> + 	u32 out[MLX5_ST_SZ_DW(create_cq_out)];
->  -	struct mlx5_ib_cq *cq;
->  +	struct mlx5_ib_cq *cq =3D to_mcq(ibcq);
->   	int uninitialized_var(index);
->   	int uninitialized_var(inlen);
->   	u32 *cqb =3D NULL;
+After merging the netfilter-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-This is now a conflict between the net-next tree and the rdma tree.
+In file included from <command-line>:
+include/net/netfilter/nft_meta.h:6:21: warning: 'key' is narrower than valu=
+es of its type
+  enum nft_meta_keys key:8;
+                     ^~~
+include/net/netfilter/nft_meta.h:6:21: error: field 'key' has incomplete ty=
+pe
+include/net/netfilter/nft_meta.h:8:22: warning: 'dreg' is narrower than val=
+ues of its type
+   enum nft_registers dreg:8;
+                      ^~~~
+include/net/netfilter/nft_meta.h:8:22: error: field 'dreg' has incomplete t=
+ype
+include/net/netfilter/nft_meta.h:9:22: warning: 'sreg' is narrower than val=
+ues of its type
+   enum nft_registers sreg:8;
+                      ^~~~
+include/net/netfilter/nft_meta.h:9:22: error: field 'sreg' has incomplete t=
+ype
+include/net/netfilter/nft_meta.h:13:32: error: array type has incomplete el=
+ement type 'struct nla_policy'
+ extern const struct nla_policy nft_meta_policy[];
+                                ^~~~~~~~~~~~~~~
+include/net/netfilter/nft_meta.h:17:22: warning: 'struct nlattr' declared i=
+nside parameter list will not be visible outside of this definition or decl=
+aration
+         const struct nlattr * const tb[]);
+                      ^~~~~~
+include/net/netfilter/nft_meta.h:16:22: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+         const struct nft_expr *expr,
+                      ^~~~~~~~
+include/net/netfilter/nft_meta.h:15:36: warning: 'struct nft_ctx' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+ int nft_meta_get_init(const struct nft_ctx *ctx,
+                                    ^~~~~~~
+include/net/netfilter/nft_meta.h:21:22: warning: 'struct nlattr' declared i=
+nside parameter list will not be visible outside of this definition or decl=
+aration
+         const struct nlattr * const tb[]);
+                      ^~~~~~
+include/net/netfilter/nft_meta.h:20:22: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+         const struct nft_expr *expr,
+                      ^~~~~~~~
+include/net/netfilter/nft_meta.h:19:36: warning: 'struct nft_ctx' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+ int nft_meta_set_init(const struct nft_ctx *ctx,
+                                    ^~~~~~~
+include/net/netfilter/nft_meta.h:24:22: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+         const struct nft_expr *expr);
+                      ^~~~~~~~
+include/net/netfilter/nft_meta.h:23:30: warning: 'struct sk_buff' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+ int nft_meta_get_dump(struct sk_buff *skb,
+                              ^~~~~~~
+include/net/netfilter/nft_meta.h:27:22: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+         const struct nft_expr *expr);
+                      ^~~~~~~~
+include/net/netfilter/nft_meta.h:26:30: warning: 'struct sk_buff' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+ int nft_meta_set_dump(struct sk_buff *skb,
+                              ^~~~~~~
+include/net/netfilter/nft_meta.h:31:23: warning: 'struct nft_pktinfo' decla=
+red inside parameter list will not be visible outside of this definition or=
+ declaration
+          const struct nft_pktinfo *pkt);
+                       ^~~~~~~~~~~
+include/net/netfilter/nft_meta.h:30:17: warning: 'struct nft_regs' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+          struct nft_regs *regs,
+                 ^~~~~~~~
+include/net/netfilter/nft_meta.h:29:37: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+ void nft_meta_get_eval(const struct nft_expr *expr,
+                                     ^~~~~~~~
+include/net/netfilter/nft_meta.h:35:23: warning: 'struct nft_pktinfo' decla=
+red inside parameter list will not be visible outside of this definition or=
+ declaration
+          const struct nft_pktinfo *pkt);
+                       ^~~~~~~~~~~
+include/net/netfilter/nft_meta.h:34:17: warning: 'struct nft_regs' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+          struct nft_regs *regs,
+                 ^~~~~~~~
+include/net/netfilter/nft_meta.h:33:37: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+ void nft_meta_set_eval(const struct nft_expr *expr,
+                                     ^~~~~~~~
+include/net/netfilter/nft_meta.h:38:19: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+      const struct nft_expr *expr);
+                   ^~~~~~~~
+include/net/netfilter/nft_meta.h:37:40: warning: 'struct nft_ctx' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+ void nft_meta_set_destroy(const struct nft_ctx *ctx,
+                                        ^~~~~~~
+include/net/netfilter/nft_meta.h:42:19: warning: 'struct nft_data' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+      const struct nft_data **data);
+                   ^~~~~~~~
+include/net/netfilter/nft_meta.h:41:19: warning: 'struct nft_expr' declared=
+ inside parameter list will not be visible outside of this definition or de=
+claration
+      const struct nft_expr *expr,
+                   ^~~~~~~~
+include/net/netfilter/nft_meta.h:40:40: warning: 'struct nft_ctx' declared =
+inside parameter list will not be visible outside of this definition or dec=
+laration
+ int nft_meta_set_validate(const struct nft_ctx *ctx,
+                                        ^~~~~~~
+
+Caused by commit
+
+  30e103fe24de ("netfilter: nft_meta: move bridge meta keys into nft_meta_b=
+ridge")
+
+interacting with commit
+
+  3a768d9f7ae5 ("kbuild: compile-test kernel headers to ensure they are sel=
+f-contained")
+
+from the kbuild tree.
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Jul 2019 13:34:42 +1000
+Subject: [PATCH] don't test build another netfilter header
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/Kbuild | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/Kbuild b/include/Kbuild
+index 78434c59701f..cfd73c94d015 100644
+--- a/include/Kbuild
++++ b/include/Kbuild
+@@ -900,6 +900,7 @@ header-test-			+=3D net/netfilter/nf_tables_core.h
+ header-test-			+=3D net/netfilter/nf_tables_ipv4.h
+ header-test-			+=3D net/netfilter/nf_tables_ipv6.h
+ header-test-			+=3D net/netfilter/nft_fib.h
++header-test-			+=3D net/netfilter/nft_meta.h
+ header-test-			+=3D net/netfilter/nft_reject.h
+ header-test-			+=3D net/netns/can.h
+ header-test-			+=3D net/netns/generic.h
+--=20
+2.20.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/WFz+iZTScEnSIiQwpXVHD5l
+--Sig_/h4fLp5t4l=mmg./plMjkz4y
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0iuGUACgkQAVBC80lX
-0GxbEwf+PlZ2tLyCFf5KdyUPf1/Nk5a8cYCobK1n7AAHZu+hd5HOvOiUI6cx3szE
-9M4TuGve/KZwD3JF4VUtqjyRHfea5C44E7CuCefSlUftak60gusKATGaB+efwbOb
-JOnDG6qHoeom2JhjoUgWilljISukGwP5ARrnleWosnu9BldCuM0EzcRgxd27eTrB
-cigGuxlyPaIfEXQWONOyENjg5wQ3ZRyKe69h7y+4zKfi/lgUgEhXMemdRg7Kjknp
-JyJ21FWMhHvDGpBfU2m1Kr6z9AqeUR9JcUXzg1DDMHosMaJU0XZMlcCJB+ektGqe
-RjpI5MzMURZ2yUCXDMAVPIZXa2lrTA==
-=GGMU
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0iuw4ACgkQAVBC80lX
+0GzFBQf/b/YE1PdhlGCXXYtciFUNz6F/q06Jom3PElXtxUPS4c/8BevEMLw5s5s0
+8njf6f782BbbgIP7EJaZIQHVVnk6ROr+AUXi1uWwALViruEaVvvHDg3bIX9miu17
+P2bVHSGit5vAsYUe++AlylfjrFuAt07wXTcJ7vZ9lSv5ddZ+ARev8yMpZaEJi75Q
+Y7nWEKkWDAbzcchit4Srp5PcYszldXNnyZEfSgZOWeKpWVaFGJGoUprkHTLdciS1
+V7FASRGW0b1tieoTY9/vIj6gbEBPnxASBNbM3VwnLINqAEMM7XUzOVIx1YQmE/XV
+NximHTIu89QjKc/4u89SqM5ESd+P5Q==
+=Okfl
 -----END PGP SIGNATURE-----
 
---Sig_/WFz+iZTScEnSIiQwpXVHD5l--
+--Sig_/h4fLp5t4l=mmg./plMjkz4y--
