@@ -2,102 +2,119 @@ Return-Path: <SRS0=dKUF=VG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D03C73C50
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 14:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827BFC73C50
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 15:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA9A21537
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 14:55:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="en9sy9Bo"
+	by mail.kernel.org (Postfix) with ESMTP id 57A7B2166E
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 15:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562685235;
+	bh=WYes44d1XbX9RL1aWGMXhJciepw8Ge41YgS9/MqBDmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vr1Cb9Dn7t25CCROMwZipbVfySx3Z9P3IC9p1txmwN372mQBSe+oNV8yfFS33hjQ2
+	 4MojbyCq6yfyjQF1325kK/fHPMFM9EL3ai7JLfrgweTlIQprwi/zn066z+j1HAAM/G
+	 2hBeO6WkHJTRKhGLMXRvy37hi4TZzyzSbZ6bFkgY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbfGIOzq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 10:55:46 -0400
-Received: from mail-io1-f48.google.com ([209.85.166.48]:44433 "EHLO
-        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfGIOzq (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2019 10:55:46 -0400
-Received: by mail-io1-f48.google.com with SMTP id s7so43742263iob.11;
-        Tue, 09 Jul 2019 07:55:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9KMd9yknkR/+c86sYJxaacnce7lwo4HnwkWIRsstIvc=;
-        b=en9sy9BoC7AQ5xWdOXvEGc7M1sc8G+FncI3Wyf8tSliOeOv9I0QKLXudMJBeKS5bgC
-         Lve6jVlSQ5y277mYdGTyzFuO2Gz9bmHjn898R/i6KNFCn2sx4Co0Y+Yqv+EE275ZcXH6
-         iK0rGJn/cLWvFdxk8SXTbetAYu/5je58SOkP94dzw29sNTGpKCgqyIpTtsYIzq5c4qs2
-         ic0lV+wFjB9uqcy9MeXAS5nsZndMEoD03Y7UgTDIZjfUac8QvU0xCnO7De+ZXxwPMzkF
-         SS4q/fPVKymRKFsqg4zifJvvrxAuK5JiMkU7pY6LkMo29hGmbMzL41H4iEayvHbHW73B
-         zKqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9KMd9yknkR/+c86sYJxaacnce7lwo4HnwkWIRsstIvc=;
-        b=aZMKERySd/i3jU2Z3izPJo07gPm73PPpjfjDXoNTQgjIY2lmgdLQWYLxh5+uda+oa7
-         kqrhXg4mwzXRn/O3HhJsbiw8kkCdSNZgUvPvFZP1QMYNxHN5b4V8ZbnIh4qM+MZfmk/s
-         qAeTY6hvrhuJs75ovzDOKDS1dDajDalWZy59n64bDgCaE2Wk5zaMCzb4cTS4chaIbFIp
-         szJ5UjCL8nvnj1evcYoI/W7yJ6jtKG+OgPYGxAmPmkm9sqHus7sedxrSo/ndx61xEnMz
-         wrLf8NXPv3yqlzRazvK0UBeI22B3HGnJMG9vU2mE96+475MFbqBhe9pU+3ZEZVUdT6pb
-         giuQ==
-X-Gm-Message-State: APjAAAXP1SP3q7f6rJ8zQTc32/ef0nIal0LmZnTgMgiEJI6yveTFBWcQ
-        +GzA1vFMXo6PDLK8Kzs3yaUTELiZxaEaBefbdC+EPKQ=
-X-Google-Smtp-Source: APXvYqwDxozVdqx2YUjLNkgpJjIKpdsN6GzZLTkWR9W7hcYndFmMhOnt4/nJgTTsxkPIdoGLLKL1prXG/lBM8MLRZKs=
-X-Received: by 2002:a5d:8404:: with SMTP id i4mr11903742ion.146.1562684145110;
- Tue, 09 Jul 2019 07:55:45 -0700 (PDT)
+        id S1726762AbfGIPNy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 11:13:54 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52766 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfGIPNy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2019 11:13:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QA3KMjVRm27Z/yBIcHSySV/7M7db3yiAsja5A/gEvl4=; b=j8fzb9CuPBPbVvm/uYU37XSDy
+        leO0YTTLD6yKzuYre7oQPNZrl6Mj5qDaHsHhlcJYM/7Hi4CIwnkKn4lkTLEZ5bLNXguTTAhj0et2G
+        x0e56AmMuSXjblhwq9X7kzL9zSsq4zE9YM5Q92kPOkZ16bW7NYNECrxUPyaYVNCIpUc1E=;
+Received: from [217.140.106.51] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hkroE-0005fD-RQ; Tue, 09 Jul 2019 15:13:34 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 9133ED02D72; Tue,  9 Jul 2019 16:13:33 +0100 (BST)
+Date:   Tue, 9 Jul 2019 16:13:33 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lecopzer Chen <lecopzer.chen@mediatek.com>,
+        Mark-PK Tsai <Mark-PK.Tsai@mediatek.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     kernel-build-reports@lists.linaro.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: next/master build: 230 builds: 3 failed, 227 passed, 391
+ warnings (next-20190709)
+Message-ID: <20190709151333.GD14859@sirena.co.uk>
+References: <5d24a6be.1c69fb81.c03b6.0fc7@mx.google.com>
 MIME-Version: 1.0
-References: <20190708072858.566aa564@canb.auug.org.au> <CAABAsM7jKzWPNoe63LU33tVfn7a88ZP9yzp4Bb1BN2TDWMxgjQ@mail.gmail.com>
- <ed6656ad172920882862e5571b6c237a31974bc3.camel@netapp.com>
-In-Reply-To: <ed6656ad172920882862e5571b6c237a31974bc3.camel@netapp.com>
-From:   Trond Myklebust <trondmy@gmail.com>
-Date:   Tue, 9 Jul 2019 10:55:34 -0400
-Message-ID: <CAABAsM4GzOXHrv1JLC3KRpdA=+7jiFF2tGL5=5PKYbV_Qcys5A@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the nfs tree
-To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-Cc:     "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lc9FT7cWel8HagAv"
+Content-Disposition: inline
+In-Reply-To: <5d24a6be.1c69fb81.c03b6.0fc7@mx.google.com>
+X-Cookie: Visit beautiful Vergas, Minnesota.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Yes please.
 
-On Tue, 9 Jul 2019 at 10:30, Schumaker, Anna <Anna.Schumaker@netapp.com> wrote:
->
-> On Sun, 2019-07-07 at 17:30 -0400, Trond Myklebust wrote:
-> > NetApp Security WARNING: This is an external email. Do not click
-> > links or open attachments unless you recognize the sender and know
-> > the content is safe.
-> >
-> >
-> >
-> >
-> > On Sun, 7 Jul 2019 at 17:29, Stephen Rothwell <sfr@canb.auug.org.au>
-> > wrote:
-> > > Hi all,
-> > >
-> > > Commits
-> > >
-> > >   fe9ad197bd8a ("xprtrdma: Remove the RPCRDMA_REQ_F_PENDING flag")
-> > >   08d720bcd822 ("xprtrdma: Fix occasional transport deadlock")
-> > >   beb843739ea0 ("xprtrdma: Replace use of xdr_stream_pos in
-> > > rpcrdma_marshal_req")
-> > >
-> > > are missing a Signed-off-by from their committer.
-> > >
-> >
-> > Anna?
->
-> Looks like I missed the "-s" flag to `git-am` when I was applying
-> these. I just fixed it locally, do you want me to send you a new pull
-> request?
->
-> Anna
+--lc9FT7cWel8HagAv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 09, 2019 at 07:37:50AM -0700, kernelci.org bot wrote:
+
+Today's -next fails to build tinyconfig on arm64 and x86_64:
+
+> arm64:
+>     tinyconfig: (clang-8) FAIL
+>     tinyconfig: (gcc-8) FAIL
+>=20
+> x86_64:
+>     tinyconfig: (gcc-8) FAIL
+
+due to:
+
+> tinyconfig (arm64, gcc-8) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section=
+ mismatches
+>=20
+> Section mismatches:
+>     WARNING: vmlinux.o(.meminit.text+0x430): Section mismatch in referenc=
+e from the function sparse_buffer_alloc() to the function .init.text:sparse=
+_buffer_free()
+>     FATAL: modpost: Section mismatches detected.
+
+(same error for all of them, the warning appears non-fatally in
+other configs).  This is caused by f13d13caa6ef2 (mm/sparse.c:
+fix memory leak of sparsemap_buf in aliged memory) which adds a
+reference from the __meminit annotated sparse_buffer_alloc() to
+the newly added __init annotated sparse_buffer_free().
+
+--lc9FT7cWel8HagAv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0krxwACgkQJNaLcl1U
+h9Az4wf+NjXEh83svNGV2ZzFvXQyIX1F5+MZY7+Qec/kz30LoJZXoVpSQ/XOSPZw
+4w0AlO9ogCAByTihA7SYdDeWVIbjYtpnBJkPPH9q4cr4pq73gM5VtvPMOwsLnC02
+BkikiievlHtZzDDtVZMwN/lBEsMzLPhVzth/od3+b64fG3miWorWXsCZvQP1Ru31
+JcqASJSggqba3JnUZsMTDe/eGCOiVezjwqOK33t+Wa+EVMmdqFUYsezamhzJbbQQ
+ig7iz36rj8ktEfNZ7FQF/LL+0oWG/SQr2CLB2gRmspC9eGybuMPFjsDvOsDnX3GZ
+9Yp3O3IMuXos/PMucVWAU7m76qnCGQ==
+=G6YQ
+-----END PGP SIGNATURE-----
+
+--lc9FT7cWel8HagAv--
