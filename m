@@ -2,131 +2,101 @@ Return-Path: <SRS0=dKUF=VG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7207C73C56
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 20:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A27C9C73C56
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 20:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95FCF216C4
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 20:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71F0220861
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 20:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562704659;
-	bh=/9LTzKi2u4iUq755wikCwdwulj3n2J071wkeNeptzIE=;
+	s=default; t=1562704955;
+	bh=GEmvXXtJuZoeMjHkUNxrqjxRtgJkTpEtZUN+Li1Nq6w=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ktlvhWHfgXGQxbt9gTFcl5ZSMUrZK1pMCwrzWQ/y4FJoNUPDWCiTo56hwD112U5hQ
-	 woxwNYrjmVBouhLMZ6nvERAwKbyO5au3M9fDZjCw9vXBnNoFrSiZrHXndk/dtpRraC
-	 GplV6j+kTRxosGBhJjTPYTnIcU4u2vbpqMfwBfk8=
+	b=CyMC/+2r4AEVazhBjHx4itLgMif2KGj2qniwtqhrVx/fn/m5lTDPRSJNgmmBZJ4yS
+	 NWDXSGigbibeAoTKnWRSM4GAdt9hbKbikbbjaOQfvUD+cuKw8ptS3tUNvNmiq24YGm
+	 SwfAg0cPLHUIhhYnLSQh6MI709LSGf7mSa9GXw8s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfGIUhj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 16:37:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57478 "EHLO mail.kernel.org"
+        id S1729782AbfGIUmf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 16:42:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729147AbfGIUhj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Jul 2019 16:37:39 -0400
+        id S1728955AbfGIUme (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jul 2019 16:42:34 -0400
 Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C6CA20861;
-        Tue,  9 Jul 2019 20:37:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A49F72073D;
+        Tue,  9 Jul 2019 20:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562704657;
-        bh=/9LTzKi2u4iUq755wikCwdwulj3n2J071wkeNeptzIE=;
+        s=default; t=1562704953;
+        bh=GEmvXXtJuZoeMjHkUNxrqjxRtgJkTpEtZUN+Li1Nq6w=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=J+oSXowCJu1Ojf7ZugvCFOUS/kT5hfSiz48WLrqAbUGjEHMko79VqV+tiTfBPcwzL
-         vSSbj06XgQKQbh2t6Z60kkhgAuMmF6IP0GT18Z+jf4x7Zg0QxDmuIr3q5wuCx65KbV
-         vfgDL/QRQJKySDVn6SeD2m7kXE4QAqa1KdtZNkMA=
-Date:   Tue, 9 Jul 2019 13:37:36 -0700
+        b=ZmWqLO2MGKo9QjsetZzCTSXngUYeLKa3JvNAikweNYugfvLIbMiyers4p3kUwTi9C
+         yxIgUZkvGl+xVfd/ZLwP1VlpGO5T/DWLw7rkl82b0lXLQnVh4JNtFeV9tBjlg59fqy
+         9cd6v34dSORzhTUQygVKWLdrYVe4X3FSqiKRHKd0=
+Date:   Tue, 9 Jul 2019 13:42:33 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Lecopzer Chen <lecopzer.chen@mediatek.com>,
-        Mark-PK Tsai <Mark-PK.Tsai@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        kernel-build-reports@lists.linaro.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: next/master build: 230 builds: 3 failed, 227 passed, 391
- warnings (next-20190709)
-Message-Id: <20190709133736.31f22a5e4aae49fec83faa99@linux-foundation.org>
-In-Reply-To: <20190709151333.GD14859@sirena.co.uk>
-References: <5d24a6be.1c69fb81.c03b6.0fc7@mx.google.com>
-        <20190709151333.GD14859@sirena.co.uk>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yang Shi <shy828301@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-Id: <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
+In-Reply-To: <20190709211559.6ffd2f4e@canb.auug.org.au>
+References: <20190709211559.6ffd2f4e@canb.auug.org.au>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 9 Jul 2019 16:13:33 +0100 Mark Brown <broonie@kernel.org> wrote:
+On Tue, 9 Jul 2019 21:15:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On Tue, Jul 09, 2019 at 07:37:50AM -0700, kernelci.org bot wrote:
+> Hi all,
 > 
-> Today's -next fails to build tinyconfig on arm64 and x86_64:
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 > 
-> > arm64:
-> >     tinyconfig: (clang-8) FAIL
-> >     tinyconfig: (gcc-8) FAIL
-> > 
-> > x86_64:
-> >     tinyconfig: (gcc-8) FAIL
+> arm-linux-gnueabi-ld: mm/list_lru.o: in function `list_lru_add':
+> list_lru.c:(.text+0x1a0): undefined reference to `memcg_set_shrinker_bit'
 > 
-> due to:
+> Caused by commit
 > 
-> > tinyconfig (arm64, gcc-8) — FAIL, 0 errors, 0 warnings, 0 section mismatches
-> > 
-> > Section mismatches:
-> >     WARNING: vmlinux.o(.meminit.text+0x430): Section mismatch in reference from the function sparse_buffer_alloc() to the function .init.text:sparse_buffer_free()
-> >     FATAL: modpost: Section mismatches detected.
+>   ca37e9e5f18d ("mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix-2")
 > 
-> (same error for all of them, the warning appears non-fatally in
-> other configs).  This is caused by f13d13caa6ef2 (mm/sparse.c:
-> fix memory leak of sparsemap_buf in aliged memory) which adds a
-> reference from the __meminit annotated sparse_buffer_alloc() to
-> the newly added __init annotated sparse_buffer_free().
+> CONFIG_MEMCG is not set for this build.
+> 
+> I have reverted that commit for today.
 
-Thanks.  Arnd just fixed this:
+Thanks.  This, I suppose:
 
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: mm/sparse.c: mark sparse_buffer_free as __meminit
-
-Calling an __init function from a __meminit function is not allowed:
-
-WARNING: vmlinux.o(.meminit.text+0x30ff): Section mismatch in reference from the function sparse_buffer_alloc() to the function .init.text:sparse_buffer_free()
-The function __meminit sparse_buffer_alloc() references
-a function __init sparse_buffer_free().
-If sparse_buffer_free is only used by sparse_buffer_alloc then
-annotate sparse_buffer_free with a matching annotation.
-
-Downgrade the annotation to __meminit for both, as they may be
-used in the hotplug case.
-
-Link: http://lkml.kernel.org/r/20190709185528.3251709-1-arnd@arndb.de
-Fixes: mmotm ("mm/sparse.c: fix memory leak of sparsemap_buf in aliged memory")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Lecopzer Chen <lecopzer.chen@mediatek.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- mm/sparse.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/mm/sparse.c~mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory-fix
-+++ a/mm/sparse.c
-@@ -428,7 +428,7 @@ struct page __init *sparse_mem_map_popul
- static void *sparsemap_buf __meminitdata;
- static void *sparsemap_buf_end __meminitdata;
- 
--static inline void __init sparse_buffer_free(unsigned long size)
-+static inline void __meminit sparse_buffer_free(unsigned long size)
+--- a/include/linux/memcontrol.h~mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix-2-fix
++++ a/include/linux/memcontrol.h
+@@ -1259,6 +1259,8 @@ static inline bool mem_cgroup_under_sock
+ 	} while ((memcg = parent_mem_cgroup(memcg)));
+ 	return false;
+ }
++extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
++                                  int nid, int shrinker_id);
+ #else
+ #define mem_cgroup_sockets_enabled 0
+ static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
+@@ -1267,6 +1269,10 @@ static inline bool mem_cgroup_under_sock
  {
- 	WARN_ON(!sparsemap_buf || size == 0);
- 	memblock_free_early(__pa(sparsemap_buf), size);
+ 	return false;
+ }
++static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
++					  int nid, int shrinker_id)
++{
++}
+ #endif
+ 
+ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
 _
 
