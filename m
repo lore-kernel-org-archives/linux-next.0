@@ -7,169 +7,116 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A8DC606CF
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 00:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F41AC606B0
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 00:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394282171F
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 00:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33B1A2166E
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 00:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YSok24rh"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AUWGCqdK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725807AbfGIAIf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 20:08:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:34729 "EHLO ozlabs.org"
+        id S1726763AbfGIAJ4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 20:09:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:49405 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbfGIAIf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Jul 2019 20:08:35 -0400
+        id S1726436AbfGIAJ4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jul 2019 20:09:56 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jN2S2FK0z9s7T;
-        Tue,  9 Jul 2019 10:08:32 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jN3z64BRz9sN4;
+        Tue,  9 Jul 2019 10:09:51 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562630912;
-        bh=gIbeMJpsgUZdACr7gjCFzSrPO4XcPubah6dmaViDyX4=;
+        s=201702; t=1562630993;
+        bh=xPxcJ6P8tH+jIDo5QQqs5SnjvwOcFQh+59wbcITTAo4=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YSok24rhAuzbBnDgImJvUM0Oqd9cn1DbrgLq4DeCO+ui5TkBP9ExoVKVsUk+YPqDT
-         PniEy4cr47ey41DFUpSX2FeLhfZMG5EOEq9q6cMg8St0V2AGnxGkyxniyvSxlKYeWk
-         tfU5Cbt+cg6VTBrzbpKoZasQHx/2fOcEPI8wqe0HLTfDM9qssSSuZV4uXmScaBgG5u
-         GkaAsxg9DGBxKlDaRBRp50HIQNPhM1/hEOinTgL7+C7K98i3q4be83kndhNJSdfZ5D
-         MjaSGiA76BRy6CMjzDQyouhIboFWt724gz2eIkQKRvgnNlm4juRoiQxKTA7DqTh0kD
-         jVJJXjUa57I9w==
-Date:   Tue, 9 Jul 2019 10:08:30 +1000
+        b=AUWGCqdKj+yAIR/UDkXE08ZG8Oc6Xf8XGav5V6fKXtDhAYma1jgwbNMj/Dp0TByx6
+         QYAqYCLstk+wCUVwnT43LOAkAJVbdQT8Dinvr+9bNw9TALU28N82cKiRHS+LyIKqE5
+         4twmFJgRaCqxkFB5B8rDB8DXSBiZJjCsR++CZ4Dec15e4B2mTA2M62pxLNsdF3/Y4N
+         +d3/jwOuF1G+BccqHwaFTvQAwdRjAgRbLXlvMcbCsaFsEiIW5VlPqABAJD+CYDwNJr
+         9CiIEnLGnDJ+SmJAbhozAeRIbyQevYPJTZs6nKmF/iG1kaP937DLNhSbBp4dd1nn6+
+         oCGGjmLq0A4Jg==
+Date:   Tue, 9 Jul 2019 10:09:51 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Wireless <linux-wireless@vger.kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the block tree with the jc_docs
- tree
-Message-ID: <20190709100830.5d76bb12@canb.auug.org.au>
-In-Reply-To: <20190625144226.48fff697@canb.auug.org.au>
-References: <20190625144226.48fff697@canb.auug.org.au>
+        Christian Lamparter <chunkeey@gmail.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20190709100951.38b3402e@canb.auug.org.au>
+In-Reply-To: <20190625160432.533aa140@canb.auug.org.au>
+References: <20190625160432.533aa140@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JYZFN1xrTdD/9l5Mo4UoRqO"; protocol="application/pgp-signature"
+ boundary="Sig_/_s7id3wA3S_Z2qmdsjD1SRW"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/JYZFN1xrTdD/9l5Mo4UoRqO
+--Sig_/_s7id3wA3S_Z2qmdsjD1SRW
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 25 Jun 2019 14:42:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Tue, 25 Jun 2019 16:04:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> Today's linux-next merge of the block tree got a conflict in:
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 >=20
->   Documentation/fault-injection/nvme-fault-injection.txt
+> drivers/net/wireless/intersil/p54/txrx.c: In function 'p54_rx_data':
+> drivers/net/wireless/intersil/p54/txrx.c:386:28: error: implicit declarat=
+ion of function 'ktime_get_boot_ns'; did you mean 'ktime_get_raw_ns'? [-Wer=
+ror=3Dimplicit-function-declaration]
+>    rx_status->boottime_ns =3D ktime_get_boot_ns();
+>                             ^~~~~~~~~~~~~~~~~
+>                             ktime_get_raw_ns
 >=20
-> between commit:
+> Caused by commit
 >=20
->   10ffebbed550 ("docs: fault-injection: convert docs to ReST and rename t=
-o *.rst")
+>   c11c75ec784e ("p54: Support boottime in scan results")
 >=20
-> from the jc_docs tree and commit:
+> from the wireless-drivers-next tree interacting with commit
 >=20
->   7e31d8215fd8 ("Documentation: nvme: add an example for nvme fault injec=
-tion")
+>   9285ec4c8b61 ("timekeeping: Use proper clock specifier names in functio=
+ns")
 >=20
-> from the block tree.
+> from the tip tree.
 >=20
-> I fixed it up (I removed the file and applied the following patch) and
-> can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+> I have added the following merge fix patch:
 >=20
 > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 25 Jun 2019 14:39:46 +1000
-> Subject: [PATCH] Documentation: nvme: fix for change to rst
+> Date: Tue, 25 Jun 2019 15:55:36 +1000
+> Subject: [PATCH] p54: fix up for ktime_get_boot_ns() name change
 >=20
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  .../fault-injection/nvme-fault-injection.rst  | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
+>  drivers/net/wireless/intersil/p54/txrx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/Documentation/fault-injection/nvme-fault-injection.rst b/Doc=
-umentation/fault-injection/nvme-fault-injection.rst
-> index bbb1bf3e8650..cdb2e829228e 100644
-> --- a/Documentation/fault-injection/nvme-fault-injection.rst
-> +++ b/Documentation/fault-injection/nvme-fault-injection.rst
-> @@ -118,3 +118,61 @@ Message from dmesg::
->      cpu_startup_entry+0x6f/0x80
->      start_secondary+0x187/0x1e0
->      secondary_startup_64+0xa5/0xb0
-> +
-> +Example 3: Inject an error into the 10th admin command
-> +------------------------------------------------------
-> +
-> +::
-> +
-> +  echo 100 > /sys/kernel/debug/nvme0/fault_inject/probability
-> +  echo 10 > /sys/kernel/debug/nvme0/fault_inject/space
-> +  echo 1 > /sys/kernel/debug/nvme0/fault_inject/times
-> +  nvme reset /dev/nvme0
-> +
-> +Expected Result::
-> +
-> +  After NVMe controller reset, the reinitialization may or may not succe=
-ed.
-> +  It depends on which admin command is actually forced to fail.
-> +
-> +Message from dmesg::
-> +
-> +  nvme nvme0: resetting controller
-> +  FAULT_INJECTION: forcing a failure.
-> +  name fault_inject, interval 1, probability 100, space 1, times 1
-> +  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0-rc2+ #2
-> +  Hardware name: MSI MS-7A45/B150M MORTAR ARCTIC (MS-7A45), BIOS 1.50 04=
-/25/2017
-> +  Call Trace:
-> +   <IRQ>
-> +   dump_stack+0x63/0x85
-> +   should_fail+0x14a/0x170
-> +   nvme_should_fail+0x38/0x80 [nvme_core]
-> +   nvme_irq+0x129/0x280 [nvme]
-> +   ? blk_mq_end_request+0xb3/0x120
-> +   __handle_irq_event_percpu+0x84/0x1a0
-> +   handle_irq_event_percpu+0x32/0x80
-> +   handle_irq_event+0x3b/0x60
-> +   handle_edge_irq+0x7f/0x1a0
-> +   handle_irq+0x20/0x30
-> +   do_IRQ+0x4e/0xe0
-> +   common_interrupt+0xf/0xf
-> +   </IRQ>
-> +  RIP: 0010:cpuidle_enter_state+0xc5/0x460
-> +  Code: ff e8 8f 5f 86 ff 80 7d c7 00 74 17 9c 58 0f 1f 44 00 00 f6 c4 0=
-2 0f 85 69 03 00 00 31 ff e8 62 aa 8c ff fb 66 0f 1f 44 00 00 <45> 85 ed 0f=
- 88 37 03 00 00 4c 8b 45 d0 4c 2b 45 b8 48 ba cf f7 53
-> +  RSP: 0018:ffffffff88c03dd0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffffdc
-> +  RAX: ffff9dac25a2ac80 RBX: ffffffff88d53760 RCX: 000000000000001f
-> +  RDX: 0000000000000000 RSI: 000000002d958403 RDI: 0000000000000000
-> +  RBP: ffffffff88c03e18 R08: fffffff75e35ffb7 R09: 00000a49a56c0b48
-> +  R10: ffffffff88c03da0 R11: 0000000000001b0c R12: ffff9dac25a34d00
-> +  R13: 0000000000000006 R14: 0000000000000006 R15: ffffffff88d53760
-> +   cpuidle_enter+0x2e/0x40
-> +   call_cpuidle+0x23/0x40
-> +   do_idle+0x201/0x280
-> +   cpu_startup_entry+0x1d/0x20
-> +   rest_init+0xaa/0xb0
-> +   arch_call_rest_init+0xe/0x1b
-> +   start_kernel+0x51c/0x53b
-> +   x86_64_start_reservations+0x24/0x26
-> +   x86_64_start_kernel+0x74/0x77
-> +   secondary_startup_64+0xa4/0xb0
-> +  nvme nvme0: Could not set queue count (16385)
-> +  nvme nvme0: IO queues not created
+> diff --git a/drivers/net/wireless/intersil/p54/txrx.c b/drivers/net/wirel=
+ess/intersil/p54/txrx.c
+> index be6968454282..873fea59894f 100644
+> --- a/drivers/net/wireless/intersil/p54/txrx.c
+> +++ b/drivers/net/wireless/intersil/p54/txrx.c
+> @@ -383,7 +383,7 @@ static int p54_rx_data(struct p54_common *priv, struc=
+t sk_buff *skb)
+> =20
+>  	fc =3D ((struct ieee80211_hdr *)skb->data)->frame_control;
+>  	if (ieee80211_is_probe_resp(fc) || ieee80211_is_beacon(fc))
+> -		rx_status->boottime_ns =3D ktime_get_boot_ns();
+> +		rx_status->boottime_ns =3D ktime_get_boottime_ns();
+> =20
+>  	if (unlikely(priv->hw->conf.flags & IEEE80211_CONF_PS))
+>  		p54_pspoll_workaround(priv, skb);
 > --=20
 > 2.20.1
 
@@ -180,20 +127,20 @@ Just a reminder in case you think Linus may need to know.
 Cheers,
 Stephen Rothwell
 
---Sig_/JYZFN1xrTdD/9l5Mo4UoRqO
+--Sig_/_s7id3wA3S_Z2qmdsjD1SRW
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0j2v4ACgkQAVBC80lX
-0GxjeQf8C4sX4LFHiH7ta1FzJ+XfKEE6aDaTRAekdUPyKdadebk1onRgZd+L7m9/
-tUPbPX+DAJHFQUFu+CAHogxDD056jcVIiuCmtV4dBAYPjP7HD4B4bGTRNkCCNAYs
-t9v28XeIeFXCcKvHEuHtJyvN01kHIBvda1+7eC7MYCD5pSD1HWwPk9EwGE1bNIkJ
-V448cVaNzrE2yqw7SpXLnXVCIbTgCt8fj+ng1nJWAm2WMmzXitvR6j1ezcuWs8CM
-sdXon9+BjA7lA/JLJv49yFWlHTMJIKkbQukKGJoYK6G+jmYzZxGMFHeuH4ANpEc6
-QsHdDGKOrkKzsEwaOS++8Wjf/EviyQ==
-=vKNy
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0j208ACgkQAVBC80lX
+0Gw7ZQf+KEDciOXpR5S/in68ldPfTLfZlj77Ng5gIcSC63tKqknTJ19RIFi65bKi
+cwI9Jrg3f//cnwv7ZS2c/jPkQhJm+A2imbXovB4SAxiviNRnNROIFXFsjzK5CWLH
+1sNpFYj3FhW1cVCw8Z8hW0c9d9ztTwsR4Bm0eOex7QxoZXsmutI8Ke9HHE0Mv3Kx
+PDtSWz9/OHoDO91C3WXXUEoWCRcT3fnwYm+Z5UxkhDq3VD2Vni6iyDLulvXpLX+q
+7xas7YnR0zJN8DDiNNgWHavdVoU2Xg0/t1h55Oqyp+qEKJWxWb8ibNMVJ9Mqox31
+p772Anjel8BIM6YH/iWZkKLmP8mD6w==
+=eSGL
 -----END PGP SIGNATURE-----
 
---Sig_/JYZFN1xrTdD/9l5Mo4UoRqO--
+--Sig_/_s7id3wA3S_Z2qmdsjD1SRW--
