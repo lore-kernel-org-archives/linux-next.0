@@ -7,141 +7,168 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6012DC606B0
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 06:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ED9C606B0
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E5E1216FD
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 06:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712AC21537
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:04:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HZFOY+xT"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="C8iUPPrg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725832AbfGIGzE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 02:55:04 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33029 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfGIGzE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Jul 2019 02:55:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jY3R61R1z9s3l;
-        Tue,  9 Jul 2019 16:54:59 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562655301;
-        bh=/OG1GFFqVrZ0mfKk3zuMK9QTPLM43PxzOJI/FlayNiQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HZFOY+xTu5s6LiMNpXVwys6AtcfvsF94AsmOkTY3Xwvq4BEobkRTfWXbalYGiQeDT
-         fulxk6/58/Lt9KKhbbHt4R7M9icTwwRa3lMVogy9AsAGPZivShXopG2T4ktlGGqOj7
-         noATqCwVtSXLEMf8E1cJJSOTx/JuEUhG4EdTF8tchty60rbji8dfGSERJj1kLd9GLQ
-         IdmMZpaazVEykuEWSpBg6zAJRuiM2r7EsLOZQ/UsoVNvM7X/KMx3PlAIzM1UXAiYXI
-         tEVB/s3d+b/T94AGILfpmcLl1F/JCtzPJdr/TmJqbjMJ28wi8CZiZsDoklLcWl+o6p
-         1W8g7vtzQjfeg==
-Date:   Tue, 9 Jul 2019 16:54:59 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sage Weil <sage@newdream.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1725974AbfGIHEV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 03:04:21 -0400
+Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:18014
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725818AbfGIHEU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jul 2019 03:04:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3t26rAb6VdH5rRyxQqvYdKkzoBzfNiEGLiopPUw5R8I=;
+ b=C8iUPPrgSQ5YhoSLsEwlds7FmrIpUkCyd3Vy4jaLnKsUzkzFumkycIeJMywm+HTNwuACW7sizGa7vPyDIxjC0eK+ze/5UQgmEZTFSvLZCCxA5kTA1t9xHZcHf4SrWmF6QtRrZPbIrUYRmdcWxE1LbqfkvHxr/VpavpKLOD+3OIg=
+Received: from AM6PR05MB4472.eurprd05.prod.outlook.com (52.135.162.157) by
+ AM6PR05MB6151.eurprd05.prod.outlook.com (20.178.93.223) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.18; Tue, 9 Jul 2019 07:04:16 +0000
+Received: from AM6PR05MB4472.eurprd05.prod.outlook.com
+ ([fe80::b8a9:c816:7e52:b47]) by AM6PR05MB4472.eurprd05.prod.outlook.com
+ ([fe80::b8a9:c816:7e52:b47%3]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
+ 07:04:16 +0000
+From:   Mark Zhang <markz@mellanox.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20190709165459.11b353d8@canb.auug.org.au>
+        Majd Dibbiny <majd@mellanox.com>,
+        asahiro Yamada <yamada.masahiro@socionext.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+Thread-Topic: linux-next: build failure after merge of the rdma tree
+Thread-Index: AQHVNgam1ySKRGHBz0+LGfGH8/fuJ6bB3PCA
+Date:   Tue, 9 Jul 2019 07:04:16 +0000
+Message-ID: <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
+References: <20190709133019.25a8cd27@canb.auug.org.au>
+In-Reply-To: <20190709133019.25a8cd27@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR01CA0117.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::21) To AM6PR05MB4472.eurprd05.prod.outlook.com
+ (2603:10a6:209:43::29)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=markz@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [115.196.38.205]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4396a993-735d-4f88-97d2-08d7043ba7fa
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR05MB6151;
+x-ms-traffictypediagnostic: AM6PR05MB6151:
+x-microsoft-antispam-prvs: <AM6PR05MB6151A4BBC689071BF06F22E9CAF10@AM6PR05MB6151.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0093C80C01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(346002)(39860400002)(396003)(53754006)(189003)(199004)(7736002)(305945005)(6636002)(66066001)(68736007)(31686004)(3846002)(81166006)(6116002)(73956011)(53936002)(81156014)(8936002)(8676002)(6436002)(5660300002)(66446008)(64756008)(2906002)(66556008)(66946007)(66476007)(386003)(256004)(486006)(478600001)(26005)(99286004)(316002)(54906003)(31696002)(110136005)(11346002)(2616005)(476003)(186003)(36756003)(446003)(14454004)(86362001)(53546011)(102836004)(6486002)(6506007)(229853002)(107886003)(6246003)(71190400001)(71200400001)(52116002)(76176011)(25786009)(6512007)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6151;H:AM6PR05MB4472.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: RIXnNDpiFQu5/uOg/Nipsb5BHheArzeCBfmLRzKDkt9/cRvzukCHliBbAAU5AmV5WQu1bYZF+1ghyansu9y1VKzzsCIavdxP8HG53ad0q7XvweYmwbxvQQX+4L0XycJ+HvdfdHM6dXQUUkBsm58QrUgWujD16H0DLBNFOOol3LOyjlD2jYUUNCP+I/AyVnFEZTOSrG+UvTnCornBlNRC4OX/puvHOBq36XckC/lh4xuLeWVo8OY43pupLhLZVfzJp/y5/K9eWc0c1D3QgLHb2NGxuhpflav0XhxTImQMUhF6znHDHKbpVMQWWG+hDyF7KW/31IQP8FNMPHaruiOxqyTw3kA2jCk1cQ0ZU1+lf3mAy0FSNGvLNoeQjY172rNrq2Y43QOc9imHKdgM4geHVg37uvy6tEyQBgczcwFm8y8=
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <3368234182CC824389CEFA42EF8F76B0@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/T4oAY+y+6W_Hqd+T9l31+0Y"; protocol="application/pgp-signature"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4396a993-735d-4f88-97d2-08d7043ba7fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:04:16.6052
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: markz@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6151
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/T4oAY+y+6W_Hqd+T9l31+0Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+Can you please try the patch below, thank you.
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+net/mlx5: Remove include ib_verbs.h in rdma_counter.h
 
-drivers/block/rbd.c: In function 'wake_lock_waiters':
-drivers/block/rbd.c:3933:2: error: implicit declaration of function 'lockde=
-p_assert_held_exclusive'; did you mean 'lockdep_assert_held_write'? [-Werro=
-r=3Dimplicit-function-declaration]
-  lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  lockdep_assert_held_write
+rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
+from rdma_counter.h, but it is not defined yet.
 
-Caused by commit
+Fixes: 413d3347503b ("RDMA/counter: Add set/clear per-port auto mode=20
+support")
+Signed-off-by: Mark Zhang <markz@mellanox.com>
 
-  9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() ->=
- lockdep_assert_held_write()")
+diff --git a/include/rdma/rdma_counter.h b/include/rdma/rdma_counter.h
+index 68827700ba95..eb99856e8b30 100644
+--- a/include/rdma/rdma_counter.h
++++ b/include/rdma/rdma_counter.h
+@@ -9,10 +9,10 @@
+  #include <linux/mutex.h>
+  #include <linux/pid_namespace.h>
 
-interacting with commits
+-#include <rdma/ib_verbs.h>
+  #include <rdma/restrack.h>
+  #include <rdma/rdma_netlink.h>
 
-  637cd060537d ("rbd: new exclusive lock wait/wake code")
-  a2b1da09793d ("rbd: lock should be quiesced on reacquire")
++struct ib_device;
+  struct ib_qp;
 
-from the ceph tree.
+  struct auto_mode_param {
 
-I have added the following merge fix patch for today.
+On 7/9/2019 11:30 AM, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the rdma tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> In file included from /home/sfr/next/next/include/rdma/rdma_counter.h:12,
+>                   from <command-line>:
+> /home/sfr/next/next/include/rdma/ib_verbs.h:2126:27: error: field 'port_c=
+ounter' has incomplete type
+>    struct rdma_port_counter port_counter;
+>                             ^~~~~~~~~~~~
+>=20
+> Caused by commit
+>=20
+>    413d3347503b ("RDMA/counter: Add set/clear per-port auto mode support"=
+)
+>=20
+> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
+> from rdma_counter.h, but it is not defined yet :-(
+>=20
+> I have applied the following patch for today.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 9 Jul 2019 13:17:49 +1000
+> Subject: [PATCH] RDMA: don't try to build rdma_counter.h for now
+>=20
+> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
+> from rdma_counter.h, but it is not defined yet :-(
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>   include/Kbuild | 1 +
+>   1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/Kbuild b/include/Kbuild
+> index 78434c59701f..8dab85cdf4f4 100644
+> --- a/include/Kbuild
+> +++ b/include/Kbuild
+> @@ -939,6 +939,7 @@ header-test-			+=3D rdma/ib.h
+>   header-test-			+=3D rdma/iw_portmap.h
+>   header-test-			+=3D rdma/opa_port_info.h
+>   header-test-			+=3D rdma/rdmavt_cq.h
+> +header-test-			+=3D rdma/rdma_counter.h
+>   header-test-			+=3D rdma/restrack.h
+>   header-test-			+=3D rdma/signature.h
+>   header-test-			+=3D rdma/tid_rdma_defs.h
+>=20
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 9 Jul 2019 16:46:12 +1000
-Subject: [PATCH] rbd: fix up for lockdep_assert_held_exclusive rename
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/block/rbd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 723c3ef4bd59..02216fbdb854 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3930,7 +3930,7 @@ static void wake_lock_waiters(struct rbd_device *rbd_=
-dev, int result)
- 	struct rbd_img_request *img_req;
-=20
- 	dout("%s rbd_dev %p result %d\n", __func__, rbd_dev, result);
--	lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
-+	lockdep_assert_held_write(&rbd_dev->lock_rwsem);
-=20
- 	cancel_delayed_work(&rbd_dev->lock_dwork);
- 	if (!completion_done(&rbd_dev->acquire_wait)) {
-@@ -4209,7 +4209,7 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_d=
-ev)
- 	bool need_wait;
-=20
- 	dout("%s rbd_dev %p\n", __func__, rbd_dev);
--	lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
-+	lockdep_assert_held_write(&rbd_dev->lock_rwsem);
-=20
- 	if (rbd_dev->lock_state !=3D RBD_LOCK_STATE_LOCKED)
- 		return false;
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/T4oAY+y+6W_Hqd+T9l31+0Y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kOkMACgkQAVBC80lX
-0GyP5Af/etG4RvEUmxBkzAToBclLZdaeLzz1oiLJ2NyLMmocCjEyiXhpe+VXxpcX
-QzYXxOC2gq/KDwLbHDek/bkpjX9L127eyGQtjOSFRt5eqTbozXqqYHOLpuM5/tam
-YhjMhysdXWwdgNHu3Fh/YrB2jjy32fjhFH79ug0LB2OsUSXRJNDXiSDAIV9Gz5pB
-8H4cdl4fP5FthWlx4ZDTF/i3gNEFQb/xPF2x5b/2x6ydN8dVO9PvYM1Twrq5HFLG
-pdBZoBRy6CazkylUsL4SAemg9naGl/cwz8C6r09f8oNfxk4I7kUoWm12myxQR/4k
-gUGPTKQ7irC2Vt6o53fSo83Su4bJXQ==
-=1X56
------END PGP SIGNATURE-----
-
---Sig_/T4oAY+y+6W_Hqd+T9l31+0Y--
