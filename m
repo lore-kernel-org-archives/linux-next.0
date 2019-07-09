@@ -2,192 +2,139 @@ Return-Path: <SRS0=dKUF=VG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F21BC606D7
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512BAC606B0
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 08:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5957421707
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B95D216FD
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 08:22:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="o6cYn6r4"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WZknx/Sr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfGIHSF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 03:18:05 -0400
-Received: from mail-eopbgr130058.outbound.protection.outlook.com ([40.107.13.58]:30885
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726171AbfGIHSE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:18:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hh7f2xuBCq6LCA7GPS9lDU5enW4MCikBRHX7iiw8Tmo=;
- b=o6cYn6r4yeH5+ZbrZRkNgGaMlQ7wMZxQglREemX7/gEJ7aOtTP1/PbZKaQZawiatJhitEPG07ZSNI4Kx6VNAbpVnTmbY0k5pJAbztiLzKC4Gx4CWOKrHY1dFyZb/dhxnlkfqixkh7ScRdG9KKDTI3dfJIrN8/elCzLbTDILBmqw=
-Received: from AM4PR05MB3137.eurprd05.prod.outlook.com (10.171.188.155) by
- AM4PR05MB3187.eurprd05.prod.outlook.com (10.171.189.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.20; Tue, 9 Jul 2019 07:18:01 +0000
-Received: from AM4PR05MB3137.eurprd05.prod.outlook.com
- ([fe80::ecbf:4002:63f2:43fb]) by AM4PR05MB3137.eurprd05.prod.outlook.com
- ([fe80::ecbf:4002:63f2:43fb%6]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
- 07:18:01 +0000
-From:   Leon Romanovsky <leonro@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-CC:     Mark Zhang <markz@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1725911AbfGIIWN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 04:22:13 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40715 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725886AbfGIIWN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jul 2019 04:22:13 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jZzz5zb8z9sN1;
+        Tue,  9 Jul 2019 18:22:07 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562660529;
+        bh=0E4mbQbXSeBh+V/gm/m6xxRJWGDNOPL5eLSQYqqllzA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WZknx/SrW2PSNbeKjCs/cc1gz3yjJ67iwppccmqrxniqn7XUSOAV/5wOIbF4TRSZN
+         gF9zL+aPVQ6+yeDX48WLHG17zlafSg6PX6aMKB+w7tket/hjYhNJpFC+L5ymzaNac6
+         FWrBINwmDTixQfjzjRvq3W7QgXuPlGBK/y4tUDBYKiYXUMYOE5YAdD11ao+Dd/gsej
+         WBOVZoUsIL4Y01BdjeCcv3iK6hxC2zJ02FZyhLg/senddC89iDH+QeCyb744kVJI1E
+         UJ25v+9XY9Os4OIjjMwFvAL+Qzua6DSi2kv9AqyrNssgO/1w5LnEvxTlVmaqGGWJaL
+         4fj+hSaAN35Jw==
+Date:   Tue, 9 Jul 2019 18:21:53 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        Wim Van Sebroeck <wim@iguana.be>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Majd Dibbiny <majd@mellanox.com>,
-        asahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHVNgam1ySKRGHBz0+LGfGH8/fuJ6bB3PCAgAAD4QA=
-Date:   Tue, 9 Jul 2019 07:18:00 +0000
-Message-ID: <20190709071758.GI7034@mtr-leonro.mtl.com>
-References: <20190709133019.25a8cd27@canb.auug.org.au>
- <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
-In-Reply-To: <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P192CA0038.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:209:82::15) To AM4PR05MB3137.eurprd05.prod.outlook.com
- (2603:10a6:205:8::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonro@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 395f6e05-f550-442e-c531-08d7043d935e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM4PR05MB3187;
-x-ms-traffictypediagnostic: AM4PR05MB3187:
-x-microsoft-antispam-prvs: <AM4PR05MB3187BDFDD56D863AF685654EB0F10@AM4PR05MB3187.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(396003)(136003)(39860400002)(53754006)(199004)(189003)(7736002)(446003)(11346002)(25786009)(476003)(486006)(66066001)(229853002)(33656002)(6512007)(6436002)(2906002)(478600001)(305945005)(14454004)(9686003)(6246003)(6116002)(256004)(3846002)(53936002)(8936002)(8676002)(81156014)(81166006)(6486002)(110136005)(316002)(86362001)(102836004)(186003)(5660300002)(26005)(52116002)(386003)(6506007)(53546011)(66476007)(73956011)(68736007)(6636002)(71190400001)(71200400001)(64756008)(66446008)(99286004)(66946007)(54906003)(1076003)(4326008)(66556008)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR05MB3187;H:AM4PR05MB3137.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XtTIq1gO6+tGVjXNxuuKWIxrj4+/w4Sy46dFSy1GoyhHhne2oIryD5G3ksUUjQ13fjUS470m2IJo6M1iDdo3fXUvECx9fQ4ELzG+Kh1KiPzyew61B2q3WXOjdbWC5A44bwRk/1AXodQtO8g6fAAbpB+k9uPmn5t01fM2guC8lSdRkLUcDtzy2J9aAFPuGa7vs+tS3Fmn/lRydlW21kZjLX7UjMtYs40A2FRM3EMk9UGmDK5sb9I6dH05gcm/M6bwUjpHwziA8JWbXuTu9QOJccIxk64mxZJi9o/Ti+EFKvQ3AwJa9h/oXJr4Xx3dUaTAe0d1iov7e7pD6ZSortp0aeR62P5pO6PVEbknnWT1oAaROmx63K/Au0PevQf9j/J/MbH+ppXeCf66Jd+NTTYMWfMbR8LzFog7YOPEEtcA6Zs=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C282D81B6A7AD645ACA31ABE72CEF461@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Anson Huang <Anson.Huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: linux-next: manual merge of the char-misc tree with the watchdog
+ tree
+Message-ID: <20190709182153.4ee49f62@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 395f6e05-f550-442e-c531-08d7043d935e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:18:00.9521
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonro@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR05MB3187
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RbsQDjixmUr_A0ZOBpiPoum"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 10:04:16AM +0300, Mark Zhang wrote:
-> Hi Stephen,
+--Sig_/RbsQDjixmUr_A0ZOBpiPoum
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi all,
 
-For some reason, I wasn't in initial email report, can you please check why=
-?
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-I need to be aware of any issues related to patches with my name on it
-for tracking and improving internal submission flows/checks.
+  Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
 
->
-> Can you please try the patch below, thank you.
+between commit:
 
-Jason, Doug,
+  8c21ead3ea5d ("dt-bindings: watchdog: move i.MX system controller watchdo=
+g binding to SCU")
 
-Can you please take this patch?
+from the watchdog tree and commit:
 
-Thanks
+  c2a6ea23a401 ("dt-bindings: fsl: scu: add ocotp binding")
 
->
-> net/mlx5: Remove include ib_verbs.h in rdma_counter.h
->
-> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> from rdma_counter.h, but it is not defined yet.
->
-> Fixes: 413d3347503b ("RDMA/counter: Add set/clear per-port auto mode
-> support")
-> Signed-off-by: Mark Zhang <markz@mellanox.com>
->
-> diff --git a/include/rdma/rdma_counter.h b/include/rdma/rdma_counter.h
-> index 68827700ba95..eb99856e8b30 100644
-> --- a/include/rdma/rdma_counter.h
-> +++ b/include/rdma/rdma_counter.h
-> @@ -9,10 +9,10 @@
->   #include <linux/mutex.h>
->   #include <linux/pid_namespace.h>
->
-> -#include <rdma/ib_verbs.h>
->   #include <rdma/restrack.h>
->   #include <rdma/rdma_netlink.h>
->
-> +struct ib_device;
->   struct ib_qp;
->
->   struct auto_mode_param {
->
-> On 7/9/2019 11:30 AM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > After merging the rdma tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > In file included from /home/sfr/next/next/include/rdma/rdma_counter.h:1=
-2,
-> >                   from <command-line>:
-> > /home/sfr/next/next/include/rdma/ib_verbs.h:2126:27: error: field 'port=
-_counter' has incomplete type
-> >    struct rdma_port_counter port_counter;
-> >                             ^~~~~~~~~~~~
-> >
-> > Caused by commit
-> >
-> >    413d3347503b ("RDMA/counter: Add set/clear per-port auto mode suppor=
-t")
-> >
-> > rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> > from rdma_counter.h, but it is not defined yet :-(
-> >
-> > I have applied the following patch for today.
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Tue, 9 Jul 2019 13:17:49 +1000
-> > Subject: [PATCH] RDMA: don't try to build rdma_counter.h for now
-> >
-> > rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> > from rdma_counter.h, but it is not defined yet :-(
-> >
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >   include/Kbuild | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/include/Kbuild b/include/Kbuild
-> > index 78434c59701f..8dab85cdf4f4 100644
-> > --- a/include/Kbuild
-> > +++ b/include/Kbuild
-> > @@ -939,6 +939,7 @@ header-test-			+=3D rdma/ib.h
-> >   header-test-			+=3D rdma/iw_portmap.h
-> >   header-test-			+=3D rdma/opa_port_info.h
-> >   header-test-			+=3D rdma/rdmavt_cq.h
-> > +header-test-			+=3D rdma/rdma_counter.h
-> >   header-test-			+=3D rdma/restrack.h
-> >   header-test-			+=3D rdma/signature.h
-> >   header-test-			+=3D rdma/tid_rdma_defs.h
-> >
->
+from the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index 1b56557df521,f378922906f6..000000000000
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@@ -133,16 -133,18 +133,28 @@@ RTC bindings based on SCU Message Proto
+  Required properties:
+  - compatible: should be "fsl,imx8qxp-sc-rtc";
+ =20
+ +Watchdog bindings based on SCU Message Protocol
+ +------------------------------------------------------------
+ +
+ +Required properties:
+ +- compatible: should be:
+ +              "fsl,imx8qxp-sc-wdt"
+ +              followed by "fsl,imx-sc-wdt";
+ +Optional properties:
+ +- timeout-sec: contains the watchdog timeout in seconds.
+ +
++ OCOTP bindings based on SCU Message Protocol
++ ------------------------------------------------------------
++ Required properties:
++ - compatible:		Should be "fsl,imx8qxp-scu-ocotp"
++ - #address-cells:	Must be 1. Contains byte index
++ - #size-cells:		Must be 1. Contains byte length
++=20
++ Optional Child nodes:
++=20
++ - Data cells of ocotp:
++   Detailed bindings are described in bindings/nvmem/nvmem.txt
++=20
+  Example (imx8qxp):
+  -------------
+  aliases {
+
+--Sig_/RbsQDjixmUr_A0ZOBpiPoum
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kTqEACgkQAVBC80lX
+0GzMiQf+L6LmHyXul5iEqcecvgRhkKD7R6qABepAqQOIwGLck9KI1lCX0dT/dg3H
+OTK75OYa5LViz1739eYPfqVhnS0WM3KEqhFqD4TY1QiNUQ6Et0ZXqB2t2zKGbxnl
+e7iIHV1QQT8sWtw5yIc29AVbrfIfsndN6Fp5gMg7RRf3JTnVxtFLgj34bCAf8gBG
+mlbwZC/5oAOb22MPTUp6QjbooI7ouBgGfWMblN9bsz9EiZ++9nwQCP1rY9Y1Lt7w
+nwiOHlqQe3hyofQjSFAojOkxYBDM+Voa5G0ixBuMeV9FaezqmkFo44OT6ye0mvbo
+tuEAu88qtnndlxA5OKwyczX+hvW83Q==
+=JcnW
+-----END PGP SIGNATURE-----
+
+--Sig_/RbsQDjixmUr_A0ZOBpiPoum--
