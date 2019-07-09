@@ -2,196 +2,189 @@ Return-Path: <SRS0=dKUF=VG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C491CC606B0
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 09:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7F2C606B0
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 09:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9346A216FD
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 09:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEFE220844
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 09:54:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CSVdk3HF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725951AbfGIJAw convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 05:00:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7930 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbfGIJAv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2019 05:00:51 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x698uwBu004113
-        for <linux-next@vger.kernel.org>; Tue, 9 Jul 2019 05:00:50 -0400
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.81])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tmqbxsacr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Tue, 09 Jul 2019 05:00:50 -0400
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-next@vger.kernel.org> from <BMT@zurich.ibm.com>;
-        Tue, 9 Jul 2019 09:00:49 -0000
-Received: from us1a3-smtp03.a3.dal06.isc4sb.com (10.106.154.98)
-        by smtp.notes.na.collabserv.com (10.106.227.88) with smtp.notes.na.collabserv.com ESMTP;
-        Tue, 9 Jul 2019 09:00:41 -0000
-Received: from us1a3-mail162.a3.dal06.isc4sb.com ([10.146.71.4])
-          by us1a3-smtp03.a3.dal06.isc4sb.com
-          with ESMTP id 2019070909004074-237333 ;
-          Tue, 9 Jul 2019 09:00:40 +0000 
-In-Reply-To: <20190709064346.GF7034@mtr-leonro.mtl.com>
-From:   "Bernard Metzler" <BMT@zurich.ibm.com>
-To:     "Leon Romanovsky" <leon@kernel.org>
-Cc:     "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        "Doug Ledford" <dledford@redhat.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>,
-        "David Miller" <davem@davemloft.net>,
-        "Networking" <netdev@vger.kernel.org>,
-        "Linux Next Mailing List" <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Date:   Tue, 9 Jul 2019 09:00:40 +0000
+        id S1726105AbfGIJyF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 05:54:05 -0400
+Received: from ozlabs.org ([203.11.71.1]:46199 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfGIJyF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jul 2019 05:54:05 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jd215rHdz9sMr;
+        Tue,  9 Jul 2019 19:54:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562666042;
+        bh=I20rMtRdhtlHMbcdjzh5SUTN7cTyewBku+YTQLIPT30=;
+        h=Date:From:To:Cc:Subject:From;
+        b=CSVdk3HFOPUf6pSg16PKWsUjklN10sK4BwnscIlTR3x6j9QVYh6GcIcmSb5MaiOXN
+         wdx/Oxon1ra/zLHr9v14MDuaM6ja9Ip3LPIKBwQRKNI+D27v7bPMIvgVxDAdFWk+Da
+         Wy+dkX+E6Yvzvk3gIULEauhcCSocJe6ax3IqO5u3nHBHQ+uO7XHXovdMclcopoWLA6
+         +sfmh/EATqmweJwTl256uA3SXnI3ym3NOWqJweq/HolG+65yq3HwPrZ7B8fovhVGzO
+         XPgwBZCqrrxnhHzMK7aNf10nCrnmVPZzGlXUlvQ1FYZ2dqo2PCgUCAqMOTtLKnRaPE
+         9GI9jkyRbnELQ==
+Date:   Tue, 9 Jul 2019 19:53:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: linux-next: manual merge of the hyperv tree with Linus' tree
+Message-ID: <20190709195358.25af244b@canb.auug.org.au>
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <20190709064346.GF7034@mtr-leonro.mtl.com>,<20190709135636.4d36e19f@canb.auug.org.au>
-X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
- SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
-X-LLNOutbound: False
-X-Disclaimed: 56111
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=UTF-8
-x-cbid: 19070909-7093-0000-0000-00000C001049
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.009927
-X-IBM-SpamModules-Versions: BY=3.00011400; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01229610; UDB=6.00647592; IPR=6.01010869;
- BA=6.00006352; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00027647; XFM=3.00000015;
- UTC=2019-07-09 09:00:47
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-07-09 02:46:09 - 6.00010142
-x-cbparentid: 19070909-7094-0000-0000-00008DFF1023
-Message-Id: <OF3548A4E6.BB93884C-ON00258432.00308557-00258432.00318024@notes.na.collabserv.com>
-Subject: Re:  Re: linux-next: build failure after merge of the net-next tree
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/V7L34NyEN+m=5fUhaJzV.Aq"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
------"Leon Romanovsky" <leon@kernel.org> wrote: -----
+--Sig_/V7L34NyEN+m=5fUhaJzV.Aq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
->To: "Stephen Rothwell" <sfr@canb.auug.org.au>
->From: "Leon Romanovsky" <leon@kernel.org>
->Date: 07/09/2019 08:43AM
->Cc: "Doug Ledford" <dledford@redhat.com>, "Jason Gunthorpe"
-><jgg@mellanox.com>, "David Miller" <davem@davemloft.net>,
->"Networking" <netdev@vger.kernel.org>, "Linux Next Mailing List"
-><linux-next@vger.kernel.org>, "Linux Kernel Mailing List"
-><linux-kernel@vger.kernel.org>, "Bernard Metzler"
-><bmt@zurich.ibm.com>
->Subject: [EXTERNAL] Re: linux-next: build failure after merge of the
->net-next tree
->
->On Tue, Jul 09, 2019 at 01:56:36PM +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the net-next tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/infiniband/sw/siw/siw_cm.c: In function
->'siw_create_listen':
->> drivers/infiniband/sw/siw/siw_cm.c:1978:3: error: implicit
->declaration of function 'for_ifa'; did you mean 'fork_idle'?
->[-Werror=implicit-function-declaration]
->>    for_ifa(in_dev)
->>    ^~~~~~~
->>    fork_idle
->> drivers/infiniband/sw/siw/siw_cm.c:1978:18: error: expected ';'
->before '{' token
->>    for_ifa(in_dev)
->>                   ^
->>                   ;
->>    {
->>    ~
->>
->> Caused by commit
->>
->>   6c52fdc244b5 ("rdma/siw: connection management")
->>
->> from the rdma tree.  I don't know why this didn't fail after I
->mereged
->> that tree.
->
->I had the same question, because I have this fix for a couple of days
->already.
->
->From 56c9e15ec670af580daa8c3ffde9503af3042d67 Mon Sep 17 00:00:00
->2001
->From: Leon Romanovsky <leonro@mellanox.com>
->Date: Sun, 7 Jul 2019 10:43:42 +0300
->Subject: [PATCH] Fixup to build SIW issue
->
->Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
->---
-> drivers/infiniband/sw/siw/siw_cm.c | 5 ++---
-> 1 file changed, 2 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/infiniband/sw/siw/siw_cm.c
->b/drivers/infiniband/sw/siw/siw_cm.c
->index 8e618cb7261f..c883bf514341 100644
->--- a/drivers/infiniband/sw/siw/siw_cm.c
->+++ b/drivers/infiniband/sw/siw/siw_cm.c
->@@ -1954,6 +1954,7 @@ static void siw_drop_listeners(struct iw_cm_id
->*id)
-> int siw_create_listen(struct iw_cm_id *id, int backlog)
-> {
-> 	struct net_device *dev = to_siw_dev(id->device)->netdev;
->+	const struct in_ifaddr *ifa;
-> 	int rv = 0, listeners = 0;
->
-> 	siw_dbg(id->device, "id 0x%p: backlog %d\n", id, backlog);
->@@ -1975,8 +1976,7 @@ int siw_create_listen(struct iw_cm_id *id, int
->backlog)
-> 			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
-> 			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
->
->-		for_ifa(in_dev)
->-		{
->+		in_dev_for_each_ifa_rcu(ifa, in_dev) {
-> 			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
-> 			    s_laddr.sin_addr.s_addr == ifa->ifa_address) {
-> 				s_laddr.sin_addr.s_addr = ifa->ifa_address;
->@@ -1988,7 +1988,6 @@ int siw_create_listen(struct iw_cm_id *id, int
->backlog)
-> 					listeners++;
-> 			}
-> 		}
->-		endfor_ifa(in_dev);
-> 		in_dev_put(in_dev);
-> 	} else if (id->local_addr.ss_family == AF_INET6) {
-> 		struct inet6_dev *in6_dev = in6_dev_get(dev);
->--
->2.21.0
->
->
->>
->> I have marked that driver as depending on BROKEN for today.
->>
->> --
->> Cheers,
->> Stephen Rothwell
->
->
->
-I am very sorry for that issues. Things are moving fast, and I
-didn't realize 'for_ifa' recently went away. I agree with Leon,
-his patch fixes the issue. So, please, let's apply that one.
+Hi all,
 
-Leon, many thanks for providing the fix.
+Today's linux-next merge of the hyperv tree got a conflict in:
 
-Thanks very much,
-Bernard.
+  arch/x86/include/asm/mshyperv.h
 
+between commit:
+
+  dd2cb348613b ("clocksource/drivers: Continue making Hyper-V clocksource I=
+SA agnostic")
+
+from Linus' tree and commit:
+
+  765e33f5211a ("Drivers: hv: vmbus: Break out ISA independent parts of msh=
+yperv.h")
+
+from the hyperv tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/include/asm/mshyperv.h
+index f4fa8a9d5d0b,080a92025748..000000000000
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@@ -397,4 -246,76 +256,6 @@@ static inline int hyperv_flush_guest_ma
+  }
+  #endif /* CONFIG_HYPERV */
+ =20
+ -#ifdef CONFIG_HYPERV_TSCPAGE
+ -struct ms_hyperv_tsc_page *hv_get_tsc_page(void);
+ -static inline u64 hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *t=
+sc_pg,
+ -				       u64 *cur_tsc)
+ -{
+ -	u64 scale, offset;
+ -	u32 sequence;
+ -
+ -	/*
+ -	 * The protocol for reading Hyper-V TSC page is specified in Hypervisor
+ -	 * Top-Level Functional Specification ver. 3.0 and above. To get the
+ -	 * reference time we must do the following:
+ -	 * - READ ReferenceTscSequence
+ -	 *   A special '0' value indicates the time source is unreliable and we
+ -	 *   need to use something else. The currently published specification
+ -	 *   versions (up to 4.0b) contain a mistake and wrongly claim '-1'
+ -	 *   instead of '0' as the special value, see commit c35b82ef0294.
+ -	 * - ReferenceTime =3D
+ -	 *        ((RDTSC() * ReferenceTscScale) >> 64) + ReferenceTscOffset
+ -	 * - READ ReferenceTscSequence again. In case its value has changed
+ -	 *   since our first reading we need to discard ReferenceTime and repeat
+ -	 *   the whole sequence as the hypervisor was updating the page in
+ -	 *   between.
+ -	 */
+ -	do {
+ -		sequence =3D READ_ONCE(tsc_pg->tsc_sequence);
+ -		if (!sequence)
+ -			return U64_MAX;
+ -		/*
+ -		 * Make sure we read sequence before we read other values from
+ -		 * TSC page.
+ -		 */
+ -		smp_rmb();
+ -
+ -		scale =3D READ_ONCE(tsc_pg->tsc_scale);
+ -		offset =3D READ_ONCE(tsc_pg->tsc_offset);
+ -		*cur_tsc =3D rdtsc_ordered();
+ -
+ -		/*
+ -		 * Make sure we read sequence after we read all other values
+ -		 * from TSC page.
+ -		 */
+ -		smp_rmb();
+ -
+ -	} while (READ_ONCE(tsc_pg->tsc_sequence) !=3D sequence);
+ -
+ -	return mul_u64_u64_shr(*cur_tsc, scale, 64) + offset;
+ -}
+ -
+ -static inline u64 hv_read_tsc_page(const struct ms_hyperv_tsc_page *tsc_p=
+g)
+ -{
+ -	u64 cur_tsc;
+ -
+ -	return hv_read_tsc_page_tsc(tsc_pg, &cur_tsc);
+ -}
+ -
+ -#else
+ -static inline struct ms_hyperv_tsc_page *hv_get_tsc_page(void)
+ -{
+ -	return NULL;
+ -}
+ -
+ -static inline u64 hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *t=
+sc_pg,
+ -				       u64 *cur_tsc)
+ -{
+ -	BUG();
+ -	return U64_MAX;
+ -}
+ -#endif
+ -
++ #include <asm-generic/mshyperv.h>
++=20
+  #endif
+
+--Sig_/V7L34NyEN+m=5fUhaJzV.Aq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0kZDYACgkQAVBC80lX
+0GzydQf9H/yv8PTKxH+N2Th2kxmnt0mWoR/8wsK2SqqgxvVxsdm/HajhE6wilJJo
+f1rAjjXMw86JN0rKclumVndvUUlAogqXjHeXzelHzyvN0nwDrWI/oHw7I/U/OGMI
+fg3GGC3QKTJErC6Xx/3lNbHeSwbM5ghx/j4GLQQI+TpRaBSYPoLbI4d5SIYU1p45
+lIFaxysd079gxPQzere/oiqAc0vxQKF+a6YmXALUeRSQs2lpb0OsVSFGrVF2QerF
+abuGZbBv3bBChUyEuLp8XiSqYPLMfysCULAsCHltq8Ki0Lg+t6up+FXTIDkOwGhd
+Z511df1aVUVGCozcOoyExTYwGkbiTw==
+=eQ4X
+-----END PGP SIGNATURE-----
+
+--Sig_/V7L34NyEN+m=5fUhaJzV.Aq--
