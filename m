@@ -2,95 +2,121 @@ Return-Path: <SRS0=dKUF=VG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D4BC606B0
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 00:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133DDC606B0
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 01:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F315216C4
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 00:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF2F021707
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 01:21:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="K5rwjxmU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw7lPod6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfGIAmd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Jul 2019 20:42:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:52983 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbfGIAmd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Jul 2019 20:42:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45jNnf5P0Sz9sMQ;
-        Tue,  9 Jul 2019 10:42:30 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562632951;
-        bh=wWC6fAyjgQTj/KoZ0dwwBsIL7iZlRWuzNQgC/MzxXGI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=K5rwjxmUcYgzLZhAsMglRLx0Oi0SF5ighgmJYKvtTJsjZoFNXinE7ShSZDBnSRsmv
-         js9N8r3KmNYYjeGAPqQBKoqTwsVd5piL9F0AGLNg1vTSaHdPuE1LxpHWfhZ9N7Geb7
-         O7JWQO+xdNKKSqpJgFzSWfhodqschhmHAKfzOqPdB0lrDsqtcR0tbK+3VVlSwa7rah
-         ghO/SDrf6RbBfRtreX6jcgKW3l2mW3cDzjFsEQfOLmoF+ODYOIihH5brQAFxkprOKk
-         47kE8JGtGIyw2kNwSscHT5z7SaupymFo8qlxOwelvJIuB9tzpQE95R6ZKeM5ek0R8W
-         4fHSoKpjhGDTg==
-Date:   Tue, 9 Jul 2019 10:42:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the keys tree with the integrity
+        id S1726170AbfGIBVu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Jul 2019 21:21:50 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34551 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfGIBVt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2019 21:21:49 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b13so3838286pfo.1;
+        Mon, 08 Jul 2019 18:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mOXbH37AQ7tFNQ48gevBCHTUGwe3lcXlgFdj+MBfAMA=;
+        b=Qw7lPod6Tqd6EC6IpM86aVJ7jzZ+XVTgerLUgUxf/lu82QMJrHryBxsJLnKvS/dnU5
+         4Vx9ELiQEC+xIPFur1hbEUMP2IXxS8MSEVj9Q68Uq7dTxxnmgNZwVPTNU0LTJW0E0TNK
+         MznAXMtu6A2gE/etTn/VpvjMx8+StcHFu3rKbYwTOf+blMl3yixfkOg4PArLRbV2+dQr
+         A8MGHJoVB14M6mj3Gzgh97fsrVT6RhqtUgzPX8Cg38mBR/pqnnrvXwjPHGXMWkkuY+fP
+         VhMfW+v4thtoNKqpIt/FLk47/edFhsOqh4z08ZRapv9B0OaZnjcR7qUVfoj291RDWleV
+         /yZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mOXbH37AQ7tFNQ48gevBCHTUGwe3lcXlgFdj+MBfAMA=;
+        b=HOufi6X2sHMx4q2mCkedzGPkQDPhCb2ThFJyNgND6Oc2jXfkfkfjOcRjKnJ9eQDpRr
+         w5gL2FyP731EGTSl+arXUUlRigMFPEXfJbcJJRvS2r73Luw92Yma3WeJKy3CJSDe2Ihh
+         bHFUldqAaJjprO1XZ5PSWc/a1eY+cOwzQxnF/3mCkTxmjap4SGkLYhIbhNBVZL8X+j0T
+         gp5HnEQbAFM9Y8Yvns3XR7eWq0h/vuwVGEaFJzyyZVRRfU4gGLFiWo7YQYxpov4KhrMt
+         LCEaBw606tTG4JBMAaaDWlF8A4uLoY3BJzcEv+fyHJmBZwNvhcky4CwytFCO/cmtxM3k
+         00hg==
+X-Gm-Message-State: APjAAAUqDqnyyeGt46yvxAIedLpEUIiE/XzWZHW9DDLxr5KD47cSL6Xc
+        FZ9sN/vlW2jI0vZj2+fkdHs=
+X-Google-Smtp-Source: APXvYqxIHi67pMqcRCDMWMc37kj5NpFfBmAvgo5DlqbmRm54b8mtVASrr9kFkvlal5D29wCnpWIcNw==
+X-Received: by 2002:a65:5687:: with SMTP id v7mr27731666pgs.263.1562635309169;
+        Mon, 08 Jul 2019 18:21:49 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h26sm30672650pfq.64.2019.07.08.18.21.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 18:21:47 -0700 (PDT)
+Subject: Re: linux-next: manual merge of the tip tree with the hwmon-staging
  tree
-Message-ID: <20190709104230.439f61c5@canb.auug.org.au>
-In-Reply-To: <1562632295.11461.73.camel@linux.ibm.com>
-References: <20190626143333.7ee527ca@canb.auug.org.au>
-        <20190709101107.0754b26c@canb.auug.org.au>
-        <1562632295.11461.73.camel@linux.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabian Schindlatz <fabian.schindlatz@fau.de>,
+        Len Brown <len.brown@intel.com>
+References: <20190701171524.774dfc75@canb.auug.org.au>
+ <20190709101754.1836ac73@canb.auug.org.au>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <7ba5d70c-8c48-af5d-a154-f6e11f194746@roeck-us.net>
+Date:   Mon, 8 Jul 2019 18:21:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/g5eMwaLkW.oi6kozM+r+asR"; protocol="application/pgp-signature"
+In-Reply-To: <20190709101754.1836ac73@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/g5eMwaLkW.oi6kozM+r+asR
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On 7/8/19 5:17 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 1 Jul 2019 17:15:24 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Today's linux-next merge of the tip tree got a conflict in:
+>>
+>>    drivers/hwmon/coretemp.c
+>>
+>> between commit:
+>>
+>>    601fdf7e6635 ("hwmon: Correct struct allocation style")
+>>
+>> from the hwmon-staging tree and commit:
+>>
+>>    835896a59b95 ("hwmon/coretemp: Cosmetic: Rename internal variables to zones from packages")
+>>
+>> from the tip tree.
+>>
+>> I fixed it up (the comment fixed in the latter was also fixed in the
+>> former) and can carry the fix as necessary. This is now fixed as far as
+>> linux-next is concerned, but any non trivial conflicts should be mentioned
+>> to your upstream maintainer when your tree is submitted for merging.
+>> You may also want to consider cooperating with the maintainer of the
+>> conflicting tree to minimise any particularly complex conflicts.
+> 
+> I am still getting this conflict (the commit ids may have changed).
+> Just a reminder in case you think Linus may need to know.
+> 
 
-Hi Mimi,
+Thanks a lot for the reminder.
 
-On Mon, 08 Jul 2019 20:31:35 -0400 Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Thank you for carrying the patch! =C2=A0I did remember to mention it in t=
-he
-> pull request.  :)
+I had a quick look into the actual conflicts. I thought they are trivial,
+but that is not the case. I'll drop commit 601fdf7e6635 from my queue.
+In the future, to reduce the chance of similar problems, I won't accept
+cosmetic changes to the coretemp driver anymore since I only have limited
+if any control over it.
 
-Excellent!
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/g5eMwaLkW.oi6kozM+r+asR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0j4vYACgkQAVBC80lX
-0GyLlAf8CwTh73yqJWYdUnbJCvVqNxo1Qvhmpw/Jz+FvOYUQSbTjUUnoz7DqE8e4
-HYX8zuVsTHedX35fFG9kSi2v5dcgPQzmCJKoGcDLCLgpbr7A5qKFq+PT2ajuaGU8
-eKfXhV+ekmr97lRtzLfKckdnBTL9cRGaA3dWmzYGk2xwYi4N5NeCSkLBXL9puwwP
-miq1fmYfH9/RMteZtrONqiT7oqGthK/ggXVlapzYhemMPUDlwDW4lq2NLotUDhC8
-OSp2Q/RZ9q4ko9kUKx4Almhmso0da3QrhFhI+GCa4D0PTjIzbtv4R9PGa4vDDJix
-eBOc66cYGCYYftxpIg3Jm8G000BKAg==
-=hEG5
------END PGP SIGNATURE-----
-
---Sig_/g5eMwaLkW.oi6kozM+r+asR--
+Guenter
