@@ -2,173 +2,185 @@ Return-Path: <SRS0=dKUF=VG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ED9C606B0
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02201C606B0
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712AC21537
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:04:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="C8iUPPrg"
+	by mail.kernel.org (Postfix) with ESMTP id CBD5520644
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 07:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbfGIHEV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 03:04:21 -0400
-Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:18014
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725818AbfGIHEU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Jul 2019 03:04:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3t26rAb6VdH5rRyxQqvYdKkzoBzfNiEGLiopPUw5R8I=;
- b=C8iUPPrgSQ5YhoSLsEwlds7FmrIpUkCyd3Vy4jaLnKsUzkzFumkycIeJMywm+HTNwuACW7sizGa7vPyDIxjC0eK+ze/5UQgmEZTFSvLZCCxA5kTA1t9xHZcHf4SrWmF6QtRrZPbIrUYRmdcWxE1LbqfkvHxr/VpavpKLOD+3OIg=
-Received: from AM6PR05MB4472.eurprd05.prod.outlook.com (52.135.162.157) by
- AM6PR05MB6151.eurprd05.prod.outlook.com (20.178.93.223) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Tue, 9 Jul 2019 07:04:16 +0000
-Received: from AM6PR05MB4472.eurprd05.prod.outlook.com
- ([fe80::b8a9:c816:7e52:b47]) by AM6PR05MB4472.eurprd05.prod.outlook.com
- ([fe80::b8a9:c816:7e52:b47%3]) with mapi id 15.20.2052.020; Tue, 9 Jul 2019
- 07:04:16 +0000
-From:   Mark Zhang <markz@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
+        id S1726122AbfGIHNG convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 03:13:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:44877 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfGIHNE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jul 2019 03:13:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2019 00:13:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,469,1557212400"; 
+   d="scan'208";a="167898846"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga003.jf.intel.com with ESMTP; 09 Jul 2019 00:13:01 -0700
+Received: from fmsmsx162.amr.corp.intel.com (10.18.125.71) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 9 Jul 2019 00:12:38 -0700
+Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
+ fmsmsx162.amr.corp.intel.com (10.18.125.71) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 9 Jul 2019 00:12:37 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.15]) by
+ hasmsx107.ger.corp.intel.com ([169.254.2.129]) with mapi id 14.03.0439.000;
+ Tue, 9 Jul 2019 10:12:35 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        "Arnd Bergmann" <arnd@arndb.de>
 CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Majd Dibbiny <majd@mellanox.com>,
-        asahiro Yamada <yamada.masahiro@socionext.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHVNgam1ySKRGHBz0+LGfGH8/fuJ6bB3PCA
-Date:   Tue, 9 Jul 2019 07:04:16 +0000
-Message-ID: <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
-References: <20190709133019.25a8cd27@canb.auug.org.au>
-In-Reply-To: <20190709133019.25a8cd27@canb.auug.org.au>
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Lubart, Vitaly" <vitaly.lubart@intel.com>
+Subject: RE: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Thread-Topic: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Thread-Index: AQHVJyoWchJOzGveSk+BQ8pCoENHp6bBT2iAgACmBpA=
+Date:   Tue, 9 Jul 2019 07:12:34 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DC6C94D@hasmsx108.ger.corp.intel.com>
+References: <20190620153552.1392079c@canb.auug.org.au>
+ <20190709095109.3b75679b@canb.auug.org.au>
+In-Reply-To: <20190709095109.3b75679b@canb.auug.org.au>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR01CA0117.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::21) To AM6PR05MB4472.eurprd05.prod.outlook.com
- (2603:10a6:209:43::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=markz@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [115.196.38.205]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4396a993-735d-4f88-97d2-08d7043ba7fa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR05MB6151;
-x-ms-traffictypediagnostic: AM6PR05MB6151:
-x-microsoft-antispam-prvs: <AM6PR05MB6151A4BBC689071BF06F22E9CAF10@AM6PR05MB6151.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(346002)(39860400002)(396003)(53754006)(189003)(199004)(7736002)(305945005)(6636002)(66066001)(68736007)(31686004)(3846002)(81166006)(6116002)(73956011)(53936002)(81156014)(8936002)(8676002)(6436002)(5660300002)(66446008)(64756008)(2906002)(66556008)(66946007)(66476007)(386003)(256004)(486006)(478600001)(26005)(99286004)(316002)(54906003)(31696002)(110136005)(11346002)(2616005)(476003)(186003)(36756003)(446003)(14454004)(86362001)(53546011)(102836004)(6486002)(6506007)(229853002)(107886003)(6246003)(71190400001)(71200400001)(52116002)(76176011)(25786009)(6512007)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6151;H:AM6PR05MB4472.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: RIXnNDpiFQu5/uOg/Nipsb5BHheArzeCBfmLRzKDkt9/cRvzukCHliBbAAU5AmV5WQu1bYZF+1ghyansu9y1VKzzsCIavdxP8HG53ad0q7XvweYmwbxvQQX+4L0XycJ+HvdfdHM6dXQUUkBsm58QrUgWujD16H0DLBNFOOol3LOyjlD2jYUUNCP+I/AyVnFEZTOSrG+UvTnCornBlNRC4OX/puvHOBq36XckC/lh4xuLeWVo8OY43pupLhLZVfzJp/y5/K9eWc0c1D3QgLHb2NGxuhpflav0XhxTImQMUhF6znHDHKbpVMQWWG+hDyF7KW/31IQP8FNMPHaruiOxqyTw3kA2jCk1cQ0ZU1+lf3mAy0FSNGvLNoeQjY172rNrq2Y43QOc9imHKdgM4geHVg37uvy6tEyQBgczcwFm8y8=
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <3368234182CC824389CEFA42EF8F76B0@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzU5YmExN2QtOGVmNS00ZmJkLTkzMTEtNGRhOTY2YWE0MDc4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiR1phODdEQ0dUSDA3WFA2ckhJMFQ3blpySUN4RDdVODEzYmpOc0liWDFBVTJaZENhdTlBVjNTZ0x5RjJ5K1VUaiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.184.70.11]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4396a993-735d-4f88-97d2-08d7043ba7fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 07:04:16.6052
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: markz@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6151
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
-
-Can you please try the patch below, thank you.
-
-net/mlx5: Remove include ib_verbs.h in rdma_counter.h
-
-rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-from rdma_counter.h, but it is not defined yet.
-
-Fixes: 413d3347503b ("RDMA/counter: Add set/clear per-port auto mode=20
-support")
-Signed-off-by: Mark Zhang <markz@mellanox.com>
-
-diff --git a/include/rdma/rdma_counter.h b/include/rdma/rdma_counter.h
-index 68827700ba95..eb99856e8b30 100644
---- a/include/rdma/rdma_counter.h
-+++ b/include/rdma/rdma_counter.h
-@@ -9,10 +9,10 @@
-  #include <linux/mutex.h>
-  #include <linux/pid_namespace.h>
-
--#include <rdma/ib_verbs.h>
-  #include <rdma/restrack.h>
-  #include <rdma/rdma_netlink.h>
-
-+struct ib_device;
-  struct ib_qp;
-
-  struct auto_mode_param {
-
-On 7/9/2019 11:30 AM, Stephen Rothwell wrote:
+> 
 > Hi all,
->=20
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> In file included from /home/sfr/next/next/include/rdma/rdma_counter.h:12,
->                   from <command-line>:
-> /home/sfr/next/next/include/rdma/ib_verbs.h:2126:27: error: field 'port_c=
-ounter' has incomplete type
->    struct rdma_port_counter port_counter;
->                             ^~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->    413d3347503b ("RDMA/counter: Add set/clear per-port auto mode support"=
-)
->=20
-> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> from rdma_counter.h, but it is not defined yet :-(
->=20
-> I have applied the following patch for today.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 9 Jul 2019 13:17:49 +1000
-> Subject: [PATCH] RDMA: don't try to build rdma_counter.h for now
->=20
-> rdma_counter.h include ib_verbs.h which in turn needs rdma_port_counter
-> from rdma_counter.h, but it is not defined yet :-(
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->   include/Kbuild | 1 +
->   1 file changed, 1 insertion(+)
->=20
-> diff --git a/include/Kbuild b/include/Kbuild
-> index 78434c59701f..8dab85cdf4f4 100644
-> --- a/include/Kbuild
-> +++ b/include/Kbuild
-> @@ -939,6 +939,7 @@ header-test-			+=3D rdma/ib.h
->   header-test-			+=3D rdma/iw_portmap.h
->   header-test-			+=3D rdma/opa_port_info.h
->   header-test-			+=3D rdma/rdmavt_cq.h
-> +header-test-			+=3D rdma/rdma_counter.h
->   header-test-			+=3D rdma/restrack.h
->   header-test-			+=3D rdma/signature.h
->   header-test-			+=3D rdma/tid_rdma_defs.h
->=20
+> 
+> On Thu, 20 Jun 2019 15:35:52 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
+> wrote:
+> >
+> > Today's linux-next merge of the char-misc tree got a conflict in:
+> >
+> >   drivers/misc/mei/debugfs.c
+> >
+> > between commit:
+> >
+> >   5666d896e838 ("mei: no need to check return value of debugfs_create
+> > functions")
+> >
+> > from the driver-core tree and commit:
+> >
+> >   b728ddde769c ("mei: Convert to use DEFINE_SHOW_ATTRIBUTE macro")
+> >
+> > from the char-misc tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This is
+> > now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your
+> > tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise
+> > any particularly complex conflicts.
+> >
+> > --
+> > Cheers,
+> > Stephen Rothwell
+> >
+> > diff --cc drivers/misc/mei/debugfs.c
+> > index df6bf8b81936,47cfd5005e1b..000000000000
+> > --- a/drivers/misc/mei/debugfs.c
+> > +++ b/drivers/misc/mei/debugfs.c
+> > @@@ -233,22 -154,46 +154,21 @@@ void mei_dbgfs_deregister(struct
+> mei_de
+> >    *
+> >    * @dev: the mei device structure
+> >    * @name: the mei device name
+> >  - *
+> >  - * Return: 0 on success, <0 on failure.
+> >    */
+> >  -int mei_dbgfs_register(struct mei_device *dev, const char *name)
+> > +void mei_dbgfs_register(struct mei_device *dev, const char *name)
+> >   {
+> >  -	struct dentry *dir, *f;
+> >  +	struct dentry *dir;
+> >
+> >   	dir = debugfs_create_dir(name, NULL);
+> >  -	if (!dir)
+> >  -		return -ENOMEM;
+> >  -
+> >   	dev->dbgfs_dir = dir;
+> >
+> >  -	f = debugfs_create_file("meclients", S_IRUSR, dir,
+> >  -				dev, &mei_dbgfs_meclients_fops);
+> >  -	if (!f) {
+> >  -		dev_err(dev->dev, "meclients: registration failed\n");
+> >  -		goto err;
+> >  -	}
+> >  -	f = debugfs_create_file("active", S_IRUSR, dir,
+> >  -				dev, &mei_dbgfs_active_fops);
+> >  -	if (!f) {
+> >  -		dev_err(dev->dev, "active: registration failed\n");
+> >  -		goto err;
+> >  -	}
+> >  -	f = debugfs_create_file("devstate", S_IRUSR, dir,
+> >  -				dev, &mei_dbgfs_devstate_fops);
+> >  -	if (!f) {
+> >  -		dev_err(dev->dev, "devstate: registration failed\n");
+> >  -		goto err;
+> >  -	}
+> >  -	f = debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR,
+> dir,
+> >  -				&dev->allow_fixed_address,
+> >  -				&mei_dbgfs_allow_fa_fops);
+> >  -	if (!f) {
+> >  -		dev_err(dev->dev, "allow_fixed_address: registration
+> failed\n");
+> >  -		goto err;
+> >  -	}
+> >  -	return 0;
+> >  -err:
+> >  -	mei_dbgfs_deregister(dev);
+> >  -	return -ENODEV;
+> >  +	debugfs_create_file("meclients", S_IRUSR, dir, dev,
+> > - 			    &mei_dbgfs_fops_meclients);
+> > ++			    &mei_dbgfs_meclients_fops);
+> >  +	debugfs_create_file("active", S_IRUSR, dir, dev,
+> > - 			    &mei_dbgfs_fops_active);
+> > ++			    &mei_dbgfs_active_fops);
+> >  +	debugfs_create_file("devstate", S_IRUSR, dir, dev,
+> > - 			    &mei_dbgfs_fops_devstate);
+> > ++			    &mei_dbgfs_devstate_fops);
+> >  +	debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
+> >  +			    &dev->allow_fixed_address,
+> > - 			    &mei_dbgfs_fops_allow_fa);
+> > ++			    &mei_dbgfs_allow_fa_fops);
+> >   }
+> > -
+> 
+> I am still getting this conflict (the commit ids may have changed).
+> Just a reminder in case you think Linus may need to know.
+
+The conflict is resolved correctly,  the conflicts are between Greg's misc-char  and driver-core git trees.
+Actually I've asked Greg this git expertise question: how the **exact** conflict resolution is carried between git trees (before it is finally resolved in upstream for all.). 
+For next time If anyone has the answer, please let me know.
+
+Thanks
+Tomas
 
