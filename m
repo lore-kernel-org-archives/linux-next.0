@@ -3,104 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE05C73C41
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 13:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0F3C73C46
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 13:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51EE2171F
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 13:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FAF620861
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jul 2019 13:37:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlotDVqU"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XSevLwhR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfGINUT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 09:20:19 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39018 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbfGINUT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2019 09:20:19 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v85so10465945lfa.6
-        for <linux-next@vger.kernel.org>; Tue, 09 Jul 2019 06:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GKRMa+Kxr/0AVlCfTGD8ya+QzV6VZBsG8RNlbGuSaXU=;
-        b=NlotDVqUGttPOKvpca7ffuSwOx3mdZOtNeefjZVANPbNjTeMqB11gYruAonGJzIBCM
-         KrMoIrxmDSXxiWsQeMmMPeC7qDoIT51QuBBn8IXkxh5rNnLMDhcIPP4tqHMu8XkH+40+
-         0ikv6AqK1ccSNRtpzQvMT/Kyz4Xa+NNKJw2Vd+k6px6HvtvizWFgfzfbjeBOxJEiBTNt
-         GJvwN6JUNrsi480Qw3w6B4JePL/Y3h3Q5+gE+q0Lxktj1Mq7z9BVJNRW6Wd+YFz5qymK
-         T1wLisEIRPDBJdYhN7PfgFpvFbF8tOF+eJJgq+4XeAKA7NsK/7xIZ8r/TKdhiOjKYCn6
-         8yEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GKRMa+Kxr/0AVlCfTGD8ya+QzV6VZBsG8RNlbGuSaXU=;
-        b=rMDeW6kKRe7QdQxxie/tC7KdgEEspcCl5YmVO6rJMQIwb+Rko8uk00bqmAN7fioaTK
-         Hp1kPIHFHn96o9JYb55T+DX6UsnAN67sCrU+IPKiNDZ9KEMuRfXZLKg3GCSs03SU7/iS
-         TSPVHrAsTNx106ZKOxt6UWQHaqdxsrHx8TG61CGBfFWlSUwMQGsYVr3xKHO2FjPwLh7M
-         U3Ds0JirJEkqxslPN7Akyvf2NRgTL2/gz1BzPQ69t3218sdHpuxgc3GAp3YngMHGTsAE
-         oK5EsWip7Q0Ey0C8gbbfPd7aeWUXKL+DVTC7SR+evkH6uZzOaiJypzMjybynYimtTzxm
-         Kjdw==
-X-Gm-Message-State: APjAAAWvPTFykF+AnAo+aUO9sBXxYGqtdrzzuQgfZlLRFp9JRzGYQ19p
-        oyYAzAjTH45JgRbgLMnOLYSi5b4yxijuaMbOA4rVog==
-X-Google-Smtp-Source: APXvYqypndextSv7lD0G/DINvYDcmg4OLd7rXOvdO556BBK3HPFwOKmfetXYHPn7V8VLnu7Riy6N1iNhpUYiWdIHbqM=
-X-Received: by 2002:a19:e006:: with SMTP id x6mr11338723lfg.165.1562678417264;
- Tue, 09 Jul 2019 06:20:17 -0700 (PDT)
+        id S1726684AbfGINhT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 09:37:19 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:30081 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfGINhT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2019 09:37:19 -0400
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x69Db7Js021418;
+        Tue, 9 Jul 2019 22:37:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x69Db7Js021418
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1562679428;
+        bh=ObKEOLR2UbFEeFTWRY9OPCc16z3rd26SnSFncXPuWbc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XSevLwhRcDuoYBqb/kB42Ni5nStGcoveUoWvEgSCp15o5bjj8Xxbc0Q84F5nP6N4B
+         pCe0i754DFtUJ1FGjPr06MZeEUlRpjKfsZHWRujJkP5AOjdMkyLB+o65Y28SayNHcy
+         UBUaGfflZA6c3xVWkhMbG1hdPUAsrWPzpsjaY/PyjPMDBswAvG01cxlE+bJqAQHdRR
+         3NcoOEip1hHptCTzcPjWj/IGAUQVS2jUBS8hXFz3mfMZZKYefmF4GKIFXiZ4BmjHnX
+         04yT+AcEc9byxm0pUeDju3nW+HTlfJDvDtwvrtjL6J1COOTP9z6wG0rbC4nY923xhd
+         l4IF/3C4qZ/LA==
+X-Nifty-SrcIP: [209.85.217.49]
+Received: by mail-vs1-f49.google.com with SMTP id k9so10630344vso.5;
+        Tue, 09 Jul 2019 06:37:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAWRPgfOjqdPuk5OyNby5YgWotx8lBa3ZJxG2lyfiBlIWTZ2WZo8
+        uT6snb9E9L99YB0qP8taJHzgmvdEnnYHEUHtqt0=
+X-Google-Smtp-Source: APXvYqyGPtmfLEn9rBW7ihZhvrJgW4nZtGiWD36NunhGiORc2fmpyab0TS4YqtBrz/EDtZruAE01UplHwZOi6/ypFwM=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr14546426vsn.54.1562679427317;
+ Tue, 09 Jul 2019 06:37:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190628172807.4ae7edfc@canb.auug.org.au> <20190709101557.3e950748@canb.auug.org.au>
-In-Reply-To: <20190709101557.3e950748@canb.auug.org.au>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 9 Jul 2019 15:20:05 +0200
-Message-ID: <CACRpkdZHVGUamcVfVK_-0G4EJ6S0tJfZ1YULGMR_pg7WPfBM6w@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the gpio tree with the mfd tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20190709222019.5359e707@canb.auug.org.au>
+In-Reply-To: <20190709222019.5359e707@canb.auug.org.au>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 9 Jul 2019 22:36:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARBUkmcgOzMSHav7_w2OjX-_FHBpZ5ir_kP59_27VE6Ug@mail.gmail.com>
+Message-ID: <CAK7LNARBUkmcgOzMSHav7_w2OjX-_FHBpZ5ir_kP59_27VE6Ug@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the kbuild tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen, Linus
+Stephen,
 
-On Tue, Jul 9, 2019 at 2:16 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Jul 9, 2019 at 9:20 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Commit
+>
+>   8eaeddd155af ("kbuild: header-test: Exclude more headers for um and parisc")
+>
+> is missing a Signed-off-by from its author and committer.
 
-> > Today's linux-next merge of the gpio tree got a conflict in:
-> >
-> >   drivers/gpio/Makefile
-> >
-> > between commit:
-> >
-> >   18bc64b3aebf ("gpio: Initial support for ROHM bd70528 GPIO block")
-> >
-> > from the mfd tree and commit:
-> >
-> >   db16bad6efd9 ("gpio: Sort GPIO drivers in Makefile")
-> >
-> > from the gpio tree.
-(...)
-> I am still getting this conflict (the commit ids may have changed).
-> Just a reminder in case you think Linus may need to know.
 
-Of course I forgot to mention that in my pull request to Torvalds.
+Sorry, I was trying to squash this, but missed to do that.
+Will fix it for tomorrow's linux-next.
 
-Linus: there might be some trival merge conflict in the Makefile
-because Geert made a patch restructuring the Makefile and a
-new GPIO driver was merged orthogonally in the MFD tree.
+Thanks.
 
-The resolution should be trivial, and the end result that we see
-less of this because now the files are in alphabetic order so
-we (or so it is believed) get a rectangular distribution of
-conflicts since all filenames are equally plausible (yeah right).
-It's a best effort to keep some sane order at least.
 
-Yours,
-Linus Walleij
+-- 
+Best Regards
+Masahiro Yamada
