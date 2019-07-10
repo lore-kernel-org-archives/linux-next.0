@@ -2,138 +2,103 @@ Return-Path: <SRS0=fDmY=VH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9AFC73C63
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 00:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396C8C73C63
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 01:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC6B2081C
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 00:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF56520651
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 01:04:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fCNHUNv4"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CR8b8ol+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbfGJAKw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jul 2019 20:10:52 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52847 "EHLO ozlabs.org"
+        id S1726428AbfGJBEr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jul 2019 21:04:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:45661 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbfGJAKw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Jul 2019 20:10:52 -0400
+        id S1726218AbfGJBEr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jul 2019 21:04:47 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45k02Z0CPWz9sNT;
-        Wed, 10 Jul 2019 10:10:45 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45k1Dr04l5z9sNf;
+        Wed, 10 Jul 2019 11:04:44 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562717448;
-        bh=aje3qxoBM4jR9gwrtVjQf9LBOywN3qK6W7j1K/1yo9c=;
+        s=201702; t=1562720684;
+        bh=TQR0GcQ36S035CtDAlaimOx2Kh2rr7zoQ9d5zOLqMgw=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fCNHUNv4edxOH+Ki7HKSJdAGtKGxrN46iHZF7epuZiOjwjRqi9Wlitv+PjKlduM+o
-         DGGVyltY27H3u8zqF6CGlaj8a61+8nDAPggRitsRQJFhxrtCS2udaJzJhf6SK6n9GX
-         2gjNChvuh+xkuj+GfwlIZ7q1KHvgVYScRbKhXdp3ni+x3RQNKpEziCJzKWrsHuAT4r
-         ZO4gXFzRjpmIZ9g7ok+3vt662GO3vUBBu5JU6mE43Xkwy7PK8EFxL3Vi2Em7E/6p6t
-         zKdYxrchekTCt72QvV+QhnxdlGTximppIYULuo+qhbQHT1XV0vXcAzgngx8ffXUkA3
-         YiMpnqmTJeLLg==
-Date:   Wed, 10 Jul 2019 10:10:44 +1000
+        b=CR8b8ol+4YW7RxwEBW6ekFtajem3SLsA5zjXGXXNLUbp2ca72zkLQWel/BzO/P60B
+         jWdndw34LXKz2BUe0mVM6VqBPYkKdm36CmHLK1uudxTQ3LxJtHhAgZSybh0fKJ9wEW
+         QNDhBdZoXzpRx8vAo7Si0mBrqxyk3scVDWLDKSgoljqoTI66Oo9jSspquNnsHTTWsW
+         eNzAt1/lr8LByS0ufKBqzgh+FSfncSL6edBvl2WGz0C7he8AKS73BqAlM4V+wRJX0O
+         dpJvkqmegRGgSsaK50OAUqBCZ4tcKmFlLSkWlbpAwdT99ei6tm3zOyey2qrA1lToVz
+         CzIA7A6gQIICA==
+Date:   Wed, 10 Jul 2019 11:04:43 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jonathan Corbet <corbet@lwn.net>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Mark Zhang <markz@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        "Tobin C. Harding" <tobin@kernel.org>
-Subject: Re: linux-next: manual merge of the jc_docs tree with the vfs tree
-Message-ID: <20190710101044.499cc273@canb.auug.org.au>
-In-Reply-To: <20190708115032.098e7302@canb.auug.org.au>
-References: <20190708115032.098e7302@canb.auug.org.au>
+        Majd Dibbiny <majd@mellanox.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+Message-ID: <20190710110443.002220c8@canb.auug.org.au>
+In-Reply-To: <20190709124631.GG3436@mellanox.com>
+References: <20190709133019.25a8cd27@canb.auug.org.au>
+        <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
+        <20190709071758.GI7034@mtr-leonro.mtl.com>
+        <20190709124631.GG3436@mellanox.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//I+qp68hEYYgPmC+gUo4Fad"; protocol="application/pgp-signature"
+ boundary="Sig_/hi2rpc5Dd+yZzkhXjD3njhm"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//I+qp68hEYYgPmC+gUo4Fad
+--Sig_/hi2rpc5Dd+yZzkhXjD3njhm
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jason,
 
-On Mon, 8 Jul 2019 11:50:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Tue, 9 Jul 2019 12:46:34 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
 >
-> Today's linux-next merge of the jc_docs tree got a conflict in:
+> It isn't quite enough to make the header compile stand alone, I'm
+> adding this instead.
 >=20
->   Documentation/filesystems/vfs.txt
->=20
-> between commit:
->=20
->   51eae7431ded ("vfs: Kill mount_single()")
->=20
-> from the vfs tree and commit:
->=20
->   af96c1e304f7 ("docs: filesystems: vfs: Convert vfs.txt to RST")
->=20
-> from the jc_docs tree.
->=20
-> I fixed it up (I removed the file and added the following merge fix patch)
-> and can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 8 Jul 2019 11:48:39 +1000
-> Subject: [PATCH] docs: filesystems: vfs: update for "vfs: Kill mount_sing=
-le()"
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  Documentation/filesystems/vfs.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystem=
-s/vfs.rst
-> index 0f85ab21c2ca..a65ee69f02d1 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -195,8 +195,8 @@ and provides a fill_super() callback instead.  The ge=
-neric variants are:
->  ``mount_nodev``
->  	mount a filesystem that is not backed by a device
-> =20
-> -``mount_single``
-> -	mount a filesystem which shares the instance between all mounts
-> +``vfs_get_super``
-> +	mount a filesystem with one of a number of superblock sharing options.
-> =20
->  A fill_super() callback implementation has the following arguments:
-> =20
+> From 37c1e072276b03b080eb24ff24c39080aeaf49ef Mon Sep 17 00:00:00 2001
+> From: Jason Gunthorpe <jgg@mellanox.com>
+> Date: Tue, 9 Jul 2019 09:44:47 -0300
+> Subject: [PATCH] RDMA/counters: Make rdma_counter.h compile stand alone
 
-This is now a conflict between the vfs tree and linus' tree.
+I will apply this to linux-next today and reenable the stand alone
+building for rdma_counter.h
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//I+qp68hEYYgPmC+gUo4Fad
+--Sig_/hi2rpc5Dd+yZzkhXjD3njhm
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0lLQQACgkQAVBC80lX
-0GxOSgf/YMPy8wShKR5k3kS71Ruc6tAV59+80c+PS5Je/cZbYLhAtsaTLb8nN+jQ
-GqIrGKcj6D3WWexMIRtHRYRL+FggVBpfHQNmBfo4oFjXzPKTdghgGCBfNGImd0/e
-SY1YNfrbzMaWRvFx8UUcG9rfjoYJxyvvNb923zoO81laVSyfZjPyxfF4MqfjcY2P
-IK9zoTw20Ud+/RPNZVy9n8kVd9vSnLeqVxInNRxoWtxvMtXeTN4JKT9jTQiknfd2
-9Vq0z2grumb/Owim56JMbgSOlbg9ZZ/kN8xY/cuWc+ItDivrgs7ncVH2KNJAinHG
-eFHuR//E7fyJFje36D+YwklFfONAgA==
-=CC12
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0lOasACgkQAVBC80lX
+0GyBPAf+KwnFQFn+T7H3mJspDCclYT1OTlcBVNEiGGah4HETQyR89ZleqPNOYEAO
+l9q/jxzwae54yR1p1nzO0SRkW7sokBRUMa/scO8TQIWULG5VvTNo9bCgVy+w29HA
+02pCRBtMB2AZfjZYD+uhzJ8K7ToEdJkdFtG3oZ8ZUxn36k9Ay2u8eZ05fE2Zf2Ua
+dXk04FSis6gPXiKqtsgv8lKdswOFXTMvSQ8W4nKSmznkEFcMZmdrv89vE45mHprj
+R4+84/KJCAqxe9t6wvOTJfY7JF71lFYpjO4jA/fRjz9/uBMNDYaqZCbdXfcjM82A
+rt+Z+qoHmAPDFSkKYd3JpkIp4e0nEg==
+=fUKg
 -----END PGP SIGNATURE-----
 
---Sig_//I+qp68hEYYgPmC+gUo4Fad--
+--Sig_/hi2rpc5Dd+yZzkhXjD3njhm--
