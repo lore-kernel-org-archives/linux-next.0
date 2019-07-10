@@ -2,200 +2,143 @@ Return-Path: <SRS0=fDmY=VH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744C7C74A36
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 17:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C0BC74A35
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 18:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41C7320844
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 17:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 873D8214AF
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 18:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="WhjhX2wK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6Jda9RG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfGJRwW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 13:52:22 -0400
-Received: from mail-eopbgr150044.outbound.protection.outlook.com ([40.107.15.44]:24238
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727408AbfGJRwW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Jul 2019 13:52:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vc7Jp0Wlbf6OzPHbtl28tNHq8sRgqzMBeSHd9wn7pVY=;
- b=WhjhX2wK5XkML+iWCREX2dtjsTBlXd+aOkYDLwdlz1o9V++RxuBKa2bn+EeWmRmmwLP8pff06WzIyzq2k43JSByCMD5ojZHaCB5s9pOfVoJguDlggLfvTgvnJHegDQ+QA3XamIQuCwo8rwpeYr55hh01+2EIBWCGHu/ZiHB3oFQ=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5903.eurprd05.prod.outlook.com (20.178.125.224) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.18; Wed, 10 Jul 2019 17:52:17 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.020; Wed, 10 Jul 2019
- 17:52:17 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Leon Romanovsky <leon@kernel.org>,
-        Bernard Metzler <bmt@zurich.ibm.com>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Doug Ledford <dledford@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Thread-Topic: linux-next: build failure after merge of the net-next tree
-Thread-Index: AQHVNgpSNqxsVllq5U23Am+RwOaE5KbB1zsAgAJNFwA=
-Date:   Wed, 10 Jul 2019 17:52:17 +0000
-Message-ID: <20190710175212.GM2887@mellanox.com>
-References: <20190709135636.4d36e19f@canb.auug.org.au>
- <20190709064346.GF7034@mtr-leonro.mtl.com>
-In-Reply-To: <20190709064346.GF7034@mtr-leonro.mtl.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: QB1PR01CA0010.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:2d::23) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a5bcd310-b785-497e-8ba3-08d7055f5968
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR05MB5903;
-x-ms-traffictypediagnostic: VI1PR05MB5903:
-x-microsoft-antispam-prvs: <VI1PR05MB590395EE512D3F73A096D59CCFF00@VI1PR05MB5903.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2201;
-x-forefront-prvs: 0094E3478A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(396003)(366004)(346002)(39860400002)(53754006)(199004)(189003)(1076003)(5660300002)(14454004)(66446008)(6116002)(76176011)(54906003)(110136005)(26005)(386003)(6506007)(53546011)(3846002)(99286004)(66476007)(52116002)(66556008)(64756008)(86362001)(66946007)(102836004)(478600001)(316002)(6246003)(2906002)(53936002)(486006)(476003)(2616005)(4326008)(68736007)(66066001)(229853002)(186003)(81166006)(81156014)(8936002)(8676002)(7736002)(71190400001)(256004)(6512007)(6486002)(36756003)(14444005)(11346002)(446003)(25786009)(33656002)(71200400001)(6436002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5903;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 6tB3yH4JflnOpESEmCKv2qAt1HyWxX+XuWUPuw2xg2aCOyJ6qE0RliW1cZCwPhR+i/Uij0zGtXuVGGsa9ou17jNrccDAva3C3lW/RrysAERXYHOVI++MWEETghi+qPC0JG7NZmSeWYHz08gWRCA6jSk+VgNLvWga4Jyj/RVcfuHn+ATzm5LxVqAZgIYOMjYcy+ldtcaJteg/y2DuQlQyKGzkFhXocnsMNQXmfgMClk/Lkk8Wv+TdKR7E7yMk3Ih+3/Gzi+VR5GiQsfmJUx4Hyg0GsizCzNL4UBcnMDY5plAY/Zyct1FxrKeHCRu3nEOH2hqGH4xM8x481kipz9tCZI7iN7+zs0CaBhRLNL8fRZ3NsGXNAdYxVxc+4bJsZXESUdSvjLcq/OVmGpvb8Jb/1HRq064+EK22m4oTiYnzV4U=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0A009C5F7EF45F44B725B00AE5D926EA@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1728202AbfGJSSw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 14:18:52 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44612 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728195AbfGJSSv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2019 14:18:51 -0400
+Received: by mail-io1-f68.google.com with SMTP id s7so6731242iob.11;
+        Wed, 10 Jul 2019 11:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=USfTc8VlQ7lMuVnExRUFHsZN24BSBPa8IsBimhGr2ZM=;
+        b=Z6Jda9RG/tdgKYTzGiVVDcvZZp/F/qWlDeFrShf1uIgoQAOTS6/tHF9dNrtwEbPrJb
+         sZhYepRIwoOnimBaSacn14WAkROBMgygCwxFAoZYYrXBc+moL2zkrx5am4CthzBBd1ZI
+         V5lVO6dcLeLZqqSPPk590dUve+CDcU/BTFXUK1YRVhRNFzMkq5/V29aqadJBE7kP8Ix+
+         FlUVs1aIS9DrtE5W2Dhi5Y8WG96TewiIeUvMgb4rB5i+f6UpUwVHOv4V2/2K4pK4rvVv
+         8b2RcO84KahTGkSQuBk/1pHtRlD2F81PSCc469f5haqlq0BEQoGTJSjz2RE+tTENPBO2
+         iB7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=USfTc8VlQ7lMuVnExRUFHsZN24BSBPa8IsBimhGr2ZM=;
+        b=r8EdsNNg0N8Mj4bAVDRU8VqSwfpyKXet+4W6NEZakwUj1bodEA/+JUlb3X5lBYlvOJ
+         HEZs2oVLrqkgbhsw4IXbvYmZlvbNDZ2eLL7aREzdnpH4i/CWlaG0eJN+OupDS2LfTKam
+         LlQV0Vkf9rcEu2XhiZSr2o4m2fhp+v/e6ALQJXNXPvIFThsp55KonsLsS0O+huO56Fkg
+         UhpXtU+bXOH9rFiuXMa5i5pS6oHIuiAYAEwo1yXnWOG6lszxPqj6y7fPts0XCB/UwhkE
+         5qONXp6MXfugLqsdSXyFDTQ6jBUie/cJ3C2YDWOINsD8rLdqIHPfwQsMExSNrTK8NsCn
+         CEhQ==
+X-Gm-Message-State: APjAAAURUxCHXTIlOTx6WKbuafdxIOirTa/PCW2dXw2PzWVGSAk0E7kL
+        9XWtDJT/QQHqmQBx9b2s1lQxxcKIvqCEANwuBRo=
+X-Google-Smtp-Source: APXvYqxj7JlnKBYI7dCZsX/jyEqcbrHHfBdmKsYQ9CH5x37q2PgZ48bEowscqlsHMFkfkNZ0/9J1Ry569i6GN9+SYsI=
+X-Received: by 2002:a5e:d817:: with SMTP id l23mr11139904iok.282.1562782731034;
+ Wed, 10 Jul 2019 11:18:51 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5bcd310-b785-497e-8ba3-08d7055f5968
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2019 17:52:17.8438
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5903
+References: <20190709165459.11b353d8@canb.auug.org.au> <20190710100138.0aa36d47@canb.auug.org.au>
+In-Reply-To: <20190710100138.0aa36d47@canb.auug.org.au>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 10 Jul 2019 20:21:33 +0200
+Message-ID: <CAOi1vP8wsFDzmdwHw8HwvuycPnOChAjzAOLgajLHqxMadoWojQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Sage Weil <sage@newdream.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 09:43:46AM +0300, Leon Romanovsky wrote:
-> On Tue, Jul 09, 2019 at 01:56:36PM +1000, Stephen Rothwell wrote:
-> > Hi all,
+On Wed, Jul 10, 2019 at 2:01 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> On Tue, 9 Jul 2019 16:54:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > After merging the net-next tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
 > >
-> > drivers/infiniband/sw/siw/siw_cm.c: In function 'siw_create_listen':
-> > drivers/infiniband/sw/siw/siw_cm.c:1978:3: error: implicit declaration =
-of function 'for_ifa'; did you mean 'fork_idle'? [-Werror=3Dimplicit-functi=
-on-declaration]
-> >    for_ifa(in_dev)
-> >    ^~~~~~~
-> >    fork_idle
-> > drivers/infiniband/sw/siw/siw_cm.c:1978:18: error: expected ';' before =
-'{' token
-> >    for_ifa(in_dev)
-> >                   ^
-> >                   ;
-> >    {
-> >    ~
+> > drivers/block/rbd.c: In function 'wake_lock_waiters':
+> > drivers/block/rbd.c:3933:2: error: implicit declaration of function 'lockdep_assert_held_exclusive'; did you mean 'lockdep_assert_held_write'? [-Werror=implicit-function-declaration]
+> >   lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+> >   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >   lockdep_assert_held_write
 > >
 > > Caused by commit
 > >
-> >   6c52fdc244b5 ("rdma/siw: connection management")
+> >   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() -> lockdep_assert_held_write()")
 > >
-> > from the rdma tree.  I don't know why this didn't fail after I mereged
-> > that tree.
->=20
-> I had the same question, because I have this fix for a couple of days alr=
-eady.
->=20
-> From 56c9e15ec670af580daa8c3ffde9503af3042d67 Mon Sep 17 00:00:00 2001
-> From: Leon Romanovsky <leonro@mellanox.com>
-> Date: Sun, 7 Jul 2019 10:43:42 +0300
-> Subject: [PATCH] Fixup to build SIW issue
->=20
-> Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
->  drivers/infiniband/sw/siw/siw_cm.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/s=
-iw/siw_cm.c
-> index 8e618cb7261f..c883bf514341 100644
-> +++ b/drivers/infiniband/sw/siw/siw_cm.c
-> @@ -1954,6 +1954,7 @@ static void siw_drop_listeners(struct iw_cm_id *id)
->  int siw_create_listen(struct iw_cm_id *id, int backlog)
->  {
->  	struct net_device *dev =3D to_siw_dev(id->device)->netdev;
-> +	const struct in_ifaddr *ifa;
->  	int rv =3D 0, listeners =3D 0;
->=20
->  	siw_dbg(id->device, "id 0x%p: backlog %d\n", id, backlog);
-> @@ -1975,8 +1976,7 @@ int siw_create_listen(struct iw_cm_id *id, int back=
-log)
->  			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
->  			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
->=20
-> -		for_ifa(in_dev)
-> -		{
-> +		in_dev_for_each_ifa_rcu(ifa, in_dev) {
->  			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
+> > interacting with commits
+> >
+> >   637cd060537d ("rbd: new exclusive lock wait/wake code")
+> >   a2b1da09793d ("rbd: lock should be quiesced on reacquire")
+> >
+> > from the ceph tree.
+> >
+> > I have added the following merge fix patch for today.
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Tue, 9 Jul 2019 16:46:12 +1000
+> > Subject: [PATCH] rbd: fix up for lockdep_assert_held_exclusive rename
+> >
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/block/rbd.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> > index 723c3ef4bd59..02216fbdb854 100644
+> > --- a/drivers/block/rbd.c
+> > +++ b/drivers/block/rbd.c
+> > @@ -3930,7 +3930,7 @@ static void wake_lock_waiters(struct rbd_device *rbd_dev, int result)
+> >       struct rbd_img_request *img_req;
+> >
+> >       dout("%s rbd_dev %p result %d\n", __func__, rbd_dev, result);
+> > -     lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+> > +     lockdep_assert_held_write(&rbd_dev->lock_rwsem);
+> >
+> >       cancel_delayed_work(&rbd_dev->lock_dwork);
+> >       if (!completion_done(&rbd_dev->acquire_wait)) {
+> > @@ -4209,7 +4209,7 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
+> >       bool need_wait;
+> >
+> >       dout("%s rbd_dev %p\n", __func__, rbd_dev);
+> > -     lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+> > +     lockdep_assert_held_write(&rbd_dev->lock_rwsem);
+> >
+> >       if (rbd_dev->lock_state != RBD_LOCK_STATE_LOCKED)
+> >               return false;
+>
+> This fix now needs to be applied to the merge of the ceph tree.
 
-Hum. There is no rcu lock held here and we can't use RCU anyhow as
-siw_listen_address will sleep.
+Hi Stephen,
 
-I think this needs to use rtnl, as below. Bernard, please urgently
-confirm. Thanks
+Yes, that is what I figured would happen.  I assume you would keep
+carrying this fixup until the ceph tree is merged.
 
-diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw=
-/siw_cm.c
-index 8e618cb7261f62..ee98e96a5bfaba 100644
---- a/drivers/infiniband/sw/siw/siw_cm.c
-+++ b/drivers/infiniband/sw/siw/siw_cm.c
-@@ -1965,6 +1965,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlo=
-g)
- 	 */
- 	if (id->local_addr.ss_family =3D=3D AF_INET) {
- 		struct in_device *in_dev =3D in_dev_get(dev);
-+		const struct in_ifaddr *ifa;
- 		struct sockaddr_in s_laddr, *s_raddr;
-=20
- 		memcpy(&s_laddr, &id->local_addr, sizeof(s_laddr));
-@@ -1975,8 +1976,8 @@ int siw_create_listen(struct iw_cm_id *id, int backlo=
-g)
- 			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
- 			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
-=20
--		for_ifa(in_dev)
--		{
-+		rtnl_lock();
-+		in_dev_for_each_ifa_rtnl(ifa, in_dev) {
- 			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
- 			    s_laddr.sin_addr.s_addr =3D=3D ifa->ifa_address) {
- 				s_laddr.sin_addr.s_addr =3D ifa->ifa_address;
-@@ -1988,7 +1989,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlo=
-g)
- 					listeners++;
- 			}
- 		}
--		endfor_ifa(in_dev);
-+		rtnl_unlock();
- 		in_dev_put(in_dev);
- 	} else if (id->local_addr.ss_family =3D=3D AF_INET6) {
- 		struct inet6_dev *in6_dev =3D in6_dev_get(dev);
+Thanks,
+
+                Ilya
