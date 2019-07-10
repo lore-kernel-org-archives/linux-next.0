@@ -2,98 +2,79 @@ Return-Path: <SRS0=fDmY=VH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B8DC73C7C
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 11:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE5C74A21
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 13:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BC5F2064A
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 11:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M5thVoqX"
+	by mail.kernel.org (Postfix) with ESMTP id 3904220651
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 13:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbfGJLb5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 07:31:57 -0400
-Received: from ozlabs.org ([203.11.71.1]:55879 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfGJLb5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Jul 2019 07:31:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kH8T4vd3z9s8m;
-        Wed, 10 Jul 2019 21:31:53 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562758314;
-        bh=m5bNgR67y/SQwBaN1hdKZQlFvCWv8aHyXrhC/bU/8YU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=M5thVoqXJq7eH2BApOIjDZIe47hO3Es5e0UhXrl52VH0MuwgSnUb2YvlB9ZvHPEYy
-         Xdku5Rjjj3DzI7ApZDqS5ehakI+TUL+1zWnc4j8fNe2NXNVM4L3pJo6w3eRpmoC9cA
-         BdUe84vgI43phAe0Th/Tbx+tkoUuCnwTJPURcjXCWkANUS3yoH/G8mWKQSOToiliJ4
-         6UWfFxj/LBI3+9pr9SfQ7Tv/sDRPuzM5kdn2hV/9eQ634MrLJXfjjOObaiw99wFvtn
-         jHHgWffRV/h1Mfr0d0up0cJk+RFdRrvWS5CBkjNcofBLwFxhkImSlZufHnT65yEygb
-         HtpbnqR8a/7zA==
-Date:   Wed, 10 Jul 2019 21:31:51 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: linux-next: Fixes tag needs some work in the mmc tree
-Message-ID: <20190710213151.20acf4bb@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zoS3FJeT1XxruqhG7T5mXyz"; protocol="application/pgp-signature"
+        id S1727359AbfGJNjl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 09:39:41 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:60926 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727281AbfGJNjl (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2019 09:39:41 -0400
+Received: from ramsan ([84.194.98.4])
+        by baptiste.telenet-ops.be with bizsmtp
+        id b1ff2000g05gfCL011ffzv; Wed, 10 Jul 2019 15:39:40 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hlCot-0005BA-TD; Wed, 10 Jul 2019 15:39:39 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hlCot-0006vc-Qf; Wed, 10 Jul 2019 15:39:39 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] rdma/siw: Add missing dependencies on LIBCRC32C and DMA_VIRT_OPS
+Date:   Wed, 10 Jul 2019 15:39:30 +0200
+Message-Id: <20190710133930.26591-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/zoS3FJeT1XxruqhG7T5mXyz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+If LIBCRC32C and DMA_VIRT_OPS are not enabled:
 
-Hi all,
+    drivers/infiniband/sw/siw/siw_main.o: In function `siw_newlink':
+    siw_main.c:(.text+0x35c): undefined reference to `dma_virt_ops'
+    drivers/infiniband/sw/siw/siw_qp_rx.o: In function `siw_csum_update':
+    siw_qp_rx.c:(.text+0x16): undefined reference to `crc32c'
 
-In commit
+Fix the first issue by adding a select of DMA_VIRT_OPS.
+Fix the second issue by replacing the unneeded dependency on
+CRYPTO_CRC32 by a dependency on LIBCRC32C.
 
-  59592cc1f593 ("mmc: sdhci_am654: Add dependency on MMC_SDHCI_AM654")
+Reported-by: noreply@ellerman.id.au (first issue)
+Fixes: c0cf5bdde46c664d ("rdma/siw: addition to kernel build environment")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/infiniband/sw/siw/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Fixes tag
+diff --git a/drivers/infiniband/sw/siw/Kconfig b/drivers/infiniband/sw/siw/Kconfig
+index 94f684174ce3556e..b622fc62f2cd6d46 100644
+--- a/drivers/infiniband/sw/siw/Kconfig
++++ b/drivers/infiniband/sw/siw/Kconfig
+@@ -1,6 +1,7 @@
+ config RDMA_SIW
+ 	tristate "Software RDMA over TCP/IP (iWARP) driver"
+-	depends on INET && INFINIBAND && CRYPTO_CRC32
++	depends on INET && INFINIBAND && LIBCRC32C
++	select DMA_VIRT_OPS
+ 	help
+ 	This driver implements the iWARP RDMA transport over
+ 	the Linux TCP/IP network stack. It enables a system with a
+-- 
+2.17.1
 
-  Fixes: aff88ff23512 ("mmc: sdhci_am654: Add Initial Support for AM654 SDH=
-CI driver")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: 41fd4caeb00b ("mmc: sdhci_am654: Add Initial Support for AM654 SDHCI=
- driver")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zoS3FJeT1XxruqhG7T5mXyz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0lzKcACgkQAVBC80lX
-0Gwspgf/TWHYmJV4ST7tzicwdGXNf19V4wK1fN2ZolyYoDIxehXEZLWGk8VLZ8a4
-eniq72dUmbjRUl9irdbbhZnrSEtaFHlgGWE5qAja8hQQs8TbB9xY8jIvDFeq/99I
-FiYuQ7eqdcS7LiZm4Ec3MRK/4d+tzblTr04WD8SFuo21PwRLAA6oa8a7CoW8RFrs
-BlK+tmPWNjY43APS8xON/aqKNTjlWWsfCgflLmmZVyaG4uGDe/REKkVd6CAVHbr1
-7y6yC/wXKf7lpNK0mo464YpBcAMEtxcpg7ud082Rzn+fj4iC51jwBd1pert4qxZ2
-bMnDrDM08ok5u5FsvLjYgbBI9ByJ4A==
-=FDNY
------END PGP SIGNATURE-----
-
---Sig_/zoS3FJeT1XxruqhG7T5mXyz--
