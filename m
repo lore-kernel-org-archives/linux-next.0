@@ -2,100 +2,130 @@ Return-Path: <SRS0=fDmY=VH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53763C73C6D
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 07:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574C7C73C7C
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 08:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268F520651
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 07:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562742312;
-	bh=OvHOLk31LU5PHwE9O5BOcj+gIa36yQzZRYPmZhFFFpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AyueHiBNuZAuORQPbF8aHmzKyiADlTW8ahF/SAiMBGbjAgHS1TL44VFAOMTKjo08t
-	 deaHkLg6zzBsXM+7//UzSg1TjZsjynz6uyKHZq9I385UIdQlbOLXH6SnG2PrUWxolb
-	 XAmrvXHZfndsuB8fROwFqR5T/TAr0djI4s/d1aGs=
+	by mail.kernel.org (Postfix) with ESMTP id 1C34920844
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 08:25:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KWQnQYrH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbfGJHFL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 03:05:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33350 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726151AbfGJHFL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Jul 2019 03:05:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3615DAC4C;
-        Wed, 10 Jul 2019 07:05:10 +0000 (UTC)
-Date:   Wed, 10 Jul 2019 09:05:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727341AbfGJIZk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 04:25:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:33185 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727063AbfGJIZk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 10 Jul 2019 04:25:40 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kC1Y6DMkz9sMQ;
+        Wed, 10 Jul 2019 18:25:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562747138;
+        bh=BQcSY58E8lgwsATwcKMa7GTpVoMjox+PYKqAeW/r5bs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KWQnQYrHAge7pKAGPfQA3GTE+/1ko6/wWwxfKIxngwp/oa4dY0iEcq0nAe8+T6pSI
+         rWB/5yKjeQVuIzeBFK06EH7Ai6wst8zgHDWzWnepRR/S+Pf8XMMh/GcSDIAorHsusk
+         2RJgNW8V1AWKy8UNlyC5aU1Qf63+5viyg25oC+aZfxuvzHRRTbTrHBJkP4A/UgkEjW
+         BrylwL9Rf/k2z0M7FfWpI+LWN46eRkRNxkXvYhK1IaANH8UTX/24EbVitR/1R4Z4yj
+         dzu6PNghKlPHTTbWaL9jREAMfdCnCaBUq/bqdZgdmfoC3Ez7v26R5gVUEFgCmfT9On
+         Lae42rhqBxN3w==
+Date:   Wed, 10 Jul 2019 18:25:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yang Shi <shy828301@gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20190710070509.GB29695@dhcp22.suse.cz>
-References: <20190709211559.6ffd2f4e@canb.auug.org.au>
- <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
+        Keith Busch <keith.busch@intel.com>
+Subject: linux-next: manual merge of the akpm-current tree with the iomap
+ tree
+Message-ID: <20190710182530.0f26a159@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0lberg+hkvK8LOI5Tbzyf.b"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue 09-07-19 13:42:33, Andrew Morton wrote:
-> On Tue, 9 Jul 2019 21:15:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi all,
-> > 
-> > After merging the akpm-current tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> > 
-> > arm-linux-gnueabi-ld: mm/list_lru.o: in function `list_lru_add':
-> > list_lru.c:(.text+0x1a0): undefined reference to `memcg_set_shrinker_bit'
-> > 
-> > Caused by commit
-> > 
-> >   ca37e9e5f18d ("mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix-2")
-> > 
-> > CONFIG_MEMCG is not set for this build.
-> > 
-> > I have reverted that commit for today.
-> 
-> Thanks.  This, I suppose:
-> 
-> --- a/include/linux/memcontrol.h~mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix-2-fix
-> +++ a/include/linux/memcontrol.h
-> @@ -1259,6 +1259,8 @@ static inline bool mem_cgroup_under_sock
->  	} while ((memcg = parent_mem_cgroup(memcg)));
->  	return false;
->  }
-> +extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
-> +                                  int nid, int shrinker_id);
->  #else
->  #define mem_cgroup_sockets_enabled 0
->  static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
-> @@ -1267,6 +1269,10 @@ static inline bool mem_cgroup_under_sock
->  {
->  	return false;
->  }
-> +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
-> +					  int nid, int shrinker_id)
-> +{
-> +}
->  #endif
+--Sig_/0lberg+hkvK8LOI5Tbzyf.b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Can we get the full series resent please. I have completely lost track
-of all the follow up fixes.
+Hi all,
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  fs/iomap.c
+
+between commit:
+
+  6610815a3343 ("iomap: move the page migration code into a separate file")
+
+from the iomap tree and commit:
+
+  70b7f3cfceee ("mm: migrate: remove unused mode argument")
+
+from the akpm-current tree.
+
+I fixed it up (I rmeoved the file and applied the merge fix patch below)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 10 Jul 2019 18:21:35 +1000
+Subject: [PATCH] mm: migrate: fix for fs/iomap.c splitting
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/iomap/migrate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/iomap/migrate.c b/fs/iomap/migrate.c
+index a25874700f95..9ef266e27286 100644
+--- a/fs/iomap/migrate.c
++++ b/fs/iomap/migrate.c
+@@ -17,7 +17,7 @@ iomap_migrate_page(struct address_space *mapping, struct =
+page *newpage,
+ {
+ 	int ret;
+=20
+-	ret =3D migrate_page_move_mapping(mapping, newpage, page, mode, 0);
++	ret =3D migrate_page_move_mapping(mapping, newpage, page, 0);
+ 	if (ret !=3D MIGRATEPAGE_SUCCESS)
+ 		return ret;
+=20
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0lberg+hkvK8LOI5Tbzyf.b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0loPoACgkQAVBC80lX
+0Gwoewf/QcFzo8hZzNC1k7F7UDQx+zg689qkXhcF8qbgBUxlCju5logiW+fnQoJj
+jAdBThBZQhOy0nRrbwkYHen5UgzHx/ZQv2G/lkLYsIhFtNMqe8pN4rJ/3iivbdai
+1akRuhCDbSvgbCM+tE7y9tQmLAfDjC5uAsnAv1EnbTqGQtYWx5z0It2UMqMh2E4m
+mwFO/uDTdNXjFfxFq5Q2codAZATDvlsqEUPJVyHCBrwXwoS23/bbPWCpZhPzEvka
+hliUM+YuPsH8wuvgiDWwjSMv9mUJ9rArAK3zYDQgc1LaG2OMvICgG0/LlsX6qsJX
+YUV1XjUQWV4Ud9Uolw775PSTYEA4cQ==
+=42dm
+-----END PGP SIGNATURE-----
+
+--Sig_/0lberg+hkvK8LOI5Tbzyf.b--
