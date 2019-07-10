@@ -2,100 +2,100 @@ Return-Path: <SRS0=fDmY=VH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B76EC73C6D
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 06:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53763C73C6D
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 07:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D75F420838
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 06:00:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AojIX4zX"
+	by mail.kernel.org (Postfix) with ESMTP id 268F520651
+	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 07:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562742312;
+	bh=OvHOLk31LU5PHwE9O5BOcj+gIa36yQzZRYPmZhFFFpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AyueHiBNuZAuORQPbF8aHmzKyiADlTW8ahF/SAiMBGbjAgHS1TL44VFAOMTKjo08t
+	 deaHkLg6zzBsXM+7//UzSg1TjZsjynz6uyKHZq9I385UIdQlbOLXH6SnG2PrUWxolb
+	 XAmrvXHZfndsuB8fROwFqR5T/TAr0djI4s/d1aGs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725839AbfGJGAz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 02:00:55 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49155 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfGJGAz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Jul 2019 02:00:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45k7pX18Ndz9s3Z;
-        Wed, 10 Jul 2019 16:00:52 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562738452;
-        bh=QS1TYk+jPpzFLZYgrElcWfPd8Iy8zqMpGdy+TeAxg2A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AojIX4zX6lK74pdPSLgR2nbDRUS7WMgbWDbOFlcDKE3uer56SlVS5h+TNxhNO3rgr
-         RMDVHpnrzdZtNpUr5dwCvSgDUbct8v/BEcW3sLlsIe5ZsONrEdjOR5UK+kDREwst+5
-         IhqMysx1wi91BlAx7QtN3Inh/9xr5/N46SmkDwkXueqZ5GOqSyEbaM0/DUSG8BLiqg
-         dkZYo1XkBoAUgzLtfJTLhXTHg3ZYyDZlXaEHjdqHySqeuFsZ0Ases84dVCqAWumvKf
-         SvQRMZLUbkIDdp28krazNTAzL1ZvooOIwpjXTN+u3pUpWPxCc/rUBVtxOXDa0cT+yw
-         1IjbGRNMomhRg==
-Date:   Wed, 10 Jul 2019 16:00:51 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     Greg KH <greg@kroah.com>, "Arnd Bergmann" <arnd@arndb.de>,
+        id S1726159AbfGJHFL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 03:05:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33350 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726151AbfGJHFL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 10 Jul 2019 03:05:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3615DAC4C;
+        Wed, 10 Jul 2019 07:05:10 +0000 (UTC)
+Date:   Wed, 10 Jul 2019 09:05:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lubart, Vitaly" <vitaly.lubart@intel.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- driver-core tree
-Message-ID: <20190710160051.5b192606@canb.auug.org.au>
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DC6C94D@hasmsx108.ger.corp.intel.com>
-References: <20190620153552.1392079c@canb.auug.org.au>
-        <20190709095109.3b75679b@canb.auug.org.au>
-        <5B8DA87D05A7694D9FA63FD143655C1B9DC6C94D@hasmsx108.ger.corp.intel.com>
+        Yang Shi <shy828301@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20190710070509.GB29695@dhcp22.suse.cz>
+References: <20190709211559.6ffd2f4e@canb.auug.org.au>
+ <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1JauvoM9pHm9Os9uhPJxkTc"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/1JauvoM9pHm9Os9uhPJxkTc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue 09-07-19 13:42:33, Andrew Morton wrote:
+> On Tue, 9 Jul 2019 21:15:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi all,
+> > 
+> > After merging the akpm-current tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > arm-linux-gnueabi-ld: mm/list_lru.o: in function `list_lru_add':
+> > list_lru.c:(.text+0x1a0): undefined reference to `memcg_set_shrinker_bit'
+> > 
+> > Caused by commit
+> > 
+> >   ca37e9e5f18d ("mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix-2")
+> > 
+> > CONFIG_MEMCG is not set for this build.
+> > 
+> > I have reverted that commit for today.
+> 
+> Thanks.  This, I suppose:
+> 
+> --- a/include/linux/memcontrol.h~mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-fix-2-fix
+> +++ a/include/linux/memcontrol.h
+> @@ -1259,6 +1259,8 @@ static inline bool mem_cgroup_under_sock
+>  	} while ((memcg = parent_mem_cgroup(memcg)));
+>  	return false;
+>  }
+> +extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+> +                                  int nid, int shrinker_id);
+>  #else
+>  #define mem_cgroup_sockets_enabled 0
+>  static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
+> @@ -1267,6 +1269,10 @@ static inline bool mem_cgroup_under_sock
+>  {
+>  	return false;
+>  }
+> +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+> +					  int nid, int shrinker_id)
+> +{
+> +}
+>  #endif
 
-Hi Tomas,
+Can we get the full series resent please. I have completely lost track
+of all the follow up fixes.
 
-On Tue, 9 Jul 2019 07:12:34 +0000 "Winkler, Tomas" <tomas.winkler@intel.com=
-> wrote:
->
-> Actually I've asked Greg this git expertise question: how the
-> **exact** conflict resolution is carried between git trees (before it
-> is finally resolved in upstream for all.). For next time If anyone
-> has the answer, please let me know.
-
-When I see a conflict, I fix it up and report it, then "git rerere"
-will remember the resolution for me so that the next day it is fixed up
-automatically.  When Linus merges the same trees he will do the same
-(or a similar) merge resolution.  I depend on the maintainers to inform
-Linus if the conflict is any anyway difficult to resolve.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1JauvoM9pHm9Os9uhPJxkTc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0lfxMACgkQAVBC80lX
-0GylYAgAiDaCEKvhJeM7K6qo7sJNDK/yUzqM9NC8FBwsIRVAwUjZH1XarjFi8334
-EVJbXZ1WxPW1I04QgqejLjwMG8P/i6qDtrLjBaIYrU0bIFk2GgBlmTdkRHt2szsp
-BrUn7ByJuGOvK0/l0HQhOO+RH876fj64WmP15bcpVrDmJ9FKBONt2sulA7NI8KmO
-lkUrtOb4oqIsuDE7RbOSUMODnc0BOPPyByBMbaDU4mexXb46cKT3Wxr0pjE8QE3R
-tajIAZF0z3boxBgmy95HEjglMUh5sWP822pWfV6Tor6+yzEh4z3JXyDIV4G+s0AR
-8a21p3I6LsuSo1m7ExM7BjpKEGm/UQ==
-=QlJ5
------END PGP SIGNATURE-----
-
---Sig_/1JauvoM9pHm9Os9uhPJxkTc--
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
