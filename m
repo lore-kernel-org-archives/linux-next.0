@@ -4,39 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF0EC74A41
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 02:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D85C74A41
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 03:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A5321019
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 02:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE18021019
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 03:13:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="RjuMwksX"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SuTADCom"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfGKC0e (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 22:26:34 -0400
-Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:47683
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727463AbfGKC0d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Jul 2019 22:26:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7cHZ/Mps1zGGP9xyKCK8tVrmFAOOIRvyJHupP4h9TpA=;
- b=RjuMwksX9sQRs8XWAaMe8kemSsHFIUWUdruL8ZGwS1/Lunvv9N1TEUMrY/tfgcOhvXQep6B7vhPLCQ5r+xinq/0URMr2VBfDzbzW9yzWVfbMi5hFWQwgPZXWVrMLgaU+XhVs/iUDksrLW39QVkuNBxvEhZg8TTmAwdymN/G6NE4=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB4143.eurprd05.prod.outlook.com (10.171.182.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.19; Thu, 11 Jul 2019 02:26:27 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.020; Thu, 11 Jul 2019
- 02:26:27 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Leon Romanovsky <leon@kernel.org>,
+        id S1728097AbfGKDNt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 23:13:49 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:57123 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726353AbfGKDNt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 10 Jul 2019 23:13:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kh3F3SsSz9sNF;
+        Thu, 11 Jul 2019 13:13:45 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562814826;
+        bh=PhG2hG4cwurJt26BRZUTaDAqGL6edeBLrcMEroPsEj0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SuTADComobW495yn0VS+70Awano2ExGgqtgVV+QRwhFeli/zdhgoqwIrbhBgrPn1x
+         4skLMs9TYL/picxQWd1RBtOB0LxHHRHUYfMJHorysnA3jMGk8ILvjBrauq1KPJYZco
+         r906QruX68qilfJIrw4VLnkLPi232pQysd6Q223G7NRGZDFF/Wg4ETXkqkfbzcCp58
+         okM9iCm5cdnDg2Lx2up0BhHzb7mspbEB3whIj7l2FlYrPfXpC9aijxxuexB3zwwP1P
+         pqtgOryYP2L4Cg/I4P+umsvAx942+39ZvTIqbod59+sp8+dHTTPld3NmnKTAwX6rKo
+         km/sisSjD5EZA==
+Date:   Thu, 11 Jul 2019 13:13:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
         Bernard Metzler <bmt@zurich.ibm.com>,
         Doug Ledford <dledford@redhat.com>,
         David Miller <davem@davemloft.net>,
@@ -44,73 +47,64 @@ CC:     Leon Romanovsky <leon@kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the net-next tree
-Thread-Topic: linux-next: build failure after merge of the net-next tree
-Thread-Index: AQHVNgpSNqxsVllq5U23Am+RwOaE5KbB1zsAgAJNFwCAAIW/AIAAAj0A
-Date:   Thu, 11 Jul 2019 02:26:27 +0000
-Message-ID: <20190711015854.GC22409@mellanox.com>
+Message-ID: <20190711131344.452fc064@canb.auug.org.au>
+In-Reply-To: <20190711015854.GC22409@mellanox.com>
 References: <20190709135636.4d36e19f@canb.auug.org.au>
- <20190709064346.GF7034@mtr-leonro.mtl.com>
- <20190710175212.GM2887@mellanox.com>
- <20190711115054.7d7f468c@canb.auug.org.au>
-In-Reply-To: <20190711115054.7d7f468c@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YTBPR01CA0026.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:14::39) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0833b2fe-25a9-4878-caa2-08d705a72d5d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4143;
-x-ms-traffictypediagnostic: VI1PR05MB4143:
-x-microsoft-antispam-prvs: <VI1PR05MB4143DC4685EE9625AD8C1890CFF30@VI1PR05MB4143.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:626;
-x-forefront-prvs: 0095BCF226
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(376002)(136003)(396003)(346002)(189003)(199004)(316002)(6246003)(99286004)(6916009)(386003)(7736002)(52116002)(305945005)(33656002)(26005)(66066001)(6512007)(8936002)(102836004)(6116002)(186003)(53936002)(6506007)(76176011)(8676002)(3846002)(486006)(36756003)(476003)(2616005)(25786009)(4326008)(5660300002)(68736007)(4744005)(11346002)(66946007)(54906003)(478600001)(81156014)(81166006)(66446008)(64756008)(66556008)(66476007)(71190400001)(71200400001)(2906002)(6436002)(229853002)(1076003)(446003)(86362001)(6486002)(14454004)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4143;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LsXKwomZ/109ut7p8RyH71RqfhZB8ZJ01V6oo8nQ4S7Emw1fiNyymzElHzJGMlphr5K7aIBxIdbHYaH3LMG1Gg/Ks1EoQR08X1vH8UhN113YXB/eV+J0ueE2Zw0WREZ+ZWD1LAGugCbWOkZrKxmp55fdEfJ132ApemNGjNah92Mvjax3v6bZTmc3J3yhI5JJWbE3P8Z8PYyB64zifYxSvdvMigv2XKhJj5Xjns2eweDrVjccpTYVK+zTODzYcGZQJxbVdPGgQLLuNPpY614M/eUNAsvQ+kDk0hPo8PVhtsrE3oQn3MCjDqKbUlTQvV4i91Q8B0wO1z1RB8jt7JVIwwKGoc9Dx+I9lyJfsQ+/CLCGP+IA8x0jZ1rdcV8EtWn56Zzvnf981bqb7JD1afwHtpsVr55WTpgYIJqwTL1BbLw=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3D8D34EB44B9AF4C89FE0F2F428FB111@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        <20190709064346.GF7034@mtr-leonro.mtl.com>
+        <20190710175212.GM2887@mellanox.com>
+        <20190711115054.7d7f468c@canb.auug.org.au>
+        <20190711015854.GC22409@mellanox.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0833b2fe-25a9-4878-caa2-08d705a72d5d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2019 02:26:27.7122
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4143
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6ThWdQ5XpS0.NYkNCCb3CV2"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 11:50:54AM +1000, Stephen Rothwell wrote:
+--Sig_/6ThWdQ5XpS0.NYkNCCb3CV2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> So today this failed to build after I merged the rdma tree (previously
-> it didn;t until after the net-next tree was merged (I assume a
-> dependency changed).  It failed because in_dev_for_each_ifa_rcu (and
-> in_dev_for_each_ifa_rtnl) is only defined in a commit in the net-next
-> tree :-(
+Hi Jason,
 
-? I'm confused..=20
+On Thu, 11 Jul 2019 02:26:27 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> On Thu, Jul 11, 2019 at 11:50:54AM +1000, Stephen Rothwell wrote:
+>=20
+> > So today this failed to build after I merged the rdma tree (previously
+> > it didn;t until after the net-next tree was merged (I assume a
+> > dependency changed).  It failed because in_dev_for_each_ifa_rcu (and
+> > in_dev_for_each_ifa_rtnl) is only defined in a commit in the net-next
+> > tree :-( =20
+>=20
+> ? I'm confused..=20
+>=20
+> rdma.git builds fine stand alone (I hope!)
 
-rdma.git builds fine stand alone (I hope!)
+I have "Fixup to build SIW issue" from Leon (which switches to using
+in_dev_for_each_ifa_rcu) included in the rmda tree merge commit because
+without that the rdma tree would not build for me.  Are you saying that
+I don't need that at all, now?
 
-If you merge it with netdev then the above patch is needed afer the
-merge as netdev changed to ifa_rcu
+--=20
+Cheers,
+Stephen Rothwell
 
-I just did this a few hours ago to make and test the patch I sent
-above..
+--Sig_/6ThWdQ5XpS0.NYkNCCb3CV2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Jason
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0mqWgACgkQAVBC80lX
+0GwurQgAgB9bMJLhS8GhhH0OUWvzmBFfu1x4BKqe6qXkABkKMZBip4oPpREIfhLP
+DUayvBrwM+7oOKZ0BWe7tJMSjPj61XmQzHL7g9aHO9PvnDfHtsRkjshY3R16UWfJ
+RfdWvByMRu+gxWbNxB+xFjVeE4le7mQbeP/Kwyu1WqG/HYIBFZMrFzAsmfgLhozB
+1/h8/ir4oA591iwhksdIutmW3jUG0sc666gK5cvnyBmZKCAFpepzOcbI4pefV1+S
+1Zw49JKsDi8ZD0Sh/SK7kxbcyQHsCC0YypycStBvMMEohdPxOktcxsgzxX1/Ptea
+Xy4Cmv7CmXCG/n1wgfxwsMyTDRbYCA==
+=YQjt
+-----END PGP SIGNATURE-----
+
+--Sig_/6ThWdQ5XpS0.NYkNCCb3CV2--
