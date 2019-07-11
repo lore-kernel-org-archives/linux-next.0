@@ -2,45 +2,41 @@ Return-Path: <SRS0=APSk=VI=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0832EC74A41
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 01:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF0EC74A41
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 02:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C624121530
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 01:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97A5321019
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 02:26:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OpS1mLnd"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="RjuMwksX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfGKBvA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 21:51:00 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:38453 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbfGKBvA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Jul 2019 21:51:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kfCg1qglz9sN6;
-        Thu, 11 Jul 2019 11:50:55 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562809857;
-        bh=mugHbuqWraD1+aK2zG0Zb/wLM2BX5/bKzJm2crG3zls=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OpS1mLndMfZxHZ6BnBNmRFK8Acsn9ngjt5Zgpx2SGh+4lia0OsrmjWS9t3hDqg586
-         4JzgjcjXtQry+vFxjV/35Krv3NCV5VGRAElmpqy2HcRZfCptltq03S/OL0C4dT9tBm
-         ZrbnTJFS61/MvlkDlfIYuhPfyKi+0bw7ryqJzcG/KnxLQc2MM9JIZ85J7dgakIqQhH
-         NexkYLxsuWN7H6lqKXEQkNA2qjLjNqtdAZkHf9zBCmuI1rBGsKuFiCbZWuBy5Sd+Gu
-         uVWNkx7m8mSjY0s9KiYQXCpUzXbZXr8UYFYGoDsnvpAntVvE4wxLa/PJkDbjDU2XGu
-         7RRO3LvcPjuxQ==
-Date:   Thu, 11 Jul 2019 11:50:54 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
+        id S1727622AbfGKC0e (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 22:26:34 -0400
+Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:47683
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727463AbfGKC0d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 10 Jul 2019 22:26:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7cHZ/Mps1zGGP9xyKCK8tVrmFAOOIRvyJHupP4h9TpA=;
+ b=RjuMwksX9sQRs8XWAaMe8kemSsHFIUWUdruL8ZGwS1/Lunvv9N1TEUMrY/tfgcOhvXQep6B7vhPLCQ5r+xinq/0URMr2VBfDzbzW9yzWVfbMi5hFWQwgPZXWVrMLgaU+XhVs/iUDksrLW39QVkuNBxvEhZg8TTmAwdymN/G6NE4=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB4143.eurprd05.prod.outlook.com (10.171.182.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.19; Thu, 11 Jul 2019 02:26:27 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2052.020; Thu, 11 Jul 2019
+ 02:26:27 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Leon Romanovsky <leon@kernel.org>,
         Bernard Metzler <bmt@zurich.ibm.com>,
         Doug Ledford <dledford@redhat.com>,
         David Miller <davem@davemloft.net>,
@@ -48,160 +44,73 @@ Cc:     Leon Romanovsky <leon@kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20190711115054.7d7f468c@canb.auug.org.au>
-In-Reply-To: <20190710175212.GM2887@mellanox.com>
+Thread-Topic: linux-next: build failure after merge of the net-next tree
+Thread-Index: AQHVNgpSNqxsVllq5U23Am+RwOaE5KbB1zsAgAJNFwCAAIW/AIAAAj0A
+Date:   Thu, 11 Jul 2019 02:26:27 +0000
+Message-ID: <20190711015854.GC22409@mellanox.com>
 References: <20190709135636.4d36e19f@canb.auug.org.au>
-        <20190709064346.GF7034@mtr-leonro.mtl.com>
-        <20190710175212.GM2887@mellanox.com>
+ <20190709064346.GF7034@mtr-leonro.mtl.com>
+ <20190710175212.GM2887@mellanox.com>
+ <20190711115054.7d7f468c@canb.auug.org.au>
+In-Reply-To: <20190711115054.7d7f468c@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: YTBPR01CA0026.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:14::39) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [156.34.55.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0833b2fe-25a9-4878-caa2-08d705a72d5d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4143;
+x-ms-traffictypediagnostic: VI1PR05MB4143:
+x-microsoft-antispam-prvs: <VI1PR05MB4143DC4685EE9625AD8C1890CFF30@VI1PR05MB4143.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:626;
+x-forefront-prvs: 0095BCF226
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(376002)(136003)(396003)(346002)(189003)(199004)(316002)(6246003)(99286004)(6916009)(386003)(7736002)(52116002)(305945005)(33656002)(26005)(66066001)(6512007)(8936002)(102836004)(6116002)(186003)(53936002)(6506007)(76176011)(8676002)(3846002)(486006)(36756003)(476003)(2616005)(25786009)(4326008)(5660300002)(68736007)(4744005)(11346002)(66946007)(54906003)(478600001)(81156014)(81166006)(66446008)(64756008)(66556008)(66476007)(71190400001)(71200400001)(2906002)(6436002)(229853002)(1076003)(446003)(86362001)(6486002)(14454004)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4143;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LsXKwomZ/109ut7p8RyH71RqfhZB8ZJ01V6oo8nQ4S7Emw1fiNyymzElHzJGMlphr5K7aIBxIdbHYaH3LMG1Gg/Ks1EoQR08X1vH8UhN113YXB/eV+J0ueE2Zw0WREZ+ZWD1LAGugCbWOkZrKxmp55fdEfJ132ApemNGjNah92Mvjax3v6bZTmc3J3yhI5JJWbE3P8Z8PYyB64zifYxSvdvMigv2XKhJj5Xjns2eweDrVjccpTYVK+zTODzYcGZQJxbVdPGgQLLuNPpY614M/eUNAsvQ+kDk0hPo8PVhtsrE3oQn3MCjDqKbUlTQvV4i91Q8B0wO1z1RB8jt7JVIwwKGoc9Dx+I9lyJfsQ+/CLCGP+IA8x0jZ1rdcV8EtWn56Zzvnf981bqb7JD1afwHtpsVr55WTpgYIJqwTL1BbLw=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3D8D34EB44B9AF4C89FE0F2F428FB111@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zWqer.ymUPl5GdFzgX0ANsT"; protocol="application/pgp-signature"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0833b2fe-25a9-4878-caa2-08d705a72d5d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2019 02:26:27.7122
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4143
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/zWqer.ymUPl5GdFzgX0ANsT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 11, 2019 at 11:50:54AM +1000, Stephen Rothwell wrote:
 
-Hi all,
+> So today this failed to build after I merged the rdma tree (previously
+> it didn;t until after the net-next tree was merged (I assume a
+> dependency changed).  It failed because in_dev_for_each_ifa_rcu (and
+> in_dev_for_each_ifa_rtnl) is only defined in a commit in the net-next
+> tree :-(
 
-On Wed, 10 Jul 2019 17:52:17 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> On Tue, Jul 09, 2019 at 09:43:46AM +0300, Leon Romanovsky wrote:
-> > On Tue, Jul 09, 2019 at 01:56:36PM +1000, Stephen Rothwell wrote: =20
-> > > Hi all,
-> > >
-> > > After merging the net-next tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >
-> > > drivers/infiniband/sw/siw/siw_cm.c: In function 'siw_create_listen':
-> > > drivers/infiniband/sw/siw/siw_cm.c:1978:3: error: implicit declaratio=
-n of function 'for_ifa'; did you mean 'fork_idle'? [-Werror=3Dimplicit-func=
-tion-declaration]
-> > >    for_ifa(in_dev)
-> > >    ^~~~~~~
-> > >    fork_idle
-> > > drivers/infiniband/sw/siw/siw_cm.c:1978:18: error: expected ';' befor=
-e '{' token
-> > >    for_ifa(in_dev)
-> > >                   ^
-> > >                   ;
-> > >    {
-> > >    ~
-> > >
-> > > Caused by commit
-> > >
-> > >   6c52fdc244b5 ("rdma/siw: connection management")
-> > >
-> > > from the rdma tree.  I don't know why this didn't fail after I mereged
-> > > that tree. =20
-> >=20
-> > I had the same question, because I have this fix for a couple of days a=
-lready.
-> >=20
-> > From 56c9e15ec670af580daa8c3ffde9503af3042d67 Mon Sep 17 00:00:00 2001
-> > From: Leon Romanovsky <leonro@mellanox.com>
-> > Date: Sun, 7 Jul 2019 10:43:42 +0300
-> > Subject: [PATCH] Fixup to build SIW issue
-> >=20
-> > Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-> >  drivers/infiniband/sw/siw/siw_cm.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw=
-/siw/siw_cm.c
-> > index 8e618cb7261f..c883bf514341 100644
-> > +++ b/drivers/infiniband/sw/siw/siw_cm.c
-> > @@ -1954,6 +1954,7 @@ static void siw_drop_listeners(struct iw_cm_id *i=
-d)
-> >  int siw_create_listen(struct iw_cm_id *id, int backlog)
-> >  {
-> >  	struct net_device *dev =3D to_siw_dev(id->device)->netdev;
-> > +	const struct in_ifaddr *ifa;
-> >  	int rv =3D 0, listeners =3D 0;
-> >=20
-> >  	siw_dbg(id->device, "id 0x%p: backlog %d\n", id, backlog);
-> > @@ -1975,8 +1976,7 @@ int siw_create_listen(struct iw_cm_id *id, int ba=
-cklog)
-> >  			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
-> >  			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
-> >=20
-> > -		for_ifa(in_dev)
-> > -		{
-> > +		in_dev_for_each_ifa_rcu(ifa, in_dev) {
-> >  			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) || =20
->=20
-> Hum. There is no rcu lock held here and we can't use RCU anyhow as
-> siw_listen_address will sleep.
->=20
-> I think this needs to use rtnl, as below. Bernard, please urgently
-> confirm. Thanks
->=20
-> diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/s=
-iw/siw_cm.c
-> index 8e618cb7261f62..ee98e96a5bfaba 100644
-> --- a/drivers/infiniband/sw/siw/siw_cm.c
-> +++ b/drivers/infiniband/sw/siw/siw_cm.c
-> @@ -1965,6 +1965,7 @@ int siw_create_listen(struct iw_cm_id *id, int back=
-log)
->  	 */
->  	if (id->local_addr.ss_family =3D=3D AF_INET) {
->  		struct in_device *in_dev =3D in_dev_get(dev);
-> +		const struct in_ifaddr *ifa;
->  		struct sockaddr_in s_laddr, *s_raddr;
-> =20
->  		memcpy(&s_laddr, &id->local_addr, sizeof(s_laddr));
-> @@ -1975,8 +1976,8 @@ int siw_create_listen(struct iw_cm_id *id, int back=
-log)
->  			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
->  			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
-> =20
-> -		for_ifa(in_dev)
-> -		{
-> +		rtnl_lock();
-> +		in_dev_for_each_ifa_rtnl(ifa, in_dev) {
->  			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
->  			    s_laddr.sin_addr.s_addr =3D=3D ifa->ifa_address) {
->  				s_laddr.sin_addr.s_addr =3D ifa->ifa_address;
-> @@ -1988,7 +1989,7 @@ int siw_create_listen(struct iw_cm_id *id, int back=
-log)
->  					listeners++;
->  			}
->  		}
-> -		endfor_ifa(in_dev);
-> +		rtnl_unlock();
->  		in_dev_put(in_dev);
->  	} else if (id->local_addr.ss_family =3D=3D AF_INET6) {
->  		struct inet6_dev *in6_dev =3D in6_dev_get(dev);
+? I'm confused..=20
 
-So today this failed to build after I merged the rdma tree (previously
-it didn;t until after the net-next tree was merged (I assume a
-dependency changed).  It failed because in_dev_for_each_ifa_rcu (and
-in_dev_for_each_ifa_rtnl) is only defined in a commit in the net-next
-tree :-(
+rdma.git builds fine stand alone (I hope!)
 
-I have disabled the driver again.
+If you merge it with netdev then the above patch is needed afer the
+merge as netdev changed to ifa_rcu
 
---=20
-Cheers,
-Stephen Rothwell
+I just did this a few hours ago to make and test the patch I sent
+above..
 
---Sig_/zWqer.ymUPl5GdFzgX0ANsT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0mlf4ACgkQAVBC80lX
-0Gx1rggAlkl1kFtVwHZG0bs5T+kS+PRHZBvdYHXo44GXD23vLrwu0N9hVZEeHSIu
-+g+SiptCEgtRPjFDrHydUZV5LnoHRCfu/SszQZ92RtaWm9fMDB9h8xCK4NQ+JwU4
-nCI1f+tZQ6rsDB8eeFhWNxUrHI8CZVf1oE2Gv2zQ/+USnU0skE7RbOZPN8DAKSDG
-vx1ugSopBzIch80xAHOKniPrAhUVq68jRieaENO0Q6ohbT+t9phkJlQ+a4P6PPH7
-U3UZ6cS9SpdGDpe+DMD4U/7gnwj6FuZ0iRmUz9fb3fSsIK+JfyriXcdKYi189NnJ
-MzGCVqKam30DsIBg15r5moLqrqUAXg==
-=N2Fj
------END PGP SIGNATURE-----
-
---Sig_/zWqer.ymUPl5GdFzgX0ANsT--
+Jason
