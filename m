@@ -2,250 +2,165 @@ Return-Path: <SRS0=APSk=VI=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BB4C74A4B
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 08:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F2AC74A51
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 09:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 318FE208E4
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 08:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EEE12166E
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 09:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562838291;
+	bh=OU0r6pDDPf0bfwJa5IbUsOd0jpftMBSu3AIyCunAmaA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DXKuiaIFKma3otU9TC+0x8Q/i29WnVqcsMeNDdyOwbrbcbWW8W2vbYwhF60ZpYEEp
+	 YDprobDmxVRmqTWf5mHjGUKu2LfzMI1DnHpONmMsdHzUaXzhTNeFTgbgQPijfptzwu
+	 BngIfybLRVc3JTqzpRqZZEw6ZIQsB2ODqXPY563s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfGKIBD convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 11 Jul 2019 04:01:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57906 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726997AbfGKIBD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 11 Jul 2019 04:01:03 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6B7vcDX082757
-        for <linux-next@vger.kernel.org>; Thu, 11 Jul 2019 04:01:00 -0400
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [158.85.210.114])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tnxkuws5p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Thu, 11 Jul 2019 04:01:00 -0400
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-next@vger.kernel.org> from <BMT@zurich.ibm.com>;
-        Thu, 11 Jul 2019 08:00:57 -0000
-Received: from us1b3-smtp01.a3dr.sjc01.isc4sb.com (10.122.7.174)
-        by smtp.notes.na.collabserv.com (10.122.47.58) with smtp.notes.na.collabserv.com ESMTP;
-        Thu, 11 Jul 2019 08:00:49 -0000
-Received: from us1b3-mail162.a3dr.sjc03.isc4sb.com ([10.160.174.187])
-          by us1b3-smtp01.a3dr.sjc01.isc4sb.com
-          with ESMTP id 2019071108004955-181834 ;
-          Thu, 11 Jul 2019 08:00:49 +0000 
-In-Reply-To: <20190710175212.GM2887@mellanox.com>
-From:   "Bernard Metzler" <BMT@zurich.ibm.com>
-To:     "Jason Gunthorpe" <jgg@mellanox.com>
-Cc:     "Leon Romanovsky" <leon@kernel.org>,
-        "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        "Doug Ledford" <dledford@redhat.com>,
-        "David Miller" <davem@davemloft.net>,
-        "Networking" <netdev@vger.kernel.org>,
-        "Linux Next Mailing List" <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Date:   Thu, 11 Jul 2019 08:00:49 +0000
+        id S1727595AbfGKJou (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 11 Jul 2019 05:44:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbfGKJou (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 11 Jul 2019 05:44:50 -0400
+Received: from earth.universe (dyndsl-031-150-081-114.ewe-ip-backbone.de [31.150.81.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03D4B20872;
+        Thu, 11 Jul 2019 09:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562838289;
+        bh=OU0r6pDDPf0bfwJa5IbUsOd0jpftMBSu3AIyCunAmaA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=toW6Y+6trrhb59gdQZIgM6+Cf/7TISSyfPifjfMC8gDKzcL7ahmDmIzG6cUfNGtHP
+         46Qx5Bsv/qEYXgAZtKosbv/4XgZ+dlzWByh6N1dgKYFCEZv6sFCtxQNT4X0PhniIUx
+         ygR20+fE441RUQH+lgq5QhGxOR1XT/uiupViMGWU=
+Received: by earth.universe (Postfix, from userid 1000)
+        id C0C783C08DC; Thu, 11 Jul 2019 11:44:46 +0200 (CEST)
+Date:   Thu, 11 Jul 2019 11:44:46 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: linux-next: manual merge of the battery tree with the pci tree
+Message-ID: <20190711094446.mdmjlcsnorluzy5h@earth.universe>
+References: <20190628135511.34853c19@canb.auug.org.au>
+ <20190709101424.3876cbba@canb.auug.org.au>
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <20190710175212.GM2887@mellanox.com>,<20190709135636.4d36e19f@canb.auug.org.au>
- <20190709064346.GF7034@mtr-leonro.mtl.com>
-X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
- SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
-X-KeepSent: 360C0EBE:4A489B94-00258434:002B10B7;
- type=4; name=$KeepSent
-X-LLNOutbound: False
-X-Disclaimed: 35307
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=UTF-8
-x-cbid: 19071108-9695-0000-0000-000006B766FA
-X-IBM-SpamModules-Scores: BY=0.020306; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.399202; ST=0; TS=0; UL=0; ISC=; MB=0.010234
-X-IBM-SpamModules-Versions: BY=3.00011408; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01230531; UDB=6.00648155; IPR=6.01011807;
- BA=6.00006354; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00027677; XFM=3.00000015;
- UTC=2019-07-11 08:00:55
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-07-11 03:41:51 - 6.00010150
-x-cbparentid: 19071108-9696-0000-0000-0000681A9D1B
-Message-Id: <OF360C0EBE.4A489B94-ON00258434.002B10B7-00258434.002C0536@notes.na.collabserv.com>
-Subject: Re:  Re: linux-next: build failure after merge of the net-next tree
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-11_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="x4dhcvjv35gg7k5q"
+Content-Disposition: inline
+In-Reply-To: <20190709101424.3876cbba@canb.auug.org.au>
+User-Agent: NeoMutt/20180716
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
------"Jason Gunthorpe" <jgg@mellanox.com> wrote: -----
 
->To: "Leon Romanovsky" <leon@kernel.org>, "Bernard Metzler"
-><bmt@zurich.ibm.com>
->From: "Jason Gunthorpe" <jgg@mellanox.com>
->Date: 07/10/2019 07:52PM
->Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Doug Ledford"
-><dledford@redhat.com>, "David Miller" <davem@davemloft.net>,
->"Networking" <netdev@vger.kernel.org>, "Linux Next Mailing List"
-><linux-next@vger.kernel.org>, "Linux Kernel Mailing List"
-><linux-kernel@vger.kernel.org>
->Subject: [EXTERNAL] Re: linux-next: build failure after merge of the
->net-next tree
->
->On Tue, Jul 09, 2019 at 09:43:46AM +0300, Leon Romanovsky wrote:
->> On Tue, Jul 09, 2019 at 01:56:36PM +1000, Stephen Rothwell wrote:
->> > Hi all,
->> >
->> > After merging the net-next tree, today's linux-next build (x86_64
->> > allmodconfig) failed like this:
->> >
->> > drivers/infiniband/sw/siw/siw_cm.c: In function
->'siw_create_listen':
->> > drivers/infiniband/sw/siw/siw_cm.c:1978:3: error: implicit
->declaration of function 'for_ifa'; did you mean 'fork_idle'?
->[-Werror=implicit-function-declaration]
->> >    for_ifa(in_dev)
->> >    ^~~~~~~
->> >    fork_idle
->> > drivers/infiniband/sw/siw/siw_cm.c:1978:18: error: expected ';'
->before '{' token
->> >    for_ifa(in_dev)
->> >                   ^
->> >                   ;
->> >    {
->> >    ~
->> >
->> > Caused by commit
->> >
->> >   6c52fdc244b5 ("rdma/siw: connection management")
->> >
->> > from the rdma tree.  I don't know why this didn't fail after I
->mereged
->> > that tree.
->> 
->> I had the same question, because I have this fix for a couple of
->days already.
->> 
->> From 56c9e15ec670af580daa8c3ffde9503af3042d67 Mon Sep 17 00:00:00
->2001
->> From: Leon Romanovsky <leonro@mellanox.com>
->> Date: Sun, 7 Jul 2019 10:43:42 +0300
->> Subject: [PATCH] Fixup to build SIW issue
->> 
->> Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
->>  drivers/infiniband/sw/siw/siw_cm.c | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/infiniband/sw/siw/siw_cm.c
->b/drivers/infiniband/sw/siw/siw_cm.c
->> index 8e618cb7261f..c883bf514341 100644
->> +++ b/drivers/infiniband/sw/siw/siw_cm.c
->> @@ -1954,6 +1954,7 @@ static void siw_drop_listeners(struct
->iw_cm_id *id)
->>  int siw_create_listen(struct iw_cm_id *id, int backlog)
->>  {
->>  	struct net_device *dev = to_siw_dev(id->device)->netdev;
->> +	const struct in_ifaddr *ifa;
->>  	int rv = 0, listeners = 0;
->> 
->>  	siw_dbg(id->device, "id 0x%p: backlog %d\n", id, backlog);
->> @@ -1975,8 +1976,7 @@ int siw_create_listen(struct iw_cm_id *id,
->int backlog)
->>  			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
->>  			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
->> 
->> -		for_ifa(in_dev)
->> -		{
->> +		in_dev_for_each_ifa_rcu(ifa, in_dev) {
->>  			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
->
->Hum. There is no rcu lock held here and we can't use RCU anyhow as
->siw_listen_address will sleep.
->
->I think this needs to use rtnl, as below. Bernard, please urgently
->confirm. Thanks
->
+--x4dhcvjv35gg7k5q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+Hi,
 
-That listen will not sleep. The socket is just marked
-listening. Accepting a new connection is handled asynchronously
-by a work handler, kicked by a socket callback
-(siw_cm_llp_state_change).
+On Tue, Jul 09, 2019 at 10:14:24AM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Fri, 28 Jun 2019 13:55:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >=20
+> > Today's linux-next merge of the battery tree got a conflict in:
+> >=20
+> >   Documentation/power/power_supply_class.txt
+> >=20
+> > between commit:
+> >=20
+> >   151f4e2bdc7a ("docs: power: convert docs to ReST and rename to *.rst")
+> >=20
+> > from the pci tree and commit:
+> >=20
+> >   49c9cd95bb6d ("power: supply: add input power and voltage limit prope=
+rties")
+> >=20
+> > from the battery tree.
+> >=20
+> > I fixed it up (I deleted the file and adde the following merge fix patc=
+h)
+> > and can carry the fix as necessary. This is now fixed as far as linux-n=
+ext
+> > is concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
+> >=20
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Fri, 28 Jun 2019 13:52:44 +1000
+> > Subject: [PATCH] power: supply: update for conversion to .rst
+> >=20
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  Documentation/power/power_supply_class.rst | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >=20
+> > diff --git a/Documentation/power/power_supply_class.rst b/Documentation=
+/power/power_supply_class.rst
+> > index 3f2c3fe38a61..883b2ef63119 100644
+> > --- a/Documentation/power/power_supply_class.rst
+> > +++ b/Documentation/power/power_supply_class.rst
+> > @@ -166,6 +166,14 @@ INPUT_CURRENT_LIMIT
+> >    input current limit programmed by charger. Indicates
+> >    the current drawn from a charging source.
+> > =20
+> > +INPUT_VOLTAGE_LIMIT
+> > +  input voltage limit programmed by charger. Indicates
+> > +  the voltage limit from a charging source.
+> > +
+> > +INPUT_POWER_LIMIT
+> > +  input power limit programmed by charger. Indicates
+> > +  the power limit from a charging source.
+> > +
+> >  CHARGE_CONTROL_LIMIT
+> >    current charge control limit setting
+> >  CHARGE_CONTROL_LIMIT_MAX
+> > --=20
+> > 2.20.1
+>=20
+> I am still getting this conflict (the commit ids may have changed).
+> Just a reminder in case you think Linus may need to know.
 
-But, I think you are correct, we are missing the
-rcu_read_lock/unlock around that iteration. Could we please add
-that (see below)?
+Yes - your solution is correct and I will forward the information to
+Linus, thanks.
 
-Thanks very much!
-Bernard.
+(Sorry for the delayed reply, lot's of work these days)
 
-diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
-index c883bf514341..c5c060103993 100644
---- a/drivers/infiniband/sw/siw/siw_cm.c
-+++ b/drivers/infiniband/sw/siw/siw_cm.c
-@@ -1976,6 +1976,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
-                        id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
-                        &s_raddr->sin_addr, ntohs(s_raddr->sin_port));
- 
-+               rcu_read_lock();
-                in_dev_for_each_ifa_rcu(ifa, in_dev) {
-                        if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
-                            s_laddr.sin_addr.s_addr == ifa->ifa_address) {
-@@ -1988,6 +1989,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
-                                        listeners++;
-                        }
-                }
-+               rcu_read_unlock();
-                in_dev_put(in_dev);
-        } else if (id->local_addr.ss_family == AF_INET6) {
-                struct inet6_dev *in6_dev = in6_dev_get(dev);
+-- Sebastian
 
+--x4dhcvjv35gg7k5q
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->diff --git a/drivers/infiniband/sw/siw/siw_cm.c
->b/drivers/infiniband/sw/siw/siw_cm.c
->index 8e618cb7261f62..ee98e96a5bfaba 100644
->--- a/drivers/infiniband/sw/siw/siw_cm.c
->+++ b/drivers/infiniband/sw/siw/siw_cm.c
->@@ -1965,6 +1965,7 @@ int siw_create_listen(struct iw_cm_id *id, int
->backlog)
-> 	 */
-> 	if (id->local_addr.ss_family == AF_INET) {
-> 		struct in_device *in_dev = in_dev_get(dev);
->+		const struct in_ifaddr *ifa;
-> 		struct sockaddr_in s_laddr, *s_raddr;
-> 
-> 		memcpy(&s_laddr, &id->local_addr, sizeof(s_laddr));
->@@ -1975,8 +1976,8 @@ int siw_create_listen(struct iw_cm_id *id, int
->backlog)
-> 			id, &s_laddr.sin_addr, ntohs(s_laddr.sin_port),
-> 			&s_raddr->sin_addr, ntohs(s_raddr->sin_port));
-> 
->-		for_ifa(in_dev)
->-		{
->+		rtnl_lock();
->+		in_dev_for_each_ifa_rtnl(ifa, in_dev) {
-> 			if (ipv4_is_zeronet(s_laddr.sin_addr.s_addr) ||
-> 			    s_laddr.sin_addr.s_addr == ifa->ifa_address) {
-> 				s_laddr.sin_addr.s_addr = ifa->ifa_address;
->@@ -1988,7 +1989,7 @@ int siw_create_listen(struct iw_cm_id *id, int
->backlog)
-> 					listeners++;
-> 			}
-> 		}
->-		endfor_ifa(in_dev);
->+		rtnl_unlock();
-> 		in_dev_put(in_dev);
-> 	} else if (id->local_addr.ss_family == AF_INET6) {
-> 		struct inet6_dev *in6_dev = in6_dev_get(dev);
->
->
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0nBQgACgkQ2O7X88g7
++prXFBAAgsLyABGUEPD4Z+Tmgyqvw3XXLW/TcALqK7JGWdVDd6nD41fQ1hHvI57V
+i8BQrge6B3dF1VUCEQAIEoOm5ACaKwG/m8kEB8KVSe60v/k1P6C+VMbE7bkzUDLm
+GtnuXGAMJNa5/FpEuYzyY0ezhk0KrPL+86BMJ1cKVHaxU2IuAI/R7oFQT1zvCHdF
+/1cO1IV2rwPjp4M/cN0CVBkBq1FhJwfoDxRp1BtvClUiZsuoJ/T0gT1U2/xZJU42
+L2/N1l1sIQ0pp9tvAhwJ95w8IcRpiBiK2ohDqvrzB9BTA2Gz75cAhUwpOVSBbnh0
+dpdZhcNjEl2qAqnX7lhJXWkzNPy87DWpz3z6PDmh9CR/zV9S0far9RIS1sQsXBwQ
+ClHp3odWFet0tbs8ImfYU3qwhMZxkUbOz432ijGsVGC2QO9+eAcphHQ8Al+j/gWw
+KP0/HXghB5TwF9TTP/lDtr/OfRO7+wbPj/AH3TMSkslPuVli/Oo6q2yXoWbjQBWp
+NXgMR375hfji4Qe7Hg80Fufm++z/Gs4qXTpkc4LYCZIznBS6+v7bihx50VyHUqtp
+EKF0WaPAnP/OSJ9g0DtCSA6FF/n3hgRlzt0RMDOaxB3vKxxBJQbA+UHZ+Op7iqDW
+FfC3jwuA8jWH9913ipl0vxYULH+NU9P37o3HyWH2n8f2cjCxtU0=
+=csO5
+-----END PGP SIGNATURE-----
 
+--x4dhcvjv35gg7k5q--
