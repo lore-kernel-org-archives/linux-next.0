@@ -1,185 +1,233 @@
-Return-Path: <SRS0=fDmY=VH=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=APSk=VI=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37C6C74A35
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 22:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73912C74A3F
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 00:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD31021530
-	for <linux-next@archiver.kernel.org>; Wed, 10 Jul 2019 22:34:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="PWsyEjdh"
+	by mail.kernel.org (Postfix) with ESMTP id 28E7E21530
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 00:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562805277;
+	bh=8R+/m0sE0I5uj5ZSjtj66c6S6/vD4UOWM1T2cgd3nhk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=ZUsrqPMJ+PfJwgggixSwgMjtJid34xSQgOYmePDcYqpgJIjjCuTKy19+AzwZZeyMI
+	 UJlToCk39wf+zUfyDjSNT7AQv1Xv4LhTNDblCePGF8OR3FIHIot0SHSIRSCTLgzuSf
+	 11oax+X8Xpm834YBcdowpjAFDRi3uTx3BKfgnkgg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfGJWex (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Jul 2019 18:34:53 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:37846 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbfGJWew (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2019 18:34:52 -0400
-Received: by mail-wr1-f47.google.com with SMTP id n9so4107342wrr.4
-        for <linux-next@vger.kernel.org>; Wed, 10 Jul 2019 15:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=/6j/C3AMPjtDBjrS4gU25o0NmqkNHn5en8pnGBDusAo=;
-        b=PWsyEjdhNdobUnQgV+BMLRCdDMHolLPMdr0RKV1WogZXD2k/K8/lg35OEBc/tG06xj
-         oqh/JnNZ3sXQKNyMNpgYEfNozrue6000tXm58eFFvjHr5w8+QZjypJiC1ILlRiQ4j94a
-         DBUbahulWcEJ3LQHmExDVO3v/p4ImjLt9Mu1LU60IV/jVsESFLBYRin7VASEX8Pw5pee
-         mQkW6DfAKyZyD7rKoHbT1v0iYf/ZUooZFuE8KNE0ZOJscf2KRw39w+WmaBnVhVuNgcCm
-         FASMn/Ir9LB59RHyICiMC00fZ7ga/ZqBoTRepSFpOo2+dm454q+Z+wCe5T5eVHG4HeXP
-         LX1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=/6j/C3AMPjtDBjrS4gU25o0NmqkNHn5en8pnGBDusAo=;
-        b=D3EUmNgpdUIwuHpBawWr858yiEx/jE5ES01loAGEVTaDGWEKXkzgD2Yz4CxOgzedxo
-         KQNmpvM8x/6htKhqqa8mdezWqYFIedMhAOQoVJ+Fm2J7ILyr6nPIGr3Qj2KtBXA8C1GZ
-         hOpjEf+wfwQH+eFbR3+w5OJSU3yuz/WYzRb+wyQYMbA+Aa5HQDsPoJ97apoWip9s5o0W
-         q/3vQ09Xyzc38FFm6aGQcTEU2uaRZvo19SPxKZXWDIuyFIqqOZtwqJ8HjYC4/50daZ2p
-         7UaFCsweLNdDEkIaM2NsUqf+1/ez485nS/qOD83G519oGe6UUGfUXxAACBmRwHZwkXjy
-         HSlA==
-X-Gm-Message-State: APjAAAXRCUKoRLFQYZNZB6WTpg+P6q1D6w7xpFRAR4WXn2n5RsDnGjxy
-        UXiuoAQ9tSz3ujMQjblJDSgpkttQljY=
-X-Google-Smtp-Source: APXvYqz7UH+sB0FzB8PdNy8l67FL32yof9rraZ+DjjTJTDip2ykG/YhlaeOoRYJremB1mPVcxlw4jQ==
-X-Received: by 2002:adf:f3c1:: with SMTP id g1mr29648wrp.203.1562798090269;
-        Wed, 10 Jul 2019 15:34:50 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id j9sm196024wrn.81.2019.07.10.15.34.49
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Jul 2019 15:34:49 -0700 (PDT)
-Message-ID: <5d266809.1c69fb81.16b9e.14ef@mx.google.com>
-Date:   Wed, 10 Jul 2019 15:34:49 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: next-20190710
-X-Kernelci-Branch: master
-X-Kernelci-Tree: next
-Subject: next/master boot: 240 boots: 12 failed, 226 passed with 1 offline,
- 1 untried/unknown (next-20190710)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+        id S1727386AbfGKAeg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Jul 2019 20:34:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726627AbfGKAeg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 10 Jul 2019 20:34:36 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D243F20844;
+        Thu, 11 Jul 2019 00:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562805275;
+        bh=8R+/m0sE0I5uj5ZSjtj66c6S6/vD4UOWM1T2cgd3nhk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=15cLiRKYElxT+OTfUatRgaL5YnB17vt4q9Nqec0GZOdxw4UEbobab4W4xWvBR2yYX
+         1hmIcSdceRphT71xQ/R5fo/NE899HS4lSDrA+ZBYFNQLzwHSzde+pcQAEllBL2ueD2
+         Ry/3dtCxF+bpGyUPNm1jzqHsRMdo55TeBzy+bvDs=
+Date:   Wed, 10 Jul 2019 17:34:34 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yang Shi <shy828301@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-Id: <20190710173434.8081fa5410ccf0ccd72719b9@linux-foundation.org>
+In-Reply-To: <20190710070509.GB29695@dhcp22.suse.cz>
+References: <20190709211559.6ffd2f4e@canb.auug.org.au>
+        <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
+        <20190710070509.GB29695@dhcp22.suse.cz>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 240 boots: 12 failed, 226 passed with 1 offline, 1 untrie=
-d/unknown (next-20190710)
+On Wed, 10 Jul 2019 09:05:09 +0200 Michal Hocko <mhocko@kernel.org> wrote:
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190710/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190710/
+> >  	return false;
+> >  }
+> > +static inline void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+> > +					  int nid, int shrinker_id)
+> > +{
+> > +}
+> >  #endif
+> 
+> Can we get the full series resent please. I have completely lost track
+> of all the follow up fixes.
 
-Tree: next
-Branch: master
-Git Describe: next-20190710
-Git Commit: a77f5c70e3d27df87dce07920fce0423ed9e7804
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 78 unique boards, 26 SoC families, 20 builds out of 227
+It's just mm-shrinker-make-shrinker-not-depend-on-memcg-kmem.patch that
+had all the little buildy fixes.  Below.
 
-Boot Regressions Detected:
+But this patchset seems to have a list handling bug
+http://lkml.kernel.org/r/1562795006.8510.19.camel@lca.pw.
 
-arm:
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          armada-xp-openblocks-ax3-4:
-              lab-baylibre-seattle: failing since 15 days (last pass: next-=
-20190624 - first fail: next-20190625)
 
-    oxnas_v6_defconfig:
-        gcc-8:
-          ox820-cloudengines-pogoplug-series-3:
-              lab-baylibre: new failure (last pass: next-20190705)
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Subject: mm: shrinker: make shrinker not depend on memcg kmem
 
-    qcom_defconfig:
-        gcc-8:
-          qcom-apq8064-cm-qs600:
-              lab-baylibre-seattle: failing since 19 days (last pass: next-=
-20190619 - first fail: next-20190621)
-          qcom-apq8064-ifc6410:
-              lab-baylibre-seattle: failing since 20 days (last pass: next-=
-20190618 - first fail: next-20190620)
+Currently shrinker is just allocated and can work when memcg kmem is
+enabled.  But, THP deferred split shrinker is not slab shrinker, it
+doesn't make too much sense to have such shrinker depend on memcg kmem. 
+It should be able to reclaim THP even though memcg kmem is disabled.
 
-arm64:
+Introduce a new shrinker flag, SHRINKER_NONSLAB, for non-slab shrinker. 
+When memcg kmem is disabled, just such shrinkers can be called in
+shrinking memcg slab.
 
-    defconfig:
-        gcc-8:
-          apq8096-db820c:
-              lab-bjorn: failing since 8 days (last pass: next-20190625 - f=
-irst fail: next-20190701)
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          meson-gxbb-p200:
-              lab-baylibre: new failure (last pass: next-20190702)
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        clang-8:
-          meson-gxbb-p200:
-              lab-baylibre: new failure (last pass: next-20190702)
-
-Boot Failures Detected:
-
-arm:
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
-
-    oxnas_v6_defconfig:
-        gcc-8:
-            ox820-cloudengines-pogoplug-series-3: 1 failed lab
-
-    sunxi_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
-
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
-            qcom-apq8064-ifc6410: 1 failed lab
-
-arm64:
-    defconfig:
-        gcc-8:
-            apq8096-db820c: 1 failed lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        clang-8:
-            meson-gxbb-p200: 1 failed lab
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        clang-8:
-            meson-gxbb-nanopi-k2: 1 failed lab
-            meson-gxbb-p200: 1 failed lab
-            meson-gxl-s905x-khadas-vim: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
+[akpm@linux-foundation.org: fix build]
+  Link: http://lkml.kernel.org/r/201907052120.OGYPhvno%lkp@intel.com
+[shy828301@gmail.com: fixes]
+  Link: http://lkml.kernel.org/r/CAHbLzkr8h0t+2xs6f7htKZFdKDbsD5F4z-AAt+CDa-uVwSkQ1Q@mail.gmail.com
+[akpm@linux-foundation.org: coding style fixes]
+[akpm@linux-foundation.org: build fix]
+Link: http://lkml.kernel.org/r/1561507361-59349-4-git-send-email-yang.shi@linux.alibaba.com
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
-For more info write to <info@kernelci.org>
+
+ include/linux/shrinker.h |    3 ++-
+ mm/vmscan.c              |   36 +++++++++++++++++++-----------------
+ 2 files changed, 21 insertions(+), 18 deletions(-)
+
+--- a/include/linux/shrinker.h~mm-shrinker-make-shrinker-not-depend-on-memcg-kmem
++++ a/include/linux/shrinker.h
+@@ -69,7 +69,7 @@ struct shrinker {
+ 
+ 	/* These are for internal use */
+ 	struct list_head list;
+-#ifdef CONFIG_MEMCG_KMEM
++#ifdef CONFIG_MEMCG
+ 	/* ID in shrinker_idr */
+ 	int id;
+ #endif
+@@ -81,6 +81,7 @@ struct shrinker {
+ /* Flags */
+ #define SHRINKER_NUMA_AWARE	(1 << 0)
+ #define SHRINKER_MEMCG_AWARE	(1 << 1)
++#define SHRINKER_NONSLAB	(1 << 2)
+ 
+ extern int prealloc_shrinker(struct shrinker *shrinker);
+ extern void register_shrinker_prepared(struct shrinker *shrinker);
+--- a/mm/vmscan.c~mm-shrinker-make-shrinker-not-depend-on-memcg-kmem
++++ a/mm/vmscan.c
+@@ -174,8 +174,7 @@ unsigned long vm_total_pages;
+ static LIST_HEAD(shrinker_list);
+ static DECLARE_RWSEM(shrinker_rwsem);
+ 
+-#ifdef CONFIG_MEMCG_KMEM
+-
++#ifdef CONFIG_MEMCG
+ /*
+  * We allow subsystems to populate their shrinker-related
+  * LRU lists before register_shrinker_prepared() is called
+@@ -227,18 +226,7 @@ static void unregister_memcg_shrinker(st
+ 	idr_remove(&shrinker_idr, id);
+ 	up_write(&shrinker_rwsem);
+ }
+-#else /* CONFIG_MEMCG_KMEM */
+-static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+-{
+-	return 0;
+-}
+ 
+-static void unregister_memcg_shrinker(struct shrinker *shrinker)
+-{
+-}
+-#endif /* CONFIG_MEMCG_KMEM */
+-
+-#ifdef CONFIG_MEMCG
+ static bool global_reclaim(struct scan_control *sc)
+ {
+ 	return !sc->target_mem_cgroup;
+@@ -293,6 +281,15 @@ static bool memcg_congested(pg_data_t *p
+ 
+ }
+ #else
++static int prealloc_memcg_shrinker(struct shrinker *shrinker)
++{
++	return 0;
++}
++
++static void unregister_memcg_shrinker(struct shrinker *shrinker)
++{
++}
++
+ static bool global_reclaim(struct scan_control *sc)
+ {
+ 	return true;
+@@ -579,7 +576,7 @@ static unsigned long do_shrink_slab(stru
+ 	return freed;
+ }
+ 
+-#ifdef CONFIG_MEMCG_KMEM
++#ifdef CONFIG_MEMCG
+ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 			struct mem_cgroup *memcg, int priority)
+ {
+@@ -587,7 +584,7 @@ static unsigned long shrink_slab_memcg(g
+ 	unsigned long ret, freed = 0;
+ 	int i;
+ 
+-	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
++	if (!mem_cgroup_online(memcg))
+ 		return 0;
+ 
+ 	if (!down_read_trylock(&shrinker_rwsem))
+@@ -613,6 +610,11 @@ static unsigned long shrink_slab_memcg(g
+ 			continue;
+ 		}
+ 
++		/* Call non-slab shrinkers even though kmem is disabled */
++		if (!memcg_kmem_enabled() &&
++		    !(shrinker->flags & SHRINKER_NONSLAB))
++			continue;
++
+ 		ret = do_shrink_slab(&sc, shrinker, priority);
+ 		if (ret == SHRINK_EMPTY) {
+ 			clear_bit(i, map->map);
+@@ -649,13 +651,13 @@ unlock:
+ 	up_read(&shrinker_rwsem);
+ 	return freed;
+ }
+-#else /* CONFIG_MEMCG_KMEM */
++#else /* CONFIG_MEMCG */
+ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 			struct mem_cgroup *memcg, int priority)
+ {
+ 	return 0;
+ }
+-#endif /* CONFIG_MEMCG_KMEM */
++#endif /* CONFIG_MEMCG */
+ 
+ /**
+  * shrink_slab - shrink slab caches
+_
+
