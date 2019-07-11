@@ -7,70 +7,68 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDBEC74A42
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 05:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDA9C74A42
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 05:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA3321530
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 05:04:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF6620872
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jul 2019 05:15:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rJ2e5TnR"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TmF19Edy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbfGKFEO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 11 Jul 2019 01:04:14 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45429 "EHLO ozlabs.org"
+        id S1726683AbfGKFPL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 11 Jul 2019 01:15:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:39323 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727874AbfGKFEO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 11 Jul 2019 01:04:14 -0400
+        id S1726296AbfGKFPK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 11 Jul 2019 01:15:10 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kkVf4lVGz9sDB;
-        Thu, 11 Jul 2019 15:04:10 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45kklJ4BVfz9sBt;
+        Thu, 11 Jul 2019 15:15:08 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562821451;
-        bh=7Nxg3ylgJpNFggaAHZGA41O1MIYbZXvBamiEMnBnJ8g=;
+        s=201702; t=1562822108;
+        bh=A15oo3lnPBgimcgWn2uZygbu1s4lzeQ81MYn/Qa33K4=;
         h=Date:From:To:Cc:Subject:From;
-        b=rJ2e5TnRCgaLWvHL0zKcuVrf2MSW9Yy1udGydqbpTbMaZVPmZZdpOAYjR3yteEQdC
-         oXWfWjEwPtSVXnTVLqvWsP9On6xd4sYKuVYJyTM0El8Q8Hr1koe5jaZQjxleXfWGP7
-         O6Ipi7zjcJzI3EW0ta3GRGTfBURom0jfQwfLGzRg9bF9gv9f5jH/LA9DtMFEqcTiJy
-         hBtbjqS7PdpdWswkrSuaCr3lhPTHSD6BSSDYVXTwzY8dXIhP8ptngbfIsxw+Ma7MCQ
-         uYqkntJQ5h2SPPnyxw9Zn+EgDmxCC0cSu909stGGsZ0vSiKaNfNXFKQmHlHQ5HI6QU
-         4XWn+EF14sv8g==
-Date:   Thu, 11 Jul 2019 15:04:09 +1000
+        b=TmF19EdyXP1K7C9nH/XuS3+7l8a+wYFgFHCLK1/OFJzTaS8X5OwRcW6PQH8VWMYPH
+         0ShbiCyAOToFRs2xMQv9TgVNBobfTkv1v2h94Z3XnhimtHva4gaWXT8kpTnM8x5GT8
+         veSzwLRQi2PXlEJWxyqQ+VlBkDuT2OgkXUF786L86tFnV3TSV4KdGA5sbLf9glAe1m
+         tAnKquVK8OiPr1ZSz/1NEouSpuFNK7m7+MgvMyet9pwN9XatvQs4VSkHYz/PO55+uh
+         h0xFwAqdUwZqChuK3L01LAWTbtrvB/6rdNYNWGkd3Yu8poKZE8wSUWWd9pmh5qoHHQ
+         EF76t3vJDBgxw==
+Date:   Thu, 11 Jul 2019 15:15:07 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
+To:     Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Christoph Hellwig <hch@lst.de>
+        Tejun Heo <tj@kernel.org>, Chao Yu <yuchao0@huawei.com>
 Subject: linux-next: build failure after merge of the block tree
-Message-ID: <20190711150409.2455206a@canb.auug.org.au>
+Message-ID: <20190711151507.7ec1fd18@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/B5NooziqED55ovJZ4cwZzQ."; protocol="application/pgp-signature"
+ boundary="Sig_/fQ6oCqxHszi+mJrDNm=bKkS"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/B5NooziqED55ovJZ4cwZzQ.
+--Sig_/fQ6oCqxHszi+mJrDNm=bKkS
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the block tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-fs/xfs/xfs_aops.c: In function 'xfs_add_to_ioend':
-fs/xfs/xfs_aops.c:799:2: error: implicit declaration of function 'wbc_accou=
-nt_io'; did you mean 'blk_account_rq'? [-Werror=3Dimplicit-function-declara=
-tion]
-  wbc_account_io(wbc, page, len);
-  ^~~~~~~~~~~~~~
-  blk_account_rq
+fs/f2fs/data.c: In function 'f2fs_merge_page_bio':
+fs/f2fs/data.c:516:3: error: implicit declaration of function 'wbc_account_=
+io'; did you mean 'blk_account_rq'? [-Werror=3Dimplicit-function-declaratio=
+n]
+   wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
+   ^~~~~~~~~~~~~~
+   blk_account_rq
 
 Caused by commit
 
@@ -79,34 +77,34 @@ group_owner()")
 
 interacting with commit
 
-  adfb5fb46af0 ("xfs: implement cgroup aware writeback")
+  8648de2c581e ("f2fs: add bio cache for IPU")
 
-from the xfs tree.
+from the f2fs tree.
 
-I have applied the following merge fix patch:
+I added the following merge fix patch or today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 11 Jul 2019 15:01:54 +1000
-Subject: [PATCH] xfs: fix up for wbc_account_io rename
+Date: Thu, 11 Jul 2019 15:13:21 +1000
+Subject: [PATCH] f2fs: fix for wbc_account_io rename
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- fs/xfs/xfs_aops.c | 2 +-
+ fs/f2fs/data.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 761248ee2778..f16d5f196c6b 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -796,7 +796,7 @@ xfs_add_to_ioend(
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 323306630f93..4eb2f3920140 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -513,7 +513,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
  	}
 =20
- 	wpc->ioend->io_size +=3D len;
--	wbc_account_io(wbc, page, len);
-+	wbc_account_cgroup_owner(wbc, page, len);
- }
+ 	if (fio->io_wbc)
+-		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
++		wbc_account_cgroup_owner(fio->io_wbc, page, PAGE_SIZE);
 =20
- STATIC void
+ 	inc_page_count(fio->sbi, WB_DATA_TYPE(page));
+=20
 --=20
 2.20.1
 
@@ -114,20 +112,20 @@ index 761248ee2778..f16d5f196c6b 100644
 Cheers,
 Stephen Rothwell
 
---Sig_/B5NooziqED55ovJZ4cwZzQ.
+--Sig_/fQ6oCqxHszi+mJrDNm=bKkS
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0mw0kACgkQAVBC80lX
-0Gzj6ggAoP4l5jKOrhf+ZYoxXF2wQNPz4FfAT31AaniMR/4ElvqovcKvbGrTSRRs
-CY2k3XkFEjxjVLmL/tXSeJsxjn1L9E4DEOVP56vRZ7/9xKHFKio/5o7Qbi2vxcLH
-jLGqPV+dwQFXMf4uPp8+z9xUrdJUmiOamoM9jOTMDFw5yjUoaeikqjsWc0QzwBbh
-4D4xUv+qKCiTWJZCjCV6UsE0wJ+cP118k9ozuVpRThXw4IxjVzVB7HLEXIpzs0C1
-uyigm8Nr3zloqhq/TNT62tCnsbHZA1Z053YxJfJPICX/YVYfjDZFFXoh9nVYj4+z
-y+eWN4mmzSx20x3Y55wqmUKhViKNpA==
-=HzFB
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0mxdsACgkQAVBC80lX
+0Gyumgf/UyFml7MpbpYLD24HTtwSzldMXQGaillCox1LdkDuLoyaoFD46ik8w8Ob
+Jsf9tsY7i6Qa/UxLdyeQ9d5VmHXvvCMHr3m9EoT7pD6D3GHGnzZrl1dtJ1pk6gr5
+MfuWjM4nfBL6dRkfk9ncExi6bE7SpnReh5Om2+RfyVuHhKwfcqSLoiR2BoZZbSkI
+/6IsAbypmqJMz2R80C7jcHC4a6UhW7d+Ec6zFGTC6l2OKxOEmcOZI+QDtOcHG1pJ
+wh81kfAYZvJtC2TeIEVWrZZIERFDxiQZg/cty+BfZ4XNQKeMVohVVNHi1pZSy01Q
+U3zzmRxikc0gFLdKUHUmRnONb9P5jw==
+=yale
 -----END PGP SIGNATURE-----
 
---Sig_/B5NooziqED55ovJZ4cwZzQ.--
+--Sig_/fQ6oCqxHszi+mJrDNm=bKkS--
