@@ -2,94 +2,96 @@ Return-Path: <SRS0=0/zj=VJ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5889BC742D2
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 17:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675ADC742D2
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 21:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25B76205ED
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 17:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F83217D6
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 21:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562954013;
-	bh=ONPzdVHMIvpPolwKBGo1Y6DqMR7K8PMrIb8PTJIfEbs=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=wAb07ustr/MLmxqIfwNcglixA8WHvxfgkk7HsSoCMztPuFjzgUPeWe4h1Sv8N4rih
-	 XwPCp6EuKdMOKP1+AEIFKZHxqalo0GA3mjtxX81Z7b6Mf92Q6ybemxBxxlfl3Se1Q2
-	 Duudj+Wi0t3jHn3bHmq8m5bmRDiaxSlbULQR2oL8=
+	s=default; t=1562966107;
+	bh=84KH1NKKp+X9DBsNyPpI1JzWgMF+ovJKrSmV72XOuuA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=MTDUo1ER8/EIbPiEDpkYUYdAKYKlSoTWanayN1T7Maopnr5fFlbXpQVluNusiigDo
+	 BHNZFxALfxTK5blXd990p4Ox55TlVbo7xu1dwue4gjqdhfIUytfHgfba4bgFv6sQw/
+	 VgHCO4Laux0YIVQQnOA6sv74NzBeFCYMvhd3fLsY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfGLRxc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 12 Jul 2019 13:53:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51220 "EHLO mail.kernel.org"
+        id S1727982AbfGLVPG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 12 Jul 2019 17:15:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbfGLRxc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 12 Jul 2019 13:53:32 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1727967AbfGLVPG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 12 Jul 2019 17:15:06 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.64])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EC5E2054F;
-        Fri, 12 Jul 2019 17:53:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68A932146E;
+        Fri, 12 Jul 2019 21:15:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562954011;
-        bh=ONPzdVHMIvpPolwKBGo1Y6DqMR7K8PMrIb8PTJIfEbs=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=OcYdDGI7OlrM5FG9m7dDxn2LvXBPD5GoNw3OLQENTi6ufmgPWi43NEDY3pLt5Wd62
-         a6n7xt/slE8vIrDW+vybclyC4wXbcYqpyMUx2CPa8FtbIiDMkTqxOpsmumwK//2w5I
-         bWq1W+RrA1kpEa+6/OTl79Oln1OFMpuyZLfD6Kcg=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190702120350.7029b623@canb.auug.org.au>
-References: <20190702100103.12c132da@canb.auug.org.au> <20190702111455.4ef3494f@canb.auug.org.au> <20190702120350.7029b623@canb.auug.org.au>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the clk tree
-User-Agent: alot/0.8.1
-Date:   Fri, 12 Jul 2019 10:53:30 -0700
-Message-Id: <20190712175331.5EC5E2054F@mail.kernel.org>
+        s=default; t=1562966105;
+        bh=84KH1NKKp+X9DBsNyPpI1JzWgMF+ovJKrSmV72XOuuA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CBeYKAYPMDUjiMGytkc/Bk1Pr+hCn+LW0WUMb6dpBwAh4E1VPF/A3a2dCUdH1MFlK
+         2VZOmEsYQBBJbUy49jLppevJHlscfQfA3aqVZz3WvS9ky3JdG54O1xE9jWHau+VM7r
+         EEx6OqmJ86RmSsJQZ4xF9KiJmK95CTXO0ZcSjPiE=
+Date:   Fri, 12 Jul 2019 14:15:04 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yang Shi <shy828301@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-Id: <20190712141504.3518d0e6a9607f2304dfe6e3@linux-foundation.org>
+In-Reply-To: <CAK8P3a3Eb1+imK+daiK=ctN6DhwSuTfnAnUUG9xK5rQo=pZ_uQ@mail.gmail.com>
+References: <20190709211559.6ffd2f4e@canb.auug.org.au>
+        <20190709134233.b50814f5a789244b9bdb573e@linux-foundation.org>
+        <20190710070509.GB29695@dhcp22.suse.cz>
+        <20190710173434.8081fa5410ccf0ccd72719b9@linux-foundation.org>
+        <CAK8P3a3Eb1+imK+daiK=ctN6DhwSuTfnAnUUG9xK5rQo=pZ_uQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Quoting Stephen Rothwell (2019-07-01 19:03:50)
-> Hi all,
->=20
-> On Tue, 2 Jul 2019 11:14:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
+On Fri, 12 Jul 2019 12:59:45 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+
+> On Thu, Jul 11, 2019 at 2:41 AM Andrew Morton <akpm@linux-foundation.org> wrote:
 > >
-> > On Tue, 2 Jul 2019 10:01:03 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> > >=20
-> > > We need something like this (untested): =20
-> >=20
-> > simple testing shows build errors ... we need something better.
->=20
-> This at least passes my (few) build tests (this will be in linux-next
-> today):
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 2 Jul 2019 11:53:07 +1000
-> Subject: [PATCH] clk: consoldiate the __clk_get_hw() declarations
->=20
-> Without this we were getting errors like:
->=20
-> In file included from drivers/clk/clkdev.c:22:0:
-> drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' foll=
-ows non-static declaration
-> include/linux/clk-provider.h:808:16: note: previous declaration of '__clk=
-_get_hw' was here
->=20
-> Fixes: 59fcdce425b7 ("clk: Remove ifdef for COMMON_CLK in clk-provider.h")
-> fixes: 73e0e496afda ("clkdev: Always allocate a struct clk and call __clk=
-_get() w/ CCF")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >
+> > From: Yang Shi <yang.shi@linux.alibaba.com>
+> > Subject: mm: shrinker: make shrinker not depend on memcg kmem
+> >
+> > Currently shrinker is just allocated and can work when memcg kmem is
+> > enabled.  But, THP deferred split shrinker is not slab shrinker, it
+> > doesn't make too much sense to have such shrinker depend on memcg kmem.
+> > It should be able to reclaim THP even though memcg kmem is disabled.
+> >
+> > Introduce a new shrinker flag, SHRINKER_NONSLAB, for non-slab shrinker.
+> > When memcg kmem is disabled, just such shrinkers can be called in
+> > shrinking memcg slab.
+> >
+> 
+> Today's linux-next again fails without CONFIG_MEMCG_KMEM:
+> 
+> mm/vmscan.c:220:7: error: implicit declaration of function
+> 'memcg_expand_shrinker_maps' [-Werror,-Wimplicit-function-declaration]
+>                 if (memcg_expand_shrinker_maps(id)) {
+>                     ^
+> mm/vmscan.c:608:56: error: no member named 'shrinker_map' in 'struct
+> mem_cgroup_per_node'
+>         map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
+>                                         ~~~~~~~~~~~~~~~~~~~~  ^
+> 
 
-Thanks for fixing this. I didn't run all the configs it seems.
-
-I'll pull this into the clk pile now.
+Thanks.  With this and the mysterious list_del() corruption issue I
+think I'll drop the patchset.
 
