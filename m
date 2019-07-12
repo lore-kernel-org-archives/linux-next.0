@@ -7,170 +7,181 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697A9C742A1
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 00:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F54AC742A1
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 00:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3F6208E4
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 00:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56E8920645
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 00:53:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BB/aUiEp"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HjnWyp00"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbfGLAoe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 11 Jul 2019 20:44:34 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:41625 "EHLO ozlabs.org"
+        id S1728757AbfGLAxp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 11 Jul 2019 20:53:45 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:35573 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726199AbfGLAoe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 11 Jul 2019 20:44:34 -0400
+        id S1728102AbfGLAxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 11 Jul 2019 20:53:44 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45lDhb2PSBz9sMr;
-        Fri, 12 Jul 2019 10:44:31 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45lDv92wx4z9sDB;
+        Fri, 12 Jul 2019 10:53:41 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562892271;
-        bh=l/JfEetmGiTQbE17ezOkcEKybuDLnf5J4bq6IQRRqlw=;
+        s=201702; t=1562892821;
+        bh=9nqnT4c5xDJ2xkLnLYje3wmXodcWe5kPWN3E0U3MmtU=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BB/aUiEpr9AQnfhDGVIFpi2HfCrmTgjh9XNd0p9Dg/5pl73jFmZcoBj/VRb0kUvR6
-         W1rO/ZCA0jBCENPF/ZqBnZ1nZbefbM3h3GI2rujifGy5yqW0768ZTpUWx8SgyAQX7l
-         3pzRMmTVcBKpPkfw1EdiH/cYctX0SCXwUDg51yBe30XK49P0saHiiynQyvZ5Mcd3FW
-         1Gio6+yMshLi254mJdR7TLTs6JwFMf4B35vKGEym+G8BGyVroHHJLS8mXj7scHqjcq
-         7xRf58qxUQh113Ri/bEOYg2PsRlvn25C2qp10rLxIoW99QwtOLikm4eSNPhcuwwMox
-         R57XvkY4c/sgA==
-Date:   Fri, 12 Jul 2019 10:44:30 +1000
+        b=HjnWyp00LftPpNJK/I3sO4QMdYODaTxoWMx3wV5gnrW2SEQW1wUP3HviLTcbV3jOs
+         TEO2B72iEQNMBEkEhZAqt6Vtu4Sd9k7NeVF4hcYOX8+6uiAvhQx8KEm7H/l9m/4dMk
+         c4N0hrBzNyeG8u2UnlxBX/xuXirgkXqhJgWUb2BK5TvNASbD7PZV/vmK3/IZmLW2oe
+         ZE6ZQIsbzJJHpFmqn40w45Mc3nUHNtwUHPCb8aqf58+PB0TD9kIf4odmINyqP2xFEu
+         g0qOOg3gDW2tzu9kffhmYpiw78J1FffeUw7NU5imKlMskcuRthbq5BfzXsrwosX69j
+         V9l9j5i0k/W1A==
+Date:   Fri, 12 Jul 2019 10:53:40 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+To:     Greg KH <greg@kroah.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: linux-next: build failure after merge of the char-misc tree
-Message-ID: <20190712104430.739f1b61@canb.auug.org.au>
-In-Reply-To: <20190708192345.53fce4cf@canb.auug.org.au>
-References: <20190708192345.53fce4cf@canb.auug.org.au>
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Message-ID: <20190712105340.1520bce0@canb.auug.org.au>
+In-Reply-To: <20190701190940.7f23ac15@canb.auug.org.au>
+References: <20190701190940.7f23ac15@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mQvolzmOpIqHqWuZ0oeUFXj"; protocol="application/pgp-signature"
+ boundary="Sig_/lsCaH7KgcM/R.cV75LDzF0."; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/mQvolzmOpIqHqWuZ0oeUFXj
+--Sig_/lsCaH7KgcM/R.cV75LDzF0.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 8 Jul 2019 19:23:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+On Mon, 1 Jul 2019 19:09:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
+>
+> Today's linux-next merge of the char-misc tree got a conflict in:
 >=20
-> After merging the char-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+>   drivers/hwtracing/coresight/of_coresight.c
 >=20
-> drivers/misc/vmw_balloon.c: In function 'vmballoon_mount':
-> drivers/misc/vmw_balloon.c:1736:14: error: 'simple_dname' undeclared (fir=
-st use in this function); did you mean 'simple_rename'?
->    .d_dname =3D simple_dname,
->               ^~~~~~~~~~~~
->               simple_rename
-> drivers/misc/vmw_balloon.c:1736:14: note: each undeclared identifier is r=
-eported only once for each function it appears in
-> drivers/misc/vmw_balloon.c:1739:9: error: implicit declaration of functio=
-n 'mount_pseudo'; did you mean 'mount_bdev'? [-Werror=3Dimplicit-function-d=
-eclaration]
->   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
->          ^~~~~~~~~~~~
->          mount_bdev
-> drivers/misc/vmw_balloon.c:1739:9: warning: returning 'int' from a functi=
-on with return type 'struct dentry *' makes pointer from integer without a =
-cast [-Wint-conversion]
->   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->         BALLOON_VMW_MAGIC);
->         ~~~~~~~~~~~~~~~~~~
+> between commit:
 >=20
-> Caused by commit
+>   418e3ea157ef ("bus_find_device: Unify the match callback with class_fin=
+d_device")
 >=20
->   83a8afa72e9c ("vmw_balloon: Compaction support")
+> from the driver-core tree and commits:
 >=20
-> interacting with commits
+>   22aa495a6477 ("coresight: Rename of_coresight to coresight-platform")
+>   20961aea982e ("coresight: platform: Use fwnode handle for device search=
+")
 >=20
->   7e5f7bb08b8c ("unexport simple_dname()")
->   8d9e46d80777 ("fold mount_pseudo_xattr() into pseudo_fs_get_tree()")
+> from the char-misc tree.
 >=20
-> from the vfs tree.
->=20
-> I applied the following merge fix patch:
+> I fixed it up (I removed the file and added the following merge fix patch)
+> and can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 >=20
 > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 8 Jul 2019 19:17:56 +1000
-> Subject: [PATCH] convert vmwballoon to use the new mount API
+> Date: Mon, 1 Jul 2019 19:07:20 +1000
+> Subject: [PATCH] coresight: fix for "bus_find_device: Unify the match cal=
+lback
+>  with class_find_device"
 >=20
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  drivers/misc/vmw_balloon.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
+>  drivers/hwtracing/coresight/coresight-platform.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-> index 91fa43051535..e8c0f7525f13 100644
-> --- a/drivers/misc/vmw_balloon.c
-> +++ b/drivers/misc/vmw_balloon.c
-> @@ -29,6 +29,7 @@
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/mount.h>
-> +#include <linux/pseudo_fs.h>
->  #include <linux/balloon_compaction.h>
->  #include <linux/vmw_vmci_defs.h>
->  #include <linux/vmw_vmci_api.h>
-> @@ -1728,21 +1729,14 @@ static inline void vmballoon_debugfs_exit(struct =
-vmballoon *b)
-> =20
->  #ifdef CONFIG_BALLOON_COMPACTION
-> =20
-> -static struct dentry *vmballoon_mount(struct file_system_type *fs_type,
-> -				      int flags, const char *dev_name,
-> -				      void *data)
-> +static int vmballoon_init_fs_context(struct fs_context *fc)
->  {
-> -	static const struct dentry_operations ops =3D {
-> -		.d_dname =3D simple_dname,
-> -	};
-> -
-> -	return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> -			    BALLOON_VMW_MAGIC);
-> +	return init_pseudo(fc, BALLOON_VMW_MAGIC) ? 0 : -ENOMEM;
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/h=
+wtracing/coresight/coresight-platform.c
+> index 3c5ceda8db24..fc67f6ae0b3e 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -37,7 +37,7 @@ static int coresight_alloc_conns(struct device *dev,
+>  	return 0;
 >  }
 > =20
->  static struct file_system_type vmballoon_fs =3D {
->  	.name           =3D "balloon-vmware",
-> -	.mount          =3D vmballoon_mount,
-> +	.init_fs_context          =3D vmballoon_init_fs_context,
->  	.kill_sb        =3D kill_anon_super,
->  };
-> =20
+> -int coresight_device_fwnode_match(struct device *dev, void *fwnode)
+> +int coresight_device_fwnode_match(struct device *dev, const void *fwnode)
+>  {
+>  	return dev_fwnode(dev) =3D=3D fwnode;
+>  }
 
-This is now a conflict between the vfs tree and Linus' tree.
+This is now a conflict between the driver-core tree and Linus' tree.
+
+The declaration of coresight_device_fwnode_match() also needs fixing up
+in drivers/hwtracing/coresight/coresight-priv.h (as done in the patch
+below supplied by Nathan Chancellor).
+
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Mon, 1 Jul 2019 11:28:08 -0700
+Subject: [PATCH] coresight: Make the coresight_device_fwnode_match declarat=
+ion's fwnode parameter const
+
+drivers/hwtracing/coresight/coresight.c:1051:11: error: incompatible pointe=
+r types passing 'int (struct device *, void *)' to parameter of type 'int (=
+*)(struct device *, const void *)' [-Werror,-Wincompatible-pointer-types]
+                                      coresight_device_fwnode_match);
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/device.h:173:17: note: passing argument to parameter 'match' =
+here
+                               int (*match)(struct device *dev, const void =
+*data));
+                                     ^
+1 error generated.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/hwtracing/coresight/coresight-priv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtraci=
+ng/coresight/coresight-priv.h
+index 8b07fe55395a..7d401790dd7e 100644
+--- a/drivers/hwtracing/coresight/coresight-priv.h
++++ b/drivers/hwtracing/coresight/coresight-priv.h
+@@ -202,6 +202,6 @@ static inline void *coresight_get_uci_data(const struct=
+ amba_id *id)
+=20
+ void coresight_release_platform_data(struct coresight_platform_data *pdata=
+);
+=20
+-int coresight_device_fwnode_match(struct device *dev, void *fwnode);
++int coresight_device_fwnode_match(struct device *dev, const void *fwnode);
+=20
+ #endif
+--=20
+2.22.0
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/mQvolzmOpIqHqWuZ0oeUFXj
+--Sig_/lsCaH7KgcM/R.cV75LDzF0.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0n1+4ACgkQAVBC80lX
-0GzVJAf/RDoLlHds5kYTXclzo2ds+aY91gXqvGzsZJz/28mZElrTV15W8gvE6L3j
-YOJ9hsbY4kgkacLhWm2iYSV/nkSvFBmrt2s5pRs1qk4rXgEQWC7VQv7br8VMsBpJ
-PCdoHznmZEU8tMMdwP6fUJ4ob41pOnfUSBHHPnIlGqE/RMn5xIsCoYNr2yr/RIY1
-rOI4lATfOr5AG6Vfm4X+pZXCHJ431h4dgeZmMdr1ckG1KqoYCjYhvHgR7nJiR6mQ
-a9CutMwD74KiAS39/28hZgtLXG1aOSN7wIgCSoEVVjXluion8/bfhhJfy0+7h3M+
-NmuEYupvU9lr2Vcl2lccqKs1em0wug==
-=8P35
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0n2hQACgkQAVBC80lX
+0GzZbAf+IIK26LPqifxVvuY00AX/q8lGWfwgoia+ByrQtdBWo3hM0xWDdoUwxLjp
+T8IgdOy1Q2nBr8FYLVK6Y5cCgcbbI2AzK3W39g2jZ1MD9AtRZEVpXNlx/RMM4bwn
+rFcNFVyVt4EjFGqJ1PfpXkBEyBwc3vwDOVeFF7xYRoXgkLh9xNH1Z1KS3iqZ3bZ6
+EvrZ7lZdb5wJ8arfc2KAilcpUsbmoPqnFhudA5TyOOCX883ZqxL6lGYD5VCkxq1l
+J8/b02JzlGxZI2y8SLHF74s9Y1sktVASgdlhNHop/QKopckK1n1LRZT9t7skAyPH
+eb5lo2yeV+O36KY3JW/fZZIXNl6aXQ==
+=NuX5
 -----END PGP SIGNATURE-----
 
---Sig_/mQvolzmOpIqHqWuZ0oeUFXj--
+--Sig_/lsCaH7KgcM/R.cV75LDzF0.--
