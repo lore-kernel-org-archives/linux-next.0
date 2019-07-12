@@ -2,177 +2,107 @@ Return-Path: <SRS0=0/zj=VJ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E26C742A8
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 08:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127C8C742A5
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 08:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D257D21537
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 08:38:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCC52084B
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jul 2019 08:47:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="FeDvb65j";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FqbO97DB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1XzrMZ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbfGLIiY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 12 Jul 2019 04:38:24 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38837 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725877AbfGLIiX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:38:23 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id B749D2230E;
-        Fri, 12 Jul 2019 04:38:22 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 12 Jul 2019 04:38:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=/UVl1SfI1iLqkTsHe3vvfHE6leW
-        BQBCgm2DrQ+AZhuk=; b=FeDvb65jzKh9ghvM1HCsSOXtn9CnPAhANSHh0STjxKD
-        LbVqaYAd0KVoB5qZZdIwkrYK5cVDnAdF530XhX5ilO0wLC5pFmk52uYD+SvqMJKV
-        ZZH4nZvyDhCT1qjICj/a5Or0rQZ0C4a0IutgIgLZnYd5Bc7B3PwMskEmsXVLak22
-        7hO8ITIpH9OAhYveSIU90xbIya6AU7l7o0NvPKCghF7DCVhBILG19UL3n6mi9Zp5
-        UH4UE+I2m5YmckXxlpHiYGMq6uggaOCxik9XWvewRl65z8KPpkOHLS1vJ8H/QNfY
-        g8rSAjVBgWO9A5Ub6CYHJvZUA0l+6S5MEi5mV/8CPbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/UVl1S
-        fI1iLqkTsHe3vvfHE6leWBQBCgm2DrQ+AZhuk=; b=FqbO97DBs5/ZTmPDcD3Glf
-        PjagPJr1GioWza5EKp4nmjemeHczqP6PwpZl1nJHbgnrK4O58rCZf1LBB+6sB/Tt
-        O1wHgnLiMtn3ZoEdGQmbVFT7A9sFWb9sJETPzA88ISCsgVllmWma67BQPF7Iggc0
-        wNxVX1JVFefj5sMs7u8QHBI0GjuRDbp/jit8Th3kDcw+AlJJXKYkjDNBg+GzlctN
-        UpCPaBE6VIWA7iqW0tCAVSmmLl7d8SLYb0467AEAlJtjzjOXCVVH28lhHprteyHt
-        tY9S6cWAHmE+z5q/vfNLNgnkhyzxkHCLdX5gJPBPqC8ztL8/p2caPhWsH3bwf6rA
-        ==
-X-ME-Sender: <xms:_UYoXQOguVlUqK9-SN_uHhS74SotEOGASz3FDsfw2VH2IQl14bHgrQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrhedtgddtgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:_UYoXf1E8-HxayeYP4JppO4Fch5OtgdS7fUCYwM2yUA2DQGZM6ay3Q>
-    <xmx:_UYoXWNeGIB9dO34uvdzCfjag_yrN0R1yq5MrikjNymKVtDZima6Aw>
-    <xmx:_UYoXSzWxYDvkc7nxMVp8KXBYR8xCHhZycLfpK4ZwUESSpVCuqUcVA>
-    <xmx:_kYoXUm_cxfpVqtNQEmLoQHqY7nywqV1nNhZHftTD3PZOgbSIPUVng>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F2E480061;
-        Fri, 12 Jul 2019 04:38:21 -0400 (EDT)
-Date:   Fri, 12 Jul 2019 09:59:20 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        id S1726192AbfGLIrW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 12 Jul 2019 04:47:22 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41768 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfGLIrW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 12 Jul 2019 04:47:22 -0400
+Received: by mail-pl1-f196.google.com with SMTP id m9so4422242pls.8;
+        Fri, 12 Jul 2019 01:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=esRAOOVeCAMfkLBCPpbUJgFGAvMCopvzPUsRT/4VLVI=;
+        b=e1XzrMZ3sILfaqqVuSBZxuypjl2P58tzLbSE9QshiDMXsaqrea9IoEO09J6m2todds
+         mrMe1bLP4LXoIsTJzCoagdDYE+HVDTRilvoLXaWI/AfOPHrV0fcSfntBcltck2aeFuID
+         PHd6AkMohE9FrY/k5NsiuYFrPcydpL/lse9aHKALed0jkHAIG08aWPi7fFlcsj636kvp
+         8/J/AD1uv+EO1Q0NljusZriyHp8vOIuH1QYt0U7xYHXXoumTYpCFd4zd4I2A5h10EdJx
+         QdiuKffqaBtz8l60wfI5mz6S4uRUm+ntfJ9KX1Z25ngA42UrI8LSgA09NQ39fcNqw7Mc
+         50mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=esRAOOVeCAMfkLBCPpbUJgFGAvMCopvzPUsRT/4VLVI=;
+        b=TmYHC8VYZLqGjRgIvV/ukL2FSwXIFSiT5UnEMk9GGBcj9uGcBfPZoGyX5aNOExuOsl
+         Bloq2G72QED+WD6xfzitrnUOp3i04HDFbCWeRe9tQV2N8nCsWTXzqd97uLA4G6FMX46v
+         JUmTrSx+6PY0h4Ghm1Df45eRJ3GSYIA+lPoN3vDimoAufNfDjc/UEx99xUIaInTY7Ob4
+         E1lDRI3vPuCOz9pd9HOeJvRwMDIaDpY9DswMQAlHtSn9TfEIjM0wmaRayZjlG0t54Sgg
+         x72XKLk2gf31CxChJIn4cAqyA2l9pEWWJV0VIJGzEhmqvabZ5MiccMnJ56QgiBV6lidW
+         kzww==
+X-Gm-Message-State: APjAAAUS1Ow+JA0ZS7Hzlc407kzXacy+7m6Ro4M1rUdjbBzWmKhVa3Gy
+        9xaK5gh26r/OLr6mXM4ToSvgtwP3hCI=
+X-Google-Smtp-Source: APXvYqxpeGPfI+CsYePvXY4R+JulVlCm6bs8+qzmmvbZZDT2OqumfflEJP31ZUiqiKIzdVXAdhhPaw==
+X-Received: by 2002:a17:902:7791:: with SMTP id o17mr10115787pll.27.1562921241186;
+        Fri, 12 Jul 2019 01:47:21 -0700 (PDT)
+Received: from localhost ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id d2sm9419115pfn.29.2019.07.12.01.47.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Jul 2019 01:47:20 -0700 (PDT)
+Date:   Fri, 12 Jul 2019 17:47:17 +0900
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: linux-next: build failure after merge of the char-misc tree
-Message-ID: <20190712075920.GA18592@kroah.com>
-References: <20190708192345.53fce4cf@canb.auug.org.au>
- <20190712104430.739f1b61@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+Message-ID: <20190712084717.GA31048@minwoo-desktop>
+References: <20190712073511.53bd6665@canb.auug.org.au>
+ <a04e21e3-3bf7-276d-ccfd-d617e88c80b6@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190712104430.739f1b61@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <a04e21e3-3bf7-276d-ccfd-d617e88c80b6@kernel.dk>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 10:44:30AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 19-07-11 16:03:22, Jens Axboe wrote:
+> On 7/11/19 3:35 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > In commit
+> > 
+> >    8f3858763d33 ("nvme: fix NULL deref for fabrics options")
+> > 
+> > Fixes tag
+> > 
+> >    Fixes: 958f2a0f8 ("nvme-tcp: set the STABLE_WRITES flag when data digests
+> > 
+> > has these problem(s):
+> > 
+> >    - SHA1 should be at least 12 digits long
+> >      Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+> >      or later) just making sure it is not set (or set to "auto").
+> >    - Subject has leading but no trailing parentheses
+> >    - Subject has leading but no trailing quotes
+> > 
+> > Please do not split Fixes tags over more than one line.  Also do not
+> > include blank lines among the tags.
+
+I'm sorry for noises here.  I will keep that in mind.
+
+Thanks Stephen,
+
 > 
-> On Mon, 8 Jul 2019 19:23:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > After merging the char-misc tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/misc/vmw_balloon.c: In function 'vmballoon_mount':
-> > drivers/misc/vmw_balloon.c:1736:14: error: 'simple_dname' undeclared (first use in this function); did you mean 'simple_rename'?
-> >    .d_dname = simple_dname,
-> >               ^~~~~~~~~~~~
-> >               simple_rename
-> > drivers/misc/vmw_balloon.c:1736:14: note: each undeclared identifier is reported only once for each function it appears in
-> > drivers/misc/vmw_balloon.c:1739:9: error: implicit declaration of function 'mount_pseudo'; did you mean 'mount_bdev'? [-Werror=implicit-function-declaration]
-> >   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> >          ^~~~~~~~~~~~
-> >          mount_bdev
-> > drivers/misc/vmw_balloon.c:1739:9: warning: returning 'int' from a function with return type 'struct dentry *' makes pointer from integer without a cast [-Wint-conversion]
-> >   return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> >          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >         BALLOON_VMW_MAGIC);
-> >         ~~~~~~~~~~~~~~~~~~
-> > 
-> > Caused by commit
-> > 
-> >   83a8afa72e9c ("vmw_balloon: Compaction support")
-> > 
-> > interacting with commits
-> > 
-> >   7e5f7bb08b8c ("unexport simple_dname()")
-> >   8d9e46d80777 ("fold mount_pseudo_xattr() into pseudo_fs_get_tree()")
-> > 
-> > from the vfs tree.
-> > 
-> > I applied the following merge fix patch:
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 8 Jul 2019 19:17:56 +1000
-> > Subject: [PATCH] convert vmwballoon to use the new mount API
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/misc/vmw_balloon.c | 14 ++++----------
-> >  1 file changed, 4 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-> > index 91fa43051535..e8c0f7525f13 100644
-> > --- a/drivers/misc/vmw_balloon.c
-> > +++ b/drivers/misc/vmw_balloon.c
-> > @@ -29,6 +29,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/spinlock.h>
-> >  #include <linux/mount.h>
-> > +#include <linux/pseudo_fs.h>
-> >  #include <linux/balloon_compaction.h>
-> >  #include <linux/vmw_vmci_defs.h>
-> >  #include <linux/vmw_vmci_api.h>
-> > @@ -1728,21 +1729,14 @@ static inline void vmballoon_debugfs_exit(struct vmballoon *b)
-> >  
-> >  #ifdef CONFIG_BALLOON_COMPACTION
-> >  
-> > -static struct dentry *vmballoon_mount(struct file_system_type *fs_type,
-> > -				      int flags, const char *dev_name,
-> > -				      void *data)
-> > +static int vmballoon_init_fs_context(struct fs_context *fc)
-> >  {
-> > -	static const struct dentry_operations ops = {
-> > -		.d_dname = simple_dname,
-> > -	};
-> > -
-> > -	return mount_pseudo(fs_type, "balloon-vmware:", NULL, &ops,
-> > -			    BALLOON_VMW_MAGIC);
-> > +	return init_pseudo(fc, BALLOON_VMW_MAGIC) ? 0 : -ENOMEM;
-> >  }
-> >  
-> >  static struct file_system_type vmballoon_fs = {
-> >  	.name           = "balloon-vmware",
-> > -	.mount          = vmballoon_mount,
-> > +	.init_fs_context          = vmballoon_init_fs_context,
-> >  	.kill_sb        = kill_anon_super,
-> >  };
-> >  
-> 
-> This is now a conflict between the vfs tree and Linus' tree.
+> I should have caught that. Since it's top-of-tree and recent, I'll
+> amend it.
 
-Looks good to me, I'll watch out for this when Al's tree is merged.
-
-thanks,
-
-greg k-h
+Jens,  I will do it from the next time.  Thanks for ammend.
