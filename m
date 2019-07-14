@@ -6,126 +6,88 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A184C73C66
-	for <linux-next@archiver.kernel.org>; Sun, 14 Jul 2019 07:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA941C73C66
+	for <linux-next@archiver.kernel.org>; Sun, 14 Jul 2019 12:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC70E20838
-	for <linux-next@archiver.kernel.org>; Sun, 14 Jul 2019 07:55:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 633832064A
+	for <linux-next@archiver.kernel.org>; Sun, 14 Jul 2019 12:15:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="M/q5WH94"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jTRXk0Iq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfGNHzx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 14 Jul 2019 03:55:53 -0400
-Received: from mail-eopbgr10072.outbound.protection.outlook.com ([40.107.1.72]:25782
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726728AbfGNHzw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 14 Jul 2019 03:55:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M+xgLxJvF3Q29XQo3ke2X/scoe4qyCeHupcmuwd96tRztP4vbx/kJzx/aeyIGSs5wqUtFz83OGwf+h9cOWrm2R8Ct5dv8/2dF8UBA7tgz5++77ldj0+bBuCquOGtSmR0mQUfgsObod0rEbhJolzWTDPHU490NnTkLNAYQzMn8UExp9/YYTjJ8WHl3exT+wAmFdPzIO/vef5pM0DUDfL2dyC+2WM4shTGWp9C2q+4aIsUEEfuI11+xt5DxxGNXVydUsHBasPy0hYbS1UVioUUn3EDYjClUM951w8cJxFigtdDrEB/zN/ymOlX49dKNH+7PNgBx7rs6vZCoteBERjoMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pWnWYUwFSuqVZ8qiveFXjlD/RDXCjkAAm4iDegL/TLc=;
- b=CadcV97ZRuWZ08aprRsaSPdj/Waw+P8VBJEG7xSIT2FJFx1Dvc30kMDIXsoZUQwEfdl2DPW2B6khEYrHe9acr+kznH2g/QJWG7+H7m0Msu2IhuOj4Fggr1niUb9kcQiYqV08tcw3mAXN39PnliEK5il27WKuGxtgj1aw7MuM96tj0G3mFXS2+uL94QU8FlkPYiHi4lba4fLARKLyzg9ebvnfrswjxpRHmE64L/3rMgmCcTxQSTV5K7W9TBJffBAr1AquUGLr2uHw+jSKiCUhiVB5Yxm8X8D4Nq3UMX+Q4dAnU9HiKsaLjyHvV/c1Xq5o5zTbCN5OVHZHixYAb3T4BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pWnWYUwFSuqVZ8qiveFXjlD/RDXCjkAAm4iDegL/TLc=;
- b=M/q5WH94mNb3hDIM7kZf5U/wcIJOJ0ipNgbSVkt8CvZ5BxHMH92p17f0aRFhJDHTnKoNA/tPjfmwLQM152APhSuCRrWNe6ZeY8OicvJhf5aa6zMcqULdIG0xr4lioifQ4lurgEqcP9J2ZWOcakPABVGslJbdWbK0nuFNMUTre3A=
-Received: from DBBPR05MB6283.eurprd05.prod.outlook.com (20.179.40.84) by
- DBBPR05MB6476.eurprd05.prod.outlook.com (20.179.43.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Sun, 14 Jul 2019 07:55:49 +0000
-Received: from DBBPR05MB6283.eurprd05.prod.outlook.com
- ([fe80::2833:939d:2b5c:4a2d]) by DBBPR05MB6283.eurprd05.prod.outlook.com
- ([fe80::2833:939d:2b5c:4a2d%6]) with mapi id 15.20.2073.012; Sun, 14 Jul 2019
- 07:55:48 +0000
-From:   Tariq Toukan <tariqt@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1728313AbfGNMPa (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 14 Jul 2019 08:15:30 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40955 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728302AbfGNMPa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 14 Jul 2019 08:15:30 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45mlws5CXkz9sBt;
+        Sun, 14 Jul 2019 22:15:25 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563106527;
+        bh=zCtnZaNPQCWLcBCQ4GnLDTPHFxRXQKg3Uco8fUMs/U8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jTRXk0IqFLeHoB8sGWzc2i22FhF6SW/SCFSUW/u07ueo3s10Jeif0IMxnB0oCl5m3
+         AMOl6TXpvUDkOVmKa3woAO3MsRh0MvvJQmoCb+sgNw5zH7SghS6sAchSZ4roNxk9lF
+         LEXQL+KrjSMUp8jP6f2oqbGzHKQfRUq4C5sMjQo7UMscoKxWq5gJASd1VThFTyrCD3
+         H/mqvKvihbZq7aNRjOSTg0fc3CzZedbZrHRRyz7vwbx/DJl+B4Jout2o6afRutxRWm
+         EN55QGbp316iJc6d80KW1uaCFEM8cCqF/dxP6bRIPHDvCoevUcEOoamg+GhOtzfhy3
+         B7HHUSEav77Nw==
+Date:   Sun, 14 Jul 2019 22:15:11 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Tariq Toukan <tariqt@mellanox.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Saeed Mahameed <saeedm@mellanox.com>
 Subject: Re: linux-next: Fixes tag needs some work in the net tree
-Thread-Topic: linux-next: Fixes tag needs some work in the net tree
-Thread-Index: AQHVOH4jqpLwEYqGE0Kxlz4/p/63C6bJwhiA
-Date:   Sun, 14 Jul 2019 07:55:48 +0000
-Message-ID: <4f524361-9ea3-7c04-736d-d14fcb498178@mellanox.com>
+Message-ID: <20190714221511.7717d6de@canb.auug.org.au>
+In-Reply-To: <4f524361-9ea3-7c04-736d-d14fcb498178@mellanox.com>
 References: <20190712165042.01745c65@canb.auug.org.au>
-In-Reply-To: <20190712165042.01745c65@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR0P264CA0031.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:100:1::19) To DBBPR05MB6283.eurprd05.prod.outlook.com
- (2603:10a6:10:c1::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tariqt@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9ea53efe-57fa-48b7-0fb9-08d70830af2a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DBBPR05MB6476;
-x-ms-traffictypediagnostic: DBBPR05MB6476:
-x-microsoft-antispam-prvs: <DBBPR05MB6476AA658DD6EB85F66D2544AECC0@DBBPR05MB6476.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:200;
-x-forefront-prvs: 0098BA6C6C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(39850400004)(346002)(396003)(199004)(189003)(53754006)(5660300002)(66066001)(256004)(6116002)(3846002)(4326008)(53936002)(386003)(6436002)(76176011)(52116002)(229853002)(102836004)(186003)(26005)(53546011)(6506007)(6486002)(107886003)(6246003)(31686004)(11346002)(2616005)(446003)(476003)(6512007)(99286004)(71190400001)(2906002)(486006)(305945005)(71200400001)(86362001)(7736002)(36756003)(25786009)(81156014)(81166006)(8936002)(478600001)(54906003)(31696002)(8676002)(110136005)(4744005)(316002)(66446008)(64756008)(66556008)(66476007)(66946007)(68736007)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6476;H:DBBPR05MB6283.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: R5Yk5ieqM5o+z9LRbGpGvwknJWQzTctVNf2MuHLhi04WahhaxkYtBubIsuv3jc33x5cXeYed7AjrFnV5GWmI2oo6i7HMYL3jWIxAaVOMnaIUvb1cX5VG3DhoLVQ0f97zT3LtsZT6wyWgScCyMrwCIUOSur/zloeujT+fmbBUuG7Liw5r1DWYxQpYTTREKS/kYZ2Jgu9siSxp15v2b2Ng7KjS32C+UfQvIVwdWFnj9rM+IOeaX2XmqlyJ3YDgnu7K2C1+u7t0SxTqCkmW0+J2Ay58dr5p5AZULi93ZHAGVga547Wl63+0EXOWd0lxl3oeQEw3hxJz8tw6K1ffA0CDE8c5j9o0MP//aMvjN7a0iuTU+jBNWREcN2oBFsrvuw98nXq81lRz6heRnF6Vbk4+TIZ7mgoL3lq6HryU5AN/0Rc=
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <9E9A24DB4B1AE044A927E004EA66E52F@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        <4f524361-9ea3-7c04-736d-d14fcb498178@mellanox.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ea53efe-57fa-48b7-0fb9-08d70830af2a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2019 07:55:48.8425
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tariqt@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6476
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/HR3_qu0kY4vLk3q+cvEgK6A"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/HR3_qu0kY4vLk3q+cvEgK6A
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Tariq,
 
-On 7/12/2019 9:50 AM, Stephen Rothwell wrote:
-> Hi all,
->=20
-> In commit
->=20
->    c93dfec10f1d ("net/mlx5e: Fix compilation error in TLS code")
->=20
-> Fixes tag
->=20
->    Fixes: 90687e1a9a50 ("net/mlx5: Kconfig, Better organize compilation f=
-lags")
->=20
-> has these problem(s):
->=20
->    - Target SHA1 does not exist
->=20
-> Did you mean
->=20
-> Fixes: e2869fb2068b ("net/mlx5: Kconfig, Better organize compilation flag=
-s")
->=20
+On Sun, 14 Jul 2019 07:55:48 +0000 Tariq Toukan <tariqt@mellanox.com> wrote:
+>
+> How do you think we should handle this?
 
-Right.
-Thank you Stephen!
-How do you think we should handle this?
+Dave doesn't rebase his trees, so all you can really do is learn from
+it and not do it again :-)
 
-Tariq
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HR3_qu0kY4vLk3q+cvEgK6A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0rHM8ACgkQAVBC80lX
+0GwXrQf9H3vPyShbxrWd+9Vw75CQ+e1v8Qe34v6K9YkmD6yt/KWC9vXzjXMdV33b
+Remz+W/t1DdbhDcJ2/i1fJo5kwvmhY9hfKwN+rHXpWoDnmopGBQJItC1dqybGQq7
+TxIVmJKEIFFIRDDRNYyCbuRS+3oyW8fwxTeXsVaRqYyxoKnUOkoTqbwE2xxtMnWN
+bBwNrJwL6WHyJCAEJgusV38lBbQAhRQ06vsS4m7feWqv1hPxTWdo2TYcrQJ74YhA
+Qc+AcfWCRk9t4W7ip2qU3bgP9Q7LE8c3DMdD6E5fjjfb+3uHz3MxKTdrypUAACxB
+BUWpzU7CPpv8TLe0UuPkIWQhHq4ULw==
+=bBcO
+-----END PGP SIGNATURE-----
+
+--Sig_/HR3_qu0kY4vLk3q+cvEgK6A--
