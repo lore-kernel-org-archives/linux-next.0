@@ -2,83 +2,271 @@ Return-Path: <SRS0=p9M6=VM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1D7C73C66
-	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 00:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A721C73C66
+	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 01:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B15E7214AE
-	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 00:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C840E20820
+	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 01:11:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XdZSrUPs"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vm2aqd5Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbfGOAG1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 14 Jul 2019 20:06:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:39325 "EHLO ozlabs.org"
+        id S1728933AbfGOBLt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 14 Jul 2019 21:11:49 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:60189 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728864AbfGOAG1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 14 Jul 2019 20:06:27 -0400
+        id S1729023AbfGOBLt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 14 Jul 2019 21:11:49 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45n3jD5YrYz9sMQ;
-        Mon, 15 Jul 2019 10:06:24 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45n58c4JyTz9sDQ;
+        Mon, 15 Jul 2019 11:11:44 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1563149184;
-        bh=0+uCFa4Gv4psJERzms4nSYHlcKm0SgM1ZlEldtrN0NU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XdZSrUPsZGForhj54nmvb2ALVLfu6eC+ZoU2BvLyQgMNs9WV3EmDZfE6zpSnpkWq7
-         Sq3XgXc6fweWPsNq4HFDS8UOM35KO3ZLPZ5x0kzeXI6w5q6dnTBukoi/VISiYHW1+Q
-         Nfp2D7cIoxkKLgu/jnVEBbrvMorHxAPimwfH45zR3SedvA3upAfsvuptdUL13vpl+r
-         lKxTJjeRWwsB4yhtayV9hTWrdJTHBUM5IwdVMYrGYnp3x0FoeYtRiiYhb1V1qE2Am7
-         Hm2etcjSQBo4fR7l5kkHL+oqRGp5+gimlyTyWe3FtnL8qkxTfw2mg6lQLAXeunAybr
-         bjK2BswLEmvgg==
-Date:   Mon, 15 Jul 2019 10:06:24 +1000
+        s=201702; t=1563153106;
+        bh=+EFxW7lfuaRKJ9IfT8iLFDOaEU0DyeJaAtDegePrkmo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Vm2aqd5ZbAQFzUP8J7NhirTVo8416jy46FXq+iofZyI1eDIWzM54/OnF0lsCvFtXD
+         zL4BQuKj5gOxTYQ77k0JEobmEyD5Jje9qGw5HPDfZZk1Jb7ptxvOj52sIIVSapEFK0
+         qbomVdnJ0p5NNMlQF8pwcHdB0rjUeWsUM5QaQQ0YfBppLQwZC2khAWT5YWqKAX0KKL
+         L3fF0grYi5uTkGGJP3QPMOtf80udfqHQGfXV3sezjfP2Y+IXDy21rochviK3dN/N9+
+         4rXJNrOhuy79e+1IwJSWSOBzoqn43zsNLGFygyBQx81urnntbc/xRUU1iOKdGNV4vQ
+         gxUNwitdpGw/Q==
+Date:   Mon, 15 Jul 2019 11:11:44 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Teigland <teigland@redhat.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: error fetching the dlm tree
-Message-ID: <20190715100624.359730da@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the drm
+ tree
+Message-ID: <20190715111144.24d303df@canb.auug.org.au>
+In-Reply-To: <20190709100645.5302a5c9@canb.auug.org.au>
+References: <20190624204908.64a33862@canb.auug.org.au>
+        <20190624210659.152a20bb@canb.auug.org.au>
+        <20190709100645.5302a5c9@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XUSKFVOV+ou6sI2UgAFquIn"; protocol="application/pgp-signature"
+ boundary="Sig_/KRQeiCZ1x+C30jKBozlhXat"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/XUSKFVOV+ou6sI2UgAFquIn
+--Sig_/KRQeiCZ1x+C30jKBozlhXat
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Fetching the dlm tree fails like this:
+On Tue, 9 Jul 2019 10:06:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> On Mon, 24 Jun 2019 21:06:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > On Mon, 24 Jun 2019 20:49:08 +1000 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote: =20
+> > >
+> > > Today's linux-next merge of the akpm-current tree got a conflict in:
+> > >=20
+> > >   mm/memory.c
+> > >=20
+> > > between commit:
+> > >=20
+> > >   29875a52915e ("mm: Add an apply_to_pfn_range interface")
+> > >=20
+> > > from the drm tree and commit:
+> > >=20
+> > >   e972cea08fb3 ("mm/pgtable: drop pgtable_t variable from pte_fn_t fu=
+nctions")
+> > >=20
+> > > from the akpm-current tree.
+> > >=20
+> > > I fixed it up (see below my signature, then added the following merge
+> > > resolution patch as well) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your t=
+ree
+> > > is submitted for merging.  You may also want to consider cooperating
+> > > with the maintainer of the conflicting tree to minimise any particula=
+rly
+> > > complex conflicts.
+> > >=20
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Mon, 24 Jun 2019 20:40:46 +1000
+> > > Subject: [PATCH] merge fixup for "mm: Add an apply_to_pfn_range inter=
+face"
+> > >=20
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > ---
+> > >  include/linux/mm.h    | 2 +-
+> > >  mm/as_dirty_helpers.c | 8 ++------
+> > >  2 files changed, 3 insertions(+), 7 deletions(-)
+> > >=20
+> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > > index 87d53de3dee4..4404e18443ef 100644
+> > > --- a/include/linux/mm.h
+> > > +++ b/include/linux/mm.h
+> > > @@ -2673,7 +2673,7 @@ extern int apply_to_page_range(struct mm_struct=
+ *mm, unsigned long address,
+> > >  			       unsigned long size, pte_fn_t fn, void *data);
+> > > =20
+> > >  struct pfn_range_apply;
+> > > -typedef int (*pter_fn_t)(pte_t *pte, pgtable_t token, unsigned long =
+addr,
+> > > +typedef int (*pter_fn_t)(pte_t *pte, unsigned long addr,
+> > >  			 struct pfn_range_apply *closure);
+> > >  struct pfn_range_apply {
+> > >  	struct mm_struct *mm;
+> > > diff --git a/mm/as_dirty_helpers.c b/mm/as_dirty_helpers.c
+> > > index f600e31534fb..7c863626c2a4 100644
+> > > --- a/mm/as_dirty_helpers.c
+> > > +++ b/mm/as_dirty_helpers.c
+> > > @@ -26,7 +26,6 @@ struct apply_as {
+> > >  /**
+> > >   * apply_pt_wrprotect - Leaf pte callback to write-protect a pte
+> > >   * @pte: Pointer to the pte
+> > > - * @token: Page table token, see apply_to_pfn_range()
+> > >   * @addr: The virtual page address
+> > >   * @closure: Pointer to a struct pfn_range_apply embedded in a
+> > >   * struct apply_as
+> > > @@ -36,8 +35,7 @@ struct apply_as {
+> > >   *
+> > >   * Return: Always zero.
+> > >   */
+> > > -static int apply_pt_wrprotect(pte_t *pte, pgtable_t token,
+> > > -			      unsigned long addr,
+> > > +static int apply_pt_wrprotect(pte_t *pte, unsigned long addr,
+> > >  			      struct pfn_range_apply *closure)
+> > >  {
+> > >  	struct apply_as *aas =3D container_of(closure, typeof(*aas), base);
+> > > @@ -78,7 +76,6 @@ struct apply_as_clean {
+> > >  /**
+> > >   * apply_pt_clean - Leaf pte callback to clean a pte
+> > >   * @pte: Pointer to the pte
+> > > - * @token: Page table token, see apply_to_pfn_range()
+> > >   * @addr: The virtual page address
+> > >   * @closure: Pointer to a struct pfn_range_apply embedded in a
+> > >   * struct apply_as_clean
+> > > @@ -91,8 +88,7 @@ struct apply_as_clean {
+> > >   *
+> > >   * Return: Always zero.
+> > >   */
+> > > -static int apply_pt_clean(pte_t *pte, pgtable_t token,
+> > > -			  unsigned long addr,
+> > > +static int apply_pt_clean(pte_t *pte, unsigned long addr,
+> > >  			  struct pfn_range_apply *closure)
+> > >  {
+> > >  	struct apply_as *aas =3D container_of(closure, typeof(*aas), base);
+> > > --=20
+> > > 2.20.1
+> > >=20
+> > > --=20
+> > > Cheers,
+> > > Stephen Rothwell
+> > >=20
+> > > diff --cc mm/memory.c
+> > > index 462aa47f8878,f8a75528658a..e7e37fcbd687
+> > > --- a/mm/memory.c
+> > > +++ b/mm/memory.c
+> > > @@@ -2037,12 -2036,11 +2035,11 @@@ static int apply_to_pte_range(stru=
+ct pf
+> > >   {
+> > >   	pte_t *pte;
+> > >   	int err;
+> > > - 	pgtable_t token;
+> > >   	spinlock_t *uninitialized_var(ptl);
+> > >  =20
+> > >  -	pte =3D (mm =3D=3D &init_mm) ?
+> > >  +	pte =3D (closure->mm =3D=3D &init_mm) ?
+> > >   		pte_alloc_kernel(pmd, addr) :
+> > >  -		pte_alloc_map_lock(mm, pmd, addr, &ptl);
+> > >  +		pte_alloc_map_lock(closure->mm, pmd, addr, &ptl);
+> > >   	if (!pte)
+> > >   		return -ENOMEM;
+> > >  =20
+> > > @@@ -2050,10 -2048,8 +2047,8 @@@
+> > >  =20
+> > >   	arch_enter_lazy_mmu_mode();
+> > >  =20
+> > > - 	token =3D pmd_pgtable(*pmd);
+> > > -=20
+> > >   	do {
+> > > - 		err =3D closure->ptefn(pte++, token, addr, closure);
+> > >  -		err =3D fn(pte++, addr, data);
+> > > ++		err =3D closure->ptefn(pte++, addr, closure);
+> > >   		if (err)
+> > >   			break;
+> > >   	} while (addr +=3D PAGE_SIZE, addr !=3D end);   =20
+> >=20
+> > I also needed this:
+> >=20
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 24 Jun 2019 21:04:14 +1000
+> > Subject: [PATCH] another fixup for "mm: Add an apply_to_pfn_range inter=
+face"
+> >=20
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  mm/memory.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index e7e37fcbd687..81d71fbfca5a 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -2189,14 +2189,13 @@ struct page_range_apply {
+> >   * Callback wrapper to enable use of apply_to_pfn_range for
+> >   * the apply_to_page_range interface
+> >   */
+> > -static int apply_to_page_range_wrapper(pte_t *pte, pgtable_t token,
+> > -				       unsigned long addr,
+> > +static int apply_to_page_range_wrapper(pte_t *pte, unsigned long addr,
+> >  				       struct pfn_range_apply *pter)
+> >  {
+> >  	struct page_range_apply *pra =3D
+> >  		container_of(pter, typeof(*pra), pter);
+> > =20
+> > -	return pra->fn(pte, token, addr, pra->data);
+> > +	return pra->fn(pte, addr, pra->data);
+> >  }
+> > =20
+> >  /*
+> > --=20
+> > 2.20.1 =20
+>=20
+> I am still getting this conflict (the commit ids may have changed).
+> Just a reminder in case you think Linus may need to know.
+>=20
 
-fatal: Couldn't find remote ref refs/heads/next
-
+These fix ups are now needed when merging the drm tree into Linus' tree.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/XUSKFVOV+ou6sI2UgAFquIn
+--Sig_/KRQeiCZ1x+C30jKBozlhXat
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0rw4AACgkQAVBC80lX
-0Gx3YQf/etONh00e5wzEygVXOB+hjcvyJgGDBDYkcxkzwCDdnxeEjQNWdhT/Z7Co
-zcZ4y8MhtU0hLBzTlWYJLBF8m5YdoSqlxaOQzudvi1yaWoEknyBausRkaHwxVI8B
-MCZrwDnzlcTgOjHRAegCLtYSixETX8cZ4djPiVgOolsV2wmJjIURrlea/1hf/+ep
-gY8SIlZlYa0N3IM6Iw4xRnQtoquDiHbJ4ORgr731YZ9CbIegeKGYkMJzzJt5MyiT
-XHtCIAVVq9kavaDwciAiwdBioehJCfGzXGysRpnhePHQjbBTx8p3UkWc6FdUqb/1
-nAUMANrnPfFQy2H/Fbc6hDt13g/AGg==
-=nhTY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0r0tAACgkQAVBC80lX
+0GzzHQf+O4zxvTgB10N5ktRcxSE7/iq5c8Ax5VPj7Ipdslj4Tm76ou2vXNfK0am9
+PnDLzpRRIxp5t5sDEdYcZRdQZXYL5BVCeLRM7FDozj3HwORK8oVPYpvwgz7A0uKT
+c3qeRwi5yRjJdOuRdf1UFmyh4/AG4BN4+H2GkHKsau1FPr/4De7TsqBxovZVi7aC
+HFDz6Sl0zCT0U2iCbcM+8BDa71NA+ls/LeAWi7ZEoHZxXxbC/zVV7iZZ753yBg/o
+jexNlkl5aFA8pYVsiDclDso5mEWtPTi6SHckLJ9/O0bJChrEbDcyUy9SWCKUXpTP
+Ecmj/O1JR00qH16IXXdEw+gmYhCR7A==
+=F+tm
 -----END PGP SIGNATURE-----
 
---Sig_/XUSKFVOV+ou6sI2UgAFquIn--
+--Sig_/KRQeiCZ1x+C30jKBozlhXat--
