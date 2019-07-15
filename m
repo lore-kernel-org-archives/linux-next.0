@@ -2,163 +2,140 @@ Return-Path: <SRS0=p9M6=VM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF7AC7618F
-	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 11:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77536C7618F
+	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 16:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD3F720665
-	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 11:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A55020838
+	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 16:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="aY5pabU5"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XFtS7SqP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbfGOLII (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 15 Jul 2019 07:08:08 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:36974 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729674AbfGOLII (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 15 Jul 2019 07:08:08 -0400
-Received: by mail-wr1-f44.google.com with SMTP id n9so16634538wrr.4
-        for <linux-next@vger.kernel.org>; Mon, 15 Jul 2019 04:08:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=yr2OmIr8dXV1iKJAkt2ZxDCx1TTQAyJ7uVUBX/beeDc=;
-        b=aY5pabU53u1IfgzEOMRpM/xVaxMR9u/aP1vfAaAfRfwvekLhGQ7WIMyobLk7BeAe9v
-         Ug2hFxgZ/DzwAyV89XVBO25UVD3mlPwNwrF735J6VQmvj8SXBfnYnaTL4FDr7x89oVUR
-         E/4AIstMghcI5acA9hy7uYYYc9kRO/EZ+SutP4M4w467C3C5oarAVUe+oq2jsUxgKIN5
-         5IR1/wpneO0PXq9OQ6xBmaFD7AQaZbLbgLftg3+z3ReLzshVDTHiBL39H0UhjmFC0FhU
-         NmHL9mvYKjWq283g9FS21wx/5DKKtNwv8N2C1NtKxCPnz4tUopnZGIcKymoa3pENtex2
-         Cosg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=yr2OmIr8dXV1iKJAkt2ZxDCx1TTQAyJ7uVUBX/beeDc=;
-        b=KMTjXsqtTyTVYl/XbXqXY0q+bot3xYWFCSnhEyGk21oZgej2ubWbk3Py2YRaukSe0R
-         /HW+T2utI87NaCnV4E0KJtnWyRPYClWBmVulZK5m7V7x+imdc+qKuJTARV/mn09pcIkf
-         CmbPoQq+TvB5qu37pKk7awv4ZgakuNRhuytq8erPqSPlEppghACrXCAggmXxfYgnFcub
-         VJqEZGuZru9EUPtD3YocZqXu6kLq4D+JHzYW0hPebv9H7PmnRqNCYghQLhoQtjoVA8fZ
-         hMeYv5GBAR6xYxDNYbH2ImC4RKC3Ywz3qWC/vsc9LTVUJRWdw9kDiMw1/6YOTJOJFov1
-         Z4SA==
-X-Gm-Message-State: APjAAAUC2YRM1IbVEu9bvtqHWA/o+Ao7jr80eeN525OuTDE2pIS0hrfO
-        jthuDj1OeaFK1ExatsNgqEMbA6HgeUY=
-X-Google-Smtp-Source: APXvYqyX0MF1hPnj+6i+IXZHx6ghG+U98YmqUHl5Vw0IjDpyuJBqSNxVnCBTCGjwmgVUPPufdvUEMw==
-X-Received: by 2002:adf:ed0e:: with SMTP id a14mr27527145wro.259.1563188885747;
-        Mon, 15 Jul 2019 04:08:05 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id e5sm17067942wro.41.2019.07.15.04.08.05
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 04:08:05 -0700 (PDT)
-Message-ID: <5d2c5e95.1c69fb81.4bb98.fe2f@mx.google.com>
-Date:   Mon, 15 Jul 2019 04:08:05 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1731074AbfGOQnm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 15 Jul 2019 12:43:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39776 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730874AbfGOQnm (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 15 Jul 2019 12:43:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RSkHGbyKshnf7brwgRog4FDJoLltbAeNAqTZqLgrOwY=; b=XFtS7SqPr0O7CD4ceZo/N+zxa
+        Hp78Ke84ABnLHxgSSlz/cF6IDlSJ+dVng6vqz0iHJN2WXypfdOfQATpnB2Qngv2wROo6A9xTfv73y
+        MJmxV6xSY7elM3bt0d+cBRu1NU0Ej6musiTFiT2wIy/q9yuQIfXayyN1Fd/M8qVxNRxk/LCfkXXan
+        qookMFgHS40TQrNxj+eJ1k7jJNSzqOS2SU+ySJbRnBC2PLsio09Fgco20A17UENfISYGeK+LeQM2b
+        3gzqN2zhvwdewf8JZadvhnZqEDXkIYBIe69pdDn5dBZa4jO8e32l5FdLbl1nRPNmyMB059dVdF13L
+        AXNvXk2Jg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hn44f-0006wc-9g; Mon, 15 Jul 2019 16:43:41 +0000
+Subject: Re: linux-next: Tree for Jul 15 (HEADERS_TEST w/ netfilter tables
+ offload)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <20190715144848.4cc41e07@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ccb5b818-c191-2d9e-311f-b2c79b7f6823@infradead.org>
+Date:   Mon, 15 Jul 2019 09:43:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: next-20190715
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: next
-X-Kernelci-Branch: master
-Subject: next/master boot: 235 boots: 10 failed,
- 222 passed with 3 offline (next-20190715)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <20190715144848.4cc41e07@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 235 boots: 10 failed, 222 passed with 3 offline (next-201=
-90715)
+On 7/14/19 9:48 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Please do not add v5.4 material to your linux-next included branches
+> until after v5.3-rc1 has been released.
+> 
+> Changes since 20190712:
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190715/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190715/
+Hi,
 
-Tree: next
-Branch: master
-Git Describe: next-20190715
-Git Commit: e689ed79e479fb754a28957a7a58218893d57cb1
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 80 unique boards, 26 SoC families, 21 builds out of 230
+I am seeing these build errors from HEADERS_TEST (or KERNEL_HEADERS_TEST)
+for include/net/netfilter/nf_tables_offload.h.s:
 
-Boot Regressions Detected:
+  CC      include/net/netfilter/nf_tables_offload.h.s
+In file included from ./../include/net/netfilter/nf_tables_offload.h:5:0,
+                 from <command-line>:0:
+../include/net/netfilter/nf_tables.h: In function ‘nft_gencursor_next’:
+../include/net/netfilter/nf_tables.h:1223:14: error: ‘const struct net’ has no member named ‘nft’; did you mean ‘nf’?
+  return net->nft.gencursor + 1 == 1 ? 1 : 0;
+              ^~~
+              nf
+In file included from ../include/linux/kernel.h:11:0,
+                 from ../include/net/flow_offload.h:4,
+                 from ./../include/net/netfilter/nf_tables_offload.h:4,
+                 from <command-line>:0:
+../include/net/netfilter/nf_tables.h: In function ‘nft_genmask_cur’:
+../include/net/netfilter/nf_tables.h:1234:29: error: ‘const struct net’ has no member named ‘nft’; did you mean ‘nf’?
+  return 1 << READ_ONCE(net->nft.gencursor);
+                             ^
+../include/linux/compiler.h:261:17: note: in definition of macro ‘__READ_ONCE’
+  union { typeof(x) __val; char __c[1]; } __u;   \
+                 ^
+../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro ‘READ_ONCE’
+  return 1 << READ_ONCE(net->nft.gencursor);
+              ^~~~~~~~~
+../include/net/netfilter/nf_tables.h:1234:29: error: ‘const struct net’ has no member named ‘nft’; did you mean ‘nf’?
+  return 1 << READ_ONCE(net->nft.gencursor);
+                             ^
+../include/linux/compiler.h:263:22: note: in definition of macro ‘__READ_ONCE’
+   __read_once_size(&(x), __u.__c, sizeof(x));  \
+                      ^
+../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro ‘READ_ONCE’
+  return 1 << READ_ONCE(net->nft.gencursor);
+              ^~~~~~~~~
+../include/net/netfilter/nf_tables.h:1234:29: error: ‘const struct net’ has no member named ‘nft’; did you mean ‘nf’?
+  return 1 << READ_ONCE(net->nft.gencursor);
+                             ^
+../include/linux/compiler.h:263:42: note: in definition of macro ‘__READ_ONCE’
+   __read_once_size(&(x), __u.__c, sizeof(x));  \
+                                          ^
+../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro ‘READ_ONCE’
+  return 1 << READ_ONCE(net->nft.gencursor);
+              ^~~~~~~~~
+../include/net/netfilter/nf_tables.h:1234:29: error: ‘const struct net’ has no member named ‘nft’; did you mean ‘nf’?
+  return 1 << READ_ONCE(net->nft.gencursor);
+                             ^
+../include/linux/compiler.h:265:30: note: in definition of macro ‘__READ_ONCE’
+   __read_once_size_nocheck(&(x), __u.__c, sizeof(x)); \
+                              ^
+../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro ‘READ_ONCE’
+  return 1 << READ_ONCE(net->nft.gencursor);
+              ^~~~~~~~~
+../include/net/netfilter/nf_tables.h:1234:29: error: ‘const struct net’ has no member named ‘nft’; did you mean ‘nf’?
+  return 1 << READ_ONCE(net->nft.gencursor);
+                             ^
+../include/linux/compiler.h:265:50: note: in definition of macro ‘__READ_ONCE’
+   __read_once_size_nocheck(&(x), __u.__c, sizeof(x)); \
+                                                  ^
+../include/net/netfilter/nf_tables.h:1234:14: note: in expansion of macro ‘READ_ONCE’
+  return 1 << READ_ONCE(net->nft.gencursor);
+              ^~~~~~~~~
+make[2]: *** [../scripts/Makefile.build:304: include/net/netfilter/nf_tables_offload.h.s] Error 1
 
-arm:
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          armada-xp-openblocks-ax3-4:
-              lab-baylibre-seattle: failing since 19 days (last pass: next-=
-20190624 - first fail: next-20190625)
+Should this header file not be tested?
 
-    qcom_defconfig:
-        gcc-8:
-          qcom-apq8064-cm-qs600:
-              lab-baylibre-seattle: failing since 23 days (last pass: next-=
-20190619 - first fail: next-20190621)
-          qcom-apq8064-ifc6410:
-              lab-baylibre-seattle: failing since 24 days (last pass: next-=
-20190618 - first fail: next-20190620)
-
-Boot Failures Detected:
-
-arm:
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
-            qcom-apq8064-ifc6410: 1 failed lab
-
-    oxnas_v6_defconfig:
-        gcc-8:
-            ox820-cloudengines-pogoplug-series-3: 1 failed lab
-
-    sunxi_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
-
-arm64:
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        clang-8:
-            meson-gxbb-nanopi-k2: 1 failed lab
-            meson-gxl-s905x-khadas-vim: 1 failed lab
-
-    defconfig:
-        gcc-8:
-            meson-gxl-s905x-nexbox-a95x: 1 failed lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            meson-gxm-nexbox-a1: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
-    defconfig:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+thanks.
+-- 
+~Randy
