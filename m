@@ -2,83 +2,102 @@ Return-Path: <SRS0=Z6PR=VN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5DAC76188
-	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 03:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F91CC76188
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 04:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F34A2206C2
-	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 03:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1BE6206C2
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 04:26:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="RL+CgOhE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbfGPDqq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 15 Jul 2019 23:46:46 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:36260 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727862AbfGPDqq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 15 Jul 2019 23:46:46 -0400
-Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.12])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hnEQO-0003Ya-4P; Mon, 15 Jul 2019 21:46:45 -0600
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Jon Mason <jdmason@kudzu.us>,
-        NTB Mailing List <linux-ntb@googlegroups.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190716130341.03b02792@canb.auug.org.au>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <7ec45bb7-4e72-2415-21f7-44dadaa0fada@deltatee.com>
-Date:   Mon, 15 Jul 2019 21:46:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726295AbfGPE0A (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 16 Jul 2019 00:26:00 -0400
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:36913 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfGPE0A (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 16 Jul 2019 00:26:00 -0400
+Received: by mail-oi1-f182.google.com with SMTP id t76so14538144oih.4
+        for <linux-next@vger.kernel.org>; Mon, 15 Jul 2019 21:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bRcWjRmFxDg4SEfu8zxM0/EewJf42HkBJR2XudH/ONs=;
+        b=RL+CgOhEgmcOursufR7ym3mvIjJtb8YF7FA4i1dQ+ChMdYOfqc7cBf1uOv9gSILKoX
+         b/ZIQDh1+yyo4WOQI1zWbL9UsnEN41d9c8eOhCQUlxEnAf2ba9RhvS4YCEghd38lJe/P
+         0X9z0o5i1Y64obie0hpaNiQlXjXOdyEuuLToKg649QodM5sbHcnrdwTceEK3QuZMYeVi
+         nUsi/7l8E0iK4k9MhDtE6M0Gp72ZoUBYcsME/7rFufU+w6cq1dqrO5ggcgOHhn7elBYw
+         iMX5dj6Pj8/PXmgIr7J2qXmqfIRtNxHCYfrW5TqGv+sKiXlZ/Q7c6ceS3NWIdIHEBq1r
+         Nzwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bRcWjRmFxDg4SEfu8zxM0/EewJf42HkBJR2XudH/ONs=;
+        b=q4cm3EfIttGzmlVpobk+rMtE9j74qLlB0ebRX8LRx2VQLW52HepFd+TPxNVjHTNMhS
+         +47WB7fLP7B96mub58runN8yDrmf85hahCfJIFG8zPe0dOSJAAJamzvDOrX58R/2TmGH
+         jbxSo0sVCcFtBJE6doNInnmgC5Rul+/rx4kR1/ZaxIhFrDAwXjL+QORgLJjSrP3Q+kgO
+         11bsAP1+rZzMSdHjpggyGaTG4ptO34OKRBJCdpE8BYtlOJgFFgC3gm5J0xrWirmlrGeq
+         raYrRuBR059eLzCAwlw7nqpvrwO/izuy5vYCqTUFbeYUD7+89kQXS4Zc8B2WckcD8jDY
+         BADQ==
+X-Gm-Message-State: APjAAAWKtPetVNd4qWrpcwA8S3oCVfokLH7OwQefBHZE4jZfVjvwP7mi
+        UW5yYAWEIuqtPQoB21dxAKwMnBQd0KoonOeWqMIXRQ==
+X-Google-Smtp-Source: APXvYqznIzJKBkcX2EHDSxKUoYWP9K8fyWDLsG2+p7M5YMdh44wYFm51T0RqPbprZgpvnEg5STv9Fldjf1pllgR7iyU=
+X-Received: by 2002:aca:fc50:: with SMTP id a77mr15040114oii.0.1563251159049;
+ Mon, 15 Jul 2019 21:25:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190716130341.03b02792@canb.auug.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.191.165
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, yamada.masahiro@socionext.com, sfr@canb.auug.org.au
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: linux-next: build warning after merge of the ntb tree
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190704205536.32740b34@canb.auug.org.au> <20190704125539.GL3401@mellanox.com>
+ <20190704230133.1fe67031@canb.auug.org.au> <20190704132836.GM3401@mellanox.com>
+ <20190705070810.1e01ea9d@canb.auug.org.au> <CAPcyv4hHC3s3nePSSHaKkFFbxuABZE3GLa7Li=0j6Z45ERrPEg@mail.gmail.com>
+ <20190705120810.GA31525@mellanox.com> <20190706220426.c2c4518f20e1ecc7ddd069fa@linux-foundation.org>
+In-Reply-To: <20190706220426.c2c4518f20e1ecc7ddd069fa@linux-foundation.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 15 Jul 2019 21:25:47 -0700
+Message-ID: <CAPcyv4i=c4ByS9dC4+vLf0Y0xNNcH2RemzwGj9eCdATMp=gb+w@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the hmm tree
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On Sat, Jul 6, 2019 at 10:04 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Fri, 5 Jul 2019 12:08:15 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> > On Thu, Jul 04, 2019 at 04:29:55PM -0700, Dan Williams wrote:
+> > > Guys, Andrew has kicked the subsection patches out of -mm because of
+> > > the merge conflicts. Can we hold off on the hmm cleanups for this
+> > > cycle?
+> >
+> > I agree with you we should prioritize your subsection patches over
+> > CH's cleanup if we cannot have both.
+> >
+> > As I said, I'll drop CH's at Andrews request, but I do not want to
+> > make any changes without being aligned with him.
+>
+> OK, I had a shot at repairing the damage on top of current linux-next.
+> The great majority of the issues were in
+> mm-devm_memremap_pages-enable-sub-section-remap.patch.
+>
+> Below are the rejects which I saw and below that is my attempt to
+> resolve it all.  Dan, please go through this with a toothcomb.  I've
+> just done an mmotm release with all this in it so please do whatever's
+> needed to verify that it's all working correctly.
 
+Apologies for the delay, I was offline last week for a move. This
+looks good to me and even caught some "X >> PAGE_SHIFT" to
+"PHYS_PFN(X)" conversions that I missed. It also passes my testing.
+Thank you accommodating a rebase.
 
-On 2019-07-15 9:03 p.m., Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the ntb tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> WARNING: could not open /home/sfr/next/next/drivers/ntb/ntb.c: No such file or directory
-> 
-> The only thing I could see that might be relevant is commit
-> 
->   56dce8121e97 ("kbuild: split out *.mod out of {single,multi}-used-m rules")
-> 
-> and some others in the kbuild tree. Nothing has changed recently in the
-> ntb tree ...
-> 
-> drievrs/ntb builds a module called ntb but there is no ntb.c file.
-> 
-> Any ideas?
-
-I renamed the ntb.c file to core.c so we could add more files to build
-ntb.ko. See [1].
-
-Thanks,
-
-Logan
-
-
-[1]
-https://lore.kernel.org/linux-iommu/20190422210528.15289-6-logang@deltatee.com/
+Now to take a look at Oscar's fixes.
