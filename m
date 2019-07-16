@@ -1,173 +1,135 @@
-Return-Path: <SRS0=p9M6=VM=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=Z6PR=VN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596D1C7618F
-	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 20:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09B9C7618F
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 00:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2316A20665
-	for <linux-next@archiver.kernel.org>; Mon, 15 Jul 2019 20:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7928320880
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 00:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x8qRxSKX"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Jjkh/Crc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731311AbfGOUXB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 15 Jul 2019 16:23:01 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41267 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbfGOUXB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 15 Jul 2019 16:23:01 -0400
-Received: by mail-io1-f68.google.com with SMTP id j5so32059203ioj.8
-        for <linux-next@vger.kernel.org>; Mon, 15 Jul 2019 13:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P4sgcLOMbyXJn+TV7zW0h6BmBF+H1WzQkFZRqrEO1yk=;
-        b=x8qRxSKXM/VFrSA9MdVLx5KR/z6b3iDcECgXoECDoiVev6JVwoSBGpwetlt5thhq44
-         mY09gs1r9IhHQVndWTzDlOjvOu4KG8gL+sgLdJSxK3igsH2XG067Hzry6zF87XPqWHOM
-         FXCowuUymmjDVWwzpv9J229PtLmL00goBLAvK1tzs2m+j1JcuKhz7xvFk+Yyw2PimOpZ
-         E4dmSDWdV7RfrlmV5Su2W3xFWcWHZKi/SnrW+emDui2uJNr0Injpf6LZ9IUBS75tkPBF
-         fUduPlI1iZUSCdklu3x/8fULWTmd4CjtfS9AKA6puwH6vHNJdgA3zPnQAxdEZxG1TjI0
-         JfxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P4sgcLOMbyXJn+TV7zW0h6BmBF+H1WzQkFZRqrEO1yk=;
-        b=ekPRoIGiA2lrVtA+c/HNyNfWobK47gC1cQQvoj8pxAlIhz/C2dJdWMjIp4zPMJ5D69
-         BRAg6mkhLq62Pvo7H/re0Q8WCGFgTtXWzOAKj75wNuSmVXGhHdLbkWemKS7XHGEJnxze
-         Y02nRX4XGifaqSCHXjLrPm8f4msiAQDPbR3ypjpEbVguVI0WkFjmIvz+CHpLJwMDuh3v
-         phag8eUEktWaU8qx2TePPxL/0RzPotnpYoYLrGwqQGE+EG3Z59WIvC/92IbPvO60/V7p
-         +zsjQTJW7QC7M1J0+SWNKHBAlq7tF5xmeMZJa/39VvWH6je3i2DVUojM3LCpgX4aqUH8
-         qsNA==
-X-Gm-Message-State: APjAAAVAWmRJetXo0Tb5S/p0Ku4YkclnmeaL8opfnwvCvud4/VNlH/1L
-        HfhxQaAEmtnMy9h+b663njhxs4oVq3Oy3wqbxEe+Gg==
-X-Google-Smtp-Source: APXvYqxUdBXLkQNSTCf6BXUxQvwj8MwgN2wmZfnscGiL9J14U4GCW3ly/hYqzCTiXdS6t7GAf8gb6+fDRIEbeN5DQq4=
-X-Received: by 2002:a5d:8e08:: with SMTP id e8mr28360386iod.139.1563222180157;
- Mon, 15 Jul 2019 13:23:00 -0700 (PDT)
+        id S1730383AbfGPAqe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 15 Jul 2019 20:46:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:38985 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730355AbfGPAqd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 15 Jul 2019 20:46:33 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45nhY24fvQz9sBF;
+        Tue, 16 Jul 2019 10:46:30 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563237990;
+        bh=NYPbY3fuAcWI162LDv1eE5JulP/EGNYsx66AjCIB84g=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Jjkh/CrcSp5ovD/SmkbRdG+itfCAVgoVFJs9TncswZkG69mxtiNJaYWf8GQNCfmQY
+         UyizlxwCMKm6diOwMZOSLmoxu5k5ha7nHt8P0Lo6qRwo5NvxQRan51k+xWUfcf/M5N
+         zjAI6I0gUbzUqFvVZrgxxkkdtOWXXHmD8/ZHqqks2y1ptuDvWh8h0r3WbtP0jIdhmo
+         xrsOq5+pvShDWLK/BK9OOBNlIsPBqyj6uibHx3BDwdYFPhgW0sDMzPL7mLhS/cSPcp
+         4u+BKpe789QMGmk2Kuao/xOj0lZ2DiS4g7WUXIveHGprlPw3SBLQGE70MmLYpIrQFo
+         8d5t3/zy0B7Mg==
+Date:   Tue, 16 Jul 2019 10:46:14 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the rdma tree with the v4l-dvb-next
+ tree
+Message-ID: <20190716104614.2ec8b57c@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190701190940.7f23ac15@canb.auug.org.au> <20190712105340.1520bce0@canb.auug.org.au>
-In-Reply-To: <20190712105340.1520bce0@canb.auug.org.au>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 15 Jul 2019 14:22:49 -0600
-Message-ID: <CANLsYkwNM7c6d-3+jpf+V=HppQ9cnA-RDmam_6qUuKC_g_Tq7A@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- driver-core tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/UCF0+_SusNV/iWmB5bDZx8m"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+--Sig_/UCF0+_SusNV/iWmB5bDZx8m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Jul 2019 at 18:53, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> On Mon, 1 Jul 2019 19:09:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the char-misc tree got a conflict in:
-> >
-> >   drivers/hwtracing/coresight/of_coresight.c
-> >
-> > between commit:
-> >
-> >   418e3ea157ef ("bus_find_device: Unify the match callback with class_find_device")
-> >
-> > from the driver-core tree and commits:
-> >
-> >   22aa495a6477 ("coresight: Rename of_coresight to coresight-platform")
-> >   20961aea982e ("coresight: platform: Use fwnode handle for device search")
-> >
-> > from the char-misc tree.
-> >
-> > I fixed it up (I removed the file and added the following merge fix patch)
-> > and can carry the fix as necessary. This is now fixed as far as linux-next
-> > is concerned, but any non trivial conflicts should be mentioned to your
-> > upstream maintainer when your tree is submitted for merging.  You may
-> > also want to consider cooperating with the maintainer of the conflicting
-> > tree to minimise any particularly complex conflicts.
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 1 Jul 2019 19:07:20 +1000
-> > Subject: [PATCH] coresight: fix for "bus_find_device: Unify the match callback
-> >  with class_find_device"
-> >
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/hwtracing/coresight/coresight-platform.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> > index 3c5ceda8db24..fc67f6ae0b3e 100644
-> > --- a/drivers/hwtracing/coresight/coresight-platform.c
-> > +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> > @@ -37,7 +37,7 @@ static int coresight_alloc_conns(struct device *dev,
-> >       return 0;
-> >  }
-> >
-> > -int coresight_device_fwnode_match(struct device *dev, void *fwnode)
-> > +int coresight_device_fwnode_match(struct device *dev, const void *fwnode)
-> >  {
-> >       return dev_fwnode(dev) == fwnode;
-> >  }
->
-> This is now a conflict between the driver-core tree and Linus' tree.
->
-> The declaration of coresight_device_fwnode_match() also needs fixing up
-> in drivers/hwtracing/coresight/coresight-priv.h (as done in the patch
-> below supplied by Nathan Chancellor).
+Hi all,
 
-I have updated my next branch and you shouldn't see this again.
+Today's linux-next merge of the rdma tree got a conflict in:
 
-Thanks,
-Mathieu
+  Documentation/index.rst
 
->
-> From: Nathan Chancellor <natechancellor@gmail.com>
-> Date: Mon, 1 Jul 2019 11:28:08 -0700
-> Subject: [PATCH] coresight: Make the coresight_device_fwnode_match declaration's fwnode parameter const
->
-> drivers/hwtracing/coresight/coresight.c:1051:11: error: incompatible pointer types passing 'int (struct device *, void *)' to parameter of type 'int (*)(struct device *, const void *)' [-Werror,-Wincompatible-pointer-types]
->                                       coresight_device_fwnode_match);
->                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> include/linux/device.h:173:17: note: passing argument to parameter 'match' here
->                                int (*match)(struct device *dev, const void *data));
->                                      ^
-> 1 error generated.
->
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/hwtracing/coresight/coresight-priv.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-> index 8b07fe55395a..7d401790dd7e 100644
-> --- a/drivers/hwtracing/coresight/coresight-priv.h
-> +++ b/drivers/hwtracing/coresight/coresight-priv.h
-> @@ -202,6 +202,6 @@ static inline void *coresight_get_uci_data(const struct amba_id *id)
->
->  void coresight_release_platform_data(struct coresight_platform_data *pdata);
->
-> -int coresight_device_fwnode_match(struct device *dev, void *fwnode);
-> +int coresight_device_fwnode_match(struct device *dev, const void *fwnode);
->
->  #endif
-> --
-> 2.22.0
->
-> --
-> Cheers,
-> Stephen Rothwell
+between commit:
+
+  09fdc957ad0d ("docs: leds: add it to the driver-api book")
+(and others following)
+
+from the v4l-dvb-next tree and commit:
+
+  a3a400da206b ("docs: infiniband: add it to the driver-api bookset")
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/index.rst
+index f379e43fcda0,869616b57aa8..000000000000
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@@ -96,23 -90,9 +96,24 @@@ needed)
+ =20
+     driver-api/index
+     core-api/index
+ +   locking/index
+ +   accounting/index
+ +   block/index
+ +   cdrom/index
+ +   ide/index
+ +   fb/index
+ +   fpga/index
+ +   hid/index
+ +   iio/index
+ +   leds/index
++    infiniband/index
+     media/index
+ +   netlabel/index
+     networking/index
+ +   pcmcia/index
+ +   target/index
+ +   timers/index
+ +   watchdog/index
+     input/index
+     hwmon/index
+     gpu/index
+
+--Sig_/UCF0+_SusNV/iWmB5bDZx8m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0tHlYACgkQAVBC80lX
+0Gz/0AgAnh5PF5cFTlabGAwhQDCkqtClfxWieEu8pcv1ru0QiNKScJGPb8VuicrB
+y9bTB1RtJzuR9jaP/Fz6cb0LSCwZKlJs8TdyJOR1c+dHaulTYFq4HVOrZ1ls468t
+tAuYWIKkNxoOSSO87TTd+Y1XpG+Fu6nK1e7eyCax8s4Jyos5tmiT6umF3+HXoopW
+EJwi3KN9Kx0CDEApn7ydfa4sayVVDgG8YO4hPB79RB4pBy3bgI0uYwW2A60nnunt
+2gvF1gFnglG//LUPIJ4oC/jHsoLK94Lc9nrPJGEBwlURUwdh2zR1srBZjPpHQknQ
+xVPA24RSzuNdEZt73i3ZdAIkmcgmUw==
+=TjnG
+-----END PGP SIGNATURE-----
+
+--Sig_/UCF0+_SusNV/iWmB5bDZx8m--
