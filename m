@@ -6,117 +6,90 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DA8C76188
-	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 04:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93712C76188
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 04:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05EBD20880
-	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 04:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 425DA21721
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 04:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FOCz9PUS"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NZZw+mma"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfGPEbZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 16 Jul 2019 00:31:25 -0400
-Received: from ozlabs.org ([203.11.71.1]:54243 "EHLO ozlabs.org"
+        id S1726694AbfGPEyf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 16 Jul 2019 00:54:35 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:46511 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726632AbfGPEbZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 16 Jul 2019 00:31:25 -0400
+        id S1726487AbfGPEyf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 16 Jul 2019 00:54:35 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45nnXW1hQVz9sDQ;
-        Tue, 16 Jul 2019 14:31:23 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45np3D1Sv8z9s8m;
+        Tue, 16 Jul 2019 14:54:32 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1563251483;
-        bh=pTcKZ8WGITRcN7hoLC31zCeTJhydGo5fa6HBdaxi/WQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FOCz9PUSJRTSnzKm0/k/0rW5Tnx87LL9JevtSgRLEtdLfS9wOe2NxMzNfL958SZAF
-         hUjpiN60hORwWhyqak6zHMUwId+GhxUThnIxilNaGQ6Kc5DFUWV4n7PJtFjNoW77if
-         wkJmPPS2ocm3VtUM0Zf2dlCMZgVjP6SBEwZXCzs+wse0G1DnD/BRSf/Gfd7aBNjcBO
-         OsdrfobOcqYwUOeTPnT10gSMEw4Rqy5WKNgATt2S2JTlAsWin0kba8d+ZRF9cmg+uU
-         UcKN7vlgTiqkbspGUPE/bUarPh05aFkgGO8UJHDVb8YJY/tYkAUTxOlbvmYRvFmImo
-         Kczt4qa5GVtCg==
-Date:   Tue, 16 Jul 2019 14:31:21 +1000
+        s=201702; t=1563252873;
+        bh=2XWH8qIY1CIIR3ml+Ox9a821mFuxSlD/1oeUNyofL5c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NZZw+mmaArU0ZuWgKvt2IGyKksQFDsE+vKnNAzl3keoAseDstJmRnJ3DGmq7I/Ly4
+         SI59CGFZsU6tawjKHwYGrOFGDezEGATVHTF/DHiipDRGuex8ipdGuKRgaAN4x2AXzN
+         nh3Gq4GAUceHRyxJDs5AuzrH96Vzyr/Ky2yO3FZL5cpJ2yCeB4eRyh+YodNnEHuaX6
+         4rQcX7UsjE+h8F2HUPj9w6rO9LEIiFAH48kYohGVW1t81gM4ZXsCikgEj7guQ9jeRo
+         z95+t6cSMYOxgfoChJB1nwOzQS/vZ6DLyBb2iHNn0k9y8drmIBz3Yy4vZvRVZsgKyf
+         EPur1y72PZtZg==
+Date:   Tue, 16 Jul 2019 14:54:31 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jon Mason <jdmason@kudzu.us>,
+        NTB Mailing List <linux-ntb@googlegroups.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kbuild tree
-Message-ID: <20190716143121.3027ef58@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the ntb tree
+Message-ID: <20190716145431.26da7a75@canb.auug.org.au>
+In-Reply-To: <7ec45bb7-4e72-2415-21f7-44dadaa0fada@deltatee.com>
+References: <20190716130341.03b02792@canb.auug.org.au>
+        <7ec45bb7-4e72-2415-21f7-44dadaa0fada@deltatee.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/B2rQDOIA2FwcxfwTX_Z_HSw"; protocol="application/pgp-signature"
+ boundary="Sig_/6wNty9WHNNpLB=upKszJLxs"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/B2rQDOIA2FwcxfwTX_Z_HSw
+--Sig_/6wNty9WHNNpLB=upKszJLxs
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Logan,
 
-After merging the kbuild tree, today's linux-next build (x86_64
-allnoconfig) failed like this:
+On Mon, 15 Jul 2019 21:46:42 -0600 Logan Gunthorpe <logang@deltatee.com> wr=
+ote:
+>
+> I renamed the ntb.c file to core.c so we could add more files to build
+> ntb.ko. See [1].
 
-make[1]: *** No rule to make target 'modules.order', needed by 'autoksyms_r=
-ecursive'.  Stop.
-
-Starting with commit
-
-  656c0ac3cb4b ("kbuild: modpost: read modules.order instead of $(MODVERDIR=
-)/*.mod")
-
-i.e. after reverting just:
-
-25a55e249bc0 Revert "kbuild: create *.mod with full directory path and remo=
-ve MODVERDIR"
-15657d9eceb6 Revert "kbuild: remove the first line of *.mod files"
-8c21f4122839 Revert "kbuild: remove 'prepare1' target"
-35bc41d44d2d Revert "kbuild: split out *.mod out of {single,multi}-used-m r=
-ules"
-
-I get
-
-cat: modules.order: No such file or directory
-
-near the end of the allnoconfig build (but it does not fail).
-
-and when I remove 25a55e249bc0 i.e. stop reverting
-
-  0539f970a842 ("kbuild: create *.mod with full directory path and remove M=
-ODVERDIR")
-
-the build fails.
-
-So, for today I have reverted these 4 commits:
-
-  56dce8121e97 ("kbuild: split out *.mod out of {single,multi}-used-m rules=
-")
-  fbe0b5eb7890 ("kbuild: remove 'prepare1' target")
-  008fa222d268 ("kbuild: remove the first line of *.mod files")
-  0539f970a842 ("kbuild: create *.mod with full directory path and remove M=
-ODVERDIR")
+But that was last changed in June, so I assume that some change to the
+build system has caused this warning to be produced now.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/B2rQDOIA2FwcxfwTX_Z_HSw
+--Sig_/6wNty9WHNNpLB=upKszJLxs
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0tUxkACgkQAVBC80lX
-0GxWUQf+PfOOmG278suiqMlQn3x6BuBZoupmKmMHMF3J/rkYUEtmO+yJDMz6hbph
-luK+9DY5QJJf1dCkCg3z2AuXhJktof5lLME/a6D4eKnYg19s9x/FCw+hMUvFad3/
-rv73ojQIBZxlBVGWx0ZuzqGZWtuSNlXYuywWxVwmN5rTzb1YeJ50VsjjbUNz7G58
-V9gieh/dLKa5wfZSljHKrW4GQl7KNL7VZf3fRO4Xll4mnoH/EjOsLMRnU0nKhEhC
-HnrzZeiNqGue7fquYPKnmzZZPjNELyC7B2ibBDTbt7kbgX1BfUAczwmM8pOGzzPv
-CDWLTIkwhdXTv6ebkl3gx3HSxddo+Q==
-=+L0I
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0tWIcACgkQAVBC80lX
+0GzAEwf+Kilbh4hmWSH4gsjN7AcjrvhLIzGrDTEzWyIHM6XLba1XNBOHCMFgT2w1
+v5eMjG03GH4nQikQO8eaYwAlsiDWM15thNUGqF/sld235ZCW/w17XIVbwXzrvsLF
+ErvmrWyZEoArrEFy1Js6dMCDvbuUJQkKBLIDd+x13q/Cf8ZAzVsguXQN5hSbLq87
+Wz2GWXNB53lyfV+NttjkdZj7W12H6df2IHqny3qe7OxGipbsNWFTIRHJkWI/xpsd
+e9Ofh61XkKXgiHdQWlNZyHyk8iWMdLfMkl+x854+6CElPiniFRdfyjYACsC06YEn
+Gjt5uvPhnEbjYyrBIOlTEIfADAvSgA==
+=hXRI
 -----END PGP SIGNATURE-----
 
---Sig_/B2rQDOIA2FwcxfwTX_Z_HSw--
+--Sig_/6wNty9WHNNpLB=upKszJLxs--
