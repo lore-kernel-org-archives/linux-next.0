@@ -2,129 +2,85 @@ Return-Path: <SRS0=Z6PR=VN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28462C76188
-	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 12:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7B6C7618F
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 19:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9BE2173C
-	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 12:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563280856;
-	bh=sDCrB67DtJxCMeHqRCCcdHbOVzyaUEWlKyDhDHV5pj8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=o+o72hgPfCM1dE6O5UyuRbAQFdhxSfBd/toURN5yXjTW8KVaX8JQB0SbV3hhv+Coj
-	 1b4ikOiI94sVVGIa1toscNefn4kjkcyshr9825zua8HjWIT4y3eJdVh6XIRmLhL9ri
-	 DZO7gVyVKJpd8JcmYSK2BgF3XkcUjBLW2RAbvxcM=
+	by mail.kernel.org (Postfix) with ESMTP id 1AA70205C9
+	for <linux-next@archiver.kernel.org>; Tue, 16 Jul 2019 19:38:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a5Y2ukJZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfGPMkz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 16 Jul 2019 08:40:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49338 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbfGPMkz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 16 Jul 2019 08:40:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=k7uNjGYc5NGW86U1WwRqV0gayXTomQeitE9Om1/SzOk=; b=u1ZS6tKNBRD5Lu81RQ1RdVPM3
-        G6YKyiYLYqejgDbPnCYdCEltx0Vy2Ft9wL4QrGxzSdU7fxeQNDu42H84Rh6Fz2em46n6Hg3gnYLnf
-        f5mFBK4Y31pL0QEBy0tiHM8MmtgyC9jAnd5DKhfo5o3wPtOr/3VttlPVyskHlYiUpP0/2c/Var7ME
-        FIvfU8YSOKXyyAs9N3LJJbfQCCvWmWx1OrHbWbzz8beeJk0Uqbp9sFdPKo8haejP5vYv6ywojPdrW
-        m+ICy4XmMmWh/jBBOV39BcNGvo0qbXBfx8Kjs8B3zACHU6u7qe2KFeqeFqR5yx+2VCA2RfxUkYkQ8
-        XeAxwPEJA==;
-Received: from [189.27.46.152] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hnMlH-0007gL-6Y; Tue, 16 Jul 2019 12:40:51 +0000
-Date:   Tue, 16 Jul 2019 09:40:47 -0300
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S2388518AbfGPTiE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 16 Jul 2019 15:38:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:35857 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfGPTiE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 16 Jul 2019 15:38:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45p9ff0LYbz9sBt;
+        Wed, 17 Jul 2019 05:38:02 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563305882;
+        bh=2XmstIrQHROb6umNOg9uWOJl4VLaeO+HwdlYs+MRNjE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=a5Y2ukJZYRtIHi8ESGvULW54wtj56hsEbJrpNdBCvRxiN32LFZZNXGkT21Mj//3KZ
+         i1Aiu/yhHos0S5ItAXLGXnGeiEi9sbS8bNVf0lFe+9U8xQ3PhV4rhqPO6n9JyGMKxb
+         T9qupnENeaD69AFg+dCLlIdvyFX/lWOFNjVMwMReXVP5grFX0npV4c7P45WDgebMtO
+         cdOjxh2i10yx/fk8/OsaXydijYDbuD+g9podjL1XbYr36ZoCWjvzQklWXynchUhttN
+         VdQqx7grOMNPyIvN61au1/0XxwSoc+XT6ZfbwdS9IgUdjHKbkKSBa3Du3fLrhClO69
+         VPBnN1Fc/41nw==
+Date:   Wed, 17 Jul 2019 05:37:53 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rdma tree with the v4l-dvb-next
- tree
-Message-ID: <20190716094047.38e0074b@coco.lan>
-In-Reply-To: <20190716122637.GA29741@mellanox.com>
-References: <20190716104614.2ec8b57c@canb.auug.org.au>
-        <20190716122637.GA29741@mellanox.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Subject: linux-next: Signed-off-by missing for commit in the amdgpu tree
+Message-ID: <20190717053733.639b7f6b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iL0F5JxeBpUEO+BrOtLF+_/"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Em Tue, 16 Jul 2019 12:26:40 +0000
-Jason Gunthorpe <jgg@mellanox.com> escreveu:
+--Sig_/iL0F5JxeBpUEO+BrOtLF+_/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Jul 16, 2019 at 10:46:14AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the rdma tree got a conflict in:
-> > 
-> >   Documentation/index.rst
-> > 
-> > between commit:
-> > 
-> >   09fdc957ad0d ("docs: leds: add it to the driver-api book")
-> > (and others following)
-> > 
-> > from the v4l-dvb-next tree and commit:
-> > 
-> >   a3a400da206b ("docs: infiniband: add it to the driver-api bookset")
-> > 
-> > from the rdma tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.  
-> 
-> I'm surprised this is coming from a v4l tree..
+Hi all,
 
-Jon asked me to send a pull request with the pending conversion
-patches. I opted to apply them to my v4l-dvb-next tree, just because
-it was the simplest way of having those at linux-next :-)
+Commit
 
-> 
-> > diff --cc Documentation/index.rst
-> > index f379e43fcda0,869616b57aa8..000000000000
-> > --- a/Documentation/index.rst
-> > +++ b/Documentation/index.rst
-> > @@@ -96,23 -90,9 +96,24 @@@ needed)
-> >   
-> >      driver-api/index
-> >      core-api/index
-> >  +   locking/index
-> >  +   accounting/index
-> >  +   block/index
-> >  +   cdrom/index
-> >  +   ide/index
-> >  +   fb/index
-> >  +   fpga/index
-> >  +   hid/index
-> >  +   iio/index
-> >  +   leds/index
-> > +    infiniband/index  
-> 
-> This should be kept sorted, Mauro rdma is already merged you'll need
-> to tell Linus about this trivial conflict when you send your patches.
+  50092eb42f16 ("drm/amdgpu: Fix unaligned memory copies")
 
-Yeah, I placed a comment about that at the pull request I sent
-earlier today.
+is missing a Signed-off-by from its committer.
 
-In any case, this is a simple conflict. It should be trivial for
-Linus to address it.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-Mauro
+--Sig_/iL0F5JxeBpUEO+BrOtLF+_/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0uJ5EACgkQAVBC80lX
+0Gy7FAf/d5mftaWV5a418/WaOi4gSTCDowr0sONL1ITc+G26k2CFVBKCFYCy9lCD
+rcleHHhE1v8OHVEddnol3r5FexvSxvXh1/aIa59Qlm2G1ocKKUGaRelLMNmtTQh8
+IlxgNlrgZtgBgVpMMUsriPbmTMSk7hJprQVJ9kUK4+/7DYgUsKid4vJfm/CqOi/b
+x3x+LKfQKLQ+86o3Bh16B4QglLnQhRznrlsEdoO+u4bc83W4pzF6BTtj6okQkbqa
+5EM+XBsqv0+peqv6JA094At6SBxL0NUAdVcIsCK7TO2snP8/G+UsDVqhVpo5Ft0g
+HsRfQ+b8LRTITLqVNeSKPALOnGCAoQ==
+=wB5i
+-----END PGP SIGNATURE-----
+
+--Sig_/iL0F5JxeBpUEO+BrOtLF+_/--
