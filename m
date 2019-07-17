@@ -2,113 +2,132 @@ Return-Path: <SRS0=DgJi=VO=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BBFC76186
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 06:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A2BC76186
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 06:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B4220818
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 06:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94BB2173E
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 06:34:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aWKQb3fH"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gXVacMqu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfGQGVt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 17 Jul 2019 02:21:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55544 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfGQGVt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 02:21:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8acWEJVKozUDgbpRsbTOTilbmLjq4nOryNdKnvI3qyI=; b=aWKQb3fHRk6FMee1FGDNwMLKe
-        M4Nqa+LepSV7tm+3LRwMfSbx4YMi0yKJm++e0dwlPzvuu27wTU55lV/eOOee2V9w5Vp22S11zU+Fv
-        eMfWoMv0NtG0DCNW/L6kHVbz6lV70XsOcbLToJCrwjYX6DcM7MQeUw75slz52UzQrL7e1rjxcFo71
-        FW9uqsmTIxpBvyyI78MZqW93YZ9orfltYRCirJ60GcYxMc45MGbelUJeOeuEu/dDYvmrgHf3w90QH
-        FZxAzZhM1jOBFIVXjMmm+BLRmYL4cBf+fQCT07AS8xT87dMHt9OeDHAsQUU2rZ2Nx4uW3c6Ubfv8U
-        Ed+H3mQ3w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hndK0-0007nf-Mj; Wed, 17 Jul 2019 06:21:48 +0000
-Subject: Re: mmotm 2019-07-16-17-14 uploaded
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-References: <20190717001534.83sL1%akpm@linux-foundation.org>
- <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
- <20190717143830.7f7c3097@canb.auug.org.au>
- <a9d0f937-ef61-1d25-f539-96a20b7f8037@infradead.org>
-Message-ID: <072ca048-493c-a079-f931-17517663bc09@infradead.org>
-Date:   Tue, 16 Jul 2019 23:21:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1725892AbfGQGeJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 17 Jul 2019 02:34:09 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:49861 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfGQGeJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 02:34:09 -0400
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x6H6Y50h019086;
+        Wed, 17 Jul 2019 15:34:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x6H6Y50h019086
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563345246;
+        bh=rG7ekEvaQy1IjhchJCTkqJacKz4cRc1jvbuG8gJAP9M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gXVacMquCuEXEGhx3Ti/SvGU6V2I4SNFOhfrjTKdUzbkaCwO18NlV21SnudqyxPHG
+         d+PjzkPbvOk0scjD/dOXf3Vg52Bp0v1WK5EC6wX6RxboJZXTw41dJjoNWQ3Je3c++e
+         u4XU2LWxmOGQKbRUkvSXBhNMBme07AqBAarjfd2ve+aftPiCe3CBPARFZ9Nf6p/Rz3
+         EWV/8P+MkYogE6+47q6v7DuYqJOdUCeQ62DHmXnud4EvHOHwAgybx8VzNoq4N3AI5o
+         eGV7K+mpxuGafTKlxs8WDo9sHqRvSe6q0D7RKCPOcUK8Q7lQzRBpib8ZOhy+0rpveI
+         fPEBa27iGHVKQ==
+X-Nifty-SrcIP: [209.85.217.47]
+Received: by mail-vs1-f47.google.com with SMTP id m8so15737320vsj.0;
+        Tue, 16 Jul 2019 23:34:05 -0700 (PDT)
+X-Gm-Message-State: APjAAAUbd3RgE1WpC6uDxGuibYNgQPrGTdPD4ZUt7KtG7DTCmiP6zIfN
+        D+84pE3NEA0enK2maE4CDkzypayhzHINxEOZfcs=
+X-Google-Smtp-Source: APXvYqzgNWfC169qm/VJmhV93vE8pqpShdA43iCdrk/fvt6DOhA6i66MYEisEz8GA2ScseJMPjrlg8uFi3GEPxYwCfk=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr23161422vsn.54.1563345244535;
+ Tue, 16 Jul 2019 23:34:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <a9d0f937-ef61-1d25-f539-96a20b7f8037@infradead.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190709133019.25a8cd27@canb.auug.org.au> <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
+ <20190709071758.GI7034@mtr-leonro.mtl.com> <20190709124631.GG3436@mellanox.com>
+ <20190710110443.002220c8@canb.auug.org.au> <20190710143036.1582c79d@canb.auug.org.au>
+ <20190717092801.77037015@canb.auug.org.au>
+In-Reply-To: <20190717092801.77037015@canb.auug.org.au>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 17 Jul 2019 15:33:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARZqi-QcGaTEaoTEASbnBaGzYchgDoWeuthR+G8jxQHMg@mail.gmail.com>
+Message-ID: <CAK7LNARZqi-QcGaTEaoTEASbnBaGzYchgDoWeuthR+G8jxQHMg@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Mark Zhang <markz@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Majd Dibbiny <majd@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/16/19 11:19 PM, Randy Dunlap wrote:
-> On 7/16/19 9:38 PM, Stephen Rothwell wrote:
->> Hi Randy,
->>
->> On Tue, 16 Jul 2019 20:50:11 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
->>>
->>> drivers/gpu/drm/amd/amdgpu/Kconfig contains this (from linux-next.patch):
->>>
->>> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig~linux-next
->>> +++ a/drivers/gpu/drm/amd/amdgpu/Kconfig
->>> @@ -27,7 +27,12 @@ config DRM_AMDGPU_CIK
->>>  config DRM_AMDGPU_USERPTR
->>>  	bool "Always enable userptr write support"
->>>  	depends on DRM_AMDGPU
->>> +<<<<<<< HEAD
->>>  	depends on HMM_MIRROR
->>> +=======
->>> +	depends on ARCH_HAS_HMM
->>> +	select HMM_MIRROR
->>> +>>>>>>> linux-next/akpm-base  
->>>  	help
->>>  	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
->>>  	  isn't already selected to enabled full userptr support.
->>>
->>> which causes a lot of problems.
->>
->> Luckily, I don't apply that patch (I instead merge the actual
->> linux-next tree at that point) so this does not affect the linux-next
->> included version of mmotm.
->>
-> 
-> for the record:  drivers/gpio/Makefile:
-> 
-> <<<<<<< HEAD
-> obj-$(CONFIG_GPIO_BD70528)              += gpio-bd70528.o
-> =======
-> obj-$(CONFIG_GPIO_BD70528)              += gpio-bd70528.o
->>>>>>>> linux-next/akpm-base
-> 
-> 
-> 
+Hi Stephen,
 
-drivers/dma-buf/dma-buf.c:
-<<<<<<< HEAD
-=======
-#include <linux/pseudo_fs.h>
->>>>>>> linux-next/akpm-base
 
+On Wed, Jul 17, 2019 at 8:28 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi,
+>
+> On Wed, 10 Jul 2019 14:30:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Wed, 10 Jul 2019 11:04:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > On Tue, 9 Jul 2019 12:46:34 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+> > > >
+> > > > It isn't quite enough to make the header compile stand alone, I'm
+> > > > adding this instead.
+> > > >
+> > > > From 37c1e072276b03b080eb24ff24c39080aeaf49ef Mon Sep 17 00:00:00 2001
+> > > > From: Jason Gunthorpe <jgg@mellanox.com>
+> > > > Date: Tue, 9 Jul 2019 09:44:47 -0300
+> > > > Subject: [PATCH] RDMA/counters: Make rdma_counter.h compile stand alone
+> > >
+> > > I will apply this to linux-next today and reenable the stand alone
+> > > building for rdma_counter.h
+> >
+> > That worked for me ...
+>
+> rdma_counter.h should be able to be removed from the exceptions list now.
+>
+> I have been building linux-next with this patch for a while, so maybe
+> it could be applied to the kbuild tree?
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 10 Jul 2019 13:03:16 +1000
+> Subject: [PATCH] rdma: attempt to build rdma_counter.h stand alone again
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/Kbuild | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/include/Kbuild b/include/Kbuild
+> index 7e9f1acb9dd5..765ff864130d 100644
+> --- a/include/Kbuild
+> +++ b/include/Kbuild
+> @@ -949,7 +949,6 @@ header-test-                        += pcmcia/ds.h
+>  header-test-                   += rdma/ib.h
+>  header-test-                   += rdma/iw_portmap.h
+>  header-test-                   += rdma/opa_port_info.h
+> -header-test-                   += rdma/rdma_counter.h
+>  header-test-                   += rdma/rdmavt_cq.h
+>  header-test-                   += rdma/restrack.h
+>  header-test-                   += rdma/signature.h
+
+Yes, this is just a one-liner fix-up,
+so I'd like to fold it into this:
+
+https://patchwork.kernel.org/patch/11047283/
 
 
 -- 
-~Randy
+Best Regards
+Masahiro Yamada
