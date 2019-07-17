@@ -2,111 +2,102 @@ Return-Path: <SRS0=DgJi=VO=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77568C76186
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 04:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F30C76186
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 06:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FEAC217D9
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 04:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F69D217D9
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 06:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X5ODQmuV"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RZN+6hkY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfGQEie (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 17 Jul 2019 00:38:34 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54889 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfGQEid (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 17 Jul 2019 00:38:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45pPfG6TYLz9s3l;
-        Wed, 17 Jul 2019 14:38:30 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1563338311;
-        bh=7o9BO0ADmmnMeCw0wqmCaRTFN+ZKwypcAxGKZdpgnH8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X5ODQmuVyLfNoIKGCLu+tlRTXrGFI1NzAdzDXi+dNhzYhZ52JAHiH6ajzlN3GeRg+
-         Oh3H2hbICg2tzXiMQQZdmIv42dQDjvuHTUyMtlqc69Vc8yesT0CUZ46RQyfzh4clUd
-         XgeoS0OeA5BkcUogkbmMZGz57c/XmTDI/MBih8AHpPtK4DDNX4jvJqFtz/aZauPbs7
-         VWfrGCAWtflRWAGnrNqLtRAEtDuahMn7MdXBWbus65jHa59P4brEIR5wKDgqSyX6NS
-         Aw1LO7WJ7bWRN2F5kMB+cqyK0zmR6U+/ZTZGPOCdQGa0RZMH8XcEojfGZbuDf8rA3l
-         Ac2SrTUUrLbYg==
-Date:   Wed, 17 Jul 2019 14:38:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Randy Dunlap <rdunlap@infradead.org>
+        id S1728914AbfGQGTp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 17 Jul 2019 02:19:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfGQGTp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 02:19:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=o9OnSlZJU5DUUCjEct8az2tBr1Fx/bIZ5665+npBK6E=; b=RZN+6hkYNj53BCOuGJCII7CTy
+        4UP0nDFKHWBfBLP60hguy5Cccg/HS5uW+WBamn3keHex3uSblsfTqp/vgYdbxQgJygTaMedfhoYUI
+        +MfE8bpoa4voUC9FwnPrYXuSMFpTNjBGgvZChZaM29s312FbxnXBlBIU3L4ziP7x4fonUeTudxLbD
+        JFV8ZTPulU5KD102qXFqqeFMKpKGgxZ7zr65/CSgBCtWteOLA7g4OjTlLVZrqbDWNgc5W2yLDndTQ
+        O8QO1XeaqDETBPXDnLRo0JFqvNBz4PHvfzQkYgeTt8M2uTKxDLA3b4XCUzqqLmyglTrWXFS3mrpiu
+        TtiQN4IbA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hndHz-0005Xd-OA; Wed, 17 Jul 2019 06:19:43 +0000
+Subject: Re: mmotm 2019-07-16-17-14 uploaded
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
         linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         mm-commits@vger.kernel.org
-Subject: Re: mmotm 2019-07-16-17-14 uploaded
-Message-ID: <20190717143830.7f7c3097@canb.auug.org.au>
-In-Reply-To: <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
 References: <20190717001534.83sL1%akpm@linux-foundation.org>
-        <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+ <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+ <20190717143830.7f7c3097@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a9d0f937-ef61-1d25-f539-96a20b7f8037@infradead.org>
+Date:   Tue, 16 Jul 2019 23:19:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m"; protocol="application/pgp-signature"
+In-Reply-To: <20190717143830.7f7c3097@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/16/19 9:38 PM, Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> On Tue, 16 Jul 2019 20:50:11 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> drivers/gpu/drm/amd/amdgpu/Kconfig contains this (from linux-next.patch):
+>>
+>> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig~linux-next
+>> +++ a/drivers/gpu/drm/amd/amdgpu/Kconfig
+>> @@ -27,7 +27,12 @@ config DRM_AMDGPU_CIK
+>>  config DRM_AMDGPU_USERPTR
+>>  	bool "Always enable userptr write support"
+>>  	depends on DRM_AMDGPU
+>> +<<<<<<< HEAD
+>>  	depends on HMM_MIRROR
+>> +=======
+>> +	depends on ARCH_HAS_HMM
+>> +	select HMM_MIRROR
+>> +>>>>>>> linux-next/akpm-base  
+>>  	help
+>>  	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
+>>  	  isn't already selected to enabled full userptr support.
+>>
+>> which causes a lot of problems.
+> 
+> Luckily, I don't apply that patch (I instead merge the actual
+> linux-next tree at that point) so this does not affect the linux-next
+> included version of mmotm.
+> 
 
-Hi Randy,
+for the record:  drivers/gpio/Makefile:
 
-On Tue, 16 Jul 2019 20:50:11 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> drivers/gpu/drm/amd/amdgpu/Kconfig contains this (from linux-next.patch):
->=20
-> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig~linux-next
-> +++ a/drivers/gpu/drm/amd/amdgpu/Kconfig
-> @@ -27,7 +27,12 @@ config DRM_AMDGPU_CIK
->  config DRM_AMDGPU_USERPTR
->  	bool "Always enable userptr write support"
->  	depends on DRM_AMDGPU
-> +<<<<<<< HEAD
->  	depends on HMM_MIRROR
-> +=3D=3D=3D=3D=3D=3D=3D
-> +	depends on ARCH_HAS_HMM
-> +	select HMM_MIRROR
-> +>>>>>>> linux-next/akpm-base =20
->  	help
->  	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
->  	  isn't already selected to enabled full userptr support.
->=20
-> which causes a lot of problems.
+<<<<<<< HEAD
+obj-$(CONFIG_GPIO_BD70528)              += gpio-bd70528.o
+=======
+obj-$(CONFIG_GPIO_BD70528)              += gpio-bd70528.o
+>>>>>>> linux-next/akpm-base
 
-Luckily, I don't apply that patch (I instead merge the actual
-linux-next tree at that point) so this does not affect the linux-next
-included version of mmotm.
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0upkYACgkQAVBC80lX
-0GxY4Af+Oq4/F8H+zsaZlffvr9kWxLnnkP6seTpuCtjL3Lrao+6kmrHwvRxWXRmb
-DqfVHihQ1LhaVW8VoP1GycoXaKBcQn0goSb15YVCUh/GPRhYnatbaUFZwk+ktGmq
-k6ln30+yEY2kKT0FzWwX8dovVmwJ1UCQY1D0wCVMItQB58CerSX4mnmZWinA6lfO
-NEX3APGd2tviTSbBhvy3O8GsCtLGmyX4WWT+TRWJqOZnHeuPLTsIDjDUCAhab/y6
-SY6uOswYK1uKKBRJu7ATwmaJP2DMV2rm6Ueq+XH9Mx/sw19RG2Nji8/EoDhQ1WRh
-Yc0S0HXamFnMIevXgk9IgqtFYoCrvA==
-=eNFs
------END PGP SIGNATURE-----
-
---Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m--
+-- 
+~Randy
