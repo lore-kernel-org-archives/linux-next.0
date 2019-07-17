@@ -2,89 +2,127 @@ Return-Path: <SRS0=DgJi=VO=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D3AC7618F
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 14:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE99C76192
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 15:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74A32173E
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 14:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 229FE2173B
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 15:31:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PHYffguA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQBsCkXH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfGQO4A (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 17 Jul 2019 10:56:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45824 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfGQO4A (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 10:56:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Hqyv4zXqfJWvsDUEBnkw44GnKu9JuXe0Tjma2P25hIA=; b=PHYffguA8Do4AfdhPOYF0/QtR
-        EBq7JI6/Gk9l93jsR/Cf9s2z+BbMdIBQ8GHui9bYZGDTSOqKeEPo/kvRMc4XhyPbZg2VeZDfN0uuq
-        foSMg9eo7rjoTJo418aje2TXH7SjtLzXIp0/024YtEiakXEukBeaFPEnJuwj6ksU8Uy4EjPlMD80D
-        10Yefa9I8t2ANsgEGs7aA+mZbNIoVtd1UaJV1sHNPVep8F7ZoTA2S8w8riTU21Nv3hQZMregOi8uN
-        KYjnbu21XWjjfu/mQuFe0rj+2NdprGxL/TaghcjCuL/dek6+vevJsl/qY6XeyUxY0yxdGeIopMHvg
-        K3FHAlAig==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hnlLb-0006dc-4A; Wed, 17 Jul 2019 14:55:59 +0000
-Subject: Re: mmotm 2019-07-16-17-14 uploaded
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-References: <20190717001534.83sL1%akpm@linux-foundation.org>
- <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
- <20190717143830.7f7c3097@canb.auug.org.au>
- <a9d0f937-ef61-1d25-f539-96a20b7f8037@infradead.org>
- <072ca048-493c-a079-f931-17517663bc09@infradead.org>
- <20190717180424.320fecea@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a1179bac-204d-110e-327f-845e9b09a7ab@infradead.org>
-Date:   Wed, 17 Jul 2019 07:55:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726598AbfGQPbB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 17 Jul 2019 11:31:01 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45958 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfGQPbB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 11:31:01 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f9so25278331wre.12;
+        Wed, 17 Jul 2019 08:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=lp9LaovzP897q8rJ2Yj+FnynKyErmgF+4dB6/5fv4Qc=;
+        b=cQBsCkXHEbz/p+7To9YvkAomNZXA+0rNFFlP1doS7rmcIw5JTbovEamNB84rUbwyeS
+         W05zL2tInijJOXZC+d3l5Bh/ih2vZWfz/xKsnTlqDahDzDoK10Us74oV71wrvkEF0zDW
+         336+9Tk7I3WqdQNqVAlwd57DLNpsGhqW7mcx375IKs6WeYDojUK0YHZitITwrC9tMqHw
+         c2ni9cBowAqaKArKkO8jcdwzkO0B1lOe7tWJLD463kyKM961HM/TcLMjDmPszRpBLbOi
+         S+jU3sXvL1qptIZ2GOKYhyuAu8JCAUm1Is/viML4UZ/+RcWGCL1dp/i7xXh5bcrcoAxr
+         k4nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=lp9LaovzP897q8rJ2Yj+FnynKyErmgF+4dB6/5fv4Qc=;
+        b=M8nC9g2XFIOom5/LQ1XsGHc0L70X4AY+vSjw72Dz7cTjjmNi+rWMTxGkiuOeJpHOkm
+         D7+fdrZws1H71NMUTMvG6Kw8TcHfPbd9nJyPLwh/JdJUmNTfVkpsgTXdSXhBefSyMjEo
+         c7AXJf0WIEnTvxHpygj3ZiKhLG3yh5ndqyDB+UjMDGvbNif3xnqkQlEdL5rz3SSFknxs
+         Bbb1SEkRvjAQCaCB73EzyrDxrc+9rqbZHQ0w9SqacCci8jb5cb75p4biWOocoT7IVXNF
+         9PkEokRN08QilzCh7/RpoqMkuLnhF/UfaTz02lJUmHplpDz2eDZbFkDFnj8uLl+R7MDc
+         dEiQ==
+X-Gm-Message-State: APjAAAXn58ywHHRB0r+nOUh9ZDupnn2HKna85rs3y7WD2Es9wmupvvw9
+        c88yT8GdqRJYfZRFRVnEvpUleDkSi2S+sm5oLXE=
+X-Google-Smtp-Source: APXvYqzYeK8zm6fB6RbtMRqyt4P012ELpdexhrmS+06mNC/hM+fmWO/+wj8CgMoax1sy0qPdnZacR0b4gMWxeqQ8Qlo=
+X-Received: by 2002:a5d:498f:: with SMTP id r15mr41131590wrq.353.1563377458447;
+ Wed, 17 Jul 2019 08:30:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190717180424.320fecea@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190717142922.214d54ec@canb.auug.org.au>
+In-Reply-To: <20190717142922.214d54ec@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Wed, 17 Jul 2019 17:30:47 +0200
+Message-ID: <CA+icZUUhnSGkLQcCZBzYXCRxExiZ1F=KnzdeiNSbojHRfxRjOA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jul 17
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/17/19 1:04 AM, Stephen Rothwell wrote:
-> Hi Randy,
-> 
-> On Tue, 16 Jul 2019 23:21:48 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> drivers/dma-buf/dma-buf.c:
->> <<<<<<< HEAD
->> =======
->> #include <linux/pseudo_fs.h>
->>>>>>>>> linux-next/akpm-base  
-> 
-> I can't imagine what went wrong, but you can stop now :-)
-> 
-> $ grep '<<< HEAD' linux-next.patch | wc -l
-> 1473
+Hi Steven, Hi Darrick,
 
-Yes, I did the grep also, decided to give up.
+Unfortunately, my build-script is not working anymore.
 
-> I must try to find the emails where Andrew and I discussed the
-> methodology used to produce the linux-next.patch from a previous
-> linux-next tree.
+I am using builddeb/mkdebian scripts.
 
+[ BUILD-LOG ]
+...
+set -e; mkdir -p include/config/; { echo "5.2.0$(/bin/bash
+./scripts/setlocalversion .)"; } > include/config/kernel.release.tmp;
+if [ -r include/config/kernel.release ] && cmp -s
+include/config/kernel.release include/config/kernel.release.tmp; then
+rm -f include/config/kernel.release.tmp; else : '  UPD
+include/config/kernel.release'; mv -f
+include/config/kernel.release.tmp include/config/kernel.release; fi
+make -f ./scripts/Makefile.build obj=3Dscripts/package bindeb-pkg
+/bin/bash ./scripts/package/mkdebian
+./scripts/package/mkdebian: line 149: cd: source/: No such file or director=
+y
+make[1]: *** [scripts/package/Makefile:79: bindeb-pkg] Error 1
+make: *** [Makefile:1442: bindeb-pkg] Error 2
 
+Investigations revealed hardcoded stuff from the ...
 
--- 
-~Randy
+Merge remote-tracking branch 'iomap/iomap-for-next'
+
+$ git blame scripts/package/mkdebian | grep 'cd source'
+87bdff62e470c (Darrick J. Wong    2019-06-27 17:30:15 -0700 149) (cd
+source/ ; stg ser | sed -e '/^-/d' -e 's/^. /  * /g') >>
+debian/changelog
+
+$ git log --oneline --author=3D"Darrick J. Wong" scripts/package/mkdebian
+87bdff62e470 mtr: Build script adjustments
+
+I do not think this was intended?
+
+Reverting seems to be easy and fix it for me.
+
+$ git revert --no-edit 87bdff62e470
+F=C3=BChre Erkennung f=C3=BCr ungenaue Umbenennung aus: 100% (2251440/22514=
+40), Fertig.
+[5.2.0-3-amd64-cbl-asmgoto db8ec1968620] Revert "mtr: Build script adjustme=
+nts"
+ Date: Wed Jul 17 17:27:26 2019 +0200
+ 3 files changed, 10 insertions(+), 17 deletions(-)
+
+Please make it work again for $WORLD.
+
+Thanks.
+
+Regards,
+- Sedat -
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log=
+/scripts/package/mkdebian?h=3Dnext-20190717
