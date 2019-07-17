@@ -2,181 +2,89 @@ Return-Path: <SRS0=DgJi=VO=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5704C76186
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 11:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D3AC7618F
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 14:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9AC120880
-	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 11:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A74A32173E
+	for <linux-next@archiver.kernel.org>; Wed, 17 Jul 2019 14:56:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="fczuCjdw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PHYffguA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfGQL17 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 17 Jul 2019 07:27:59 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:38719 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfGQL16 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 07:27:58 -0400
-Received: by mail-wr1-f48.google.com with SMTP id g17so24412425wrr.5
-        for <linux-next@vger.kernel.org>; Wed, 17 Jul 2019 04:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=Mn3gcrpdxPeBWkuBYSZTt+TWOIIflbhBRt4vACtNLMc=;
-        b=fczuCjdwXXklGWTmmNNQ0b5ezFVh2hf7qqw/pk22yktktdNUTn59L84EzUEDaOjdIh
-         C6OQD9RMS9nJwJ22FbGUb6+sRJ1bH/ai4LA/ifvUmwIcioHXrim4mTICBQ3oyru4dsYq
-         JxczuCYawWSWOIE2z7Yr4S+EcUZyY1x4NgfFbcj+Vl7ZpAE5X7jt0h8HpiFPTTy7ZaAP
-         3W84mtLI2TpF3m7PNpR2NyeZEOHNmHgCLUQzW4zYkgSlT5HV531rdjm70HfUgbx3HLI6
-         WymhUSWLpWb5fzZOUYeRatT5apWwRwd2TrpFiDaDc4yrSP7geVzb/3+y8+9kmqVOjZdX
-         cqYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=Mn3gcrpdxPeBWkuBYSZTt+TWOIIflbhBRt4vACtNLMc=;
-        b=dhdYpIILTIATjpsWcCAOPOffaFhSsu4Xcu1DC0rqQEJhqWcBDt65ZwG33qvc9tD+Gi
-         cZ20dC3XnkSIFGpYGLsNwRUnWDPBjqJ61OZBSi1ZglLKllLCbshdR4NGeowqg9YK8PKO
-         0uzq5SP1GSOf0InnX2U+UI6TEkkNRIcqMwW1biuxgVpYROEii8I1DL5NxRxT3GJUdtDQ
-         LuBirWskUhi36CHTznHaRSGRPPVo1xXYbozHf/udV+O8zw5as25J10oYO2XsUy2PqtJ1
-         /vFN/uzp4AxXAtK+QCPPBl4kKNj8fDiTSS9Wd83EGKRpbOx9nhnPBfyJ4jHerXkD5OXs
-         OsDA==
-X-Gm-Message-State: APjAAAV4ZsWx5Ym0dkT3zpplz9QVKy/9AQEYFNYVR8yhszgY67buCFe1
-        gLHvWOelrdA3HFn3DK7JJofPNhMMR9Y=
-X-Google-Smtp-Source: APXvYqwxmV8NLb3WTHt1R8LfMUhWyh570EHK5kfxxCesT5CPU38h6eJkuOWjKng0RtcpeaXFWzQWng==
-X-Received: by 2002:adf:ed11:: with SMTP id a17mr42905362wro.112.1563362876666;
-        Wed, 17 Jul 2019 04:27:56 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id u186sm36879310wmu.26.2019.07.17.04.27.55
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2019 04:27:56 -0700 (PDT)
-Message-ID: <5d2f063c.1c69fb81.d5363.4f85@mx.google.com>
-Date:   Wed, 17 Jul 2019 04:27:56 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1727285AbfGQO4A (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 17 Jul 2019 10:56:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45824 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfGQO4A (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2019 10:56:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Hqyv4zXqfJWvsDUEBnkw44GnKu9JuXe0Tjma2P25hIA=; b=PHYffguA8Do4AfdhPOYF0/QtR
+        EBq7JI6/Gk9l93jsR/Cf9s2z+BbMdIBQ8GHui9bYZGDTSOqKeEPo/kvRMc4XhyPbZg2VeZDfN0uuq
+        foSMg9eo7rjoTJo418aje2TXH7SjtLzXIp0/024YtEiakXEukBeaFPEnJuwj6ksU8Uy4EjPlMD80D
+        10Yefa9I8t2ANsgEGs7aA+mZbNIoVtd1UaJV1sHNPVep8F7ZoTA2S8w8riTU21Nv3hQZMregOi8uN
+        KYjnbu21XWjjfu/mQuFe0rj+2NdprGxL/TaghcjCuL/dek6+vevJsl/qY6XeyUxY0yxdGeIopMHvg
+        K3FHAlAig==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hnlLb-0006dc-4A; Wed, 17 Jul 2019 14:55:59 +0000
+Subject: Re: mmotm 2019-07-16-17-14 uploaded
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+References: <20190717001534.83sL1%akpm@linux-foundation.org>
+ <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+ <20190717143830.7f7c3097@canb.auug.org.au>
+ <a9d0f937-ef61-1d25-f539-96a20b7f8037@infradead.org>
+ <072ca048-493c-a079-f931-17517663bc09@infradead.org>
+ <20190717180424.320fecea@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a1179bac-204d-110e-327f-845e9b09a7ab@infradead.org>
+Date:   Wed, 17 Jul 2019 07:55:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: next-20190717
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: next
-X-Kernelci-Branch: master
-Subject: next/master boot: 265 boots: 17 failed, 243 passed with 4 offline,
- 1 conflict (next-20190717)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <20190717180424.320fecea@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 265 boots: 17 failed, 243 passed with 4 offline, 1 confli=
-ct (next-20190717)
+On 7/17/19 1:04 AM, Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> On Tue, 16 Jul 2019 23:21:48 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> drivers/dma-buf/dma-buf.c:
+>> <<<<<<< HEAD
+>> =======
+>> #include <linux/pseudo_fs.h>
+>>>>>>>>> linux-next/akpm-base  
+> 
+> I can't imagine what went wrong, but you can stop now :-)
+> 
+> $ grep '<<< HEAD' linux-next.patch | wc -l
+> 1473
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190717/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190717/
+Yes, I did the grep also, decided to give up.
 
-Tree: next
-Branch: master
-Git Describe: next-20190717
-Git Commit: e40115c06b1d3a6059ba379041e4661dbb6b02b8
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 84 unique boards, 27 SoC families, 22 builds out of 230
+> I must try to find the emails where Andrew and I discussed the
+> methodology used to produce the linux-next.patch from a previous
+> linux-next tree.
 
-Boot Regressions Detected:
 
-arm64:
 
-    defconfig:
-        gcc-8:
-          meson-gxm-khadas-vim2:
-              lab-baylibre: new failure (last pass: next-20190705)
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          meson-gxm-khadas-vim2:
-              lab-baylibre: new failure (last pass: next-20190705)
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-          meson-gxm-khadas-vim2:
-              lab-baylibre: new failure (last pass: next-20190705)
-
-Boot Failures Detected:
-
-arm:
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
-            qcom-apq8064-ifc6410: 1 failed lab
-
-    oxnas_v6_defconfig:
-        gcc-8:
-            ox820-cloudengines-pogoplug-series-3: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
-
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-bananapi: 1 failed lab
-
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
-
-arm64:
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-gxm-khadas-vim2: 1 failed lab
-
-    defconfig:
-        gcc-8:
-            apq8096-db820c: 1 failed lab
-            meson-gxl-s905x-nexbox-a95x: 1 failed lab
-            meson-gxm-khadas-vim2: 1 failed lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            meson-gxl-s905x-nexbox-a95x: 1 failed lab
-            meson-gxm-khadas-vim2: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    sunxi_defconfig:
-        gcc-8
-            sun7i-a20-bananapi: 1 offline lab
-
-arm64:
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
-    defconfig:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    multi_v7_defconfig+CONFIG_SMP=3Dn:
-        am57xx-beagle-x15:
-            lab-linaro-lkft: FAIL (gcc-8)
-            lab-drue: PASS (gcc-8)
-
----
-For more info write to <info@kernelci.org>
+-- 
+~Randy
