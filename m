@@ -2,114 +2,97 @@ Return-Path: <SRS0=eN3K=VQ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3552BC76196
-	for <linux-next@archiver.kernel.org>; Fri, 19 Jul 2019 08:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE64C76188
+	for <linux-next@archiver.kernel.org>; Fri, 19 Jul 2019 08:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F90821851
-	for <linux-next@archiver.kernel.org>; Fri, 19 Jul 2019 08:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 221BB20665
+	for <linux-next@archiver.kernel.org>; Fri, 19 Jul 2019 08:41:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TA7Ls/ZE"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SoJAOSLv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfGSIcg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 19 Jul 2019 04:32:36 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43364 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfGSIcg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 19 Jul 2019 04:32:36 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6J8WALd020368;
-        Fri, 19 Jul 2019 03:32:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563525130;
-        bh=IVqQ1ovk/uB5I3+HYY88jIzu+tAVMCodVGet/Jwe4Qw=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=TA7Ls/ZEkH2MbrRXeYpK/I5F6jqRsO9SrdHYTKsvbb8YV35on1KfFQeB8SYPnL6re
-         6NnLvVEyQ/sNskzSNhGBpXoW24Vu3AOGMPKwtXzVy9rmIuySPxWTc7hbTUkKRxRZh0
-         RK1pIyAePXpb4zqaFDDjRbt9YttbGuTaI9GGpXn4=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6J8WAor097464
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 19 Jul 2019 03:32:10 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 19
- Jul 2019 03:32:10 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 19 Jul 2019 03:32:10 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6J8W6xV081189;
-        Fri, 19 Jul 2019 03:32:07 -0500
-Subject: Re: mmotm 2019-07-17-16-05 uploaded (MTD_HYPERBUS, HBMC_AM654)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190717230610.zvRfipNL4%akpm@linux-foundation.org>
- <4b510069-5f5d-d079-1a98-de190321a97a@infradead.org>
-CC:     <akpm@linux-foundation.org>, <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-next@vger.kernel.org>, <mhocko@suse.cz>,
-        <mm-commits@vger.kernel.org>, <sfr@canb.auug.org.au>,
-        <linux-mtd@lists.infradead.org>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <c3b93f7a-5861-475f-faeb-3ec7e8e9b728@ti.com>
-Date:   Fri, 19 Jul 2019 14:02:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1725853AbfGSIlV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 19 Jul 2019 04:41:21 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50587 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbfGSIlV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 19 Jul 2019 04:41:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45qkxS29Drz9s3l;
+        Fri, 19 Jul 2019 18:41:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563525678;
+        bh=AfUDJOPkyWvFlrjo9LOtQTi3KuQ2jyPwaXYtid1vbUA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SoJAOSLvodpm3XsS0DYUx4yRIOBTR/CfEYkJCpmFjpVrHwpoPpzz0d5Jlw9J5+kg5
+         ZfrULMMvxaOXD1qs1g/Si+NVk+TRuWa/RpnnZ5XT9oXp2mcBNXhLvUcORDooJKwYHb
+         EA7hGHWEWGLL++vy+pFJnDiknZHU9JAvQTvVFZoj4yMsWaWioZPUgvpqgxIuzaGSf+
+         pE3nt0V2YpzvmlNOmNyKV8cU69LlZ6w+2/GQmnTO5zmyQF4ZFXNeGJVKD9f/JFFzli
+         hi/ZxUy/5M15dobvhqZFKBa7LoT7fV9picb3x50dm5nXwypFbv2nXaOHOvYX2SIGsi
+         EQIV7A1I8k8sA==
+Date:   Fri, 19 Jul 2019 18:41:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Ben Skeggs <bskeggs@redhat.com>
+Subject: linux-next: Fixes tag needs some work in the drm tree
+Message-ID: <20190719184112.6bae9eb0@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <4b510069-5f5d-d079-1a98-de190321a97a@infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; boundary="Sig_/G9MxQIo.QHoane_qfAxQ+/p";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi,
+--Sig_/G9MxQIo.QHoane_qfAxQ+/p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 18/07/19 9:15 PM, Randy Dunlap wrote:
-> On 7/17/19 4:06 PM, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2019-07-17-16-05 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> http://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
-> 
-> on x86_64, when CONFIG_OF is not set/enabled:
-> 
-> WARNING: unmet direct dependencies detected for MUX_MMIO
->   Depends on [n]: MULTIPLEXER [=y] && (OF [=n] || COMPILE_TEST [=n])
->   Selected by [y]:
->   - HBMC_AM654 [=y] && MTD [=y] && MTD_HYPERBUS [=y]
-> 
-> due to
-> config HBMC_AM654
-> 	tristate "HyperBus controller driver for AM65x SoC"
-> 	select MULTIPLEXER
-> 	select MUX_MMIO
-> 
-> Those unprotected selects are lacking something.
-> 
+Hi all,
 
-Sorry for that! I have posted a fix here. Let me know if that works. Thanks!
+In commit
 
-https://patchwork.ozlabs.org/patch/1133946/
+  b7019ac550eb ("drm/nouveau: fix bogus GPL-2 license header")
 
--- 
-Regards
-Vignesh
+Fixes tag
+
+  Fixes: b24413180f5 (License cleanup: add SPDX GPL-2.0 license identifier =
+to files with no license)
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/G9MxQIo.QHoane_qfAxQ+/p
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0xgigACgkQAVBC80lX
+0GzKoAgAh+uW21gJ4l2i2YQ2jCrg6wg09OmYZVZ94eOrBiO4mTaArQaQlWxijWKQ
+9UIGzkGuWuoAy9PbfmYC/TJ4xkQO8gvzaS5paJjnXnsWzUrtJDRsyby7pHSq0536
+PzQXXcgCo4ZNQXyJZBlxgNm2YhtO/4u8SVQ9042JvBAaD7zXItdpqwZF+oC2+0nY
+7IPzOOs3QkpEPZ8XEgQJx2eg4DlbVDU+BhSezlttp25yAZsEIUo5Rtpe+ZyIzxAd
+8xh/3IGgZaoLsCjWT+AaazKmEK9FwWbBjV1IGIg1xUosj8WqrCnOeen8qeO48T35
+HAJu5h6cV9xHli2JsKcj78X1z9qEuQ==
+=TSzi
+-----END PGP SIGNATURE-----
+
+--Sig_/G9MxQIo.QHoane_qfAxQ+/p--
