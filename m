@@ -6,53 +6,55 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F09C76190
-	for <linux-next@archiver.kernel.org>; Mon, 22 Jul 2019 15:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A16C76190
+	for <linux-next@archiver.kernel.org>; Mon, 22 Jul 2019 21:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28E8B204FD
-	for <linux-next@archiver.kernel.org>; Mon, 22 Jul 2019 15:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88A0C21900
+	for <linux-next@archiver.kernel.org>; Mon, 22 Jul 2019 21:35:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="R070fEDK"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uCq5/5ck"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbfGVPV5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 22 Jul 2019 11:21:57 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:50429 "EHLO ozlabs.org"
+        id S1731333AbfGVVfj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 22 Jul 2019 17:35:39 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45405 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728288AbfGVPV5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:21:57 -0400
+        id S1729004AbfGVVfj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:35:39 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45slhK0CXMz9sDQ;
-        Tue, 23 Jul 2019 01:21:53 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45svzW6TQRz9sBZ;
+        Tue, 23 Jul 2019 07:35:35 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1563808914;
-        bh=z5WiiJX5uAlUkmKbSRsDyoZNz71+vQZD44f1bmFgLLQ=;
+        s=201702; t=1563831336;
+        bh=L80NI8xzhTtIgcmhZBig5LBwXSPMVdF1dSa76Kz0qZY=;
         h=Date:From:To:Cc:Subject:From;
-        b=R070fEDKq6+SZSfGZOYBBCpusQRtNWixAzbo2y28KBpWptUeofgNYAd/6Fi0WXnBj
-         pgetVFz6hDlPBi7gzBDz7NiRBjZY1Wvx0k8MaVnkgjI3A76mOcKJTqz5WYMNeOm+WN
-         qcXbUYyiTMFlcXBpWwZRs/mPSP82p3u11kdDVBCVOD869FlmOObfYmOuL4lKRMUwPY
-         e0U+whQrqXeKnQjJAY8LBMISdZ8GqzqafctY32WOs9NtYTUPlwljz0KcaIzfwrMQTh
-         f4b9rEh5NBHDxQ621dSb+GW0UhyIJSSeNCgFKL/VVZmGzDdhf9g8DQJEWW/EFMxiqk
-         7jGdwNmWPXGBQ==
-Date:   Tue, 23 Jul 2019 01:21:52 +1000
+        b=uCq5/5ckzLldaxfM3EQOng/bIaMOpcshjYbk2GoVLWLYscsTU3QjsvwxJTbdVUS+Z
+         sI9iQzl5x8t465P8Ny1jO+mH8Qg6wIE92GhoFkd2M2+G4KUDKzrYK1NkGnx7AcESHv
+         vYQXingTSwAkKcsn8GVES1Bpwl58SR2LAL/cQD4nVaL4QXra1LG9e8U/Vb1elk5s7c
+         TatZJuuW3BPvAM/83HFLZbKWXRS0PYhwKeUMmSSKyZhBxctGOCW9YCQmUZbd+wnXv8
+         vWHlaWYp7s79QZOCGKkV++zwTUSE8lGwnL9xuFNsYoxnxCP7T8eb1QwWT7e3y9RXK9
+         51dV53GgtpJDQ==
+Date:   Tue, 23 Jul 2019 07:35:18 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
-Subject: linux-next: Fixes tag needs some work in the mmc-fixes tree
-Message-ID: <20190723012152.047dfd59@canb.auug.org.au>
+        Maciej =?UTF-8?B?xbtlbmN6?= =?UTF-8?B?eWtvd3NraQ==?= 
+        <maze@google.com>
+Subject: linux-next: Fixes tag needs some work in the net-next tree
+Message-ID: <20190723073518.59fa66e0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.0OxGC./vcPDMJYX9L7.6QX";
+Content-Type: multipart/signed; boundary="Sig_/lFBGb0vxewojfyG=A0Rc5=N";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/.0OxGC./vcPDMJYX9L7.6QX
+--Sig_/lFBGb0vxewojfyG=A0Rc5=N
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -60,37 +62,39 @@ Hi all,
 
 In commit
 
-  665e985c2f41 ("mmc: meson-mx-sdio: Fix misuse of GENMASK macro")
+  66b5f1c43984 ("net-ipv6-ndisc: add support for RFC7710 RA Captive Portal =
+Identifier")
 
 Fixes tag
 
-  Fixes: ed80a13bb4c4 ("mmc: meson-mx-sdio: Add a driver for the Amlogic
+  Fixes: e35f30c131a56
 
 has these problem(s):
 
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
+  - missing subject
 
-Please do not split Fixes tags over more than one line.
+Did you mean
+
+Fixes: e35f30c131a5 ("Treat ND option 31 as userland (DNSSL support)")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/.0OxGC./vcPDMJYX9L7.6QX
+--Sig_/lFBGb0vxewojfyG=A0Rc5=N
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl011JAACgkQAVBC80lX
-0GwZhgf+OfVMHAS+i0XbufgaawA7goaFCehn8gFb9BE0w7HHYPJ5U8lZkIkhQPcV
-eQybuPkCh8LzVFKyNQ/eFatCqA1bcKDOzVf89YFrRUxthnlk8s577d33LheWhPaN
-Nv9x+OjRd1i9+mo7N8CJeIARObUgQdVOUJouwgETIo8C6XkU4SFnOrh5iqbZ0tyj
-N9d9rpZ3tyGbdXKfO3kiy5HJaNYm8BON19Am4qdqMZkvWdRC0pcEv/gre3F4uOLG
-q2cYhC17SLbK4vsXhM1CW70VoSZppmAyTeV0eaq8bN++XLPORuPGgbsZhHFfAv7W
-WpXC/r6O8S2AbVrCiFXwgIHrP6hpXA==
-=BsT2
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl02LBYACgkQAVBC80lX
+0Gw8Nwf/VOjsejY1Z6g6NK+bOt7as3NHUho/x9gL6y3Bxg99UraEbJjWKBvvvf7y
+wvE8Vr56Q+yw1qdixQDP+yg5LOjXpO+7lo5z921mPTd4n8kOieK61GFk1WecayiW
+wI8IyWlSUnq5DKMBCxxGnObQSKLas0Fn+oMXd+/x+39iUleGoNnvzrAQZ+SWNbL7
+bIg4mRvV9i6WLsn4J4YScvhMh+hJzru25OXktl9UJXWVH3fzqtMetCwV8X7rkgEq
+8lqKzWXP6h0I1bFab9kA2B1WSplAG6WN35UyTgDJKN0IWP8taETODT4yQOo5Ef45
+IBzFiJWaXoSgnZRcF0RCGbr+wjPwOQ==
+=BZZl
 -----END PGP SIGNATURE-----
 
---Sig_/.0OxGC./vcPDMJYX9L7.6QX--
+--Sig_/lFBGb0vxewojfyG=A0Rc5=N--
