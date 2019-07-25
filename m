@@ -2,92 +2,180 @@ Return-Path: <SRS0=hAv5=VW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A46C7618B
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 09:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D614C7618B
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 11:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0278222ADA
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 09:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8DA922BE8
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 11:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TGj+UyFX"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="ftp4sAFq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387547AbfGYJhT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 25 Jul 2019 05:37:19 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43655 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfGYJhT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:37:19 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vRvH2DVYz9s8m;
-        Thu, 25 Jul 2019 19:37:14 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564047435;
-        bh=7RiHInY7DFEoGXyuXyrZaDPTm271sEh+0+BO/eN/XyY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TGj+UyFXQ3lkHKGajD69PjX7WCQCPKkIk/yGkk7uZud5Hrr76VGjffAGiQ0h0NPl0
-         8MdBtGc/fVBaYwCO1E6bmliRXkAf0xEDOYLGYos6+x9oDpE69tupZJ6pFYKegaJinc
-         Tg5cjhweylGo40M8YfguNvxcOuzvepF7Stx7mAHpzjAwxuAOO18IBRu4J7jPE6aj0j
-         xY4RVPhWVdKpX4aUEbAYphRSAapeeeAtw5yDqEtVQRhhE7DiYw8FiJKkwGVVsrj0wu
-         KHgHI6+0HTXFa7DqrY+UubwTY3CAQqtvGJHeKyDwwMHXiqPXpLQHhuwG7l4cUmOaVB
-         D38GnGGETjH3A==
-Date:   Thu, 25 Jul 2019 19:37:05 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: linux-next: build failure after merge of the net-next tree
-Message-ID: <20190725193647.388c149b@canb.auug.org.au>
+        id S2391486AbfGYLCg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 Jul 2019 07:02:36 -0400
+Received: from mail-wm1-f48.google.com ([209.85.128.48]:34459 "EHLO
+        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391478AbfGYLCg (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2019 07:02:36 -0400
+Received: by mail-wm1-f48.google.com with SMTP id w9so35498773wmd.1
+        for <linux-next@vger.kernel.org>; Thu, 25 Jul 2019 04:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=Ez5zlHYzWAJzoofJvnpMB8w8d4qTjIV00l5lIBzHnsg=;
+        b=ftp4sAFqOiDYxl83IQ5RwKz2kdm2SBjrVvUXKhRK2igw1n8VO62PjSEstG7WI5lEI5
+         C6ascKtQsau4OrHcSPJuNUK1+yCYkh82ct6UH5NpQu9qnVxcZq048U1sq8l8Y2mcJVv3
+         7ZM4E7JZgpfoSPtHpku3uL7XRkcHAbByalXVqQDwWAqCUDdAjmfU1PBtWd61/mz51iRv
+         d5MrDxibYiarl72tWl9x69qklEar4sCHjSQ+62K2VOaqk0U5RjckJUSTi1nO+FQiTdNc
+         Hx+NivOksQk12tNUcE/G7+IvTfVkyuBuO0kEYt/9WBHH6bOvwUpmWFl4xB3SB9DqzUBy
+         b1Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=Ez5zlHYzWAJzoofJvnpMB8w8d4qTjIV00l5lIBzHnsg=;
+        b=DqxJr3Ef2v28aFGnQWgvnyZSkcA9ot69srCKOlqLAx7Mw9fanPYypJP1tMQHfPmN/9
+         CDauOlFbhQGavEFCdZjtV+cOApRACPmggJ+kq1HJRVPrTPQRAv/0Zax8dJW6eGuks+Ba
+         PKLtLA9PTySiQyd0R4EWcMpaLSfvglUnC/w94kOLEhdG4Q9xDuLACWWvk8ZqbpgfHkMB
+         xUZqBMbT7oVvX1myCtN6HdQuq6qpEiLa9y03rHBiLrdctfAbOa62qwrdcU9A/RLm+CdC
+         MAZZilUT4j5PjyNGtvmFLhGGeYQlBClMQvY8nmT4Kr1DqBFo4sEqxO2EZYN7QqpmbXU9
+         ffgw==
+X-Gm-Message-State: APjAAAUBuX6I6G3WcJhbuDH3EtHYz1Bt+mOUuyrUkJYfig+vnk4Gt7uA
+        IBD+62FCop2YbSO6InGraJby1tG79Yo=
+X-Google-Smtp-Source: APXvYqw4dbO+JuPvlLPvbAWTwEvp8zksgJUMqOYXFDr0h1ww8H8sBU9QGfeLkIY7ALWyokMpHIVJqg==
+X-Received: by 2002:a7b:c7cb:: with SMTP id z11mr72330988wmk.24.1564052553419;
+        Thu, 25 Jul 2019 04:02:33 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id o3sm40303411wrs.59.2019.07.25.04.02.32
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 04:02:32 -0700 (PDT)
+Message-ID: <5d398c48.1c69fb81.2be33.cc46@mx.google.com>
+Date:   Thu, 25 Jul 2019 04:02:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/N52ruag=7bLPa+bY2JH2LKG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v5.3-rc1-380-g074d4925d74b
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: next
+X-Kernelci-Branch: pending-fixes
+Subject: next/pending-fixes boot: 231 boots: 10 failed,
+ 218 passed with 3 offline (v5.3-rc1-380-g074d4925d74b)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/N52ruag=7bLPa+bY2JH2LKG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+next/pending-fixes boot: 231 boots: 10 failed, 218 passed with 3 offline (v=
+5.3-rc1-380-g074d4925d74b)
 
-Hi all,
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.3-rc1-380-g074d4925d74b/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.3-rc1-380-g074d4925d74b/
 
-After merging the net-next tree, today's linux-next build (mips
-cavium_octeon_defconfig) failed like this:
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.3-rc1-380-g074d4925d74b
+Git Commit: 074d4925d74bcd62416daab0a03ed708b2af41ef
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 85 unique boards, 27 SoC families, 22 builds out of 222
 
-drivers/staging/octeon/ethernet-tx.c:287:23: error: implicit declaration of=
- function 'skb_drag_size'; did you mean 'skb_frag_size'? [-Werror=3Dimplici=
-t-function-declaration]
+Boot Regressions Detected:
 
-Caused by commit
+arm:
 
-  92493a2f8a8d ("Build fixes for skb_frag_size conversion")
+    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          armada-xp-openblocks-ax3-4:
+              lab-baylibre-seattle: failing since 29 days (last pass: v5.2-=
+rc6-99-g690c98f37a5e - first fail: v5.2-rc6-130-gddc352bc91de)
 
---=20
-Cheers,
-Stephen Rothwell
+    qcom_defconfig:
+        gcc-8:
+          qcom-apq8064-cm-qs600:
+              lab-baylibre-seattle: failing since 7 days (last pass: v5.2-8=
+586-gf96c1aec6d0e - first fail: v5.2-11081-g48f391c6cc7e)
+          qcom-apq8064-ifc6410:
+              lab-baylibre-seattle: failing since 7 days (last pass: v5.2-8=
+586-gf96c1aec6d0e - first fail: v5.2-11081-g48f391c6cc7e)
 
---Sig_/N52ruag=7bLPa+bY2JH2LKG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+arm64:
 
------BEGIN PGP SIGNATURE-----
+    defconfig:
+        gcc-8:
+          apq8096-db820c:
+              lab-bjorn: new failure (last pass: v5.3-rc1-337-gad76983bea69)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl05eEEACgkQAVBC80lX
-0GxEuQf8D8J95ArpVOssGYWkAXI4kje9KKTdgcPQbOQo95octSRGnr6TE0vd+zcZ
-FpevIgM6HBv/LjsIg6YBV/awwpx8XxbwbSTwWcQ+a7uhSUH3fyaS6+iON9OK+kHG
-SP+TpRO1IRe/DQyXE5qO8ct23WUARyVfhuu3vD6HXiZdY7Bdm789hMrUnW3PUcVI
-WTVK1wsED1yNnucH7Vuym8fyFecuvdx1KyBtRwWo6N1Oit4NpJ+vukfWif+WV8iS
-5A6rRAU4jDQaMdN3WZPtP5GlPMBokMzdRvDQ1Aiovpf/+B6pXZaGcDRJ6qfEbNQe
-qUXVUw26dhhjhuqvplbDYZqhqqqKsQ==
-=vyep
------END PGP SIGNATURE-----
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-gxm-khadas-vim2:
+              lab-baylibre: new failure (last pass: v5.3-rc1-337-gad76983be=
+a69)
 
---Sig_/N52ruag=7bLPa+bY2JH2LKG--
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+          meson-gxm-khadas-vim2:
+              lab-baylibre: new failure (last pass: v5.3-rc1-337-gad76983be=
+a69)
+
+Boot Failures Detected:
+
+arm:
+    qcom_defconfig:
+        gcc-8:
+            qcom-apq8064-cm-qs600: 1 failed lab
+            qcom-apq8064-ifc6410: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
+        gcc-8:
+            exynos4412-odroidx2: 1 failed lab
+
+    oxnas_v6_defconfig:
+        gcc-8:
+            ox820-cloudengines-pogoplug-series-3: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            armada-xp-openblocks-ax3-4: 1 failed lab
+
+arm64:
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            meson-gxm-khadas-vim2: 1 failed lab
+
+    defconfig:
+        gcc-8:
+            apq8096-db820c: 1 failed lab
+            meson-gxl-s905x-nexbox-a95x: 1 failed lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            meson-gxl-s905x-nexbox-a95x: 1 failed lab
+            meson-gxm-khadas-vim2: 1 failed lab
+
+Offline Platforms:
+
+arm64:
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
+
+    defconfig:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
