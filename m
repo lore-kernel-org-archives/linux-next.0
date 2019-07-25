@@ -6,119 +6,99 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F28C76186
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 00:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61010C76186
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 02:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6181A2190F
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 00:58:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 285AA21734
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 02:31:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uPq/hUDV"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WVoAOy8a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387769AbfGYA6b (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 24 Jul 2019 20:58:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:44507 "EHLO ozlabs.org"
+        id S2388544AbfGYCba (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 24 Jul 2019 22:31:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:35559 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbfGYA6b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 24 Jul 2019 20:58:31 -0400
+        id S2388525AbfGYCba (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 24 Jul 2019 22:31:30 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vDNd2jmCz9sBt;
-        Thu, 25 Jul 2019 10:58:25 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vGRz1SVtz9s00;
+        Thu, 25 Jul 2019 12:31:27 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564016309;
-        bh=PPuO+Wxvc09i2eFH/arezdXXxJeN18c0zhD/Fc+fE9o=;
+        s=201702; t=1564021887;
+        bh=fGSuBCeypp34E2NiCYSbcZpIny6NTqpcpaPHZ1wGKx4=;
         h=Date:From:To:Cc:Subject:From;
-        b=uPq/hUDVxd2V4wrQ7uj6GvE5l52FsLbXrQJ+k1TKrN/sbZzrc+hgnRT69eWxmVDJQ
-         B+pXy87eaIndxIT7fhjP9PJkntL3Aaz0HrBiBCpgNyqxSiQ4zKo76ImraUM9byojNw
-         NRXEg/FBsWYfivX5xnbTpRMMmzLMYZvAiAGwPuOD3ZlU2GfXDv6RiOgEQDkNrKsEgo
-         AshuYYtmgQX3p3DYRftiYtrCSkE9MRmcvXtAZYG6qbWix7wDKcK9Q7zrjRulQ1xkxl
-         S3XkK+UhIPYyJX3P/VoQIowZ64EG+J1fn0EltsxG+H6qJlypPU5Xx6wU4UDJnulRF0
-         yBdbGJNJ/h+PQ==
-Date:   Thu, 25 Jul 2019 10:58:24 +1000
+        b=WVoAOy8a6FjdDQD8p/SNOW6qghI97FPIFkaFATX5IkfOjEKxy0Sj6pieG4bXOp0wq
+         0lI2mg+DI80LqsFiRQ9YgMhD61vu6nZZJ9fd5CRPovBup20qFrhqf/Aldoy6ljH4Ob
+         72dzkapCzgKezLhYjRwb9YfO82eA3BnMcSnEtK2ydwo+2QA5aIiJdJu20uDipaYoLN
+         s7dapRv6+dYOJ7AHw1Lc3pKcJ1FmetDhYFfg/64cdCiVEUO6UPjjRYHJyhN3OyJL6P
+         x+5Qsr+eG9Uj46Kuufm+EsHKKh/puyPrpPtQ2FJ2HupOjds5EkKrul3u4+ylo+TOEK
+         Iwz1JIGZQE0uQ==
+Date:   Thu, 25 Jul 2019 12:31:26 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Sean Nyekjaer <sean@geanix.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190725105824.4e628c43@canb.auug.org.au>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: linux-next: build failure after merge of the leds tree
+Message-ID: <20190725123126.725c77c8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/k5AIR+Ny/7Yd5oGlEAw1gLx";
+Content-Type: multipart/signed; boundary="Sig_/8_VVWf/7.doNQSjImMQe.Bq";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/k5AIR+Ny/7Yd5oGlEAw1gLx
+--Sig_/8_VVWf/7.doNQSjImMQe.Bq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the leds tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/net/can/flexcan.c
+drivers/leds/leds-max77650.c: In function 'max77650_led_probe':
+drivers/leds/leds-max77650.c:121:8: error: implicit declaration of function=
+ 'devm_of_led_classdev_register'; did you mean 'devm_led_classdev_register'=
+? [-Werror=3Dimplicit-function-declaration]
+   rv =3D devm_of_led_classdev_register(dev, child, &led->cdev);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        devm_led_classdev_register
 
-between commit:
+Caused by commit
 
-  e9f2a856e102 ("can: flexcan: fix an use-after-free in flexcan_setup_stop_=
-mode()")
+  4eba5b82096e ("leds: class: Improve LED and LED flash class registration =
+API")
 
-from the net tree and commit:
+interacting with commit
 
-  915f9666421c ("can: flexcan: add support for DT property 'wakeup-source'")
+  5be102eb161a ("leds: max77650: Add LEDs support")
 
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the leds tree from next-20190724 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/can/flexcan.c
-index fcec8bcb53d6,09d8e623dcf6..000000000000
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@@ -1473,9 -1473,10 +1491,12 @@@ static int flexcan_setup_stop_mode(stru
- =20
-  	device_set_wakeup_capable(&pdev->dev, true);
- =20
-+ 	if (of_property_read_bool(np, "wakeup-source"))
-+ 		device_set_wakeup_enable(&pdev->dev, true);
-+=20
- -	return 0;
- +out_put_node:
- +	of_node_put(gpr_np);
- +	return ret;
-  }
- =20
-  static const struct of_device_id flexcan_of_match[] =3D {
-
---Sig_/k5AIR+Ny/7Yd5oGlEAw1gLx
+--Sig_/8_VVWf/7.doNQSjImMQe.Bq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl04/rAACgkQAVBC80lX
-0GyiVAf+MH+vKU+Xk/7uRhw3NEVTbPL8rqUhF4NnbV/gg8TYjFUEgPCYmpi0XEMQ
-C5Irjn7+z2skP7HjrUqEx2XFesmYaD7zYibKTKBv2p22RFs5h00rs3OJIBYU6BKf
-6C0Y/+tczdwzGupkK5FZJOtXLlMItApFMthS2J/Ukua12TNo1p/TrzKZlaX4hEmm
-XYtMsXd/Qm4/5dDgCt1nc8LBpGVEGyoUos0YGxxke4uDLNbkv+X5ak6AQQu1U4Xq
-a4y9+lzaamtpNBIwNCzFUGLSlRSZPhlPFF73RBN7uVhD1TFxA3S4WZeLMWLb/dNr
-Oza9Twf+VCb1Q8beyRTVTQ7Vd/KYqA==
-=wiVc
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl05FH4ACgkQAVBC80lX
+0Gwxqgf/TAfUqalagcT4Xd9/W3PV4mTStwIBcWoeqn0gaCm/7GH8DzNKVIF79MKe
+4tlS2vrmhBBnGfNSoXRzhGGJ8SOKXGhbFm3wutv8ZYVxSsmfmavMk0Sz2m9tgXTN
+ZZ4c4vhy/mGkgbnQ/a42/Bjc7wHVpWCXI5FTwZpq+j9dUNJ8Ma+Xf8Oa8a1pNbev
+Mxh3c1rAExzN//K9JbA/s5jqhxRLA5PGmS5OtUL2Rt9vkBJEBvrQK6ggH55sS2vj
+eRMGg8xOmltZET8CStz15Sogv5m+85WBiYMbENNQMJ2VQq89SwFjN0/f6bMrarI+
+pXmrTTkoUIkYUysvcREThY+yH7dF6Q==
+=Gb3x
 -----END PGP SIGNATURE-----
 
---Sig_/k5AIR+Ny/7Yd5oGlEAw1gLx--
+--Sig_/8_VVWf/7.doNQSjImMQe.Bq--
