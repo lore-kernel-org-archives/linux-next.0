@@ -2,73 +2,104 @@ Return-Path: <SRS0=hAv5=VW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79452C76190
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 23:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9546C76190
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 23:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE7721852
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 23:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFD5229F9
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 23:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564098002;
+	bh=iy1BW35mJIm+u1ndRp7gqExlXuNpjLDRAzH09BcEAsY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=IJDuhC04fgRRZze8/PgBj6Zu6MAJMOT0jnv+vTs/jxy7bedxW/X1a610mNqnaDwKQ
+	 MdR7viGXcwizBi6fJbN76sXROMBMtiQe4L57JLw0VQzJXR7pMuLviBcNXpLWmwZz0W
+	 8rgDo2OwEgGkPrUMe3oe0sfp/Yg59c8S7oxfZMsc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbfGYXbP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 25 Jul 2019 19:31:15 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57292 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfGYXbP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2019 19:31:15 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqnCa-00044o-51; Thu, 25 Jul 2019 23:31:12 +0000
-Date:   Fri, 26 Jul 2019 00:31:12 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: linux-next: run time BUG after merge of the vfs-fixes tree?
-Message-ID: <20190725233112.GI1131@ZenIV.linux.org.uk>
-References: <20190725144712.39cb1e5b@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725144712.39cb1e5b@canb.auug.org.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1726927AbfGYXkC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 Jul 2019 19:40:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfGYXkC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 25 Jul 2019 19:40:02 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A2BA21951;
+        Thu, 25 Jul 2019 23:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564098000;
+        bh=iy1BW35mJIm+u1ndRp7gqExlXuNpjLDRAzH09BcEAsY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=vLjb1KeectGNjzRx+6eWqeYw0tAHPetlrJyW2cFRrGjB2oFd3tgLcRcumIgiMgdTZ
+         TMAykIuGqE3toftxZvn8UfWrN2Z1iib1K/EY1Kshp3irJMUwfFbRe3ciH4nWGJQxGr
+         D55fhfKMXurpk7OHLvUawEz9kGaz+yJdOp67nph8=
+Date:   Thu, 25 Jul 2019 16:39:59 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Chris Down <chris@chrisdown.name>
+Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
+Message-Id: <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
+In-Reply-To: <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
+References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
+        <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 02:47:12PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, 25 Jul 2019 15:02:59 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> On 7/24/19 9:40 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2019-07-24-21-39 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> > You will need quilt to apply these patches to the latest Linus release (5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> > 
 > 
-> During my qemu boot tests (powerpc64 pseries_le_defconfig) today, I got
-> the following BUG:
+> on i386:
+> 
+> ld: mm/memcontrol.o: in function `mem_cgroup_handle_over_high':
+> memcontrol.c:(.text+0x6235): undefined reference to `__udivdi3'
 
-... caused by mismerge.  #fixes does
-@@ -1471,10 +1470,11 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
-                                list_add_tail(&p->mnt_child, &p->mnt_parent->mnt_mounts);
-                        } else {
-                                umount_mnt(p);
--                               hlist_add_head(&p->mnt_umount, &unmounted);
-                        }
-                }
-                change_mnt_propagation(p, MS_PRIVATE);
-+               if (disconnect)
-+                       hlist_add_head(&p->mnt_umount, &unmounted);
-        }
- }
-and your merge has dropped the removal part - it has
-                                list_add_tail(&p->mnt_child, &p->mnt_parent->mnt_mounts);
-                        } else {
-                                umount_mnt(p);
-                                hlist_add_head(&p->mnt_umount, &unmounted);
-                        }
-                }
-                change_mnt_propagation(p, MS_PRIVATE);
-                if (disconnect)
-                        hlist_add_head(&p->mnt_umount, &unmounted);
-        }
-}
+Thanks.  This?
 
-Should've #work.dcache from there once (equal) #work.dcache2 got pulled ;-/
+--- a/mm/memcontrol.c~mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix
++++ a/mm/memcontrol.c
+@@ -2414,8 +2414,9 @@ void mem_cgroup_handle_over_high(void)
+ 	 */
+ 	clamped_high = max(high, 1UL);
+ 
+-	overage = ((u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT)
+-		/ clamped_high;
++	overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
++	do_div(overage, clamped_high);
++
+ 	penalty_jiffies = ((u64)overage * overage * HZ)
+ 		>> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHIFT);
+ 
+_
+
