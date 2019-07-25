@@ -2,73 +2,92 @@ Return-Path: <SRS0=hAv5=VW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8661C7618B
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 08:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A46C7618B
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 09:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57E421871
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 08:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0278222ADA
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 09:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TGj+UyFX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389680AbfGYId3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 25 Jul 2019 04:33:29 -0400
-Received: from mail.us.es ([193.147.175.20]:57832 "EHLO mail.us.es"
+        id S2387547AbfGYJhT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 Jul 2019 05:37:19 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43655 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389231AbfGYId3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 25 Jul 2019 04:33:29 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 1FD41C04F1
-        for <linux-next@vger.kernel.org>; Thu, 25 Jul 2019 10:33:27 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 0FB35115111
-        for <linux-next@vger.kernel.org>; Thu, 25 Jul 2019 10:33:27 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 0499F115108; Thu, 25 Jul 2019 10:33:27 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 1154211510C;
-        Thu, 25 Jul 2019 10:33:25 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Thu, 25 Jul 2019 10:33:25 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (unknown [31.4.183.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725808AbfGYJhT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 25 Jul 2019 05:37:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id AF0F440705C3;
-        Thu, 25 Jul 2019 10:33:24 +0200 (CEST)
-Date:   Thu, 25 Jul 2019 10:33:22 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vRvH2DVYz9s8m;
+        Thu, 25 Jul 2019 19:37:14 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564047435;
+        bh=7RiHInY7DFEoGXyuXyrZaDPTm271sEh+0+BO/eN/XyY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TGj+UyFXQ3lkHKGajD69PjX7WCQCPKkIk/yGkk7uZud5Hrr76VGjffAGiQ0h0NPl0
+         8MdBtGc/fVBaYwCO1E6bmliRXkAf0xEDOYLGYos6+x9oDpE69tupZJ6pFYKegaJinc
+         Tg5cjhweylGo40M8YfguNvxcOuzvepF7Stx7mAHpzjAwxuAOO18IBRu4J7jPE6aj0j
+         xY4RVPhWVdKpX4aUEbAYphRSAapeeeAtw5yDqEtVQRhhE7DiYw8FiJKkwGVVsrj0wu
+         KHgHI6+0HTXFa7DqrY+UubwTY3CAQqtvGJHeKyDwwMHXiqPXpLQHhuwG7l4cUmOaVB
+         D38GnGGETjH3A==
+Date:   Thu, 25 Jul 2019 19:37:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Phil Sutter <phil@nwl.cc>
-Subject: Re: linux-next: Signed-off-by missing for commit in the netfilter
- tree
-Message-ID: <20190725083322.mlsf6kk3awabxefl@salvia>
-References: <20190725071803.6beb44f9@canb.auug.org.au>
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20190725193647.388c149b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725071803.6beb44f9@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: multipart/signed; boundary="Sig_/N52ruag=7bLPa+bY2JH2LKG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 07:18:03AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   5f5ff5ca2e18 ("netfilter: nf_tables: Make nft_meta expression more robust")
-> 
-> is missing a Signed-off-by from its author.
+--Sig_/N52ruag=7bLPa+bY2JH2LKG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixed, thanks.
+Hi all,
+
+After merging the net-next tree, today's linux-next build (mips
+cavium_octeon_defconfig) failed like this:
+
+drivers/staging/octeon/ethernet-tx.c:287:23: error: implicit declaration of=
+ function 'skb_drag_size'; did you mean 'skb_frag_size'? [-Werror=3Dimplici=
+t-function-declaration]
+
+Caused by commit
+
+  92493a2f8a8d ("Build fixes for skb_frag_size conversion")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/N52ruag=7bLPa+bY2JH2LKG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl05eEEACgkQAVBC80lX
+0GxEuQf8D8J95ArpVOssGYWkAXI4kje9KKTdgcPQbOQo95octSRGnr6TE0vd+zcZ
+FpevIgM6HBv/LjsIg6YBV/awwpx8XxbwbSTwWcQ+a7uhSUH3fyaS6+iON9OK+kHG
+SP+TpRO1IRe/DQyXE5qO8ct23WUARyVfhuu3vD6HXiZdY7Bdm789hMrUnW3PUcVI
+WTVK1wsED1yNnucH7Vuym8fyFecuvdx1KyBtRwWo6N1Oit4NpJ+vukfWif+WV8iS
+5A6rRAU4jDQaMdN3WZPtP5GlPMBokMzdRvDQ1Aiovpf/+B6pXZaGcDRJ6qfEbNQe
+qUXVUw26dhhjhuqvplbDYZqhqqqKsQ==
+=vyep
+-----END PGP SIGNATURE-----
+
+--Sig_/N52ruag=7bLPa+bY2JH2LKG--
