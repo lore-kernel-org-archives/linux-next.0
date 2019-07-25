@@ -2,85 +2,73 @@ Return-Path: <SRS0=hAv5=VW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B48C76191
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 22:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79452C76190
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 23:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9ED22CB9
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 22:03:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ABdMJ/Mz"
+	by mail.kernel.org (Postfix) with ESMTP id 4AE7721852
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 23:31:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfGYWDG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 25 Jul 2019 18:03:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35710 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbfGYWDG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2019 18:03:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z6RYngi3cJJjtiTM0pcFs8c1UrVLGOUye1Guqo9Ye98=; b=ABdMJ/MzOxf5WQbmFkAZaxpyi
-        odM/o9V2QsyOs2V6Qibnt/LaE7TxI0D+PhKQ/pTCnE33ld5nWtnGgFNaL5wXY/eb6cMCj1cjsvHQ5
-        6PYC27o5vuSD7ZLaj02Bt0h66ZeR5ld1OYHiDGCPQmJw7pn6WZPXhDuOxBmk18J11QFBkstHWtT+3
-        gB5ZYi5O4tXzUhYb7A2HDVRwaEi6TflhJOGZXOR5/ZIqQLYthI2eoV+aeHn1qOLpV4YX5SRkiGfLU
-        cAhHedU6YJgU9qno/BQtQnjP+jf3RDgYsV8DTLA27h4ZKC1LRQuHi0TA0aR5MMBNd9DskpS+wHMru
-        Mw5qWtpaA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqlpF-0002UC-Ry; Thu, 25 Jul 2019 22:03:02 +0000
-Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Chris Down <chris@chrisdown.name>
-References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
-Date:   Thu, 25 Jul 2019 15:02:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726835AbfGYXbP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 Jul 2019 19:31:15 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:57292 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfGYXbP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2019 19:31:15 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqnCa-00044o-51; Thu, 25 Jul 2019 23:31:12 +0000
+Date:   Fri, 26 Jul 2019 00:31:12 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: Re: linux-next: run time BUG after merge of the vfs-fixes tree?
+Message-ID: <20190725233112.GI1131@ZenIV.linux.org.uk>
+References: <20190725144712.39cb1e5b@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725144712.39cb1e5b@canb.auug.org.au>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/24/19 9:40 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-07-24-21-39 has been uploaded to
+On Thu, Jul 25, 2019 at 02:47:12PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
+> During my qemu boot tests (powerpc64 pseries_le_defconfig) today, I got
+> the following BUG:
 
-on i386:
+... caused by mismerge.  #fixes does
+@@ -1471,10 +1470,11 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+                                list_add_tail(&p->mnt_child, &p->mnt_parent->mnt_mounts);
+                        } else {
+                                umount_mnt(p);
+-                               hlist_add_head(&p->mnt_umount, &unmounted);
+                        }
+                }
+                change_mnt_propagation(p, MS_PRIVATE);
++               if (disconnect)
++                       hlist_add_head(&p->mnt_umount, &unmounted);
+        }
+ }
+and your merge has dropped the removal part - it has
+                                list_add_tail(&p->mnt_child, &p->mnt_parent->mnt_mounts);
+                        } else {
+                                umount_mnt(p);
+                                hlist_add_head(&p->mnt_umount, &unmounted);
+                        }
+                }
+                change_mnt_propagation(p, MS_PRIVATE);
+                if (disconnect)
+                        hlist_add_head(&p->mnt_umount, &unmounted);
+        }
+}
 
-ld: mm/memcontrol.o: in function `mem_cgroup_handle_over_high':
-memcontrol.c:(.text+0x6235): undefined reference to `__udivdi3'
-
-
--- 
-~Randy
+Should've #work.dcache from there once (equal) #work.dcache2 got pulled ;-/
