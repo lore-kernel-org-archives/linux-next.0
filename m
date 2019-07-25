@@ -2,187 +2,176 @@ Return-Path: <SRS0=hAv5=VW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B44FC7618B
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 11:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3F8C7618B
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 11:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202B02238C
-	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 11:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67CF222BED
+	for <linux-next@archiver.kernel.org>; Thu, 25 Jul 2019 11:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KFCu1BSI"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="sPgUZdKY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403930AbfGYLSA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 25 Jul 2019 07:18:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:33145 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403940AbfGYLR7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:17:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vV7S3ZQmz9sDQ;
-        Thu, 25 Jul 2019 21:17:56 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564053476;
-        bh=/i3NQQ0toEw4SRGaWHbWAYnk6aaHQk6Yx7cIdSQKRI0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KFCu1BSI3GEx5MYD6aO4rJeS+0YyJP1DvAN0f3QeKfZfgLzGFmRDUW+TD9ag7ZOHi
-         gJbssHhy6Po5Wgmt5rE8l+ZOQ2kBQH64nso9JVJmxMQwQQv2KyjDi57oT+AhpZYREN
-         Pt7C+5lQFpxS0VdZm+9e0+5WVG8QR/bJtT81OC0zUwj8VfjSzB319RVNDLQAhvumO1
-         SvCSQMUvU8yRJxsoraSqYX1cV9luPzDMHWpPCwBhI2eMAEGYsx1NBmrrXaWKXVx81P
-         gGLufb5/tGknnoWwt7nEDY4sDAV57takrXBKEcDdSA4rM7q9iVGeDNnD1HcmWzGaCK
-         U5FgRI0+Z5QcA==
-Date:   Thu, 25 Jul 2019 21:17:54 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: stats (Was: Linux 5.3-rc1)
-Message-ID: <20190725211754.5aa1640a@canb.auug.org.au>
-In-Reply-To: <CAHk-=wiVjkTqzP6OppBuLQZ+t1mpRQC4T+Ho4Wg2sBAapKd--Q@mail.gmail.com>
-References: <CAHk-=wiVjkTqzP6OppBuLQZ+t1mpRQC4T+Ho4Wg2sBAapKd--Q@mail.gmail.com>
+        id S1728279AbfGYL4c (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 Jul 2019 07:56:32 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:46000 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfGYL4b (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2019 07:56:31 -0400
+Received: by mail-wr1-f42.google.com with SMTP id f9so50421402wre.12
+        for <linux-next@vger.kernel.org>; Thu, 25 Jul 2019 04:56:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=289poNtSFPAGQGANr5nW3kAoU64zXbcel4XbU5scq7c=;
+        b=sPgUZdKYJE5ewsbh9DxFOdx+9bBgMhrDtnQp/hpNnrvO4pMbzoW9hB3ombwI1Hfh8P
+         r0HmotKmQv4H/N2k3AoK2hldiTroPDEtGwsldw8vlUOAfyMlUQdkaWIBVA4GqEfhK17D
+         lnv7ME0yQbqoNfs4pflwt0pBejuNBkQ0O1dhdAOn7cXH1YiM55Aqhyfx/KXC6C1ovIn3
+         9OcUvEsMWZ8fqunvlDhCTmCmsSNxH7+vWNEU4TPa7p0tEoyFqWMXhL65dFGN3Vnvy5X8
+         RZ6BFl4v8laJ/6+qxZt+7GG7dWTSshmYoBanwWMvLgHVySTeYNJjrNXeOqz7m2mhiLMM
+         azYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=289poNtSFPAGQGANr5nW3kAoU64zXbcel4XbU5scq7c=;
+        b=p0j1ldFQsbb45pNIwlb+E4wr70elmqQSfi9+z96PifUxflFkqOUKZgGLlHR9I4aBKc
+         rRonUsMTKboGeldHtlRDZufmR8dweRWeXRIYFnyKof09CrHtW8ipvn5z7/dl7SN3WUnI
+         5RPPVaCjnyf1+FP3lPwvWmhwHs00GhD212ajAbtgm6rk2S3m+C32v5V1tl9djvrEHrj/
+         j9g3Yis4rHO2oonvP/R+3CjI4HazhdqUcxJRMMGd+UOfwZv3yVbGqKYl5zavR9Yfuq7Y
+         tOdhkcN0TcnG/v7iNaYzlEKRB6x5hwSaKslHlBzQlzoAddxfqSXvWzCu5/Kcr83LyBdM
+         S3jg==
+X-Gm-Message-State: APjAAAWJhHdI9/ynU+3VMZcrYTHqctDWM57jcS6svi6g6nFIFTT1MpD3
+        G0aIRlK9Pg/5DmjGQP6q8zynxahuk8c=
+X-Google-Smtp-Source: APXvYqxK1u2rIMpEvDtNkwcKep2oedkmuF5MuTkdG+xAukVCWrfYmPPM/H5izCQHqlna2CKFPT147g==
+X-Received: by 2002:adf:ed11:: with SMTP id a17mr6677671wro.112.1564055789114;
+        Thu, 25 Jul 2019 04:56:29 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id x11sm34874678wmi.26.2019.07.25.04.56.28
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 04:56:28 -0700 (PDT)
+Message-ID: <5d3998ec.1c69fb81.714e6.ce07@mx.google.com>
+Date:   Thu, 25 Jul 2019 04:56:28 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5RiFGHPF5CPL.CP=sbkKfbn";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: next-20190725
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: next
+X-Kernelci-Branch: master
+Subject: next/master boot: 295 boots: 15 failed, 273 passed with 4 offline,
+ 3 untried/unknown (next-20190725)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/5RiFGHPF5CPL.CP=sbkKfbn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+next/master boot: 295 boots: 15 failed, 273 passed with 4 offline, 3 untrie=
+d/unknown (next-20190725)
 
-Hi all,
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20190725/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190725/
 
-As usual, the executive friendly graph is at
-http://neuling.org/linux-next-size.html :-)
+Tree: next
+Branch: master
+Git Describe: next-20190725
+Git Commit: 13bf6d6a51df4fbf57b0626a7e469b9232ed2d38
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 90 unique boards, 28 SoC families, 22 builds out of 229
 
-(No merge commits counted, next-20190709 was the first linux-next after
-the merge window opened.)
+Boot Regressions Detected:
 
-Commits in v5.3-rc1 (relative to v5.2):            12608
-Commits in next-20190709:                          12256
-Commits with the same SHA1:                        11291
-Commits with the same patch_id:                      303 (1)
-Commits with the same subject line:                   63 (1)
+arm:
 
-(1) not counting those in the lines above.
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+          sun8i-h2-plus-orangepi-r1:
+              lab-baylibre: new failure (last pass: next-20190724)
 
-So commits in -rc1 that were in next-20190709:     11657 92%
+    sunxi_defconfig:
+        gcc-8:
+          sun8i-h2-plus-orangepi-r1:
+              lab-baylibre: new failure (last pass: next-20190724)
 
-Some breakdown of the list of extra commits (relative to next-20190709)
-in -rc1:
+arm64:
 
-Top ten first word of commit summary:
+    defconfig:
+        clang-8:
+          meson-gxbb-nanopi-k2:
+              lab-baylibre: new failure (last pass: next-20190724)
 
-     85 net
-     78 docs
-     64 perf
-     61 drm
-     39 kvm
-     37 x86
-     26 scsi
-     24 kbuild
-     23 selftests
-     21 s390
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+          meson-gxbb-p200:
+              lab-baylibre: new failure (last pass: next-20190712)
 
-Top ten authors:
+Boot Failures Detected:
 
-     78 mchehab+samsung@kernel.org
-     33 yamada.masahiro@socionext.com
-     23 adrian.hunter@intel.com
-     21 jpoimboe@redhat.com
-     18 arnd@arndb.de
-     18 acme@redhat.com
-     15 iii@linux.ibm.com
-     14 rui.zhang@intel.com
-     14 pbonzini@redhat.com
-     14 hoeppner@linux.ibm.com
+arm:
+    qcom_defconfig:
+        gcc-8:
+            qcom-apq8064-cm-qs600: 1 failed lab
+            qcom-apq8064-ifc6410: 1 failed lab
 
-Top ten commiters:
+    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
+        gcc-8:
+            exynos4412-odroidx2: 1 failed lab
 
-    157 davem@davemloft.net
-     77 mchehab+samsung@kernel.org
-     63 acme@redhat.com
-     54 tglx@linutronix.de
-     46 alexander.deucher@amd.com
-     44 pbonzini@redhat.com
-     34 yamada.masahiro@socionext.com
-     29 rafael.j.wysocki@intel.com
-     28 torvalds@linux-foundation.org
-     26 daniel@iogearbox.net
+    oxnas_v6_defconfig:
+        gcc-8:
+            ox820-cloudengines-pogoplug-series-3: 1 failed lab
 
-There are also 599 commits in next-20190709 that didn't make it into
-v5.3-rc1.
+    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            armada-xp-openblocks-ax3-4: 1 failed lab
 
-Top ten first word of commit summary:
+arm64:
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        clang-8:
+            meson-gxbb-nanopi-k2: 1 failed lab
+            meson-gxl-s905x-khadas-vim: 1 failed lab
+            meson-gxl-s905x-libretech-cc: 1 failed lab
+            meson-gxm-khadas-vim2: 1 failed lab
+            r8a7795-salvator-x: 1 failed lab
 
-    286 drm
-     27 mm
-     25 xtensa
-     25 vfs
-     24 arm
-     21 pm
-     11 nfc
-      9 apparmor
-      8 lib
-      8 dt-bindings
+    defconfig:
+        gcc-8:
+            meson-gxl-s905x-nexbox-a95x: 1 failed lab
 
-Top ten authors:
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            meson-gxbb-p200: 1 failed lab
+            meson-gxl-s905x-nexbox-a95x: 1 failed lab
 
-     65 chris@chris-wilson.co.uk
-     42 xiaojie.yuan@amd.com
-     37 tvrtko.ursulin@intel.com
-     29 dhowells@redhat.com
-     23 imre.deak@intel.com
-     21 jcmvbkbc@gmail.com
-     21 james.qian.wang@arm.com
-     21 akpm@linux-foundation.org
-     19 olof@lixom.net
-     16 digetx@gmail.com
+Offline Platforms:
 
-Some of Andrew's patches are fixes for other patches in his tree (and
-have been merged into those).
+arm:
 
-Top ten commiters:
+    multi_v7_defconfig:
+        gcc-8
+            sun7i-a20-bananapi: 1 offline lab
 
-     95 sfr@canb.auug.org.au
-     86 chris@chris-wilson.co.uk
-     53 alexander.deucher@amd.com
-     39 tvrtko.ursulin@intel.com
-     38 liviu.dudau@arm.com
-     35 viro@zeniv.linux.org.uk
-     28 jcmvbkbc@gmail.com
-     23 imre.deak@intel.com
-     21 myungjoo.ham@samsung.com
-     19 olof@lixom.net
+arm64:
 
-Those commits by me are from the quilt series (mainly Andrew's mmotm
-tree).
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
 
---=20
-Cheers,
-Stephen Rothwell
+    defconfig:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
 
---Sig_/5RiFGHPF5CPL.CP=sbkKfbn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl05j+IACgkQAVBC80lX
-0GyCigf/d/jWkpnGcxnUezQuyTLZIiu2Ho9OfrxtTmrmO84IVkDW01RMKSxP9IkF
-JzTuqKif6mv1r3ECp/SA5jzLLKh48FXfcS7qPcYa3mtgjhkEaXY8+Ij0bvCEZOA1
-aSZ4YQbtOsDHmmNrxK7IXdBoYJ0stZ+CA6dcr/cKQxeEWr3v+CRXJnwNixJ+MSqJ
-gScf8VsW0wT2S5V0WbDZDzRFbP9hl4Z2LEMXyw5cg8a+bHCwWHvEo+IHsYc8y3W+
-IOzyhAWA8vSQ+XM1D6ghqy2uazLlSYDO+//6LtozM4XKf/To/IsPhD0v7PtOr3QF
-ggc5DiUt0ODP11TSDSudbrqA8UYqRQ==
-=GqK3
------END PGP SIGNATURE-----
-
---Sig_/5RiFGHPF5CPL.CP=sbkKfbn--
+---
+For more info write to <info@kernelci.org>
