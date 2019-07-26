@@ -2,94 +2,154 @@ Return-Path: <SRS0=o3JF=VX=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED118C7618B
-	for <linux-next@archiver.kernel.org>; Fri, 26 Jul 2019 12:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D453C7618B
+	for <linux-next@archiver.kernel.org>; Fri, 26 Jul 2019 12:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2DCA22BEF
-	for <linux-next@archiver.kernel.org>; Fri, 26 Jul 2019 12:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564143093;
-	bh=s9B5Bn0sq7OrH/Ur+r/evxxA7wBBdyuURHmd/GNzHX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2Eb8lZzfAbEDHf0XEbWu2TpF+BnJAL/1dcUMWMSfZa5M2E6D+dT4Okmxi8NTEIv23
-	 Xxic5uaZCD0F0mDFF8wMG9nCXEcjkzTp0NId2HvkbrbD6QFHIyHJfyIQmCc1fG7fTM
-	 k3GePUahfCaoqLyZkZ8V7KsdTCK+XFRCtrUf1d8w=
+	by mail.kernel.org (Postfix) with ESMTP id 2E31C22BE8
+	for <linux-next@archiver.kernel.org>; Fri, 26 Jul 2019 12:18:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="IiCsfSOL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfGZMLd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 26 Jul 2019 08:11:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34614 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfGZMLd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2019 08:11:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zWH1HzHWTTOCtqXLaOsKtptgTOZvy4cv9Binkani0EE=; b=TgjB94n9T+uXyDkpjPi5iTBNa
-        4ZY9Y271kuxB9ysKglxBsjkJikVOnVF6sMjSf0Bdq1LxaRHuPW5kU/03Jor9jrqpTdvVfTq40nPBp
-        btAbtT+2Sr56dwTGhb6+8MIVTlK/AhxPGiY9J5YH3OFR7QvrEieMPu6k8xcbzmNDsvazA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hqz4J-0001ZR-Qi; Fri, 26 Jul 2019 12:11:27 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 4A2DD2742B63; Fri, 26 Jul 2019 13:11:27 +0100 (BST)
-Date:   Fri, 26 Jul 2019 13:11:27 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the sound-asoc tree
-Message-ID: <20190726121127.GB55803@sirena.org.uk>
-References: <20190726072752.2acb2149@canb.auug.org.au>
- <14710d5e-7dfd-84e0-2ea1-712863c4e455@ti.com>
+        id S1726434AbfGZMSE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 26 Jul 2019 08:18:04 -0400
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:54592 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbfGZMSE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2019 08:18:04 -0400
+Received: by mail-wm1-f44.google.com with SMTP id p74so47806270wme.4
+        for <linux-next@vger.kernel.org>; Fri, 26 Jul 2019 05:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=CaY+abNlZYHpIcsQju9kSAmeT0WlgvpvXbCJ9nmasro=;
+        b=IiCsfSOLR3Ez6n6VWzRNkSZimxfWyDOtoJ+HzRNwSruN/QmLceX3ews26aL8rieYcc
+         m9AejErc6eWiKTjWMt/nNHRQqZ/569tSc3m/5HbLDl69ERBnswKBVm3RHxTJMK55MIET
+         HRvw8T0nYzRlEh4bo4BMl0oS6722JquSKZD3D4V6mC2H/nULeaD5FBmryszJpQwiQfRb
+         nW0fIcv1OBYnIgJhdsc1ANJYxz4RerXOBZ2/IFyJTOY10GEuu8vkv1+cwLgGdNj3nxUc
+         GyNzDc7coFHqC3EBOGUA//fXLkEGEKyk88Yvf/s3x8ipbzPTY8kS9roQV0wP37wCwF8o
+         kbbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=CaY+abNlZYHpIcsQju9kSAmeT0WlgvpvXbCJ9nmasro=;
+        b=hQXdEVpczhIICi17e7sEn+T/LI91QHkb/XQaQzqqCMe1z3qkavQhGqWHS4hefc9j16
+         9ewOXQ4u29OW/6rmTwB1Q71nF8EaoVDp+qro5YWwLExxXFQBO5uJbk53vyrMsYuKIuwx
+         5p30zKrN64b6cjicGCi94Zzj/oR9onXP1TmKzJrBWNVp2TUewYjjW5cYWsnoCa+Z2RNJ
+         t9J/U0ZqSaATsbs942D4k4s0fALnxl/RM8XzJOREIc5X96vg1KzqGGp/jHn0BLG18dfw
+         nQsWI5DdXA9WjXjACNOewhRt6rrlWJKb8KGnTTuw6NhGz76nhwfZxeX4m3cGYQimVy8F
+         5ELA==
+X-Gm-Message-State: APjAAAUu0TIaAt2kYghU6n8f9cW6zxla8UftvcQVIfG+lHSAIjbQS122
+        IrlVgek9qTyt/C+J3twdwfwMD9q3fLU=
+X-Google-Smtp-Source: APXvYqymd5oiF9fkNmcU/Ra9SlHnJM0YLBqNx202y9GAz8RQ/tLx09QheZx44z1mm8nwjBeim2nMQQ==
+X-Received: by 2002:a1c:7a02:: with SMTP id v2mr84766702wmc.159.1564143482002;
+        Fri, 26 Jul 2019 05:18:02 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id w14sm42193929wrk.44.2019.07.26.05.18.00
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 05:18:01 -0700 (PDT)
+Message-ID: <5d3aef79.1c69fb81.b264e.6e29@mx.google.com>
+Date:   Fri, 26 Jul 2019 05:18:01 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
-Content-Disposition: inline
-In-Reply-To: <14710d5e-7dfd-84e0-2ea1-712863c4e455@ti.com>
-X-Cookie: Think sideways!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: next-20190726
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: next
+X-Kernelci-Branch: master
+Subject: next/master boot: 254 boots: 16 failed, 231 passed with 4 offline,
+ 1 untried/unknown, 2 conflicts (next-20190726)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+next/master boot: 254 boots: 16 failed, 231 passed with 4 offline, 1 untrie=
+d/unknown, 2 conflicts (next-20190726)
 
---IrhDeMKUP4DT/M7F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20190726/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190726/
 
-On Fri, Jul 26, 2019 at 09:04:37AM +0300, Peter Ujfalusi wrote:
+Tree: next
+Branch: master
+Git Describe: next-20190726
+Git Commit: fde50b96be821ac9673a7e00847cc4605bd88f34
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 81 unique boards, 27 SoC families, 21 builds out of 230
 
-> Mark: can you either drop the patch and I'll send a new one with fixed
-> SHA1 or can you fix the commit message in place?
+Boot Failures Detected:
 
-Both of which involve rebasing :(  Against my better judgement I
-rebased.
+arm:
+    qcom_defconfig:
+        gcc-8:
+            qcom-apq8064-cm-qs600: 1 failed lab
+            qcom-apq8064-ifc6410: 1 failed lab
 
---IrhDeMKUP4DT/M7F
-Content-Type: application/pgp-signature; name="signature.asc"
+    oxnas_v6_defconfig:
+        gcc-8:
+            ox820-cloudengines-pogoplug-series-3: 1 failed lab
 
------BEGIN PGP SIGNATURE-----
+    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            armada-xp-openblocks-ax3-4: 1 failed lab
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl067e4ACgkQJNaLcl1U
-h9BzQgf8Dz9ldhvbs+BNcizQURg8b60KSK5yLwlP+ngImwdkmtpaOTWHkDYspieN
-ygjAUzrkFTagoj77lCJTrHjDcKMOI4eIy7RWtGlc6nyEKNBSHbBD16lUv5anljY8
-Ok7ab49RLEy20Ti9l90GhAqbZzYQ+UOhGerSi1bkqQA8uiHjBIi7BcrsFi85msr7
-mxVCurAhhFnAQRXLOyvTMB0bWgX1lbUNAvMW3TM6qJdtZukC0GSoMCEpyae1nvCV
-RoDjvmBGH04qIq5GxYbzMXNiebmiB+3kcUkmnOnRqylyh7IMpayn1coQEtH4Eka2
-I8TecNXYaICzr6U0F8Nu4/QH30cqFQ==
-=2nhj
------END PGP SIGNATURE-----
+arm64:
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            meson-gxm-khadas-vim2: 1 failed lab
 
---IrhDeMKUP4DT/M7F--
+    defconfig:
+        gcc-8:
+            apq8096-db820c: 1 failed lab
+            meson-gxm-khadas-vim2: 1 failed lab
+            meson-gxm-nexbox-a1: 1 failed lab
+            rk3399-firefly: 1 failed lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            meson-gxl-s905x-nexbox-a95x: 1 failed lab
+
+Offline Platforms:
+
+arm64:
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
+
+    defconfig:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            meson-gxbb-odroidc2: 1 offline lab
+
+Conflicting Boot Failures Detected: (These likely are not failures as other=
+ labs are reporting PASS. Needs review.)
+
+arm:
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        am57xx-beagle-x15:
+            lab-linaro-lkft: FAIL (gcc-8)
+            lab-drue: PASS (gcc-8)
+
+    multi_v7_defconfig:
+        am57xx-beagle-x15:
+            lab-linaro-lkft: FAIL (gcc-8)
+            lab-drue: PASS (gcc-8)
+
+---
+For more info write to <info@kernelci.org>
