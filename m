@@ -2,95 +2,123 @@ Return-Path: <SRS0=9EzI=VY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E439C76186
-	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 05:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FF6C7618B
+	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 10:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D917F2080C
-	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 05:10:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E27AC2086D
+	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 10:16:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RbIMxa4U"
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="a71xFW1N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfG0FKh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 27 Jul 2019 01:10:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:56663 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfG0FKh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:10:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45wYtf25ZYz9s3l;
-        Sat, 27 Jul 2019 15:10:34 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564204234;
-        bh=7sAqKIZuDSrrgjnGY2T3rvyNbaN1Ey5S0LLp3GBtKY4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=RbIMxa4UuQNXTca4iOvN2+Pqm3E6bjL0/a7FsmS+SV9YhTShE6810dv72G778S9N9
-         bVTrgtCiRuFUF3M3jwjrr00fCnYNLAnzeeKCXhdqgcBOJtZBJqMPhJ8nrHnDUrPyZ4
-         b2cu+nGJA7EqgoKjZ/mOEX5PnF59dqQ2KnuO2VEQGoMqF8kwmhBUkK98BSisul94nk
-         lvtsZsNHEkiAs1oS8Uiy0L2sCqb2YXGBD1UFe1TFevEHqAsUPJdzdLAk6YjXA/zscr
-         anjnuKXj2nROzgbShbqD/SNRK+vwagHFHhml/4wNPJZNYyOhfRAzuD7cpSgaC0vMnZ
-         tNqaEYi9KzEsQ==
-Date:   Sat, 27 Jul 2019 15:10:32 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Subject: linux-next: Fixes tag needs some work in the usb tree
-Message-ID: <20190727151032.4eaf3032@canb.auug.org.au>
+        id S1728533AbfG0KQM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 27 Jul 2019 06:16:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33976 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728828AbfG0KQM (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 27 Jul 2019 06:16:12 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 31so56880843wrm.1
+        for <linux-next@vger.kernel.org>; Sat, 27 Jul 2019 03:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IXEjdnUn3VkhWBwJSQhECGFViuPtRLCo9vxT8tzVgl8=;
+        b=a71xFW1NUEq3o8kaHcCrDOOxweDvWfxkp5iKwmVSBuzUXtmp2Bs/hmDEUtV3HkeQnQ
+         JWMv9wk0XNKWjntQLlyVE8LDYrP7rri71bngMvGZW5+W2nL4nbe36sjnAUywcyUSnLxn
+         ET/QGwikXysoTxta0lpPP7dpr1pLviGffAq1w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IXEjdnUn3VkhWBwJSQhECGFViuPtRLCo9vxT8tzVgl8=;
+        b=IaTQDYqRvrengeqDwZG9sdc6yp57n181nM6+FHbJlkSz66EqovcyIc529RqUnPMLok
+         oeWdWOXGzJoHY8TbfSh/DHOcAhoJveNpUJ2EmnHx7XjGOhnWGJJ4B/T4VJZqbl0ulmB3
+         rz3fa6hs1OFWDKiRvuUdkNoT9tox3Us5CX8rB35vTXiUcR+1a+P+2cdxJC+5YQdjVqLz
+         cVO2mkc+3aWY3MABgCZYoUBgShp+RLAu2cCfp34EevHXN4BTjkBoQa9RHTuEOh+dwPz5
+         p2UJLuf4jwCogy8/om9Q2IFL29G/plqxSeiXA05InoKbsNBlTWGqcIZRgIU1u0BJGoOM
+         nduQ==
+X-Gm-Message-State: APjAAAXnJy6unARQAGO4qiCcipaII55IURt7fe6zwabIMVaw7n3/P8PF
+        DhqElAOCDcD7tWVffdOBxOX3Qw==
+X-Google-Smtp-Source: APXvYqx/cGuS1gJ0Afm2ttVoWqm/3PaHRFGZ43BnTfOXHbEQEMJU5qWym22vdCCCuNXUHFEHPP+FUQ==
+X-Received: by 2002:adf:e841:: with SMTP id d1mr28181928wrn.204.1564222569709;
+        Sat, 27 Jul 2019 03:16:09 -0700 (PDT)
+Received: from localhost ([2a01:4b00:8432:8a00:56e1:adff:fe3f:49ed])
+        by smtp.gmail.com with ESMTPSA id f2sm49931061wrq.48.2019.07.27.03.16.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 27 Jul 2019 03:16:09 -0700 (PDT)
+Date:   Sat, 27 Jul 2019 11:16:08 +0100
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
+Message-ID: <20190727101608.GA1740@chrisdown.name>
+References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
+ <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
+ <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
+ <20190727034205.GA10843@archlinux-threadripper>
+ <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_Sfn20AuKRKioi7H1EK8W.C";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/_Sfn20AuKRKioi7H1EK8W.C
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+u64 division: truly the gift that keeps on giving. Thanks Andrew for following 
+up on these.
 
-Hi all,
+Andrew Morton writes:
+>Ah.
+>
+>It's rather unclear why that u64 cast is there anyway.  We're dealing
+>with ulongs all over this code.  The below will suffice.
 
-In commit
+This place in particular uses u64 to make sure we don't overflow when left 
+shifting, since the numbers can get pretty big (and that's somewhat needed due 
+to the need for high precision when calculating the penalty jiffies). It's ok 
+if the output after division is an unsigned long, just the intermediate steps 
+need to have enough precision.
 
-  6269e4c76eac ("usb: host: xhci-hub: fix extra endianness conversion")
+>Chris, please take a look?
+>
+>--- a/mm/memcontrol.c~mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix-fix
+>+++ a/mm/memcontrol.c
+>@@ -2415,7 +2415,7 @@ void mem_cgroup_handle_over_high(void)
+> 	clamped_high = max(high, 1UL);
+>
+> 	overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
+>-	do_div(overage, clamped_high);
+>+	overage /= clamped_high;
 
-Fixes tag
+I think this isn't going to work because left shifting by 
+MEMCG_DELAY_PRECISION_SHIFT can make the number bigger than ULONG_MAX, which 
+may cause wraparound -- we need to retain the u64 until we divide.
 
-  Fixes: 395f540 "xhci: support new USB 3.1 hub request to get extended por=
-t status"
+Maybe div_u64 will satisfy both ARM and i386? ie.
 
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_Sfn20AuKRKioi7H1EK8W.C
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl073MgACgkQAVBC80lX
-0GyZEgf/T+BVbseNdzp0mokl9ve96XSAQDzj1j4NKY5PC9eCYbErmlG+I12z+QX+
-CssgOL39BeLPdHcZZSFpDeYfn4qoFpGE1GoNQMi4VK6n15myTjOvWTe1pWoYGkcd
-K19s4sRl1hj1Z0Wke8pZfkS0H3ovkgvWi74Hruumu7zeIPjIjDt2sWY4+caiMALR
-AibcFkLJ+Wla8ro9mim4lk8Gj1klLEegqmC7OpL7W53WXCqB0L0yy6MRDIp0M1F0
-YC+aJ/yE/LGL0/DW4LirZnIfiVmqyBOUf4i32uGZaRPTZuSbbKdUm+pLCjwX5H7a
-hLUT0GFwbhUzVyjLIrHi6e1whh/pNA==
-=vBwa
------END PGP SIGNATURE-----
-
---Sig_/_Sfn20AuKRKioi7H1EK8W.C--
+diff --git mm/memcontrol.c mm/memcontrol.c
+index 5c7b9facb0eb..e12a47e96154 100644
+--- mm/memcontrol.c
++++ mm/memcontrol.c
+@@ -2419,8 +2419,8 @@ void mem_cgroup_handle_over_high(void)
+         */
+        clamped_high = max(high, 1UL);
+ 
+-       overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
+-       do_div(overage, clamped_high);
++       overage = div_u64((u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT,
++                         clamped_high);
+ 
+        penalty_jiffies = ((u64)overage * overage * HZ)
+                >> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHIFT);
