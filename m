@@ -2,130 +2,87 @@ Return-Path: <SRS0=9EzI=VY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C79C76190
-	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 04:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EB7C76186
+	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 05:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 546A020828
-	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 04:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F2742080C
+	for <linux-next@archiver.kernel.org>; Sat, 27 Jul 2019 05:07:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rCdaI5ow"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U/Jngwsa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfG0Egf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 27 Jul 2019 00:36:35 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39319 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfG0Egf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 27 Jul 2019 00:36:35 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x4so3172522wrt.6;
-        Fri, 26 Jul 2019 21:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fgu+GGVg1EZygpoH3s9DclHYrB/yjZrN74J1ygtmHDM=;
-        b=rCdaI5ow4Gypn3RIkjHZYS/h7C40k7HDxGmk4PNXBdQyErnWDTj5cewNyXnH9m9Ibc
-         KWgiqyGFfnJyAJxcfuXfIGHiSY4GAexpXh+1OhSaIo227T1Iu7jqhJRpueo4l3EfKiXX
-         SoDKLDixvK8YmE9NPbZiTmSWtQvBcuc5m5pxS6/JCxZo5dP8SHEbyHjxlsiHnAbbeSCq
-         DbjXiK7OAS2UkXQVMBvKp+5HZpL6ObcsyxE+0js4AzVPtRbP6meDeazRmXiuyRJEEIcB
-         5ZQMwgtb0aFPAWSTUxMcMXHOC8RuOYyRhkNoblpDTMiEEbg//yDXpffEZQkU/SJ0BgI0
-         lJeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fgu+GGVg1EZygpoH3s9DclHYrB/yjZrN74J1ygtmHDM=;
-        b=Q+Te0bzZ6Swz5DGb322R1+7H4KYEFL1QSs863E/cHmyKdDObQQsrPSiMiXpVRd4UaF
-         2U6xBEHzjY1oXbNcDcOrPdLvbe6JrjsdgJwRIXjR/VKGt3lErOqLsNQUXiIqLWSwyBgp
-         zJdQzrOr9KrXNFZ7cf1rvr+HT3jda3fRChYD881QsO7jbixiy3Fx36wFFeeWNXKRNLrc
-         POi8o0XeCx6dsZGGU4GJGvNmUch7vg69oRgSZ/EZGhWdOM+MD9yaq+5vQWUiheHe33zA
-         pnSsQjnrtwM5C+MHjS0MqjHZLAASqecFWYBWLlVG94v907v3CHmCfGKcpUFZ3K7XE56Y
-         EC7A==
-X-Gm-Message-State: APjAAAW8Jn7tDlj0AWKH1I5OWtS95a/GBq30X7rq2BpGrLA6NPRGo/wr
-        IC0X4e+znUQmZMFmfui05ZjGTQ93hMw=
-X-Google-Smtp-Source: APXvYqzccEi33UZ//inmdDXND5H+3IHNcEku4M74cRWUS5+7SqqAECOVxFTsB3ZmO3bcUki1fk+CJg==
-X-Received: by 2002:adf:de8e:: with SMTP id w14mr3818862wrl.79.1564202193019;
-        Fri, 26 Jul 2019 21:36:33 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id j33sm110096204wre.42.2019.07.26.21.36.32
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 21:36:32 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 21:36:31 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Chris Down <chris@chrisdown.name>
-Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
-Message-ID: <20190727043631.GA125522@archlinux-threadripper>
-References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
- <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
- <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
- <20190727034205.GA10843@archlinux-threadripper>
- <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
+        id S1726592AbfG0FHr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 27 Jul 2019 01:07:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:43053 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbfG0FHr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:07:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45wYqN0Df9z9s8m;
+        Sat, 27 Jul 2019 15:07:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564204064;
+        bh=9VKOPpnCFNPvhE4WbCH3Jd3UIbwkeUe5Udt6mTVfzQA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=U/JngwsaMcSUk+pVEdrV1ZabkstSszx7BdFKOumorvjeO7QIDgE1V6HTbACt7Qzpi
+         KW1VWHri8P3GNTJYyNMmrO7o2/h9+JtGYccnrV1gSf0wz5nIPZYbaJuvlmQBOE6CEB
+         scL8spAIPkeUPz54Op2wUkU9d3oSj5x0+J3aJIqAcuR2Nrf64iPt36VfOrT9GA+MqJ
+         UjwmfRlV6FIc+ZJRkTijMxI7IMS4+rHBxIAoZkaX7YK4Qmpr9HP2o/dwVHNmTkUUOw
+         dFU3GKopotF1bf7GniAmX+Bvql6CznK9OB8Hn0xmqq+iIBc6OlCSYwRrNcR/s1Eixx
+         NmcfrYD0NstSw==
+Date:   Sat, 27 Jul 2019 15:07:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Hook, Gary" <Gary.Hook@amd.com>
+Subject: linux-next: Signed-off-by missing for commit in the crypto tree
+Message-ID: <20190727150738.3640330a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/signed; boundary="Sig_/3xuTo3MPgvbTu/7bDhsMuiR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 09:19:52PM -0700, Andrew Morton wrote:
-> On Fri, 26 Jul 2019 20:42:05 -0700 Nathan Chancellor <natechancellor@gmail.com> wrote:
-> 
-> > > @@ -2414,8 +2414,9 @@ void mem_cgroup_handle_over_high(void)
-> > >  	 */
-> > >  	clamped_high = max(high, 1UL);
-> > >  
-> > > -	overage = ((u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT)
-> > > -		/ clamped_high;
-> > > +	overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
-> > > +	do_div(overage, clamped_high);
-> > > +
-> > >  	penalty_jiffies = ((u64)overage * overage * HZ)
-> > >  		>> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHIFT);
-> > >  
-> > > _
-> > > 
-> > 
-> > This causes a build error on arm:
-> > 
-> 
-> Ah.
-> 
-> It's rather unclear why that u64 cast is there anyway.  We're dealing
-> with ulongs all over this code.  The below will suffice.
+--Sig_/3xuTo3MPgvbTu/7bDhsMuiR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I was thinking the same thing.
+Hi all,
 
-> Chris, please take a look?
-> 
-> --- a/mm/memcontrol.c~mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix-fix
-> +++ a/mm/memcontrol.c
-> @@ -2415,7 +2415,7 @@ void mem_cgroup_handle_over_high(void)
->  	clamped_high = max(high, 1UL);
->  
->  	overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
-> -	do_div(overage, clamped_high);
-> +	overage /= clamped_high;
->  
->  	penalty_jiffies = ((u64)overage * overage * HZ)
->  		>> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHIFT);
-> _
-> 
+Commit
 
-I assume this will get folded in with the original patch but for
-completeness (multi_v7_defconfig + CONFIG_MEMCG):
+  53a5d5192803 ("crypto: ccp - Log an error message when ccp-crypto fails t=
+o load")
 
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+is missing a Signed-off-by from its author.
 
-Thanks for the quick fix!
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3xuTo3MPgvbTu/7bDhsMuiR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl073BoACgkQAVBC80lX
+0GxGewf/ad86dxEWUFE63NAJ28+iTnoxJkqp6Yc4Gg97n03HSMgqL4Cq/5KEkkq/
+kwo7WE5ND6KZX3llmDZ5iKOx9LaO2XlYiWusCrpjhRIV16gyBshl4tJVnJFcDPNy
+Ve5ma/lbGlrktND25/ORtaZh2Z/hxJVCh9yudXpYif7sGKN4a3MEbfg18LcdGlUS
+oO7Ry2aqxZKkSDFfO8V1DdE1dn8hcCRKlVfRIjg7veQ0G9Y4NF78CbOgYgywwQ2Z
+69d1wf8km1H4+ivrKj3kBDgadUa9Nzw82ySIpJI+VI/4scOyk127hY3isgiYE60O
+5gEPU7is3YXib3Zap598UjTEot+tww==
+=nznr
+-----END PGP SIGNATURE-----
+
+--Sig_/3xuTo3MPgvbTu/7bDhsMuiR--
