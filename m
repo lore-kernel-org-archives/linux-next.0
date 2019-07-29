@@ -2,119 +2,89 @@ Return-Path: <SRS0=Nwgw=V2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4979EC433FF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 05:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75493C433FF
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 05:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B9320C01
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 05:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F48820659
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 05:57:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="W0TtNsAf"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J8yOS+2Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfG2FpG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Jul 2019 01:45:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:57713 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbfG2FpG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 29 Jul 2019 01:45:06 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xpYW5HDSz9s3l;
-        Mon, 29 Jul 2019 15:45:03 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564379104;
-        bh=OjBusjBmTh3FC4xRu9En+9wxMY50HFlVLJk9zi826S4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=W0TtNsAfdUakVjiM74Pczb6qE3AsCA0cEovBZfUuRobtddOZgA2Gj6EjoHLX3ykNn
-         D7vwk/Z380Xs30VsSEiNJ0hOnb93FSic7iHJtBeTrph+PQpVEABb9nW/6riMOgJJ3s
-         lQvs3WSZAyK/3mlwZNFIwa2a7ESffhfqqgM7EOTaio+NoIlb97rlbfsczGg4VPUxAs
-         9GQLl63BsXe7huyGckksi2aLaTqm8v6D5bUXtJ36fHvvrM/+3n8wDd8CQsMvhfE5Zw
-         CI8hjYC+m1YtS/R21G1qSdo93snh6cpaLRVDLk/lZnQ3DpyFMXT3JD64VD5P+fsLvA
-         1MfSwEGpYvTMg==
-Date:   Mon, 29 Jul 2019 15:45:03 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-next@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: Add fsverity tree to linux-next
-Message-ID: <20190729154503.13aed678@canb.auug.org.au>
-In-Reply-To: <20190729031226.GA2252@sol.localdomain>
-References: <20190729031226.GA2252@sol.localdomain>
+        id S1726694AbfG2F5a (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jul 2019 01:57:30 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39192 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbfG2F5a (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2019 01:57:30 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6T5vHcG112416;
+        Mon, 29 Jul 2019 00:57:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1564379837;
+        bh=ZBBtjgkp3IEZyi3dmUJg7t2qmPquHE7qmyrLb1xnUKQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=J8yOS+2YWlufXItfpnBiWP2ROPc6nuF8jarEJVIKHkiHIfCJYNrF58hZHlP/2ilRN
+         D8VF4msiKNZWVFsWkt6Sj8qIsDfEgajpnhnnfVIKDJadYWuOxVjTl9WOdxQ4Qx3K66
+         RO3uX7XLfpVcdSGsysceUYdKc2aoY3wwwo9ZB+T8=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6T5vHmS017456
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 29 Jul 2019 00:57:17 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 29
+ Jul 2019 00:57:17 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 29 Jul 2019 00:57:17 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6T5vFPe056273;
+        Mon, 29 Jul 2019 00:57:16 -0500
+Subject: Re: linux-next: Fixes tag needs some work in the sound-asoc tree
+To:     Mark Brown <broonie@kernel.org>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190726072752.2acb2149@canb.auug.org.au>
+ <14710d5e-7dfd-84e0-2ea1-712863c4e455@ti.com>
+ <20190726121127.GB55803@sirena.org.uk>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <03b5c26b-73e3-5c72-2d64-91c049f06c78@ti.com>
+Date:   Mon, 29 Jul 2019 08:57:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/o/A/oFcwBKxzLJmh1WMQYp.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20190726121127.GB55803@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/o/A/oFcwBKxzLJmh1WMQYp.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Mark,
 
-Hi Eric,
+On 26/07/2019 15.11, Mark Brown wrote:
+> On Fri, Jul 26, 2019 at 09:04:37AM +0300, Peter Ujfalusi wrote:
+> 
+>> Mark: can you either drop the patch and I'll send a new one with fixed
+>> SHA1 or can you fix the commit message in place?
+> 
+> Both of which involve rebasing :(  Against my better judgement I
+> rebased.
 
-On Sun, 28 Jul 2019 20:12:26 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Can you please add the fsverity tree to linux-next?
->=20
->         https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git#fsverity
->=20
-> This branch contains the latest fs-verity patches
-> (https://lore.kernel.org/linux-fsdevel/20190722165101.12840-1-ebiggers@ke=
-rnel.org/T/#u).
-> We are planning a pull request for 5.4.
->=20
-> Please use as contacts:
->=20
->         Eric Biggers <ebiggers@kernel.org>
->         Theodore Y. Ts'o <tytso@mit.edu>
+thank you and sorry again...
 
-Added from tomorrow.
+- Péter
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/o/A/oFcwBKxzLJmh1WMQYp.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+h98ACgkQAVBC80lX
-0GzVDgf/d55c2rZLDeEKeui7XemWo7U4YCJZVQsO2Ye1k4OURh8KuPB4OHFAxnrm
-FXjilOcrXCqrXaNyoo4xaRfy2oZesdGslLLxjZL8Jnf6DLm5sxbA/JbxR+95wMkH
-O4MxF5R7r5SbzzTt7j1DGlfn5SGW7xkNHmOPhurdtyyqq0J5ag6rk+U/nNn2TpAM
-eZ9C+mJrmjIage8ogA2P8XGWZOU6nNJs+4nQ1pB79MiJyK9IkPJBH+dpC+TG9Rpy
-Z6Z49aJa1DSBlM+FX2kRCpRlkBwsVg5yBDzYjyk6J5ODYInzCpdHsCXTjM2nvmST
-+qr2gMk47+PWDhcI9yomBWndRIdLwg==
-=p76q
------END PGP SIGNATURE-----
-
---Sig_/o/A/oFcwBKxzLJmh1WMQYp.--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
