@@ -6,89 +6,92 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DB2C433FF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 03:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729F5C433FF
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 04:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 608622070D
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 03:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F9A720651
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 04:04:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CO/mKSBp"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D970EviR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbfG2DsT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 28 Jul 2019 23:48:19 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37195 "EHLO ozlabs.org"
+        id S1725988AbfG2EEJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jul 2019 00:04:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:55489 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbfG2DsT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 28 Jul 2019 23:48:19 -0400
+        id S1725962AbfG2EEJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 Jul 2019 00:04:09 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xlym5739z9s3l;
-        Mon, 29 Jul 2019 13:48:16 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xmK16BrJz9s3l;
+        Mon, 29 Jul 2019 14:04:05 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564372096;
-        bh=cmM63/7lK54E3ACi1o07jmlKAFIfgPMeQr3s68YCImo=;
+        s=201702; t=1564373046;
+        bh=5aMRIYgwHdRX5tRFfBsaakpgQFBynoRUdtJ0cJDOsYk=;
         h=Date:From:To:Cc:Subject:From;
-        b=CO/mKSBpC586w5dX9nCV+WiPH+BtkscrI7zy63mgqzwLhH1dnQrRcqSkcXLhDAtdy
-         vMfu1Uv+CBR9sNXcEA8oTwoPUAQdSeDeKSoJXQk+MKV3TQwi0MCxWQA/rpceEcv04j
-         BZkY/tnNTUuqAyyNQKKk7l0tlSysmkrpT+MydWShslh/61jXsDfL/ERVPjHtZNFaU9
-         k2Pj4k3luLHioNKMlvNESM3vfCsm8jpDYktyEXxas0likrIuMUf7SN0BFd/zChz0iM
-         5U61cd411CrhiOr/nlcLsm9oMWl/MvydZYoPeDkItjZ/5b1tsF3jdmITOxr7yOMT4S
-         9urSWkvJSiR6A==
-Date:   Mon, 29 Jul 2019 13:48:16 +1000
+        b=D970EviRRTwcwnbjcyMb//7TvqiWl0JWjSMpIT5M4QQpUPasPQFYC50qMQT+ssW8N
+         mdEuM9K+woTKCxexJ2FU913sRPWjVByeh+Y3/MQvzg1Qv90C26a9IJ80mFZSZqV0mY
+         HYD7twSpf9XHPKPB/DuX96bwRxgt5YIX/VfqKF9H/1yRjMjFtwETvqiQw3gVywzdxB
+         +EWQIEx3cGoPOBITqN0OMk47aX1lvY99qGPiA7otdOtsb+EI1ECRF3nV+AfOYYjXuQ
+         w5OHwAu0VcDOUVe7BEbpaxC8nkCe8JI6qUJXKdEsoz+EFajgF+i+ncmc6jFFIKY3a5
+         C/WyCdy+j+ZzA==
+Date:   Mon, 29 Jul 2019 14:04:04 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Takashi Iwai <tiwai@suse.de>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Message-ID: <20190729134816.605ff6d3@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of Linus' tree
+Message-ID: <20190729140404.37bac29e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy";
+Content-Type: multipart/signed; boundary="Sig_/yDBVGcXbmvxPZtM=KzrxmqT";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy
+--Sig_/yDBVGcXbmvxPZtM=KzrxmqT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the origin tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-drivers/infiniband/sw/siw/siw_mem.c: In function 'siw_free_plist':
-drivers/infiniband/sw/siw/siw_mem.c:66:16: warning: unused variable 'p' [-W=
-unused-variable]
-  struct page **p =3D chunk->plist;
-                ^
+sound/aoa/codecs/onyx.c: In function 'onyx_snd_single_bit_get':
+sound/aoa/codecs/onyx.c:377:37: warning: 'c' may be used uninitialized in t=
+his function [-Wmaybe-uninitialized]
+  ucontrol->value.integer.value[0] =3D !!(c & mask) ^ polarity;
+                                     ^~~~~~~~~~~~
 
 Introduced by commit
 
-  63630f9a8d72 ("mm/gup: add make_dirty arg to put_user_pages_dirty_lock()")
+  f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
+
+This warning has been around for a long time.  It could possibly be
+suppressed by checking for errors returned by onyx_read_register().
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy
+--Sig_/yDBVGcXbmvxPZtM=KzrxmqT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+bIAACgkQAVBC80lX
-0GxIRwgAhvQSTAktG/+8HkyBrP7E5e1K/hKmwNC8I73HcqFshHmLrRWGmkDf1st1
-81B41pvjWDMbqEOPcpUCR9mFF/uJ1mTusVgmP/05xQzF74/JV0Zp/nDcsNhJOwWW
-NWt17WOwAF8/TlmT+4gis5wIj6ZbK/UsTYoKW61JQH1+eVOD7269SPByb5YH62sE
-5NX3zYt+/nqyzaVSPBX3v03RA1dFtM82Jb2CFzLMbEHiBnbXqTsdJ4hJyQ3p7haP
-GXq2jii1pqiYl/Js0tQ0J2galrIrV/DTALKrY95wouUK5cTe6YkrtZFVO26nzfY0
-fEUsAEg0NjS+lW4MIw8daD3wQubQzA==
-=AjZl
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+cDQACgkQAVBC80lX
+0GxmdAgAkoSRWTyYbU9Sus611bowFouwUga0JzX+bwmwUpUQyrE6IkWJvzZHSoxF
+d+Tjl59Cq8hKS1CnsHKb3guldkT7+rJuroyhIqa/Dmq7yixOwppvnuRDl4pvQzm3
+dpWJS6ZQX/PAgfhKbWslQGKxuJiQC0Dej/ZXvsaslETAv/yaqzjKVX6VbFOPhxUz
+967tX1OsZmK2OHEZQzeg4mDdy9u6vxvkjTXI2kQwnji6KP58R7clqx7ChHPAAJj1
+R1G1i8a82JzTmacU3W2Ynpk5nPXiEWOjN5wCwlZHtf4S3o01bOYPATgcWqEXR6jP
+ZRSP6w5sMaUWHV5Zmu0bVuMV2UslyQ==
+=+qQD
 -----END PGP SIGNATURE-----
 
---Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy--
+--Sig_/yDBVGcXbmvxPZtM=KzrxmqT--
