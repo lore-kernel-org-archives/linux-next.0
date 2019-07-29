@@ -2,103 +2,95 @@ Return-Path: <SRS0=Nwgw=V2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D74EC433FF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 18:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38350C433FF
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 21:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C9A206BA
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 18:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 047D221655
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 21:25:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mPD3EbJ9"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="usKnPllx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfG2SEu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Jul 2019 14:04:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49150 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbfG2SEu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2019 14:04:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PPCoIvY0ptmHG65RLTTxoEUAS5Vd8DJmfHn79ns6Cz4=; b=mPD3EbJ9/PI5/IXrlCmYsVUCWK
-        bj5u/rA41R+qK+5Suwzd4RJ6UfnmFTusHcHCKWuYVVutPzWtfDfV3BsMTqNYm3pvTCglimRAUC02p
-        RMQPcQXEbO7fkg5kSGtkoTRCKReg5YT4bgsEiSeF42EYOZjFIuNMOP1SPcproSo2/z/kqeLFEECow
-        2YERNW2E7TzQ6EgBcC/8rqUB0q1XWm/Nsrsqwf+7vvY/2o4JL437v9Ve7a1C66g7VpxVUlKRqv1KS
-        v6XcKM5E5lsxQP9+sWZl4as8BZ+6hSnfB5bYb2TnDWZy4oKaPODWarVYGSaI2gwPgV0rTgbkSzWlz
-        hMZrymrQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsA0p-0004oP-I7; Mon, 29 Jul 2019 18:04:44 +0000
-Subject: Re: linux-next: Tree for Jul 26 (media/usb/dvb-usb/pctv452e.c)
-To:     Dominik Kuhlen <dkuhlen@gmx.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726277AbfG2VZr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jul 2019 17:25:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:45739 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbfG2VZr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 Jul 2019 17:25:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45yCQv74bTz9sBF;
+        Tue, 30 Jul 2019 07:25:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564435544;
+        bh=Hm4cWm4Sx9br2Kg/TJ4DCrGqjB3bgR17NwoIbxj8BWU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=usKnPllxKTMUxfdejGQbEt0u308F4l0xxijWlKteoZ35vOPlCUXY0oeF3oGaz/EOj
+         KTZhq5X8wixxYTOKNYr00hu7G2eHLMpriyGtxv1iPT5mOBLdT3Sjb+yQyYc3pts8mG
+         nIkQ2pGArz+a/G2hYtz1r7WY/nNlTlRrZYGnzzCzJXFs9POcbMD6YYU9P86bihfC5w
+         olRaU54D6AWlR63KWpkutvNj3pxRxwKAvUUAqHwRkaa7I9hTF51rzNo09jjcqC2p0C
+         UkgA2j5u2DRcXA+tDtL2LqooTFHs2JF5wvj1zZas2sY2PbTisxfBQs6uCwPYvTRJHU
+         d9mR/XVeD5t4Q==
+Date:   Tue, 30 Jul 2019 07:25:28 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        Andre Weidemann <Andre.Weidemann@web.de>,
-        "Michael H. Schimek" <mschimek@gmx.at>
-References: <20190726152342.2dd8b728@canb.auug.org.au>
- <782d7306-497f-7bd8-daaa-abac4fca0bdc@infradead.org>
- <201907291952.54035.dkuhlen@gmx.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7995d469-34a8-2574-5137-18a509187d23@infradead.org>
-Date:   Mon, 29 Jul 2019 11:04:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Oliver Hartkopp <socketcan@hartkopp.net>
+Subject: linux-next: Fixes tag needs some work in the net-next tree
+Message-ID: <20190730072528.61dc41b0@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <201907291952.54035.dkuhlen@gmx.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/4ff8KR8asv4YEcV_8eNUE9s";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/29/19 10:52 AM, Dominik Kuhlen wrote:
-> Hi Randy,
-> 
-> On Friday 26 July 2019 16:57:50 Randy Dunlap wrote:
->> On 7/25/19 10:23 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20190725:
->>>
->>
->> on x86_64:
->>
->> In file included from ../drivers/media/usb/dvb-usb/pctv452e.c:16:0:
->> ../drivers/media/usb/dvb-usb/pctv452e.c: In function ‘pctv452e_frontend_attach’:
->> ../drivers/media/dvb-frontends/stb0899_drv.h:139:36: error: weak declaration of ‘stb0899_attach’ being applied to a already existing, static definition
->>  static inline struct dvb_frontend *stb0899_attach(struct stb0899_config *config,
->>                                     ^~~~~~~~~~~~~~
-> 
->  cat config-r6623 | grep -i pctv45
-> CONFIG_DVB_USB_PCTV452E=y
-> 
->  cat config-r6623 | grep -i stb0899
-> # CONFIG_DVB_STB0899 is not set
-> 
-> -> mismatching configuration:
-> The pctv452e needs the stb0899 frontend driver to work.
-> And the CONFIG_DVB_STB6100 must also be set.
+--Sig_/4ff8KR8asv4YEcV_8eNUE9s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This build error is from a randconfig.  The Kconfig rules for this (any)
-driver should not allow build errors to be generated.
+Hi all,
 
-For DVB_USB_PCTV452E (and probably most of drivers/media/), there is an
-attempt to handle this by the use of MEDIA_SUBDRV_AUTOSELECT (which is
-not set/enabled in this particular randconfig).  So I am reporting that
-the Kconfig entry for DVB_USB_PCTV452E is not sufficient.
-(although I expect that some people won't care)
+In commit
 
+  473d924d7d46 ("can: fix ioctl function removal")
 
-thanks.
--- 
-~Randy
+Fixes tag
+
+  Fixes: 60649d4e0af ("can: remove obsolete empty ioctl() handler")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4ff8KR8asv4YEcV_8eNUE9s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0/ZEgACgkQAVBC80lX
+0GwrmQf/S/RdpxuZete0fU6UtHVcS2Hs/FRIUPtqGJJ7XiIrlzUqnaN9or8kuNj+
+0RG8p2IA270tME/EcckLg1coSIMNxZfXfmLSwTs+YalmalpGeHSJgcVnV/l6Tddi
+b4MmZ6ve7lDKyxC/Nzx8e1gdAzMMJ/7ZleJ5giQ92x5pL0Vh4pmThEwn9nho7LA1
+8vCNRmRT51DdVdAYzGEw7bd+twt5290RxUOeqpmYLppUt0aa7lZLsUQFcN8P6utb
+eumtQIBdUk3Q0KdhsFwrFP0Z0sPK27drdpMgHTid/cFSaGGac+BDSxEiesTiyfxA
+WfbvWU4y4E63WJi4FgcIviHCfwzorA==
+=5FyS
+-----END PGP SIGNATURE-----
+
+--Sig_/4ff8KR8asv4YEcV_8eNUE9s--
