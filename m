@@ -2,89 +2,70 @@ Return-Path: <SRS0=Nwgw=V2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75493C433FF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 05:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A89C433FF
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 06:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F48820659
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 05:57:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J8yOS+2Y"
+	by mail.kernel.org (Postfix) with ESMTP id 0203020644
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 06:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfG2F5a (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Jul 2019 01:57:30 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39192 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbfG2F5a (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2019 01:57:30 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6T5vHcG112416;
-        Mon, 29 Jul 2019 00:57:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564379837;
-        bh=ZBBtjgkp3IEZyi3dmUJg7t2qmPquHE7qmyrLb1xnUKQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=J8yOS+2YWlufXItfpnBiWP2ROPc6nuF8jarEJVIKHkiHIfCJYNrF58hZHlP/2ilRN
-         D8VF4msiKNZWVFsWkt6Sj8qIsDfEgajpnhnnfVIKDJadYWuOxVjTl9WOdxQ4Qx3K66
-         RO3uX7XLfpVcdSGsysceUYdKc2aoY3wwwo9ZB+T8=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6T5vHmS017456
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 29 Jul 2019 00:57:17 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 29
- Jul 2019 00:57:17 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 29 Jul 2019 00:57:17 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6T5vFPe056273;
-        Mon, 29 Jul 2019 00:57:16 -0500
-Subject: Re: linux-next: Fixes tag needs some work in the sound-asoc tree
-To:     Mark Brown <broonie@kernel.org>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+        id S1726048AbfG2G6C (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jul 2019 02:58:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53306 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725957AbfG2G6C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 Jul 2019 02:58:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 16BC5ACBA;
+        Mon, 29 Jul 2019 06:58:01 +0000 (UTC)
+Date:   Mon, 29 Jul 2019 08:58:00 +0200
+Message-ID: <s5h8sshpbt3.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190726072752.2acb2149@canb.auug.org.au>
- <14710d5e-7dfd-84e0-2ea1-712863c4e455@ti.com>
- <20190726121127.GB55803@sirena.org.uk>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <03b5c26b-73e3-5c72-2d64-91c049f06c78@ti.com>
-Date:   Mon, 29 Jul 2019 08:57:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190726121127.GB55803@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Subject: Re: linux-next: build warning after merge of Linus' tree
+In-Reply-To: <20190729140404.37bac29e@canb.auug.org.au>
+References: <20190729140404.37bac29e@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Mark,
-
-On 26/07/2019 15.11, Mark Brown wrote:
-> On Fri, Jul 26, 2019 at 09:04:37AM +0300, Peter Ujfalusi wrote:
+On Mon, 29 Jul 2019 06:04:04 +0200,
+Stephen Rothwell wrote:
 > 
->> Mark: can you either drop the patch and I'll send a new one with fixed
->> SHA1 or can you fix the commit message in place?
+> Hi all,
 > 
-> Both of which involve rebasing :(  Against my better judgement I
-> rebased.
+> After merging the origin tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
+> 
+> sound/aoa/codecs/onyx.c: In function 'onyx_snd_single_bit_get':
+> sound/aoa/codecs/onyx.c:377:37: warning: 'c' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   ucontrol->value.integer.value[0] = !!(c & mask) ^ polarity;
+>                                      ^~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
+> 
+> This warning has been around for a long time.  It could possibly be
+> suppressed by checking for errors returned by onyx_read_register().
 
-thank you and sorry again...
+Yes, or simply zero-ing the variable in onyx_read_register().  The
+current code ignores the read error and it's been OK over a decade :)
 
-- Péter
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+thanks,
+
+Takashi
