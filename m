@@ -2,230 +2,132 @@ Return-Path: <SRS0=Nwgw=V2=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DCBC433FF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 12:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CFDC433FF
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 17:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244FE214AE
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 12:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26839206BA
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jul 2019 17:53:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="QCzkep66"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="iAbU8Dut"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfG2MwU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Jul 2019 08:52:20 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:44290 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbfG2MwT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2019 08:52:19 -0400
-Received: by mail-wr1-f50.google.com with SMTP id p17so61702952wrf.11
-        for <linux-next@vger.kernel.org>; Mon, 29 Jul 2019 05:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=HC5OC1Vpc4uRh0RFxplO8Ct+EsDz3fmkXwirEFu5T7U=;
-        b=QCzkep66M/2QWRqKnUu9DavOvco8yZeRCBrAtgtbzGqNFibfGzXBosSKOiOStvCbZn
-         h7xWlxyTkYH5BtAjM5A76J1SljlX/MAtyrrxPvTYISGcNeA9BzFsWocjB10mjuMi38nt
-         KF47y6pEnGTErpHl8S/TdLr9qEAVkXx2S/cMRFJch2GUZv89th1oRuU/27liCc5zGI6u
-         oSjdAg+aVdBacREJsSGaOxH4djzcNQffL2AeIz94AO+yBdMQ6f1ciWLmZ5NJW1tjZUnc
-         +vUsPiEsa0s0lQxdUc/a3Szclk4nOC1dGb+x+cql3C8zpCJXch+rDLuUbhO598QbCrHM
-         0/9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=HC5OC1Vpc4uRh0RFxplO8Ct+EsDz3fmkXwirEFu5T7U=;
-        b=OC0WNxiTx8RW75sDaAczlGlVcCU5ZWyVel1yXB34PMBFHNxCRwEKHOXORrA0QE+AkZ
-         fePaasb8aCtWCNdUx4pHxyKFqnJfLN4lTalg9yf1qwgK2s5PpuRSMEcpxG9TQM9w4nz9
-         a57YXhpy1/Bl5qWJkETAxV0cf4doYsJgJGRXzTKwr+iZurKP+RGUBZTRC5wq1GdsRRlP
-         7aaw7vYMmQenAx/xgqfyPUszQWsj7gnGrxDHDETiLwY04xEzIIl7/5z3QTqKYjpEcmhU
-         iO9vnGKFeB678PPefHjW409PGlCj0NvFHM9MWbcGLY8HXe1am3tiwKUdti8O+TaXigd2
-         a/aQ==
-X-Gm-Message-State: APjAAAVIgAkkivsmvIUxB2O/K8pYoEeBwbLHHrzf+mmxwoxxKwFOiuOi
-        9zTY/gkrTZ75TiaUtnLt/Qp/yVFw
-X-Google-Smtp-Source: APXvYqwLw2jcH5Gg1dytOOj9NSe/IyJhGMwfhiNt2d0HZT4EWERIpfM+D5Ks/aawPZAIeIWV3eWwSg==
-X-Received: by 2002:adf:ce03:: with SMTP id p3mr45621167wrn.94.1564404736643;
-        Mon, 29 Jul 2019 05:52:16 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id g8sm59541982wmf.17.2019.07.29.05.52.15
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 05:52:15 -0700 (PDT)
-Message-ID: <5d3eebff.1c69fb81.5c064.b962@mx.google.com>
-Date:   Mon, 29 Jul 2019 05:52:15 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1728312AbfG2RxP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jul 2019 13:53:15 -0400
+Received: from mout.gmx.net ([212.227.17.21]:41659 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728017AbfG2RxP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 Jul 2019 13:53:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1564422781;
+        bh=7wzmysCmKHB/MJ7yViR5g7vWMi9GW505v/lZE5dCVIM=;
+        h=X-UI-Sender-Class:From:To:Subject:Date:Cc:References:In-Reply-To;
+        b=iAbU8DutaEeE3VfG0gwqHQ7qG/JsABdtnNR4ue6jFALSoC+bXayD02Zbo4r83D8eI
+         TTMS0iU0hT6gd5QAaACP6dK7sI2E8SK1qV8XM5EUYPdcmx5WrJ/M6qtXa4UDLKobF/
+         bOOIuhvd/+JNpmzDQmYGbhcpKiBxrqkPmScyCyTA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from doku18 ([77.2.94.7]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MTwYX-1i0iWD3q2j-00Qfvd; Mon, 29
+ Jul 2019 19:53:01 +0200
+From:   Dominik Kuhlen <dkuhlen@gmx.net>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 26 (media/usb/dvb-usb/pctv452e.c)
+Date:   Mon, 29 Jul 2019 19:52:53 +0200
+User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-media" <linux-media@vger.kernel.org>,
+        Andre Weidemann <Andre.Weidemann@web.de>,
+        "Michael H. Schimek" <mschimek@gmx.at>
+References: <20190726152342.2dd8b728@canb.auug.org.au> <782d7306-497f-7bd8-daaa-abac4fca0bdc@infradead.org>
+In-Reply-To: <782d7306-497f-7bd8-daaa-abac4fca0bdc@infradead.org>
+X-KMail-QuotePrefix: > 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: next
-X-Kernelci-Kernel: next-20190729
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: boot
-Subject: next/master boot: 193 boots: 4 failed, 124 passed with 64 offline,
- 1 conflict (next-20190729)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed;
+  boundary="nextPart21433132.aLrHPWef0M";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Message-Id: <201907291952.54035.dkuhlen@gmx.net>
+X-Provags-ID: V03:K1:mB95IJ4jmxVaVllUrtLW0PlafrMBRi95QT3zMIxkaolk/h9cUhs
+ qE+kkoXiesuWcSw1kXZAr9PI6qOjmgptR6d0ftkmPR5pnXhq1mcXyc6ltTxcmUMU8nH3P7c
+ JKU1kXYTXVuYFyI40LVFDlAn/uxdDwiluSqxVEGJ01nRGqMG/f+8PXn2V/n7X/KnG2zA5kr
+ k+KRfA33Ed0gSEQHoY1gA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8NkhlyBt2jY=:91UkcdGkNYBP7/JWBItlEj
+ 7a9x6fVwxjVgHjKoWQo8bRm0hI1lpuHGMXkqJS5wdY+onIakReAzilTRXagrbKABv1Uwn5CpA
+ qwJjLiHjBIk2ggZEspg+ouBDWURerNAyY+/09yuu+ZniG+WGut0NuqJBjROtY0zmmt7/O8G3P
+ h5W/adb9kbryDPgMFkQrUtKpk0v1WAETs0DHXfMCGk7YiSUHUqoTIRpvAW6I6mWjSOLd8tZYb
+ PDP0Bo+pIlfvR/GAAEXRiYIipkPojc2xvkukODgo+AbP9vYnvhZcRQ5v8KXSFeMfIujNdFhA5
+ WX3pmq4WYpntMjoF7Jhv9UdT0n9q6fyOi3ZT2H5fMdwBoj2uWr5vqH6lo/emSMGWQvqANZCCX
+ 9s1a2uZsLyz0arUsBf+zaK+1TwRUDV6FGXlsyxf44tgW2yOTuvdSkF/lql5VH0HLhT9mDyYVJ
+ lO4tQakp+6gC1E2I3JQ3RD8YyQoefpp0ahjjz0R0WKhf6S0y3RkLUftyPv3cAybcCamClnM0W
+ /0g0TMJzcF56FpTdWq0hF7P7cRo79/Se98QnoFx42N251KKeUEbFn7zq2qwrl/hDjv1Tvi1bY
+ 2cv9WwnYab3jy050D7bfLp+Yl/d/hJ32R6gmHgdW0Rl3hJIJZQp9iUWvtvPp8MuP3KgY3GX3J
+ qskTkpXmk3r7C1IwaOgLHI5rZRTnfvNGE3J/+OmQp6xGaulqvJQpc2aLPTZKa50c7hMU746P/
+ MufYe8GL9E3gGgDuGInD/kk7C10d9uqwxvVI5klF+KXn/eQicAS1c1gO2zgAavKJ1G5nTGetp
+ NxtEu0NZ4oHpS/X28AbI5OlfVdWKBw38sqy9L5MKxmMkX+5d6blQj54QP6FYdM6sfRF8ng0+8
+ MCV7AKxEdDeF2CS4vdUWAuXsPr2SAweTV/vfYs4oOCovwv644a6aawjK9Y8MoMBRIHArVknIp
+ wH7rffBbkkweb5gRTfWiSDS2i1HUVJ2Ivu7iye2PSHQ0kRX/5iToiVJ6E7SGk7WHKrd9PistT
+ mfAP4jI5xXmRfs/ZvGM0QCH1BHxsmQrgpi0N/9WGTqSU+nUdkqdLn73PUeuz8qrU0Xx434fQK
+ 7lX8a5J513sxE8=
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 193 boots: 4 failed, 124 passed with 64 offline, 1 confli=
-ct (next-20190729)
+--nextPart21433132.aLrHPWef0M
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190729/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190729/
+Hi Randy,
 
-Tree: next
-Branch: master
-Git Describe: next-20190729
-Git Commit: 0d8b3265d9a6376b416b3ba86f758a5c6a85a6df
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 73 unique boards, 25 SoC families, 20 builds out of 229
+On Friday 26 July 2019 16:57:50 Randy Dunlap wrote:
+> On 7/25/19 10:23 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20190725:
+> >=20
+>=20
+> on x86_64:
+>=20
+> In file included from ../drivers/media/usb/dvb-usb/pctv452e.c:16:0:
+> ../drivers/media/usb/dvb-usb/pctv452e.c: In function =E2=80=98pctv452e_fr=
+ontend_attach=E2=80=99:
+> ../drivers/media/dvb-frontends/stb0899_drv.h:139:36: error: weak declarat=
+ion of =E2=80=98stb0899_attach=E2=80=99 being applied to a already existing=
+, static definition
+>  static inline struct dvb_frontend *stb0899_attach(struct stb0899_config =
+*config,
+>                                     ^~~~~~~~~~~~~~
 
-Boot Failures Detected:
+ cat config-r6623 | grep -i pctv45
+CONFIG_DVB_USB_PCTV452E=3Dy
 
-arm64:
-    defconfig:
-        gcc-8:
-            apq8096-db820c: 1 failed lab
+ cat config-r6623 | grep -i stb0899
+# CONFIG_DVB_STB0899 is not set
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        clang-8:
-            meson-gxl-s905x-khadas-vim: 1 failed lab
+=2D> mismatching configuration:
+The pctv452e needs the stb0899 frontend driver to work.
+And the CONFIG_DVB_STB6100 must also be set.
 
-arm:
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
+Best regards,
+  Dominik
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
+--nextPart21433132.aLrHPWef0M
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
-Offline Platforms:
+-----BEGIN PGP SIGNATURE-----
 
-riscv:
+iF0EABECAB0WIQRFyJKmsHqIL03994Lo5et+p+0wogUCXT8ydgAKCRDo5et+p+0w
+ouxYAKCStBFtM3FPc2DVzyK8twIZARLLXQCePMdigKYUO7HPoUmuy8IRu835eGw=
+=76Pp
+-----END PGP SIGNATURE-----
 
-    defconfig:
-        gcc-8
-            sifive_fu540: 1 offline lab
-
-arm64:
-
-    defconfig:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-            meson-gxm-nexbox-a1: 1 offline lab
-            rk3399-firefly: 1 offline lab
-            sun50i-a64-pine64-plus: 1 offline lab
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-            meson-gxm-nexbox-a1: 1 offline lab
-            rk3399-firefly: 1 offline lab
-            sun50i-a64-pine64-plus: 1 offline lab
-
-mips:
-
-    pistachio_defconfig:
-        gcc-8
-            pistachio_marduk: 1 offline lab
-
-arm:
-
-    exynos_defconfig:
-        gcc-8
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            bcm72521-bcm97252sffe: 1 offline lab
-            bcm7445-bcm97445c: 1 offline lab
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            imx7s-warp: 1 offline lab
-            meson8b-odroidc1: 1 offline lab
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            stih410-b2120: 1 offline lab
-            sun4i-a10-cubieboard: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    omap2plus_defconfig:
-        gcc-8
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            da850-evm: 1 offline lab
-            dm365evm,legacy: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        gcc-8
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            imx7s-warp: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun4i-a10-cubieboard: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    omap2plus_defconfig:
-        am57xx-beagle-x15:
-            lab-linaro-lkft: FAIL (gcc-8)
-            lab-drue: PASS (gcc-8)
-
----
-For more info write to <info@kernelci.org>
+--nextPart21433132.aLrHPWef0M--
