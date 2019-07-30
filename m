@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE994C0650F
-	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345B0C0650F
+	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8645C208E3
-	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F173B2087F
+	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="mSaifvDH"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="HWAKOiLU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbfG3MDu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 30 Jul 2019 08:03:50 -0400
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:43839 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbfG3MDt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2019 08:03:49 -0400
-Received: by mail-wr1-f53.google.com with SMTP id p13so65455749wru.10
-        for <linux-next@vger.kernel.org>; Tue, 30 Jul 2019 05:03:48 -0700 (PDT)
+        id S1727796AbfG3MSA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 30 Jul 2019 08:18:00 -0400
+Received: from mail-wm1-f48.google.com ([209.85.128.48]:52344 "EHLO
+        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfG3MSA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2019 08:18:00 -0400
+Received: by mail-wm1-f48.google.com with SMTP id s3so56922808wms.2
+        for <linux-next@vger.kernel.org>; Tue, 30 Jul 2019 05:17:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=Pfg3FbFTREO0kem5ea1ldk5/6KVoTQTUhtVbuvENr5w=;
-        b=mSaifvDH8u+3VGqatU6B0tseLnboM2Xn0kafCmkH99jc795/Nt7hpVXRiQ2KigsJq+
-         YfQY0b2n+vHDOZCQg2FfqXBCuZjzJc6sW5lj/OD28CuNc3QJY5yiyGLuE8d3LCqQ9Be0
-         wdnSVjSuEhWBZvAI2HfU7LKLkrcqoUxOTGKFOeoxdvaIDwNhyArTOD4kZT/OjsNjYF2r
-         1cXz1LECFTfCO49D8BGOdOwnIxxfuXL+0ZRF/X48ccPtnQj0LBjwL4tfOV5JpZ5nFYVt
-         QplJPGHJ43vXtJw7HkzgFUP6JJPtV6pIMnTeSld8MsqY29nD6wmLuF/U4ovtIvQAeeVp
-         Is8Q==
+        bh=SLv+9zu2bGltRU6XGRS4pVGSfdyiQk+2Mic+9K3sdjg=;
+        b=HWAKOiLU7BRlPCLMyI91TRPo71cNI8Wyj5WVTRkCZcJ9OB+Jg9U5T/EmZXrFtweBn/
+         hu0PffmGiJ+WYoS6IjDdbTA3ZGkTWBilEC1WdtkcJlHevvE7UEKXU6Xh/IlYuhcyWPaQ
+         NyYiB+XHCvucVGUwVxiOXmaQCf0u4VSYVR0R4K5BJHfwTuxFH4DakXug75/bG1K4UOdP
+         iLYOxas5CjR0H/jtGxUrlDxy5V2yy2nQG+Kq7MhqutCltzbRzG8eCqgOF2a8SapYQeZi
+         6fjLX+kAB8Zii1Movzm8l+52PE+HbNzB4GryYI3aeyCEj7AN+iESN3K7VYTumOZmUNll
+         FQdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=Pfg3FbFTREO0kem5ea1ldk5/6KVoTQTUhtVbuvENr5w=;
-        b=a14R+ogUpD33arJi1pJ/ZjDRBVd4AwMyr5cFXX+sUfIZJYZIg1BaYQStkLdkW7H8C7
-         PgRYFbKUBjQNFBB6nZY4WPNoAGaahWGVI7tb4nnzUl8mOx1mKU37mCZ5zx0Rvv4Nh1+7
-         Nzng85Qj4ph955ae45fdwPHXZ1r42Rb8Kbznyf4dFoYxIQ4ptLXSQuZK9YyE83kB1aXe
-         2w1InU+pxW74HEz+teYbqPKVVqD04Oz6r8tYAB/CiZPlqY6B9MEd/yer548EEc14U8Vv
-         g+xvks0Ih54Ez8RM9alEYuFpx8HelbiC1yFpgpSX73+Dx2DI/QVgBlRNnTKrYQpx5WQU
-         bucg==
-X-Gm-Message-State: APjAAAXmiPQYLM3tXaK7ZAyJGz+s4PdAmJhWSswo4WajUsphmw2OYLT4
-        /utTW6YMtEOYG0zFdI7fkJ2gVelf8/4=
-X-Google-Smtp-Source: APXvYqxPB3HG4A3YuR1Y6+wGpZ1Uo50g2XWfdiwGXdLhFspCAH/QQAKuLn8IUSbfQ5qvAObp1Uv+kA==
-X-Received: by 2002:adf:f450:: with SMTP id f16mr95267283wrp.335.1564488227327;
-        Tue, 30 Jul 2019 05:03:47 -0700 (PDT)
+        bh=SLv+9zu2bGltRU6XGRS4pVGSfdyiQk+2Mic+9K3sdjg=;
+        b=TxjnKMM3E4yR2HgEIGQvdTK6g1xvxJwUzohBGoj0E/XmbXVKOhkleU41V6V5++07c+
+         pVUws49/7lMP2+ZuKi+dvGnZW6kHW/2GjVJBCqxqyO3OCz3tyZ3NjRR4N9PNJSw/VW6A
+         8qVUofADRujyOh7s65Q9pKpNLb9unp0uFG/d3PMaehKA+RMDcA93EWfXHYMMi0N5fGnP
+         wxG+TXwOe+AodVvGNj9wZau7auHwQMDhikAcyat8Ms1jK9/U2Lna4LO5SE2UJ1SWFhmY
+         oymdtOoRQT8B8Ruu8cAJl/jOBO6qHAI3iiW5rMTdt/hZUFpYuIxlQ8nKFF9w2r9MWaE0
+         oLEw==
+X-Gm-Message-State: APjAAAVRDqXAk8UdWf3eC0//Ist8d4z3hNcVhrEP2qlwgi0hzhZc1n+u
+        QNgtihSiIxt09baV4LgqAXeN4aoAm3o=
+X-Google-Smtp-Source: APXvYqyzBAij45zKNzpSZF906Oa2vWcQYs0UK0mGj5e7fkFLgM2JUqSFrK+q8sOD5AlQHhvhvWXkcw==
+X-Received: by 2002:a7b:c5c3:: with SMTP id n3mr5279883wmk.101.1564489077304;
+        Tue, 30 Jul 2019 05:17:57 -0700 (PDT)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id v16sm49193617wrn.28.2019.07.30.05.03.45
+        by smtp.gmail.com with ESMTPSA id e6sm62682993wrw.23.2019.07.30.05.17.56
         for <linux-next@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 05:03:46 -0700 (PDT)
-Message-ID: <5d403222.1c69fb81.19d4e.c134@mx.google.com>
-Date:   Tue, 30 Jul 2019 05:03:46 -0700 (PDT)
+        Tue, 30 Jul 2019 05:17:56 -0700 (PDT)
+Message-ID: <5d403574.1c69fb81.02bd.9b21@mx.google.com>
+Date:   Tue, 30 Jul 2019 05:17:56 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Tree: next
-X-Kernelci-Kernel: v5.3-rc2-311-gc89ef2371cc7
-X-Kernelci-Branch: pending-fixes
+X-Kernelci-Kernel: next-20190730
+X-Kernelci-Branch: master
 X-Kernelci-Report-Type: boot
-Subject: next/pending-fixes boot: 216 boots: 5 failed,
- 147 passed with 64 offline (v5.3-rc2-311-gc89ef2371cc7)
+Subject: next/master boot: 265 boots: 17 failed,
+ 184 passed with 64 offline (next-20190730)
 To:     linux-next@vger.kernel.org
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
@@ -73,28 +73,36 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes boot: 216 boots: 5 failed, 147 passed with 64 offline (v=
-5.3-rc2-311-gc89ef2371cc7)
+next/master boot: 265 boots: 17 failed, 184 passed with 64 offline (next-20=
+190730)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
-xes/kernel/v5.3-rc2-311-gc89ef2371cc7/
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.3-rc2-311-gc89ef2371cc7/
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20190730/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190730/
 
 Tree: next
-Branch: pending-fixes
-Git Describe: v5.3-rc2-311-gc89ef2371cc7
-Git Commit: c89ef2371cc7a1f5bd816e91b8e5f6b573fa8e98
+Branch: master
+Git Describe: next-20190730
+Git Commit: 70f4b4ac1655dffd33cb38f369b31bdecc588daa
 Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 84 unique boards, 28 SoC families, 22 builds out of 222
+Tested: 84 unique boards, 28 SoC families, 22 builds out of 230
 
 Boot Failures Detected:
 
 arm64:
     defconfig:
         gcc-8:
-            apq8096-db820c: 1 failed lab
+            qcom-qdf2400: 1 failed lab
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
             meson-gxm-khadas-vim2: 1 failed lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            meson-gxm-khadas-vim2: 1 failed lab
+            qcom-qdf2400: 1 failed lab
 
 arm:
     oxnas_v6_defconfig:
