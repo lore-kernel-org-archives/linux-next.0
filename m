@@ -2,122 +2,101 @@ Return-Path: <SRS0=AjV7=V3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21A5C433FF
-	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 13:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23111C0650F
+	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 15:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4BCC20644
-	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 13:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564493319;
-	bh=XpWkFolxoM1QBzhbjz+wPLbK0rVXLuEzqUTJVYli1pE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0Uq7DO2W7ZhVj+oG6labSkk7L7uImNbL80WQmUTNt29t5TGhJIaN5xcAIbdlU2CZs
-	 gltqmNhZVyEEkP+Gv77NswXmcSjHJEu/op8+8+oDQ4QB1UwxADQiV/6l9b7DAFPWms
-	 LMS1RWuUupqu/YhMklfGs27rMncJp79KBsc3cbF0=
+	by mail.kernel.org (Postfix) with ESMTP id E98B2206A2
+	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 15:01:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DYScE28+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfG3N2j (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 30 Jul 2019 09:28:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43590 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbfG3N2i (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2019 09:28:38 -0400
+        id S1730615AbfG3PBA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 30 Jul 2019 11:01:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59104 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729745AbfG3PBA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2019 11:01:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=walLL9B2ctUvGn9VSOEMf5RfdhWokjcJ8sftsI3u0oE=; b=JBmq85+IrCD5UTa4/ev5Idm9x
-        hftU0Smw6FZju2dNnYJHyjA/2JYQUP1ZdAOYnHOMtxR9SCC8EctW3F0LK9F7lzBbYpJYp+uDXd1jm
-        3gH5zvdh8P5LftzAxOSjOB6QXGpoVx/EROyFADXD4MqvZevZlnfO5S8vcs4c+55n+YGwA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hsSB7-0007ZD-O5; Tue, 30 Jul 2019 13:28:33 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id CD4ED2742CB5; Tue, 30 Jul 2019 14:28:32 +0100 (BST)
-Date:   Tue, 30 Jul 2019 14:28:32 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Tri Vo <trong@google.com>
-Cc:     kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Matt Hart <matthew.hart@linaro.org>
-Subject: Re: next/master boot: 265 boots: 17 failed, 184 passed with 64
- offline (next-20190730)
-Message-ID: <20190730132832.GD4264@sirena.org.uk>
-References: <5d403574.1c69fb81.14163.65d3@mx.google.com>
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=65E/ZXh4vz3P8VI73lH3jp+lf5tDRwhBiGW2ssQEd30=; b=DYScE28+ygzReT+7bGbOKgUdOU
+        BOwaFKuzKMd3f4dbnOlK0j1lR3bL9dT9mTbZzDJBgda9gxTFrnQnyJW4aNulFaY9ijZTnrXxxznv8
+        M1rsVPuV9q5f/pwMXr0ypqlI6C5aMwfCz130GlZalVg34IS8dGKu6Yn0zjV8Pj0GTVqxnVgr/sZ27
+        jFzIrFzqK5t/wQhrRjoFv57qxShs332W4Ax8QX4hr7E2eg5MCbljO2cDviT2oy0wdVQ4gCUeXDxIP
+        5NAFKs+zOXOtrKR+KZQ9yaZwIELUBohrgSVuLM6NYXVhlBFqgnoF2H9l+b4WJJMfaMPG8rgr24Yyw
+        sn02Uvqg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsTcW-0000Ic-JY; Tue, 30 Jul 2019 15:00:56 +0000
+Subject: Re: linux-next: Tree for Jul 30 (drivers/net/phy/mdio-octeon.c: i386)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Daney <david.daney@cavium.com>
+References: <20190730151527.08f611b8@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5db8f58b-3f20-a7ba-fcae-18dd0aa7df50@infradead.org>
+Date:   Tue, 30 Jul 2019 08:00:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
-Content-Disposition: inline
-In-Reply-To: <5d403574.1c69fb81.14163.65d3@mx.google.com>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190730151527.08f611b8@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On 7/29/19 10:15 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190729:
+> 
 
---Km1U/tdNT/EmXiR1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+on i386:
 
-On Tue, Jul 30, 2019 at 05:17:56AM -0700, kernelci.org bot wrote:
+../drivers/net/phy/mdio-octeon.c: In function ‘octeon_mdiobus_probe’:
+../drivers/net/phy/mdio-octeon.c:48:3: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   (u64)devm_ioremap(&pdev->dev, mdio_phys, regsize);
+   ^
+In file included from ../drivers/net/phy/mdio-octeon.c:14:0:
+../drivers/net/phy/mdio-cavium.h:111:36: error: implicit declaration of function ‘writeq’; did you mean ‘writel’? [-Werror=implicit-function-declaration]
+ #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
+                                    ^
+../drivers/net/phy/mdio-octeon.c:56:2: note: in expansion of macro ‘oct_mdio_writeq’
+  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
+  ^~~~~~~~~~~~~~~
+../drivers/net/phy/mdio-cavium.h:111:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
+                                                ^
+../drivers/net/phy/mdio-octeon.c:56:2: note: in expansion of macro ‘oct_mdio_writeq’
+  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
+  ^~~~~~~~~~~~~~~
+../drivers/net/phy/mdio-cavium.h:111:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
+                                                ^
+../drivers/net/phy/mdio-octeon.c:77:2: note: in expansion of macro ‘oct_mdio_writeq’
+  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
+  ^~~~~~~~~~~~~~~
+../drivers/net/phy/mdio-octeon.c: In function ‘octeon_mdiobus_remove’:
+../drivers/net/phy/mdio-cavium.h:111:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
+                                                ^
+../drivers/net/phy/mdio-octeon.c:91:2: note: in expansion of macro ‘oct_mdio_writeq’
+  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
+  ^~~~~~~~~~~~~~~
 
-> next/master boot: 265 boots: 17 failed, 184 passed with 64 offline (next-20190730)
-> Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20190730/
-> Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/next-20190730/
 
-For a while now all arm64 big endian clang built kernels have been
-failing, the kernel mounts the root filesystem but is unable to execute
-init due to an inability to understand the executable format:
 
-08:55:25.999629  <6>[  226.077194] Run /init as init process
-08:55:31.066490  <4>[  226.086518] request_module: kmod_concurrent_max (0) close to 0 (max_modprobes: 50), for module binfmt-464c, throttling...
-08:55:31.085167  <4>[  231.135458] request_module: modprobe binfmt-464c cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-08:55:35.745340  ShellCommand command timed out.: Sending # in case of corruption. Connection timeout 00:01:54, retry in 00:00:11
-08:55:35.846536  #
-08:55:35.849523  #
-08:55:36.185339  <4>[  231.154208] request_module: kmod_concurrent_max (0) close to 0 (max_modprobes: 50), for module binfmt-464c, throttling...
-08:55:36.208673  <4>[  236.255449] request_module: modprobe binfmt-464c cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-08:55:36.209013  <3>[  236.269366] Failed to execute /init (error -8)
-08:55:36.210161  <6>[  236.285459] Run /sbin/init as init process
-08:55:41.306737  <4>[  236.294490] request_module: kmod_concurrent_max (0) close to 0 (max_modprobes: 50), for module binfmt-464c, throttling...
-08:55:41.331547  <4>[  241.375455] request_module: modprobe binfmt-464c cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-08:55:41.331837  <3>[  241.389316] Starting init: /sbin/init exists but couldn't execute it (error -8)
-
-(binfmt-464c is binfmt-misc, the fallback for unknown executable
-formats).  The same kernel version built with GCC boots fine.
-
-You can see a bunch of reports here (all the big endian failures):
-
-	https://kernelci.org/boot/all/job/next/branch/master/kernel/next-20190730/
-
-It's possible that there's some infrastructure error that's causing the
-wrong ramdisk to be sent to the boards only for clang but I'd be a bit
-surprised.
-
---Km1U/tdNT/EmXiR1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1ARgAACgkQJNaLcl1U
-h9DFbgf+KqXb8a9Ph8jjvciYHVMRk/1noLRaTxS02sx0KuuFAWpZt0LN72ou4vKq
-Lxn59VKfK2aCp7f8Dul5PW4sPRWF4S+PlTEzURic0Cvho09GIOWrgfE2LDsAJ8wj
-Z9w1wLWY+IJj3eaJI0CnUMuyhbzqgD4XLig6F4dTYt/MU1aHtYWZ6T7b1iPN90gk
-6dJS8EXTbWquHHhXs0tf9OnPxYhG+TryzBeT6NmB7Jx+cE8Qte2ppiTHrrOdIzFn
-+p4ky3406620ZXu08g78GURRoY6EeCerACq3hRXTQ41KVIC4aSjDgMGhDY6Wibp5
-z7xqVe3dA6UODHmwiSHkod06K8H3lw==
-=AzxX
------END PGP SIGNATURE-----
-
---Km1U/tdNT/EmXiR1--
+-- 
+~Randy
