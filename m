@@ -2,230 +2,118 @@ Return-Path: <SRS0=AjV7=V3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345B0C0650F
-	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A35C0650F
+	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F173B2087F
-	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:18:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="HWAKOiLU"
+	by mail.kernel.org (Postfix) with ESMTP id A2F3E206E0
+	for <linux-next@archiver.kernel.org>; Tue, 30 Jul 2019 12:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564490072;
+	bh=1UjhES2iGbFTnNijmZHs5fyhgQ8oro399sm3BfiuAD8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=A1tp6PjpbnQHPWyr2lom1DZ5X0wc8vcy/uvt5Y2+dYsMQg6dSwZ1mlNVTZFNpnCb7
+	 yipE1njsshjCqVKsLVfUDSBE5QAScqT2GAuwrgxfXiDbuWTl1u+jmJ0Hdyi0eOf/sr
+	 JgeNhq44XZ6u9/czoktosgu8IvmlIM87kI+MXTrg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbfG3MSA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 30 Jul 2019 08:18:00 -0400
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:52344 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbfG3MSA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2019 08:18:00 -0400
-Received: by mail-wm1-f48.google.com with SMTP id s3so56922808wms.2
-        for <linux-next@vger.kernel.org>; Tue, 30 Jul 2019 05:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=SLv+9zu2bGltRU6XGRS4pVGSfdyiQk+2Mic+9K3sdjg=;
-        b=HWAKOiLU7BRlPCLMyI91TRPo71cNI8Wyj5WVTRkCZcJ9OB+Jg9U5T/EmZXrFtweBn/
-         hu0PffmGiJ+WYoS6IjDdbTA3ZGkTWBilEC1WdtkcJlHevvE7UEKXU6Xh/IlYuhcyWPaQ
-         NyYiB+XHCvucVGUwVxiOXmaQCf0u4VSYVR0R4K5BJHfwTuxFH4DakXug75/bG1K4UOdP
-         iLYOxas5CjR0H/jtGxUrlDxy5V2yy2nQG+Kq7MhqutCltzbRzG8eCqgOF2a8SapYQeZi
-         6fjLX+kAB8Zii1Movzm8l+52PE+HbNzB4GryYI3aeyCEj7AN+iESN3K7VYTumOZmUNll
-         FQdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=SLv+9zu2bGltRU6XGRS4pVGSfdyiQk+2Mic+9K3sdjg=;
-        b=TxjnKMM3E4yR2HgEIGQvdTK6g1xvxJwUzohBGoj0E/XmbXVKOhkleU41V6V5++07c+
-         pVUws49/7lMP2+ZuKi+dvGnZW6kHW/2GjVJBCqxqyO3OCz3tyZ3NjRR4N9PNJSw/VW6A
-         8qVUofADRujyOh7s65Q9pKpNLb9unp0uFG/d3PMaehKA+RMDcA93EWfXHYMMi0N5fGnP
-         wxG+TXwOe+AodVvGNj9wZau7auHwQMDhikAcyat8Ms1jK9/U2Lna4LO5SE2UJ1SWFhmY
-         oymdtOoRQT8B8Ruu8cAJl/jOBO6qHAI3iiW5rMTdt/hZUFpYuIxlQ8nKFF9w2r9MWaE0
-         oLEw==
-X-Gm-Message-State: APjAAAVRDqXAk8UdWf3eC0//Ist8d4z3hNcVhrEP2qlwgi0hzhZc1n+u
-        QNgtihSiIxt09baV4LgqAXeN4aoAm3o=
-X-Google-Smtp-Source: APXvYqyzBAij45zKNzpSZF906Oa2vWcQYs0UK0mGj5e7fkFLgM2JUqSFrK+q8sOD5AlQHhvhvWXkcw==
-X-Received: by 2002:a7b:c5c3:: with SMTP id n3mr5279883wmk.101.1564489077304;
-        Tue, 30 Jul 2019 05:17:57 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id e6sm62682993wrw.23.2019.07.30.05.17.56
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 05:17:56 -0700 (PDT)
-Message-ID: <5d403574.1c69fb81.02bd.9b21@mx.google.com>
-Date:   Tue, 30 Jul 2019 05:17:56 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1727324AbfG3Mec (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 30 Jul 2019 08:34:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37364 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbfG3Meb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2019 08:34:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=D2YPQJSssFXG6XJhGCQI9LtrGRYEbm9Vq4RoLp19BNU=; b=rHu2BycLd+YYaFD2GZaq7O3Et
+        jHoKHhun6/D56t5jU2t8Omk80fN8N1YT451NzhorKaNVhIVSUxc+oswCEnESSIxvKvfipUg4/CmC9
+        4ul/BXAb+qPSQrXBvaxhiYElXkXup2Ti43+8SXJFU2OVk8eyiw2JHLabnsnqDAAB+tO5Y=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hsRKk-0007Qu-Ca; Tue, 30 Jul 2019 12:34:26 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 8BEEC2742D06; Tue, 30 Jul 2019 13:34:25 +0100 (BST)
+Date:   Tue, 30 Jul 2019 13:34:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     khilman@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>
+Cc:     kernel-build-reports@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
+        linux-oxnas@groups.io
+Subject: Re: next/master boot: 265 boots: 17 failed, 184 passed with 64
+ offline (next-20190730)
+Message-ID: <20190730123425.GB4264@sirena.org.uk>
+References: <5d403574.1c69fb81.14163.65d3@mx.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: next
-X-Kernelci-Kernel: next-20190730
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: boot
-Subject: next/master boot: 265 boots: 17 failed,
- 184 passed with 64 offline (next-20190730)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
+Content-Disposition: inline
+In-Reply-To: <5d403574.1c69fb81.14163.65d3@mx.google.com>
+X-Cookie: Times approximate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 265 boots: 17 failed, 184 passed with 64 offline (next-20=
-190730)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190730/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190730/
+--yEPQxsgoJgBvi8ip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tree: next
-Branch: master
-Git Describe: next-20190730
-Git Commit: 70f4b4ac1655dffd33cb38f369b31bdecc588daa
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 84 unique boards, 28 SoC families, 22 builds out of 230
+On Tue, Jul 30, 2019 at 05:17:56AM -0700, kernelci.org bot wrote:
 
-Boot Failures Detected:
+> Boot Failures Detected:
+>=20
+> arm:
+>     oxnas_v6_defconfig:
+>         gcc-8:
+>             ox820-cloudengines-pogoplug-series-3: 1 failed lab
 
-arm64:
-    defconfig:
-        gcc-8:
-            qcom-qdf2400: 1 failed lab
+For some time now -next and mainline have been failing to boot on
+Pogoplug 3 with the oxnas_v6_defconfig, the kernel seems to start fine
+but fails to parse the ramdisk it's passed:
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-gxm-khadas-vim2: 1 failed lab
+08:50:02.086589  <6>[    7.719854] IP-Config: Complete:
+08:50:02.087213  <6>[    7.723330]      device=3Deth0, hwaddr=3D0a:a2:89:27=
+:10:1b, ipaddr=3D10.201.4.144, mask=3D255.255.0.0, gw=3D10.201.0.1
+08:50:02.087413  <6>[    7.733409]      host=3D10.201.4.144, domain=3D, nis=
+-domain=3D(none)
+08:50:02.088056  <6>[    7.739499]      bootserver=3D10.201.1.1, rootserver=
+=3D10.201.1.1, rootpath=3D
+08:50:02.088248  <6>[    7.739504]      nameserver0=3D10.201.1.1
+08:50:02.129966  <5>[    7.752025] RAMDISK: Couldn't find valid RAM disk im=
+age starting at 0.
+08:50:02.130381  <4>[    7.759616] List of all partitions:
+08:50:02.131333  <4>[    7.763363] 0100           65536 ram0=20
 
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            meson-gxm-khadas-vim2: 1 failed lab
-            qcom-qdf2400: 1 failed lab
+Possibly an issue with the ramdisk getting overwritten or something?
 
-arm:
-    oxnas_v6_defconfig:
-        gcc-8:
-            ox820-cloudengines-pogoplug-series-3: 1 failed lab
+Full details for today's -next can be seen here:
 
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
+	https://kernelci.org/boot/id/5d4004bb59b51489d631b28d/
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
+--yEPQxsgoJgBvi8ip
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Offline Platforms:
+-----BEGIN PGP SIGNATURE-----
 
-riscv:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1AOVAACgkQJNaLcl1U
+h9ALMgf/UsXvdF4Sayi9hNUwwm0wCOJ9dB1n8L76v9DjPI1cN8MvrF+3M3HS7M7S
+6jNyB7dFoxrMILacFV4Co45NcBMF+ZgeJjPcWDHpF/vwj0XsV8d2C9aIvdLpqdVy
+Jh65+wIkFnTPWhrjTzFUxAlWclv/6i7ZBBe42oC79SInfsieyNH5V1OMoO01XI7i
+CyTqDXmbQL72Nmp2r5jCi/SwrC5Sh1xYWVFynDoyGVZieOr8oQOIsRyaDzqAj+nc
+Zqw0nmzkVJzkBYqqSs+P4IaD5BKrWUwiofTMspxnAPXt8X5K57GfXvgswGxBNvhE
+4ut4elXlKKD4+AwZAiwwAe05rE3iCA==
+=+oW9
+-----END PGP SIGNATURE-----
 
-    defconfig:
-        gcc-8
-            sifive_fu540: 1 offline lab
-
-arm64:
-
-    defconfig:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-            meson-gxm-nexbox-a1: 1 offline lab
-            rk3399-firefly: 1 offline lab
-            sun50i-a64-pine64-plus: 1 offline lab
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-            meson-gxm-nexbox-a1: 1 offline lab
-            rk3399-firefly: 1 offline lab
-            sun50i-a64-pine64-plus: 1 offline lab
-
-mips:
-
-    pistachio_defconfig:
-        gcc-8
-            pistachio_marduk: 1 offline lab
-
-arm:
-
-    exynos_defconfig:
-        gcc-8
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            bcm72521-bcm97252sffe: 1 offline lab
-            bcm7445-bcm97445c: 1 offline lab
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            imx7s-warp: 1 offline lab
-            meson8b-odroidc1: 1 offline lab
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            stih410-b2120: 1 offline lab
-            sun4i-a10-cubieboard: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    omap2plus_defconfig:
-        gcc-8
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            da850-evm: 1 offline lab
-            dm365evm,legacy: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        gcc-8
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            imx7s-warp: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun4i-a10-cubieboard: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+--yEPQxsgoJgBvi8ip--
