@@ -2,105 +2,113 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E43EC32750
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 01:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D38C32750
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 01:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B074206A2
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 01:35:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cgTvd0V7"
+	by mail.kernel.org (Postfix) with ESMTP id 2024C206E0
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 01:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564537237;
+	bh=i97ozyZSB79AVKRSwbJmyXlCnoRo8bUjqoJ7TEpNBcw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mZW+UAD3Axw54NDIPKTEUWDzbOsiX4a76uF/g4o+tb9fPjYMpJqVfCXmuUOFvyM/A
+	 +EgG2qzazICC3sHr5NETF0eFYv4sh+BPR3anNGQ81+YbOlFWaPinyGVLejLLimtJTi
+	 gDSL1pa9ggSsFKVREFExdxNc3/Wk3JIPgsRLpe3Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfGaBfL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 30 Jul 2019 21:35:11 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52377 "EHLO ozlabs.org"
+        id S1726761AbfGaBkg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 30 Jul 2019 21:40:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726136AbfGaBfL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 30 Jul 2019 21:35:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1725209AbfGaBkg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 30 Jul 2019 21:40:36 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ywwC3Y7hz9sBF;
-        Wed, 31 Jul 2019 11:35:07 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564536908;
-        bh=U+0oStk4fqlrdWvDvsNj+synI4I7Bk845MdkuW6gz8g=;
-        h=Date:From:To:Cc:Subject:From;
-        b=cgTvd0V72RJXLcMiMMy+1xc2q+q9M260B7zynEfosMmS2Hvp+hlfwuvYRnxUqyM3f
-         dAdVEycR/0Gs2ZDKYJMpFnpzhn0I0LP6h2Vzoql5a9k5yt8mzwqW4Kop9ob2ye/o57
-         wcwHxff9Uln3i3f7IvHfbxKdaSAC8lTT26Zd0IS6M1cgeuitXMA2ICVh1QzbmWyXWW
-         eO7dnEweyay46kA1C+LWPTwcpxWix6LNGpX/EndtUfMTRLSbFXibCx/HYZNtbpA3BL
-         Le6cICwtKtCBlDH64VBVEG61D4qVcYpNzYbPdwOT/u3uKILkI8lkB2yVUDfQ7HWiw+
-         1s0yW4hKc6EbQ==
-Date:   Wed, 31 Jul 2019 11:35:00 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id CCB082067D;
+        Wed, 31 Jul 2019 01:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564537236;
+        bh=i97ozyZSB79AVKRSwbJmyXlCnoRo8bUjqoJ7TEpNBcw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m8ETSYMgPt76VLypqay5hLTpJOQgiHV8nGEc+pNQBvqi9qLJA2YH7/9LafNelNBrj
+         x9pMrD5FfwgdhIKARxa0ct5zOOMIKRQ/PoN6AAhHJ87/r91zfYYyKxWWd2V4TzytGx
+         9Idj0XaGmiufVDOUjmbRI+79wWHHEI2Yy9taWCS0=
+Date:   Tue, 30 Jul 2019 18:40:34 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Howells <dhowells@redhat.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: linux-next: manual merge of the hwmon-staging tree with the mips
- tree
-Message-ID: <20190731113500.62e2eaef@canb.auug.org.au>
+        linux-fscrypt@vger.kernel.org
+Subject: Re: linux-next: build warnings after merge of the keys tree
+Message-ID: <20190731014034.GB687@sol.localdomain>
+Mail-Followup-To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Howells <dhowells@redhat.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org
+References: <20190730123042.1f17cdd4@canb.auug.org.au>
+ <20190730034704.GA1966@sol.localdomain>
+ <20190730135216.377a16d5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wG+LLzs7SmwXry35m9wBr/0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730135216.377a16d5@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/wG+LLzs7SmwXry35m9wBr/0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 30, 2019 at 01:52:16PM +1000, Stephen Rothwell wrote:
+> Hi Eric,
+> 
+> On Mon, 29 Jul 2019 20:47:04 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > On Tue, Jul 30, 2019 at 12:30:42PM +1000, Stephen Rothwell wrote:
+> > > +static struct key_acl fsverity_acl = {
+> > > +	.usage	= REFCOUNT_INIT(1),
+> > > +	.possessor_viewable = true,  
+> > 
+> > I don't think .possessor_viewable should be set here, since there's no
+> > KEY_POSSESSOR_ACE(KEY_ACE_VIEW) in the ACL.  David, this bool is supposed to
+> > mean such an entry is present, right?  Is it really necessary, since it's
+> > redundant with the ACL itself?
+> 
+> OK, I can take that out of the patch for tomorrow.
+> 
+> > Otherwise this looks good, thanks Stephen.  I'll want to remove a few of these
+> > permissions in a separate patch later, but for now we can just keep it
+> > equivalent to the original code as you've done.
+> 
+> Thanks for the review.
+> 
 
-Hi all,
+Hmm, apparently it's not *exactly* equivalent, since the ACL is missing INVAL
+and JOIN permission for the owner, while those were originally granted by SEARCH
+permission.  We don't need those, but just to keep the merge resolution itself
+as boring as possible, can you please use the following to make it equivalent:
 
-Today's linux-next merge of the hwmon-staging tree got a conflict in:
+static struct key_acl fsverity_acl = {
+	.usage	= REFCOUNT_INIT(1),
+	.nr_ace	= 2,
+	.aces = {
+		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_JOIN |
+				  KEY_ACE_INVAL),
+		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ | KEY_ACE_WRITE |
+			      KEY_ACE_SEARCH | KEY_ACE_SET_SECURITY |
+			      KEY_ACE_INVAL | KEY_ACE_REVOKE | KEY_ACE_JOIN |
+			      KEY_ACE_CLEAR),
+	}
+};
 
-  drivers/hwmon/jz4740-hwmon.c
 
-between commit:
+Thanks!
 
-  d202742058b2 ("hwmon: Drop obsolete JZ4740 driver")
-
-from the mips tree and commit:
-
-  8d91bfd06bc1 ("hwmon: Remove dev_err() usage after platform_get_irq()")
-
-from the hwmon-staging tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wG+LLzs7SmwXry35m9wBr/0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1A8EQACgkQAVBC80lX
-0Gxpegf7BZV+Ghq5XStYN8z5j0EgygL26AcnGn4DsxJY7bqeSWv8qcZxPw38Enim
-HX4v7jwEgDKDXhQyHSZRUnn/nHAmNmcBGBiwAFo6TDPG36SL46kOyaGlPr8DQACo
-XCUj1SUuwVmoqLP3sGMUH2ftbbYdCJFszo52KJTIhVFpTBBM/aQzE1I3ruUGumqQ
-iU3uDh6glUEHFh5V3b5Bv7hgGI3D+iJ1o7oWIfEvbfzAu9O7VicXq2NXOHH2qacB
-7sxuEm3zPqehcMJJKKegGpp8c6N6I7tDuD8S4EmebG/oenwGAhTvZP73zGjnMXNm
-dSRqNocQ0abXgeR/nX7kovJUddrWlA==
-=yXVO
------END PGP SIGNATURE-----
-
---Sig_/wG+LLzs7SmwXry35m9wBr/0--
+- Eric
