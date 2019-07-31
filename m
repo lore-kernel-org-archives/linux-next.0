@@ -2,144 +2,117 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689B1C433FF
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 12:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB72C32751
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 13:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40915208E3
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 12:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N/ZCazuB"
+	by mail.kernel.org (Postfix) with ESMTP id E0278208E3
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 13:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfGaMQE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 08:16:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:41763 "EHLO ozlabs.org"
+        id S1729384AbfGaNRl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 09:17:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:63732 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbfGaMQE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:16:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45zC7h6dQ5z9sDQ;
-        Wed, 31 Jul 2019 22:16:00 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564575361;
-        bh=5sST4uA7a8v2Bkt32XwqcTJdnvlaNvANZv414a4LsFk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=N/ZCazuBTeGS96zt63PfnYIsZlNDHt6v9XqOrgUIZ7kX7ZoHqylhgwn3yPHS528P6
-         7MGlGbmQz5av3B8CRavNabQYbPJNlG6Ks0dPiTDcDLXmESDDnu+Rf+yXMfjVzc4Iew
-         WFdMVn2t8GAWRCLpGp74S0o5Z5FfKCtdfrza/gOxsISXnscY/ITg2sOWOGF29tZP3+
-         cJNelRxlEbrPh2aju4gZhXccxFUmdlVaBrkAHtq9sYlhrB4BwnH+HnNQ49/rfUa7rC
-         l/Jsv9p+A2DGK8Ou8zpcq+c0QsqZlG6MwgRIcGIMRNFerzrNbG5vkAQ8Nr5/XEwd/p
-         t+A5c//Q9rjmw==
-Date:   Wed, 31 Jul 2019 22:15:50 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Next <linux-next@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: New Renesas SoC tree for linux-next (was: [PATCH] MAINTAINERS:
- Add Geert as Renesas SoC Co-Maintainer)
-Message-ID: <20190731221550.5be0a103@canb.auug.org.au>
-In-Reply-To: <CAMuHMdV1zXCq6dbcg6=YmHgYqE5tfc1e7DbB3UgTVPm-5rU2Bw@mail.gmail.com>
-References: <20190729175658.13672-1-geert+renesas@glider.be>
-        <CAMuHMdV1zXCq6dbcg6=YmHgYqE5tfc1e7DbB3UgTVPm-5rU2Bw@mail.gmail.com>
+        id S1729371AbfGaNRl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:17:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 06:17:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
+   d="scan'208";a="191241302"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 31 Jul 2019 06:17:36 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        mm-commits@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, mhocko@suse.cz,
+        linux-mm@kvack.org, Mark Brown <broonie@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2019-07-04-15-01 uploaded (gpu/drm/i915/oa/)
+In-Reply-To: <CAK7LNATF+D5TgTZijG3EPBVON5NmN+JcwmCBvnvkMFyR+3wF2A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org> <80bf2204-558a-6d3f-c493-bf17b891fc8a@infradead.org> <CAK7LNAQc1xYoet1o8HJVGKuonUV40MZGpK7eHLyUmqet50djLw@mail.gmail.com> <CAK7LNASLfyreDPvNuL1svvHPC0woKnXO_bsNku4DMK6UNn4oHw@mail.gmail.com> <5e5353e2-bfab-5360-26b2-bf8c72ac7e70@infradead.org> <CAK7LNATF+D5TgTZijG3EPBVON5NmN+JcwmCBvnvkMFyR+3wF2A@mail.gmail.com>
+Date:   Wed, 31 Jul 2019 16:21:58 +0300
+Message-ID: <87v9vimj9l.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8KjFQ.PEdR.jGnI=ekR7oRB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/8KjFQ.PEdR.jGnI=ekR7oRB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Geert,
-
-On Wed, 31 Jul 2019 09:33:19 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
+On Fri, 05 Jul 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> On Fri, Jul 5, 2019 at 12:23 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> On 7/4/19 8:09 PM, Masahiro Yamada wrote:
+>> > On Fri, Jul 5, 2019 at 12:05 PM Masahiro Yamada
+>> > <yamada.masahiro@socionext.com> wrote:
+>> >>
+>> >> On Fri, Jul 5, 2019 at 10:09 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>> >>>
+>> >>> On 7/4/19 3:01 PM, akpm@linux-foundation.org wrote:
+>> >>>> The mm-of-the-moment snapshot 2019-07-04-15-01 has been uploaded to
+>> >>>>
+>> >>>>    http://www.ozlabs.org/~akpm/mmotm/
+>> >>>>
+>> >>>> mmotm-readme.txt says
+>> >>>>
+>> >>>> README for mm-of-the-moment:
+>> >>>>
+>> >>>> http://www.ozlabs.org/~akpm/mmotm/
+>> >>>
+>> >>> I get a lot of these but don't see/know what causes them:
+>> >>>
+>> >>> ../scripts/Makefile.build:42: ../drivers/gpu/drm/i915/oa/Makefile: No such file or directory
+>> >>> make[6]: *** No rule to make target '../drivers/gpu/drm/i915/oa/Makefile'.  Stop.
+>> >>> ../scripts/Makefile.build:498: recipe for target 'drivers/gpu/drm/i915/oa' failed
+>> >>> make[5]: *** [drivers/gpu/drm/i915/oa] Error 2
+>> >>> ../scripts/Makefile.build:498: recipe for target 'drivers/gpu/drm/i915' failed
+>> >>>
+>> >>
+>> >> I checked next-20190704 tag.
+>> >>
+>> >> I see the empty file
+>> >> drivers/gpu/drm/i915/oa/Makefile
+>> >>
+>> >> Did someone delete it?
+>> >>
+>> >
+>> >
+>> > I think "obj-y += oa/"
+>> > in drivers/gpu/drm/i915/Makefile
+>> > is redundant.
+>>
+>> Thanks.  It seems to be working after deleting that line.
 >
-> Apparently Gmail marked my previous email as spam, so probably that's
-> why I don't see my branch in linux-next.
-
-Nothing to do with Gmail, just me not reading well enough. Sorry about
-that.
-
-> Can you please add it?
-
-Will do.
-
-> Stephen: Can you please add my branch to linux-next, after Simon's
->          branch, which may still receive fixes for v5.3?
 >
->  ARM/RENESAS ARM64 ARCHITECTURE
->  M:     Simon Horman <horms@verge.net.au>
-> +M:     Geert Uytterhoeven <geert+renesas@glider.be>
->  M:     Magnus Damm <magnus.damm@gmail.com>
->  L:     linux-renesas-soc@vger.kernel.org
->  Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.g=
-it next
-> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-> next
->=20
->  ARM/SHMOBILE ARM ARCHITECTURE
->  M:     Simon Horman <horms@verge.net.au>
-> +M:     Geert Uytterhoeven <geert+renesas@glider.be>
->  M:     Magnus Damm <magnus.damm@gmail.com>
->  L:     linux-renesas-soc@vger.kernel.org
->  Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.g=
-it next
-> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-> next
+> Could you check whether or not
+> drivers/gpu/drm/i915/oa/Makefile exists in your source tree?
+>
+> Your build log says it was missing.
+>
+> But, commit 5ed7a0cf3394 ("drm/i915: Move OA files to separate folder")
+> added it.  (It is just an empty file)
+>
+> I am just wondering why.
 
-Added from tomorrow.
+I've sent patches adding some content, and they'll make their way
+upstream eventually. I am not sure why the empty file was added
+originally. Perhaps as a placeholder, seemed benign enough.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+BR,
+Jani.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/8KjFQ.PEdR.jGnI=ekR7oRB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1BhnYACgkQAVBC80lX
-0Gx5Pwf/fKj1HnU164D+WFaWT4dvkgdOvqCh/Ea+X4sToOmjyrjF0nTKKGnXlL7T
-6jeeP1EBm7n4Z7YHb7tgMC8gNFgK/P5gg5JVMAFOqYJu9iKr3SDUpnbm8YO80OJ9
-xMbTLTfPjWku05jLiSUAQJXPvBl7juPdN7NTzN5SOp3UK+Y7QgHo8BJIUdzIFQ+L
-dhB/8D18K7T+xiO4TidCFCzDC4xxMCbMfGaW+OshqVDkFjwAPvnMltp6hfKrTD3r
-19KR5yQ+X8mw5jmTI3oiJRsk783DS/2gJDciVqiUMkIe6GiE+unaWl48huFuBS+x
-LeJ8wt8oANI8CROwpPYFfNqP9lPqZQ==
-=BiaT
------END PGP SIGNATURE-----
-
---Sig_/8KjFQ.PEdR.jGnI=ekR7oRB--
+-- 
+Jani Nikula, Intel Open Source Graphics Center
