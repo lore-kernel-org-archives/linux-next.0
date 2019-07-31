@@ -2,106 +2,140 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E641C32751
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8029FC32751
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 380EE2184B
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:21:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="PIv2yYBZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SRKKDG1u"
+	by mail.kernel.org (Postfix) with ESMTP id 61C93208E4
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:33:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbfGaHVt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 03:21:49 -0400
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:44105 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725871AbfGaHVt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 03:21:49 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 2B8F24C8;
-        Wed, 31 Jul 2019 03:21:46 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 31 Jul 2019 03:21:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=IASG/165vAg3lwsVChfA/H8GkGe
-        uDko3lIAWgtbJGI4=; b=PIv2yYBZYvO0S+68n05r9KRRWcsyVfvvoPFlqCRPydZ
-        fx3Bh8PEeEbeF3KO8GqmvAJVqNBuYlpWhmALinkSWpfnFHAFGnBBhmFz0B6ISpG5
-        r45Ii/CuRHvzAqTIiU5bWky7OZekagI8LYR57U5SeI3WBBFoJXD6xt47UGw0ZACK
-        eiwthLoVhNsT7PUosfpveLMhVxoWleXugazPgGISb9zaWe9lEirXy0NXJwmEzWRe
-        bmtOgXTm0Cb3ae5kWspzclItEhN7eRX0ERA5Vc1Ctkmb1Eoi94S9fsuDchKeIycK
-        uydyCVwZnKccgVSH+gXQEptHvtYtDmz2YqgiCJnk8pg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=IASG/1
-        65vAg3lwsVChfA/H8GkGeuDko3lIAWgtbJGI4=; b=SRKKDG1urRyuHo93IiOkrH
-        hfzeWa4B5S+9tMO/pGVDS1Q33EqjgnCmKJafL9VPksisu/P1qKVgqOCqdCd7G703
-        NkXaWLJQyDE52pesEphr+A9OvxWUA6TuiW6v67kMJwNgf/fC0WEfxQHT3NEa8H/W
-        b+pYOwXvEiS/zbNRZElfskdphLFWmu63FAbMpYqnXiqSpCVBbw7VTq2A368EICrG
-        EKZN3/wta1GQlOiL/80rByPHAfXweTS8nygTjdF0Ic+RkQRfhyciE7rcN0zGyxG+
-        7Q40ViiXKjOBH0MQNVKpAw1LA+Ts8Vhv1ICxgwnor/pcCmj7m33DSFEwXI1KC8ZQ
-        ==
-X-ME-Sender: <xms:iUFBXQYNXJpVDM3levlCUBFTxTPdYMnGIwSMzlVt__q-1Yxxz15MKw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleeggdduudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
-    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:iUFBXdGeuocRsbbLEmKFlmJFpYwpX8_gLrbH2uBf1C_XZIXypzMNIw>
-    <xmx:iUFBXaYKXIs6HiSjB8X865L1_T5Ie3OuW9KK7szh-GkW5YnTM56fBQ>
-    <xmx:iUFBXURiKBIDxxaYc_wGLC0QIW_noYyp1Vr-cQZ7P73CDrjNUJeOVA>
-    <xmx:iUFBXZKkuoylR3rpLeR7s25DVfUQvPQ1jXvUnVcO3UyRPDZOPFvEug>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E1DD2380076;
-        Wed, 31 Jul 2019 03:21:44 -0400 (EDT)
-Date:   Wed, 31 Jul 2019 09:21:43 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the tty tree
-Message-ID: <20190731072143.GA24490@kroah.com>
-References: <20190731171221.326095e9@canb.auug.org.au>
+        id S1726057AbfGaHde (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 03:33:34 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34542 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfGaHdd (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 03:33:33 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w9so639542wmd.1;
+        Wed, 31 Jul 2019 00:33:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EJpdEs0Y/iKBAR0s7maiN7L6lAFR9Ak7SsJNj35d3J0=;
+        b=GJCqlU89QKyE1TCEYEaW9MRDDemIaOZLiOT6FvkGUSW63WdXFxUP93D4KGBuv1uP6n
+         C1zxP/6Rrl3R3mPShPBgSuRUgfzlXwnWZ5/pagoKNgPlDTE1NA+hs+mSl1epA7xkhxdZ
+         L0OI+cv5H9KOMqDeid5QGVmI9sKtBYa92qg92nGfrNliQibHxX9RcTg+kimAKSXusDo8
+         J9Pzzn9odxz5Y7tdW7FitXYv6jypbxoRbF1iP15IoeA7aGoM7IBKEUq9Cxde5uHBsPBd
+         ZGr9XQ7cn6fMITprF97/fgtfUkyj2FD/MpGsogsBgyX5EpA9HHkE2Uk4axq64NX/UaKS
+         KB2w==
+X-Gm-Message-State: APjAAAXz/jDkbarepNpr45SrYCzt+M94skWD/5V/oOxlsEHE3HN27Euc
+        gk7EPqCbQfBtBjkPLbt+W1yhsNt/NVPjRL9rCypu4g==
+X-Google-Smtp-Source: APXvYqxdjX7Ynuepc4FG8+RzFEwARyA/ZVMVrjdrylPwmVSnS9Cv+//GVf6/Dw9BF49EnZLRnfidzYApIlvDEcIy1Ug=
+X-Received: by 2002:a7b:c310:: with SMTP id k16mr68511863wmj.133.1564558411362;
+ Wed, 31 Jul 2019 00:33:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731171221.326095e9@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190729175658.13672-1-geert+renesas@glider.be>
+In-Reply-To: <20190729175658.13672-1-geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 31 Jul 2019 09:33:19 +0200
+Message-ID: <CAMuHMdV1zXCq6dbcg6=YmHgYqE5tfc1e7DbB3UgTVPm-5rU2Bw@mail.gmail.com>
+Subject: New Renesas SoC tree for linux-next (was: [PATCH] MAINTAINERS: Add
+ Geert as Renesas SoC Co-Maintainer)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next <linux-next@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 05:12:21PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   fa04d8c1c150 ("tty: serial: fsl_lpuart: Use appropriate lpuart32_* I/O funcs")
-> 
-> Fixes tag
-> 
->   Fixes: a5fa2660d787 ("tty/serial/fsl_lpuart: Add CONSOLE_POLL support
-> 
-> has these problem(s):
-> 
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
-> 
-> Please do not split Fixes tags over more than one line.
+Hi Stephen,
 
-Sorry about that, let me take your script and finally incorporate it
-into my review scripts so this doesn't happen again.
+Apparently Gmail marked my previous email as spam, so probably that's
+why I don't see my branch in linux-next.
 
-thanks,
+Can you please add it?
+Thanks a lot!
 
-greg k-h
+---------- Forwarded message ---------
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, Jul 29, 2019 at 7:57 PM
+Subject: [PATCH] MAINTAINERS: Add Geert as Renesas SoC Co-Maintainer
+To: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell
+<sfr@canb.auug.org.au>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm
+<magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman
+<khilman@kernel.org>, Olof Johansson <olof@lixom.net>,
+<linux-renesas-soc@vger.kernel.org>,
+<linux-arm-kernel@lists.infradead.org>,
+<linux-kernel@vger.kernel.org>, Geert Uytterhoeven
+<geert+renesas@glider.be>
+
+
+At the end of the v5.3 upstream kernel development cycle, Simon will be
+stepping down from his role as Renesas SoC maintainer.  Starting with
+the v5.4 development cycle, Geert is taking over this role.
+
+Add Geert as a co-maintainer, and add his git repository and branch.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Stephen: Can you please add my branch to linux-next, after Simon's
+         branch, which may still receive fixes for v5.3?
+
+         Thanks!
+---
+ MAINTAINERS | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6426db5198f05377..6de667021591fb52 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2155,10 +2155,12 @@ F:
+Documentation/devicetree/bindings/arm/realtek.txt
+
+ ARM/RENESAS ARM64 ARCHITECTURE
+ M:     Simon Horman <horms@verge.net.au>
++M:     Geert Uytterhoeven <geert+renesas@glider.be>
+ M:     Magnus Damm <magnus.damm@gmail.com>
+ L:     linux-renesas-soc@vger.kernel.org
+ Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
+ T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
++T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
+next
+ S:     Supported
+ F:     arch/arm64/boot/dts/renesas/
+ F:     Documentation/devicetree/bindings/arm/renesas.yaml
+@@ -2269,10 +2271,12 @@ F:      drivers/media/platform/s5p-mfc/
+
+ ARM/SHMOBILE ARM ARCHITECTURE
+ M:     Simon Horman <horms@verge.net.au>
++M:     Geert Uytterhoeven <geert+renesas@glider.be>
+ M:     Magnus Damm <magnus.damm@gmail.com>
+ L:     linux-renesas-soc@vger.kernel.org
+ Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
+ T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
++T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
+next
+ S:     Supported
+ F:     arch/arm/boot/dts/emev2*
+ F:     arch/arm/boot/dts/gr-peach*
+--
+2.17.1
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
