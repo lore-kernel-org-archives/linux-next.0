@@ -2,104 +2,154 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0632C433FF
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 08:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A56C32751
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 10:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF4FD208E3
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 08:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3D17206A2
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 10:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfGaI63 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 04:58:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17408 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725970AbfGaI62 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:58:28 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V8l23a031755
-        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 04:58:27 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u35fwfd7r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 04:58:27 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 31 Jul 2019 09:58:25 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 09:58:23 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6V8w5Jr19005810
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 08:58:05 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9C6D0A405C;
-        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 573FEA4060;
-        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.134])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 10:58:20 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
+        id S1728504AbfGaK1D (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 06:27:03 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65291 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728055AbfGaK1D (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 06:27:03 -0400
+Received: from 79.184.255.110.ipv4.supernova.orange.pl (79.184.255.110) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
+ id 517435089605ae31; Wed, 31 Jul 2019 12:27:01 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Patrick Steuer <steuer@linux.ibm.com>
-Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
-References: <20190731163915.3fdfcb14@canb.auug.org.au>
+        Marcelo Tosatti <mtosatti@redhat.com>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date:   Wed, 31 Jul 2019 12:27:01 +0200
+Message-ID: <2125012.dsI546JiDj@kreacher>
+In-Reply-To: <20190731153419.7b728744@canb.auug.org.au>
+References: <20190731153419.7b728744@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731163915.3fdfcb14@canb.auug.org.au>
-X-TM-AS-GCONF: 00
-x-cbid: 19073108-0012-0000-0000-00000337EE06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073108-0013-0000-0000-000021719646
-Message-Id: <20190731085819.GA3488@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310095
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 04:39:15PM +1000, Stephen Rothwell wrote:
+On Wednesday, July 31, 2019 7:34:19 AM CEST Stephen Rothwell wrote:
+> 
+> --Sig_/RVaztRR.13XAL2aXFk8lo/g
+> Content-Type: text/plain; charset=US-ASCII
+> Content-Transfer-Encoding: quoted-printable
+> 
 > Hi all,
 > 
-> Changes since 20190730:
+> After merging the pm tree, today's linux-next build (x86_64 allnoconfig)
+> failed like this:
+> 
+> x86_64-linux-gnu-ld: kernel/sched/core.o: in function `cpuidle_poll_time':
+> core.c:(.text+0x230): multiple definition of `cpuidle_poll_time'; arch/x86/=
+> kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/loadavg.o: in function `cpuidle_poll_time=
+> ':
+> loadavg.c:(.text+0x0): multiple definition of `cpuidle_poll_time'; arch/x86=
+> /kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/clock.o: in function `cpuidle_poll_time':
+> clock.c:(.text+0x0): multiple definition of `cpuidle_poll_time'; arch/x86/k=
+> ernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/cputime.o: in function `cpuidle_poll_time=
+> ':
+> cputime.c:(.text+0x0): multiple definition of `cpuidle_poll_time'; arch/x86=
+> /kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/idle.o: in function `cpuidle_poll_time':
+> idle.c:(.text+0xd0): multiple definition of `cpuidle_poll_time'; arch/x86/k=
+> ernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/fair.o: in function `cpuidle_poll_time':
+> fair.c:(.text+0xb20): multiple definition of `cpuidle_poll_time'; arch/x86/=
+> kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/rt.o: in function `cpuidle_poll_time':
+> rt.c:(.text+0x790): multiple definition of `cpuidle_poll_time'; arch/x86/ke=
+> rnel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/deadline.o: in function `cpuidle_poll_tim=
+> e':
+> deadline.c:(.text+0xce0): multiple definition of `cpuidle_poll_time'; arch/=
+> x86/kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/wait.o: in function `cpuidle_poll_time':
+> wait.c:(.text+0x1d0): multiple definition of `cpuidle_poll_time'; arch/x86/=
+> kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/wait_bit.o: in function `cpuidle_poll_tim=
+> e':
+> wait_bit.c:(.text+0x50): multiple definition of `cpuidle_poll_time'; arch/x=
+> 86/kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/swait.o: in function `cpuidle_poll_time':
+> swait.c:(.text+0x30): multiple definition of `cpuidle_poll_time'; arch/x86/=
+> kernel/process.o:process.c:(.text+0xc0): first defined here
+> x86_64-linux-gnu-ld: kernel/sched/completion.o: in function `cpuidle_poll_t=
+> ime':
+> completion.c:(.text+0x0): multiple definition of `cpuidle_poll_time'; arch/=
+> x86/kernel/process.o:process.c:(.text+0xc0): first defined here
+> 
+> Caused by commit
+> 
+>   259231a04561 ("cpuidle: add poll_limit_ns to cpuidle_device structure")
+> 
+> I have added the following patch for today:
+>
 
-Hello Ard,
+I've applied this patch to my pm-cpuidle branch, thanks Stephen!
 
-two of your patches in the crypto tree cause build breakage on s390:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 31 Jul 2019 15:29:52 +1000
+> Subject: [PATCH] cpuidle: header file stubs must be "static inline"
+> 
+> An x86_64 allmodconfig build produces these errors:
+> 
+> x86_64-linux-gnu-ld: kernel/sched/core.o: in function `cpuidle_poll_time':
+> core.c:(.text+0x230): multiple definition of `cpuidle_poll_time'; arch/x86/=
+> kernel/process.o:process.c:(.text+0xc0): first defined here
+> 
+> (and more)
+> 
+> Fixes: 259231a04561 ("cpuidle: add poll_limit_ns to cpuidle_device structur=
+> e")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/cpuidle.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+> index ba535a1a47d5..1a9f54eb3aa1 100644
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -170,7 +170,7 @@ static inline int cpuidle_enter(struct cpuidle_driver *=
+> drv,
+>  				struct cpuidle_device *dev, int index)
+>  {return -ENODEV; }
+>  static inline void cpuidle_reflect(struct cpuidle_device *dev, int index) =
+> { }
+> -extern u64 cpuidle_poll_time(struct cpuidle_driver *drv,
+> +static inline u64 cpuidle_poll_time(struct cpuidle_driver *drv,
+>  			     struct cpuidle_device *dev)
+>  {return 0; }
+>  static inline int cpuidle_register_driver(struct cpuidle_driver *drv)
+> --=20
+> 2.20.1
+> 
+> --=20
+> Cheers,
+> Stephen Rothwell
+> 
+> --Sig_/RVaztRR.13XAL2aXFk8lo/g
+> Content-Type: application/pgp-signature
+> Content-Description: OpenPGP digital signature
+> 
+> 
+> --Sig_/RVaztRR.13XAL2aXFk8lo/g--
+> 
 
-The patch ("crypto: aes - create AES library based on the fixed time AES code")
-causes this:
 
-arch/s390/crypto/aes_s390.c:111:13: error: conflicting types for 'aes_encrypt'
-  111 | static void aes_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
-      |             ^~~~~~~~~~~
 
-And the commit ("crypto: aegis128 - add support for SIMD acceleration") causes
-another build breakage:
-
-crypto/aegis128-core.c:19:10: fatal error: asm/simd.h: No such file or directory
-   19 | #include <asm/simd.h>
-      |          ^~~~~~~~~~~~
 
