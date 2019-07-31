@@ -2,115 +2,63 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51824C433FF
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E9BC32751
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E74206A2
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564572295;
-	bh=d5zKbCw5ekz5/hRTTt3l12FVKkCvKVqsVx/06fPHHW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Gkz4ewM3ZM4L6nYqj+fv7it5i/K/zAcp3rTwjBpu9nC3NdB69r7VtIkJsj+zmqhD9
-	 OfHJXveJDotED3N7qFpagdIs1q2OS56kK1yv+fr/hENEgbg0lL8iltwRhFUH9WuFW0
-	 /4d1reSs3lQDS9MZOG9YYhkEZ0kV95TZ/Vx0YELY=
+	by mail.kernel.org (Postfix) with ESMTP id C7274206A3
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:32:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfGaLYy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 07:24:54 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53106 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfGaLYy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 07:24:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NNkKpSgMuJ0KRRXiISTaddlqY+jM8kpTuvVm8K7loEo=; b=m/zIh+7lsaMz2pnXHbCTB9AVJ
-        mV40UnIA7bnq14o76hcNSjOpD6JbreoPgt+MGAR2O1CuqmWu8ljttfVxcmnORwU/401Nbl2UEq9BG
-        TuOwWWGC8jd4PU1/gHwfmgG4gkJEMReqYJEJ13AdV3B2stt59YpknqEboxMWWgIJa1Ueo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmio-0001kD-NN; Wed, 31 Jul 2019 11:24:42 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id C59922742C99; Wed, 31 Jul 2019 12:24:41 +0100 (BST)
-Date:   Wed, 31 Jul 2019 12:24:41 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     kernel-build-reports@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-next@vger.kernel.org
-Subject: Re: next/master build: 221 builds: 11 failed, 210 passed, 13 errors,
- 1174 warnings (next-20190731)
-Message-ID: <20190731112441.GB4369@sirena.org.uk>
-References: <5d41767d.1c69fb81.d6304.4c8c@mx.google.com>
+        id S1726369AbfGaLc2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 07:32:28 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:40390 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726231AbfGaLc1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 07:32:27 -0400
+Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
+        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hsmqA-00052w-Du; Wed, 31 Jul 2019 21:32:18 +1000
+Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hsmq8-0005UF-82; Wed, 31 Jul 2019 21:32:16 +1000
+Date:   Wed, 31 Jul 2019 21:32:16 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Patrick Steuer <steuer@linux.ibm.com>
+Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
+Message-ID: <20190731113216.GA21068@gondor.apana.org.au>
+References: <20190731163915.3fdfcb14@canb.auug.org.au>
+ <20190731085819.GA3488@osiris>
+ <20190731110816.GA20753@gondor.apana.org.au>
+ <20190731111520.GC3488@osiris>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GID0FwUMdk1T2AWN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d41767d.1c69fb81.d6304.4c8c@mx.google.com>
-X-Cookie: FEELINGS are cascading over me!!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190731111520.GC3488@osiris>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On Wed, Jul 31, 2019 at 01:15:20PM +0200, Heiko Carstens wrote:
+>
+> However that doesn't fix the simd.h header file breakage with the
+> second patch :)
 
---GID0FwUMdk1T2AWN
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That fix should be there now too.
 
-On Wed, Jul 31, 2019 at 04:07:41AM -0700, kernelci.org bot wrote:
-
-Today's -next fails to build an ARM allmodconfig due to:
-
-> allmodconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 40 warnings, 0 section=
- mismatches
->=20
-> Errors:
->     drivers/net/phy/mdio-cavium.h:111:36: error: implicit declaration of =
-function 'writeq'; did you mean 'writel'? [-Werror=3Dimplicit-function-decl=
-aration]
-
-as a result of the changes that introduced:
-
-WARNING: unmet direct dependencies detected for MDIO_OCTEON
-  Depends on [n]: NETDEVICES [=3Dy] && MDIO_DEVICE [=3Dm] && MDIO_BUS [=3Dm=
-] && 64BIT && HAS_IOMEM [=3Dy] && OF_MDIO [=3Dm]
-  Selected by [m]:
-  - OCTEON_ETHERNET [=3Dm] && STAGING [=3Dy] && (CAVIUM_OCTEON_SOC && NETDE=
-VICES [=3Dy] || COMPILE_TEST [=3Dy])
-
-which is triggered by the staging OCTEON_ETHERNET driver which misses a
-64BIT dependency but added COMPILE_TEST in 171a9bae68c72f2
-(staging/octeon: Allow test build on !MIPS).
-
---GID0FwUMdk1T2AWN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1BengACgkQJNaLcl1U
-h9DLnwf/f8I9dl2D69S1eeFNRVh2aLjJV9PMJSjfoyGSDSEKyrS7CVSR8qWRkfir
-LwbOCkTe7W9RVxR409aCkPkHcqLlCquQxDeyihTP00ZevmIzgLN7A1mLv0LmoIbn
-vldWfuGkbKM67v9n1nwgNBuZK/6eXFobpRlAFrPBx6tiMH4zvAbMKQgO8GuHXdQs
-EFd9Wxa38ixftAfcoNbMng2vmYqFiU/nOM9MUQBtWwZ30OV359/nSHMpwfyO9KEJ
-sfd866tLAddesCX15Kk/DS/r1qQViMKmqTiOTSHe4r3YKQL9/o8NByGs7k0rWG6t
-hgLW0Xnb1iREo3Scv3PBByS5PuMdbw==
-=Oxer
------END PGP SIGNATURE-----
-
---GID0FwUMdk1T2AWN--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
