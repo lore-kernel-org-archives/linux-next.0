@@ -2,104 +2,115 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D4BC433FF
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51824C433FF
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 873A2208E3
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E74206A2
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 11:24:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564572295;
+	bh=d5zKbCw5ekz5/hRTTt3l12FVKkCvKVqsVx/06fPHHW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Gkz4ewM3ZM4L6nYqj+fv7it5i/K/zAcp3rTwjBpu9nC3NdB69r7VtIkJsj+zmqhD9
+	 OfHJXveJDotED3N7qFpagdIs1q2OS56kK1yv+fr/hENEgbg0lL8iltwRhFUH9WuFW0
+	 /4d1reSs3lQDS9MZOG9YYhkEZ0kV95TZ/Vx0YELY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728718AbfGaLPc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 07:15:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728681AbfGaLPc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:15:32 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6VBDF4o130424
-        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 07:15:31 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u395at82r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 07:15:28 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 31 Jul 2019 12:15:26 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 12:15:23 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6VBF56l33554876
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 11:15:05 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7BCB11C05E;
-        Wed, 31 Jul 2019 11:15:21 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8DFEB11C050;
-        Wed, 31 Jul 2019 11:15:21 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.134])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 11:15:21 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 13:15:20 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Patrick Steuer <steuer@linux.ibm.com>
-Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
-References: <20190731163915.3fdfcb14@canb.auug.org.au>
- <20190731085819.GA3488@osiris>
- <20190731110816.GA20753@gondor.apana.org.au>
+        id S1726096AbfGaLYy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 07:24:54 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53106 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfGaLYy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 07:24:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NNkKpSgMuJ0KRRXiISTaddlqY+jM8kpTuvVm8K7loEo=; b=m/zIh+7lsaMz2pnXHbCTB9AVJ
+        mV40UnIA7bnq14o76hcNSjOpD6JbreoPgt+MGAR2O1CuqmWu8ljttfVxcmnORwU/401Nbl2UEq9BG
+        TuOwWWGC8jd4PU1/gHwfmgG4gkJEMReqYJEJ13AdV3B2stt59YpknqEboxMWWgIJa1Ueo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hsmio-0001kD-NN; Wed, 31 Jul 2019 11:24:42 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id C59922742C99; Wed, 31 Jul 2019 12:24:41 +0100 (BST)
+Date:   Wed, 31 Jul 2019 12:24:41 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     kernel-build-reports@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-next@vger.kernel.org
+Subject: Re: next/master build: 221 builds: 11 failed, 210 passed, 13 errors,
+ 1174 warnings (next-20190731)
+Message-ID: <20190731112441.GB4369@sirena.org.uk>
+References: <5d41767d.1c69fb81.d6304.4c8c@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GID0FwUMdk1T2AWN"
 Content-Disposition: inline
-In-Reply-To: <20190731110816.GA20753@gondor.apana.org.au>
-X-TM-AS-GCONF: 00
-x-cbid: 19073111-0012-0000-0000-00000337F6EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073111-0013-0000-0000-000021719FB9
-Message-Id: <20190731111520.GC3488@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310117
+In-Reply-To: <5d41767d.1c69fb81.d6304.4c8c@mx.google.com>
+X-Cookie: FEELINGS are cascading over me!!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 09:08:17PM +1000, Herbert Xu wrote:
-> On Wed, Jul 31, 2019 at 10:58:20AM +0200, Heiko Carstens wrote:
-> > On Wed, Jul 31, 2019 at 04:39:15PM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20190730:
-> > 
-> > Hello Ard,
-> > 
-> > two of your patches in the crypto tree cause build breakage on s390:
-> > 
-> > The patch ("crypto: aes - create AES library based on the fixed time AES code")
-> > causes this:
-> 
-> Ard already sent a patch for this which I've just pushed out.
 
-Ok, thanks!
+--GID0FwUMdk1T2AWN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-However that doesn't fix the simd.h header file breakage with the
-second patch :)
+On Wed, Jul 31, 2019 at 04:07:41AM -0700, kernelci.org bot wrote:
 
+Today's -next fails to build an ARM allmodconfig due to:
+
+> allmodconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 40 warnings, 0 section=
+ mismatches
+>=20
+> Errors:
+>     drivers/net/phy/mdio-cavium.h:111:36: error: implicit declaration of =
+function 'writeq'; did you mean 'writel'? [-Werror=3Dimplicit-function-decl=
+aration]
+
+as a result of the changes that introduced:
+
+WARNING: unmet direct dependencies detected for MDIO_OCTEON
+  Depends on [n]: NETDEVICES [=3Dy] && MDIO_DEVICE [=3Dm] && MDIO_BUS [=3Dm=
+] && 64BIT && HAS_IOMEM [=3Dy] && OF_MDIO [=3Dm]
+  Selected by [m]:
+  - OCTEON_ETHERNET [=3Dm] && STAGING [=3Dy] && (CAVIUM_OCTEON_SOC && NETDE=
+VICES [=3Dy] || COMPILE_TEST [=3Dy])
+
+which is triggered by the staging OCTEON_ETHERNET driver which misses a
+64BIT dependency but added COMPILE_TEST in 171a9bae68c72f2
+(staging/octeon: Allow test build on !MIPS).
+
+--GID0FwUMdk1T2AWN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1BengACgkQJNaLcl1U
+h9DLnwf/f8I9dl2D69S1eeFNRVh2aLjJV9PMJSjfoyGSDSEKyrS7CVSR8qWRkfir
+LwbOCkTe7W9RVxR409aCkPkHcqLlCquQxDeyihTP00ZevmIzgLN7A1mLv0LmoIbn
+vldWfuGkbKM67v9n1nwgNBuZK/6eXFobpRlAFrPBx6tiMH4zvAbMKQgO8GuHXdQs
+EFd9Wxa38ixftAfcoNbMng2vmYqFiU/nOM9MUQBtWwZ30OV359/nSHMpwfyO9KEJ
+sfd866tLAddesCX15Kk/DS/r1qQViMKmqTiOTSHe4r3YKQL9/o8NByGs7k0rWG6t
+hgLW0Xnb1iREo3Scv3PBByS5PuMdbw==
+=Oxer
+-----END PGP SIGNATURE-----
+
+--GID0FwUMdk1T2AWN--
