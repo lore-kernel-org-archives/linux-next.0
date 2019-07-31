@@ -2,117 +2,228 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB72C32751
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 13:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D36BC433FF
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 14:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0278208E3
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 13:17:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26E522089E
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 14:37:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="LeLM4E13"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbfGaNRl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 09:17:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:63732 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729371AbfGaNRl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:17:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 06:17:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
-   d="scan'208";a="191241302"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 31 Jul 2019 06:17:36 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        mm-commits@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, mhocko@suse.cz,
-        linux-mm@kvack.org, Mark Brown <broonie@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2019-07-04-15-01 uploaded (gpu/drm/i915/oa/)
-In-Reply-To: <CAK7LNATF+D5TgTZijG3EPBVON5NmN+JcwmCBvnvkMFyR+3wF2A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190704220152.1bF4q6uyw%akpm@linux-foundation.org> <80bf2204-558a-6d3f-c493-bf17b891fc8a@infradead.org> <CAK7LNAQc1xYoet1o8HJVGKuonUV40MZGpK7eHLyUmqet50djLw@mail.gmail.com> <CAK7LNASLfyreDPvNuL1svvHPC0woKnXO_bsNku4DMK6UNn4oHw@mail.gmail.com> <5e5353e2-bfab-5360-26b2-bf8c72ac7e70@infradead.org> <CAK7LNATF+D5TgTZijG3EPBVON5NmN+JcwmCBvnvkMFyR+3wF2A@mail.gmail.com>
-Date:   Wed, 31 Jul 2019 16:21:58 +0300
-Message-ID: <87v9vimj9l.fsf@intel.com>
+        id S1729211AbfGaOha (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 10:37:30 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51011 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729208AbfGaOha (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 10:37:30 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v15so61108094wml.0
+        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 07:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=0MsRppYRm8PvnSUkB8nfvQduamjZQVI86G7V5GbgoNc=;
+        b=LeLM4E13jm6LVhBYxa7E/0zgVMNwSCrlxF+arHvx0hmMkSq1oqAu0nFV/L92xWLmvc
+         AEsWCS1D60wvbLRufykYVK4SvFRn5ZaBQ+EMU36flQcMikqqfbNsJEwUHM74WVU826XA
+         U6QNKt1TCfTVJunKP5ltbKGoyw5HBFj8+XlyDikEVL37eLarEgpjXG6OqzFOnnxn5olK
+         UMJvK/IXyx0hpBD6zpd8jR9BRXLOFAzvzga0jF8jeaE/NuwSNQS1vZ2qjaBsqNDPaAKL
+         8AvuBmXLjjDQez5/sbi69zccMrJwdbKLTKnP9LExDiRqBCyGNB+q7eUrKA6O0QifrkxH
+         aerw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=0MsRppYRm8PvnSUkB8nfvQduamjZQVI86G7V5GbgoNc=;
+        b=XhT9UQXz2JBjl+rDaFcERH0h2qZ65zByfrKbG30Ox72mVUdLuyBAvQM/uBFf7Pd2QF
+         V7kdZnMpXYBgXlISQR25OAVOg83zvCpGj6s1P8pFrYMExSfyiJqapca+ya+VRd33m8h5
+         dUzyxUe5sffuuBrOvrhSOaKF4tQHJx0k9qF5+U9CYl9AgPiHwl8ReffDgwhy+lmC6ejr
+         1VKLcF7RUhfTeUgitGJrIoetHBq1kEOhen6WViKFkR3P9djvop6PqkVJTOG8ortbY+qQ
+         uI3DSqbeEWksAcP+IaRT++W2SvxWP3vaidmYPXoY/H6bvekWK36OmO9qrghFreAJ0bP1
+         K4PA==
+X-Gm-Message-State: APjAAAUHUVLJjqMITOGqBDr0GaUSDjsm/be/vUE+ucnHRzVJmKXUgWx9
+        SkjTN69ddiB/Sm6051Hu+MnAV+tpSrE=
+X-Google-Smtp-Source: APXvYqzZFwLUbfJcEnbZbAGT1zV57YW9h9yhIbVmQk04aT+D+8FTRtrjLvF7V4kfL8f1/40SqSBmEw==
+X-Received: by 2002:a1c:305:: with SMTP id 5mr82031188wmd.101.1564583847173;
+        Wed, 31 Jul 2019 07:37:27 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id x6sm71506855wrt.63.2019.07.31.07.37.26
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 07:37:26 -0700 (PDT)
+Message-ID: <5d41a7a6.1c69fb81.2f7f9.9daa@mx.google.com>
+Date:   Wed, 31 Jul 2019 07:37:26 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: next
+X-Kernelci-Kernel: next-20190731
+X-Kernelci-Branch: master
+X-Kernelci-Report-Type: boot
+Subject: next/master boot: 258 boots: 15 failed, 181 passed with 61 offline,
+ 1 untried/unknown (next-20190731)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, 05 Jul 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-> On Fri, Jul 5, 2019 at 12:23 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> On 7/4/19 8:09 PM, Masahiro Yamada wrote:
->> > On Fri, Jul 5, 2019 at 12:05 PM Masahiro Yamada
->> > <yamada.masahiro@socionext.com> wrote:
->> >>
->> >> On Fri, Jul 5, 2019 at 10:09 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->> >>>
->> >>> On 7/4/19 3:01 PM, akpm@linux-foundation.org wrote:
->> >>>> The mm-of-the-moment snapshot 2019-07-04-15-01 has been uploaded to
->> >>>>
->> >>>>    http://www.ozlabs.org/~akpm/mmotm/
->> >>>>
->> >>>> mmotm-readme.txt says
->> >>>>
->> >>>> README for mm-of-the-moment:
->> >>>>
->> >>>> http://www.ozlabs.org/~akpm/mmotm/
->> >>>
->> >>> I get a lot of these but don't see/know what causes them:
->> >>>
->> >>> ../scripts/Makefile.build:42: ../drivers/gpu/drm/i915/oa/Makefile: No such file or directory
->> >>> make[6]: *** No rule to make target '../drivers/gpu/drm/i915/oa/Makefile'.  Stop.
->> >>> ../scripts/Makefile.build:498: recipe for target 'drivers/gpu/drm/i915/oa' failed
->> >>> make[5]: *** [drivers/gpu/drm/i915/oa] Error 2
->> >>> ../scripts/Makefile.build:498: recipe for target 'drivers/gpu/drm/i915' failed
->> >>>
->> >>
->> >> I checked next-20190704 tag.
->> >>
->> >> I see the empty file
->> >> drivers/gpu/drm/i915/oa/Makefile
->> >>
->> >> Did someone delete it?
->> >>
->> >
->> >
->> > I think "obj-y += oa/"
->> > in drivers/gpu/drm/i915/Makefile
->> > is redundant.
->>
->> Thanks.  It seems to be working after deleting that line.
->
->
-> Could you check whether or not
-> drivers/gpu/drm/i915/oa/Makefile exists in your source tree?
->
-> Your build log says it was missing.
->
-> But, commit 5ed7a0cf3394 ("drm/i915: Move OA files to separate folder")
-> added it.  (It is just an empty file)
->
-> I am just wondering why.
+next/master boot: 258 boots: 15 failed, 181 passed with 61 offline, 1 untri=
+ed/unknown (next-20190731)
 
-I've sent patches adding some content, and they'll make their way
-upstream eventually. I am not sure why the empty file was added
-originally. Perhaps as a placeholder, seemed benign enough.
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20190731/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20190731/
 
-BR,
-Jani.
+Tree: next
+Branch: master
+Git Describe: next-20190731
+Git Commit: ce96e791d6a7e11078f279273213c5c2e906f401
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 85 unique boards, 27 SoC families, 20 builds out of 221
 
+Boot Failures Detected:
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+arm64:
+    defconfig:
+        gcc-8:
+            apq8096-db820c: 1 failed lab
+            qcom-qdf2400: 1 failed lab
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        clang-8:
+            meson-gxbb-nanopi-k2: 1 failed lab
+            meson-gxl-s805x-p241: 1 failed lab
+            meson-gxl-s905x-khadas-vim: 1 failed lab
+            meson-gxl-s905x-libretech-cc: 1 failed lab
+            meson-gxm-khadas-vim2: 1 failed lab
+            r8a7795-salvator-x: 1 failed lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            qcom-qdf2400: 1 failed lab
+
+arm:
+    oxnas_v6_defconfig:
+        gcc-8:
+            ox820-cloudengines-pogoplug-series-3: 1 failed lab
+
+    qcom_defconfig:
+        gcc-8:
+            qcom-apq8064-cm-qs600: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+            rk3288-veyron-jaq: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            armada-xp-openblocks-ax3-4: 1 failed lab
+
+Offline Platforms:
+
+arm64:
+
+    defconfig:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+            meson-gxm-nexbox-a1: 1 offline lab
+            rk3399-firefly: 1 offline lab
+            sun50i-a64-pine64-plus: 1 offline lab
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+            meson-gxm-nexbox-a1: 1 offline lab
+            rk3399-firefly: 1 offline lab
+            sun50i-a64-pine64-plus: 1 offline lab
+
+mips:
+
+    pistachio_defconfig:
+        gcc-8
+            pistachio_marduk: 1 offline lab
+
+arm:
+
+    exynos_defconfig:
+        gcc-8
+            exynos5250-arndale: 1 offline lab
+            exynos5420-arndale-octa: 1 offline lab
+            exynos5800-peach-pi: 1 offline lab
+
+    multi_v7_defconfig:
+        gcc-8
+            bcm72521-bcm97252sffe: 1 offline lab
+            bcm7445-bcm97445c: 1 offline lab
+            exynos5250-arndale: 1 offline lab
+            exynos5420-arndale-octa: 1 offline lab
+            exynos5800-peach-pi: 1 offline lab
+            imx6dl-wandboard_dual: 1 offline lab
+            imx6dl-wandboard_solo: 1 offline lab
+            imx6q-wandboard: 1 offline lab
+            imx7s-warp: 1 offline lab
+            meson8b-odroidc1: 1 offline lab
+            omap3-beagle: 1 offline lab
+            omap4-panda: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+            stih410-b2120: 1 offline lab
+            sun4i-a10-cubieboard: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+            vf610-colibri-eval-v3: 1 offline lab
+
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-ifc6410: 1 offline lab
+
+    davinci_all_defconfig:
+        gcc-8
+            da850-evm: 1 offline lab
+            dm365evm,legacy: 1 offline lab
+
+    imx_v6_v7_defconfig:
+        gcc-8
+            imx6dl-wandboard_dual: 1 offline lab
+            imx6dl-wandboard_solo: 1 offline lab
+            imx6q-wandboard: 1 offline lab
+            imx7s-warp: 1 offline lab
+            vf610-colibri-eval-v3: 1 offline lab
+
+    sunxi_defconfig:
+        gcc-8
+            sun4i-a10-cubieboard: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
