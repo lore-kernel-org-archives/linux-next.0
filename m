@@ -2,103 +2,144 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9C5C32751
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 12:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689B1C433FF
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 12:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 529EC2089E
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 12:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40915208E3
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 12:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrX1QYVp"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N/ZCazuB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfGaMBq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 08:01:46 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43730 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfGaMBp (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 08:01:45 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r22so4283818pgk.10;
-        Wed, 31 Jul 2019 05:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=mxMz9DTYTl5hcQl/IOSK5bxeHDD9Zpp9rkD02EBfWBw=;
-        b=GrX1QYVpWlLNEHLqvIochVMBQ25mLyaDxVFB38BIMIhEosrKIW5g62qKrFveRgl8BH
-         jIs7yhi3evsr98nbAh8KC/ZG8UJL2G2a07+jsWOdu5/9IZ4uuUJzMjESX4AhuoUnftCD
-         /EYxWQqZl/FYmqhSf4ZpOJX7eyqK9i7/tV+cub8fZ+3giqD+8ff216/MPh/qhxJGY5t1
-         QWTfvMgsOi0viMgbtiGivYUyhZnwaNV/SOXV9EZ1f3EZc94i44RNTPkSSLCJRwwjjgcp
-         PnwuI3kdNEm9TpqxG10rrJndTSF01wfA1IWwCLTeUxU2bo6Gd5hzZSys/Ww716Sn2hlk
-         deDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=mxMz9DTYTl5hcQl/IOSK5bxeHDD9Zpp9rkD02EBfWBw=;
-        b=bi/lo2NnIjgkAVmTjMK7ddGAKgmcWCIsItq3Pd5IreBkjkboLjH5VjgQk59+OFDtBY
-         L//AyTEcN3jHAf8h24fhIQDZbtgBx7dEoUkmYfYZcsxU1rQtRnjwTlyB5OjwLwp32mTk
-         Yrqu1ch1b5OEdNlY4Q/c6KMFleW4pp4FYR4Hcp1qrNUtfFjS+Y+qAGERx3Pm/QpmJFt0
-         c5ZpCdnHSAp8vIeKbZdWytFCauVlAOIQR0QZEdVPaqJMb6r/Pr6l7g+CITliwh1scMWx
-         EZz//MBvdITwEMr+b+eEbN6ZNYsdwulpdB8o/iTDWtTqIFoEyczcSwDxo2lLXY1Wq/8r
-         /qCw==
-X-Gm-Message-State: APjAAAU0sjrCcFutl6t9C9C2nJC4pZTN2C6HoatCEx6DmtfbkqOSWs7j
-        HpwcFchDtBfT6YgW/JU2wO54FM+0
-X-Google-Smtp-Source: APXvYqytpW1TS1jHUuiARJFaYVzq69ivzNY29VEf4QqVcLOZ95jTtJnNq60Jnoc04kQbt+HqLVO/Kw==
-X-Received: by 2002:a65:5082:: with SMTP id r2mr87193169pgp.170.1564574505034;
-        Wed, 31 Jul 2019 05:01:45 -0700 (PDT)
-Received: from ?IPv6:2402:f000:4:72:808::177e? ([2402:f000:4:72:808::177e])
-        by smtp.gmail.com with ESMTPSA id c26sm72452537pfr.172.2019.07.31.05.01.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 05:01:44 -0700 (PDT)
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20190731161629.4a20a23d@canb.auug.org.au>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <a9c66184-15b9-cd11-60b7-5a644c0521b0@gmail.com>
-Date:   Wed, 31 Jul 2019 20:01:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726968AbfGaMQE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 08:16:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:41763 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbfGaMQE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:16:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45zC7h6dQ5z9sDQ;
+        Wed, 31 Jul 2019 22:16:00 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564575361;
+        bh=5sST4uA7a8v2Bkt32XwqcTJdnvlaNvANZv414a4LsFk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=N/ZCazuBTeGS96zt63PfnYIsZlNDHt6v9XqOrgUIZ7kX7ZoHqylhgwn3yPHS528P6
+         7MGlGbmQz5av3B8CRavNabQYbPJNlG6Ks0dPiTDcDLXmESDDnu+Rf+yXMfjVzc4Iew
+         WFdMVn2t8GAWRCLpGp74S0o5Z5FfKCtdfrza/gOxsISXnscY/ITg2sOWOGF29tZP3+
+         cJNelRxlEbrPh2aju4gZhXccxFUmdlVaBrkAHtq9sYlhrB4BwnH+HnNQ49/rfUa7rC
+         l/Jsv9p+A2DGK8Ou8zpcq+c0QsqZlG6MwgRIcGIMRNFerzrNbG5vkAQ8Nr5/XEwd/p
+         t+A5c//Q9rjmw==
+Date:   Wed, 31 Jul 2019 22:15:50 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Next <linux-next@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: New Renesas SoC tree for linux-next (was: [PATCH] MAINTAINERS:
+ Add Geert as Renesas SoC Co-Maintainer)
+Message-ID: <20190731221550.5be0a103@canb.auug.org.au>
+In-Reply-To: <CAMuHMdV1zXCq6dbcg6=YmHgYqE5tfc1e7DbB3UgTVPm-5rU2Bw@mail.gmail.com>
+References: <20190729175658.13672-1-geert+renesas@glider.be>
+        <CAMuHMdV1zXCq6dbcg6=YmHgYqE5tfc1e7DbB3UgTVPm-5rU2Bw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190731161629.4a20a23d@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; boundary="Sig_/8KjFQ.PEdR.jGnI=ekR7oRB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/8KjFQ.PEdR.jGnI=ekR7oRB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Geert,
 
-On 2019/7/31 14:16, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 31 Jul 2019 09:33:19 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
 >
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->
-> fs/ocfs2/xattr.c:1493:13: warning: 'ocfs2_xa_add_entry' defined but not used [-Wunused-function]
->   static void ocfs2_xa_add_entry(struct ocfs2_xa_loc *loc, u32 name_hash)
->               ^~~~~~~~~~~~~~~~~~
->
-> Introduced by commit
->
->    45d9aa3d263d ("fs: ocfs2: fix possible null-pointer dereferences in ocfs2_xa_prepare_entry()")
->
+> Apparently Gmail marked my previous email as spam, so probably that's
+> why I don't see my branch in linux-next.
 
-I look at the code again.
-The function ocfs2_xa_add_entry() is never called when using this patch.
-Thus, I think the definition of ocfs2_xa_add_entry() could be removed.
-If it is okay, I can send a new patch (v3).
+Nothing to do with Gmail, just me not reading well enough. Sorry about
+that.
 
+> Can you please add it?
 
-Best wishes,
-Jia-Ju Bai
+Will do.
+
+> Stephen: Can you please add my branch to linux-next, after Simon's
+>          branch, which may still receive fixes for v5.3?
+>
+>  ARM/RENESAS ARM64 ARCHITECTURE
+>  M:     Simon Horman <horms@verge.net.au>
+> +M:     Geert Uytterhoeven <geert+renesas@glider.be>
+>  M:     Magnus Damm <magnus.damm@gmail.com>
+>  L:     linux-renesas-soc@vger.kernel.org
+>  Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.g=
+it next
+> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+> next
+>=20
+>  ARM/SHMOBILE ARM ARCHITECTURE
+>  M:     Simon Horman <horms@verge.net.au>
+> +M:     Geert Uytterhoeven <geert+renesas@glider.be>
+>  M:     Magnus Damm <magnus.damm@gmail.com>
+>  L:     linux-renesas-soc@vger.kernel.org
+>  Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.g=
+it next
+> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+> next
+
+Added from tomorrow.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/8KjFQ.PEdR.jGnI=ekR7oRB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1BhnYACgkQAVBC80lX
+0Gx5Pwf/fKj1HnU164D+WFaWT4dvkgdOvqCh/Ea+X4sToOmjyrjF0nTKKGnXlL7T
+6jeeP1EBm7n4Z7YHb7tgMC8gNFgK/P5gg5JVMAFOqYJu9iKr3SDUpnbm8YO80OJ9
+xMbTLTfPjWku05jLiSUAQJXPvBl7juPdN7NTzN5SOp3UK+Y7QgHo8BJIUdzIFQ+L
+dhB/8D18K7T+xiO4TidCFCzDC4xxMCbMfGaW+OshqVDkFjwAPvnMltp6hfKrTD3r
+19KR5yQ+X8mw5jmTI3oiJRsk783DS/2gJDciVqiUMkIe6GiE+unaWl48huFuBS+x
+LeJ8wt8oANI8CROwpPYFfNqP9lPqZQ==
+=BiaT
+-----END PGP SIGNATURE-----
+
+--Sig_/8KjFQ.PEdR.jGnI=ekR7oRB--
