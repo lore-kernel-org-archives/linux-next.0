@@ -2,96 +2,106 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1172C32751
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E641C32751
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B534B206A3
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 380EE2184B
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:21:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q2ubVie9"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="PIv2yYBZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SRKKDG1u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbfGaHMZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 03:12:25 -0400
-Received: from ozlabs.org ([203.11.71.1]:56423 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfGaHMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 03:12:25 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45z4PL3hKgz9s3l;
-        Wed, 31 Jul 2019 17:12:22 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564557142;
-        bh=UdwW/mnUrireVfWyIo4Ee6IEoXzagdV0hnePRChllbw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Q2ubVie93phsnRvmBAwuhn8LRJydx4UX/IHz51DwJ4zor0EKYBNBRtTIFlQ5FP4AI
-         xNeD8wkpBTutkTP5ffh1Yfg4PnCA/MXtTzpLGt6TlI7MS/3EqxY9+rCHPb8thfS8aX
-         vzKqDEPrBbqO3kZbCHV2a99ZyASKnjyBN2tC/jwjVLMWESOlLXAKU7dytr1LH+B8l+
-         9CUSjwS1G1U0Z8QWToCkg6cslLnmJI3jHkpMurd40KzQFcirMq2hz2yIAei3FHV68e
-         KsB2nrIFEtBiYqXBl8RjVd4fdqcaWQ1l5L2KhHJliFUnswqE3qaYXnH0K8jHHmcIfZ
-         XIpwg8TbqwSUg==
-Date:   Wed, 31 Jul 2019 17:12:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
+        id S1727540AbfGaHVt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 03:21:49 -0400
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:44105 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbfGaHVt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 03:21:49 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 2B8F24C8;
+        Wed, 31 Jul 2019 03:21:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 31 Jul 2019 03:21:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=IASG/165vAg3lwsVChfA/H8GkGe
+        uDko3lIAWgtbJGI4=; b=PIv2yYBZYvO0S+68n05r9KRRWcsyVfvvoPFlqCRPydZ
+        fx3Bh8PEeEbeF3KO8GqmvAJVqNBuYlpWhmALinkSWpfnFHAFGnBBhmFz0B6ISpG5
+        r45Ii/CuRHvzAqTIiU5bWky7OZekagI8LYR57U5SeI3WBBFoJXD6xt47UGw0ZACK
+        eiwthLoVhNsT7PUosfpveLMhVxoWleXugazPgGISb9zaWe9lEirXy0NXJwmEzWRe
+        bmtOgXTm0Cb3ae5kWspzclItEhN7eRX0ERA5Vc1Ctkmb1Eoi94S9fsuDchKeIycK
+        uydyCVwZnKccgVSH+gXQEptHvtYtDmz2YqgiCJnk8pg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=IASG/1
+        65vAg3lwsVChfA/H8GkGeuDko3lIAWgtbJGI4=; b=SRKKDG1urRyuHo93IiOkrH
+        hfzeWa4B5S+9tMO/pGVDS1Q33EqjgnCmKJafL9VPksisu/P1qKVgqOCqdCd7G703
+        NkXaWLJQyDE52pesEphr+A9OvxWUA6TuiW6v67kMJwNgf/fC0WEfxQHT3NEa8H/W
+        b+pYOwXvEiS/zbNRZElfskdphLFWmu63FAbMpYqnXiqSpCVBbw7VTq2A368EICrG
+        EKZN3/wta1GQlOiL/80rByPHAfXweTS8nygTjdF0Ic+RkQRfhyciE7rcN0zGyxG+
+        7Q40ViiXKjOBH0MQNVKpAw1LA+Ts8Vhv1ICxgwnor/pcCmj7m33DSFEwXI1KC8ZQ
+        ==
+X-ME-Sender: <xms:iUFBXQYNXJpVDM3levlCUBFTxTPdYMnGIwSMzlVt__q-1Yxxz15MKw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleeggdduudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:iUFBXdGeuocRsbbLEmKFlmJFpYwpX8_gLrbH2uBf1C_XZIXypzMNIw>
+    <xmx:iUFBXaYKXIs6HiSjB8X865L1_T5Ie3OuW9KK7szh-GkW5YnTM56fBQ>
+    <xmx:iUFBXURiKBIDxxaYc_wGLC0QIW_noYyp1Vr-cQZ7P73CDrjNUJeOVA>
+    <xmx:iUFBXZKkuoylR3rpLeR7s25DVfUQvPQ1jXvUnVcO3UyRPDZOPFvEug>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E1DD2380076;
+        Wed, 31 Jul 2019 03:21:44 -0400 (EDT)
+Date:   Wed, 31 Jul 2019 09:21:43 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: linux-next: Fixes tag needs some work in the tty tree
-Message-ID: <20190731171221.326095e9@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the tty tree
+Message-ID: <20190731072143.GA24490@kroah.com>
+References: <20190731171221.326095e9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.baL9FeGwHuZIWh+eOtLaWa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731171221.326095e9@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/.baL9FeGwHuZIWh+eOtLaWa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 31, 2019 at 05:12:21PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   fa04d8c1c150 ("tty: serial: fsl_lpuart: Use appropriate lpuart32_* I/O funcs")
+> 
+> Fixes tag
+> 
+>   Fixes: a5fa2660d787 ("tty/serial/fsl_lpuart: Add CONSOLE_POLL support
+> 
+> has these problem(s):
+> 
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+> 
+> Please do not split Fixes tags over more than one line.
 
-Hi all,
+Sorry about that, let me take your script and finally incorporate it
+into my review scripts so this doesn't happen again.
 
-In commit
+thanks,
 
-  fa04d8c1c150 ("tty: serial: fsl_lpuart: Use appropriate lpuart32_* I/O fu=
-ncs")
-
-Fixes tag
-
-  Fixes: a5fa2660d787 ("tty/serial/fsl_lpuart: Add CONSOLE_POLL support
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes tags over more than one line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.baL9FeGwHuZIWh+eOtLaWa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1BP1UACgkQAVBC80lX
-0GzAAQf8CmfbG5DLxBciqquYtgOXsgCHbJEQQBWrgf73/n7iYrcdvzOOd7clxxC0
-lKGG4xvKEmUD7ITNfs3QVPTMijBBuEwPXw39uCfn00QP/rE2aQTgusSecNxf7Za6
-RA0PF7dtlRUJ2rc2uqusDps0hr2Gxt+xjCez0izTx8VK90F1FBTFHJxQvFq9rdnU
-2W1JbuV5/VjHpFodWRn5VETTsqkqqdZshnyeiLR0EfPdBX/Xj1P8o58Zfz5gomHc
-7MJ+eJd9lR53xtk+UWJzS7HDRoRS5gSy/eCFm/Gkw1bzazcn1pGwIFcWerTNBk3m
-Bcs5iO4ERAhm7Q7YbI2IrBer7QisrA==
-=a7It
------END PGP SIGNATURE-----
-
---Sig_/.baL9FeGwHuZIWh+eOtLaWa--
+greg k-h
