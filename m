@@ -2,140 +2,104 @@ Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8029FC32751
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0632C433FF
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 08:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61C93208E4
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 07:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF4FD208E3
+	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 08:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbfGaHde (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 03:33:34 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34542 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfGaHdd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 03:33:33 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so639542wmd.1;
-        Wed, 31 Jul 2019 00:33:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EJpdEs0Y/iKBAR0s7maiN7L6lAFR9Ak7SsJNj35d3J0=;
-        b=GJCqlU89QKyE1TCEYEaW9MRDDemIaOZLiOT6FvkGUSW63WdXFxUP93D4KGBuv1uP6n
-         C1zxP/6Rrl3R3mPShPBgSuRUgfzlXwnWZ5/pagoKNgPlDTE1NA+hs+mSl1epA7xkhxdZ
-         L0OI+cv5H9KOMqDeid5QGVmI9sKtBYa92qg92nGfrNliQibHxX9RcTg+kimAKSXusDo8
-         J9Pzzn9odxz5Y7tdW7FitXYv6jypbxoRbF1iP15IoeA7aGoM7IBKEUq9Cxde5uHBsPBd
-         ZGr9XQ7cn6fMITprF97/fgtfUkyj2FD/MpGsogsBgyX5EpA9HHkE2Uk4axq64NX/UaKS
-         KB2w==
-X-Gm-Message-State: APjAAAXz/jDkbarepNpr45SrYCzt+M94skWD/5V/oOxlsEHE3HN27Euc
-        gk7EPqCbQfBtBjkPLbt+W1yhsNt/NVPjRL9rCypu4g==
-X-Google-Smtp-Source: APXvYqxdjX7Ynuepc4FG8+RzFEwARyA/ZVMVrjdrylPwmVSnS9Cv+//GVf6/Dw9BF49EnZLRnfidzYApIlvDEcIy1Ug=
-X-Received: by 2002:a7b:c310:: with SMTP id k16mr68511863wmj.133.1564558411362;
- Wed, 31 Jul 2019 00:33:31 -0700 (PDT)
+        id S1727753AbfGaI63 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 04:58:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725970AbfGaI62 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 04:58:28 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V8l23a031755
+        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 04:58:27 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u35fwfd7r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Wed, 31 Jul 2019 04:58:27 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Wed, 31 Jul 2019 09:58:25 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 31 Jul 2019 09:58:23 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6V8w5Jr19005810
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 08:58:05 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C6D0A405C;
+        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 573FEA4060;
+        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.134])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
+Date:   Wed, 31 Jul 2019 10:58:20 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Patrick Steuer <steuer@linux.ibm.com>
+Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
+References: <20190731163915.3fdfcb14@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190729175658.13672-1-geert+renesas@glider.be>
-In-Reply-To: <20190729175658.13672-1-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 31 Jul 2019 09:33:19 +0200
-Message-ID: <CAMuHMdV1zXCq6dbcg6=YmHgYqE5tfc1e7DbB3UgTVPm-5rU2Bw@mail.gmail.com>
-Subject: New Renesas SoC tree for linux-next (was: [PATCH] MAINTAINERS: Add
- Geert as Renesas SoC Co-Maintainer)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next <linux-next@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731163915.3fdfcb14@canb.auug.org.au>
+X-TM-AS-GCONF: 00
+x-cbid: 19073108-0012-0000-0000-00000337EE06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19073108-0013-0000-0000-000021719646
+Message-Id: <20190731085819.GA3488@osiris>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907310095
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+On Wed, Jul 31, 2019 at 04:39:15PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190730:
 
-Apparently Gmail marked my previous email as spam, so probably that's
-why I don't see my branch in linux-next.
+Hello Ard,
 
-Can you please add it?
-Thanks a lot!
+two of your patches in the crypto tree cause build breakage on s390:
 
----------- Forwarded message ---------
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, Jul 29, 2019 at 7:57 PM
-Subject: [PATCH] MAINTAINERS: Add Geert as Renesas SoC Co-Maintainer
-To: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell
-<sfr@canb.auug.org.au>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm
-<magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman
-<khilman@kernel.org>, Olof Johansson <olof@lixom.net>,
-<linux-renesas-soc@vger.kernel.org>,
-<linux-arm-kernel@lists.infradead.org>,
-<linux-kernel@vger.kernel.org>, Geert Uytterhoeven
-<geert+renesas@glider.be>
+The patch ("crypto: aes - create AES library based on the fixed time AES code")
+causes this:
 
+arch/s390/crypto/aes_s390.c:111:13: error: conflicting types for 'aes_encrypt'
+  111 | static void aes_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+      |             ^~~~~~~~~~~
 
-At the end of the v5.3 upstream kernel development cycle, Simon will be
-stepping down from his role as Renesas SoC maintainer.  Starting with
-the v5.4 development cycle, Geert is taking over this role.
+And the commit ("crypto: aegis128 - add support for SIMD acceleration") causes
+another build breakage:
 
-Add Geert as a co-maintainer, and add his git repository and branch.
+crypto/aegis128-core.c:19:10: fatal error: asm/simd.h: No such file or directory
+   19 | #include <asm/simd.h>
+      |          ^~~~~~~~~~~~
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Stephen: Can you please add my branch to linux-next, after Simon's
-         branch, which may still receive fixes for v5.3?
-
-         Thanks!
----
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6426db5198f05377..6de667021591fb52 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2155,10 +2155,12 @@ F:
-Documentation/devicetree/bindings/arm/realtek.txt
-
- ARM/RENESAS ARM64 ARCHITECTURE
- M:     Simon Horman <horms@verge.net.au>
-+M:     Geert Uytterhoeven <geert+renesas@glider.be>
- M:     Magnus Damm <magnus.damm@gmail.com>
- L:     linux-renesas-soc@vger.kernel.org
- Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
- T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
-+T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
-next
- S:     Supported
- F:     arch/arm64/boot/dts/renesas/
- F:     Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -2269,10 +2271,12 @@ F:      drivers/media/platform/s5p-mfc/
-
- ARM/SHMOBILE ARM ARCHITECTURE
- M:     Simon Horman <horms@verge.net.au>
-+M:     Geert Uytterhoeven <geert+renesas@glider.be>
- M:     Magnus Damm <magnus.damm@gmail.com>
- L:     linux-renesas-soc@vger.kernel.org
- Q:     http://patchwork.kernel.org/project/linux-renesas-soc/list/
- T:     git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
-+T:     git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
-next
- S:     Supported
- F:     arch/arm/boot/dts/emev2*
- F:     arch/arm/boot/dts/gr-peach*
---
-2.17.1
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
