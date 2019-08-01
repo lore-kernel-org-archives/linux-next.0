@@ -6,99 +6,163 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61D5C32751
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 02:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63223C433FF
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 02:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0AA20693
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 02:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2906820B7C
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 02:50:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QaZhCL+W"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qai+NTOj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfHACaL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 22:30:11 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52245 "EHLO ozlabs.org"
+        id S1726626AbfHACuN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 22:50:13 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40559 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726800AbfHACaL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 Jul 2019 22:30:11 -0400
+        id S1726125AbfHACuN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 22:50:13 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45zZ596mjNz9sBF;
-        Thu,  1 Aug 2019 12:30:04 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45zZXK0vY4z9sMr;
+        Thu,  1 Aug 2019 12:50:08 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564626608;
-        bh=F6yYrwA8wrWGh9l/at9G7REoMS60ygdsyKPlul1m6gI=;
+        s=201702; t=1564627810;
+        bh=Vz4PbnGvp87fekQr8Axb0T3lKXfAHGX5+7DZxMwiTsE=;
         h=Date:From:To:Cc:Subject:From;
-        b=QaZhCL+WBLqKyRiIv9LmrKpl6lnFiNtDPMGJjUMSdtQB5AlMbdwTBaGZToKG2k1KZ
-         TaJr26TJisLqZUDxc8IkpNs1ba5SnN7mTN/ImIzh6uDuOIWVMVZyIdfO4Eg8KB/Axf
-         ElH6m8mo/b5MTfuEAxx/4m3d/uo2O4ynHbto1kTGnzgnFdH11dj/DrebsXuz/9PYNP
-         B8nKHzGj9g7aeu30cMPwOijKPeQDMUtwSPPjLp1IbiKtRGDbWby9nFPRyKdS87NSYE
-         89+ZD7dRbn/ljDySH7NtC4YKAH7ANEkUs5mwRRzQLNzl2lQpjfps7656qoOZiMxceu
-         HJmQNdoVeUHeQ==
-Date:   Thu, 1 Aug 2019 12:30:04 +1000
+        b=qai+NTOjAghdddihkjQork1rjg5sA/onFT1l63P1d+xXvcnqjdnPG+LobkoGBsgCN
+         e114GOo3LM2yYHAKgh7T6+pyIUuY3C6QxoBpBf8TfNFB1Q73nNRqzveVgiHQQRxEYm
+         2UB92rK7D8sE8yUCT6jmHMwSbr1MHKZVwHZlGqBzfrberXpX6ekkwExH2j98PKPsLF
+         hwIRf5S8Pp5+iHDKv8SDaQcQoa1sleK37Flik66JWpPTVBEc7hJYNSU0UGWEyDBPd/
+         jzU6ONEE2txadkVi8Z/CdZolCbK2IfQrulmnLhQk66kgWzGNEzDb20fdVNGkUWeAly
+         8fEhEiKhwFAZA==
+Date:   Thu, 1 Aug 2019 12:50:08 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20190801123004.2aa5c658@canb.auug.org.au>
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>
+Subject: linux-next: manual merge of the sound-asoc tree with the sound tree
+Message-ID: <20190801125008.4a533637@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1rIQwGsme1TfqSXECl9f2.Z";
+Content-Type: multipart/signed; boundary="Sig_/Of7hYDvcZhZJ_+VWo=quPjd";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/1rIQwGsme1TfqSXECl9f2.Z
+--Sig_/Of7hYDvcZhZJ_+VWo=quPjd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the sound-asoc tree got conflicts in:
 
-drivers/gpu/drm/radeon/radeon_connectors.c: In function 'radeon_add_legacy_=
-connector':
-drivers/gpu/drm/radeon/radeon_connectors.c:2433:5: error: 'ddc' undeclared =
-(first use in this function)
-     ddc =3D &radeon_connector->ddc_bus->adapter;
-     ^~~
-drivers/gpu/drm/radeon/radeon_connectors.c:2433:5: note: each undeclared id=
-entifier is reported only once for each function it appears in
+  sound/soc/intel/skylake/skl-nhlt.c
+  sound/soc/intel/skylake/skl.h
 
-Caused by commit
+between commit:
 
-  bed7a2182de6 ("drm/radeon: Provide ddc symlink in connector sysfs directo=
-ry")
+  1169cbf6b98e ("ASoC: Intel: Skylake: use common NHLT module")
 
-I have used the drm-misc tree from next-20190731 for today.
+from the sound tree and commit:
+
+  bcc2a2dc3ba8 ("ASoC: Intel: Skylake: Merge skl_sst and skl into skl_dev s=
+truct")
+
+from the sound-asoc tree.
+
+I fixed it up (I think, see below (I used the sound tree version of
+ound/soc/intel/skylake/skl-nhlt.c)) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non
+trivial conflicts should be mentioned to your upstream maintainer when
+your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/1rIQwGsme1TfqSXECl9f2.Z
+diff --cc sound/soc/intel/skylake/skl-nhlt.c
+index 6f57ceb9efb7,6fc3a190067e..000000000000
+--- a/sound/soc/intel/skylake/skl-nhlt.c
++++ b/sound/soc/intel/skylake/skl-nhlt.c
+diff --cc sound/soc/intel/skylake/skl.h
+index f4dd6c767993,600a61f79b0a..000000000000
+--- a/sound/soc/intel/skylake/skl.h
++++ b/sound/soc/intel/skylake/skl.h
+@@@ -16,7 -16,9 +16,8 @@@
+  #include <sound/hdaudio_ext.h>
+  #include <sound/hda_codec.h>
+  #include <sound/soc.h>
+ -#include "skl-nhlt.h"
+  #include "skl-ssp-clk.h"
++ #include "skl-sst-ipc.h"
+ =20
+  #define SKL_SUSPEND_DELAY 2000
+ =20
+@@@ -128,24 -167,27 +166,24 @@@ struct skl_dsp_ops=20
+  int skl_platform_unregister(struct device *dev);
+  int skl_platform_register(struct device *dev);
+ =20
+- struct nhlt_specific_cfg *skl_get_ep_blob(struct skl *skl, u32 instance,
+ -struct nhlt_acpi_table *skl_nhlt_init(struct device *dev);
+ -void skl_nhlt_free(struct nhlt_acpi_table *addr);
++ struct nhlt_specific_cfg *skl_get_ep_blob(struct skl_dev *skl, u32 instan=
+ce,
+  					u8 link_type, u8 s_fmt, u8 no_ch,
+  					u32 s_rate, u8 dirn, u8 dev_type);
+ =20
+- int skl_nhlt_update_topology_bin(struct skl *skl);
+- int skl_init_dsp(struct skl *skl);
+- int skl_free_dsp(struct skl *skl);
+- int skl_suspend_late_dsp(struct skl *skl);
+- int skl_suspend_dsp(struct skl *skl);
+- int skl_resume_dsp(struct skl *skl);
+- void skl_cleanup_resources(struct skl *skl);
+ -int skl_get_dmic_geo(struct skl_dev *skl);
++ int skl_nhlt_update_topology_bin(struct skl_dev *skl);
++ int skl_init_dsp(struct skl_dev *skl);
++ int skl_free_dsp(struct skl_dev *skl);
++ int skl_suspend_late_dsp(struct skl_dev *skl);
++ int skl_suspend_dsp(struct skl_dev *skl);
++ int skl_resume_dsp(struct skl_dev *skl);
++ void skl_cleanup_resources(struct skl_dev *skl);
+  const struct skl_dsp_ops *skl_get_dsp_ops(int pci_id);
+  void skl_update_d0i3c(struct device *dev, bool enable);
+- int skl_nhlt_create_sysfs(struct skl *skl);
+- void skl_nhlt_remove_sysfs(struct skl *skl);
+- void skl_get_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks);
++ int skl_nhlt_create_sysfs(struct skl_dev *skl);
++ void skl_nhlt_remove_sysfs(struct skl_dev *skl);
++ void skl_get_clks(struct skl_dev *skl, struct skl_ssp_clk *ssp_clks);
+  struct skl_clk_parent_src *skl_get_parent_clk(u8 clk_id);
+- int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
++ int skl_dsp_set_dma_control(struct skl_dev *skl, u32 *caps,
+  				u32 caps_size, u32 node_id);
+ =20
+  struct skl_module_cfg;
+
+--Sig_/Of7hYDvcZhZJ_+VWo=quPjd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1CTqwACgkQAVBC80lX
-0GwQFwf/bkQ4sQR7J6NB16AEgGu/p2R8lXhPjZa2XtdZY+zrfKDcD1fhlriYJaIf
-ZalH+q0oPJmGm53OhaeLMmTVF0lOWEoEtVZFto+YEtoqTILgMwRu47dXhanM4iJT
-qxe0Rq8haX/zCypvqrFMTStQmOzg0AZcRKYPWtvnrQBFx6PGwpr6A94ajjxIbW0o
-FMyXrW2deieI0Gx8PLD/Z3q29V30fKNcxVoHMCyLsvQaItqnTwYJTKR/iLDioaAM
-wSPsUMpNGDPTOWPe2+gItHWQTGDFua9tJB/iglf28rOi8rZSEFUuhlclg5fV97Ti
-GGXVLs46KPRtNUXiKaBdZVDkwtgegg==
-=2y3a
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1CU2AACgkQAVBC80lX
+0Gx+Jgf6A9sBdThuP5HB4RNEfLuww0j7MwkSNFi/V4Ur1+70oJbE3elPkuy+VkrO
+JX4WOY0MXZ9j/b02nEkj3Tc5HAuKQlkPuSZcgNYOszHjw21ZbJRBS9OAbZ2wPp8i
+bGKpsMNjgDWyCrU9ef9hbtu0juMri/DIk6i1GtSuva6Z/dMH0iLc1MFG8w5kfmLS
+5gGZYmqKGOiW72Bt3QJhx9PaAiHyV4XQnp5Ru0u4YQkBCIwGEa0fXaHL8eTeXgX0
+3rMZmO5MuSq+I/3h1ev9AKHkA+KDokybFIuM1P39do69t/3KLdqQQkkyZtM9m9a5
+Tb9830pfCL7tTAGpMkdg0tgnGgDMkw==
+=S4cp
 -----END PGP SIGNATURE-----
 
---Sig_/1rIQwGsme1TfqSXECl9f2.Z--
+--Sig_/Of7hYDvcZhZJ_+VWo=quPjd--
