@@ -2,95 +2,95 @@ Return-Path: <SRS0=Uj9k=V5=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92BDC19759
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 20:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9E1C19759
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 21:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9957520838
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 20:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD314206B8
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 21:48:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hnBldSv2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbfHAUVr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 1 Aug 2019 16:21:47 -0400
-Received: from sauhun.de ([88.99.104.3]:56804 "EHLO pokefinder.org"
+        id S1730713AbfHAVsi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 1 Aug 2019 17:48:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:38897 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfHAUVr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 1 Aug 2019 16:21:47 -0400
-Received: from localhost (p54B333D2.dip0.t-ipconnect.de [84.179.51.210])
-        by pokefinder.org (Postfix) with ESMTPSA id 7D2FE2CF684;
-        Thu,  1 Aug 2019 22:21:44 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 22:21:44 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        id S1726403AbfHAVsh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Aug 2019 17:48:37 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4603nv05Sgz9s3Z;
+        Fri,  2 Aug 2019 07:48:34 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564696115;
+        bh=aIngYeEzEy2hPKC6P+EjAYCZpyzJwPIbJ1tSaVX7aK4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=hnBldSv2ThzJTeoJ56CsuX9AZZdqlOAFGlw9OFGNNwylEkAIRLsOBWis7gWO/3n/T
+         /aIUKShwD1j7U7Ds8sRAWdrxejNUdhXrp5aoB8h4wj6Q/LD8e67wY3y6VO+aFvxV+8
+         9WWFeXEgYjWU4vGAGcADz2ZQ0M87B2RY/QdivsckKc1029DnmEsrYShpITkK0uHao/
+         Sc7C/iBFtQh9l0PyF9RE/wNjL0Sum+H6wqO4oK/8sAsNAF2y4Y0G6AAV9yajAicdUQ
+         huF2PWvKm9ezYzHAVbAp6kLY3kxWw/nldyK06zmShYgBCDfvG7+f/wvjdBuAid1iTY
+         khLTJKgAgILkA==
+Date:   Fri, 2 Aug 2019 07:48:13 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: linux-next: Fixes tag needs some work in the i2c tree
-Message-ID: <20190801202143.GA16487@ninjato>
-References: <20190802000252.74ada349@canb.auug.org.au>
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: linux-next: Fixes tag needs some work in the arm64-fixes tree
+Message-ID: <20190802074813.73b82a14@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-Content-Disposition: inline
-In-Reply-To: <20190802000252.74ada349@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/uWc0yy8xSu08lkEq9.urLiD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--Sig_/uWc0yy8xSu08lkEq9.urLiD
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi all,
 
-> In commit
->=20
->   9c5718e14b81 ("i2c: at91: disable TXRDY interrupt after sending data")
->=20
-> Fixes tag
->=20
->   Fixes: fac368a0404 ("i2c: at91: add new driver")
->=20
-> has these problem(s):
->=20
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
+In commit
 
-Thanks for the report, I fixed it.
+  72de4a283cb1 ("arm64: kprobes: Recover pstate.D in single-step exception =
+handler")
 
-Micha=C5=82, please check your gitconfig to avoid these issue in the future.
-And I will check why checkpatch didn't report this flaw to me.
+Fixes tag
 
-Kind regards,
+  Fixes: commit 7419333fa15e ("arm64: kprobe: Always clear pstate.D in brea=
+kpoint exception handler")
 
-   Wolfram
+has these problem(s):
 
+  - leading word 'commit' unexpected
 
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/uWc0yy8xSu08lkEq9.urLiD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1DSdMACgkQFA3kzBSg
-KbY9kg/+IjNTKlYEX5yiyVIkYDgPl1yCKrHTw59Xu9Mt7HhAaN/0ZZo4sV0wcVn8
-eCppj7OF6MdrCkuN60YH63ynLg/2wkMrXo80h9iy1H66hQLWYoN4uX8xrYfD5LlP
-Vm74p9wsZebbdBFP6hSMC/VOKLL79Kahebsr8qLEammSTVxPAXsszx/MWGZBJIf2
-IVbdLSywqOig2KARPDeUUvG2YTnex3B7acraZB8p5zCWNG1uwOpU+ePzoK+6u9h7
-+6O1E7YUOZZ3ENyYidwTZryNCgGI6bWf8vBziDu4+cLSNzXTNYfkbVcVkuWu8nY6
-2SouJ3u+omzBj7UMfbItsScCWCXpQVB+wOKmXOMJb0tlWULLQVsNOoWqAUuRcWw0
-s7swGhmIrJIOz7ym9UyKcCHvpZ3hm4eXju3S+vLPNeJDFRzsz4EdEf/OXqI0EwRt
-GlPeASlKGHM7Ea3yxZj5cYDvU6U+76Sa3DvyrX00aYwyUwfx6EKyOPq1df4G33in
-me7DNI+Z3AO72gx1mQXzy25BIbUIKxCUdqN5ZDbhG2NMYRiBQLn8zrS5EgfISlEr
-qEldomEhDk7pwmquOq9gc0RBmysK46Mk/CXzHIc2xgCN+iQzHW0o5MscSYK6fWx0
-6hwqDOG36C4PqcI8qUyhrWwKJ/hhXBYp6qyu3gJDKPe8Oe5gPzM=
-=CqVz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1DXh0ACgkQAVBC80lX
+0Gy0rggAnS3PZqGfhWWnKtOBIRAxqGoAabOxnbJRg8bzQtU2x1vbYZ7Qw2P6KJJz
+TGQQVqG+sIEEbP81Z0aX0Q0icz+Ft6oOLvOb2XOA4DVSnzs7Or2qGK3vbq1bidd6
+PB/E8QEGdZUovcLyJT2HCgxTaor/Oqmh8PnniXmcURJr7U2YoJj6ihiVAZZXliBk
+bXALsaeN0Wgx+Ygp+gVwKGXnzo83gbctMG21fvn67SHgJBxqvzhSUmmJiW3PaRAs
+aCZR9cX0aqBycZCM9qM2VUaszEpHKskeYmXuLiNdB8/Bq/uF9OgBikLmQoP2Ni/2
+wl77t3dqXitUbI2RKAk40UJFNw4RlA==
+=qGdW
 -----END PGP SIGNATURE-----
 
---UugvWAfsgieZRqgk--
+--Sig_/uWc0yy8xSu08lkEq9.urLiD--
