@@ -2,86 +2,72 @@ Return-Path: <SRS0=Uj9k=V5=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0BFC19759
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 14:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6127AC19759
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 14:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A06B7216C8
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 14:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 313EC216C8
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 14:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564668364;
-	bh=/QGwV/099q7Ievh2NdD7j7R9/868BoMicaYNGZZ6kPc=;
+	s=default; t=1564668615;
+	bh=aTQgjcwnlFP9R0XuBVgdEzfyH25m29QufiYDNE5ngdE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EQ42SSnlP8b0qagIKv4LiEL22XqDBFSQLjMRlUQofDoGFpFSjJJF0LE7Czn+Tj2kp
-	 H6WCNuaS7reZl1b1d8fEJucI/ZWiHEFQTG7xAkdonpFtWZP3dsHwZSiSDsDjxUmS+u
-	 LjetCa6w9uLCM38W94S+N1eVF2vWdG8TK8NI8B+k=
+	b=o36CVA5kUos+MqhDE7QTjFTWU9bqi2SDouB6r0Md3bfFJQuQlFfoYqXEflv8AdeBP
+	 4xRv1FqNNy+77FepLEvtxS252l6p+eF1PLaryAGjPOhMzJ/a5Z+7Qcj5SL0RKmwRGP
+	 aE4qBhal8jnnP6RyzanFcC5yRvtvGoA6LtFYCIQc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730544AbfHAOGE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 1 Aug 2019 10:06:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37374 "EHLO mail.kernel.org"
+        id S1731771AbfHAOKO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 1 Aug 2019 10:10:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730502AbfHAOGD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:06:03 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1731620AbfHAOKO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Aug 2019 10:10:14 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A741A20838;
-        Thu,  1 Aug 2019 14:06:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3D0020679;
+        Thu,  1 Aug 2019 14:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564668363;
-        bh=/QGwV/099q7Ievh2NdD7j7R9/868BoMicaYNGZZ6kPc=;
+        s=default; t=1564668613;
+        bh=aTQgjcwnlFP9R0XuBVgdEzfyH25m29QufiYDNE5ngdE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qyvXwckMZP/C30lbjcHqLQW+JdPhnbP1qEUqpiIxqptK4JObN56JDyDuDhiyJ2H/y
-         nwE798SqAY7Y1/pb+yyjeTbdCZhKn46UPR5YTDHN/ptzIqpTQGN6dqrJFjNoefFLpK
-         0u1uMKx4SharqupYDyxm3c798o8dnVAI3Mw5OVFs=
-Date:   Thu, 1 Aug 2019 16:05:58 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        sfr@canb.auug.org.au, lkp@intel.com,
-        mika.westerberg@linux.intel.com, wsa@the-dreams.de
-Subject: Re: [PATCH 1/3] i2c: Revert incorrect conversion to use generic
- helper
-Message-ID: <20190801140558.GA31375@kroah.com>
-References: <20190801061042.GA1132@kroah.com>
- <20190801102026.27312-1-suzuki.poulose@arm.com>
- <20190801135451.GA26585@kroah.com>
- <09633766-0156-ffb5-3821-3b57e1448599@arm.com>
+        b=EDX4xAksYbtR2hl+kD3gWwwg9YL0fEHnijkOWgjt8paEPQ4/srbpTdfQtjKvuChs6
+         FbFeAjYi4RTMZOZMSONSFZQ+IfLq1um6mVcaAbCUi0JtR+o0hvdJhMLJ/+2UMeFRAP
+         5jrS7r6HXoYJRAbw9YGfs2JilMmDU7QScT+kn/Ko=
+Date:   Thu, 1 Aug 2019 15:10:09 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm64-fixes
+ tree
+Message-ID: <20190801141009.iksa5pc25vxlydak@willie-the-truck>
+References: <20190801235614.4318ce1a@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <09633766-0156-ffb5-3821-3b57e1448599@arm.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190801235614.4318ce1a@canb.auug.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 03:03:06PM +0100, Suzuki K Poulose wrote:
-> On 08/01/2019 02:54 PM, Greg KH wrote:
-> > On Thu, Aug 01, 2019 at 11:20:24AM +0100, Suzuki K Poulose wrote:
-> > > The patch "drivers: Introduce device lookup variants by ACPI_COMPANION device"
-> > > converted an incorrect instance in i2c driver to a new helper. Revert this
-> > > change.
-> > > 
-> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > Cc: Wolfram Sang <wsa@the-dreams.de>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > Fixes: 00500147cbd3 ("drivers: Introduce device lookup variants by ACPI_COMPANION device")
-> > 
-> > I'll go add this...
+On Thu, Aug 01, 2019 at 11:56:14PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Thanks Greg ! Sorry, I thought the commit ids may change in linus's and
-> thus I referred to the "commit subject"
+> Commit
+> 
+>   23fb9748a46d ("arm64: Lower priority mask for GIC_PRIO_IRQON")
+> 
+> is missing a Signed-off-by from its committer.
 
-Once they are in my -next branch, they will not change.
+Urgh, I just can't get this one right, can I? Let's see if I managed it
+this time. Otherwise I'm reverting the thing and we'll just have to live
+with broken priority masking forever!
 
-thanks,
-
-greg k-h
+Will
