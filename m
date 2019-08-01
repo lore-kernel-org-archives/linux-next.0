@@ -1,271 +1,96 @@
-Return-Path: <SRS0=W9k0=V4=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=Uj9k=V5=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2866C32751
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 23:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADC1C32751
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 01:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6549E20693
-	for <linux-next@archiver.kernel.org>; Wed, 31 Jul 2019 23:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6875D20B7C
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 01:53:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZlgztYtZ"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UimalsXL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbfGaXwP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Jul 2019 19:52:15 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47310 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbfGaXwP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jul 2019 19:52:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Z/8fjbB6GIqa8OqZZjiQ3WTsAAPhEVjbBU3v9+5XIIE=; b=ZlgztYtZjDXm02P01Yu4eNfIZT
-        ly/I/jMw27KXas0BzEVHXE0amgQVbqABM0R0ZGjFs3VPLlzbCdqV6CNWAmqNeFoDtMBn4wIbvM2e9
-        F+O/niXaakVZmVagOQWTHhi3jPFq9NEf+LhfTm9zuXSr2P4wBHOiJFuzc4frQ96BmKOi9iBDdeHIS
-        i8w7Ce25MVOJ+RHGKey3FQMqQ5dC53pmrCKvv+yW6gHu6o0KvJ8HhnHejXH9uifCFRcmChuwHbAZ0
-        jLidXwQlDs/3J/2fTQ6YpL25pOX6HOTGwpxIG65yP7T/UxcPrmBAoOSkuuuQfxHkznbYNFK4lo+V5
-        Y1d97xGg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsyO5-0000rm-SG; Wed, 31 Jul 2019 23:52:06 +0000
-Subject: Re: [PATCH] net: mdio-octeon: Fix build error and Kconfig warning
-To:     Nathan Chancellor <natechancellor@gmail.com>, davem@davemloft.net
-Cc:     andrew@lunn.ch, broonie@kernel.org, devel@driverdev.osuosl.org,
-        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
-        hkallweit1@gmail.com, kernel-build-reports@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
-        netdev@vger.kernel.org, willy@infradead.org,
-        kbuild test robot <lkp@intel.com>
-References: <20190731.094150.851749535529247096.davem@davemloft.net>
- <20190731185023.20954-1-natechancellor@gmail.com>
- <b3444283-7a77-ece8-7ac6-41756aa7dc60@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <64f7ef68-c373-5ff5-ff6d-8a7ce0e30798@infradead.org>
-Date:   Wed, 31 Jul 2019 16:52:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728582AbfHABxt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Jul 2019 21:53:49 -0400
+Received: from ozlabs.org ([203.11.71.1]:52801 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfHABxt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 31 Jul 2019 21:53:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45zYHH1fgrz9sMr;
+        Thu,  1 Aug 2019 11:53:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564624427;
+        bh=qA+DdzH9hW92l3545Ern1lVxlp+wJWRpfNpGdbQZ2eY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UimalsXL+VsMURodnJMJmpF0A+5HxB5itnRkuKUp+idnYuswYDN7iIYZyIXfgsvJ2
+         pbgKUKi15h92Hb6/THcmadIqpG6ZNCP2PsMRL2qM2xKfZ95lbyK9vEPWPWIaC7NrrG
+         jTrkTA6rl2Fpah5wNDwGlWS/7rwC0fW1ukmwAAciQQgBRo7yvvfZI/fZW/5Vtcz5jf
+         fQVaALjK7F8ildpgOp6GlDrFA0Q9JMxfOgrZxdmKbOBpEL4Mie1yy16daiqdiHg+wa
+         VgEcz3uKG0sieduxU4ABt06ZHR2lQ+KM7luttcV/Rb4EWOE5a70AgSvWt4IORfEIBW
+         VTKiMTCeHLMfA==
+Date:   Thu, 1 Aug 2019 11:53:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: linux-next: build warnings after merge of the crypto tree
+Message-ID: <20190801115346.77439e35@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <b3444283-7a77-ece8-7ac6-41756aa7dc60@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/xos6cSQgdCPocAQXX1g8kft";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/31/19 2:55 PM, Randy Dunlap wrote:
-> On 7/31/19 11:50 AM, Nathan Chancellor wrote:
->> arm allyesconfig warns:
->>
->> WARNING: unmet direct dependencies detected for MDIO_OCTEON
->>   Depends on [n]: NETDEVICES [=y] && MDIO_DEVICE [=y] && MDIO_BUS [=y]
->> && 64BIT && HAS_IOMEM [=y] && OF_MDIO [=y]
->>   Selected by [y]:
->>   - OCTEON_ETHERNET [=y] && STAGING [=y] && (CAVIUM_OCTEON_SOC &&
->> NETDEVICES [=y] || COMPILE_TEST [=y])
->>
->> and errors:
->>
->> In file included from ../drivers/net/phy/mdio-octeon.c:14:
->> ../drivers/net/phy/mdio-octeon.c: In function 'octeon_mdiobus_probe':
->> ../drivers/net/phy/mdio-cavium.h:111:36: error: implicit declaration of
->> function 'writeq'; did you mean 'writeb'?
->> [-Werror=implicit-function-declaration]
->>   111 | #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
->>       |                                    ^~~~~~
->> ../drivers/net/phy/mdio-octeon.c:56:2: note: in expansion of macro
->> 'oct_mdio_writeq'
->>    56 |  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
->>       |  ^~~~~~~~~~~~~~~
->> cc1: some warnings being treated as errors
->>
->> This allows MDIO_OCTEON to be built with COMPILE_TEST as well and
->> includes the proper header for readq/writeq. This does not address
->> the several -Wint-to-pointer-cast and -Wpointer-to-int-cast warnings
->> that appeared as a result of commit 171a9bae68c7 ("staging/octeon:
->> Allow test build on !MIPS") in these files.
->>
->> Fixes: 171a9bae68c7 ("staging/octeon: Allow test build on !MIPS")
->> Reported-by: kbuild test robot <lkp@intel.com>
->> Reported-by: Mark Brown <broonie@kernel.org>
->> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> 
-> 
-> With today's linux-next (20190731), I am still seeing a Kconfig warning and
-> build errors (building for i386):
-> 
-> and applying Greg's "depends on NETDEVICES" patch and this patch:
-> 
-> WARNING: unmet direct dependencies detected for MDIO_OCTEON
->   Depends on [n]: NETDEVICES [=y] && MDIO_DEVICE [=m] && MDIO_BUS [=m] && (64BIT [=n] || COMPILE_TEST [=y]) && HAS_IOMEM [=y] && OF_MDIO [=n]
->   Selected by [m]:
->   - OCTEON_ETHERNET [=m] && STAGING [=y] && (CAVIUM_OCTEON_SOC || COMPILE_TEST [=y]) && NETDEVICES [=y]
-> 
-> ERROR: "cavium_mdiobus_write" [drivers/net/phy/mdio-octeon.ko] undefined!
-> ERROR: "cavium_mdiobus_read" [drivers/net/phy/mdio-octeon.ko] undefined!
-> 
-> 
-> kernel .config file is attached.
-> 
-> Am I missing another patch?
-> 
-> thanks.
+--Sig_/xos6cSQgdCPocAQXX1g8kft
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If I add this to drivers/staging/octeon/Kconfig:
-	select MDIO_OCTEON
-+	select MDIO_CAVIUM
-	help
+Hi all,
 
-then the build succeeds.
+After merging the crypto tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-This isn't being done by make *config because MDIO_OCTEON depends on OF_MDIO,
-which is not set in my .config file, so the "select MDIO_CAVIUM" in MDIO_OCTEON
-is not done.
+scripts/Makefile.asm-generic:25: redundant generic-y found in arch/arm/incl=
+ude/asm/Kbuild: simd.h
 
-However, there are lots of type/cast warnings in both mdio-octeon and mdio-cavium:
+Introduced by commit
 
-../drivers/net/phy/mdio-octeon.c: In function ‘octeon_mdiobus_probe’:
-../drivers/net/phy/mdio-octeon.c:48:3: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-   (u64)devm_ioremap(&pdev->dev, mdio_phys, regsize);
-   ^
-In file included from ../drivers/net/phy/mdio-octeon.c:14:0:
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-octeon.c:56:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-octeon.c:77:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-octeon.c: In function ‘octeon_mdiobus_remove’:
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-octeon.c:91:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
-  ^~~~~~~~~~~~~~~
+  82cb54856874 ("asm-generic: make simd.h a mandatory include/asm header")
 
-and
+Also the powerpc ppc64_defconfig build produced this warning:
 
-  CC [M]  drivers/net/phy/mdio-cavium.o
-In file included from ../drivers/net/phy/mdio-cavium.c:11:0:
-../drivers/net/phy/mdio-cavium.c: In function ‘cavium_mdiobus_set_mode’:
-../drivers/net/phy/mdio-cavium.h:114:37: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_readq(addr)  readq((void *)addr)
-                                     ^
-../drivers/net/phy/mdio-cavium.c:21:16: note: in expansion of macro ‘oct_mdio_readq’
-  smi_clk.u64 = oct_mdio_readq(p->register_base + SMI_CLK);
-                ^~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-cavium.c:24:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_clk.u64, p->register_base + SMI_CLK);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.c: In function ‘cavium_mdiobus_c45_addr’:
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-cavium.c:39:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_wr.u64, p->register_base + SMI_WR_DAT);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-cavium.c:47:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_cmd.u64, p->register_base + SMI_CMD);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:114:37: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_readq(addr)  readq((void *)addr)
-                                     ^
-../drivers/net/phy/mdio-cavium.c:54:16: note: in expansion of macro ‘oct_mdio_readq’
-   smi_wr.u64 = oct_mdio_readq(p->register_base + SMI_WR_DAT);
-                ^~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.c: In function ‘cavium_mdiobus_read’:
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-cavium.c:86:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_cmd.u64, p->register_base + SMI_CMD);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:114:37: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_readq(addr)  readq((void *)addr)
-                                     ^
-../drivers/net/phy/mdio-cavium.c:93:16: note: in expansion of macro ‘oct_mdio_readq’
-   smi_rd.u64 = oct_mdio_readq(p->register_base + SMI_RD_DAT);
-                ^~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.c: In function ‘cavium_mdiobus_write’:
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-cavium.c:125:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_wr.u64, p->register_base + SMI_WR_DAT);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:113:48: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
-                                                ^
-../drivers/net/phy/mdio-cavium.c:131:2: note: in expansion of macro ‘oct_mdio_writeq’
-  oct_mdio_writeq(smi_cmd.u64, p->register_base + SMI_CMD);
-  ^~~~~~~~~~~~~~~
-../drivers/net/phy/mdio-cavium.h:114:37: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
- #define oct_mdio_readq(addr)  readq((void *)addr)
-                                     ^
-../drivers/net/phy/mdio-cavium.c:138:16: note: in expansion of macro ‘oct_mdio_readq’
-   smi_wr.u64 = oct_mdio_readq(p->register_base + SMI_WR_DAT);
-                ^~~~~~~~~~~~~~
+scripts/Makefile.asm-generic:25: redundant generic-y found in arch/powerpc/=
+include/asm/Kbuild: simd.h
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/xos6cSQgdCPocAQXX1g8kft
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
->> ---
->>  drivers/net/phy/Kconfig       | 2 +-
->>  drivers/net/phy/mdio-cavium.h | 2 ++
->>  2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
->> index 20f14c5fbb7e..ed2edf4b5b0e 100644
->> --- a/drivers/net/phy/Kconfig
->> +++ b/drivers/net/phy/Kconfig
->> @@ -159,7 +159,7 @@ config MDIO_MSCC_MIIM
->>  
->>  config MDIO_OCTEON
->>  	tristate "Octeon and some ThunderX SOCs MDIO buses"
->> -	depends on 64BIT
->> +	depends on 64BIT || COMPILE_TEST
->>  	depends on HAS_IOMEM && OF_MDIO
->>  	select MDIO_CAVIUM
->>  	help
->> diff --git a/drivers/net/phy/mdio-cavium.h b/drivers/net/phy/mdio-cavium.h
->> index ed5f9bb5448d..b7f89ad27465 100644
->> --- a/drivers/net/phy/mdio-cavium.h
->> +++ b/drivers/net/phy/mdio-cavium.h
->> @@ -108,6 +108,8 @@ static inline u64 oct_mdio_readq(u64 addr)
->>  	return cvmx_read_csr(addr);
->>  }
->>  #else
->> +#include <linux/io-64-nonatomic-lo-hi.h>
->> +
->>  #define oct_mdio_writeq(val, addr)	writeq(val, (void *)addr)
->>  #define oct_mdio_readq(addr)		readq((void *)addr)
->>  #endif
->>
-> 
-> 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1CRioACgkQAVBC80lX
+0Gy80Qf/Z5wG6jTUzCB5bSU7bNOflLTWZir7lzHdMQTSAxlHSxisazhg4kSgt9ov
+Prj0giZRnYNzD8SDDOg3/lygPUhE/igXzCS42eD1hlByMRDncpNoLIEFO2JMUdB9
+5nouLllS2i4Q11X0Xnc40LTEZ4LDpy7nwAnYRtfGczA2rOyjeXLT/RvRzk0bD0we
+Vz/PmJg8fRhq5edIlUzfWVIvRWR6d+khD+iI4xv2NOk63j00auueBJQg+gQupxlZ
+rtEDIwCGCkPUvBJDGOLcRwzUC2WUT0GGW/aRquYlGNG3rJ/xCSNhuaEypIPG8WtZ
+EQPwnwRF52Pug4imDNnBzfFe9j+UKg==
+=WXZJ
+-----END PGP SIGNATURE-----
 
-
--- 
-~Randy
+--Sig_/xos6cSQgdCPocAQXX1g8kft--
