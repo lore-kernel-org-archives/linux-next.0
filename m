@@ -2,103 +2,74 @@ Return-Path: <SRS0=Uj9k=V5=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ADCC19759
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 12:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0179BC433FF
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 13:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9C320665
-	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 12:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C64C6214DA
+	for <linux-next@archiver.kernel.org>; Thu,  1 Aug 2019 13:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564667697;
+	bh=b6VWoGqdheqRkM9OnmHqVVLtc9wh2RvzqyHz1w64wq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jlPNhAOy9HUjCK4ePbwtivWoQjQjfkA8/EAwLlU7LEfV0WrBbbWFHiM+IwDFpXIBw
+	 6mThiwBlSPEk8TzD2Hc5TbLE+ze/ckQNai8mS7EgL9E1iquJMjHFNratnmql3vUcC4
+	 BeB6K1QBgiesomqUUVpM6+l5hWZI98r8nsuZxgbA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfHAM3B (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 1 Aug 2019 08:29:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:12844 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728800AbfHAM3A (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Aug 2019 08:29:00 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71CSsCF084610
-        for <linux-next@vger.kernel.org>; Thu, 1 Aug 2019 08:28:59 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u3yseh3xp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Thu, 01 Aug 2019 08:28:59 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 1 Aug 2019 13:28:56 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Aug 2019 13:28:53 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71CSpCO32637432
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Aug 2019 12:28:51 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59FDEA405B;
-        Thu,  1 Aug 2019 12:28:51 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0EFABA4067;
-        Thu,  1 Aug 2019 12:28:51 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.134])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  1 Aug 2019 12:28:50 +0000 (GMT)
-Date:   Thu, 1 Aug 2019 14:28:49 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Patrick Steuer <steuer@linux.ibm.com>
-Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
-References: <20190731163915.3fdfcb14@canb.auug.org.au>
- <20190731085819.GA3488@osiris>
- <20190731110816.GA20753@gondor.apana.org.au>
- <20190731111520.GC3488@osiris>
- <20190731113216.GA21068@gondor.apana.org.au>
- <20190731114453.GD3488@osiris>
+        id S1729197AbfHANy5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 1 Aug 2019 09:54:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729149AbfHANy5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:54:57 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED99520838;
+        Thu,  1 Aug 2019 13:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564667696;
+        bh=b6VWoGqdheqRkM9OnmHqVVLtc9wh2RvzqyHz1w64wq8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ItM6GyEuTDTexWouEuvuE6yqgoBCQNWyua7TBMBO6PF2GzVp/QJSJqbhLf1LMJBgf
+         UApupRrrFtyoh4vLBmX04+Rg9Cz+IQr++Jhj/Comxf3sgZ+T4sACWMmzerV3ZeGa3t
+         6N3lhwhcqAJ1l9Q2q8Ee4LATS0aeIj69ZpnOhpDk=
+Date:   Thu, 1 Aug 2019 15:54:51 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        sfr@canb.auug.org.au, lkp@intel.com,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/3] i2c: Revert incorrect conversion to use generic
+ helper
+Message-ID: <20190801135451.GA26585@kroah.com>
+References: <20190801061042.GA1132@kroah.com>
+ <20190801102026.27312-1-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190731114453.GD3488@osiris>
-X-TM-AS-GCONF: 00
-x-cbid: 19080112-4275-0000-0000-00000352BFAA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080112-4276-0000-0000-00003863B24B
-Message-Id: <20190801122849.GB4163@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908010131
+In-Reply-To: <20190801102026.27312-1-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 01:44:54PM +0200, Heiko Carstens wrote:
-> On Wed, Jul 31, 2019 at 09:32:16PM +1000, Herbert Xu wrote:
-> > On Wed, Jul 31, 2019 at 01:15:20PM +0200, Heiko Carstens wrote:
-> > >
-> > > However that doesn't fix the simd.h header file breakage with the
-> > > second patch :)
-> > 
-> > That fix should be there now too.
+On Thu, Aug 01, 2019 at 11:20:24AM +0100, Suzuki K Poulose wrote:
+> The patch "drivers: Introduce device lookup variants by ACPI_COMPANION device"
+> converted an incorrect instance in i2c driver to a new helper. Revert this
+> change.
 > 
-> Yes, works now. Thank you!
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Still not... with linux-next as of today I get this (s390 defconfig):
+Fixes: 00500147cbd3 ("drivers: Introduce device lookup variants by ACPI_COMPANION device")
 
-ERROR: "crypto_aegis128_decrypt_chunk_simd" [crypto/aegis128.ko] undefined!
-ERROR: "crypto_aegis128_update_simd" [crypto/aegis128.ko] undefined!
-ERROR: "crypto_aegis128_encrypt_chunk_simd" [crypto/aegis128.ko] undefined!
-scripts/Makefile.modpost:105: recipe for target 'modules-modpost' failed
-
+I'll go add this...
