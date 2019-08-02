@@ -2,245 +2,228 @@ Return-Path: <SRS0=XbQ9=V6=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE1CC32750
-	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 12:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F36C32750
+	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 13:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F7021841
-	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 12:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35992087C
+	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 13:04:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="vE/FiuIf"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="w9ApgwGK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388834AbfHBMNf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 2 Aug 2019 08:13:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33284 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389119AbfHBMNf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Aug 2019 08:13:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so77049034wru.0
-        for <linux-next@vger.kernel.org>; Fri, 02 Aug 2019 05:13:32 -0700 (PDT)
+        id S2404114AbfHBNEG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 2 Aug 2019 09:04:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44182 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404109AbfHBNEF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Aug 2019 09:04:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p17so77086712wrf.11
+        for <linux-next@vger.kernel.org>; Fri, 02 Aug 2019 06:04:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=nWckPHSirOqlDTAGCTdb3h/5YBLxWPzDoCpYMTF8cfY=;
-        b=vE/FiuIfiCHqHXsVsTqWaZ4hsWlBqn9OfzMC52IoXjzwiLqxqYvj7x1Qm0YF28TOpr
-         2QKWfRYl2Y3wJ/g9FL0zz8ui/GZs3wMc+xvTIfS+OXV0zv1G57jbImnpZziZzYNX8VIW
-         EX/f7YUwg9BQJsZRfAjJqeeU+HdCwfxNFyWGvS3gPbw529uKXDQSaMBk8J8sATep0w+w
-         sF2n2B/6CyE2lANODANWi8jYx0WfoO8gGUM6mTnFJWiGFkTT6MRVUY2ANdhCzk8f7qa/
-         hr5r7QnIfWgbzN7Bkfh0b5QY1UmssQrQzmZeChgxG+KvLJV2Ai1upYgNmjmfHg0kU2Lr
-         OILQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=4tYADAgGqRhGr5S50MX3nQS4EBniZFY08V7kKLYCB+Y=;
+        b=w9ApgwGKeQXLHzJSlYpzr0J2NcxiAJotChgFQe6J1QWac6kYRpk1ch+DrCjSfMI9UQ
+         Q+nFyoO7Wo5wQrmhYlu6vw8omI7lm2mwWuTD5ROOS/aDrXJS5gXUaNVzbopQkkJaa5fU
+         NmwQ2JvjjuHAH6ubY7aNxvr0oauOkCO4j2+NnYITjlMklgKakyrJVlD584ax1MriNkc5
+         rlLrqYk/yYcYi2E4yPuT8WSyEBFb403VR9zSpi9ELx13ixvWQHPZmkZEjAZr76cCeUl5
+         xpqHbjriDGvlpcYPs7amqi8V32YpJGcrJyH/Cj2nrLl66mGD14KTmWPZ6iTsS5a2afgu
+         f3tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=nWckPHSirOqlDTAGCTdb3h/5YBLxWPzDoCpYMTF8cfY=;
-        b=KvzlYm9eTJ6oLM6CfNjO7Ws8RTUUL/hUkz1okGTXm7miRdkUVe/5ikFgdfRxKkvDLy
-         4yn3G5mpYn+iZCUinwjp9dWyIpVb7uUwzayc8TN8Rv8yJnaoRV7WnWKvXgrtNX9jTRp4
-         NLNQlB3dUH/SkajzRCvsPjZFThDQ6jyaYg7+8ihWppHjEziW/TJPxJF6vkXp6XgoVFgG
-         avwJ3p/6EpFRIkuajNwgekM2Mmudc1rcLopAYvbCE5+3xCovKyF8IrOUdGhuUc0cDKVt
-         CSffEJsXkvZSMBpIWhSk6y1nU/iPF++RnY1qNBBkWbrPQ4yJtxgDgo5+kw1NxCNHtzRz
-         kKZg==
-X-Gm-Message-State: APjAAAX5Qr/Yd5/7dsN0BqW+C8sNo5VIrGLfW+1hTURxH/17ZJMrbUAX
-        FQxrt/xRYbMAS9Gxcpsgl3hnsDmse6o=
-X-Google-Smtp-Source: APXvYqyfzWcEabrvdqezTJun9QSeDwYGEcWsZQ5WcLBDnmuA27E31ThFm7MHzrk0j4OPKMxBDoPcHA==
-X-Received: by 2002:adf:de8b:: with SMTP id w11mr30185085wrl.134.1564748011710;
-        Fri, 02 Aug 2019 05:13:31 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id x8sm63368527wmc.5.2019.08.02.05.13.30
-        for <linux-next@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to;
+        bh=4tYADAgGqRhGr5S50MX3nQS4EBniZFY08V7kKLYCB+Y=;
+        b=Bl6P9ux+SAU50JhkfLaiYRv6h1hne2WPSisLhCSvi0tZvVuMe9re7kJdL+Rd9v166w
+         Uy651Xc6jNhWmOgfMJMs0Sv9hzHUDMuQQO4OFBTfUEVX/EfKsczhu1j8YOtEqrxBPu5m
+         kuXmtMJQsA25LfRez7fe/q365BBlVJzz1OTshvAvGoCUMxp/FBtjFEqqp/sK+37bZa2A
+         irR86GEOTSEUws8zJWHdUIVfxYJxtE3TILFeQQFgqGdaxfb/GdpF/n7xcFp+Iigbjd4x
+         ZEkawgecK0LWo5wQGCO2QAPPGT9bcnMUcvH8O9IYeu0RvTsbg7P2TjU8cCCEWU0krIW0
+         6sAw==
+X-Gm-Message-State: APjAAAXvICdmJx4xAoc/yg5jcyQBCpOCQgi4M2/T8L+Q55XrQjgfjB+X
+        L4HbortCPGSE6HzqA5j4Ds5/7l1Z2q8FKA==
+X-Google-Smtp-Source: APXvYqxVPcdwCbB5z844xeunow0/PIVbBdDt6vn5NimF225MM4CeGE+dbM3syR3/NaNtlIoN9OZBOA==
+X-Received: by 2002:adf:ed8a:: with SMTP id c10mr151680412wro.33.1564751042715;
+        Fri, 02 Aug 2019 06:04:02 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 5sm62349561wmg.42.2019.08.02.06.04.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Aug 2019 05:13:30 -0700 (PDT)
-Message-ID: <5d4428ea.1c69fb81.cbcb1.7251@mx.google.com>
-Date:   Fri, 02 Aug 2019 05:13:30 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 02 Aug 2019 06:04:01 -0700 (PDT)
+Subject: Re: next/master boot: 265 boots: 17 failed, 184 passed with 64
+ offline (next-20190730)
+To:     Mark Brown <broonie@kernel.org>, khilman@baylibre.com
+Cc:     kernel-build-reports@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
+        linux-oxnas@groups.io
+References: <5d403574.1c69fb81.14163.65d3@mx.google.com>
+ <20190730123425.GB4264@sirena.org.uk>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <71c56763-2786-e864-cb34-852a1c830dda@baylibre.com>
+Date:   Fri, 2 Aug 2019 15:03:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: next
-X-Kernelci-Kernel: next-20190802
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: boot
-Subject: next/master boot: 263 boots: 11 failed, 186 passed with 64 offline,
- 1 untried/unknown, 1 conflict (next-20190802)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <20190730123425.GB4264@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="1xEsepQlYxTzZZMYdhZrc2UY4qLKzxJ9Z"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 263 boots: 11 failed, 186 passed with 64 offline, 1 untri=
-ed/unknown, 1 conflict (next-20190802)
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--1xEsepQlYxTzZZMYdhZrc2UY4qLKzxJ9Z
+Content-Type: multipart/mixed; boundary="HW9FyrmIe8F3Yah5As3FxUbs2BUGi4652";
+ protected-headers="v1"
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: Mark Brown <broonie@kernel.org>, khilman@baylibre.com
+Cc: kernel-build-reports@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
+ linux-oxnas@groups.io
+Message-ID: <71c56763-2786-e864-cb34-852a1c830dda@baylibre.com>
+Subject: Re: next/master boot: 265 boots: 17 failed, 184 passed with 64
+ offline (next-20190730)
+References: <5d403574.1c69fb81.14163.65d3@mx.google.com>
+ <20190730123425.GB4264@sirena.org.uk>
+In-Reply-To: <20190730123425.GB4264@sirena.org.uk>
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190802/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190802/
+--HW9FyrmIe8F3Yah5As3FxUbs2BUGi4652
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Tree: next
-Branch: master
-Git Describe: next-20190802
-Git Commit: 7b4980e0bcf46f797e8ba6ca38e15418df253647
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 80 unique boards, 28 SoC families, 22 builds out of 230
+Hi Mark,
 
-Boot Failures Detected:
+On 30/07/2019 14:34, Mark Brown wrote:
+> On Tue, Jul 30, 2019 at 05:17:56AM -0700, kernelci.org bot wrote:
+>=20
+>> Boot Failures Detected:
+>>
+>> arm:
+>>     oxnas_v6_defconfig:
+>>         gcc-8:
+>>             ox820-cloudengines-pogoplug-series-3: 1 failed lab
+>=20
+> For some time now -next and mainline have been failing to boot on
+> Pogoplug 3 with the oxnas_v6_defconfig, the kernel seems to start fine
+> but fails to parse the ramdisk it's passed:
+>=20
+> 08:50:02.086589  <6>[    7.719854] IP-Config: Complete:
+> 08:50:02.087213  <6>[    7.723330]      device=3Deth0, hwaddr=3D0a:a2:8=
+9:27:10:1b, ipaddr=3D10.201.4.144, mask=3D255.255.0.0, gw=3D10.201.0.1
+> 08:50:02.087413  <6>[    7.733409]      host=3D10.201.4.144, domain=3D,=
+ nis-domain=3D(none)
+> 08:50:02.088056  <6>[    7.739499]      bootserver=3D10.201.1.1, rootse=
+rver=3D10.201.1.1, rootpath=3D
+> 08:50:02.088248  <6>[    7.739504]      nameserver0=3D10.201.1.1
+> 08:50:02.129966  <5>[    7.752025] RAMDISK: Couldn't find valid RAM dis=
+k image starting at 0.
+> 08:50:02.130381  <4>[    7.759616] List of all partitions:
+> 08:50:02.131333  <4>[    7.763363] 0100           65536 ram0=20
+>=20
+> Possibly an issue with the ramdisk getting overwritten or something?
 
-arm64:
-    defconfig:
-        gcc-8:
-            meson-gxm-khadas-vim2: 1 failed lab
+Thanks for reporting, it's my suspicion since my multiple bisect runs all=
+ point to
+this merge commit :
+a318423b61e8 Merge tag 'upstream-5.3-rc1' of git://git.kernel.org/pub/scm=
+/linux/kernel/git/rw/ubifs
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        clang-8:
-            meson-gxl-s805x-p241: 1 failed lab
-            meson-gxl-s905x-khadas-vim: 1 failed lab
-            meson-gxl-s905x-libretech-cc: 1 failed lab
-            meson-gxm-khadas-vim2: 1 failed lab
-            r8a7795-salvator-x: 1 failed lab
+This merge doesn't introduce notable changes for the oxnas_v6_defconfig, =
+but disabling UBI entirely makes
+it work again.
 
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        clang-8:
-            meson-gxm-khadas-vim2: 1 failed lab
+Continuing my investigations...
 
-arm:
-    oxnas_v6_defconfig:
-        gcc-8:
-            ox820-cloudengines-pogoplug-series-3: 1 failed lab
+Neil
 
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
+>=20
+> Full details for today's -next can be seen here:
+>=20
+> 	https://kernelci.org/boot/id/5d4004bb59b51489d631b28d/
+>=20
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
 
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
 
-Offline Platforms:
+--HW9FyrmIe8F3Yah5As3FxUbs2BUGi4652--
 
-riscv:
+--1xEsepQlYxTzZZMYdhZrc2UY4qLKzxJ9Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-    defconfig:
-        gcc-8
-            sifive_fu540: 1 offline lab
+-----BEGIN PGP SIGNATURE-----
 
-arm64:
+iQIzBAEBCgAdFiEEPVPGJshWBf4d9CyLd9zb2sjISdEFAl1ENMAACgkQd9zb2sjI
+SdHMwA//axa7tmbR0dsz3Iqp06C4UyGU9fIFNO5NtsbywqxrwEDkje7VBlLoli6q
+HvtBHRE/Pge8Wn/Rlq+J1LbkwQACP3CCIDtTCxTKDHyFnIoiIaccesN4y1PC/MNe
+YhB2VGvriqcUVsl7kGBzZjG12A+LCxhSa2gy8CWBTSt48JnW/ZO4T2fFNGgnVSHa
+B1gffyY1Ma2SNLFnQ/Q+sp61vWsry6XyFLABv2x6yk7/RCtwooAUzOsIoVn8tadZ
+C2vpCUaRMOyFhbBSBOwF0Tkyv/PK2AsE89qvjASYwEEUh/568JZXYtiWEXn7HX3Y
+Mj9xWGH+mmS5UwbBk0rtoIjtzSXwVLGNBaZ0JFqMFvWETub9KkpXFwKd5HrH0udH
+1xd3DHngpVrPIBC/nFBO2hYWREVZ26fPmizlYXrNoi2mKMPrWxDUtT9p96VAA3nY
+hmQ8Z4W+VnPojBkGK+eCPuuvs/dzuawItdlroEQxD2hRRCFXJV4PjnJIRJX4aJfO
+LVRqT60tNLKCoy/osc50k/cWjBMHmr+DMtkSFobi2QLo54reBZb16F8rd98LykYx
++jWV6Cr1wK4xmdP+5+eqLJZNEAPgpkeaDz4VnXG1jqywx+B/RjD8DDzLq2q+Y7qV
+Q7NlBMdGXMcm0aENcQ+atP97svoJxtdvTtszPe+6RGDw+yaOK4Q=
+=XbQu
+-----END PGP SIGNATURE-----
 
-    defconfig:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-            meson-gxm-nexbox-a1: 1 offline lab
-            rk3399-firefly: 1 offline lab
-            sun50i-a64-pine64-plus: 1 offline lab
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-            meson-g12a-u200: 1 offline lab
-            meson-g12a-x96-max: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            meson-gxl-s905d-p230: 1 offline lab
-            meson-gxl-s905x-libretech-cc: 1 offline lab
-            meson-gxl-s905x-nexbox-a95x: 1 offline lab
-            meson-gxl-s905x-p212: 1 offline lab
-            meson-gxm-nexbox-a1: 1 offline lab
-            rk3399-firefly: 1 offline lab
-            sun50i-a64-pine64-plus: 1 offline lab
-
-mips:
-
-    pistachio_defconfig:
-        gcc-8
-            pistachio_marduk: 1 offline lab
-
-arm:
-
-    exynos_defconfig:
-        gcc-8
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            bcm72521-bcm97252sffe: 1 offline lab
-            bcm7445-bcm97445c: 1 offline lab
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            imx7s-warp: 1 offline lab
-            meson8b-odroidc1: 1 offline lab
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            stih410-b2120: 1 offline lab
-            sun4i-a10-cubieboard: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    omap2plus_defconfig:
-        gcc-8
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            da850-evm: 1 offline lab
-            dm365evm,legacy: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        gcc-8
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            imx7s-warp: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun4i-a10-cubieboard: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    multi_v7_defconfig+CONFIG_SMP=3Dn:
-        am57xx-beagle-x15:
-            lab-linaro-lkft: FAIL (gcc-8)
-            lab-drue: PASS (gcc-8)
-
----
-For more info write to <info@kernelci.org>
+--1xEsepQlYxTzZZMYdhZrc2UY4qLKzxJ9Z--
