@@ -2,96 +2,84 @@ Return-Path: <SRS0=XbQ9=V6=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7CEC19759
-	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 03:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F2DC32750
+	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 03:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4DD206A3
-	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 03:21:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="soKLvqi4"
+	by mail.kernel.org (Postfix) with ESMTP id 948E1206A2
+	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 03:37:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbfHBDV3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 1 Aug 2019 23:21:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:42595 "EHLO ozlabs.org"
+        id S1726703AbfHBDh1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 1 Aug 2019 23:37:27 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:48362 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729060AbfHBDV2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 1 Aug 2019 23:21:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 460C9x40Krz9sBF;
-        Fri,  2 Aug 2019 13:21:24 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564716086;
-        bh=c0IT9plBnekDV3FBF4JgbaCWu5qpsMQyv6Ht34zq+6U=;
-        h=Date:From:To:Cc:Subject:From;
-        b=soKLvqi4D0RrZ/LFc/VRLFajZnHHPzpWVgTV6wNO06eIyxSXiXGvFdyczLGKQw77p
-         XnXN8p43K2/gpOkgfwY4ijO+EE8QF9y+tDT1G8AFwwIjFDNjUmiX+QrKgnp+M8HTwM
-         V7W1a1K15exHnonlSYYISvXc0OynzJZEaMA3tVN50oMYGgE8Ut2vaSNkIW0eb0ZycE
-         It90FLvfTNRhIFRTIP7WiiMvj53tAbX7Q7609MUHm/7aczRt+3lwbXwyyLzamZ3E7q
-         G0tg1QTk2sI+aagUP4aZTAxX1tnSNMpmfaTeBxHsyUXpYc/sIzIQNoAfOj6Z0Xp9ex
-         0DFWo1HuFMMbQ==
-Date:   Fri, 2 Aug 2019 13:21:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726574AbfHBDh1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Aug 2019 23:37:27 -0400
+Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
+        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1htO1I-0004SL-NH; Fri, 02 Aug 2019 13:14:16 +1000
+Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1htO1G-0003xg-Hf; Fri, 02 Aug 2019 13:14:14 +1000
+Date:   Fri, 2 Aug 2019 13:14:14 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Uwe =?UTF-8?B?S2xlaW5lLUs=?= =?UTF-8?B?w7ZuaWc=?= 
-        <uwe@kleine-koenig.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: linux-next: build warning after merge of the i2c tree
-Message-ID: <20190802132123.6eabf3b7@canb.auug.org.au>
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Patrick Steuer <steuer@linux.ibm.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
+Message-ID: <20190802031414.GB14879@gondor.apana.org.au>
+References: <20190731163915.3fdfcb14@canb.auug.org.au>
+ <20190731085819.GA3488@osiris>
+ <20190731110816.GA20753@gondor.apana.org.au>
+ <20190731111520.GC3488@osiris>
+ <20190731113216.GA21068@gondor.apana.org.au>
+ <20190731114453.GD3488@osiris>
+ <20190801122849.GB4163@osiris>
+ <CAKv+Gu_1HP2NapMk5O_-XpJdga5zyFJDkVudTRT6CWm+tqPndA@mail.gmail.com>
+ <20190802102019.6a789c51@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pSTusmkKzKkBd72podNMiaK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802102019.6a789c51@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/pSTusmkKzKkBd72podNMiaK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen:
 
-Hi all,
+On Fri, Aug 02, 2019 at 10:20:19AM +1000, Stephen Rothwell wrote:
+>
+> It might be time to revert all this series and try again.  The
+> implementation seems to have not been well thought through from a kernel
+> building point of view.  For a start the two commits
+> 
+>   7cdc0ddbf74a ("crypto: aegis128 - add support for SIMD acceleration")
+>   ecc8bc81f2fb ("crypto: aegis128 - provide a SIMD implementation based on NEON intrinsics")
 
-After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+I think the idea was that it would get optimised out if the
+implementation is absent which is why it was meant to work in
+this order.  But oviously as we have found out this didn't work.
 
-drivers/i2c/busses/i2c-designware-master.c: In function 'i2c_dw_init_recove=
-ry_info':
-drivers/i2c/busses/i2c-designware-master.c:658:6: warning: unused variable =
-'r' [-Wunused-variable]
-  int r;
-      ^
+Ard, I think relying on the compiler to optimise something out based
+on an assignment within an if statement is just too error-prone.
+We'll need a different mechanism for this.
 
-Introduced by commit
+For now I'm going to back out those two specific patches as the
+rest seem to be valid by themselves.
 
-  33eb09a02e8d ("i2c: designware: make use of devm_gpiod_get_optional")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/pSTusmkKzKkBd72podNMiaK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1DrDMACgkQAVBC80lX
-0GxfqAf/QmQf4oJCnvp5qQRFOt7+LA8r4sN/Zezn4P0Prtx/vfhd6iR9U04NuOiT
-nYXKZjhES1PFoMKh6rF3jJaJwqdXxywujIlcFDQSXB8hSpO4xouDcN29Wb+Oe7QV
-x75lsFnHaou5BRL50CsK0FatbjmCvps2xzf1JkMDbxxqSzjaTD5cvmvYDwnlhvH9
-stb3FcwhJgNtVPnFXQt0p7S0gRnLOoyEI8pUcze0UB47iEAmAsPDB+xW/84jFBoj
-BjObTY8BZ4GfEKVZf6MplJ+5cmIjc12SC3q5tRjPZ6i+q0MTXOdtipfIVbKGu/Rb
-WU7OTOVGrWz6yit9ao1YDtA2MGmDRQ==
-=mMt8
------END PGP SIGNATURE-----
-
---Sig_/pSTusmkKzKkBd72podNMiaK--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
