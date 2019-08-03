@@ -2,84 +2,77 @@ Return-Path: <SRS0=Ie+F=V7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EE3C433FF
-	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 00:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 607BAC433FF
+	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 01:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13F120880
-	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 00:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564792939;
-	bh=QWMlU6tOGtjY+ZagXZH1w3wsUBJYvnKFyDdlJoUwrMM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=QzBQd+4wVts6Ff6g6DTqXGy8rfShX2uwrS58UffClDaDatlKNKqkgvYYsO2W4yd2I
-	 +YZ0UBbnj/+le4mTwQ16reAtsPIZrir8ESeHuxEpdVRS4erHTV5+sU/u5VnxC7VBx7
-	 J4kmL5yx6X+gODe4rl1m0sxYsVu2bcf2Q2cmVLlk=
+	by mail.kernel.org (Postfix) with ESMTP id 2E0972054F
+	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 01:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390874AbfHCAmT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 2 Aug 2019 20:42:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389781AbfHCAmT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 2 Aug 2019 20:42:19 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A5D62087E;
-        Sat,  3 Aug 2019 00:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564792938;
-        bh=QWMlU6tOGtjY+ZagXZH1w3wsUBJYvnKFyDdlJoUwrMM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FdkFbFImrxSMA7WuTTE8waU77hFzeBhQncdmd7TzT6uv28lW7gmw61NgG7Gitpin4
-         ghKynQ0n3IKocbFlMIVqsmL9VBLnAypRfs08hDXpXgZkx4hIKW+HzoqUmc/KNMQe6c
-         59pw8hP+2vngTdwzejM58B+M/d1dVvB3+XLZzXnk=
-Date:   Sat, 3 Aug 2019 09:42:12 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the arm64-fixes tree
-Message-Id: <20190803094212.3ff4b1ba33c50c63173c8d31@kernel.org>
-In-Reply-To: <20190802074813.73b82a14@canb.auug.org.au>
-References: <20190802074813.73b82a14@canb.auug.org.au>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2388144AbfHCBLe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 2 Aug 2019 21:11:34 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53034 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387926AbfHCBLe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Aug 2019 21:11:34 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 16D1612665355;
+        Fri,  2 Aug 2019 18:11:33 -0700 (PDT)
+Date:   Fri, 02 Aug 2019 18:11:32 -0700 (PDT)
+Message-Id: <20190802.181132.1425585873361511856.davem@davemloft.net>
+To:     natechancellor@gmail.com
+Cc:     andrew@lunn.ch, broonie@kernel.org, devel@driverdev.osuosl.org,
+        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+        hkallweit1@gmail.com, kernel-build-reports@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
+        netdev@vger.kernel.org, willy@infradead.org, lkp@intel.com,
+        rdunlap@infradead.org
+Subject: Re: [PATCH] net: mdio-octeon: Fix build error and Kconfig warning
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190731185023.20954-1-natechancellor@gmail.com>
+References: <20190731.094150.851749535529247096.davem@davemloft.net>
+        <20190731185023.20954-1-natechancellor@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 02 Aug 2019 18:11:33 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, 2 Aug 2019 07:48:13 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Wed, 31 Jul 2019 11:50:24 -0700
 
-> Hi all,
+> arm allyesconfig warns:
 > 
-> In commit
+> WARNING: unmet direct dependencies detected for MDIO_OCTEON
+>   Depends on [n]: NETDEVICES [=y] && MDIO_DEVICE [=y] && MDIO_BUS [=y]
+> && 64BIT && HAS_IOMEM [=y] && OF_MDIO [=y]
+>   Selected by [y]:
+>   - OCTEON_ETHERNET [=y] && STAGING [=y] && (CAVIUM_OCTEON_SOC &&
+> NETDEVICES [=y] || COMPILE_TEST [=y])
 > 
->   72de4a283cb1 ("arm64: kprobes: Recover pstate.D in single-step exception handler")
+> and errors:
 > 
-> Fixes tag
-> 
->   Fixes: commit 7419333fa15e ("arm64: kprobe: Always clear pstate.D in breakpoint exception handler")
-> 
-> has these problem(s):
-> 
->   - leading word 'commit' unexpected
+> In file included from ../drivers/net/phy/mdio-octeon.c:14:
+> ../drivers/net/phy/mdio-octeon.c: In function 'octeon_mdiobus_probe':
+> ../drivers/net/phy/mdio-cavium.h:111:36: error: implicit declaration of
+> function 'writeq'; did you mean 'writeb'?
 
-Oops, sorry. It was my mistake to add "commit", it should be removed.
-Will, should I remove it? or could you modify on your tree?
+The proper way to fix this is to include either
 
-Thank you,
+	linux/io-64-nonatomic-hi-lo.h
 
+or
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+	linux/io-64-nonatomic-lo-hi.h
+
+whichever is appropriate.
