@@ -2,111 +2,68 @@ Return-Path: <SRS0=Ie+F=V7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC80C433FF
-	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 06:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5EDC433FF
+	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 10:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D248B2073D
-	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 06:05:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVh4eCRn"
+	by mail.kernel.org (Postfix) with ESMTP id E7354206A2
+	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 10:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfHCGFd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 3 Aug 2019 02:05:33 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52865 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726621AbfHCGFd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 3 Aug 2019 02:05:33 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s3so69877489wms.2;
-        Fri, 02 Aug 2019 23:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rNjsuP0ZjDp9jnRQNucz2c5yrrLQk2HCJuqAw6zZVeM=;
-        b=LVh4eCRnc+8XPVEiLWCyMApcVszjz2OaYV8RYm0L7XWc3HjY9IwIwOyJEVNiDLIVtM
-         MIl9CYrEs3SxyB3KwyjiPhYG2BfGpQKw4BvOODGx2egaLIAawt8MKY/WKTtyo2m0M7U0
-         iq3aFs8wi/HbWP6rfo4Vqsq2V+y4bGiW++1SbHvXLb0P/7GAQoMCMIVjXMOi0c6HZKR0
-         TdVGbN1fu6rDGl7J3REDkP5glgHsQIg2J/5Q2EMGeZKu/TPKOn5kT1dhZdv/Y/Z2mzgn
-         gv1jhd504dTix0h/CwyzkgZmmoKebRS1vMJfNUv3rfkYs44Yry2s3o4KT9jU96OBdLIv
-         PDaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rNjsuP0ZjDp9jnRQNucz2c5yrrLQk2HCJuqAw6zZVeM=;
-        b=Exw8X/T8HFnvD9nM17zlXZv4ksN2vVsOtPAaHtgz+Ka1B/bBrPS5S5GkgOzbsUYvFM
-         Gab8W+nTMBly1RVjI4TuUk3cSTmxhiTp/jgzb95rHjxReRVX+TyZCU8te1LeJ2fRTcpG
-         +kTGLhs10gf2B/7ZKuRFoaME58Vox/yUoQfEwrwowY/9GCkhDNSBG6bnQOK7MHjC0ofW
-         EaCuFIUPoFOgz0rgN6Mh7SU2CtSUA8kgRJocbBRKVQRckAynTuxDK8l2bmD66tM2wLKs
-         /Yx7HuLnNTipVhdO8VhqimnrmTK1929jb0zSvpgRryZK8sVTcq2jDm5k9VRAAer7dUN/
-         mXRQ==
-X-Gm-Message-State: APjAAAUfJL3nULbmRkVe47qh5YUEUkX4F7Se4MxDv9QwxBPIixAiikeX
-        U6BVC0n+ekTcmIUY51VXWZ4=
-X-Google-Smtp-Source: APXvYqz36zGRvW+EA5Q16NvmRTURlwWo6t5ErfVh/qGFKq4wC1cYjfYdUWL01hQeI+UTjypAPLkC/A==
-X-Received: by 2002:a1c:d10c:: with SMTP id i12mr7689994wmg.152.1564812330438;
-        Fri, 02 Aug 2019 23:05:30 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id r123sm73514728wme.7.2019.08.02.23.05.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 23:05:29 -0700 (PDT)
-Date:   Fri, 2 Aug 2019 23:05:28 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Miller <davem@davemloft.net>, andrew@lunn.ch,
-        broonie@kernel.org, devel@driverdev.osuosl.org,
-        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
-        hkallweit1@gmail.com, kernel-build-reports@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
-        netdev@vger.kernel.org, lkp@intel.com, rdunlap@infradead.org
-Subject: Re: [PATCH] net: mdio-octeon: Fix build error and Kconfig warning
-Message-ID: <20190803060528.GA89737@archlinux-threadripper>
-References: <20190731.094150.851749535529247096.davem@davemloft.net>
- <20190731185023.20954-1-natechancellor@gmail.com>
- <20190802.181132.1425585873361511856.davem@davemloft.net>
- <20190803013031.GA76252@archlinux-threadripper>
- <20190803013952.GF5597@bombadil.infradead.org>
+        id S2388378AbfHCKPk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 3 Aug 2019 06:15:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:59946 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388371AbfHCKPk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 3 Aug 2019 06:15:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A69E344;
+        Sat,  3 Aug 2019 03:15:37 -0700 (PDT)
+Received: from iMac.local (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAD373F71F;
+        Sat,  3 Aug 2019 03:15:36 -0700 (PDT)
+Date:   Sat, 3 Aug 2019 11:15:34 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Will Deacon <will@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the arm64-fixes tree
+Message-ID: <20190803101533.GA58477@iMac.local>
+References: <20190802074813.73b82a14@canb.auug.org.au>
+ <20190803094212.3ff4b1ba33c50c63173c8d31@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190803013952.GF5597@bombadil.infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190803094212.3ff4b1ba33c50c63173c8d31@kernel.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 06:39:52PM -0700, Matthew Wilcox wrote:
-> On Fri, Aug 02, 2019 at 06:30:31PM -0700, Nathan Chancellor wrote:
-> > On Fri, Aug 02, 2019 at 06:11:32PM -0700, David Miller wrote:
-> > > The proper way to fix this is to include either
-> > > 
-> > > 	linux/io-64-nonatomic-hi-lo.h
-> > > 
-> > > or
-> > > 
-> > > 	linux/io-64-nonatomic-lo-hi.h
-> > > 
-> > > whichever is appropriate.
+On Sat, Aug 03, 2019 at 09:42:12AM +0900, Masami Hiramatsu wrote:
+> On Fri, 2 Aug 2019 07:48:13 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > In commit
 > > 
-> > Hmmmm, is that not what I did?
+> >   72de4a283cb1 ("arm64: kprobes: Recover pstate.D in single-step exception handler")
 > > 
-> > Although I did not know about io-64-nonatomic-hi-lo.h. What is the
-> > difference and which one is needed here?
+> > Fixes tag
+> > 
+> >   Fixes: commit 7419333fa15e ("arm64: kprobe: Always clear pstate.D in breakpoint exception handler")
+> > 
+> > has these problem(s):
+> > 
+> >   - leading word 'commit' unexpected
 > 
-> Whether you write the high or low 32 bits first.  For this, it doesn't
-> matter, since the compiled driver will never be run on real hardware.
+> Oops, sorry. It was my mistake to add "commit", it should be removed.
+> Will, should I remove it? or could you modify on your tree?
 
-That's what I figured. I have only seen lo-hi used personally, which is
-what I went with here. Thanks for the confirmation!
+No need to. Will fixed it already.
 
-> 
-> > There is apparently another failure when OF_MDIO is not set, I guess I
-> > can try to look into that as well and respin into a series if
-> > necessary.
-> 
-> Thanks for taking care of that!
+-- 
+Catalin
