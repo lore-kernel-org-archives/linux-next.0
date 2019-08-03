@@ -1,86 +1,85 @@
-Return-Path: <SRS0=XbQ9=V6=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=Ie+F=V7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17DCC32750
-	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 16:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EE3C433FF
+	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 00:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A2A2087E
-	for <linux-next@archiver.kernel.org>; Fri,  2 Aug 2019 16:22:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AIBv+30I"
+	by mail.kernel.org (Postfix) with ESMTP id D13F120880
+	for <linux-next@archiver.kernel.org>; Sat,  3 Aug 2019 00:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564792939;
+	bh=QWMlU6tOGtjY+ZagXZH1w3wsUBJYvnKFyDdlJoUwrMM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=QzBQd+4wVts6Ff6g6DTqXGy8rfShX2uwrS58UffClDaDatlKNKqkgvYYsO2W4yd2I
+	 +YZ0UBbnj/+le4mTwQ16reAtsPIZrir8ESeHuxEpdVRS4erHTV5+sU/u5VnxC7VBx7
+	 J4kmL5yx6X+gODe4rl1m0sxYsVu2bcf2Q2cmVLlk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390898AbfHBQWU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 2 Aug 2019 12:22:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46412 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389867AbfHBQWT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Aug 2019 12:22:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JiPRz1b1DB02obaqCC3z20a5XEDkM8AtFJgDiFd1iVo=; b=AIBv+30IiFOPBIKyKY90cKN7C
-        c7RI1W+PPUsBiM7EcXVDttqHmkSyweMEcecPRoVFyAqtHoFbazefx7dgXUo4qTjtWbKsJ9f6C6EFB
-        0iv6ei++jHrxflsJto44ZAzCS2R3R1furjP8FvzjMaZLnrad4n62SQbhYm27XgHh9TjWCdbRdOIv4
-        J0D25W2MWjxZoh+7WyYdRLk6qTedaW1x179xjzSBr9fl0TdbMdK4qGBymCrGIQe4Rrdy9CxFDJ726
-        kUcO2YdaGL7m8LRrHaAoaOcdRqT4p+00MCj3hv205btJQxYRZzguwA6qUET1DWdjlq2q6hyxUgL+I
-        JzZTQ0GuA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htaJu-00047k-7l; Fri, 02 Aug 2019 16:22:18 +0000
-Subject: Re: linux-next: Tree for Aug 2 (staging/octeon/)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-References: <20190802155223.41b0be6e@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9f6374e6-2175-0e0c-6be3-a2aca53bd865@infradead.org>
-Date:   Fri, 2 Aug 2019 09:22:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190802155223.41b0be6e@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        id S2390874AbfHCAmT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 2 Aug 2019 20:42:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389781AbfHCAmT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 2 Aug 2019 20:42:19 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A5D62087E;
+        Sat,  3 Aug 2019 00:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564792938;
+        bh=QWMlU6tOGtjY+ZagXZH1w3wsUBJYvnKFyDdlJoUwrMM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FdkFbFImrxSMA7WuTTE8waU77hFzeBhQncdmd7TzT6uv28lW7gmw61NgG7Gitpin4
+         ghKynQ0n3IKocbFlMIVqsmL9VBLnAypRfs08hDXpXgZkx4hIKW+HzoqUmc/KNMQe6c
+         59pw8hP+2vngTdwzejM58B+M/d1dVvB3+XLZzXnk=
+Date:   Sat, 3 Aug 2019 09:42:12 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the arm64-fixes tree
+Message-Id: <20190803094212.3ff4b1ba33c50c63173c8d31@kernel.org>
+In-Reply-To: <20190802074813.73b82a14@canb.auug.org.au>
+References: <20190802074813.73b82a14@canb.auug.org.au>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 8/1/19 10:52 PM, Stephen Rothwell wrote:
+On Fri, 2 Aug 2019 07:48:13 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
 > Hi all,
 > 
-> Changes since 20190801:
+> In commit
 > 
+>   72de4a283cb1 ("arm64: kprobes: Recover pstate.D in single-step exception handler")
+> 
+> Fixes tag
+> 
+>   Fixes: commit 7419333fa15e ("arm64: kprobe: Always clear pstate.D in breakpoint exception handler")
+> 
+> has these problem(s):
+> 
+>   - leading word 'commit' unexpected
 
-on x86_64:
-when CONFIG_OF is not set/enabled.
+Oops, sorry. It was my mistake to add "commit", it should be removed.
+Will, should I remove it? or could you modify on your tree?
 
-
-WARNING: unmet direct dependencies detected for MDIO_OCTEON
-  Depends on [n]: NETDEVICES [=y] && MDIO_DEVICE [=y] && MDIO_BUS [=y] && 64BIT [=y] && HAS_IOMEM [=y] && OF_MDIO [=n]
-  Selected by [y]:
-  - OCTEON_ETHERNET [=y] && STAGING [=y] && (CAVIUM_OCTEON_SOC || COMPILE_TEST [=y]) && NETDEVICES [=y]
-
-ld: drivers/net/phy/mdio-octeon.o: in function `octeon_mdiobus_probe':
-mdio-octeon.c:(.text+0x31c): undefined reference to `cavium_mdiobus_read'
-ld: mdio-octeon.c:(.text+0x35a): undefined reference to `cavium_mdiobus_write'
-
-
-OCTEON_ETHERNET should not select MDIO_OCTEON when OF_MDIO is not set/enabled.
+Thank you,
 
 
 -- 
-~Randy
+Masami Hiramatsu <mhiramat@kernel.org>
