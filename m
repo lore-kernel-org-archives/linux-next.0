@@ -2,126 +2,124 @@ Return-Path: <SRS0=jfJ0=WB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20597C433FF
-	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 04:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6782C0650F
+	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 05:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E48492070D
-	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 04:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D2020679
+	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 05:37:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lqDWLVPH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhZy+wh7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbfHEE5j (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 5 Aug 2019 00:57:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:60767 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbfHEE5j (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 5 Aug 2019 00:57:39 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46259X61ngz9s7T;
-        Mon,  5 Aug 2019 14:57:36 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564981056;
-        bh=Kwjsg60Bv78fkfFhCCvHJttAJaSF+wmyVAYwqKxGsLA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lqDWLVPHKQaChx12u4Bqeoka2q8nx70si95qJXfKKAfL5QPIIdtDa/qIYVfOWKBaI
-         0mtV25IvOeSJfJq6qeqa5cH9G3HmtzKqQymzZP7xxMExPPONvW8WIfrQjEbHdEV+1z
-         gS9DI/sJheBrPkK1O+T185GOX/RFf3Bhl8LdQKeyKk9z4Z1sG47kheMAC2+9iWkJbu
-         BS//Hee9Zcny2zwsD1jHlm52Mfo9ft5B9wwG2hvzeAiFwPlR/5YOABt7UOf1gckLAm
-         iHo6yP13PqqSmNKqdoeJDOZRcPDWRd8ZvEN0fH5urepOzbhyjYcw6eZR6wKAb4a0go
-         zEFlnq56/UAgw==
-Date:   Mon, 5 Aug 2019 14:57:36 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: linux-next: build failure after merge of the crypto tree
-Message-ID: <20190805145736.2d39f95b@canb.auug.org.au>
+        id S1726880AbfHEFhk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 5 Aug 2019 01:37:40 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33493 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfHEFhk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Aug 2019 01:37:40 -0400
+Received: by mail-ed1-f68.google.com with SMTP id i11so13991561edq.0;
+        Sun, 04 Aug 2019 22:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e7SmD7yFaW7cupdfnMf69Nas41lybmIWNy4DUrYdi6w=;
+        b=lhZy+wh7Ot9Dm7RjJrPbQxWLNBhtMeA1F1ai8JvZCvtBjgyJPWXNrw6az1sZNJJuZJ
+         EGtFURcXUhouTqHYbkToePxtWpqowff4TI0EnVDGiko9/Jf4KG880MnQLwHPLxQ/zAlK
+         FBjSbpWnkf7bRP22CnU3Qg7iif2LxF+EcrpGK6Oi0CEzh255FxmYz1LUCuChTMhaxHbj
+         qvTf4BJPR4zhu8r/I5aM7vZzZNpIgK5kblDMP2icLOU3QNouGqimoiAxYgDewZxdWJxa
+         bkW813g+MBoyY3UxvP8vhw/D3app9dzTG7eDewryvRE5t6+AdMHRzomt8LgabueQ0l8s
+         hB5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e7SmD7yFaW7cupdfnMf69Nas41lybmIWNy4DUrYdi6w=;
+        b=axB0MHRb4o0YVhuQNbpNOgPpBTpSJg2Yzdy8vUif4yrmizcMNrnG20LdDrkJ8Y8qmV
+         xL/0gkADWhe3J3p9fL/opBiRo0BaMG8wWZ0kvXx2psjo5aljKrwo+sniOYpku/o1AOee
+         elklAMmgXXmeHoSvrdje5/biaSiwTyU0AA312WWLx3P5fo9rUMxZLEt0aarKwsqBkxBp
+         BhWr/nneCbSAEIH/yFSv8lnQMqwsx+xr6MYJVbwE2FRrijEyzouKLmGyZaq8vXw+SVtj
+         UIucqzNgwvq7+5KTOrDe+3J06WGqBbyeCT+KKpYRARn1b4AU+UQEcvlZqmvmhJaNsHCX
+         fmMQ==
+X-Gm-Message-State: APjAAAXM7T5AE/c8H2HFyKK2Uc8FlmAHorMnqZcErbATv//pddFBbpj2
+        2DEzykh/Kj95Ccu13dmore8csr11J5Hn8kikPp8a7c0hgj0=
+X-Google-Smtp-Source: APXvYqzrUQ0KIxAAmZ9dGaqc1E25enFfHxJarD7mXqpkO/aMJjYoooZMKJ2WujGIRObOn/+MA4uklnkSYtnGn3fZdt0=
+X-Received: by 2002:aa7:d781:: with SMTP id s1mr86532706edq.20.1564983458349;
+ Sun, 04 Aug 2019 22:37:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xTBKpWe9v5NlxbxL4v5QvzF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190805145736.2d39f95b@canb.auug.org.au>
+In-Reply-To: <20190805145736.2d39f95b@canb.auug.org.au>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Mon, 5 Aug 2019 13:37:27 +0800
+Message-ID: <CANhBUQ2gBYtPhyfBizu1T6V+XCoyy-bKgkqiHKY2ZOHskg_s_Q@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/xTBKpWe9v5NlxbxL4v5QvzF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 5, 2019 at 12:57 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the crypto tree, today's linux-next build (sparc64
+> defconfig) failed like this:
+>
+> drivers/char/hw_random/n2-drv.c: In function 'n2rng_probe':
+> drivers/char/hw_random/n2-drv.c:771:29: error: 'pdev' undeclared (first use in this function); did you mean 'cdev'?
+>   err = devm_hwrng_register(&pdev->dev, &np->hwrng);
+>                              ^~~~
+>                              cdev
+> drivers/char/hw_random/n2-drv.c:771:29: note: each undeclared identifier is reported only once for each function it appears in
+>
+> Caused by commit
+>
+>   3e75241be808 ("hwrng: drivers - Use device-managed registration API")
+>
 
-Hi all,
+It is my typo, thanks for your fix!
 
-After merging the crypto tree, today's linux-next build (sparc64
-defconfig) failed like this:
+Regards,
+Chuhong
 
-drivers/char/hw_random/n2-drv.c: In function 'n2rng_probe':
-drivers/char/hw_random/n2-drv.c:771:29: error: 'pdev' undeclared (first use=
- in this function); did you mean 'cdev'?
-  err =3D devm_hwrng_register(&pdev->dev, &np->hwrng);
-                             ^~~~
-                             cdev
-drivers/char/hw_random/n2-drv.c:771:29: note: each undeclared identifier is=
- reported only once for each function it appears in
-
-Caused by commit
-
-  3e75241be808 ("hwrng: drivers - Use device-managed registration API")
-
-I applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 5 Aug 2019 14:49:59 +1000
-Subject: [PATCH] hwrng: fix typo in n2-drv.c
-
-Fixes: 3e75241be808 ("hwrng: drivers - Use device-managed registration API")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/char/hw_random/n2-drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-dr=
-v.c
-index 2d256b3470db..73e408146420 100644
---- a/drivers/char/hw_random/n2-drv.c
-+++ b/drivers/char/hw_random/n2-drv.c
-@@ -768,7 +768,7 @@ static int n2rng_probe(struct platform_device *op)
- 	np->hwrng.data_read =3D n2rng_data_read;
- 	np->hwrng.priv =3D (unsigned long) np;
-=20
--	err =3D devm_hwrng_register(&pdev->dev, &np->hwrng);
-+	err =3D devm_hwrng_register(&op->dev, &np->hwrng);
- 	if (err)
- 		goto out_hvapi_unregister;
-=20
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xTBKpWe9v5NlxbxL4v5QvzF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1Ht0AACgkQAVBC80lX
-0GwDhQf/faKdUW5dGiwL6BcS1VWPr05Q6fkvSO3K5CPMR6kxzcHrhJzJ5cmlo/Mr
-auG+eCRXImb+REsfycJ4rxfpWISb8rWSkGNfEavijVmsbnHkngPLDd2lUzf6LjVa
-/ZMmdVC1z+WtXP/4HZchuCpk8VamC9RYDNbJXCXPz3tXcJ/HYpncyvqceNEGCjim
-QDWKnKZQtN2DIZH2yBp+s8RHdSzFxgFjTrFg5wToB4Mx+68z/OPa8XZj6XcXXKZr
-emA3V082G4UXi8pGh3X3tnAG6Y22r5vggIlsyo6gJhF60/8JVjzZGZ96xfTpFU/B
-H+o9BBpus5HdVBISLDcjGLPVobRzzw==
-=TF+o
------END PGP SIGNATURE-----
-
---Sig_/xTBKpWe9v5NlxbxL4v5QvzF--
+> I applied the following patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 5 Aug 2019 14:49:59 +1000
+> Subject: [PATCH] hwrng: fix typo in n2-drv.c
+>
+> Fixes: 3e75241be808 ("hwrng: drivers - Use device-managed registration API")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/char/hw_random/n2-drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
+> index 2d256b3470db..73e408146420 100644
+> --- a/drivers/char/hw_random/n2-drv.c
+> +++ b/drivers/char/hw_random/n2-drv.c
+> @@ -768,7 +768,7 @@ static int n2rng_probe(struct platform_device *op)
+>         np->hwrng.data_read = n2rng_data_read;
+>         np->hwrng.priv = (unsigned long) np;
+>
+> -       err = devm_hwrng_register(&pdev->dev, &np->hwrng);
+> +       err = devm_hwrng_register(&op->dev, &np->hwrng);
+>         if (err)
+>                 goto out_hvapi_unregister;
+>
+> --
+> 2.20.1
+>
+> --
+> Cheers,
+> Stephen Rothwell
