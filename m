@@ -4,91 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F085C433FF
-	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 03:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 592BFC0650F
+	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 04:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB53E20880
-	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 03:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D05205F4
+	for <linux-next@archiver.kernel.org>; Mon,  5 Aug 2019 04:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X9fdExVr"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aoktEEZS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfHEDEN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 4 Aug 2019 23:04:13 -0400
-Received: from ozlabs.org ([203.11.71.1]:46505 "EHLO ozlabs.org"
+        id S1725902AbfHEE4m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 5 Aug 2019 00:56:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:44983 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbfHEDEN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 4 Aug 2019 23:04:13 -0400
+        id S1725782AbfHEE4m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Aug 2019 00:56:42 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4622ff22Fkz9sNx;
-        Mon,  5 Aug 2019 13:04:10 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46258R3JH2z9s7T;
+        Mon,  5 Aug 2019 14:56:39 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564974250;
-        bh=r9I99tLyLD5nxx5Zr+h7m74pVqauWanji7UCe01s9Pw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=X9fdExVrw6l7zKmXACen9UT+yWJbBuO88sqIShkZf8thWKSFoozBT54vGFnMddjV5
-         vi4BOJ5fySjY165F3IbSS0+NjQ5Os5gfpDmtd3e9dIV9kntKCDx5O/24PYiy54ovSK
-         1gEAIP7LphOQVZ/e37Lp9nGY13euBSnCIPVLKv/PZBXWpUwTaYlqAdOuDoGmjkrh70
-         /D1j4lH/eWsg58L/aaavQhj9K7jYxZEXLOcLsOfQzIs83TzZY4orUijmGdec27Lh3m
-         vnoUz3yhza2KOV2NNT0mX32dv+KcznUT+A0zJmFkB0jehThTSFgkdrKLhd2Pys0vZe
-         WzKuJgvqOpsJA==
-Date:   Mon, 5 Aug 2019 13:04:03 +1000
+        s=201702; t=1564980999;
+        bh=p8BMlV7M4nkyaQOehup2eIdyDBxqmogaxnZMP6CJ71g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aoktEEZSTrNzUtqIiuiwhwHtbWNOeZu6ucL0Uw0RyKU+HEDDPzCRMxupIpX4DenN7
+         qm+VrLHgEsJ3pm45E0auRKP9cbHe18cVxUKYME/YGMRt0wCVm3aQuVmb12dX8Fvyv+
+         4MJeKDn12KNJJZPstKi/6FEulpKPbskm7fo+KbKhG8tQhnYaB9HUnahsom/qTvdA9d
+         1GQ+6K7EjWXQDsjkNGyPAHZiGekOmkAeAsScY1XhI32M/avNWVHP9L/Ji6OB4x9h6s
+         Npuop2iUZ3Ut+Lw3B2dEm1YBfw8j1o3VD58mI2tcSrGZG+Ifi6y6fYrEt2Ez6oQh3c
+         whYv46RNNXUQA==
+Date:   Mon, 5 Aug 2019 14:56:38 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     Greg KH <greg@kroah.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Saravana Kannan <saravanak@google.com>
-Subject: linux-next: build warning after merge of the driver-core tree
-Message-ID: <20190805130403.06dc27b4@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Message-ID: <20190805145638.222e58b1@canb.auug.org.au>
+In-Reply-To: <20190805130403.06dc27b4@canb.auug.org.au>
+References: <20190805130403.06dc27b4@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bes5F2ic.1asHnYSmE8if9o";
+Content-Type: multipart/signed; boundary="Sig_/4PfON9VtgcPaDTbu955TQ=_";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/bes5F2ic.1asHnYSmE8if9o
+--Sig_/4PfON9VtgcPaDTbu955TQ=_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the driver-core tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+On Mon, 5 Aug 2019 13:04:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the driver-core tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>=20
+> drivers/of/platform.c:674:12: warning: 'of_link_to_suppliers' defined but=
+ not used [-Wunused-function]
+>  static int of_link_to_suppliers(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~~~~
+>=20
+> Introduced by commit
+>=20
+>   690ff7881b26 ("of/platform: Add functional dependency link from DT bind=
+ings")
 
-drivers/of/platform.c:674:12: warning: 'of_link_to_suppliers' defined but n=
-ot used [-Wunused-function]
- static int of_link_to_suppliers(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~~
+It also produced this warning:
 
-Introduced by commit
-
-  690ff7881b26 ("of/platform: Add functional dependency link from DT bindin=
-gs")
+drivers/of/platform.c: In function 'of_link_property':
+drivers/of/platform.c:650:18: warning: ?: using integer constants in boolea=
+n context [-Wint-in-bool-context]
+  return done ? 0 : -ENODEV;
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/bes5F2ic.1asHnYSmE8if9o
+--Sig_/4PfON9VtgcPaDTbu955TQ=_
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1HnKMACgkQAVBC80lX
-0GwPOwf/WnyFlJapb2s4Yc7hWk7pBo2Yo/avAfRCgVVc3/qWyeQlGAeFSruIrhzP
-Ic+VDl5Io9qqsc4GaeaFC/L/CJL23QneqgQqlk0aRR3t+jcRjl1JY6nhcEy1daPI
-ZaXci4Z/B/gYutuZ7vrlJOfEMCXgeQUh8eLsntm2i56mI0tGEtwCh4OmtXqHtm7c
-dbarxQKOOPzTnB9x/V6SI7naTfyqc/7kHSbymDZwYQpb1gX1sRCd+zUOkJ3poNq2
-+nkJMVKGz7+DwjEVAfGDndbgQP1nOh9iSeNQYpOUKOMoQD+O21h2P3WRjtIbBXag
-CcoGI6MqwN6/g9mIZ61xrZcVnaRnlg==
-=wQ+3
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1HtwYACgkQAVBC80lX
+0GyyJgf/bzKrhKVCAa2puKBZfCT3dn6q6UHG7YthvIrDFHur08h8LX+xbyl9LGaR
+oagxjiGkHOdReuklsvqcxH1L8/0zveAW+XSAw6iES98HlcM4j5RQUr5yMU9w1WJm
+b7uPTFiLhs/skr6+lgB6IpXGoYX5/jIU26f5DpFGbOQCMJ6NqcsTKjxbNFjGG2Gp
+7JbWYdjbkdykOiMbRBDau21aen2WnCYlD6HcBJkY/ot2AMUhrZdAGQQ3rI0R+lft
+RC7GPfcXUu4uuWlhhYTV+EBivyyvTLcK0FZMRTUwkq9G4XaVcSHijxG6ykPIrh9s
+gkqD1mTYrB0GqHT8/yoTjYvQoIOxJg==
+=k5qX
 -----END PGP SIGNATURE-----
 
---Sig_/bes5F2ic.1asHnYSmE8if9o--
+--Sig_/4PfON9VtgcPaDTbu955TQ=_--
