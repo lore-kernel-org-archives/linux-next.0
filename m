@@ -6,92 +6,83 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F244BC433FF
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 21:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16A2C433FF
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 23:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A952B216F4
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 21:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D96D2089E
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 23:30:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HpgD6rgN"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UqjhZFxP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfHFVWW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 17:22:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:56651 "EHLO ozlabs.org"
+        id S1726069AbfHFXas (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 19:30:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:48983 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfHFVWW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:22:22 -0400
+        id S1726044AbfHFXar (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Aug 2019 19:30:47 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4636zG5mJYz9s7T;
-        Wed,  7 Aug 2019 07:22:18 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4639qS61rBz9sBF;
+        Wed,  7 Aug 2019 09:30:44 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565126539;
-        bh=DB/4gsWOGUgMNekDqwCl6PQ6ppOYW96vq43QS71YHhs=;
+        s=201702; t=1565134244;
+        bh=APD0Xj8POeQN32pet+v6/GF2149kJ9ghQPB0FuUWBkg=;
         h=Date:From:To:Cc:Subject:From;
-        b=HpgD6rgN9y1GoX/yQZvXQVcfeJz+gI/mosOhkDeZGpeC+pumIiHfvStdPSCke9WAH
-         oPEmeMgog4uES+gbZSFCho3/WobJpDn6VpRYKkvyWveoGtmqVW03qY3ylOjCk1Bwq1
-         gEzmW8N2FoUpMroAHZO0mQXB/b9vMxO8FMfFT4dcUOmrYUqHTBt25HdCB8fhFZWO6z
-         Pp50ueV32IDHd1qdoAr8ScREFcUPi9hA4gpEMlYlAIimY8Kg3DIF+qTOA4lp5+kTyO
-         OE1tF2W6zR9zwFT8VTOQsb0jUo862hp8xRvsOMXKI/O1LrtdZ5RKv8kYAcUanxecyb
-         yDmYPTKZm8lRA==
-Date:   Wed, 7 Aug 2019 07:22:10 +1000
+        b=UqjhZFxP0UDRgBeKupXYvUOIg9E+vdkBVqux+c6jNfYbNTDY3yJZBDINuAk52hcDi
+         6rrfqbXTBoFHkUOox/LRmmz+WLJB58GlApEo1nScFdmFtwfWa99Nm9+7d/iL/p6tYo
+         7W6H5BmMi0IX7rnQpiW+YnvAtC76za0Lo0+aSpaZFz/8E4ehe7xG7tStWXkAllgHEX
+         4DRa+ZdugGuiOU7H4rb5OgKOAdaxxuOtHlzHLb9kveZheJY9E+XjJviRNurD7/MW4x
+         6HFeEUHPdFdj6ibOXUzeeLQmMDHWqteEcdRDFgUqymzsNHRmHwDPqp6brmNhT40cZo
+         S1/imaQVf5hQA==
+Date:   Wed, 7 Aug 2019 09:30:37 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     David Miller <davem@davemloft.net>,
         Networking <netdev@vger.kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Roman Mashak <mrv@mojatatu.com>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Message-ID: <20190807072210.13e99a2f@canb.auug.org.au>
+        Yifeng Sun <pkusunyifeng@gmail.com>
+Subject: linux-next: Signed-off-by missing for commit in the net-next tree
+Message-ID: <20190807093037.65ac614e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/QNc8HX=70e2s/5NP8IcVioD";
+Content-Type: multipart/signed; boundary="Sig_/DW/fZ2_35iFfbVHoi7N1nDf";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/QNc8HX=70e2s/5NP8IcVioD
+--Sig_/DW/fZ2_35iFfbVHoi7N1nDf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Commit
 
-  b35475c5491a ("net sched: update vlan action for batched events operation=
-s")
+  aa733660dbd8 ("openvswitch: Print error when ovs_execute_actions() fails")
 
-Fixes tag
-
-  Fixes: c7e2b9689 ("sched: introduce vlan action")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+is missing a Signed-off-by from its author.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/QNc8HX=70e2s/5NP8IcVioD
+--Sig_/DW/fZ2_35iFfbVHoi7N1nDf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1J74IACgkQAVBC80lX
-0GxG4Af+IXipOJ9IyBpzknqRwotg0RMOYW3kVDHeU5JMf17NahoITJmGzY8NsYwy
-2IIrHkKV85Q0TO48absLuK1vCyyrerdKDUpmuK053YFU1RQn5jqBbEdZoHHhfSEU
-UxLWpViMX4e5K5FZQ+TXW/jlYSqqKd80+TbRjcKmlFC80XDNXNnhOyN/cIPenBIN
-/mBxObLZZc4CCBiSRnWZDL/g0jFuKqvUulm7OGrHsMbOJQNPmZWhaNBh04qSnOV5
-AquDjNXGdNjltF6rSjcfjDCVkVjBp3lr9luRh5Ub6+6bkb1Y156Sjvd8XyD/rpnF
-AmqJdfz56NR0TM1/c8gMg+x05wKcWA==
-=2dz7
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1KDZ0ACgkQAVBC80lX
+0GziCQgAkssM2BUps+5KtP9aXRfOKQ64fWWZQ7dc2p1KAisbH/bsFDGAabL9s4Lq
+KKgB8teOGv4npZtbbPxIV0KdsLkxNAfE8tP3TZVYSVqck7Ldy2lU/wEb6bgSNEF6
+7h2D4PoIvkY39+N9jIOuTpp8Ykra2kup8dwhD2+YILsBlblZjRC9mD2VLFq4TQwD
+WU/q8UEGWZ++2DxLOtSIIKCVrh/WJZKuDhhPHuCjYN50qcjiyGZJGbW0ZWzirujY
+5moMDimPjXc934ju5gMm5OK933GVKY60s2b+d0Fc+0jrZFyyipf1zLYdTtIVBDUq
+yVpwP/RAW33cPT7Nhwt956cjw2WUIg==
+=g7M2
 -----END PGP SIGNATURE-----
 
---Sig_/QNc8HX=70e2s/5NP8IcVioD--
+--Sig_/DW/fZ2_35iFfbVHoi7N1nDf--
