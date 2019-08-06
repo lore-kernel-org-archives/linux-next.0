@@ -2,109 +2,163 @@ Return-Path: <SRS0=AeLc=WC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D3DC31E40
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 11:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983BBC433FF
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 12:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAA3C2075B
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 11:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6331E20B1F
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 12:03:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OoejvXx4"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="lZEYFT7O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfHFL0k (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 07:26:40 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38017 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfHFL0k (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 07:26:40 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s15so54744243wmj.3
-        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 04:26:38 -0700 (PDT)
+        id S1730177AbfHFMDm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 08:03:42 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:36816 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfHFMDm (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 08:03:42 -0400
+Received: by mail-wm1-f52.google.com with SMTP id g67so72093622wme.1
+        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 05:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=/bvE/+rT0hqQd9DEVs/wAQSXv8Qv9MrLv1HMgeH12XY=;
-        b=OoejvXx4Lwte+KoWCzvOh8zT6a2jBCn5tmxATTCyE1IfLYdWwc2BQe9RRsmiZNHR8T
-         K2V0XzrzTGtSil3Zxegj2HgN5p3U2XNUWLm76W6TcX7+XJVnlxGF8DdvDfHU/acDLQxe
-         O+TyLzq2AZgNunii/1t23V7R/4DkooMnnNvLI9A54iGISwQfv2nNma0SxzYDaY1Wo0f0
-         HTCsXWYRfnz49VqJppdcmvznJE81AuJF/Oz5HtU/AhtffSk9bT8hk8LmlLEXDoxGeKXo
-         JLZ6fZA9RxerIfyVcG0dEqIC0Vttho8Al+rOsdZBCalZdfRW6ZF+zVzfO27XpTpVbkBy
-         iSoQ==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=bV41UdEzuGgtBq7uPzqscF5r4H1ir+vHb9no60FQ8D4=;
+        b=lZEYFT7OxS3heVDpGHFBx/ZcceM5nU6heEc1SSfpxfCdTlczF73bP/rnbPjUhLC0aO
+         OzdtdWsYRBYYTA1s6XVkrNGa/PGmhRoVxWH6LNGs+hQoZ2E63kzinlUSRao0Nt2/aeXq
+         GyyCIVUZJzTIqlq/WrXS4wWKSbAM5sGFgrB0iRUNDZkQ7qqolS+0JPD+uGnrrXzTesO3
+         JTQZhNNwbWfDdDnbA/5Fg8ppxgcNoWtzZvOidRpJOskovk6+JHDTO5vTVmz1y3rz5Y3S
+         97BqXIrGvoIr9OrZLfu1FLoY9yOFDWmix+ktIGCYNNPFfwEee61lxEQqxABq05SAf3c1
+         TgNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=/bvE/+rT0hqQd9DEVs/wAQSXv8Qv9MrLv1HMgeH12XY=;
-        b=M0aX0+SuszQ59zYrTp1sYlRkA6gF12Aq2jpv6LNn9F3HLWdIcZu756cuu8h5OVdLX0
-         +CfgZ1n+v/SlbZWx/h/CYrqRK2wZL6S1Ddq1iUYTXsvNboQ1NwCUz8ZUEei9ZAtoEloE
-         Qz78Ikqa9TSZWBP82RshQPjOEwfcHQ3WXdtkIAt33TEHc60EkG/GjCmYMdiEJA1dnE0f
-         bx7iJWefhfsTlAjJS2uDgEtoZRJee6llabi7esVZRkDBHQQTK5WP4bidR226OdYzNCbv
-         92K36KHbd96OQ5HC9ZWecg3S4vyDdoFDUT8HfkDoOZAp/0U+tQeFsCkS9V9yyIz+Rn0i
-         DO8w==
-X-Gm-Message-State: APjAAAXY/7/2GEWtJtv1p7VNe7HR8liU98u5FRJfNhPAe9mrPg7kz3DB
-        r/RT/FWtqKXtNzXSzLy679s=
-X-Google-Smtp-Source: APXvYqy+aGW32eLte4S/O5X+3t5EFW+6HZI3ZHqTmkeIaX9Usk34wMHzhohgAORdtpN129ijwTzGzQ==
-X-Received: by 2002:a05:600c:34d:: with SMTP id u13mr4477382wmd.48.1565090798068;
-        Tue, 06 Aug 2019 04:26:38 -0700 (PDT)
-Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
-        by smtp.gmail.com with ESMTPSA id 66sm2286039wrc.83.2019.08.06.04.26.36
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=bV41UdEzuGgtBq7uPzqscF5r4H1ir+vHb9no60FQ8D4=;
+        b=K0N7UVTkMGJ4UILEuOShdAnhCyy8DfUbRk5ymUZom9veJqHEcl00kc0KChVlkVWZiP
+         0ZQL689jXj0JlwoLQe4afp6KSObtvYZJSU5wJRHNU3vYkyK+yRYIKYIMHyRHCOJ931+M
+         0H3ee/8rmSWjWETYbz92Htg6pomse/Y634914/BLJJibZSm5oBl6vgPe9QrORsdHJzCz
+         d3vsQ4I2ZSxk1FUvf1G4ixegylnUvlPV2fMD7enkx//chId4uKj7b9/rGeaQYwZEgLdB
+         XWfh0ljkb7OCqTzs9xV2lk0MqWASrooLm3mtXY0In6rRSMY1vsh5up9nnuCcjCSgFPid
+         iAXQ==
+X-Gm-Message-State: APjAAAU/sEdZlWuv1KKGDBXjJHbgENYuMVH5Br6eNIEdDnpOVDQgCgKs
+        Qr7Mwnr/3d6buCNxEUHhonx3YrJXIvA0iQ==
+X-Google-Smtp-Source: APXvYqz7RaJN5WBefg7GynowDoF+8XDJDHcPSZakMqATKbnHlBTEQQbg0GXwJbNGpbUvTIEJmORO2Q==
+X-Received: by 2002:a1c:63d7:: with SMTP id x206mr4643565wmb.19.1565093020941;
+        Tue, 06 Aug 2019 05:03:40 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id g19sm158032163wrb.52.2019.08.06.05.03.38
+        for <linux-next@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 04:26:37 -0700 (PDT)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH] drm/amdgpu: fix compile error about readq/writeq on arm
- ARCH
-To:     Tao Zhou <tao.zhou1@amd.com>, amd-gfx@lists.freedesktop.org,
-        alexander.deucher@amd.com, hawking.zhang@amd.com,
-        dennis.li@amd.com, broonie@kernel.org
-Cc:     linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-build-reports@lists.linaro.org
-References: <20190806103156.3778-1-tao.zhou1@amd.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <a19ac490-a803-84c0-5598-e78edbb3447b@gmail.com>
-Date:   Tue, 6 Aug 2019 13:26:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 06 Aug 2019 05:03:39 -0700 (PDT)
+Message-ID: <5d496c9b.1c69fb81.e1be2.ae1b@mx.google.com>
+Date:   Tue, 06 Aug 2019 05:03:39 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190806103156.3778-1-tao.zhou1@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: next
+X-Kernelci-Kernel: v5.3-rc3-394-gd777ca65dd5a
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Report-Type: boot
+Subject: next/pending-fixes boot: 174 boots: 6 failed,
+ 148 passed with 20 offline (v5.3-rc3-394-gd777ca65dd5a)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Am 06.08.19 um 12:31 schrieb Tao Zhou:
-> readq/writeq can't be found on arm architecture, implement them
-> with 32 bits operations
+next/pending-fixes boot: 174 boots: 6 failed, 148 passed with 20 offline (v=
+5.3-rc3-394-gd777ca65dd5a)
 
-Mhm, wasn't the whole point about using readq/writeq that we needed 
-64bit atomic operations?
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.3-rc3-394-gd777ca65dd5a/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.3-rc3-394-gd777ca65dd5a/
 
-Christian.
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.3-rc3-394-gd777ca65dd5a
+Git Commit: d777ca65dd5aca46749723cb8e5a919aedce77b7
+Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 71 unique boards, 25 SoC families, 20 builds out of 222
 
->
-> Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index f62d4f30e810..aaf7f31cf8df 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -29,6 +29,7 @@
->   #include <linux/kthread.h>
->   #include <linux/console.h>
->   #include <linux/slab.h>
-> +#include <linux/io-64-nonatomic-lo-hi.h>
->   #include <drm/drmP.h>
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_probe_helper.h>
+Boot Failures Detected:
 
+arm64:
+    defconfig:
+        gcc-8:
+            apq8096-db820c: 1 failed lab
+
+arm:
+    multi_v7_defconfig:
+        gcc-8:
+            exynos5250-snow: 1 failed lab
+
+    qcom_defconfig:
+        gcc-8:
+            qcom-apq8064-cm-qs600: 1 failed lab
+            qcom-apq8064-ifc6410: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            armada-xp-openblocks-ax3-4: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
+        gcc-8:
+            exynos4412-odroidx2: 1 failed lab
+
+Offline Platforms:
+
+arm64:
+
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            mt7622-rfb1: 1 offline lab
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            mt7622-rfb1: 1 offline lab
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            alpine-db: 1 offline lab
+            at91-sama5d4_xplained: 1 offline lab
+            at91-sama5d4ek: 1 offline lab
+            bcm4708-smartrg-sr400ac: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+
+    sama5_defconfig:
+        gcc-8
+            at91-sama5d4_xplained: 1 offline lab
+            at91-sama5d4ek: 1 offline lab
+
+    bcm2835_defconfig:
+        gcc-8
+            bcm2835-rpi-b: 1 offline lab
+
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
