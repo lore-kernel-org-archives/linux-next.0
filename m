@@ -2,91 +2,94 @@ Return-Path: <SRS0=AeLc=WC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D84C433FF
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 23:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADC1C433FF
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 23:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB65208C3
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 23:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D436216B7
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 23:50:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aat9VujI"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AEkJIejs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfHFXhj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 19:37:39 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:39021 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfHFXhj (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 19:37:39 -0400
-Received: by mail-ot1-f51.google.com with SMTP id r21so91019629otq.6;
-        Tue, 06 Aug 2019 16:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8L9+kA0ZqqoXXOvjVGsnYHKbZZYVFf05tAiM0vqOfpY=;
-        b=Aat9VujIbakXAbrANx5VLitNoxcOmDSXhUPZoTZt2JOLtepc2KnR/KDSbYgkdqscTY
-         h+/woRs4GEMd+/BND8Xi9UVfmBAGdphXhw7uY3ek9ZQlHkWd7g+tSqZJ/HfSyiARHcNQ
-         dtRokDXuScQueRKy+qUuSWqvPN7ZsS33aaEaywzZIHQmyOaBbtrVhmyanRqF6Nvlxkx2
-         lgM0SVKEmpzOWCbLCESXylW8Da0VuzkKHby6yXe+Wi8T/dG8CZgF+Hz82sWwAVD7ttTf
-         kmDCLXSHGeHTuQIL87GePfCPxJsfgM5vdmu3UpCr2454jWbrkBR78X5WzS+w5UAR6/CL
-         QF4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8L9+kA0ZqqoXXOvjVGsnYHKbZZYVFf05tAiM0vqOfpY=;
-        b=tyHRHSLu0P/B/dETKVFgSmJxY/wqj+xLLsW+d8ddzF7p85K48/lWEd1GTWqi7OlQz3
-         J7cwgzGim9qyl7b2e6pAlHZBxaA5vy37To9KtZp9a7cRc6b4f3SdJVAp89ajsiK0vCVA
-         XDgYDdW6MDsxFfQJjS965XsVPiYWkxPh8VUHmkmy57oo6gAeBGtRbzGwAfK9gwjOVLj9
-         g5UHEM/L075SN7oh/D9BFEpPNpYbhfD7pZnadD7URlVl0YQIDzfqCmNnOBjB1Cgv1Jtx
-         NYCXrpiIyjz5JU/RoMVdBaS9oulEHYHDB/vt6/h9pE2EdtLPiIMyQSwiLziZzFP+64uu
-         /0BA==
-X-Gm-Message-State: APjAAAUJu9vwCViSmvoYeXPoO/Is7TXR9IliFnZMJk4kcf4KLa2+dsab
-        e7zLcWiE/ll1uzknlMhEKRPqd7Li3QB6LqBpc0Hmk7qKH9s=
-X-Google-Smtp-Source: APXvYqwWhdojtNp06dNBY/mjr5KCbVJJTzbQYRADOl71ExYCcR1ZqHsrFWcbV6lA3DN8mFMbxMFajwdBnxPsohodEso=
-X-Received: by 2002:aca:2211:: with SMTP id b17mr3691703oic.64.1565134657862;
- Tue, 06 Aug 2019 16:37:37 -0700 (PDT)
+        id S1726331AbfHFXu0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 19:50:26 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56161 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbfHFXu0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Aug 2019 19:50:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 463BG72psQz9sNk;
+        Wed,  7 Aug 2019 09:50:23 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565135423;
+        bh=zct1gQ9OQBGfGzQ+4xFemqwOdAOZIJVO/pR0Gb+YSis=;
+        h=Date:From:To:Cc:Subject:From;
+        b=AEkJIejspy7zsU6YjSn9laq+MRe00X4B+ioeu3td9UU2EDWZyGWuePImAHkbm0oh1
+         FB4FAriX/Vr4zIdJuZthrwbJfpySIlvCMagbr2qifR9pT2MEpaOQ/6mPZ3XJ/mm0Op
+         XGL1dPH/Hukm9W5qur4eIRVlUJ9vtAHYqhfYEVu/8JLbD95Zf5c1JrHbwsM/oSfd6T
+         TD7b//u3auQpXwfqluTwtpRVHl9gdYkwW23sNl1Ysa3sYE6NGAyogV6aE53yHayRjj
+         4o7sn5v84bZlaw1aHmxKiehssBzCtdr8sVWLqHUI9kNqGYEMqp0VanZ5yD2cLrM6MO
+         TokYjK1SZ7ZPg==
+Date:   Wed, 7 Aug 2019 09:50:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: linux-next: build failure after merge of the arm64 tree
+Message-ID: <20190807095022.0314e2fc@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190807093037.65ac614e@canb.auug.org.au>
-In-Reply-To: <20190807093037.65ac614e@canb.auug.org.au>
-From:   Yifeng Sun <pkusunyifeng@gmail.com>
-Date:   Tue, 6 Aug 2019 16:37:26 -0700
-Message-ID: <CAEYOeXMV1DbTsy7U1-Fu0eztVGpw-+ZEJTK0Hzm8xbqCL7fabw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the net-next tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/7emCAv/hhDBzUrOu7i.tONe";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+--Sig_/7emCAv/hhDBzUrOu7i.tONe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-My apologies, thanks for the email. Please add the signed-off if you can.
+Hi all,
 
-Signed-off-by: Yifeng Sun <pkusunyifeng@gmail.com>
+After merging the arm64 tree, today's linux-next build (powerpc
+ppc64_defconfig) was just spinning in make - it executing some scripts,
+but it was hard to catch just what.
 
-Thanks,
-Yifeng
+Apparently caused by commit
 
-On Tue, Aug 6, 2019 at 4:30 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   aa733660dbd8 ("openvswitch: Print error when ovs_execute_actions() fails")
->
-> is missing a Signed-off-by from its author.
->
-> --
-> Cheers,
-> Stephen Rothwell
+  5cf896fb6be3 ("arm64: Add support for relocating the kernel with RELR rel=
+ocations")
+
+I have not idea why, but reverting the above commit allows to build
+to finish.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7emCAv/hhDBzUrOu7i.tONe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1KEj4ACgkQAVBC80lX
+0GxI2Af+InUCBZC1eshxBKWx+T8XmnaIXtcTPt9Y4CjwTJwSn8X+cwd65CudkIYZ
+UhXKADJRVgGowqIzyU/MptSux5vCw49L5Pjn9XcfIqdwBWe267db2Usd4zI/9+o7
+iELYB2FZKfFd51J2ZJe4xq1AZCPD/yoZTarEPTb/xzaPThA7Yc/X+yjAStcz7WtP
+IknugKRYSteCLu8TyVppp6D971vgn6/d8mW5HyQbv9HnrbVBLEzbCy8/NCDqirnn
+CcSGZdEzlqHKDAmKbwk/uPZAMBYP0staGklQt4N7uH9zGg4G231/Ml0HUKdQA3n3
+T5GtHA9h+jlEIxEDnEdvalT/TH9Q+g==
+=h4LQ
+-----END PGP SIGNATURE-----
+
+--Sig_/7emCAv/hhDBzUrOu7i.tONe--
