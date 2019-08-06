@@ -2,83 +2,96 @@ Return-Path: <SRS0=AeLc=WC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD61C31E40
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 21:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F244BC433FF
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 21:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2377F206A2
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 21:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A952B216F4
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 21:22:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HpgD6rgN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbfHFVLe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 17:11:34 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:49886 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfHFVLe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 17:11:34 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 953EE12661549;
-        Tue,  6 Aug 2019 14:11:33 -0700 (PDT)
-Date:   Tue, 06 Aug 2019 14:11:33 -0700 (PDT)
-Message-Id: <20190806.141133.1365654857955536268.davem@davemloft.net>
-To:     natechancellor@gmail.com
-Cc:     andrew@lunn.ch, broonie@kernel.org, devel@driverdev.osuosl.org,
-        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
-        hkallweit1@gmail.com, kernel-build-reports@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
-        lkp@intel.com, netdev@vger.kernel.org, rdunlap@infradead.org,
-        willy@infradead.org
-Subject: Re: [PATCH v2] net: mdio-octeon: Fix Kconfig warnings and build
- errors
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190803060155.89548-1-natechancellor@gmail.com>
-References: <20190731185023.20954-1-natechancellor@gmail.com>
-        <20190803060155.89548-1-natechancellor@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 06 Aug 2019 14:11:34 -0700 (PDT)
+        id S1726340AbfHFVWW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 17:22:22 -0400
+Received: from ozlabs.org ([203.11.71.1]:56651 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbfHFVWW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:22:22 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4636zG5mJYz9s7T;
+        Wed,  7 Aug 2019 07:22:18 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565126539;
+        bh=DB/4gsWOGUgMNekDqwCl6PQ6ppOYW96vq43QS71YHhs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HpgD6rgN9y1GoX/yQZvXQVcfeJz+gI/mosOhkDeZGpeC+pumIiHfvStdPSCke9WAH
+         oPEmeMgog4uES+gbZSFCho3/WobJpDn6VpRYKkvyWveoGtmqVW03qY3ylOjCk1Bwq1
+         gEzmW8N2FoUpMroAHZO0mQXB/b9vMxO8FMfFT4dcUOmrYUqHTBt25HdCB8fhFZWO6z
+         Pp50ueV32IDHd1qdoAr8ScREFcUPi9hA4gpEMlYlAIimY8Kg3DIF+qTOA4lp5+kTyO
+         OE1tF2W6zR9zwFT8VTOQsb0jUo862hp8xRvsOMXKI/O1LrtdZ5RKv8kYAcUanxecyb
+         yDmYPTKZm8lRA==
+Date:   Wed, 7 Aug 2019 07:22:10 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Roman Mashak <mrv@mojatatu.com>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Message-ID: <20190807072210.13e99a2f@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/QNc8HX=70e2s/5NP8IcVioD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-RnJvbTogTmF0aGFuIENoYW5jZWxsb3IgPG5hdGVjaGFuY2VsbG9yQGdtYWlsLmNvbT4NCkRhdGU6
-IEZyaSwgIDIgQXVnIDIwMTkgMjM6MDE6NTYgLTA3MDANCg0KPiBBZnRlciBjb21taXQgMTcxYTli
-YWU2OGM3ICgic3RhZ2luZy9vY3Rlb246IEFsbG93IHRlc3QgYnVpbGQgb24NCj4gIU1JUFMiKSwg
-dGhlIGZvbGxvd2luZyBjb21iaW5hdGlvbiBvZiBjb25maWdzIGNhdXNlIGEgZmV3IEtjb25maWcN
-Cj4gd2FybmluZ3MgYW5kIGJ1aWxkIGVycm9ycyAoZGlzdGlsbGVkIGZyb20gYXJtIGFsbHllc2Nv
-bmZpZyBhbmQgUmFuZHkncw0KPiByYW5kY29uZmlnIGJ1aWxkcyk6DQo+IA0KPiAgICAgQ09ORklH
-X05FVERFVklDRVM9eQ0KPiAgICAgQ09ORklHX1NUQUdJTkc9eQ0KPiAgICAgQ09ORklHX0NPTVBJ
-TEVfVEVTVD15DQo+IA0KPiBhbmQgQ09ORklHX09DVEVPTl9FVEhFUk5FVCBhcyBlaXRoZXIgYSBt
-b2R1bGUgb3IgYnVpbHQtaW4uDQo+IA0KPiBXQVJOSU5HOiB1bm1ldCBkaXJlY3QgZGVwZW5kZW5j
-aWVzIGRldGVjdGVkIGZvciBNRElPX09DVEVPTg0KPiAgIERlcGVuZHMgb24gW25dOiBORVRERVZJ
-Q0VTIFs9eV0gJiYgTURJT19ERVZJQ0UgWz15XSAmJiBNRElPX0JVUyBbPXldDQo+ICYmIDY0QklU
-IFs9bl0gJiYgSEFTX0lPTUVNIFs9eV0gJiYgT0ZfTURJTyBbPW5dDQo+ICAgU2VsZWN0ZWQgYnkg
-W3ldOg0KPiAgIC0gT0NURU9OX0VUSEVSTkVUIFs9eV0gJiYgU1RBR0lORyBbPXldICYmIChDQVZJ
-VU1fT0NURU9OX1NPQyB8fA0KPiBDT01QSUxFX1RFU1QgWz15XSkgJiYgTkVUREVWSUNFUyBbPXld
-DQo+IA0KPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gLi4vZHJpdmVycy9uZXQvcGh5L21kaW8tb2N0
-ZW9uLmM6MTQ6DQo+IC4uL2RyaXZlcnMvbmV0L3BoeS9tZGlvLWNhdml1bS5oOjExMTozNjogZXJy
-b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mDQo+IGZ1bmN0aW9uIKF3cml0ZXGiOyBkaWQgeW91
-IG1lYW4goXdyaXRlbKI/DQo+IFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9u
-XQ0KPiAgIDExMSB8ICNkZWZpbmUgb2N0X21kaW9fd3JpdGVxKHZhbCwgYWRkcikgd3JpdGVxKHZh
-bCwgKHZvaWQgKilhZGRyKQ0KPiAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgXn5+fn5+DQo+IA0KPiBDT05GSUdfNjRCSVQgaXMgbm90IHN0cmljdGx5IG5lY2Vzc2Fy
-eSBpZiB0aGUgcHJvcGVyIHJlYWRxL3dyaXRlcQ0KPiBkZWZpbml0aW9ucyBhcmUgaW5jbHVkZWQg
-ZnJvbSBpby02NC1ub25hdG9taWMtbG8taGkuaC4NCj4gDQo+IENPTkZJR19PRl9NRElPIGlzIG5v
-dCBuZWVkZWQgd2hlbiBDT05GSUdfQ09NUElMRV9URVNUIGlzIGVuYWJsZWQgYmVjYXVzZQ0KPiBv
-ZiBjb21taXQgZjlkYzlhYzUxNjEwICgib2YvbWRpbzogQWRkIGR1bW15IGZ1bmN0aW9ucyBpbiBv
-Zl9tZGlvLmguIikuDQo+IA0KPiBGaXhlczogMTcxYTliYWU2OGM3ICgic3RhZ2luZy9vY3Rlb246
-IEFsbG93IHRlc3QgYnVpbGQgb24gIU1JUFMiKQ0KPiBSZXBvcnRlZC1ieToga2J1aWxkIHRlc3Qg
-cm9ib3QgPGxrcEBpbnRlbC5jb20+DQo+IFJlcG9ydGVkLWJ5OiBNYXJrIEJyb3duIDxicm9vbmll
-QGtlcm5lbC5vcmc+DQo+IFJlcG9ydGVkLWJ5OiBSYW5keSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFk
-ZWFkLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogTmF0aGFuIENoYW5jZWxsb3IgPG5hdGVjaGFuY2Vs
-bG9yQGdtYWlsLmNvbT4NCg0KQXBwbGllZCB0byBuZXQtbmV4dC4NCg0KUGxlYXNlIG1ha2UgaXQg
-Y2xlYXIgd2hhdCB0cmVlIHlvdXIgY2hhbmdlcyBhcmUgdGFyZ2V0dGluZyBpbiB0aGUgZnV0dXJl
-LA0KdGhhbmsgeW91Lg0K
+--Sig_/QNc8HX=70e2s/5NP8IcVioD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+In commit
+
+  b35475c5491a ("net sched: update vlan action for batched events operation=
+s")
+
+Fixes tag
+
+  Fixes: c7e2b9689 ("sched: introduce vlan action")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/QNc8HX=70e2s/5NP8IcVioD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1J74IACgkQAVBC80lX
+0GxG4Af+IXipOJ9IyBpzknqRwotg0RMOYW3kVDHeU5JMf17NahoITJmGzY8NsYwy
+2IIrHkKV85Q0TO48absLuK1vCyyrerdKDUpmuK053YFU1RQn5jqBbEdZoHHhfSEU
+UxLWpViMX4e5K5FZQ+TXW/jlYSqqKd80+TbRjcKmlFC80XDNXNnhOyN/cIPenBIN
+/mBxObLZZc4CCBiSRnWZDL/g0jFuKqvUulm7OGrHsMbOJQNPmZWhaNBh04qSnOV5
+AquDjNXGdNjltF6rSjcfjDCVkVjBp3lr9luRh5Ub6+6bkb1Y156Sjvd8XyD/rpnF
+AmqJdfz56NR0TM1/c8gMg+x05wKcWA==
+=2dz7
+-----END PGP SIGNATURE-----
+
+--Sig_/QNc8HX=70e2s/5NP8IcVioD--
