@@ -2,112 +2,156 @@ Return-Path: <SRS0=AeLc=WC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2319C0650F
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 00:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A316C433FF
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 02:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73D82147A
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 00:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E265E20717
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 02:15:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bQK7Lw6T"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gqtezC10"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbfHFADz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 5 Aug 2019 20:03:55 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43149 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfHFADz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Aug 2019 20:03:55 -0400
-Received: by mail-ot1-f66.google.com with SMTP id j11so30832479otp.10
-        for <linux-next@vger.kernel.org>; Mon, 05 Aug 2019 17:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Lg/DgxD3VnnGHA1TcpT2F4zdWkdlPFk/7sUfWPDW9zE=;
-        b=bQK7Lw6Ta7pxzVic0w3JpbqQC3Q3gA+uD3iHWbJfaDr5Fhk6XXl1PTil8laFZKlseS
-         2szxRHloYyOd8o8vSzhxOpV+obbD4Q7/zlz/LW6AAJJsoXsIZ4GlHNl0IqY3yTn3hC0X
-         Hi0Mjj0RcipQvLI+6MEHX5kc5BMpxtaUalx5p5inl3pJo5u3zAhBAwUCA6xZoH9+DCxk
-         J+Fhh//1Lx4sNGlyuqyIoaIDkI1vuGCbkByJMsTQU24sj13y44TxbS9P5IVFlcDwPloi
-         eraKnbPZ4symb7LieX8BKOz5OmmxpdmuXDFhJHW+Yj29vD27NUuF3CpeI8DZyh1LdTil
-         D9rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lg/DgxD3VnnGHA1TcpT2F4zdWkdlPFk/7sUfWPDW9zE=;
-        b=P6B+6FUmw84ueF4zGvTqsGsbiaE+gQs6/J69mj73FEjyegD1HShxnTB1wpKSJkCdHf
-         +9cKeZcjy8UUqJzyv5XBuz3SLbJqgx2oHIYI7N4ZG3kC8w0EDF5XGD8Hccwc89Id6nXh
-         rmy9tbePsy0U5/+rf9sOi/VykKmRUV5VJqSGRYqAOwWsIp3wg+bpI/2YvavTM1iRA5A9
-         Nxd0GkuUrhBzt8F/Wfz2vYxa6e3FiMII45Snk8xh0zfo0O21Wrv7JmMAG40JFoDpa+Ak
-         UNUAkSVmkVTVRfdJy6eBNcRlh62M9B/zEFdxwiNdAZbykpBuC8X9D6M2XMhH7zRtETct
-         gYOw==
-X-Gm-Message-State: APjAAAXCO26O8wTBULM7LD21baW/rcA9MLG+fI3LKQfB6Q00mtcZf4m+
-        KOHQmdn+JsRbb/4slKuJ703ZRK7Aysi1P/3KYhGRWQ==
-X-Google-Smtp-Source: APXvYqwIS1h7siX+nevMs4Z+Oy5KRR3DjgmRHxK4CUcKMskHi2jBpE3xTaaEjAqNsmEHp6TlpFd5duss1Xn1hOoOda0=
-X-Received: by 2002:a9d:6256:: with SMTP id i22mr517569otk.139.1565049834029;
- Mon, 05 Aug 2019 17:03:54 -0700 (PDT)
+        id S1730900AbfHFCPl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 5 Aug 2019 22:15:41 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59853 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729921AbfHFCPl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Aug 2019 22:15:41 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 462dX92Jsrz9sBF;
+        Tue,  6 Aug 2019 12:15:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565057737;
+        bh=+QU8r+QEPvR0/c+i1mAJXOGDW63fLQfMU95ysF2g8RQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=gqtezC10/iushRRO7RCt1zPCrqYauWin6a4TKr88x1TDiQS4R9ni04E7RL9HqKyNv
+         KHTywB0ZMzM8MIwjQvPYip3nrnTO0zyZWCZmhSQCMP0jAQDuMGtkXRDYoZRj2J6B35
+         CsJGK3Rwu6Hli9yfOnP0j8EtRxFamFCBXtibHeeXhBjwfRhdM+eX0VSiJwg47665VS
+         Yqu4QYocHCstMnzajkszfzi67DHFCZKqXYrov9Bq4s5j97fJ3fn48McVsDpyCoXcL5
+         zbB0mdk8xlI7blKDbSnGXMl47AgP2kXMYhLULXW3ij0E0QjOpC4OCSJP94dQzKbp4W
+         jiDsbDesnrg2w==
+Date:   Tue, 6 Aug 2019 12:15:19 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: linux-next: build failure after merge of the integrity tree
+Message-ID: <20190806121519.0f8ac653@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190805130403.06dc27b4@canb.auug.org.au> <20190805145638.222e58b1@canb.auug.org.au>
-In-Reply-To: <20190805145638.222e58b1@canb.auug.org.au>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 5 Aug 2019 17:03:18 -0700
-Message-ID: <CAGETcx_Xwu64+CFz_AxUpDBeRBfB9+qU7pSc+KvVFVOOsjMUvw@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the driver-core tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Greg KH <greg@kroah.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/zTLvc.ANXYxn/G.A9CglH=f";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Sun, Aug 4, 2019 at 9:56 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> On Mon, 5 Aug 2019 13:04:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the driver-core tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> >
-> > drivers/of/platform.c:674:12: warning: 'of_link_to_suppliers' defined but not used [-Wunused-function]
-> >  static int of_link_to_suppliers(struct device *dev)
-> >             ^~~~~~~~~~~~~~~~~~~~
-> >
-> > Introduced by commit
-> >
-> >   690ff7881b26 ("of/platform: Add functional dependency link from DT bindings")
->
-> It also produced this warning:
->
-> drivers/of/platform.c: In function 'of_link_property':
-> drivers/of/platform.c:650:18: warning: ?: using integer constants in boolean context [-Wint-in-bool-context]
->   return done ? 0 : -ENODEV;
->
+--Sig_/zTLvc.ANXYxn/G.A9CglH=f
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for reporting Stephen!
+Hi all,
 
-I'll fix the bool vs int thing right away. Weird that no other
-compilation caught it.
+After merging the integrity tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-As for the function not used, I'll move all the new code into the
-already existing ifndef CONFIG_PPC for now.
+In file included from <command-line>:
+include/linux/module_signature.h:32:2: error: unknown type name 'u8'
+  u8 algo;  /* Public-key crypto algorithm [0] */
+  ^~
+include/linux/module_signature.h:33:2: error: unknown type name 'u8'
+  u8 hash;  /* Digest algorithm [0] */
+  ^~
+include/linux/module_signature.h:34:2: error: unknown type name 'u8'
+  u8 id_type; /* Key identifier type [PKEY_ID_PKCS7] */
+  ^~
+include/linux/module_signature.h:35:2: error: unknown type name 'u8'
+  u8 signer_len; /* Length of signer's name [0] */
+  ^~
+include/linux/module_signature.h:36:2: error: unknown type name 'u8'
+  u8 key_id_len; /* Length of key identifier [0] */
+  ^~
+include/linux/module_signature.h:37:2: error: unknown type name 'u8'
+  u8 __pad[3];
+  ^~
+include/linux/module_signature.h:38:2: error: unknown type name '__be32'
+  __be32 sig_len; /* Length of signature data */
+  ^~~~~~
+include/linux/module_signature.h:41:54: error: unknown type name 'size_t'
+ int mod_check_sig(const struct module_signature *ms, size_t file_len,
+                                                      ^~~~~~
+include/linux/module_signature.h:41:54: note: 'size_t' is defined in header=
+ '<stddef.h>'; did you forget to '#include <stddef.h>'?
+include/linux/module_signature.h:1:1:
++#include <stddef.h>
+ /* SPDX-License-Identifier: GPL-2.0+ */
+include/linux/module_signature.h:41:54:
+ int mod_check_sig(const struct module_signature *ms, size_t file_len,
+                                                      ^~~~~~
 
-Looks like PPC doesn't populate platform devices from DT using the
-generic of_platform_default_populate_init() in drivers/of/platform.c.
-I tried grepping around, but I don't see clearly where all the devices
-are populated from DT for PPC. I'm not familiar with PPC, so if you or
-someone else can give me a pointer to how devices are populated in
-PPC, that's be helpful. If there's interest in this series for PPC,
-I'd be happy to add support to however PPC populates the devices from
-DT -- specifically, creating device links for devices as they are
-populated.
+Caused by commit
 
-Thanks,
-Saravana
+  c8424e776b09 ("MODSIGN: Export module signature definitions")
+
+We now have build time checks to make sure that include files are self
+contained.
+
+I have added the following fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 6 Aug 2019 12:09:36 +1000
+Subject: [PATCH] MODSIGN: make new include file self contained
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/module_signature.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/module_signature.h b/include/linux/module_signat=
+ure.h
+index 523617fc5b6a..7eb4b00381ac 100644
+--- a/include/linux/module_signature.h
++++ b/include/linux/module_signature.h
+@@ -9,6 +9,8 @@
+ #ifndef _LINUX_MODULE_SIGNATURE_H
+ #define _LINUX_MODULE_SIGNATURE_H
+=20
++#include <linux/types.h>
++
+ /* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
+ #define MODULE_SIG_STRING "~Module signature appended~\n"
+=20
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zTLvc.ANXYxn/G.A9CglH=f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1I4rcACgkQAVBC80lX
+0Gzw6gf+KRVWNfz612RsV41gpCJO04MKJt5O2JENYUhAKLQUOEKgF7EyYuN4sxk3
+2o26m2vt40nBv4qXgGc1aKwqnqz7SFuIijzc/wxCh2SoJISI/F2MjXunF9PmxIwN
+Z5bjxxZUhgB7z83evNe5kEstS3W9iV4N2cAJkU8cMDed9CehFkFUsN06JZgfoysD
+i2pNOFSOS9IJcYttRIk1e1C+H5su5JgErSv5zteQFzG3vCDsmgWfPLN92kBTT9MO
+H/tdeAVx/hn9aLj6gpfOtggtrbQkFgc5Oj8zEsi8MfBwzdrW8Fnymjuc7subdtWp
+7W8XouRhQTa0rls3sPu6sOMydiIk6w==
+=Qd6n
+-----END PGP SIGNATURE-----
+
+--Sig_/zTLvc.ANXYxn/G.A9CglH=f--
