@@ -2,168 +2,116 @@ Return-Path: <SRS0=AeLc=WC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA777C433FF
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 12:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FE5C31E40
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 19:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE54520B1F
-	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 12:38:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="pwFPuUiY"
+	by mail.kernel.org (Postfix) with ESMTP id 51F122075B
+	for <linux-next@archiver.kernel.org>; Tue,  6 Aug 2019 19:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfHFMiN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 08:38:13 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36788 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfHFMiN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 08:38:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n4so87827842wrs.3
-        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 05:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=eePA13VNd2GmenVwEYBjjdcVgISfmnFGRcT9wPnZPQ0=;
-        b=pwFPuUiYOy2/SgTaHpevQCLhBsiSr1qimotdmBE9fHWNkpOouHAlEUMA+t0rlej3nU
-         vzIVzzZR9zuREMYUF56eduS4Yo5HNX8CfGTwyIDwhy27S9gr8Ff985AyOLauk/cD9qfI
-         hA5Haq6soiIXnSb5IioDVLVJSXMPbB3Lpv1NmsUmQa2PZGa/L8s/QeCQiU+Z51vennZL
-         1CqtWuN+DGVdP27sut8hBme//0FJVCSMYojXWoASKmZUME7zx7rjoC6RvmHEdt5EmvT4
-         3Keql+BdQBaEv64FbdMtK3BO0qc0ICKiHK/+oUGObBqRjNeR8wdmowhxvgOJUD1ti5fx
-         2h5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=eePA13VNd2GmenVwEYBjjdcVgISfmnFGRcT9wPnZPQ0=;
-        b=IOTuKA49nJUUHioNO6YG2DPM6N7FIggQayfOfSZEe3T69Vu3pNhSl1CYVrScXeRhhf
-         l2EsGYnmKx6AQA6MA0CHPs8yUeImMOcrG1pnvljTlRuqV+2fug0+q9crz5ei1T+M4l4P
-         QrkNoFzKg/5LtcwH3eorGqtWlcvMX1Edi4BvKuN/yhNF6mA8p3VWjtt78gpZvQDJWt90
-         Q40eJ4I0MVqOmz2hq5QDvgzXSYF+q76sSdviJY1EQJEv4YVQyMxspOoTYIOwbR4Hs1c9
-         YQchPQTjGrudNgZEcchKvP9knSIde4yzfEAtt7/Cg0m0G5/o0o6CO/Jio8k6U8yKsdRP
-         Zi4A==
-X-Gm-Message-State: APjAAAVqMoSnN37KmVYWDIrgziRoDSuRvDEEbP9dbNjfkq2asnX6Ktxv
-        I/PhmDDaZ41wpUV+F/Sv7Pn8A1sWXfCjcA==
-X-Google-Smtp-Source: APXvYqxRBBBFjEWWs+hWwMpXS/pmrXTYzB9wQI/kUexW4eZAjzAUbPFDpBxfKd/QZNriMWycCN9HQQ==
-X-Received: by 2002:adf:eb4e:: with SMTP id u14mr4760714wrn.168.1565095090189;
-        Tue, 06 Aug 2019 05:38:10 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f204sm146362219wme.18.2019.08.06.05.38.08
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 05:38:09 -0700 (PDT)
-Message-ID: <5d4974b1.1c69fb81.57582.5b30@mx.google.com>
-Date:   Tue, 06 Aug 2019 05:38:09 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: next
-X-Kernelci-Kernel: next-20190806
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: boot
-Subject: next/master boot: 194 boots: 5 failed, 167 passed with 20 offline,
- 1 untried/unknown, 1 conflict (next-20190806)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+        id S1725948AbfHFTC3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 15:02:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9102 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725939AbfHFTC3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 15:02:29 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x76J2FRa056813
+        for <linux-next@vger.kernel.org>; Tue, 6 Aug 2019 15:02:28 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7esv9bkb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 15:02:27 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 6 Aug 2019 20:02:22 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 6 Aug 2019 20:02:19 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x76J2IPi46530734
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 6 Aug 2019 19:02:18 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53060A404D;
+        Tue,  6 Aug 2019 19:02:18 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B06CA4051;
+        Tue,  6 Aug 2019 19:02:17 +0000 (GMT)
+Received: from dhcp-9-31-103-47.watson.ibm.com (unknown [9.31.103.47])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  6 Aug 2019 19:02:17 +0000 (GMT)
+Subject: Re: linux-next: build failure after merge of the integrity tree
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>
+Date:   Tue, 06 Aug 2019 15:02:16 -0400
+In-Reply-To: <20190806134530.747d155e@canb.auug.org.au>
+References: <20190806121519.0f8ac653@canb.auug.org.au>
+         <87imrb0yoh.fsf@morokweng.localdomain>
+         <20190806134530.747d155e@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19080619-0008-0000-0000-00000305E60D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080619-0009-0000-0000-0000A17FF045
+Message-Id: <1565118136.11223.215.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-06_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908060167
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 194 boots: 5 failed, 167 passed with 20 offline, 1 untrie=
-d/unknown, 1 conflict (next-20190806)
+Hi Stephen,
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20190806/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20190806/
+On Tue, 2019-08-06 at 13:45 +1000, Stephen Rothwell wrote:
+> Hi Thiago,
+> 
+> On Tue, 06 Aug 2019 00:18:06 -0300 Thiago Jung Bauermann <bauerman@linux.ibm.com> wrote:
+> >
+> > Sorry for the trouble. I wasn't aware of that build time check.
+> > I'll enable HEADER_TEST and KERNEL_HEADER_TEST for my next patches.
 
-Tree: next
-Branch: master
-Git Describe: next-20190806
-Git Commit: 958eb4327c1761c609bde8e9f7c04e9d1c6fbb96
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 71 unique boards, 25 SoC families, 20 builds out of 230
+ditto
 
-Boot Failures Detected:
+> 
+> I do allmodconfig builds which enable those.
+> 
+> > Thanks for providing the fix. Should I post a new version or can Mimi
+> > squash the above into the original patch?
+> 
+> Up to Mimi, but either works (or just committing my patch if the tree is
+> normally not rebased).
 
-arm64:
-    defconfig:
-        gcc-8:
-            apq8096-db820c: 1 failed lab
+Based on the new "Documentation/maintainer/rebasing-and-merging.rst",
+I'm under the impression that we shouldn't be rebasing, even for
+"just" adding tags.  Waiting for tags before pushing out to next-
+integrity is causing delays, but we're trying out this approach.  So
+for now, I've included your commit.
 
-arm:
-    qcom_defconfig:
-        gcc-8:
-            qcom-apq8064-cm-qs600: 1 failed lab
-            qcom-apq8064-ifc6410: 1 failed lab
+thanks,
 
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            armada-xp-openblocks-ax3-4: 1 failed lab
+Mimi
 
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
-        gcc-8:
-            exynos4412-odroidx2: 1 failed lab
 
-Offline Platforms:
 
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            juno-r2: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            mt7622-rfb1: 1 offline lab
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            juno-r2: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            juno-r2: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-            mt7622-rfb1: 1 offline lab
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            alpine-db: 1 offline lab
-            at91-sama5d4_xplained: 1 offline lab
-            at91-sama5d4ek: 1 offline lab
-            bcm4708-smartrg-sr400ac: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    sama5_defconfig:
-        gcc-8
-            at91-sama5d4_xplained: 1 offline lab
-            at91-sama5d4ek: 1 offline lab
-
-    bcm2835_defconfig:
-        gcc-8
-            bcm2835-rpi-b: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    omap2plus_defconfig:
-        am57xx-beagle-x15:
-            lab-linaro-lkft: FAIL (gcc-8)
-            lab-drue: PASS (gcc-8)
-
----
-For more info write to <info@kernelci.org>
