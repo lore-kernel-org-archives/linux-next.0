@@ -2,153 +2,138 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EE8C31E40
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 03:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8515C433FF
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F44206A2
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 03:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 894F8217F5
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:02:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cr8l9KKS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="olLNrj+m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfHGDV0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 23:21:26 -0400
-Received: from ozlabs.org ([203.11.71.1]:56639 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726334AbfHGDV0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Aug 2019 23:21:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 463GxZ5nJlz9sNm;
-        Wed,  7 Aug 2019 13:21:22 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565148083;
-        bh=Zj56/N6J9SqSEYqx4TFSlTMJwiW/FCBC7anYs5vZGTE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Cr8l9KKSRD1cgAFy73xZ6XxjUMfZf0bzV6yACwmcV1XhGCyHVlNCxBhFw3gpar14Y
-         Nn4ZILYLnI64wGUrFMOnAxk75JU0XoQjDPDRA3aIUCH5Z0IsolOZIOUb8HtHw6GWBX
-         UL2ji/Z/KWyG2qH7HQRlAmfwjHP1cQYkEF0cyw8yffl8EsAVojwT0MYU0GbdoJR+Zt
-         Jm7PT5O5Pf1HqdRh2Y2I0Y+8+DCk9elrAZXpDcjC6CeC85EhOUFzIjscovAhAKMcGY
-         hAWjZY01KSl3Oectk9Niod6S5Giwj4V2MBi0+pWarxbCEX4k2S5j6w98pAzhV1NRTC
-         1Ojq2muakB/tg==
-Date:   Wed, 7 Aug 2019 13:21:22 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexdeucher@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20190807132122.698277b3@canb.auug.org.au>
+        id S1725767AbfHGECt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 00:02:49 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54311 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfHGECt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 00:02:49 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p74so80235954wme.4
+        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 21:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cvxwh5Q1CDvq6FjXTDwKs9pxhptkpkbLpHFBpcmZjFY=;
+        b=olLNrj+min9+DpiwL88xfNWSlKYSkBlGciRRSCSLUzj4Q+PQD9g2uATz5gvqMaDrLI
+         KcpJaN9ymOMnh74yVqt3OEZIKEsv3KH2RYsMA3TAVVgFy+nSFtfWpl6n2E9yOfU6bwFt
+         vi0Zq7+K1Z9nTup+sHKIiAXlvRs6C9f4Hp/bci1Hh5YnDCVhHZQwYDqf/3DxWLHfzfRn
+         SAA4iw3VRNeHuH7Ii8oCsTrnZS72mqyJQQLejM0amKEdC8JWKa/HK/F4nnyBFJc2UK7P
+         /NGa0+yvP3aqznf9PZu6LTuxTw5Il+6Hn/ZplEEmw5mcoVMq6SJcDVCgRjQdwThC7jWS
+         5R8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cvxwh5Q1CDvq6FjXTDwKs9pxhptkpkbLpHFBpcmZjFY=;
+        b=sdeLEYha5g5FaUaLYBjyGHcwL+ACGU4x0zTJUndD9Ca08dAdWWFSrpKPcNwRSyxC0X
+         sWZVk8gGIBUsYZHaxDd3MxkOh3V/XF6J65H23FcKAq1pvGeA8f4oe1yBN7bZTa00qrGx
+         i9wnRV15K5SaeGg102ADNYXmWrHUsI2/Bu5Bhe/mwBBOhnDxme11WsQSDbuWBDcZsvxa
+         dC6+gcCsHc7o/mIVjn2yzNSFtPAJJYgWDwm5wCbpeaQwle51/VkxzoRzqMpW4uRTnPEI
+         xR8jyJ6IrYwoGCiMTH9qguA0a2dLMI/QoHQixhCBiG4U514Hx4yhMdLasFnbuuwNoOd5
+         yqpw==
+X-Gm-Message-State: APjAAAXJp8Jbng6hsahanQ2FMPceOslMu3IQwoh8GCn/l1pOoRvuf1qm
+        pH9/3BkckXIq5R6mQh6bEyIV+fVAf0MdHwNMnlyKEaQZ
+X-Google-Smtp-Source: APXvYqzqi1md6aMDXZ0aEKmOL6kqcE4x97weuxHXac0i/Nb9bm41r9lGuXyjHxP2jv8v7CweNvkk+3aOrjWKUOQbeuA=
+X-Received: by 2002:a1c:67c3:: with SMTP id b186mr7387863wmc.34.1565150567277;
+ Tue, 06 Aug 2019 21:02:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CDHrW63E0.twJ01h6XrsSgb";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190807025640.682-1-tao.zhou1@amd.com> <20190807105759.58a28ef0@xhacker.debian>
+In-Reply-To: <20190807105759.58a28ef0@xhacker.debian>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 7 Aug 2019 00:02:35 -0400
+Message-ID: <CADnq5_O4SJexzU2V5+B8tBcTPDU6nR1LakaOMpNng5veOo4guw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: replace readq/writeq with atomic64 operations
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Tao Zhou <tao.zhou1@amd.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel-build-reports@lists.linaro.org" 
+        <kernel-build-reports@lists.linaro.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        "dennis.li@amd.com" <dennis.li@amd.com>,
+        "hawking.zhang@amd.com" <hawking.zhang@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/CDHrW63E0.twJ01h6XrsSgb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 6, 2019 at 11:31 PM Jisheng Zhang
+<Jisheng.Zhang@synaptics.com> wrote:
+>
+> On Wed, 7 Aug 2019 10:56:40 +0800 Tao Zhou wrote:
+>
+>
+> >
+> >
+> > readq/writeq are not supported on all architectures
+> >
+> > Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
+> > ---
+> >  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++------
+> >  1 file changed, 2 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> > index 558fe6d091ed..7eb9e0b9235a 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> > @@ -272,14 +272,10 @@ void amdgpu_mm_wreg(struct amdgpu_device *adev, uint32_t reg, uint32_t v,
+> >   */
+> >  uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
+> >  {
+> > -       uint64_t ret;
+> > -
+> >         if ((reg * 4) < adev->rmmio_size)
+> > -               ret = readq(((void __iomem *)adev->rmmio) + (reg * 4));
+> > +               return atomic64_read((atomic64_t *)(adev->rmmio + (reg * 4)));
+>
+> atomic64_read doesn't equal to readq on some architectures..
 
-Hi all,
+What we really wanted originally was atomic64.  We basically want a
+read or write that is guaranteed to be 64 bits at a time.
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Alex
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_object.c: In function 'amdgpu_bo_release_=
-notify':
-drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1245:28: error: 'struct ttm_buff=
-er_object' has no member named 'resv'
-  reservation_object_lock(bo->resv, NULL);
-                            ^~
-drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1247:47: error: 'struct ttm_buff=
-er_object' has no member named 'resv'
-  r =3D amdgpu_fill_buffer(abo, AMDGPU_POISON, bo->resv, &fence);
-                                               ^~
-drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1253:30: error: 'struct ttm_buff=
-er_object' has no member named 'resv'
-  reservation_object_unlock(bo->resv);
-                              ^~
-
-Caused by commit
-
-  5a5011a72489 ("drm/amdgpu: switch driver from bo->resv to bo->base.resv")
-
-interacting with commit
-
-  ab2f7a5c18b5 ("drm/amdgpu: Implement VRAM wipe on release")
-
-from the amdgpu tree.
-
-I have added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 7 Aug 2019 13:17:54 +1000
-Subject: [PATCH] drm/amdgpu: fix up for "drm/amdgpu: switch driver from bo-=
->resv to bo->base.resv"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_object.c
-index b2c03be51c29..2d07f16f1789 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -1242,15 +1242,15 @@ void amdgpu_bo_release_notify(struct ttm_buffer_obj=
-ect *bo)
- 	    !(abo->flags & AMDGPU_GEM_CREATE_VRAM_WIPE_ON_RELEASE))
- 		return;
-=20
--	reservation_object_lock(bo->resv, NULL);
-+	reservation_object_lock(bo->base.resv, NULL);
-=20
--	r =3D amdgpu_fill_buffer(abo, AMDGPU_POISON, bo->resv, &fence);
-+	r =3D amdgpu_fill_buffer(abo, AMDGPU_POISON, bo->base.resv, &fence);
- 	if (!WARN_ON(r)) {
- 		amdgpu_bo_fence(abo, fence, false);
- 		dma_fence_put(fence);
- 	}
-=20
--	reservation_object_unlock(bo->resv);
-+	reservation_object_unlock(bo->base.resv);
- }
-=20
- /**
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CDHrW63E0.twJ01h6XrsSgb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1KQ7IACgkQAVBC80lX
-0Gx9xQgAnT0UG7gTC4SWsKJsckbfUk5lxfcwSny+VZR29NGb3WjT4YzhiU/Xnbdw
-J5Ifvhnu8JGxHQgv+/0x/2tE1jfK7LssrRYXbzu/0KVfgOLIe1IGEJ3a+rxoIM7x
-QShhok2gWudajNFMdS3zD66JDVk/u/F0hvduM4SQSBES1fEwqFSbZWbQecol4OTm
-RSfLRGcyZhpvRqbuI2xTHloswHQHsRFSU6f3EGwaClQnEdYJFiUV2E7rGGROd7QP
-fXTY08hV0wUOdAuoBFRJRyNakaoAK/Qe1LprR4uG4FCyWo+Q/E6xOJ5AchhHCHC5
-onh3r3kitOFYGwOANgcbPldfVYHsuQ==
-=OTBj
------END PGP SIGNATURE-----
-
---Sig_/CDHrW63E0.twJ01h6XrsSgb--
+>
+> >         else
+> >                 BUG();
+> > -
+> > -       return ret;
+> >  }
+> >
+> >  /**
+> > @@ -294,7 +290,7 @@ uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
+> >  void amdgpu_mm_wreg64(struct amdgpu_device *adev, uint32_t reg, uint64_t v)
+> >  {
+> >         if ((reg * 4) < adev->rmmio_size)
+> > -               writeq(v, ((void __iomem *)adev->rmmio) + (reg * 4));
+> > +               atomic64_set((atomic64_t *)(adev->rmmio + (reg * 4)), v);
+> >         else
+> >                 BUG();
+> >  }
+> > --
+> > 2.17.1
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
