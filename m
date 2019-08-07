@@ -2,150 +2,135 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC8EC32758
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B99FC19759
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 05:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095952089E
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A5B2089E
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 05:10:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pr1TFTBP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kORicJpz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725835AbfHGEZx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 00:25:53 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41937 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfHGEZx (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 00:25:53 -0400
-Received: by mail-ot1-f66.google.com with SMTP id o101so99094902ota.8
-        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 21:25:52 -0700 (PDT)
+        id S1725809AbfHGFKq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 01:10:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35478 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfHGFKp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 01:10:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k2so4104555wrq.2;
+        Tue, 06 Aug 2019 22:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3ATctTDaGdbuSHTCGNV3yIygAvKI+PZ5Bx0qOvsrsdU=;
-        b=Pr1TFTBPQsPZQkpBl1gTXGD5ehedYAy5IgSiynzskrPnWdr4niMAIJVdzjNvrApE4r
-         FDSjtJCibdOlzOpQNWmdaIhwwiHAN9UkbuccdaCJxa2w4HVSoLB0X7putJWBQ4mziSpC
-         3/EHLm2TEeo4Ww++5N2jMzlt0GdyY86ZDUP2m5SSeqTTiIeUHaE7yGD4fNhJPwYiczEe
-         K9vDFUsmlQvuQP6kZY7H+E7TiWLayveSS1ece73bgYdl8HEu1O6B5pi+wybjZDOtRgi1
-         gxD3OKbAKL7L32rqu1b+yZOqR4ZYvwEd3dBvcmPEfDpf39eKu6wsYR1+4+huS8E+BjOK
-         4NXA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=J8q3C8XNtyFn5o0cwi/6TaYLXcXbfFKt+Egf2sjlgy4=;
+        b=kORicJpztHIAwdM1j6OiXotMjAmnbeuzPVZK1OaRQqPj3TihOURdk3RfNJcrNYn71+
+         rkYlRYB8UN8FvSCEU7NhsxslbjiCQZziRQytKjphOWY3pDterZ5KGGg5JrXEVIlSOHYl
+         n+cJhGcjrw0vhAqoc/2wyY/qPptwNTsyJtbx/ulhiGkEHKSHXx00c2GlqpDuB1Jq/T4F
+         pdyjiC2s65LPItL7nqmur9LPmsu9wFUROtYC+RWRagdcw3lV3E35Fn8Ln3xOo5oUUtO2
+         ADawuzcz2reCB0yu9FvBoFKqzXWCsfhbE/Q4FV+6aiBn4BOjUH5DqiO8KMApy2GknrLT
+         FECQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3ATctTDaGdbuSHTCGNV3yIygAvKI+PZ5Bx0qOvsrsdU=;
-        b=io0HIyVCOIueUI7Yv0NPzDvcr8aeirwJqrZez+7XpxwrdDsK73AKfnFNBAyAmKyiXe
-         rqewdkm2cDR09qOTnRwKVWk2KCpbjZcHXlsJiS7ovPWnyruAWlSFwQoVnSOgEfePBS7t
-         Auw+SbsSnfUS4ZWrs8IuQ/Ga6if5L2yS+JxCSaXkm6ZYpnHoDT/FtqAjxM66V5R1Qj0R
-         CfOgY0sk34pqm9mJXD4QPwV02XKVg8yRiVm5ArCCGcz2kbWKdENDaYObVmj8OLkfbM5U
-         2mmIGmZu9l2MknihQViHfqdqyb2J34VKVT/CyaVlnxUlj1nKcDXXgu5npl8b1+r5ZVpf
-         CfIQ==
-X-Gm-Message-State: APjAAAXlbVlfq+GwYvs2jhPm1+0KV8rfHQeLG7sezqtKglVJZX3ODF5c
-        e1JQ00iXRiUDhJe4RVS2OSIxoOr93OBpRnpb7cXPEQ==
-X-Google-Smtp-Source: APXvYqyd/Zu0XywNS/VeNaLFP0dsw9hCkyh6Xki5zJ7X68h0qtL57F5zTIUSNPDvsC+fAUE8xwVCmn/m7vN3YCNliKg=
-X-Received: by 2002:a05:6638:303:: with SMTP id w3mr7848813jap.103.1565151952221;
- Tue, 06 Aug 2019 21:25:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=J8q3C8XNtyFn5o0cwi/6TaYLXcXbfFKt+Egf2sjlgy4=;
+        b=bOXwrDw4grGHVNzb0q7qsRvPCZSA9am/SF13wdfiXMNE3dOBfYqhEpJsJDrQFdDfvt
+         fBWYGNp6ZxHSwH0mVqP+n5Cvl9DavdgHFxL2JiQ0BGNQ2+Q9HmPdo1a8KWjwzhYY7P46
+         ocZQRU2c/yXNvWTiIETGJx258j2EIze5+Kn95oKg7VmHW8YrRQeRJefOZa11EOe7t2n1
+         foE44XZ64TsVaykdkh3v40wtyskgo8Do3Ln9Qf+d3QF1oewv3W5YI2zaDZWo+LXdRNW5
+         cJV3uoesyJUcAjVEjeqjQauvGycV3UA7lkURwXkix8U39FIAtmoyjXeKN9YKrldB11zp
+         Av6w==
+X-Gm-Message-State: APjAAAW4KugBy0X7ksU4RkbnO8nRjan0vtLn7cpwetnafbWbUaGlo5fm
+        oY5/uv6XSZWPq5JZOfn7fms=
+X-Google-Smtp-Source: APXvYqyjCQmPGVso7ydC60Zaa2gys5Ws3aDZ25TP0UeAxXRLDn2hGC0AAUKFdh/ro7Y4q3pZ1dRHLg==
+X-Received: by 2002:a5d:4941:: with SMTP id r1mr7822802wrs.225.1565154643044;
+        Tue, 06 Aug 2019 22:10:43 -0700 (PDT)
+Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id o20sm227955236wrh.8.2019.08.06.22.10.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 22:10:41 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 22:10:40 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     andrew@lunn.ch, broonie@kernel.org, devel@driverdev.osuosl.org,
+        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+        hkallweit1@gmail.com, kernel-build-reports@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org,
+        lkp@intel.com, netdev@vger.kernel.org, rdunlap@infradead.org,
+        willy@infradead.org
+Subject: Re: [PATCH v2] net: mdio-octeon: Fix Kconfig warnings and build
+ errors
+Message-ID: <20190807051040.GA117554@archlinux-threadripper>
+References: <20190731185023.20954-1-natechancellor@gmail.com>
+ <20190803060155.89548-1-natechancellor@gmail.com>
+ <20190806.141133.1365654857955536268.davem@davemloft.net>
 MIME-Version: 1.0
-References: <20190807100803.63007737@canb.auug.org.au> <20190807022356.8502-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20190807022356.8502-1-bjorn.andersson@linaro.org>
-From:   Vaishali Thakkar <vaishali.thakkar@linaro.org>
-Date:   Wed, 7 Aug 2019 09:55:41 +0530
-Message-ID: <CANNG1HVRCfQPk4pP37SbEcR+_Upx7+N_SH95TYUxAhiB+jNLHg@mail.gmail.com>
-Subject: Re: [PATCH v2] soc: qcom: socinfo: Annotate switch cases with fall through
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190806.141133.1365654857955536268.davem@davemloft.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 7 Aug 2019 at 07:54, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
->
-> Introduce fall through annotations in the switch statements of
-> socinfo_debugfs_init() to silence compiler warnings.
+On Tue, Aug 06, 2019 at 02:11:33PM -0700, David Miller wrote:
+> From: Nathan Chancellor <natechancellor@gmail.com>
+> Date: Fri,  2 Aug 2019 23:01:56 -0700
+> 
+> > After commit 171a9bae68c7 ("staging/octeon: Allow test build on
+> > !MIPS"), the following combination of configs cause a few Kconfig
+> > warnings and build errors (distilled from arm allyesconfig and Randy's
+> > randconfig builds):
+> > 
+> >     CONFIG_NETDEVICES=y
+> >     CONFIG_STAGING=y
+> >     CONFIG_COMPILE_TEST=y
+> > 
+> > and CONFIG_OCTEON_ETHERNET as either a module or built-in.
+> > 
+> > WARNING: unmet direct dependencies detected for MDIO_OCTEON
+> >   Depends on [n]: NETDEVICES [=y] && MDIO_DEVICE [=y] && MDIO_BUS [=y]
+> > && 64BIT [=n] && HAS_IOMEM [=y] && OF_MDIO [=n]
+> >   Selected by [y]:
+> >   - OCTEON_ETHERNET [=y] && STAGING [=y] && (CAVIUM_OCTEON_SOC ||
+> > COMPILE_TEST [=y]) && NETDEVICES [=y]
+> > 
+> > In file included from ../drivers/net/phy/mdio-octeon.c:14:
+> > ../drivers/net/phy/mdio-cavium.h:111:36: error: implicit declaration of
+> > function ‘writeq’; did you mean ‘writel’?
+> > [-Werror=implicit-function-declaration]
+> >   111 | #define oct_mdio_writeq(val, addr) writeq(val, (void *)addr)
+> >       |                                    ^~~~~~
+> > 
+> > CONFIG_64BIT is not strictly necessary if the proper readq/writeq
+> > definitions are included from io-64-nonatomic-lo-hi.h.
+> > 
+> > CONFIG_OF_MDIO is not needed when CONFIG_COMPILE_TEST is enabled because
+> > of commit f9dc9ac51610 ("of/mdio: Add dummy functions in of_mdio.h.").
+> > 
+> > Fixes: 171a9bae68c7 ("staging/octeon: Allow test build on !MIPS")
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > Reported-by: Mark Brown <broonie@kernel.org>
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> 
+> Applied to net-next.
+> 
+> Please make it clear what tree your changes are targetting in the future,
+> thank you.
 
-Oops, I missed this. Thanks for fixing it!
+Sorry for the confusion, I'll do my best to add a patch suffix in the
+future.
 
-> Fixes: 9c84c1e78634 ("soc: qcom: socinfo: Expose custom attributes")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Acked-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
-
-> ---
->  drivers/soc/qcom/socinfo.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-> index 855353bed19e..a39ea5061dc5 100644
-> --- a/drivers/soc/qcom/socinfo.c
-> +++ b/drivers/soc/qcom/socinfo.c
-> @@ -323,6 +323,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->                 debugfs_create_x32("raw_device_number", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.raw_device_num);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 11):
->         case SOCINFO_VERSION(0, 10):
->         case SOCINFO_VERSION(0, 9):
-> @@ -330,10 +331,12 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->
->                 debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.foundry_id);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 8):
->         case SOCINFO_VERSION(0, 7):
->                 DEBUGFS_ADD(info, pmic_model);
->                 DEBUGFS_ADD(info, pmic_die_rev);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 6):
->                 qcom_socinfo->info.hw_plat_subtype =
->                         __le32_to_cpu(info->hw_plat_subtype);
-> @@ -341,6 +344,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->                 debugfs_create_u32("hardware_platform_subtype", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.hw_plat_subtype);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 5):
->                 qcom_socinfo->info.accessory_chip =
->                         __le32_to_cpu(info->accessory_chip);
-> @@ -348,23 +352,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
->                 debugfs_create_u32("accessory_chip", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.accessory_chip);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 4):
->                 qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
->
->                 debugfs_create_u32("platform_version", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.plat_ver);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 3):
->                 qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
->
->                 debugfs_create_u32("hardware_platform", 0400,
->                                    qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.hw_plat);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 2):
->                 qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
->
->                 debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
->                                    &qcom_socinfo->info.raw_ver);
-> +               /* Fall through */
->         case SOCINFO_VERSION(0, 1):
->                 DEBUGFS_ADD(info, build_id);
->                 break;
-> --
-> 2.18.0
->
+Thank you for picking this up!
+Nathan
