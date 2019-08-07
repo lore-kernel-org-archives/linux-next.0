@@ -2,50 +2,50 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB6CC433FF
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 14:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA95C32751
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 14:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2602199C
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 14:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF5132199C
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 14:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbfHGOuM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 10:50:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59730 "EHLO
+        id S1729968AbfHGOuU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 10:50:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48968 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729887AbfHGOuM (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 10:50:12 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x77EkpDM014482
-        for <linux-next@vger.kernel.org>; Wed, 7 Aug 2019 10:50:11 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7xrvpf5t-1
+        by vger.kernel.org with ESMTP id S1730003AbfHGOuU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 10:50:20 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x77Ekoh0068396
+        for <linux-next@vger.kernel.org>; Wed, 7 Aug 2019 10:50:19 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7yp0kcx5-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Wed, 07 Aug 2019 10:50:10 -0400
+        for <linux-next@vger.kernel.org>; Wed, 07 Aug 2019 10:50:19 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-next@vger.kernel.org> from <maier@linux.ibm.com>;
-        Wed, 7 Aug 2019 15:50:08 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 7 Aug 2019 15:50:16 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 7 Aug 2019 15:50:03 +0100
+        Wed, 7 Aug 2019 15:50:13 +0100
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x77EnhnL29163932
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x77EoBLA27590880
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 7 Aug 2019 14:49:43 GMT
+        Wed, 7 Aug 2019 14:50:11 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F3FB11C073;
-        Wed,  7 Aug 2019 14:50:01 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 8850E11C054;
+        Wed,  7 Aug 2019 14:50:10 +0000 (GMT)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE6B511C064;
-        Wed,  7 Aug 2019 14:50:00 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0D41011C066;
+        Wed,  7 Aug 2019 14:50:10 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  7 Aug 2019 14:50:00 +0000 (GMT)
+        Wed,  7 Aug 2019 14:50:09 +0000 (GMT)
 From:   Steffen Maier <maier@linux.ibm.com>
 To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
@@ -62,46 +62,75 @@ Cc:     linux-next@vger.kernel.org, linux-scsi@vger.kernel.org,
         "Ewan D . Milne" <emilne@redhat.com>,
         Christoph Hellwig <hch@lst.de>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 0/2] scsi: core: regression fixes for request batching
-Date:   Wed,  7 Aug 2019 16:49:46 +0200
+Subject: [PATCH 2/2] scsi: core: fix dh and multipathing for SCSI hosts without request batching
+Date:   Wed,  7 Aug 2019 16:49:48 +0200
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190807144948.28265-1-maier@linux.ibm.com>
+References: <20190807144948.28265-1-maier@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19080714-0028-0000-0000-0000038C9A2B
+x-cbid: 19080714-4275-0000-0000-000003564A67
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080714-0029-0000-0000-0000244CFF51
-Message-Id: <20190807144948.28265-1-maier@linux.ibm.com>
+x-cbparentid: 19080714-4276-0000-0000-000038684CDB
+Message-Id: <20190807144948.28265-3-maier@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-07_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=817 adultscore=0 classifier=spam adjust=0 reason=mlx
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908070158
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi James, Martin, Paolo, Ming,
+This was missing from scsi_device_from_queue() due to the introduction
+of another new scsi_mq_ops_no_commit of linux-next commit
+8930a6c20791 ("scsi: core: add support for request batching")
+from Martin's scsi/5.4/scsi-queue or James' scsi/misc.
 
-multipathing with linux-next is broken since 20190723 in our CI.
-The patches fix a memleak and a severe dh/multipath functional regression.
-It would be nice if we could get them to 5.4/scsi-queue and also next.
+Only devicehandler code seems to call scsi_device_from_queue():
+*** drivers/scsi/scsi_dh.c:
+scsi_dh_activate[255]          sdev = scsi_device_from_queue(q);
+scsi_dh_set_params[302]        sdev = scsi_device_from_queue(q);
+scsi_dh_attach[325]            sdev = scsi_device_from_queue(q);
+scsi_dh_attached_handler_name[363] sdev = scsi_device_from_queue(q);
 
-I would have preferred if such a new feature had used its own
-new copy scsi_mq_ops_batching instead of changing the use case and
-semantics of the existing scsi_mq_ops, because this would likely
-cause less regressions for all the other users not using the new feature.
+Fixes multipath tools follow-on errors:
 
-Steffen Maier (2):
-  scsi: core: fix missing .cleanup_rq for SCSI hosts without request
-    batching
-  scsi: core: fix dh and multipathing for SCSI hosts without request
-    batching
+$ multipath -v6
+...
+libdevmapper: ioctl/libdm-iface.c(1887): device-mapper: reload ioctl on mpatha  failed: No such device
+...
+mpatha: failed to load map, error 19
+...
 
- drivers/scsi/scsi_lib.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+showing also as kernel messages:
 
+device-mapper: table: 252:0: multipath: error attaching hardware handler
+device-mapper: ioctl: error adding target to table
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: 8930a6c20791 ("scsi: core: add support for request batching")
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+---
+ drivers/scsi/scsi_lib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 90c257622bb0..73e7d29fbd66 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1922,7 +1922,8 @@ struct scsi_device *scsi_device_from_queue(struct request_queue *q)
+ {
+ 	struct scsi_device *sdev = NULL;
+ 
+-	if (q->mq_ops == &scsi_mq_ops)
++	if (q->mq_ops == &scsi_mq_ops_no_commit ||
++	    q->mq_ops == &scsi_mq_ops)
+ 		sdev = q->queuedata;
+ 	if (!sdev || !get_device(&sdev->sdev_gendev))
+ 		sdev = NULL;
 -- 
 2.17.1
 
