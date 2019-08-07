@@ -2,122 +2,150 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5547CC19759
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC8EC32758
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2550621743
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 095952089E
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 04:25:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/fjFJD7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pr1TFTBP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725775AbfHGEDR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 00:03:17 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38497 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfHGEDR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 00:03:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g17so89860489wrr.5
-        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 21:03:16 -0700 (PDT)
+        id S1725835AbfHGEZx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 00:25:53 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41937 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfHGEZx (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 00:25:53 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o101so99094902ota.8
+        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 21:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DS8TkoatmhBOAOl9/V+vPjhoaY+z/XSVugAwkdDAxDE=;
-        b=b/fjFJD70KifetHPM3oBOkfqbuB3X8qM5XiUKl/O/ygxcK8TRWfCWG3yAyHX2mcX4u
-         bda+TLKIzAwYDK+F0sxMuVEQClgAT/+1Vg2JeqrnqIeyxVEfojTLSRejKQogYrJay/j0
-         z8hegFZhwSrUn0I/Z1GT442l9JkU8oZViVDsS2mSBmLTDjIZtdoUFuZ5cjZXaZ7+84UL
-         zKeLNG9zlKXrrWy/jiMmmOMP2BcdMU59OwboLM+TeviH2blbVrJg+cFTv/s5soekn0/A
-         wIhMmt6YZIxphAguaEg97B7e39vt13CU/8n9FpO/Aj6ocPPSvAk9UIDlpaa++u1Z4HFj
-         cQ1w==
+        bh=3ATctTDaGdbuSHTCGNV3yIygAvKI+PZ5Bx0qOvsrsdU=;
+        b=Pr1TFTBPQsPZQkpBl1gTXGD5ehedYAy5IgSiynzskrPnWdr4niMAIJVdzjNvrApE4r
+         FDSjtJCibdOlzOpQNWmdaIhwwiHAN9UkbuccdaCJxa2w4HVSoLB0X7putJWBQ4mziSpC
+         3/EHLm2TEeo4Ww++5N2jMzlt0GdyY86ZDUP2m5SSeqTTiIeUHaE7yGD4fNhJPwYiczEe
+         K9vDFUsmlQvuQP6kZY7H+E7TiWLayveSS1ece73bgYdl8HEu1O6B5pi+wybjZDOtRgi1
+         gxD3OKbAKL7L32rqu1b+yZOqR4ZYvwEd3dBvcmPEfDpf39eKu6wsYR1+4+huS8E+BjOK
+         4NXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DS8TkoatmhBOAOl9/V+vPjhoaY+z/XSVugAwkdDAxDE=;
-        b=EXaLzw9l2eCTfsTUyG/Xq78a+C2DqKWUMWnol/voeaoMotaboTcjqeieXlTjAA9Hyt
-         iundnFJ3Ed2Ydc21oJOPjMEJu1XiVgDWtIpp5c3DdgEnostOshl//vpOiJMDa4LduStq
-         7/LZFuhlcYclNDS+pvLtJYu6KWnncwqtewILZO+N2EErdP1jt7j9nv7Xrk5PRn8NIaFN
-         U1aoSS7CnSIB1HTRp9ZpkqjuMnhi//MQsRP2nlBcQPZVWV+K4M3ueu4sbgHubM4LONYK
-         8qJp8yqO+XP488nFfJvXrlkw8DruiVExF5xGZh0OKHDIIIj9Oq2quS3rDmXhCNKyZVQ9
-         /Wmw==
-X-Gm-Message-State: APjAAAUg1956hWW3Li9gA9XF98JthVIKBarq6R1h2vAcxERGt+Xfmf39
-        mB7D4Pdq2FL1kk9D0aTijwCEyD1fegcrJpX0oaE=
-X-Google-Smtp-Source: APXvYqypr7OZCh/KU83kbzMyUIE6B2KmPb/cud+JZwza2yq2Tl4YmBUJEBmRnmQ76YWLN1ImgGN8IIxHwo/lzSs3tWM=
-X-Received: by 2002:adf:f94a:: with SMTP id q10mr7224149wrr.341.1565150595348;
- Tue, 06 Aug 2019 21:03:15 -0700 (PDT)
+        bh=3ATctTDaGdbuSHTCGNV3yIygAvKI+PZ5Bx0qOvsrsdU=;
+        b=io0HIyVCOIueUI7Yv0NPzDvcr8aeirwJqrZez+7XpxwrdDsK73AKfnFNBAyAmKyiXe
+         rqewdkm2cDR09qOTnRwKVWk2KCpbjZcHXlsJiS7ovPWnyruAWlSFwQoVnSOgEfePBS7t
+         Auw+SbsSnfUS4ZWrs8IuQ/Ga6if5L2yS+JxCSaXkm6ZYpnHoDT/FtqAjxM66V5R1Qj0R
+         CfOgY0sk34pqm9mJXD4QPwV02XKVg8yRiVm5ArCCGcz2kbWKdENDaYObVmj8OLkfbM5U
+         2mmIGmZu9l2MknihQViHfqdqyb2J34VKVT/CyaVlnxUlj1nKcDXXgu5npl8b1+r5ZVpf
+         CfIQ==
+X-Gm-Message-State: APjAAAXlbVlfq+GwYvs2jhPm1+0KV8rfHQeLG7sezqtKglVJZX3ODF5c
+        e1JQ00iXRiUDhJe4RVS2OSIxoOr93OBpRnpb7cXPEQ==
+X-Google-Smtp-Source: APXvYqyd/Zu0XywNS/VeNaLFP0dsw9hCkyh6Xki5zJ7X68h0qtL57F5zTIUSNPDvsC+fAUE8xwVCmn/m7vN3YCNliKg=
+X-Received: by 2002:a05:6638:303:: with SMTP id w3mr7848813jap.103.1565151952221;
+ Tue, 06 Aug 2019 21:25:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190807025640.682-1-tao.zhou1@amd.com>
-In-Reply-To: <20190807025640.682-1-tao.zhou1@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 7 Aug 2019 00:03:03 -0400
-Message-ID: <CADnq5_Pet0SMuxayjJpWpBuWP4gZvkeCbOuQmw=z=iSi9bdNrQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: replace readq/writeq with atomic64 operations
-To:     Tao Zhou <tao.zhou1@amd.com>
-Cc:     amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Hawking Zhang <hawking.zhang@amd.com>,
-        Dennis Li <dennis.li@amd.com>, Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kernel-build-reports@lists.linaro.org
+References: <20190807100803.63007737@canb.auug.org.au> <20190807022356.8502-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20190807022356.8502-1-bjorn.andersson@linaro.org>
+From:   Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Date:   Wed, 7 Aug 2019 09:55:41 +0530
+Message-ID: <CANNG1HVRCfQPk4pP37SbEcR+_Upx7+N_SH95TYUxAhiB+jNLHg@mail.gmail.com>
+Subject: Re: [PATCH v2] soc: qcom: socinfo: Annotate switch cases with fall through
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 10:56 PM Tao Zhou <tao.zhou1@amd.com> wrote:
+On Wed, 7 Aug 2019 at 07:54, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
 >
-> readq/writeq are not supported on all architectures
->
-> Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
+> Introduce fall through annotations in the switch statements of
+> socinfo_debugfs_init() to silence compiler warnings.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Oops, I missed this. Thanks for fixing it!
+
+> Fixes: 9c84c1e78634 ("soc: qcom: socinfo: Expose custom attributes")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Acked-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
 
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+>  drivers/soc/qcom/socinfo.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index 558fe6d091ed..7eb9e0b9235a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -272,14 +272,10 @@ void amdgpu_mm_wreg(struct amdgpu_device *adev, uint32_t reg, uint32_t v,
->   */
->  uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
->  {
-> -       uint64_t ret;
-> -
->         if ((reg * 4) < adev->rmmio_size)
-> -               ret = readq(((void __iomem *)adev->rmmio) + (reg * 4));
-> +               return atomic64_read((atomic64_t *)(adev->rmmio + (reg * 4)));
->         else
->                 BUG();
-> -
-> -       return ret;
->  }
+> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+> index 855353bed19e..a39ea5061dc5 100644
+> --- a/drivers/soc/qcom/socinfo.c
+> +++ b/drivers/soc/qcom/socinfo.c
+> @@ -323,6 +323,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>                 debugfs_create_x32("raw_device_number", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.raw_device_num);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 11):
+>         case SOCINFO_VERSION(0, 10):
+>         case SOCINFO_VERSION(0, 9):
+> @@ -330,10 +331,12 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
 >
->  /**
-> @@ -294,7 +290,7 @@ uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
->  void amdgpu_mm_wreg64(struct amdgpu_device *adev, uint32_t reg, uint64_t v)
->  {
->         if ((reg * 4) < adev->rmmio_size)
-> -               writeq(v, ((void __iomem *)adev->rmmio) + (reg * 4));
-> +               atomic64_set((atomic64_t *)(adev->rmmio + (reg * 4)), v);
->         else
->                 BUG();
->  }
+>                 debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.foundry_id);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 8):
+>         case SOCINFO_VERSION(0, 7):
+>                 DEBUGFS_ADD(info, pmic_model);
+>                 DEBUGFS_ADD(info, pmic_die_rev);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 6):
+>                 qcom_socinfo->info.hw_plat_subtype =
+>                         __le32_to_cpu(info->hw_plat_subtype);
+> @@ -341,6 +344,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>                 debugfs_create_u32("hardware_platform_subtype", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.hw_plat_subtype);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 5):
+>                 qcom_socinfo->info.accessory_chip =
+>                         __le32_to_cpu(info->accessory_chip);
+> @@ -348,23 +352,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>                 debugfs_create_u32("accessory_chip", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.accessory_chip);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 4):
+>                 qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
+>
+>                 debugfs_create_u32("platform_version", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.plat_ver);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 3):
+>                 qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
+>
+>                 debugfs_create_u32("hardware_platform", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.hw_plat);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 2):
+>                 qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
+>
+>                 debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.raw_ver);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 1):
+>                 DEBUGFS_ADD(info, build_id);
+>                 break;
 > --
-> 2.17.1
+> 2.18.0
 >
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
