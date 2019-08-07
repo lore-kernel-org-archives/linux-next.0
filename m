@@ -2,99 +2,134 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13911C19759
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E57C433FF
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C176722BED
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11708229F3
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:17:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QxIgrBO2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lw+MGCG5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfHGIAr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 04:00:47 -0400
-Received: from ozlabs.org ([203.11.71.1]:38141 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727331AbfHGIAr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Aug 2019 04:00:47 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 463P7w243wz9sBF;
-        Wed,  7 Aug 2019 18:00:44 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565164844;
-        bh=nWUso8Mumq9hEJIjbu03nhZTrk9SBdkWYlP1sbRhN5M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QxIgrBO2ExGCMZCIZKvY8d1NW3Q3GDzjaF7x3aOpfEgSAW4JpabnrWLQz9ls8iBzS
-         inhSbvYI6FK2QdAUn/y6DSMxh0UaODdKZ5yrwl3lUSaE+4DYC8EzV4oFjkuAnW/C/b
-         dh+7U03tnWvNBHs/HD//qW4nnuc6YW5s+fQrQZh+972NsFUsSm3mPpOp3da9PMDRXd
-         Gplsq7FDVlyThyxp84rq2uBimCH+/s9G1f56H81KqDPoj0DvAhlNLioyVvqCjxqWkg
-         osErTt4dcpb/j6+LBdSKKulxpIhlFTu6cZy6ENxMPI3DHcFuz0YJGcQGfrD0teuxqc
-         j1Qog2S1jIZjA==
-Date:   Wed, 7 Aug 2019 18:00:41 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Message-ID: <20190807180041.07f06dc0@canb.auug.org.au>
+        id S1728567AbfHGIRy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 04:17:54 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34254 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728588AbfHGIRv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 04:17:51 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p17so84647513ljg.1
+        for <linux-next@vger.kernel.org>; Wed, 07 Aug 2019 01:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=uZ71/IjfnhtwBPFF6THZcvtecPOI1brQIp9ai2NeI1k=;
+        b=lw+MGCG53qlHD6l00B/7Hr2jQ5KNOzTe/Gk4nJidoMcAM/PCuqYZNE5tCopKN5tIB9
+         ybdrmwbQq5dr9qON9O8J8tGMHldp8JlCb68Ac2C0JgrkXcGwvDALxCGgpGaA82m0RYXA
+         zDX6S/ynK0N53ICsuuEg/6wrYFCVbJ2HCDDXtR42Frjtd5oq48/dnaIr00RzlNlkR7gP
+         Dui88b7Dhs5Iyz7jNvscReYjqxYvEeRM5v4NIkWqclUCYLi2XkMxH0PRxVxOG9bZJv2L
+         5QY+LkAUXXOj7VzSwILoN2j9w6heWQ+OyEsdpqqgtZUaF4YL1FkoK0LlSOT4PJM4xtNO
+         sGGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=uZ71/IjfnhtwBPFF6THZcvtecPOI1brQIp9ai2NeI1k=;
+        b=Kdrm4n+Jrjeg8/7eOBqqSLRq9gUffH/tvHxWa5b9ctBdWFeHiJc3G4aj0hs0orzLUd
+         JGksIq8F94UDzsWVbXKrHyhednvoJnv5zWcqtX+zvQNI4/VilW3Qgen/xtO5SSBMfJnE
+         MILSMXc9uxi0rO2kRC442wqM3eg34O8vI6N7ztos3zfRU33JS4ZB8GTPlq3NVFjcdjZN
+         bmBvdA1b0mA4hZHPQUypqTMyi2BmAybCdO0qFqvyEggpXWIWnsaGz5XKZRq2bGToccN+
+         ADGHpgttBHEtDgfg9ftBmmjasXCaNFJPbEPNoinDh0rTzlAdFrJLQOz7izWWNRjLREuA
+         yGjg==
+X-Gm-Message-State: APjAAAWWIixCDdf5t95HU1L4NwnsICf2TenKn2N7KlV4Gbcn6No4Y/xQ
+        5YU2x2h+zrKnE7T5sGzczUsQOg0ryAGMr2LWtISFmSKlksA=
+X-Google-Smtp-Source: APXvYqwBt9zZPEZS9Zv/S7dA7gva1bRM0PXxxk+aEKCKsKDg9IuOsBbotspesjzG8OPcsmVa9uK3w9BCohv4bn1xoHc=
+X-Received: by 2002:a2e:87d0:: with SMTP id v16mr4116786ljj.24.1565165868639;
+ Wed, 07 Aug 2019 01:17:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Cat9BKs_Cts05iNlLKlEe7i";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 7 Aug 2019 13:47:37 +0530
+Message-ID: <CA+G9fYus+cW4775Y2_Xqpc+G6YP_KfjGeCMzoSQq6o2yVY8Q3w@mail.gmail.com>
+Subject: next-20190806: arm64: adv7511 3-0039: failed to find dsi host
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Hans Verkuil <hans.verkuil@cisco.com>, mchehab@kernel.org,
+        robh+dt@kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-media@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, agross@kernel.org,
+        david.brown@linaro.org, lkft-triage@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Cat9BKs_Cts05iNlLKlEe7i
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+arm64 devices dragonboard 410c (QC410E) and hi6220-hikey running Linux
+next-20190806 loading modules causing floods of kernel messages.
 
-Hi all,
+We have enabled few extra kernel configs for testing.
+CONFIG_DRM_I2C_ADV7511=m
+CONFIG_DRM_I2C_ADV7511_CEC=y
+...
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Please find below boot log and config file link.
 
-In file included from include/linux/bits.h:22,
-                 from arch/x86/include/asm/msr-index.h:5,
-                 from arch/x86/boot/cpucheck.c:28:
-include/linux/build_bug.h:49: warning: "BUILD_BUG_ON" redefined
- #define BUILD_BUG_ON(condition) \
-=20
-In file included from arch/x86/boot/cpucheck.c:22:
-arch/x86/boot/boot.h:31: note: this is the location of the previous definit=
-ion
- #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+[    0.000000] Linux version 5.3.0-rc3-next-20190806 (oe-user@oe-host)
+(gcc version 7.3.0 (GCC)) #1 SMP PREEMPT Tue Aug 6 05:49:36 UTC 2019
+[    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
+....
+[   10.051193] adv7511 3-0039: 3-0039 supply dvdd not found, using
+dummy regulator
+[   10.051633] adv7511 3-0039: 3-0039 supply pvdd not found, using
+dummy regulator
+[   10.076257] adreno 1c00000.gpu: Adding to iommu group 0
+[   10.090929] adv7511 3-0039: 3-0039 supply a2vdd not found, using
+dummy regulator
+[   10.101703] msm_mdp 1a01000.mdp: Adding to iommu group 1
+[   10.102563] msm_mdp 1a01000.mdp: No interconnect support may cause
+display underflows!
+[   10.139492] adv7511 3-0039: failed to find dsi host
+...
+[   33.065744] adv7511 3-0039: failed to find dsi host
+[   33.076721] msm 1a00000.mdss: 1a00000.mdss supply vdd not found,
+using dummy regulator
+[   33.078344] msm_mdp 1a01000.mdp: [drm:mdp5_bind [msm]] MDP5 version v1.6
+[   33.083862] msm 1a00000.mdss: bound 1a01000.mdp (ops mdp5_ops [msm])
+[   33.090892] msm_dsi 1a98000.dsi: 1a98000.dsi supply gdsc not found,
+using dummy regulator
+[   33.097756] msm_dsi 1a98000.dsi: 1a98000.dsi supply gdsc not found,
+using dummy regulator
+[   33.106606] msm_dsi_manager_register: failed to register mipi dsi
+host for DSI 0
+[   33.114579] msm 1a00000.mdss: failed to bind 1a98000.dsi (ops
+dsi_ops [msm]): -517
+[   33.121263] msm 1a00000.mdss: master bind failed: -517
+[   33.135547] adv7511 3-0039: 3-0039 supply dvdd not found, using
+dummy regulator
+[   33.139360] adv7511 3-0039: 3-0039 supply pvdd not found, using
+dummy regulator
+[   33.143646] adv7511 3-0039: 3-0039 supply a2vdd not found, using
+dummy regulator
 
-Caused by commit
+Full test log
+https://lkft.validation.linaro.org/scheduler/job/860208#L956
 
-  d72f2a993607 ("linux/bits.h: add compile time sanity check of GENMASK inp=
-uts")
+metadata:
+  git branch: master
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git commit: 958eb4327c1761c609bde8e9f7c04e9d1c6fbb96
+  git describe: next-20190806
+  make_kernelversion: 5.3.0-rc3
+  kernel-config:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579/config
+  kernel-defconfig:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579/defconfig
+  build-location:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Cat9BKs_Cts05iNlLKlEe7i
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1KhSkACgkQAVBC80lX
-0Gz7QQf8DhiCZO/C8/QZInhLi1DwLpET6DdkpBHvLXhlusorqCcnsoeEBs+lDYWV
-aZN24E4DMzezlUIbKBEDozQGPeWYMyjVjdtST4l4if1Z4Ak1rcxfKd20MulPX04Z
-KeZZKZuqCHavtC3s5Ozuw81gXvwPc/z6z+bVSIZD4WxH0ZvZ42Jw08ZDOkZAY6Iw
-I65aEUZSH++2+8d3VEZw8drMXIrXvtsG+cZdRaCXmbuwoXhsoLozjkzpMEvMfE8K
-vz1mMcjFuIouSXBLkl8JW1ODWXr/o0UW/FYVKtMDFXkqM1wlhytN619LxGHcYYj/
-iMV5PewDOvbv4frMdoNG8msAg9m9gg==
-=55Mv
------END PGP SIGNATURE-----
-
---Sig_/Cat9BKs_Cts05iNlLKlEe7i--
+Best regards
+Naresh Kamboju
