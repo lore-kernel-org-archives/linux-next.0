@@ -2,139 +2,161 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06CBC31E40
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEC8C31E40
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 03:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E81216F4
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F372070C
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 03:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="01vV5quK"
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="M1lPi+2x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbfHGC4x (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 22:56:53 -0400
-Received: from mail-eopbgr760052.outbound.protection.outlook.com ([40.107.76.52]:13382
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1727087AbfHGDJK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 23:09:10 -0400
+Received: from mail-eopbgr680083.outbound.protection.outlook.com ([40.107.68.83]:32159
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726518AbfHGC4w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:56:52 -0400
+        id S1726797AbfHGDJK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Aug 2019 23:09:10 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nWPdnakyhnR74NSGjGh6eeOnrfGShlgsES5yCt5u9qW8CiGVa5Oi03XDhefr9DvPvPdXQpbZqzMa86Uv9VlrE+86fxrRHb9cPZiTl43uKUrKKNj9HIkYOea3/jLxZWWolAM+Qdupc9Xo92ZINI4Wf6i1YdTxTiIIrAx7YpU8BVASWV3QdgTr8ZPPKAXOvPfE8eO+QmIAtfoDAYIbrD/rO+u86E2E1OQ767uuCtGAZObSypgEMaPxC6wx4IyBh2APfzo2PKRK8spuqTb/60lN1oSU7c0N4m95V+9yUBmeLOXLz+KLoWiDFR/tOLFjK3Mc8tYd83Usp5FqpDajaaz2hw==
+ b=lElniQXwqdKJ90gdgk++iZwRYczLtyNkzhvvnW0NsyqujlZuAgw4wf5dvB+6R34FEne2FV7G9WxtH8F64qTLVRe4n+Q1vXqq5JpNJujKOlJOXRFQfhAqX9hGVkyoXk/20Fe08VK9kLxGlsO7uLRRCEYE+ACk+jiCOjp18qcyJTkR6x7LFCbkY4yyNofTfRRqEZMJtdFIVeRkY1n8nZ3ZLtaHwibZiAuDdKhVzYzPGYf9T4CN+lNunYzS8YDZ/RmFGI8/r2jO1QYfFo5qFjiZHsNqFNF+YydL0fIA59VbWyskYgx3gkd5G0TtxYv9G7rlH0xaBJIqxb83CFqKcnTEEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yky6w6/M4SeHS15mmKKQtpK5alww9+bmfDk4qJna3/I=;
- b=iZsglEpD5wGKBLonXv4jYlGzYDUHXZ4UP+HUvqAu497fFWCGfFffwc3vA7E4Xc/BfqJU0rYMQNHduYzqajW1XpEWuTZitbDdPdmGtPN9xsaxg3K5eMeaOrED7UscDRPIr2xlI/vtszhrU8oJi8PS9k6lMHFxVRdBeQj4Ynlz/Nl1ShPtdTK43/Be6q98VAwhpjQYC5gcGM4A6RfIke1QHLFuGJ7O2U4k6xnHrJQbEboLdnrS2CG507uqLxFSIeRfGjb7tAB8TokITvW8hALzkhGSJDjU/x6Z/tWoNedMCdQnTQk5EZUMI8OluwwXQ2eqNjC4s3CvDH1PQb1ZeeQS2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.linaro.org
- smtp.mailfrom=amd.com;dmarc=permerror action=none
- header.from=amd.com;dkim=none (message not signed);arc=none
+ bh=KFTqavC5bZ0Xn9zq9zxHp549mm/WODx/cknwVAJtx28=;
+ b=nN2rc59Xli30jpTjDgv4DoGA/4TCtTzkIGgeHWx4CsmhtFc7jRFhT+GvpfQzmKGvbXIDKsy3lf6H/wGoThiKtslYNp05S4/DPbDNcijNdpmVhbuitj8heo50TJI79gDN9i9uXImHKeDkPkBI/BIc/VzC511rs/kMN4ORrj2BZ5eSShOj7+B+G7bW28t5bujwQWwi6OOZmBkvA+JU8/F82lLX3zIgtxEqCTwq4Cfyw9Qs9fKhE0RpoQXum707V/dhWBjBO8QKxz/AvYAab6/7WkwGcSC5shlCh8Wer3leeguhqroO2Qiwy5B60NBegj/MvCPXlcarLTUMBu6KPBjHFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synaptics.com; dmarc=pass action=none
+ header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yky6w6/M4SeHS15mmKKQtpK5alww9+bmfDk4qJna3/I=;
- b=01vV5quKFaefE/H7PL5mupPTZ/YJQG+6uE8GW8OsGfFU2XJbyfvgAMNKtyE4GICgc6ejbFBSYjM3bNPbLj1KT2JKOpwY0jxVB54/WdLBkUkpMg57POJmGTrLAW3AH9EvzIJ/DTFjqCYZUXYZu7pi8g7he/9aW4qc2VJHdv0LLEw=
-Received: from MWHPR1201CA0021.namprd12.prod.outlook.com
- (2603:10b6:301:4a::31) by BYAPR12MB2710.namprd12.prod.outlook.com
- (2603:10b6:a03:68::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2136.19; Wed, 7 Aug
- 2019 02:56:50 +0000
-Received: from BY2NAM03FT043.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e4a::201) by MWHPR1201CA0021.outlook.office365.com
- (2603:10b6:301:4a::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.13 via Frontend
- Transport; Wed, 7 Aug 2019 02:56:50 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; lists.linaro.org; dkim=none (message not signed)
- header.d=none;lists.linaro.org; dmarc=permerror action=none
- header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- BY2NAM03FT043.mail.protection.outlook.com (10.152.85.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2157.15 via Frontend Transport; Wed, 7 Aug 2019 02:56:49 +0000
-Received: from taozhou1u2.amd.com (10.34.1.3) by SATLEXCHOV01.amd.com
- (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Tue, 6 Aug 2019
- 21:56:47 -0500
-From:   Tao Zhou <tao.zhou1@amd.com>
-To:     <amd-gfx@lists.freedesktop.org>, <alexander.deucher@amd.com>,
-        <hawking.zhang@amd.com>, <dennis.li@amd.com>, <broonie@kernel.org>,
-        <akpm@linux-foundation.org>, <christian.koenig@amd.com>
-CC:     <kernel-build-reports@lists.linaro.org>,
+ bh=KFTqavC5bZ0Xn9zq9zxHp549mm/WODx/cknwVAJtx28=;
+ b=M1lPi+2xEOMhM3ptRgkvEHZ5EUOVbJUlnuI4TmYLNaE3YdvdJpSqr7OQQZ+l0aqIuAs3Bt2TDrA/+ayxxyhs/GOGdOiDHrnQgCKuzqmSRxty0eMqeimmOLBQS4CG3TbLbJcnlYqkQsHR/LwHRgaXEomdSZEOd0wXIserh19qQUs=
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
+ BYAPR03MB3591.namprd03.prod.outlook.com (52.135.213.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.13; Wed, 7 Aug 2019 03:09:07 +0000
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::a517:3578:67bf:6c88]) by BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::a517:3578:67bf:6c88%7]) with mapi id 15.20.2136.018; Wed, 7 Aug 2019
+ 03:09:05 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Tao Zhou <tao.zhou1@amd.com>
+CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "hawking.zhang@amd.com" <hawking.zhang@amd.com>,
+        "dennis.li@amd.com" <dennis.li@amd.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-next@vger.kernel.org>, "Tao Zhou" <tao.zhou1@amd.com>
-Subject: [PATCH] drm/amdgpu: replace readq/writeq with atomic64 operations
-Date:   Wed, 7 Aug 2019 10:56:40 +0800
-Message-ID: <20190807025640.682-1-tao.zhou1@amd.com>
-X-Mailer: git-send-email 2.17.1
+        "kernel-build-reports@lists.linaro.org" 
+        <kernel-build-reports@lists.linaro.org>
+Subject: Re: [PATCH] drm/amdgpu: replace readq/writeq with atomic64 operations
+Thread-Topic: [PATCH] drm/amdgpu: replace readq/writeq with atomic64
+ operations
+Thread-Index: AQHVTMvKn2cibV5eE0W0lKhtRWOdxKbu/lEA
+Date:   Wed, 7 Aug 2019 03:09:05 +0000
+Message-ID: <20190807105759.58a28ef0@xhacker.debian>
+References: <20190807025640.682-1-tao.zhou1@amd.com>
+In-Reply-To: <20190807025640.682-1-tao.zhou1@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [124.74.246.114]
+x-clientproxiedby: TY1PR01CA0187.jpnprd01.prod.outlook.com (2603:1096:403::17)
+ To BYAPR03MB4773.namprd03.prod.outlook.com (2603:10b6:a03:134::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8c31620f-20a0-45f8-5338-08d71ae49afe
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR03MB3591;
+x-ms-traffictypediagnostic: BYAPR03MB3591:
+x-microsoft-antispam-prvs: <BYAPR03MB3591255330BF4B15E84689F2EDD40@BYAPR03MB3591.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:651;
+x-forefront-prvs: 01221E3973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(136003)(39860400002)(396003)(376002)(189003)(199004)(54906003)(6116002)(76176011)(3846002)(52116002)(99286004)(386003)(71200400001)(64756008)(66946007)(71190400001)(66446008)(486006)(6436002)(5660300002)(66066001)(7416002)(6506007)(316002)(66476007)(66556008)(476003)(11346002)(6246003)(8936002)(86362001)(50226002)(4326008)(446003)(25786009)(6486002)(1076003)(7736002)(102836004)(229853002)(305945005)(8676002)(6916009)(53936002)(6512007)(256004)(26005)(2906002)(81166006)(14454004)(186003)(478600001)(81156014)(68736007)(9686003)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3591;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: DkaHdeJ+NUkEmC+oRl0E+NCwmmXtfEwK09OW1TGDF6lgO7ekqytTnoAf/Pl+/BnjxOmifumz8z1YQ6fjU5DqN0TyAwPPxOoM4vWit2vhNwMA9rXXkkWd7cRJHx2A3gnK5tl35JPnjgbPr5/RvnkoNKYP3d5+NlTwian9V+4nk3ZLDqrDsqhrSOEZc9iTfIcu//NMlt9novH7mLtxtPYe5M5gWY5FG4EDEI8ILu7lWDwuXgFFrRiIIVsGYmKbSWkAjvifkTJyTMkftP6TLmJYnB/sfnngr29BBrv9N5z4m6ZTHAwIZGlPF+7QDtQQJyHoBt4JLrV85DzSE/W+kk6SUUeHJC4UllNKl80gT+fjEUBBQPzWhhmyunKjGQn1aIgFzKzYRJciPhRJwAWb32ABK7YupDeuY7ieAWJJzGEQ7dI=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5E427FF48ECA554D95F17DF5415C85A3@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(39860400002)(376002)(2980300002)(428003)(199004)(189003)(68736007)(2201001)(486006)(50466002)(48376002)(476003)(53416004)(6666004)(2616005)(356004)(426003)(126002)(336012)(186003)(86362001)(6636002)(47776003)(478600001)(4326008)(26005)(70206006)(316002)(54906003)(1076003)(16586007)(110136005)(5660300002)(7696005)(51416003)(53936002)(8676002)(70586007)(36756003)(8936002)(81166006)(81156014)(50226002)(305945005)(2906002)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2710;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8bdaf23d-67ff-4dfa-a56e-08d71ae2e4dd
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:BYAPR12MB2710;
-X-MS-TrafficTypeDiagnostic: BYAPR12MB2710:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB271044796759B6AE287FF480B0D40@BYAPR12MB2710.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:466;
-X-Forefront-PRVS: 01221E3973
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: cM6Rs+5qRQZU+kNfIqs1zxyQY8bCl0jE7pJBdn2dOoL7uQ0LruNrBOw1lEKvQZXFLXNGI739+x63BVBLi4mfxLNtCygclmDn4+993i156ejaccChEvYksXAQ7cySfYFBON0654AeDjYezo4N7XoWJWMNRwgKZgqly/cjgz8Kozti2tmYZXasvj14Y9sx9fRSsCtwDFG+xCsNePlyWt7Pv0unWS4z2DOtrkgUnkWfPT/rp9r0I+gi+YYI2rcOAhDa4bWzYHqujH8iYXTTXFXOKXOUgzQPVm56LW/GNxD4iSNz/+naXSAb+WC4Hyg5pV70H9QWXSEzsXqM3clZ9ev0IL5xEeTIiNrSP5bmOVXRmt92lW+cgRpMEsFxNw9JcdT9tGrRybvHQQaRTGxH0en6TzlnmJS6xFXQ+sV89QXr1LI=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2019 02:56:49.9265
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c31620f-20a0-45f8-5338-08d71ae49afe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 03:09:05.3437
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bdaf23d-67ff-4dfa-a56e-08d71ae2e4dd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2710
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jiszha@synaptics.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3591
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-readq/writeq are not supported on all architectures
+On Wed, 7 Aug 2019 10:56:40 +0800 Tao Zhou wrote:
 
-Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 558fe6d091ed..7eb9e0b9235a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -272,14 +272,10 @@ void amdgpu_mm_wreg(struct amdgpu_device *adev, uint32_t reg, uint32_t v,
-  */
- uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
- {
--	uint64_t ret;
--
- 	if ((reg * 4) < adev->rmmio_size)
--		ret = readq(((void __iomem *)adev->rmmio) + (reg * 4));
-+		return atomic64_read((atomic64_t *)(adev->rmmio + (reg * 4)));
- 	else
- 		BUG();
--
--	return ret;
- }
- 
- /**
-@@ -294,7 +290,7 @@ uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
- void amdgpu_mm_wreg64(struct amdgpu_device *adev, uint32_t reg, uint64_t v)
- {
- 	if ((reg * 4) < adev->rmmio_size)
--		writeq(v, ((void __iomem *)adev->rmmio) + (reg * 4));
-+		atomic64_set((atomic64_t *)(adev->rmmio + (reg * 4)), v);
- 	else
- 		BUG();
- }
--- 
-2.17.1
+>=20
+>=20
+> readq/writeq are not supported on all architectures
+>=20
+> Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm=
+/amd/amdgpu/amdgpu_device.c
+> index 558fe6d091ed..7eb9e0b9235a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -272,14 +272,10 @@ void amdgpu_mm_wreg(struct amdgpu_device *adev, uin=
+t32_t reg, uint32_t v,
+>   */
+>  uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
+>  {
+> -       uint64_t ret;
+> -
+>         if ((reg * 4) < adev->rmmio_size)
+> -               ret =3D readq(((void __iomem *)adev->rmmio) + (reg * 4));
+> +               return atomic64_read((atomic64_t *)(adev->rmmio + (reg * =
+4)));
 
+atomic64_read doesn't equal to readq on some architectures..
+
+>         else
+>                 BUG();
+> -
+> -       return ret;
+>  }
+>=20
+>  /**
+> @@ -294,7 +290,7 @@ uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev,=
+ uint32_t reg)
+>  void amdgpu_mm_wreg64(struct amdgpu_device *adev, uint32_t reg, uint64_t=
+ v)
+>  {
+>         if ((reg * 4) < adev->rmmio_size)
+> -               writeq(v, ((void __iomem *)adev->rmmio) + (reg * 4));
+> +               atomic64_set((atomic64_t *)(adev->rmmio + (reg * 4)), v);
+>         else
+>                 BUG();
+>  }
+> --
+> 2.17.1
