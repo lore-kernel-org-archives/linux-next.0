@@ -2,88 +2,99 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1317CC433FF
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 07:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13911C19759
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2211217F4
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 07:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C176722BED
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:00:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QxIgrBO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfHGHmi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 03:42:38 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39678 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727190AbfHGHmi (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 03:42:38 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l9so87332081qtu.6;
-        Wed, 07 Aug 2019 00:42:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YX5oJHAYwAnKvXPilaQ3uI0rZTwKEluEk/x0jK9UBHc=;
-        b=jnP+gg7RLW4s4uJZ/qbzak/gM1fMFdcWTe0h2mEDRmHTFY9FtMl1YGkqd5Q9hV9aBE
-         koAF/r4UVGyvraIoY5WXfz3GTnCIDanrjnkyejDrP3eaCaM5IEv5V72q2bYmdCR7wrcP
-         V+63VFozE5k/RHq/1qHqYKby/rOZZlU9+IB32+3FawLkA6eZADzJ2E3F/ky4TdwwXX2R
-         T8Pg/l+FG/R9aaT+7kf55xpYsIACDIGL1mKuYv/w9e18e9ZKXqv7JOdXHhnjwWFJX31r
-         aujgbSZa8QhuBdx5gjUnRntoRCHdoDUqGt5oueTtNoFtRkpZMNl8H6sJVM5Pw6MjAJy2
-         Mpug==
-X-Gm-Message-State: APjAAAW9YvJLasZ9a/jv+Bj/0FDARpVEy6inUTWA8bOyQMV5HNBMeEZ9
-        pDllymnsZtKpaE26zf1I7ysefEjqR4MO1GpbdsVxFp0xOIE=
-X-Google-Smtp-Source: APXvYqyKB2tVYAAT3rlbv0b6ctqmVwAp8nB6JmQP5aZNXyqWzCt97zXDWHk7SuHH/7noDZYiNVXF5UDbXIxTh43hCSs=
-X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr6658392qvf.62.1565163757053;
- Wed, 07 Aug 2019 00:42:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190807102517.5d2c2873@canb.auug.org.au>
-In-Reply-To: <20190807102517.5d2c2873@canb.auug.org.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 7 Aug 2019 09:42:20 +0200
-Message-ID: <CAK8P3a1cGR5y=EFuAOEXyZExXnVi=JcHvVJ0iw=MyY0rvrAmXg@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the mips tree with Linus' tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1728158AbfHGIAr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 04:00:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:38141 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727331AbfHGIAr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 7 Aug 2019 04:00:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 463P7w243wz9sBF;
+        Wed,  7 Aug 2019 18:00:44 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565164844;
+        bh=nWUso8Mumq9hEJIjbu03nhZTrk9SBdkWYlP1sbRhN5M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QxIgrBO2ExGCMZCIZKvY8d1NW3Q3GDzjaF7x3aOpfEgSAW4JpabnrWLQz9ls8iBzS
+         inhSbvYI6FK2QdAUn/y6DSMxh0UaODdKZ5yrwl3lUSaE+4DYC8EzV4oFjkuAnW/C/b
+         dh+7U03tnWvNBHs/HD//qW4nnuc6YW5s+fQrQZh+972NsFUsSm3mPpOp3da9PMDRXd
+         Gplsq7FDVlyThyxp84rq2uBimCH+/s9G1f56H81KqDPoj0DvAhlNLioyVvqCjxqWkg
+         osErTt4dcpb/j6+LBdSKKulxpIhlFTu6cZy6ENxMPI3DHcFuz0YJGcQGfrD0teuxqc
+         j1Qog2S1jIZjA==
+Date:   Wed, 7 Aug 2019 18:00:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>
-Content-Type: text/plain; charset="UTF-8"
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20190807180041.07f06dc0@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Cat9BKs_Cts05iNlLKlEe7i";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Aug 7, 2019 at 2:25 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the mips tree got a conflict in:
->
->   arch/mips/include/asm/vdso/vdso.h
-> ( arch/mips/vdso/vdso.h in Linus' tree)
->
-> between commit:
->
->   ee38d94a0ad8 ("page flags: prioritize kasan bits over last-cpuid")
->
-> from Linus' tree and commit:
->
->   6393e6064486 ("mips: fix vdso32 build, again")
->
-> from the mips tree.
->
-> I fixed it up (I just used the mips tree version) and can carry the fix
-> as necessary. This is now fixed as far as linux-next is concerned, but
-> any non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+--Sig_/Cat9BKs_Cts05iNlLKlEe7i
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, that resolution is correct. My original fix for the issue in ee38d94a0ad8
-got folded into that patch when it was merged, but as the vdso is now
-completely different in the mips tree, the newer fix is needed there
-compared to what is in Linus' tree.
+Hi all,
 
-       Arnd
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from include/linux/bits.h:22,
+                 from arch/x86/include/asm/msr-index.h:5,
+                 from arch/x86/boot/cpucheck.c:28:
+include/linux/build_bug.h:49: warning: "BUILD_BUG_ON" redefined
+ #define BUILD_BUG_ON(condition) \
+=20
+In file included from arch/x86/boot/cpucheck.c:22:
+arch/x86/boot/boot.h:31: note: this is the location of the previous definit=
+ion
+ #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+
+Caused by commit
+
+  d72f2a993607 ("linux/bits.h: add compile time sanity check of GENMASK inp=
+uts")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Cat9BKs_Cts05iNlLKlEe7i
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1KhSkACgkQAVBC80lX
+0Gz7QQf8DhiCZO/C8/QZInhLi1DwLpET6DdkpBHvLXhlusorqCcnsoeEBs+lDYWV
+aZN24E4DMzezlUIbKBEDozQGPeWYMyjVjdtST4l4if1Z4Ak1rcxfKd20MulPX04Z
+KeZZKZuqCHavtC3s5Ozuw81gXvwPc/z6z+bVSIZD4WxH0ZvZ42Jw08ZDOkZAY6Iw
+I65aEUZSH++2+8d3VEZw8drMXIrXvtsG+cZdRaCXmbuwoXhsoLozjkzpMEvMfE8K
+vz1mMcjFuIouSXBLkl8JW1ODWXr/o0UW/FYVKtMDFXkqM1wlhytN619LxGHcYYj/
+iMV5PewDOvbv4frMdoNG8msAg9m9gg==
+=55Mv
+-----END PGP SIGNATURE-----
+
+--Sig_/Cat9BKs_Cts05iNlLKlEe7i--
