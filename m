@@ -2,130 +2,119 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0CFC19759
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5050EC433FF
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1420222FC
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:46:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A44A223CB
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 08:53:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="IbcT7TS8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387641AbfHGIqh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 04:46:37 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:53141 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387452AbfHGIqh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2019 04:46:37 -0400
-Received: from [IPv6:2001:983:e9a7:1:9c05:4bbc:890e:7747] ([IPv6:2001:983:e9a7:1:9c05:4bbc:890e:7747])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id vHabhjtKZAffAvHach7Mxn; Wed, 07 Aug 2019 10:46:34 +0200
-Subject: Re: next-20190806: arm64: adv7511 3-0039: failed to find dsi host
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, mchehab@kernel.org,
-        robh+dt@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, agross@kernel.org,
-        david.brown@linaro.org, lkft-triage@lists.linaro.org,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <CA+G9fYus+cW4775Y2_Xqpc+G6YP_KfjGeCMzoSQq6o2yVY8Q3w@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <a9f7c007-8639-0202-c35d-219d371a1842@xs4all.nl>
-Date:   Wed, 7 Aug 2019 10:46:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CA+G9fYus+cW4775Y2_Xqpc+G6YP_KfjGeCMzoSQq6o2yVY8Q3w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1726461AbfHGIx3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 04:53:29 -0400
+Received: from mail-eopbgr700046.outbound.protection.outlook.com ([40.107.70.46]:11585
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726331AbfHGIx3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 7 Aug 2019 04:53:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=maMXZUbunUkcBh+vdY5Go1bhRtaVpY0vUOGTcU/5+lkFZD9NQCPeEB38piHX2OA/AIy5ZSN5aKIIr5VfZ3TywcvLFsz1XK295O1XkxMZmFDIo4uIOvCmLgP5z0KFDuoYp+HszEklrMdl65JLYXW02nF03NJzGqptWcwmO+bn5tFrbXRcZPYLzTIgTYRilYnnk8ntP7tnF7Vh4/ahlYAwlIdNdp15/NQ8R0XOx/hpsmpUMjUREbVt1cwbh6tfSMwkSdMTfzmidrnx25fO1txCp8X7yid2N961HJ4tkSprFe3vSIcpw2C7LlwaaEN8MQiqneh/7ISAEfcSsfmhv6fJBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wyj9TdYcfisZgKkautYT5py2AvvuZ75t9XGu4Rr6Jx0=;
+ b=FpHrhOmuU37uArdbphIxE/LLt6Qd0VyAraUtHLFmSWdwjVDWyewHR1czFERR/u+/WRomiREPq4/5NpZBP+0kZ2o+f6mSC1Wizl9dQyvaQxEl2gMmhVqdDRhQ8+yQVdXFmK7ITGO58ugnnsWc+ntpGtv8ZJlpKGFBe2SbWSQrlsUP7fHcqBXOsoTN4WTv0kyX/Hm+novYOqbqQ/AgUZ5QeODA1iiAbFnqObHHw7yD97zyixmyGKbgywefXH+yJZTmW+RtHdhgiu2rs5mLCxPDKRb8xkMZ3lhnCkkV99QLyAMpco3JukLYH64C7BjSGKJ3yurtmUoxzde1E99stadQXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=amd.com;dmarc=pass action=none header.from=amd.com;dkim=pass
+ header.d=amd.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wyj9TdYcfisZgKkautYT5py2AvvuZ75t9XGu4Rr6Jx0=;
+ b=IbcT7TS8rXCjLa7j0FqcRaXpD7oP/seStjWype0KWt8IJO/Rb75QyBavOKz3eWitpc2XuaC1gN26SbmXIzzG/Zf4goAqmw9MCHog3l6p0hfo5KTq4DUkuwyuVQnuJsF1Nqc6aZl1AXs1+LkdSZIhFagbI+BXhAFuDC5KN9Dptzk=
+Received: from DM5PR12MB1546.namprd12.prod.outlook.com (10.172.36.23) by
+ DM5PR12MB1371.namprd12.prod.outlook.com (10.168.239.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.16; Wed, 7 Aug 2019 08:53:26 +0000
+Received: from DM5PR12MB1546.namprd12.prod.outlook.com
+ ([fe80::fc5f:ce01:e8c8:db89]) by DM5PR12MB1546.namprd12.prod.outlook.com
+ ([fe80::fc5f:ce01:e8c8:db89%12]) with mapi id 15.20.2136.018; Wed, 7 Aug 2019
+ 08:53:26 +0000
+From:   "Koenig, Christian" <Christian.Koenig@amd.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Zhou1, Tao" <Tao.Zhou1@amd.com>
+CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Zhang, Hawking" <Hawking.Zhang@amd.com>,
+        "Li, Dennis" <Dennis.Li@amd.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel-build-reports@lists.linaro.org" 
+        <kernel-build-reports@lists.linaro.org>
+Subject: Re: [PATCH] drm/amdgpu: replace readq/writeq with atomic64 operations
+Thread-Topic: [PATCH] drm/amdgpu: replace readq/writeq with atomic64
+ operations
+Thread-Index: AQHVTMvE140hqrZvSkOTllezqlrDj6bvREIAgAAdQoA=
+Date:   Wed, 7 Aug 2019 08:53:25 +0000
+Message-ID: <daff9fc7-ead8-40e0-9a16-cb3b90b01722@amd.com>
+References: <20190807025640.682-1-tao.zhou1@amd.com>
+ <20190807070834.GA24792@infradead.org>
+In-Reply-To: <20190807070834.GA24792@infradead.org>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfApS0b/lMPm7rop7sg4zrGCd+8i5M4UPTpKak97B2soWM1lDxIqMEISdnpCsJMglPti5bkjxmU2Axw9lKEqQw4HCmMOx113b51Z7Ji58DjsbuiIF5JAp
- 2hpTdBYYwQ90Rrq3A8U2qoCTM6Z/JttrqM5JxCTBNphIfY/AuA7m0KHVCvE1pI1IThCds62OiVpyDbYYyzKvnIs52V68cd1UB0l9j4cC+XqxAeAYZmG1mK7w
- xaad+EklKa6qrQnuLMDsiMmDGrhJg+DDCeSMfzRXxZw4ebYXnUtwlo3aYNb5CQR41tCTT/ESrJt/IPPxWzyET4o3F4/YppkFLZgfoIfB5Y3ZQ7IpElrhZz4r
- hV57N0/Yuuoq0T9x7kA9dTXm+F3NWk3J5WKmiB365qLjkOgSI63bfUxmkWT7m+jgjqVzq/TGfjOwkqqmmPirOtmj69K2yV/grgKxrXhMroiuaJ6glk2kq2e+
- BLuAfNaMYLMy6RNaPAwL6o6xAQg0mXGKT+wSjoXbDC1yeypR0ZeSIBVS1myDswQDidoHIohjuLYJN8a7QRZ7dz1F7/rPyRKUZquqdWxLOIlTNnedR96BVikJ
- /APKCq63uC5PmQQtGFwLXihb7WzA7QXNLVXwxAoWFoWdS2ygZkf0LLnZA8ngSsCuDBI/oZMdrqaX8YUMpDr0WRRCF+7SlvbH+O6oUDgqh3ZABG2uX1I1Dq2n
- 2xbI43RkHTE=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+x-clientproxiedby: PR1PR01CA0005.eurprd01.prod.exchangelabs.com
+ (2603:10a6:102::18) To DM5PR12MB1546.namprd12.prod.outlook.com
+ (2603:10b6:4:8::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d06c977a-1957-440c-4f20-08d71b14b557
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1371;
+x-ms-traffictypediagnostic: DM5PR12MB1371:
+x-microsoft-antispam-prvs: <DM5PR12MB1371825DBF2548986AA28CB183D40@DM5PR12MB1371.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1051;
+x-forefront-prvs: 01221E3973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(31696002)(6506007)(86362001)(2616005)(46003)(25786009)(256004)(8936002)(66446008)(81156014)(66946007)(6512007)(14454004)(99286004)(81166006)(52116002)(64756008)(66556008)(66476007)(76176011)(2906002)(36756003)(31686004)(68736007)(6246003)(102836004)(71190400001)(53936002)(316002)(6486002)(446003)(4744005)(386003)(6116002)(65826007)(110136005)(8676002)(7736002)(11346002)(58126008)(486006)(476003)(229853002)(6636002)(478600001)(64126003)(71200400001)(65956001)(305945005)(6436002)(5660300002)(4326008)(186003)(54906003)(65806001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1371;H:DM5PR12MB1546.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: n7BWIbSrYjBs1LHn6hwFPwNaVqrVr1BPcHaYassYQc8VOOHUOk1yBfi/AduD/o6pttJnUYNRJBXL+oc5UKfYcF5sHY83h/5z5uDjv+rwvdkaTXg1PxalKdNZoSe5mfyryPlVtGLGvQKiFZLx57FdCuaAOV5kUJQk0rvDhm/iykPWy6ZcVRytcb/cYJUimNsL1pIcq7H9gCwgr4qwokNkfjUHMJXDwZNmoDS9Dvw4vrjEE4KeBRbHY8PFtC/wucxneQlIs241gGRDvyRUqsLk/0pj4injHdojokGzdKDlHQCiicGDOmiKbyd3qhJuY6sGUtelHIvrfUsXJ7WoqJ6gjCFG0/xre1Z7MgBT8USQvcLAOsVojoir8HM09escAgONuQCxHQwUjc5qerqPkDNRxC6xlzTjaC5NCsoj+Z/QEhQ=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E712C262E9D105428F8F25A3E55ED872@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d06c977a-1957-440c-4f20-08d71b14b557
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 08:53:25.7385
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ckoenig@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1371
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Adding dri-devel since this appears to be drm specific and not media
-related.
-
-Regards,
-
-	Hans
-
-On 8/7/19 10:17 AM, Naresh Kamboju wrote:
-> arm64 devices dragonboard 410c (QC410E) and hi6220-hikey running Linux
-> next-20190806 loading modules causing floods of kernel messages.
-> 
-> We have enabled few extra kernel configs for testing.
-> CONFIG_DRM_I2C_ADV7511=m
-> CONFIG_DRM_I2C_ADV7511_CEC=y
-> ...
-> 
-> Please find below boot log and config file link.
-> 
-> [    0.000000] Linux version 5.3.0-rc3-next-20190806 (oe-user@oe-host)
-> (gcc version 7.3.0 (GCC)) #1 SMP PREEMPT Tue Aug 6 05:49:36 UTC 2019
-> [    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
-> ....
-> [   10.051193] adv7511 3-0039: 3-0039 supply dvdd not found, using
-> dummy regulator
-> [   10.051633] adv7511 3-0039: 3-0039 supply pvdd not found, using
-> dummy regulator
-> [   10.076257] adreno 1c00000.gpu: Adding to iommu group 0
-> [   10.090929] adv7511 3-0039: 3-0039 supply a2vdd not found, using
-> dummy regulator
-> [   10.101703] msm_mdp 1a01000.mdp: Adding to iommu group 1
-> [   10.102563] msm_mdp 1a01000.mdp: No interconnect support may cause
-> display underflows!
-> [   10.139492] adv7511 3-0039: failed to find dsi host
-> ...
-> [   33.065744] adv7511 3-0039: failed to find dsi host
-> [   33.076721] msm 1a00000.mdss: 1a00000.mdss supply vdd not found,
-> using dummy regulator
-> [   33.078344] msm_mdp 1a01000.mdp: [drm:mdp5_bind [msm]] MDP5 version v1.6
-> [   33.083862] msm 1a00000.mdss: bound 1a01000.mdp (ops mdp5_ops [msm])
-> [   33.090892] msm_dsi 1a98000.dsi: 1a98000.dsi supply gdsc not found,
-> using dummy regulator
-> [   33.097756] msm_dsi 1a98000.dsi: 1a98000.dsi supply gdsc not found,
-> using dummy regulator
-> [   33.106606] msm_dsi_manager_register: failed to register mipi dsi
-> host for DSI 0
-> [   33.114579] msm 1a00000.mdss: failed to bind 1a98000.dsi (ops
-> dsi_ops [msm]): -517
-> [   33.121263] msm 1a00000.mdss: master bind failed: -517
-> [   33.135547] adv7511 3-0039: 3-0039 supply dvdd not found, using
-> dummy regulator
-> [   33.139360] adv7511 3-0039: 3-0039 supply pvdd not found, using
-> dummy regulator
-> [   33.143646] adv7511 3-0039: 3-0039 supply a2vdd not found, using
-> dummy regulator
-> 
-> Full test log
-> https://lkft.validation.linaro.org/scheduler/job/860208#L956
-> 
-> metadata:
->   git branch: master
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   git commit: 958eb4327c1761c609bde8e9f7c04e9d1c6fbb96
->   git describe: next-20190806
->   make_kernelversion: 5.3.0-rc3
->   kernel-config:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579/config
->   kernel-defconfig:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579/defconfig
->   build-location:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579
-> 
-> Best regards
-> Naresh Kamboju
-> 
-
+QW0gMDcuMDguMTkgdW0gMDk6MDggc2NocmllYiBDaHJpc3RvcGggSGVsbHdpZzoNCj4gT24gV2Vk
+LCBBdWcgMDcsIDIwMTkgYXQgMTA6NTY6NDBBTSArMDgwMCwgVGFvIFpob3Ugd3JvdGU6DQo+PiBy
+ZWFkcS93cml0ZXEgYXJlIG5vdCBzdXBwb3J0ZWQgb24gYWxsIGFyY2hpdGVjdHVyZXMNCj4gTkFL
+LiAgWW91IG11c3Qgbm90IHVzZSBhdG9taWNfKiBvbiBfX2lvbWVtIChNTUlPKSBtZW1vcnkuDQoN
+CldlbGwgdGhlbiB3aGF0J3MgdGhlIHJpZ2h0IHRoaW5nIHRvIGRvIGhlcmU/DQoNCkVzc2VudGlh
+bGx5IHdyaXRlcS9yZWFkcSBkb2Vzbid0IHNlZW1zIHRvIGJlIGF2YWlsYWJsZSBvbiBhbGwgDQph
+cmNoaXRlY3R1cmVzIGVpdGhlci4NCg0KUmVnYXJkcywNCkNocmlzdGlhbi4NCg==
