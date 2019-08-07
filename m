@@ -2,144 +2,186 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E94C31E40
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8511FC433FF
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B57208C3
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DE0217F4
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcewzGRW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F1SiR62u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfHGCYA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 22:24:00 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43585 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728994AbfHGCYA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 22:24:00 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r26so6646876pgl.10
-        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 19:24:00 -0700 (PDT)
+        id S1726797AbfHGCeu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 22:34:50 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42484 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfHGCet (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 22:34:49 -0400
+Received: by mail-vs1-f66.google.com with SMTP id 190so59692723vsf.9
+        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 19:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pkL8MY9zC5v+zrBda/zPQm0g3an3ptjtpVdI7jzPVfs=;
-        b=hcewzGRW803/McXeTj5WrIwfjtIILcuMOhhJI0+XH2tVg9fxh/5KolBT0x1b5T51+R
-         XQ7IzrsxAVtHeyFEBDzoK5YSDcR82uErm3bVWGbHKSg1K4zRos0VapMK+1uxdw/foioe
-         8U99TG1Qn/sp68fFKtdn6NTCKGlwrmX0NtkvzSDWUbbHDKqXSrIiBsfWxTVkj/N/HyjT
-         iBlOtyfqcbF00/ppnxcHXZDVoeccewmF/JIELCQ0/o5INRAL4oHH+C/PTBqw4XC3Tb6P
-         RFC6O+PCswW6u79cxA/A/infPSvko1boCXwi+HBSH6bCnN9eOji0e8EqlqN67zYuqmqS
-         OzHA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vZySuVgDrMwYu72Sx/Yyym02kCpQXLkPK8PNQdvmdTs=;
+        b=F1SiR62uuCiYwaAFZHB76fCXVKxf7JXtPhpxtNgrVd7MyfyLkTV1DIeX/jAyXBunyv
+         RQrIlMkIGluKnySzfOF3GZSLDP6MveHIH7veoxvjvHiYv/WElwSO9Iwo0h0q9MtKrvfP
+         kL/UCJwy+siSLXnj0w9kxjQETAkg8eD5w50q97dB6F3z+72b41Wrzv2dgqkH/m1FOQ0i
+         V5bUDjsT76x73WZJYgzY4Vv9fR4a4k1cEIlUL/gbWQE/MJFoZtehpet47dSrdA/83Gqk
+         G38q97D0ZqJoZeASMBUD4lJMr2MlJPqrttFt4KV70TVWSDOfP/xerBtrtLdWIL4aCjIR
+         w0zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pkL8MY9zC5v+zrBda/zPQm0g3an3ptjtpVdI7jzPVfs=;
-        b=qxLwVjCpTW8iAwTXObKB7pbS2wvB9WE6jpHJzkV3M7d229KTTVuZ2oK0a21pNYoT0f
-         Tw1bBhOVYD/ol/lP7HPxxbbbREKvAPUPYxInRcbchwzg9cQC1CD4J7RpMAs4wfr2Mk9I
-         V5bYAsnD9RPAyPzhwVMRNq8Ni/0Gz3mczY7Wvl1e3AuQWNLwlmx+eOSr8NohVkSg/X//
-         kiOyBk8FXDLA6On/qnkcmP5n6Yx1n1ueFuHoqHQTCmqCWRjDZby9GtDp/fpKk5/O2Mmt
-         Dnc4DAXUyO2ZDxKfjtyzp/5vEeIV+7g4NB49rrky+913zr1GeVbadZ6Zc6c91GH6hRmW
-         aMMw==
-X-Gm-Message-State: APjAAAXF1I2c6JUmg/a6rDFgyiNZgF1rWKuerHaMVD8gr3ee37DLMzXS
-        Lj9S5nzMQ8YjrcAC0ir3YXBWuA==
-X-Google-Smtp-Source: APXvYqz7rj/ZOxWgoHwJTLzC8i+4illOfJNW0JcRCpvRX9rpVQhzih41tpGt3i/vt14DeAjuz7iIjA==
-X-Received: by 2002:a62:b515:: with SMTP id y21mr6996570pfe.213.1565144639931;
-        Tue, 06 Aug 2019 19:23:59 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i124sm164007064pfe.61.2019.08.06.19.23.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 19:23:59 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH v2] soc: qcom: socinfo: Annotate switch cases with fall through
-Date:   Tue,  6 Aug 2019 19:23:56 -0700
-Message-Id: <20190807022356.8502-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190807100803.63007737@canb.auug.org.au>
-References: 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vZySuVgDrMwYu72Sx/Yyym02kCpQXLkPK8PNQdvmdTs=;
+        b=PcFHHR5ofG8/aPwGB31bNKiQyLFzLuUU2c9bB7qyLzNd3hBRfM20r+iZ6r6ts+7iN2
+         5IfdB20dG7W1+XPnjimBfBbJXxgrBLZi1Nu8x1ECHJbdTvp1/UbMpk2cILqDPMDp8hCx
+         408R2ItEGrL2M12BSVWYEzgELj1tDSGjneSxT7g4FX8bVF4MZbYGlndEBPP5PZwYCEcM
+         MY5hx9+zGaYEdj4w9eWlIXsud0vXkuOgQtHqDSTtZqsrm7iBDAhYKO/GM0HVrYWeFatO
+         5Fo8QdjARIgtNY418n4T1y+i5aNGocqIqdlSJZjWZc9UD1Uvr3dwK+6onyHwO+kB7g/4
+         mAWw==
+X-Gm-Message-State: APjAAAXMw9mPW+bYR61Y7uOfyzpXnrVewg7TrzTAAVLyjq1c4oMPvRwV
+        C+bcIr6o7tGHL2zUSWjgtEksMoH9F6bhc3AVL4CPqA==
+X-Google-Smtp-Source: APXvYqzMwsO5cKGxZ3JYDTOsPOYBmB+qZmPho1/Yle815I5CkBfbapDdnjT0eQA4Zv+lnRSJnerL6Wc4UY2iNLWlUpk=
+X-Received: by 2002:a67:ff0a:: with SMTP id v10mr4748856vsp.1.1565145287978;
+ Tue, 06 Aug 2019 19:34:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190807095022.0314e2fc@canb.auug.org.au>
+In-Reply-To: <20190807095022.0314e2fc@canb.auug.org.au>
+From:   Peter Collingbourne <pcc@google.com>
+Date:   Tue, 6 Aug 2019 19:34:36 -0700
+Message-ID: <CAMn1gO6P_VfDRjGZb67ZS4Kh0wjTEQi0cbOkmibTokHQOgP7qw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the arm64 tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Introduce fall through annotations in the switch statements of
-socinfo_debugfs_init() to silence compiler warnings.
+On Tue, Aug 6, 2019 at 4:50 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the arm64 tree, today's linux-next build (powerpc
+> ppc64_defconfig) was just spinning in make - it executing some scripts,
+> but it was hard to catch just what.
+>
+> Apparently caused by commit
+>
+>   5cf896fb6be3 ("arm64: Add support for relocating the kernel with RELR relocations")
+>
+> I have not idea why, but reverting the above commit allows to build
+> to finish.
 
-Fixes: 9c84c1e78634 ("soc: qcom: socinfo: Expose custom attributes")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/soc/qcom/socinfo.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Okay, I can reproduce with:
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 855353bed19e..a39ea5061dc5 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -323,6 +323,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
- 		debugfs_create_x32("raw_device_number", 0400,
- 				   qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.raw_device_num);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 11):
- 	case SOCINFO_VERSION(0, 10):
- 	case SOCINFO_VERSION(0, 9):
-@@ -330,10 +331,12 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
- 
- 		debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.foundry_id);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 8):
- 	case SOCINFO_VERSION(0, 7):
- 		DEBUGFS_ADD(info, pmic_model);
- 		DEBUGFS_ADD(info, pmic_die_rev);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 6):
- 		qcom_socinfo->info.hw_plat_subtype =
- 			__le32_to_cpu(info->hw_plat_subtype);
-@@ -341,6 +344,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
- 		debugfs_create_u32("hardware_platform_subtype", 0400,
- 				   qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.hw_plat_subtype);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 5):
- 		qcom_socinfo->info.accessory_chip =
- 			__le32_to_cpu(info->accessory_chip);
-@@ -348,23 +352,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
- 		debugfs_create_u32("accessory_chip", 0400,
- 				   qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.accessory_chip);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 4):
- 		qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
- 
- 		debugfs_create_u32("platform_version", 0400,
- 				   qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.plat_ver);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 3):
- 		qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
- 
- 		debugfs_create_u32("hardware_platform", 0400,
- 				   qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.hw_plat);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 2):
- 		qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
- 
- 		debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
- 				   &qcom_socinfo->info.raw_ver);
-+		/* Fall through */
- 	case SOCINFO_VERSION(0, 1):
- 		DEBUGFS_ADD(info, build_id);
- 		break;
--- 
-2.18.0
+$ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- defconfig
+*** Default configuration is based on 'ppc64_defconfig'
+#
+# No change to .config
+#
+$ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -j72
+scripts/kconfig/conf  --syncconfig Kconfig
+scripts/kconfig/conf  --syncconfig Kconfig
+scripts/kconfig/conf  --syncconfig Kconfig
+[...]
 
+And confirmed that backing out my patch fixes it.
+
+The problem seems to come from the use of $(NM) in the Kconfig file.
+If I apply this diff:
+
+diff --git a/init/Kconfig b/init/Kconfig
+index d96127ebc44e0..177a95b323230 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -31,7 +31,7 @@ config CC_HAS_ASM_GOTO
+        def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+
+ config TOOLS_SUPPORT_RELR
+-       def_bool $(success,env "CC=$(CC)" "LD=$(LD)" "NM=$(NM)"
+"OBJCOPY=$(OBJCOPY)" $(srctree)/scripts/tools-support-relr.sh)
++       def_bool $(success,$(NM))
+
+ config CC_HAS_WARN_MAYBE_UNINITIALIZED
+        def_bool $(cc-option,-Wmaybe-uninitialized)
+
+I still see the hang. Replacing $(NM) with something else makes it go away.
+
+That leads me to ask what is special about $(NM) + powerpc? It turns
+out to be this fragment of arch/powerpc/Makefile:
+
+ifdef CONFIG_PPC64
+new_nm := $(shell if $(NM) --help 2>&1 | grep -- '--synthetic' >
+/dev/null; then echo y; else echo n; fi)
+
+ifeq ($(new_nm),y)
+NM              := $(NM) --synthetic
+endif
+endif
+
+We're setting NM to something else based on a config option, which I
+presume sets up some sort of circular dependency that confuses
+Kconfig. Removing this fragment of the makefile (or appending
+--synthetic unconditionally) also makes the problem go away.
+
+We should at least able to remove the test for a new-enough binutils.
+According to changes.rst we require binutils 2.21 which was released
+in 2011, and support for --synthetic was added to binutils in 2004:
+https://github.com/bminor/binutils-gdb/commit/0873df2aec48685715d2c5041c1f6f4ed43976c1
+
+But why are we passing --synthetic at all on ppc64? This behaviour
+seems to come from this commit from 2004:
+https://github.com/mpe/linux-fullhistory/commit/0e32679a4ea48a634d94e97355d47512ef14d71f
+which states: "On new toolchains we need to use nm --synthetic or we
+miss code symbols."
+
+But I only see a couple of missing symbols if I compare the output of
+nm with and without --synthetic on a powerpc64 kernel:
+
+$ diff -u <(powerpc-linux-gnu-nm --synthetic vmlinux)
+<(powerpc-linux-gnu-nm  vmlinux)
+--- /dev/fd/63 2019-08-06 18:48:56.127020621 -0700
++++ /dev/fd/62 2019-08-06 18:48:56.131020636 -0700
+@@ -74840,7 +74840,6 @@
+ c000000001901b10 D LZ4_decompress_fast
+ c0000000007819a0 T .LZ4_decompress_fast_continue
+ c000000001901b70 D LZ4_decompress_fast_continue
+-c0000000007811e0 t .LZ4_decompress_fast_extDict
+ c000000001901b40 d LZ4_decompress_fast_extDict
+ c000000000781960 T .LZ4_decompress_fast_usingDict
+ c000000001901b58 D LZ4_decompress_fast_usingDict
+@@ -74856,7 +74855,6 @@
+ c000000001901bd0 D LZ4_decompress_safe_usingDict
+ c0000000007822b0 T .LZ4_decompress_safe_withPrefix64k
+ c000000001901b88 D LZ4_decompress_safe_withPrefix64k
+-c000000000780c60 t .LZ4_decompress_safe_withSmallPrefix
+ c000000001901b28 d LZ4_decompress_safe_withSmallPrefix
+ c00000000077fbe0 T .LZ4_setStreamDecode
+ c000000001901ac8 D LZ4_setStreamDecode
+
+I guess the problem was worse back in 2004. It almost certainly didn't
+involve these particular symbols because they were added in commit
+2209fda323e2fd2a2d0885595fd5097717f8d2aa from 2018. So I guess we have
+a couple of possible quick fixes (assuming that the Kconfig issue
+can't be solved somehow): either stop passing --synthetic on powerpc
+and lose a couple of symbols in 64-bit kernels, or start passing it
+unconditionally on powerpc (it doesn't seem to make a difference to
+the nm output on a ppc64_defconfig kernel with CONFIG_PPC64=n). I'm
+cc'ing the powerpc maintainers for their opinion on what to do. While
+this is being resolved we should probably back out my patch from
+-next.
+
+Peter
