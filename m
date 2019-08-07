@@ -2,186 +2,139 @@ Return-Path: <SRS0=ikMb=WD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8511FC433FF
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A06CBC31E40
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DE0217F4
-	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E81216F4
+	for <linux-next@archiver.kernel.org>; Wed,  7 Aug 2019 02:56:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F1SiR62u"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="01vV5quK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfHGCeu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Aug 2019 22:34:50 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42484 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfHGCet (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2019 22:34:49 -0400
-Received: by mail-vs1-f66.google.com with SMTP id 190so59692723vsf.9
-        for <linux-next@vger.kernel.org>; Tue, 06 Aug 2019 19:34:48 -0700 (PDT)
+        id S1727461AbfHGC4x (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Aug 2019 22:56:53 -0400
+Received: from mail-eopbgr760052.outbound.protection.outlook.com ([40.107.76.52]:13382
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726518AbfHGC4w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Aug 2019 22:56:52 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nWPdnakyhnR74NSGjGh6eeOnrfGShlgsES5yCt5u9qW8CiGVa5Oi03XDhefr9DvPvPdXQpbZqzMa86Uv9VlrE+86fxrRHb9cPZiTl43uKUrKKNj9HIkYOea3/jLxZWWolAM+Qdupc9Xo92ZINI4Wf6i1YdTxTiIIrAx7YpU8BVASWV3QdgTr8ZPPKAXOvPfE8eO+QmIAtfoDAYIbrD/rO+u86E2E1OQ767uuCtGAZObSypgEMaPxC6wx4IyBh2APfzo2PKRK8spuqTb/60lN1oSU7c0N4m95V+9yUBmeLOXLz+KLoWiDFR/tOLFjK3Mc8tYd83Usp5FqpDajaaz2hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yky6w6/M4SeHS15mmKKQtpK5alww9+bmfDk4qJna3/I=;
+ b=iZsglEpD5wGKBLonXv4jYlGzYDUHXZ4UP+HUvqAu497fFWCGfFffwc3vA7E4Xc/BfqJU0rYMQNHduYzqajW1XpEWuTZitbDdPdmGtPN9xsaxg3K5eMeaOrED7UscDRPIr2xlI/vtszhrU8oJi8PS9k6lMHFxVRdBeQj4Ynlz/Nl1ShPtdTK43/Be6q98VAwhpjQYC5gcGM4A6RfIke1QHLFuGJ7O2U4k6xnHrJQbEboLdnrS2CG507uqLxFSIeRfGjb7tAB8TokITvW8hALzkhGSJDjU/x6Z/tWoNedMCdQnTQk5EZUMI8OluwwXQ2eqNjC4s3CvDH1PQb1ZeeQS2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.linaro.org
+ smtp.mailfrom=amd.com;dmarc=permerror action=none
+ header.from=amd.com;dkim=none (message not signed);arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vZySuVgDrMwYu72Sx/Yyym02kCpQXLkPK8PNQdvmdTs=;
-        b=F1SiR62uuCiYwaAFZHB76fCXVKxf7JXtPhpxtNgrVd7MyfyLkTV1DIeX/jAyXBunyv
-         RQrIlMkIGluKnySzfOF3GZSLDP6MveHIH7veoxvjvHiYv/WElwSO9Iwo0h0q9MtKrvfP
-         kL/UCJwy+siSLXnj0w9kxjQETAkg8eD5w50q97dB6F3z+72b41Wrzv2dgqkH/m1FOQ0i
-         V5bUDjsT76x73WZJYgzY4Vv9fR4a4k1cEIlUL/gbWQE/MJFoZtehpet47dSrdA/83Gqk
-         G38q97D0ZqJoZeASMBUD4lJMr2MlJPqrttFt4KV70TVWSDOfP/xerBtrtLdWIL4aCjIR
-         w0zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vZySuVgDrMwYu72Sx/Yyym02kCpQXLkPK8PNQdvmdTs=;
-        b=PcFHHR5ofG8/aPwGB31bNKiQyLFzLuUU2c9bB7qyLzNd3hBRfM20r+iZ6r6ts+7iN2
-         5IfdB20dG7W1+XPnjimBfBbJXxgrBLZi1Nu8x1ECHJbdTvp1/UbMpk2cILqDPMDp8hCx
-         408R2ItEGrL2M12BSVWYEzgELj1tDSGjneSxT7g4FX8bVF4MZbYGlndEBPP5PZwYCEcM
-         MY5hx9+zGaYEdj4w9eWlIXsud0vXkuOgQtHqDSTtZqsrm7iBDAhYKO/GM0HVrYWeFatO
-         5Fo8QdjARIgtNY418n4T1y+i5aNGocqIqdlSJZjWZc9UD1Uvr3dwK+6onyHwO+kB7g/4
-         mAWw==
-X-Gm-Message-State: APjAAAXMw9mPW+bYR61Y7uOfyzpXnrVewg7TrzTAAVLyjq1c4oMPvRwV
-        C+bcIr6o7tGHL2zUSWjgtEksMoH9F6bhc3AVL4CPqA==
-X-Google-Smtp-Source: APXvYqzMwsO5cKGxZ3JYDTOsPOYBmB+qZmPho1/Yle815I5CkBfbapDdnjT0eQA4Zv+lnRSJnerL6Wc4UY2iNLWlUpk=
-X-Received: by 2002:a67:ff0a:: with SMTP id v10mr4748856vsp.1.1565145287978;
- Tue, 06 Aug 2019 19:34:47 -0700 (PDT)
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yky6w6/M4SeHS15mmKKQtpK5alww9+bmfDk4qJna3/I=;
+ b=01vV5quKFaefE/H7PL5mupPTZ/YJQG+6uE8GW8OsGfFU2XJbyfvgAMNKtyE4GICgc6ejbFBSYjM3bNPbLj1KT2JKOpwY0jxVB54/WdLBkUkpMg57POJmGTrLAW3AH9EvzIJ/DTFjqCYZUXYZu7pi8g7he/9aW4qc2VJHdv0LLEw=
+Received: from MWHPR1201CA0021.namprd12.prod.outlook.com
+ (2603:10b6:301:4a::31) by BYAPR12MB2710.namprd12.prod.outlook.com
+ (2603:10b6:a03:68::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2136.19; Wed, 7 Aug
+ 2019 02:56:50 +0000
+Received: from BY2NAM03FT043.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e4a::201) by MWHPR1201CA0021.outlook.office365.com
+ (2603:10b6:301:4a::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.13 via Frontend
+ Transport; Wed, 7 Aug 2019 02:56:50 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; lists.linaro.org; dkim=none (message not signed)
+ header.d=none;lists.linaro.org; dmarc=permerror action=none
+ header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ BY2NAM03FT043.mail.protection.outlook.com (10.152.85.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2157.15 via Frontend Transport; Wed, 7 Aug 2019 02:56:49 +0000
+Received: from taozhou1u2.amd.com (10.34.1.3) by SATLEXCHOV01.amd.com
+ (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Tue, 6 Aug 2019
+ 21:56:47 -0500
+From:   Tao Zhou <tao.zhou1@amd.com>
+To:     <amd-gfx@lists.freedesktop.org>, <alexander.deucher@amd.com>,
+        <hawking.zhang@amd.com>, <dennis.li@amd.com>, <broonie@kernel.org>,
+        <akpm@linux-foundation.org>, <christian.koenig@amd.com>
+CC:     <kernel-build-reports@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-next@vger.kernel.org>, "Tao Zhou" <tao.zhou1@amd.com>
+Subject: [PATCH] drm/amdgpu: replace readq/writeq with atomic64 operations
+Date:   Wed, 7 Aug 2019 10:56:40 +0800
+Message-ID: <20190807025640.682-1-tao.zhou1@amd.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190807095022.0314e2fc@canb.auug.org.au>
-In-Reply-To: <20190807095022.0314e2fc@canb.auug.org.au>
-From:   Peter Collingbourne <pcc@google.com>
-Date:   Tue, 6 Aug 2019 19:34:36 -0700
-Message-ID: <CAMn1gO6P_VfDRjGZb67ZS4Kh0wjTEQi0cbOkmibTokHQOgP7qw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the arm64 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(39860400002)(376002)(2980300002)(428003)(199004)(189003)(68736007)(2201001)(486006)(50466002)(48376002)(476003)(53416004)(6666004)(2616005)(356004)(426003)(126002)(336012)(186003)(86362001)(6636002)(47776003)(478600001)(4326008)(26005)(70206006)(316002)(54906003)(1076003)(16586007)(110136005)(5660300002)(7696005)(51416003)(53936002)(8676002)(70586007)(36756003)(8936002)(81166006)(81156014)(50226002)(305945005)(2906002)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2710;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8bdaf23d-67ff-4dfa-a56e-08d71ae2e4dd
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:BYAPR12MB2710;
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2710:
+X-Microsoft-Antispam-PRVS: <BYAPR12MB271044796759B6AE287FF480B0D40@BYAPR12MB2710.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:466;
+X-Forefront-PRVS: 01221E3973
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: cM6Rs+5qRQZU+kNfIqs1zxyQY8bCl0jE7pJBdn2dOoL7uQ0LruNrBOw1lEKvQZXFLXNGI739+x63BVBLi4mfxLNtCygclmDn4+993i156ejaccChEvYksXAQ7cySfYFBON0654AeDjYezo4N7XoWJWMNRwgKZgqly/cjgz8Kozti2tmYZXasvj14Y9sx9fRSsCtwDFG+xCsNePlyWt7Pv0unWS4z2DOtrkgUnkWfPT/rp9r0I+gi+YYI2rcOAhDa4bWzYHqujH8iYXTTXFXOKXOUgzQPVm56LW/GNxD4iSNz/+naXSAb+WC4Hyg5pV70H9QWXSEzsXqM3clZ9ev0IL5xEeTIiNrSP5bmOVXRmt92lW+cgRpMEsFxNw9JcdT9tGrRybvHQQaRTGxH0en6TzlnmJS6xFXQ+sV89QXr1LI=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2019 02:56:49.9265
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bdaf23d-67ff-4dfa-a56e-08d71ae2e4dd
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2710
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 4:50 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the arm64 tree, today's linux-next build (powerpc
-> ppc64_defconfig) was just spinning in make - it executing some scripts,
-> but it was hard to catch just what.
->
-> Apparently caused by commit
->
->   5cf896fb6be3 ("arm64: Add support for relocating the kernel with RELR relocations")
->
-> I have not idea why, but reverting the above commit allows to build
-> to finish.
+readq/writeq are not supported on all architectures
 
-Okay, I can reproduce with:
+Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-$ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- defconfig
-*** Default configuration is based on 'ppc64_defconfig'
-#
-# No change to .config
-#
-$ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -j72
-scripts/kconfig/conf  --syncconfig Kconfig
-scripts/kconfig/conf  --syncconfig Kconfig
-scripts/kconfig/conf  --syncconfig Kconfig
-[...]
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 558fe6d091ed..7eb9e0b9235a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -272,14 +272,10 @@ void amdgpu_mm_wreg(struct amdgpu_device *adev, uint32_t reg, uint32_t v,
+  */
+ uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
+ {
+-	uint64_t ret;
+-
+ 	if ((reg * 4) < adev->rmmio_size)
+-		ret = readq(((void __iomem *)adev->rmmio) + (reg * 4));
++		return atomic64_read((atomic64_t *)(adev->rmmio + (reg * 4)));
+ 	else
+ 		BUG();
+-
+-	return ret;
+ }
+ 
+ /**
+@@ -294,7 +290,7 @@ uint64_t amdgpu_mm_rreg64(struct amdgpu_device *adev, uint32_t reg)
+ void amdgpu_mm_wreg64(struct amdgpu_device *adev, uint32_t reg, uint64_t v)
+ {
+ 	if ((reg * 4) < adev->rmmio_size)
+-		writeq(v, ((void __iomem *)adev->rmmio) + (reg * 4));
++		atomic64_set((atomic64_t *)(adev->rmmio + (reg * 4)), v);
+ 	else
+ 		BUG();
+ }
+-- 
+2.17.1
 
-And confirmed that backing out my patch fixes it.
-
-The problem seems to come from the use of $(NM) in the Kconfig file.
-If I apply this diff:
-
-diff --git a/init/Kconfig b/init/Kconfig
-index d96127ebc44e0..177a95b323230 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -31,7 +31,7 @@ config CC_HAS_ASM_GOTO
-        def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
-
- config TOOLS_SUPPORT_RELR
--       def_bool $(success,env "CC=$(CC)" "LD=$(LD)" "NM=$(NM)"
-"OBJCOPY=$(OBJCOPY)" $(srctree)/scripts/tools-support-relr.sh)
-+       def_bool $(success,$(NM))
-
- config CC_HAS_WARN_MAYBE_UNINITIALIZED
-        def_bool $(cc-option,-Wmaybe-uninitialized)
-
-I still see the hang. Replacing $(NM) with something else makes it go away.
-
-That leads me to ask what is special about $(NM) + powerpc? It turns
-out to be this fragment of arch/powerpc/Makefile:
-
-ifdef CONFIG_PPC64
-new_nm := $(shell if $(NM) --help 2>&1 | grep -- '--synthetic' >
-/dev/null; then echo y; else echo n; fi)
-
-ifeq ($(new_nm),y)
-NM              := $(NM) --synthetic
-endif
-endif
-
-We're setting NM to something else based on a config option, which I
-presume sets up some sort of circular dependency that confuses
-Kconfig. Removing this fragment of the makefile (or appending
---synthetic unconditionally) also makes the problem go away.
-
-We should at least able to remove the test for a new-enough binutils.
-According to changes.rst we require binutils 2.21 which was released
-in 2011, and support for --synthetic was added to binutils in 2004:
-https://github.com/bminor/binutils-gdb/commit/0873df2aec48685715d2c5041c1f6f4ed43976c1
-
-But why are we passing --synthetic at all on ppc64? This behaviour
-seems to come from this commit from 2004:
-https://github.com/mpe/linux-fullhistory/commit/0e32679a4ea48a634d94e97355d47512ef14d71f
-which states: "On new toolchains we need to use nm --synthetic or we
-miss code symbols."
-
-But I only see a couple of missing symbols if I compare the output of
-nm with and without --synthetic on a powerpc64 kernel:
-
-$ diff -u <(powerpc-linux-gnu-nm --synthetic vmlinux)
-<(powerpc-linux-gnu-nm  vmlinux)
---- /dev/fd/63 2019-08-06 18:48:56.127020621 -0700
-+++ /dev/fd/62 2019-08-06 18:48:56.131020636 -0700
-@@ -74840,7 +74840,6 @@
- c000000001901b10 D LZ4_decompress_fast
- c0000000007819a0 T .LZ4_decompress_fast_continue
- c000000001901b70 D LZ4_decompress_fast_continue
--c0000000007811e0 t .LZ4_decompress_fast_extDict
- c000000001901b40 d LZ4_decompress_fast_extDict
- c000000000781960 T .LZ4_decompress_fast_usingDict
- c000000001901b58 D LZ4_decompress_fast_usingDict
-@@ -74856,7 +74855,6 @@
- c000000001901bd0 D LZ4_decompress_safe_usingDict
- c0000000007822b0 T .LZ4_decompress_safe_withPrefix64k
- c000000001901b88 D LZ4_decompress_safe_withPrefix64k
--c000000000780c60 t .LZ4_decompress_safe_withSmallPrefix
- c000000001901b28 d LZ4_decompress_safe_withSmallPrefix
- c00000000077fbe0 T .LZ4_setStreamDecode
- c000000001901ac8 D LZ4_setStreamDecode
-
-I guess the problem was worse back in 2004. It almost certainly didn't
-involve these particular symbols because they were added in commit
-2209fda323e2fd2a2d0885595fd5097717f8d2aa from 2018. So I guess we have
-a couple of possible quick fixes (assuming that the Kconfig issue
-can't be solved somehow): either stop passing --synthetic on powerpc
-and lose a couple of symbols in 64-bit kernels, or start passing it
-unconditionally on powerpc (it doesn't seem to make a difference to
-the nm output on a ppc64_defconfig kernel with CONFIG_PPC64=n). I'm
-cc'ing the powerpc maintainers for their opinion on what to do. While
-this is being resolved we should probably back out my patch from
--next.
-
-Peter
