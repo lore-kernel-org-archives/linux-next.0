@@ -2,138 +2,107 @@ Return-Path: <SRS0=GS7m=WE=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0F6C433FF
-	for <linux-next@archiver.kernel.org>; Thu,  8 Aug 2019 02:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D92C32751
+	for <linux-next@archiver.kernel.org>; Thu,  8 Aug 2019 03:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18B22171F
-	for <linux-next@archiver.kernel.org>; Thu,  8 Aug 2019 02:53:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h2J8ojQi"
+	by mail.kernel.org (Postfix) with ESMTP id C044E21882
+	for <linux-next@archiver.kernel.org>; Thu,  8 Aug 2019 03:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbfHHCxb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Aug 2019 22:53:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:35857 "EHLO ozlabs.org"
+        id S2389645AbfHHDCB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Aug 2019 23:02:01 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:58116 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727978AbfHHCxb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Aug 2019 22:53:31 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 463tGw3FLXz9s7T;
-        Thu,  8 Aug 2019 12:53:27 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565232808;
-        bh=/PuKtT7hVEGOuEdR+eb2Zo3CrrUaO63bl10cgsb8BH4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=h2J8ojQiYVX+SIFRiezM7ePsVtjVQwzWzFA0f9xnHmsBVnu6Fsaz2F2RMt4X+z++0
-         C84YjQH/VGCZXtzn0W6H7l+JDtcKvsASqlS63+WBijsGT/Z4v6op/oIfRAAD/WbX5+
-         kF2VMypPt4quEdbIJ7DJu4SDt8tUIBRhKTu/JhnGUagOJMezxE9rD6jt1/ichXiG1m
-         mU275Hk37Hjy19kgIUugnWW8Ze3Q4csh6zHOVlmJY8opVj6ZGMbA5+3BhVdj86jAhn
-         1rOzaMHqhE3LF1GQ1Vr5mqLvSbKDG3HZi9DRY62yJmiawXDEa+akB9XNDxI26JwxzN
-         7X25Qy+eMoyWQ==
-Date:   Thu, 8 Aug 2019 12:53:26 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
+        id S2389632AbfHHDCA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 7 Aug 2019 23:02:00 -0400
+Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
+        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hvYgg-0001B1-8I; Thu, 08 Aug 2019 13:01:58 +1000
+Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hvYgf-0004H8-DD; Thu, 08 Aug 2019 13:01:57 +1000
+Date:   Thu, 8 Aug 2019 13:01:57 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrii Nakryiko <andriin@fb.com>
-Subject: linux-next: manual merge of the bpf-next tree with Linus' tree
-Message-ID: <20190808125326.614065d6@canb.auug.org.au>
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Message-ID: <20190808030156.GA15782@gondor.apana.org.au>
+References: <20190805145736.2d39f95b@canb.auug.org.au>
+ <20190808115245.0c88c300@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/t965bQleaCIqT2n30_GaWGl";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808115245.0c88c300@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/t965bQleaCIqT2n30_GaWGl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 08, 2019 at 11:52:45AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 5 Aug 2019 14:57:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> > 
+> > After merging the crypto tree, today's linux-next build (sparc64
+> > defconfig) failed like this:
+> > 
+> > drivers/char/hw_random/n2-drv.c: In function 'n2rng_probe':
+> > drivers/char/hw_random/n2-drv.c:771:29: error: 'pdev' undeclared (first use in this function); did you mean 'cdev'?
+> >   err = devm_hwrng_register(&pdev->dev, &np->hwrng);
+> >                              ^~~~
+> >                              cdev
+> > drivers/char/hw_random/n2-drv.c:771:29: note: each undeclared identifier is reported only once for each function it appears in
+> > 
+> > Caused by commit
+> > 
+> >   3e75241be808 ("hwrng: drivers - Use device-managed registration API")
+> > 
+> > I applied the following patch for today:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 5 Aug 2019 14:49:59 +1000
+> > Subject: [PATCH] hwrng: fix typo in n2-drv.c
+> > 
+> > Fixes: 3e75241be808 ("hwrng: drivers - Use device-managed registration API")
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/char/hw_random/n2-drv.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
+> > index 2d256b3470db..73e408146420 100644
+> > --- a/drivers/char/hw_random/n2-drv.c
+> > +++ b/drivers/char/hw_random/n2-drv.c
+> > @@ -768,7 +768,7 @@ static int n2rng_probe(struct platform_device *op)
+> >  	np->hwrng.data_read = n2rng_data_read;
+> >  	np->hwrng.priv = (unsigned long) np;
+> >  
+> > -	err = devm_hwrng_register(&pdev->dev, &np->hwrng);
+> > +	err = devm_hwrng_register(&op->dev, &np->hwrng);
+> >  	if (err)
+> >  		goto out_hvapi_unregister;
+> >  
+> > -- 
+> > 2.20.1
+> 
+> I am still applying that patch ...
 
-Hi all,
+Sorry, I forgot about your patch as it wasn't cced to the crypto
+mailing list.  It should be out there now.
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+I've also added a compile test for this driver so at least it should
+fail for me on x86 too.
 
-  tools/lib/bpf/libbpf.c
-
-between commit:
-
-  1d4126c4e119 ("libbpf: sanitize VAR to conservative 1-byte INT")
-
-from Linus' tree and commit:
-
-  b03bc6853c0e ("libbpf: convert libbpf code to use new btf helpers")
-
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/lib/bpf/libbpf.c
-index 2b57d7ea7836,3abf2dd1b3b5..000000000000
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@@ -1370,22 -1374,16 +1372,21 @@@ static void bpf_object__sanitize_btf(st
- =20
-  	for (i =3D 1; i <=3D btf__get_nr_types(btf); i++) {
-  		t =3D (struct btf_type *)btf__type_by_id(btf, i);
-- 		kind =3D BTF_INFO_KIND(t->info);
- =20
-- 		if (!has_datasec && kind =3D=3D BTF_KIND_VAR) {
-+ 		if (!has_datasec && btf_is_var(t)) {
-  			/* replace VAR with INT */
-  			t->info =3D BTF_INFO_ENC(BTF_KIND_INT, 0, 0);
- -			t->size =3D sizeof(int);
- -			*(int *)(t + 1) =3D BTF_INT_ENC(0, 0, 32);
- +			/*
- +			 * using size =3D 1 is the safest choice, 4 will be too
- +			 * big and cause kernel BTF validation failure if
- +			 * original variable took less than 4 bytes
- +			 */
- +			t->size =3D 1;
-- 			*(int *)(t+1) =3D BTF_INT_ENC(0, 0, 8);
-- 		} else if (!has_datasec && kind =3D=3D BTF_KIND_DATASEC) {
-++			*(int *)(t + 1) =3D BTF_INT_ENC(0, 0, 8);
-+ 		} else if (!has_datasec && btf_is_datasec(t)) {
-  			/* replace DATASEC with STRUCT */
-- 			struct btf_var_secinfo *v =3D (void *)(t + 1);
-- 			struct btf_member *m =3D (void *)(t + 1);
-+ 			const struct btf_var_secinfo *v =3D btf_var_secinfos(t);
-+ 			struct btf_member *m =3D btf_members(t);
-  			struct btf_type *vt;
-  			char *name;
- =20
-
---Sig_/t965bQleaCIqT2n30_GaWGl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1LjqYACgkQAVBC80lX
-0GyyZQf9HpGsTBYYj/EbUlYjBJQiYNKf3nilJ36/aZKDUa9R6wBu3tHu6p24zRRh
-cSvwL8hit9tcUZOI1t4OyVh64mlW8GRxE5kKu0722dxRnSMQx7Td3LTA6inrlCCV
-CnJRlEoCHpP7vITbo+0cwVhJt+OR4k4/GEAf/mZVqZAwoXMsUZkC6LY30aKWDJfc
-3TzURLuzemJSJvZAsNOXDHevUM++t+01n1iq+3Y6bf9grOyQc9NI732GKTTxOPEE
-FpNhnSp8H24r2yBiuIgJqHSNAwZy/03TUtiijE8xomQZoIWOUn10BL4d2tnP/kpn
-kU6k1xWsopkhAi54Z0ebJcEEjpDLWA==
-=cXek
------END PGP SIGNATURE-----
-
---Sig_/t965bQleaCIqT2n30_GaWGl--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
