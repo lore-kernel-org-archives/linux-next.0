@@ -2,42 +2,106 @@ Return-Path: <SRS0=0EBU=WG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D97C433FF
-	for <linux-next@archiver.kernel.org>; Sat, 10 Aug 2019 17:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BCBC32751
+	for <linux-next@archiver.kernel.org>; Sat, 10 Aug 2019 20:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F706208C3
-	for <linux-next@archiver.kernel.org>; Sat, 10 Aug 2019 17:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB37208C3
+	for <linux-next@archiver.kernel.org>; Sat, 10 Aug 2019 20:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbfHJRmI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 10 Aug 2019 13:42:08 -0400
-Received: from verein.lst.de ([213.95.11.211]:35654 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725884AbfHJRmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 10 Aug 2019 13:42:08 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 5C43268BFE; Sat, 10 Aug 2019 19:42:05 +0200 (CEST)
-Date:   Sat, 10 Aug 2019 19:42:05 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, hch@lst.de,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Aug 9
-Message-ID: <20190810174205.GA11215@lst.de>
-References: <20190809180350.5cf09351@canb.auug.org.au> <CADYN=9LPrQyCqWyUG-SUZircE=0rjkeQaASqUtAM--5CoaZCiw@mail.gmail.com>
+        id S1726201AbfHJUmb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 10 Aug 2019 16:42:31 -0400
+Received: from smtprelay0208.hostedemail.com ([216.40.44.208]:54724 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726014AbfHJUmb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Sat, 10 Aug 2019 16:42:31 -0400
+X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Sat, 10 Aug 2019 16:42:30 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id 287351800294E
+        for <linux-next@vger.kernel.org>; Sat, 10 Aug 2019 20:33:17 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 5A0FA1802913B;
+        Sat, 10 Aug 2019 20:33:15 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: dust49_1c42199401b48
+X-Filterd-Recvd-Size: 3048
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 10 Aug 2019 20:33:14 +0000 (UTC)
+Message-ID: <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
+Subject: Re: [PATCH] Makefile: Convert -Wimplicit-fallthrough=3 to just
+ -Wimplicit-fallthrough for clang
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Date:   Sat, 10 Aug 2019 13:33:12 -0700
+In-Reply-To: <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
+         <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
+         <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+         <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADYN=9LPrQyCqWyUG-SUZircE=0rjkeQaASqUtAM--5CoaZCiw@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Fixed in the dma-mapping-for-linus tree, which means the pull request
-will be delayed until next week.  Thanks for the report.
+On Sat, 2019-08-10 at 13:18 -0700, Joe Perches wrote:
+> On Sat, 2019-08-10 at 12:44 -0700, Linus Torvalds wrote:
+> > On Sat, Aug 10, 2019 at 12:32 PM Joe Perches <joe@perches.com> wrote:
+> > > What does it take for this sort of patch to be applied by you?
+> > 
+> > The basic rule tends to be: "normal channels".
+> []
+> > I pulled from Gustavo earlier today to add a few more expected switch
+> > fall-through's, I guess I can take this Makefile change directly.
+> 
+> Thanks. It's simple enough.
+> 
+> There are classes of patches generated by scripts that have
+> no real mechanism to be applied today.
+> 
+> For instance: global coccinelle scripted changes to use stracpy
+> https://lore.kernel.org/lkml/alpine.DEB.2.21.1907251747560.2494@hadrien/
+> 
+> and trivial scripted changes to MAINTAINERS
+> https://lore.kernel.org/lkml/6482e6546dc328ec47b07dba9a78a9573ebb3e56.camel@perches.com/
+> 
+> that are basically impossible to be applied by anyone but you.
+> 
+> Otherwise there are hundreds of little micro patches most of
+> which would not otherwise be applied.
+> 
+> There should be some process available to get these treewide
+> or difficult to keep up-to-date and apply patches handled.
+> 
+> I believe these sorts of scripted patches should ideally
+> be handled immediately before an RC1 so other trees can be 
+> synchronized in the simplest way possible.
+
+Hey Stephen
+
+Question for you about a possible -next process change.
+
+Would it be reasonable to have some mechanism to script
+treewide patches to generate and apply after Andrew Morton's
+mmotm patches are applied to -next?
+
+This could allow treewide scripted patches to have
+compilation and test coverage before possibly being
+applied to Linus' tree.
+
+What would be necessary to allow this?
+
