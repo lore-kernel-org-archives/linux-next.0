@@ -1,107 +1,116 @@
-Return-Path: <SRS0=0EBU=WG=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=Ps7T=WH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BCBC32751
-	for <linux-next@archiver.kernel.org>; Sat, 10 Aug 2019 20:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030ABC0650F
+	for <linux-next@archiver.kernel.org>; Sun, 11 Aug 2019 21:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB37208C3
-	for <linux-next@archiver.kernel.org>; Sat, 10 Aug 2019 20:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A16E92084D
+	for <linux-next@archiver.kernel.org>; Sun, 11 Aug 2019 21:27:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sqBxk/kZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfHJUmb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 10 Aug 2019 16:42:31 -0400
-Received: from smtprelay0208.hostedemail.com ([216.40.44.208]:54724 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726014AbfHJUmb (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:42:31 -0400
-X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Sat, 10 Aug 2019 16:42:30 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id 287351800294E
-        for <linux-next@vger.kernel.org>; Sat, 10 Aug 2019 20:33:17 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 5A0FA1802913B;
-        Sat, 10 Aug 2019 20:33:15 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: dust49_1c42199401b48
-X-Filterd-Recvd-Size: 3048
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 10 Aug 2019 20:33:14 +0000 (UTC)
-Message-ID: <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
-Subject: Re: [PATCH] Makefile: Convert -Wimplicit-fallthrough=3 to just
- -Wimplicit-fallthrough for clang
-From:   Joe Perches <joe@perches.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Date:   Sat, 10 Aug 2019 13:33:12 -0700
-In-Reply-To: <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
-References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
-         <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
-         <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
-         <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1725847AbfHKV1P (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 11 Aug 2019 17:27:15 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48631 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbfHKV1P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 11 Aug 2019 17:27:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 466Brc3ctcz9sML;
+        Mon, 12 Aug 2019 07:27:12 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565558832;
+        bh=lemg1XZKoY/pD1ybQMwC+6Du3MCkFzha4FmfuaD/GUg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=sqBxk/kZNe2wpuIoLf3MW/bewetlG4FJlGudpYYvjnftLt2Bp0iYHwoZil4N5VP2z
+         4LnyAp8oLHh3MxnW0BmpPNiLhXnTKIexqw1l1pZI5rgGLPsgG/D6hN0q5ljXY18DQ5
+         cI7JRXRcTAu+T/3xZDPiFD17iz8A3zLWbL7/kSzuTv5g7zzlsVrFaRIPWQWaYBIIEZ
+         q2VJgeF6pWtv9JrICw1Njf7JKtcM3c9l37p3h3UiduNypikFD6H1/3yxeCLLHYAHiF
+         TjVyuNpfQNtvkCmvquvWg5/fSRKPbSFfY9oXfmBUuQ1nSgYGROWUfyH68SPfYbgRPN
+         EFafp5E2ap1mw==
+Date:   Mon, 12 Aug 2019 07:26:59 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Add SPDX kernel tree to linux-next
+Message-ID: <20190812072659.606b2107@canb.auug.org.au>
+In-Reply-To: <20190810115533.GA6302@kroah.com>
+References: <20190810115533.GA6302@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/joDWPergj0mqSvlW2B4zo=E";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Sat, 2019-08-10 at 13:18 -0700, Joe Perches wrote:
-> On Sat, 2019-08-10 at 12:44 -0700, Linus Torvalds wrote:
-> > On Sat, Aug 10, 2019 at 12:32 PM Joe Perches <joe@perches.com> wrote:
-> > > What does it take for this sort of patch to be applied by you?
-> > 
-> > The basic rule tends to be: "normal channels".
-> []
-> > I pulled from Gustavo earlier today to add a few more expected switch
-> > fall-through's, I guess I can take this Makefile change directly.
-> 
-> Thanks. It's simple enough.
-> 
-> There are classes of patches generated by scripts that have
-> no real mechanism to be applied today.
-> 
-> For instance: global coccinelle scripted changes to use stracpy
-> https://lore.kernel.org/lkml/alpine.DEB.2.21.1907251747560.2494@hadrien/
-> 
-> and trivial scripted changes to MAINTAINERS
-> https://lore.kernel.org/lkml/6482e6546dc328ec47b07dba9a78a9573ebb3e56.camel@perches.com/
-> 
-> that are basically impossible to be applied by anyone but you.
-> 
-> Otherwise there are hundreds of little micro patches most of
-> which would not otherwise be applied.
-> 
-> There should be some process available to get these treewide
-> or difficult to keep up-to-date and apply patches handled.
-> 
-> I believe these sorts of scripted patches should ideally
-> be handled immediately before an RC1 so other trees can be 
-> synchronized in the simplest way possible.
+--Sig_/joDWPergj0mqSvlW2B4zo=E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hey Stephen
+Hi Greg,
 
-Question for you about a possible -next process change.
+On Sat, 10 Aug 2019 13:55:33 +0200 Greg KH <gregkh@linuxfoundation.org> wro=
+te:
+>=20
+> I realized that I've been sending patches to Linus from my "SPDX" kernel
+> tree for a few releases now, and it's not included in linux-next, which
+> is not good.
+>=20
+> So, could you please add the kernel tree / branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/spdx.git spdx-linus
+>=20
+> to linux-next?
 
-Would it be reasonable to have some mechanism to script
-treewide patches to generate and apply after Andrew Morton's
-mmotm patches are applied to -next?
+Added from today.  One question: is this meant to be a -next tree or a
+-fixes tree?
 
-This could allow treewide scripted patches to have
-compilation and test coverage before possibly being
-applied to Linus' tree.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-What would be necessary to allow this?
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/joDWPergj0mqSvlW2B4zo=E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1QiCMACgkQAVBC80lX
+0Gwlzgf7BHK49PKtF9cbwzB+OTFwcYVI5QBhlxcgG7jPdrI+YRBJXPnszm6VcdwA
+TZ3qgjkJl8SDAy88LsefAtMqRgZi52rIiJ6SB9YXfPlPzu/3tre47Umb+zLfTCoj
++HMN6zHnKskaPB0jxyEv3Lm/m8CWT4pzdXlQnWMrguvp+6PVbczZMsvJqMg9WEWr
+X8a8df9QIlhDPIHOFgJ7BiNSMT1/L3/uN2Wu2szqMLix5PoRoAI+OSA8mBRcWWUI
+RPE9fa8SGwloMIoU8CsRFAmy9DAT+F+wArb11iyjyfuPavqhglGJywPzCQS4O5/1
+v+PjPeos8+qfC6AxI23IjvFJtBxEaw==
+=7LyJ
+-----END PGP SIGNATURE-----
+
+--Sig_/joDWPergj0mqSvlW2B4zo=E--
