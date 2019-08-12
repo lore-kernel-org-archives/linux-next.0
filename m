@@ -2,108 +2,94 @@ Return-Path: <SRS0=3BD/=WI=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21F6C31E40
-	for <linux-next@archiver.kernel.org>; Mon, 12 Aug 2019 18:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF41C433FF
+	for <linux-next@archiver.kernel.org>; Mon, 12 Aug 2019 21:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B82882070C
-	for <linux-next@archiver.kernel.org>; Mon, 12 Aug 2019 18:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565633329;
-	bh=XXkdZBJbNK4NKUe11/IVrnTKSH3fWRQ9TI/CxLJvdlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GJkKfBNwZPR0LBU5Q4EYtXr1zLIjxtsO5ecAyCsGrP1FrQd8tXnp3qEBHKrJw8hhp
-	 NEjC7tA0pyUo6HIa05v99FrDmhGJX/qvc/UqwMhVMqKIlv6vXbownqlQmxS+8fxwHa
-	 yQfipinMOAco7G20ZYI+s+qdmUmgkonDSKor1hfA=
+	by mail.kernel.org (Postfix) with ESMTP id DCF5E2070C
+	for <linux-next@archiver.kernel.org>; Mon, 12 Aug 2019 21:39:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DeELis/F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfHLSIs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 12 Aug 2019 14:08:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34354 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfHLSIs (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2019 14:08:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jMh85WQgxIdcz7yd1BWSn2ujSLN3yCFWRbvzn04j/60=; b=tGt0eNbG4+SkPkLXOUgPm4pKy
-        WVySWGw3MzdYRSARCh6IKpb09zogVVtk3jSkDv2lQ9tQi95flP7s+UlKxq6JyowqW9pG8QO3hpW2K
-        HtOe67xFnI/GoiriCY0pHL1UQyccdnNry3AgcOJcT2hPCt9mXOI22GwO+GDARxuAAuu58=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hxEFs-0002Ty-I9; Mon, 12 Aug 2019 17:37:12 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 9E08E2740CBD; Mon, 12 Aug 2019 18:37:11 +0100 (BST)
-Date:   Mon, 12 Aug 2019 18:37:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: next/master boot: 254 boots: 11 failed, 227 passed with 16
- offline (v5.3-rc4-5755-g8e72ac275c63)
-Message-ID: <20190812173711.GN4592@sirena.co.uk>
-References: <5d519859.1c69fb81.531c0.088a@mx.google.com>
+        id S1726765AbfHLVjZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 12 Aug 2019 17:39:25 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44133 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbfHLVjZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Aug 2019 17:39:25 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 466q4B1XBLz9sN1;
+        Tue, 13 Aug 2019 07:39:22 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565645962;
+        bh=0ODdc4jwNEI8tBoNVuK1oJEVG49Nb6xIuolDFClL8tM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DeELis/Fpcv1Vf/zfOCuUk1CTTSsbNTBb6ygM4imNnqfuyflIjGYrAc+24cQMz2Ua
+         Nr42+TjioO6ee8sUd37s4BLMqsEjpy+BTVv57GXcD4zkhil4tFBZGLHf0KaB9rkrxb
+         D1aDu667uD99D8kaVNtTXKePnnMBiY4iIz5ZYrsOWTQzKD+veUggXK6BWtqly3D8ld
+         FKI6wS+En1b1PplwDT8S1etI79lzKA6c4DrpbknYW7wnMU9pU1Ht2rO7xW1s/VSOnJ
+         8v/gRTo7/xWF666sr6SiWyypIwauA1i7Uy+qdNOgivP2Mbb8Pk4vLIbG0IWzU56w8u
+         ODOloy2GNwDsg==
+Date:   Tue, 13 Aug 2019 07:39:14 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Aug 12
+Message-ID: <20190813073914.2465e92e@canb.auug.org.au>
+In-Reply-To: <CAMuHMdUEoBj-JBZza4==9TENfFk3BckCPO+mrZjhu1vOr05_0w@mail.gmail.com>
+References: <20190812193146.4939f5f5@canb.auug.org.au>
+        <CAMuHMdUEoBj-JBZza4==9TENfFk3BckCPO+mrZjhu1vOr05_0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6yHiY5vv/BiPjcMt"
-Content-Disposition: inline
-In-Reply-To: <5d519859.1c69fb81.531c0.088a@mx.google.com>
-X-Cookie: Decaffeinated coffee?  Just Say No.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/xdLrJqR.jPwaZzL0VXYgbGa";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-
---6yHiY5vv/BiPjcMt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/xdLrJqR.jPwaZzL0VXYgbGa
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2019 at 09:48:25AM -0700, kernelci.org bot wrote:
+Hi Geert,
 
-Today's -next fails to boot on qcs404-evb-4k:
+On Mon, 12 Aug 2019 15:38:06 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
+>
+> Looks like commit 8e72ac275c63a44c ("Add linux-next specific files for
+> 20190812")
+> made it to git.kernel.org, but the tag didn't?
 
-> arm64:
->     defconfig:
->         gcc-8:
+Thanks for letting me know.  I made some changes to my scripts for
+yesterday and there was a bug that I did not notice :-(  I have added
+the tag and pushed it our just now.
 
-The boot appears to suddenly drop into a bootloader near the end of
-boot:
+--=20
+Cheers,
+Stephen Rothwell
 
-05:14:44.500307  [    1.886858] Key type dns_resolver registered
-05:14:44.500345  [    1.892544] registered taskstats version 1
-05:14:44.500382  [    1.895502] Loading compiled-in X.509 certificates
-05:14:44.515903  [    1.916067] hctosys: unable to open rtc device (rtc0)
-05:14:51.562124 =20
-05:14:51.562251  Format: Log Type - Time(microsec) - Message - Optional Info
-05:14:51.562306  Log Type: B - Since Boot(Power On Reset),  D - Delta,  S -=
- Statistic
-05:14:51.562383  S - QC_IMAGE_VERSION_STRING=3DBOOT.XF.0.1-00080-QCS405LZB-2
-05:14:51.562427  S - IMAGE_VARIANT_STRING=3DQcs405LA
-
---6yHiY5vv/BiPjcMt
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/xdLrJqR.jPwaZzL0VXYgbGa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1Ro8YACgkQJNaLcl1U
-h9DSZQf/bKwhCQ1C3b2g6D9QdwqB6vbUt9Wg0E/+9Th2rg+WR98nT9yHXhzYLpPP
-8KF1isnSnh1bQMivHodQzHRjgKqexOsG7WNI79x1XQbsqURFcIwNm2UFIJq5gkXF
-9Y1YedRKyy+pUT17WRNRpZk1lV9r+LTND8IObYOzRU9rZxCpA5wXSGVz3imh+VL5
-eXcublPQWwRUSccn479DylpZQSzCnSUtHVCwDN/ti09FXIa401d/Zpije+9NqJjb
-+kycjvuSQK0hfdI4U2WlNivIlqqVakvx6ihtvRQaIbhXgkboIjfeLRv6Au5+olWx
-2vEU0ix+a1mUYvvMiLtJFwkbSALDyw==
-=FI7D
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1R3IIACgkQAVBC80lX
+0GysUwf+Kpk3y8lBWnC86Xg7CyhDuwwpIlSdVAXUuvJFEqbxk4Pt6DTFG7m7hUgm
+YJPzmv3xujML+h0iJKgrLdxGalpuiNoz5QMJu3D98Dnk093BIvedJOHVVkJ7mf2R
+43PQeuhneCLYWI6yDdGAI5kVDQmZ/Ojwqi74SzOi6yJzEcJxQonizXkE8JURo/0k
+AyMq/DC7RAbnY6mP7ti09Wo9QMqH8KiXZxv9EX3QvTTToH+UovY9YFOPxHf4xLtn
+yHfcgpGCEU/TwOw1VO6+QAc2brLYKUXHM/qlDwq5GEsiEFASDn7CXuFEwvdjHlOd
+Gy/k+BPk4AHmc7uVeRxpUNxufq8N9g==
+=h72d
 -----END PGP SIGNATURE-----
 
---6yHiY5vv/BiPjcMt--
+--Sig_/xdLrJqR.jPwaZzL0VXYgbGa--
