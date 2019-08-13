@@ -4,78 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A84B4C433FF
-	for <linux-next@archiver.kernel.org>; Tue, 13 Aug 2019 10:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC03C32750
+	for <linux-next@archiver.kernel.org>; Tue, 13 Aug 2019 10:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83ADA206C2
-	for <linux-next@archiver.kernel.org>; Tue, 13 Aug 2019 10:23:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8B9F20679
+	for <linux-next@archiver.kernel.org>; Tue, 13 Aug 2019 10:23:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfHMKX0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 13 Aug 2019 06:23:26 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:33966 "EHLO inva021.nxp.com"
+        id S1728854AbfHMKX1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 13 Aug 2019 06:23:27 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:33948 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbfHMKX0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Aug 2019 06:23:26 -0400
+        id S1727632AbfHMKX1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 13 Aug 2019 06:23:27 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A1C61200154;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8B36F20016D;
         Tue, 13 Aug 2019 12:23:24 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C1DD3200783;
-        Tue, 13 Aug 2019 12:23:20 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DA86C200154;
+        Tue, 13 Aug 2019 12:23:19 +0200 (CEST)
 Received: from lsv03124.swis.in-blr01.nxp.com (lsv03124.swis.in-blr01.nxp.com [92.120.146.121])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8636B402F0;
-        Tue, 13 Aug 2019 18:23:15 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D359402BF;
+        Tue, 13 Aug 2019 18:23:14 +0800 (SGT)
 From:   Ashish Kumar <Ashish.Kumar@nxp.com>
 To:     linux-kernel@vger.kernel.org, broonie@kernel.org,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-next@vger.kernel.org, Ashish Kumar <Ashish.Kumar@nxp.com>
-Subject: [Patch v4 3/3] dt-bindings: Enhance binding to extend example for flash entry
-Date:   Tue, 13 Aug 2019 15:53:11 +0530
-Message-Id: <1565691791-26167-3-git-send-email-Ashish.Kumar@nxp.com>
+        linux-next@vger.kernel.org, Ashish Kumar <Ashish.Kumar@nxp.com>,
+        Kuldeep Singh <kuldeep.singh@nxp.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>
+Subject: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add ls2080a compatibility string to bindings
+Date:   Tue, 13 Aug 2019 15:53:09 +0530
+Message-Id: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
-References: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Add example for adding flash entry on various boards' dts
-using flash manufacture spansion/cypress.
+There are 2 version of QSPI-IP, according to which controller registers sets
+can be big endian or little endian.There are some other minor changes like
+RX fifo depth etc.
 
-Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
+The big endian version uses driver compatible "fsl,ls1021a-qspi" and
+little endian version uses driver compatible "fsl,ls2080a-qspi"
+
+Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
+Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Han Xu <han.xu@nxp.com>
 ---
 v4:
+-Rebase to spi.git,
 -Add new patch to series.
+-Previous versions reviewed here http://patchwork.ozlabs.org/patch/1118639/
 v3:
-Not present
-v2:
-Not present
- 
- Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Rebase to top
+v2: 
+Convert to patch series and rebasing done on top of tree
+
+ Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-index 2c2a3e9..7ba0472 100644
+index e8f1d62..6d7c9ec 100644
 --- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
 +++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-@@ -35,7 +35,11 @@ qspi0: quadspi@40044000 {
- 	clock-names = "qspi_en", "qspi";
- 
- 	flash0: s25fl128s@0 {
--		....
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "spansion,s25fl128s", "jedec,spi-nor";
-+		spi-max-frequency = <50000000>;
-+		reg = <0>;
- 	};
- };
- 
+@@ -3,9 +3,8 @@
+ Required properties:
+   - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
+ 		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
+-		 "fsl,ls1021a-qspi"
++		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
+ 		 or
+-		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
+ 		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
+   - reg : the first contains the register location and length,
+           the second contains the memory mapping address and length
 -- 
 2.7.4
 
