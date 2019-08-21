@@ -1,35 +1,35 @@
-Return-Path: <SRS0=rDMd=WQ=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=A997=WR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAD0C3A589
-	for <linux-next@archiver.kernel.org>; Tue, 20 Aug 2019 23:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1E6C3A589
+	for <linux-next@archiver.kernel.org>; Wed, 21 Aug 2019 00:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECDF022D6D
-	for <linux-next@archiver.kernel.org>; Tue, 20 Aug 2019 23:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 888B42087E
+	for <linux-next@archiver.kernel.org>; Wed, 21 Aug 2019 00:20:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfHTXhc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 20 Aug 2019 19:37:32 -0400
-Received: from smtprelay0178.hostedemail.com ([216.40.44.178]:44955 "EHLO
+        id S1726502AbfHUAUs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 20 Aug 2019 20:20:48 -0400
+Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:55756 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726248AbfHTXhc (ORCPT
+        by vger.kernel.org with ESMTP id S1726215AbfHUAUs (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:37:32 -0400
+        Tue, 20 Aug 2019 20:20:48 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 6DB2F180A8151;
-        Tue, 20 Aug 2019 23:37:30 +0000 (UTC)
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 3D9DE181D33FC;
+        Wed, 21 Aug 2019 00:20:46 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: scene35_2441a800be623
-X-Filterd-Recvd-Size: 3565
+X-HE-Tag: crush78_7af148c290837
+X-Filterd-Recvd-Size: 3059
 Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
         (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 20 Aug 2019 23:37:29 +0000 (UTC)
-Message-ID: <9d12995c5e7e41fc5d8ba202f76a2cf854183245.camel@perches.com>
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 21 Aug 2019 00:20:44 +0000 (UTC)
+Message-ID: <edd8efd53fadd07992f804cc595c6ae5fdb60e73.camel@perches.com>
 Subject: Re: rfc: treewide scripted patch mechanism? (was: Re: [PATCH]
  Makefile: Convert -Wimplicit-fallthrough=3 to just -Wimplicit-fallthrough
  for clang)QUILT
@@ -41,7 +41,7 @@ Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         LKML <linux-kernel@vger.kernel.org>,
         clang-built-linux@googlegroups.com,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Date:   Tue, 20 Aug 2019 16:37:27 -0700
+Date:   Tue, 20 Aug 2019 17:20:43 -0700
 In-Reply-To: <CAHk-=wgqQKoAnhmhGE-2PBFt7oQs9LLAATKbYa573UO=DPBE0Q@mail.gmail.com>
 References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
          <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
@@ -80,31 +80,23 @@ On Tue, 2019-08-20 at 16:28 -0700, Linus Torvalds wrote:
 > didn't fix the problem with different size limits, but at least it
 > fixed the fundamentally broken assumption that the source has no size
 > limit at all.
-> 
-> Honestly, I really really REALLY don't want yet another broken string
-> handling function, when we still have a lot of the old strlcpy() stuff
-> in the tree from previous broken garbage.
-> 
-> The fact is, when you copy strings, both the destination *AND* the
-> source may have size limits. They may be the same. Or they may not be.
-> 
-> This is particularly noticeable in the "str*_pad()" versions. It's
-> simply absolutely and purely wrong. I will note that we currently have
-> not a single user or strscpy_pad() in the whole kernel outside of the
-> testing code.
-> 
-> And yes, we actually *do* have real and present cases of "source and
-> destination have different sizes". They aren't common, but they do
-> exist.
-> 
-> So I'm putting my foot down on yet another broken string copy
-> interface from people who do not understand this fundamental issue.
 
-I think you are mistaken about the stracpy limits as
-the only limit is not the source size but the dest.
+Umm, btw: have you actually looked at stracpy?
 
-Why should the source be size limited?
+It's just a convenience wrapper around strscpy
+and dest must be a char array and its size
+does not need to be specified as a somewhat
+useless argument otherwise prone to misuse.
 
-btw: I also think str.cpy_pad is horrible.
+#define stracpy(dest, src)						\
+({									\
+	size_t count = ARRAY_SIZE(dest);				\
+	BUILD_BUG_ON(!(__same_type(dest, char[]) ||			\
+		       __same_type(dest, unsigned char[]) ||		\
+		       __same_type(dest, signed char[])));		\
+									\
+	strscpy(dest, src, count);					\
+})
 
+I sent several patches for those misuses.
 
