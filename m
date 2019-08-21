@@ -2,119 +2,119 @@ Return-Path: <SRS0=A997=WR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07CEBC3A59E
-	for <linux-next@archiver.kernel.org>; Wed, 21 Aug 2019 04:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18230C3A59E
+	for <linux-next@archiver.kernel.org>; Wed, 21 Aug 2019 04:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DBF22DD3
-	for <linux-next@archiver.kernel.org>; Wed, 21 Aug 2019 04:16:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCF9A22CF7
+	for <linux-next@archiver.kernel.org>; Wed, 21 Aug 2019 04:42:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kMmEHoPl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfHUEQw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 21 Aug 2019 00:16:52 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:28811 "EHLO 1wt.eu"
+        id S1725283AbfHUEmE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 21 Aug 2019 00:42:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:57315 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727457AbfHUEQw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 21 Aug 2019 00:16:52 -0400
-X-Greylist: delayed 899 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Aug 2019 00:16:51 EDT
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id x7L41OHU009738;
-        Wed, 21 Aug 2019 06:01:24 +0200
-Date:   Wed, 21 Aug 2019 06:01:24 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joe Perches <joe@perches.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: rfc: treewide scripted patch mechanism? (was: Re: [PATCH]
- Makefile: Convert -Wimplicit-fallthrough=3 to just -Wimplicit-fallthrough
- for clang)QUILT
-Message-ID: <20190821040124.GA9608@1wt.eu>
-References: <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
- <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
- <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
- <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
- <ad42da450ccafcb571cca9289dcf52840dbb53d3.camel@perches.com>
- <20190820092451.791c85e5@canb.auug.org.au>
- <14723fccc2c3362cc045df17fc8554f37c8a8529.camel@perches.com>
- <CAHk-=wgqQKoAnhmhGE-2PBFt7oQs9LLAATKbYa573UO=DPBE0Q@mail.gmail.com>
- <edd8efd53fadd07992f804cc595c6ae5fdb60e73.camel@perches.com>
- <CAHk-=wg8vLmmwTGhXM51NpSWJW8RFEAKoXxG0Hu_Q9Uwbjj8kw@mail.gmail.com>
+        id S1725268AbfHUEmE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 21 Aug 2019 00:42:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Cw495LSXz9s00;
+        Wed, 21 Aug 2019 14:42:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566362521;
+        bh=c2ZA7UuGe1Jz51uUDHrUKKg420FVgPBPVw/Mn6rVOvw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kMmEHoPlFEUoGGyFj2UY2VjSsRSjyqiDy676CxJamLBacx5YYA/vE8EJxYxzdwp9/
+         nowWw05L8SjsHhRig4E0D7cys2u0TzqxHaRvcZlGY97qVMlC7zs9JP3OjscyQprey4
+         gbVnOs0xYSsZ8youpLY8O/GvOxAA43df89MNU04XVqTd3vw5J3J9TbKeX69xWVldTI
+         I0mrQTSKo33YdfvWe8stQFbvWhxLUlsU39ipo/vZA/etpzzlVbp4d+605roC5VCMIY
+         CuLN5jyRXib/C24f4kuu1isfF4l3ljOtN7WF5uOsoQ9g/fjcR5x2yBH1W/feOGzkZX
+         Ou94zzEFeHWtA==
+Date:   Wed, 21 Aug 2019 14:42:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: linux-next: manual merge of the irqchip tree with the pci tree
+Message-ID: <20190821144200.7192b3a4@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg8vLmmwTGhXM51NpSWJW8RFEAKoXxG0Hu_Q9Uwbjj8kw@mail.gmail.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Type: multipart/signed; boundary="Sig_/tdFKtA5bSqO30zf4t7_Rwin";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:43:27PM -0700, Linus Torvalds wrote:
-> I would seriously suggest doing something like
-> 
->    copy_string( dst, dstsize, src, srcsize, FLAGS );
-> 
-> where FLAGS migth be "pad" or whatever. Make it return the size of the
-> resulting string, because while it can be convenient to pass 'dst" on,
-> it's not useful.
+--Sig_/tdFKtA5bSqO30zf4t7_Rwin
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I actually like this a lot. FLAGS could also indicate whether or not a
-zero before srcsize ends the copy or not, allowing to copy substrings
-of known length or known valid strings of unknown length by passing ~0
-in srcsize. And it could also indicate whether the returned value should
-indicate how much was copied or how much would have been needed for the
-copy to work (so that testing (result <= dstsize) indicates truncation).
+Hi all,
 
-> And then maybe just add the helper macro that turns an array into a
-> "pointer, size" combination, rather than yet another letter jumble.
+Today's linux-next merge of the irqchip tree got a conflict in:
 
-I did exactly this in some of my projects including haproxy, I called
-the lib "ist" for "indirect string", and found it extremely convenient
-to use because many functions now return an ist or take an ist as an
-argument. Passing a structure of only two elements results in passing
-only two registers, and that's the same for the return value. Moreover,
-the compiler is smart enough to eliminate a *lot* of manipulations, and
-to replace pointer dereferences with direct register manipulations. I
-do have a lot of ist("foo") spread everywhere in the code, which makes
-a struct ist from the string and its length, and when you look at the
-code, the compiler used immediate values for both the string and its
-length. It's also extremely convenient for string comparisons and
-lookups because you start by checking the length and can eliminate
-lookups and dereferences, making keyword parsers very efficient. It
-also allows us to have an istcat() function doing like strncat() but
-with the output size always known so that there's no risk of appending
-past the end when the starting point doesn't match the beginning of a
-string.
+  drivers/pci/controller/pci-hyperv.c
 
-I must confess that I became quite addict to using this because it's
-so much convenient not to have to care about string length nor zero
-termination anymore, without the overhead of calling strlen() on
-resulting values!
+between commit:
 
-For illustration of the simplicity the code is here :
-    http://git.haproxy.org/?p=haproxy.git;a=blob_plain;f=include/common/ist.h
+  44b1ece783ff ("PCI: hv: Detect and fix Hyper-V PCI domain number collisio=
+n")
 
-And here are a few examples of usage:
-  - declaration in arrays:
-    http://git.haproxy.org/?p=haproxy.git;a=blob;f=contrib/prometheus-exporter/service-prometheus.c;h=9b9ef2ea8e2e8ee0cc63364500d39fc08009fb8d;hb=HEAD#l644
-  - appending to a string:
-    http://git.haproxy.org/?p=haproxy.git;a=blob;f=contrib/prometheus-exporter/service-prometheus.c;h=9b9ef2ea8e2e8ee0cc63364500d39fc08009fb8d;hb=HEAD#l1112
-  - passing as function arguments:
-    http://git.haproxy.org/?p=haproxy.git;a=blob;f=src/http_ana.c;h=b2069e3ead59e7bcde45ac76a1c6b0b6b5fb3882;hb=HEAD#l2468
-    http://git.haproxy.org/?p=haproxy.git;a=blob;f=src/http_ana.c;h=b2069e3ead59e7bcde45ac76a1c6b0b6b5fb3882;hb=HEAD#l2602
-  - checking for known values:
-    http://git.haproxy.org/?p=haproxy.git;a=blob;f=src/h2.c;h=c41da8e5ee116e75e4719709527511c299a3657c;hb=HEAD#l295
+from the pci tree and commit:
 
-I'm personally totally convinced by this approach and am slowly improving
-this interface to progressively use it everywhere, and quite frankly I
-can only strongly recommend going into the same direction for ease of
-use, safety, and efficiency.
+  467a3bb97432 ("PCI: hv: Allocate a named fwnode instead of an address-bas=
+ed one")
 
-Willy
+from the irqchip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/controller/pci-hyperv.c
+index 3a56de6b2ec2,97056f3dd317..000000000000
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@@ -2563,7 -2521,7 +2563,8 @@@ static int hv_pci_probe(struct hv_devic
+  			const struct hv_vmbus_device_id *dev_id)
+  {
+  	struct hv_pcibus_device *hbus;
+ +	u16 dom_req, dom;
++ 	char *name;
+  	int ret;
+ =20
+  	/*
+
+--Sig_/tdFKtA5bSqO30zf4t7_Rwin
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1cy5gACgkQAVBC80lX
+0GxEjwf7B9JeDD7sR40T5sEE+XzFOOy6xkyorNU2attK2PW7bZ2QG5OKbns+ip8p
+rad1CrQFzUjeBzusakWsavi4FOidQrS7ETFhVuJKeGCWZ3PrlMLouWCcDemsrq+A
+pyvlx11HCr5UGYs/i5XQWgqTo1mq6FeaAOiJqwHitTUZ4iNQhp5Bgk+cATpocPj9
+kbthcNIN8brsnT7OSVJ11Gfz3yNbqLLVG0EHpo5OihF+4Om5MpPVe9dAloygng49
+sQsYuxA0qPi9VrQF86tqnX19mtBMte6QN8iDkGDscdNDwAXF+JTZgulhRWUqMn3H
+5rE5SY+4NLoTsU8g9rF1BjAHFpvVOQ==
+=F8xl
+-----END PGP SIGNATURE-----
+
+--Sig_/tdFKtA5bSqO30zf4t7_Rwin--
