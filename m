@@ -2,68 +2,84 @@ Return-Path: <SRS0=DIWN=WZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FD0C3A5A6
-	for <linux-next@archiver.kernel.org>; Thu, 29 Aug 2019 22:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FC2C3A5A3
+	for <linux-next@archiver.kernel.org>; Thu, 29 Aug 2019 22:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2418821874
-	for <linux-next@archiver.kernel.org>; Thu, 29 Aug 2019 22:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57AD522CEA
+	for <linux-next@archiver.kernel.org>; Thu, 29 Aug 2019 22:46:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="UYQHthzH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbfH2W3f (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 29 Aug 2019 18:29:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51873 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbfH2W3f (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2019 18:29:35 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i3Suw-0008OT-7i; Fri, 30 Aug 2019 00:29:23 +0200
-Date:   Fri, 30 Aug 2019 00:29:21 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-cc:     Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning from Linus' tree
-In-Reply-To: <20190830082357.4650d243@canb.auug.org.au>
-Message-ID: <alpine.DEB.2.21.1908300028360.1938@nanos.tec.linutronix.de>
-References: <20190830082357.4650d243@canb.auug.org.au>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1728595AbfH2WqA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 29 Aug 2019 18:46:00 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45282 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728579AbfH2Wp7 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2019 18:45:59 -0400
+Received: by mail-ot1-f67.google.com with SMTP id m24so5055643otp.12
+        for <linux-next@vger.kernel.org>; Thu, 29 Aug 2019 15:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AIuig4xjj1okPm1v+nckMKBMxCFTk/w+YVlFEyiN+6I=;
+        b=UYQHthzH50nn10Fq77yoEj2YvcrNXNY6o18RXam9bIfpl1wHeEULO4yuuCSRI/Ru2K
+         RLreXb965cYq9f3IqoESXN6C24GqPvA0ZrmEimO02Cts4PIULu8eTSRXN1IJsCJpfuRT
+         +BxwrrliSYijoXLFR2JXb4Dd9dixmo7nx0t/SCzsYhC6j9bvK86j3oNNTrtP+EVJSHkr
+         99Pi3kPcsOf6m/wOqSI9Rwe2C2ZMhHPCJ4mFEsr7TfAmthneIydvqyFqOfcrDZTd1ej9
+         rYDVYNrMO2OaS4qmIqAoNyXXvTyMb6cGBOK+FkHL6xZJdSGVe9V9M57hTVctnR+W3nW/
+         RkxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AIuig4xjj1okPm1v+nckMKBMxCFTk/w+YVlFEyiN+6I=;
+        b=CAY13xUUW3xye0V5vxL0UfSXFJjqBPD5EKvz238L2bRMR1KiTRgm9Qk3qqhXFqgoff
+         HtaPkOUtmwCgM9NQgiNfHCHWm4eWE9p3MP+WLDSloiqwc3cn1EV+3VjQ/jD1zu6/Nzr9
+         0nxXFWvZMn5T1JLhlTcM+HWxkiIQaQDaWATNxnyXXOirEwRxYSEhjC81DUqtfmi5AELH
+         HJWNf4NyivTgWcHa+E1lVqF2JdUwFE+52J62aQMZrhkTk+1ks3aK5Y5R4GLnL8us2Zo3
+         bc5yUJwONAHMBb/t2xkM/9dwQf4OsBShnZY4yDfnrgkQMhcCULVYqLmzVoJ/R0/Td/pZ
+         9xLw==
+X-Gm-Message-State: APjAAAW+wHUfKXxy9FeeFIjgaSv8OWumuO5Yvn6NEwHfe9fw6zuhbo0A
+        uuZml0CQjyGTIdjhHpakiUdUOfNnP9wRpsIWegLhjw==
+X-Google-Smtp-Source: APXvYqy2RByDJRCk/msHyU5rudzz0l2j2S1qCHXaP4lkineatCLBMlR9sdECn9SSUKEhV7aUFLo14KwjqemHdp5tUtA=
+X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr9281786otr.247.1567118758900;
+ Thu, 29 Aug 2019 15:45:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190830080855.45421fa0@canb.auug.org.au>
+In-Reply-To: <20190830080855.45421fa0@canb.auug.org.au>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 29 Aug 2019 15:45:48 -0700
+Message-ID: <CAPcyv4iWUa-HVoODtbj-G2jxS0Tm-x_=s4PNQ-M-FvDibYFgFw@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the nvdimm-fixes tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeff Moyer <jmoyer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen,
-
-On Fri, 30 Aug 2019, Stephen Rothwell wrote:
-
+On Thu, Aug 29, 2019 at 3:09 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
 > Hi all,
-> 
-> From Linus tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> arch/x86/boot/edd.c: In function 'query_edd':
-> arch/x86/boot/edd.c:148:11: warning: taking address of packed member of 'struct boot_params' may result in an unaligned pointer value [-Waddress-of-packed-member]
->   148 |  mbrptr = boot_params.edd_mbr_sig_buffer;
->       |           ^~~~~~~~~~~
-> 
-> I assume this is a result of upgrading my x86_64 cross compiler to v9.2.1
-> (from v8.3.0).
+>
+> In commit
+>
+>   dcbce3cd20be ("libnvdimm/pfn: Fix namespace creation on misaligned addresses")
+>
+> Fixes tag
+>
+>   Fixes: commit a3619190d62e ("libnvdimm/pfn: stop padding pmem namespaces ...")
+>
+> has these problem(s):
+>
+>   - leading word 'commit' unexpected
 
-Yes. We have a fix queued which should hit next tomorrow.
-
-Thanks,
-
-	tglx
+"Fixes" fixed, thanks Stephen.
