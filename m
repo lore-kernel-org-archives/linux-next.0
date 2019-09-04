@@ -2,86 +2,190 @@ Return-Path: <SRS0=8W17=W7=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CD3C3A5A9
-	for <linux-next@archiver.kernel.org>; Wed,  4 Sep 2019 21:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AE0C3A59E
+	for <linux-next@archiver.kernel.org>; Wed,  4 Sep 2019 23:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406AE208E4
-	for <linux-next@archiver.kernel.org>; Wed,  4 Sep 2019 21:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B98922168B
+	for <linux-next@archiver.kernel.org>; Wed,  4 Sep 2019 23:43:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L6nO0Wxc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="herM5rmY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfIDVjg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 4 Sep 2019 17:39:36 -0400
-Received: from ozlabs.org ([203.11.71.1]:45437 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726495AbfIDVjg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:39:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Nxzp1JR6z9sDB;
-        Thu,  5 Sep 2019 07:39:34 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567633174;
-        bh=Nkc0HkYO/x0RTv0Alngals51mJgcrSX+X+cmXRsFX4Q=;
-        h=Date:From:To:Cc:Subject:From;
-        b=L6nO0WxcEpwQPWOzj753nKDQDuXP7dgWWe8m3pebiJQqHvcl8mzSMCJdFVtsTaOfN
-         JCDfl0ERKIUnR1bWOMnky3LMf5wZzFnmQn0/4t8dOx0anJ2aXtQkJc45ueTC89rCTP
-         PKHnb8e33Jp8PifITe1kftv3idyEW6eYib/sft/yTcO5TrsMmuvMhlKfvwxJSBtz82
-         lBSQm/GV1qYKLNL8nBumF5em/9Fy7CkgDvnxG/fRHdqP+xRUqllpemn2OO+JYI1F5R
-         MR9T8zKoDzRQ1XcYbmeyLIGRlMbTjjLvCx6FEz9efRV9NiMN5PJSbLEoDLixSXGH+G
-         1lfw3FIHnVIew==
-Date:   Thu, 5 Sep 2019 07:39:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the ext4 tree
-Message-ID: <20190905073931.642040db@canb.auug.org.au>
+        id S1730011AbfIDXnr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 4 Sep 2019 19:43:47 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46400 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729773AbfIDXnr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 4 Sep 2019 19:43:47 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q5so425679pfg.13
+        for <linux-next@vger.kernel.org>; Wed, 04 Sep 2019 16:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=20yt+YNZ1L9RG1o4wcjzf4KRuf7yK7zvoTIvG7LJ5dY=;
+        b=herM5rmY9dTySIiWkNtCKws+S32Q+KNr9KnA+p+QMqgbvsrsie5gRriffPC8sA/dvK
+         C++NJPm6cH/IV68xM7a5W3/bTfJlMUFX7BletVHvCCULvYeZu48DdlxbAwoy94COPeAO
+         BGcpaMHSHj2EEV0RFEg9nPnaQpxL9D/QuBcIcCpiVGxTDNkmNzGk6ekHCJIXmsrYr3oQ
+         YJGXuZA5OUqyclRL9oYjNGwSjgNYxHO4R881eXHiHVeOEN8PHtpeAaICunkMrmOE2uSY
+         wPBwMv1qHNKI62tT1HPe5QAamvEIjeMaPx6S3IT+eKQr1aYnFZDUzwx++38b90NXxpXS
+         paJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=20yt+YNZ1L9RG1o4wcjzf4KRuf7yK7zvoTIvG7LJ5dY=;
+        b=OglQXEBGwr9bGSmGJVfO9nm225kjh+56EkTdHTOWd+VnHAFGaevU/fW8O+iiBvR/5H
+         pSh3UC+dyNPEfyvLghcO/tc6DMZAqqPNuedK809nCbuaYi8JixlMOe+j5deumBeqDQiG
+         G/ITyTF+IEXyyjL/9ZNSssKkWwKKT2Fc3WKUe+cOhD6awJwE+b65uwyYUPwqVMPTRqtY
+         KFmIxg9VLqbRiPnuAy+VLxYWB4GjNs+Qu9/RxaIdWphXCOUJ0L+9fkPb7LLCyJ8u1DvA
+         PrxUAs9PPMZCKEEx1EGdw0KsqftCIycJpfGKHNzXnQYX79khlKvv16LASjZqJEx/Wm8S
+         JTig==
+X-Gm-Message-State: APjAAAUcAL8iJw88+yq1Tx3vKjYC8q1a0IQ8QH5+vgUHbnvcDcLElvdU
+        GYq+FLNDZyrq1rza97q/ywXLjruRQeavh+PCLgWFLA==
+X-Google-Smtp-Source: APXvYqwb6a9JvgIsY537fvx0QmcGGFZpP9NmS0y0s0rFiAJs9NR6meGRExFTHKlaBQgpKv098lpoKduJkhchy366fA4=
+X-Received: by 2002:a65:690b:: with SMTP id s11mr596069pgq.10.1567640625488;
+ Wed, 04 Sep 2019 16:43:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/n+F5DPF.84nTp=gmxp1S+eV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190904164622.57f69595@canb.auug.org.au>
+In-Reply-To: <20190904164622.57f69595@canb.auug.org.au>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 4 Sep 2019 16:43:34 -0700
+Message-ID: <CAKwvOdkxgNJ_KW3M4DW-VnMk9_Vst8yPTheELTrMDK14bb+L+w@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the drm tree with the kbuild tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/n+F5DPF.84nTp=gmxp1S+eV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 3, 2019 at 11:46 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the drm tree got conflicts in:
+>
+>   drivers/gpu/drm/amd/display/dc/calcs/Makefile
+>   drivers/gpu/drm/amd/display/dc/dml/Makefile
+>   drivers/gpu/drm/amd/display/dc/dsc/Makefile
+>
+> between commit:
+>
+>   30851871d5ab ("kbuild: change *FLAGS_<basetarget>.o to take the path relative to $(obj)")
+>
+> from the kbuild tree and commit:
+>
+>   0f0727d971f6 ("drm/amd/display: readd -msse2 to prevent Clang from emitting libcalls to undefined SW FP routines")
+>
+> from the drm tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Hi all,
+My changes LGTM, thanks!
 
-Commit
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> index d930df63772c,16614d73a5fc..000000000000
+> --- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> @@@ -32,9 -32,13 +32,13 @@@ endi
+>
+>   calcs_ccflags := -mhard-float -msse $(cc_stack_align)
+>
+> + ifdef CONFIG_CC_IS_CLANG
+> + calcs_ccflags += -msse2
+> + endif
+> +
+>  -CFLAGS_dcn_calcs.o := $(calcs_ccflags)
+>  -CFLAGS_dcn_calc_auto.o := $(calcs_ccflags)
+>  -CFLAGS_dcn_calc_math.o := $(calcs_ccflags) -Wno-tautological-compare
+>  +CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calcs.o := $(calcs_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calc_auto.o := $(calcs_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calc_math.o := $(calcs_ccflags) -Wno-tautological-compare
+>
+>   BW_CALCS = dce_calcs.o bw_fixed.o custom_float.o
+>
+> diff --cc drivers/gpu/drm/amd/display/dc/dml/Makefile
+> index 83792e2c0f0e,95fd2beca80c..000000000000
+> --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+> @@@ -32,16 -32,25 +32,20 @@@ endi
+>
+>   dml_ccflags := -mhard-float -msse $(cc_stack_align)
+>
+> + ifdef CONFIG_CC_IS_CLANG
+> + dml_ccflags += -msse2
+> + endif
+> +
+>  -CFLAGS_display_mode_lib.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_lib.o := $(dml_ccflags)
+>
+>   ifdef CONFIG_DRM_AMD_DC_DCN2_0
+>  -CFLAGS_display_mode_vba.o := $(dml_ccflags)
+>  -CFLAGS_display_mode_vba_20.o := $(dml_ccflags)
+>  -CFLAGS_display_rq_dlg_calc_20.o := $(dml_ccflags)
+>  -CFLAGS_display_mode_vba_20v2.o := $(dml_ccflags)
+>  -CFLAGS_display_rq_dlg_calc_20v2.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_vba.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_mode_vba_20.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_rq_dlg_calc_20.o := $(dml_ccflags)
+>   endif
+>  -ifdef CONFIG_DRM_AMD_DCN3AG
+>  -CFLAGS_display_mode_vba_3ag.o := $(dml_ccflags)
+>  -endif
+>  -CFLAGS_dml1_display_rq_dlg_calc.o := $(dml_ccflags)
+>  -CFLAGS_display_rq_dlg_helpers.o := $(dml_ccflags)
+>  -CFLAGS_dml_common_defs.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/dml1_display_rq_dlg_calc.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/display_rq_dlg_helpers.o := $(dml_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dml/dml_common_defs.o := $(dml_ccflags)
+>
+>   DML = display_mode_lib.o display_rq_dlg_helpers.o dml1_display_rq_dlg_calc.o \
+>         dml_common_defs.o
+> diff --cc drivers/gpu/drm/amd/display/dc/dsc/Makefile
+> index c3922d6e7696,17db603f2d1f..000000000000
+> --- a/drivers/gpu/drm/amd/display/dc/dsc/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/dsc/Makefile
+> @@@ -9,9 -9,14 +9,13 @@@ endi
+>
+>   dsc_ccflags := -mhard-float -msse $(cc_stack_align)
+>
+> + ifdef CONFIG_CC_IS_CLANG
+> + dsc_ccflags += -msse2
+> + endif
+> +
+>  -CFLAGS_rc_calc.o := $(dsc_ccflags)
+>  -CFLAGS_rc_calc_dpi.o := $(dsc_ccflags)
+>  -CFLAGS_codec_main_amd.o := $(dsc_ccflags)
+>  -CFLAGS_dc_dsc.o := $(dsc_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dsc/rc_calc.o := $(dsc_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dsc/rc_calc_dpi.o := $(dsc_ccflags)
+>  +CFLAGS_$(AMDDALPATH)/dc/dsc/dc_dsc.o := $(dsc_ccflags)
+>
+>   DSC = dc_dsc.o rc_calc.o rc_calc_dpi.o
+>
 
-  520f897a3554 ("ext4: use percpu_counters for extent_status cache hits/mis=
-ses")
 
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n+F5DPF.84nTp=gmxp1S+eV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1wLxMACgkQAVBC80lX
-0Gy4YQf/WNd1yRKkMO3FjbneNAOYtXwzvBFUH0ikK0SoVvX2JyOujxH796T1UFs0
-N9r4Gl5beCGWeRaLiZ1krII2ESUmR8aVsNz0WN4rVhNYojUSdUNFBSwjOs6VZy60
-S0qGoGyqPHHCSMiXppQGud6fltRKJBaL80k86wnf1qn3WrLJpKY5Tiumo2UJYleS
-6yb6kBTdYSKfyM+y20/t9sGVl2mT44L5FAxLR47rfzyT8ORBXWQfFX8dug/UyFiC
-dyP7lwx/QG6QuEfzv+PpKld1YuhsIW7c2ZxbuBANOhSNy0OyzfdSCtbs+rfWiBfr
-ipgqK8fAlTzzCdX7NeWIk3A/bwCX9Q==
-=1y0J
------END PGP SIGNATURE-----
-
---Sig_/n+F5DPF.84nTp=gmxp1S+eV--
+-- 
+Thanks,
+~Nick Desaulniers
