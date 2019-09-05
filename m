@@ -2,104 +2,82 @@ Return-Path: <SRS0=v0Qy=XA=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A340C3A5A5
-	for <linux-next@archiver.kernel.org>; Thu,  5 Sep 2019 03:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063C6C3A5A5
+	for <linux-next@archiver.kernel.org>; Thu,  5 Sep 2019 06:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7E6217D7
-	for <linux-next@archiver.kernel.org>; Thu,  5 Sep 2019 03:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92DCD2173B
+	for <linux-next@archiver.kernel.org>; Thu,  5 Sep 2019 06:02:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n4nBW4F6"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cQFOWKcI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbfIEDmR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 4 Sep 2019 23:42:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:44493 "EHLO ozlabs.org"
+        id S1729366AbfIEGCt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 5 Sep 2019 02:02:49 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:55361 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbfIEDmQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 4 Sep 2019 23:42:16 -0400
+        id S1726175AbfIEGCs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 5 Sep 2019 02:02:48 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46P62G4pP0z9sDB;
-        Thu,  5 Sep 2019 13:42:13 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46P98Q2S8Wz9sBF;
+        Thu,  5 Sep 2019 16:02:46 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567654934;
-        bh=D20kb8FI3SomKAMFU69sx2kOZjLBDN7Zio+s1/ojh5g=;
+        s=201702; t=1567663366;
+        bh=uUwByufKpnFTkAp/bGgn90W1r1vFi14mgdTW1FMySiw=;
         h=Date:From:To:Cc:Subject:From;
-        b=n4nBW4F6iU8JNHCd2sXvqFLwQv01DM83fps9ZYicuMoPD3F4t+EPZ7V99BScFAFN7
-         CcV3qQ4PoST4MbLMx7yKrxtPtJ/AVQd86IjYo2Efo3o193crsys7vNnYR0w+T8QLDT
-         f9XG5Q2Va93VGfrjsop0UJpAbttdKsn27U1+wg84/REF0wllVAWRhZrmXHqVBrNC8G
-         kHnBXwozJBeVgPFQTt6iX42ADyLRIu5P7NgdckkXzFPyfoISY9OHt9O5rzJrykyhMV
-         Be0hI3wOo/8tfxlR7OdqA3CshCpPcxMDrao2SUpkaFXYzRcn5KW40uFAMYM1zNPgMM
-         FTyVkJhnVE9qw==
-Date:   Thu, 5 Sep 2019 13:42:13 +1000
+        b=cQFOWKcIti5p/B2VuY8sM0NSfUx3ow6BUwj3QT0TWWYmnh9PsHqsit4bfYShOD96Z
+         0j29VhLsCiGiDGN48qDLf3RlmW86kHe4MH/LF4R2qgdq6w8zp1u3oV2hTQN2sM8JFQ
+         DiW79WM4YN4flLzGwhBRTueEEdekV5Yr9XwNCliBozmkReMBk4bZX9FkhBwkJqVB8j
+         ZopJ3MFAjDqwpkLz5eseFb+RBSKHanPgEnKwQU/DDFWM+Qza597VVSr04nse4Y+DPM
+         lAwP8RORPiBMzJdfazf94m8mXE+DwXw8OJyGZKFLu57/F+ujxgXe/pbCBR7Me6r/w7
+         2OnecaFUfCiEQ==
+Date:   Thu, 5 Sep 2019 16:02:37 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: linux-next: manual merge of the net-next tree with the arm-soc tree
-Message-ID: <20190905134213.739ca375@canb.auug.org.au>
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: no release today
+Message-ID: <20190905160237.2e972a89@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7ZgpHNInDPnmm6UQg5TPdzE";
+Content-Type: multipart/signed; boundary="Sig_/Ob.n=vBwyb3Yk1MRhgx8y4I";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/7ZgpHNInDPnmm6UQg5TPdzE
+--Sig_/Ob.n=vBwyb3Yk1MRhgx8y4I
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  drivers/net/ethernet/nuvoton/w90p910_ether.c
-
-between commit:
-
-  00d2fbf73d55 ("net: remove w90p910-ether driver")
-
-from the arm-soc tree and commit:
-
-  d1a55841ab24 ("net: Remove dev_err() usage after platform_get_irq()")
-
-from the net-next tree.
-
-I fixed it up (I removed the file) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+As I said yesterday, there will be no release today, or any day until
+September 30.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/7ZgpHNInDPnmm6UQg5TPdzE
+--Sig_/Ob.n=vBwyb3Yk1MRhgx8y4I
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1whBUACgkQAVBC80lX
-0GxxrAf9F2t1WiC/CROxhOEgz3XgdRi7F4M0XLeKgV6HYsch3nX5Wj9Z1Vh8tW6l
-c/fbKI1ZSokhfgYm1cEiqm/9SQg2lhUiGywuszysvidYT7o1GX/zMb9CGNC5fg8p
-zJsmfVIjLY5Qzo4RtOQSqFlT8wgd+CXFK2fEn/9nEnryStrlzb/E6xA+b437SxuI
-gQ7U2Zl+eNgIgMJXMJlLQQP+3yfw5HJX7Ox4AbYxYbuV6wS9H1XZvWkT4JjCgSQZ
-jsn8b1Ly8foiIhxb7K7cDl7yUCJyjCoVUqIGTAY6grwXCxRGRm5EDr9thpRRrCgS
-yAxzxRctgd46mxhzjE9l0L2sbmpMOA==
-=nc/L
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1wpP0ACgkQAVBC80lX
+0GwTjwgAkG71xe53hMTmDnsuAb2tDr4VtADU+Up8niCXJdyWpQA1qlCBe9OtZjHj
+XO8b+sFwjoOkObNGhrsw3yi4g4dUZ6p1CIFC++4Z7XXETR3+3bHQPM4mEqz7dGYd
+ImoEp83Q3XrBemfWvCOTZzwSQ+FN+s+tS9NXU8m2qWEb+BJlEkBTzfqNx61u/KFP
+s0IDeiDSxJZXV956UpKGk5RpatAzvyD46BnQCb8lrAAwfvlNwUBEszPDQN+9Zcti
+8AxdaCMuu1nlSkPfG38iTqsyc3+d1BvVKlSnnq8NWnN9j4vEflJnQqW3ezd/tpin
+cIBbbPxqZfMZE+Fz948ZkRAfbUtB3w==
+=kl9O
 -----END PGP SIGNATURE-----
 
---Sig_/7ZgpHNInDPnmm6UQg5TPdzE--
+--Sig_/Ob.n=vBwyb3Yk1MRhgx8y4I--
