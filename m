@@ -2,88 +2,84 @@ Return-Path: <SRS0=lz4r=XF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36204C4740A
-	for <linux-next@archiver.kernel.org>; Tue, 10 Sep 2019 14:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DF3C4740A
+	for <linux-next@archiver.kernel.org>; Tue, 10 Sep 2019 14:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACE12081B
-	for <linux-next@archiver.kernel.org>; Tue, 10 Sep 2019 14:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD8A20863
+	for <linux-next@archiver.kernel.org>; Tue, 10 Sep 2019 14:21:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HZ4Fu1lS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="rNLUxgoR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387951AbfIJOPV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 10 Sep 2019 10:15:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:44583 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727332AbfIJOPV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:15:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46SRrC6bvlz9sNw;
-        Wed, 11 Sep 2019 00:15:03 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1568124918;
-        bh=uveICKI/Zy2jOMFY3utIvKtGujqgY4Bx6V53QBYzQ9M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HZ4Fu1lSomB3GvI81gMDbKN2euUztS7sbSBtjngQB3BTd0sipNykAtPJqAcBbSk1a
-         wJJ6N+tZ8zDtTzMP359mXvVW+Q7k19dl8jVpwbpAt5Kw7W927mkrH7BcZQNnTcnySn
-         hC6u1prEswNy2Xfn/koq0NyZjQ45qB7Ua2iqw0NxA1XrRj0ZVxjvJEdL6r1V+0Dheu
-         WUdx55HFbuY08axCfNaaWHfyiXY1fys+JrLI5PXlKNpLbhhEYTkDYEUGa3j0iVrlCr
-         2Nz5wq/N/kkpoMh3EUNFI+Pq5v6YEHEhOVYXdbYqT1aS29DkrOOd5aEDB20xjnzSm4
-         rwTirjRwLo/9A==
-Date:   Wed, 11 Sep 2019 00:14:59 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Russell King <linux@armlinux.org.uk>
+        id S1732662AbfIJOVe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 10 Sep 2019 10:21:34 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:43426 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730779AbfIJOVe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2019 10:21:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iLTLwbdz4fgVz4ZXeuOVU1SlVl+j3xkBZocxNZDBcz8=; b=rNLUxgoRwkYilxwmy0gL+9fYi
+        gBdTra/HYESg9mU8DdjhNegllCIVZtuXQ4jY9+4ozk7JTObWiEyzW/CgaRtkCvLRbTpWSfH0+Qb7P
+        kENsgNBqee0NyC044xLLv1Nscb0jcPBRgK1/RQgnF5ABGc0geigOkzWTyfSoGsDaph2eiupGeS20K
+        KM/OalB7YYcTLP8rP8ol3NPOgoprRl2Y76eKjszt+7FhrxyO/YuV+LF3Yy0/Z6xwR27JHf7IFP4YW
+        OP2AXMUHHRI4LYUfm+GUOOvz7NoXbGDVBpbtkykhv3uld/GLr317sZMUUeNQTLRDlB8Vc8ROYFSmF
+        MSTm2ZJQQ==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:37848)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1i7h1O-0000aW-MC; Tue, 10 Sep 2019 15:21:30 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1i7h1M-000334-I5; Tue, 10 Sep 2019 15:21:28 +0100
+Date:   Tue, 10 Sep 2019 15:21:28 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mike Rapoport <mike.rapoport@gmail.com>,
         Mike Rapoport <rppt@linux.ibm.com>, Chester Lin <clin@suse.com>
-Subject: linux-next: Signed-off-by missing for commit in the arm tree
-Message-ID: <20190911001459.6ccc76ee@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm tree
+Message-ID: <20190910142128.GR13294@shell.armlinux.org.uk>
+References: <20190911001459.6ccc76ee@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zKHOt/cHZiNbKLEbF6_dwjz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911001459.6ccc76ee@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/zKHOt/cHZiNbKLEbF6_dwjz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This is correctly signed off, but Mike didn't send the patch correctly.
+It missed a From: line for the proper author, so the patch was committed
+as if Mike had authored it, which he didn't.
 
-Hi all,
+On Wed, Sep 11, 2019 at 12:14:59AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   2505b9ba9c37 ("ARM: 8904/1: skip nomap memblocks while finding the lowmem/highmem boundary")
+> 
+> is missing a Signed-off-by from its author.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Commit
 
-  2505b9ba9c37 ("ARM: 8904/1: skip nomap memblocks while finding the lowmem=
-/highmem boundary")
 
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zKHOt/cHZiNbKLEbF6_dwjz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl13r+MACgkQAVBC80lX
-0Gy7lgf8DRsJmCV6Pmj6moGNfZwC9sWFlaayGzYiKyG5D2DP7EKRKipqOqd4XQTF
-i12FQvYmR5k3YXE1t567hHfTAJlwo3A3E5G9B7sewYn/N7P8cvD+s0eeN5oqhaD4
-ImalFcRAZD21N/NAgWkiapZmcND2TieeNh3bl2OI41QraX3pg9bwkBktAGQ66t6w
-g6RS+MZNFGxqqNqxWhu3KCl6V9xx4munm1juexypRLNYsN/Jj44zmaXg6SQeFi5O
-cFog6CpFeUYmJobbIkNfDrCiQR8lxpYj9qWrcftCHViNCIibF16FL7tbU45/b/AD
-Y6W/VAtw6RL3DVjiU2O94mTNZX4E5A==
-=vZLb
------END PGP SIGNATURE-----
-
---Sig_/zKHOt/cHZiNbKLEbF6_dwjz--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
