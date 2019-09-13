@@ -1,154 +1,121 @@
-Return-Path: <SRS0=fsQv=XH=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=uiQ0=XI=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA02C4CEC6
-	for <linux-next@archiver.kernel.org>; Thu, 12 Sep 2019 19:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 069CFC49ED7
+	for <linux-next@archiver.kernel.org>; Fri, 13 Sep 2019 17:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC6520856
-	for <linux-next@archiver.kernel.org>; Thu, 12 Sep 2019 19:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC1E20693
+	for <linux-next@archiver.kernel.org>; Fri, 13 Sep 2019 17:19:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="FL+dRFFy"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gqL0EETY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfILTk1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 12 Sep 2019 15:40:27 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:35262 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfILTk1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Sep 2019 15:40:27 -0400
-Received: by mail-wr1-f44.google.com with SMTP id g7so29785497wrx.2
-        for <linux-next@vger.kernel.org>; Thu, 12 Sep 2019 12:40:24 -0700 (PDT)
+        id S1729657AbfIMRTh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 13 Sep 2019 13:19:37 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44835 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbfIMRTh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 13 Sep 2019 13:19:37 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w6so3255345oie.11
+        for <linux-next@vger.kernel.org>; Fri, 13 Sep 2019 10:19:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=1k6x2F2wI4IK87XZLsiOZoRWFJyXnAiIyjhxW4JycPc=;
-        b=FL+dRFFygGLrG3bHHnJdfExwYoj+u/kclt1xjTHRJKGIioJCZGyTyL6fWBHWILYG/q
-         YOiAtSvedLszplJQvM5qAe+E1CWGchWqFm4xmOlROEAYkCQ5xgX+vTtyXvb1tUMolqX4
-         TmjKBBWMHRu/NbCWGhhMNmb1WGaMrYxUwEy+gHV3izI06PFvbW4sxnggC1eEKIG/E3cx
-         H5Ww2RWnHCnXizuMX46PpKK+qEJClIkBC+0fviy4NGgm32G6iDSsqpLoo+qxvvzYASi3
-         TE7lUcSi9orGaZWRsydTG0oGtSkMYjIgTchcanPpe40wggcucmuOhBLlBWqWOxRFe/Qn
-         0Xow==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OKzQ7wwphOjxmY/K1EtxnOsTdv2PWzuGJ4C8ws0Egy0=;
+        b=gqL0EETYmHL8v3NKExxXcCfswUCCiPVZzxeoC79eVpYprEt+jozMPa6wAWDltcNb3x
+         VmYaF6bcrZLJnKz9xIIEwoEwF8/jbmki9ju1dVDY7Krqll1tKgk871TOS2FTkEv5VjJL
+         RRtibs3gERfUlHMwswxQ0mabI7O5m4cz9vovI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=1k6x2F2wI4IK87XZLsiOZoRWFJyXnAiIyjhxW4JycPc=;
-        b=A6M1r8PLe/SAo/LjgUa3DPuOpcHNsF4EMZsuU474U5qBXy9NEcofokgMW3aq8w0kdR
-         R0XVFHyTdZp0Sou3ZGWEDs4WxANHrqHDfyFeXiBVOMiTBvYLalYQ6iFifETH7jgnRlXd
-         RePDZGYuCvF2KCLZ6rtYMnPTTSbmeZYFMBRmMTASm9e+l1qLj0QfpvzmeXh7upSZDiem
-         9Wto5hM/YYPJ8tLOPslBRl1XsuOnKYRukRG5/mkVc+N9D+YxfVAm+bIncXjTa7E+X9UP
-         84ayJaE+cHzSGQS7mvzccntGcRhTn8s3VKrc/jH7dR0F4w+HvB9wm+EF8pqEfz9FkhVP
-         wYYQ==
-X-Gm-Message-State: APjAAAXqcwlSUEMtRmqlKbF2T5W5v0+UPK1hjT3BV7mD5PmPt9PYHfO0
-        A3nw0LivX1emdOJicQIJe7tSHYCsBPM=
-X-Google-Smtp-Source: APXvYqxcXv8o/RTMIQj98geW53Rg8UOUpIVMAmBmMZ7p+ISV2w2xJ0fY63zVzdk7r7Tb90KKjK/vRg==
-X-Received: by 2002:a5d:40c4:: with SMTP id b4mr9027481wrq.214.1568317223795;
-        Thu, 12 Sep 2019 12:40:23 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id v6sm249923wma.24.2019.09.12.12.40.22
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Sep 2019 12:40:23 -0700 (PDT)
-Message-ID: <5d7a9f27.1c69fb81.d28f6.196a@mx.google.com>
-Date:   Thu, 12 Sep 2019 12:40:23 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OKzQ7wwphOjxmY/K1EtxnOsTdv2PWzuGJ4C8ws0Egy0=;
+        b=HJ2w/VYtjLeo880YNu+jAWHAyFzfdbuXPnx02teiQq1nV0f1FmMLdEFg9+N9yJJF0f
+         yeCK8Duo+Fxm2RZWnVvsbxnSm1/H850HpL443xw8vrsqA0mqWZxQ8yZ7I0RoQnQt/F1/
+         gD2X8/RIel+G40Ng9uZ4oTlmiAkQSk39RqPzKJV462TLgpis/DJwYyZa8amML6KJjT3Z
+         8l3ttGhMrE6OKrstLdgCQjbN5TDB7AIibAaKRYkiEczpeH84eqpXTEWqeBIHvMy3WZPR
+         PQHR4rrHr6R2UC88RMtGx2Hqbsp2orH5FIC+E8yliz3M1PrjyEBikVSe2OCT9moVGy64
+         /QrA==
+X-Gm-Message-State: APjAAAXCcufsTc5/5FKVJ/VHvQP8EFKiGzqmDn4076bfuDwmSnhIfR5q
+        wRWXKeFPk3P4UNx0IT24s7D5wMBmLqsM955Dr6OwKQ==
+X-Google-Smtp-Source: APXvYqwuw9ZYZrUqJW3S1meWYkCAvipklH3NTP77DVgNvFseKQvu1WlDTpRX3RPGZCmD4dIwv3Hxd1PSyIy8xnCxSnk=
+X-Received: by 2002:aca:5697:: with SMTP id k145mr4124856oib.101.1568395175833;
+ Fri, 13 Sep 2019 10:19:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.3-rc8-192-g7931faaade95
-X-Kernelci-Tree: next
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: pending-fixes
-Subject: next/pending-fixes boot: 318 boots: 11 failed,
- 295 passed with 10 offline, 2 untried/unknown (v5.3-rc8-192-g7931faaade95)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20190907090534.GB1712@pc-sasha.localdomain> <CAKMK7uHYdXwruQxxBM12Q5MVeH9fjFpZvxZz06BSo7YrCQbM2w@mail.gmail.com>
+ <20190908141307.GA7115@pc-sasha.localdomain> <20190909201159.778590a0@canb.auug.org.au>
+ <20190909202128.0c420ddd@canb.auug.org.au> <CAJ1xhMXKNRfOm1Xj3B_cgLByBfDP03P+DBEbRpWc+tU6kdxtBw@mail.gmail.com>
+In-Reply-To: <CAJ1xhMXKNRfOm1Xj3B_cgLByBfDP03P+DBEbRpWc+tU6kdxtBw@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 13 Sep 2019 19:19:24 +0200
+Message-ID: <CAKMK7uEnECWMC-EhEhNYiMH4+om6vLTmNw3jTwx0MY5m-Ksc8A@mail.gmail.com>
+Subject: Re: Kernel panic during drm/nouveau init 5.3.0-rc7-next-20190903
+To:     Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes boot: 318 boots: 11 failed, 295 passed with 10 offline, =
-2 untried/unknown (v5.3-rc8-192-g7931faaade95)
+On Mon, Sep 9, 2019 at 12:25 PM Alexander Kapshuk
+<alexander.kapshuk@gmail.com> wrote:
+>
+> On Mon, Sep 9, 2019 at 1:21 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi,
+> >
+> > On Mon, 9 Sep 2019 20:11:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > If you are bisecting linux-next, I will suggest bisecting between the
+> > > stable branch on linux-next (which is just Linus' tree when I started
+> > > that day) and the top of the first linux-next that fails.  (Assuming
+> > > that the stable branch is good).
+> >
+> > Actually (since you won't be bisecting the latest linux-next), you
+> > probably want to use
+> >
+> > git merge-base stable next-20190903
+> >         (or whatever linux-next you are bisecting)
+> >
+> > as your first good commit (assuming it id good :-)).
+> >
+> > --
+> > Cheers,
+> > Stephen Rothwell
+>
+> Hi Stephen,
+>
+> Thanks very much for the tips.
+> I'll go ahead and give those a try.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
-xes/kernel/v5.3-rc8-192-g7931faaade95/
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.3-rc8-192-g7931faaade95/
+Yeah this should help, but in general, due to our non-linear history,
+git bisect can jump around quite a bit. Especially if you only look at
+dates. Also due to our non-linear history, it sometimes needs to test
+you a merge-base, to figure out which part of the history it needs to
+chase for the bad commit. So all normal, but the hint above should
+help.
 
-Tree: next
-Branch: pending-fixes
-Git Describe: v5.3-rc8-192-g7931faaade95
-Git Commit: 7931faaade95204384f3b02b2a39dcc431b278e7
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 90 unique boards, 28 SoC families, 26 builds out of 222
+Also, you don't need to restart git bisect, you can just tell it about
+any good/bad commit you tested with
 
-Boot Failures Detected:
+$ git bisect good|bad $sha1
 
-arm64:
-    defconfig:
-        gcc-8:
-            apq8096-db820c: 1 failed lab
-            meson-gxl-s805x-libretech-ac: 1 failed lab
-            meson-gxm-khadas-vim2: 1 failed lab
+The more git knows, the quicker it should find the bad commit.
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-gxm-khadas-vim2: 1 failed lab
-
-    defconfig+kselftest:
-        gcc-8:
-            qcom-qdf2400: 1 failed lab
-            r8a7795-salvator-x: 1 failed lab
-            r8a7796-m3ulcb: 2 failed labs
-            rk3399-puma-haikou: 1 failed lab
-
-arm:
-    multi_v7_defconfig+kselftest:
-        gcc-8:
-            bcm2836-rpi-2-b: 1 failed lab
-            rk3288-rock2-square: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
