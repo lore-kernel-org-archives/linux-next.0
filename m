@@ -2,162 +2,125 @@ Return-Path: <SRS0=8DFL=XT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CC7C432C1
-	for <linux-next@archiver.kernel.org>; Tue, 24 Sep 2019 02:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AFFC432C1
+	for <linux-next@archiver.kernel.org>; Tue, 24 Sep 2019 17:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E29F0206C2
-	for <linux-next@archiver.kernel.org>; Tue, 24 Sep 2019 02:03:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="ZpR2SlJ2"
+	by mail.kernel.org (Postfix) with ESMTP id B7B6D217D7
+	for <linux-next@archiver.kernel.org>; Tue, 24 Sep 2019 17:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569346940;
+	bh=SWsxUoKvNrcwqgvRvktKZdQ/RAP+XinsF3OqqxOTZVY=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=YXJFSV1ZU3O4D/pMAJsmG/hwcI1a4y9Ti6eA/IENPU5kUDyEQOYuW1MUKKZLZXj5/
+	 nYUc3+Bp0HNSZvnmuOJc6LQ+kamK6scUAkHA1TgM94E/ELNGIkuQupW3NdGpEMl40p
+	 rbOWnGx50iYPVILFztM3j7u86/Ahs9o/AO0S/ZU4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403911AbfIXCDP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 23 Sep 2019 22:03:15 -0400
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:39837 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408472AbfIXCDL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2019 22:03:11 -0400
-Received: by mail-wr1-f52.google.com with SMTP id r3so65040wrj.6
-        for <linux-next@vger.kernel.org>; Mon, 23 Sep 2019 19:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=ghDTPJbP6oLZsAtKUa+BKCKzEIbpv8sc/sYMfBTfWl8=;
-        b=ZpR2SlJ2UE77gt+I0lKuFCY/3OZani6wA8yH2En+oVej26aug2/6tiSdhIg3yFBStd
-         Bkqlo9Gei3opJ3ZFf+CJCscMh14rkysp7/qOPUZaIQpcMbEc/ah2DtkQ/Y2Luj0mRZuq
-         UqFldfQt5PS36o0GIqGNZoKColeARZJwnOokV5Wwd1/YqmxhgaWkyU6TYnOQlfqgiUKg
-         Ivb2gzNWnnveYs3wZ8YrJ2W4YkAR6637TIcTmcpazE1bYBH5+lauSdqFaNdl2jXCPR6N
-         bF/b9snnQr6olaSzSzzvyJuMJ+hijqba2mtqWH56sSpxCV/Bia0Y2m55QwCu90oefXUu
-         84dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=ghDTPJbP6oLZsAtKUa+BKCKzEIbpv8sc/sYMfBTfWl8=;
-        b=qDoTz87skZH1/nbos4xVfSYjieSZxvC2r6RcjfnEZ9+ZjJ2oihVjEfyZvINqh2I0jw
-         nc/fsTfbl7qbHv2nNfkfw5sVePBpWprBTdYeq9lL0UJ1KsPhV/i43eOeAFTyOSjJ6TbV
-         rQfpBBpY7zAFNQ8ICw5GV1lrfGxWZ27BjfdlBWwxgxuZ5HiRUfqw8VcnO3fg9sKkgMtP
-         F4T9qlqOIanmevA6N5sJymeB+kykIJdCjBCyKIKciSb2wKEA77iEmdVEE86wepfFBVdB
-         9mbWl8AynTXOGc/sQncIywfmVNlGMJA3e3pgqD87/onpl0hU1PyvGid5feay+ghgPHQY
-         qzNA==
-X-Gm-Message-State: APjAAAVn5LGAbo9DyUFcVI6+1t5KHJl9icILCUTZ7ozC9lyysFUMIPkR
-        WuFnkK4/Ry5J777eHWEiEOh6LeNu0svmHA==
-X-Google-Smtp-Source: APXvYqztFfIJrZc/r0i5Kdj97IdG8yUECfZEiuQ/u7gMK6Sdvh7MgadLY9oI69HApRYe1Iec73oqMQ==
-X-Received: by 2002:a5d:4f0b:: with SMTP id c11mr226450wru.63.1569290589176;
-        Mon, 23 Sep 2019 19:03:09 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id c132sm192140wme.27.2019.09.23.19.03.08
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Sep 2019 19:03:08 -0700 (PDT)
-Message-ID: <5d89795c.1c69fb81.c312c.0c57@mx.google.com>
-Date:   Mon, 23 Sep 2019 19:03:08 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1730860AbfIXRmU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 24 Sep 2019 13:42:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50902 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387559AbfIXRmU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 24 Sep 2019 13:42:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zes2dxJDlGtac+6+LdBHVUz2/S2c9+ELLrylkyDTREE=; b=gfoEjdUSj4SNm7t2DOAPmfPW0
+        J18O2mCcYpmRu1OcYFi4CrPe4xgLz271BBMZ9bDSlO2qkIysU9abEjE3TVjg6LiKBjgKL9S2kKi/J
+        YgMcDUoba35ajzLjZ2YkfFJSt6GzgQvEcFcCtz+4H2o3RHXdWaz6b6MRo04tKk095A8Ns=;
+Received: from [12.157.10.118] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iCopI-00029A-MI; Tue, 24 Sep 2019 17:42:12 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 602F8D02FC7; Tue, 24 Sep 2019 18:42:10 +0100 (BST)
+Date:   Tue, 24 Sep 2019 10:42:10 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the integrity tree with the modules tree
+Message-ID: <20190924174210.GZ2036@sirena.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.3-11900-g8bca7701fc34
-X-Kernelci-Tree: next
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: pending-fixes
-Subject: next/pending-fixes boot: 307 boots: 14 failed,
- 280 passed with 11 offline, 2 untried/unknown (v5.3-11900-g8bca7701fc34)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Z5Iw6G/4V9lVaptU"
+Content-Disposition: inline
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes boot: 307 boots: 14 failed, 280 passed with 11 offline, =
-2 untried/unknown (v5.3-11900-g8bca7701fc34)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
-xes/kernel/v5.3-11900-g8bca7701fc34/
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.3-11900-g8bca7701fc34/
+--Z5Iw6G/4V9lVaptU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tree: next
-Branch: pending-fixes
-Git Describe: v5.3-11900-g8bca7701fc34
-Git Commit: 8bca7701fc34e3e5e6b5a3c037c3afe692c0cf4a
-Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 93 unique boards, 26 SoC families, 26 builds out of 214
+Hi all,
 
-Boot Failures Detected:
+Today's linux-next merge of the integrity tree got a conflict in:
 
-arm64:
-    defconfig:
-        gcc-8:
-            apq8096-db820c: 1 failed lab
-            mt7622-rfb1: 1 failed lab
-            qcom-qdf2400: 1 failed lab
-            rk3399-firefly: 1 failed lab
+  init/Kconfig
 
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-            mt7622-rfb1: 1 failed lab
-            rk3399-firefly: 1 failed lab
+between commit:
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-g12b-s922x-khadas-vim3: 1 failed lab
+  d189c2a4b6f0f4a ("module: remove redundant 'depends on MODULES'")
 
-    defconfig+kselftest:
-        gcc-8:
-            qcom-qdf2400: 1 failed lab
-            r8a7795-salvator-x: 1 failed lab
-            r8a7796-m3ulcb: 1 failed lab
-            rk3399-puma-haikou: 1 failed lab
-            sun50i-h5-libretech-all-h3-cc: 1 failed lab
+=66rom the modules tree and commit:
 
-arm:
-    multi_v7_defconfig+kselftest:
-        gcc-8:
-            bcm2836-rpi-2-b: 1 failed lab
-            rk3288-rock2-square: 1 failed lab
+  c8424e776b09328 ("MODSIGN: Export module signature definitions")
 
-Offline Platforms:
+=66rom the integrity tree.
 
-arm64:
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
+diff --cc init/Kconfig
+index 70734141a2f5a,2dca877c9ed71..0000000000000
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@@ -2047,7 -2010,8 +2051,7 @@@ config MODULE_SRCVERSION_AL
+ =20
+  config MODULE_SIG
+  	bool "Module signature verification"
+- 	select SYSTEM_DATA_VERIFICATION
+ -	depends on MODULES
++ 	select MODULE_SIG_FORMAT
+  	help
+  	  Check modules for valid signatures upon load: the signature
+  	  is simply appended to the module. For more information see
 
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
+--Z5Iw6G/4V9lVaptU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            apq8016-sbc: 1 offline lab
+-----BEGIN PGP SIGNATURE-----
 
-arm:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2KVXEACgkQJNaLcl1U
+h9BO2Qf/Riuc9Ogb9q6Q9JIlOKiEMESZ13GqkNzBCU24n7FPiO639flGaNBK0g8p
+eqTHHhEkrkia1rJbkppDn1hLZ86lSrCBYiMHFrznhirDQQ+Q2kRl6A3KzE0hCl0m
+0bYK2zN/Z9akzKhHKACjqjpa/HpZz9Cv8NHYp4ieCRVBwsJAOLKV22+aGz2KOi2J
+KySKJrs+/NiQZd/nVPst8jOnS1B+OfaBRsm6iXIJ3jRvHM7t6hU/xsLLp+LYcPjw
+ki555VEEwrYaG9/IKsK7pU3JyT0uwksX2LpnutMYCLd235IogNpWF5fwvuGMjVY9
+E0UykZmiw9VYQzmD5Bdk1fJnkGNufg==
+=MhpP
+-----END PGP SIGNATURE-----
 
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+--Z5Iw6G/4V9lVaptU--
