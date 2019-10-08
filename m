@@ -2,117 +2,73 @@ Return-Path: <SRS0=cvyS=YB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809BEC10F14
-	for <linux-next@archiver.kernel.org>; Tue,  8 Oct 2019 20:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E2FC4360C
+	for <linux-next@archiver.kernel.org>; Tue,  8 Oct 2019 20:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36AE821835
-	for <linux-next@archiver.kernel.org>; Tue,  8 Oct 2019 20:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8DE2070B
+	for <linux-next@archiver.kernel.org>; Tue,  8 Oct 2019 20:57:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TADT4mDE"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="d/OYnJgQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfJHUiV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Oct 2019 16:38:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:51145 "EHLO ozlabs.org"
+        id S1730722AbfJHU47 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Oct 2019 16:56:59 -0400
+Received: from mail.nic.cz ([217.31.204.67]:48130 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727835AbfJHUiV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 8 Oct 2019 16:38:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46nq1N2f5yz9sCJ;
-        Wed,  9 Oct 2019 07:38:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1570567099;
-        bh=MrlA8glPOdIlnMDdmhWkEzsJ4Uw18kpN8kq97gWX804=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TADT4mDEYP9VeyEU5hHnVpHW7HEihrCrk1l56tt3aNebVfN34fBKiIbXXiV1GkA9m
-         F88LANLhMK+pbrEb/XjJ16yczM1/WYUiCgGGEZsSdgiRSUwuHoNQHASIR1zyNUvMlQ
-         bgYKURzxuQjvsM2SNwbnkRfQmoL3m55lT2pMPVda19KxzFXDYEntEIzXw9MhqUdQB0
-         MbvsdfVrAtDDgGCWFho3fpiQlR6HBxIWkmuAb9ss0X1Lo54Jpcsa0/ITbT/iHIb23X
-         GUeyT/aur28jO6UJ/YUPifV4mQIQGYoTvQRG6pZLtg9YX7MovRfniO0dM9Ahs0aqZK
-         0SqmnCB2QHQ3Q==
-Date:   Wed, 9 Oct 2019 07:38:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        id S1730523AbfJHU47 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 8 Oct 2019 16:56:59 -0400
+X-Greylist: delayed 414 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Oct 2019 16:56:58 EDT
+Received: from localhost (unknown [172.20.6.135])
+        by mail.nic.cz (Postfix) with ESMTPSA id E3BAE140E3E;
+        Tue,  8 Oct 2019 22:50:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1570567803; bh=kkT366TqLTz6ZShDaMjzSLfYLU+lLy2kRMtQYV9bCEM=;
+        h=Date:From:To;
+        b=d/OYnJgQdi/E6twtZrnoYU2giwUHogwREFg1dWJcDTnY56CbfuA4A8ruxJMMTR+m8
+         3BuX0+NCfxQroPYzhYk7K+92f+PS4b4hFxszIH04wAXFGJq68pVmf5Kgp6srORERR5
+         B/4/fV+VE2lzGe0qihObaIww56xNTFeExBjcSVrg=
+Date:   Tue, 8 Oct 2019 22:50:02 +0200
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
         Gregory Clement <gregory.clement@bootlin.com>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek =?UTF-8?B?QmVow7pu?= <marek.behun@nic.cz>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: linux-next: Fixes tags need some work in the mvebu tree
-Message-ID: <20191009073803.633c02b5@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tags need some work in the mvebu tree
+Message-ID: <20191008225002.5b95efdf@nic.cz>
+In-Reply-To: <20191009073803.633c02b5@canb.auug.org.au>
+References: <20191009073803.633c02b5@canb.auug.org.au>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/83NC32yotp61XK8KAkelqst";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.100.3 at mail.nic.cz
+X-Virus-Status: Clean
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/83NC32yotp61XK8KAkelqst
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 9 Oct 2019 07:38:03 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> Hi all,
+> 
+> In commit
+> 
+>   69eea31a26da ("arm64: dts: armada-3720-turris-mox: convert usb-phy to phy-supply")
+> 
+> Fixes tag
+> 
+>   Fixes: eb6c2eb6c7fb ("usb: host: xhci-plat: Prevent an abnormally
+> 
 
-In commit
+This is weird, in the patch I sent the tag ends there with ...")
 
-  69eea31a26da ("arm64: dts: armada-3720-turris-mox: convert usb-phy to phy=
--supply")
-
-Fixes tag
-
-  Fixes: eb6c2eb6c7fb ("usb: host: xhci-plat: Prevent an abnormally
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fxes tags across more than one line.
-
-In commit
-
-  46cb29381635 ("arm64: dts: marvell: Add AP806-dual missing CPU clocks")
-
-Fixes tag
-
-  Fixes: e043bbd61e01 ("arm64: dts: marvell: Add cpu clock node on Armada 7=
-K/8K")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean
-
-Fixes: c00bc38354cf ("arm64: dts: marvell: Add cpu clock node on Armada 7K/=
-8K")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/83NC32yotp61XK8KAkelqst
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2c86sACgkQAVBC80lX
-0Gx6ngf/c4xA1GN4BnVOwkZqXYTiKSh6eCut+R+VYVT/MNfPqNHgnQ66UGIaqYqY
-NSH5O3N5DUY7pBLVFaLzAxrSstrALc3+4JMPW9MRFp/g7uZzqRo0v7/JiybrM/EY
-GuoRe5iNq8sLE3PX42zrVdpp8qTi1ofP3M+kIx3/2Gs40qbVrsBRp2LxKMV8H7Kb
-xyBqdi0v8fL2IAOa1wQYyfLd8JD8vvs+IwL7gl3Gt4JPqS3ZWHZIhz4Lvsr/ErHe
-c2FxX4A0tAnky2hnyrud8j2FsJ2sKmflQywFaQYga7725JjT3imoci8xPU4XuBpx
-oKOum6awQogQG84dJGdpqHFHknvYVw==
-=bBKv
------END PGP SIGNATURE-----
-
---Sig_/83NC32yotp61XK8KAkelqst--
+Marek
