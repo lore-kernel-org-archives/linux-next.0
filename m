@@ -2,170 +2,89 @@ Return-Path: <SRS0=sbjL=YL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B564CA9ED0
-	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 05:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7ECCA9ED0
+	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 05:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC5D222C5
-	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 05:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6E82222C3
+	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 05:01:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MS6cWvzg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZ0tEDaK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407327AbfJRFAq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 18 Oct 2019 01:00:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:59595 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727627AbfJRFAq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 18 Oct 2019 01:00:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46vVR047dMz9sP3;
-        Fri, 18 Oct 2019 13:31:40 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1571365907;
-        bh=STqXBQt1of/WFIT0GVfq42YrvZ3JDvNR2LFQ87IDERM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MS6cWvzglWlyRB1w1pnINex7OcQ3VsrD6+OCHaOiorDM2hqOFT+bs6SohJ5s1g4HP
-         vW6Szz6i+lJL6exfdTptnjlKSFlCZDhRWs5mfxoRZY65p2NWSBbasLKAu6Dmgitx60
-         oVtxsMEcCCZjlGZjq/+3wJ8gvP58kESCloqqyNATJlCdu76ilIkdgck8K2et+Evcld
-         tEib04l9lohK/Vm4W3NKebRKq+zC2UgdjWZG0UeFJlCONTCPGpiBayAp0iCJyXbxtw
-         VF361NIm2M4bTZFuxmC58w7cphh5VhbYm9ji9ITsLigVsrESCFuvlMeTzJ41WqaeMS
-         vCpvnt4KZ+rUA==
-Date:   Fri, 18 Oct 2019 13:31:39 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S2407298AbfJRFBM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 18 Oct 2019 01:01:12 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36436 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407184AbfJRFBM (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2019 01:01:12 -0400
+Received: by mail-pl1-f194.google.com with SMTP id j11so2256918plk.3;
+        Thu, 17 Oct 2019 22:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wpJfPZmMYz1gHLTNi+cKJTn1LIoYcx1Zone10S78hMg=;
+        b=FZ0tEDaKSb1fjZ35ji80nGBEkLxkXPIXJ2FvWbrkcMTHJwnnbaOejUCN23Q2cfSp7G
+         a7iRe4brGFHMvYqxelgkcTNRPK22hSf8NEaUxvPvNabN9WcB7jUijIgIlDZ2JHj0Roiu
+         p4+P+kEoqzv/73jmaP3gRXUkHTOXN5rXd/uiS8b+WphgcEU4zkHXzjtZOvDwIR+7W41V
+         WJxIBek3fEIO+i+u7AAhsDfy5UOXgdrJxiuVJ6gzALiWuHWdIK3zkT/slxgCkweStRkr
+         gbOrWYsJ4MojCeGdlm51kVCrSD0cEqz1g70jncmaD2Xn0KWjig8Yto64REnBiVZqrJ19
+         CRPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wpJfPZmMYz1gHLTNi+cKJTn1LIoYcx1Zone10S78hMg=;
+        b=kkFcHpMDYhX+7ugzXM/NJmmbU/bCUbaC8S7p8IoJRE+xVS+z+wYUGRSJmI7HgQsgdF
+         MQo5/tjDCC6SrqOJEUxTCUAlmZwuLiBxIEPh82PHHYSlTVoSzVF7MZJ4OUQO+JLWqyQz
+         WJnofjjwOmSlo3HSM5GR2hgolILxcoUbORxQ73YBMIVg5vSTGSSaWGt2LU1i8jXxsNxz
+         Cv3XGmUoGLdgjVNZA+HdGjZcZHKEWwrF8IOegQn8+OqQG1vPIpvQOScveq2r70cSQHbB
+         h9WVrMl2jNBNuERS6d/dCPl01lCmmJUPev9tlSvilDeAYeltH0SeollwTOLAruOYryhZ
+         82lA==
+X-Gm-Message-State: APjAAAVQ5ofgOtxXC8lAO9We2RyXRGiMYZSo40FbtekJT2oRw1YtAutG
+        QlnyTBj+frn/CisViK0/WlDD8gvB
+X-Google-Smtp-Source: APXvYqyyRC3rRWHEdU/4ehIqVTyMDDP6d3MBshcdRrCKVsJhdcNuojXErnWWf00fZs7sEBIVI05X/w==
+X-Received: by 2002:a17:902:b94b:: with SMTP id h11mr7840953pls.21.1571374871038;
+        Thu, 17 Oct 2019 22:01:11 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:180::cfd0])
+        by smtp.gmail.com with ESMTPSA id s141sm5721197pfs.13.2019.10.17.22.01.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 22:01:10 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 22:01:08 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBl?= =?UTF-8?B?bA==?= 
-        <bjorn.topel@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: linux-next: manual merge of the tip tree with the net-next tree
-Message-ID: <20191018133139.30c88807@canb.auug.org.au>
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: linux-next: build warning after merge of the bpf-next tree
+Message-ID: <20191018050107.dsnt4ukq6n6l6luy@ast-mbp>
+References: <20191018105657.4584ec67@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Z+ofq0xCGo0+RR6uVsB2NLd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018105657.4584ec67@canb.auug.org.au>
+User-Agent: NeoMutt/20180223
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Z+ofq0xCGo0+RR6uVsB2NLd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 18, 2019 at 10:56:57AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the bpf-next tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> WARNING: 2 bad relocations
+> c000000001998a48 R_PPC64_ADDR64    _binary__btf_vmlinux_bin_start
+> c000000001998a50 R_PPC64_ADDR64    _binary__btf_vmlinux_bin_end
 
-Hi all,
+Can ppc folks help me figure out what this warning means?
 
-Today's linux-next merge of the tip tree got a conflict in:
-
-  samples/bpf/Makefile
-
-between commit:
-
-  1d97c6c2511f ("samples/bpf: Base target programs rules on Makefile.target=
-")
-
-from the net-next tree and commit:
-
-  fce9501aec6b ("samples/bpf: fix build by setting HAVE_ATTR_TEST to zero")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc samples/bpf/Makefile
-index 4df11ddb9c75,42b571cde177..000000000000
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@@ -168,38 -171,21 +168,39 @@@ always +=3D ibumad_kern.
-  always +=3D hbm_out_kern.o
-  always +=3D hbm_edt_kern.o
- =20
- -KBUILD_HOSTCFLAGS +=3D -I$(objtree)/usr/include
- -KBUILD_HOSTCFLAGS +=3D -I$(srctree)/tools/lib/bpf/
- -KBUILD_HOSTCFLAGS +=3D -I$(srctree)/tools/testing/selftests/bpf/
- -KBUILD_HOSTCFLAGS +=3D -I$(srctree)/tools/lib/ -I$(srctree)/tools/include
- -KBUILD_HOSTCFLAGS +=3D -I$(srctree)/tools/perf
- -KBUILD_HOSTCFLAGS +=3D -DHAVE_ATTR_TEST=3D0
- +ifeq ($(ARCH), arm)
- +# Strip all except -D__LINUX_ARM_ARCH__ option needed to handle linux
- +# headers when arm instruction set identification is requested.
- +ARM_ARCH_SELECTOR :=3D $(filter -D__LINUX_ARM_ARCH__%, $(KBUILD_CFLAGS))
- +BPF_EXTRA_CFLAGS :=3D $(ARM_ARCH_SELECTOR)
- +TPROGS_CFLAGS +=3D $(ARM_ARCH_SELECTOR)
- +endif
- +
- +TPROGS_CFLAGS +=3D -Wall -O2
- +TPROGS_CFLAGS +=3D -Wmissing-prototypes
- +TPROGS_CFLAGS +=3D -Wstrict-prototypes
- +
- +TPROGS_CFLAGS +=3D -I$(objtree)/usr/include
- +TPROGS_CFLAGS +=3D -I$(srctree)/tools/lib/bpf/
- +TPROGS_CFLAGS +=3D -I$(srctree)/tools/testing/selftests/bpf/
- +TPROGS_CFLAGS +=3D -I$(srctree)/tools/lib/
- +TPROGS_CFLAGS +=3D -I$(srctree)/tools/include
- +TPROGS_CFLAGS +=3D -I$(srctree)/tools/perf
-++TPROGS_CFLAGS +=3D -DHAVE_ATTR_TEST=3D0
- =20
- -HOSTCFLAGS_bpf_load.o +=3D -I$(objtree)/usr/include -Wno-unused-variable
- +ifdef SYSROOT
- +TPROGS_CFLAGS +=3D --sysroot=3D$(SYSROOT)
- +TPROGS_LDFLAGS :=3D -L$(SYSROOT)/usr/lib
- +endif
- +
- +TPROGCFLAGS_bpf_load.o +=3D -Wno-unused-variable
- =20
- -KBUILD_HOSTLDLIBS		+=3D $(LIBBPF) -lelf
- -HOSTLDLIBS_tracex4		+=3D -lrt
- -HOSTLDLIBS_trace_output	+=3D -lrt
- -HOSTLDLIBS_map_perf_test	+=3D -lrt
- -HOSTLDLIBS_test_overhead	+=3D -lrt
- -HOSTLDLIBS_xdpsock		+=3D -pthread
- +TPROGS_LDLIBS			+=3D $(LIBBPF) -lelf
- +TPROGLDLIBS_tracex4		+=3D -lrt
- +TPROGLDLIBS_trace_output	+=3D -lrt
- +TPROGLDLIBS_map_perf_test	+=3D -lrt
- +TPROGLDLIBS_test_overhead	+=3D -lrt
- +TPROGLDLIBS_xdpsock		+=3D -pthread
- =20
-  # Allows pointing LLC/CLANG to a LLVM backend with bpf support, redefine =
-on cmdline:
-  #  make samples/bpf/ LLC=3D~/git/llvm/build/bin/llc CLANG=3D~/git/llvm/bu=
-ild/bin/clang
-
---Sig_/Z+ofq0xCGo0+RR6uVsB2NLd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2pJAsACgkQAVBC80lX
-0GyqEwf/UuMAsHsveGo2AA1IPKiMbsDeaMyqQOSlVmR60dCwQFt/0FIiGRYvDOj1
-Bj8APje30mHsjkB8soqEQ6wZAdDmzzrSIlI55bubZp2ogCBhoP4r+eDfYZJyLiCL
-O3tzu/owv5qrURc6e1qHQch6LhT5So77T3UPpL8xEPoGMPOpMVHeaHwq4H+B9ldA
-JpiMbPI+gRpaDghkt8ZwnPeetv6hChoeZVUKATArwuk5jJM4n+fIpnWratvgI+eZ
-AVPrdPGXNfFqttwLvq/dgjSxwplSn+onU6XtmO7reAPN6NHjPC1F6KNQYOg6nEQQ
-KJer+ciicgEiQ5jNLlr1fRuq0f8f4Q==
-=1V2Z
------END PGP SIGNATURE-----
-
---Sig_/Z+ofq0xCGo0+RR6uVsB2NLd--
