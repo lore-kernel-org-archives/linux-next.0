@@ -2,68 +2,103 @@ Return-Path: <SRS0=sbjL=YL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5B2CA9ED1
-	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 04:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432C8CA9ED0
+	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 05:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CA0222C5
-	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 04:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 143CD222C5
+	for <linux-next@archiver.kernel.org>; Fri, 18 Oct 2019 05:00:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jatNbz0I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbfJREyE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 18 Oct 2019 00:54:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:24459 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbfJREx3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 18 Oct 2019 00:53:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2019 19:31:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,310,1566889200"; 
-   d="scan'208";a="202568296"
-Received: from yihuaxu1-mobl.ccr.corp.intel.com ([10.249.174.21])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Oct 2019 19:31:01 -0700
-Message-ID: <076f3766e46a98e984c0a0196c0e6b2651701ef0.camel@intel.com>
-Subject: Re: Adding thermal group git tree
-From:   Zhang Rui <rui.zhang@intel.com>
+        id S2441832AbfJRFAT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 18 Oct 2019 01:00:19 -0400
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:41558 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfJRFAT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2019 01:00:19 -0400
+Received: by mail-pg1-f176.google.com with SMTP id t3so2649322pga.8;
+        Thu, 17 Oct 2019 22:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hkRzongkuOUe83ChWkL44NvN9Te54QbJ4HXExHzR2dY=;
+        b=jatNbz0IMlnkkWt3Xg1ggLGyaO+fIaHEXiyAghJ3oj3XGcTM6ib5fXHRjNOMzSfc4i
+         vCGp5w1Z+JLotu0IymLr1p0tRWNP7CE0HJgfQHkCoZlqf1NltbKigkHVou6QPc5+xzcG
+         Ww7lLxU48nRRFiQuTCC1TPVDsWKgpHK0/dVgJrMSojuoJrL5UpXHuK31cxiPqs1gQSJS
+         vyxwxHLJ3L3U3jWa10U+hHtsRIlCqeD4B0R6bWzLub+bEXq28Ws5rcGM/JIM9JVLxmQw
+         BlqDV8QwxTIGdGa42EtKB6wDuHg84K2VTcc4AcfkL5/cjszzprioS+kQ2JoyiJeHb3Bi
+         ut3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hkRzongkuOUe83ChWkL44NvN9Te54QbJ4HXExHzR2dY=;
+        b=ZB6qLK+Rj3bFNulOGUkke6WTqYS7bmQStwEE+tqQgTkK1afgpTYhXx+/zb5bHdk390
+         KUpxi6j0Zc4R+dAN45RmugCVQR7eiyQ3gIlFsNmZq/Zi9PTMhCrQ7S+Vf0s5CI/aotul
+         FIbnZH4BpSbiLMfsI7cSsd4Wn8V4GD4ONsLyreXMy6aGwoVxWxiOuoJ37RF9gOhry9HM
+         OFhGL8688mjjXObw4eVE8y3EVVIuH9d45nr7O2Sv2bSbCfVXPo6tr7jqf035VxX9gn8L
+         JMDL2FdfPz9kFyIq8hzr48Sm3d+UZbVI0oVg5mZ2LAuiyj2uuB6knmCM/jXk2Z68mpOK
+         fj6Q==
+X-Gm-Message-State: APjAAAUvc6jVZUI1Tj19a53uFDv81RcXMiLWsbGfnbBdNXxMQ+T1nzm9
+        /1Kaq7sb1xnr5VjTPpHS2z0=
+X-Google-Smtp-Source: APXvYqwaO3NXr1IrOUdk7COhtE8etBUdbbxwgbUaqCWe2dBM2NF7UNRJQNPJdNWWjJt44Zo+wGuoMQ==
+X-Received: by 2002:aa7:8691:: with SMTP id d17mr4373530pfo.218.1571374818508;
+        Thu, 17 Oct 2019 22:00:18 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:180::cfd0])
+        by smtp.gmail.com with ESMTPSA id r24sm4564056pfh.69.2019.10.17.22.00.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Oct 2019 22:00:17 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 22:00:15 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>
-Date:   Fri, 18 Oct 2019 10:31:01 +0800
-In-Reply-To: <20191018074040.6e9a8ba5@canb.auug.org.au>
-References: <540b4561-8920-f4fc-1b90-b013f20c8e25@linaro.org>
-         <20191015075154.4858a256@canb.auug.org.au>
-         <53defc08-9f67-ecdd-eb77-c0f34fecf05a@linaro.org>
-         <17dd6a545ebb23497647a14e8574effe1a0f674b.camel@intel.com>
-         <20191018074040.6e9a8ba5@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
+Message-ID: <20191018050013.sle55bwea5kxovej@ast-mbp>
+References: <20191018133139.30c88807@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018133139.30c88807@canb.auug.org.au>
+User-Agent: NeoMutt/20180223
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, 2019-10-18 at 07:40 +1100, Stephen Rothwell wrote:
-> Hi Zhang,
+On Fri, Oct 18, 2019 at 01:31:39PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Thu, 17 Oct 2019 09:40:06 +0800 Zhang Rui <rui.zhang@intel.com>
-> wrote:
-> > 
-> > Thanks for adding the branch, and yes, please CC Eduardo and me.
-> > Thanks
-> > a lot!
+> Today's linux-next merge of the tip tree got a conflict in:
 > 
-> Done.
+>   samples/bpf/Makefile
+> 
+> between commit:
+> 
+>   1d97c6c2511f ("samples/bpf: Base target programs rules on Makefile.target")
+> 
+> from the net-next tree and commit:
+> 
+>   fce9501aec6b ("samples/bpf: fix build by setting HAVE_ATTR_TEST to zero")
+> 
+> from the tip tree.
 
-Great, thanks for your help!
-
--rui
-> 
+Argh.
+Can tip folks revert the patch and let it go the normal route via bpf trees?
+There was no good reason in creating such conflicts.
 
