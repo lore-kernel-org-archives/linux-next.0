@@ -2,78 +2,79 @@ Return-Path: <SRS0=vCjB=YO=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504D5CA9EAF
-	for <linux-next@archiver.kernel.org>; Mon, 21 Oct 2019 19:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D93ACA9EAF
+	for <linux-next@archiver.kernel.org>; Mon, 21 Oct 2019 19:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2213C20873
-	for <linux-next@archiver.kernel.org>; Mon, 21 Oct 2019 19:32:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E608920873
+	for <linux-next@archiver.kernel.org>; Mon, 21 Oct 2019 19:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbfJUTcv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 21 Oct 2019 15:32:51 -0400
-Received: from smtprelay0176.hostedemail.com ([216.40.44.176]:44375 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728056AbfJUTcv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 21 Oct 2019 15:32:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 1505D18224089;
-        Mon, 21 Oct 2019 19:32:50 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: deer20_35a6d87dcf03f
-X-Filterd-Recvd-Size: 1851
-Received: from XPS-9350 (cpe-23-242-70-174.socal.res.rr.com [23.242.70.174])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 21 Oct 2019 19:32:48 +0000 (UTC)
-Message-ID: <16d819ded0c1edb46af8914a26cad479aac176e9.camel@perches.com>
-Subject: Re: linux-next: Fixes tag needs some work in the rdma-fixes tree
-From:   Joe Perches <joe@perches.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Matteo Croce <mcroce@redhat.com>,
-        Doug Ledford <dledford@redhat.com>,
+        id S1728943AbfJUThC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 21 Oct 2019 15:37:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43881 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728543AbfJUThC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Oct 2019 15:37:02 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iMdU6-0005N0-Dy; Mon, 21 Oct 2019 19:36:54 +0000
+Date:   Mon, 21 Oct 2019 21:36:53 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Potnuri Bharat Teja <bharat@chelsio.com>
-Date:   Mon, 21 Oct 2019 12:32:47 -0700
-In-Reply-To: <20191021173921.GD6285@mellanox.com>
-References: <20191021184128.601ff09d@canb.auug.org.au>
-         <c4377d50c8a30ae292cd7886909238ce4fb56ee5.camel@redhat.com>
-         <20191021151507.GD25164@mellanox.com>
-         <CAGnkfhzCuCUBG++QRTZbsUyFr8orq059Be7AvyL+_V9Smz7J3g@mail.gmail.com>
-         <20191021170111.GB6285@mellanox.com>
-         <CAGnkfhwsczOBLMZSJ0pWm=L3bMqgd4mWNitpZB3-NwjFN+fYDA@mail.gmail.com>
-         <20191021171153.GC6285@mellanox.com>
-         <d3a389360982c9d2730e6b29eb96523a562483ac.camel@perches.com>
-         <20191021173921.GD6285@mellanox.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Josh Poimboeuf <jpoimboe@redhat.com>, linux@rasmusvillemoes.dk,
+        cyphar@cyphar.com, keescook@chromium.org
+Subject: Re: linux-next: Tree for Oct 18 (objtool)
+Message-ID: <20191021193652.lfccehm37dkkofp7@wittgenstein>
+References: <20191018180300.090dbcb9@canb.auug.org.au>
+ <40de4e26-450e-b932-3d73-e833c8aeaa2e@infradead.org>
+ <20191021123549.GC1817@hirez.programming.kicks-ass.net>
+ <20191021131149.GA19358@hirez.programming.kicks-ass.net>
+ <20191021131947.yih3wqjbfroaj4dz@wittgenstein>
+ <20191021134759.GG1800@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191021134759.GG1800@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, 2019-10-21 at 17:39 +0000, Jason Gunthorpe wrote:
-> Maybe output format and then parse it to check the min
-> length and verify the subject?
+On Mon, Oct 21, 2019 at 03:47:59PM +0200, Peter Zijlstra wrote:
+> On Mon, Oct 21, 2019 at 03:19:48PM +0200, Christian Brauner wrote:
+> > On Mon, Oct 21, 2019 at 03:11:49PM +0200, Peter Zijlstra wrote:
+> 
+> > > By popular request; here's that alternative. Completely untested :-)
+> > 
+> > Am I not getting some mails? :)
+> 
+> You're not on the 'right' IRC channels :-)
 
-I'm not too worried about that for now.
-12 should still be good for quite awhile...
+Well, we saw that that wasn't true today. :)
 
-$ git log --abbrev=1 --format='%h' --no-merges  | \
-  awk '{print length($1);}' | sort -n | uniq -c
-     90 5
- 463746 6
- 320183 7
-  26244 8
-   1683 9
-    118 10
-      6 11
+> 
+> > I prefer this one as it allows us to avoid working around this in
+> > usercopy.c. Should especially make if this potentially helps in other
+> > cases as well?
+> 
+> That was Josh's argument too.
+> 
+> Personally I think GCC is being a moron here, because with value range
+> analysis it should be able to prove the shift-UB cannot happen (the <
+> sizeof(unsigned long) conditions on both), but alas, it emits the UBSAN
+> calls anyway.
 
+Ok, so I take it you route that patch somehwere through tip?
+I'm happy with the ubsan fix:
 
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
