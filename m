@@ -2,68 +2,93 @@ Return-Path: <SRS0=vMZX=YW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F9DCA9EC0
-	for <linux-next@archiver.kernel.org>; Tue, 29 Oct 2019 01:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8EDCA9EC0
+	for <linux-next@archiver.kernel.org>; Tue, 29 Oct 2019 01:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22DC420830
-	for <linux-next@archiver.kernel.org>; Tue, 29 Oct 2019 01:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572313328;
-	bh=ALunPfJtB8RbV0cQjCfp2WxTp3KG1vPT8vRZfOf8jOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kD2dbNe6KtpzbOrYu5e3O2M+/Rzpmu5FrMnk7j7VqDysBuGD+mEoe0Hf7GfUd7jzp
-	 19w+IM6V3wTafvBqJ61DGyRY5lx8htsPOevZazNRkV2twv5KBxLksRm+M2Afgum2t6
-	 kWTGfIHYfO9qAExVeEu8E8SL8OVRnIwGs5KIYKWo=
+	by mail.kernel.org (Postfix) with ESMTP id 14C1621721
+	for <linux-next@archiver.kernel.org>; Tue, 29 Oct 2019 01:49:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Pbz4wDP9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbfJ2BmH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 28 Oct 2019 21:42:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbfJ2BmH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Oct 2019 21:42:07 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2B0F20663;
-        Tue, 29 Oct 2019 01:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572313326;
-        bh=ALunPfJtB8RbV0cQjCfp2WxTp3KG1vPT8vRZfOf8jOQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ExgU/O/xUPZaE5t1oMZ0ZuyZg6DnNwnOc6ndbxxPozuugRdEDmgG06MGTx3H+Y5nn
-         FhQmRSnNULgUxuPNdh+VmMPa67695oJZrKOvj6I5NKVFZhiOocRqjPWvLeOioeY+cG
-         OO4EDfNHXXNgg0fitGm5X86KxI3hpH4miw+vfjAg=
-Date:   Tue, 29 Oct 2019 09:42:00 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the imx-mxs tree
-Message-ID: <20191029014156.GP16985@dragon>
-References: <20191029073838.146df408@canb.auug.org.au>
+        id S1727379AbfJ2Bt0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 28 Oct 2019 21:49:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46716 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727364AbfJ2Bt0 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2019 21:49:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9T1mn6S085568;
+        Tue, 29 Oct 2019 01:49:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=BwpL56zWq/DyfZTKkawyTy/VoYhLLKsZYiZWk9+XeG4=;
+ b=Pbz4wDP9qK47sd+UlHmbfMR3sAcbeA0oh32YCSuQdVpKoX8XO48b0IfZs0nUosmVmthm
+ JYN81VCbL2MDePWj4lYeyKOSbT61lsbCNoyNODldDV4n46xKAh+IXJa3PJ/8Deqk9JqC
+ QYN6O4lm7AF3hDZE8r3sBg2ImjoUJYyGU5wKj0zhiP3noaNOeb8dKwVJXR0LieJ3dFw+
+ nO/wm8J0ziZw4RhP6Md8jTwebZSS0j21+6+ht4HL6I7JnhAuB2WXNDj9RUsQ8gySDnpv
+ V7f+cbsuRQTLA4Z/tA+cXadlID/Lzc8ggBcz/MZhS204cwCH/DgK/EQBv3E+r8+hdetT jw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vvumfag7b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 01:49:11 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9T1gq6A107620;
+        Tue, 29 Oct 2019 01:49:11 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2vw09gu3nn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 01:49:10 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9T1n6qI020391;
+        Tue, 29 Oct 2019 01:49:06 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 28 Oct 2019 18:49:06 -0700
+To:     James Smart <jsmart2021@gmail.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, martin.petersen@oracle.com,
+        sfr@canb.auug.org.au, Dick Kennedy <dick.kennedy@broadcom.com>
+Subject: Re: [PATCH] lpfc: fix build error of lpfc_debugfs.c for vfree/vmalloc
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191025182530.26653-1-jsmart2021@gmail.com>
+Date:   Mon, 28 Oct 2019 21:49:04 -0400
+In-Reply-To: <20191025182530.26653-1-jsmart2021@gmail.com> (James Smart's
+        message of "Fri, 25 Oct 2019 11:25:30 -0700")
+Message-ID: <yq1tv7s8gof.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029073838.146df408@canb.auug.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9424 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=722
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910290017
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9424 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=821 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910290018
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 07:38:38AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   5a7fd0deda7a ("arm64: defconfig: Enable CONFIG_KEYBOARD_IMX_SC_KEY as module")
-> 
-> is missing a Signed-off-by from its committer.
 
-Thanks much for reporting, Stephen.  I just got it fixed.
+James,
 
-Shawn
+> lpfc_debufs.c was missing include of vmalloc.h when compiled on PPC.
+>
+> Add missing header.
+
+Applied to 5.5/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
