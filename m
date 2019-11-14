@@ -2,81 +2,97 @@ Return-Path: <SRS0=yUwf=ZG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3CDC432C3
-	for <linux-next@archiver.kernel.org>; Thu, 14 Nov 2019 08:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D57C432C3
+	for <linux-next@archiver.kernel.org>; Thu, 14 Nov 2019 09:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EAB3206F0
-	for <linux-next@archiver.kernel.org>; Thu, 14 Nov 2019 08:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF0CA206C0
+	for <linux-next@archiver.kernel.org>; Thu, 14 Nov 2019 09:21:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KCZxPz6u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbfKNI6P (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 14 Nov 2019 03:58:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38094 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725977AbfKNI6P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 14 Nov 2019 03:58:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 52300B24C;
-        Thu, 14 Nov 2019 08:58:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8DECB1E4AD2; Thu, 14 Nov 2019 09:58:12 +0100 (CET)
-Date:   Thu, 14 Nov 2019 09:58:12 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-next@vger.kernel.org
-Subject: Re: Coverity: ext4_iomap_alloc(): Integer handling issues
-Message-ID: <20191114085812.GB28486@quack2.suse.cz>
-References: <201911111735.1F45BB0B4@keescook>
- <20191112072239.GB15488@bobrowski>
- <20191112110004.GF1241@quack2.suse.cz>
- <201911121256.647DA73508@keescook>
- <20191112212846.GA29863@bobrowski>
- <201911121414.ECAA926@keescook>
- <20191113093754.GB6367@quack2.suse.cz>
- <201911131036.2E3F280B9@keescook>
+        id S1726002AbfKNJV1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 14 Nov 2019 04:21:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:56703 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725977AbfKNJV1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 14 Nov 2019 04:21:27 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47DGFJ1C1Wz9s7T;
+        Thu, 14 Nov 2019 20:21:24 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1573723284;
+        bh=Su9SciTG5y8VlxFFPshZ485bk7lrNMhM9K3kUHG2sRQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KCZxPz6uOlnMxW52o/7PWKk7Si0rLcY6YQtAKWjMovQSKPbnyapuXVL6FkVMNW1X9
+         s2vcdpULnyAeQwBl16MEF6RrIV5uA7JRRxcYvUixkh1dXrzn9IzKQ9ot5wnGOrV2VV
+         Yf/gIsY23QqanWOjXBDL75ShuNIeNDdseBMpMByri0tcxmquWtPD0h7JopnEVIqrFQ
+         dlwzhFa5AFBCcyHicGzDSPRoAV6gDgBOmXOFvLhrj/usjlhSzgrWnrj7TFI2rjg7f9
+         1IgzO/Pfw6YQaa+ZIk+ivRuuPXHQYcvbS2+/O/7U89rmSuUPTv+IdlY+9sv6u25t68
+         vgpT6MdicoYIg==
+Date:   Thu, 14 Nov 2019 20:21:22 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: linux-next: Fixes tag needs some work in the arm-soc tree
+Message-ID: <20191114202122.0f38eab6@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201911131036.2E3F280B9@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/h4bRdnJqf._UF0UZazA8wl5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed 13-11-19 10:38:43, Kees Cook wrote:
-> On Wed, Nov 13, 2019 at 10:37:54AM +0100, Jan Kara wrote:
-> > Well, I don't think we want to clutter various places in the code with
-> > checks that inode->i_blkbits (which is what blkbits actually is) is what we
-> > expect. inode->i_blkbits is initialized in fs/inode.c:inode_init_always()
-> > from sb->s_blocksize_bits and never changed. sb->s_blocksize_bits gets set
-> > through sb_set_blocksize().  Now it would make sense to assert in
-> > sb_set_blocksize() that block size is in the range we expect it (currently
-> > there's just a comment there). But then I suspect that Coverity won't be
-> > able to carry over the limits as far as into ext4_iomap_alloc() code...
-> > Kees?
-> 
-> Yeah, I'm not sure it's capabilities in this regard. It's still a bit of a
-> black box. :) I just tend to lean toward adding asserts to code-document
-> value range expectations. Perhaps add the check in sb_set_blocksize()
-> just because it's a decent thing to test, and if Coverity doesn't notice,
-> that's okay -- my goal is to improve the kernel which may not always
-> reduce the static checker noise. :)
+--Sig_/h4bRdnJqf._UF0UZazA8wl5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Now I've noticed that set_blocksize() called from sb_set_blocksize()
-already has these checks. So there's nothing to add. Just Coverity is not
-able to carry over those limits that far...
+Hi all,
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+n commit
+
+  9a6edfe32f37 ("firmware: arm_scmi: Fix doorbell ring logic for !CONFIG_64=
+BIT")
+
+Fixes tag
+
+  Fixes: 823839571d76 ("firmware: arm_scmi: Make use SCMI v2.0 fastchannel
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more than one line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/h4bRdnJqf._UF0UZazA8wl5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3NHJIACgkQAVBC80lX
+0GzlSwgAjoiDtqoUq2bkVMFZkO/8ZZdHgoNLzkX09oU87yoReHG8Ljw3z5b4pTCd
+t1quaUWwTxudkyIzZk3xy1p4MCiAjJ+HGgEV9UM77VF+2ZCqjZEnYAspiQC2MevS
+RSgmLE4RHfvrJ+6dfAHnw0K49bqhgB0pvdr7tgIoxBrS7gwofx0Dvk5jYHFQL3hv
+bMipMsV7y6n5TbA9Uckm+h+5tKIZdgUZF91D7HFnHwMALslTyyJE6exS7OeqWqzy
+8/5ZaUtU9e2FbBggSCMvj1h415HisgDMxEgJjrJ2evrVWwUKpQ6XRw0LJxvH+qQb
+n37OjnJ0TmKP4cNkUZewx2xdQXQAFA==
+=fc37
+-----END PGP SIGNATURE-----
+
+--Sig_/h4bRdnJqf._UF0UZazA8wl5--
