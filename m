@@ -2,108 +2,173 @@ Return-Path: <SRS0=tgaE=ZH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DATE_IN_PAST_06_12,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED526C43141
-	for <linux-next@archiver.kernel.org>; Fri, 15 Nov 2019 05:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FD7C432C3
+	for <linux-next@archiver.kernel.org>; Fri, 15 Nov 2019 05:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C89ED2072D
-	for <linux-next@archiver.kernel.org>; Fri, 15 Nov 2019 05:29:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18F37206D6
+	for <linux-next@archiver.kernel.org>; Fri, 15 Nov 2019 05:32:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iQN/Supo"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cIlPkzBz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfKOF3q (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 15 Nov 2019 00:29:46 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34531 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbfKOF3p (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 15 Nov 2019 00:29:45 -0500
-Received: by mail-pl1-f193.google.com with SMTP id h13so3864357plr.1
-        for <linux-next@vger.kernel.org>; Thu, 14 Nov 2019 21:29:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XZkN9+kUoRQ9uBZoFuptITant6xYc3cAxZ6x4hNFsbo=;
-        b=iQN/SupoAsrzY7KzqYS/8b7Nh+LRIr7OKepsE8dJWaGnSlUyhFPZHb26dLTpLrr+6p
-         sF/2wg/5maFWjGeOZhnS/XffzFqCjaHWTNZw0oZGOWdIzFsZTnO9kp7ZPiNHcVVkJHlB
-         THDwb3TiQCZLCUgGphFIpJztBTupkHKA28yiQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XZkN9+kUoRQ9uBZoFuptITant6xYc3cAxZ6x4hNFsbo=;
-        b=LbKkHB2zsmO4nXS/VWcXCft9Uh0ujq239BKSoSJUH51WUvvotncZjjFgr1NW0PyKVv
-         FAjIMZapJxEGZiowPpVZIQfE0M92eb7H/8m5J+70PfbLCezJYvEwHAusnk1LynV1wOtA
-         aMvF/hkval92X/rl15tg1admQ2S+x38slAhOfr11391Ur3Glip1BiuGKj0tqdDFjZrlF
-         YkL7LWXsiVCbB61b5a6Z915EgeE3DyZ/6dV/Eu1RO/H89m7PnTx9Jqdtt/XdVvZxhUcW
-         Anj+hwIygQOW9a0LPfmq4V/YIhuUjZHhOk3erQbNMyOWqt6DyWBHZa3tZiDZiEVYis/8
-         e/TA==
-X-Gm-Message-State: APjAAAVVbDKG03BQ2g2KRfRqTyuf06YbEgTTnvm/Oe0tVt3WMvYegOAL
-        gIddcREjezuZtlYoNvixCz+pHwMZ8U0=
-X-Google-Smtp-Source: APXvYqySCijUwLCxn004BCwqcRR5lBczZ5d0p7V7o4tF6Lm3ryz9dIHdgV+WjiZvVI177tTfHyUpGg==
-X-Received: by 2002:a17:902:8690:: with SMTP id g16mr13918122plo.194.1573795785008;
-        Thu, 14 Nov 2019 21:29:45 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h3sm6742740pji.16.2019.11.14.21.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 21:29:42 -0800 (PST)
-Date:   Thu, 14 Nov 2019 10:43:09 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-next@vger.kernel.org
-Subject: Re: Coverity: ext4_iomap_alloc(): Integer handling issues
-Message-ID: <201911141042.5B8B2BC4AB@keescook>
-References: <201911111735.1F45BB0B4@keescook>
- <20191112072239.GB15488@bobrowski>
- <20191112110004.GF1241@quack2.suse.cz>
- <201911121256.647DA73508@keescook>
- <20191112212846.GA29863@bobrowski>
- <201911121414.ECAA926@keescook>
- <20191113093754.GB6367@quack2.suse.cz>
- <201911131036.2E3F280B9@keescook>
- <20191114085812.GB28486@quack2.suse.cz>
+        id S1727145AbfKOFcG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 15 Nov 2019 00:32:06 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33693 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfKOFcF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 15 Nov 2019 00:32:05 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Dn6B3gCbz9sP4;
+        Fri, 15 Nov 2019 16:32:02 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1573795922;
+        bh=EgmmEVk62/FPNnUYLxtc9tGZBgbgflsJT0JxSgS/3HQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cIlPkzBzK6ybCrPgG4FhbdHuouA3kXufB+PzTklifJoCxXram8v6rVy3V31q3Di3q
+         uiC2va5pui0fkwyEk4BAtWGKx9VhG2Eb0Zbvg6iGJGb8G4jvQvvIWjlZu9+eiOdRVJ
+         FJxQfx/6JRTdzFOxhWmm5RAhCky7np85WwBuk+3hS6mMdhOi4bNeLZnnN2NWoGbueW
+         1svTb8rqFg7mSauE4HvH72f4HumPLc7obgWmgMhDqnfrbwK/eSdfKVN1OsRYZio39q
+         rEhmZZZKNdnCfrC5t85jNOKg0saELFONgNesjB7wbEWgtbCRq2xdiEYBfcl/fAiGrX
+         hZRcq6UoJpHVw==
+Date:   Fri, 15 Nov 2019 16:32:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Reber <areber@redhat.com>
+Subject: linux-next: manual merge of the pidfd tree with Linus' tree
+Message-ID: <20191115163200.6526ccfa@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191114085812.GB28486@quack2.suse.cz>
+Content-Type: multipart/signed; boundary="Sig_/63otFFzaLmS9VxfxmMwYVh+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 09:58:12AM +0100, Jan Kara wrote:
-> On Wed 13-11-19 10:38:43, Kees Cook wrote:
-> > On Wed, Nov 13, 2019 at 10:37:54AM +0100, Jan Kara wrote:
-> > > Well, I don't think we want to clutter various places in the code with
-> > > checks that inode->i_blkbits (which is what blkbits actually is) is what we
-> > > expect. inode->i_blkbits is initialized in fs/inode.c:inode_init_always()
-> > > from sb->s_blocksize_bits and never changed. sb->s_blocksize_bits gets set
-> > > through sb_set_blocksize().  Now it would make sense to assert in
-> > > sb_set_blocksize() that block size is in the range we expect it (currently
-> > > there's just a comment there). But then I suspect that Coverity won't be
-> > > able to carry over the limits as far as into ext4_iomap_alloc() code...
-> > > Kees?
-> > 
-> > Yeah, I'm not sure it's capabilities in this regard. It's still a bit of a
-> > black box. :) I just tend to lean toward adding asserts to code-document
-> > value range expectations. Perhaps add the check in sb_set_blocksize()
-> > just because it's a decent thing to test, and if Coverity doesn't notice,
-> > that's okay -- my goal is to improve the kernel which may not always
-> > reduce the static checker noise. :)
-> 
-> Now I've noticed that set_blocksize() called from sb_set_blocksize()
-> already has these checks. So there's nothing to add. Just Coverity is not
-> able to carry over those limits that far...
+--Sig_/63otFFzaLmS9VxfxmMwYVh+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Okay, cool. I'll mark it as such. Thanks!
+Hi all,
 
--- 
-Kees Cook
+Thanks, Christian, for the heads up about this.
+
+Today's linux-next merge of the pidfd tree got a conflict in:
+
+  include/uapi/linux/sched.h
+
+between commit:
+
+  fa729c4df558 ("clone3: validate stack arguments")
+
+from Linus' tree and commit:
+
+  fef0d8e4c7a1 ("fork: extend clone3() to support setting a PID")
+
+from the pidfd tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/uapi/linux/sched.h
+index 25b4fa00bad1,2e649cfa07f4..000000000000
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@@ -36,28 -39,38 +39,42 @@@
+  #ifndef __ASSEMBLY__
+  /**
+   * struct clone_args - arguments for the clone3 syscall
+-  * @flags:       Flags for the new process as listed above.
+-  *               All flags are valid except for CSIGNAL and
+-  *               CLONE_DETACHED.
+-  * @pidfd:       If CLONE_PIDFD is set, a pidfd will be
+-  *               returned in this argument.
+-  * @child_tid:   If CLONE_CHILD_SETTID is set, the TID of the
+-  *               child process will be returned in the child's
+-  *               memory.
+-  * @parent_tid:  If CLONE_PARENT_SETTID is set, the TID of
+-  *               the child process will be returned in the
+-  *               parent's memory.
+-  * @exit_signal: The exit_signal the parent process will be
+-  *               sent when the child exits.
+-  * @stack:       Specify the location of the stack for the
+-  *               child process.
+-  *               Note, @stack is expected to point to the
+-  *               lowest address. The stack direction will be
+-  *               determined by the kernel and set up
+-  *               appropriately based on @stack_size.
+-  * @stack_size:  The size of the stack for the child process.
+-  * @tls:         If CLONE_SETTLS is set, the tls descriptor
+-  *               is set to tls.
++  * @flags:        Flags for the new process as listed above.
++  *                All flags are valid except for CSIGNAL and
++  *                CLONE_DETACHED.
++  * @pidfd:        If CLONE_PIDFD is set, a pidfd will be
++  *                returned in this argument.
++  * @child_tid:    If CLONE_CHILD_SETTID is set, the TID of the
++  *                child process will be returned in the child's
++  *                memory.
++  * @parent_tid:   If CLONE_PARENT_SETTID is set, the TID of
++  *                the child process will be returned in the
++  *                parent's memory.
++  * @exit_signal:  The exit_signal the parent process will be
++  *                sent when the child exits.
++  * @stack:        Specify the location of the stack for the
++  *                child process.
+++ *                Note, @stack is expected to point to the
+++ *                lowest address. The stack direction will be
+++ *                determined by the kernel and set up
+++ *                appropriately based on @stack_size.
++  * @stack_size:   The size of the stack for the child process.
++  * @tls:          If CLONE_SETTLS is set, the tls descriptor
++  *                is set to tls.
++  * @set_tid:      Pointer to an array of type *pid_t. The size
++  *                of the array is defined using @set_tid_size.
++  *                This array is used select PIDs/TIDs for newly
++  *                created processes. The first element in this
++  *                defines the PID in the most nested PID
++  *                namespace. Each additional element in the array
++  *                defines the PID in the parent PID namespace of
++  *                the original PID namespace. If the array has
++  *                less entries than the number of currently
++  *                nested PID namespaces only the PIDs in the
++  *                corresponding namespaces are set.
++  * @set_tid_size: This defines the size of the array referenced
++  *                in @set_tid. This cannot be larger than the
++  *                kernel's limit of nested PID namespaces.
+   *
+   * The structure is versioned by size and thus extensible.
+   * New struct members must go at the end of the struct and
+
+--Sig_/63otFFzaLmS9VxfxmMwYVh+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3OOFAACgkQAVBC80lX
+0GwJJQf/WtMyIw1DdBpnWQ7UStJWZtiNh7Atco5Y2+O0MV0bSc2DtUZOsvZFHyhS
+byaPj00joRIalmYVPTivIyzpZmo+vo1QfPmmz0RM4fif/pFTaRRKt6rEbXDtAD6B
+x2b+dmFbmhx9o5ts/8wgHzyJPZDL8/pnBWWAbf8DKe254LFKcDnbnSHetT7Pnr0x
+GBkcOYIeCb/cNKDWNlRRcyrE0wAoAP3YpK/hHlWSGyku7lgQ+WSROX7qng/rSIqF
+kIFRzwlPGWhTzIyPHhEr1Jc+VUhijE4UAKdk6ydewJxGhwAq3dkVgmybmqdSUl26
+2BzJJKxaz8gLDCT3hl6aa2/O23Stbg==
+=SrZM
+-----END PGP SIGNATURE-----
+
+--Sig_/63otFFzaLmS9VxfxmMwYVh+--
