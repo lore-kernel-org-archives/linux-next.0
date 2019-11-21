@@ -2,150 +2,144 @@ Return-Path: <SRS0=Yfg/=ZN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A1FC432C3
-	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 18:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E28C43215
+	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 18:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4FB20672
-	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 18:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 711D020659
+	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 18:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqCL0T6N"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cOv3U23E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfKUShX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 21 Nov 2019 13:37:23 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38362 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbfKUShW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Nov 2019 13:37:22 -0500
-Received: by mail-wr1-f67.google.com with SMTP id i12so5699786wro.5;
-        Thu, 21 Nov 2019 10:37:21 -0800 (PST)
+        id S1727020AbfKUSny (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 21 Nov 2019 13:43:54 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43638 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbfKUSny (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Nov 2019 13:43:54 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l20so4123896oie.10
+        for <linux-next@vger.kernel.org>; Thu, 21 Nov 2019 10:43:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DP2863yACbff5i+RB3eZcwhNt5zRZsKWECbY34JBcgA=;
-        b=TqCL0T6NAWRZxDvpie2AstfsSje6ENUuHqVWYhyMpDwMihvL3IVbv4lfh7bRYOxeDC
-         OAm9kjeRqp63n1gZP92JqXyABQxJk8jE6A53cdPJQrQkGj33N9Ero1yWvfbsVVKFNa8/
-         YPYJQDJuUetzBzUj/8coik4Q2EvmX5srQLQ+1B0pTx5XmNqsfKW8hPG9ErbIBTwhBj+F
-         xUHwgCmXC8zwX+oKI5OGaLs4sumgIvpTk1LNPiHa7slWqezoG6W0nFdpwkkepiyeWUs/
-         ob5zd1b/O3gBtP8EUCPpmOaj+AFABXFnyEyDUpJX7Lu6aADQ/QfrLWZzDLiw7isPBCdJ
-         mMqw==
+        bh=Oehb3N8x/6VYNF5g8Ikynmg31kRc2XRlRmBTauKlHqE=;
+        b=cOv3U23E45yrBccLHgBCjp65/tLymOEVGJP140ZxBWObRTcCYHjftGMcP+OxJ94YaV
+         kUzYJg8CdO0iFTk15+rSnq33a8FHyj5P4cXDYTJqyIQAtjMy6uj90Xkx+3jy0LeUHXxj
+         /bTfNQ2YJDN7f0RpEZO1PDCT6KdM2K5BzpKdsT+C9d65e4KFQ/PZq72rBHB9CLevWmPa
+         VQJYlv1IHnLlrA6pQdSZYWdHzON0lqzyNCGRmukle+mK3b4npqWyVieYn8KzjA/iznVF
+         CNI6OtmgdyMmWLxtIdg1gf+jKmGNId36rcFvPC5IYVDToW5Sp8N5B9Ad/xd5e+h40T9N
+         vS6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DP2863yACbff5i+RB3eZcwhNt5zRZsKWECbY34JBcgA=;
-        b=Sz2LF6p9a98PubE2ZzuJa9IKshhwsEuXjRSnsfrMGBBo0q4a9tDAxQJQV/3MX/jEyh
-         BfNwbwI1SgS9gdbiepbslBmK+4T81vAXhSTTdUpK5eKGGfCFeCbonvkAYp/jLYWFBdIN
-         EccH7NmuH6dvHJK2tNjihiEQRnGLioNv1dgJloJmtQeWsdoGR9gPAEHme1OqwpCYTncK
-         QrfZGlF1iu9yVDiEE+PK5pgEH8C6K9HyLg8IPJr9YL2w2i8/Ltmeb/wx+ZMF4YtAzBXh
-         l8To7lcaBP3s+3JJNZj61ZGTqwsBdxIwLRXmil8f3/CbOgLWaO60m0eAyWZ3IqLepDXW
-         oAyw==
-X-Gm-Message-State: APjAAAWRJUUy0znfquLX/qSg4Wj/GZq2yeyx0uJmH7At/xLkyqilyP6M
-        OnXgyaEu2OyDDXbXQuQfe/aZ8aXQiQmH758Ejac=
-X-Google-Smtp-Source: APXvYqw0gk8+IPXr82CnrP23ZVlU698/XaqMec5S9dwPM2xvZo/BgowQ0jIeqLBr0yaDtAygzcPKTGG5mcm9rFvHOmU=
-X-Received: by 2002:a5d:4688:: with SMTP id u8mr12610035wrq.40.1574361441116;
- Thu, 21 Nov 2019 10:37:21 -0800 (PST)
+        bh=Oehb3N8x/6VYNF5g8Ikynmg31kRc2XRlRmBTauKlHqE=;
+        b=hRONi5uuXOmY2JMA4WGPL6uyWJTB36IOjX9ZEiVtpDt1mUBVprH+4xqxAXS/JLZy11
+         0k8koWRv17zfe4Sv/1iOHfkQSBzdz8jM8JRGZjZE/d+csmsOWaP58HcZe6Jd1auGt+jz
+         Hplw1pfMUSaLEj/DmQvlOFUwX6lnVbu2MQJx25bCY3m5Ccd+t6+8XFN/fe1/FE9mSpL1
+         etA+U9xqcVF5E0oyG/DMuUYmO9obxvxq9yvP2FygiaS2uZwFo1wxGZ35v/rk7/Sry9Qa
+         A8ls6487SzoK+sP2OWpw9rUYgaS9Q4NHluRhhDb1//a2jj23IEzkdYzsKQEM9vqM4RRT
+         COaA==
+X-Gm-Message-State: APjAAAWX/yYqKSwpYw91B4mtEMveu6p6Fwl73VDzLMR1mi6FUQBrY19P
+        cTAOQtrqdz0TdCZixtaQativ9FlG7kqEX9GkgfvIng==
+X-Google-Smtp-Source: APXvYqwT+4xRnhgdAO1a5oE5atRewqWe1SbAhSQ4Ouij9K+zoSC2vh2437x4G63SsvTvsyrKH9zFulLuEYKwAVtvOm0=
+X-Received: by 2002:aca:5413:: with SMTP id i19mr9210836oib.121.1574361832039;
+ Thu, 21 Nov 2019 10:43:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20191121145403.46789cb5@canb.auug.org.au>
-In-Reply-To: <20191121145403.46789cb5@canb.auug.org.au>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 21 Nov 2019 13:37:09 -0500
-Message-ID: <CADnq5_O+J3pVR_SxP8cYnkwJo9LK8uQTXrFtpMbz9c8NYmOGnA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
+References: <20191120203434.2a0727b3@canb.auug.org.au> <58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org>
+ <CANpmjNOHTyTRCeo3oxEPTY__TCjAQ8nMvcqDSZ6Otfs7vVESSA@mail.gmail.com> <20191121183711.w2qnysscwnbxocc4@treble>
+In-Reply-To: <20191121183711.w2qnysscwnbxocc4@treble>
+From:   Marco Elver <elver@google.com>
+Date:   Thu, 21 Nov 2019 19:43:40 +0100
+Message-ID: <CANpmjNMzue4xatqy5hik1sBNohHUR_VYND6_2qWaK5Kwy1aiLQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Nov 20 (kcsan + objtool)
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kevin Wang <kevin1.wang@amd.com>
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 10:54 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 21 Nov 2019 at 19:37, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 >
-> Hi all,
+> On Wed, Nov 20, 2019 at 08:48:41PM +0100, Marco Elver wrote:
+> > On Wed, 20 Nov 2019 at 17:18, Randy Dunlap <rdunlap@infradead.org> wrote:
+> > >
+> > > On 11/20/19 1:34 AM, Stephen Rothwell wrote:
+> > > > Hi all,
+> > > >
+> > > > Changes since 20191119:
+> > > >
+> > >
+> > > on x86_64:
+> > >
+> > > kernel/kcsan/core.o: warning: objtool: kcsan_found_watchpoint()+0xa: call to kcsan_is_enabled() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_read1()+0x13: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_write1()+0x10: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_read2()+0x13: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_write2()+0x10: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_read4()+0x13: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_write4()+0x10: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_read8()+0x13: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_write8()+0x10: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_read16()+0x13: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_write16()+0x10: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_read_range()+0x13: call to find_watchpoint() with UACCESS enabled
+> > > kernel/kcsan/core.o: warning: objtool: __tsan_write_range()+0x10: call to find_watchpoint() with UACCESS enabled
+> > >
+> > > kernel/trace/trace_branch.o: warning: objtool: ftrace_likely_update()+0x361: call to __stack_chk_fail() with UACCESS enabled
+> > >
+> > >
+> > > Full randconfig file is attached.
+> >
+> > Thanks.
+> >
+> > This is due to CONFIG_CC_OPTIMIZE_FOR_SIZE=y. It seems the compiler
+> > decides to not even inline small static inline functions. I tried to
+> > make this go away by adding __always_inline, but then we're also left
+> > with atomic64_try_cmpxchg which never gets inlined.
+> >
+> > The optimized build simply inlines the small static inline functions.
+> > We certainly do not want to add more functions to the objtool
+> > whitelist, especially those that are private to KCSAN.
+> >
+> > We could fix it by either:
+> >
+> > 1. Adding __always_inline to every function used by the KCSAN runtime
+> > outside user_access_save + also fix atomic64_try_cmpxchg
+> > (atomic-instrumented.h).
+> >
+> > 2. Just not compile KCSAN with -Os, i.e. have the Makefile strip -Os
+> > and replace it with -O2 for kcsan/core.c. #2 is the simpler option,
+> > and would probably make KCSAN more effective even with -Os. Although
+> > it might violate the assumption of whoever decided they want both
+> > CC_OPTIMIZE_FOR_SIZE and KCSAN. It might also mean that future
+> > compilers that have a new inlining algorithm will have the same
+> > problem.
+> >
+> > What do people think is better?
 >
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> I haven't had a chance to look at this yet, and probably won't be able
+> to do so until at least Monday...
 >
-> In file included from include/trace/define_trace.h:102,
->                  from drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h:502,
->                  from drivers/gpu/drm/amd/amdgpu/amdgpu_trace_points.c:29:
-> include/trace/../../drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h:476:52: error: expected expression before ';' token
->   476 |         __string(ring, sched_job->base.sched->name);
->       |                                                    ^
-> include/trace/trace_events.h:435:2: note: in definition of macro 'DECLARE_EVENT_CLASS'
->   435 |  tstruct        \
->       |  ^~~~~~~
-> include/trace/trace_events.h:77:9: note: in expansion of macro 'PARAMS'
->    77 |         PARAMS(tstruct),         \
->       |         ^~~~~~
-> include/trace/../../drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h:472:1: note: in expansion of macro 'TRACE_EVENT'
->   472 | TRACE_EVENT(amdgpu_ib_pipe_sync,
->       | ^~~~~~~~~~~
-> include/trace/../../drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h:475:6: note: in expansion of macro 'TP_STRUCT__entry'
->   475 |      TP_STRUCT__entry(
->       |      ^~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   2c2fdb8bca29 ("drm/amdgpu: fix amdgpu trace event print string format error")
->
-> from the drm tree interacting with commit
->
->   60fdad00827c ("ftrace: Rework event_create_dir()")
->
-> from the tip tree.
->
-> I have added the following merge fix patch:
+> Adding PeterZ who's the objtool uaccess expert.
 
-Applied.  Thanks!
+Thanks. I have a patch which does #1, since it's probably cleaner. I
+will send it out soon.
 
-Alex
+If there is a better way to resolve this, any suggestions welcome.
 
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 21 Nov 2019 14:46:00 +1100
-> Subject: [PATCH] merge fix for "ftrace: Rework event_create_dir()"
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-> index f940526c5889..63e734a125fb 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-> @@ -473,7 +473,7 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
->             TP_PROTO(struct amdgpu_job *sched_job, struct dma_fence *fence),
->             TP_ARGS(sched_job, fence),
->             TP_STRUCT__entry(
-> -                            __string(ring, sched_job->base.sched->name);
-> +                            __string(ring, sched_job->base.sched->name)
->                              __field(uint64_t, id)
->                              __field(struct dma_fence *, fence)
->                              __field(uint64_t, ctx)
-> --
-> 2.23.0
->
-> --
-> Cheers,
-> Stephen Rothwell
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thanks,
+-- Marco
