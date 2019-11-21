@@ -2,62 +2,152 @@ Return-Path: <SRS0=Yfg/=ZN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D30BC432C0
-	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 15:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1A0C432C3
+	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 18:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8909206F4
-	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 15:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4E02206CB
+	for <linux-next@archiver.kernel.org>; Thu, 21 Nov 2019 18:37:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvS01kmZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbfKUPPS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 21 Nov 2019 10:15:18 -0500
-Received: from muru.com ([72.249.23.125]:43130 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfKUPPS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:15:18 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id B1C4980DB;
-        Thu, 21 Nov 2019 15:15:54 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 07:15:14 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1727047AbfKUShW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 21 Nov 2019 13:37:22 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44827 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726880AbfKUShW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Nov 2019 13:37:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574361440;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wEMwsmsZ/juHdne/TJ39MbTp+BFkJkSc6k7UlQcJDDQ=;
+        b=fvS01kmZa/5IrNq3MqELHPjOPqr3eBTTEOC2De4Vs2Kidb5BBR6/OwwsOxlizqcPNTsnQY
+        8RHua7Haa9PJGMEXN0gu7qA1046kNQvsD4eGhRnhC2mTo9mxjAmn01y35LpxUHffbITWMe
+        rjPLoVOLvauG9RNNtVVP4yceTeHD10M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-S48D8N2TO6KW0k3f1yc76Q-1; Thu, 21 Nov 2019 13:37:17 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F8E6107ACC5;
+        Thu, 21 Nov 2019 18:37:15 +0000 (UTC)
+Received: from treble (ovpn-124-31.rdu2.redhat.com [10.10.124.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8041F6106F;
+        Thu, 21 Nov 2019 18:37:13 +0000 (UTC)
+Date:   Thu, 21 Nov 2019 12:37:11 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Marco Elver <elver@google.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: linux-next: Fixes tag needs some work in the omap tree
-Message-ID: <20191121151514.GV35479@atomide.com>
-References: <20191121072254.79e13f56@canb.auug.org.au>
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Nov 20 (kcsan + objtool)
+Message-ID: <20191121183711.w2qnysscwnbxocc4@treble>
+References: <20191120203434.2a0727b3@canb.auug.org.au>
+ <58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org>
+ <CANpmjNOHTyTRCeo3oxEPTY__TCjAQ8nMvcqDSZ6Otfs7vVESSA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CANpmjNOHTyTRCeo3oxEPTY__TCjAQ8nMvcqDSZ6Otfs7vVESSA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: S48D8N2TO6KW0k3f1yc76Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20191121072254.79e13f56@canb.auug.org.au>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [191120 21:01]:
-> Hi all,
-> 
-> In commit
-> 
->   e130d53f2599 ("ARM: dts: dra7: fix cpsw mdio fck clock")
-> 
-> Fixes tag
-> 
->   Fixes: commit 1faa415c9c6e ("ARM: dts: Add fck for cpsw mdio for omap variants")
-> 
-> has these problem(s):
-> 
->   - leading word 'commit' unexpected
+On Wed, Nov 20, 2019 at 08:48:41PM +0100, Marco Elver wrote:
+> On Wed, 20 Nov 2019 at 17:18, Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> > On 11/20/19 1:34 AM, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Changes since 20191119:
+> > >
+> >
+> > on x86_64:
+> >
+> > kernel/kcsan/core.o: warning: objtool: kcsan_found_watchpoint()+0xa: ca=
+ll to kcsan_is_enabled() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_read1()+0x13: call to fin=
+d_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_write1()+0x10: call to fi=
+nd_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_read2()+0x13: call to fin=
+d_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_write2()+0x10: call to fi=
+nd_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_read4()+0x13: call to fin=
+d_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_write4()+0x10: call to fi=
+nd_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_read8()+0x13: call to fin=
+d_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_write8()+0x10: call to fi=
+nd_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_read16()+0x13: call to fi=
+nd_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_write16()+0x10: call to f=
+ind_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_read_range()+0x13: call t=
+o find_watchpoint() with UACCESS enabled
+> > kernel/kcsan/core.o: warning: objtool: __tsan_write_range()+0x10: call =
+to find_watchpoint() with UACCESS enabled
+> >
+> > kernel/trace/trace_branch.o: warning: objtool: ftrace_likely_update()+0=
+x361: call to __stack_chk_fail() with UACCESS enabled
+> >
+> >
+> > Full randconfig file is attached.
+>=20
+> Thanks.
+>=20
+> This is due to CONFIG_CC_OPTIMIZE_FOR_SIZE=3Dy. It seems the compiler
+> decides to not even inline small static inline functions. I tried to
+> make this go away by adding __always_inline, but then we're also left
+> with atomic64_try_cmpxchg which never gets inlined.
+>=20
+> The optimized build simply inlines the small static inline functions.
+> We certainly do not want to add more functions to the objtool
+> whitelist, especially those that are private to KCSAN.
+>=20
+> We could fix it by either:
+>=20
+> 1. Adding __always_inline to every function used by the KCSAN runtime
+> outside user_access_save + also fix atomic64_try_cmpxchg
+> (atomic-instrumented.h).
+>=20
+> 2. Just not compile KCSAN with -Os, i.e. have the Makefile strip -Os
+> and replace it with -O2 for kcsan/core.c. #2 is the simpler option,
+> and would probably make KCSAN more effective even with -Os. Although
+> it might violate the assumption of whoever decided they want both
+> CC_OPTIMIZE_FOR_SIZE and KCSAN. It might also mean that future
+> compilers that have a new inlining algorithm will have the same
+> problem.
+>=20
+> What do people think is better?
 
-Thanks I'll fix this in omap-for-v5.5/dt-v2 branch.
+I haven't had a chance to look at this yet, and probably won't be able
+to do so until at least Monday...
 
-Regards,
+Adding PeterZ who's the objtool uaccess expert.
 
-Tony
+--=20
+Josh
 
