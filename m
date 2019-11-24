@@ -1,4 +1,4 @@
-Return-Path: <SRS0=D0Sw=ZP=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=hU3Y=ZQ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,95 +6,111 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FA0C432C0
-	for <linux-next@archiver.kernel.org>; Sat, 23 Nov 2019 10:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB7BC432C0
+	for <linux-next@archiver.kernel.org>; Sun, 24 Nov 2019 22:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 484F02071B
-	for <linux-next@archiver.kernel.org>; Sat, 23 Nov 2019 10:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1475520815
+	for <linux-next@archiver.kernel.org>; Sun, 24 Nov 2019 22:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RTDcw08G"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="t63HcXb0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbfKWKiI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 23 Nov 2019 05:38:08 -0500
-Received: from ozlabs.org ([203.11.71.1]:55975 "EHLO ozlabs.org"
+        id S1726931AbfKXWjT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 24 Nov 2019 17:39:19 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:41995 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726141AbfKWKiI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 23 Nov 2019 05:38:08 -0500
+        id S1726855AbfKXWjT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 24 Nov 2019 17:39:19 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47KqWd5Kygz9sPT;
-        Sat, 23 Nov 2019 21:38:05 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47LlTH2Vrhz9sPT;
+        Mon, 25 Nov 2019 09:39:15 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1574505486;
-        bh=bnvsHm6hocJvSDljZVTTi1VrUYj3ZLx2xrnHxYB//iU=;
+        s=201702; t=1574635156;
+        bh=4q1KyTDlb0ND4mkqK8ewLqPEYFfOu065MxrD5xwKFzo=;
         h=Date:From:To:Cc:Subject:From;
-        b=RTDcw08GZrt4/VOx4JeIWSigwtu10emHykywUqqFr1kgiKAyFGDUjsBaau0oFBiUe
-         NsFEjJymozEF9bGBuTb8D5Sb9H1SLJ1SPu0sIFIoefL/oQ2nzBlDTF3X7W33mUVvfO
-         eOx2b8MntpYsvS0cV3D0wC2LGcdnD200rmVUAJuApHCdAqs00avCs/Vgw+iMThgFA+
-         eLctoPrXe5gwUyNco6VnITI9CUNMv2AEFCmSJ/Nni8KfdGU95IfHG9ckwG9AU5ocUc
-         A1/AN3/KseIk8eWFeZNsDKlfkWHRgiJWWhfC31TSznUb+w6Jef9VptmA2KzoXiCq5p
-         pI4n+Ktde4akw==
-Date:   Sat, 23 Nov 2019 21:37:54 +1100
+        b=t63HcXb0b0Mer6zIkRhVWPC2By3UYL+T+Tj4eyhld18gQIEDHHo3HOJdhRSDC+PDw
+         PCXJ9QEwmUY/1391+tu/5Lvyga4E5//cv0G0I/aIBS/EWf+bbd7BRwqb3le/JvVS/N
+         jfwZzGDCQi61f3xJ73B23J2fcEQKsCuO5DCMIPYFdz4HZZA+zjLlpeYdUE1JapuoCc
+         gFhiA8pQRSf+PXYtUEx1XJUmh27DfSwFOnOwFU/kLZ0IYJmV0BPBtAzda15JZFgfwN
+         SNfJnrZZDAkf8otD9T7lpv1KZoYOuw3+rPT/2hK9sKr09RQfiEbJdkwvhlyhtpkyXP
+         qwCfTysJumUCQ==
+Date:   Mon, 25 Nov 2019 09:39:07 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Herring <robherring2@gmail.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: linux-next: Fixes tag needs some work in the devicetree tree
-Message-ID: <20191123213754.0e6a9872@canb.auug.org.au>
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: linux-next: manual merge of the pci tree with the powerpc tree
+Message-ID: <20191125093907.45e3421b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/lSS9=4FB1AdXg250S11Zeq3";
+Content-Type: multipart/signed; boundary="Sig_/b+Onz14PBl20uhRM4dwdRuw";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/lSS9=4FB1AdXg250S11Zeq3
+--Sig_/b+Onz14PBl20uhRM4dwdRuw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Today's linux-next merge of the pci tree got a conflict in:
 
-  a8b0edcdd852 ("dt-bindings: power: Rename back power_domain.txt bindings =
-to fix references")
+  arch/powerpc/include/asm/Kbuild
 
-Fixes tag
+between commit:
 
-  Fixes: ea312b90857d ("dt-bindings: power: Convert Generic Power Domain bi=
-ndings to json-schema")
+  265c3491c4bc ("powerpc: Add support for GENERIC_EARLY_IOREMAP")
 
-has these problem(s):
+from the powerpc tree and commit:
 
-  - Target SHA1 does not exist
+  356f42aff121 ("asm-generic: Make msi.h a mandatory include/asm header")
 
-Did you mean
+from the pci tree.
 
-Fixes: 5279a3d8bede ("dt-bindings: power: Convert Generic Power Domain bind=
-ings to json-schema")
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/lSS9=4FB1AdXg250S11Zeq3
+diff --cc arch/powerpc/include/asm/Kbuild
+index 148bee20e7e2,17726f2e46de..000000000000
+--- a/arch/powerpc/include/asm/Kbuild
++++ b/arch/powerpc/include/asm/Kbuild
+@@@ -11,5 -10,3 +11,4 @@@ generic-y +=3D local64.
+  generic-y +=3D mcs_spinlock.h
+  generic-y +=3D preempt.h
+  generic-y +=3D vtime.h
+- generic-y +=3D msi.h
+ +generic-y +=3D early_ioremap.h
+
+--Sig_/b+Onz14PBl20uhRM4dwdRuw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3ZDAIACgkQAVBC80lX
-0GwmcQf+PQqpIoBlBtGt6StzSZngBli7O1/CIyS/BghfDc2psSpTzuKuCRsOOo9g
-QrG4xEpytC3DSiyVabU2npvwryMp01grOyU+by1208es0AQ8/sogszXAv2uz5raX
-0yDfckHCaYUpZ4b1qnLpL4X6EM7RyeXWaxucG335O3e/ccXYCy0w2xKjuJL36Ddz
-fUz5g0UkkGdnromDQ4nddOD+VB4G7vzWvxEAwH7uRG1qW+bOg3wRpWWg+7JZ1jBE
-MZJfp9KkEH0eJPmL9NT7JoY2LbDNdITE9bS0f9uE9t/ZKKvqWEZDsuv+CRUrqVz0
-Zq7C375B3VY8ryHxh01rG26dbn+Y9g==
-=acCH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3bBosACgkQAVBC80lX
+0GxSCQf9GqVqx1LQuv7pxaUpAfSHTgqiURU3NYL+s6pFWcZqlqSZZuwOgW3Dlte5
+Q5CwCC4z6FDugRWucbXvWo2dYTqBypijJugygqXYruHOHl3i40mgSyiTqIXkleWR
+mdBbA8EOYfLfI7f/DboasIxKk/qaN4TZfCjW+rT7bPwHha/kMr1vYR8pUHPLsvVX
+PNHDFavWlCT9UaPOo5CU4Q4H3gsGuag5m6owS42Ifp2gwQF3r25tgjtYDcxLPkh0
+IoiqmtXKYIvHclm1p7QIjwxqbLreiuL/wvJWJYOWUICu66s3a2jkyVVjCCtOX2D8
+8gHptQa/NAyg8RkEzB/F6yGCSJz/Qg==
+=Idfr
 -----END PGP SIGNATURE-----
 
---Sig_/lSS9=4FB1AdXg250S11Zeq3--
+--Sig_/b+Onz14PBl20uhRM4dwdRuw--
