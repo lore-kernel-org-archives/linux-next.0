@@ -2,187 +2,188 @@ Return-Path: <SRS0=lNcl=2A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FD4C43603
-	for <linux-next@archiver.kernel.org>; Tue, 10 Dec 2019 15:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDABC43603
+	for <linux-next@archiver.kernel.org>; Tue, 10 Dec 2019 15:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDE22073B
-	for <linux-next@archiver.kernel.org>; Tue, 10 Dec 2019 15:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280BD2073B
+	for <linux-next@archiver.kernel.org>; Tue, 10 Dec 2019 15:07:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="cYMvMJYf"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fl/xLsH0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfLJPGm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 10 Dec 2019 10:06:42 -0500
-Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:33921 "EHLO
-        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbfLJPGm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Dec 2019 10:06:42 -0500
-X-Greylist: delayed 430 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Dec 2019 10:06:40 EST
-X-EEMSG-check-017: 37072224|UPDC19PA24_ESA_OUT06.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,300,1571702400"; 
-   d="scan'208";a="37072224"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 10 Dec 2019 14:59:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1575989967; x=1607525967;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=ELb72ZR2Uh1TaMvJB/y5pi9a9pIUKU55hg21Xzcheas=;
-  b=cYMvMJYfTahMkEGDxdxzXzMC/VJd4dfYryVPTnVyxdriFRg9Q7UMRsq5
-   j6NsasI4j7RgQAQMtmj8KX8SxgCLwUJuCR3ylulCiSF60WcYKyIPy2vMb
-   Jz0dDdULPBG2v1DGF7OkqqEVsd9DdAjAhoL0giM7fASkcZOGelJie2aiW
-   UvxNdcYhZalp5hD04Q3fwEJeYkfGyfrjddLfqo3O15Ijkj/2jqr43YM95
-   9k8Z9DN4Nm1Mqj5031Fa1pM/W8lAOXADWgUPOcn1G8CLSk4swm76ZOik0
-   K4Uo1WrznW6nZUvodAilReSahve6jJCq25sVfO+mQ4/+h9H+8Grv247BV
-   w==;
-X-IronPort-AV: E=Sophos;i="5.69,300,1571702400"; 
-   d="scan'208";a="30940234"
-IronPort-PHdr: =?us-ascii?q?9a23=3AMdNI3hXhxXPwMjwyfZw/aXWznTXV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYZRWBtKdThVPEFb/W9+hDw7KP9fy5AipZsM3K7iFKWacPfi?=
- =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
- =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMLjYZmJKs9xR?=
- =?us-ascii?q?rEr39VcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
- =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
- =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
- =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhCufixjpOi3Tr36M1zv?=
- =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
- =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
- =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
- =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
- =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
- =?us-ascii?q?YTsELDHiHxmEXtkqCZal8o+vSo6uv7YrXmoYWQN4lohQHlLqsigMm/AeU8Mg?=
- =?us-ascii?q?QWXmib//qz1KH78EHkT7hHgec6n6nEvJzAO8gWqbC1DxVI3oo77hawFTam0N?=
- =?us-ascii?q?AWnXkdK1JFfQqKj5P0NFHVO/34Efe+jEiskDds3fzGOKbhDY/XInjMl7fhY6?=
- =?us-ascii?q?5x61RAxwor0dBf+5VUB6kZIP3pR0/xsMfVDgcjPAypx+brEdB91oQZWWKVHK?=
- =?us-ascii?q?CVKr/dsViN5ug3OemDeJcVuCrhK/gi//PulmE2mVscfamvwJsWZ2u1HuppI0?=
- =?us-ascii?q?qHe3rgmNQBHnkQvgo4UuPqjEeOUTlJZ3a9R6g8/C00CJq6DYffQYCgmLiB3C?=
- =?us-ascii?q?a9Hp1LaWFKE0uMHmn0eIWZQfcMaT6SI894njwBUriuVpIh1RWwuwLh1bpnIf?=
- =?us-ascii?q?Tb+jcCuZLgytd1/evTmg829TBuCMSdyW6NRXlunmwUXz82wLx/oUtlx1eH0K?=
- =?us-ascii?q?h4heFYFNNK6/NPTAg7OoLcwvdkC9D9RA3BZM2FSFW4TdW8BzE+UNYxz8UJY0?=
- =?us-ascii?q?ZnFNWolgrD0DayA78Ji7yLA4Q58qDG0Hj0IMZ90WzG1Kg6j1Q9RstPNGumhr?=
- =?us-ascii?q?Nw9gTJAo7JklmWl7ytdaQH2y7N+nuDwXCSs0FfVQ4jGZnCCEgWe0+eiNP+/E?=
- =?us-ascii?q?6KG6enFLAPKgJczYuHLaxQZ5viilAQAL/4NdDfZX+hs3m/CAzOxb6WaofuPW?=
- =?us-ascii?q?IH02GVDEkCjhBW5nuNKBI/GjbkpmXSEThjPUzgblmq8uRkrn6/CEguwFKkdU?=
- =?us-ascii?q?pkgoGp9wYViPrUcPYa2rYJqW91sDlvNEqs1NLRTdybrkxue7sKMoB120tOyW?=
- =?us-ascii?q?+M7181BZenNa03wwdFIgk=3D?=
-X-IPAS-Result: =?us-ascii?q?A2ARAACise9d/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYFtAgEBAQELAYFzgW0gEiqEA4kDhmcBAQEBAQEGgTeJaZFGCQEBA?=
- =?us-ascii?q?QEBAQEBATcBAYRAAoInNwYOAhABAQEEAQEBAQEFAwEBbIVDgjspAYJ5AQEBA?=
- =?us-ascii?q?QIBIwQRQRALGAICJgICVwYBDAYCAQGCUww/glMFIKxcdX8zhU+DQoFIgQ4oA?=
- =?us-ascii?q?YwxeYEHgREnD4JdPodZgl4ElnxGlyKCOYI7ky8GG5o4jkqcQSOBWCsIAhgII?=
- =?us-ascii?q?Q+DJ1ARFIxyF45BIwMwjysBAQ?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 10 Dec 2019 14:59:26 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xBAExBpx265470;
-        Tue, 10 Dec 2019 09:59:11 -0500
-Subject: Re: [RFC PATCH] security: add an interface to lookup the lockdown
- reason
-To:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     linux-next@vger.kernel.org, jamorris@linux.microsoft.com
-References: <157594493094.748324.9234611948545428995.stgit@chester>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <285edbb5-b08e-5bdc-f951-841fe1d77521@tycho.nsa.gov>
-Date:   Tue, 10 Dec 2019 09:59:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <157594493094.748324.9234611948545428995.stgit@chester>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727535AbfLJPH6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 10 Dec 2019 10:07:58 -0500
+Received: from mail-eopbgr40055.outbound.protection.outlook.com ([40.107.4.55]:30081
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727272AbfLJPH6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 10 Dec 2019 10:07:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DWYVdcoV0mpwSrMSbkGrUwpjn45+gW82oU5qz8ZF6O2boNa9qv5p61JuraMPXQMaJg66BPjHfV+AHta+yjl+T4VTLkUimPr6Bveina8dR9ga1a6QgsX0OcL1hXERVP7NDiHrMW1Eh4SKlerO/m36cMW8IVSA1VbFlurMNYVXguRfRijqdZdN2QWYnuvjI+LTkAXEAy3AkQ7YkcxjTGWQmKRSw1UFvTIKSiqsTJjuTzOWyDrX5W4tLUd5qmpmtlOfcfW0NrQI7Q6Tgzs2k1kb4PzeLr8loBPfx952Olyfm2OI51egeyJ5qDVPg35ZcLK97qNhACUbEQPVqAjjtFXNAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l9zF5UnigfJFS7VnIIla1MjD2hvRPi1jKSAN5R+rgfM=;
+ b=ceVSTtE7hNCeGCYJhkzVtu3SL6YoDJ36RBP7oibgm7coSPm9bENwoDegtc25yR2q/G5Ov3OJ6TUJ+6q9EUZMjCNYzhViUS3WJRgjue5F9fzwXmkvYkAowTCv55IuHyBir3uai1SDBI02u66fTpqe9EF+88GS7Zmv+R7IXh7hJ7JxZgT9ChShaGfalWDOBlCI13AMsbcBRHwcH9AB0T9jcp9WH06d2KSdykAQLEzSLyIH2f1ufPyVrt78pAFecS2FOGQEl4m72LPny3UjN2FrsVdmGELie7V+NqTITyEA2Kf57pFpS7PjtFyuMZ7eOOOcFcTV+veNrZYdV81WZbxeQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l9zF5UnigfJFS7VnIIla1MjD2hvRPi1jKSAN5R+rgfM=;
+ b=fl/xLsH0zNg8i/4vfqtwAAtRHPNtMgsHEvm3ks6fPrCmHCk3LMnar2NGzqkfM9Wn8a/7xPHSGXjciEDH4L8MH+1JPYULTK8DGod83JB7lDY8vp/jvvv/IY7U5hQbzyF6ka4m0EaNhzh1p2H2wWL3dzKOsbA+Jzce3ohq6pwNeEQ=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB3311.eurprd04.prod.outlook.com (10.170.231.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.12; Tue, 10 Dec 2019 15:07:53 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::2c49:44c8:2c02:68b1]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::2c49:44c8:2c02:68b1%5]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
+ 15:07:53 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: debugfs removal fails after commit 653f0d05be09
+ ("simple_recursive_removal(): kernel-side rm -rf for ramfs-style
+ filesystems")
+Thread-Topic: debugfs removal fails after commit 653f0d05be09
+ ("simple_recursive_removal(): kernel-side rm -rf for ramfs-style
+ filesystems")
+Thread-Index: AQHVr2uYTLylvgmYT06ytvH4hDQoww==
+Date:   Tue, 10 Dec 2019 15:07:53 +0000
+Message-ID: <VI1PR04MB7023BFC12D955816384A922CEE5B0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9ae52d69-0b37-4ca0-c83e-08d77d82bb58
+x-ms-traffictypediagnostic: VI1PR04MB3311:|VI1PR04MB3311:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB331120A35EE189B13B4CD4D4EE5B0@VI1PR04MB3311.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1332;
+x-forefront-prvs: 02475B2A01
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(366004)(376002)(136003)(39860400002)(199004)(189003)(478600001)(71200400001)(86362001)(186003)(966005)(6506007)(33656002)(26005)(44832011)(7696005)(5660300002)(52536014)(8676002)(76116006)(8936002)(81166006)(81156014)(64756008)(66446008)(66946007)(316002)(55016002)(91956017)(9686003)(2906002)(4326008)(54906003)(66476007)(66556008)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3311;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: I4vWKszHbPHsObSsXk16KF+3omI2tDk5hiFsLktrGPtbryVaChbeqOZKdIvsT4kO77n5MbMGirTfJXl+yJ3JfQ+VCLgxdrsoEgnyZR/pfzds4cuJY5hY3lt7rgIVut7+9QM28QyDA3wdfeD0TdNLIwDe7PNh3tYYDO7btowzKJkjQSOAn+WE+fg/0LyL4DbRVm/4uxTIoPIYdAQ7DIl/pOaKKfLkmHsR7/3jffJAgtQh91OkioII5/GGc0OiA1nHflI/F5ZATEG7HEpdxW9cmDUqZgOKMuusqMFoeJmaFWvQoJ4/0KejeQe1Yd67JCKUbIz8MwWmhHytnPVwqYEWEnVyIGwSEphy9ppIF48IPgAOBiiXDcHtLo4g4FwH0zisjCTCMSSIbmrxoq9rZXQq/ANXlR4qWXZC5Q6yWQPu50VRbfLN9piWtFhD9dF1rmGOG103UA+eOZZUMZwpy7Qa6rnPtOmD9LNEEGTSv2KUpC8=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ae52d69-0b37-4ca0-c83e-08d77d82bb58
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 15:07:53.7607
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7jaeTga6ECbbv/KeKQ2Nu1PqNTgkfDy+6Bj4VG5O2pev4rxLGTkJbIMCvVjgUrDt9F9Qg9FU1uy5a4PCRUi75w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3311
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 12/9/19 9:28 PM, Paul Moore wrote:
-> With CONFIG_AUDIT enabled but CONFIG_SECURITY disabled we run into
-> a problem where the lockdown reason table is missing.  This patch
-> attempts to fix this by hiding the table behind a lookup function.
-
-Shouldn't lsm_audit.c be conditional on both CONFIG_AUDIT and 
-CONFIG_SECURITY?  When/why would we want it built without 
-CONFIG_SECURITY enabled?
-
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->   include/linux/security.h |    7 +++++++
->   security/lsm_audit.c     |   12 +++++++++---
->   security/security.c      |    5 +++++
->   3 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 64b19f050343..295509a809d6 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -447,6 +447,8 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->   int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
->   int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
->   int security_locked_down(enum lockdown_reason what);
-> +const char *security_locked_reasonstr(enum lockdown_reason what);
-> +
->   #else /* CONFIG_SECURITY */
->   
->   static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-> @@ -1274,6 +1276,11 @@ static inline int security_locked_down(enum lockdown_reason what)
->   {
->   	return 0;
->   }
-> +
-> +static inline const char *security_locked_reasonstr(enum lockdown_reason what)
-> +{
-> +	return NULL;
-> +}
->   #endif	/* CONFIG_SECURITY */
->   
->   #ifdef CONFIG_SECURITY_NETWORK
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 2d2bf49016f4..519ef6046638 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -426,10 +426,16 @@ static void dump_common_audit_data(struct audit_buffer *ab,
->   				 a->u.ibendport->dev_name,
->   				 a->u.ibendport->port);
->   		break;
-> -	case LSM_AUDIT_DATA_LOCKDOWN:
-> -		audit_log_format(ab, " lockdown_reason=");
-> -		audit_log_string(ab, lockdown_reasons[a->u.reason]);
-> +	case LSM_AUDIT_DATA_LOCKDOWN: {
-> +		const char *str = security_locked_reasonstr(a->u.reason);
-> +
-> +		if (str) {
-> +			audit_log_format(ab, " lockdown_reason=");
-> +			audit_log_string(ab, str);
-> +		} else
-> +			audit_log_format(ab, " lockdown_reason=?");
->   		break;
-> +	}
->   	} /* switch (a->type) */
->   }
->   
-> diff --git a/security/security.c b/security/security.c
-> index 2b5473d92416..2f228fdbebf5 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2438,6 +2438,11 @@ int security_locked_down(enum lockdown_reason what)
->   }
->   EXPORT_SYMBOL(security_locked_down);
->   
-> +const char *security_locked_reasonstr(enum lockdown_reason what)
-> +{
-> +	return lockdown_reasons[what];
-> +}
-> +
->   #ifdef CONFIG_PERF_EVENTS
->   int security_perf_event_open(struct perf_event_attr *attr, int type)
->   {
-> 
-
+Hello,=0A=
+=0A=
+Commit 653f0d05be09 ("simple_recursive_removal(): kernel-side rm -rf for =
+=0A=
+ramfs-style filesystems") triggers the following WARN in =0A=
+linux-next-20191210 for me (and later a panic):=0A=
+=0A=
+WARNING: CPU: 0 PID: 1 at fs/dcache.c:338 dentry_free+0xa4/0xb0 =0A=
+=0A=
+Call trace:=0A=
+  dentry_free+0xa4/0xb0=0A=
+  __dentry_kill+0x180/0x1c0=0A=
+  dput+0x298/0x418=0A=
+  simple_recursive_removal+0x22c/0x258=0A=
+  debugfs_remove+0x5c/0x80=0A=
+  opp_debug_remove_one+0x18/0x20=0A=
+  _opp_kref_release+0x40/0x78=0A=
+  dev_pm_opp_put+0x40/0x58=0A=
+  _opp_remove_all_static+0x50/0x78=0A=
+  _put_opp_list_kref+0x3c/0x50=0A=
+  _dev_pm_opp_find_and_remove_table+0x2c/0x90=0A=
+  dev_pm_opp_of_remove_table+0x14/0x20=0A=
+  imx_devfreq_probe+0xf0/0x270=0A=
+=0A=
+This goes away if I revert the patch.=0A=
+=0A=
+My driver just does dev_pm_opp_of_add_table, encounters an error and =0A=
+then calls dev_pm_opp_of_remove_table to cleanup. This seems reasonable =0A=
+and is a common pattern in devfreq drivers but cleanup now crashes?=0A=
+=0A=
+Calls from OPP debug code seem reasonable:=0A=
+=0A=
+opp_debug_register(146): opp_dev=3Dffff0000b87be700=0A=
+opp_list_debug_create_dir(112): opp_dev=3Dffff0000b87be700=0A=
+opp_set_dev_name(24): dev=3Dffff0000b94c2810=0A=
+opp_debug_create_supplies(45): opp=3Dffff0000b87be580=0A=
+opp_debug_create_one(103): opp=3Dffff0000b87be580 dentry=3Dffff0000b8cdf8c0=
+=0A=
+opp_debug_create_supplies(45): opp=3Dffff0000b87be500=0A=
+opp_debug_create_one(103): opp=3Dffff0000b87be500 dentry=3Dffff0000b8cf0240=
+=0A=
+opp_debug_create_supplies(45): opp=3Dffff0000b87be480=0A=
+opp_debug_create_one(103): opp=3Dffff0000b87be480 dentry=3Dffff0000b8cf0b40=
+=0A=
+opp_debug_remove_one(34): opp=3Dffff0000b87be580 dentry=3Dffff0000b8cdf8c0=
+=0A=
+=0A=
+For some reason CONFIG_DEBUG_FS is no longer "y" on imx_v6_v7_defconfig =0A=
+but if enabled I also get similar problems on imx6 (trimmed):=0A=
+=0A=
+WARNING: CPU: 1 PID: 1 at fs/dcache.c:338 dentry_free+0xb8/0xd0=0A=
+[<c012df84>] (__warn)=0A=
+[<c012e3d8>] (warn_slowpath_fmt)=0A=
+[<c02ee68c>] (dentry_free)=0A=
+[<c02ef174>] (__dentry_kill)=0A=
+[<c02f0078>] (dput)=0A=
+[<c0305150>] (simple_recursive_removal)=0A=
+[<c04e32b4>] (debugfs_remove)=0A=
+[<c06442d0>] (_regulator_put.part.0)=0A=
+[<c06444b8>] (regulator_put)=0A=
+[<c064b720>] (devm_regulator_release)=0A=
+[<c07809fc>] (release_nodes)=0A=
+[<c0780d24>] (devres_release_all)=0A=
+[<c077b394>] (really_probe)=0A=
+[<c077b9f8>] (driver_probe_device)=0A=
+[<c077be0c>] (device_driver_attach)=0A=
+[<c077be7c>] (__driver_attach)=0A=
+[<c07791e8>] (bus_for_each_dev)=0A=
+[<c077acc0>] (driver_attach)=0A=
+[<c077a458>] (bus_add_driver)=0A=
+[<c077ccb4>] (driver_register)=0A=
+[<c095d870>] (i2c_register_driver)=0A=
+[<c135d8a8>] (isl29018_driver_init)=0A=
+[<c01033f4>] (do_one_initcall)=0A=
+[<c1300fd4>] (kernel_init_freeable)=0A=
+[<c0dea7e0>] (kernel_init)=0A=
+=0A=
+Patch link is here, didn't find it on patchwork to reply:=0A=
+=0A=
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?=
+id=3D653f0d05be0948e7610bb786e6570bb6c48a4e75=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
