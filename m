@@ -6,54 +6,53 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DFFC43603
-	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 20:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0361CC00454
+	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 20:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA1221556
-	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 20:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C285C206C3
+	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 20:52:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qD1PQgWR"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EuQ7lqAm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfLKUiB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 11 Dec 2019 15:38:01 -0500
-Received: from ozlabs.org ([203.11.71.1]:34943 "EHLO ozlabs.org"
+        id S1726623AbfLKUwg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 11 Dec 2019 15:52:36 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45499 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfLKUiB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 11 Dec 2019 15:38:01 -0500
+        id S1726463AbfLKUwg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 11 Dec 2019 15:52:36 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Y7zV6Cfbz9sR7;
-        Thu, 12 Dec 2019 07:37:58 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Y87T6bYYz9sR7;
+        Thu, 12 Dec 2019 07:44:53 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576096679;
-        bh=TqGBa9RdBOyz6xcAX/wv4TSVKSa+idsg3abp07UvJLk=;
+        s=201702; t=1576097094;
+        bh=o188grKvGRAXTTRAnmYypQCL6OQC91z4G0LRS+LQ9yk=;
         h=Date:From:To:Cc:Subject:From;
-        b=qD1PQgWRLTvewnvTCIT5SUEQezIMQynjhMSmcBWOq83b4V3/cFgKZbRK9iUuP1pya
-         bAawTvI228Q1fNzP4kRuqoj278xzOfzesC3umyO6vfer8ILlstLRto0t9L27Qja9hA
-         5OtKiXi+nUxMYt3Yvpyx8v4uc8JR4xBtmDKtHqurm4dbfIWHTfxOjJyHA1bvP4856R
-         bRPN4wlDtc/aQLTUBCkUJP2y3WFtsiRu+opY+DgpHqXfmuAUHaAcV4Wq8lbT7HiMAm
-         f8YNsJ+oEO7c1sRWup5Xs9LOQXBv3a+Gz6gOPSmFjbC9dkb4Fo4h9Z+Z673bLSuVD7
-         u+B2Iq0sWlhwQ==
-Date:   Thu, 12 Dec 2019 07:37:50 +1100
+        b=EuQ7lqAmd3k+ojpEH+8KqWwFGDWHUsTdx1Zcrqh3raGhv9MX6BkdqzivE5WryIgDe
+         K4kUiXms+3EeC/P3wt+pceKXQ6ug2yROahey3oXcZ40iVxRrKar59p7SpowBJUUEtq
+         ptaZ6QYFsXG65fnumWzDRv7LgGhvrCkjNt408QfGWGGhr/P5LcYqxaW2hC4vC5cTLA
+         47S/fJATL7XHAQOcA+CIr4h/fTwGrzWXyA4vRkVEat7msmrvf8xMDGscEG3tLb/3ka
+         ALZcJq5J+8laRUppDg+Yt99tSeEKOg6lZR3QS+rZsUM06iOGYBogqrlB5SSUpAb4YC
+         VxfVK5qM7uoVw==
+Date:   Thu, 12 Dec 2019 07:44:51 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Linux Crypto List <linux-crypto@vger.kernel.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Subject: linux-next: Fixes tag needs some work in the crypto tree
-Message-ID: <20191212073750.62a974dd@canb.auug.org.au>
+        kbuild test robot <lkp@intel.com>
+Subject: linux-next: Fixes tag needs some work in the rcu tree
+Message-ID: <20191212074451.18c69a64@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YThANIE2iXQVlG+Kq.23wPW";
+Content-Type: multipart/signed; boundary="Sig_/gzX7T1NyZWQ1_=iUBWQx_tN";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/YThANIE2iXQVlG+Kq.23wPW
+--Sig_/gzX7T1NyZWQ1_=iUBWQx_tN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -61,37 +60,40 @@ Hi all,
 
 In commit
 
-  7278fa25aa0e ("crypto: caam - do not reset pointer size from MCFGR regist=
-er")
+  3b570f534011 ("rcutorture: The rcu_boot_ended variable can be static")
 
 Fixes tag
 
-  Fixes: a1cf573ee95 ("crypto: caam - select DMA address size at runtime")
+  Fixes: 68ce6668914d ("rcutorture: Suppress forward-progress complaints du=
+ring early boot")
 
 has these problem(s):
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: 7e1204f7a29e ("rcutorture: Suppress forward-progress complaints duri=
+ng early boot")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/YThANIE2iXQVlG+Kq.23wPW
+--Sig_/gzX7T1NyZWQ1_=iUBWQx_tN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3xU54ACgkQAVBC80lX
-0GwWrQgAnRRG1FHbQHrQCQ2UrHc9f8sBoAOaENCMuiw+GZwFN48SC5wlm4bWui+r
-AOJ+B90RFl9tbGX7cUbvTwfQO6LKx18dqP3AdWcCtSRO7/FteXJnT6Ry0k/oz5dU
-voAHWjwYDCmg9LWRlDGoMHhRemUEmRj7HMVM5+5zAxumoNMI84olB/DwhICGUDLU
-n3CIDxgptPGerGQ8w1luxuA8Un9IeuyIrrhqqAMFGGkyiVyT3PXwp8PwSyT3uGa7
-0HF584uS0yY4pntbsebAa0WYOzJo7eq8my8vIIDH8R4OlcmX6sfWs1HPgeaD2hXU
-Tz0L2mW178H5rReqsliwiR9iUMiybg==
-=l8JG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3xVUMACgkQAVBC80lX
+0GxyZgf+PaAQQyzo3lOH6jxw7T5/sY4vo1MgQmqOER8XrHwGOvP7UC1BW1dBhmTb
+x5GqMGIaTSUKgqt0RjeSJwdrwvQ8owd6je/YA7acRgPoHvB6XjCJ8srMgGUtQLXd
+Bojdu8NJvDR9f7/kt1fty57rnV2h1HKptK4Uyxx/DiAwtpKN2j+Dm31Abn/ELmcZ
+a5Q91UiC54iqb4YDO+hSBmPfMHwlLdB4rwvvfA7W5nkEJnqmlv6m1Us2JCjSOV+h
+3vUMpbb5atb7jeRTPXnSoEJiMf0fcWrNEcBpOipl7Z8FxRQMqtA+eYe8VuP+xUcL
+lXifHls8qcdge/I88SaIGc5+mfddRQ==
+=/OSC
 -----END PGP SIGNATURE-----
 
---Sig_/YThANIE2iXQVlG+Kq.23wPW--
+--Sig_/gzX7T1NyZWQ1_=iUBWQx_tN--
