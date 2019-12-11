@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85954C43603
-	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 15:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38152C43603
+	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 16:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC2921556
-	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 15:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08E5B214D8
+	for <linux-next@archiver.kernel.org>; Wed, 11 Dec 2019 16:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576078808;
-	bh=v7NXfuoFVjuFyBu9o28MKB2XGHkf0ThvJn1RrLDUic4=;
+	s=default; t=1576080299;
+	bh=BRHJ8Y1OF2lR3NJEHm4qduil6xTPTcnYmBsxmtpUhLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Cu4ydnwdoGUPTYfxXeADbWjzDs2rcjvSUFgQxBZ9oDkUQ1Wdtw6ZEBgvi89Bw4iEO
-	 m3bHGkmd71ghYGErt+qgQf+7Ji0S0SSbwQaD7njUxJG7ll2iCWhFpkWOGJqbcBz5t8
-	 P8d4b4QYXCpkeVt6xYk255TJhNK3qEBw4DRY8tk0=
+	b=la2yTdGdbhpxLGf6NRNg62qzTgsHtEWZ5I3xHi7GD8J9NUruP4BjzSrA1P5ORY1LF
+	 MF2Q0kjs3DGZrErlZQqnOqcIe5xGiv8qp1nyopLPeGVfV0ZXCoxyLKCGlTc2qaFqaw
+	 1EcC6V0W+yB3HjPzCt82IlalRvLAI5FBE1OFr5G8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387858AbfLKPkC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 11 Dec 2019 10:40:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49118 "EHLO mail.kernel.org"
+        id S1731286AbfLKQEy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 11 Dec 2019 11:04:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387659AbfLKPig (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:38:36 -0500
+        id S1731273AbfLKPM5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:12:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3D2B2467F;
-        Wed, 11 Dec 2019 15:38:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D31624681;
+        Wed, 11 Dec 2019 15:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078715;
-        bh=v7NXfuoFVjuFyBu9o28MKB2XGHkf0ThvJn1RrLDUic4=;
+        s=default; t=1576077177;
+        bh=BRHJ8Y1OF2lR3NJEHm4qduil6xTPTcnYmBsxmtpUhLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0maCFJA+dMOktcL9rREd6keDcalcUYXUNn1IqEkDxpq+D/AynMMDllb3IB4Tl+cKp
-         oh9fu4MojhAlPS68qj1WpsMgELJA6jFCmCFQ5hCrnX2ZhBH67slFA/ghM5O5QhLniB
-         Qo43l+E8O5xKe6xbXp+yB6zrHd3+z8AiSnSamUWQ=
+        b=HkIxf7kKK8jRcBNdMVzKEHf4Wg3UzKrkrIPXHqtTAafiPopWpeQJBq19Lp+wGm3F6
+         yeAs+lvTsLUPlibl9gNw74HnJJMXODQpkpz+5sRjQ45h5MLFeW+dhGGpx3+lZ4ZQBK
+         M/xb91G5v7d24PEWNo+xZPRx++hCcxwSKGe5CkKk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     James Smart <jsmart2021@gmail.com>,
@@ -48,12 +48,12 @@ Cc:     James Smart <jsmart2021@gmail.com>,
         Dick Kennedy <dick.kennedy@broadcom.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 20/37] scsi: lpfc: fix: Coverity: lpfc_cmpl_els_rsp(): Null pointer dereferences
-Date:   Wed, 11 Dec 2019 10:37:56 -0500
-Message-Id: <20191211153813.24126-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 061/134] scsi: lpfc: fix: Coverity: lpfc_cmpl_els_rsp(): Null pointer dereferences
+Date:   Wed, 11 Dec 2019 10:10:37 -0500
+Message-Id: <20191211151150.19073-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211153813.24126-1-sashal@kernel.org>
-References: <20191211153813.24126-1-sashal@kernel.org>
+In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
+References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -109,10 +109,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 7ca8c2522c928..530b7df21322a 100644
+index 4794a58deaf3c..66f8867dd8377 100644
 --- a/drivers/scsi/lpfc/lpfc_els.c
 +++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -3839,7 +3839,7 @@ lpfc_cmpl_els_rsp(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+@@ -4440,7 +4440,7 @@ lpfc_cmpl_els_rsp(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
  		mempool_free(mbox, phba->mbox_mem_pool);
  	}
  out:
