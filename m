@@ -2,87 +2,96 @@ Return-Path: <SRS0=eeeA=2H=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52827C43603
-	for <linux-next@archiver.kernel.org>; Tue, 17 Dec 2019 18:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D29C2D0CD
+	for <linux-next@archiver.kernel.org>; Tue, 17 Dec 2019 19:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D886206D7
-	for <linux-next@archiver.kernel.org>; Tue, 17 Dec 2019 18:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576606882;
-	bh=dzYMfl8JcI/Le0q1ov6KbWOivHM1vp0+ovdLbfnX6Qg=;
-	h=To:Cc:From:Subject:Date:List-ID:From;
-	b=ubpvTIh/g9AokZzGVU92Les4htx8xMGPUgSq/itQ5WkK4HrdQ2xOfPW4eMQhx6/4s
-	 PgD28cl0AOkmpQpKy7+psDYrydi1s+z9WRffGqml33QYTFz8qs3lrMRDBkZOMHKqvO
-	 XLkI3+L7x+C9SN/3Lecj/v2zjKE2G8Ujhcn92oAc=
+	by mail.kernel.org (Postfix) with ESMTP id 034FD2146E
+	for <linux-next@archiver.kernel.org>; Tue, 17 Dec 2019 19:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLQSVV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 17 Dec 2019 13:21:21 -0500
-Received: from mail-il1-f169.google.com ([209.85.166.169]:33374 "EHLO
-        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfLQSVV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Dec 2019 13:21:21 -0500
-Received: by mail-il1-f169.google.com with SMTP id v15so1889668iln.0
-        for <linux-next@vger.kernel.org>; Tue, 17 Dec 2019 10:21:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=dzYMfl8JcI/Le0q1ov6KbWOivHM1vp0+ovdLbfnX6Qg=;
-        b=DzoztPmSYCCfT3AVRMMwrIKPCrqdDKB8UEywOiiTxY+ee/ya108w8N+9qzhBQ2oYPy
-         9t7gTokKG5PyUIDszXQPlS2W5AujThaJG7dnAYlABijii/2aQXYEcN3oNMvO7ZTYg/h1
-         2iZNNSw8soMNF3orGbYnVQH5aCKPKMx3a7VBY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=dzYMfl8JcI/Le0q1ov6KbWOivHM1vp0+ovdLbfnX6Qg=;
-        b=RufNfhKOWKk9gLJLShWkou9EDYZZ6bjAwlN4mK3vPwkA0q/ULMOjGIN1vRQEsuS0g4
-         I10up+zSdHHHS+VV6ajLiUme61zTDxI7MrdumySFydwRwsX9ckPt51RpkpYRZ2m2S99I
-         FqDBfcyHkGg8rZy+lex/ACNGtnevCztWJMe85CpGWqYYj/5aqiUTiRPzIfCyFYwrNgt6
-         MmuvC2jDcnCFntHRexzdJ3eIVzHyF62QkdbWISSaxJLanokJDgSSiX5q7wgL4SvdDn+V
-         ONLWCaL9/4V1fuX/UWN5RkKivUByfSXqQRqZlErklKbmhLeC7hLEFbGhiNZN21fhYObL
-         EdIg==
-X-Gm-Message-State: APjAAAWVU9ZX/UEzxWO/KBH/Q4kYzCJeTvEfsibFJ+iMSm+teVawguXl
-        HbkfDz7dQBrM5Ttfo2ALoYWbW4ppQO3O9A==
-X-Google-Smtp-Source: APXvYqy/KgqcGlzMqv5Ix8aQF0Ou+7fVtmE4Tpg4yaAd2LzN5G8wntPvmjlgQxeoQrC75sSPLGi0hQ==
-X-Received: by 2002:a92:884e:: with SMTP id h75mr18238549ild.199.1576606880357;
-        Tue, 17 Dec 2019 10:21:20 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id s10sm5417782iop.36.2019.12.17.10.21.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 10:21:19 -0800 (PST)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S1727836AbfLQTlH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 17 Dec 2019 14:41:07 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:46666 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726742AbfLQTlG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Dec 2019 14:41:06 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 9425E20022;
+        Tue, 17 Dec 2019 20:40:59 +0100 (CET)
+Date:   Tue, 17 Dec 2019 20:40:58 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Subject: Request to add linux-kselftest kunit branch
-Message-ID: <15fd4946-1f64-cb36-c74c-1126e070d93b@linuxfoundation.org>
-Date:   Tue, 17 Dec 2019 11:21:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v1 1/1] drm/drm_panel: Fix EXPORT of
+ drm_panel_of_backlight() one more time
+Message-ID: <20191217194058.GA30852@ravnborg.org>
+References: <20191217140721.42432-1-andriy.shevchenko@linux.intel.com>
+ <63f068fe-13b4-98d1-8e27-faa1bd0bdf23@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63f068fe-13b4-98d1-8e27-faa1bd0bdf23@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=JfrnYn6hAAAA:8
+        a=KKAkSRfTAAAA:8 a=7gkXJVJtAAAA:8 a=P1BnusSwAAAA:8 a=pGLkceISAAAA:8
+        a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=e5mUnYsNAAAA:8 a=-g4Mg-S7RQq0A9TmIasA:9
+        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=cvBusfyB2V15izCimMoJ:22
+        a=E9Po1WZjFZOl8hwRPBS3:22 a=D0XLA9XvdZm18NrgonBM:22
+        a=AjGcO6oz07-iQ99wixmX:22 a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+On Tue, Dec 17, 2019 at 08:25:03AM -0800, Randy Dunlap wrote:
+> On 12/17/19 6:07 AM, Andy Shevchenko wrote:
+> > The initial commit followed by the fix didn't take into consideration the case
+> > 
+> > CONFIG_DRM_PANEL=y
+> > CONFIG_BACKLIGHT_CLASS_DEVICE=m
+> > CONFIG_DRM_I915=y
+> > 
+> > where symbol devm_of_find_backlight() is not reachable from DRM subsystem.
+> > Quick fix is to avoid drm_panel_of_backlight() from exporting in such case.
+> > 
+> > Fixes: 907aa265fde6 ("drm/drm_panel: fix EXPORT of drm_panel_of_backlight")
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > Cc: Sean Paul <sean@poorly.run>
+> > Cc: David Airlie <airlied@linux.ie>
+> > Cc: Daniel Vetter <daniel@ffwll.ch>
+> > Cc: Maxime Ripard <mripard@kernel.org>
+> > Cc: dri-devel@lists.freedesktop.org
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Yes, that fixes the build error.  Thanks.
+> 
+> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-Please add the following linux-kselftest kunit branch to linux-next.
+Hi Andy - thanks for fixing this. And thanks Randy for verifying the
+fix.
+It passed my build test and is now pushed to drm-misc-next.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=kunit
-
-Please include Brendan Higgins on the CC list for any issues on
-this branch.
-
-thanks,
--- Shuah
+	Sam
