@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DAAC3276E
-	for <linux-next@archiver.kernel.org>; Thu,  2 Jan 2020 22:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BB5C3276C
+	for <linux-next@archiver.kernel.org>; Thu,  2 Jan 2020 22:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096D720866
-	for <linux-next@archiver.kernel.org>; Thu,  2 Jan 2020 22:40:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B7E421835
+	for <linux-next@archiver.kernel.org>; Thu,  2 Jan 2020 22:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578004848;
-	bh=HUfSgEkG8t+m0fwL7Dux3zhDIhdJ6z0Kgv7mMuzGckA=;
+	s=default; t=1578005425;
+	bh=S06nD4+InRMS/mrn6P6TDwIwbqOvVhfwerr3OLNfmvM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ChXhvf1qo4PBQapUuFjqJTnxeQQSH2E9OAh68IvmL7hYNkTyYvB+bsv6ySr0wOboZ
-	 fiRRv3fUgRR8eSInP5WnrigRpvBYFp2VpKTpAUr5UtfzSErQaJ0ZA+4gLl1m7j5vqA
-	 +jEOLkYk/jZd3lEE3/+YSHcsk8NYxSbWD9lb5xYs=
+	b=GE+nWalNNC/PIf16ag5uj0ZgSmZaaiHtXsTuSXdbjhBtp4ncbnjpeytQhzjKqiVDa
+	 h/maCEUVMlCtnDs2DUjPqOFoctWOY5J8DlVp7oitQj5q0OJuHbI+NCPwspoE8JjkQO
+	 0ms3cQNkK53VDMpTOAN6Su3PRgpaRCHoxzkEGUow=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730879AbgABWiH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 2 Jan 2020 17:38:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51492 "EHLO mail.kernel.org"
+        id S1729306AbgABWZj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 2 Jan 2020 17:25:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731192AbgABWiF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:38:05 -0500
+        id S1729258AbgABWZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:25:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B5D220866;
-        Thu,  2 Jan 2020 22:38:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF21A222C3;
+        Thu,  2 Jan 2020 22:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004684;
-        bh=HUfSgEkG8t+m0fwL7Dux3zhDIhdJ6z0Kgv7mMuzGckA=;
+        s=default; t=1578003937;
+        bh=S06nD4+InRMS/mrn6P6TDwIwbqOvVhfwerr3OLNfmvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1/TWJy873VKP3lnzLhYXHBJv04P7dJ7Hk3dfxds80oUsKB3VDUEnYwiHIz1wgGBvz
-         Pf6XxLxOgHKlX/nfuKP1LTJdZMpjBTIiSfGQ9tcPWln9BAJn+DkDgr7caaAtRKD4Yy
-         EysIoySvDw+3aY3yKaNYQx7o1ZmwYs1yYBwvNQp8=
+        b=fgJ0KebxwSIjDOuX2T/4SaWOHNM/6Vn1xCysheh0hssu0xfagIcff/NpLnhev/dGG
+         WNt2Zd7MRa0MAHHIhEaRUy1PCSG6wFR1NftlH17v1aazGXdh6lhqroWGnmJK19ujPM
+         P7nuOF3/TyCWLchnU8GYgzNgd4fyGqopPcRIywiE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,12 +50,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         James Smart <jsmart2021@gmail.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 109/137] scsi: lpfc: fix: Coverity: lpfc_cmpl_els_rsp(): Null pointer dereferences
-Date:   Thu,  2 Jan 2020 23:08:02 +0100
-Message-Id: <20200102220601.821035436@linuxfoundation.org>
+Subject: [PATCH 4.14 26/91] scsi: lpfc: fix: Coverity: lpfc_cmpl_els_rsp(): Null pointer dereferences
+Date:   Thu,  2 Jan 2020 23:07:08 +0100
+Message-Id: <20200102220426.562383744@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220356.856162165@linuxfoundation.org>
+References: <20200102220356.856162165@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -111,10 +111,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 7ca8c2522c92..530b7df21322 100644
+index c851fd14ff3e..4c84c2ae1112 100644
 --- a/drivers/scsi/lpfc/lpfc_els.c
 +++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -3839,7 +3839,7 @@ lpfc_cmpl_els_rsp(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+@@ -4102,7 +4102,7 @@ lpfc_cmpl_els_rsp(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
  		mempool_free(mbox, phba->mbox_mem_pool);
  	}
  out:
