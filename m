@@ -6,108 +6,120 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D0BC32771
-	for <linux-next@archiver.kernel.org>; Mon,  6 Jan 2020 09:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517BBC32771
+	for <linux-next@archiver.kernel.org>; Mon,  6 Jan 2020 09:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8DE62072C
-	for <linux-next@archiver.kernel.org>; Mon,  6 Jan 2020 09:25:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2133821775
+	for <linux-next@archiver.kernel.org>; Mon,  6 Jan 2020 09:30:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MSSdMaqe"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="uuzkC+qq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BJFQLezq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbgAFJZU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 6 Jan 2020 04:25:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:35713 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbgAFJZU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 6 Jan 2020 04:25:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47rqqK2f8gz9sPJ;
-        Mon,  6 Jan 2020 20:25:17 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1578302717;
-        bh=QqMTVdOF4kD3oUVpX8KijE7FsTmrDvHpiYjIvWkE5+g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MSSdMaqewGwVsF6BRpU4YywWbUy98Z0zbHRSBqlowicl1pYjK8Ke89KP2I770Y3TK
-         Taya34+Ya/IXH/ellXskCSMK5Z/OJHNVAvPjQOQCEOocr1dc5a0Ei/YY9UFZRXh504
-         TE1O5oRQeTBSTtBWZygbcNhlIZ40vIUEe7ailrWXT8Co6W1sbTQvPEGLf+v0CoKQqC
-         IiMOl1EBQb6fOVAgSTfRnx5BziRz0+7+MCebGagm4rB2KsTMs2FNOkSdGjMPWRR47H
-         x3iMuUJx4eIiAgnDotj9yXBVEErz2d3Do/M4/M6JMI1/z278IuESYOU9xgLwUZgE4Z
-         k0OZcJ6ddZvfg==
-Date:   Mon, 6 Jan 2020 20:25:07 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        id S1725821AbgAFJay (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 6 Jan 2020 04:30:54 -0500
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:59075 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725446AbgAFJay (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Jan 2020 04:30:54 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 8A35AB20;
+        Mon,  6 Jan 2020 04:30:53 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 06 Jan 2020 04:30:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=mwCYxJdW6jjrkaF0B9XqzXtGY+C
+        nv7HizzKmKReYnXc=; b=uuzkC+qqU3Bm5/kEe6BDyVX8zZPQz2Qg+iozL7hKCmE
+        RJoSPsrvE38tIvyZKJlYZxaVSCG1l8Uqfd/tmZ0g24CN/aOHzOuHKvZtPsCDg6vL
+        BOldtklBaQeb+xnIPPgB79+ZmgitE/2GwmxGkYVCbhRW6o80gB1n8mGnnKC/cTzs
+        Ybi1HdCY2Endqc5aQFhmmWpEWn6pkiDdjmEM17jgiGFXkUWFIX4bGIeZLiiggevp
+        enjctwyLlJws1IScHmcegvzCggOaX9V78PpFFTTGBz8EfKCHSCu6AIqCjNiCX4At
+        oKZdCNRdjbjXuBDUJdW8jtdI6OjmbVSIOBxkEgV4r+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=mwCYxJ
+        dW6jjrkaF0B9XqzXtGY+Cnv7HizzKmKReYnXc=; b=BJFQLezqtAcb3vix4o697v
+        Fnv9sd6VMJl8Aj0iUlvfxzXe6lJ6RxuKkKXGVMLNyoSYH5MegIOH1RhrwXywJW7e
+        V5Pvenq8JpsVMBJpWpn3EupnN1fhRZ4Jurh23crsrRgdpBM04FvvMESUo2eEc2OI
+        OgSmZCi0sN+P4qeYi/8HjjWI6jBlL6DzKMMbtrAJ6RagHVoGimbPiRE/ifESOidb
+        4R5srDrvli3sm1xDIeiuVo3GS3M6XNrdGM5eESjS0Jly6kz7rhHkiPBm42hmewjM
+        q6HGAQWc8FVX3HDvis1bkaNdK4XFnkW9TfCGT8AnL3OnSW6cBMSpDPFRAxXNuUrw
+        ==
+X-ME-Sender: <xms:TP4SXm13mLTQQBp2To2s4IJXBEw_bDCkR2Z89CBLIs8pRnbEQSHwXA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdehtddgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepkhgvrhhnvghlrd
+    horhhgnecukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhfrhho
+    mhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:TP4SXk4y5Dspxfo_db24bXamvoWzaNj5XGkP0gMQnpYyHl3JlPOwQg>
+    <xmx:TP4SXqS4lFGg8fkWLNMOsI4PGVlPDaJTOG_2qR8K3axZJ5aN3TIB5A>
+    <xmx:TP4SXhUzFPxN495jDm5ptRU1adsDvQHS-WZjZM-fYCAiMcyZsoGUlA>
+    <xmx:Tf4SXhoR0WFqn-RtnVCCZ3H_lYuq-kNnyfZsbfyKtI-KJCNtUfq2CQ>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CEE4430602DB;
+        Mon,  6 Jan 2020 04:30:51 -0500 (EST)
+Date:   Mon, 6 Jan 2020 10:30:49 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the y2038 tree with the vhost tree
-Message-ID: <20200106202507.7f8037cc@canb.auug.org.au>
-In-Reply-To: <CAK8P3a2ackxPwQxb-yeQ1pgJ5Hbh44NXDUCSfROc94kmmtx89A@mail.gmail.com>
-References: <20200106152440.05a36767@canb.auug.org.au>
-        <CAK8P3a2ackxPwQxb-yeQ1pgJ5Hbh44NXDUCSfROc94kmmtx89A@mail.gmail.com>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>
+Subject: Re: linux-next: build warning after merge of the usb tree
+Message-ID: <20200106093049.GA3108013@kroah.com>
+References: <20200106144122.01f51be9@canb.auug.org.au>
+ <20200106075858.GA13634@pi3>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bfn5fVltCGasNCC.1s/Fz+0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106075858.GA13634@pi3>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/bfn5fVltCGasNCC.1s/Fz+0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jan 06, 2020 at 08:58:58AM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Jan 06, 2020 at 02:41:22PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> > produced this warning:
+> > 
+> > WARNING: unmet direct dependencies detected for PHY_DA8XX_USB
+> >   Depends on [n]: ARCH_DAVINCI_DA8XX
+> >   Selected by [m]:
+> >   - USB_OHCI_HCD_DAVINCI [=m] && USB_SUPPORT [=y] && USB [=m] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y]) && USB_OHCI_HCD [=m]
+> > 
+> > WARNING: unmet direct dependencies detected for PHY_DA8XX_USB
+> >   Depends on [n]: ARCH_DAVINCI_DA8XX
+> >   Selected by [m]:
+> >   - USB_OHCI_HCD_DAVINCI [=m] && USB_SUPPORT [=y] && USB [=m] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y]) && USB_OHCI_HCD [=m]
+> > 
+> > WARNING: unmet direct dependencies detected for PHY_DA8XX_USB
+> >   Depends on [n]: ARCH_DAVINCI_DA8XX
+> >   Selected by [m]:
+> >   - USB_OHCI_HCD_DAVINCI [=m] && USB_SUPPORT [=y] && USB [=m] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y]) && USB_OHCI_HCD [=m]
+> > 
+> > Introduced by commit
+> > 
+> >   88eaaecc4446 ("usb: host: Enable compile testing for some of drivers")
+> 
+> +Cc,
+> 
+> Hi Stephen,
+> 
+> Thanks for the report.  I already sent a patch for it for the phy:
+> https://lore.kernel.org/lkml/20200103164710.4829-2-krzk@kernel.org/
 
-Hi Arnd,
+I'll go queue this up through my usb tree as it is annoying for my
+builds as well :(
 
-On Mon, 6 Jan 2020 09:31:14 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> It doesn't. The rules used to be fairly complicated, but not
-> (after my patches) basically any driver that has an .ioctl
-> function must have a .compat_ioctl function and vice versa.
->=20
-> > index 54158766334b,fbbf18ac1d5d..000000000000
-> > --- a/drivers/block/virtio_blk.c
-> > +++ b/drivers/block/virtio_blk.c
-> > @@@ -310,6 -404,10 +310,9 @@@ static int virtblk_getgeo(struct block_
-> >   }
-> >
-> >   static const struct block_device_operations virtblk_fops =3D {
-> >  -      .ioctl  =3D virtblk_ioctl,
-> > + #ifdef CONFIG_COMPAT
-> > +       .compat_ioctl =3D blkdev_compat_ptr_ioctl,
-> > + #endif
-> >         .owner  =3D THIS_MODULE,
-> >         .getgeo =3D virtblk_getgeo,
-> >   }; =20
->=20
-> Removing it would be better, but this version is not wrong.
+thanks,
 
-Thanks.
-
-I have adjusted my resolution from tomorrow to drop the CONFIG_COMPAT
-section as well.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bfn5fVltCGasNCC.1s/Fz+0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4S/PMACgkQAVBC80lX
-0GyP8QgAoUR4mc6NwWc7w+ItDUykBYqPXd5q8TcRuvm6Q8DEHZW8uVagMTomu/go
-e4eBNM1ah4g4WuI+wlgv9mzFwcc0jkISdPKBcFY0+KmtMPb9WO/ZHNWZxU+xpCPq
-RcIEfuG51JHH4cMZGTTNOgqEfyR558wQC4nX5VzEJHw5qwGbfg5UEMuQIv3ZVtUd
-Z5v35I1F1L5KJgFGEPNO6eGwDbLQX4MKNQajZcCKYOTPbDBWcGwBc4EuUr/QG/8e
-g2sbeo1Ln6BCGzkGMLihkPJyBdeFYZj6/5nBrZ31A9vDDXDu2POHGKLrTIEKhTpd
-AFNpqDmkWlLl0Y6ehazDqOX1Nd1/RA==
-=/dBR
------END PGP SIGNATURE-----
-
---Sig_/bfn5fVltCGasNCC.1s/Fz+0--
+greg k-h
