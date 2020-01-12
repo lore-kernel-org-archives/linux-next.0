@@ -1,132 +1,105 @@
-Return-Path: <SRS0=CjnE=3A=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=Nl4r=3B=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2B9C282DD
-	for <linux-next@archiver.kernel.org>; Sat, 11 Jan 2020 14:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54508C3F68F
+	for <linux-next@archiver.kernel.org>; Sun, 12 Jan 2020 18:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0631F2082E
-	for <linux-next@archiver.kernel.org>; Sat, 11 Jan 2020 14:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CBDF21569
+	for <linux-next@archiver.kernel.org>; Sun, 12 Jan 2020 18:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbgAKObz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 11 Jan 2020 09:31:55 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:58275 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729743AbgAKObz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 11 Jan 2020 09:31:55 -0500
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alexandre@ghiti.fr)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id D0921E0002;
-        Sat, 11 Jan 2020 14:31:50 +0000 (UTC)
-From:   Alexandre Ghiti <alexandre@ghiti.fr>
-Subject: Re: linux-next: build warning after merge of the bpf-next tree
-To:     Palmer Dabbelt <palmerdabbelt@google.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, daniel@iogearbox.net,
-        ast@kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, zong.li@sifive.com
-References: <a367af4d-7267-2e94-74dc-2a2aac204080@ghiti.fr>
- <20191018105657.4584ec67@canb.auug.org.au>
- <20191028110257.6d6dba6e@canb.auug.org.au>
- <mhng-0daa1a90-2bed-4b2e-833e-02cd9c0aa73f@palmerdabbelt-glaptop>
-Message-ID: <d5d59f54-e391-3659-d4c0-eada50f88187@ghiti.fr>
-Date:   Sat, 11 Jan 2020 09:31:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1733152AbgALScj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 12 Jan 2020 13:32:39 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38282 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732957AbgALScj (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 12 Jan 2020 13:32:39 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iqi2N-006mo9-2h; Sun, 12 Jan 2020 18:32:35 +0000
+Date:   Sun, 12 Jan 2020 18:32:35 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+Message-ID: <20200112183235.GO8904@ZenIV.linux.org.uk>
+References: <20200106123027.1a162197@canb.auug.org.au>
+ <e9a87175-64c9-46da-4737-72987a53e836@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <mhng-0daa1a90-2bed-4b2e-833e-02cd9c0aa73f@palmerdabbelt-glaptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9a87175-64c9-46da-4737-72987a53e836@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On Mon, Jan 06, 2020 at 09:04:01PM -0700, Jens Axboe wrote:
+> On 1/5/20 6:30 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the block tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > fs/open.c:977:12: error: conflicting types for 'build_open_flags'
+> >   977 | inline int build_open_flags(const struct open_how *how,
+> >       |            ^~~~~~~~~~~~~~~~
+> > In file included from /home/sfr/next/next/fs/open.c:36:
+> > fs/internal.h:127:12: note: previous declaration of 'build_open_flags' was here
+> >   127 | extern int build_open_flags(int flags, umode_t mode, struct open_flags *op);
+> >       |            ^~~~~~~~~~~~~~~~
+> > 
+> > Caused by commits
+> > 
+> >   4e9e15c9426e ("fs: make build_open_flags() available internally")
+> >   3bba3e571bc8 ("io_uring: add support for IORING_OP_OPENAT")
+> > 
+> > interacting with commit
+> > 
+> >   0a51692d49ec ("open: introduce openat2(2) syscall")
+> > 
+> > from the vfs tree.
+> > 
+> > I have applied the following fix up patch for today:
+> 
+> Thanks Stephen - I'll pull in the VFS tree and rebase the 5.6 io_uring
+> bits on that. Then I'll send it out for review again, haven't heard from
+> Al on the non-block open change.
 
-On 1/10/20 7:20 PM, Palmer Dabbelt wrote:
-> On Fri, 10 Jan 2020 14:28:17 PST (-0800), alexandre@ghiti.fr wrote:
->> Hi guys,
->>
->> On 10/27/19 8:02 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> On Fri, 18 Oct 2019 10:56:57 +1100 Stephen Rothwell 
->>> <sfr@canb.auug.org.au> wrote:
->>>> Hi all,
->>>>
->>>> After merging the bpf-next tree, today's linux-next build (powerpc
->>>> ppc64_defconfig) produced this warning:
->>>>
->>>> WARNING: 2 bad relocations
->>>> c000000001998a48 R_PPC64_ADDR64 _binary__btf_vmlinux_bin_start
->>>> c000000001998a50 R_PPC64_ADDR64 _binary__btf_vmlinux_bin_end
->>>>
->>>> Introduced by commit
->>>>
->>>>    8580ac9404f6 ("bpf: Process in-kernel BTF")
->>> This warning now appears in the net-next tree build.
->>>
->>>
->> I bump that thread up because Zong also noticed that 2 new 
->> relocations for
->> those symbols appeared in my riscv relocatable kernel branch following
->> that commit.
->>
->> I also noticed 2 new relocations R_AARCH64_ABS64 appearing in arm64 
->> kernel.
->>
->> Those 2 weak undefined symbols have existed since commit
->> 341dfcf8d78e ("btf: expose BTF info through sysfs") but this is the fact
->> to declare those symbols into btf.c that produced those relocations.
->>
->> I'm not sure what this all means, but this is not something I expected
->> for riscv for
->> a kernel linked with -shared/-fpie. Maybe should we just leave them to
->> zero ?
->>
->> I think that deserves a deeper look if someone understands all this
->> better than I do.
->
-> Can you give me a pointer to your tree and how to build a relocatable 
-> kernel?
-> Weak undefined symbols have the absolute value 0,
+FWIW, I don't believe that your approach is workable.  First of all,
+*ANY* transition out of RCU mode can lead to blocking.  You need to
+acquire several references (mount and dentry, at the very least).
+Suppose the last one fails (->d_seq mismatch).  Now you suddenly
+have to drop the one(s) you've acquired.  And both dput() and mntput()
+are fundamentally blocking operations.
 
+It simply does not work.  You could cobble up something that kinda-sorta
+works, if your added flag had
+	* caused hard failure on unlazy_child()
+	* caused hard failure on unlazy_walk() with any symlinks in stack
+	* caused hard failure on unlazy_walk() if it would've been required
+to grab root
+	* made unlazy_walk() go through very careful dance if it's just
+about nd->path; I'm not sure how well that could be done, but theoretically
+it's not impossible.
 
-So according to you the 2 new relocations R_RISCV_64 are normal and 
-should not
-be modified at runtime right ?
+But for open() it's not going to work at all.  Any open for write => you
+will have to wait if you run into fs freeze.  O_TRUNC => you've got IO
+to do.  Worst of all, once you've dropped out of RCU mode, *YOU* *CAN'T*
+*FAIL*.  Because that means blocking operations.  So you need to verify
+that you won't run into a blocking ->open(), IMA deciding to play silly
+buggers and read through the entire file, etc., etc. _before_ dropping
+out of RCU mode.
 
+do_last() is messy enough as it is; adding _this_ is completely out of
+question.
 
-> but the kernel is linked at
-> an address such that 0 can't be reached by normal means.  When I added 
-> support
-> to binutils for this I did it in a way that required almost no code --
-> essetially I just stopped dissallowing x0 as a possible base register 
-> for PCREL
-> relocations, which results in 0 always being accessible.  I just 
-> wanted to get
-> the kernel to build again, so I didn't worry about chasing around all the
-> addressing modes.  The PIC/PIE support generates different relocations 
-> and I
-> wouldn't be surprised if I just missed one (or more likely all) of them.
->
-> It's probably a simple fix, though I feel like every time I say that 
-> about the
-> linker I end up spending a month in there...
-
-You can find it here:
-
-https://github.com/AlexGhiti/riscv-linux/tree/int/alex/riscv_relocatable_v1
-
-Zong fixed the bug introduced by those 2 new relocations and everything 
-works
-like a charm, so I'm not sure you have to dig in the linker :)
-
-Alex
-
+Jens, if you have a workable plan on that non-blocking open of yours,
+post it in full details.  Until then - NAK, and that's about as hard one
+as I ever had to give.
