@@ -2,137 +2,102 @@ Return-Path: <SRS0=ckY+=3N=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB34C35240
-	for <linux-next@archiver.kernel.org>; Fri, 24 Jan 2020 02:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2992BC35240
+	for <linux-next@archiver.kernel.org>; Fri, 24 Jan 2020 02:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D80A721835
-	for <linux-next@archiver.kernel.org>; Fri, 24 Jan 2020 02:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE75021835
+	for <linux-next@archiver.kernel.org>; Fri, 24 Jan 2020 02:47:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mDqooZlE"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gv4AeN+x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbgAXCla (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 23 Jan 2020 21:41:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:36167 "EHLO ozlabs.org"
+        id S1730328AbgAXCrZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 23 Jan 2020 21:47:25 -0500
+Received: from ozlabs.org ([203.11.71.1]:55203 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729340AbgAXCla (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 23 Jan 2020 21:41:30 -0500
+        id S1730335AbgAXCrZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 23 Jan 2020 21:47:25 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 483k123CbTz9sRK;
-        Fri, 24 Jan 2020 13:41:25 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 483k7t6jNYz9sRY;
+        Fri, 24 Jan 2020 13:47:22 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1579833686;
-        bh=FcO1sEsS142OWFXaWw24W2vXKioXSusedr8yViPSC8g=;
+        s=201702; t=1579834043;
+        bh=dj8Iwj87VCWiUtesjaynCNfCKhgwaWRaTCOP3C4hc4Y=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mDqooZlEmHUrv/1H/5rFaLtf32F3LEIl4un/rdy2XoNEnazWDx+8f1F8CbYt/Lna+
-         p2CTjr2d0dpJwO6pxH+X3RorPK6anx2roN6RtRg6kjlX+3J/s8wBNRsUfZ3niqmq3B
-         PE7Gj0nTBFwBoyvTaQmbvWBeJO4T4uroldTtY52rS/KMlEEU7Uo8WORP7s88+JLWfX
-         nLX9EM+XH5spkUxgWwwefwP/3XPSwNOsmyN84B+BCKS4qU6z1LnRauDXwU7GhMZW6V
-         OnurWaprxcKdzhsKKCIVycnSkgDhoaQdjTNka6m9iW9LfIRRBX7jEejQXnCkS253aL
-         fkHmDD0uDN4lQ==
-Date:   Fri, 24 Jan 2020 13:41:24 +1100
+        b=gv4AeN+xDmceb4bu8CxcW4GFpKRp9nDryHv7MuOxom6vI2cjW0kvXp5t69PXeTZ05
+         9h/8YVOniuWxgGhAxC/d+OwIZnspZR2ji1ac7V8z19/2b9/GXMUqHv8xBF7zOSbIJw
+         5ZGPJYFhRgcsSPSQ9IdP+2ez1NVZA2gRWnpxKg9vz9V7PFbLvQ3Wu8aN7BSnNoTzYD
+         67tk07aAbSJravq60KVA0EDpWwyecI+bS5qwP+f1uB9Bw3UJaMHTwq+6sCHqap9X1P
+         PpoYiawXNI8XTjIVWrOnhEyv6RmTLJrQ9EWNgsC5DUc1tmCkK3O7/OUKF56X/ek1Wq
+         USjhe7K62SH/Q==
+Date:   Fri, 24 Jan 2020 13:47:22 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20200124134124.57759b06@canb.auug.org.au>
-In-Reply-To: <20200110175729.3b5d2338@canb.auug.org.au>
-References: <20200110175729.3b5d2338@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the xfs tree
+Message-ID: <20200124134722.728032e6@canb.auug.org.au>
+In-Reply-To: <20200116091242.087b425e@canb.auug.org.au>
+References: <20200116091242.087b425e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dj5/oQ=7f9hsgkLwC.+H_UT";
+Content-Type: multipart/signed; boundary="Sig_/qouaCh+c4GtccEDBtAbqf3f";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/dj5/oQ=7f9hsgkLwC.+H_UT
+--Sig_/qouaCh+c4GtccEDBtAbqf3f
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi all
 
-On Fri, 10 Jan 2020 17:57:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Thu, 16 Jan 2020 09:12:42 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
-> failed like this:
+> After merging the xfs tree, today's linux-next build
+> (powerpppc64_defconfig) produced this warning:
 >=20
-> fs/inode.c:1615:5: error: redefinition of 'bmap'
->  1615 | int bmap(struct inode *inode, sector_t *block)
->       |     ^~~~
-> In file included from fs/inode.c:7:
-> include/linux/fs.h:2867:19: note: previous definition of 'bmap' was here
->  2867 | static inline int bmap(struct inode *inode,  sector_t *block)
->       |                   ^~~~
+> fs/xfs/xfs_inode.c: In function 'xfs_itruncate_extents_flags':
+> fs/xfs/xfs_inode.c:1523:8: warning: unused variable 'done' [-Wunused-vari=
+able]
+>  1523 |  int   done =3D 0;
+>       |        ^~~~
 >=20
-> Caused by commit
+> Introduced by commit
 >=20
->   65a805fdd75f ("fibmap: Use bmap instead of ->bmap method in ioctl_fibma=
-p")
->=20
-> I have added this patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 10 Jan 2020 17:53:19 +1100
-> Subject: [PATCH] fs: fix up for !CONFIG_BLOCK and bmap
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/inode.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 9f894b25af2b..590f36daa006 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1598,6 +1598,7 @@ void iput(struct inode *inode)
->  }
->  EXPORT_SYMBOL(iput);
-> =20
-> +#ifdef CONFIG_BLOCK
->  /**
->   *	bmap	- find a block number in a file
->   *	@inode:  inode owning the block number being requested
-> @@ -1621,6 +1622,7 @@ int bmap(struct inode *inode, sector_t *block)
->  	return 0;
->  }
->  EXPORT_SYMBOL(bmap);
-> +#endif
-> =20
->  /*
->   * With relative atime, only update atime if the previous atime is
-> --=20
-> 2.24.0
+>   4bbb04abb4ee ("xfs: truncate should remove all blocks, not just to the =
+end of the page cache")
 
-I am still applying this patch each day ...
+I am still getting this warning.
+
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/dj5/oQ=7f9hsgkLwC.+H_UT
+--Sig_/qouaCh+c4GtccEDBtAbqf3f
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4qWVQACgkQAVBC80lX
-0Gx+Swf+JuM1TIB5DvgWdYg0D+lCNr+DSWs/JD5Kgfy6f8nhkB/D48NP4ciRpkMB
-HkEdj1nbacp57JMCqKZfqQoMsMR2IuVozH6q9/nTWWoKDLALrJlxLSVIED7B9k7I
-Mqz23r/m7vkl6hb+9r3tvudqnCT+jz8v+Z59vk+8ZdUXmtJCXxeXyw2mwBYRNHTh
-8VJ8oABdrMBhb40Tlmv8l++SP4Fy/edTHYHrpeQU+ZaDM5FcQhB5OmPvlpwstqaP
-l1/VGzaec7Mp1+unMruQNl+XDh+/6RI6g5eyqo923H64lPjvkiJ/H7H4fBHlWN34
-YXndiZOvDnhPOJHvl1/MRP8UBFjNxw==
-=DERz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4qWroACgkQAVBC80lX
+0Gz54gf9ExiarEO4lO0WaH0iMdpn0NfB7+5tWK/aJfIQ4coJYqCkszvofEfiagj1
+rBFJ+dV9Pd6jBq8dRUdupGBZ3ia0rkOSPIa0SJPsgHejpv499KBfjb4gSHEbkwMz
+Bb1BabDbhaq1D/4zzDw9uamim/ViIKvvXoMDv9tzgLWT9zuRCcexYCmw3tr6DiPM
+s+nIA1FTnLHRUzaQ4ji3nEeCZFcbGNzo7qwiNU09J0Nvh9VgxUjBTZ65yBNH9OqG
+LBvHAwdHwMquZRLU2QsNHBNVp6ZXJv8lbfKLXk7uAAe+CQX9f438XjDMub4Vw1Nd
+vu5UrmLoh5pGxUicLFt5FRN5N+vPfw==
+=iZ6P
 -----END PGP SIGNATURE-----
 
---Sig_/dj5/oQ=7f9hsgkLwC.+H_UT--
+--Sig_/qouaCh+c4GtccEDBtAbqf3f--
