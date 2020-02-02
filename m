@@ -1,119 +1,85 @@
-Return-Path: <SRS0=k/we=3V=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=PF1S=3W=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC20C33C9E
-	for <linux-next@archiver.kernel.org>; Sat,  1 Feb 2020 07:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C415C35249
+	for <linux-next@archiver.kernel.org>; Sun,  2 Feb 2020 20:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C90E320679
-	for <linux-next@archiver.kernel.org>; Sat,  1 Feb 2020 07:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EBA62067C
+	for <linux-next@archiver.kernel.org>; Sun,  2 Feb 2020 20:42:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="imkZ7L7p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgBAHyU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 1 Feb 2020 02:54:20 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:60447 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbgBAHyU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 1 Feb 2020 02:54:20 -0500
-Received: from mail-qk1-f182.google.com ([209.85.222.182]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MaIGB-1j0s9f1OCr-00WDRn; Sat, 01 Feb 2020 08:54:18 +0100
-Received: by mail-qk1-f182.google.com with SMTP id x1so9033590qkl.12;
-        Fri, 31 Jan 2020 23:54:18 -0800 (PST)
-X-Gm-Message-State: APjAAAUCkr2U/V42J2Uw4zDUgQYClOJ80jBHIySkWZsOkaqLIsrnkPlZ
-        R1lTiLsQSh1iucH0wDKDc4vO5kH09MINDr2Ets0=
-X-Google-Smtp-Source: APXvYqyNQnpxEBtv4vRLe1sVwoTOmRvI7Or42gQvFykFz8mdLXAwXfpEfrCQZJZ73WNx9A4iV5Bp5Af5CouWgkX9434=
-X-Received: by 2002:a05:620a:218d:: with SMTP id g13mr14826914qka.286.1580543657085;
- Fri, 31 Jan 2020 23:54:17 -0800 (PST)
+        id S1726943AbgBBUmT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 2 Feb 2020 15:42:19 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54713 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbgBBUmT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 2 Feb 2020 15:42:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 489jZ07344z9sPK;
+        Mon,  3 Feb 2020 07:42:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1580676137;
+        bh=B2hLmk31JryAktx7MdlUn59snzXyCALDvA6eVwGUbTg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=imkZ7L7p/Z5IaoyjkP8QVFDMzlx0ljB47+qJBMLXeZyg/TkzFS/aqN+Es0jZdNsR/
+         FJTJpxAzacaxdHpaMpP2AvOm3faM+Ikt/V0nmWT6/180lPF67zAt2RIh+Q7NsbXoDa
+         fqdqpgtmSRKg9N3O12eHtI6EoEnYRPRRzIemktTc4i/oCgDHnRVOzRbZ0A8zUE+NCw
+         GEmDmSawwwro/LCMax0aTRK76Sk1LrV3/tNy5j5RcbGnZzbtt0V1fjphLnF37YEs/0
+         tOYjivOB0UrGNqGVWu0K+/Y77cbA1j22tKQaCzV36rxg7SuqQ6kdrlmMhM91FjxPH2
+         +Z5OgZ8C21kfA==
+Date:   Mon, 3 Feb 2020 07:41:51 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: bad rebase of the csky tree
+Message-ID: <20200203074151.05bfe914@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20200131141309.367c9d8b@canb.auug.org.au> <20200201003230.GA32350@fieldses.org>
-In-Reply-To: <20200201003230.GA32350@fieldses.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 1 Feb 2020 08:54:01 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2sWmeATCC67g+dr0qbBschztNuj8ATewdSay6Na13ARg@mail.gmail.com>
-Message-ID: <CAK8P3a2sWmeATCC67g+dr0qbBschztNuj8ATewdSay6Na13ARg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:97sbIK9+56zG/Pl/3nTMcsLgxkzt6oinf5xBBeBY+HzhdFjjuds
- T10A21WB/wpUf/dee7ImGAUxbZU0n5dF7ojV770RRHEldaeSjKtnbi0bpqmr+XOkn2Mt+8w
- SJdyvA+DmFxkg82uGdq+o1QnD860OQyGlfxhe1hMjxeqjpaZQzIV3CT8az0IDJnj82IP4BR
- dLwFaiINd3Nda61nq88zA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+eeKMtLniI0=:Hd+kkX9vn+/f9dYOSwIIZY
- g8tkEdQM09OKSu12hduKGNkK6+Wbv3BV9UZFwrynpxosHQVtu4W89QF2CcSGp82ZIFKvZE6IM
- sqICGz9HGD7FDuQ7LrqM7uuVUbaOwTWdtS2zyKXsBSAmJ0IZSRNbnejpcaP9cpIG/UQN4afs+
- mx2oAFQhYhc1LCg88KuoWTiRYKutrqDFU0HFfNEeCOBiZl+J6scgUQhwwc/bcHKIvxTXY8zYu
- rNjldBBSPb17OHO6RxV61Da5UffgqTF197DG/KOUOOSil/ISwCVURMv8ZQ+mdJMDzmGGvXM76
- D9Cxk8/Ueijx3P4oDs7ad4f/B8Rx0pZ+wAm09cK/1AGyJ5a5A6n7FcwOovGWaLpBqn9TSNhf4
- k+W4V9m28EB0kpT/iauA3hpmkeXIZWW1lcuWYEhmRqgLGFHNoa+WQCs344DZ8BzNSgV61afOD
- 677S3RkunFcY4FlWFobdq4jD9ya6I/rKx4QgNrtuOfwxIdkB2H/J/+mY1gi9mPzxCAic485xq
- J2TIiP+6PENVHa+LEQAf2D0E3vPlgA35gVT4TWUNRfvC+8OwP7bx5/Y0yqt/fnMlul2ku1jt1
- gdls5SXhRJI/y91pNdANsEoumH9do3dmSU8MN7asn/CD5Ezm11/axYTpBs4PcdeDU0pOXc0dj
- GrhH8awS3ObjXhyhTuNa8WCVF2wukbD0u9CXqaJxJmrNEvWsC1AQ7GTTuo5fq7Ccxq4+lTTXP
- scCoQaTfv58JJbu+YxNiPevVWPcRSfFQ1fnO1ynOJ738EFJQl8XtHy3lW/7BEDnhG1CdO3t/j
- lSa9Bz6kENLruAalNLqJt/EC8XBJQgAAdJuNNbaMJvbo/gjzX8=
+Content-Type: multipart/signed; boundary="Sig_/lriMuSHaFGbuffbes_tc9eC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Sat, Feb 1, 2020 at 1:32 AM J. Bruce Fields <bfields@fieldses.org> wrote:
->
-> On Fri, Jan 31, 2020 at 02:13:09PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > After merging the akpm-current tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> >
-> > net/sunrpc/auth_gss/svcauth_gss.c: In function 'gss_proxy_save_rsc':
-> > net/sunrpc/auth_gss/svcauth_gss.c:1251:19: error: storage size of 'boot' isn't known
-> >  1251 |   struct timespec boot;
-> >       |                   ^~~~
-> > net/sunrpc/auth_gss/svcauth_gss.c:1273:3: error: implicit declaration of function 'getboottime'; did you mean 'getboottime64'? [-Werror=implicit-function-declaration]
-> >  1273 |   getboottime(&boot);
-> >       |   ^~~~~~~~~~~
-> >       |   getboottime64
-> > net/sunrpc/auth_gss/svcauth_gss.c:1251:19: warning: unused variable 'boot' [-Wunused-variable]
-> >  1251 |   struct timespec boot;
-> >       |                   ^~~~
-> >
-> > Caused by commit
-> >
-> >   a415f20a18c9 ("sunrpc: expiry_time should be seconds not timeval")
+--Sig_/lriMuSHaFGbuffbes_tc9eC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This commit uses the now-removed 'struct timespec' type and 'getboottime()'
-function, so to fix the compilation error, the 64-bit replacements need to e
-used as described in Documentation/core-api/timekeeping.rst
+Hi all,
 
-> > from the nfsd tree interacting with commits
-> >
-> >   de371b6c7b73 ("y2038: remove unused time32 interfaces")
-> >   aa7ff200a719 ("y2038: hide timeval/timespec/itimerval/itimerspec types")
-> >
-> > from the akpm-current tree.
-> >
-> > I have reverted the nfsd commit for today.  A better solution is requested.
->
-> Unfortunately that expiry time seems to be a signed 32-bit integer in
-> both the kernel<->gss-proxy and the gss-proxy<->krb5 interfaces.
->
-> I guess we'll have to come to an agreement with the krb5 developers.
->
-> Simplest might be to agree that the thing's unsigned.  The expiry
-> shouldn't ever need to be decades in the future, so unsigned mod 2^32
-> arithmetic should work forever.
+The rebase of the csky tree has rebased some of the commits from Linus'
+tree as well.  Please do not rebase your tree unnecessarily and especially
+not during the merge window.  And be more careful about how you do
+rebases if they are necessary.
 
-Can you be more specific which interface you are referring to?
-My change to gss_import_v1_context() is now part of mainline
-as of 294ec5b87a8a ("sunrpc: convert to time64_t for expiry"),
-is anything else needed there?
+--=20
+Cheers,
+Stephen Rothwell
 
-       Arnd
+--Sig_/lriMuSHaFGbuffbes_tc9eC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl43NA8ACgkQAVBC80lX
+0GyvHQgAnskELwgAvripE6UZHfaFS9uA/PDWdSzOhEm+DYd4xV93EbMqRRDQ5uKI
+lWoTs4vRJzM8IEqPE0/WzrvPuge42fqzEXzWAHWW0VDRk9OL7dJBZb3LM5LXVNIB
+NrSNOQ5BvS7xuYXJo+7fk77L1OMF7irmXz22vM2oT5b0JNb15gJ6SpNA9NadhG+7
+eIvY54MtulZqkq9a1l8Min2yt9rJNoOvrBgq6Nl1YCuPy8vqgIDiP6j9PGVkOrNJ
+jh3EoAdTn2uLFQEaTjEY2DdpMiOAYfTkPTllQ9YM1KirUdFBt2l7Kqh3MkxQJ50H
+WaFaSgESjeEe+u4PZLtFtxiBysNtog==
+=sToY
+-----END PGP SIGNATURE-----
+
+--Sig_/lriMuSHaFGbuffbes_tc9eC--
