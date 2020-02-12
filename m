@@ -2,109 +2,66 @@ Return-Path: <SRS0=qjxt=4A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7192FC2BA83
-	for <linux-next@archiver.kernel.org>; Wed, 12 Feb 2020 15:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4301EC2BA83
+	for <linux-next@archiver.kernel.org>; Wed, 12 Feb 2020 16:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4267A20661
-	for <linux-next@archiver.kernel.org>; Wed, 12 Feb 2020 15:26:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=btinternet.com header.i=@btinternet.com header.b="WtlM0Xyh"
+	by mail.kernel.org (Postfix) with ESMTP id 2321820873
+	for <linux-next@archiver.kernel.org>; Wed, 12 Feb 2020 16:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbgBLP04 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 12 Feb 2020 10:26:56 -0500
-Received: from mailomta25-re.btinternet.com ([213.120.69.118]:39277 "EHLO
-        re-prd-fep-048.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727698AbgBLP0z (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:26:55 -0500
-X-Greylist: delayed 12198 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 10:26:55 EST
-Received: from re-prd-rgout-004.btmx-prd.synchronoss.net ([10.2.54.7])
-          by re-prd-fep-047.btinternet.com with ESMTP
-          id <20200212120334.PPOK16580.re-prd-fep-047.btinternet.com@re-prd-rgout-004.btmx-prd.synchronoss.net>;
-          Wed, 12 Feb 2020 12:03:34 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1581509014; 
-        bh=kHGdWcUTXHR3UL14kLf9Zry9N63KEVIVP1LWL5DkSqQ=;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:MIME-Version;
-        b=WtlM0Xyht+vuAwdt/l8f1czhehZX34hzsp9kCVtmGoM91BcQRd0eVw0SfDA0hgWa4i+Q2A5EN/3fG1KpGHmDPkyLvwio5Yt7/2GLYX38G7p47HyhlMR69Q2vT9cWk88EcPVevMNPocTs3T+BX3Bjg+4jTOaRenLqqO27ATrF8XEPKXPiOI/HWuOd5Fd5LY+GnAlIb1jbqTKRt5nuWZw2CzeqXqWzQCEH2pRwa7rWmB5hUrZV6ABquYod3KE7x+1euxIGk0q1njvgF6MXQs5U37Z3PDwVTWPtIQjkE/LlteHp1jiTSzUBD95vvFHD2XRIoUo/kDKIisuNnEnNpXOBZw==
-Authentication-Results: btinternet.com;
-    auth=pass (PLAIN) smtp.auth=richard_c_haines@btinternet.com
-X-Originating-IP: [31.49.60.248]
-X-OWM-Source-IP: 31.49.60.248 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedugedrieehgdefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecukfhppeefuddrgeelrdeitddrvdegkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepfedurdegledriedtrddvgeekpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqecuuefqffgjpeekuefkvffokffogfdprhgtphhtthhopeeotghgiihonhgvshesghhoohhglhgvmhgrihhlrdgtohhmqedprhgtphhtthhopeeoughhohifvghllhhssehrvgguhhgrthdrtghomheqpdhrtghpthhtohepoehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehprghulhesphgruhhlqdhmohhorhgvrdgtohhmqedprhgtphhtthho
-        peeorhhitghhrghruggptggphhgrihhnvghssehhohhtmhgrihhlrdgtohhmqedprhgtphhtthhopeeoshgushesthihtghhohdrnhhsrgdrghhovheqpdhrtghpthhtohepoehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruheq
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-Received: from localhost.localdomain (31.49.60.248) by re-prd-rgout-004.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
-        id 5E3A181A01289E90; Wed, 12 Feb 2020 12:03:34 +0000
-Message-ID: <1d0b80d272a8e8c4a7b322d2d2bcc483d9e41a28.camel@btinternet.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the keys tree
-From:   Richard Haines <richard_c_haines@btinternet.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Paul Moore <paul@paul-moore.com>,
-        David Howells <dhowells@redhat.com>, sds@tycho.nsa.gov
+        id S1728627AbgBLQD6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 12 Feb 2020 11:03:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32922 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726728AbgBLQD6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:03:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9E478AF3E;
+        Wed, 12 Feb 2020 16:03:56 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 204E8DA8DB; Wed, 12 Feb 2020 17:03:42 +0100 (CET)
+Date:   Wed, 12 Feb 2020 17:03:41 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christian =?ISO-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Date:   Wed, 12 Feb 2020 12:03:33 +0000
-In-Reply-To: <20200212103548.266f81fd@canb.auug.org.au>
-References: <20200212103548.266f81fd@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: linux-next: build warning after merge of the btrfs tree
+Message-ID: <20200212160341.GL2902@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20200212091028.718ca6dc@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212091028.718ca6dc@canb.auug.org.au>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 2020-02-12 at 10:35 +1100, Stephen Rothwell wrote:
+On Wed, Feb 12, 2020 at 09:10:28AM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the selinux tree got conflicts in:
+> After merging the btrfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
 > 
->   security/selinux/include/security.h
->   security/selinux/ss/services.c
+> fs/btrfs/volumes.c: In function 'btrfs_scratch_superblocks':
+> fs/btrfs/volumes.c:7338:3: warning: ignoring return value of 'write_one_page', declared with attribute warn_unused_result [-Wunused-result]
+>  7338 |   write_one_page(page);
+>       |   ^~~~~~~~~~~~~~~~~~~~
 > 
-> between commit:
+> Introduced by commit
 > 
->   87b14da5b76a ("security/selinux: Add support for new key
-> permissions")
-> 
-> from the keys tree and commit:
-> 
->   7470d0d13fb6 ("selinux: allow kernfs symlinks to inherit parent
-> directory context")
-> 
-> from the selinux tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your
-> tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any
-> particularly
-> complex conflicts.
-> 
+>   d19ec014a46b ("btrfs: use the page-cache for super block reading")
 
-I think 87b14da5b76a ("security/selinux: Add support for new key
-permissions") should be revoked and resubmitted via selinux as it was
-never ack'ed there and produced before 7470d0d13fb6 ("selinux: allow
-kernfs symlinks to inherit parent directory context"), that has been
-ack'ed.
-
-Because of this the policy capability ids are out of sync with what has
-been committed in userspace libsepol.
-
-Plus as Paul mentioned there is an outstanding query on the permission
-loop that David needs to answer.
-
-
-
+Known and fix is in the patchset revision that will be in the next
+for-next branch update. Thanks.
