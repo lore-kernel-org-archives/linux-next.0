@@ -2,116 +2,110 @@ Return-Path: <SRS0=Obje=4N=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE3DC35DE1
-	for <linux-next@archiver.kernel.org>; Tue, 25 Feb 2020 13:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72905C35E04
+	for <linux-next@archiver.kernel.org>; Tue, 25 Feb 2020 14:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCC492176D
-	for <linux-next@archiver.kernel.org>; Tue, 25 Feb 2020 13:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 354C921744
+	for <linux-next@archiver.kernel.org>; Tue, 25 Feb 2020 14:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582635957;
-	bh=+As4mDnnLApyLyfQzFILmdOY51jEVGMNz0BBktEP5V8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=2IaLo+qddqkucsUz5kUIEJ3JV+HyP37cyoVJvgUZ/BbZLPIsQmANjRCFsnZygmk1X
-	 dUxnsxdooUnK3762ULkj/5or82zRPECzaDARFhzxDOkyH0rhPlZlO2rX2XFc/+94Zz
-	 nttX0eGguohLAWU68HJulYD/sSflIVQgPBmPtMdg=
+	s=default; t=1582641407;
+	bh=4Z/rPRDF1OAUC8yRceV/KqQY81/AC6Or4/e79DSK8pk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dNYX/szuseu18wxWLtAYIKo5qmFn05jDN+y2k3HvYjBcnGhntNXnhAk/Qx2QK4D4R
+	 SsHa4Tvv9VfxLOe4LFY8foiNvpCKvJG5XABvqQZ/py5YqWDzH9NWcLfjpRAsCeK5jo
+	 b2WGi1yiA8DBUXk09bhKrULQx4hHKmYL0vYeIND8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729800AbgBYNF4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Feb 2020 08:05:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39440 "EHLO mail.kernel.org"
+        id S1729179AbgBYOgq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Feb 2020 09:36:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729193AbgBYNF4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 25 Feb 2020 08:05:56 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728981AbgBYOgq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Feb 2020 09:36:46 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C8D21556;
-        Tue, 25 Feb 2020 13:05:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3E2E2064A;
+        Tue, 25 Feb 2020 14:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582635955;
-        bh=+As4mDnnLApyLyfQzFILmdOY51jEVGMNz0BBktEP5V8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B0MNX8mYwhgjQSRUkltS9baZmcWNRjxPdc3tem6vzw9m6VGZZkcMOemqJCOiD+xrZ
-         ShKuWcvCzvshiIR8rh3fuDNdOIyR/4wJD+amV/Vpof1hptLAbGIE2KIApfVKbRCWba
-         cjq4De6w8vlTQFhBLZj1+Otvk+5Z0fq8IaLbQDCU=
-Date:   Tue, 25 Feb 2020 22:05:51 +0900
+        s=default; t=1582641406;
+        bh=4Z/rPRDF1OAUC8yRceV/KqQY81/AC6Or4/e79DSK8pk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fV9QFyBOfm2hRADqJJrH5U3C0hQ/XIYiX3iaBEkuD2U+JlQEtyqwZNUtIaDu7NacU
+         FQ6ubrlBeimWAgr0iwBemQUTL1Kz+kU4plj9HWKV2deAJPrhGSLXwnCpgUStwe0gG6
+         vbowaXfgurl6KokgmGUe7Dx14AviXCr+dyursZTA=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: Tree for Feb 25 (BOOT_CONFIG)
-Message-Id: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
-In-Reply-To: <20200225192304.f3ccd36bd1c451e3a1969255@kernel.org>
-References: <20200225142452.14d4e169@canb.auug.org.au>
-        <7e8f78b4-12f9-6bd3-72dc-08152fbe9345@infradead.org>
-        <20200225192304.f3ccd36bd1c451e3a1969255@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH] bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency issue
+Date:   Tue, 25 Feb 2020 23:36:41 +0900
+Message-Id: <158264140162.23842.11237423518607465535.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
+References: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 25 Feb 2020 19:23:04 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Since commit d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by
+default") also changed the CONFIG_BOOTTIME_TRACING to select
+CONFIG_BOOT_CONFIG to show the boot-time tracing on the menu,
+it introduced wrong dependencies with BLK_DEV_INITRD as below.
 
-> On Mon, 24 Feb 2020 22:58:01 -0800
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
-> > On 2/24/20 7:24 PM, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20200224:
-> > > 
-> > 
-> > 
-> > on i386:
-> > 
-> > WARNING: unmet direct dependencies detected for BOOT_CONFIG
-> >   Depends on [n]: BLK_DEV_INITRD [=n]
-> >   Selected by [y]:
-> >   - BOOTTIME_TRACING [=y] && TRACING_SUPPORT [=y] && FTRACE [=y] && TRACING [=y]
-> 
-> Oops, thanks for reporting!
-> 
-> So I made the Boottime tracing selects the bootconfig, but the bootconfig depends on initrd support.
-> Hmm, should I make BOOTTIME_TRACING depends on BLK_DEV_INITRD??
+WARNING: unmet direct dependencies detected for BOOT_CONFIG
+  Depends on [n]: BLK_DEV_INITRD [=n]
+  Selected by [y]:
+  - BOOTTIME_TRACING [=y] && TRACING_SUPPORT [=y] && FTRACE [=y] && TRACING [=y]
 
-OK, there are 3 options.
+This makes the CONFIG_BOOT_CONFIG selects CONFIG_BLK_DEV_INITRD to
+fix this error and make CONFIG_BOOTTIME_TRACING=n by default, so
+that both boot-time tracing and boot configuration off but those
+appear on the menu list.
 
-1) make BOOTTIME_TRACING depends on BOOT_CONFIG
-2) make BOOTTIME_TRACING selects BLK_DEV_INITRD
-3) make BOOT_CONFIG selects BLK_DEV_INITRD (and BOOTTIME_TRACING=n by default)
+Fixes: d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by default")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ init/Kconfig         |    2 +-
+ kernel/trace/Kconfig |    1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-Or, I'll hurry to implement CONFIG_BUILTIN_BOOT_CONFIG support.
+diff --git a/init/Kconfig b/init/Kconfig
+index a84e7aa89a29..8b4c3e8c05ea 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1217,7 +1217,7 @@ endif
+ 
+ config BOOT_CONFIG
+ 	bool "Boot config support"
+-	depends on BLK_DEV_INITRD
++	select BLK_DEV_INITRD
+ 	help
+ 	  Extra boot config allows system admin to pass a config file as
+ 	  complemental extension of kernel cmdline when booting.
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 795c3e02d3f1..402eef84c859 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -145,7 +145,6 @@ config BOOTTIME_TRACING
+ 	bool "Boot-time Tracing support"
+ 	depends on TRACING
+ 	select BOOT_CONFIG
+-	default y
+ 	help
+ 	  Enable developer to setup ftrace subsystem via supplemental
+ 	  kernel cmdline at boot time for debugging (tracing) driver
 
-Thank you, 
-
-
-
-> 
-> Thank you,
-> 
-> > 
-> > 
-> > Full randconfig file is attached.
-> > 
-> > -- 
-> > ~Randy
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> 
-> -- 
-> Masami Hiramatsu <mhiramat@kernel.org>
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
