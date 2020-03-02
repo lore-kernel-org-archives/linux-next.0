@@ -2,92 +2,125 @@ Return-Path: <SRS0=/46v=4T=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB40C3F2D2
-	for <linux-next@archiver.kernel.org>; Mon,  2 Mar 2020 03:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CABC3F2D2
+	for <linux-next@archiver.kernel.org>; Mon,  2 Mar 2020 04:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E84712468E
-	for <linux-next@archiver.kernel.org>; Mon,  2 Mar 2020 03:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FA0A24699
+	for <linux-next@archiver.kernel.org>; Mon,  2 Mar 2020 04:23:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RR9fjuBV"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ApG3XI/o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgCBDo5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 1 Mar 2020 22:44:57 -0500
-Received: from ozlabs.org ([203.11.71.1]:51425 "EHLO ozlabs.org"
+        id S1726872AbgCBEXJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 1 Mar 2020 23:23:09 -0500
+Received: from ozlabs.org ([203.11.71.1]:43111 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbgCBDo5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 1 Mar 2020 22:44:57 -0500
+        id S1726874AbgCBEXJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 1 Mar 2020 23:23:09 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48W5cl2HwQz9sPR;
-        Mon,  2 Mar 2020 14:44:54 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48W6Sq00Gfz9sSL;
+        Mon,  2 Mar 2020 15:23:06 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583120695;
-        bh=RE64/CC4GTkrUVJEyyPC3E0NI9nq1JvTICucGATw7ys=;
+        s=201702; t=1583122987;
+        bh=WrY0QgoF/se4vTsljwQkp5MWu7uOMNQCFnVzmMD9laU=;
         h=Date:From:To:Cc:Subject:From;
-        b=RR9fjuBVG2ku4N3ycqGbSTIZ1L5wZLnLqJJGrfJWWilYMj46gPIkIbKU80PfCEtRj
-         WimTPf3h/1haHuEZXsHGzHfziys+aSgF9YdMOsClpD4bJR0cYiS5etWBwLOQ5/MPKG
-         PrVppag2UcHWpc7YcPjNaLVe0/I2P2jpsDVRctRYdLNbZRk1yE9EU77wugTvNn9mwM
-         x5MOGqr/L/if9ySO3RCODvwLOdcPXWWfyyrCw0AaJI39+nPrdcBzuHTpRTDpZAPBLP
-         ED3Iik7mjtWW9Aj9adnktcFJmP1otu1Hd8gtwJYyRo84srFJ/VIpyICwctdM3qwkNm
-         pPOyy+n8zCVNw==
-Date:   Mon, 2 Mar 2020 14:44:52 +1100
+        b=ApG3XI/oHDruKt3JV9EIBq89vQGPkjzvYLUMvMDHixFxKSzO60vIyiY/QnpRQAhcW
+         bs8IufTIHsTLDUt6QXxXPSy23IZtqCnqvgcy3cxpxRVF028fLqepnPZ/MYW9IaA3Vy
+         vyqEcoGNeYPZBZ6Y2cpt/tJR0lnHx6ZNjPOvpm+HkXB8i2pK82vOKwFbdQ2l03QzcV
+         UlAx18FfV6dzBJ0ETsIsoW8qT8I3wAlBIjU+ZqDIPyy5k7dF6bKRx+fDU9tHA36FTg
+         f3ATF72LsTsIkBZB4h2nYS4wnOJUgbGQYzpIw/vYVGdQm0TjSpRZg1hfbABy4iTYgx
+         Kw2+UbjeBhe8w==
+Date:   Mon, 2 Mar 2020 15:23:06 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Theodore Ts'o <tytso@mit.edu>
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: linux-next: build warning after merge of the random tree
-Message-ID: <20200302144452.6a7c4907@canb.auug.org.au>
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>
+Subject: linux-next: build failure after merge of the akpm tree
+Message-ID: <20200302152306.49cd866d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//AJJERX5+tXGlT89fR6mCmM";
+Content-Type: multipart/signed; boundary="Sig_/_Sqota=fc05cOGAqsikexaf";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//AJJERX5+tXGlT89fR6mCmM
+--Sig_/_Sqota=fc05cOGAqsikexaf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the random tree, today's linux-next build (x86_64
-allnoconfig) produced this warning:
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/char/random.c:820:13: warning: 'crng_initialize_secondary' defined =
-but not used [-Wunused-function]
-  820 | static void crng_initialize_secondary(struct crng_state *crng)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+arch/powerpc/kvm/book3s_64_mmu_radix.c: In function 'debugfs_radix_read':
+arch/powerpc/kvm/book3s_64_mmu_radix.c:1226:8: error: unused variable 'pgd'=
+ [-Werror=3Dunused-variable]
+ 1226 |  pgd_t pgd, *pgdp;
+      |        ^~~
+cc1: all warnings being treated as errors
 
-Introduced by commit
+Caused by commit
 
-  5cbe0f13b51a ("random: split primary/secondary crng init paths")
+  cad54c147231 ("powerpc: add support for folded p4d page tables")
+
+I applied the following fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Mar 2020 15:19:40 +1100
+Subject: [PATCH] fix for "powerpc: add support for folded p4d page tables"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kvm/book3s_64_mmu_radix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book=
+3s_64_mmu_radix.c
+index beb694285100..3fb598659420 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
+@@ -1223,7 +1223,7 @@ static ssize_t debugfs_radix_read(struct file *file, =
+char __user *buf,
+ 	unsigned long gpa;
+ 	pgd_t *pgt;
+ 	struct kvm_nested_guest *nested;
+-	pgd_t pgd, *pgdp;
++	pgd_t *pgdp;
+ 	p4d_t p4d, *p4dp;
+ 	pud_t pud, *pudp;
+ 	pmd_t pmd, *pmdp;
+--=20
+2.25.0
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//AJJERX5+tXGlT89fR6mCmM
+--Sig_/_Sqota=fc05cOGAqsikexaf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5cgTQACgkQAVBC80lX
-0Gw7Vgf/QvQWJJnfyV2c5oiPRmKdE+nJSgejsc6SHpFB5wtbo5xG/wpRbpVM80kC
-Mjo3CRc9mPbkMEVURRpZ+vHeJl/tRyDb3/62tnWV4d+jT1l/Zwb3DsD34DtoQ+1j
-maZoXIqr6k5irxPbXY351RgpD9Fsc52Z5Mdtk1g5/Bs0bJv0T9PaPdgBz64ch7QQ
-i+hkOwtHNtLy/Ak8ubZxrhU+IS8bJVy+h3BGVs2EAtP1lvzoeAaSJCxLHvH8ISmI
-Y9FkOIMeY5MDTreeEvY56BECevHgGDHYQgxWT8LbpbLmFKoHSdMO5OQuTwRoPVf1
-DxAvV+xhzO5obmbC8UZ6Wx4FU4BvLA==
-=eHLM
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5ciioACgkQAVBC80lX
+0GweSggApVPnl7cW33i4cT0zpCRIRBdaSEK2TmYVS+Gybb1wO8AqwwGOL7oGW1tU
+UIZWB07f+/d0pN4OepxAst8ePlRomUzo+npdI+mEBMd1QQZv6CZMlX+paOWe+0HX
+AIZSyz1ILdNhoKXZG1ZgwkHhIT6cROK6Y0iVgxEkqipXJ07LXkvXub8GcN8BagZe
+2gIJQw5p2PfgQQwu7Z+t0yQZW6rXe8FmsXChoQ8MW1F0wMY7az6WwlrdOHQ+XzEU
+OAkdcbbpjkU8bIuR92XKUdjZicgRE63BlPi5FHTaOaEkIXB17mdcbXFYMPhCuVLH
+yVhybrgO4yE8ZAqfIWDxshUldnxNKA==
+=mQPA
 -----END PGP SIGNATURE-----
 
---Sig_//AJJERX5+tXGlT89fR6mCmM--
+--Sig_/_Sqota=fc05cOGAqsikexaf--
