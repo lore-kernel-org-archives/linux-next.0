@@ -2,163 +2,126 @@ Return-Path: <SRS0=xLV9=4U=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC21C3F2CD
-	for <linux-next@archiver.kernel.org>; Tue,  3 Mar 2020 00:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA6FC3F2CD
+	for <linux-next@archiver.kernel.org>; Tue,  3 Mar 2020 00:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C4024677
-	for <linux-next@archiver.kernel.org>; Tue,  3 Mar 2020 00:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CC152467E
+	for <linux-next@archiver.kernel.org>; Tue,  3 Mar 2020 00:26:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kzv9byor"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgCCAZ0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 2 Mar 2020 19:25:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24752 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726947AbgCCAZR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 2 Mar 2020 19:25:17 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0230LCOb139315
-        for <linux-next@vger.kernel.org>; Mon, 2 Mar 2020 19:25:16 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfn076wx6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Mon, 02 Mar 2020 19:25:16 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <imbrenda@linux.ibm.com>;
-        Tue, 3 Mar 2020 00:25:14 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Mar 2020 00:25:10 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0230P8n339846118
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Mar 2020 00:25:08 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 843A84204C;
-        Tue,  3 Mar 2020 00:25:08 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0AEA4203F;
-        Tue,  3 Mar 2020 00:25:07 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.145.0.1])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Mar 2020 00:25:07 +0000 (GMT)
-From:   Claudio Imbrenda <imbrenda@linux.ibm.com>
-To:     linux-next@vger.kernel.org, akpm@linux-foundation.org,
-        jack@suse.cz, kirill@shutemov.name
-Cc:     borntraeger@de.ibm.com, david@redhat.com, aarcange@redhat.com,
-        linux-mm@kvack.org, frankja@linux.ibm.com, sfr@canb.auug.org.au,
-        jhubbard@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v2 1/2] mm/gup: fixup for 9947ea2c1e608e32 "mm/gup: track FOLL_PIN pages"
-Date:   Tue,  3 Mar 2020 01:25:05 +0100
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200303002506.173957-1-imbrenda@linux.ibm.com>
-References: <20200303002506.173957-1-imbrenda@linux.ibm.com>
+        id S1727041AbgCCA0X (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 2 Mar 2020 19:26:23 -0500
+Received: from ozlabs.org ([203.11.71.1]:58941 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbgCCA0X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 2 Mar 2020 19:26:23 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48Wd985fPQz9sSG;
+        Tue,  3 Mar 2020 11:26:20 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1583195181;
+        bh=6pNAZ4DNdVjlv1OmTqyQ0CQpMidWYRVRMi415EdzFLc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kzv9byorkfPrd7DYiYlrIPiBbd+bYYnp1AXR3ttQVpD56sZ0IK0gsrwntv/HpxQgL
+         tph+FEXez5mEAa5IucY03akcTStY9ZKyWP1Zrhj/SesO87572xUk+yiUv3R3gq2GZj
+         fjJpiaaECCy0k/Hpx9MRY0eKyHYq5rLcSVPNslFFvM2tHxhpY55XSV61hACWdTqGAS
+         BJjgI0kOw/f+zhj5EgogimWiT6mZws2xzwSiZSCx9TBAdcExgtytDpJi/nWqDtQ19Y
+         k/9G2pNHci/NSDfcAEIUT7GUn/zhqXId1+WQQy0kPh9ZWQ7lT/eKmOcJ3TB+H9uUxc
+         ZmXU/lc5DXfXw==
+Date:   Tue, 3 Mar 2020 11:26:14 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: linux-next: manual merge of the netfilter-next tree with Linus'
+ tree
+Message-ID: <20200303112614.546aa34f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030300-0016-0000-0000-000002EC772E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030300-0017-0000-0000-0000334FBC05
-Message-Id: <20200303002506.173957-2-imbrenda@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_09:2020-03-02,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
- impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2003020157
+Content-Type: multipart/signed; boundary="Sig_/QYioLg.i7ALBe_AZALOdD7Y";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-In case pin fails, we need to unpin, a simple put_page will not be enough
+--Sig_/QYioLg.i7ALBe_AZALOdD7Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-fixup for commit 9947ea2c1e608e32 ("mm/gup: track FOLL_PIN pages")
+Hi all,
 
-it can be simply squashed in
+Today's linux-next merge of the netfilter-next tree got a conflict in:
 
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
----
- mm/gup.c | 46 +++++++++++++++++++++++-----------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+  net/netfilter/ipset/ip_set_hash_gen.h
 
-diff --git a/mm/gup.c b/mm/gup.c
-index f589299b0d4a..81a95fbe9901 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -116,6 +116,28 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
- 	return NULL;
- }
- 
-+static void put_compound_head(struct page *page, int refs, unsigned int flags)
-+{
-+	if (flags & FOLL_PIN) {
-+		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED,
-+				    refs);
-+
-+		if (hpage_pincount_available(page))
-+			hpage_pincount_sub(page, refs);
-+		else
-+			refs *= GUP_PIN_COUNTING_BIAS;
-+	}
-+
-+	VM_BUG_ON_PAGE(page_ref_count(page) < refs, page);
-+	/*
-+	 * Calling put_page() for each ref is unnecessarily slow. Only the last
-+	 * ref needs a put_page().
-+	 */
-+	if (refs > 1)
-+		page_ref_sub(page, refs - 1);
-+	put_page(page);
-+}
-+
- /**
-  * try_grab_page() - elevate a page's refcount by a flag-dependent amount
-  *
-@@ -2134,7 +2156,7 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 			goto pte_unmap;
- 
- 		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
--			put_page(head);
-+			put_compound_head(head, 1, flags);
- 			goto pte_unmap;
- 		}
- 
-@@ -2267,28 +2289,6 @@ static int record_subpages(struct page *page, unsigned long addr,
- 	return nr;
- }
- 
--static void put_compound_head(struct page *page, int refs, unsigned int flags)
--{
--	if (flags & FOLL_PIN) {
--		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED,
--				    refs);
--
--		if (hpage_pincount_available(page))
--			hpage_pincount_sub(page, refs);
--		else
--			refs *= GUP_PIN_COUNTING_BIAS;
--	}
--
--	VM_BUG_ON_PAGE(page_ref_count(page) < refs, page);
--	/*
--	 * Calling put_page() for each ref is unnecessarily slow. Only the last
--	 * ref needs a put_page().
--	 */
--	if (refs > 1)
--		page_ref_sub(page, refs - 1);
--	put_page(page);
--}
--
- #ifdef CONFIG_ARCH_HAS_HUGEPD
- static unsigned long hugepte_addr_end(unsigned long addr, unsigned long end,
- 				      unsigned long sz)
--- 
-2.24.1
+between commit:
 
+  f66ee0410b1c ("netfilter: ipset: Fix "INFO: rcu detected stall in hash_xx=
+x" reports")
+
+from Linus' tree and commit:
+
+  9fabbf56abfe ("netfilter: Replace zero-length array with flexible-array m=
+ember")
+
+from the netfilter-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/netfilter/ipset/ip_set_hash_gen.h
+index e52d7b7597a0,f1edc5b9b4ce..1ee43752d6d3
+--- a/net/netfilter/ipset/ip_set_hash_gen.h
++++ b/net/netfilter/ipset/ip_set_hash_gen.h
+@@@ -105,11 -75,9 +105,11 @@@ struct htable_gc=20
+  /* The hash table: the table size stored here in order to make resizing e=
+asy */
+  struct htable {
+  	atomic_t ref;		/* References for resizing */
+ -	atomic_t uref;		/* References for dumping */
+ +	atomic_t uref;		/* References for dumping and gc */
+  	u8 htable_bits;		/* size of hash table =3D=3D 2^htable_bits */
+ +	u32 maxelem;		/* Maxelem per region */
+ +	struct ip_set_region *hregion;	/* Region locks and ext sizes */
+- 	struct hbucket __rcu *bucket[0]; /* hashtable buckets */
++ 	struct hbucket __rcu *bucket[]; /* hashtable buckets */
+  };
+ =20
+  #define hbucket(h, i)		((h)->bucket[i])
+
+--Sig_/QYioLg.i7ALBe_AZALOdD7Y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5dpCYACgkQAVBC80lX
+0Gw3uwf/RaVvcJWrbYdHPzAx4vdbLuHRp6bdBd+kgaV3Np/hFh/ipUI5+fq2yeWK
+ZogcV2y+VqXIVTliSHhNN0RkH9vlwo/tylSfs9WFERG1HmrMsQmhtTt0Idjfef0y
+AD/S+WYSn0uV5eZxHa/ZUUS4xkdqvfrumnXVlz7haeert/+FrHDFc3BkzgxdJxLi
+REVLdgBvyrly5ZiwaVqQliQ+NlyG3uRVhRMNiPwLq4hTjnauy5gIukRqsMwUmGeb
+RT6U1skYeytt7UDFWKEkX/8s3PG/1jqdTf9dEKPgOybaqAsl5W+uidZTdvmHiIVW
+JFbEtM9+NNJBpmmh6LlVCR/cltXNLw==
+=Ig/C
+-----END PGP SIGNATURE-----
+
+--Sig_/QYioLg.i7ALBe_AZALOdD7Y--
