@@ -2,68 +2,97 @@ Return-Path: <SRS0=6Aaj=4W=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B39C3F2D1
-	for <linux-next@archiver.kernel.org>; Thu,  5 Mar 2020 09:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26CEC3F2D9
+	for <linux-next@archiver.kernel.org>; Thu,  5 Mar 2020 09:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C4020870
-	for <linux-next@archiver.kernel.org>; Thu,  5 Mar 2020 09:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7499B21741
+	for <linux-next@archiver.kernel.org>; Thu,  5 Mar 2020 09:34:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dBIKgr3G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbgCEJVz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 5 Mar 2020 04:21:55 -0500
-Received: from foss.arm.com ([217.140.110.172]:45410 "EHLO foss.arm.com"
+        id S1725912AbgCEJeB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 5 Mar 2020 04:34:01 -0500
+Received: from ozlabs.org ([203.11.71.1]:37949 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbgCEJVz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 5 Mar 2020 04:21:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E856031B;
-        Thu,  5 Mar 2020 01:21:54 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E87323F534;
-        Thu,  5 Mar 2020 01:21:53 -0800 (PST)
-Date:   Thu, 5 Mar 2020 09:21:51 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
+        id S1726101AbgCEJeB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 5 Mar 2020 04:34:01 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48Y5D658rdz9sPg;
+        Thu,  5 Mar 2020 20:33:58 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1583400839;
+        bh=0VNV0vcRlSNoebDfMcN1IfFTAHR24zqhJXQME3nFPck=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dBIKgr3G8RXKFx5zbWL1ChjyJtRat+8eo1d9KcybZdtaGBMz5RCCDdKLE04xj8cYC
+         4pz+cVbI2CNDJMaLwKUsNWYvngiqMHSbx1qcO3QF7ZI5y0juH1Un3u7uYOn8E3QOFY
+         RYxzhmq95aD+tkYsysjgsjRs8Zxh/nYBhQY6YYHVt7aiAoub6YhzthOF2Ko852IM6l
+         u6kC+tDyT+FviTkF2WmRR6PPcVtjrsG/MSuJUZYzSD6e2o1TsDJV+z/7sGwaS9j6CW
+         hOgNFxbi30NsfV1TtYQJKfrksRVuNCM71QywxDoh65t5lQEllWB2Z/Xe8T3FkhBKx1
+         mfgH0b/mDPdnQ==
+Date:   Thu, 5 Mar 2020 20:33:56 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the arm64 tree
-Message-ID: <20200305092151.GB1729062@arrakis.emea.arm.com>
-References: <20200305165046.42e62969@canb.auug.org.au>
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20200305203356.307c0a18@canb.auug.org.au>
+In-Reply-To: <1583398476.17146.6.camel@mtksdccf07>
+References: <20200305163743.7128c251@canb.auug.org.au>
+        <1583398476.17146.6.camel@mtksdccf07>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200305165046.42e62969@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/vs3T5M5K+OJMDk5rszPkr5S";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 04:50:46PM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the akpm tree got a conflict in:
-> 
->   arch/arm64/mm/mmu.c
-> 
-> between commit:
-> 
->   bbd6ec605c0f ("arm64/mm: Enable memory hot remove")
-> 
-> from the arm64 tree and patch:
-> 
->   37be0f08b1cc ("arm64/mm: implement unmap_hotplug_p4d_range")
-> 
-> from the akpm tree.
-> 
-> I fixed it up (I just dropped the latter (and its followup fix) for today)
+--Sig_/vs3T5M5K+OJMDk5rszPkr5S
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen. Anshuman integrated those fixes in his memory hotremove
-series.
+Hi Walter,
 
--- 
-Catalin
+On Thu, 5 Mar 2020 16:54:36 +0800 Walter Wu <walter-zh.wu@mediatek.com> wro=
+te:
+>
+> I'm sorry for the build warning, it doesn't generate in our local
+> environment(arm64/x86_64). Would you tell me what toolchains can
+> reproduce it?
+
+I am using a PowerPC LE hosted x86_64 gcc v9.2.1 (Debian cross compiler).
+
+$ /usr/bin/x86_64-linux-gnu-gcc --version
+x86_64-linux-gnu-gcc (Debian 9.2.1-21) 9.2.1 20191130
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vs3T5M5K+OJMDk5rszPkr5S
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5gx4UACgkQAVBC80lX
+0Gw8BQgAjSdyOpTjhzBm5yJfu5c8Yrc2F7VT6ZOM5TSPPHHiLhr38Yy+VcLzFf+N
+GuDIUJ1oiVsXmLrR/VGyu8/IK4HRe+niva2hvQdYT3ewcxJGD9FuXcIcLA70oOeU
+yNbH1QEeejpHJ89i+ceAO29G6EL1+6o765j4Ky9NOGOlEl1DWBNBOQGeTKa/8M3H
+q9TlaWhzhnlrjbZfjp2t/GZqTMZmUYSINijFj/X3VCswNK3WZIGmJ+MK+FE1Yvr9
+SCmevgyiBNhBkHgLVDoVOV8cJQapWqfZLThBAH8kDT0N5c1SmwVo9OnLN/xNePrt
+V+akoU3CRdpf8ad95DfOXCWALYwjvw==
+=6mz4
+-----END PGP SIGNATURE-----
+
+--Sig_/vs3T5M5K+OJMDk5rszPkr5S--
