@@ -2,90 +2,93 @@ Return-Path: <SRS0=7TaV=42=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8770BC10F25
-	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 23:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB145C10F25
+	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 23:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD0E2146E
-	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 23:08:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErJy79Kb"
+	by mail.kernel.org (Postfix) with ESMTP id A221F24654
+	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 23:17:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583795862;
+	bh=wa+lBkf3egB7zRHwcS9hbPziO+9VWjfRhmzJ9OncfhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=I0QtF4aFjON7+xWAYsH3XkYho4+HejWUkjIfMt6+DBtDKgb9U5/9lLnCpqS6uNOwt
+	 5Ycqlh9jBoab8kXvm8vO2JSM8OSNHXKzLCPDFN/xG777KY4ZKYLwD/o1mDeO1wHdo3
+	 K6NZJ1xavM3brUjAh3oP8HOp5i3VANZMpSyhiq+A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbgCIXIO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 9 Mar 2020 19:08:14 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:43246 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgCIXIO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 9 Mar 2020 19:08:14 -0400
-Received: by mail-yw1-f65.google.com with SMTP id p69so11889394ywh.10;
-        Mon, 09 Mar 2020 16:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YBrgj95YDWeT6B7iosvroZAr99Kor3UDGVq8CoZfnPk=;
-        b=ErJy79KbuvPzPWmVfQGUBPh4YGQxBGv+HXj2NN6SlbrXkPaNqqGLloBZxX6bcp5bF4
-         8RRbr3YGFC+WRncP9c0C9CDhuAMxJr+bZY9cjAc6IWTTWMhvR9VVWmrDW4dtV07TWr0A
-         YZsN8n+gtCVhem8fQXcE1uX6ks2EuF0d4WX2EkzB4l5iloMj7t4g1uBfxTkPFFf52NZb
-         LNsddCPb1F4XMpM9+obTNHSF1GK8INf+D/uwdQZJTReVcLiHpmkPaPEanilm6bkZHiSO
-         +Nt8NaX0pGFPEAzkYU8KV62VN+rcupaTFPgZM1cJiiMT1IKyKjy7eiZLO87b22TJNovi
-         RZOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YBrgj95YDWeT6B7iosvroZAr99Kor3UDGVq8CoZfnPk=;
-        b=tIbseVC2JDiZtPsPyUD/xLxqAZJXDAc5pyed5oXOTD67ZKllQl4vaQ5jpo/ZEEV2KT
-         gFUiThL+bhdxDcLALVyEPpEsw8TZAvXTMzwqgSiYrWs/cmb4M7f6asx/BjxiLlaCJ57X
-         FOZWz38OTZ1D4sx1x786Lf+OGqqbrHNHJVy9ggVR4ImbZ1FGBZicRxnkcHUK8Wwe6SlJ
-         tDyw+d3M7f4I+iPWQDZG/L7o34s7OQHe68J5TkqBtUaD40TzB8Izt/WSondzEctj7CkA
-         XXYbQFTvb160jAcKjl4ApTXaaywSiJ0B3Zc8dX1NvcuGlNcbJEOnPZIDFa+EeFVQ6YjI
-         rEWA==
-X-Gm-Message-State: ANhLgQ0qijlj35a+Z625p98MePttChvXJ0Dv8kwU1dGd7RmYTkL3vS/x
-        WCWfMeCa0iGAeApBp84Cgus7ypnFZOOB9Y6S0FGbS3GP
-X-Google-Smtp-Source: ADFU+vsjOKr6BzWi6LrzbOSSXDkC0x4ZWL/FbgfxVnW15EhwjJKLEZxvrIO+r5LlDMRETQJl0Ryj/5vl8XVT1tT2/6w=
-X-Received: by 2002:a25:86c9:: with SMTP id y9mr21568200ybm.376.1583795293391;
- Mon, 09 Mar 2020 16:08:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200310092805.7c37c3c1@canb.auug.org.au>
-In-Reply-To: <20200310092805.7c37c3c1@canb.auug.org.au>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 9 Mar 2020 18:07:25 -0500
-Message-ID: <CAH2r5ms6qT7gd7HbZQ3UDYyY8VX+Oqu2xbYw4wixNTDDAtbg5Q@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
+        id S1727125AbgCIXRm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 9 Mar 2020 19:17:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726698AbgCIXRm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 9 Mar 2020 19:17:42 -0400
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94F312146E;
+        Mon,  9 Mar 2020 23:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583795861;
+        bh=wa+lBkf3egB7zRHwcS9hbPziO+9VWjfRhmzJ9OncfhU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G1JR/s2UTlzLt0tpi1/04f6wBI8VwOzSxJwSrp4qLheDI2MPWk4mavivfdGql7bnb
+         4stwQkgd84rA/09sXtz9CV/avYAGmLRbLshkkMg5tRN4WAspUiEcDVXk/GY0jy2Mfy
+         XgnNmQyL7nmLbFHZLb69XKfpE31I2SYP30OKRhgo=
+Received: by pali.im (Postfix)
+        id 9A556BE0; Tue, 10 Mar 2020 00:17:39 +0100 (CET)
+Date:   Tue, 10 Mar 2020 00:17:39 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build warning after merge of the vfs tree
+Message-ID: <20200309231739.2w45cleifsmwbfd6@pali>
+References: <20200310095918.3ea6432f@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310095918.3ea6432f@canb.auug.org.au>
+User-Agent: NeoMutt/20180716
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-fixed
-
-On Mon, Mar 9, 2020 at 5:28 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
+On Tuesday 10 March 2020 09:59:18 Stephen Rothwell wrote:
 > Hi all,
->
-> Commit
->
->   91737cf1a418 ("cifs: smb2pdu.h: Replace zero-length array with flexible-array member")
->
-> is missing a Signed-off-by from its committer.
->
-> --
-> Cheers,
-> Stephen Rothwell
+> 
+> After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> warning: same module names found:
+>   fs/exfat/exfat.ko
+>   drivers/staging/exfat/exfat.ko
+> 
+> Introduced by commit
+> 
+>   b9d1e2e6265f ("exfat: add Kconfig and Makefile")
+> 
+> and not fixed by commit
+> 
+>   1a3c0509ce83 ("staging: exfat: make staging/exfat and fs/exfat mutually exclusive")
 
+Hello Stephen!
 
+exfat.ko from fs/exfat subdirectory is a rewrite/cleanup of staging
+exfat driver. It means that fs/exfat replaces staging/exfat and so after
+fs/exfat is merged, the old staging/exfat code is not needed anymore.
 
--- 
-Thanks,
+Therefore I think that instead of hacking Kconfig/Makefile files to
+define mutually exclusivity, it is better to remove staging/exfat code.
 
-Steve
+Removal of old staging code should be easy and should fix this problem.
+
+Any objections? Or other ideas?
