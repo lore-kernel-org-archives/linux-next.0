@@ -6,109 +6,89 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA5AC10F25
-	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 22:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6F7C10F25
+	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 23:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C94ED24649
-	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 22:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8C4E2146E
+	for <linux-next@archiver.kernel.org>; Mon,  9 Mar 2020 23:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KL0cHZS1"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O4pP+x7F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgCIW7W (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 9 Mar 2020 18:59:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:36845 "EHLO ozlabs.org"
+        id S1726698AbgCIXIC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 9 Mar 2020 19:08:02 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:39217 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbgCIW7W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 9 Mar 2020 18:59:22 -0400
+        id S1726536AbgCIXIC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 9 Mar 2020 19:08:02 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48btvW4YyRz9sPJ;
-        Tue, 10 Mar 2020 09:59:19 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48bv5X1368z9sPF;
+        Tue, 10 Mar 2020 10:08:00 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583794760;
-        bh=206rIbkp0C/1Ogfui2ffVjFpvbdu0zvMFzur9BTxmis=;
+        s=201702; t=1583795280;
+        bh=Y/1vQP+6MEAUcRXqDqjNGMgG1RWqFT0/Us8Xg4YZJt4=;
         h=Date:From:To:Cc:Subject:From;
-        b=KL0cHZS1CHJrnpydDUzSv+aZO234X7kPD9BBh4vKBn2nGlncweo5Fz0QTjScDjYnG
-         st6l0WXtJWNVQWk/ri+oWWAu9EJ0arvZopaua3/XRZQlMUlXT78VbEWph+hezrT1aA
-         byXy30GsiySgmsxBSwvRpyp2G6+IEqESd9Zfl/LF/+60ChIWPCb4Wk+vqwZfaeMYBB
-         sTLlTLXy499jrUmwMTp/9OpXmZSPk1gneV+Dkbkl2pdAFSZsM3746Cry9UmqIjMW60
-         5uze4UAw+ief5KjguJKTmG+J+DM5m7BljWLNrSlfMs+37/oqYuHtBh4qDP8h+Y1Odi
-         vWEpwy+XEvUlg==
-Date:   Tue, 10 Mar 2020 09:59:18 +1100
+        b=O4pP+x7FIJ+aHoxCZxuaID4txbbGk4v/XdfpsuLY/gKpr1mjv4S249NYca/HtuSB1
+         abGRcpNMa2Kd1+MK2G0IHjcjbL+7vgJiWoA97kAs5vbDlb8EyZzfFT990g5uJ5JhyJ
+         BhZozUmDOrN/mnolsAK8lrptqUJUbfUe34rknQX5xzfx2S31yesK41bsaZKQaAk4RM
+         2AKfF4JHHMWNvm9bHGy9CB8+j862UtttuVkzO1JAlM2RM8GlCbX8hLoMjGHwY3zCQq
+         BzUN7TgUKKBjow+kQgVpsvJScRp4Dd8nxqtx4JInfD4CniJBs4QMLiMDwQ3c+lvgqb
+         BjXs774SiVLIg==
+Date:   Tue, 10 Mar 2020 10:07:59 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
+To:     Bjorn Helgaas <bhelgaas@google.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: build warning after merge of the vfs tree
-Message-ID: <20200310095918.3ea6432f@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the pci tree
+Message-ID: <20200310100759.221c6add@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/knfUsg6=EcD246GvZQuo23u";
+Content-Type: multipart/signed; boundary="Sig_/8EQD6ymTlscBFC+C=Rgaix=";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/knfUsg6=EcD246GvZQuo23u
+--Sig_/8EQD6ymTlscBFC+C=Rgaix=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-warning: same module names found:
-  fs/exfat/exfat.ko
-  drivers/staging/exfat/exfat.ko
+ERROR: "pci_speed_string" [drivers/pci/controller/pcie-brcmstb.ko] undefine=
+d!
+ERROR: "pcie_link_speed" [drivers/pci/controller/pcie-brcmstb.ko] undefined!
 
-Introduced by commit
+Caused by commit
 
-  b9d1e2e6265f ("exfat: add Kconfig and Makefile")
+  31483a35dbed ("PCI: Use pci_speed_string() for all PCI/PCI-X/PCIe strings=
+")
 
-and not fixed by commit
-
-  1a3c0509ce83 ("staging: exfat: make staging/exfat and fs/exfat mutually e=
-xclusive")
-
-$ grep EXFAT .config
-CONFIG_STAGING_EXFAT_FS=3Dm
-CONFIG_STAGING_EXFAT_DISCARD=3Dy
-CONFIG_STAGING_EXFAT_DELAYED_SYNC=3Dy
-CONFIG_STAGING_EXFAT_KERNEL_DEBUG=3Dy
-CONFIG_STAGING_EXFAT_DEBUG_MSG=3Dy
-CONFIG_STAGING_EXFAT_DEFAULT_CODEPAGE=3D437
-CONFIG_STAGING_EXFAT_DEFAULT_IOCHARSET=3D"utf8"
-# DOS/FAT/EXFAT/NT Filesystems
-CONFIG_EXFAT_FS=3Dm
-CONFIG_EXFAT_DEFAULT_IOCHARSET=3D"utf8"
-# end of DOS/FAT/EXFAT/NT Filesystems
+I have used the pci tree from next-20200306 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/knfUsg6=EcD246GvZQuo23u
+--Sig_/8EQD6ymTlscBFC+C=Rgaix=
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5mykYACgkQAVBC80lX
-0GzkhQf/exGVw+61mho1oNpxk0lkPhRIPu1I+ySRrOBDnt9vf3ltuv3S1ZTyQiA/
-NAAp15Shp3oe99nvLX5Hr709QdTxdvjbEC74aekJtglpUNUfXyoP5fcwplGgAZ1Y
-W9rNhapWVjcIozUnVrynTgp4joVv1MzvmjXDKH+pPHA6ndYe/4dw+VoApupldasE
-08zMQ3wC7TWwjO7vjzp7L0M5Zkv2Mj9v2vX68ZErjGMkHDer2E46SIOXPu52lMhY
-e2zi2VQdG0/kq679dB0kdnsnStXzdO+NonbCKfuk8bxLpTCfeAwpCqTwvXIkDG1A
-54ax7ZOZ2c/L4EPt2GYbERvHeSEwmg==
-=e7uC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5mzE8ACgkQAVBC80lX
+0Gxnwwf/bEdPZOSkwQlHOCmwVjxxO8JmY49sU+L2Qvwgr7e4ZY1ojLVb6ZApes4R
+pcXX8YUuKoDZpfBTzJ6UEYzfK7VGuFL++9PELbZZOjyY/96QrkWB3wJephqq/JL+
+w3cmXILqwYucKqjmb1W/IiqvbVsT17D5Phpb3kzj4E/1pGEvqffBMYnWPj0qAXi+
+7QrHs6z1tSlLXPyHK/YvjOA+nk2pOY2OUGKlx71yehbajRQR7y97SIkB/uYz+8Ve
+NJ1AkNySW26mK9Y4M0+E65KzIChhPOCVACnbvMycW1nfIUsjx7MPwEeaLwtQXX+7
+DYQzIPcpWVEq75V+5L+uVKxWMqaTlg==
+=xVMu
 -----END PGP SIGNATURE-----
 
---Sig_/knfUsg6=EcD246GvZQuo23u--
+--Sig_/8EQD6ymTlscBFC+C=Rgaix=--
