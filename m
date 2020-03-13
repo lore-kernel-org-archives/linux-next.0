@@ -2,112 +2,61 @@ Return-Path: <SRS0=l1oP=46=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA0CC4CECE
-	for <linux-next@archiver.kernel.org>; Fri, 13 Mar 2020 13:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC30DC2BB1D
+	for <linux-next@archiver.kernel.org>; Fri, 13 Mar 2020 13:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFAA2073E
-	for <linux-next@archiver.kernel.org>; Fri, 13 Mar 2020 13:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99DEE206BE
+	for <linux-next@archiver.kernel.org>; Fri, 13 Mar 2020 13:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbgCMNGs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 13 Mar 2020 09:06:48 -0400
-Received: from smtprelay0180.hostedemail.com ([216.40.44.180]:38090 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726479AbgCMNGs (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 13 Mar 2020 09:06:48 -0400
-X-Greylist: delayed 445 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Mar 2020 09:06:47 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 88E14180001DC
-        for <linux-next@vger.kernel.org>; Fri, 13 Mar 2020 12:59:23 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id CFC0318010A45;
-        Fri, 13 Mar 2020 12:59:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: idea77_3485785e1df18
-X-Filterd-Recvd-Size: 3039
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 13 Mar 2020 12:59:20 +0000 (UTC)
-Message-ID: <d67ed65313f3a1579c1cf88348e8853c5cca4598.camel@perches.com>
-Subject: [PATCH] drm/amd/powerplay: Move fallthrough; into containing
- #ifdef/#endif
-From:   Joe Perches <joe@perches.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alex Deucher <alexdeucher@gmail.com>
+        id S1726479AbgCMN0G (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 13 Mar 2020 09:26:06 -0400
+Received: from 8bytes.org ([81.169.241.247]:51100 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbgCMN0F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 13 Mar 2020 09:26:05 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 8B8EA269; Fri, 13 Mar 2020 14:26:04 +0100 (CET)
+Date:   Fri, 13 Mar 2020 14:26:01 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 13 Mar 2020 05:57:37 -0700
-In-Reply-To: <20200313205748.03d30145@canb.auug.org.au>
-References: <20200313205748.03d30145@canb.auug.org.au>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: Fixes tag needs some work in the iommu tree
+Message-ID: <20200313132601.GM3794@8bytes.org>
+References: <20200311093638.3b442a3d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311093638.3b442a3d@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-The automated conversion of /* fallthrough */ comments converted
-a comment outside of an #ifdef/#endif case block that should be
-inside the block.
-
-Move the fallthrough inside the block to silence the warning.
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
-
-On Fri, 2020-03-13 at 20:57 +1100, Stephen Rothwell wrote:
+On Wed, Mar 11, 2020 at 09:36:38AM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> After merging the amdgpu tree, today's linux-next build (powerpc
-> allyesconfig) produced this warning:
+> In commit
 > 
-> In file included from include/linux/compiler_types.h:59,
->                  from <command-line>:
-> drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/smu7_hwmgr.c: In function 'smu7_request_link_speed_change_before_state_change':
-> include/linux/compiler_attributes.h:200:41: warning: statement will never be executed [-Wswitch-unreachable]
->   200 | # define fallthrough                    __attribute__((__fallthrough__))
->       |                                         ^~~~~~~~~~~~~
-> drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/smu7_hwmgr.c:3706:4: note: in expansion of macro 'fallthrough'
->  3706 |    fallthrough;
->       |    ^~~~~~~~~~~
+>   57744190bf30 ("iommu/vt-d: dmar: replace WARN_TAINT with pr_warn + add_taint")
 > 
-> Introduced by commit
+> Fixes tag
 > 
->   e86efa063cd1 ("AMD POWERPLAY: Use fallthrough;")
+>   Fixes: fd0c8894893c ("intel-iommu: Set a more specific taint flag for invalid BI
+> 
+> has these problem(s):
+> 
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+> 
+> Please do not truncate Fixes tag lines.
 
-This is also one of the #ifdef/#endif pairs
-where the fallthrough is outside of the #endif.
-
-https://lore.kernel.org/lkml/cover.1584040050.git.joe@perches.com/
-
-Here is a delta patch for this.
-Let me know if another form is needed.
-
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-index fc5236c..774048 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -3702,8 +3702,8 @@ static int smu7_request_link_speed_change_before_state_change(
- 		case PP_PCIEGen2:
- 			if (0 == amdgpu_acpi_pcie_performance_request(hwmgr->adev, PCIE_PERF_REQ_GEN2, false))
- 				break;
--#endif
- 			fallthrough;
-+#endif
- 		default:
- 			data->force_pcie_gen = smu7_get_current_pcie_speed(hwmgr);
- 			break;
--- 
-2.24.0
+Fixed now, thanks.
 
 
