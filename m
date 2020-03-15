@@ -2,94 +2,78 @@ Return-Path: <SRS0=+NC7=5A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35E8C0044D
-	for <linux-next@archiver.kernel.org>; Sun, 15 Mar 2020 02:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4E0C10DCE
+	for <linux-next@archiver.kernel.org>; Sun, 15 Mar 2020 18:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD762071C
-	for <linux-next@archiver.kernel.org>; Sun, 15 Mar 2020 02:12:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H4QRWvnS"
+	by mail.kernel.org (Postfix) with ESMTP id 61CCD206B1
+	for <linux-next@archiver.kernel.org>; Sun, 15 Mar 2020 18:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbgCOCMj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 14 Mar 2020 22:12:39 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43145 "EHLO ozlabs.org"
+        id S1729003AbgCOSOu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 15 Mar 2020 14:14:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:49683 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbgCOCMj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:12:39 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48ffYJ3vJbz9sQt;
-        Sat, 14 Mar 2020 21:53:08 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584183188;
-        bh=QlsV1HCQHbY2WWpViGPYwW68TQzmVIwuJv9pVD10PaY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=H4QRWvnSum976mvXURkExDaUS4gbZ8dRNH1uYSsmutv48nSHcRHjL7YfSXYZB58il
-         8zOuD1LA4ehxigqlIsKod/l0oc5HHvqeohtctjXz9uIkyGt0sC56PXlZeGTIngMbva
-         pZnYZYtaCacFKqz+jAA0vfjY7sl2vU6+X0zBOYz4OHYxXbjUX2ZF33dzD+9/7wuNMq
-         3e/PD0iTzSMz+lo0BTpH4ZEqKvUhvceL/OsYTGuwiJMxaZVK1pLyJbOq/1QVDxYggG
-         kO6nXIcqoLkY+bLNPrTn/mtlf++HQI5kwUkdXZsQBg1YlU6RqpFFCi3Qd1SudcsAIt
-         u42S8MHjCCRYQ==
-Date:   Sat, 14 Mar 2020 21:53:07 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        id S1729001AbgCOSOu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 15 Mar 2020 14:14:50 -0400
+IronPort-SDR: JJS1KShbjfpiUAy1pzVLffCmtYsgXfZGPbvYy7A+1QOga0VVZs/OH2Mlf5bin8H5/TL9/qdKqg
+ v9Qh+HE5cyRg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2020 11:14:49 -0700
+IronPort-SDR: S7JlCLgnKLniOLwGJWA3ufxlOWM4qy471wRdfKsVmjvmwsog/+18oo2JQS7jQYmkSYSrP6XMDK
+ 8jLRkZJD6AxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,557,1574150400"; 
+   d="scan'208";a="235824287"
+Received: from babayass-mobl.ger.corp.intel.com (HELO localhost) ([10.249.90.210])
+  by fmsmga007.fm.intel.com with ESMTP; 15 Mar 2020 11:14:47 -0700
+Date:   Sun, 15 Mar 2020 20:14:45 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: linux-next: Fixes tag needs some work in the tpmdd tree
-Message-ID: <20200314215307.1c5f4a45@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the tpmdd tree
+Message-ID: <20200315181445.GB224162@linux.intel.com>
+References: <20200314215307.1c5f4a45@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ym6Mtc=/vK3Tn2cnkGWPAft";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200314215307.1c5f4a45@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ym6Mtc=/vK3Tn2cnkGWPAft
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Mar 14, 2020 at 09:53:07PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   606c8d992ba5 ("tpm: ibmvtpm: Wait for buffer to be set before proceeding")
+> 
+> Fixes tag
+> 
+>   Fixes: 132f76294744 ("Add new device driver to support IBM vTPM")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
+>     Just use
+> 	git log -1 --format='Fixes: %h ("%s")'
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Hi all,
+Thanks, has been fixed now.
 
-In commit
+Stefan, please do modify the short summary next time when you add a
+fixes tag. Thanks.
 
-  606c8d992ba5 ("tpm: ibmvtpm: Wait for buffer to be set before proceeding")
-
-Fixes tag
-
-  Fixes: 132f76294744 ("Add new device driver to support IBM vTPM")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ym6Mtc=/vK3Tn2cnkGWPAft
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5st5MACgkQAVBC80lX
-0GyY9QgAjO4PWGuZ2aLFTbw648wqk5zUUAAjur26F03CJfsf/vB4M9OML78aCoxM
-OZ6SqJQ4k5b4GNtHheUGFgjHf+NkS3OWhOJ2bt9E/tyrXwH4zWVbqub4nDtEaMgv
-2xmXzLde3m9ieDf/RAnWA86bXEfjkYnFcDGZmQ97t2EWJXX7Oem+7Xgk/yBFVORV
-Pf9ZXaA3RJdwLc/xjEPWu/gpT+fzQB2xwA0uvtGeUhvceICE3No1KfWJ4bYF36eC
-AmpInnYUConGn16W+mL3pdyc44xQ5b7Z80esNM9c7ixub496kqdJrlVHGOi+wXR3
-7pOiNJO8Q+y5sPcNtVt7H8RyuPA0tQ==
-=6CG+
------END PGP SIGNATURE-----
-
---Sig_/ym6Mtc=/vK3Tn2cnkGWPAft--
+/Jarkko
