@@ -2,77 +2,149 @@ Return-Path: <SRS0=JS3s=5F=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04212C4332D
-	for <linux-next@archiver.kernel.org>; Fri, 20 Mar 2020 01:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5498C4332B
+	for <linux-next@archiver.kernel.org>; Fri, 20 Mar 2020 01:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB5F620753
-	for <linux-next@archiver.kernel.org>; Fri, 20 Mar 2020 01:28:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7042520409
+	for <linux-next@archiver.kernel.org>; Fri, 20 Mar 2020 01:58:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="odz+oJHl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgCTB2z (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 19 Mar 2020 21:28:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12103 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727235AbgCTB2z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 19 Mar 2020 21:28:55 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8FDBE9DD9CCE3F553607;
-        Fri, 20 Mar 2020 09:28:51 +0800 (CST)
-Received: from ubuntu.huawei.com (10.175.104.215) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.487.0; Fri, 20 Mar 2020 09:28:41 +0800
-From:   Chen Huang <chenhuang5@huawei.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-CC:     Dave Gerlach <d-gerlach@ti.com>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-next@vger.kernel.org>, Chen Huang <chenhuang5@huawei.com>
-Subject: [PATCH -next] soc: ti: pm33xx: Add a judgement for variable 'ret'
-Date:   Fri, 20 Mar 2020 07:11:50 +0800
-Message-ID: <20200319231150.28106-1-chenhuang5@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727183AbgCTB6H (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 19 Mar 2020 21:58:07 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:55865 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727049AbgCTB6H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 19 Mar 2020 21:58:07 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48k6P64pBvz9sRf;
+        Fri, 20 Mar 2020 12:58:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584669484;
+        bh=vpn3DCJ6hBIhxzV7dh61Ga58Bi+1fn8fnZxjDFSplAU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=odz+oJHlLzYtS9b8Hv2RfP3PVo3l8fX6GEpxx6/W5HfcvT2HI5kKtw4e3Ja2LTyjw
+         3UQyuMIHR+xcNZvxY/yUZzqIiZDQRnQFk99Y3UNpR/Y13JHgbv+Tj1GIkv9PMUBni0
+         h2j0ki4fPTiu5dYQIDt+2pnbDx/B6H/63/0Csr/1eIzL5gRniy8yJWqoYLBOSbDh1V
+         S5ZqaAZ7qyu6+lGH79JTljnse3FpIlYKgn6pPQImhb1haNi8jEdi3ENg58vIlS8DZk
+         MQdBWlStahD4hCQy/af08K83EZ0e9B5Ul99rK41x9D99mK93X2xuvwo/G1yg5HSEF8
+         pTTxuxqmPUTNA==
+Date:   Fri, 20 Mar 2020 12:57:59 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+Subject: Re: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Message-ID: <20200320125759.4cffcfec@canb.auug.org.au>
+In-Reply-To: <20200311133635.7fcb422e@canb.auug.org.au>
+References: <20200311133635.7fcb422e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.215]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/M4Ayn.nt.3qtE_R/ryZr4ui";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Variable 'ret' is the result whether sram has prepared to translate
-to low power state. 0 represents preparation is successful, others
-represent error code. If preparation failed, then return 'ret' to end
-the function.
+--Sig_/M4Ayn.nt.3qtE_R/ryZr4ui
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Hi all,
 
-drivers/soc/ti/pm33xx.c: In function am33xx_do_sram_idle:
-drivers/soc/ti/pm33xx.c:135:6: warning: variable ret set but not used [-Wunused-but-set-variable]
+On Wed, 11 Mar 2020 13:36:35 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the drm-intel tree got a conflict in:
+>=20
+>   drivers/gpu/drm/i915/gvt/vgpu.c
+>=20
+> between commit:
+>=20
+>   04d6067f1f19 ("drm/i915/gvt: Fix unnecessary schedule timer when no vGP=
+U exits")
+>=20
+> from the drm-intel-fixes tree and commit:
+>=20
+>   12d5861973c7 ("drm/i915/gvt: Make WARN* drm specific where vgpu ptr is =
+available")
+>=20
+> from the drm-intel tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/gpu/drm/i915/gvt/vgpu.c
+> index 345c2aa3b491,abcde8ce1a9a..000000000000
+> --- a/drivers/gpu/drm/i915/gvt/vgpu.c
+> +++ b/drivers/gpu/drm/i915/gvt/vgpu.c
+> @@@ -271,18 -272,12 +272,19 @@@ void intel_gvt_release_vgpu(struct inte
+>   void intel_gvt_destroy_vgpu(struct intel_vgpu *vgpu)
+>   {
+>   	struct intel_gvt *gvt =3D vgpu->gvt;
+> + 	struct drm_i915_private *i915 =3D gvt->gt->i915;
+>  =20
+> - 	WARN(vgpu->active, "vGPU is still active!\n");
+>  -	mutex_lock(&vgpu->vgpu_lock);
+>  -
+> + 	drm_WARN(&i915->drm, vgpu->active, "vGPU is still active!\n");
+>  =20
+>  +	/*
+>  +	 * remove idr first so later clean can judge if need to stop
+>  +	 * service if no active vgpu.
+>  +	 */
+>  +	mutex_lock(&gvt->lock);
+>  +	idr_remove(&gvt->vgpu_idr, vgpu->id);
+>  +	mutex_unlock(&gvt->lock);
+>  +
+>  +	mutex_lock(&vgpu->vgpu_lock);
+>   	intel_gvt_debugfs_remove_vgpu(vgpu);
+>   	intel_vgpu_clean_sched_policy(vgpu);
+>   	intel_vgpu_clean_submission(vgpu);
 
-Fixes: commit 6afaff1c6624f ("soc: ti: pm33xx: Add base cpuidle support")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Huang <chenhuang5@huawei.com>
----
- drivers/soc/ti/pm33xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+This is now a conflict between the drm tree and Linus' tree.
 
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index de0123ec8ad6..a51ba770f1e3 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -139,6 +139,8 @@ static int am33xx_do_sram_idle(u32 wfi_flags)
- 
- 	if (wfi_flags & WFI_FLAG_WAKE_M3)
- 		ret = m3_ipc->ops->prepare_low_power(m3_ipc, WKUP_M3_IDLE);
-+	if (ret)
-+		return ret;
- 
- 	return pm_ops->cpu_suspend(am33xx_do_wfi_sram, wfi_flags);
- }
--- 
-2.17.1
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/M4Ayn.nt.3qtE_R/ryZr4ui
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl50IycACgkQAVBC80lX
+0Gy/oQf/f6ur6aXr9wh2GKgS3ntYeqJLVO/RJzqtIfcwOlq5cuIKOy5mfBRLhBr8
+aiIJMn641UtnqEALXAKcaHr0evQpQqey446ACo941EDomOPMlNWW3Wn/AKlE9rWq
+mMyXNcmUcTq0VuKkJvCGoLQFtEPDjHB9G3bKeCDSmEUr8xR1QNRcVNXa+0/KxtV4
+gQlE2gwYd8tMfs1Oh296zz04UyFWxDPOSk/KJzjGwJrtDOxDbkCrwNDTWL/nSU+g
+UyLq39qjgFgXmlM2wpcXiRm8Swm0MwppnEU3pOD06b5avEQTtApteCgpuk4iSe+H
+DquIaVloMeRBZf0353rkFYIyc/Wo7w==
+=DcUr
+-----END PGP SIGNATURE-----
+
+--Sig_/M4Ayn.nt.3qtE_R/ryZr4ui--
