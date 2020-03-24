@@ -6,55 +6,57 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FA2C10DCE
-	for <linux-next@archiver.kernel.org>; Tue, 24 Mar 2020 07:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A16C41621
+	for <linux-next@archiver.kernel.org>; Tue, 24 Mar 2020 08:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD9F20663
-	for <linux-next@archiver.kernel.org>; Tue, 24 Mar 2020 07:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB26E2080C
+	for <linux-next@archiver.kernel.org>; Tue, 24 Mar 2020 08:07:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="savUlJMP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="iI9M+jG5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbgCXHCb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 24 Mar 2020 03:02:31 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:45909 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725905AbgCXHCb (ORCPT
+        id S1726079AbgCXIHO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 24 Mar 2020 04:07:14 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:27910 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726083AbgCXIHO (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Tue, 24 Mar 2020 03:02:31 -0400
+        Tue, 24 Mar 2020 04:07:14 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585033350; h=Content-Type: MIME-Version: Message-ID:
+ s=smtp; t=1585037233; h=Content-Type: MIME-Version: Message-ID:
  In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=nJ3chewxtuY/kHXLvF/iaS0jMEykQS+33TUuAaJ+now=; b=savUlJMPa6ZQVH8J2765sRYuYRnRh3kl9zROtYYDiYOvTaGZ4h14qBw3/2FkRRWGb98sX5tX
- QzD6ZXieZxagHM4Sp/bCO87QPEs7/NJdPxQ3vBBjh/mESGw5OvUDQuy/uTeXqixFV2BqI1f0
- rGDJL1d8p0JIIUV1IpH5M41l6Uo=
-X-Mailgun-Sending-Ip: 104.130.122.27
+ bh=OexxCsDxMktm3qYhK0o2fjls+ZpSajpQ4OCMAhLYhHk=; b=iI9M+jG5Vy8eO/VhWnytsuFirmH0swq1Gw8BGjjl4gbl6xXBYCMk8gTk7j4WWDlvHHl+/bl5
+ yvLU4qX4JyUvILrN/6jAEDvMyXk1WnIfUcy0OfefJFDkSRaAmpTyuPakoii6Lxii+oxY/P8N
+ Knkx0JD5D+5YLAyH+kVlQgruq+Y=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyJmNGRkZiIsICJsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e79b02b.7f0ca6b1e110-smtp-out-n02;
- Tue, 24 Mar 2020 07:00:59 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e79bfac.7f3b07aa85e0-smtp-out-n03;
+ Tue, 24 Mar 2020 08:07:08 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 01B42C432C2; Tue, 24 Mar 2020 07:00:59 +0000 (UTC)
+        id AFCC2C432C2; Tue, 24 Mar 2020 08:07:08 +0000 (UTC)
 Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D18EEC433CB;
-        Tue, 24 Mar 2020 07:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D18EEC433CB
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E6E2C433CB;
+        Tue, 24 Mar 2020 08:07:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E6E2C433CB
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Wireless <linux-wireless@vger.kernel.org>,
+To:     Luca Coelho <luca@coelho.fi>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wireless <linux-wireless@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luca Coelho <luciano.coelho@intel.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the wireless-drivers tree
 References: <20200324111653.35c368e4@canb.auug.org.au>
-Date:   Tue, 24 Mar 2020 09:00:54 +0200
-In-Reply-To: <20200324111653.35c368e4@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 24 Mar 2020 11:16:53 +1100")
-Message-ID: <87wo7a8cex.fsf@kamboji.qca.qualcomm.com>
+        <87wo7a8cex.fsf@kamboji.qca.qualcomm.com>
+        <122b75308eea43076367d06879552270e11dfbb4.camel@coelho.fi>
+Date:   Tue, 24 Mar 2020 10:07:03 +0200
+In-Reply-To: <122b75308eea43076367d06879552270e11dfbb4.camel@coelho.fi> (Luca
+        Coelho's message of "Tue, 24 Mar 2020 09:29:08 +0200")
+Message-ID: <87sghy89co.fsf@kamboji.qca.qualcomm.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -63,33 +65,43 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Luca Coelho <luca@coelho.fi> writes:
 
-> Today's linux-next merge of the wireless-drivers-next tree got a
-> conflict in:
+> On Tue, 2020-03-24 at 09:00 +0200, Kalle Valo wrote:
+>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>> 
+>> > Today's linux-next merge of the wireless-drivers-next tree got a
+>> > conflict in:
+>> > 
+>> >   drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+>> > 
+>> > between commit:
+>> > 
+>> >   cf52c8a776d1 ("iwlwifi: pcie: add 0x2526/0x401* devices back to cfg detection")
+>> > 
+>> > from the wireless-drivers tree and commits:
+>> > 
+>> >   67eb556da609 ("iwlwifi: combine 9260 cfgs that only change names")
+>> >   d6f2134a3831 ("iwlwifi: add mac/rf types and 160MHz to the device tables")
+>> > 
+>> > from the wireless-drivers-next tree.
+>> > 
+>> > I fixed it up (I am not sure wat to do with this, so I just dropped
+>> > the former changes for now) and can carry the fix as necessary. This
+>> > is now fixed as far as linux-next is concerned, but any non trivial
+>> > conflicts should be mentioned to your upstream maintainer when your tree
+>> > is submitted for merging.  You may also want to consider cooperating
+>> > with the maintainer of the conflicting tree to minimise any particularly
+>> > complex conflicts.
+>> 
+>> Thanks Stephen. Luca, how do you propose to fix this conflict?
 >
->   drivers/net/wireless/intel/iwlwifi/pcie/drv.c
->
-> between commit:
->
->   cf52c8a776d1 ("iwlwifi: pcie: add 0x2526/0x401* devices back to cfg detection")
->
-> from the wireless-drivers tree and commits:
->
->   67eb556da609 ("iwlwifi: combine 9260 cfgs that only change names")
->   d6f2134a3831 ("iwlwifi: add mac/rf types and 160MHz to the device tables")
->
-> from the wireless-drivers-next tree.
->
-> I fixed it up (I am not sure wat to do with this, so I just dropped
-> the former changes for now) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> The resolution is correct.  Just drop the cf52c8a776d1 changes, since
+> the list of specific subsytem device IDs are not necessary after
+> d6f2134a3831 anymore.  The detection is based on other characteristics
+> of the devices.
 
-Thanks Stephen. Luca, how do you propose to fix this conflict?
+Thanks, I'll mention this in my pull request to Dave.
 
 -- 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
