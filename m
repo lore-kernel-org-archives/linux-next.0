@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E26EC2D0EF
-	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 19:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FB8C43331
+	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 19:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D4A2137B
-	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 19:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCEDF2137B
+	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 19:28:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GGdl+7D8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KMUIVcsJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731388AbgCaT2o (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 31 Mar 2020 15:28:44 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:23861 "EHLO
+        id S1730673AbgCaT22 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 31 Mar 2020 15:28:28 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49854 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731344AbgCaT2k (ORCPT
+        by vger.kernel.org with ESMTP id S1730408AbgCaT21 (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Tue, 31 Mar 2020 15:28:40 -0400
+        Tue, 31 Mar 2020 15:28:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585682919;
+        s=mimecast20190719; t=1585682906;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UPzLC2rz9LAK+MMvoMcBgB6jfQ9CNONVopuUfX8iewE=;
-        b=GGdl+7D8/VxJDsKxpClTxm4lNCqaN6pY9aA968ZI8yoNE5eTQh15YSmvNbsI8OEej4HSQr
-        R87lFnsdu94FW7SQEcwEL6wt1V1D/h8nzPK7AWPQW/1FZbl44y329tWOTAog5q6i9v+8++
-        mBDkeUidcrhYVITsIqOHruKei5mSrSU=
+        bh=1EtrP69P9x99nL17zc2WKV5FEgGlPObPqDaYjk2gMbc=;
+        b=KMUIVcsJ6xWUABl1q3pFRGNPeXuyA15V08SGe6DB0MFVFsR8lWp7CMCenrJKA03EjKVpP4
+        9ukZ9IZb4l4BG1iOKDkSkbsOmIinQNhI5AznhcTQ0gyFAEc1sGdauRFwBw9zXzRcvn4U0r
+        QrPFJRj3knfuu/43hJREDA+aW2g+hf4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-415-3IvjyyRgMGGo_gwIV1j_1w-1; Tue, 31 Mar 2020 15:28:35 -0400
-X-MC-Unique: 3IvjyyRgMGGo_gwIV1j_1w-1
+ us-mta-393-AnYolck1OumgolGyzYnitA-1; Tue, 31 Mar 2020 15:28:22 -0400
+X-MC-Unique: AnYolck1OumgolGyzYnitA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0FB87149C2;
-        Tue, 31 Mar 2020 19:28:34 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D14C418A6EC1;
+        Tue, 31 Mar 2020 19:28:20 +0000 (UTC)
 Received: from eperezma.remote.csb (ovpn-112-92.ams2.redhat.com [10.36.112.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C2C3E8EA1A;
-        Tue, 31 Mar 2020 19:28:31 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E08298A52;
+        Tue, 31 Mar 2020 19:28:18 +0000 (UTC)
 From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -56,9 +56,9 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Halil Pasic <pasic@linux.ibm.com>,
         Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH v3 7/8] tools/virtio: Add --reset=random
-Date:   Tue, 31 Mar 2020 21:28:03 +0200
-Message-Id: <20200331192804.6019-8-eperezma@redhat.com>
+Subject: [PATCH v3 3/8] vhost: use batched version by default
+Date:   Tue, 31 Mar 2020 21:27:59 +0200
+Message-Id: <20200331192804.6019-4-eperezma@redhat.com>
 In-Reply-To: <20200331192804.6019-1-eperezma@redhat.com>
 References: <20200331192804.6019-1-eperezma@redhat.com>
 MIME-Version: 1.0
@@ -70,237 +70,324 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Currently, it only removes and add backend, but it will reset vq
-position in future commits.
+From: "Michael S. Tsirkin" <mst@redhat.com>
 
+As testing shows no performance change, switch to that now.
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 ---
- drivers/vhost/test.c       | 57 ++++++++++++++++++++++++++++++++++++++
- drivers/vhost/test.h       |  1 +
- tools/virtio/virtio_test.c | 44 ++++++++++++++++++++++++++---
- 3 files changed, 98 insertions(+), 4 deletions(-)
+ drivers/vhost/vhost.c | 251 +-----------------------------------------
+ drivers/vhost/vhost.h |   4 -
+ 2 files changed, 2 insertions(+), 253 deletions(-)
 
-diff --git a/drivers/vhost/test.c b/drivers/vhost/test.c
-index 4b00cd4266ad..102066515b48 100644
---- a/drivers/vhost/test.c
-+++ b/drivers/vhost/test.c
-@@ -263,9 +263,62 @@ static int vhost_test_set_features(struct vhost_test=
- *n, u64 features)
- 	return 0;
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 38e65a36465b..56c5253056ee 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -2113,253 +2113,6 @@ static unsigned next_desc(struct vhost_virtqueue =
+*vq, struct vring_desc *desc)
+ 	return next;
  }
 =20
-+static long vhost_test_set_backend(struct vhost_test *n, unsigned index,=
- int fd)
-+{
-+	static void *private_data;
-+
-+	const bool enable =3D fd !=3D -1;
-+	struct vhost_virtqueue *vq;
-+	int r;
-+
-+	mutex_lock(&n->dev.mutex);
-+	r =3D vhost_dev_check_owner(&n->dev);
-+	if (r)
-+		goto err;
-+
-+	if (index >=3D VHOST_TEST_VQ_MAX) {
-+		r =3D -ENOBUFS;
-+		goto err;
-+	}
-+	vq =3D &n->vqs[index];
-+	mutex_lock(&vq->mutex);
-+
-+	/* Verify that ring has been setup correctly. */
-+	if (!vhost_vq_access_ok(vq)) {
-+		r =3D -EFAULT;
-+		goto err_vq;
-+	}
-+	if (!enable) {
-+		vhost_poll_stop(&vq->poll);
-+		private_data =3D vq->private_data;
-+		vq->private_data =3D NULL;
-+	} else {
-+		r =3D vhost_vq_init_access(vq);
-+		vq->private_data =3D private_data;
-+		if (r =3D=3D 0)
-+			r =3D vhost_poll_start(&vq->poll, vq->kick);
-+	}
-+
-+	mutex_unlock(&vq->mutex);
-+
-+	if (enable) {
-+		vhost_test_flush_vq(n, index);
-+	}
-+
-+	mutex_unlock(&n->dev.mutex);
-+	return 0;
-+
-+err_vq:
-+	mutex_unlock(&vq->mutex);
-+err:
-+	mutex_unlock(&n->dev.mutex);
-+	return r;
-+}
-+
- static long vhost_test_ioctl(struct file *f, unsigned int ioctl,
- 			     unsigned long arg)
+-static int get_indirect(struct vhost_virtqueue *vq,
+-			struct iovec iov[], unsigned int iov_size,
+-			unsigned int *out_num, unsigned int *in_num,
+-			struct vhost_log *log, unsigned int *log_num,
+-			struct vring_desc *indirect)
+-{
+-	struct vring_desc desc;
+-	unsigned int i =3D 0, count, found =3D 0;
+-	u32 len =3D vhost32_to_cpu(vq, indirect->len);
+-	struct iov_iter from;
+-	int ret, access;
+-
+-	/* Sanity check */
+-	if (unlikely(len % sizeof desc)) {
+-		vq_err(vq, "Invalid length in indirect descriptor: "
+-		       "len 0x%llx not multiple of 0x%zx\n",
+-		       (unsigned long long)len,
+-		       sizeof desc);
+-		return -EINVAL;
+-	}
+-
+-	ret =3D translate_desc(vq, vhost64_to_cpu(vq, indirect->addr), len, vq-=
+>indirect,
+-			     UIO_MAXIOV, VHOST_ACCESS_RO);
+-	if (unlikely(ret < 0)) {
+-		if (ret !=3D -EAGAIN)
+-			vq_err(vq, "Translation failure %d in indirect.\n", ret);
+-		return ret;
+-	}
+-	iov_iter_init(&from, READ, vq->indirect, ret, len);
+-
+-	/* We will use the result as an address to read from, so most
+-	 * architectures only need a compiler barrier here. */
+-	read_barrier_depends();
+-
+-	count =3D len / sizeof desc;
+-	/* Buffers are chained via a 16 bit next field, so
+-	 * we can have at most 2^16 of these. */
+-	if (unlikely(count > USHRT_MAX + 1)) {
+-		vq_err(vq, "Indirect buffer length too big: %d\n",
+-		       indirect->len);
+-		return -E2BIG;
+-	}
+-
+-	do {
+-		unsigned iov_count =3D *in_num + *out_num;
+-		if (unlikely(++found > count)) {
+-			vq_err(vq, "Loop detected: last one at %u "
+-			       "indirect size %u\n",
+-			       i, count);
+-			return -EINVAL;
+-		}
+-		if (unlikely(!copy_from_iter_full(&desc, sizeof(desc), &from))) {
+-			vq_err(vq, "Failed indirect descriptor: idx %d, %zx\n",
+-			       i, (size_t)vhost64_to_cpu(vq, indirect->addr) + i * sizeof des=
+c);
+-			return -EINVAL;
+-		}
+-		if (unlikely(desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_INDIRECT))) =
+{
+-			vq_err(vq, "Nested indirect descriptor: idx %d, %zx\n",
+-			       i, (size_t)vhost64_to_cpu(vq, indirect->addr) + i * sizeof des=
+c);
+-			return -EINVAL;
+-		}
+-
+-		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_WRITE))
+-			access =3D VHOST_ACCESS_WO;
+-		else
+-			access =3D VHOST_ACCESS_RO;
+-
+-		ret =3D translate_desc(vq, vhost64_to_cpu(vq, desc.addr),
+-				     vhost32_to_cpu(vq, desc.len), iov + iov_count,
+-				     iov_size - iov_count, access);
+-		if (unlikely(ret < 0)) {
+-			if (ret !=3D -EAGAIN)
+-				vq_err(vq, "Translation failure %d indirect idx %d\n",
+-					ret, i);
+-			return ret;
+-		}
+-		/* If this is an input descriptor, increment that count. */
+-		if (access =3D=3D VHOST_ACCESS_WO) {
+-			*in_num +=3D ret;
+-			if (unlikely(log && ret)) {
+-				log[*log_num].addr =3D vhost64_to_cpu(vq, desc.addr);
+-				log[*log_num].len =3D vhost32_to_cpu(vq, desc.len);
+-				++*log_num;
+-			}
+-		} else {
+-			/* If it's an output descriptor, they're all supposed
+-			 * to come before any input descriptors. */
+-			if (unlikely(*in_num)) {
+-				vq_err(vq, "Indirect descriptor "
+-				       "has out after in: idx %d\n", i);
+-				return -EINVAL;
+-			}
+-			*out_num +=3D ret;
+-		}
+-	} while ((i =3D next_desc(vq, &desc)) !=3D -1);
+-	return 0;
+-}
+-
+-/* This looks in the virtqueue and for the first available buffer, and c=
+onverts
+- * it to an iovec for convenient access.  Since descriptors consist of s=
+ome
+- * number of output then some number of input descriptors, it's actually=
+ two
+- * iovecs, but we pack them into one and note how many of each there wer=
+e.
+- *
+- * This function returns the descriptor number found, or vq->num (which =
+is
+- * never a valid descriptor number) if none was found.  A negative code =
+is
+- * returned on error. */
+-int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+-		      struct iovec iov[], unsigned int iov_size,
+-		      unsigned int *out_num, unsigned int *in_num,
+-		      struct vhost_log *log, unsigned int *log_num)
+-{
+-	struct vring_desc desc;
+-	unsigned int i, head, found =3D 0;
+-	u16 last_avail_idx;
+-	__virtio16 avail_idx;
+-	__virtio16 ring_head;
+-	int ret, access;
+-
+-	/* Check it isn't doing very strange things with descriptor numbers. */
+-	last_avail_idx =3D vq->last_avail_idx;
+-
+-	if (vq->avail_idx =3D=3D vq->last_avail_idx) {
+-		if (unlikely(vhost_get_avail_idx(vq, &avail_idx))) {
+-			vq_err(vq, "Failed to access avail idx at %p\n",
+-				&vq->avail->idx);
+-			return -EFAULT;
+-		}
+-		vq->avail_idx =3D vhost16_to_cpu(vq, avail_idx);
+-
+-		if (unlikely((u16)(vq->avail_idx - last_avail_idx) > vq->num)) {
+-			vq_err(vq, "Guest moved used index from %u to %u",
+-				last_avail_idx, vq->avail_idx);
+-			return -EFAULT;
+-		}
+-
+-		/* If there's nothing new since last we looked, return
+-		 * invalid.
+-		 */
+-		if (vq->avail_idx =3D=3D last_avail_idx)
+-			return vq->num;
+-
+-		/* Only get avail ring entries after they have been
+-		 * exposed by guest.
+-		 */
+-		smp_rmb();
+-	}
+-
+-	/* Grab the next descriptor number they're advertising, and increment
+-	 * the index we've seen. */
+-	if (unlikely(vhost_get_avail_head(vq, &ring_head, last_avail_idx))) {
+-		vq_err(vq, "Failed to read head: idx %d address %p\n",
+-		       last_avail_idx,
+-		       &vq->avail->ring[last_avail_idx % vq->num]);
+-		return -EFAULT;
+-	}
+-
+-	head =3D vhost16_to_cpu(vq, ring_head);
+-
+-	/* If their number is silly, that's an error. */
+-	if (unlikely(head >=3D vq->num)) {
+-		vq_err(vq, "Guest says index %u > %u is available",
+-		       head, vq->num);
+-		return -EINVAL;
+-	}
+-
+-	/* When we start there are none of either input nor output. */
+-	*out_num =3D *in_num =3D 0;
+-	if (unlikely(log))
+-		*log_num =3D 0;
+-
+-	i =3D head;
+-	do {
+-		unsigned iov_count =3D *in_num + *out_num;
+-		if (unlikely(i >=3D vq->num)) {
+-			vq_err(vq, "Desc index is %u > %u, head =3D %u",
+-			       i, vq->num, head);
+-			return -EINVAL;
+-		}
+-		if (unlikely(++found > vq->num)) {
+-			vq_err(vq, "Loop detected: last one at %u "
+-			       "vq size %u head %u\n",
+-			       i, vq->num, head);
+-			return -EINVAL;
+-		}
+-		ret =3D vhost_get_desc(vq, &desc, i);
+-		if (unlikely(ret)) {
+-			vq_err(vq, "Failed to get descriptor: idx %d addr %p\n",
+-			       i, vq->desc + i);
+-			return -EFAULT;
+-		}
+-		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_INDIRECT)) {
+-			ret =3D get_indirect(vq, iov, iov_size,
+-					   out_num, in_num,
+-					   log, log_num, &desc);
+-			if (unlikely(ret < 0)) {
+-				if (ret !=3D -EAGAIN)
+-					vq_err(vq, "Failure detected "
+-						"in indirect descriptor at idx %d\n", i);
+-				return ret;
+-			}
+-			continue;
+-		}
+-
+-		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_WRITE))
+-			access =3D VHOST_ACCESS_WO;
+-		else
+-			access =3D VHOST_ACCESS_RO;
+-		ret =3D translate_desc(vq, vhost64_to_cpu(vq, desc.addr),
+-				     vhost32_to_cpu(vq, desc.len), iov + iov_count,
+-				     iov_size - iov_count, access);
+-		if (unlikely(ret < 0)) {
+-			if (ret !=3D -EAGAIN)
+-				vq_err(vq, "Translation failure %d descriptor idx %d\n",
+-					ret, i);
+-			return ret;
+-		}
+-		if (access =3D=3D VHOST_ACCESS_WO) {
+-			/* If this is an input descriptor,
+-			 * increment that count. */
+-			*in_num +=3D ret;
+-			if (unlikely(log && ret)) {
+-				log[*log_num].addr =3D vhost64_to_cpu(vq, desc.addr);
+-				log[*log_num].len =3D vhost32_to_cpu(vq, desc.len);
+-				++*log_num;
+-			}
+-		} else {
+-			/* If it's an output descriptor, they're all supposed
+-			 * to come before any input descriptors. */
+-			if (unlikely(*in_num)) {
+-				vq_err(vq, "Descriptor has out after in: "
+-				       "idx %d\n", i);
+-				return -EINVAL;
+-			}
+-			*out_num +=3D ret;
+-		}
+-	} while ((i =3D next_desc(vq, &desc)) !=3D -1);
+-
+-	/* On success, increment avail index. */
+-	vq->last_avail_idx++;
+-
+-	/* Assume notifications from guest are disabled at this point,
+-	 * if they aren't we would need to update avail_event index. */
+-	BUG_ON(!(vq->used_flags & VRING_USED_F_NO_NOTIFY));
+-	return head;
+-}
+-EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
+-
+ static struct vhost_desc *peek_split_desc(struct vhost_virtqueue *vq)
  {
-+	struct vhost_vring_file backend;
- 	struct vhost_test *n =3D f->private_data;
- 	void __user *argp =3D (void __user *)arg;
- 	u64 __user *featurep =3D argp;
-@@ -277,6 +330,10 @@ static long vhost_test_ioctl(struct file *f, unsigne=
-d int ioctl,
- 		if (copy_from_user(&test, argp, sizeof test))
- 			return -EFAULT;
- 		return vhost_test_run(n, test);
-+	case VHOST_TEST_SET_BACKEND:
-+		if (copy_from_user(&backend, argp, sizeof backend))
-+			return -EFAULT;
-+		return vhost_test_set_backend(n, backend.index, backend.fd);
- 	case VHOST_GET_FEATURES:
- 		features =3D VHOST_FEATURES;
- 		if (copy_to_user(featurep, &features, sizeof features))
-diff --git a/drivers/vhost/test.h b/drivers/vhost/test.h
-index 7dd265bfdf81..822bc4bee03a 100644
---- a/drivers/vhost/test.h
-+++ b/drivers/vhost/test.h
-@@ -4,5 +4,6 @@
+ 	BUG_ON(!vq->ndescs);
+@@ -2570,7 +2323,7 @@ static int fetch_descs(struct vhost_virtqueue *vq)
+  * This function returns the descriptor number found, or vq->num (which =
+is
+  * never a valid descriptor number) if none was found.  A negative code =
+is
+  * returned on error. */
+-int vhost_get_vq_desc_batch(struct vhost_virtqueue *vq,
++int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 		      struct iovec iov[], unsigned int iov_size,
+ 		      unsigned int *out_num, unsigned int *in_num,
+ 		      struct vhost_log *log, unsigned int *log_num)
+@@ -2645,7 +2398,7 @@ int vhost_get_vq_desc_batch(struct vhost_virtqueue =
+*vq,
 =20
- /* Start a given test on the virtio null device. 0 stops all tests. */
- #define VHOST_TEST_RUN _IOW(VHOST_VIRTIO, 0x31, int)
-+#define VHOST_TEST_SET_BACKEND _IOW(VHOST_VIRTIO, 0x32, int)
-=20
- #endif
-diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 4a2b9d11f287..93d81cd64ba0 100644
---- a/tools/virtio/virtio_test.c
-+++ b/tools/virtio/virtio_test.c
-@@ -20,6 +20,7 @@
- #include "../../drivers/vhost/test.h"
-=20
- #define RANDOM_BATCH -1
-+#define RANDOM_RESET -1
-=20
- /* Unused */
- void *__kmalloc_fake, *__kfree_ignore_start, *__kfree_ignore_end;
-@@ -46,6 +47,9 @@ struct vdev_info {
- 	struct vhost_memory *mem;
- };
-=20
-+static const struct vhost_vring_file no_backend =3D { .fd =3D -1 },
-+				     backend =3D { .fd =3D 1 };
-+
- bool vq_notify(struct virtqueue *vq)
- {
- 	struct vq_info *info =3D vq->priv;
-@@ -155,10 +159,10 @@ static void wait_for_interrupt(struct vdev_info *de=
-v)
+ 	return ret;
  }
+-EXPORT_SYMBOL_GPL(vhost_get_vq_desc_batch);
++EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
 =20
- static void run_test(struct vdev_info *dev, struct vq_info *vq,
--		     bool delayed, int batch, int bufs)
-+		     bool delayed, int batch, int reset_n, int bufs)
- {
- 	struct scatterlist sl;
--	long started =3D 0, completed =3D 0;
-+	long started =3D 0, completed =3D 0, next_reset =3D reset_n;
- 	long completed_before, started_before;
- 	int r, test =3D 1;
- 	unsigned len;
-@@ -171,6 +175,7 @@ static void run_test(struct vdev_info *dev, struct vq=
-_info *vq,
- 		completed_before =3D completed;
- 		started_before =3D started;
- 		do {
-+			const bool reset =3D reset_n && completed > next_reset;
- 			if (random_batch)
- 				batch =3D (random() % vq->vring.num) + 1;
+ /* Reverse the effect of vhost_get_vq_desc. Useful for error handling. *=
+/
+ void vhost_discard_vq_desc(struct vhost_virtqueue *vq, int n)
+diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+index a6fc11797a8a..1dbb5e44fba4 100644
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -203,10 +203,6 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned=
+ int ioctl, void __user *arg
+ bool vhost_vq_access_ok(struct vhost_virtqueue *vq);
+ bool vhost_log_access_ok(struct vhost_dev *);
 =20
-@@ -200,12 +205,26 @@ static void run_test(struct vdev_info *dev, struct =
-vq_info *vq,
- 			if (started >=3D bufs)
- 				r =3D -1;
-=20
-+			if (reset) {
-+				r =3D ioctl(dev->control, VHOST_TEST_SET_BACKEND,
-+					  &no_backend);
-+				assert(!r);
-+			}
-+
- 			/* Flush out completed bufs if any */
- 			while (virtqueue_get_buf(vq->vq, &len)) {
- 				++completed;
- 				r =3D 0;
- 			}
-=20
-+			if (reset) {
-+				r =3D ioctl(dev->control, VHOST_TEST_SET_BACKEND,
-+					  &backend);
-+				assert(!r);
-+
-+                                while (completed > next_reset)
-+					next_reset +=3D completed;
-+			}
- 		} while (r =3D=3D 0);
- 		if (completed =3D=3D completed_before && started =3D=3D started_before=
-)
- 			++spurious;
-@@ -270,6 +289,11 @@ const struct option longopts[] =3D {
- 		.val =3D 'b',
- 		.has_arg =3D required_argument,
- 	},
-+	{
-+		.name =3D "reset",
-+		.val =3D 'r',
-+		.has_arg =3D optional_argument,
-+	},
- 	{
- 	}
- };
-@@ -282,6 +306,7 @@ static void help(void)
- 		" [--no-virtio-1]"
- 		" [--delayed-interrupt]"
- 		" [--batch=3Drandom/N]"
-+		" [--reset=3Drandom/N]"
- 		"\n");
- }
-=20
-@@ -290,7 +315,7 @@ int main(int argc, char **argv)
- 	struct vdev_info dev;
- 	unsigned long long features =3D (1ULL << VIRTIO_RING_F_INDIRECT_DESC) |
- 		(1ULL << VIRTIO_RING_F_EVENT_IDX) | (1ULL << VIRTIO_F_VERSION_1);
--	long batch =3D 1;
-+	long batch =3D 1, reset =3D 0;
- 	int o;
- 	bool delayed =3D false;
-=20
-@@ -326,6 +351,17 @@ int main(int argc, char **argv)
- 				assert(batch < (long)INT_MAX + 1);
- 			}
- 			break;
-+		case 'r':
-+			if (!optarg) {
-+				reset =3D 1;
-+			} else if (0 =3D=3D strcmp(optarg, "random")) {
-+				reset =3D RANDOM_RESET;
-+			} else {
-+				reset =3D strtol(optarg, NULL, 10);
-+				assert(reset >=3D 0);
-+				assert(reset < (long)INT_MAX + 1);
-+			}
-+			break;
- 		default:
- 			assert(0);
- 			break;
-@@ -335,6 +371,6 @@ int main(int argc, char **argv)
- done:
- 	vdev_info_init(&dev, features);
- 	vq_info_add(&dev, 256);
--	run_test(&dev, &dev.vqs[0], delayed, batch, 0x100000);
-+	run_test(&dev, &dev.vqs[0], delayed, batch, reset, 0x100000);
- 	return 0;
- }
+-int vhost_get_vq_desc_batch(struct vhost_virtqueue *,
+-		      struct iovec iov[], unsigned int iov_count,
+-		      unsigned int *out_num, unsigned int *in_num,
+-		      struct vhost_log *log, unsigned int *log_num);
+ int vhost_get_vq_desc(struct vhost_virtqueue *,
+ 		      struct iovec iov[], unsigned int iov_count,
+ 		      unsigned int *out_num, unsigned int *in_num,
 --=20
 2.18.1
 
