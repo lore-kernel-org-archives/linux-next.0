@@ -4,46 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2CEC43331
-	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 18:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D531C2D0F2
+	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 18:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF89212CC
-	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 18:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D3F212CC
+	for <linux-next@archiver.kernel.org>; Tue, 31 Mar 2020 18:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Om15Xjr7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XVOrxEDh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbgCaSAX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 31 Mar 2020 14:00:23 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46386 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726403AbgCaSAW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:00:22 -0400
+        id S1727384AbgCaSAi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 31 Mar 2020 14:00:38 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34725 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728087AbgCaSAg (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2020 14:00:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585677621;
+        s=mimecast20190719; t=1585677634;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ejq1qV0bZ7JSSzHx+BezIAPlzBsCmIZo0gnP311dA2E=;
-        b=Om15Xjr7HSs+WizlSIGCp3xHj2ZU26/pEWpKyWI1JQQrX8vjf+m5vKDALUtgoaGxtCKm0c
-        TiV5eaa/D8JP8n4YwfJXpri6TZ6ipbmbss/C9v71MjtTuFYctLhFUa5+bv/Ct7gSp/aYr5
-        eGsFbEwfOp18fwvjH6MZa1DlpQAVXco=
+        bh=FFJYGGwUu9B8h+W1ItcNL0y6xF04SMRsuHG1jktXLH4=;
+        b=XVOrxEDh0Q0lhh4pwgRav7OGd+byeN8lZbk20fNUlLCjVwLzrTid/wOsdAZAXV9ErNpkUV
+        7Ph8Ak2OIpZq2+VKIgRM+ZOuD/TeLpoAwRbhLuRCOp/h3b/5PPOCS0V7oLqXDB7jGpj0JQ
+        1RwAuGQqF3Z1eNZi4vciMKajqWFPHk4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-267-sZyTbHyOOkO-4k3-p-BSeg-1; Tue, 31 Mar 2020 14:00:20 -0400
-X-MC-Unique: sZyTbHyOOkO-4k3-p-BSeg-1
+ us-mta-485-aOacgKlTNNmSQ0REzocsOw-1; Tue, 31 Mar 2020 14:00:31 -0400
+X-MC-Unique: aOacgKlTNNmSQ0REzocsOw-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B8475107ACC7;
-        Tue, 31 Mar 2020 18:00:18 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 98BAB1084437;
+        Tue, 31 Mar 2020 18:00:29 +0000 (UTC)
 Received: from eperezma.remote.csb (ovpn-112-92.ams2.redhat.com [10.36.112.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2926F608E7;
-        Tue, 31 Mar 2020 18:00:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4130F98A55;
+        Tue, 31 Mar 2020 18:00:27 +0000 (UTC)
 From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -56,9 +55,9 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Cornelia Huck <cohuck@redhat.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH v2 1/8] vhost: Create accessors for virtqueues private_data
-Date:   Tue, 31 Mar 2020 19:59:59 +0200
-Message-Id: <20200331180006.25829-2-eperezma@redhat.com>
+Subject: [PATCH v2 5/8] tools/virtio: Add --batch option
+Date:   Tue, 31 Mar 2020 20:00:03 +0200
+Message-Id: <20200331180006.25829-6-eperezma@redhat.com>
 In-Reply-To: <20200331180006.25829-1-eperezma@redhat.com>
 References: <20200331180006.25829-1-eperezma@redhat.com>
 MIME-Version: 1.0
@@ -70,235 +69,140 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+This allow to test vhost having >1 buffers in flight
+
 Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 ---
- drivers/vhost/net.c   | 28 +++++++++++++++-------------
- drivers/vhost/vhost.h | 28 ++++++++++++++++++++++++++++
- drivers/vhost/vsock.c | 14 +++++++-------
- 3 files changed, 50 insertions(+), 20 deletions(-)
+ tools/virtio/virtio_test.c | 47 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index e158159671fa..6c5e7a6f712c 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -424,7 +424,7 @@ static void vhost_net_disable_vq(struct vhost_net *n,
- 	struct vhost_net_virtqueue *nvq =3D
- 		container_of(vq, struct vhost_net_virtqueue, vq);
- 	struct vhost_poll *poll =3D n->poll + (nvq - n->vqs);
--	if (!vq->private_data)
-+	if (!vhost_vq_get_backend_opaque(vq))
- 		return;
- 	vhost_poll_stop(poll);
+diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
+index b427def67e7e..c30de9088f3c 100644
+--- a/tools/virtio/virtio_test.c
++++ b/tools/virtio/virtio_test.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #define _GNU_SOURCE
+ #include <getopt.h>
++#include <limits.h>
+ #include <string.h>
+ #include <poll.h>
+ #include <sys/eventfd.h>
+@@ -152,11 +153,11 @@ static void wait_for_interrupt(struct vdev_info *de=
+v)
  }
-@@ -437,7 +437,7 @@ static int vhost_net_enable_vq(struct vhost_net *n,
- 	struct vhost_poll *poll =3D n->poll + (nvq - n->vqs);
- 	struct socket *sock;
 =20
--	sock =3D vq->private_data;
-+	sock =3D vhost_vq_get_backend_opaque(vq);
- 	if (!sock)
- 		return 0;
-=20
-@@ -524,7 +524,7 @@ static void vhost_net_busy_poll(struct vhost_net *net=
-,
- 		return;
-=20
- 	vhost_disable_notify(&net->dev, vq);
--	sock =3D rvq->private_data;
-+	sock =3D vhost_vq_get_backend_opaque(rvq);
-=20
- 	busyloop_timeout =3D poll_rx ? rvq->busyloop_timeout:
- 				     tvq->busyloop_timeout;
-@@ -570,8 +570,10 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net=
- *net,
-=20
- 	if (r =3D=3D tvq->num && tvq->busyloop_timeout) {
- 		/* Flush batched packets first */
--		if (!vhost_sock_zcopy(tvq->private_data))
--			vhost_tx_batch(net, tnvq, tvq->private_data, msghdr);
-+		if (!vhost_sock_zcopy(vhost_vq_get_backend_opaque(tvq)))
-+			vhost_tx_batch(net, tnvq,
-+				       vhost_vq_get_backend_opaque(tvq),
-+				       msghdr);
-=20
- 		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, false);
-=20
-@@ -685,7 +687,7 @@ static int vhost_net_build_xdp(struct vhost_net_virtq=
-ueue *nvq,
- 	struct vhost_virtqueue *vq =3D &nvq->vq;
- 	struct vhost_net *net =3D container_of(vq->dev, struct vhost_net,
- 					     dev);
--	struct socket *sock =3D vq->private_data;
-+	struct socket *sock =3D vhost_vq_get_backend_opaque(vq);
- 	struct page_frag *alloc_frag =3D &net->page_frag;
- 	struct virtio_net_hdr *gso;
- 	struct xdp_buff *xdp =3D &nvq->xdp[nvq->batched_xdp];
-@@ -952,7 +954,7 @@ static void handle_tx(struct vhost_net *net)
- 	struct socket *sock;
-=20
- 	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_TX);
--	sock =3D vq->private_data;
-+	sock =3D vhost_vq_get_backend_opaque(vq);
- 	if (!sock)
- 		goto out;
-=20
-@@ -1121,7 +1123,7 @@ static void handle_rx(struct vhost_net *net)
- 	int recv_pkts =3D 0;
-=20
- 	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
--	sock =3D vq->private_data;
-+	sock =3D vhost_vq_get_backend_opaque(vq);
- 	if (!sock)
- 		goto out;
-=20
-@@ -1344,9 +1346,9 @@ static struct socket *vhost_net_stop_vq(struct vhos=
-t_net *n,
- 		container_of(vq, struct vhost_net_virtqueue, vq);
-=20
- 	mutex_lock(&vq->mutex);
--	sock =3D vq->private_data;
-+	sock =3D vhost_vq_get_backend_opaque(vq);
- 	vhost_net_disable_vq(n, vq);
--	vq->private_data =3D NULL;
-+	vhost_vq_set_backend_opaque(vq, NULL);
- 	vhost_net_buf_unproduce(nvq);
- 	nvq->rx_ring =3D NULL;
- 	mutex_unlock(&vq->mutex);
-@@ -1528,7 +1530,7 @@ static long vhost_net_set_backend(struct vhost_net =
-*n, unsigned index, int fd)
- 	}
-=20
- 	/* start polling new socket */
--	oldsock =3D vq->private_data;
-+	oldsock =3D vhost_vq_get_backend_opaque(vq);
- 	if (sock !=3D oldsock) {
- 		ubufs =3D vhost_net_ubuf_alloc(vq,
- 					     sock && vhost_sock_zcopy(sock));
-@@ -1538,7 +1540,7 @@ static long vhost_net_set_backend(struct vhost_net =
-*n, unsigned index, int fd)
- 		}
-=20
- 		vhost_net_disable_vq(n, vq);
--		vq->private_data =3D sock;
-+		vhost_vq_set_backend_opaque(vq, sock);
- 		vhost_net_buf_unproduce(nvq);
- 		r =3D vhost_vq_init_access(vq);
- 		if (r)
-@@ -1575,7 +1577,7 @@ static long vhost_net_set_backend(struct vhost_net =
-*n, unsigned index, int fd)
- 	return 0;
-=20
- err_used:
--	vq->private_data =3D oldsock;
-+	vhost_vq_set_backend_opaque(vq, oldsock);
- 	vhost_net_enable_vq(n, vq);
- 	if (ubufs)
- 		vhost_net_ubuf_put_wait_and_free(ubufs);
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index a123fd70847e..0808188f7e8f 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -244,6 +244,34 @@ enum {
- 			 (1ULL << VIRTIO_F_VERSION_1)
- };
-=20
-+/**
-+ * vhost_vq_set_backend_opaque - Set backend opaque.
-+ *
-+ * @vq            Virtqueue.
-+ * @private_data  The private data.
-+ *
-+ * Context: Need to call with vq->mutex acquired.
-+ */
-+static inline void vhost_vq_set_backend_opaque(struct vhost_virtqueue *v=
-q,
-+					       void *private_data)
-+{
-+	vq->private_data =3D private_data;
-+}
-+
-+/**
-+ * vhost_vq_get_backend_opaque - Get backend opaque.
-+ *
-+ * @vq            Virtqueue.
-+ * @private_data  The private data.
-+ *
-+ * Context: Need to call with vq->mutex acquired.
-+ * Return: Opaque previously set with vhost_vq_set_backend_opaque.
-+ */
-+static inline void *vhost_vq_get_backend_opaque(struct vhost_virtqueue *=
-vq)
-+{
-+	return vq->private_data;
-+}
-+
- static inline bool vhost_has_feature(struct vhost_virtqueue *vq, int bit=
-)
+ static void run_test(struct vdev_info *dev, struct vq_info *vq,
+-		     bool delayed, int bufs)
++		     bool delayed, int batch, int bufs)
  {
- 	return vq->acked_features & (1ULL << bit);
-diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-index c2d7d57e98cf..6e20dbe14acd 100644
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -91,7 +91,7 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 	struct scatterlist sl;
+ 	long started =3D 0, completed =3D 0;
+-	long completed_before;
++	long completed_before, started_before;
+ 	int r, test =3D 1;
+ 	unsigned len;
+ 	long long spurious =3D 0;
+@@ -165,28 +166,42 @@ static void run_test(struct vdev_info *dev, struct =
+vq_info *vq,
+ 	for (;;) {
+ 		virtqueue_disable_cb(vq->vq);
+ 		completed_before =3D completed;
++		started_before =3D started;
+ 		do {
+-			if (started < bufs) {
++			while (started < bufs &&
++			       (started - completed) < batch) {
+ 				sg_init_one(&sl, dev->buf, dev->buf_size);
+ 				r =3D virtqueue_add_outbuf(vq->vq, &sl, 1,
+ 							 dev->buf + started,
+ 							 GFP_ATOMIC);
+-				if (likely(r =3D=3D 0)) {
+-					++started;
+-					if (unlikely(!virtqueue_kick(vq->vq)))
++				if (unlikely(r !=3D 0)) {
++					if (r =3D=3D -ENOSPC &&
++					    started > started_before)
++						r =3D 0;
++					else
+ 						r =3D -1;
++					break;
+ 				}
+-			} else
++
++				++started;
++
++				if (unlikely(!virtqueue_kick(vq->vq))) {
++					r =3D -1;
++					break;
++				}
++			}
++
++			if (started >=3D bufs)
+ 				r =3D -1;
 =20
- 	mutex_lock(&vq->mutex);
+ 			/* Flush out completed bufs if any */
+-			if (virtqueue_get_buf(vq->vq, &len)) {
++			while (virtqueue_get_buf(vq->vq, &len)) {
+ 				++completed;
+ 				r =3D 0;
+ 			}
 =20
--	if (!vq->private_data)
-+	if (!vhost_vq_get_backend_opaque(vq))
- 		goto out;
-=20
- 	/* Avoid further vmexits, we're already processing the virtqueue */
-@@ -440,7 +440,7 @@ static void vhost_vsock_handle_tx_kick(struct vhost_w=
-ork *work)
-=20
- 	mutex_lock(&vq->mutex);
-=20
--	if (!vq->private_data)
-+	if (!vhost_vq_get_backend_opaque(vq))
- 		goto out;
-=20
- 	vhost_disable_notify(&vsock->dev, vq);
-@@ -533,8 +533,8 @@ static int vhost_vsock_start(struct vhost_vsock *vsoc=
-k)
- 			goto err_vq;
- 		}
-=20
--		if (!vq->private_data) {
--			vq->private_data =3D vsock;
-+		if (!vhost_vq_get_backend_opaque(vq)) {
-+			vhost_vq_set_backend_opaque(vq, vsock);
- 			ret =3D vhost_vq_init_access(vq);
- 			if (ret)
- 				goto err_vq;
-@@ -547,14 +547,14 @@ static int vhost_vsock_start(struct vhost_vsock *vs=
-ock)
- 	return 0;
-=20
- err_vq:
--	vq->private_data =3D NULL;
-+	vhost_vq_set_backend_opaque(vq, NULL);
- 	mutex_unlock(&vq->mutex);
-=20
- 	for (i =3D 0; i < ARRAY_SIZE(vsock->vqs); i++) {
- 		vq =3D &vsock->vqs[i];
-=20
- 		mutex_lock(&vq->mutex);
--		vq->private_data =3D NULL;
-+		vhost_vq_set_backend_opaque(vq, NULL);
- 		mutex_unlock(&vq->mutex);
- 	}
- err:
-@@ -577,7 +577,7 @@ static int vhost_vsock_stop(struct vhost_vsock *vsock=
+ 		} while (r =3D=3D 0);
+-		if (completed =3D=3D completed_before)
++		if (completed =3D=3D completed_before && started =3D=3D started_before=
 )
- 		struct vhost_virtqueue *vq =3D &vsock->vqs[i];
-=20
- 		mutex_lock(&vq->mutex);
--		vq->private_data =3D NULL;
-+		vhost_vq_set_backend_opaque(vq, NULL);
- 		mutex_unlock(&vq->mutex);
+ 			++spurious;
+ 		assert(completed <=3D bufs);
+ 		assert(started <=3D bufs);
+@@ -244,6 +259,11 @@ const struct option longopts[] =3D {
+ 		.name =3D "no-delayed-interrupt",
+ 		.val =3D 'd',
+ 	},
++	{
++		.name =3D "batch",
++		.val =3D 'b',
++		.has_arg =3D required_argument,
++	},
+ 	{
  	}
+ };
+@@ -255,6 +275,7 @@ static void help(void)
+ 		" [--no-event-idx]"
+ 		" [--no-virtio-1]"
+ 		" [--delayed-interrupt]"
++		" [--batch=3DN]"
+ 		"\n");
+ }
 =20
+@@ -263,6 +284,7 @@ int main(int argc, char **argv)
+ 	struct vdev_info dev;
+ 	unsigned long long features =3D (1ULL << VIRTIO_RING_F_INDIRECT_DESC) |
+ 		(1ULL << VIRTIO_RING_F_EVENT_IDX) | (1ULL << VIRTIO_F_VERSION_1);
++	long batch =3D 1;
+ 	int o;
+ 	bool delayed =3D false;
+=20
+@@ -289,6 +311,11 @@ int main(int argc, char **argv)
+ 		case 'D':
+ 			delayed =3D true;
+ 			break;
++		case 'b':
++			batch =3D strtol(optarg, NULL, 10);
++			assert(batch > 0);
++			assert(batch < (long)INT_MAX + 1);
++			break;
+ 		default:
+ 			assert(0);
+ 			break;
+@@ -298,6 +325,6 @@ int main(int argc, char **argv)
+ done:
+ 	vdev_info_init(&dev, features);
+ 	vq_info_add(&dev, 256);
+-	run_test(&dev, &dev.vqs[0], delayed, 0x100000);
++	run_test(&dev, &dev.vqs[0], delayed, batch, 0x100000);
+ 	return 0;
+ }
 --=20
 2.18.1
 
