@@ -2,112 +2,190 @@ Return-Path: <SRS0=EORr=5T=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBBAC2BA19
-	for <linux-next@archiver.kernel.org>; Fri,  3 Apr 2020 16:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 182ABC43331
+	for <linux-next@archiver.kernel.org>; Fri,  3 Apr 2020 19:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16803206E9
-	for <linux-next@archiver.kernel.org>; Fri,  3 Apr 2020 16:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D97E0206B8
+	for <linux-next@archiver.kernel.org>; Fri,  3 Apr 2020 19:56:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CPt4LxMl"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="TG/B0LKI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404646AbgDCQv7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 3 Apr 2020 12:51:59 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:24035 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404637AbgDCQv4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Apr 2020 12:51:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585932715;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=nk4IMYZH5hA+grx8NX+gdSGbc36TSHy3mPL/TXH5NwQ=;
-        b=CPt4LxMlUXUh/kRvw4h113OMEcm4GnyN4dGfbClB4gozyVaZgWxdBJ9KHQXaPkDOriss8g
-        jJ26GEklJPIBCKkKNDEHyEqtlE7Gp7xjonEagbZDNVjyw06n3B9bYwYQA2Py1nqBTXOdiD
-        ai7thVuO9skmahwZYKe6Hq2OC3s0RBc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-463-bacAC-9KM1GftEvSI7fyMA-1; Fri, 03 Apr 2020 12:51:53 -0400
-X-MC-Unique: bacAC-9KM1GftEvSI7fyMA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 19AB2800D53;
-        Fri,  3 Apr 2020 16:51:52 +0000 (UTC)
-Received: from eperezma.remote.csb (ovpn-113-28.ams2.redhat.com [10.36.113.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A058518A85;
-        Fri,  3 Apr 2020 16:51:49 +0000 (UTC)
-From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 6/8] tools/virtio: Extract virtqueue initialization in vq_reset
-Date:   Fri,  3 Apr 2020 18:51:17 +0200
-Message-Id: <20200403165119.5030-7-eperezma@redhat.com>
-In-Reply-To: <20200403165119.5030-1-eperezma@redhat.com>
-References: <20200403165119.5030-1-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        id S1727322AbgDCT4H (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 3 Apr 2020 15:56:07 -0400
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:36747 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbgDCT4H (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Apr 2020 15:56:07 -0400
+Received: by mail-pf1-f172.google.com with SMTP id n10so4060781pff.3
+        for <linux-next@vger.kernel.org>; Fri, 03 Apr 2020 12:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=jAwVTLLNmA2tXhM7Swt4hZt0ySHk2ZVCDfOhwnJ0PkU=;
+        b=TG/B0LKIDpRjoifAoDfjPQzag+TerK/ZV4+btsmf4xwq5ABztWgXFapxSQkNI7iwKH
+         UPMZJhc+rJJBaBFi3V3I4xQegRQ6zILefNmMYdfek/nqnwLXEGQyBgjTpEvbC3l9JxB/
+         XEDqVTq2TPcngP2QVEEeaj5rUSq7Gp3bJszjBTJTT2vSqJ7si0aNeWSrpExgBbRgxrMa
+         VJTmjUKGPfFN4lVguFVzdoSh9OYhdaivL4rjkuKDoiqojneipHaOO9V/Sid8aJIwNLX9
+         tWQBwcmh7Nq4lUEgVEM53K3X/v6dQjrZw6YDV4ONabDYBOOQxh2+ZSUuRorL03vLV6Cf
+         9qzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=jAwVTLLNmA2tXhM7Swt4hZt0ySHk2ZVCDfOhwnJ0PkU=;
+        b=korScmP7eqQjtb0RVNXP+Gxynt8f04Dn6NBT/WEbSKGr5g47+1E38+gSiHrOGFlNdc
+         bk1shMHR9VnFDxiKupzc//SqwSlKMm8d8SvoE++pvatab6eFMaIEivjnz9dN99qu18y4
+         hiSH2dONhGH7KZ+uzBSV858O8InSOSa1ntnyPgQ4NOqgLA2edgntTuqjKPfC0kIQpG18
+         zoQshS2UetTGZv3C3fAxNDDuffUdwkl593Z0tapTACFGVjCnzE6Lu13+lmIQHkLXBg6K
+         wjdC3O1aV0rWB3E8o4Ylryk3L0O3qJ5KflKLqEv6eZFD8BmxLlS2dm2uFjWQdk+nAD/9
+         A7IQ==
+X-Gm-Message-State: AGi0PuYcOiWsNGECJj/O8u1K3Z7YlZLY0NpCBEMgUEgrfn6zWxQ1wWuT
+        LemYY4+YN0yNGpa/3G7inN0hw5yjd60=
+X-Google-Smtp-Source: APiQypI+Xmw6skjYFCUWQygAmlHUxzhcjA4gWEvRDhXdXikDLKulwGNe2fdFs+ZDPECDNQO5odj6Tg==
+X-Received: by 2002:a63:a601:: with SMTP id t1mr9902296pge.23.1585943765455;
+        Fri, 03 Apr 2020 12:56:05 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id fa16sm6305406pjb.39.2020.04.03.12.56.03
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2020 12:56:04 -0700 (PDT)
+Message-ID: <5e8794d4.1c69fb81.faf4e.c215@mx.google.com>
+Date:   Fri, 03 Apr 2020 12:56:04 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: next-20200403
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: next
+X-Kernelci-Branch: master
+Subject: next/master boot: 278 boots: 7 failed, 261 passed with 4 offline,
+ 6 untried/unknown (next-20200403)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-So we can reset after that in the main loop
+next/master boot: 278 boots: 7 failed, 261 passed with 4 offline, 6 untried=
+/unknown (next-20200403)
+
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20200403/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20200403/
+
+Tree: next
+Branch: master
+Git Describe: next-20200403
+Git Commit: 606b5dac8e15e82e5866fa59e675ca6a6b7276c0
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 101 unique boards, 24 SoC families, 29 builds out of 227
+
+Boot Regressions Detected:
+
+arm:
+
+    exynos_defconfig:
+        gcc-8:
+          exynos5422-odroidxu3:
+              lab-collabora: failing since 13 days (last pass: next-2020031=
+9 - first fail: next-20200320)
+          exynos5800-peach-pi:
+              lab-collabora: failing since 3 days (last pass: next-20200305=
+ - first fail: next-20200331)
+
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+          exynos5800-peach-pi:
+              lab-collabora: failing since 3 days (last pass: next-20200129=
+ - first fail: next-20200331)
+          sun8i-h2-plus-orangepi-r1:
+              lab-baylibre: new failure (last pass: next-20200401)
+
+    sama5_defconfig:
+        gcc-8:
+          at91-sama5d4_xplained:
+              lab-baylibre: failing since 45 days (last pass: next-20200214=
+ - first fail: next-20200217)
+
+arm64:
+
+    defconfig:
+        gcc-8:
+          meson-axg-s400:
+              lab-baylibre-seattle: new failure (last pass: next-20200402)
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-axg-s400:
+              lab-baylibre-seattle: new failure (last pass: next-20200402)
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+          meson-axg-s400:
+              lab-baylibre-seattle: new failure (last pass: next-20200402)
+
+riscv:
+
+    defconfig:
+        gcc-8:
+          sifive_fu540:
+              lab-baylibre-seattle: failing since 7 days (last pass: next-2=
+0200326 - first fail: next-20200327)
+
+Boot Failures Detected:
+
+arm:
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+            exynos5800-peach-pi: 1 failed lab
+
+    multi_v7_defconfig:
+        gcc-8:
+            bcm2836-rpi-2-b: 1 failed lab
+
+    exynos_defconfig:
+        gcc-8:
+            exynos5422-odroidxu3: 1 failed lab
+            exynos5800-peach-pi: 2 failed labs
+
+    sama5_defconfig:
+        gcc-8:
+            at91-sama5d4_xplained: 1 failed lab
+
+riscv:
+    defconfig:
+        gcc-8:
+            sifive_fu540: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+
+arm64:
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+
+    defconfig:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8
+            meson-axg-s400: 1 offline lab
+
 ---
- tools/virtio/virtio_test.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 9b730434997c..7b7829e510c0 100644
---- a/tools/virtio/virtio_test.c
-+++ b/tools/virtio/virtio_test.c
-@@ -95,6 +95,19 @@ void vhost_vq_setup(struct vdev_info *dev, struct vq_info *info)
- 	assert(r >= 0);
- }
- 
-+static void vq_reset(struct vq_info *info, int num, struct virtio_device *vdev)
-+{
-+	if (info->vq)
-+		vring_del_virtqueue(info->vq);
-+
-+	memset(info->ring, 0, vring_size(num, 4096));
-+	vring_init(&info->vring, num, info->ring, 4096);
-+	info->vq = __vring_new_virtqueue(info->idx, info->vring, vdev, true,
-+					 false, vq_notify, vq_callback, "test");
-+	assert(info->vq);
-+	info->vq->priv = info;
-+}
-+
- static void vq_info_add(struct vdev_info *dev, int num)
- {
- 	struct vq_info *info = &dev->vqs[dev->nvqs];
-@@ -104,13 +117,7 @@ static void vq_info_add(struct vdev_info *dev, int num)
- 	info->call = eventfd(0, EFD_NONBLOCK);
- 	r = posix_memalign(&info->ring, 4096, vring_size(num, 4096));
- 	assert(r >= 0);
--	memset(info->ring, 0, vring_size(num, 4096));
--	vring_init(&info->vring, num, info->ring, 4096);
--	info->vq =
--		__vring_new_virtqueue(info->idx, info->vring, &dev->vdev, true,
--				      false, vq_notify, vq_callback, "test");
--	assert(info->vq);
--	info->vq->priv = info;
-+	vq_reset(info, num, &dev->vdev);
- 	vhost_vq_setup(dev, info);
- 	dev->fds[info->idx].fd = info->call;
- 	dev->fds[info->idx].events = POLLIN;
--- 
-2.18.1
-
+For more info write to <info@kernelci.org>
