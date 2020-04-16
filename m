@@ -2,98 +2,101 @@ Return-Path: <SRS0=6J9B=6A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22838C38A29
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 07:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03910C2BB85
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 08:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 040D82076A
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 07:59:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC3D206B9
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 08:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3JE1EZv"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="npT8sRBi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441088AbgDPH6t (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 16 Apr 2020 03:58:49 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25724 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2440790AbgDPH5D (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 16 Apr 2020 03:57:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587023823;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NIXtCxLH9qE2Xr1d3NAPwfOyt7PzhZHgvlWtNr1RJhc=;
-        b=d3JE1EZvYQGzk0bHCiofiQ/IQWQOjHHGd2OOPSShJr2Yq4j0hD5AcvvFivASUR8T5UQjrX
-        Aptb1Z/k1b8eqFvHDg7389PbPHA901zZI/zH3TkHFjDHa6l5gMBtGRQcZBYdzB7HK4jVoh
-        63L6tAp4WOmlR0DKsmecY8+I/6EdoF8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-VibkYPSGNAO5AKaTj77VSw-1; Thu, 16 Apr 2020 03:56:59 -0400
-X-MC-Unique: VibkYPSGNAO5AKaTj77VSw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2502249AbgDPIkr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 16 Apr 2020 04:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441458AbgDPIjv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 16 Apr 2020 04:39:51 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B70E2C03C1A8;
+        Thu, 16 Apr 2020 01:27:48 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 17F23800D5C;
-        Thu, 16 Apr 2020 07:56:58 +0000 (UTC)
-Received: from eperezma.remote.csb (ovpn-112-194.ams2.redhat.com [10.36.112.194])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B28567E7C5;
-        Thu, 16 Apr 2020 07:56:55 +0000 (UTC)
-From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/8] vhost: Not cleaning batched descs in VHOST_SET_VRING_BASE ioctl
-Date:   Thu, 16 Apr 2020 09:56:37 +0200
-Message-Id: <20200416075643.27330-3-eperezma@redhat.com>
-In-Reply-To: <20200416075643.27330-1-eperezma@redhat.com>
-References: <20200416075643.27330-1-eperezma@redhat.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 492smK4CFPz9sP7;
+        Thu, 16 Apr 2020 18:27:45 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1587025666;
+        bh=/ecLQujCj7PCtPflbT7k6//wSNSBSiYzqTmN62g5shA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=npT8sRBiGiJ1JZe4wcevWxdTxWyoV/sJ4YgNL7XQCaSOr07D1J4i52sRmx5t1KzwX
+         dMBUpzPJGS0vkQL4fRwcZ0eKX+1SGTxiaJhp+FRlLzm86eNcU293/FmlB4VTtt2ZxK
+         koQoSpUoLFR81AM2lYG6Hi/5ljt9wl+XtkEF6yRYTSjujNRoWJGbOANL0LBVqZubVg
+         hMDTFiK4zvivThmSjd+EsGTFgcl3j7ru9O8HZwdnoTgP9GZAgYSpYS/W/0EPq9K0Nf
+         RRTDU6cScj6N13ut0v7LSOYuwp6CRiG+FLGLN7bfPYuPntrLAQbQygq9fKGzDjmqOr
+         X9Mb/ZIpC7iLA==
+Date:   Thu, 16 Apr 2020 18:27:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Message-ID: <20200416182744.12d69766@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="Sig_/MbzpMfz80_1fnMH_TAOt4=s";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-They are cleaned in vhost_vq_set_backend, which can be called with an
-active backend. To set and remove backends already clean batched
-descriptors, so to do it here is completely redundant.
+--Sig_/MbzpMfz80_1fnMH_TAOt4=s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: ("af3756cfed9a vhost: batching fetches")
+Hi all,
 
-Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
----
- drivers/vhost/vhost.c | 1 -
- 1 file changed, 1 deletion(-)
+After merging the v4l-dvb tree, today's linux-next build (s390 defconfig
+and other s390 configs) failed like this:
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 0395229486a9..882d0df57e24 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1579,7 +1579,6 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigne=
-d int ioctl, void __user *arg
- 		vq->last_avail_idx =3D s.num;
- 		/* Forget the cached index value. */
- 		vq->avail_idx =3D vq->last_avail_idx;
--		vq->ndescs =3D vq->first_desc =3D 0;
- 		break;
- 	case VHOST_GET_VRING_BASE:
- 		s.index =3D idx;
+drivers/pci/Kconfig:16:error: recursive dependency detected!
+drivers/pci/Kconfig:16:	symbol PCI is selected by CEC_SECO
+drivers/media/cec/platform/Kconfig:100:	symbol CEC_SECO depends on MEDIA_CE=
+C_SUPPORT
+drivers/media/cec/Kconfig:27:	symbol MEDIA_CEC_SUPPORT default is visible d=
+epending on MEDIA_SUPPORT_FILTER
+drivers/media/Kconfig:25:	symbol MEDIA_SUPPORT_FILTER depends on MEDIA_SUPP=
+ORT
+drivers/media/Kconfig:12:	symbol MEDIA_SUPPORT depends on HAS_IOMEM
+arch/s390/Kconfig:722:	symbol HAS_IOMEM default value contains PCI
+For a resolution refer to Documentation/kbuild/kconfig-language.rst
+subsection "Kconfig recursive dependency limitations"
+
+Not really sure which commit caused this.
+
 --=20
-2.18.1
+Cheers,
+Stephen Rothwell
 
+--Sig_/MbzpMfz80_1fnMH_TAOt4=s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6YFwAACgkQAVBC80lX
+0Gxtxwf8C3jwl907GDofFWk1dgBfETM9z9Jra1Ir1b8VtootQDdpDcmylA4HwiFN
+GKFXLR4f49A6vjMGaI8XLloA3o6lkHEfLpPvGl25l3jfpdp2bdD8o0mSRuSadSoA
+IxLeFClM6Sa+uE0uQZntZdaLLD1SWAVNJIooRn35TFRxGBG8DLOv12L7WD++u8kd
+Wa0fmz38IDl0pQs6o/cI402SZ9lhtsyS/Y785seqJIhbC4ZVG9+0NylMaeygojJS
+udN7GiKYkIDA45i2BweR8fu6YZh4fsMmtzEoayOwuyjYQYix7gMaqhxMFSxQzlr9
+Y/uloHLPlyJjndglUpAlSqotQW2DzA==
+=a5ZY
+-----END PGP SIGNATURE-----
+
+--Sig_/MbzpMfz80_1fnMH_TAOt4=s--
