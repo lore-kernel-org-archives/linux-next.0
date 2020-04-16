@@ -2,185 +2,106 @@ Return-Path: <SRS0=6J9B=6A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F430C2BB55
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 12:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231F1C2BB55
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 13:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7D3921973
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 12:52:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="rj6gu+66"
+	by mail.kernel.org (Postfix) with ESMTP id EEC5D21BE5
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 13:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587042573;
+	bh=W+N7f/ROs+1DQJjqsh04Z5iYGFtFPOdmGOJQwSuRZNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F1AOhkCIK0DpQkaAEvKBQ0Ae281PwTciaVHeoGHUNRkyVPeCxXspaH/Cx7KBqKPPq
+	 gdSTjlc0FJy7M4JAEe+D55RnYNwuOxWnINFszPtV3FFjAQQp9Pgh7TjDHuEsv9W/q4
+	 VwLfTINLLQcQ1w9S9gC7icxiwHMafF1PZOjR1Tgo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636036AbgDPMw0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 16 Apr 2020 08:52:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2636287AbgDPMwV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 16 Apr 2020 08:52:21 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA3EC061A0C
-        for <linux-next@vger.kernel.org>; Thu, 16 Apr 2020 05:52:20 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id nu11so1334241pjb.1
-        for <linux-next@vger.kernel.org>; Thu, 16 Apr 2020 05:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=kQRaYFPe4g5wDSsedYWlO3CCokR4+ViiRMNDjTt0Yrc=;
-        b=rj6gu+664gjPr/KgpjW72b4p8PCgKu0rKuEv2ND5/8jpwe3AJwVE9zCd5yDBjDphDu
-         UQNHdZqRsco0CcHpnRtehGJ6noIwtvDgR1LyOzHXKkXESyGt3glIp8+T7UTs/zAPIn4P
-         9UBA7pKao0204+IBK374FErsrC3n277ESqsn11JPDnHwXxQPAircDicRXQo0B81F8hcg
-         Go55gltE/qmdT9aNVrsKlYiLE1kMoLFpe15ejUQunJxc77+8B41xctVDucOlHxtPjmBW
-         HsL9BL5f4EUYFuZPLWJFRwob3n0k4CCZQNrI7D1HCQjaHcMD5qosyxxkhd1spq6vNi5E
-         GdXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=kQRaYFPe4g5wDSsedYWlO3CCokR4+ViiRMNDjTt0Yrc=;
-        b=psi5GSyz0WHXXcaKfiL14xcOdY2fRqfsoZaeWx9l1f6xGtBWr7hNfr+lCr6t/2Zz6g
-         CA5a7GOCHUzHcLnBx0RCAt5+yyjnhJeWO1dO0C2NcEet7jO17TNf9nZIqdAuo+R4D1NU
-         zFjA/ZWnK0jl+YBBDldjl3MnkzgmEkJIrq5HAyWlewCeoqTTGFW1pg/usaiHJkwON6OK
-         5k34fcy4yAnWhz/+a3/1rKfp8nntt1bwn4Y6WCN5ZoFuonXbLrfsMpIF5XwB2gF9+Sz5
-         +H4cvc41RRx1oIZGIYltbCbJhG8n85hds82rsoMgFfbJIaAOgO5YYNAuqY/IZnvd1gti
-         0KPw==
-X-Gm-Message-State: AGi0PuaJa3vF6LwREK3TFnADblyS9VHlUVCu9WPu94s/RJihhT8ck93M
-        wIqGtzXKc7C6mxrVkHmCiLnKhJc5SQ4=
-X-Google-Smtp-Source: APiQypJL5YlLYl8IdxLJHYb+na89U9+/ZZD+6EcN0zas23IixsaAfEuTMQlWYgJCUVbtwNd44ke67g==
-X-Received: by 2002:a17:90b:3014:: with SMTP id hg20mr5101963pjb.56.1587041539480;
-        Thu, 16 Apr 2020 05:52:19 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id kb18sm2800355pjb.14.2020.04.16.05.52.18
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 05:52:18 -0700 (PDT)
-Message-ID: <5e985502.1c69fb81.d4452.9399@mx.google.com>
-Date:   Thu, 16 Apr 2020 05:52:18 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S2894836AbgDPNJa (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 16 Apr 2020 09:09:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2894835AbgDPNJ3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 16 Apr 2020 09:09:29 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 111F3214AF;
+        Thu, 16 Apr 2020 13:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587042568;
+        bh=W+N7f/ROs+1DQJjqsh04Z5iYGFtFPOdmGOJQwSuRZNQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B5LLDE6h7OXt3tq4MtHbgQhqfyTj6KmX9/3gY43x02KWhfqQXTzlePuyJao+KyDY3
+         UVCrROn5ObwAUMO60Zdqm+AILPO/Ca2j/R82M4npkzIlkhWilYBlO+EAvoJ/VtalWm
+         uNB16KoyWfAWzMERIq2C3D1ynRQQUnkPPCpkAbZ0=
+Date:   Thu, 16 Apr 2020 14:09:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: Re: linux-next: Fixes tags needs some work in the sound-asoc tree
+Message-ID: <20200416130925.GJ5354@sirena.org.uk>
+References: <20200416094111.3f37623f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: next-20200416
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: next
-X-Kernelci-Branch: master
-Subject: next/master boot: 280 boots: 6 failed, 266 passed with 3 offline,
- 5 untried/unknown (next-20200416)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qD3brAgIG4LbUq6d"
+Content-Disposition: inline
+In-Reply-To: <20200416094111.3f37623f@canb.auug.org.au>
+X-Cookie: Tempt me with a spoon!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master boot: 280 boots: 6 failed, 266 passed with 3 offline, 5 untried=
-/unknown (next-20200416)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
-nel/next-20200416/
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20200416/
+--qD3brAgIG4LbUq6d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tree: next
-Branch: master
-Git Describe: next-20200416
-Git Commit: a3ca59b9af21e68069555ffff1ad89bd2a7c40fc
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Tested: 108 unique boards, 25 SoC families, 30 builds out of 228
+On Thu, Apr 16, 2020 at 09:41:11AM +1000, Stephen Rothwell wrote:
 
-Boot Regressions Detected:
+> has these problem(s):
 
-arm:
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
 
-    sama5_defconfig:
-        gcc-8:
-          at91-sama5d4_xplained:
-              lab-baylibre: failing since 58 days (last pass: next-20200214=
- - first fail: next-20200217)
+> Please do not split Fixes tags over more than one line.
 
-    versatile_defconfig:
-        gcc-8:
-          versatile-pb:
-              lab-collabora: new failure (last pass: next-20200415)
+> Mark, since you don't seem to rebase your branches, please start pushing
+> back on these before they are committed to your tree (especially the
+> non existent SHA1s).
 
-arm64:
+Is there some scripting that does these checks (ideally someone would be
+running a bot for this)?
 
-    defconfig:
-        clang-9:
-          apq8096-db820c:
-              lab-bjorn: failing since 2 days (last pass: next-20200412 - f=
-irst fail: next-20200414)
-        gcc-8:
-          meson-g12b-odroid-n2:
-              lab-baylibre: new failure (last pass: next-20200415)
+TBH aside from the missing SHA1s (which are a definite issue, mainly
+coming from Intel unfortunately) I'm struggling to see most of the
+things you're reporting as substantial issues - I'm not sure that
+tooling should be caring about much beyond the SHA1 in the tag, and if
+it is then supporting wrapping like RFC822 headers doesn't seem
+unreasonable.
 
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-          meson-axg-s400:
-              lab-baylibre-seattle: new failure (last pass: next-20200415)
-          meson-gxl-s805x-p241:
-              lab-baylibre: new failure (last pass: next-20200414)
+--qD3brAgIG4LbUq6d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8:
-          meson-axg-s400:
-              lab-baylibre-seattle: new failure (last pass: next-20200415)
-          meson-g12b-a311d-khadas-vim3:
-              lab-baylibre: new failure (last pass: next-20200415)
+-----BEGIN PGP SIGNATURE-----
 
-riscv:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6YWQUACgkQJNaLcl1U
+h9D/NAf/UIyaddWWGiNokiLtMwXGYPX1+ZySMYxZJ5ZLfI29WsRbad/ePIyUTBlH
+x8CHJJEvK1iMesrFn1pd+oFfbU4sZ5CQMbUGFaVj6tJ7lZc0JiyXczHZN30ZgbWo
+asn9S9gB7DFGLRYF/ZVcFYFmIKcODrDmBOwG3KjE8dFsiNtMKc6zaZxN+G8edBmn
+QchyTLJQ/J3Z03jOhGX78B4e+nMWKAY7FT8Stk0DTmPMTvl8MpNAPGn1uJnlBGkR
+a312kgt4wSJOtXXpA7i7jP0mf6TEQy1bk5um9pHqOd4oISTXmupRSxgaaO+TypW8
+7t8Phd/y8yzjtW4IvJP3CdretJDESw==
+=T9Qd
+-----END PGP SIGNATURE-----
 
-    defconfig:
-        gcc-8:
-          sifive_fu540:
-              lab-baylibre-seattle: failing since 19 days (last pass: next-=
-20200326 - first fail: next-20200327)
-
-Boot Failures Detected:
-
-arm:
-    multi_v7_defconfig:
-        gcc-8:
-            bcm2836-rpi-2-b: 1 failed lab
-
-    sama5_defconfig:
-        gcc-8:
-            at91-sama5d4_xplained: 1 failed lab
-
-arm64:
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8:
-            meson-gxl-s805x-p241: 1 failed lab
-
-    defconfig:
-        gcc-8:
-            meson-g12b-odroid-n2: 1 failed lab
-
-riscv:
-    defconfig:
-        gcc-8:
-            sifive_fu540: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-
-arm64:
-
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
-        gcc-8
-            meson-axg-s400: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+--qD3brAgIG4LbUq6d--
