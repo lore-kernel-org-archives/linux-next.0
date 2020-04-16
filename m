@@ -2,96 +2,97 @@ Return-Path: <SRS0=6J9B=6A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DATE_IN_PAST_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5BCC2BB55
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7991C2BB55
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 17:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 373AB2076D
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95ED721924
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 17:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587057745;
+	bh=t7y5LQKxiCKr8DRWNT37PQt/NonhVq+IuIpLAI7CGNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2sibvcKT8G8HG5sty/Td1MuNHHPT9YeSDAM4lKOdm4/K6wKtCTzy15pBQXPBquuHL
+	 VBf/eZmPF9q+w79JJpmzHRdWyoNgCK43PxLgjkl0VjW+Dco4RFhvLtI7dc5OyY/17v
+	 Yf6wUyzf59YvHrMB1ZRphoevKbRmWihMWyAaDMd4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbgDPQvX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:51:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:5528 "EHLO mga07.intel.com"
+        id S1730767AbgDPRWY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 16 Apr 2020 13:22:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727910AbgDPQvU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:51:20 -0400
-IronPort-SDR: R2IdWx56wEWraMyrXGXBFY3//qj3eFCKBlmSA7nHI9BVEcpNsGuQpIOdHFnaVlAf3/4q/wUJCN
- kZ4dfxX0uV8g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:51:18 -0700
-IronPort-SDR: ak+3S0j6sDqOFGFT/3cgjGIRLkm2WdcJEc+2FtgpItsOgDIUFmG93ls1QG9XOaLL5EvmqOvril
- h6opWpXGFb8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
-   d="scan'208";a="278060192"
-Received: from ernestom-mobl.amr.corp.intel.com (HELO [10.251.128.102]) ([10.251.128.102])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Apr 2020 09:51:17 -0700
-Subject: Re: linux-next: Fixes tags needs some work in the sound-asoc tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1729373AbgDPRWY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 16 Apr 2020 13:22:24 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A9C12076D;
+        Thu, 16 Apr 2020 17:22:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587057743;
+        bh=t7y5LQKxiCKr8DRWNT37PQt/NonhVq+IuIpLAI7CGNY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wpp+zpP6mhxhMOmcPCPPYkGqhwpQA/5yIVAiB3hrZWBduZauZdmRQul0Waov+B7ub
+         BgdHyB364tqIRAH8myC7Bw2wehHDyzXRNFI8y2hDySwVrkAvV3CcRX4L+htZWbsM3z
+         sNBirLgOuXsEd0Rohk7aoOde/9DzVNNH4MvfGJGk=
+Date:   Thu, 16 Apr 2020 18:22:19 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-References: <20200416094111.3f37623f@canb.auug.org.au>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <14195fe3-14b2-eb80-3409-f7ca817b95f5@linux.intel.com>
-Date:   Thu, 16 Apr 2020 07:55:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Hui Wang <hui.wang@canonical.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bard liao <yung-chuan.liao@linux.intel.com>
+Subject: Re: linux-next: build failures after merge of the sound-asoc tree
+Message-ID: <20200416172219.GO5354@sirena.org.uk>
+References: <20200415121521.3e40b591@canb.auug.org.au>
+ <f73485eb-c0c8-c557-7491-5daabce4d3de@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200416094111.3f37623f@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1bhFRg6vL9BT9osV"
+Content-Disposition: inline
+In-Reply-To: <f73485eb-c0c8-c557-7491-5daabce4d3de@linux.intel.com>
+X-Cookie: Tempt me with a spoon!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
 
+--1bhFRg6vL9BT9osV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4/15/20 6:41 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->    101001652ee7 ("ASoC: SOF: topology: fix: handle DAI widget connections properly with multiple CPU DAI's")
-> 
-> Fixes tag
-> 
->    Fixes: 4a7e26a4d833 ("ASoC: SOF: topology: connect dai widget to all
-> 
-> has these problem(s):
-> 
->    - Target SHA1 does not exist
-> 
-> Maybe you meant
-> 
-> Fixes: c59aca98c912 ("ASoC: SOF: topology: connect dai widget to all cpu-dais")
-> 
-> Also, please do not split Fixes tags over more than one line and keep
-> all the commit message tags together at the end of the commit message.
+On Tue, Apr 14, 2020 at 10:28:10PM -0500, Pierre-Louis Bossart wrote:
+> On 4/14/20 9:15 PM, Stephen Rothwell wrote:
 
-Sorry about that. I always run checkpatch.pl and didn't see an error
+> > drivers/soundwire/intel.c:676:8: error: 'struct snd_soc_pcm_runtime' has no member named 'codec_dais'
+> >    676 |     rtd->codec_dais[i]->name);
 
-../patches/20200415/0001-ASoC-SOF-topology-fix-handle-DAI-widget-connections-.patch
------------------------------------------------------------------------------------
-total: 0 errors, 0 warnings, 0 checks, 49 lines checked
+> Bard, can you take care of the SoundWire change - this needs to change to
+> asoc_rtd_to_codec(rtd, i)
 
-My theory is that the SHA1 check is fooled by our use of worktrees. This 
-SHA1 does exist but on another SOF development branch. Is there a way to 
-restrict the checks only to the base upstream branch, e.g. Mark's 
-for-5.8 branch?
+Bard?
 
-If not, we probably need to make sure we have a separate directory just 
-for upstreaming, to avoid any pollution from SOF branches?
+--1bhFRg6vL9BT9osV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks
--Pierre
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6YlEoACgkQJNaLcl1U
+h9ASpwf/YKfh8U5CWkgqK8mGVOeRPjf4UcTyV1hxcI3CylFyvakIeaXm6aavw032
+LIZ/HFTZo/wz1agTpb3dQRHE0wFr9EctnaQ6EpYguyKovvHXP058YmAMi0nxCwap
+O4Yf1vXpHOKAHNQhPNf54kQykd7wxiwLEEfFLNZdWPYKWKsC3R75pKEskA/ehWZ6
+HRQsKS5UYhLnRQAQzxkm9YJ72Mr8H9vtFhAzjF9crlFs7yxKogk06pIUYnQPPPg1
+BWjsTFLoamtbHYQQPftd4riX2w1/omBSIfvVCzmyHAJCJqUfFpdhtqq0QBepgQRP
+nJ3SeFpBKaM3lXw/vgJS42QILOOUUw==
+=fr8X
+-----END PGP SIGNATURE-----
+
+--1bhFRg6vL9BT9osV--
