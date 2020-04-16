@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54C9C2D0EF
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 07:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6A0C2D0EF
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 07:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDE0220784
-	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 07:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA23A206E9
+	for <linux-next@archiver.kernel.org>; Thu, 16 Apr 2020 07:58:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H4K3SBoY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ihOJa4RG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440900AbgDPH6a (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 16 Apr 2020 03:58:30 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25436 "EHLO
+        id S2441057AbgDPH6j (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 16 Apr 2020 03:58:39 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46586 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2440835AbgDPH5N (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 16 Apr 2020 03:57:13 -0400
+        with ESMTP id S2440792AbgDPH5E (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 16 Apr 2020 03:57:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587023831;
+        s=mimecast20190719; t=1587023823;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ykITk4fxK46D6AMrZatD/OE634nsOv7eweYKlbWRBw8=;
-        b=H4K3SBoYjiV3cKFwnFv+Z1ahNok6aOXZEpiakbbCQ9QBnYIYNE9kqWQNnAFTYy50k7Y/cm
-        hNiDIEfvdFBx3qJS3RrKd6d/eoWEaGg02zRxPzG0bbxH7PtQkpWksoDHXOoTlvu4RjeHKb
-        BSJ4QcqgdONgdlgwwu0we9RBfrVNEuI=
+        bh=J/bW9r45TOwsNmE8eTZdikVBjfTc4MSQA0VtKPvgd54=;
+        b=ihOJa4RGup7av+25PmlIlPN5MpEn6vlDwpiIg6QPPStKpNGaU/ob+Uz8Ikmxj2x0MwFPKr
+        rvnG+3XM2JHhTwOzJiQDfJB5MDlABthJtFUFiL1W/VO6JONnkLJmgT6/ep51c9snyGINyp
+        LHzVTeDFeKFwIcJnyW65BkE4tNLolh0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-244-Hw17gpxjPcefP6o9UzMOdw-1; Thu, 16 Apr 2020 03:57:07 -0400
-X-MC-Unique: Hw17gpxjPcefP6o9UzMOdw-1
+ us-mta-148-YgMnOMW2PYamKI8TvnTRkQ-1; Thu, 16 Apr 2020 03:57:02 -0400
+X-MC-Unique: YgMnOMW2PYamKI8TvnTRkQ-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 58C73DB81;
-        Thu, 16 Apr 2020 07:57:06 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF545801E5E;
+        Thu, 16 Apr 2020 07:57:00 +0000 (UTC)
 Received: from eperezma.remote.csb (ovpn-112-194.ams2.redhat.com [10.36.112.194])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EF0BA7E7C0;
-        Thu, 16 Apr 2020 07:57:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 726E17E7C0;
+        Thu, 16 Apr 2020 07:56:58 +0000 (UTC)
 From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
@@ -55,9 +55,9 @@ Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Cornelia Huck <cohuck@redhat.com>,
         Halil Pasic <pasic@linux.ibm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 5/8] tools/virtio: Use __vring_new_virtqueue in virtio_test.c
-Date:   Thu, 16 Apr 2020 09:56:40 +0200
-Message-Id: <20200416075643.27330-6-eperezma@redhat.com>
+Subject: [PATCH v2 3/8] vhost: Replace vq->private_data access by backend accesors
+Date:   Thu, 16 Apr 2020 09:56:38 +0200
+Message-Id: <20200416075643.27330-4-eperezma@redhat.com>
 In-Reply-To: <20200416075643.27330-1-eperezma@redhat.com>
 References: <20200416075643.27330-1-eperezma@redhat.com>
 MIME-Version: 1.0
@@ -69,32 +69,48 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-As updated in ("2a2d1382fe9d virtio: Add improved queue allocation API")
+This function still places backend directly in private_data, instead of
+use the accesors created on ("cbfc8f21b49a vhost: Create accessors for
+virtqueues private_data"). Using accesor.
+
+Fixes: ("7ce8cc28ce48 tools/virtio: Add --reset=3Drandom")
 
 Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 ---
- tools/virtio/virtio_test.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/vhost/test.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 1d5144590df6..d9827b640c21 100644
---- a/tools/virtio/virtio_test.c
-+++ b/tools/virtio/virtio_test.c
-@@ -106,10 +106,9 @@ static void vq_info_add(struct vdev_info *dev, int n=
-um)
- 	assert(r >=3D 0);
- 	memset(info->ring, 0, vring_legacy_size(num, 4096));
- 	vring_legacy_init(&info->vring, num, info->ring, 4096);
--	info->vq =3D vring_new_virtqueue(info->idx,
--				       info->vring.num, 4096, &dev->vdev,
--				       true, false, info->ring,
--				       vq_notify, vq_callback, "test");
-+	info->vq =3D
-+		__vring_new_virtqueue(info->idx, info->vring, &dev->vdev, true,
-+				      false, vq_notify, vq_callback, "test");
- 	assert(info->vq);
- 	info->vq->priv =3D info;
- 	vhost_vq_setup(dev, info);
+diff --git a/drivers/vhost/test.c b/drivers/vhost/test.c
+index 251ca723ac3f..789c096e454b 100644
+--- a/drivers/vhost/test.c
++++ b/drivers/vhost/test.c
+@@ -265,7 +265,7 @@ static int vhost_test_set_features(struct vhost_test =
+*n, u64 features)
+=20
+ static long vhost_test_set_backend(struct vhost_test *n, unsigned index,=
+ int fd)
+ {
+-	static void *private_data;
++	static void *backend;
+=20
+ 	const bool enable =3D fd !=3D -1;
+ 	struct vhost_virtqueue *vq;
+@@ -290,11 +290,11 @@ static long vhost_test_set_backend(struct vhost_tes=
+t *n, unsigned index, int fd)
+ 	}
+ 	if (!enable) {
+ 		vhost_poll_stop(&vq->poll);
+-		private_data =3D vq->private_data;
+-		vq->private_data =3D NULL;
++		backend =3D vhost_vq_get_backend(vq);
++		vhost_vq_set_backend(vq, NULL);
+ 	} else {
+ 		r =3D vhost_vq_init_access(vq);
+-		vq->private_data =3D private_data;
++		vhost_vq_set_backend(vq, backend);
+ 		if (r =3D=3D 0)
+ 			r =3D vhost_poll_start(&vq->poll, vq->kick);
+ 	}
 --=20
 2.18.1
 
