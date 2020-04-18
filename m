@@ -2,112 +2,98 @@ Return-Path: <SRS0=JndU=6C=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB3AC352BE
-	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 08:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FEEC2D0EF
+	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 10:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C15A7214D8
-	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 08:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A95D221D7E
+	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 10:22:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uw0O9D1c"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AseJXGrX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725949AbgDRIOe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 18 Apr 2020 04:14:34 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:53005 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbgDRIOe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 18 Apr 2020 04:14:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1725994AbgDRKWm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 18 Apr 2020 06:22:42 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:21079 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725799AbgDRKWi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Sat, 18 Apr 2020 06:22:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587205355;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vwWNaCCFGnInUmv5tpeoOpCpadYnvdzVMsJO2bg1Nbc=;
+        b=AseJXGrX8C7TSRWz0YQQaO0TSMHyNHhSG63iV6BaUbhgXO2EXFTqIJPmY6teFu3jK9AKT1
+        uFfv4gK28TM5L+Bkzzs9rOPDYXhnuQRp/MaJSX1ESn/lNATOYDK2Ezz2oOdAgpYETz5daW
+        YhgLlcAaNfnzQDhaz8Xn/iz+9nMzLI0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-353-5AHjK9raMU2HXAvB4v78SQ-1; Sat, 18 Apr 2020 06:22:30 -0400
+X-MC-Unique: 5AHjK9raMU2HXAvB4v78SQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4945MX3Y9vz9sQx;
-        Sat, 18 Apr 2020 18:14:00 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1587197642;
-        bh=G8iMWCchG1teLmnVcfKg6CPEC0PAsZOhu4cHv56WVwE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uw0O9D1cGqHhSeRW4k7P7ETkAvMrg9aUTL/PWkY+SX9D/V8obRPCWQBAeiKCmK45w
-         R6NzzWSC9yOvWwgIX83jGnNWfrDZF98IEX7K9B0bZrHptZPm8llL+/SPVbNy/GxEyF
-         BO9eln5LihuGFiHyNxHL2XU2Szeoq9kZhbAjPUcj8lS0K1wTzAQiCokQ+aq51G9mII
-         bzOPZF0SEcq4m1fkeMWOwgxLq9+KGCMSlVOtd09Mbzfo7JTkWhWdEzgOYLOPNUaAG9
-         HZGlIi8OBSTukwDp9Iyt9EFINQw4A1wAMlS1jilXkn/sUhph4dhlju6KeEUZsKCs5g
-         ncOJCYKPGT8TQ==
-Date:   Sat, 18 Apr 2020 18:13:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        syzbot <syzbot+826543256ed3b8c37f62@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: linux-next test error: BUG: using __this_cpu_read() in
- preemptible code in __mod_memcg_state
-Message-ID: <20200418181358.0a761486@canb.auug.org.au>
-In-Reply-To: <CACT4Y+ZsAgq0M=xUzrXTOYaaJfr_BrD8_5R5bhzr9k29jDSC+w@mail.gmail.com>
-References: <00000000000022640205a04a20d8@google.com>
-        <20200309092423.2ww3aw6yfyce7yty@box>
-        <5b1196be-09ce-51f7-f5e7-63f2e597f91e@linux.alibaba.com>
-        <d3fb0593-e483-3b69-bf2c-99ad6cd03567@linux.alibaba.com>
-        <CACT4Y+Zfcs2MxD9-zR748UbkEpsV4BYjFgw1XgSqX4X8z=92CA@mail.gmail.com>
-        <20200418174353.02295792@canb.auug.org.au>
-        <20200418175059.7100ed7b@canb.auug.org.au>
-        <CACT4Y+ZsAgq0M=xUzrXTOYaaJfr_BrD8_5R5bhzr9k29jDSC+w@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 70BEB8018A3;
+        Sat, 18 Apr 2020 10:22:29 +0000 (UTC)
+Received: from eperezma.remote.csb (ovpn-112-94.ams2.redhat.com [10.36.112.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 137831001DC2;
+        Sat, 18 Apr 2020 10:22:26 +0000 (UTC)
+From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: [PATCH v3 1/8] vhost: Not cleaning batched descs in VHOST_SET_VRING_BASE ioctl
+Date:   Sat, 18 Apr 2020 12:22:10 +0200
+Message-Id: <20200418102217.32327-2-eperezma@redhat.com>
+In-Reply-To: <20200418102217.32327-1-eperezma@redhat.com>
+References: <20200418102217.32327-1-eperezma@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/FO+IgIlyK6wXn_YCvpKjvSp";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/FO+IgIlyK6wXn_YCvpKjvSp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+They are cleaned in vhost_vq_set_backend, which can be called with an
+active backend. To set and remove backends already clean batched
+descriptors, so to do it here is completely redundant.
 
-Hi Dmitry,
+Fixes: ("e7539c20a4a6 vhost: batching fetches")
 
-On Sat, 18 Apr 2020 10:02:36 +0200 Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > #syz invalid =20
->=20
-> This is correct, thanks!
->=20
-> You may now see "Status: closed as invalid on 2020/04/18 07:51" at:
-> https://syzkaller.appspot.com/bug?extid=3D826543256ed3b8c37f62
->=20
-> It does not show up as "open" and if this will happen again syzbot
-> will report it (rather than assume it's still the old bug happening).
+Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+---
+ drivers/vhost/vhost.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-OK, good, thanks.
-
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 0395229486a9..882d0df57e24 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1579,7 +1579,6 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigne=
+d int ioctl, void __user *arg
+ 		vq->last_avail_idx =3D s.num;
+ 		/* Forget the cached index value. */
+ 		vq->avail_idx =3D vq->last_avail_idx;
+-		vq->ndescs =3D vq->first_desc =3D 0;
+ 		break;
+ 	case VHOST_GET_VRING_BASE:
+ 		s.index =3D idx;
 --=20
-Cheers,
-Stephen Rothwell
+2.18.1
 
---Sig_/FO+IgIlyK6wXn_YCvpKjvSp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6atsYACgkQAVBC80lX
-0GxKLgf7B1CaeOafVaZuCm00dKwG5hpfeoiZ90BssMjH+U91777VeGujRDCLsz82
-sgYE8FV3sqY5xnFkZi8SIMXUiVQnEVDLZiwe/gmNvS0zu9Uh9kUDUvwMhOlf6faB
-kSWu907utWkPrznsU36QctaVA5qwXpRDBUZX/NVBJkcBL6xAw1/ER1n/89kf2l7X
-IzJLEw68AAbwPlKAdiARMg0aQXvWbeRzs+C0HiH668G2XHL/usBBFdZT/lZCg5Xl
-tBe4s8bsxBHbv0lblZZNRFXUvCKB56TbpPCqAO+PQT+bKrKjA19xD8W74/EiMd9Y
-165rBH3gTrzj24jJwyJdUFNSH93Gkg==
-=ZnYC
------END PGP SIGNATURE-----
-
---Sig_/FO+IgIlyK6wXn_YCvpKjvSp--
