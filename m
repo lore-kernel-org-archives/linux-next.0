@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66918C2D0EF
-	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 10:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 980E5C2D0EF
+	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 10:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 415BE21D7E
-	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 10:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DF9921D7E
+	for <linux-next@archiver.kernel.org>; Sat, 18 Apr 2020 10:24:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PdrUbu+m"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="huwLXI96"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbgDRKX7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 18 Apr 2020 06:23:59 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24788 "EHLO
+        id S1726050AbgDRKYV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 18 Apr 2020 06:24:21 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:38960 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726049AbgDRKWv (ORCPT
+        by vger.kernel.org with ESMTP id S1726024AbgDRKWr (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Sat, 18 Apr 2020 06:22:51 -0400
+        Sat, 18 Apr 2020 06:22:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587205370;
+        s=mimecast20190719; t=1587205366;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NTpuDlc6qvgZkv1wgOF0V1ahvk1X+aQkxyfimEc4tRM=;
-        b=PdrUbu+m6O4jT37TeKlsNlK2D9vRqqLCox0pBtlFZHa9R1JHwkKGtzltckuB84jPQn7PeL
-        GkG3x8tgV6whAEKs8BLz2cSGJzW8Ky8xZitnTdwbqztzdys4/ybM4NLbFFuoBoW4V2qq9a
-        3qd+VeKUYIMQKsGE4DzzuMFyPPDjHss=
+        bh=UESdyrXT+qLtkr29FvZrw/ATFVQJjMdAGWcplfhsfoM=;
+        b=huwLXI96FaA2w+9MyArkaR/czJ3FthBYTjBHG/AlWL+8KFsuw8KCQQHNo/WBZP/+xVoK8I
+        +20WOrnyHrmMZJRrl81rOpZ5i7i4GJf3H4rpTOzdxWKnA8PlIj49gvV/jvefiSWAsJSGE9
+        R51KrtJ3bK8bbcSgDtHfF8abGqngphc=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-30-2j2JnosrPRypXaWZa6e8Ag-1; Sat, 18 Apr 2020 06:22:48 -0400
-X-MC-Unique: 2j2JnosrPRypXaWZa6e8Ag-1
+ us-mta-126-6ocvjgO7Nei7k3OHZb0Rew-1; Sat, 18 Apr 2020 06:22:43 -0400
+X-MC-Unique: 6ocvjgO7Nei7k3OHZb0Rew-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 938378017F5;
-        Sat, 18 Apr 2020 10:22:47 +0000 (UTC)
-Received: from eperezma.remote.csb (ovpn-112-94.ams2.redhat.com [10.36.112.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E6641001DC2;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 46AFD1005509;
         Sat, 18 Apr 2020 10:22:42 +0000 (UTC)
+Received: from eperezma.remote.csb (ovpn-112-94.ams2.redhat.com [10.36.112.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E51421000325;
+        Sat, 18 Apr 2020 10:22:39 +0000 (UTC)
 From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     "virtualization@lists.linux-foundation.org" 
@@ -56,9 +56,9 @@ Cc:     "virtualization@lists.linux-foundation.org"
         kvm list <kvm@vger.kernel.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH v3 6/8] tools/virtio: Extract virtqueue initialization in vq_reset
-Date:   Sat, 18 Apr 2020 12:22:15 +0200
-Message-Id: <20200418102217.32327-7-eperezma@redhat.com>
+Subject: [PATCH v3 5/8] tools/virtio: Use __vring_new_virtqueue in virtio_test.c
+Date:   Sat, 18 Apr 2020 12:22:14 +0200
+Message-Id: <20200418102217.32327-6-eperezma@redhat.com>
 In-Reply-To: <20200418102217.32327-1-eperezma@redhat.com>
 References: <20200418102217.32327-1-eperezma@redhat.com>
 MIME-Version: 1.0
@@ -70,55 +70,32 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-So we can reset after that in the main loop.
+As updated in ("2a2d1382fe9d virtio: Add improved queue allocation API")
 
 Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 ---
- tools/virtio/virtio_test.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ tools/virtio/virtio_test.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 0a247ba3b899..bc16c818bda3 100644
+index 6bc3e172cc9b..0a247ba3b899 100644
 --- a/tools/virtio/virtio_test.c
 +++ b/tools/virtio/virtio_test.c
-@@ -94,6 +94,19 @@ void vhost_vq_setup(struct vdev_info *dev, struct vq_i=
-nfo *info)
- 	assert(r >=3D 0);
- }
-=20
-+static void vq_reset(struct vq_info *info, int num, struct virtio_device=
- *vdev)
-+{
-+	if (info->vq)
-+		vring_del_virtqueue(info->vq);
-+
-+	memset(info->ring, 0, vring_size(num, 4096));
-+	vring_init(&info->vring, num, info->ring, 4096);
-+	info->vq =3D __vring_new_virtqueue(info->idx, info->vring, vdev, true,
-+					 false, vq_notify, vq_callback, "test");
-+	assert(info->vq);
-+	info->vq->priv =3D info;
-+}
-+
- static void vq_info_add(struct vdev_info *dev, int num)
- {
- 	struct vq_info *info =3D &dev->vqs[dev->nvqs];
-@@ -103,13 +116,7 @@ static void vq_info_add(struct vdev_info *dev, int n=
+@@ -105,10 +105,9 @@ static void vq_info_add(struct vdev_info *dev, int n=
 um)
- 	info->call =3D eventfd(0, EFD_NONBLOCK);
- 	r =3D posix_memalign(&info->ring, 4096, vring_size(num, 4096));
  	assert(r >=3D 0);
--	memset(info->ring, 0, vring_size(num, 4096));
--	vring_init(&info->vring, num, info->ring, 4096);
--	info->vq =3D
--		__vring_new_virtqueue(info->idx, info->vring, &dev->vdev, true,
--				      false, vq_notify, vq_callback, "test");
--	assert(info->vq);
--	info->vq->priv =3D info;
-+	vq_reset(info, num, &dev->vdev);
+ 	memset(info->ring, 0, vring_size(num, 4096));
+ 	vring_init(&info->vring, num, info->ring, 4096);
+-	info->vq =3D vring_new_virtqueue(info->idx,
+-				       info->vring.num, 4096, &dev->vdev,
+-				       true, false, info->ring,
+-				       vq_notify, vq_callback, "test");
++	info->vq =3D
++		__vring_new_virtqueue(info->idx, info->vring, &dev->vdev, true,
++				      false, vq_notify, vq_callback, "test");
+ 	assert(info->vq);
+ 	info->vq->priv =3D info;
  	vhost_vq_setup(dev, info);
- 	dev->fds[info->idx].fd =3D info->call;
- 	dev->fds[info->idx].events =3D POLLIN;
 --=20
 2.18.1
 
