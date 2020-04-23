@@ -2,76 +2,116 @@ Return-Path: <SRS0=HJAX=6H=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0995C54FCB
-	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 12:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF49C54FCB
+	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 13:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85C002074F
-	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 12:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87034208E4
+	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 13:04:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="T3Q9H+56"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgDWM0e (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 23 Apr 2020 08:26:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:62016 "EHLO mga06.intel.com"
+        id S1728308AbgDWNEF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 23 Apr 2020 09:04:05 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:60375 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbgDWM0d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 23 Apr 2020 08:26:33 -0400
-IronPort-SDR: /sihSxZVvuDj6/0YsQxdBiFJ6ROFhR+PnSXIfJecDVMONCIbYSafRZ0b47QrXYUVgoChQo3WxY
- Dc2rsZXCcWdg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 05:26:33 -0700
-IronPort-SDR: gFk0zFCNkZPm9QNMJ8rY7QXqd35COTkC6c1cVd+Rj7Ey+G/MP3RMx2ZVo6uTtEXNx+YUIz3qrA
- p7xGQ7cYZXkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,307,1583222400"; 
-   d="scan'208";a="259407494"
-Received: from zzhang7-mobl1.amr.corp.intel.com (HELO [10.255.73.51]) ([10.255.73.51])
-  by orsmga006.jf.intel.com with ESMTP; 23 Apr 2020 05:26:32 -0700
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-To:     Mark Brown <broonie@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
+        id S1726685AbgDWNEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 23 Apr 2020 09:04:05 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 497HYt01bMz9sRN;
+        Thu, 23 Apr 2020 23:04:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1587647043;
+        bh=RsqDktuMMP2UgufhCx84QjzJaJ3BCDZnFMhqrYgH1i8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T3Q9H+56rirN9jDvJka9cRS5NRtrWdc/QPTAW3cBRZ8CBsf0PD1RHVZOlmS+ufW4m
+         vH43guW8YFopRrfDLPApSP7nuIwdE85NWG9/Es8jsQNJq+wfprxwgi3A80Ay5gyHAn
+         tx42rHpVBUSyENQSZFhqy5mBaag5lx+KDnm79yN91lq5YkYpi9Z8JVY2xsJhEhdOXE
+         0as+13FvAAKy/o7FEEQhS6/aAB9DK77f4+6irtIZ9t1hsTOVBAAzftBVqb5bFSt6s+
+         QEVga1M6QhZnAUPLcT22hE/qr/6E5ZOYlbeKnDbRV/a2dXnU66e2ZP4DlCtk14MLhY
+         fUcOoOMGR6A8w==
+Date:   Thu, 23 Apr 2020 23:04:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-References: <20200423155539.4492a0cc@canb.auug.org.au>
- <20200423113041.GI4808@sirena.org.uk>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <00f801fc-cf1c-8ea0-3d2a-0c8e902dd1f0@linux.intel.com>
-Date:   Thu, 23 Apr 2020 07:26:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
+        YueHaibing <yuehaibing@huawei.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20200423230400.2cb1a285@canb.auug.org.au>
 In-Reply-To: <20200423113041.GI4808@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200423155539.4492a0cc@canb.auug.org.au>
+        <20200423113041.GI4808@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/me9ky4T/dLNjtXpiU+noB5h";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/me9ky4T/dLNjtXpiU+noB5h
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Mark,
 
-On 4/23/20 6:30 AM, Mark Brown wrote:
+On Thu, 23 Apr 2020 12:30:41 +0100 Mark Brown <broonie@kernel.org> wrote:
+>
 > On Thu, Apr 23, 2020 at 03:55:39PM +1000, Stephen Rothwell wrote:
-> 
->> Presumably caused by (one of) commits
-> 
->>    fe17e6cdc0fe ("ASoC: SOF: imx8: Fix randbuild error")
->>    cb0312f61c3e ("ASoC: SOF: imx: fix undefined reference issue")
-> 
->> I just removed the COMPILE_TEST from SND_SOC_SOF_IMX_TOPLEVEL for today.
-> 
+>=20
+> > Presumably caused by (one of) commits =20
+>=20
+> >   fe17e6cdc0fe ("ASoC: SOF: imx8: Fix randbuild error")
+> >   cb0312f61c3e ("ASoC: SOF: imx: fix undefined reference issue") =20
+>=20
+> > I just removed the COMPILE_TEST from SND_SOC_SOF_IMX_TOPLEVEL for today=
+. =20
+>=20
 > It looks like this is triggered by PowerPC not including
 > drivers/firmware - there are missing dependencies but it works for other
 > all*configs since the dependencies all get built in those.  It would be
 > helpful if PowerPC were fixed to include the firmware directory to
 > improve coverage.
 
-We have a fix for this, I'll send it later today. There were still unmet 
-dependencies and inconsistent use of select/depends.
+$ git grep drivers/firmware 'arch/*/*Kconfig*'
+arch/arm/Kconfig:source "drivers/firmware/Kconfig"
+arch/arm64/Kconfig:source "drivers/firmware/Kconfig"
+arch/ia64/Kconfig:source "drivers/firmware/Kconfig"
+arch/mips/Kconfig:source "drivers/firmware/Kconfig"
+arch/x86/Kconfig:source "drivers/firmware/Kconfig"
+
+so, sure, it works for some architectures.  We would need someone to do
+the work to make sure that adding drivers/firmware to all the others
+does not break other stuff.  Until then, please add the needed
+dependencies.
+
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/me9ky4T/dLNjtXpiU+noB5h
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6hkkAACgkQAVBC80lX
+0Gw/vgf/RCdmmZnXRnDInT2vsf1nlf2B3qr9OvydGkxsoxbQepgegAkwiwYAyAy1
+BnL/J0xhUHrH6pR1b+OfSOe/dNPtLbvAdpUE7aHDZ6/NiwCZCtbNc7+8iNwfhEz9
+bTL0j4Pb+BT0zE/dKtDZSZgi5DblRNdKhEPB9VlTLwqDidJza3iAPOK2ze6yuB4r
+dPVY/qT1xxpdLPng7K8zIVMtCiHiRAx8xPK0I2Tcqy/Qs8b9xqczqtYZgeC1KX14
+vwEKXc4+vVvP8lG7Z6nGxpoSPF2z68G31z3IXx0Bk6suHUb6PX61Qcy+s4exSKlf
+sY8twW9/duwIua7Lmygok5k7LtN8yw==
+=w+zl
+-----END PGP SIGNATURE-----
+
+--Sig_/me9ky4T/dLNjtXpiU+noB5h--
