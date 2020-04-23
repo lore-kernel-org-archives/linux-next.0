@@ -2,97 +2,76 @@ Return-Path: <SRS0=HJAX=6H=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FF4C54FCB
-	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 11:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0995C54FCB
+	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 12:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44C312077D
-	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 11:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587641445;
-	bh=kVntl4bz6GqjD14R9UNyNixCRlF7iMAYqQts9muhbvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zQrxFlh6yYaPMvSksU3zRqbcQYfm2rV0xOTmSUc22t092pnosCp/ILtk9W2BTIQWO
-	 GiHefo2PrxN84DOdrYI93RHBfMozJ7FPUgbD1oDdH+XbljsJkerk532bQwR+PlrYnL
-	 u1eiCloLnkMCQxC62/RsXjC9zwt6D8tINMPBq6Mk=
+	by mail.kernel.org (Postfix) with ESMTP id 85C002074F
+	for <linux-next@archiver.kernel.org>; Thu, 23 Apr 2020 12:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbgDWLao (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 23 Apr 2020 07:30:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49080 "EHLO mail.kernel.org"
+        id S1726119AbgDWM0e (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 23 Apr 2020 08:26:34 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62016 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727911AbgDWLao (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 23 Apr 2020 07:30:44 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCF6620736;
-        Thu, 23 Apr 2020 11:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587641444;
-        bh=kVntl4bz6GqjD14R9UNyNixCRlF7iMAYqQts9muhbvU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FPZ4IFAlEYGnZE/2x7zYn77H9Zoi2M/QcUtaWjjKgPlTx+Ai3+mPKQOgEo+Ygy3gY
-         RWFH8VN7CjoRL8kmjxZAmh8EVmPKzy5jM41IvwtuFdSLvNyK02lqGxHTghZiD3gyCj
-         Hh1ZMfeqUUsK0Ym/dD5iZyJIfBYgMW6exKlbhzxs=
-Date:   Thu, 23 Apr 2020 12:30:41 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        id S1726112AbgDWM0d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 23 Apr 2020 08:26:33 -0400
+IronPort-SDR: /sihSxZVvuDj6/0YsQxdBiFJ6ROFhR+PnSXIfJecDVMONCIbYSafRZ0b47QrXYUVgoChQo3WxY
+ Dc2rsZXCcWdg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 05:26:33 -0700
+IronPort-SDR: gFk0zFCNkZPm9QNMJ8rY7QXqd35COTkC6c1cVd+Rj7Ey+G/MP3RMx2ZVo6uTtEXNx+YUIz3qrA
+ p7xGQ7cYZXkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,307,1583222400"; 
+   d="scan'208";a="259407494"
+Received: from zzhang7-mobl1.amr.corp.intel.com (HELO [10.255.73.51]) ([10.255.73.51])
+  by orsmga006.jf.intel.com with ESMTP; 23 Apr 2020 05:26:32 -0700
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+To:     Mark Brown <broonie@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20200423113041.GI4808@sirena.org.uk>
+        YueHaibing <yuehaibing@huawei.com>
 References: <20200423155539.4492a0cc@canb.auug.org.au>
+ <20200423113041.GI4808@sirena.org.uk>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <00f801fc-cf1c-8ea0-3d2a-0c8e902dd1f0@linux.intel.com>
+Date:   Thu, 23 Apr 2020 07:26:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fmvA4kSBHQVZhkR6"
-Content-Disposition: inline
-In-Reply-To: <20200423155539.4492a0cc@canb.auug.org.au>
-X-Cookie: This unit... must... survive.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200423113041.GI4808@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
 
---fmvA4kSBHQVZhkR6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Apr 23, 2020 at 03:55:39PM +1000, Stephen Rothwell wrote:
+On 4/23/20 6:30 AM, Mark Brown wrote:
+> On Thu, Apr 23, 2020 at 03:55:39PM +1000, Stephen Rothwell wrote:
+> 
+>> Presumably caused by (one of) commits
+> 
+>>    fe17e6cdc0fe ("ASoC: SOF: imx8: Fix randbuild error")
+>>    cb0312f61c3e ("ASoC: SOF: imx: fix undefined reference issue")
+> 
+>> I just removed the COMPILE_TEST from SND_SOC_SOF_IMX_TOPLEVEL for today.
+> 
+> It looks like this is triggered by PowerPC not including
+> drivers/firmware - there are missing dependencies but it works for other
+> all*configs since the dependencies all get built in those.  It would be
+> helpful if PowerPC were fixed to include the firmware directory to
+> improve coverage.
 
-> Presumably caused by (one of) commits
-
->   fe17e6cdc0fe ("ASoC: SOF: imx8: Fix randbuild error")
->   cb0312f61c3e ("ASoC: SOF: imx: fix undefined reference issue")
-
-> I just removed the COMPILE_TEST from SND_SOC_SOF_IMX_TOPLEVEL for today.
-
-It looks like this is triggered by PowerPC not including
-drivers/firmware - there are missing dependencies but it works for other
-all*configs since the dependencies all get built in those.  It would be
-helpful if PowerPC were fixed to include the firmware directory to
-improve coverage.
-
---fmvA4kSBHQVZhkR6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6hfGAACgkQJNaLcl1U
-h9DRVgf+NI0QBwmID0HLQ6+7pq2Fc9/AfxVoYoCRl8W3Ip5Y9XPBBhyiSTM7iJgM
-0Js5rUODxu3T7vGrFr3LB59bmltCo1h/V1sVmm5fU8Dq4/2pj3NMk7wX4L+3s5LA
-l7NvVHkvSHg/G8Zf2V1T93byMfvCjK9RLOasggn19vo9OLFocruhCLCUziv2j1jh
-hwpFXBuPQW66MnijGJMMs9lVcBMur6uFyg95g2GDtdN2rmK73h4M8G0le5wE9b+f
-bXlkONOLMgWOoMsyTck9Wqk5Rna8G4EiSgzUTSj4TQ/gG/UYZy1UqrrHzmAPV0ET
-RxtEHPdPZ9SkbqinV2qLmuEmmPTS0w==
-=LHkp
------END PGP SIGNATURE-----
-
---fmvA4kSBHQVZhkR6--
+We have a fix for this, I'll send it later today. There were still unmet 
+dependencies and inconsistent use of select/depends.
