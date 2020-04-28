@@ -2,122 +2,80 @@ Return-Path: <SRS0=8J+/=6M=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BFEC83004
-	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 06:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8CFC83000
+	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 07:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B74E3206B9
-	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 06:55:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UgNAI6Ad"
+	by mail.kernel.org (Postfix) with ESMTP id 9741F206B9
+	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 07:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgD1Gzd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 28 Apr 2020 02:55:33 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:47945 "EHLO ozlabs.org"
+        id S1725917AbgD1HBd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 28 Apr 2020 03:01:33 -0400
+Received: from sauhun.de ([88.99.104.3]:39424 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbgD1Gzd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 28 Apr 2020 02:55:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49BC8H6DNXz9sSG;
-        Tue, 28 Apr 2020 16:55:27 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1588056931;
-        bh=6eiIFrHk1wWxVd8A8Z8Z5Fdd6GKLAXFKycz/ivOwzDA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=UgNAI6Adsh7CNRp6fa+3asPpwdKRSaxfoYa8DiaxQkbrk9TTfi2mDihi5QdUmYmND
-         A6BdRzNSMOKbP2UZknoJz/nhHfRZuYvPP3zuFqzLteNkEGXAq6tB7O5g8Ms28wmXk4
-         /JZA3TKTh1DOThDeZ9slqiolhDG3UnsvaQxHc4a3HfsVrb2QvdZPTRUTZf+6yI60Wc
-         ITt8w6ERAWnkmhpxF1JI0I3MWUeWtcjrwV/aiGdITTbAUVumy/JK3acouIXwwAcQSj
-         RSCT8PUE2Cday5SMW5okhE1vcEiaya1ABxB2I36VTLqAfDIK4CNfrbGN+opVcDDRvy
-         FQ/foocSRQRcw==
-Date:   Tue, 28 Apr 2020 16:55:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul@pwsan.com>
+        id S1725867AbgD1HBd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 28 Apr 2020 03:01:33 -0400
+Received: from localhost (p5486CA03.dip0.t-ipconnect.de [84.134.202.3])
+        by pokefinder.org (Postfix) with ESMTPSA id 1AB072C0710;
+        Tue, 28 Apr 2020 09:01:31 +0200 (CEST)
+Date:   Tue, 28 Apr 2020 09:01:30 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zong Li <zong.li@sifive.com>,
-        Vincent Chen <vincent.chen@sifive.com>
-Subject: linux-next: manual merge of the akpm-current tree with the risc-v
- tree
-Message-ID: <20200428165525.6e7c2f7a@canb.auug.org.au>
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: Re: linux-next: Fixes tag needs some work in the i2c tree
+Message-ID: <20200428070130.GA2522@kunai>
+References: <20200428082848.19d38b67@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oOtCp/bk25KN/dVmacqCv7d";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Content-Disposition: inline
+In-Reply-To: <20200428082848.19d38b67@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/oOtCp/bk25KN/dVmacqCv7d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/riscv/Kconfig
+> This triggered because the "space" after the ":" is a Unicode non-breaking
+> space (U+0x00a0, UTF8 0xc2 0xa0).  I am not sure if this is a problem
+> or not.  This is the forst time I have seen this.
 
-between commits:
+Thanks for reporting, I obviously didn't notice. Well, technically,
+commit messages can be UTF8, so not really an error. However, it will
+probably break lots of homebrew scripts, so a checkpatch warning it is,
+then?
 
-  d3c263cda1a5 ("riscv: Add KGDB support")
-  ce66581cb6e9 ("riscv: Use the XML target descriptions to report 3 system =
-registers")
+I'll fix it nonetheless.
 
-from the risc-v tree and commit:
 
-  bbb6dc9ac443 ("riscv: support DEBUG_WX")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/riscv/Kconfig
-index 39f7a70cbd72,8576cc027b76..000000000000
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@@ -68,8 -67,7 +67,9 @@@ config RISC
-  	select ARCH_HAS_GCOV_PROFILE_ALL
-  	select HAVE_COPY_THREAD_TLS
-  	select HAVE_ARCH_KASAN if MMU && 64BIT
- +	select HAVE_ARCH_KGDB
- +	select HAVE_ARCH_KGDB_QXFER_PKT
-+ 	select ARCH_HAS_DEBUG_WX
- =20
-  config ARCH_MMAP_RND_BITS_MIN
-  	default 18 if 64BIT
-
---Sig_/oOtCp/bk25KN/dVmacqCv7d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6n014ACgkQAVBC80lX
-0Gy9pgf+K+gRGhUD1wMp4hRaanXCmlHA1aqKXkXW4HcnEOzG9swpSdvl7uMN+Alc
-/5bPmmwrtkyKp/2dQjeT/tu9TSQOnvaNe4uwpgP2zUksx+r0v6kgW4kUQb0OniKu
-jTPhwKKY4jkuUDaL6UzsjoPJ/txI8myBIAYe7gVzXHW1yCkvmdqBnqosaabbTPyw
-tF4h3WBZhWTFLXobNJ9Ja9WHLaESgaqG6Npo/+W5YruOB3wZ9w714mGNP2jtHgfl
-YcjTgax4l0v0m9IQ09HMcGAsNuVp2J7q376/9GRr0Se5yQXGa91h0yM+B7ZP5+g0
-OqWdMZIrSjdGEVFO2gqg36ySv5XUFw==
-=0gmd
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6n1MYACgkQFA3kzBSg
+KbaBYBAAlqd23QfIGLSE5/GOIVifxr8xx1DXidoqRozdr4ZzAyRYnUDkULHFtqq6
+eUGdKrpNQkee9wfnQNBg6GCCP100mAu+ZY9od7MYwXm2TgkfQIs7sRSxzJduFSbl
+mbTqHok7u7Ai5gb8l+EjH7uujsS5axHjn3yAuY+s4GYngtPUhQOQts4icGWzPW0n
+1TaOKDRMi9N5ibQ9sbaYUNOhua/c5rxtQj8yJo3iH6YQpFuzlOJgulj9Xu1UqaYX
+eovK3YeuBKrqX4JlicQcjGcoF2xTtqdkj3fEbjHq8KCYFuzbI9b4Ml0IMd1m181l
+Zx2fJXeJRSnTMmrZzOFVGzJPBWPAtF7CiMwdoYMVUQvRK4Rrw5z8IvIx2isnL5ZE
+hVWwLDjQlkydD4EOCqx4GGjDAl73be7wBCttcerzGFPal9fXnJ4Z07rL8drLeHea
+XTkY4gR/8A2dvaH+XevPwCp+QM/6Dh0NmXrMnc+SEqzXtYfwIRIDYPB0PnX51NKG
+V9oWaNx+LTp0j3lEv9zhutH1KHVWacHpNqvbb6uxSqfIBZp5z0KeUc0X2G6op0zd
+OUK2IIaCvbLnefGAbMrLiKMxXAVfnRvnERg0NSiEG2bigcXu1PNBA2kJ0wSyKGOH
+USSbOkL2uP2806iQUiPsKIjuw0DXWguP+rqKlfnG/SRsNFcE2oI=
+=2VRM
 -----END PGP SIGNATURE-----
 
---Sig_/oOtCp/bk25KN/dVmacqCv7d--
+--BXVAT5kNtrzKuDFl--
