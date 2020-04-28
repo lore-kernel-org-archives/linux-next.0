@@ -6,138 +6,91 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF35C83000
-	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 12:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD08C83008
+	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 12:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDB00206A1
-	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 12:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3994206D6
+	for <linux-next@archiver.kernel.org>; Tue, 28 Apr 2020 12:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ND43hL9j";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZxF3R5eD"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pM7rz3M7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbgD1MPt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 28 Apr 2020 08:15:49 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:47905 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726361AbgD1MPt (ORCPT
+        id S1726846AbgD1Mzc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 28 Apr 2020 08:55:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726827AbgD1Mzb (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Tue, 28 Apr 2020 08:15:49 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 735E05CF;
-        Tue, 28 Apr 2020 08:15:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 28 Apr 2020 08:15:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=MKgnf5oZdY5J/2DP/ygrKEwrYrZ
-        vo+dhsYgP9CuFCh4=; b=ND43hL9jU2568+y6FZM/24NvLgNaPSj76c17+op89yK
-        bsC/nATK0W033RI/eAUVNtCyyX/X5fBlhX79hboHTWvEhHZg8s5MmnkfEKzNGasy
-        bE3w7H3nKG287Z68F/3KoHxPKZBw+oN3QtlAlierfwVdQ3U/ReHNmWYyCbHSzkDt
-        N2NSMz9ahxUABur+ObQm6xQFjnomdxQCSszzK+ih81hXmgq1AyuSMVNSLCpL3v6n
-        TL2mH3IICEHk0VU46ktqsej6NDaQDcmHVRdDWNj3wRy/uILPu9hH0fUnJcHzHjtX
-        NS8yRrkECK6Leq+DDgND6auPfcmT8+Lj7GhghHoGz5g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=MKgnf5
-        oZdY5J/2DP/ygrKEwrYrZvo+dhsYgP9CuFCh4=; b=ZxF3R5eDt2q0cdlKU2bBEw
-        6KB9qzsoPmspl2lEkuu7fd7btb+dGgTRtNTY+d1aA76PaD+8VCfGSMhNmyI+UWOH
-        loAdYLtZjZLj1ww6Bm7V05QKkiF63dSlLnjRgufmSpK1jYUbDFLiYo5Sr2MeIvSD
-        kJSyCCQSh3H/3coimpoM+SvVT6d+ShHkSbqerlxT1RRYJ4k/pVvgTddxphH8eURp
-        yQMwKbLOltHzuOyR3hyFMAztIL3z9Ez10n+Jc1qi72/OyY5DFKhECFk+REWUxV7N
-        2ELH0kzgbk5OrkmloI+Fddaasrb69q/h9BI+yr4oWhCkJaBmEbXQXiiaOupN5AHA
-        ==
-X-ME-Sender: <xms:cx6oXnfq7utcPguBKoQaf-Xj_kj54dHtxQ3tFX6OxhRCKCqZla6XEQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedriedugdeglecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledruddtje
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgv
-    gheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:cx6oXo73uuZWVTsJD-7uGbeLL0ZV1F9sERedckweQjZMgyZvZCfJwg>
-    <xmx:cx6oXs_8YcNFc50n4X_zNl8pZEZUiW7EuOZH4VO2XWhYo-P03po5Pw>
-    <xmx:cx6oXiF2zCb_WqqItrYDSj-IRsYgIZxP-pwL26l6pV7lAcusvdYKQg>
-    <xmx:dB6oXikNVwgN7Nt97UmAd4kp65DRyI69jZqwvtKlHMNojlbLOeJGUQ>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 183AF3280068;
-        Tue, 28 Apr 2020 08:15:46 -0400 (EDT)
-Date:   Tue, 28 Apr 2020 14:15:45 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        Tue, 28 Apr 2020 08:55:31 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845BDC03C1A9;
+        Tue, 28 Apr 2020 05:55:31 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49BM7g0ggCz9sP7;
+        Tue, 28 Apr 2020 22:55:27 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1588078527;
+        bh=Y47UAgUAwN2altZxsVR5r8sQ2CymmGxOKr3zUKWNfCs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pM7rz3M75dursj3FH7FuoCZxCoThX5DOFVapWQlX70HObHiZjpIoLtK4QSyWlDRr2
+         90RWNMbArJWXCYbrFyj539JZRUi4uiqFOuFnjH3Ii4plLWwf094SSy8Ya/24w+Gs+X
+         WixajLCBFtb6y1qN3ybk9K93FuYOMqv3kd+keptlaowLNDIssrt0bM4QcIzsrgA2kO
+         1Lxc76220fHALnEO2HJIws620fuu6GjvDyQ+vQp3a7ryVq0cU61cVXHtnwhQnW8CvK
+         usOImGfniilwRPklwvI+OulpGxPQaHGzjtAg7VGBWMQGmoccyl6fHGjsIbD7cCXYpi
+         IxkF3cDIIaelg==
+Date:   Tue, 28 Apr 2020 22:55:16 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Malcolm Priestley <tvboxspy@gmail.com>
 Subject: Re: linux-next: manual merge of the staging tree with the
  staging.current tree
-Message-ID: <20200428121545.GA1234722@kroah.com>
+Message-ID: <20200428225516.59ad9812@canb.auug.org.au>
+In-Reply-To: <20200428121545.GA1234722@kroah.com>
 References: <20200424151546.4dea83cb@canb.auug.org.au>
- <20200424064555.GA143960@kroah.com>
+        <20200424064555.GA143960@kroah.com>
+        <20200428121545.GA1234722@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200424064555.GA143960@kroah.com>
+Content-Type: multipart/signed; boundary="Sig_/c3I6eY74TZKPZPf/lkB_W+z";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Apr 24, 2020 at 08:45:55AM +0200, Greg KH wrote:
-> On Fri, Apr 24, 2020 at 03:15:46PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the staging tree got a conflict in:
-> > 
-> >   drivers/staging/vt6656/main_usb.c
-> > 
-> > between commit:
-> > 
-> >   664ba5180234 ("staging: vt6656: Fix calling conditions of vnt_set_bss_mode")
-> > 
-> > from the staging.current tree and commit:
-> > 
-> >   463288b98190 ("staging: vt6556: vnt_rf_setpower convert to use ieee80211_channel.")
-> > 
-> > from the staging tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc drivers/staging/vt6656/main_usb.c
-> > index 5f78cad3b647,3c76d3cb5bbe..000000000000
-> > --- a/drivers/staging/vt6656/main_usb.c
-> > +++ b/drivers/staging/vt6656/main_usb.c
-> > @@@ -743,13 -740,8 +736,12 @@@ static void vnt_bss_info_changed(struc
-> >   		vnt_update_pre_ed_threshold(priv, false);
-> >   	}
-> >   
-> >  +	if (changed & (BSS_CHANGED_BASIC_RATES | BSS_CHANGED_ERP_PREAMBLE |
-> >  +		       BSS_CHANGED_ERP_SLOT))
-> >  +		vnt_set_bss_mode(priv);
-> >  +
-> > - 	if (changed & BSS_CHANGED_TXPOWER)
-> > - 		vnt_rf_setpower(priv, priv->current_rate,
-> > - 				conf->chandef.chan->hw_value);
-> > + 	if (changed & (BSS_CHANGED_TXPOWER | BSS_CHANGED_BANDWIDTH))
-> > + 		vnt_rf_setpower(priv, conf->chandef.chan);
-> >   
-> >   	if (changed & BSS_CHANGED_BEACON_ENABLED) {
-> >   		dev_dbg(&priv->usb->dev,
-> 
-> 
-> Thanks, that looks correct, I'll handle this when the staging.linus
-> branch goes to Linus in a few days.
+--Sig_/c3I6eY74TZKPZPf/lkB_W+z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This should now all be resolved in my staging.next branch.
+Hi Greg,
 
-thanks,
+On Tue, 28 Apr 2020 14:15:45 +0200 Greg KH <greg@kroah.com> wrote:
+>
+> This should now all be resolved in my staging.next branch.
 
-greg k-h
+Yep, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/c3I6eY74TZKPZPf/lkB_W+z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6oJ7UACgkQAVBC80lX
+0Gwh/ggAnC9mj602XOfR51MrtWaeI6Ip4h0HXHl30uqP+S5avDzQquZz6nPQyxFj
+Sqm+DUAWGYteq5pXIbTbB8BIVn7t3RqSLV4QswkJAZ8gTet/Er3fjJwBMhnFds//
+eCDGlEeWgqrWpbvIhL8P9p+57O96ZtSgZGiKuTLzZQn8kavB7lj3Kq03mK8cIH96
+w0aGkFaw3WqRukOrBtCeW3kQ91xPHsouXwyZF/a2km0pKEFfa7SJKHhPndK81Tl7
+7Zrq6VNqLt8otmhNaokvTVrFMr8r4rn9e6eqJgMsfgJSn0rAD6L0bANYVwyHjjJI
+mDkzBXEzCHQydPcG0T26jRnyv0dobw==
+=DDYk
+-----END PGP SIGNATURE-----
+
+--Sig_/c3I6eY74TZKPZPf/lkB_W+z--
