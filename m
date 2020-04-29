@@ -2,70 +2,94 @@ Return-Path: <SRS0=o6+q=6N=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271C4C83003
-	for <linux-next@archiver.kernel.org>; Wed, 29 Apr 2020 06:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAF4C83003
+	for <linux-next@archiver.kernel.org>; Wed, 29 Apr 2020 08:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7C4206D6
-	for <linux-next@archiver.kernel.org>; Wed, 29 Apr 2020 06:54:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4800D206D9
+	for <linux-next@archiver.kernel.org>; Wed, 29 Apr 2020 08:14:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q+ify96+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgD2GyI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 29 Apr 2020 02:54:08 -0400
-Received: from verein.lst.de ([213.95.11.211]:32872 "EHLO verein.lst.de"
+        id S1726386AbgD2IOJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 29 Apr 2020 04:14:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:48853 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726355AbgD2GyI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 29 Apr 2020 02:54:08 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id C2BE968BEB; Wed, 29 Apr 2020 08:54:04 +0200 (CEST)
-Date:   Wed, 29 Apr 2020 08:54:04 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1726355AbgD2IOJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 29 Apr 2020 04:14:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49BrrZ2nKrz9sSM;
+        Wed, 29 Apr 2020 18:14:06 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1588148047;
+        bh=aV0PEZPNtfTNVHHepqbBqkTosbZbpsGAfAJk+1cZnFs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Q+ify96+D3WB501DW64HOaDzCsOTz6olVhWC9SYpH/BYrDumMYmDxvrbm2RKqtaE4
+         NqlPz0P444rxK9Cu0CTB4T8fU06v7xyaT//qNILtFBgF81aMHKPoGpZF2qK9z9R4YX
+         B4OPDtJ1LxDn4I+ib+IZfz5d+tHH+SVXwVW2v9Ja12BcOcxSWAOdLeyrXAwSNxJcpu
+         OS7988cT/RphFgwq3bq0PlXJdlYLWuEAEeJFD7o1xWWmxfzvT/KxexsttUl+Eze5Pe
+         W8givRR/nqfsm+7tkvpSU7IPjAtJzmj2MCN/1Mo0d3PYQfs3GhVec4mttwY7LK3ZAs
+         I/ucZFqXxn5yg==
+Date:   Wed, 29 Apr 2020 18:14:03 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- bpf-next tree
-Message-ID: <20200429065404.GA32139@lst.de>
-References: <20200429164507.35ac444b@canb.auug.org.au> <20200429064702.GA31928@lst.de> <CAADnVQJWLPpt6tEGo=KkLBaHLpwZFLBfZX7UB4Z6+hMf6g220w@mail.gmail.com>
+        YueHaibing <yuehaibing@huawei.com>
+Subject: linux-next: build warning after merge of the soundwire tree
+Message-ID: <20200429181403.07a54d40@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAADnVQJWLPpt6tEGo=KkLBaHLpwZFLBfZX7UB4Z6+hMf6g220w@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: multipart/signed; boundary="Sig_/T44KkzRtqgVZ2Lm5bKFtiq6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 11:49:34PM -0700, Alexei Starovoitov wrote:
-> On Tue, Apr 28, 2020 at 11:47 PM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > On Wed, Apr 29, 2020 at 04:45:07PM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > Today's linux-next merge of the akpm-current tree got a conflict in:
-> > >
-> > >   kernel/sysctl.c
-> > >
-> > > between commit:
-> > >
-> > >   f461d2dcd511 ("sysctl: avoid forward declarations")
-> > >
-> > > from the bpf-next tree and commits:
-> >
-> > Hmm, the above should have gone in through Al..
-> 
-> Al pushed them into vfs tree and we pulled that tag into bpf-next.
+--Sig_/T44KkzRtqgVZ2Lm5bKFtiq6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ok.  And Stephen pulled your tree first.
+Hi all,
+
+[Sorry that I did not report this earlier.]
+
+After merging the soundwire tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+drivers/soundwire/intel_init.c:193:14: warning: 'sdw_intel_init' defined bu=
+t not used [-Wunused-function]
+  193 | static void *sdw_intel_init(acpi_handle *parent_handle,
+      |              ^~~~~~~~~~~~~~
+
+Introduced by commit
+
+  2978a43e7690 ("soundwire: intel: Make sdw_intel_init static")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/T44KkzRtqgVZ2Lm5bKFtiq6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6pN0sACgkQAVBC80lX
+0GyiDgf+MeySdb0MFM9y5ONWf0wElC6K3bCe1yZVCiJQPTRVScyr22RQtX02vqHg
+o4XZR4YggZVU9Q2FljgVr2dlP2ctxo9NXfitndY4Oxqk5182A8aWi2HwybJ96kbG
+RgYkFLGrPmuneP6SgGdTq4eQvEq+INDmzerOWCCC+58w+X1XO+f9YDoQQJO8GlXG
+JD7jBhmRjF51zCy3JQ7QImr/CR7YUEt/2vcr3sG+SgjZZG0ykKP7yH1gy6NWM6+x
+veTNYxI7ffbQofbhopChdurUBsyV6uuSz7f0Q9TdhYhxutOzan3o/+Vy2TJPwQ96
+iEuvXOa0P8i15bxjEHxuuxnJNkOyTw==
+=uLAY
+-----END PGP SIGNATURE-----
+
+--Sig_/T44KkzRtqgVZ2Lm5bKFtiq6--
