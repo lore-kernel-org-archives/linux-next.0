@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EFEC4724C
-	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 04:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1D1C4724C
+	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 04:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF16820836
-	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 04:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0520D20857
+	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 04:14:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="IAI2Ts2h"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="N4SldThh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgEAEOF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 1 May 2020 00:14:05 -0400
-Received: from gateway20.websitewelcome.com ([192.185.60.19]:47488 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726452AbgEAEOE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 1 May 2020 00:14:04 -0400
-X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 May 2020 00:14:03 EDT
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 2456B400C5FA7
-        for <linux-next@vger.kernel.org>; Thu, 30 Apr 2020 21:08:57 -0500 (CDT)
+        id S1728220AbgEAEOX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 1 May 2020 00:14:23 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.31]:24139 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728217AbgEAEOX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 1 May 2020 00:14:23 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 87CE5400C3532
+        for <linux-next@vger.kernel.org>; Thu, 30 Apr 2020 22:50:12 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id UMJwjqs0AAGTXUMJwj8xY9; Thu, 30 Apr 2020 22:26:36 -0500
+        id UMgmjScToXVkQUMgmjbpBh; Thu, 30 Apr 2020 22:50:12 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=sLNiod4wWyNf3MxlJD5dqytFHvgWQv3WzDsXbMGio2g=; b=IAI2Ts2h2qtCrTplwOxN/QN5rD
-        RwH2QnSsTQZaxIofKJdpu0T8huasxbDlei/nA4PLib3acmiQOTiNl0onCWa4hUzVxnwLffMyO84HM
-        pJRwQGoGGJd2jmMkG5NRCp058ON1jD1OHFuvfm7SiJGKLES28FDisBS6DxFsjiP/2TLfHNvaqF/gM
-        3rEWgBLJ7bT78Yhc9ARfQMYnANltiU4AwfTn6Qyv2P4ldqJA6aTLi0k2ugEmReMsrsPmqIjsTuVp6
-        F2a8uAvR3tj1S+iOIayfVyqEpaBlZfTGXc5bfLtqOO2dki9gd+Us2iZTgDEqF35UwVwLr82NDvWUP
-        PJPLIwJA==;
-Received: from [189.207.59.248] (port=58366 helo=[192.168.15.9])
+        bh=X5v6XgBQvXYCV/k6yfv1MAtOVy8utTNfVch0kLIBlYE=; b=N4SldThhN2NFbW+d8EcfmV1Hpr
+        5T02bteGw36ZL/u44B8sSa6+l7WdcElpXlEPo5In9M6PIGaHN4UQFdvKgXFbohfDqg3OiyRYKpVCi
+        91Mm1dk3fKkLYtn4JTlA08CHv/uNQkj/FkPbwdZHQbAxQ2FX6TMCgMBwVWwjSkGzWlP5SfQ5VaCHV
+        1VexxlLorJ88O3zkvsKqWi8c0LATvjv3WSw+OtaGw6H1DnviXgGrbWtANouiChDfclLMfBrOUKK3Y
+        yaeloFp6ln9CgWhzh7BgiDMUUZ93QVlrjUZDcPOQmEecR1ow4e507nXMvhqjLCNgcCPQgpPX1j80I
+        mA6g9XYQ==;
+Received: from [189.207.59.248] (port=58874 helo=[192.168.15.9])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1jUMJv-002ZWy-RM; Thu, 30 Apr 2020 22:26:35 -0500
+        id 1jUMgm-002kze-2o; Thu, 30 Apr 2020 22:50:12 -0500
 Subject: Re: linux-next: manual merge of the mlx5-next tree with the
  kspp-gustavo tree
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>,
         David Miller <davem@davemloft.net>,
         Networking <netdev@vger.kernel.org>
@@ -58,7 +58,7 @@ Cc:     Leon Romanovsky <leon@kernel.org>,
         Raed Salem <raeds@mellanox.com>
 References: <20200429120625.2b5bb507@canb.auug.org.au>
  <20200501131230.58835994@canb.auug.org.au>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+ <32eb40f0-a17b-5a7f-41e0-0f30a507fc31@embeddedor.com>
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
  xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
  2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
@@ -102,12 +102,12 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <32eb40f0-a17b-5a7f-41e0-0f30a507fc31@embeddedor.com>
-Date:   Thu, 30 Apr 2020 22:30:57 -0500
+Message-ID: <585d76be-a2e7-1da6-9a9a-f46f14aea222@embeddedor.com>
+Date:   Thu, 30 Apr 2020 22:54:33 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200501131230.58835994@canb.auug.org.au>
+In-Reply-To: <32eb40f0-a17b-5a7f-41e0-0f30a507fc31@embeddedor.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -119,13 +119,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.207.59.248
 X-Source-L: No
-X-Exim-ID: 1jUMJv-002ZWy-RM
+X-Exim-ID: 1jUMgm-002kze-2o
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.15.9]) [189.207.59.248]:58366
+X-Source-Sender: ([192.168.15.9]) [189.207.59.248]:58874
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
+X-Email-Count: 14
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-next-owner@vger.kernel.org
@@ -133,94 +133,19 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+Stephen,
 
-On 4/30/20 22:12, Stephen Rothwell wrote:
-> Hi all,
+On 4/30/20 22:30, Gustavo A. R. Silva wrote:
+
+>> This is now a conflict between the net-next and kspp-gustavo trees.
+>>
 > 
-> On Wed, 29 Apr 2020 12:06:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the mlx5-next tree got a conflict in:
->>
->>   include/linux/mlx5/mlx5_ifc.h
->>
->> between commit:
->>
->>   3ba225b506a2 ("treewide: Replace zero-length array with flexible-array member")
->>
->> from the kspp-gustavo tree and commit:
->>
->>   d65dbedfd298 ("net/mlx5: Add support for COPY steering action")
->>
->> from the mlx5-next tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->>
->> -- 
->> Cheers,
->> Stephen Rothwell
->>
->> diff --cc include/linux/mlx5/mlx5_ifc.h
->> index 8d30f18dcdee,fb243848132d..000000000000
->> --- a/include/linux/mlx5/mlx5_ifc.h
->> +++ b/include/linux/mlx5/mlx5_ifc.h
->> @@@ -5743,7 -5771,7 +5771,7 @@@ struct mlx5_ifc_alloc_modify_header_con
->>   	u8         reserved_at_68[0x10];
->>   	u8         num_of_actions[0x8];
->>   
->> - 	union mlx5_ifc_set_action_in_add_action_in_auto_bits actions[];
->>  -	union mlx5_ifc_set_add_copy_action_in_auto_bits actions[0];
->> ++	union mlx5_ifc_set_add_copy_action_in_auto_bits actions[];
->>   };
->>   
->>   struct mlx5_ifc_dealloc_modify_header_context_out_bits {
->> @@@ -9677,9 -9705,32 +9705,32 @@@ struct mlx5_ifc_mcda_reg_bits 
->>   
->>   	u8         reserved_at_60[0x20];
->>   
->>  -	u8         data[0][0x20];
->>  +	u8         data[][0x20];
->>   };
->>   
->> + enum {
->> + 	MLX5_MFRL_REG_RESET_TYPE_FULL_CHIP = BIT(0),
->> + 	MLX5_MFRL_REG_RESET_TYPE_NET_PORT_ALIVE = BIT(1),
->> + };
->> + 
->> + enum {
->> + 	MLX5_MFRL_REG_RESET_LEVEL0 = BIT(0),
->> + 	MLX5_MFRL_REG_RESET_LEVEL3 = BIT(3),
->> + 	MLX5_MFRL_REG_RESET_LEVEL6 = BIT(6),
->> + };
->> + 
->> + struct mlx5_ifc_mfrl_reg_bits {
->> + 	u8         reserved_at_0[0x20];
->> + 
->> + 	u8         reserved_at_20[0x2];
->> + 	u8         pci_sync_for_fw_update_start[0x1];
->> + 	u8         pci_sync_for_fw_update_resp[0x2];
->> + 	u8         rst_type_sel[0x3];
->> + 	u8         reserved_at_28[0x8];
->> + 	u8         reset_type[0x8];
->> + 	u8         reset_level[0x8];
->> + };
->> + 
->>   struct mlx5_ifc_mirc_reg_bits {
->>   	u8         reserved_at_0[0x18];
->>   	u8         status_code[0x8];
-> 
-> This is now a conflict between the net-next and kspp-gustavo trees.
+> Thanks for reporting this. I think the best solution, for now, is to remove the
+> changes from my tree. I'll do it right away.
 > 
 
-Thanks for reporting this. I think the best solution, for now, is to remove the
-changes from my tree. I'll do it right away.
+I just updated my -next tree. This conflict should be resolved now. :)
 
 Thanks
 --
 Gustavo
-
