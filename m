@@ -2,130 +2,92 @@ Return-Path: <SRS0=T6QX=6P=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D252C4724C
-	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 03:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EDAC4724C
+	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 03:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06CB720643
-	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 03:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0767E20836
+	for <linux-next@archiver.kernel.org>; Fri,  1 May 2020 03:56:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n0/oe4aL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g4HrP8Bq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbgEADpq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 30 Apr 2020 23:45:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:47965 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbgEADpq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 30 Apr 2020 23:45:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728150AbgEAD4v (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 30 Apr 2020 23:56:51 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37697 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727889AbgEAD4v (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 30 Apr 2020 23:56:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588305410;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bXalt8zK+YdFYaEr91Rzg8c48giwHyBf2CnOS3ryAnE=;
+        b=g4HrP8BqXk4dZFfJBE4sewsZrQNTx3zDynKz+bmqCUXCLKdCyQby8RbRFVYZToHIssirNt
+        SLskPdBPVzJEjv4244XsBahZkvIrX93fbYkXRy2Afa9oBC2QMz4y7CLR+/mGdVCrbWckc4
+        F6KhmNSTJlB9WeqBJgFt387GuFrENYY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-494-LWnWZ9qkMw6JQyRYU5-6Mw-1; Thu, 30 Apr 2020 23:56:48 -0400
+X-MC-Unique: LWnWZ9qkMw6JQyRYU5-6Mw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49Cynx66VLz9sTP;
-        Fri,  1 May 2020 13:45:41 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1588304743;
-        bh=IIPHFxBcj85QE/JOewCEDMMpIUUBvRoR4Qgg9tLU9ys=;
-        h=Date:From:To:Cc:Subject:From;
-        b=n0/oe4aLBYnd0kU17bBSG/shak8TUpLVzsim9vQzP+Gx6ztXNam/bKTtuzxrV2HKK
-         6FA3u1j+IakNj6a12gt+Mg+FxHtVQS4R+E2T1jxmBQekSIxjjlDzgGqA+j0/V8HSBH
-         oojpNbn3pBGkCEdKE7/Nvnsz4on5WkFq9tc7gLtN52be19NfkQo2Wi4/nHLOAwuomM
-         timJod54omTDV+/j3fwqTGyz4pZH/JhymbHHakAwGuOi1WN1U6UMVZ/1I7scs/9ILe
-         XlHr1A4hVMaWf664Xia/8BTt5BSV0WoTxBGeLi7thqKVGpZ5jWgLVqRzQy45/HFCdG
-         X0IxSalQRXIsA==
-Date:   Fri, 1 May 2020 13:45:36 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45077186E6F9;
+        Fri,  1 May 2020 03:56:47 +0000 (UTC)
+Received: from treble (ovpn-113-19.rdu2.redhat.com [10.10.113.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8B583579A5;
+        Fri,  1 May 2020 03:56:46 +0000 (UTC)
+Date:   Thu, 30 Apr 2020 22:56:44 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes
- tree
-Message-ID: <20200501134536.12468fa1@canb.auug.org.au>
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Apr 30 (objtool warnings)
+Message-ID: <20200501035644.i7woe5bpyxqwjpwh@treble>
+References: <20200430174019.417e5f3e@canb.auug.org.au>
+ <8eedaa40-c93d-428e-47aa-ee1e6b6d69e6@infradead.org>
+ <9005add6-3b90-f9f0-eb56-6e309853eb7f@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/rd9/1PLkDNX6mHZWGfNHp2o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9005add6-3b90-f9f0-eb56-6e309853eb7f@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/rd9/1PLkDNX6mHZWGfNHp2o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Apr 30, 2020 at 07:40:52AM -0700, Randy Dunlap wrote:
+> On 4/30/20 7:31 AM, Randy Dunlap wrote:
+> > On 4/30/20 12:40 AM, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> Changes since 20200429:
+> >>
+> > 
+> > on x86_64:
+> > 
+> > kernel/exit.o: warning: objtool: __x64_sys_exit_group()+0x2e: unreachable instruction
+> > kernel/cred.o: warning: objtool: copy_creds()+0x278: unreachable instruction
+> > net/core/skbuff.o: warning: objtool: skb_push()+0x9e: unreachable instruction
+> > 
+> > 
+> > Full randconfig file is attached.
+> > 
+> 
+> oops, forgot to Cc: Josh and Peter.
 
-Hi all,
+These are all related to -flive-patching, for some reason it reduces
+GCC's ability to detect local noreturn functions.  I had some patches
+for these (and more) I'll need to dig up.
 
-Today's linux-next merge of the drm tree got a conflict in:
+-- 
+Josh
 
-  include/linux/dma-buf.h
-
-between commit:
-
-  6f49c2515e22 ("dma-buf: fix documentation build warnings")
-
-from the drm-misc-fixes tree and commit:
-
-  09606b5446c2 ("dma-buf: add peer2peer flag")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/dma-buf.h
-index 57bcef6f988a,82e0a4a64601..000000000000
---- a/include/linux/dma-buf.h
-+++ b/include/linux/dma-buf.h
-@@@ -333,8 -334,16 +333,16 @@@ struct dma_buf=20
-   * Attachment operations implemented by the importer.
-   */
-  struct dma_buf_attach_ops {
-+ 	/**
-+ 	 * @allow_peer2peer:
-+ 	 *
-+ 	 * If this is set to true the importer must be able to handle peer
-+ 	 * resources without struct pages.
-+ 	 */
-+ 	bool allow_peer2peer;
-+=20
-  	/**
- -	 * @move_notify
- +	 * @move_notify: [optional] notification that the DMA-buf is moving
-  	 *
-  	 * If this callback is provided the framework can avoid pinning the
-  	 * backing store while mappings exists.
-
---Sig_/rd9/1PLkDNX6mHZWGfNHp2o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6rm2AACgkQAVBC80lX
-0GxJBwf/coOFFEbY8Z/MwYFICaThvtaMgyS97f1WpYa3Pnj8wCQ7CGfTVQVwKa77
-CNkg/096iwIc/eJVgNbODY+XKh28Q92IA4jVwkJ+rTiFkhcb/JI7A4m4Nvhkrx9X
-RihPQ0BTkoT+oJBUWvzpOoi8lmrHQaxCPmRspjPqk7/7DPFZbRftHGATzziZXHDG
-4Jx+MaFlZj+tygXiJMQoSESiuxRvpPNkG1bBrufr3/4dZ5U/ZcSQPrCfmN288oCV
-pYo3IvWoJLHB4Xd7NTrxgNJYjnCe4Pz+XXSZUji9g0p+jqQU27firEzT2Ot4XDif
-xYpWwAaOARGTWWEUv9uTctLrWv3/cA==
-=84tC
------END PGP SIGNATURE-----
-
---Sig_/rd9/1PLkDNX6mHZWGfNHp2o--
