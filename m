@@ -2,115 +2,230 @@ Return-Path: <SRS0=UVIl=6Z=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151C1C54E8D
-	for <linux-next@archiver.kernel.org>; Mon, 11 May 2020 15:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E3DC47255
+	for <linux-next@archiver.kernel.org>; Mon, 11 May 2020 20:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9106206D5
-	for <linux-next@archiver.kernel.org>; Mon, 11 May 2020 15:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1684D20752
+	for <linux-next@archiver.kernel.org>; Mon, 11 May 2020 20:36:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="WkH6I4MX"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="JrxnTrNr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbgEKP22 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 11 May 2020 11:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726173AbgEKP21 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 11 May 2020 11:28:27 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95502C061A0C
-        for <linux-next@vger.kernel.org>; Mon, 11 May 2020 08:28:26 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id t16so4078774plo.7
-        for <linux-next@vger.kernel.org>; Mon, 11 May 2020 08:28:26 -0700 (PDT)
+        id S1729842AbgEKUg7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 11 May 2020 16:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729801AbgEKUg6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 11 May 2020 16:36:58 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAB02C061A0C
+        for <linux-next@vger.kernel.org>; Mon, 11 May 2020 13:36:58 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id d184so5275124pfd.4
+        for <linux-next@vger.kernel.org>; Mon, 11 May 2020 13:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sU6/Ap1ejE6vLfYumdjwgHoh2Gd0VUeSHIvSaou8lbY=;
-        b=WkH6I4MXB4YwCmjTwfC9sYSwt75AgJ+dqhYinn/45vvg7OHLvtfhBrLP8vBgxvEfhf
-         tuLrZuazYIHXGpIvEqWrLUIGPplFgTesIX+FvwDKx8QYQgDfeDrTcEnYtl5snfKUqOb4
-         +27RxtciXPvLwM6njCKRBqpsb9ffD0AsaauSLROIkeCDVEergyaYGoHx62blUScRW10A
-         WzD0iLST7rdFLY0Yrkv2UHmXsqXXTdCcM9BuzAIwJ+6UvAVR+fTahnWlOVV9d6xc4o5g
-         rUVVFlL36ApWWGBYHi2V6M/pmnu1jHrT7oEdXuL+bpCgMhMLchnz4SVJVfWUxlY7a2SJ
-         /yhQ==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=MF+WJ6DfbRumLiydy3F4fjQ1+kZTp2GDwmahNUldPQg=;
+        b=JrxnTrNrmuzDuR8ALTdIOrU8US7fPOfL97rTNebPBcrSXk5SiEkUN3jSnDyP6kL4uC
+         Z5ffLKTZ95god3R8FUShYJRXuccqNqiJCljbf60nkABhdKBkOU5BlFW4e01z7WI0pqAl
+         v9HG4+GkmpmKV5MW9jDJdmUooereu3ZWY4usCSY+Ps6auClNlKFKOHbUuKRfNrM+zNKG
+         NBLiOm1js/9fHSaKeogXZGGZZyywNbg2VNnAKqC/79dQQ8yGx7PAzpgRm27Wynz6Cm77
+         BLSuJsQzbvGOvAwgHhJEupniUBSo9AzF39GgPn2iuq0qBZ2kHQGA0pOmBZl8Gjul7/HQ
+         yN+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sU6/Ap1ejE6vLfYumdjwgHoh2Gd0VUeSHIvSaou8lbY=;
-        b=sL7e80LWypdzUG1JpaZXJwvfHG29xvF5q2NPeWLgWCjsM8zgdJb1QEvrrwPSKOs84c
-         VcrvI4Wn3F8MfTwUBg38wtssDV/cxZh3jTYGgp+tkyjfKC/mOTUgTYCIoqVaguQKNOaV
-         cBaFYKTFbtyhLEfFGX/yColktYR3k+iUg8eUuTuW8Yl1iSnwGCWb3VkzzqiX9gVF7LQf
-         mLFjLv3JBsMZPlmO+Y4AH3aemfsDkEuyy4EBtmInv/GzI5DE5xe1e3xip7sCAUmcdB2b
-         2eqyUu/m2FUbo8B3EnlAuyofAtGphNvxPs6p9ITEJEB2YnvImQ6+NG6FsMeAm54vBzhu
-         UjCg==
-X-Gm-Message-State: AGi0PuYzICSaWt+GIp8aa1dFRpNZ3EIEIR88y/YWtnAEjKeh04NF56dn
-        LwwGOQc9L4D72nOoedjfT4QZGw==
-X-Google-Smtp-Source: APiQypJ839OdEAVyroEW6HDW3lotjBrNt50hVB0MDGzX9Xkb+EriFzeC7/X6yWfaIRwuKdO5G74DuQ==
-X-Received: by 2002:a17:902:bc86:: with SMTP id bb6mr15384209plb.243.1589210905743;
-        Mon, 11 May 2020 08:28:25 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:2dd6:4c58:486d:263e? ([2605:e000:100e:8c61:2dd6:4c58:486d:263e])
-        by smtp.gmail.com with ESMTPSA id y7sm9563873pfq.21.2020.05.11.08.28.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 May 2020 08:28:24 -0700 (PDT)
-Subject: Re: linux-next: build failure after merge of the block tree
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bart Van Assche <bvanassche@acm.org>
-References: <20200511142756.1b7ef706@canb.auug.org.au>
- <74a0ddc6-8637-c821-7128-4431261b0c12@kernel.dk>
- <20200511151749.GA29295@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <20234840-c9f4-1e68-14f1-57b1ccd1c730@kernel.dk>
-Date:   Mon, 11 May 2020 09:28:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=MF+WJ6DfbRumLiydy3F4fjQ1+kZTp2GDwmahNUldPQg=;
+        b=HJ1bpNf8liXfTD9vwya8896bXIcSLk+QMpkmbp/SAt8RfD/w3y6y5eSSyYaHUasnQp
+         C8Y+HbbmTooEsqp5T4vT1maSboOMwDBV42glXLSXdLEJP58SSlggDdTOSxwbz7QhSJfw
+         j4nTSU32itc2z7LuzyK3EBnT3Tupkmn5AdVHK6wbmFuU/iOsOvdWgqLeaSonQThOSYd/
+         gHABICleaxTBaAic759JsFUETu/tS8OqPSsYQvBC3hQRq4YU+gYPfcXQzFOWsHxqDK+P
+         TtXBFQj9yOBFHNdWeA8c5e3A9bkYSOREfpc5AA5whaxS0TsL1/eWRrmm5GVBjW+dSZEz
+         8Ikg==
+X-Gm-Message-State: AGi0PuZPbX5ppX4B/D/M6rALKumvaJp3i1gsGxpq+CP+k5qjnSSfWSVr
+        OyjUdVkT7yhevMEXhUyzjLp62+jN19o=
+X-Google-Smtp-Source: APiQypLLqzjNJ0SW9hfrcrcUWf04Fjmm0JvWOPw0AwWkzyrIEnLSwAbbZTB8xUhipVOWDUcXT1ArFg==
+X-Received: by 2002:a62:be0c:: with SMTP id l12mr17555115pff.95.1589229417827;
+        Mon, 11 May 2020 13:36:57 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id f6sm10016077pfn.189.2020.05.11.13.36.56
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2020 13:36:57 -0700 (PDT)
+Message-ID: <5eb9b769.1c69fb81.cd8a3.470e@mx.google.com>
+Date:   Mon, 11 May 2020 13:36:57 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200511151749.GA29295@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: next
+X-Kernelci-Kernel: next-20200511
+X-Kernelci-Report-Type: boot
+Subject: next/master boot: 249 boots: 13 failed, 225 passed with 5 offline,
+ 6 untried/unknown (next-20200511)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 5/11/20 9:17 AM, Christoph Hellwig wrote:
-> On Mon, May 11, 2020 at 09:06:41AM -0600, Jens Axboe wrote:
->> On 5/10/20 10:27 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> After merging the block tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>>
->>> drivers/block/aoe/aoeblk.c: In function 'aoeblk_gdalloc':
->>> drivers/block/aoe/aoeblk.c:410:21: error: 'struct backing_dev_info' has no member named 'name'
->>>   410 |  q->backing_dev_info->name = "aoe";
->>>       |                     ^~
->>>
->>> Caused by commit
->>>
->>>   1cd925d58385 ("bdi: remove the name field in struct backing_dev_info")
->>
->> Gah, thanks Stephen. This series is looking less and less impressive,
->> fallout for both 5.7 and 5.8, in terms of build testing (none).
-> 
-> And the sad part is that it has been sitting out there exposed to the
-> buildbot for weeks.  Sigh.
+next/master boot: 249 boots: 13 failed, 225 passed with 5 offline, 6 untrie=
+d/unknown (next-20200511)
 
-Indeed, I do wish the build bot was a bit more expedient (as in 24h turn
-around would be good), and reliable. Seems hit or miss, don't fully trust
-it and this series is an example of why.
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20200511/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20200511/
 
--- 
-Jens Axboe
+Tree: next
+Branch: master
+Git Describe: next-20200511
+Git Commit: 4b20e7462caa697f8a2cdab04ed8a5881cc65427
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 104 unique boards, 24 SoC families, 29 builds out of 228
 
+Boot Regressions Detected:
+
+arm:
+
+    imx_v6_v7_defconfig:
+        gcc-8:
+          imx6dl-wandboard_dual:
+              lab-baylibre-seattle: new failure (last pass: next-20200508)
+          imx6dl-wandboard_solo:
+              lab-baylibre-seattle: new failure (last pass: next-20200508)
+
+    multi_v7_defconfig:
+        gcc-8:
+          tegra124-jetson-tk1:
+              lab-collabora: failing since 4 days (last pass: next-20200505=
+ - first fail: next-20200507)
+
+    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
+        gcc-8:
+          tegra124-jetson-tk1:
+              lab-collabora: failing since 4 days (last pass: next-20200505=
+ - first fail: next-20200507)
+
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+          tegra124-jetson-tk1:
+              lab-collabora: failing since 4 days (last pass: next-20200505=
+ - first fail: next-20200507)
+
+    sama5_defconfig:
+        gcc-8:
+          at91-sama5d4_xplained:
+              lab-baylibre: failing since 83 days (last pass: next-20200214=
+ - first fail: next-20200217)
+
+    tegra_defconfig:
+        gcc-8:
+          tegra124-jetson-tk1:
+              lab-collabora: failing since 4 days (last pass: next-20200505=
+ - first fail: next-20200507)
+          tegra30-beaver:
+              lab-baylibre-seattle: failing since 4 days (last pass: next-2=
+0200505 - first fail: next-20200507)
+
+    versatile_defconfig:
+        gcc-8:
+          versatile-pb:
+              lab-collabora: new failure (last pass: next-20200508)
+
+arm64:
+
+    defconfig:
+        clang-9:
+          apq8016-sbc:
+              lab-bjorn: failing since 4 days (last pass: next-20200505 - f=
+irst fail: next-20200507)
+        gcc-8:
+          sun50i-a64-pine64-plus:
+              lab-baylibre: new failure (last pass: next-20200508)
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-gxl-s805x-libretech-ac:
+              lab-baylibre: new failure (last pass: next-20200508)
+          sun50i-a64-pine64-plus:
+              lab-baylibre: new failure (last pass: next-20200508)
+
+riscv:
+
+    defconfig:
+        gcc-8:
+          sifive_fu540:
+              lab-baylibre-seattle: failing since 45 days (last pass: next-=
+20200326 - first fail: next-20200327)
+
+Boot Failures Detected:
+
+riscv:
+    defconfig:
+        gcc-8:
+            sifive_fu540: 1 failed lab
+
+arm64:
+    defconfig:
+        gcc-8:
+            mt7622-rfb1: 1 failed lab
+            sun50i-a64-pine64-plus: 1 failed lab
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            mt7622-rfb1: 1 failed lab
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            meson-gxl-s805x-libretech-ac: 1 failed lab
+
+arm:
+    sama5_defconfig:
+        gcc-8:
+            at91-sama5d4_xplained: 1 failed lab
+
+    tegra_defconfig:
+        gcc-8:
+            tegra124-jetson-tk1: 1 failed lab
+            tegra30-beaver: 1 failed lab
+
+    multi_v7_defconfig:
+        gcc-8:
+            tegra124-jetson-tk1: 1 failed lab
+            tegra30-beaver: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy:
+        gcc-8:
+            tegra124-jetson-tk1: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+            tegra124-jetson-tk1: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+            qcom-apq8064-cm-qs600: 1 offline lab
+            stih410-b2120: 1 offline lab
+
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+
+    exynos_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
