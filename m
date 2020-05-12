@@ -2,98 +2,140 @@ Return-Path: <SRS0=Oo3s=62=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CB4CA90AF
-	for <linux-next@archiver.kernel.org>; Tue, 12 May 2020 17:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07684CA90AF
+	for <linux-next@archiver.kernel.org>; Tue, 12 May 2020 19:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E687206A5
-	for <linux-next@archiver.kernel.org>; Tue, 12 May 2020 17:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D40B720740
+	for <linux-next@archiver.kernel.org>; Tue, 12 May 2020 19:50:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="oyaEp0TS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbgELRoh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 12 May 2020 13:44:37 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:42680 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbgELRoh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 12 May 2020 13:44:37 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYYxA-0006HM-VP; Tue, 12 May 2020 11:44:28 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYYxA-0006YR-5x; Tue, 12 May 2020 11:44:28 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Helge Deller <deller@gmx.de>,
-        Parisc List <linux-parisc@vger.kernel.org>, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20200511111123.68ccbaa3@canb.auug.org.au>
-        <99095805-8cbe-d140-e2f1-0c5a3e84d7e7@huawei.com>
-        <20200512003305.GX11244@42.do-not-panic.com>
-        <87y2pxs73w.fsf@x220.int.ebiederm.org>
-        <20200512172413.GC11244@42.do-not-panic.com>
-Date:   Tue, 12 May 2020 12:40:55 -0500
-In-Reply-To: <20200512172413.GC11244@42.do-not-panic.com> (Luis Chamberlain's
-        message of "Tue, 12 May 2020 17:24:13 +0000")
-Message-ID: <87k11hrqzc.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jYYxA-0006YR-5x;;;mid=<87k11hrqzc.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18BZ+GM7YxDSNtI/wYtLPC80aezvVDUzig=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: linux-next: manual merge of the vfs tree with the parisc-hd tree
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        id S1731055AbgELTuf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 12 May 2020 15:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730963AbgELTuf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 12 May 2020 15:50:35 -0400
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18729C061A0F
+        for <linux-next@vger.kernel.org>; Tue, 12 May 2020 12:50:35 -0700 (PDT)
+Received: by mail-qt1-x841.google.com with SMTP id p12so12166342qtn.13
+        for <linux-next@vger.kernel.org>; Tue, 12 May 2020 12:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:content-transfer-encoding:mime-version:subject:message-id:date
+         :cc:to;
+        bh=xgJD2hpD7vnQ87u1OXtovDwmBIQGx+H7T13YM90Cpj4=;
+        b=oyaEp0TSlc6Z4xfLcVeab/Erl0PVFTIiLxrS1Ytzffwb7DYHWL+ubEmhBiXDRrUBIC
+         H1QOtXiShfC8X6acnuo8Dn36jroIYhsqY4BZyvLYl6NKBU5hNoWL8MDPXcu7FV3d42Nq
+         Se6GLOoFSycCu1T4alpZMe1IpKS2JGuA6HBci3HN+f9KggDX9OEIIboOcSZRM6b+U5JE
+         zipMF4T5557mB9R8r1Ri+OEZ/1GoWP35n1s47+SvymHpt15L0Y85AC96FNwpMu8t1YoM
+         /eN/e3DcVqKyfS7/C8xZ/I+zzjQjKNAWXTtSHsK5yxqI321X00hi5LiBmvSu3v9NjqV9
+         e5eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:cc:to;
+        bh=xgJD2hpD7vnQ87u1OXtovDwmBIQGx+H7T13YM90Cpj4=;
+        b=nvubOUKL7yc6ZU1QqaPtS/IPEAoenZw/6zQLnxjIInm0yVEuHLvYBo+zLq9nT4tTg5
+         ZrZIfi9zz4pkiadcXRwZgXMFo/mOPIgn4i1MA9xTJf3hKQXIdZcPa08bnlKaNwSlNG/L
+         XSiZcVR1UZxFXxvDZ9grXSMSclLSfw8pXiN4soa6BhCM1KhVcyrfvat4aiVvymDWmhtJ
+         QnEuyG+MnE6d9Qb01rhBjW2CacbP9d5o76FD6f4d9hYXPaG4x5lkgB5WsmHnwbfQ2pnY
+         DOkfUzMDjxUQOpx/BegVmqqNqWl7NvCdYV5SNbhVBK8K0pK5MCA2+ie/gh8hDeQnTITw
+         OOnw==
+X-Gm-Message-State: AOAM532hrDqlO4urvkYsz0ORQIJmhKbCtfQHr6J33X2IkpPo7jHY4x9Z
+        eocB4zGbqTizkWfEovn1hqwejA==
+X-Google-Smtp-Source: ABdhPJx5yoJNFKpaTlovyxOByL1Afc0w9oDOw9IvzDUjgB/Gn2teZhN+0b3/S5ZTlmXmIN8UWrfVww==
+X-Received: by 2002:ac8:6d0a:: with SMTP id o10mr4974425qtt.141.1589313034050;
+        Tue, 12 May 2020 12:50:34 -0700 (PDT)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id o18sm64003qtb.7.2020.05.12.12.50.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 May 2020 12:50:33 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Null-ptr-deref due to "vfs, fsinfo: Add an RCU safe per-ns mount
+ list"
+Message-Id: <31941725-BEB0-4839-945A-4952C2B5ADC7@lca.pw>
+Date:   Tue, 12 May 2020 15:50:32 -0400
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Luis Chamberlain <mcgrof@kernel.org> writes:
+Reverted the linux-next commit ee8ad8190cb1 (=E2=80=9Cvfs, fsinfo: Add =
+an RCU safe per-ns mount list=E2=80=9D) fixed the null-ptr-deref.
 
-> On Tue, May 12, 2020 at 06:52:35AM -0500, Eric W. Biederman wrote:
->> Luis Chamberlain <mcgrof@kernel.org> writes:
->> 
->> > +static struct ctl_table fs_base_table[] = {
->> > +	{
->> > +		.procname	= "fs",
->> > +		.mode		= 0555,
->> > +		.child		= fs_table,
->> > +	},
->> > +	{ }
->> > +};
->>   ^^^^^^^^^^^^^^^^^^^^^^^^ You don't need this at all.
->> > > +static int __init fs_procsys_init(void)
->> > +{
->> > +	struct ctl_table_header *hdr;
->> > +
->> > +	hdr = register_sysctl_table(fs_base_table);
->>               ^^^^^^^^^^^^^^^^^^^^^ Please use register_sysctl instead.
->> 	AKA
->>         hdr = register_sysctl("fs", fs_table);
->
-> Ah, much cleaner thanks!
+# runc run root
 
-It is my hope you we can get rid of register_sysctl_table one of these
-days.  It was the original interface but today it is just a
-compatibility wrapper.
-
-I unfortunately ran out of steam last time before I finished converting
-everything over.
-
-Eric
+[ 1531.635242][ T4444] BUG: Kernel NULL pointer dereference on write at =
+0x00000000
+[ 1531.635285][ T4444] Faulting instruction address: 0xc0000000005689e0
+[ 1531.635299][ T4444] Oops: Kernel access of bad area, sig: 11 [#1]
+[ 1531.635310][ T4444] LE PAGE_SIZE=3D64K MMU=3DRadix SMP NR_CPUS=3D256 =
+DEBUG_PAGEALLOC NUMA PowerNV
+[ 1531.635331][ T4444] Modules linked in: kvm_hv kvm ip_tables x_tables =
+xfs sd_mod bnx2x tg3 ahci libahci mdio libphy libata firmware_class =
+dm_mirror dm_region_hash dm_log dm_mod
+[ 1531.635370][ T4444] CPU: 16 PID: 4444 Comm: runc:[2:INIT] Not tainted =
+5.7.0-rc5-next-20200512+ #9
+[ 1531.635383][ T4444] NIP:  c0000000005689e0 LR: c0000000005689b0 CTR: =
+0000000000000000
+[ 1531.635413][ T4444] REGS: c000001323aef980 TRAP: 0300   Not tainted  =
+(5.7.0-rc5-next-20200512+)
+[ 1531.635434][ T4444] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  =
+CR: 24424282  XER: 00000000
+[ 1531.635468][ T4444] CFAR: c0000000006f9eec DAR: 0000000000000000 =
+DSISR: 42000000 IRQMASK: 0=20
+[ 1531.635468][ T4444] GPR00: c000000000570000 c000001323aefc10 =
+c00000000168aa00 0000000000000001=20
+[ 1531.635468][ T4444] GPR04: c0000015934e9e98 c0000015934e9e98 =
+00000000283df117 fffffffe4386c189=20
+[ 1531.635468][ T4444] GPR08: c000001323aefc38 0000000000000000 =
+0000000000000000 0000000000000002=20
+[ 1531.635468][ T4444] GPR12: 0000000024402282 c000001fffff1800 =
+000000c000229990 000000000000000a=20
+[ 1531.635468][ T4444] GPR16: ffffffffffffffff 0000000000000000 =
+000000000000007a 000000012479c68c=20
+[ 1531.635468][ T4444] GPR20: 0000000000000000 000000c000000180 =
+0000000000000000 0000000000000000=20
+[ 1531.635468][ T4444] GPR24: 0000000000000000 c00000000516b870 =
+c00000000516b858 5deadbeef0000122=20
+[ 1531.635468][ T4444] GPR28: c000001323aefc38 c0000015934e9e00 =
+c0000015934e9ea8 c0000015934e9e98=20
+[ 1531.635652][ T4444] NIP [c0000000005689e0] umount_tree+0x250/0x470
+__write_once_size at include/linux/compiler.h:250
+(inlined by) __hlist_del at include/linux/list.h:811
+(inlined by) hlist_del_rcu at include/linux/rculist.h:487
+(inlined by) umount_tree at fs/namespace.c:1485
+[ 1531.635672][ T4444] LR [c0000000005689b0] umount_tree+0x220/0x470
+[ 1531.635682][ T4444] Call Trace:
+[ 1531.635709][ T4444] [c000001323aefca0] [c000000000570000] =
+do_mount+0xb70/0xc90
+[ 1531.635738][ T4444] [c000001323aefd70] [c0000000005706f8] =
+sys_mount+0x158/0x180
+[ 1531.635760][ T4444] [c000001323aefdc0] [c000000000038ac4] =
+system_call_exception+0x114/0x1e0
+[ 1531.635799][ T4444] [c000001323aefe20] [c00000000000c8f0] =
+system_call_common+0xf0/0x278
+[ 1531.635828][ T4444] Instruction dump:
+[ 1531.635836][ T4444] 60000000 2fa30000 419e0014 e93f0008 e95f0000 =
+f92a0008 f9490000 e93fffb8=20
+[ 1531.635860][ T4444] e95fffc0 fbff0000 fbff0008 2fa90000 <f92a0000> =
+419e0008 f9490008 e93f0058=20
+[ 1531.635885][ T4444] ---[ end trace f12075f6fac94362 ]---
+[ 1531.748352][ T4444]=20
+[ 1532.748433][ T4444] Kernel panic - not syncing: Fatal exception=
