@@ -2,136 +2,107 @@ Return-Path: <SRS0=7mxn=65=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58009C433E0
-	for <linux-next@archiver.kernel.org>; Fri, 15 May 2020 16:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FC9C433E0
+	for <linux-next@archiver.kernel.org>; Fri, 15 May 2020 18:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33C33206C0
-	for <linux-next@archiver.kernel.org>; Fri, 15 May 2020 16:35:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c1PAr+sg"
+	by mail.kernel.org (Postfix) with ESMTP id 949BD20727
+	for <linux-next@archiver.kernel.org>; Fri, 15 May 2020 18:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbgEOQfv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 15 May 2020 12:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726198AbgEOQfv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 15 May 2020 12:35:51 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E1DFC061A0C;
-        Fri, 15 May 2020 09:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=eOQ/VBa4Q42V4aV9l/Uj4hWGB9Uye9QeOmNKdZwF8Tc=; b=c1PAr+sglNmmpmO6FC92ZTX6Pw
-        WF1050MCZGCrvS+GNEpED62uuYJvjXAXrEHaqXTmvDQqAad3IOGx8BNeQCgN+FmCd/6RhqzWi8W2k
-        ekV1livERNWEGbLBIUkZ7qJdnzrO0gDff+l7CptvReyIenZ+Sr2YW6NEx37zO37djb4nyUzTa+u7v
-        +nZTQDzNexI4SNxJtdKarnioPTDcAVUxTaHyUOLLNiWUDtG6ZbTfuAfUXLdmvTwULeGq5cfifUzbF
-        pMTgCj7NYCkXVxr+Uto+DqLPGDDZDm8CZSO2MKSWQzTr4/wLI3OOW1kUYq+Scju5A8XJMP9cPy3aU
-        fI2jSpLQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jZdJI-0004a7-Sp; Fri, 15 May 2020 16:35:45 +0000
-Subject: Re: linux-next: Tree for May 15 (nfs/fsinfo.c)
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-References: <20200515224219.48a50b28@canb.auug.org.au>
- <129e8dee-76c3-ba9d-e692-d145653bbaaa@infradead.org>
- <ef6274c2de9fcc2e1820db1ac8f0b7602a9fe6b0.camel@hammerspace.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <de201900-c2ac-bc8e-d9c1-c18331a03a7f@infradead.org>
-Date:   Fri, 15 May 2020 09:35:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1726367AbgEOSU6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 15 May 2020 14:20:58 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49858 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgEOSU5 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 15 May 2020 14:20:57 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jZewv-0000TY-Jb; Fri, 15 May 2020 12:20:46 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jZewl-0004yB-GR; Fri, 15 May 2020 12:20:42 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+        <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+Date:   Fri, 15 May 2020 13:16:59 -0500
+In-Reply-To: <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Sat, 16 May 2020 00:18:00 +0900")
+Message-ID: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <ef6274c2de9fcc2e1820db1ac8f0b7602a9fe6b0.camel@hammerspace.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1jZewl-0004yB-GR;;;mid=<87lfltcbc4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/5CZAGXdnSF9gJYpnj+DVwF9M3wdqkovE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: linux-next boot error: general protection fault in tomoyo_get_local_path
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 5/15/20 9:32 AM, Trond Myklebust wrote:
-> Hi Randy,
-> 
-> On Fri, 2020-05-15 at 08:28 -0700, Randy Dunlap wrote:
->> On 5/15/20 5:42 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20200514:
->>>
->>> -----------------------------------------------------------------
->>> -----------
->>
->> on i386:
->>
->>   CC      fs/nfs/fsinfo.o
->> ../fs/nfs/fsinfo.c: In function ‘nfs_fsinfo_get_supports’:
->> ../fs/nfs/fsinfo.c:153:12: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if (server->attr_bitmask[0] & FATTR4_WORD0_SIZE)
->>             ^~
->> ../fs/nfs/fsinfo.c:155:12: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if (server->attr_bitmask[1] & FATTR4_WORD1_NUMLINKS)
->>             ^~
->> ../fs/nfs/fsinfo.c:158:12: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if (server->attr_bitmask[0] & FATTR4_WORD0_ARCHIVE)
->>             ^~
->> ../fs/nfs/fsinfo.c:160:12: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if (server->attr_bitmask[0] & FATTR4_WORD0_HIDDEN)
->>             ^~
->> ../fs/nfs/fsinfo.c:162:12: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if (server->attr_bitmask[1] & FATTR4_WORD1_SYSTEM)
->>             ^~
->> ../fs/nfs/fsinfo.c: In function ‘nfs_fsinfo_get_features’:
->> ../fs/nfs/fsinfo.c:205:12: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if (server->attr_bitmask[0] & FATTR4_WORD0_CASE_INSENSITIVE)
->>             ^~
->> ../fs/nfs/fsinfo.c:207:13: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>   if ((server->attr_bitmask[0] & FATTR4_WORD0_ARCHIVE) ||
->>              ^~
->> ../fs/nfs/fsinfo.c:208:13: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>       (server->attr_bitmask[0] & FATTR4_WORD0_HIDDEN) ||
->>              ^~
->> ../fs/nfs/fsinfo.c:209:13: error: ‘const struct nfs_server’ has no
->> member named ‘attr_bitmask’
->>       (server->attr_bitmask[1] & FATTR4_WORD1_SYSTEM))
->>              ^~
->>
->> Full randconfig file is attached.
->>
-> 
-> Where is this file coming from? I'm not aware of any fs/nfs/fsinfo.c in
-> the current tree or in my linux-next for 5.7, and a cursory glance is
-> showing it up in Anna's linux-next for the 5.8 merge window.
-> 
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-Hi Trond,
+> This is
+>
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+>                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+>
+>                 if (*ep == '/' && pid && pid ==
+>                     task_tgid_nr_ns(current, proc_pidns)) {
+>
+> which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+>
+> @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+>
+>                 if (*ep == '/' && pid && pid ==
+> -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
+> +                   task_tgid_nr_ns(current, proc_pidns)) {
+>                         pos = ep - 5;
+>                         if (pos < buffer)
+>                                 goto out;
+>
+> Alexey and Eric, any clue?
 
-It's in today's linux-next.  from David Howells.
+Looking at the stack backtrace this is happening as part of creating a
+file or a device node.  The dentry that is passed in most likely
+comes from d_alloc_parallel.  So we have d_inode == NULL.
 
-David?  (added to Cc)
+I want to suggest doing the very simple fix:
 
--- 
-~Randy
+-	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
++	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/' && denty->d_inode) {
 
+But I don't know if there are any other security hooks early in lookup,
+that could be called for an already existing dentry.
+
+So it looks like we need a version proc_pid_ns that works for a dentry,
+or a superblock.
+
+Alex do you think you can code up an patch against my proc-next branch
+to fix this?
+
+Eric
