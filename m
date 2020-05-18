@@ -2,129 +2,246 @@ Return-Path: <SRS0=GaV2=7A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EDAC433DF
-	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 16:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E873CC433E2
+	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 18:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1852087D
-	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 16:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589820591;
-	bh=xRjB/5JpqW83G+oMZxIS+hA+0CPCV7b4cUhUnzEu5xo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kXOQ+eaMzrn9dqM4xFdqwPGhbEHPnICT6Co1dIm7kV6lLT7kM/Gh3HwWh1/R1yTNO
-	 5FmIKQFbGBRc89afv9eSUbQkQXiPiAKWxxqYL+4/25Evwat/pRt04/2tl8pA7j+YpR
-	 crcTt8ZXlekfvM3p8nRFBBghbOrxIF0Usw0RAB94=
+	by mail.kernel.org (Postfix) with ESMTP id D0F79207D3
+	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 18:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbgERQtu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 18 May 2020 12:49:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51622 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbgERQtu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 18 May 2020 12:49:50 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D20C061A0C
-        for <linux-next@vger.kernel.org>; Mon, 18 May 2020 09:49:50 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id u6so10610746ljl.6
-        for <linux-next@vger.kernel.org>; Mon, 18 May 2020 09:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KygdLUcTs6knBX0F3T/JLZYcVgSrVEzt6jZyrJ+boZQ=;
-        b=S9bunU4mXjCTchqmsktCwiUzwrjCVNgd8YdFx6fqrfQbJSITfJ3Gfe0UZSPKy1COMq
-         XgtV3MuVzYZ10FDt3fKxp2DI4i0KU99M1qsxjthk3kmKU65B8LYjZ+6gpdV3oGSJtrEX
-         CvNN34lX+RlxUFi8ZDs+UvDfbUaWrrsJnAN1A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KygdLUcTs6knBX0F3T/JLZYcVgSrVEzt6jZyrJ+boZQ=;
-        b=As45Yfm51pqmWON3s3+LB8uGRwZwLjqzMBwikC66QI4g3zsUWZWi6gHj1i+2JFVh83
-         OjWKMBZCnWeYaGkSA+FlTRGDZOCm6p0MrdUjHuL0nYmJDaP2rbAM6HxQiQFqbL/Mbzwl
-         o3blGOu451Z8IMBn5CPrXAcUafSPoob2qJb/dWNuU/F6k9yuhkf6RPST5aKun2VJQwgJ
-         7Ondym7PGno4D2s7P9wFTlpwmVu0Ux7EEyRc4M8HitM9W/cWgulT2usmEJ2LBOr9oVbN
-         z110i6EB0AlhnXRZ/j/Wj4bRCc6OWoGivPc13x7pTXLHT/3gb5c+7+QO9fWqOC6vNW/O
-         +6qw==
-X-Gm-Message-State: AOAM532Q1ryhywivEFhclCYzwO98m8ff+1aNvQcXw6Oi9Pxeyirl2j3k
-        CTcHp+/YtF/dWEaOl4YwW8cPFl7QRt0=
-X-Google-Smtp-Source: ABdhPJytGRTBjHqhxKj6VIQwRTMavcBaGnQV5ojhXL1AeokdCF79O7jZ9FzD5vRJP4YYc0OCAAWbMA==
-X-Received: by 2002:a2e:b5d1:: with SMTP id g17mr5117218ljn.59.1589820588237;
-        Mon, 18 May 2020 09:49:48 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 4sm5890275ljc.65.2020.05.18.09.49.47
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 May 2020 09:49:47 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id w15so1320727lfe.11
-        for <linux-next@vger.kernel.org>; Mon, 18 May 2020 09:49:47 -0700 (PDT)
-X-Received: by 2002:a05:6512:62:: with SMTP id i2mr3329357lfo.152.1589820586909;
- Mon, 18 May 2020 09:49:46 -0700 (PDT)
+        id S2387490AbgERSIX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 18 May 2020 14:08:23 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:35962 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733067AbgERSHv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 18 May 2020 14:07:51 -0400
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 9201D20479;
+        Mon, 18 May 2020 18:07:42 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-next@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH v4] proc: proc_pid_ns takes super_block as an argument
+Date:   Mon, 18 May 2020 20:07:38 +0200
+Message-Id: <20200518180738.2939611-1-gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.25.4
+In-Reply-To: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <20200518145723.65b89375@canb.auug.org.au> <968394.1589817650@warthog.procyon.org.uk>
-In-Reply-To: <968394.1589817650@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 18 May 2020 09:49:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj6J-iqrCr_7oLDCbS8qXQ69EF=nPLWmvBiDmgdNWZ6KA@mail.gmail.com>
-Message-ID: <CAHk-=wj6J-iqrCr_7oLDCbS8qXQ69EF=nPLWmvBiDmgdNWZ6KA@mail.gmail.com>
-Subject: Re: How should we handle a bool depending on a tristate?
-To:     David Howells <dhowells@redhat.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Mon, 18 May 2020 18:07:45 +0000 (UTC)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, May 18, 2020 at 9:01 AM David Howells <dhowells@redhat.com> wrote:
->
->
-> Blech.  Yeah.  "depends on" doesn't work either.  The problem actually lies
-> within the Kconfig framework.  It doesn't know how to handle a bool depending
-> on a tristate.
+syzbot found that
 
-No problem with Kconfig. It knows exactly how to let a bool depend on
-a tristate.
+  touch /proc/testfile
 
-It's just that there are two different kinds of dependencies.
+causes NULL pointer dereference at tomoyo_get_local_path()
+because inode of the dentry is NULL.
 
-For example, the dependency can be a hard and absolute dependency
-(linking doesn't work, or whatever), and then obviously built-in code
-cannot be enabled if the thing it depends on is a loadable module.
+Before c59f415a7cb6, Tomoyo received pid_ns from proc's s_fs_info
+directly. Since proc_pid_ns() can only work with inode, using it in
+the tomoyo_get_local_path() was wrong.
 
-But the dependency can also be a conceptual one: "This option doesn't
-make sense unless that option is set". Then a bool can make sense even
-if the other config is a modular one.
+To avoid creating more functions for getting proc_ns, change the
+argument type of the proc_pid_ns() function. Then, Tomoyo can use
+the existing super_block to get pid_ns.
 
-And Kconfig can deal with either situation just fine.
+Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
+Fixes: c59f415a7cb6 ("Use proc_pid_ns() to get pid_namespace from the proc superblock")
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+---
+ fs/locks.c                 |  4 ++--
+ fs/proc/array.c            |  2 +-
+ fs/proc/base.c             | 10 +++++-----
+ fs/proc/self.c             |  2 +-
+ fs/proc/thread_self.c      |  2 +-
+ include/linux/proc_fs.h    |  4 ++--
+ kernel/fork.c              |  2 +-
+ net/ipv6/ip6_flowlabel.c   |  2 +-
+ security/tomoyo/realpath.c |  2 +-
+ 9 files changed, 15 insertions(+), 15 deletions(-)
 
-Do
+diff --git a/fs/locks.c b/fs/locks.c
+index 399c5dbb72c4..ab702d6efb55 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ {
+ 	struct inode *inode = NULL;
+ 	unsigned int fl_pid;
+-	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
++	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
+ 
+ 	fl_pid = locks_translate_pid(fl, proc_pidns);
+ 	/*
+@@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
+ {
+ 	struct locks_iterator *iter = f->private;
+ 	struct file_lock *fl, *bfl;
+-	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
++	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
+ 
+ 	fl = hlist_entry(v, struct file_lock, fl_link);
+ 
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 8e16f14bb05a..043311014db2 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -728,7 +728,7 @@ static int children_seq_show(struct seq_file *seq, void *v)
+ {
+ 	struct inode *inode = file_inode(seq->file);
+ 
+-	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode)));
++	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode->i_sb)));
+ 	return 0;
+ }
+ 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 5a307b3bb2d1..30c9fceca0b7 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -754,7 +754,7 @@ static const struct inode_operations proc_def_inode_operations = {
+ static int proc_single_show(struct seq_file *m, void *v)
+ {
+ 	struct inode *inode = m->private;
+-	struct pid_namespace *ns = proc_pid_ns(inode);
++	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
+ 	struct pid *pid = proc_pid(inode);
+ 	struct task_struct *task;
+ 	int ret;
+@@ -1423,7 +1423,7 @@ static const struct file_operations proc_fail_nth_operations = {
+ static int sched_show(struct seq_file *m, void *v)
+ {
+ 	struct inode *inode = m->private;
+-	struct pid_namespace *ns = proc_pid_ns(inode);
++	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
+ 	struct task_struct *p;
+ 
+ 	p = get_proc_task(inode);
+@@ -2466,7 +2466,7 @@ static int proc_timers_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
+ 
+ 	tp->pid = proc_pid(inode);
+-	tp->ns = proc_pid_ns(inode);
++	tp->ns = proc_pid_ns(inode->i_sb);
+ 	return 0;
+ }
+ 
+@@ -3377,7 +3377,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct tgid_iter iter;
+ 	struct proc_fs_info *fs_info = proc_sb_info(file_inode(file)->i_sb);
+-	struct pid_namespace *ns = proc_pid_ns(file_inode(file));
++	struct pid_namespace *ns = proc_pid_ns(file_inode(file)->i_sb);
+ 	loff_t pos = ctx->pos;
+ 
+ 	if (pos >= PID_MAX_LIMIT + TGID_OFFSET)
+@@ -3730,7 +3730,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+ 	/* f_version caches the tgid value that the last readdir call couldn't
+ 	 * return. lseek aka telldir automagically resets f_version to 0.
+ 	 */
+-	ns = proc_pid_ns(inode);
++	ns = proc_pid_ns(inode->i_sb);
+ 	tid = (int)file->f_version;
+ 	file->f_version = 0;
+ 	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
+diff --git a/fs/proc/self.c b/fs/proc/self.c
+index 309301ac0136..ca5158fa561c 100644
+--- a/fs/proc/self.c
++++ b/fs/proc/self.c
+@@ -12,7 +12,7 @@ static const char *proc_self_get_link(struct dentry *dentry,
+ 				      struct inode *inode,
+ 				      struct delayed_call *done)
+ {
+-	struct pid_namespace *ns = proc_pid_ns(inode);
++	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
+ 	pid_t tgid = task_tgid_nr_ns(current, ns);
+ 	char *name;
+ 
+diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
+index 2493cbbdfa6f..ac284f409568 100644
+--- a/fs/proc/thread_self.c
++++ b/fs/proc/thread_self.c
+@@ -12,7 +12,7 @@ static const char *proc_thread_self_get_link(struct dentry *dentry,
+ 					     struct inode *inode,
+ 					     struct delayed_call *done)
+ {
+-	struct pid_namespace *ns = proc_pid_ns(inode);
++	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
+ 	pid_t tgid = task_tgid_nr_ns(current, ns);
+ 	pid_t pid = task_pid_nr_ns(current, ns);
+ 	char *name;
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 2cb424e6f36a..6ec524d8842c 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -202,9 +202,9 @@ int open_related_ns(struct ns_common *ns,
+ 		   struct ns_common *(*get_ns)(struct ns_common *ns));
+ 
+ /* get the associated pid namespace for a file in procfs */
+-static inline struct pid_namespace *proc_pid_ns(const struct inode *inode)
++static inline struct pid_namespace *proc_pid_ns(struct super_block *sb)
+ {
+-	return proc_sb_info(inode->i_sb)->pid_ns;
++	return proc_sb_info(sb)->pid_ns;
+ }
+ 
+ #endif /* _LINUX_PROC_FS_H */
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 4385f3d639f2..e7bdaccad942 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1745,7 +1745,7 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ 	pid_t nr = -1;
+ 
+ 	if (likely(pid_has_task(pid, PIDTYPE_PID))) {
+-		ns = proc_pid_ns(file_inode(m->file));
++		ns = proc_pid_ns(file_inode(m->file)->i_sb);
+ 		nr = pid_nr_ns(pid, ns);
+ 	}
+ 
+diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
+index d64b83e85642..ce4fbba4acce 100644
+--- a/net/ipv6/ip6_flowlabel.c
++++ b/net/ipv6/ip6_flowlabel.c
+@@ -779,7 +779,7 @@ static void *ip6fl_seq_start(struct seq_file *seq, loff_t *pos)
+ {
+ 	struct ip6fl_iter_state *state = ip6fl_seq_private(seq);
+ 
+-	state->pid_ns = proc_pid_ns(file_inode(seq->file));
++	state->pid_ns = proc_pid_ns(file_inode(seq->file)->i_sb);
+ 
+ 	rcu_read_lock_bh();
+ 	return *pos ? ip6fl_get_idx(seq, *pos - 1) : SEQ_START_TOKEN;
+diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
+index 08b096e2f7e3..df4798980416 100644
+--- a/security/tomoyo/realpath.c
++++ b/security/tomoyo/realpath.c
+@@ -162,7 +162,7 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+ 	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+ 		char *ep;
+ 		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+-		struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
++		struct pid_namespace *proc_pidns = proc_pid_ns(sb);
+ 
+ 		if (*ep == '/' && pid && pid ==
+ 		    task_tgid_nr_ns(current, proc_pidns)) {
+-- 
+2.25.4
 
-    depends on XYZ = y
-
-or
-
-    depends on XYZ != n
-
-to clarify the choice. One requires a hard dependency, the other
-requires that the  option just be enabled.
-
-Now, if you just do "depends on XYZ", it allows a bool to be enabled
-even for just a module (ie that second case). That makes sense for a
-lot of "allow this feature in the module" kind of options, where it
-would be pointless to even ask about a boolean feature if the parent
-module isn't even enabled.
-
-But that "depends on XYZ=y" is not uncommon. It basically says "this
-option makes sense only when built in". Either because it requires it
-for linking, or just because it doesn't work or make sense without it.
-
-                     Linus
