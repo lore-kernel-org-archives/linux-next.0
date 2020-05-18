@@ -2,95 +2,105 @@ Return-Path: <SRS0=GaV2=7A=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6710C433E1
-	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 13:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E710C433E0
+	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 13:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2C8207E8
-	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 13:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C5F9207D3
+	for <linux-next@archiver.kernel.org>; Mon, 18 May 2020 13:01:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cVS7jAFa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgERNBC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 18 May 2020 09:01:02 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:44414 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbgERNBC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 18 May 2020 09:01:02 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jafO5-0005ha-50; Mon, 18 May 2020 07:00:57 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jafO3-0003dN-W5; Mon, 18 May 2020 07:00:56 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-next@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
-        <20200518111716.2896385-1-gladkov.alexey@gmail.com>
-        <871rnh78di.fsf@x220.int.ebiederm.org>
-        <20200518125648.robgr7mud7esao2o@comp-core-i7-2640m-0182e6>
-Date:   Mon, 18 May 2020 07:57:16 -0500
-In-Reply-To: <20200518125648.robgr7mud7esao2o@comp-core-i7-2640m-0182e6>
-        (Alexey Gladkov's message of "Mon, 18 May 2020 14:56:48 +0200")
-Message-ID: <87pnb15rkj.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1726997AbgERNBe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 18 May 2020 09:01:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43824 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbgERNBe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 18 May 2020 09:01:34 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D20C061A0C;
+        Mon, 18 May 2020 06:01:34 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49QfKH5PKQz9sTY;
+        Mon, 18 May 2020 23:01:23 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1589806885;
+        bh=X87x2O/NgHgg3pQpZtNm9qm3ZbblNwSzNsBmhoy99ww=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cVS7jAFaI3QUD3oMiUjV1oa9TRmDqjdksbhYdPw68gGZHUCID3kP5plttFCMHyPnz
+         GVJ6C430GOrSl0NeVfAXOPVrUUdSDVfN6BgLBQBGpak/QQIZZB4OZ01guSKg3Pz0oi
+         8/WM++ctW1HmwBKuNJ0IXtUoPISZlYV6PXTwtoa1fXOyozeuHapLfi+ha4IoUBh7PO
+         bKfHwIZmEiX2mnMN46SWyI9XauCqoI3DLNFIsR0Y01JHNNu2DLVYTlSILP23+kSyAE
+         6fXyuLGq1zM7kq1lJ4TCNnl3Dt/dNvbMgsxqXEs792FtkQbxVr2jxz4mdp3QdQPdmk
+         RmNHjPOHAVyJA==
+Date:   Mon, 18 May 2020 23:01:20 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Wireless <linux-wireless@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Felix Fietkau <nbd@nbd.name>,
+        Soul Huang <Soul.Huang@mediatek.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: linux-next: Fixes tag needs some work in the wireless-drivers-next
+ tree
+Message-ID: <20200518230120.7b4c6074@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jafO3-0003dN-W5;;;mid=<87pnb15rkj.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+7voJjdUzm6K/RfqhwLgvU8mZCtMfUl1k=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2] proc: proc_pid_ns takes super_block as an argument
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: multipart/signed; boundary="Sig_/dSih45EDoyKnaSCqCDR/H=S";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+--Sig_/dSih45EDoyKnaSCqCDR/H=S
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, May 18, 2020 at 07:08:57AM -0500, Eric W. Biederman wrote:
->> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
->> 
->> > The proc_pid_ns() can be used for both inode and dentry. To avoid making
->> > two identical functions, change the argument type of the proc_pid_ns().
->> >
->> > Link: https://lore.kernel.org/lkml/c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp/
->> > Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
->> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
->> 
->> So overall this looks good.
->> 
->> However, the description leaves a little bit to be desired as it does
->> not describe why it is bad to use dentry->d_sb.  A fixes tag would be
->> nice if for no other reason than to help anyone who decides to backport
->> this.
->
-> OK. I will add it.
+Hi all,
 
-Thank you.  It really helps to have the full description of why in
-the commit comments.
+In commit
 
->> And can you please compile test this?
->> 
->> There is a very silly typo in proc that keeps this from compiling.
->
-> I compiled the kernel with this patch and ran the kernel, but accidentally
-> did not check children_seq_show(). Sorry.
+  f8d6379932dd ("mt76: mt7663: fix the usage WoW with net detect support")
 
-Yes, children_seq_show is behind a sneaky CONFIG option.
+Fixes tag
 
-Eric
+  Fixes: bd39bd2f00c3 ("mt76: mt7663: introduce WoW with net detect support=
+")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: a72ad451e704 ("mt76: mt7663: introduce WoW with net detect support")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dSih45EDoyKnaSCqCDR/H=S
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7ChyAACgkQAVBC80lX
+0GyYuAf/Q7gNlAhBoIJFTdZtFGN/5W95393jFP7jFdQh6WpjGZGxicr/sVpe+qSQ
+K2Wtj3elCW4rQsuEdTVSfOHCpwbw00niNP8krcc6Ktmv+XSmRiqVie/9Qqf+ATUG
+AfvWK2JYyQxZLUQZ1OsBW5Te2szDyCgewlNE5gl25gpBfTQhOAaY3qCdtSFkPaSI
+LPiXibm9hY8GwshznMH2FF/paZ03p9PGrN1buIuiMHzp/hA2DV/c2QIDwzdLLt5O
+VY/E//yuvfPuwJCe26MVJggv7JqaL7hQwsXGfM0GIVFLq6CaeKAIRDyamIqMv3Ef
+jtcXWkITe8UqFShODEdgKOXp4mGf7Q==
+=5c9u
+-----END PGP SIGNATURE-----
+
+--Sig_/dSih45EDoyKnaSCqCDR/H=S--
