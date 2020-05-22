@@ -2,103 +2,234 @@ Return-Path: <SRS0=TyMk=7E=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA0CC433E0
-	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 14:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DBAC433E0
+	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 16:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5910C2053B
-	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 14:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A200A20756
+	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 16:26:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="lxlss0Zn"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="p4KcHbpu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730490AbgEVOq2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 22 May 2020 10:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56408 "EHLO
+        id S1730306AbgEVQ0I (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 22 May 2020 12:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbgEVOqZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 22 May 2020 10:46:25 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB1CC05BD43
-        for <linux-next@vger.kernel.org>; Fri, 22 May 2020 07:46:25 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id f4so5081573pgi.10
-        for <linux-next@vger.kernel.org>; Fri, 22 May 2020 07:46:25 -0700 (PDT)
+        with ESMTP id S1729040AbgEVQ0H (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 22 May 2020 12:26:07 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1659C061A0E
+        for <linux-next@vger.kernel.org>; Fri, 22 May 2020 09:26:06 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id e11so4452028pfn.3
+        for <linux-next@vger.kernel.org>; Fri, 22 May 2020 09:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PP3NlRQyU9hVtOdAQG1RX9CTlatqPKoXALMeR0iOkSU=;
-        b=lxlss0ZnfC4Z/AbhW67TOHU6mhwsl1MwL6RchBIVSr/q+I2CV8QoajVGUif9/k/4sk
-         U/t7cSReHxUX/OESlDS5lVyoJVYFtCzkNBSJ8iskjmqqfmuJpp0LSgBFO8YmuJiE4qqu
-         PZsB+Gj7MFYbLow6WLjiKlbkYZJt9cXBYrFOFdV+7HT7H4tyKre3aZalNxIF1wbK6SWo
-         2RQO994KR8W0zBxufyyT3KUGbdwoMkvZoYYcePbIhBHPsqbUIL0wWNNbPf+KWy2ix2WO
-         JSGx86NTWKao51q6tFo82+UH2Hta73TUuqGLCATWgF1MyeynsJfhdtlWnON4Pvs+Lbnh
-         TNDg==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=KvwTAsREu1bULUEjPvJCelbs3PNl+Wq8pJnSgoq9r98=;
+        b=p4KcHbputgbruV3XaC3ISviS+87LQxSkK3JRuLe/JyGS37p/N+euGmnjOFybok/FDQ
+         SAskejwYNfx9GomtmvKTIfQV6RlbZmmfgQrGKFWvIvvGedxD8tOYMHlpfa3Sg1QYj/Ht
+         0jqnXrrcaDjZMDO/HAI5JRZto22d3DdMZI8+0WRY7vxfijOP8xntn4uifKzE1A4Rmdgw
+         rd2Y9XX07VsxXNfGbVhg09pmNpVA88ZZGjuI3fxaMh9Mp0j7Va4y9FRhQFYmxp/OvapK
+         ar8DY7cDoGfsguJOQN8CbQDt+S+7sbuIjKmhCp62Fw+HedMEvZNR/mTi0h32fCINLxiH
+         2z7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PP3NlRQyU9hVtOdAQG1RX9CTlatqPKoXALMeR0iOkSU=;
-        b=IgWLjUVIWvmPdJd4yunLkxMKJG0hN1DcnvJ6R9iUFxzZv96CgKDlF6YQuMz7VIoNj2
-         I9QbxdLKXglNGNYNXqKul/7/bhjMMks/ywrOiDe9vOpyi5aFVWFDSIQAlYE/GHXEVYb4
-         dqnoLdy7DrOfwYdZtw55x+nrELvmomaFMH28n7lVGUCbGQ9r2KJAk9ZdjamUSP2vyRe4
-         zgMLHg8HPeqch9ttSztG59G79DqKsspFZClEkGD/8VID+AvLifud586q0kbfBcBRLqnz
-         /tYMn79Rvb3pjy2zu83vqH324DllxDOaVky3WXV9fWcLBOqD/4I04LEfgQUOW0x5P3x0
-         JG2Q==
-X-Gm-Message-State: AOAM530pygzAdk81Qn+qz5BQaJNk4Dfmhu0Q+xQ8WkJ8m/78/kX2eRlK
-        dl8nO+WL5uwY4GkaBtCgCO78Jg==
-X-Google-Smtp-Source: ABdhPJyOskFVbu5Q7jztS/JY+dJEhfz7pdsgkS1G8FHxMjsxcwx7mtvJ/wUGWknKrnr7P9rFJfWeCA==
-X-Received: by 2002:aa7:9510:: with SMTP id b16mr4234538pfp.265.1590158784741;
-        Fri, 22 May 2020 07:46:24 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:892a:d4e5:be12:19f? ([2605:e000:100e:8c61:892a:d4e5:be12:19f])
-        by smtp.gmail.com with ESMTPSA id mn19sm7014158pjb.8.2020.05.22.07.46.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 May 2020 07:46:24 -0700 (PDT)
-Subject: Re: linux-next: build failure after merge of the block tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20200522213202.38ebe825@canb.auug.org.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7bb2cb93-062c-4ef5-4986-5dd82694edfe@kernel.dk>
-Date:   Fri, 22 May 2020 08:46:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=KvwTAsREu1bULUEjPvJCelbs3PNl+Wq8pJnSgoq9r98=;
+        b=kBNAQs1BLTWXJNDnGQRRN0wH/WY/lJWTDwBV8t+YhjQpdnx4LSymWZ/RlIV4Oq+Fsx
+         d+QytL9MsyYbbt+KCHd1VAnPqqpgTjrLHx/KYK9qPRslZ8myjQRgvNmw2nzA0QygTik7
+         7zjcc6zgBESJprhZIQufclVh8u8oai8JHqtgkyctOAXnlnJveS4p0RkQX3jmsRM7trYh
+         GP3Y5VnpNmVibeXNc4Ia9UWSfwEGns88S8FziBBXn/mSd7Azw93iTqSL7Gl4+GwHxo0/
+         dF2sJ8Ip8JtHndUUdaPM4CIauCW8djp8n5FS3bMVm485yYwlKB5NcsLqtftxtUDYmklw
+         RMog==
+X-Gm-Message-State: AOAM530LeCtg4fpWlBjuQgwBR8vcDd1xn1alyF2jUckeGHmkUEj4ntVP
+        TazDrI/lIrmrNMcewnH3NSnMY+Sp8g0=
+X-Google-Smtp-Source: ABdhPJx2WadBXaxMvuJqgKB9g6cCVgid34+oRAVfcOBDnJ1ZfMh1Wkc0GOwNNppZ06qf0U57vzqcpg==
+X-Received: by 2002:a63:d70b:: with SMTP id d11mr14596217pgg.372.1590164766093;
+        Fri, 22 May 2020 09:26:06 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id i25sm7484097pfd.45.2020.05.22.09.26.04
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2020 09:26:04 -0700 (PDT)
+Message-ID: <5ec7fd1c.1c69fb81.c24e4.177f@mx.google.com>
+Date:   Fri, 22 May 2020 09:26:04 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200522213202.38ebe825@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: next
+X-Kernelci-Kernel: next-20200521
+X-Kernelci-Report-Type: boot
+X-Kernelci-Branch: master
+Subject: next/master boot: 245 boots: 19 failed, 219 passed with 4 offline,
+ 3 untried/unknown (next-20200521)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 5/22/20 5:32 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the block tree, today's linux-next build (x86_64
-> allnoconfig) failed like this:
-> 
-> fs/libfs.c: In function 'generic_file_fsync':
-> fs/libfs.c:1116:9: error: too few arguments to function 'blkdev_issue_flush'
->  1116 |  return blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL);
->       |         ^~~~~~~~~~~~~~~~~~
-> In file included from fs/libfs.c:7:
-> include/linux/blkdev.h:1875:19: note: declared here
->  1875 | static inline int blkdev_issue_flush(struct block_device *bdev, gfp_t gfp_mask,
->       |                   ^~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   c64644ce363b ("block: remove the error_sector argument to blkdev_issue_flush")
+******************************************
+* WARNING: Boot tests are now deprecated *
+******************************************
 
-Gah, I'll fold in the fix. Thanks Stephen.
+As kernelci.org is expanding its functional testing capabilities, the conce=
+pt
+of boot testing is now deprecated.  Boot results are scheduled to be droppe=
+d on
+*5th June 2020*.  The full schedule for boot tests deprecation is available=
+ on
+this GitHub issue: https://github.com/kernelci/kernelci-backend/issues/238
 
--- 
-Jens Axboe
+The new equivalent is the *baseline* test suite which also runs sanity chec=
+ks
+using dmesg and bootrr: https://github.com/kernelci/bootrr
 
+See the *baseline results for this kernel revision* on this page:
+https://kernelci.org/test/job/next/branch/master/kernel/next-20200521/plan/=
+baseline/
+
+---------------------------------------------------------------------------=
+----
+
+next/master boot: 245 boots: 19 failed, 219 passed with 4 offline, 3 untrie=
+d/unknown (next-20200521)
+
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/master/ker=
+nel/next-20200521/
+Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
+xt-20200521/
+
+Tree: next
+Branch: master
+Git Describe: next-20200521
+Git Commit: e8f3274774b45b5f4e9e3d5cad7ff9f43ae3add5
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 103 unique boards, 26 SoC families, 30 builds out of 222
+
+Boot Regressions Detected:
+
+arm:
+
+    sama5_defconfig:
+        gcc-8:
+          at91-sama5d4_xplained:
+              lab-baylibre: failing since 94 days (last pass: next-20200214=
+ - first fail: next-20200217)
+
+    versatile_defconfig:
+        gcc-8:
+          versatile-pb:
+              lab-collabora: failing since 3 days (last pass: next-20200515=
+ - first fail: next-20200518)
+
+arm64:
+
+    defconfig:
+        gcc-8:
+          meson-g12a-u200:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-g12a-x96-max:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-g12b-a311d-khadas-vim3:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-g12b-odroid-n2:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-sm1-khadas-vim3l:
+              lab-baylibre: new failure (last pass: next-20200515)
+          meson-sm1-sei610:
+              lab-baylibre: new failure (last pass: next-20200519)
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          meson-sm1-khadas-vim3l:
+              lab-baylibre: new failure (last pass: next-20200515)
+
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+          meson-g12a-u200:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-g12a-x96-max:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-g12b-a311d-khadas-vim3:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-g12b-odroid-n2:
+              lab-baylibre: new failure (last pass: next-20200519)
+          meson-sm1-khadas-vim3l:
+              lab-baylibre: new failure (last pass: next-20200515)
+          meson-sm1-sei610:
+              lab-baylibre: new failure (last pass: next-20200519)
+
+riscv:
+
+    defconfig:
+        gcc-8:
+          sifive_fu540:
+              lab-baylibre-seattle: failing since 56 days (last pass: next-=
+20200326 - first fail: next-20200327)
+
+Boot Failures Detected:
+
+riscv:
+    defconfig:
+        gcc-8:
+            sifive_fu540: 1 failed lab
+
+arm:
+    sama5_defconfig:
+        gcc-8:
+            at91-sama5d4_xplained: 1 failed lab
+
+    multi_v7_defconfig:
+        gcc-8:
+            bcm2836-rpi-2-b: 1 failed lab
+
+arm64:
+    defconfig+CONFIG_RANDOMIZE_BASE=3Dy:
+        gcc-8:
+            meson-g12a-u200: 1 failed lab
+            meson-g12a-x96-max: 1 failed lab
+            meson-g12b-a311d-khadas-vim3: 1 failed lab
+            meson-g12b-odroid-n2: 1 failed lab
+            meson-sm1-khadas-vim3l: 1 failed lab
+            meson-sm1-sei610: 1 failed lab
+            mt7622-rfb1: 1 failed lab
+
+    defconfig:
+        gcc-8:
+            meson-g12a-u200: 1 failed lab
+            meson-g12a-x96-max: 1 failed lab
+            meson-g12b-a311d-khadas-vim3: 1 failed lab
+            meson-g12b-odroid-n2: 1 failed lab
+            meson-sm1-khadas-vim3l: 1 failed lab
+            meson-sm1-sei610: 1 failed lab
+            mt7622-rfb1: 1 failed lab
+            sm8150-mtp: 1 failed lab
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+            meson-sm1-khadas-vim3l: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+            qcom-apq8064-cm-qs600: 1 offline lab
+            stih410-b2120: 1 offline lab
+
+    exynos_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
