@@ -2,120 +2,238 @@ Return-Path: <SRS0=TyMk=7E=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633C1C433E0
-	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 01:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFA0C433DF
+	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 01:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1CB20885
-	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 01:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746B4207D8
+	for <linux-next@archiver.kernel.org>; Fri, 22 May 2020 01:31:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gz6gfc6M"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="m49eE4sI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgEVB0m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 21 May 2020 21:26:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45088 "EHLO
+        id S1726835AbgEVBbK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 21 May 2020 21:31:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgEVB0m (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2020 21:26:42 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45293C061A0E;
-        Thu, 21 May 2020 18:26:42 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49Spjq3Wgsz9sSW;
-        Fri, 22 May 2020 11:26:39 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1590110799;
-        bh=YODjtNZ3rwmpRl6sJUoNkBjHr72zwfvG/cj7A1RWpJo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=gz6gfc6MaJX0JcgtZnAwtge0yGju6zY+bdBkfEinyZHDLc/1j8qd7eXngSLsveVVY
-         846ejSbBE+IQC5fUO3lWMeqYw7/oxVbhUDR3J6VPwXOgRV8AnGeSyT7BKsPg3N5G8Z
-         CmXiSM7SDa3dhSHgX74ujMvrFJ7DbIJq2+qqS5oZvM9W4XvDe+UKIdTZJBFiHg0B1y
-         zxfrBi3iBjCfTXk0A69/6/DZLIXdqgRtt9bRa2+UN6FFIjNLVFuj/VV0wHJVpcx5lo
-         oRNC+dmrtlvliy9ihWNu9d1oR5Es0RRntmwGgSqyD3ceGR3FScYT40qLtADWkgMHLQ
-         7z0UCvEzyp5CQ==
-Date:   Fri, 22 May 2020 11:26:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the ext4 tree with the fscrypt tree
-Message-ID: <20200522112638.577ec8b5@canb.auug.org.au>
+        with ESMTP id S1726829AbgEVBbJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2020 21:31:09 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E0CDC061A0E
+        for <linux-next@vger.kernel.org>; Thu, 21 May 2020 18:31:08 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id n15so4279176pjt.4
+        for <linux-next@vger.kernel.org>; Thu, 21 May 2020 18:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=AoCEB/XhWyAYIL8pIPDnfWFrF3Jmha7WYt/Zzkq9oTY=;
+        b=m49eE4sI4TmcKbuaUTgukhQcDaUd6guzjRrQ/6joi1gkb7Q+Ma5MsgzM/1HWykbFUs
+         NbFjyN2cg0wO4/O7Tddp+gAsymZMHMG1YA4TTKC4gfBWekS9cFaY6YMBIIrdhqx42r3Y
+         ZPq237f2M8YHwIRqQOW4X5C1ifA0wI6/mCfryOK/Zp+0cajPcj6VkRsuB2gDwjesU5zM
+         Qv41oCW+iT4MFlsGeECr1FMyp9f0abOdD31uqANncUMPGbCEjnD0VAc1+2jRU+cwFsCS
+         L4a9zps9mbdJH6qSMDtbJym5llciBKBdaHV9nar80r0jq+8AukIGNRGs4PYgR8iUy1XH
+         Y/Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=AoCEB/XhWyAYIL8pIPDnfWFrF3Jmha7WYt/Zzkq9oTY=;
+        b=k0aHFf/ef0BHlQfrLOfSWw8CyLzrmfi79YzxjIB34aVMnAtyu9z8v/Pi9kFOu+rnLg
+         c7E4uxdnWUa+HQKZg7w+TvAN7SNLcndgPSZugkeodMwDofscTMP9CwTj1Q+LFkt9QoSg
+         IjUiJ4LPnS6NfNEfFon42qS0fLUIra5VELqsB9zlotD5lwqsPQn7/FIiyj7zaMX9DucE
+         1nAOu/K6S5Z3KsIrxOyB9CDgNBltLc0ZPoi8U50Cpi+5zbCN8ISd2mwD2xSpivKEsW08
+         /CTMBAGiAHqsdQJgGnSVaHrfKFFc+iVPnJ/H+iEMLmE6OSmxZiiS1mZbKUhX02O6usP1
+         6naQ==
+X-Gm-Message-State: AOAM532Z1L3IGh6XI6P92TyfF+MxQ3TspzK91u/f3jezKgfcxRnjjdeh
+        orYphAP+8W/InbaWYDFKNp4UsFzzgD4=
+X-Google-Smtp-Source: ABdhPJzL9LmqO7vHPZY6NVDR0JTBpOFoLvQALoGK736NpakLJdmMcqAgeoNN2QiREiL7oblykFKy5g==
+X-Received: by 2002:a17:90a:7b8b:: with SMTP id z11mr1663548pjc.234.1590111067534;
+        Thu, 21 May 2020 18:31:07 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id a16sm5303610pjs.23.2020.05.21.18.31.06
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 May 2020 18:31:06 -0700 (PDT)
+Message-ID: <5ec72b5a.1c69fb81.4dfec.9515@mx.google.com>
+Date:   Thu, 21 May 2020 18:31:06 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TsrLHyJYATXjLv3am2_WHJv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: next
+X-Kernelci-Kernel: v5.7-rc6-239-gc0a2bce73a89
+X-Kernelci-Report-Type: boot
+X-Kernelci-Branch: pending-fixes
+Subject: next/pending-fixes boot: 246 boots: 10 failed,
+ 228 passed with 4 offline, 4 untried/unknown (v5.7-rc6-239-gc0a2bce73a89)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/TsrLHyJYATXjLv3am2_WHJv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+******************************************
+* WARNING: Boot tests are now deprecated *
+******************************************
 
-Hi all,
+As kernelci.org is expanding its functional testing capabilities, the conce=
+pt
+of boot testing is now deprecated.  Boot results are scheduled to be droppe=
+d on
+*5th June 2020*.  The full schedule for boot tests deprecation is available=
+ on
+this GitHub issue: https://github.com/kernelci/kernelci-backend/issues/238
 
-Today's linux-next merge of the ext4 tree got a conflict in:
+The new equivalent is the *baseline* test suite which also runs sanity chec=
+ks
+using dmesg and bootrr: https://github.com/kernelci/bootrr
 
-  fs/ext4/super.c
+See the *baseline results for this kernel revision* on this page:
+https://kernelci.org/test/job/next/branch/pending-fixes/kernel/v5.7-rc6-239=
+-gc0a2bce73a89/plan/baseline/
 
-between commit:
+---------------------------------------------------------------------------=
+----
 
-  ed318a6cc0b6 ("fscrypt: support test_dummy_encryption=3Dv2")
+next/pending-fixes boot: 246 boots: 10 failed, 228 passed with 4 offline, 4=
+ untried/unknown (v5.7-rc6-239-gc0a2bce73a89)
 
-from the fscrypt tree and commit:
+Full Boot Summary: https://kernelci.org/boot/all/job/next/branch/pending-fi=
+xes/kernel/v5.7-rc6-239-gc0a2bce73a89/
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v5.7-rc6-239-gc0a2bce73a89/
 
-  e0198aff3ae3 ("ext4: reject mount options not supported when remounting i=
-n handle_mount_opt()")
+Tree: next
+Branch: pending-fixes
+Git Describe: v5.7-rc6-239-gc0a2bce73a89
+Git Commit: c0a2bce73a890bc0d4d9e12f3293b120a36ae62c
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Tested: 102 unique boards, 25 SoC families, 30 builds out of 217
 
-from the ext4 tree.
+Boot Regressions Detected:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+arm:
 
---=20
-Cheers,
-Stephen Rothwell
+    exynos_defconfig:
+        gcc-8:
+          exynos5422-odroidxu3:
+              lab-collabora: failing since 10 days (last pass: v5.7-rc4-407=
+-g604da24420e3 - first fail: v5.7-rc4-552-g1e823790a7f1)
 
-diff --cc fs/ext4/super.c
-index 4a3d21972011,62e6ebc0c0ae..000000000000
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@@ -1819,8 -1817,8 +1820,8 @@@ static const struct mount_opts=20
-  	{Opt_jqfmt_vfsv0, QFMT_VFS_V0, MOPT_QFMT},
-  	{Opt_jqfmt_vfsv1, QFMT_VFS_V1, MOPT_QFMT},
-  	{Opt_max_dir_size_kb, 0, MOPT_GTE0},
- -	{Opt_test_dummy_encryption, 0, MOPT_GTE0},
- +	{Opt_test_dummy_encryption, 0, MOPT_STRING},
-- 	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
-+ 	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET | MOPT_NO_REMOUNT},
-  	{Opt_err, 0, 0}
-  };
- =20
+    multi_v7_defconfig:
+        gcc-8:
+          bcm2836-rpi-2-b:
+              lab-collabora: failing since 97 days (last pass: v5.5-8839-g5=
+6c8845edd39 - first fail: v5.6-rc1-311-ge58961fba99f)
+          imx6ul-pico-hobbit:
+              lab-pengutronix: new failure (last pass: v5.7-rc6-175-gcf2c23=
+3130ca)
 
---Sig_/TsrLHyJYATXjLv3am2_WHJv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+          rk3288-veyron-jaq:
+              lab-collabora: new failure (last pass: v5.7-rc6-175-gcf2c2331=
+30ca)
 
------BEGIN PGP SIGNATURE-----
+    sama5_defconfig:
+        gcc-8:
+          at91-sama5d4_xplained:
+              lab-baylibre: failing since 16 days (last pass: v5.7-rc3-277-=
+ga37f92ef57b2 - first fail: v5.7-rc4-211-g6d4315023bc9)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7HKk4ACgkQAVBC80lX
-0GzDZQgAphOOzunXU+74dZOBQrG3J2PRBQbGMF3H1B37IEtT8NIR8onnAF2iRw6n
-gdYPGQclYqc/7KC8U/l2glhfB/Rp7h8I0j5qLFKMEo4Pwl47HbjrCc07Kc5evIiz
-l7WW9GZrM5RB4Fw0ovkN4dUECuEDgGy8VNiply8eFtNoEKAFdHNsnlnoxeI3xLUg
-Bkyr6KtFKiUeJa/pX+JSzZCSC+OEo5gWBl7FXfapWvjuIxCygdhSRb0zAIoWou1l
-jpRvzTnbh6yaIqpK9uwTsDxZ1gxggzM1d8wl8+udbfj4r3Lbp6/tKZlhJ72oD/65
-PPzLdGErswGiffDlQARCJA2YG5bX/g==
-=truN
------END PGP SIGNATURE-----
+    versatile_defconfig:
+        gcc-8:
+          versatile-pb:
+              lab-collabora: new failure (last pass: v5.7-rc6-175-gcf2c2331=
+30ca)
 
---Sig_/TsrLHyJYATXjLv3am2_WHJv--
+arm64:
+
+    defconfig:
+        gcc-8:
+          sm8150-mtp:
+              lab-bjorn: failing since 20 days (last pass: v5.7-rc3-194-g16=
+31e20d9729 - first fail: v5.7-rc3-228-g76a37a4cf830)
+
+    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy:
+        gcc-8:
+          sun50i-h6-orangepi-3:
+              lab-clabbe: new failure (last pass: v5.7-rc6-175-gcf2c233130c=
+a)
+
+i386:
+
+    i386_defconfig:
+        gcc-8:
+          qemu_i386:
+              lab-collabora: new failure (last pass: v5.7-rc6-175-gcf2c2331=
+30ca)
+
+riscv:
+
+    defconfig:
+        gcc-8:
+          sifive_fu540:
+              lab-baylibre-seattle: failing since 41 days (last pass: v5.6-=
+12182-g8614d419a4d6 - first fail: v5.6-12503-g3a0f8793ae13)
+
+Boot Failures Detected:
+
+i386:
+    i386_defconfig:
+        gcc-8:
+            qemu_i386: 1 failed lab
+
+riscv:
+    defconfig:
+        gcc-8:
+            sifive_fu540: 1 failed lab
+
+arm:
+    sama5_defconfig:
+        gcc-8:
+            at91-sama5d4_xplained: 1 failed lab
+
+    multi_v7_defconfig+CONFIG_SMP=3Dn:
+        gcc-8:
+            rk3288-veyron-jaq: 1 failed lab
+
+    multi_v7_defconfig:
+        gcc-8:
+            bcm2836-rpi-2-b: 1 failed lab
+            imx6ul-pico-hobbit: 1 failed lab
+
+    exynos_defconfig:
+        gcc-8:
+            exynos5422-odroidxu3: 1 failed lab
+
+    allmodconfig:
+        gcc-8:
+            stm32mp157c-dk2: 1 failed lab
+
+arm64:
+    defconfig:
+        gcc-8:
+            sm8150-mtp: 1 failed lab
+            sm8250-mtp: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+            qcom-apq8064-cm-qs600: 1 offline lab
+            stih410-b2120: 1 offline lab
+
+    exynos_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
