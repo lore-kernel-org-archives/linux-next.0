@@ -2,152 +2,174 @@ Return-Path: <SRS0=NYpJ=7L=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5CEC433DF
-	for <linux-next@archiver.kernel.org>; Fri, 29 May 2020 18:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CC9C433DF
+	for <linux-next@archiver.kernel.org>; Fri, 29 May 2020 19:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFA9020723
-	for <linux-next@archiver.kernel.org>; Fri, 29 May 2020 18:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4474207D4
+	for <linux-next@archiver.kernel.org>; Fri, 29 May 2020 19:27:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OktvBRzz"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0H1SzxC5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgE2S32 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 29 May 2020 14:29:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgE2S31 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 29 May 2020 14:29:27 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D210CC03E969;
-        Fri, 29 May 2020 11:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=B5WVANQZx4YCGx97jJ5OLiz8s2lEqqhT42bbB5YnkyM=; b=OktvBRzz6+OuWH5zwNRdS/Angw
-        zaWqzcSHUi7LJ+pozmbCvkcKL+K6eyAYP2YkbChE4QjKJJoauaZqqKzVr23x/72OP04qi/Px9dm6s
-        Ad5YUeDqgMiefrDYSr1sJIne+NX7MNVsNgW6SfFbSopUtDp8HFaGwOX0+lpmvgW8YU8X3dbGNJkYk
-        EddZkfa2GsHiOna7DkMtbEyy/pmRGktK6k3Uwh6qKbIYjAqw9CE57DALW+f4SQE/3pMrZVKQR73V9
-        9ReybVEUI/yS3lRLHckpUw9OaYwfPgffzUCQ179BUWISlzXaZ7fVVOIe03B4JGSebLOWAkUuIPNjU
-        ZEaOh3/w==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jejkq-0006aG-Fy; Fri, 29 May 2020 18:29:16 +0000
-Subject: Re: [PATCH] x86/uaccess: Remove redundant likely/unlikely annotations
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        viro@zeniv.linux.org.uk, x86@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <611fa14d-8d31-796f-b909-686d9ebf84a9@infradead.org>
- <20200528172005.GP2483@worktop.programming.kicks-ass.net>
- <20200529135750.GA1580@lst.de>
- <20200529143556.GE706478@hirez.programming.kicks-ass.net>
- <20200529145325.GB706518@hirez.programming.kicks-ass.net>
- <20200529153336.GC706518@hirez.programming.kicks-ass.net>
- <20200529160514.cyaytn33thphb3tz@treble>
- <20200529161253.GD706460@hirez.programming.kicks-ass.net>
- <20200529165011.o7vvhn4wcj6zjxux@treble>
- <20200529165419.GF706460@hirez.programming.kicks-ass.net>
- <20200529172505.fdjppgquujab7ayv@treble>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <77d5741f-4b84-4cb8-1b01-3e411d3b8a70@infradead.org>
-Date:   Fri, 29 May 2020 11:29:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200529172505.fdjppgquujab7ayv@treble>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1728111AbgE2T11 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 29 May 2020 15:27:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48208 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbgE2T10 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 29 May 2020 15:27:26 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04TJLreV169365;
+        Fri, 29 May 2020 19:27:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=3qxOqaesPyrRrNuwrg9A6Iz+VpwiuvMQaao/kPwC+Uo=;
+ b=0H1SzxC5NDZhMAVTl47sNWCD2vJyf0Q6s9HR0nfDAyr03qVW1ioP+lRu3J9dzk4gb7oY
+ 4y4S5dF0KJRIq9j4wwxiWwL/MlYu1cbPxnlOu5oGtFiDFqNPIkEkc4Kv6/J3txOhdcPg
+ 6IaR2ehsv/jaUPwOvYZPlM/C7s+Sqsy7SI1Mc+r0V56/TMXtDqadP85K0zPmJTHCH3L+
+ 1FQzDrFu42ndc+AQD4mQjOQQMWr+4AHRYYVtXxP2nkbiUTLFwjWwXHl4G44ezs8IHXbZ
+ fVcSK1Duu7gtVTglsPrYP7MrZzIKoxcy8z7eplyljXFXqxri3Pb4lOAGINIt9OzA8m8q Ig== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 316u8rc3u5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 29 May 2020 19:27:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04TJNjmg066965;
+        Fri, 29 May 2020 19:27:13 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 31a9kuntd4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 May 2020 19:27:12 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 04TJR8RW022423;
+        Fri, 29 May 2020 19:27:08 GMT
+Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 29 May 2020 12:27:07 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.14\))
+Subject: Re: linux-next: manual merge of the nfsd tree with the nfs-anna tree
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20200529105917.50dfc40f@canb.auug.org.au>
+Date:   Fri, 29 May 2020 15:27:06 -0400
+Cc:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: 7bit
+Message-Id: <1AC5DB12-0E72-4AB6-B3B5-F1C40EC36F26@oracle.com>
+References: <20200529105917.50dfc40f@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Bruce Fields <bfields@fieldses.org>
+X-Mailer: Apple Mail (2.3445.104.14)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9636 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 bulkscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2005290146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9636 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 cotscore=-2147483648 suspectscore=0
+ phishscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005290146
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 5/29/20 10:25 AM, Josh Poimboeuf wrote:
-> On Fri, May 29, 2020 at 06:54:19PM +0200, Peter Zijlstra wrote:
->> On Fri, May 29, 2020 at 11:50:11AM -0500, Josh Poimboeuf wrote:
->>> The nested likelys seem like overkill anyway -- user_access_begin() is
->>> __always_inline and it already has unlikely(), which should be
->>> propagated.
->>>
->>> So just remove the outer likelys?
->>
->> That fixes it. Ack!
-> 
-> If there are no objections to the patch, I can add it to my objtool-core
-> branch unless anybody else wants to take it.  It only affects
-> linux-next.
-> 
-> ---8<---
-> 
-> From: Josh Poimboeuf <jpoimboe@redhat.com>
-> Subject: [PATCH] x86/uaccess: Remove redundant likely/unlikely annotations
-> 
-> Since user_access_begin() already has an unlikely() annotation for its
-> access_ok() check, "if (likely(user_access_begin))" results in nested
-> likely annotations.  When combined with CONFIG_TRACE_BRANCH_PROFILING,
-> GCC converges the error/success paths of the nested ifs, using a
-> register value to distinguish between them.
-> 
-> While the code is technically uaccess safe, it complicates the
-> branch-profiling generated code.  It also confuses objtool, because it
-> doesn't do register value tracking, resulting in the following warnings:
-> 
->   arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_from_user()+0x2a4: call to memset() with UACCESS enabled
->   arch/x86/lib/csum-wrappers_64.o: warning: objtool: csum_and_copy_to_user()+0x243: return with UACCESS enabled
-> 
-> The outer likely annotations aren't actually needed anyway, since the
-> compiler propagates the error path coldness when it inlines
-> user_access_begin().
-> 
-> Fixes: 18372ef87665 ("x86_64: csum_..._copy_..._user(): switch to unsafe_..._user()")
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Acked-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-
-Thanks.
-
-> ---
->  arch/x86/lib/csum-wrappers_64.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On May 28, 2020, at 8:59 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> diff --git a/arch/x86/lib/csum-wrappers_64.c b/arch/x86/lib/csum-wrappers_64.c
-> index a12b8629206d..ee63d7576fd2 100644
-> --- a/arch/x86/lib/csum-wrappers_64.c
-> +++ b/arch/x86/lib/csum-wrappers_64.c
-> @@ -27,7 +27,7 @@ csum_and_copy_from_user(const void __user *src, void *dst,
->  	might_sleep();
->  	*errp = 0;
->  
-> -	if (!likely(user_access_begin(src, len)))
-> +	if (!user_access_begin(src, len))
->  		goto out_err;
->  
->  	/*
-> @@ -89,7 +89,7 @@ csum_and_copy_to_user(const void *src, void __user *dst,
->  
->  	might_sleep();
->  
-> -	if (unlikely(!user_access_begin(dst, len))) {
-> +	if (!user_access_begin(dst, len)) {
->  		*errp = -EFAULT;
->  		return 0;
->  	}
+> Hi all,
 > 
+> Today's linux-next merge of the nfsd tree got a conflict in:
+> 
+>  include/trace/events/sunrpc.h
+> 
+> between commit:
+> 
+>  2baebf955125 ("SUNRPC: Split the xdr_buf event class")
+> 
+> from the nfs-anna tree and commit:
+> 
+>  998024dee197 ("SUNRPC: Add more svcsock tracepoints")
+> 
+> from the nfsd tree.
+
+Alternately, I can provide a v4 nfsd-5.8 series for Bruce that
+includes 2baebf955125 ("SUNRPC: Split the xdr_buf event class")
+so that these merge conflicts are avoided.
 
 
--- 
-~Randy
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc include/trace/events/sunrpc.h
+> index 73193c79fcaa,852413cbb7d9..000000000000
+> --- a/include/trace/events/sunrpc.h
+> +++ b/include/trace/events/sunrpc.h
+> @@@ -14,9 -14,41 +14,42 @@@
+>  #include <linux/net.h>
+>  #include <linux/tracepoint.h>
+> 
+> + TRACE_DEFINE_ENUM(SOCK_STREAM);
+> + TRACE_DEFINE_ENUM(SOCK_DGRAM);
+> + TRACE_DEFINE_ENUM(SOCK_RAW);
+> + TRACE_DEFINE_ENUM(SOCK_RDM);
+> + TRACE_DEFINE_ENUM(SOCK_SEQPACKET);
+> + TRACE_DEFINE_ENUM(SOCK_DCCP);
+> + TRACE_DEFINE_ENUM(SOCK_PACKET);
+> + 
+> + #define show_socket_type(type)					\
+> + 	__print_symbolic(type,					\
+> + 		{ SOCK_STREAM,		"STREAM" },		\
+> + 		{ SOCK_DGRAM,		"DGRAM" },		\
+> + 		{ SOCK_RAW,		"RAW" },		\
+> + 		{ SOCK_RDM,		"RDM" },		\
+> + 		{ SOCK_SEQPACKET,	"SEQPACKET" },		\
+> + 		{ SOCK_DCCP,		"DCCP" },		\
+> + 		{ SOCK_PACKET,		"PACKET" })
+> + 
+> + /* This list is known to be incomplete, add new enums as needed. */
+> + TRACE_DEFINE_ENUM(AF_UNSPEC);
+> + TRACE_DEFINE_ENUM(AF_UNIX);
+> + TRACE_DEFINE_ENUM(AF_LOCAL);
+> + TRACE_DEFINE_ENUM(AF_INET);
+> + TRACE_DEFINE_ENUM(AF_INET6);
+> + 
+> + #define rpc_show_address_family(family)				\
+> + 	__print_symbolic(family,				\
+> + 		{ AF_UNSPEC,		"AF_UNSPEC" },		\
+> + 		{ AF_UNIX,		"AF_UNIX" },		\
+> + 		{ AF_LOCAL,		"AF_LOCAL" },		\
+> + 		{ AF_INET,		"AF_INET" },		\
+> + 		{ AF_INET6,		"AF_INET6" })
+> + 
+> -DECLARE_EVENT_CLASS(xdr_buf_class,
+> +DECLARE_EVENT_CLASS(rpc_xdr_buf_class,
+>  	TP_PROTO(
+> +		const struct rpc_task *task,
+>  		const struct xdr_buf *xdr
+>  	),
+> 
+
+--
+Chuck Lever
+
+
+
