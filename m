@@ -2,111 +2,83 @@ Return-Path: <SRS0=WYMY=7P=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=FORGED_MUA_MOZILLA,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C42BC433DF
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 12:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E86EC433E0
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 13:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECDC820679
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 12:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB41206A2
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 13:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbgFBMlu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 2 Jun 2020 08:41:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21986 "EHLO
+        id S1727046AbgFBNtA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 2 Jun 2020 09:49:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49594 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725940AbgFBMlp (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jun 2020 08:41:45 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 052CX7tD061173;
-        Tue, 2 Jun 2020 08:41:36 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31dheku6mb-1
+        by vger.kernel.org with ESMTP id S1725940AbgFBNtA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jun 2020 09:49:00 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 052Dc8MC061313;
+        Tue, 2 Jun 2020 09:48:47 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31d2u231f2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Jun 2020 08:41:35 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 052Ca5gS008002;
-        Tue, 2 Jun 2020 12:41:34 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma01fra.de.ibm.com with ESMTP id 31bf47tf9u-1
+        Tue, 02 Jun 2020 09:48:47 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 052DRaS3022513;
+        Tue, 2 Jun 2020 13:47:34 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03ams.nl.ibm.com with ESMTP id 31bf47x4rc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Jun 2020 12:41:33 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 052CfVUN65339640
+        Tue, 02 Jun 2020 13:47:34 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 052DlWCT3342728
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 Jun 2020 12:41:31 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A973642041;
-        Tue,  2 Jun 2020 12:41:31 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 256274203F;
-        Tue,  2 Jun 2020 12:41:30 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.91.137])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  2 Jun 2020 12:41:29 +0000 (GMT)
-Subject: Re: linux-next test error: BUG: using smp_processor_id() in
- preemptible [ADDR] code: syz-fuzzer/6792
-To:     syzbot <syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-References: <0000000000008ff8ea05a71818b5@google.com>
+        Tue, 2 Jun 2020 13:47:32 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CFD54C04A;
+        Tue,  2 Jun 2020 13:47:32 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9945E4C04E;
+        Tue,  2 Jun 2020 13:47:28 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.85.91.137])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Jun 2020 13:47:28 +0000 (GMT)
 From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Tue, 2 Jun 2020 18:11:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>,
+        tytso@mit.edu, linux-kernel@vger.kernel.org,
+        adilger.kernel@dilger.ca, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCHv5 1/1] ext4: mballoc: Use raw_cpu_ptr instead of this_cpu_ptr
+Date:   Tue,  2 Jun 2020 19:17:21 +0530
+Message-Id: <20200602134721.18211-1-riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-In-Reply-To: <0000000000008ff8ea05a71818b5@google.com>
-Content-Type: multipart/mixed;
- boundary="------------8CCD057140658DF24F4D91CA"
-Content-Language: en-US
-Message-Id: <20200602124130.256274203F@d06av24.portsmouth.uk.ibm.com>
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
  definitions=2020-06-02_13:2020-06-02,2020-06-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 suspectscore=0 cotscore=-2147483648 phishscore=0
- malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 classifier=spam
- adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006020089
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ cotscore=-2147483648 malwarescore=0 phishscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 lowpriorityscore=0 suspectscore=1 spamscore=0 mlxscore=0
+ mlxlogscore=993 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006020093
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------8CCD057140658DF24F4D91CA
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-#syz test: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 
-0e21d4620dd047da7952f44a2e1ac777ded2d57e
-
---------------8CCD057140658DF24F4D91CA
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-ext4-mballoc-Use-raw_cpu_ptr-in-case-if-preemption-i.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-ext4-mballoc-Use-raw_cpu_ptr-in-case-if-preemption-i.pa";
- filename*1="tch"
-
-From cc1cf67d99d5fa61db0651c89c288df31bad6b8e Mon Sep 17 00:00:00 2001
-From: Ritesh Harjani <riteshh@linux.ibm.com>
-Date: Tue, 2 Jun 2020 17:54:12 +0530
-Subject: [PATCH 1/1] ext4: mballoc: Use raw_cpu_ptr in case if preemption is enabled
-
-It doesn't matter really in ext4_mb_new_blocks() about whether the code
+It doesn't really matter in ext4_mb_new_blocks() about whether the code
 is rescheduled on any other cpu due to preemption. Because we care
 about discard_pa_seq only when the block allocation fails and then too
 we add the seq counter of all the cpus against the initial sampled one
 to check if anyone has freed any blocks while we were doing allocation.
 
-So just use raw_cpu_ptr to not trigger this BUG.
+So just use raw_cpu_ptr instead of this_cpu_ptr to avoid this BUG.
 
 BUG: using smp_processor_id() in preemptible [00000000] code: syz-fuzzer/6927
 caller is ext4_mb_new_blocks+0xa4d/0x3b70 fs/ext4/mballoc.c:4711
@@ -150,7 +122,4 @@ index a9083113a8c0..b79b32dbe3ea 100644
  		ext4_mb_normalize_request(ac, ar);
 -- 
 2.21.3
-
-
---------------8CCD057140658DF24F4D91CA--
 
