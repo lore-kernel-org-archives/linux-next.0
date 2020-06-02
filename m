@@ -2,106 +2,105 @@ Return-Path: <SRS0=WYMY=7P=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBE6C433E0
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 10:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978D0C433E1
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 11:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 077C9207F7
-	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 10:44:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WqwHYZKY"
+	by mail.kernel.org (Postfix) with ESMTP id 8038620679
+	for <linux-next@archiver.kernel.org>; Tue,  2 Jun 2020 11:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbgFBKn7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 2 Jun 2020 06:43:59 -0400
-Received: from ozlabs.org ([203.11.71.1]:41951 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbgFBKn7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 2 Jun 2020 06:43:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49bpYm0WBpz9sSg;
-        Tue,  2 Jun 2020 20:43:56 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1591094637;
-        bh=oCZcV2xkPgXGtfLS8LiMCGtpvLn30ooD4U0COUOX/b4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WqwHYZKYBGP5kZDObHwPkHf0NRZsodarotdxs067xV/EvqItasvREu3qd9jKV8jXB
-         PIESJgR4Z6PAdb9ZAC89vouejPTTKzuDeOfEm44aH9gwqgrU16L5Tx4zd+6KTRh8e/
-         3+BnAd5unZ4shAxf731bGpfcRl7r+RgMNen3LHHNEa7QNrkAgrfqpQrTGhW7PTBOLl
-         GpQKgybhSZBzBfAyOeEHXFH89p2XqlJEbrl7LTFUUzdbnlSU49D51OiHcv7suuP6bg
-         NqjbwRcYZCH74bGFtSpQuCSMpSVpZ1FU5v/6qKgrRJLDrFwgJYmMq3XHBzamXCR9Vs
-         RiLGYgpLW36jg==
-Date:   Tue, 2 Jun 2020 20:43:54 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Max Gurtovoy <maxg@mellanox.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yamin Friedman <yaminf@mellanox.com>,
-        Israel Rukshin <israelr@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the block tree with the rdma tree
-Message-ID: <20200602204354.39727fdd@canb.auug.org.au>
-In-Reply-To: <3717aca8-9d75-33f1-ea8c-044af767ab5c@mellanox.com>
-References: <20200602125647.5f5ed151@canb.auug.org.au>
-        <3717aca8-9d75-33f1-ea8c-044af767ab5c@mellanox.com>
+        id S1726311AbgFBLUU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 2 Jun 2020 07:20:20 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:55942 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbgFBLUS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jun 2020 07:20:18 -0400
+Received: by mail-il1-f199.google.com with SMTP id x20so11397159ilj.22
+        for <linux-next@vger.kernel.org>; Tue, 02 Jun 2020 04:20:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zMicM0NHbCSTRWS4r82QF2SXzu5Q7H29IEKe/4Smvew=;
+        b=IuUKn8QcfSnLvLhHviafzwr3bliOxRO6BEt7cjxWKY/3N3dRbFu4/ylO4ObW0CqJp5
+         0NMhFQ6iKxSIoHCwnNulmSvsr5kPLW7zKn+9vq9Dp24J6sz8i4V4+cpTyShNrhyzFpT9
+         ZwO1Tw61abuZYcISql2t+VMja1xDoUmDBIxt1M92FpfQVfRr6nexWtdddiN0lqSjI6n6
+         S5lHrX4sMPDMP2lvckgAcH7SsVzTuW9wkB/SqXNlC8BJ/Shu3BQZmKGs5DiCLwri54PQ
+         zUJvkulsAkXIoPkzS26HvHCgedt1etV/u8edPBVp8GBbINcsW9GyaEW1WY+1dC1p0jKt
+         KpjA==
+X-Gm-Message-State: AOAM533v6+4g+ecMQ73WDUZ9UO/zl4T4/BBVN3aP/l9ZBa2E+hhJ1Yr7
+        BRecV2PrPV3aJMDhUms/Pxdta3XaHnYTUzb7reR7V6iJr/ix
+X-Google-Smtp-Source: ABdhPJwd5/P+dkeerOSL4vtqpDMgbEz3TJ/gVhSpiVhzNtZKOPYyEBX9SOJi9pOTo8GI4a9Hf94RBj8rRJsT5JMG09Hx74jWrJFC
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/x+8EnL2NCLRCz5R=VQZuLEU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6638:101c:: with SMTP id r28mr26033924jab.84.1591096816692;
+ Tue, 02 Jun 2020 04:20:16 -0700 (PDT)
+Date:   Tue, 02 Jun 2020 04:20:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008ff8ea05a71818b5@google.com>
+Subject: linux-next test error: BUG: using smp_processor_id() in preemptible
+ [ADDR] code: syz-fuzzer/6792
+From:   syzbot <syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/x+8EnL2NCLRCz5R=VQZuLEU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Max,
+syzbot found the following crash on:
 
-On Tue, 2 Jun 2020 11:37:26 +0300 Max Gurtovoy <maxg@mellanox.com> wrote:
->
-> On 6/2/2020 5:56 AM, Stephen Rothwell wrote:
->=20
-> This looks good to me.
->=20
-> Can you share a pointer to the tree so we'll test it in our labs ?
+HEAD commit:    0e21d462 Add linux-next specific files for 20200602
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=127233ee100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ecc1aef35f550ee3
+dashboard link: https://syzkaller.appspot.com/bug?extid=82f324bb69744c5f6969
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+82f324bb69744c5f6969@syzkaller.appspotmail.com
 
-you want tag next-20200602
+BUG: using smp_processor_id() in preemptible [00000000] code: syz-fuzzer/6792
+caller is ext4_mb_new_blocks+0xa4d/0x3b70 fs/ext4/mballoc.c:4711
+CPU: 1 PID: 6792 Comm: syz-fuzzer Not tainted 5.7.0-next-20200602-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ check_preemption_disabled+0x20d/0x220 lib/smp_processor_id.c:48
+ ext4_mb_new_blocks+0xa4d/0x3b70 fs/ext4/mballoc.c:4711
+ ext4_ext_map_blocks+0x201b/0x33e0 fs/ext4/extents.c:4244
+ ext4_map_blocks+0x4cb/0x1640 fs/ext4/inode.c:626
+ ext4_getblk+0xad/0x520 fs/ext4/inode.c:833
+ ext4_bread+0x7c/0x380 fs/ext4/inode.c:883
+ ext4_append+0x153/0x360 fs/ext4/namei.c:67
+ ext4_init_new_dir fs/ext4/namei.c:2757 [inline]
+ ext4_mkdir+0x5e0/0xdf0 fs/ext4/namei.c:2802
+ vfs_mkdir+0x419/0x690 fs/namei.c:3632
+ do_mkdirat+0x21e/0x280 fs/namei.c:3655
+ do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:359
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4b02a0
+Code: Bad RIP value.
+RSP: 002b:000000c00010d4b8 EFLAGS: 00000212 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 000000c00002c000 RCX: 00000000004b02a0
+RDX: 00000000000001c0 RSI: 000000c000026b40 RDI: ffffffffffffff9c
+RBP: 000000c00010d510 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000212 R12: ffffffffffffffff
+R13: 000000000000005b R14: 000000000000005a R15: 0000000000000100
 
-or if you just want that trees that conflicted, then
 
-block: git://git.kernel.dk/linux-block.git branch for-next
-rdma: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git branch fo=
-r-next
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/x+8EnL2NCLRCz5R=VQZuLEU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7WLWsACgkQAVBC80lX
-0Gxtpwf+MjJxsHWVelBpn/KVJRHjupGaIcGL2U0kojSsWBZqInmRjF5ELqKU0os/
-DfCMysJ9J1sSXv6DyFuZ77fJjNQWQtj4ti0MBRZ6uqUgaV49dULnUAV0gZUPAhOK
-ZlsKjSC2G2MsQkpYthiy8/CfzF6QdrJa3+01u9Ey5viDbnMKk2C1KECGLMweRoO5
-f/GX0eA3taImkwbPuAO2dFUs2omqZ9tIxAEApwki4PaV/e/IHBAv9NNNK+wINnCr
-ZQoge5hJJ4Jvn20S7tNBHbLJXuvwUArZqfTSHnLyrs6mPIJlvyNMXBVV4rbHF8yz
-58/UhmBdab2mvOJpMjCO/XqirMeNXw==
-=CUqi
------END PGP SIGNATURE-----
-
---Sig_/x+8EnL2NCLRCz5R=VQZuLEU--
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
