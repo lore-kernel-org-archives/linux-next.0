@@ -2,71 +2,101 @@ Return-Path: <SRS0=Fswj=7Q=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D49C433DF
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jun 2020 15:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92215C433E0
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jun 2020 15:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1EE0207D5
-	for <linux-next@archiver.kernel.org>; Wed,  3 Jun 2020 15:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61EE0207DF
+	for <linux-next@archiver.kernel.org>; Wed,  3 Jun 2020 15:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591197879;
+	bh=wYhSFD9Khcc0Z3mpqxy4+CiNsLPVPcf8WqMe+UPsLC8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=1matbo2PLo0SL4mcS6GQJrBdGq8r3MIhTot0D+F29YJ8R84A2Cm1A/yPe6p45zy6z
+	 RUzbc0uM4DxFXzVGn3BV9Xyol3GPlbR+Lm+FjudBjZbOhDDiYlfaRFAXyfks+BQrBe
+	 VSKgx/Ssc39TJV0CNDfKwgWjWNl+u8OzkbR65FcU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbgFCPW0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Jun 2020 11:22:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36226 "EHLO mail.kernel.org"
+        id S1725882AbgFCPYi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Jun 2020 11:24:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbgFCPW0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Jun 2020 11:22:26 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1725810AbgFCPYi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jun 2020 11:24:38 -0400
+Received: from tzanussi-mobl (c-73-211-240-131.hsd1.il.comcast.net [73.211.240.131])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E44120738;
-        Wed,  3 Jun 2020 15:22:25 +0000 (UTC)
-Date:   Wed, 3 Jun 2020 11:22:23 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id C9328206A2;
+        Wed,  3 Jun 2020 15:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591197878;
+        bh=wYhSFD9Khcc0Z3mpqxy4+CiNsLPVPcf8WqMe+UPsLC8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ERkS2pLmp6VM8p5BRD0VinxXrkbvVSPIGRdqKX7nRekXAl0RJYTIgfotZGeiJWSxA
+         5PQxfRgNoFaPNC1SFuXplrT4vXmJxvdLREX/1UU63tNq9In+eFzN5j1dVfvYbbktHx
+         Q3LZ+9KbtRSp+7EppzCQ3/XWYBUP9T9FEGNjB5gs=
+Message-ID: <af08615d0ce87b7c920a0ac6a5389834a0504cb7.camel@kernel.org>
+Subject: Re: linux-next: build failure after merge of the ftrace tree
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-Message-ID: <20200603112223.3adc3451@gandalf.local.home>
-In-Reply-To: <20200603174253.60deace5@canb.auug.org.au>
+Date:   Wed, 03 Jun 2020 10:24:36 -0500
+In-Reply-To: <20200603112223.3adc3451@gandalf.local.home>
 References: <20200603174253.60deace5@canb.auug.org.au>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+         <20200603112223.3adc3451@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 3 Jun 2020 17:42:53 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Steve,
 
-> Hi all,
+On Wed, 2020-06-03 at 11:22 -0400, Steven Rostedt wrote:
+> On Wed, 3 Jun 2020 17:42:53 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> After merging the ftrace tree, today's linux-next build (htmldocs)
-> failed like this:
+> > Hi all,
+> > 
+> > After merging the ftrace tree, today's linux-next build (htmldocs)
+> > failed like this:
+> > 
+> > 
+> > Sphinx parallel build error:
+> > docutils.utils.SystemMessage:
+> > /home/sfr/next/next/Documentation/trace/histogram-design.rst:219:
+> > (SEVERE/4) Unexpected section title.
+> > 
+> > .
+> > .
+> > 
+> > Caused by commit
+> > 
+> >   16b585fe7192 ("tracing: Add histogram-design document")
+> > 
+> > I am running a slightly out of date version os sphynx (2.4.3) ...
+> > 
 > 
+> It appears to be the ascii art that is causing the issue. I have no
+> idea
+> how to fix it. If someone has a patch they would like to submit, I
+> will
+> take it before I push it off to Linus.
 > 
-> Sphinx parallel build error:
-> docutils.utils.SystemMessage: /home/sfr/next/next/Documentation/trace/histogram-design.rst:219: (SEVERE/4) Unexpected section title.
-> 
-> .
-> .
-> 
-> Caused by commit
-> 
->   16b585fe7192 ("tracing: Add histogram-design document")
-> 
-> I am running a slightly out of date version os sphynx (2.4.3) ...
-> 
+> -- Steve
 
-It appears to be the ascii art that is causing the issue. I have no idea
-how to fix it. If someone has a patch they would like to submit, I will
-take it before I push it off to Linus.
+I just sent you/posted a patch to fix this.  Should be in your inbox
+already.
 
--- Steve
+Thanks,
+
+Tom
+
