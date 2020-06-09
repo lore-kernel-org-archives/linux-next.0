@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E66C433E2
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jun 2020 05:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9007CC433E1
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jun 2020 05:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFC8720810
-	for <linux-next@archiver.kernel.org>; Tue,  9 Jun 2020 05:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69EF920774
+	for <linux-next@archiver.kernel.org>; Tue,  9 Jun 2020 05:36:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591680895;
-	bh=/zs/ME9D5R9qnr0nQXb2PED0xJkn98WmJ/5gZDD+ors=;
+	s=default; t=1591680985;
+	bh=2wf/LZBIvGhvCrcTwdAFN04tq2VEPyYI18UMOxjRE4s=;
 	h=Date:From:To:Subject:In-Reply-To:List-ID:From;
-	b=aHtsxYFY1hl+zbWXukcoKYikrq1MYkhoUT4AUF4jMoC4/bh2mgJIdAMwQohQwnsME
-	 fCFXdMD5fp7N8ZbXG2HpT/nR46aZljqTMKP6Do5v0V13Rlg+GeGH/36pg2cDhgTyPI
-	 eGQEWiSxUYuEpUar9hatdr+7Q4DsqJrptr2wvZ6U=
+	b=f/nUPZnz+Y13JAGtPYPxsDfrZsEhjxUGrlrwt4Rh8ps42SKwaP2hw0dYAgPCZjaM3
+	 i0r9yvTRxTCL5PfEsW2B6eQI+e0+mnTqw9IrylnZmu1maLWgp6HtSKGDc28PlChwbF
+	 hpyp31Z4VSTABBSGhPtjPWvEAB4gqbFMt8Lxk0HY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgFIFeu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Jun 2020 01:34:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
+        id S1726886AbgFIFgR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Jun 2020 01:36:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbgFIFet (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Jun 2020 01:34:49 -0400
+        id S1725770AbgFIFgQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jun 2020 01:36:16 -0400
 Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C1EC207ED;
-        Tue,  9 Jun 2020 05:34:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AA1220774;
+        Tue,  9 Jun 2020 05:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591680888;
-        bh=/zs/ME9D5R9qnr0nQXb2PED0xJkn98WmJ/5gZDD+ors=;
+        s=default; t=1591680975;
+        bh=2wf/LZBIvGhvCrcTwdAFN04tq2VEPyYI18UMOxjRE4s=;
         h=Date:From:To:Subject:In-Reply-To:From;
-        b=w4rzkVqzqoNlBWgXhJWc4j+A1jWkM4gob3TyrsNtipSQZm4x1aAgRFNlDutwLM1Ty
-         t5j/pIQkQ8reHHO8AfgzE5vwWvr0G3Viz21G6UltznmssKVf3KKEFjL385S893Fb7+
-         acI83LVUCzATIlDQ5w6GLlrDZSQHYxcqLiZ3ZXG0=
-Date:   Mon, 08 Jun 2020 22:34:47 -0700
+        b=j+I2u/vDCFntnbkB3QQIVbKInSn0FXu3wgzjwzeknuojvF09AuNskbeCWUg/e/EWL
+         ZmeJb6t5qg1MiN54rY4VjDkvGaKoV89Gz+73M6kTDNm9ZXfma42XdBdm2sTmOLUsm+
+         QISM+nkOT/NtlBDWtR/H4sjrcfLNlq4wFMDtj9S8=
+Date:   Mon, 08 Jun 2020 22:36:14 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
 To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-next@vger.kernel.org, mhocko@suse.cz,
         mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-06-08-22-33 uploaded
-Message-ID: <20200609053447.B76w0AErG%akpm@linux-foundation.org>
+Subject:  mmotm 2020-06-08-22-35 uploaded
+Message-ID: <20200609053614.JML2T0-uE%akpm@linux-foundation.org>
 In-Reply-To: <20200608212922.5b7fa74ca3f4e2444441b7f9@linux-foundation.org>
 User-Agent: s-nail v14.8.16
 Sender: linux-next-owner@vger.kernel.org
@@ -53,7 +53,7 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-06-08-22-33 has been uploaded to
+The mm-of-the-moment snapshot 2020-06-08-22-35 has been uploaded to
 
    http://www.ozlabs.org/~akpm/mmotm/
 
