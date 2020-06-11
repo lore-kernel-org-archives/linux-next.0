@@ -2,131 +2,131 @@ Return-Path: <SRS0=lSqz=7Y=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3507C433E0
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jun 2020 05:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B121C433DF
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jun 2020 09:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 984492072F
-	for <linux-next@archiver.kernel.org>; Thu, 11 Jun 2020 05:15:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="mQBnsS1g"
+	by mail.kernel.org (Postfix) with ESMTP id 46A8320656
+	for <linux-next@archiver.kernel.org>; Thu, 11 Jun 2020 09:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591869346;
+	bh=+WFFEnJdhn44WKcXH9ef2WLCK5OupD6/OMB1xTrq4Sc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IKFjNEKG9f3ns9AW3vYkzcrzk+EBqpYx+4arM1sRzU3zmtWfEUnhW+lin7ZLD210r
+	 xSN8URraCpW/cxGGibFZ+pVQOe2+Ds6nEbFp126/+8uf7Yh+d3Z0dFa3SoSbyvvvbw
+	 MiMNPwYueRg3GuPfXCOOMb5sZ+InvUI1KMaoDwCg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726306AbgFKFP2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 11 Jun 2020 01:15:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58930 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbgFKFP2 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 11 Jun 2020 01:15:28 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14B0C03E96F
-        for <linux-next@vger.kernel.org>; Wed, 10 Jun 2020 22:15:27 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id s88so1883979pjb.5
-        for <linux-next@vger.kernel.org>; Wed, 10 Jun 2020 22:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=nNYUFCDTA9KQkQliSGXlW+3TWsr6yzCL7KYJ1nAqWac=;
-        b=mQBnsS1gpMMxPWgdKRSZqp8YNVX+Uzl8Du71nPWzMGO3oimml7LSD+gVO8OikkCj3J
-         z2hWtCtecYIzZBRt+qwAwWUiOHJ/Xivpw4ANJuSbBEEIMppzc5GkAY/szxSdpdERf8GP
-         S8NPsXmgTwn64nrsLE0YsBcAbC0sa++nViAh0YJJncW2wrbCVgy6kFLwv8lkUIImEF3c
-         AGChmN0ti4xSC61KCO1Aalf417kgiiFL/T9OYQZko2BLbsu+bgrDAXnbdFDmQtYGFHKN
-         GS6DDU+jwUw54ckdesS9QFVR7f59tYJta3rsgU+K992vIR2FDRJMF4fuEP+2WwAX4UTZ
-         56+A==
+        id S1726996AbgFKJzp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 11 Jun 2020 05:55:45 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33737 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbgFKJzT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 11 Jun 2020 05:55:19 -0400
+Received: by mail-wm1-f67.google.com with SMTP id j198so6574348wmj.0;
+        Thu, 11 Jun 2020 02:55:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=nNYUFCDTA9KQkQliSGXlW+3TWsr6yzCL7KYJ1nAqWac=;
-        b=ZQSMOkDC2+XOj1U/WQSa+sfE61HQeKgFdKzDkWFxf4UgnGoI0Yn2lQVzp2Lzc7wyiD
-         j17oz3HR+MTJaxtW+NcsktHuPFFszf6tDVbgtSUrFeu0kb/h3EUm9xt5Th1d7TWrnsQE
-         tlsT/q0CuoD3h+tzPb/U/4KM67GWtP32hZUGdJhIB6bEIcT/yGfj3T22ZKiCtwePCjYc
-         rGvmqzHGEmi7Eigrzg3Y80ucPhNhD3dSCYf6SJncyxDK1AwRleBWOBNhVNvlrcIMREVB
-         B8xWuKo/bbII3HwozB0QMZiLCBvqxvSjZ2KO5eno4rRFeaWJm9QxwMlQBVSaDDu7VevZ
-         1gIw==
-X-Gm-Message-State: AOAM530auTdT6YfsMiNJEVds5hjPyo8ZNsTNBd+IjjZxscs+E6K2E7BG
-        zXZ6TYD1vUjmVdwUvQjCEQihanTMHas=
-X-Google-Smtp-Source: ABdhPJzA/dt5AkF7zT2pLpGjP7HYDuPVOmb3Xb/DofxnLKbfIAbZ+L3Elf+qh9VaCz0hFdrNZ+/IyQ==
-X-Received: by 2002:a17:90a:4f4b:: with SMTP id w11mr6480840pjl.11.1591852527007;
-        Wed, 10 Jun 2020 22:15:27 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id h7sm1417048pgh.31.2020.06.10.22.15.25
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OGc4Jynhv8J9+LXwEVD2pmhTRYA7A0SBRA8Y9bWfwBM=;
+        b=ZP3WT+PqgLjTcOB43l6GxF4o9GVmkvGG8l8sH87x0bHL7XqW1KaHyZDmXKTjJKOzkt
+         RMgvMWpExF98C4c5Y8zco5vLKDG7hWRa43rDJfaSezsHoqaU+WlrqodiEafdyOR6DLBQ
+         sVAhvx5jJLoHj705kpT+10r+i2FjIpJr8PQg+MUeEUNoTiXzrXv0eurO1JGi1H1SIPOZ
+         S/KzhrJBCblA+SH0Gx9hzDttKjs8TI+oOrIpJt1f1hPWRjpYSRFdWMjxC2GYJ1vt1jOJ
+         t2JOGG6A6SmkoGwePy6IL/YHQJu+TjWJQs041ML6lujAcOHokviij9GvmZXEDyLTidDh
+         gLrA==
+X-Gm-Message-State: AOAM530ngMhb6vfGTQmJl/t9EPNN5CQTYVgAf7hkzc9JAKRH3GtCAfhI
+        VHBihFejIgcUSJAK6Xm9qRg=
+X-Google-Smtp-Source: ABdhPJxdFlFuIOqczVMYLEkBB/5DcRTZD3uW4Gi3wzWe6yykRWLuYTOprRKGwBQhCme4nouL4V90Cw==
+X-Received: by 2002:a7b:c18a:: with SMTP id y10mr7719246wmi.73.1591869316876;
+        Thu, 11 Jun 2020 02:55:16 -0700 (PDT)
+Received: from localhost (ip-37-188-174-201.eurotel.cz. [37.188.174.201])
+        by smtp.gmail.com with ESMTPSA id 67sm4301281wrk.49.2020.06.11.02.55.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 22:15:26 -0700 (PDT)
-Message-ID: <5ee1bdee.1c69fb81.81266.50e4@mx.google.com>
-Date:   Wed, 10 Jun 2020 22:15:26 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 11 Jun 2020 02:55:15 -0700 (PDT)
+Date:   Thu, 11 Jun 2020 11:55:14 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chris Down <chris@chrisdown.name>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Yafang Shao <laoar.shao@gmail.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        "Linux F2FS DEV, Mailing List" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Chao Yu <yuchao0@huawei.com>, lkft-triage@lists.linaro.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Cgroups <cgroups@vger.kernel.org>
+Subject: Re: mm: mkfs.ext4 invoked oom-killer on i386 - pagecache_get_page
+Message-ID: <20200611095514.GD20450@dhcp22.suse.cz>
+References: <20200521095515.GK6462@dhcp22.suse.cz>
+ <20200521163450.GV6462@dhcp22.suse.cz>
+ <CA+G9fYuDWGZx50UpD+WcsDeHX9vi3hpksvBAWbMgRZadb0Pkww@mail.gmail.com>
+ <CA+G9fYs2jg-j_5fdb0OW0G-JzDjN7b8d9qnX7uuk9p4c7mVSig@mail.gmail.com>
+ <20200528150310.GG27484@dhcp22.suse.cz>
+ <CA+G9fYvDXiZ9E9EfU6h0gsJ+xaXY77mRu9Jg+J7C=X4gJ3qvLg@mail.gmail.com>
+ <20200528164121.GA839178@chrisdown.name>
+ <CALOAHbAHGOsAUUM7qn=9L1u8kAf6Gztqt=SyHSmZ9XuYZWcKmg@mail.gmail.com>
+ <20200529015644.GA84588@chrisdown.name>
+ <20200529094910.GH4406@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Branch: pending-fixes
-X-Kernelci-Tree: next
-X-Kernelci-Kernel: v5.7-14137-g60392f4b277d
-Subject: next/pending-fixes baseline: 158 runs,
- 1 regressions (v5.7-14137-g60392f4b277d)
-To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200529094910.GH4406@dhcp22.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes baseline: 158 runs, 1 regressions (v5.7-14137-g60392f4b2=
-77d)
+On Fri 29-05-20 11:49:20, Michal Hocko wrote:
+> On Fri 29-05-20 02:56:44, Chris Down wrote:
+> > Yafang Shao writes:
+> > > Look at this patch[1] carefully you will find that it introduces the
+> > > same issue that I tried to fix in another patch [2]. Even more sad is
+> > > these two patches are in the same patchset. Although this issue isn't
+> > > related with the issue found by Naresh, we have to ask ourselves why
+> > > we always make the same mistake ?
+> > > One possible answer is that we always forget the lifecyle of
+> > > memory.emin before we read it. memory.emin doesn't have the same
+> > > lifecycle with the memcg, while it really has the same lifecyle with
+> > > the reclaimer. IOW, once a reclaimer begins the protetion value should
+> > > be set to 0, and after we traversal the memcg tree we calculate a
+> > > protection value for this reclaimer, finnaly it disapears after the
+> > > reclaimer stops. That is why I highly suggest to add an new protection
+> > > member in scan_control before.
+> > 
+> > I agree with you that the e{min,low} lifecycle is confusing for everyone --
+> > the only thing I've not seen confirmation of is any confirmed correlation
+> > with the i386 oom killer issue. If you've validated that, I'd like to see
+> > the data :-)
+> 
+> Agreed. Even if e{low,min} might still have some rough edges I am
+> completely puzzled how we could end up oom if none of the protection
+> path triggers which the additional debugging should confirm. Maybe my
+> debugging patch is incomplete or used incorrectly (maybe it would be
+> esier to use printk rather than trace_printk?).
 
-Regressions Summary
--------------------
-
-platform        | arch  | lab          | compiler | defconfig | results
-----------------+-------+--------------+----------+-----------+--------
-bcm2837-rpi-3-b | arm64 | lab-baylibre | gcc-8    | defconfig | 4/5    =
-
-
-  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
-v5.7-14137-g60392f4b277d/plan/baseline/
-
-  Test:     baseline
-  Tree:     next
-  Branch:   pending-fixes
-  Describe: v5.7-14137-g60392f4b277d
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  SHA:      60392f4b277dd983893bda2a86cf9cb6f0a5c1b8 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform        | arch  | lab          | compiler | defconfig | results
-----------------+-------+--------------+----------+-----------+--------
-bcm2837-rpi-3-b | arm64 | lab-baylibre | gcc-8    | defconfig | 4/5    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ee18997258b42a32a97bf19
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.7-14137-=
-g60392f4b277d/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.t=
-xt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.7-14137-=
-g60392f4b277d/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.h=
-tml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2019=
-.02-11-g17e793fa4728/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5ee18997258b42a3=
-2a97bf1c
-      failing since 6 days (last pass: v5.7-4607-g4ce9138f1bd4, first fail:=
- v5.7-8671-g086779e58c68)
-      2 lines =20
+It would be really great if we could move forward. While the fix (which
+has been dropped from mmotm) is not super urgent I would really like to
+understand how it could hit the observed behavior. Can we double check
+that the debugging patch really doesn't trigger (e.g.
+s@trace_printk@printk in the first step)? I have checked it again but
+do not see any potential code path which would be affected by the patch
+yet not trigger any output. But another pair of eyes would be really
+great.
+-- 
+Michal Hocko
+SUSE Labs
