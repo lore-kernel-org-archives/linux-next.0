@@ -2,231 +2,100 @@ Return-Path: <SRS0=OPeI=7Z=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303B4C433DF
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jun 2020 05:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F3FC433DF
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jun 2020 09:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1F4620838
-	for <linux-next@archiver.kernel.org>; Fri, 12 Jun 2020 05:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 956F2207D8
+	for <linux-next@archiver.kernel.org>; Fri, 12 Jun 2020 09:14:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="V8pOUEKS"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L2YlPGms"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbgFLFgC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 12 Jun 2020 01:36:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58368 "EHLO
+        id S1726367AbgFLJOS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 12 Jun 2020 05:14:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbgFLFgC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2020 01:36:02 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4FCCC03E96F
-        for <linux-next@vger.kernel.org>; Thu, 11 Jun 2020 22:36:01 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id h22so12060pjf.1
-        for <linux-next@vger.kernel.org>; Thu, 11 Jun 2020 22:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=LcIgAl1+0Bfk5jpEyAyA9+8PzP+BtDAE/jyz4mZneKc=;
-        b=V8pOUEKSsweKjsu1rUFaw5b7gfB0QRxWUaxJFuyMKaL/p7FZ9JU5woSZpzdkEh3N/V
-         3Qj4fpq6fAnoDJoRkpjY7DuoPrAe1Wlfk931+NcTeFtA0Zt3CMF39O0E14oQ7691NlOI
-         Wf0/2wNtWsPP4lqFEaTfB+H1UIR36kYOvkK7zX4U2sofBaCp2M79uSADiKjvbxKNaKEW
-         exNkDb/eA8FJ/KxS4DuKNNoOgi67u8RJBteuKxRZZ9xp3z8cmhGiuv6EOydhRirHYBki
-         gKUaAWwfQimXYk+G6kZNtSOI1xCYoF/IRTMocT+QpUCwjZ2EehYX1As2vcqTabaCNYVH
-         83Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=LcIgAl1+0Bfk5jpEyAyA9+8PzP+BtDAE/jyz4mZneKc=;
-        b=O6jZPzx8gAPpSVrK1vOg6jLtaNtIVQevDkTk3I9e4YU3b1hQNaqtRDoqNJtPCf0PWv
-         WKHq7gZ1Uov65gnPmANeZYy0+ZyDbXMjbp9GfLfJj0+vpWeg6QUXZCzSZK49xmUR4Vmr
-         Vha5JbB7WJ/yiqEp+jFDUJCO5J9+Bm8XuVl1uzWIfWlHvCO/TUU3WdQMdfP2GXb05wpE
-         H43goCjB1Z2/sijcBSGVxaDpcFw4fCCUJPSr31UaJNQv6ypsGz+PcHQUPgILVIpB1kz5
-         HBdZKgUWm0t/6FioIaeQbMnU1JHVhUPevfouokP62CW69+iQ/Hed+txwwuvSQj+LrueQ
-         UCvw==
-X-Gm-Message-State: AOAM531kl2JyLGjbRXxI3o/IEiLc271BchZxoW3xQNSIVWyBGNcvG90q
-        vNC4ySBkBRNoLpb0CT75haE6rOki8Uk=
-X-Google-Smtp-Source: ABdhPJy6lXHnNAV6tsYU+uQ3zYuDkEFwhzFOBK8n5ctUcDunvoWDN0OOn+orI99cecTcC8k4KAWKBw==
-X-Received: by 2002:a17:90a:30e1:: with SMTP id h88mr10736604pjb.43.1591940160327;
-        Thu, 11 Jun 2020 22:36:00 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id v186sm4855688pfv.54.2020.06.11.22.35.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2020 22:35:59 -0700 (PDT)
-Message-ID: <5ee3143f.1c69fb81.2bc46.12eb@mx.google.com>
-Date:   Thu, 11 Jun 2020 22:35:59 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S1726319AbgFLJOS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2020 05:14:18 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA77C03E96F;
+        Fri, 12 Jun 2020 02:14:17 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49jw5f1gZPz9s1x;
+        Fri, 12 Jun 2020 19:14:14 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1591953254;
+        bh=OFe7pSR6WejLTC2rUGx9oPF64ZtQ8I2djy9fI8KRR2w=;
+        h=Date:From:To:Cc:Subject:From;
+        b=L2YlPGmskFQOFyyoBqts+Tola9r/aMW9PUZdiAtYOCyKJRaYBAdWV3Nw3HXc6jfxg
+         k3H+MjjQYZudh7BaiuOAiievbnnJCXfbqcu4Gy/0CqlOwFUWadS2OG+IZbc4wPPo5c
+         GqC/BkJXvtctvPcQK5BaqV07IVChvAO9wGjPhTA8x/59vGs4r2/d4+KuLiHsKudh+g
+         NZSjeneytZlTlVHTYRFrUEzmHFSKh2QDGNjD09lsrQJXxjF6mcun8AuRxAYVFmoDZo
+         X2OSRt9O2eVuDsGm/KUz8lVDKz521yiUSan0qFL0n8k5Jw2OtwRNcw5p2BVqfXFx0K
+         DpCRKo/IH2G/g==
+Date:   Fri, 12 Jun 2020 19:14:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux Crypto List <linux-crypto@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the crypto-current tree
+Message-ID: <20200612191412.543f8fd2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Branch: pending-fixes
-X-Kernelci-Tree: next
-X-Kernelci-Kernel: v5.7-14413-gf19136b39e47
-Subject: next/pending-fixes baseline: 131 runs,
- 4 regressions (v5.7-14413-gf19136b39e47)
-To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; boundary="Sig_/n4TX5Oe76boiL6uYs0gCcxP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes baseline: 131 runs, 4 regressions (v5.7-14413-gf19136b39=
-e47)
+--Sig_/n4TX5Oe76boiL6uYs0gCcxP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Regressions Summary
--------------------
+Hi all,
 
-platform                     | arch  | lab          | compiler | defconfig =
-                   | results
------------------------------+-------+--------------+----------+-----------=
--------------------+--------
-at91-sama5d4_xplained        | arm   | lab-baylibre | gcc-8    | multi_v7_d=
-efc...CONFIG_SMP=3Dn | 0/1    =
+In commit
 
-at91-sama5d4_xplained        | arm   | lab-baylibre | gcc-8    | sama5_defc=
-onfig              | 0/1    =
+  dc03ab101464 ("crypto: ccp - Fix sparse warnings in sev-dev")
 
-hifive-unleashed-a00         | riscv | lab-baylibre | gcc-8    | defconfig =
-                   | 0/1    =
+Fixes tag
 
-meson-gxl-s805x-libretech-ac | arm64 | lab-baylibre | gcc-8    | defconfig =
-                   | 0/1    =
+  Fixes: 76a2b524a4b1 ("crypto: ccp - introduce SEV_GET_ID2 command")
 
+has these problem(s):
 
-  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
-v5.7-14413-gf19136b39e47/plan/baseline/
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
 
-  Test:     baseline
-  Tree:     next
-  Branch:   pending-fixes
-  Describe: v5.7-14413-gf19136b39e47
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  SHA:      f19136b39e477ce7853148bafce3cb3f8dbbdd1c =
+Fixes: 76a2b524a4b1 ("crypto: ccp: Implement SEV_PDH_CERT_EXPORT ioctl comm=
+and")
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/n4TX5Oe76boiL6uYs0gCcxP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Test Regressions
----------------- =
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7jR2QACgkQAVBC80lX
+0Gx0MQf+KFPNAo2pTzotO6AypmjvmUZltCZcCAC4pWEhklog7ZrdCxJaWmpY90ZV
+pysPYMHMk346NH12zudQtNHSJTuBEOyk3BT5PlZ8J01DV7YuG4FZi4L8hBGKFFUr
+Rn77v43QVRU03K8Gqprf2vYZM/YQ2jZHY7dJI4qxEPIFVtImilbfOf6IiiVlsuwU
+IzU2rYWj2iMdPo3QrbBtYRf3DbuzLK0mdlfCZObZAzdJBljWO8LT+KETWoVFgC8a
+3p96Cw2zpcz5npm/qM1u3/wFz20zpOqAvnwMkoJpgfPoxyeeL7pFt/vXKZZU3dRJ
+awDsFWUH87EvUl7I+GF/XdOit81myg==
+=5eIb
+-----END PGP SIGNATURE-----
 
-
-platform                     | arch  | lab          | compiler | defconfig =
-                   | results
------------------------------+-------+--------------+----------+-----------=
--------------------+--------
-at91-sama5d4_xplained        | arm   | lab-baylibre | gcc-8    | multi_v7_d=
-efc...CONFIG_SMP=3Dn | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ee2de3ae385246c1d97bf29
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/base=
-line-at91-sama5d4_xplained.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/base=
-line-at91-sama5d4_xplained.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2019=
-.02-11-g17e793fa4728/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ee2de3ae385246c1d97b=
-f2a
-      new failure (last pass: v5.7-14137-g60392f4b277d) =
-
-
-
-platform                     | arch  | lab          | compiler | defconfig =
-                   | results
------------------------------+-------+--------------+----------+-----------=
--------------------+--------
-at91-sama5d4_xplained        | arm   | lab-baylibre | gcc-8    | sama5_defc=
-onfig              | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ee2dccd8f6ff75a6e97bf1b
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: sama5_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/arm/sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_=
-xplained.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/arm/sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_=
-xplained.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2019=
-.02-11-g17e793fa4728/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ee2dccd8f6ff75a6e97b=
-f1c
-      failing since 37 days (last pass: v5.7-rc3-277-ga37f92ef57b2, first f=
-ail: v5.7-rc4-211-g6d4315023bc9) =
-
-
-
-platform                     | arch  | lab          | compiler | defconfig =
-                   | results
------------------------------+-------+--------------+----------+-----------=
--------------------+--------
-hifive-unleashed-a00         | riscv | lab-baylibre | gcc-8    | defconfig =
-                   | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ee2db4e9cbceda8d997bf25
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (riscv64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/riscv/defconfig/gcc-8/lab-baylibre/baseline-hifive-unleashed-=
-a00.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/riscv/defconfig/gcc-8/lab-baylibre/baseline-hifive-unleashed-=
-a00.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2019=
-.02-11-g17e793fa4728/riscv/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ee2db4e9cbceda8d997b=
-f26
-      new failure (last pass: v5.7-13513-ga8195ca429a0) =
-
-
-
-platform                     | arch  | lab          | compiler | defconfig =
-                   | results
------------------------------+-------+--------------+----------+-----------=
--------------------+--------
-meson-gxl-s805x-libretech-ac | arm64 | lab-baylibre | gcc-8    | defconfig =
-                   | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ee2df3cc237bdb96e97bf27
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/arm64/defconfig/gcc-8/lab-baylibre/baseline-meson-gxl-s805x-l=
-ibretech-ac.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.7-14413-=
-gf19136b39e47/arm64/defconfig/gcc-8/lab-baylibre/baseline-meson-gxl-s805x-l=
-ibretech-ac.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2019=
-.02-11-g17e793fa4728/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ee2df3cc237bdb96e97b=
-f28
-      new failure (last pass: v5.7-14137-g60392f4b277d) =20
+--Sig_/n4TX5Oe76boiL6uYs0gCcxP--
