@@ -2,89 +2,158 @@ Return-Path: <SRS0=eKcF=AE=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CD0C433DF
-	for <linux-next@archiver.kernel.org>; Tue, 23 Jun 2020 22:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA3BC433DF
+	for <linux-next@archiver.kernel.org>; Tue, 23 Jun 2020 23:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07C502078A
-	for <linux-next@archiver.kernel.org>; Tue, 23 Jun 2020 22:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 756A720780
+	for <linux-next@archiver.kernel.org>; Tue, 23 Jun 2020 23:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pOLPvGPc"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EkIXFub/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388596AbgFWWr4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 23 Jun 2020 18:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46744 "EHLO
+        id S2387727AbgFWXAg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 23 Jun 2020 19:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388282AbgFWWr1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 23 Jun 2020 18:47:27 -0400
+        with ESMTP id S2387606AbgFWXAf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 23 Jun 2020 19:00:35 -0400
 Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D35C061795;
-        Tue, 23 Jun 2020 15:30:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AE2C061573;
+        Tue, 23 Jun 2020 16:00:35 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49s1Dv0flkz9sSJ;
-        Wed, 24 Jun 2020 08:30:07 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49s1vy3D5Wz9s1x;
+        Wed, 24 Jun 2020 09:00:30 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1592951407;
-        bh=JhH3TIdeJOXZKtOLxfwXegln47gA8SR/yps1VimhK5k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pOLPvGPc4tqZ8nIpUupTiUcU7WkZwPz/9sRENiwST0l6J7W0PQDjn0Bc8SGTcgl5V
-         lTlFa65T5yzyE5FgRKrMeUy8y1D+jm1qASBS84FBbrTsoKuPuvWqB6YV7dugsQsKD5
-         i84vw5DbVpPx1Afaat/8pqJsAEbfafKWEYBLYrUznlNU/VQm1pgO6ES4Badn3qxC6Q
-         83vluMWglUVcsZxy8/naagc/P3qda1Kn3pEK4UGygiprCaemsD7wA3ckT+N/Hn1xLy
-         eQULs9G2KHs28nHlrfuw1e6/cHZ3Qevw7MosF/h9qxLN2cFgYqDiUxtB1+TyH/lMLA
-         QdVI7BaxTmVZw==
-Date:   Wed, 24 Jun 2020 08:30:06 +1000
+        s=201702; t=1592953233;
+        bh=KPI3aAUIMWOgw1b5tXl9B51uLxeA81au0UgltAmeN6U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EkIXFub/WzsMZ+H1Ralc3gj/qmMIfcAtcnviBfxlxctDYfwGaiNZnImNIIO63lYY5
+         Dr1FQGblvHue0YFe8kEV6C/vmiPDk6ZhxybbP5QqsPKjAAY7VToPXAmJUHWxv//ne7
+         iyKvfBpH1KAZev3MfY6XqZLv5Us2toeZ8vZaVYLDuuaE+3LVaFjKKQ1axbEyRKO5Bn
+         SpTbpmTuK23m+NQVA6Cx6byInmz0Ovxg76eVYqEOf5hrN1UvO/LFAE9TLcYmL3SpF1
+         t8p5Cvuh6aSWAPmMdWY7mkJUUzQkK9qNMYFJZWmTV9vQAxxTr1Fj0S9CIRTv2WWtn2
+         9Mg8HrmvY4f8Q==
+Date:   Wed, 24 Jun 2020 09:00:29 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greentime Hu <green.hu@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the nds32 tree
-Message-ID: <20200624083006.09cf6d27@canb.auug.org.au>
+To:     Marco Elver <elver@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        syzbot <syzbot+dbf8cf3717c8ef4a90a0@syzkaller.appspotmail.com>,
+        bp@alien8.de, hpa@zytor.com, jmattson@google.com, joro@8bytes.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
+        sean.j.christopherson@intel.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
+        x86@kernel.org
+Subject: Re: linux-next build error (9)
+Message-ID: <20200624090029.5fa2dc1f@canb.auug.org.au>
+In-Reply-To: <20200623112448.GA208112@elver.google.com>
+References: <000000000000c25ce105a8a8fcd9@google.com>
+        <20200622094923.GP576888@hirez.programming.kicks-ass.net>
+        <20200623124413.08b2bd65@canb.auug.org.au>
+        <20200623093230.GD4781@hirez.programming.kicks-ass.net>
+        <20200623201730.6c085687@canb.auug.org.au>
+        <20200623112448.GA208112@elver.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bti7bdzkfwLgH+GlH._8WwL";
+Content-Type: multipart/signed; boundary="Sig_/vx20BsoZP5nc+1hY2szmS6d";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/bti7bdzkfwLgH+GlH._8WwL
+--Sig_/vx20BsoZP5nc+1hY2szmS6d
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Marco,
 
-Commits
+On Tue, 23 Jun 2020 13:24:48 +0200 Marco Elver <elver@google.com> wrote:
+>
+> On Tue, Jun 23, 2020 at 08:17PM +1000, Stephen Rothwell wrote:
+> > Hi Peter,
+> >=20
+> > On Tue, 23 Jun 2020 11:32:30 +0200 Peter Zijlstra <peterz@infradead.org=
+> wrote: =20
+> > >
+> > > I suppose the next quest is finding a s390 compiler version that works
+> > > and then bumping the version test in the aforementioned commit. =20
+> >=20
+> > Not a lot of help, but my Debian cross compiler seems to work:
+> >=20
+> > $ s390x-linux-gnu-gcc --version
+> > s390x-linux-gnu-gcc (Debian 9.3.0-13) 9.3.0 =20
+>=20
+> Rummaging through changelogs led me to 8.3.0 as the first good GCC. Also
+> confirmed by building that version and compiling a file that breaks with
+> older versions. It seems the first major version to fix it was 9, but
+> backported to 8.3. This is for all architectures.
+>=20
+> Suggested patch below.
+>=20
+> Thanks,
+> -- Marco
+>=20
+> ------ >8 ------ =20
+>=20
+> From: Marco Elver <elver@google.com>
+> Date: Tue, 23 Jun 2020 12:57:42 +0200
+> Subject: [PATCH] kasan: Fix required compiler version
+>=20
+> The first working GCC version to satisfy
+> CC_HAS_WORKING_NOSANITIZE_ADDRESS is GCC 8.3.0.
+>=20
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D89124
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+>  lib/Kconfig.kasan | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+> index 7a496b885f46..19fba15e99c6 100644
+> --- a/lib/Kconfig.kasan
+> +++ b/lib/Kconfig.kasan
+> @@ -16,7 +16,7 @@ config CC_HAS_KASAN_SW_TAGS
+>  	def_bool $(cc-option, -fsanitize=3Dkernel-hwaddress)
+> =20
+>  config CC_HAS_WORKING_NOSANITIZE_ADDRESS
+> -	def_bool !CC_IS_GCC || GCC_VERSION >=3D 80000
+> +	def_bool !CC_IS_GCC || GCC_VERSION >=3D 80300
+> =20
+>  config KASAN
+>  	bool "KASAN: runtime memory debugger"
+> --=20
+> 2.27.0.111.gc72c7da667-goog
+>=20
 
-  dac4f526ca6a ("nds32: configs: Cleanup CONFIG_CROSS_COMPILE")
-  c22efafa9b45 ("nds32: Replace <linux/clk-provider.h> by <linux/of_clk.h>")
-
-are missing a Signed-off-by from their committer.
+Thanks for tracking that down.  I will add that patch to the tip tree
+merge for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/bti7bdzkfwLgH+GlH._8WwL
+--Sig_/vx20BsoZP5nc+1hY2szmS6d
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7ygm4ACgkQAVBC80lX
-0Gz6Cwf/WjbTgCMzbDrhJ1ACFO8Nt7xwXADglHih7at3qJmqkbI98dklv5226jo5
-/PEBH7jKyM5rOGT5nwkc8IMpH2/YfKlu+JBj+cMYOM/jkm9FEz06ieDkjwbe1+te
-+tPDYXpHiJfXqR75yoOJAWwUFs3KkTXJj34G0McHOnK9eGBUChRoZk+Cdo5TMqUg
-PGPqFTLniwd3sU9BOqkrfpkszZSHFrSXz1CW1jVVn5b31RBC+IKWPVGEXqJ4lj4L
-GAdeTggXXCzQmJeGUW7H4bllCw4VSXPVaDkr6u7FFstJpY2BszC4U7pe4+PeCfgs
-o5SymK36Cna35VjT39jF8ecHOYHOaw==
-=sAYv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7yiY0ACgkQAVBC80lX
+0Gytxwf/XSrFXKqHN67FRDF9pjKF802HQJnp4w+90WqMxbbxwr3+eodMzrTQMOBG
+5qW60CEHccXVmT3ErY7S4fqBV/4a/gUzSZIqWIuckfSBJDWM8SD3480SWTtWKTTc
+sR3Bk1jKyd+NSsA3b2gVgzWyzDKwQqFofPVZVWyNrsPq7wlOQdx/gYG0PvXXxmpo
+poRcjeAOeLL5CDAZysCTA0mwptdkiYBYZqZ0Hh8Uq9t4aVzaq/8DUCrkN6CdTh0T
+Epm0SVi+CrXDBKIskh9MLBRGimc9g7w9BnxYZlA0ek+PBDZTHfBTpY+LFvUbMbDE
+c25DPzSkr4ftsJMLqsiFHvs27ETbKA==
+=jf2S
 -----END PGP SIGNATURE-----
 
---Sig_/bti7bdzkfwLgH+GlH._8WwL--
+--Sig_/vx20BsoZP5nc+1hY2szmS6d--
