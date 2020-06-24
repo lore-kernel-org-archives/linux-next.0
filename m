@@ -2,74 +2,73 @@ Return-Path: <SRS0=yk7U=AF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD14EC433E0
-	for <linux-next@archiver.kernel.org>; Wed, 24 Jun 2020 00:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED64C433DF
+	for <linux-next@archiver.kernel.org>; Wed, 24 Jun 2020 01:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE15020DD4
-	for <linux-next@archiver.kernel.org>; Wed, 24 Jun 2020 00:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA3332137B
+	for <linux-next@archiver.kernel.org>; Wed, 24 Jun 2020 01:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592962516;
+	bh=+0IMWoLpUbRuRbVf5D/mZM7pi+csF164DDVQ5/21ijc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2l9jAM+D8f4OMTfBxIgQR9S4ScUwu+DV+mn0Vc0W6P6R/zY01GhSTq1b66VwnMtVp
+	 BraSPeuYGEFQ1L3a9XKPM7Hgp6UojEHhzCyOC/B4tpoxqpk7/NzrxJPDsrCd1wAMir
+	 iaiBWE7l7xK9DSIU+zqbN9U6RZw0c1GPlLr5QpxA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387831AbgFXAVY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 23 Jun 2020 20:21:24 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:47114 "EHLO fornost.hmeau.com"
+        id S2387921AbgFXBfQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 23 Jun 2020 21:35:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387693AbgFXAVX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 23 Jun 2020 20:21:23 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1jnt9u-0007Sc-28; Wed, 24 Jun 2020 10:20:59 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Wed, 24 Jun 2020 10:20:58 +1000
-Date:   Wed, 24 Jun 2020 10:20:58 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S2387804AbgFXBfQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 23 Jun 2020 21:35:16 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 199EA20B80;
+        Wed, 24 Jun 2020 01:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592962515;
+        bh=+0IMWoLpUbRuRbVf5D/mZM7pi+csF164DDVQ5/21ijc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Je25Ck+IVbWhGA5rgeBNGfNTjsElY9C0utY+XA2gGxRjEgnwcKt5gxcn2bU8kh+9s
+         m05zfSDHQ7P4+IUF34P1Rgc+Hju2E2OQFY5Ym34cRhcgGW8/ZZ58rdtkSaJSAoa9EA
+         7b21S+Oa8BSmqfETGe2mNHDx2ZrE0j92T8Vw3268=
+Date:   Wed, 24 Jun 2020 09:35:06 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the printk tree
-Message-ID: <20200624002057.GA12716@gondor.apana.org.au>
-References: <20200621131554.5a662afe@canb.auug.org.au>
- <20200623102655.6d16e610@canb.auug.org.au>
- <20200623121637.GA8444@alley>
- <20200623121937.GA9671@gondor.apana.org.au>
- <20200623142858.GB8444@alley>
+        Tim Harvey <tharvey@gateworks.com>
+Subject: Re: linux-next: build warnings after merge of the imx-mxs tree
+Message-ID: <20200624011800.GA31961@dragon>
+References: <20200624095007.141f0357@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200623142858.GB8444@alley>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200624095007.141f0357@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jun 23, 2020 at 04:28:58PM +0200, Petr Mladek wrote:
->
-> It is similar cycle:
+On Wed, Jun 24, 2020 at 09:50:07AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> spinlock_types.h -> lockdep.h -> printk.h -> ratelimit.h -> spinlock_types.h
+> After merging the imx-mxs tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
+
+...
+
+> Introduced by commits
 > 
-> But this time it happens via list.h -> kernel.h ->printk.h.
-> Where list.h needs READ_ONCE() stuff from compiler.h.
+>   26d7c769d460 ("ARM: dts: imx6qdl-gw53xx: allow boot firmware to set eth1 MAC")
+>   48d799918adf ("ARM: dts: imx6qdl-gw54xx: allow boot firmware to set eth1 MAC")
 
-But this is exactly the loop that's fixed by the lockdep_types
-patch.  Did you get a compile failure with *just* the lockdep
-patch?
+Sorry, Stephen.  I have just taken them out.
 
-> PS: And yes, it makes sense to push both patches via a single tree to
-> make sure that the lockdep.h split is done first.
-
-OK, can I repost this patch with your ack then?
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Shawn
