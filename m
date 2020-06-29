@@ -2,123 +2,103 @@ Return-Path: <SRS0=WxTV=AK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803EBC433DF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 19:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA2DC433E0
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 20:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D58E2065F
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 19:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF3C1206C0
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 20:39:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KMAALDJG"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="u2ONsXPw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731807AbgF2T2C (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Jun 2020 15:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46028 "EHLO
+        id S2389560AbgF2UjM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jun 2020 16:39:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732772AbgF2T15 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jun 2020 15:27:57 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4936DC03E979
-        for <linux-next@vger.kernel.org>; Mon, 29 Jun 2020 12:27:57 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id l6so5370594pjq.1
-        for <linux-next@vger.kernel.org>; Mon, 29 Jun 2020 12:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gjtO3+vpKn1A68ulTNV3+i1kW5W8NfqinqR35PqtzaI=;
-        b=KMAALDJGoGqtO4OG1RHmMXxEqwnS9LcbGgumEAe0ue9WMeuKbWgzvqK6u9RHeNs3PO
-         hJVPWrtmgZ3DV9y8pQjNFfIrujZfg/OeJOB+5YH9B647Krz5oAq9Q6OefmoCPUHRnpO8
-         gO0OUkpAmKqS+MtNG7QBmUCW0a6wVU+vzFpVo6mK6BVJlBuoF/r3WOwqtnF72kf34a5K
-         bT8WsbVXiGXMsekX+lWRdz9N2oyaWBp+EjqpPPlH07TbHmzlYsdPRA2dze8JFXDONFuc
-         VG3tMGgUk55U3op7075lFmFL+v6gF9r2IhQ7YZ8eVy8KV7Zk/UlXsWEE/ZT+RaRbrCwt
-         GNRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gjtO3+vpKn1A68ulTNV3+i1kW5W8NfqinqR35PqtzaI=;
-        b=Mlu6F4YTS2yUQHT74y4fPkAlj2babVo2GCVIJ4QYbvbnjyIPLgXKJnmX1PFrKmXjxX
-         eWvenQnj64H2pZRPxA/G5PFkTFHhyFq2wyq/2NSuR6B1mQbFdz+OL4w6bmMRDlKFTDj2
-         WJ/cb9lFkcdW1dEqVI5NWq/QAbn/kNsi6zZuqgReSpDmLJ6E9ieXbrwM60iiMbbTCa3j
-         wWysQoI551E0wOPOsSfXzn5EA1ZTC4x4i86TIW4pI/F6metMInqmr3jk5SN4jPfzFeni
-         gm+H9rF+Lt3TD4zViBOAAV8i0DIS9zrAQJYFzDRcdXHZY91Ir3a9ODavMnJFe08Yaj2K
-         cK0A==
-X-Gm-Message-State: AOAM5335mwdyUcoOnXSM6Buv2fP+1/2KOEnYV2/nHkF3M79SO/ZIuyy+
-        c+inIKH/lpQARo4UouO58CV+mQ==
-X-Google-Smtp-Source: ABdhPJy0SChbO2shXRc4vp0bmFhI2gH9IjNGdF2dYdDp0EX9wxfgtO8MwNTFrtY2y9b7qitmPqOirw==
-X-Received: by 2002:a17:90b:4c8b:: with SMTP id my11mr18897947pjb.153.1593458876736;
-        Mon, 29 Jun 2020 12:27:56 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 22sm428848pfx.94.2020.06.29.12.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 12:27:56 -0700 (PDT)
-Date:   Mon, 29 Jun 2020 12:25:24 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH -next] <linux/of.h>: add stub for of_get_next_parent() to
- fix qcom build error
-Message-ID: <20200629192524.GK388985@builder.lan>
-References: <ce0d7561-ff93-d267-b57a-6505014c728c@infradead.org>
+        with ESMTP id S1731719AbgF2TOO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jun 2020 15:14:14 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182D1C0A54DA;
+        Mon, 29 Jun 2020 00:22:55 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49wJqD1vfGz9s6w;
+        Mon, 29 Jun 2020 17:22:48 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1593415372;
+        bh=Y8lWOEK/53C9I4Sfg1srm4rd+6FuXVd7suMPKS3K/AE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=u2ONsXPwzuhbHLEdon8zpWLoAEe+drArcpjk8AR4yg1ziHp6a5etLr4VjPHOX3x+b
+         vemvXPX4kTVELNrx6AKxgTNFZySr5nUyMsi/i5T8ozdakZnV84G2CnkqrSQCt6r12C
+         7Cbk3Qf6ymjb5xSVoJOhDztl/4LWQ4pM2b3BVU1K32DFnwqL7IVxHsU3g5GtiTMoFZ
+         dNkME/W4WIWcY6kAN7bv0s25Q/S2yhjxR7n/q99W4x/gGVmXlrSgHQoQjM2AO2apOE
+         8Z2fiHszm1zp0GZyzXlRNb+1nsAzEY7REVzD6jmjaGOU7wer5YJ4cFcc/qqJ8CUqcH
+         KrNFWZDmQXjFw==
+Date:   Mon, 29 Jun 2020 17:22:40 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Naoya Horiguchi <nao.horiguchi@gmail.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>, cai@lca.pw,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, osalvador@suse.de,
+        Tony Luck <tony.luck@intel.com>, david@redhat.com,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        zeil@yandex-team.ru, naoya.horiguchi@nec.com,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCH v3 13/15] mm,hwpoison: Refactor soft_offline_huge_page
+ and __soft_offline_page
+Message-ID: <20200629172240.0d01e161@canb.auug.org.au>
+In-Reply-To: <20200628065409.GA546944@u2004>
+References: <20200624150137.7052-1-nao.horiguchi@gmail.com>
+        <20200624150137.7052-14-nao.horiguchi@gmail.com>
+        <CA+G9fYvopXWr+Y34xz2NVv17yeFs7fuKnJO_iUMnfCwaDNRXYg@mail.gmail.com>
+        <20200628065409.GA546944@u2004>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce0d7561-ff93-d267-b57a-6505014c728c@infradead.org>
+Content-Type: multipart/signed; boundary="Sig_/BfS5bgw7heJ6LcYTXdfMhhS";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon 29 Jun 09:43 PDT 2020, Randy Dunlap wrote:
+--Sig_/BfS5bgw7heJ6LcYTXdfMhhS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix a (COMPILE_TEST) build error when CONFIG_OF is not set/enabled
-> by adding a stub for of_get_next_parent().
-> 
-> ../drivers/soc/qcom/qcom-geni-se.c:819:11: error: implicit declaration of function 'of_get_next_parent'; did you mean 'of_get_parent'? [-Werror=implicit-function-declaration]
-> ../drivers/soc/qcom/qcom-geni-se.c:819:9: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: linux-arm-msm@vger.kernel.org
+Hi Naoya,
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Sun, 28 Jun 2020 15:54:09 +0900 Naoya Horiguchi <nao.horiguchi@gmail.com=
+> wrote:
+>
+> Andrew, could you append this diff on top of this series on mmotm?
 
-Regards,
-Bjorn
+I have added that patch to linux-next today.
 
-> ---
->  include/linux/of.h |    5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> --- linux-next-20200629.orig/include/linux/of.h
-> +++ linux-next-20200629/include/linux/of.h
-> @@ -630,6 +630,11 @@ static inline struct device_node *of_get
->  	return NULL;
->  }
->  
-> +static inline struct device_node *of_get_next_parent(struct device_node *node)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline struct device_node *of_get_next_child(
->  	const struct device_node *node, struct device_node *prev)
->  {
-> 
-> 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BfS5bgw7heJ6LcYTXdfMhhS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl75lsAACgkQAVBC80lX
+0GwqeggApOE4cVjf13CqeP/+MOp6uv0Ady+E4kdUraJ3c9PRp/PpwaZIztKVFB+1
+vFBhuZgj7isRK2jdVPjSACm4bNhkxYMTk9pDcdbyMLdsHP2saXrgllXhqUlQPIut
+Ee89TYrL7zLfrEoRgw435hplAq2qzpLoGGgO9Xfpbuu4oFqz7sLunwfoTtVlS58c
+nrVO6cr50tNkZRhcWpMiAlNlLZyNSY595NxMFayksucylS9eBAdPmGPHEsdlOYmx
+fsA7jwDB32shM7cngHnVr3xGp2p2kBN1rrxyE9QV4ykupil0I/zi3Fo5UKgSUqcV
+Z9f+NW5y3GIQg2WrcaI2y4UU7nhyqA==
+=TmpX
+-----END PGP SIGNATURE-----
+
+--Sig_/BfS5bgw7heJ6LcYTXdfMhhS--
