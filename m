@@ -2,120 +2,101 @@ Return-Path: <SRS0=WxTV=AK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A536C433E1
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 21:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DD3C433E0
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 21:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC3C20768
-	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 21:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D6F20829
+	for <linux-next@archiver.kernel.org>; Mon, 29 Jun 2020 21:21:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bFsvxMeG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="eupvc9s7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbgF2VGE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43344 "EHLO
+        id S1730476AbgF2VUU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731080AbgF2TMm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jun 2020 15:12:42 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5190C08E9A9;
-        Sun, 28 Jun 2020 22:43:10 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49wGcD0QQCz9sQt;
-        Mon, 29 Jun 2020 15:43:07 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1593409388;
-        bh=0gQlwqc7+1RNpQwLvCTErzn5lDh79VUZyyhucRciNrU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bFsvxMeG1BWfYgKBPbuEgrIA6YfnfKaD/ACoD8szYUP0+A1CmwmtCeSUuPkvUxw72
-         8rnEOa2Y3PzEidUb6FTp0qTmwopesnY3cNsIVNrsk6CCMTUq72SqBEd07FmQdHnCa0
-         361bn09FBtf7nXmlOw9ridBYllRrCdgLf5ua1t0vAd6JVLViSPHU4sfOKQoIdsCs3o
-         Lp8qAKoLr+WbIbvHhu9sPrAGE2doU0ZQe61QJ+GRIvA5yLYE/h2DurQF4LbMxxuIcj
-         WtN0qAUjec9fPcwOCQPhViozll9Fi+ZngwFJCYl05kCJwYIxZxI1ZQZpJgiL6HtFhH
-         K+LuXz/7Ed9vQ==
-Date:   Mon, 29 Jun 2020 15:43:05 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kees Cook <keescook@google.com>
+        with ESMTP id S1729779AbgF2Sws (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 29 Jun 2020 14:52:48 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07539C030F16
+        for <linux-next@vger.kernel.org>; Mon, 29 Jun 2020 09:25:04 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id d10so7291255pls.5
+        for <linux-next@vger.kernel.org>; Mon, 29 Jun 2020 09:25:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6u7fsXOnpntiVLfxhPmOks2Cw5x4MKBv8gUIWlulmZQ=;
+        b=eupvc9s7oTUWLWpef4QipcnGJua7jXAWsjt7JWwV+gxzv4gQvuOPABkzbJGCpMX50M
+         7VDeXpYwQcWLIN68hFKi8495Lt2hq++eSMC1HOfPA6BUcZVKNQF+H4xJ6jCh+IW8CeN+
+         4CwNQUXtRuVU8dez4qk1ww+if1571lMT89enUcZs2tPLFV3e/mhS8MOytKxOKQuK9SVl
+         aIeYvgHRCgpLzJWvq8THmowVyVy/j8A81XaQJ3ee62M3KBOCO1NjsRJhYZs45Tj9Xkfq
+         mBk2ULY8qHLgKoDJikvetY1Ir/z/EC/porLZF97jSoXEMMIyP/USaoF6yQvRrEtYzCbs
+         ZBpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6u7fsXOnpntiVLfxhPmOks2Cw5x4MKBv8gUIWlulmZQ=;
+        b=JNk+GD1Eh58c62dLjF/TNoRqENVyRNBtKHiRn5RduybmPtpz4nhXM1W+F/wF+g1mfS
+         4p6nc4L8lOZGI0KorJwtqqgnj/duzdJNVcGCdrWCMne/EnioPrXePtMF2A6bVTpIm4ph
+         2q5v00cCvXUD6M60xgeOa/zn1W/sKmmf0wAeZ0xx6R8TjSce5iA06bPAojL5mi+qCFvA
+         5DkWW3Z9GKRQp6bJVSOwCJsv+5nIS6l+mL6u4ySJgTrbYTL/Z3xiuNXZuvCjCdSpJWia
+         EASVuZqer12HdQoCEReocU2u1cTiOHVoMb0c0WJxlAqrPTQneuVx5iAdx68QbiD4nTRe
+         ZXNw==
+X-Gm-Message-State: AOAM530abJ9DNeqWqwgbHfpg178XLZNaKA7fQZ4sR28WpH8TMDBRxMEW
+        X+TwzCZ5Dp62SP2RCqnUAWJCuA==
+X-Google-Smtp-Source: ABdhPJwoJE3KK2/ckFz3jcZ/3sSQF+7WycuVQNd3KJFtZYhYYhEPn0QeeddqpPWDR/3UlOahPZTYeA==
+X-Received: by 2002:a17:902:b78a:: with SMTP id e10mr14216607pls.34.1593447903575;
+        Mon, 29 Jun 2020 09:25:03 -0700 (PDT)
+Received: from [192.168.86.197] (cpe-75-85-219-51.dc.res.rr.com. [75.85.219.51])
+        by smtp.gmail.com with ESMTPSA id z25sm194632pfg.140.2020.06.29.09.25.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jun 2020 09:25:03 -0700 (PDT)
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: linux-next: manual merge of the kspp tree with Linus' tree
-Message-ID: <20200629154305.0067d113@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200629080533.5f44d445@canb.auug.org.au>
+ <3949fc27-da62-6e26-cf07-59d3c78e2b64@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fa5b0279-32a6-f9c6-f325-cedc2786b74a@kernel.dk>
+Date:   Mon, 29 Jun 2020 10:25:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/O=BM_rb4ZsTj+JaxRLGGYJ/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <3949fc27-da62-6e26-cf07-59d3c78e2b64@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/O=BM_rb4ZsTj+JaxRLGGYJ/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 6/29/20 10:21 AM, Pavel Begunkov wrote:
+> On 29/06/2020 01:05, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> In commit
+>>
+>>   8c9cb6cd9a46 ("io_uring: fix refs underflow in io_iopoll_queue()")
+>>
+>> Fixes tag
+>>
+>>   Fixes: a1d7c393c47 ("io_uring: enable READ/WRITE to use deferred completions")
+> 
+> Jens, could you please fix this up after me?
+> full hash: a1d7c393c4711a9ce6c239c3ab053a50dc96505a
 
-Hi all,
+I don't think that's a grave enough concern to rebase, it's just "missing" a
+single digit of the sha.
 
-Today's linux-next merge of the kspp tree got a conflict in:
+-- 
+Jens Axboe
 
-  kernel/debug/kdb/kdb_io.c
-
-between commit:
-
-  9d71b344f86f ("kdb: Re-factor kdb_printf() message write code")
-
-from Linus' tree and commit:
-
-  80b89ab785a4 ("treewide: Remove uninitialized_var() usage")
-
-from the kspp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/debug/kdb/kdb_io.c
-index 683a799618ad,af0a26a521eb..000000000000
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@@ -591,7 -553,8 +591,7 @@@ int vkdb_printf(enum kdb_msgsrc src, co
-  	int this_cpu, old_cpu;
-  	char *cp, *cp2, *cphold =3D NULL, replaced_byte =3D ' ';
-  	char *moreprompt =3D "more> ";
-- 	unsigned long uninitialized_var(flags);
- -	struct console *c;
-+ 	unsigned long flags;
- =20
-  	/* Serialize kdb_printf if multiple cpus try to write at once.
-  	 * But if any cpu goes recursive in kdb, just print the output,
-
---Sig_/O=BM_rb4ZsTj+JaxRLGGYJ/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl75f2kACgkQAVBC80lX
-0Gzxpgf/ZeyGgu656e8xymIJkSQH5NvdjOL5cGTthZNwnQIhAuuVTYosa5pMSR/U
-pVjJJuxeBoJZyavka0ac9RCwg/FphoRF1FryhY+Y+UolTxqK+LGqxc9fjGeJCcFj
-NGPaiotQJxOsZdhXTz+8Kno/xq0f2fAYM04j192q0daE+3XEDUWx+CgmDGsKqTGV
-13Xb3bAtHeAiHDqcs8nHOfhkWJ8E+a0z3ORNDKKOVQx2Ui+rg5nEDngUch3QNg17
-jMONoW2KmEAlxwp7m5XJDGtYYt80A0KQ1q/057epW+8CJJDb9K3Uro1NhrSEzPDA
-oW3eV2QCFKAnFDagmlr/hRjAazMELQ==
-=zXMH
------END PGP SIGNATURE-----
-
---Sig_/O=BM_rb4ZsTj+JaxRLGGYJ/--
