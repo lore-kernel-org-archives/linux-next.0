@@ -2,67 +2,62 @@ Return-Path: <SRS0=Szez=AM=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B01C433DF
-	for <linux-next@archiver.kernel.org>; Wed,  1 Jul 2020 05:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D70C433DF
+	for <linux-next@archiver.kernel.org>; Wed,  1 Jul 2020 10:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8A720773
-	for <linux-next@archiver.kernel.org>; Wed,  1 Jul 2020 05:52:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HrvEj8+k"
+	by mail.kernel.org (Postfix) with ESMTP id CD0C620747
+	for <linux-next@archiver.kernel.org>; Wed,  1 Jul 2020 10:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593600888;
+	bh=7GNTkyFGL6BaU9SyC5X2Zxuq8NsIiZjrUMKn2rPmExw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=R0snLNDv2tWQlddEfw+IJio9Av/9/phbR5mi+1Yz/zFatEKmVwhnhw506Vb3p7MJV
+	 bDIR2co0ijnzjT0Taqo62IfnoyJascUo2KWN4WMGyH0gLlmJFyiw/swtIS2oDFNrGI
+	 rCPl+c2Uysy75fMKZzGxJDASvw1f31HdiO2C8Z+I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbgGAFw1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 1 Jul 2020 01:52:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725272AbgGAFw1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2020 01:52:27 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8E84C061755
-        for <linux-next@vger.kernel.org>; Tue, 30 Jun 2020 22:52:26 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id e4so11486882oib.1
-        for <linux-next@vger.kernel.org>; Tue, 30 Jun 2020 22:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RsQWUhxGHI4qfc235hpMf/7Q2ttwpb29HIoPyRwKMMI=;
-        b=HrvEj8+kAfMpIVuEg8rKntHthW5PBJgjWjOHDW/5EwGtEb35gdr9WknU9/JdnzmV2q
-         pq2XxKb+EYL+6wv1yg+ZzhikjN8a+4K1MFRZaVKGwu7qKKybw6SR5dhcVAkEGeYtRU+z
-         HY72d4W/cmjwDoifgZPmGVs3gtw9GEGIBE5t9AlX5ng1gjVCvaiYxhtM6Fo6uAqdNWYW
-         Mfa/ExUkAu1cEtj8IG6szT3aHy2m3sfydr687Ek1QhhxU6WbS7aCbPDd/CTRbU10b2kO
-         BgTGwTgMfWqpfStoYJtBgGVT+y1xh2cflHTTdh6S4mBUgHreb3ZGuF66wnnVYDslqb6K
-         NBNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RsQWUhxGHI4qfc235hpMf/7Q2ttwpb29HIoPyRwKMMI=;
-        b=EUVWqkpTAUlCSerT6Ra6RmuSiDNc96ZixiF+28mo3d+l0qCMPXJpMrJLzs5lDNdWe1
-         tmRzqiUAyqz2mJwAcsJgCZ0IlY7B7/o+46z5n0D4xezryR2yN6I/2SausJoA6LgXTvK0
-         68rIW5inCKQHpKBHOqLA2MCYW2WNu2gYm4T4qWXKSWPDXepHY1E8Kbbns5Sw/dhXTuHy
-         K6XWHi80b4GAztZsz3QOxtW7APnt1Qx+joHOf8crbLkFO6lGw4vGQwE34yyK8pv3qR+q
-         VBfX260E9HKq7E0rXbBmYv0T3V5hpf1gMo6qYOhqx7arn7VqJY1SbxU4RSd6i1BX5/PJ
-         QPCA==
-X-Gm-Message-State: AOAM533ynWHmTsuftocjvU5Ea1ItBJYpqP0brES3RWPT9j2gQvfoRZG9
-        mODDoxVEokpE1+L7ikTLuo0W2zdGQbIDlB9KFnIdvA==
-X-Google-Smtp-Source: ABdhPJz7ANpdueEAdE+f31hXBrnPSYVTZC7iD2Dj5fjYx9dxzyDA682ZXvad81d0C1UdShsUEVoVgf9jCNdpgGi5WWs=
-X-Received: by 2002:a05:6808:3ab:: with SMTP id n11mr13900356oie.121.1593582745833;
- Tue, 30 Jun 2020 22:52:25 -0700 (PDT)
+        id S1729908AbgGAKys (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 1 Jul 2020 06:54:48 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:33241 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729892AbgGAKyr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2020 06:54:47 -0400
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 061AsSZ4011733;
+        Wed, 1 Jul 2020 19:54:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 061AsSZ4011733
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1593600869;
+        bh=A6uk0LVabw4p6RBBaWE+21lAHhKMnw5ycMt+myfy300=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=10ODLjJribOWq7jnMmdg7a61KeFnyMcyXY6t8C4AQqMldAB+PKznauq6RK4LsG1FL
+         ExOqOlWA2GvpiPWzW2A4OzbXfzoYCNPThTPG+oqYSXoqmnS/Cqgic4o2v67YisbuBu
+         yZqUL74U0U5RyppWtfD2kffTG/guhR4/IHZw0zu3knI5lM9bCtbhf8EzAskdfOLnw1
+         60gsALE4FVDM7iYRUFmKsnm+BrS/3PsDhfvxKXYTkAdkb28BL4A3foEic4vEzz2b+n
+         P3LpoVQuxgoVH+u6TEo3BUn9Elqb1AouVMBbIu7vG2NdqikGN5zKc9krqzhImoalpF
+         gfUvnpI3dpq0Q==
+X-Nifty-SrcIP: [209.85.221.177]
+Received: by mail-vk1-f177.google.com with SMTP id d64so5361534vke.4;
+        Wed, 01 Jul 2020 03:54:28 -0700 (PDT)
+X-Gm-Message-State: AOAM5327zwgIrDasXkkyJgSMko2UrpRJHo/h875kXtk6rqqe3JFDrPXz
+        NwTWYW69mTGCjWrGx4UMLoKCopefZLTV/15iJu0=
+X-Google-Smtp-Source: ABdhPJzEbQbvlLwPi5eSQ/ja5pxAvFFGm84VH74ihD+yI+MOGCFmZrnPrx5yRl/8Ih8eFU6t/Ku3k0hujk5aZQt+b3I=
+X-Received: by 2002:ac5:c74b:: with SMTP id b11mr4735766vkn.73.1593600867304;
+ Wed, 01 Jul 2020 03:54:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200701113448.3119f64f@canb.auug.org.au>
-In-Reply-To: <20200701113448.3119f64f@canb.auug.org.au>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 1 Jul 2020 07:52:14 +0200
-Message-ID: <CANpmjNMz0rtC7AnXUnZKfg+egqqQ3BKPznsWUdEqJQDLTgAaAQ@mail.gmail.com>
+References: <20200701113448.3119f64f@canb.auug.org.au> <CANpmjNMz0rtC7AnXUnZKfg+egqqQ3BKPznsWUdEqJQDLTgAaAQ@mail.gmail.com>
+In-Reply-To: <CANpmjNMz0rtC7AnXUnZKfg+egqqQ3BKPznsWUdEqJQDLTgAaAQ@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 1 Jul 2020 19:53:51 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ_X2Kmgqc3B1m7g1K8Xnvo+ja3A11eZXRFAOqDC4Jxcw@mail.gmail.com>
+Message-ID: <CAK7LNAQ_X2Kmgqc3B1m7g1K8Xnvo+ja3A11eZXRFAOqDC4Jxcw@mail.gmail.com>
 Subject: Re: linux-next: manual merge of the rcu tree with the kbuild tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+To:     Marco Elver <elver@google.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -71,43 +66,58 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 1 Jul 2020 at 03:34, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, Jul 1, 2020 at 2:52 PM Marco Elver <elver@google.com> wrote:
 >
-> Hi all,
+> On Wed, 1 Jul 2020 at 03:34, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > Today's linux-next merge of the rcu tree got a conflict in:
+> >
+> >   kernel/kcsan/Makefile
+> >
+> > between commit:
+> >
+> >   f7c28e224da6 ("kbuild: remove cc-option test of -fno-stack-protector")
 >
-> Today's linux-next merge of the rcu tree got a conflict in:
->
->   kernel/kcsan/Makefile
->
-> between commit:
->
->   f7c28e224da6 ("kbuild: remove cc-option test of -fno-stack-protector")
+> Is it possible that this patch drops the KCSAN portion?
 
-Is it possible that this patch drops the KCSAN portion? The patch
-"kcsan: Simplify compiler flags" does the same, but is part of a
-future pull request intended for 5.9.
 
-The KCSAN changes had been in -next for well over a week. Also, I'm
-sorry I hadn't seen your patch before, otherwise I would have noticed
-this.
+Done.
 
-Please see: https://lkml.kernel.org/r/20200624190236.GA6603@paulmck-ThinkPad-P72
+Thanks.
 
-> from the kbuild tree and commits:
+
+> The patch
+> "kcsan: Simplify compiler flags" does the same, but is part of a
+> future pull request intended for 5.9.
 >
->   2839a232071f ("kcsan: Simplify compiler flags")
->   61d56d7aa5ec ("kcsan: Disable branch tracing in core runtime")
+> The KCSAN changes had been in -next for well over a week. Also, I'm
+> sorry I hadn't seen your patch before, otherwise I would have noticed
+> this.
 >
-> from the rcu tree.
+> Please see: https://lkml.kernel.org/r/20200624190236.GA6603@paulmck-ThinkPad-P72
 >
-> I fixed it up (I just used the rcu tree version) and can carry the fix
-> as necessary. This is now fixed as far as linux-next is concerned, but
-> any non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> > from the kbuild tree and commits:
+> >
+> >   2839a232071f ("kcsan: Simplify compiler flags")
+> >   61d56d7aa5ec ("kcsan: Disable branch tracing in core runtime")
+> >
+> > from the rcu tree.
+> >
+> > I fixed it up (I just used the rcu tree version) and can carry the fix
+> > as necessary. This is now fixed as far as linux-next is concerned, but
+> > any non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.
+>
+> Thank you!
+>
 
-Thank you!
 
-Thanks,
--- Marco
+
+
+-- 
+Best Regards
+Masahiro Yamada
