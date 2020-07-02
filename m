@@ -2,143 +2,113 @@ Return-Path: <SRS0=Itn4=AN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65241C433E0
-	for <linux-next@archiver.kernel.org>; Thu,  2 Jul 2020 10:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A63C433E0
+	for <linux-next@archiver.kernel.org>; Thu,  2 Jul 2020 11:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B81C2084C
-	for <linux-next@archiver.kernel.org>; Thu,  2 Jul 2020 10:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8CF420884
+	for <linux-next@archiver.kernel.org>; Thu,  2 Jul 2020 11:23:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbgGBKCQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 2 Jul 2020 06:02:16 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:41946 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbgGBKCP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 2 Jul 2020 06:02:15 -0400
-Received: by mail-io1-f70.google.com with SMTP id n3so17178058iob.8
-        for <linux-next@vger.kernel.org>; Thu, 02 Jul 2020 03:02:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=I2TZiyWWg+x4g0ftnTY+ci49EZOdDdJP5dPgJjQJwsY=;
-        b=mTZoFct6VF/xmHjQM1XcOAW+/PbAx4HDUA/nIaxMsAEn6r1oGaJxlT90x6wemHzeGw
-         BNVAkj7yLRfAcpZ82DF19DwsE5ZdwD/elkNRFPOqJlpJvpRweTcwvroUhtxDu491KtCJ
-         +varjwrTAEh1DLYDNATDSoxz/NQbGDYswYsI/3GDCXprrMKMKCWbaMOhh5HTXAgiSxJL
-         Wqoi2msNe15eLP8d7RfRmTMbSxLIpoxYvx28Yv2oioLENuW6QiT7WD72UpMCzK/AbcsG
-         1E1ayOrwtuZrtp7+80V7/C7Sqz/1L6YeEfb74VkA3aOFWI8VlAOO6mJ2NybFfyQUhRS4
-         EH3Q==
-X-Gm-Message-State: AOAM531B0XHvou8rZh858ouF++MHk1Iw/fGcS9UwIX+8RW9VqkiIdeuL
-        SUQ1S4CNl3IgAwbmxpGK8MEKpex9q/jPPxz+AU2rQbmx+Lgb
-X-Google-Smtp-Source: ABdhPJwWFsGZdUwNgwwL/ZmJRM0bbrRycFiGovtXtYUFJl3vRmUcVyotoaJKtU4bmn1JJjWjWZoSBiqDMEqogG9ysN5+HCIvwtaR
-MIME-Version: 1.0
-X-Received: by 2002:a6b:4409:: with SMTP id r9mr6501262ioa.158.1593684134778;
- Thu, 02 Jul 2020 03:02:14 -0700 (PDT)
-Date:   Thu, 02 Jul 2020 03:02:14 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bcdeaa05a97280e4@google.com>
-Subject: linux-next test error: KASAN: stack-out-of-bounds Read in bio_alloc_bioset
-From:   syzbot <syzbot+bf04628c1f6179269b0b@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1728454AbgGBLXR convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 2 Jul 2020 07:23:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36952 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728009AbgGBLXQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 2 Jul 2020 07:23:16 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 062B35Q1106284;
+        Thu, 2 Jul 2020 07:23:11 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 320ss3ubp6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Jul 2020 07:23:11 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 062B5X2Y114827;
+        Thu, 2 Jul 2020 07:23:11 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 320ss3ubnd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Jul 2020 07:23:11 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 062BH5tL024933;
+        Thu, 2 Jul 2020 11:23:09 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 31wwch5kv1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Jul 2020 11:23:08 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 062BN6CT64028808
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Jul 2020 11:23:06 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9F0642042;
+        Thu,  2 Jul 2020 11:23:06 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A4E504203F;
+        Thu,  2 Jul 2020 11:23:05 +0000 (GMT)
+Received: from [9.85.87.208] (unknown [9.85.87.208])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  2 Jul 2020 11:23:05 +0000 (GMT)
+From:   Sachin Sant <sachinp@linux.vnet.ibm.com>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.14\))
+Subject: [powerpc][next-20200701] Hung task timeouts during regression test
+ runs
+Message-Id: <CDAB3931-FAAD-443A-A9CD-362E527043A1@linux.vnet.ibm.com>
+Date:   Thu, 2 Jul 2020 16:53:04 +0530
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        ming.lei@redhat.com, axboe@kernel.dk
+To:     linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org
+X-Mailer: Apple Mail (2.3445.104.14)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-02_04:2020-07-02,2020-07-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ cotscore=-2147483648 spamscore=0 clxscore=1011 phishscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=967 suspectscore=0 mlxscore=0
+ impostorscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2007020078
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hello,
+Starting with linux-next 20200701 release I am observing automated regressions
+tests taking longer time to complete. A test which took 10 minutes with next-20200630
+took more than 60 minutes against next-20200701. 
 
-syzbot found the following crash on:
+Following hung task timeout messages were seen during these runs
 
-HEAD commit:    d37d5704 Add linux-next specific files for 20200702
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1549d0a3100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a0a0972a399422ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf04628c1f6179269b0b
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+[ 1718.848351]       Not tainted 5.8.0-rc3-next-20200701-autotest #1
+[ 1718.848356] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 1718.848362] NetworkManager  D    0  2626      1 0x00040080
+[ 1718.848367] Call Trace:
+[ 1718.848374] [c0000008b0f6b8f0] [c000000000c6d558] schedule+0x78/0x130 (unreliable)
+[ 1718.848382] [c0000008b0f6bad0] [c00000000001b070] __switch_to+0x2e0/0x480
+[ 1718.848388] [c0000008b0f6bb30] [c000000000c6ce9c] __schedule+0x2cc/0x910
+[ 1718.848394] [c0000008b0f6bc10] [c000000000c6d558] schedule+0x78/0x130
+[ 1718.848401] [c0000008b0f6bc40] [c0000000005d5a64] jbd2_log_wait_commit+0xd4/0x1a0
+[ 1718.848408] [c0000008b0f6bcc0] [c00000000055fb6c] ext4_sync_file+0x1cc/0x480
+[ 1718.848415] [c0000008b0f6bd20] [c000000000493530] vfs_fsync_range+0x70/0xf0
+[ 1718.848421] [c0000008b0f6bd60] [c000000000493638] do_fsync+0x58/0xd0
+[ 1718.848427] [c0000008b0f6bda0] [c0000000004936d8] sys_fsync+0x28/0x40
+[ 1718.848433] [c0000008b0f6bdc0] [c000000000035e28] system_call_exception+0xf8/0x1c0
+[ 1718.848440] [c0000008b0f6be20] [c00000000000ca70] system_call_common+0xf0/0x278
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bf04628c1f6179269b0b@syzkaller.appspotmail.com
+Comparing next-20200630 with next-20200701 one possible candidate seems to
+be following commit:
 
-==================================================================
-BUG: KASAN: stack-out-of-bounds in bio_list_empty include/linux/bio.h:561 [inline]
-BUG: KASAN: stack-out-of-bounds in bio_alloc_bioset+0x5b2/0x5d0 block/bio.c:482
-Read of size 8 at addr ffffc90000fc7150 by task kworker/u4:4/169
+commit 37f4a24c2469a10a4c16c641671bd766e276cf9f
+    blk-mq: centralise related handling into blk_mq_get_driver_tag
 
-CPU: 0 PID: 169 Comm: kworker/u4:4 Not tainted 5.8.0-rc3-next-20200702-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: writeback wb_workfn (flush-8:0)
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0x5/0x436 mm/kasan/report.c:383
- __kasan_report mm/kasan/report.c:513 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
- bio_list_empty include/linux/bio.h:561 [inline]
- bio_alloc_bioset+0x5b2/0x5d0 block/bio.c:482
- bio_clone_fast+0x21/0x1b0 block/bio.c:710
- bio_split+0xc7/0x2c0 block/bio.c:1477
- blk_bio_segment_split block/blk-merge.c:281 [inline]
- __blk_queue_split+0x10e2/0x1650 block/blk-merge.c:331
- blk_mq_submit_bio+0x1b0/0x1760 block/blk-mq.c:2169
- __submit_bio_noacct_mq block/blk-core.c:1181 [inline]
- submit_bio_noacct+0xc9e/0x12d0 block/blk-core.c:1214
- submit_bio+0x263/0x5b0 block/blk-core.c:1284
- ext4_io_submit fs/ext4/page-io.c:382 [inline]
- io_submit_add_bh fs/ext4/page-io.c:423 [inline]
- ext4_bio_write_page+0x9a8/0x1c27 fs/ext4/page-io.c:550
- mpage_submit_page+0x140/0x2c0 fs/ext4/inode.c:2082
- mpage_map_and_submit_buffers fs/ext4/inode.c:2330 [inline]
- mpage_map_and_submit_extent fs/ext4/inode.c:2469 [inline]
- ext4_writepages+0x237e/0x3960 fs/ext4/inode.c:2782
- do_writepages+0xec/0x290 mm/page-writeback.c:2352
- __writeback_single_inode+0x125/0x1400 fs/fs-writeback.c:1461
- writeback_sb_inodes+0x53d/0xf40 fs/fs-writeback.c:1721
- __writeback_inodes_wb+0xc6/0x280 fs/fs-writeback.c:1790
- wb_writeback+0x8bb/0xd40 fs/fs-writeback.c:1896
- wb_check_background_flush fs/fs-writeback.c:1964 [inline]
- wb_do_writeback fs/fs-writeback.c:2052 [inline]
- wb_workfn+0xb20/0x13e0 fs/fs-writeback.c:2080
- process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Reverting this commit allows the test to complete in 10 minutes.
 
+Thanks
+-Sachin
 
-addr ffffc90000fc7150 is located in stack of task kworker/u4:4/169 at offset 80 in frame:
- arch_atomic64_read arch/x86/include/asm/atomic64_64.h:22 [inline]
- arch_atomic64_fetch_add_unless include/linux/atomic-arch-fallback.h:2195 [inline]
- arch_atomic64_add_unless include/linux/atomic-arch-fallback.h:2220 [inline]
- arch_atomic64_inc_not_zero include/linux/atomic-arch-fallback.h:2236 [inline]
- atomic64_inc_not_zero include/asm-generic/atomic-instrumented.h:1609 [inline]
- atomic_long_inc_not_zero include/asm-generic/atomic-long.h:497 [inline]
- percpu_ref_tryget_live include/linux/percpu-refcount.h:282 [inline]
- submit_bio_noacct+0x0/0x12d0 block/blk-core.c:433
-
-this frame has 3 objects:
- [32, 40) 'bio'
- [64, 80) 'bio_list'
- [96, 128) 'bio_list_on_stack'
-
-Memory state around the buggy address:
- ffffc90000fc7000: 00 00 00 f2 f2 f2 00 00 00 00 00 f3 f3 f3 f3 f3
- ffffc90000fc7080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90000fc7100: f1 f1 f1 f1 00 f2 f2 f2 00 00 f2 f2 00 00 00 00
-                                                 ^
- ffffc90000fc7180: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90000fc7200: 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 00 00 00 00 f3
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
