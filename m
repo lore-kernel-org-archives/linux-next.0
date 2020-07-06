@@ -2,88 +2,76 @@ Return-Path: <SRS0=k3pJ=AR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFC3C433E0
-	for <linux-next@archiver.kernel.org>; Mon,  6 Jul 2020 07:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 100DEC433E0
+	for <linux-next@archiver.kernel.org>; Mon,  6 Jul 2020 09:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FAE620760
-	for <linux-next@archiver.kernel.org>; Mon,  6 Jul 2020 07:55:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="beItfS81"
+	by mail.kernel.org (Postfix) with ESMTP id DA37C2074F
+	for <linux-next@archiver.kernel.org>; Mon,  6 Jul 2020 09:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594027493;
+	bh=SKlcidpbSyUFcSUEjNJ2TCMy2bmEi2/HDMux5eq+x60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VmiYl41N0tjqvQTKZZUurgkA0RRCfdWZzL7yA1/hxzyQZcvu24lpLAeZSYB3YY0gm
+	 B/6HIHTa3/We7MxuLXCypoqMkushHE92+N17lEaRc+/i5ybUZl9KFj6W0So3dzIJ4e
+	 CImMbtkO+NvS3Abs+bEc/k8ItD6nw+wCR6U3ewnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbgGFHzK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 6 Jul 2020 03:55:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:56383 "EHLO ozlabs.org"
+        id S1728606AbgGFJYx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 6 Jul 2020 05:24:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728243AbgGFHzJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 6 Jul 2020 03:55:09 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728537AbgGFJYx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 6 Jul 2020 05:24:53 -0400
+Received: from localhost (unknown [122.182.251.219])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B0dCH1KkYz9sRK;
-        Mon,  6 Jul 2020 17:55:07 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1594022107;
-        bh=6x6iqbxGKE73eigAyosnUefVYXfwEF5mTT5WBaJq+lc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=beItfS81Qf3tCgXYk1WNPzyqXj/sH+dT/wdY+14nesspBoiEbhM049DZQ3VBQw83u
-         bt/nQpBuIseco2SYI6lN/FMk3FNrYvu0nRqkG7LhLfc+J9t0WJeT4DcsJzo9nmrmt2
-         zYQKpwUDbxw/ur7ZXySqMapm2CK3RxZI0CpjstMXN/YYSW4DZTpsA2+RwEa3/kfMAQ
-         BgOBzAxn2iEZomGTYMiIfHNPDy6WGm8Yd1113Mg+uxEgTjKoXlXfiS6esKiYEiaJxq
-         2Wx/aqM0LQXBrbCmUA0vs1pBRPQUwvsPrDDOWeq1k637/+gYSeudyYIi30pZJa+0Z2
-         Tl72Pe4/wU4VQ==
-Date:   Mon, 6 Jul 2020 17:55:06 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Vinod Koul <vkoul@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id F0B0220724;
+        Mon,  6 Jul 2020 09:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594027492;
+        bh=SKlcidpbSyUFcSUEjNJ2TCMy2bmEi2/HDMux5eq+x60=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y2LSnEn641AvuW/VNIr07O+nmigAhX8C66q9+duZjb/si6SlicgvOawO+diLw9MsM
+         h/2pOBNHrRwRkiR5eGc1dwG3jJN2QpSO4cYA8gD3Lskgdwg/ZmWcseKuSVHgFyRXjA
+         Qs6NGeI4qAJuIMFccyJpCSltXkb8ZfN/KAMMC0O8=
+Date:   Mon, 6 Jul 2020 14:54:47 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Angelo Dureghello <angelo.dureghello@timesys.com>
-Subject: linux-next: Signed-off-by missing for commit in the dmaengine-fixes
- tree
-Message-ID: <20200706175506.7d35ca3e@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the
+ dmaengine-fixes tree
+Message-ID: <20200706092447.GJ633187@vkoul-mobl>
+References: <20200706175506.7d35ca3e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZnkciIYEJmVqUisa7gYmIxX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200706175506.7d35ca3e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ZnkciIYEJmVqUisa7gYmIxX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On 06-07-20, 17:55, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   09c6b5536361 ("dmaengine: fsl-edma: fix wrong tcd endianness for big-endian cpu")
+> 
+> is missing a Signed-off-by from its author.
 
-Commit
+the sob line was in the patch but after the three dashes causing it to
+stripped, I have fixed that up manually and pushed again
 
-  09c6b5536361 ("dmaengine: fsl-edma: fix wrong tcd endianness for big-endi=
-an cpu")
 
-is missing a Signed-off-by from its author.
+Thanks for the report.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZnkciIYEJmVqUisa7gYmIxX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8C2NoACgkQAVBC80lX
-0GzuNwf+K7vV0aHolQB6Re+DRNYte6gE9tNu6dtuzY7pW9p+wmgEwbinGN+YnPoQ
-/XSWW5niR0/9QTL6h9GGH8W1+GRkxOFQFUu0DL4bxvAQSq7hgy/fAj0Xe+lgUg52
-mw62WUPvUjAt9TAjUCIe4Nkg9MPoacWXhZXygFZAv4MjaxnbTIc4vLkz97ZUM9+o
-IeqdAN6x3MgQESI7ytxYMZeCWBTSNs1FfmQ9rD8joNTli5gTFzgoXwKxXkCek1PO
-OMei2EmU31+Lj7hlzWpCGmbT3VY6Eo97VJBgBsnE/dUTCUnUHe2LyxtkEQSBnLqx
-R4+sy0npdtlWF4X4o7vU3ImsScYCPg==
-=ToMu
------END PGP SIGNATURE-----
-
---Sig_/ZnkciIYEJmVqUisa7gYmIxX--
+-- 
+~Vinod
