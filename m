@@ -2,92 +2,113 @@ Return-Path: <SRS0=4j8Q=AS=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBBDC433DF
-	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81170C433E0
+	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2975320708
-	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:44:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O3TpP6f7"
+	by mail.kernel.org (Postfix) with ESMTP id 5AD29206E6
+	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbgGGCof (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 6 Jul 2020 22:44:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:56395 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbgGGCof (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 6 Jul 2020 22:44:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B16GS4VjSz9sRR;
-        Tue,  7 Jul 2020 12:44:32 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1594089872;
-        bh=HP+pO41oFoQSlyD8UWUtPdpmn6fAVCYBd6fmrUXd82w=;
-        h=Date:From:To:Cc:Subject:From;
-        b=O3TpP6f74YD9R7g4wzVkCIS8RlyRL9sIyduZ0yGmckRI0YatglZCuXuT9PDpUBE/X
-         p75HQ03zlwBAMlDrclX9gDEg4SV4/Z8IMx4wAiOG3Nalbw0ASyj4gDFpYtf6dbSj7D
-         NtZi86nOUmzw0S4fKi3/D3XqT65hQekPO9DpUKz7A1CyDNN44vZhm9Rr7fjaCUZ8Ao
-         RULer9aFav8cCgbvJETlwyivea+bEwKwSUkW2w3CcTWW0FE/qb8HzItaBP8A9Rgbd4
-         804QpSPZ3uT02+A8InbAr360fMOEkErFMCkdocfNeE4t4x+3akWDVSkvubehZworsL
-         eHUcXXU1Se3JQ==
-Date:   Tue, 7 Jul 2020 12:44:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mfd tree
-Message-ID: <20200707124431.450bb0da@canb.auug.org.au>
+        id S1727064AbgGGCrV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 6 Jul 2020 22:47:21 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:40107 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726434AbgGGCrU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2020 22:47:20 -0400
+X-Greylist: delayed 1130 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Jul 2020 22:47:19 EDT
+Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 3B3135EC6A5;
+        Tue,  7 Jul 2020 12:28:26 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jsdLN-00022O-Kd; Tue, 07 Jul 2020 12:28:25 +1000
+Date:   Tue, 7 Jul 2020 12:28:25 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Brian Foster <bfoster@redhat.com>
+Subject: [PATCH] xfs: fix non-quota build breakage
+Message-ID: <20200707022825.GL2005@dread.disaster.area>
+References: <20200707102754.65254f1e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TvkVtWjdCBZFDArLLAFpwQZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200707102754.65254f1e@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
+        a=kj9zAlcOel0A:10 a=_RQrkK6FrEwA:10 a=20KFwNOVAAAA:8
+        a=xNn8sikHWVDSonxqqocA:9 a=CjuIK1q_8ugA:10
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/TvkVtWjdCBZFDArLLAFpwQZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+From: Dave Chinner <dchinner@redhat.com>
 
-After merging the mfd tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Oops, I forgot that you can config out quotas because nobody
+ever does that when they build XFS anymore.
 
-drivers/mfd/axp20x-i2c.c:82:5: warning: "CONFIG_ACPI" is not defined, evalu=
-ates to 0 [-Wundef]
-   82 | #if CONFIG_ACPI
-      |     ^~~~~~~~~~~
+Fixes: 018dc1667913 ("xfs: use direct calls for dquot IO completion")
 
-Introduced by commit
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ fs/xfs/xfs_dquot.h | 1 -
+ fs/xfs/xfs_quota.h | 9 +++++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-  20f359cb236b ("mfd: axp20x-i2c: Do not define 'struct acpi_device_id' whe=
-n !CONFIG_ACPI")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TvkVtWjdCBZFDArLLAFpwQZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8D4Y8ACgkQAVBC80lX
-0GyvrQf+K+Qjf4neIlMo2JtfdDGyKKNJR6RpAcC/JWhC4IF3BrotP2cSbpZHkE2B
-yLXyrnsIM5O/DLXUTfJFUPQxC4laW2k0hszr36hTxBAiZipMOCqeBmwN+atJkZ5D
-UoYc0SzWQ6zZ/X/BT4ydLJ2g6uJyhnePn4tUlSwJUfd06oOCO2nGTCnH7YtKiAbJ
-Eu/t4VDZcmYyPzpsY3FUavJSfWVBYsoJUf1hPWLogeh7DP0wjHJ775+nVR3mEj6Y
-yIafruTIJzILqaUXMwdaVo4vqSOn/MPqqgvz5vLdTqrVd9RwTKKEISKZ0h6p2oAf
-3A7Q3FrZoeed477buZSeIPVZql7YiA==
-=/lgx
------END PGP SIGNATURE-----
-
---Sig_/TvkVtWjdCBZFDArLLAFpwQZ--
+diff --git a/fs/xfs/xfs_dquot.h b/fs/xfs/xfs_dquot.h
+index fe9cc3e08ed6..71e36c85e20b 100644
+--- a/fs/xfs/xfs_dquot.h
++++ b/fs/xfs/xfs_dquot.h
+@@ -174,7 +174,6 @@ void		xfs_qm_dqput(struct xfs_dquot *dqp);
+ void		xfs_dqlock2(struct xfs_dquot *, struct xfs_dquot *);
+ 
+ void		xfs_dquot_set_prealloc_limits(struct xfs_dquot *);
+-void		xfs_dquot_done(struct xfs_buf *);
+ 
+ static inline struct xfs_dquot *xfs_qm_dqhold(struct xfs_dquot *dqp)
+ {
+diff --git a/fs/xfs/xfs_quota.h b/fs/xfs/xfs_quota.h
+index aa8fc1f55fbd..c92ae5e02ce8 100644
+--- a/fs/xfs/xfs_quota.h
++++ b/fs/xfs/xfs_quota.h
+@@ -13,6 +13,7 @@
+  */
+ 
+ struct xfs_trans;
++struct xfs_buf;
+ 
+ /*
+  * This check is done typically without holding the inode lock;
+@@ -107,6 +108,8 @@ extern void xfs_qm_mount_quotas(struct xfs_mount *);
+ extern void xfs_qm_unmount(struct xfs_mount *);
+ extern void xfs_qm_unmount_quotas(struct xfs_mount *);
+ 
++void		xfs_dquot_done(struct xfs_buf *);
++
+ #else
+ static inline int
+ xfs_qm_vop_dqalloc(struct xfs_inode *ip, kuid_t kuid, kgid_t kgid,
+@@ -148,6 +151,12 @@ static inline int xfs_trans_reserve_quota_bydquots(struct xfs_trans *tp,
+ #define xfs_qm_mount_quotas(mp)
+ #define xfs_qm_unmount(mp)
+ #define xfs_qm_unmount_quotas(mp)
++
++static inline void xfs_dquot_done(struct xfs_buf *bp)
++{
++	return;
++}
++
+ #endif /* CONFIG_XFS_QUOTA */
+ 
+ #define xfs_trans_unreserve_quota_nblks(tp, ip, nblks, ninos, flags) \
