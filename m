@@ -4,136 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5D1C433E0
-	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3901BC433DF
+	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B103206F6
-	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:26:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8E3206F6
+	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 02:33:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p0UhfDYi"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iR57JTc9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbgGGC0Q (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 6 Jul 2020 22:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgGGC0P (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2020 22:26:15 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8514C061755;
-        Mon,  6 Jul 2020 19:26:14 -0700 (PDT)
+        id S1727850AbgGGCdE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 6 Jul 2020 22:33:04 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47809 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbgGGCdE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 6 Jul 2020 22:33:04 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B15sJ091Hz9sRK;
-        Tue,  7 Jul 2020 12:26:11 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B16196QnSz9sRK;
+        Tue,  7 Jul 2020 12:33:01 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1594088772;
-        bh=+QRyoY+PF5bX2Z+tL1MEqsiIaaw8+XF1cDa2puZUbyc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=p0UhfDYivkqwP8p4mrTu1kKIHtP8XPbUwZt9lqJzIzzu3Yre0BIft1y+gca2ZweIN
-         w8O+DNrlytL6VKbEoA22Cmd6QqZDMBQ/G1s/zzsWm81be9uP92LVBf0/+XhkxhkhSy
-         5vPgGDcZEKyto7IViibezwFnLDPln+WNqgLx5C02mZbiKVVBU5uDDDpPV3+eeUhy6z
-         emrcUt/unzycGxF3uepqVCPl2FGmYE8MAKcpaK3a/+3G1dZL1rJFVGZY442FJZSiuS
-         emH9iA3Vobl75X3Gz3I2QNYrZpShl9j+wViswDcnyaqq3ugF19RdM7MuVCKuwUHRs0
-         ZJQlIFRlxCCTw==
-Date:   Tue, 7 Jul 2020 12:26:09 +1000
+        s=201702; t=1594089182;
+        bh=kBgI8HNkyEaoGhzJtSBMsGN3tKiNPD8PuFGOCpABeWc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iR57JTc9U4FwVTG2eqIigA1Cgv9WOVYZtBZwBzPhNtF77cPvGmYgiQqrxAVT4mvhq
+         2lFD8FFCfUvTiG6CvARvepgPX9PtjW7cE+00z1wnzDBaFCWYp5XKkoy5/ELMlfCj0u
+         WAmNOEfaQEb8wKWU83Lfi4mDdXv3yXvVAR11wf/Mmz+sPP0fV+ZBUhDxRRIBiMCiBx
+         AEyh7ZXbhOrQd25pD321QcS5bNWFGmc7baJmgoavEPFaeORfiOHKZMxFAYf26xp+za
+         jjFzUzIENGw5pvvr7Vdod+laK8D+ehqmQa9QErOvNr1OyjIUTBvFBi+ggxsWPi8rUt
+         wznx/098njUlA==
+Date:   Tue, 7 Jul 2020 12:33:01 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: linux-next: manual merge of the block tree with the gfs2 tree
-Message-ID: <20200707122609.75970e83@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20200707123301.79ca8a94@canb.auug.org.au>
+In-Reply-To: <20200630125459.0ca67c38@canb.auug.org.au>
+References: <20200622113700.3dd74527@canb.auug.org.au>
+        <20200630125459.0ca67c38@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/q./GODUFtSqVlQ1GhFU+Tm+";
+Content-Type: multipart/signed; boundary="Sig_/S9BC0YV_=F5t9ofv3kONcI4";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/q./GODUFtSqVlQ1GhFU+Tm+
+--Sig_/S9BC0YV_=F5t9ofv3kONcI4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the block tree got conflicts in:
+On Tue, 30 Jun 2020 12:54:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 22 Jun 2020 11:37:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > failed like this:
+> >=20
+> > ERROR: modpost: "sched_setscheduler" [kernel/trace/ring_buffer_benchmar=
+k.ko] undefined!
+> >=20
+> > Caused by commit
+> >=20
+> >   616d91b68cd5 ("sched: Remove sched_setscheduler*() EXPORTs")
+> >=20
+> > Missed one :-)
+> >=20
+> > I have reverted that commit for today. =20
+>=20
+> I am still reverting that commit.
 
-  include/linux/fs.h
-  mm/filemap.c
-
-between commit:
-
-  00a83a3c014a ("fs: Add IOCB_NOIO flag for generic_file_read_iter")
-
-from the gfs2 tree and commits:
-
-  dd3e6d5039de ("mm: add support for async page locking")
-  2e85abf053b9 ("mm: allow read-ahead with IOCB_NOWAIT set")
-
-from the block tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+Ditto ...
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/fs.h
-index 90b9f8b4c540,da90323b9f92..000000000000
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -315,7 -318,8 +318,9 @@@ enum rw_hint=20
-  #define IOCB_SYNC		(1 << 5)
-  #define IOCB_WRITE		(1 << 6)
-  #define IOCB_NOWAIT		(1 << 7)
- +#define IOCB_NOIO		(1 << 8)
-+ /* iocb->ki_waitq is valid */
- -#define IOCB_WAITQ		(1 << 8)
-++#define IOCB_WAITQ		(1 << 9)
- =20
-  struct kiocb {
-  	struct file		*ki_filp;
-diff --cc mm/filemap.c
-index 10e7eb3aada0,a5b1fa8f7ce4..000000000000
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@@ -2028,8 -2044,6 +2044,8 @@@ find_page
- =20
-  		page =3D find_get_page(mapping, index);
-  		if (!page) {
-- 			if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO))
-++			if (iocb->ki_flags & IOCB_NOIO)
- +				goto would_block;
-  			page_cache_sync_readahead(mapping,
-  					ra, filp,
-  					index, last_index - index);
-
---Sig_/q./GODUFtSqVlQ1GhFU+Tm+
+--Sig_/S9BC0YV_=F5t9ofv3kONcI4
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8D3UEACgkQAVBC80lX
-0GxsLgf5AVWE/uJlguY54VXfGGN4c+jTJz2X/t1uzSGy7ZlMe2g9Vu+tW3psmBEf
-6AHPVVlBfpIDimQ0LnzH0YbzxZokDYt2soRJ1wUweBXYo5AAIrNzeTwLINJw20Zk
-AIYlagy3KgjA32ISfBGLaevbJOdsl9nc6kCD4HOXaQa/RFfIWezex9GLEQwt/ZaT
-BneuSRqk2lMWzaZ3G/qvA9+s4Xl7VErrBJ5YwLERpHuvUhLslOKln0aSdefBixvr
-a9oXpg/8ARyipWUcc8Km8av3SWvImnL8lrw+HsK2o2BduOXFIgdhIaftaADAbDE/
-ex0aa06jH/8KlXQAW5PSffbQMxqaHw==
-=kobP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8D3t0ACgkQAVBC80lX
+0Gw0gAgAh6yoQOwX+Bs5XBBbTuUGJy7bN2esYVysFEbsKKXluWKM7a78sLdzAae2
+57jQRDpghDg1EaA8ShYGFiAmWD4yq0BLZEx1+Cr4jEa13NehXP3+gmblmQ+bpOt1
+nIOahh6FOwAX+NOt9Ijv+F0wDIV1zwLpNrUZuyCxDFqzA+8XhQ3iAzfctz/b8+KI
+HPDvpfnnq90tfvERytlmAFuIGTmXu/RUeYo0WqTKGpLuW1g1m/KrMQ+JWIO6TUgx
+tovMq90ZahXmWsMT18T1pgZT4BT7NrQcPwlu0qsShYsy6ccL6l5l3QVkA0B6t/GG
++2PB8Z+/6A7Cky7G5ouNAA46qQI1nw==
+=+th2
 -----END PGP SIGNATURE-----
 
---Sig_/q./GODUFtSqVlQ1GhFU+Tm+--
+--Sig_/S9BC0YV_=F5t9ofv3kONcI4--
