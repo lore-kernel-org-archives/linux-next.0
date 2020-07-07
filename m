@@ -2,105 +2,97 @@ Return-Path: <SRS0=4j8Q=AS=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C89CCC433E0
-	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 06:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE2CC433DF
+	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 07:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A974E20739
-	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 06:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2542206DF
+	for <linux-next@archiver.kernel.org>; Tue,  7 Jul 2020 07:07:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r0Clmfh9"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rw1tNmqR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgGGGIV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 7 Jul 2020 02:08:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbgGGGIV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 7 Jul 2020 02:08:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A0A9C061755;
-        Mon,  6 Jul 2020 23:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=4V3LkIihmEZz3pvewklN8v/f9kZ9j33J/E7C/lspkG8=; b=r0Clmfh9v/3OeSVIQubt0lsQon
-        UpFGA9ZtewIAQHj2FcjHABfZIdrkagS/kxm1q9V9mNq+Kd/JBgOvnafkB4pub//wJsRikLguL/GYR
-        leMZ853pwE+0hJU+xci2JXdigkrGfBDdLt6qJIa5QqwM4cfoZJxOHF0oZcyE0TD5wT2Bo1XntGHB5
-        JDuLCk0wh3ZBakBmyEQd+qiIuR/CAGa2NRmNKVKVE7006jvzXWrxdMH4I5MIO7WqJAka5EyxC24uI
-        cC6WA0k7bZcHfwtYYlUhX99BcA8G5RAkjtn32j4Zwe+0v0VPhFy1MmPjLqASex3BilHFxs/6ub8wa
-        jlk78dKw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jsgm5-00029p-EC; Tue, 07 Jul 2020 06:08:14 +0000
-Subject: Re: mmotm 2020-07-06-18-53 uploaded
- (sound/soc/amd/renoir/rn-pci-acp3x.c:)
-To:     "Mukunda,Vijendar" <vijendar.mukunda@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>,
-        sfr@canb.auug.org.au
-References: <20200707015344.U9ep-OO5Z%akpm@linux-foundation.org>
- <b54188c7-47b4-b7e4-2f74-6394320df5df@infradead.org>
- <e19cd74c-df3d-9589-1fc1-55980a8d289b@amd.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2af9510e-b3fd-97d8-c2d4-1c42943180ee@infradead.org>
-Date:   Mon, 6 Jul 2020 23:08:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        id S1726434AbgGGHG4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 7 Jul 2020 03:06:56 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48413 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725766AbgGGHG4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 7 Jul 2020 03:06:56 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B1D5B06dRz9sDX;
+        Tue,  7 Jul 2020 17:06:53 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1594105614;
+        bh=iYKuxNhEWlKwLkkOoPaKgEVuqVYwuJyOKFAZbOxF/C4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=rw1tNmqRjzrucKun1MjmoC3xBvtlpjKdDzYxe2egUyoA7yjOM9Ii8vY9wfKIKwfj5
+         RHnDzxV1ZKN/rtheh+4Gic90N6F8NCM6Z1bjTHn994o9Bx23zMVwXnVTcUP6AWOho6
+         qy4lgfpfrG7oSUx/x/p2cWlkIwGAxA0uZBBF/DNMAzsNg0OMD6rpWA7BFwlhVf+h3g
+         wm82hsJOHRdbQrVxxTh+Ugktqtwtrvx8DA/P6ggdrVLSdE51QpyUvscuM509ONP13h
+         jLOHUGYNGqdTZvaDDcM77k9YVAqKF9mg0rti1hhqjuasUiZFLoI4pDeu1DQWWB7Sjx
+         d1MMuxmXwj2lA==
+Date:   Tue, 7 Jul 2020 17:06:50 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Subject: linux-next: build warning after merge of the net-next tree
+Message-ID: <20200707170650.692c98f0@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <e19cd74c-df3d-9589-1fc1-55980a8d289b@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/cHvn5c/+F1OX0ls62Lx_3ff";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/6/20 11:15 PM, Mukunda,Vijendar wrote:
-> 
-> 
-> On 07/07/20 11:14 am, Randy Dunlap wrote:
->> On 7/6/20 6:53 PM, Andrew Morton wrote:
->>> The mm-of-the-moment snapshot 2020-07-06-18-53 has been uploaded to
->>>
->>>     https://nam11.safelinks.protection.outlook.com/?url=http:%2F%2Fwww.ozlabs.org%2F~akpm%2Fmmotm%2F&amp;data=02%7C01%7CVijendar.Mukunda%40amd.com%7C34f06090b5394f9ccb9d08d82238c5cf%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637296974530250787&amp;sdata=K8z5g9P5S7Ct%2BojnITdP0xuz159sYOiDWOyUy3abDpo%3D&amp;reserved=0
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> https://nam11.safelinks.protection.outlook.com/?url=http:%2F%2Fwww.ozlabs.org%2F~akpm%2Fmmotm%2F&amp;data=02%7C01%7CVijendar.Mukunda%40amd.com%7C34f06090b5394f9ccb9d08d82238c5cf%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637296974530250787&amp;sdata=K8z5g9P5S7Ct%2BojnITdP0xuz159sYOiDWOyUy3abDpo%3D&amp;reserved=0
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>> You will need quilt to apply these patches to the latest Linus release (5.x
->>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>> https://nam11.safelinks.protection.outlook.com/?url=http:%2F%2Fozlabs.org%2F~akpm%2Fmmotm%2Fseries&amp;data=02%7C01%7CVijendar.Mukunda%40amd.com%7C34f06090b5394f9ccb9d08d82238c5cf%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637296974530250787&amp;sdata=6CpbYkoZTJ%2FxqhyFKdZMjH%2BdG5kjOgogt8KqqNK%2BzSI%3D&amp;reserved=0
->>>
->>
->> on i386:
->>
->> when CONFIG_ACPI is not set/enabled:
->>
->> ../sound/soc/amd/renoir/rn-pci-acp3x.c: In function ‘snd_rn_acp_probe’:
->> ../sound/soc/amd/renoir/rn-pci-acp3x.c:222:9: error: implicit declaration of function ‘acpi_evaluate_integer’; did you mean ‘acpi_evaluate_object’? [-Werror=implicit-function-declaration]
->>     ret = acpi_evaluate_integer(handle, "_WOV", NULL, &dmic_status);
-> Will add ACPI as dependency in Kconfig for Renoir ACP driver.
-> Do i need to upload new version of the patch? or should i submit the incremental patch as a fix >>           ^~~~~~~~~~~~~~~~~~~~~
->>           acpi_evaluate_object
+--Sig_/cHvn5c/+F1OX0ls62Lx_3ff
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-Not my call, but I would go with an incremental patch.
+Hi all,
 
+After merging the net-next tree, today's linux-next build (sparc64
+defconfig) produced this warning:
 
-thanks.
--- 
-~Randy
+drivers/net/ethernet/sun/niu.c:9903:12: warning: 'niu_resume' defined but n=
+ot used [-Wunused-function]
+ static int niu_resume(struct device *dev_d)
+            ^~~~~~~~~~
+drivers/net/ethernet/sun/niu.c:9876:12: warning: 'niu_suspend' defined but =
+not used [-Wunused-function]
+ static int niu_suspend(struct device *dev_d)
+            ^~~~~~~~~~~
 
+Introduced by commit
+
+  b0db0cc2f695 ("sun/niu: use generic power management")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/cHvn5c/+F1OX0ls62Lx_3ff
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8EHwoACgkQAVBC80lX
+0Gz9Wgf7B8c0Hj9I+p6mdiqGGQgI6Eb8C/Ue9BRR6xslG0m0POJfZhJBess21NwF
+lcWdQVRHo+GxC/jgvpQKlKMO1D7dtfXc3EjF9LBjO00vziQamf3Ywx3tPy+jZy6N
+/BhkEvlorjI4teIJT0teKxX8D+D1HDw6vyPOfwzYde4BWE77BV7nxTvyNXhVgLRE
+O51ewAvE9HpwGhxJvNbPj6Pq9BI6/kVbjn9E6GoJUSwF3gnMXK3EKIrbGI38doYa
+pLfEOQNGYyEWuZm8Ml3H91ULsg0b0IaGTlaOpIrX9wHYsv16O1pKJ/qL892OfI2J
+kqyna/vLlZdv5xgkQ5HNWusotZFuKw==
+=L/Uf
+-----END PGP SIGNATURE-----
+
+--Sig_/cHvn5c/+F1OX0ls62Lx_3ff--
