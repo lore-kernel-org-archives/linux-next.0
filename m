@@ -2,95 +2,91 @@ Return-Path: <SRS0=grqr=AU=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E3EC433E0
-	for <linux-next@archiver.kernel.org>; Thu,  9 Jul 2020 10:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508F7C433E0
+	for <linux-next@archiver.kernel.org>; Thu,  9 Jul 2020 13:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B79A42076A
-	for <linux-next@archiver.kernel.org>; Thu,  9 Jul 2020 10:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594291171;
-	bh=doH4/ienxKWo60sc7CSLY3f/jEyMqok61EP5wH9E/6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=K0cMgdnHVS9oLE+BFhcE+90sC4E8V/9l01zaeqwxsBIGcfvmV8d04jMyzOpY6FtIk
-	 /FDrOrtV9Ny18OaWEy6DPuxsBlJ3zRvkyJsoltUXdT9eIJaUDmWWa5WAtOZZiaq8ZP
-	 b3Cjjvdve2tQp5iS1ggth8HMgH7CzIlj8yerokfc=
+	by mail.kernel.org (Postfix) with ESMTP id DE5272076A
+	for <linux-next@archiver.kernel.org>; Thu,  9 Jul 2020 13:08:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S+pa8Qch"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgGIKjb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 9 Jul 2020 06:39:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbgGIKjb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 9 Jul 2020 06:39:31 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726710AbgGINIu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 9 Jul 2020 09:08:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726471AbgGINIu (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 9 Jul 2020 09:08:50 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2B5C061A0B;
+        Thu,  9 Jul 2020 06:08:50 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B89C206DF;
-        Thu,  9 Jul 2020 10:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594291170;
-        bh=doH4/ienxKWo60sc7CSLY3f/jEyMqok61EP5wH9E/6g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bYSy0rVzEnjYRPhhtZL3iWjYIjNe909qVX5/Kx3qxoG3tY0rGf0qm/Cn1GRrBwWiP
-         a0t0uLd7xf5rRq7mkCkM40/yJyFGU1cgYluOFIzM25uXDXRznaNQmdgzBPpx7Lr8bv
-         eTVMn+yKwJQ6O9h4+e0aCc0rQLGZT0+w7DVfotzg=
-Date:   Thu, 9 Jul 2020 11:39:25 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Peng Fan <fanpeng@loongson.cn>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B2c1p6kb3z9sQt;
+        Thu,  9 Jul 2020 23:08:46 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1594300127;
+        bh=QZ2TXUsNwQX+5fM9Z1XiCcYS14Bjz3U37QBOvz6UKLY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=S+pa8QchmxP/Hxz4V1WUici9SiDKn8JD1Us5ZCcQAQe1yWQShqT5YaMiaOZxeJ3dC
+         rBBqvGc64UF7gICaq5k2juWXu5gvNKnpQ4p0wydsDPTTJazoe9sK9exr5t7Qy2IdDI
+         GXzQJQFy59DUMKIF7MHCax9LgfeJBBCj+sa6Y0bUGX78O54OwKpAediiFX5+0DXf/l
+         IQHYNnOTf6JNcSASxc+CRCmrh34Ph+vWm7JcD+JLpcSfw0DdyGSimLSdiBlxDTwipD
+         PNNgOkftpOHxE6WGZv1w5aKmSoa3kG1DTALDGYc+7dDtjPmPw6+Lnmkh27dwaIaq3h
+         EOopchiXVINNw==
+Date:   Thu, 9 Jul 2020 23:08:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Re: linux-next: build warning after merge of the spi tree
-Message-ID: <20200709103925.GB4960@sirena.org.uk>
-References: <20200709141054.1b65be9d@canb.auug.org.au>
- <31ee871f.3cd.173320cfdfe.Coremail.fanpeng@loongson.cn>
- <7376c15b.48e.173328e36ab.Coremail.fanpeng@loongson.cn>
+Subject: linux-next: Signed-off-by missing for commits in the btrfs tree
+Message-ID: <20200709230845.12f5d4f8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="R3G7APHDIzY6R/pk"
-Content-Disposition: inline
-In-Reply-To: <7376c15b.48e.173328e36ab.Coremail.fanpeng@loongson.cn>
-X-Cookie: You will be married within a year.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/n5OSowseHPXt_qLhu/dGza6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-
---R3G7APHDIzY6R/pk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/n5OSowseHPXt_qLhu/dGza6
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 09, 2020 at 03:50:47PM +0800, Peng Fan wrote:
-> Hi, Browm, Stephen
->     Firstly, feel sorry for the problem introduced by me. I think I must =
-modify my bad,but should I send another patch to delete the label "out_free=
-" or=20
-> re-send patch of v2(which maybe need to go back)?
->     Could you give me some advices? Sorry again.
+Hi all,
 
-You should send a patch on top of what's already applied but actually
-Colin Ian King sent a patch for this already which I can use so no need
-to do anything, thanks for staying on top of of this though.
+Commits
 
---R3G7APHDIzY6R/pk
-Content-Type: application/pgp-signature; name="signature.asc"
+  708dd6a863c3 ("btrfs: switch to iomap_dio_rw() for dio")
+  11b399d70e53 ("iomap: IOMAP_DIO_RWF_NO_STALE_PAGECACHE return if page inv=
+alidation fails")
+  b65c4e58e476 ("iomap: Convert wait_for_completion to flags")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/n5OSowseHPXt_qLhu/dGza6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8G89wACgkQJNaLcl1U
-h9ABjAf/cTOGCHIMImtXtt+qBaohJmn6wW2EKyp7x7HMhxQk7/1sHRCs0hh/p2xn
-NCCHOU0K+aRainT/SbFh9/fSvAtiymoOgSB7eeCbwwSFiyuuxB0M/UCSzcmjUDc3
-Rf8Gu7ma8AY+KKcmJZfeX9VbQklvTIOMGXBYI20hHGtLsLGYKO2vRSwG++DpPLdd
-7KLcaLxkJpky1RxCQgzFY3DeVPmGDhi0aOzOTyBBr5FybBw1nMoe3tv66RnNFpXw
-bKkU/xEyEboD+PuHbCSN6A8smzFvZrsmgTbJxeWgQTGUZACOIDirwgOv8C7F73cq
-Wnjwx+QEA9cqLDTi60OeDEDeF2AnCA==
-=qt78
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8HFt0ACgkQAVBC80lX
+0GwvJwgAkjueta/Jkqy2dpDRSgMtlGhK1bZS35hZSJqFp9UiqCfMGuJGv0d8CCpn
+pBXEb6qqJJqqjuH2nAW9ft8R2+GXFxJRsq/A/lcKM73x4BeKH9vwhDagTCzwxn4R
+PB3jZ0X07lTepLDIgL7R2xqe+It049aMdeB13wnEkJHVqYboidKgAjRLnqfZZWB3
+JS+mLzgGbFaUVVo5DwYoKxowUuTsuMQFDdaKZNZMQOea073YzFcnM8qUZ8GpvCVH
+Vb0dDyuiiBzsKwaZiNhNgZBreFZAI11P9z5xTOLK5aaHJm21F4sTG+bt6VCja1b4
+j2P4fx+y/uKsmz38VQU7w/T1HtKFpw==
+=anhP
 -----END PGP SIGNATURE-----
 
---R3G7APHDIzY6R/pk--
+--Sig_/n5OSowseHPXt_qLhu/dGza6--
