@@ -2,94 +2,105 @@ Return-Path: <SRS0=zMnM=AY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163E2C433E0
-	for <linux-next@archiver.kernel.org>; Mon, 13 Jul 2020 15:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4A9C433E2
+	for <linux-next@archiver.kernel.org>; Mon, 13 Jul 2020 16:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DED592075B
-	for <linux-next@archiver.kernel.org>; Mon, 13 Jul 2020 15:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594655313;
-	bh=BJRdS8UDSmuQA6iSp4Z2DXAA/LuYlKm8QLzZPV9K8d0=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=poNLxEY+Tt4sIf2R2kz4nL0pyB9fBmyy5ncUiEmE+GEJCgvW9c1xL8CE4KljKH4/4
-	 hj3javIE6priCG5q8FVPB9qb4mOeXmZbchHiDvYfeJ5pgtvOpVRocnwQ35o//USwOL
-	 eqmy1oKNfxdF9s3Ro9DfbmJ0JN+3oJO2rSW/ZEzs=
+	by mail.kernel.org (Postfix) with ESMTP id 4C462206F0
+	for <linux-next@archiver.kernel.org>; Mon, 13 Jul 2020 16:08:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UyJfcshV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730069AbgGMPsc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 13 Jul 2020 11:48:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbgGMPsb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Jul 2020 11:48:31 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4D8A207BC;
-        Mon, 13 Jul 2020 15:48:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594655311;
-        bh=BJRdS8UDSmuQA6iSp4Z2DXAA/LuYlKm8QLzZPV9K8d0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ZI2198ArFH0Gd9UaAkcLHTg3HwttIBXrb1KmrmBz4C13L/JI5TYO6c0eJSmphLr62
-         hs8Q0BW0h+vO4cQGU9Zdt3Vw2chCeTVIylVxDhiOYYHc0Balv3ICWC0ZQNx8yi6j0L
-         PK4IkXJ7YIn77vuHYpaa8fk7adnxGna6h47pOUJA=
-Date:   Mon, 13 Jul 2020 16:48:22 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Alex Elder <elder@linaro.org>,
+        id S1729659AbgGMQIr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 13 Jul 2020 12:08:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45030 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729649AbgGMQIr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 13 Jul 2020 12:08:47 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9537DC061755
+        for <linux-next@vger.kernel.org>; Mon, 13 Jul 2020 09:08:47 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id o3so11608060ilo.12
+        for <linux-next@vger.kernel.org>; Mon, 13 Jul 2020 09:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kd0lZ6Q0Y27gtL8Diz7CfYwjPZyjsUaCrsbeyNeO+hI=;
+        b=UyJfcshVLh/rnFBLweokbFSFTDg4sUFC4gltX6Cc36uqZ6LE7n+p7O2DvdMdSh3rtH
+         VNtLe9LJtVl/9HztICABh7cxjyO9C2194+qjtAxG5RHU6wnQqOAFSuSdE515I2sL4gZg
+         GVWQRv3w9xjXlT689r5VbViCIDznik2asFDLvDPHutZqhEPa3S5BTrkXo6uNsaORArVO
+         vnViD9WVRYeLIzuQDKRkm7k3sn9Mt4BLOLoVenTp+SVRsT+G71Y3k8XQWuTmABgdDY1Z
+         eoOOMbqlqJ513qCCFo6KP0t7UiZk9VUBiFFq6plP7LhsbI1noulvM9tDHVSRM3rA52MS
+         YPuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kd0lZ6Q0Y27gtL8Diz7CfYwjPZyjsUaCrsbeyNeO+hI=;
+        b=WCh1M3IY8PQP9cdjjIKJnV1BIPOK72tQkUBHWgi+nDnEfgyQDyvrjOvOjMzvx0xOsU
+         4Fa/Y7fopxLm5DTlFwdB00rnss5S0CcvG6JIzmLuBwiWBamnz4hojizLw9UO5d6w1cNB
+         n4s3Xglk8H0Bf6P9+f7X/aamFW3gtwnPrOgSUU7tgu4P8WP8pLNwRe80fB7yQffEbJpJ
+         quBGw0I9/ZDsWv2OwAe2427Uw1F985x0gI1p5A5WTUPgkOYCTdgDUjJq2mlxrUXIf2Qe
+         R6eizXqHJDuFZ5dlyH6bCzEgearPtbmO/OwEbxNzPBuqH5gwvysy6h9SZQ4jR0LHviP8
+         JlTA==
+X-Gm-Message-State: AOAM533fQKd9eqbpDj+04w9N0kaY5C/7CHV8Z2o+Ls+MZHPcxNLZYEJ2
+        aigMYM5i/qPE9u0jTJ7/B1dV6tu+qpvyUQ==
+X-Google-Smtp-Source: ABdhPJwVVTVaefgi436OAH7B4PJsDTFxe/0ZnQh0PdCTDT4XvbopyQ/Uy7q2toPvIAtgeRNXAUK/7g==
+X-Received: by 2002:a05:6e02:1086:: with SMTP id r6mr405658ilj.158.1594656526605;
+        Mon, 13 Jul 2020 09:08:46 -0700 (PDT)
+Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id f18sm7807870ion.47.2020.07.13.09.08.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2020 09:08:46 -0700 (PDT)
+Subject: Re: Build failures in -next in qcom_common.c
+To:     Mark Brown <broonie@kernel.org>,
         Siddharth Gupta <sidgup@codeaurora.org>,
         Rishabh Bhatnagar <rishabhb@codeaurora.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
-Subject: Build failures in -next in qcom_common.c
-Message-ID: <20200713154822.GC4420@sirena.org.uk>
+References: <20200713154822.GC4420@sirena.org.uk>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <cd2d5949-9ffb-953a-021d-3c375f185b06@linaro.org>
+Date:   Mon, 13 Jul 2020 11:08:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
-Content-Disposition: inline
-X-Cookie: Fast, cheap, good: pick two.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200713154822.GC4420@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On 7/13/20 10:48 AM, Mark Brown wrote:
+> Since Friday -next has been failing to build various arm and arm64
+> configurations with:
+> 
+> drivers/remoteproc/qcom_common.c:210:9: error: implicit declaration of function 'kzalloc' [-Werror,-Wimplicit-function-declaration]
+>         info = kzalloc(sizeof(*info), GFP_KERNEL);
+>                ^
 
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+That has a trivial fix.  I have contacted Bjorn to find out
+whether he's going to do it or whether he wants someone else
+to.  Thanks for pointing it out.
 
-Since Friday -next has been failing to build various arm and arm64
-configurations with:
+					-Alex
 
-drivers/remoteproc/qcom_common.c:210:9: error: implicit declaration of function 'kzalloc' [-Werror,-Wimplicit-function-declaration]
-        info = kzalloc(sizeof(*info), GFP_KERNEL);
-               ^
-drivers/remoteproc/qcom_common.c:210:7: warning: incompatible integer to pointer conversion assigning to 'struct qcom_ssr_subsystem *' from 'int' [-Wint-conversion]
-        info = kzalloc(sizeof(*info), GFP_KERNEL);
-             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-1 warning and 1 error generated.
+> drivers/remoteproc/qcom_common.c:210:7: warning: incompatible integer to pointer conversion assigning to 'struct qcom_ssr_subsystem *' from 'int' [-Wint-conversion]
+>         info = kzalloc(sizeof(*info), GFP_KERNEL);
+>              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 1 warning and 1 error generated.
+> 
+> caused by 5abfe5cf0b8358b8ad0 (remoteproc: qcom: Add per subsystem SSR
+> notification) which adds a use of kzalloc() without ensuring that it is
+> prototyped.
+> 
 
-caused by 5abfe5cf0b8358b8ad0 (remoteproc: qcom: Add per subsystem SSR
-notification) which adds a use of kzalloc() without ensuring that it is
-prototyped.
-
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8MgkUACgkQJNaLcl1U
-h9BH4gf8De7vCWX00YgvyZplg/HHYNr+cszcZZDHXRrmgWpPTBJjNu2SAVV0KVns
-jKNjuaWAQ48x3dP0Ph4EsRGSA0o0Uzpncd2+rVKRTJuIAJpBe77gxhQNaOTqM0br
-4QwNtwhvrFJIAUkyk1xaUR/VRl8WWwhj3XX3s7iVjXx7Qi53X8MCQuCqmpJy9n8C
-4CQ1poAqR+A4Eo7gqAKljtVB9TYU0iNshsWeiaFsqjgXFaiM0pBLj5ARlcvTmZUh
-KWVdjSw48kdZYeoa/wpEJTpg2RIPusHcWcSsgKCThR1eEi/gS3mGkLMI1SF6iyIF
-AaPW+qHI8WcbrEYG8hj9799Df7PBCg==
-=42W5
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
