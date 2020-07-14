@@ -2,259 +2,93 @@ Return-Path: <SRS0=ZtSy=AZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF673C433E3
-	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 17:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D6AC433E1
+	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 17:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB9D22518
-	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 17:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 676E222582
+	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 17:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="d9OAHWca"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="cwGw2/9p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgGNR1g (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 14 Jul 2020 13:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbgGNR1f (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Jul 2020 13:27:35 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4AF1C061755
-        for <linux-next@vger.kernel.org>; Tue, 14 Jul 2020 10:27:35 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id d4so7880495pgk.4
-        for <linux-next@vger.kernel.org>; Tue, 14 Jul 2020 10:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=pOeh7Mp9Vsl7eJV0rLJ2TvjRWW4kEp8Sgj9Dg9/xkFY=;
-        b=d9OAHWcag4EITOUpKfuxqohMahb/5SgMjOD/v1WgfeXyNt/XS0RqlcO3VNRxBiOyTl
-         EH2stqIoM2FbbSeX2oIXjLp0G33iOMaBv38PHVpr82UoWqEYHTDG3MfwV9F+08yBT7m6
-         fRc5D62I4vWn26FmzPh4EnorBOBMTJWjjhe3i9pK9f+VTQCCBzbNzhJkVUD/fE+kCuJa
-         fWDgVovJ4vlEiLdvjWYxi3ck7LRDqcNZVXqVLAdaEQ/WVXL8N2//0LSt1vshDH4cg+0T
-         b3ZOpdQbXCthSGZNiBZhmuJ2YsJ0JVoqoLPsiBVXpL2Jwqk6aCE/vXlwkd8l6KnijSHT
-         41LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=pOeh7Mp9Vsl7eJV0rLJ2TvjRWW4kEp8Sgj9Dg9/xkFY=;
-        b=L6BMssDcii1BBWG0kNFF1sV8sNPnX9XU+WajbsOd0nj9pLYkYHfi/UJIktMfZwlZyX
-         tRCAqFSJQUvSGACVGoZMKxRve+R50IAkDJtb6uFmWdOckG6LzZr6Z1kIdB2IpLuD49jb
-         pmto7EIb/2jmjEkMDbbieutwLC7VmwZbT7/+cgzHTiXxHZvOlrU9c42HFIm4Ck1ZCNLa
-         jaY2x9Ygx+cUYjRVHNlNumOm9cNCq44V8Y30pNKZs01kQpFThMktTj/sy7LjosLy75b8
-         S5DTUmT2qQo8WNeNkVRbagluF0tEAt3U8c/3MwOQaetbpo9WvMVL2IjH1GgI/vfsJ+z9
-         svvw==
-X-Gm-Message-State: AOAM531ETNvC4bkUSZYJcInb39nGcllZgNb3YgcvRRe2Pxi7UIW6s4q6
-        FGFqRQbas5SnYkrz4i7+Qoc4NIBTkEk=
-X-Google-Smtp-Source: ABdhPJz4bWuN2g5W4E8EdaOQ1bkJ+3Wof0GBReCTHgPQux3C4AUeDQ5oWEC2Luxh8lLYqBOBAEiQfg==
-X-Received: by 2002:a63:5d54:: with SMTP id o20mr4134044pgm.253.1594747654948;
-        Tue, 14 Jul 2020 10:27:34 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id e20sm18046052pfl.212.2020.07.14.10.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 10:27:34 -0700 (PDT)
-Message-ID: <5f0deb06.1c69fb81.4d994.bfb4@mx.google.com>
-Date:   Tue, 14 Jul 2020 10:27:34 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1727772AbgGNRtO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 14 Jul 2020 13:49:14 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:42420 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbgGNRtM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 14 Jul 2020 13:49:12 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594748951; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=HvsG3hhsmb4gPVoc6UyHgNH5M3ItFOz74uIV5eiJe8Y=; b=cwGw2/9pLd5aXyabFheY+tJ30i8jaEGMlr2N9+RJ9+OXm4r0/qpGcxH4KTjpEtz9y0IdiKXa
+ +V6+3uZU1jRpoOVKw0D6pwlRcC8Of0oAnDFSf7YmcU0+FeWZSPZ//49iu+jW2dCGCynu37e2
+ qhVXeJ9FBoVvkR2YZuyxPjl165g=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyJmNGRkZiIsICJsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n18.prod.us-west-2.postgun.com with SMTP id
+ 5f0df01675eeb235f6006cbf (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 14 Jul 2020 17:49:10
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EE35BC433C8; Tue, 14 Jul 2020 17:49:09 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DB94DC433CA;
+        Tue, 14 Jul 2020 17:49:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB94DC433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Wireless <linux-wireless@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joseph Chuang <joseph.chuang@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Subject: Re: linux-next: Fixes tag needs some work in the wireless-drivers-next tree
+References: <20200714205942.26248f1c@canb.auug.org.au>
+Date:   Tue, 14 Jul 2020 20:49:05 +0300
+In-Reply-To: <20200714205942.26248f1c@canb.auug.org.au> (Stephen Rothwell's
+        message of "Tue, 14 Jul 2020 20:59:42 +1000")
+Message-ID: <87mu429ecu.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: next-20200714
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: next
-X-Kernelci-Branch: master
-Subject: next/master baseline: 189 runs, 5 regressions (next-20200714)
-To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master baseline: 189 runs, 5 regressions (next-20200714)
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Regressions Summary
--------------------
+> Hi all,
+>
+> In commit
+>
+>   ad96bc27032c ("brcmfmac: initialize the requested dwell time")
+>
+> Fixes tag
+>
+>   Fixes: 4905432b28b7 ("brcmfmac: Fix P2P Group Formation failure via Go-neg method")
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+>
+> Maybe you meant
+>
+> Fixes: 9c29da3f4e7e ("brcmfmac: Fix P2P Group Formation failure via Go-neg method")
 
-platform                | arch  | lab          | compiler | defconfig      =
-              | results
-------------------------+-------+--------------+----------+----------------=
---------------+--------
-omap4-panda             | arm   | lab-baylibre | gcc-8    | multi_v7_defcon=
-fig           | 4/5    =
+Heh, I noticed this and I even fixed it but maybe forgot to save my edit
+or something. I'll need to be more careful next time.
 
-sun50i-a64-bananapi-m64 | arm64 | lab-clabbe   | gcc-8    | defconfig+CON..=
-.OMIZE_BASE=3Dy | 0/1    =
-
-sun50i-a64-bananapi-m64 | arm64 | lab-clabbe   | gcc-8    | defconfig      =
-              | 0/1    =
-
-vexpress-v2p-ca15-tc1   | arm   | lab-baylibre | gcc-8    | vexpress_defcon=
-fig           | 3/5    =
-
-vexpress-v2p-ca15-tc1   | arm   | lab-cip      | gcc-8    | vexpress_defcon=
-fig           | 3/5    =
-
-
-  Details:  https://kernelci.org/test/job/next/branch/master/kernel/next-20=
-200714/plan/baseline/
-
-  Test:     baseline
-  Tree:     next
-  Branch:   master
-  Describe: next-20200714
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  SHA:      5fb3d60423873c969058f16b94bca3ef304a68fb =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                | arch  | lab          | compiler | defconfig      =
-              | results
-------------------------+-------+--------------+----------+----------------=
---------------+--------
-omap4-panda             | arm   | lab-baylibre | gcc-8    | multi_v7_defcon=
-fig           | 4/5    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f0db2e000f31b069f85bb3d
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200714/arm/=
-multi_v7_defconfig/gcc-8/lab-baylibre/baseline-omap4-panda.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200714/arm/=
-multi_v7_defconfig/gcc-8/lab-baylibre/baseline-omap4-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f0db2e000f31b0=
-69f85bb41
-      new failure (last pass: next-20200713)
-      60 lines =
-
-
-
-platform                | arch  | lab          | compiler | defconfig      =
-              | results
-------------------------+-------+--------------+----------+----------------=
---------------+--------
-sun50i-a64-bananapi-m64 | arm64 | lab-clabbe   | gcc-8    | defconfig+CON..=
-.OMIZE_BASE=3Dy | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f0db20a032ab5e97885bb28
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200714/arm6=
-4/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-clabbe/baseline-sun50i-a64-=
-bananapi-m64.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200714/arm6=
-4/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-clabbe/baseline-sun50i-a64-=
-bananapi-m64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f0db20a032ab5e97885b=
-b29
-      new failure (last pass: next-20200706) =
-
-
-
-platform                | arch  | lab          | compiler | defconfig      =
-              | results
-------------------------+-------+--------------+----------+----------------=
---------------+--------
-sun50i-a64-bananapi-m64 | arm64 | lab-clabbe   | gcc-8    | defconfig      =
-              | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f0db34e552cb0568b85bb1f
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200714/arm6=
-4/defconfig/gcc-8/lab-clabbe/baseline-sun50i-a64-bananapi-m64.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200714/arm6=
-4/defconfig/gcc-8/lab-clabbe/baseline-sun50i-a64-bananapi-m64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f0db34e552cb0568b85b=
-b20
-      failing since 8 days (last pass: next-20200703, first fail: next-2020=
-0706) =
-
-
-
-platform                | arch  | lab          | compiler | defconfig      =
-              | results
-------------------------+-------+--------------+----------+----------------=
---------------+--------
-vexpress-v2p-ca15-tc1   | arm   | lab-baylibre | gcc-8    | vexpress_defcon=
-fig           | 3/5    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f0db324d2284280a485bb18
-
-  Results:     3 PASS, 1 FAIL, 1 SKIP
-  Full config: vexpress_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200714/arm/=
-vexpress_defconfig/gcc-8/lab-baylibre/baseline-vexpress-v2p-ca15-tc1.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200714/arm/=
-vexpress_defconfig/gcc-8/lab-baylibre/baseline-vexpress-v2p-ca15-tc1.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f0db324d2284280=
-a485bb1b
-      failing since 38 days (last pass: next-20200604, first fail: next-202=
-00605)
-      2 lines =
-
-
-
-platform                | arch  | lab          | compiler | defconfig      =
-              | results
-------------------------+-------+--------------+----------+----------------=
---------------+--------
-vexpress-v2p-ca15-tc1   | arm   | lab-cip      | gcc-8    | vexpress_defcon=
-fig           | 3/5    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f0db382aa9d37a2e585bb35
-
-  Results:     3 PASS, 1 FAIL, 1 SKIP
-  Full config: vexpress_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200714/arm/=
-vexpress_defconfig/gcc-8/lab-cip/baseline-vexpress-v2p-ca15-tc1.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200714/arm/=
-vexpress_defconfig/gcc-8/lab-cip/baseline-vexpress-v2p-ca15-tc1.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f0db382aa9d37a2=
-e585bb38
-      failing since 38 days (last pass: next-20200604, first fail: next-202=
-00605)
-      2 lines =20
+-- 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
