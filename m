@@ -2,114 +2,84 @@ Return-Path: <SRS0=ZtSy=AZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FC4C433FC
-	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 11:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3805C433DF
+	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 12:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 221D22220C
-	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 11:17:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UlfzeEpU"
+	by mail.kernel.org (Postfix) with ESMTP id C529F208FE
+	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 12:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbgGNLRR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 14 Jul 2020 07:17:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:27253 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727771AbgGNLP5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Jul 2020 07:15:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594725356;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wo3b72+f5d0wE/+LGqBGg/pHVyxAvNtZLrUUPiNVkWE=;
-        b=UlfzeEpU+F3xiCwOvGbX6JlNs8IDz4m03ydvaPUE1xMHjW5bQqXQ+xG3gosc8KMhjvDPjw
-        cTfCx/A+HqEr4w9FF9OIF8tJCRhBAsGjR9OpF9cCL0iUAlZaKCiDI12Q/iKPHN8bKHhLA8
-        +/JGQCvKrqnYUI739jllFovnehEEkBQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-56-JAf95g9fOGa8PNJBi69ewg-1; Tue, 14 Jul 2020 07:15:50 -0400
-X-MC-Unique: JAf95g9fOGa8PNJBi69ewg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E931100A61D;
-        Tue, 14 Jul 2020 11:15:49 +0000 (UTC)
-Received: from krava (unknown [10.40.193.14])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3ADFA1CA;
-        Tue, 14 Jul 2020 11:15:46 +0000 (UTC)
-Date:   Tue, 14 Jul 2020 13:15:45 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: linux-next: build warning after merge of the bpf-next tree
-Message-ID: <20200714111545.GI183694@krava>
-References: <20200714121608.58962d66@canb.auug.org.au>
- <20200714090048.GG183694@krava>
- <20200714203341.4664dda3@canb.auug.org.au>
- <20200714104702.GH183694@krava>
+        id S1726354AbgGNMmo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 14 Jul 2020 08:42:44 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58406 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726352AbgGNMmo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 14 Jul 2020 08:42:44 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9ECCBDDF89920A824B6C;
+        Tue, 14 Jul 2020 20:42:41 +0800 (CST)
+Received: from huawei.com (10.174.28.241) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Tue, 14 Jul 2020
+ 20:42:33 +0800
+From:   Bixuan Cui <cuibixuan@huawei.com>
+To:     <akpm@linux-foundation.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-next@vger.kernel.org>, <cuibixuan@huawei.com>,
+        <john.wanghui@huawei.com>
+Subject: [PATCH] mm/percpu: mark pcpu_chunk_type() as __maybe_unused
+Date:   Tue, 14 Jul 2020 13:41:01 +0000
+Message-ID: <20200714134101.80534-1-cuibixuan@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200714104702.GH183694@krava>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.28.241]
+X-CFilter-Loop: Reflected
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 12:47:02PM +0200, Jiri Olsa wrote:
-> On Tue, Jul 14, 2020 at 08:33:41PM +1000, Stephen Rothwell wrote:
-> 
-> SNIP
-> 
-> > > diff --git a/tools/bpf/resolve_btfids/Makefile b/tools/bpf/resolve_btfids/Makefile
-> > > index 948378ca73d4..a88cd4426398 100644
-> > > --- a/tools/bpf/resolve_btfids/Makefile
-> > > +++ b/tools/bpf/resolve_btfids/Makefile
-> > > @@ -16,6 +16,20 @@ else
-> > >    MAKEFLAGS=--no-print-directory
-> > >  endif
-> > >  
-> > > +# always use the host compiler
-> > > +ifneq ($(LLVM),)
-> > > +HOSTAR  ?= llvm-ar
-> > > +HOSTCC  ?= clang
-> > > +HOSTLD  ?= ld.lld
-> > > +else
-> > > +HOSTAR  ?= ar
-> > > +HOSTCC  ?= gcc
-> > > +HOSTLD  ?= ld
-> > > +endif
-> > > +AR       = $(HOSTAR)
-> > > +CC       = $(HOSTCC)
-> > > +LD       = $(HOSTLD)
-> > > +
-> > >  OUTPUT ?= $(srctree)/tools/bpf/resolve_btfids/
-> > >  
-> > >  LIBBPF_SRC := $(srctree)/tools/lib/bpf/
-> > > 
-> > 
-> > Thanks for the quick response.  However, in the mean time the bpf-next
-> > tree has been merged into the net-next tree, so these fixes will be
-> > needed there ASAP.
-> 
-> I just posted it
+Gcc report the following warning without CONFIG_MEMCG_KMEM:
 
-ugh, you said net-next..
+mm/percpu-internal.h:145:29: warning: ‘pcpu_chunk_type’ defined
+but not used [-Wunused-function]
+ static enum pcpu_chunk_type pcpu_chunk_type(struct pcpu_chunk *chunk)
+                             ^~~~~~~~~~~~~~~
 
-David, do you need me to repost with net-next tag?
-  https://lore.kernel.org/bpf/20200714102534.299280-1-jolsa@kernel.org/T/
+Mark pcpu_chunk_type() as __maybe_unused to make it clear.
 
-jirka
+Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+---
+ mm/percpu-internal.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/percpu-internal.h b/mm/percpu-internal.h
+index 7983455842ff..8a8a230bd957 100644
+--- a/mm/percpu-internal.h
++++ b/mm/percpu-internal.h
+@@ -129,7 +129,7 @@ static inline int pcpu_chunk_map_bits(struct pcpu_chunk *chunk)
+ }
+
+ #ifdef CONFIG_MEMCG_KMEM
+-static enum pcpu_chunk_type pcpu_chunk_type(struct pcpu_chunk *chunk)
++static enum pcpu_chunk_type __maybe_unused pcpu_chunk_type(struct pcpu_chunk *chunk)
+ {
+ 	if (chunk->obj_cgroups)
+ 		return PCPU_CHUNK_MEMCG;
+@@ -142,7 +142,7 @@ static bool pcpu_is_memcg_chunk(enum pcpu_chunk_type chunk_type)
+ }
+
+ #else
+-static enum pcpu_chunk_type pcpu_chunk_type(struct pcpu_chunk *chunk)
++static enum pcpu_chunk_type __maybe_unused pcpu_chunk_type(struct pcpu_chunk *chunk)
+ {
+ 	return PCPU_CHUNK_ROOT;
+ }
+--
+2.17.1
 
