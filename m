@@ -2,148 +2,129 @@ Return-Path: <SRS0=ZtSy=AZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB5EC433E2
-	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 13:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B2A4C433DF
+	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 14:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E006522507
-	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 13:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38D4D2067D
+	for <linux-next@archiver.kernel.org>; Tue, 14 Jul 2020 14:37:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dY+ZsGS0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z3NSvmGi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbgGNN6D (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 14 Jul 2020 09:58:03 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32365 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726450AbgGNN56 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:57:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594735077;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KsP+Zg2SXxpGWvQphHBj9WDMJC0wpn9ZmfS2E7PsRDA=;
-        b=dY+ZsGS0E23sdgul9DvcPhCf7qXAtm58c6BKQL7bIC78tXoP1F0nO4r670ngF/pWKOm55X
-        G7UsJIX9ND0fup2YC9tbryd4uerIJyjce4btOWr8edYmWFJNwkfkAc0zBDvGt4KUrgZpNs
-        TjE2sPqCh321PIWQi507Pm3xybvuv5c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-491-VBrKysQKOeejqWQNk3_Q2A-1; Tue, 14 Jul 2020 09:57:53 -0400
-X-MC-Unique: VBrKysQKOeejqWQNk3_Q2A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A50F1800597;
-        Tue, 14 Jul 2020 13:57:51 +0000 (UTC)
-Received: from treble (unknown [10.10.119.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D5DF2E02A;
-        Tue, 14 Jul 2020 13:57:49 +0000 (UTC)
-Date:   Tue, 14 Jul 2020 08:57:47 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, pmladek@suse.cz,
-        live-patching@vger.kernel.org
-Subject: Re: linux-next: Tree for Jun 23 (objtool (2))
-Message-ID: <20200714135747.lcgysd5joguhssas@treble>
-References: <20200623162820.3f45feae@canb.auug.org.au>
- <61df2e8f-75e8-d233-9c3c-5b4fa2b7fbdc@infradead.org>
- <20200702123555.bjioosahrs5vjovu@treble>
- <alpine.LSU.2.21.2007141240540.5393@pobox.suse.cz>
+        id S1728275AbgGNOhe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 14 Jul 2020 10:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbgGNOhd (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Jul 2020 10:37:33 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9ACFC061794
+        for <linux-next@vger.kernel.org>; Tue, 14 Jul 2020 07:37:32 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id h22so23019987lji.9
+        for <linux-next@vger.kernel.org>; Tue, 14 Jul 2020 07:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lK9a1yh/EhE3qkm1elmL6lwF7ziT/zqKmAG/PHA6ZOA=;
+        b=Z3NSvmGi1zKUsvgeygynh+ITklJceB1KEnpIldaqI5MEUZy2m/tQgDrFqcbvYfh63r
+         j0VcE1IcdAM6R/CBN1UvvaAk6ARqymw753YL/papmNPPisKpDn86xp0k1KyaKLQ8f4V/
+         PEUDjxMF7d7mAuadqlHJjVMniI6vB1hQKh26CHWGzRmuLOh8Oy64AM5AgRaPXcaGKvxL
+         p9ZRzaowPofuPENecCZDZLN0Tyd75Y2MVb/LLI2VRQtyH60caW51NTdVEWHI6Nxdio1w
+         su/OWOJQzUw5OgjUHHHrvMgRg8z19M5VCXPMBfHCAp8Jz+fwZT7vZX7SGozCDimJJ8DJ
+         G5yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lK9a1yh/EhE3qkm1elmL6lwF7ziT/zqKmAG/PHA6ZOA=;
+        b=SsQkIJgonHOvk2bfgtaooCz2EZSf3nTzjQPuG0nkNlgtiVuY3x0wCE8mjL+7KfhMcr
+         23zAjV5m2VHZ+DAanY0JVLweINQYpB56/jtS3xaItvgHZod43wpi0T69b9utkWkT3Bw8
+         Yu7vNHjGahSi3cfXxuoTf0KLNYMrzlPWVWHeuGmYNuNBwQdY/HsutTet8TUipzSUr18/
+         HF5qQFNWqF382wLjUrJHNid36dFDiAFRscYV6VQiQf01Luk/J88AJ7lUEMOBudPBGn0S
+         6/8FdcGd4FeFowgR6ZlyuxFVW5LGgcpiS/sxDlxBXXeEL8ipVkk9pBs9scVASDVIRBZZ
+         rjiw==
+X-Gm-Message-State: AOAM530XXQJUD2TkIoPbOV8g0D5HS92/hSTY6pi7Nh2qB0zy1BMT4rOb
+        ue9wt5nh89xBcWIIVfiayoGsbWrI9yzawtNhjSUMJQ==
+X-Google-Smtp-Source: ABdhPJzX5dpcaBKDxEYLl0vrwhi8F7+YdV8dkC4BCrbt7sSJP+LG5g2U5WSp4XIU7quRW1BEQAv2maCKFgN7vcoO7KY=
+X-Received: by 2002:a2e:9857:: with SMTP id e23mr2609366ljj.411.1594737451191;
+ Tue, 14 Jul 2020 07:37:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.2007141240540.5393@pobox.suse.cz>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <2fa6dda741a8a315405989bf3276d9158f4d92e2.1594036709.git.lucien.xin@gmail.com>
+ <e852e03656d09a9e469c3fe9c04af25a0551075c.1594036709.git.lucien.xin@gmail.com>
+ <2a8edf158432201b796f13ccc2e80f2fcafbb8d8.1594036709.git.lucien.xin@gmail.com>
+ <b588daa77c6304119b8578d31d3e29fbc8959178.1594036709.git.lucien.xin@gmail.com>
+ <cover.1594036709.git.lucien.xin@gmail.com> <97bd8d867973d769486f5a9b98fe6e13ba3fa821.1594036709.git.lucien.xin@gmail.com>
+ <a0c059b3690e690248cbbe1130e160b96b30d989.1594036709.git.lucien.xin@gmail.com>
+In-Reply-To: <a0c059b3690e690248cbbe1130e160b96b30d989.1594036709.git.lucien.xin@gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 14 Jul 2020 20:07:19 +0530
+Message-ID: <CA+G9fYv1Zx7ptDDs-WAeJ_rhsUX6ZJ1Kx2Nk=BUt_hjKiKhC+A@mail.gmail.com>
+Subject: Re: [PATCHv3 ipsec-next 06/10] ip6_vti: support IP6IP6 tunnel
+ processing with .cb_handler
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     Netdev <netdev@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 12:56:21PM +0200, Miroslav Benes wrote:
-> On Thu, 2 Jul 2020, Josh Poimboeuf wrote:
-> 
-> > On Tue, Jun 23, 2020 at 08:06:07AM -0700, Randy Dunlap wrote:
-> > > On 6/22/20 11:28 PM, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > Changes since 20200622:
-> > > > 
-> > > 
-> > > on x86_64:
-> > > 
-> > > arch/x86/kernel/cpu/mce/core.o: warning: objtool: mce_timed_out()+0x24: unreachable instruction
-> > > kernel/exit.o: warning: objtool: __x64_sys_exit_group()+0x14: unreachable instruction
-> > > 
-> > > Full randconfig file is attached.
-> > 
-> > More livepatch...
-> 
-> Correct.
-> 
-> Both are known and I thought Josh had fixes queued somewhere for both, but 
-> my memory fails me quite often. See below.
+On Mon, 6 Jul 2020 at 17:32, Xin Long <lucien.xin@gmail.com> wrote:
+>
+> Similar to IPIP tunnel's processing, this patch is to support
+> IP6IP6 tunnel processing with .cb_handler.
+>
+> v1->v2:
+>   - no change.
+> v2-v3:
+>   - enable it only when CONFIG_INET6_XFRM_TUNNEL is defined, to fix
+>     the build error, reported by kbuild test robot.
+>
+> Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> ---
+>  net/ipv6/ip6_vti.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>
+> diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
+> index 1147f64..39efe41 100644
+> --- a/net/ipv6/ip6_vti.c
+> +++ b/net/ipv6/ip6_vti.c
+> @@ -1218,6 +1218,26 @@ static struct xfrm6_protocol vti_ipcomp6_protocol __read_mostly = {
+>         .priority       =       100,
+>  };
+>
+> +#if IS_ENABLED(CONFIG_INET6_XFRM_TUNNEL)
+> +static int vti6_rcv_tunnel(struct sk_buff *skb)
+> +{
+> +       const xfrm_address_t *saddr;
+> +       __be32 spi;
+> +
+> +       saddr = (const xfrm_address_t *)&ipv6_hdr(skb)->saddr;
+> +       spi = xfrm6_tunnel_spi_lookup(dev_net(skb->dev), saddr);
 
-I did have fixes for some of them in a stash somewhere, but I never
-finished them because I decided it's a GCC bug.
+arm build failed due this error on linux-next 20200713 and  20200713
+15:51:27 | net/ipv6/ip6_vti.o: In function `vti6_rcv_tunnel':
+15:51:27 | ip6_vti.c:(.text+0x1d20): undefined reference to
+`xfrm6_tunnel_spi_lookup'
 
-> However, I think it is time to decide how to approach this whole saga. It 
-> seems that there are not so many places in the kernel in need of 
-> __noreturn annotation in the end and as jikos argued at least some of 
-> those should be fixed regardless.
+ref:
+https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=lkft,MACHINE=am57xx-evm,label=docker-lkft/812/consoleText
 
-I would agree that global functions like do_group_exit() deserve a
-__noreturn annotation, though it should be in the header file.  But
-static functions shouldn't need it.
-
-> Josh, should I prepare proper patches and submit them to relevant
-> maintainers to see where this path is going?
-
-If that's how you want to handle it, ok, but it doesn't seem right to
-me, for the static functions at least.
-
-> It would be much better to fix it in GCC, but it has been like banging 
-> one's head against a wall so far. Josh, you wanted to create a bug 
-> for GCC in this respect in the past? Has that happened?
-
-I didn't open a bug, but I could, if you think that would help.  I
-haven't had a lot of success with GCC bugs in the past.
-
-> If I remember correctly, we discussed briefly a possibility to cope with 
-> that in objtool, but no solution was presented.
-
-That would also feel like a GCC workaround and might impede objtool's
-ability to find bugs like this one, and possibly more serious bugs.
-
-> Removing -flive-patching is also a possibility. I don't like it much, but 
-> we discussed it with Petr M. a couple of months ago and it might be a way 
-> too.
-
--flive-patching has many problems which I outlined before.  None of them
-have been addressed.  I still feel the same way, that it should be
-reverted until it's ready.  Otherwise it's a drain on upstream.
-
-Also, if the GCC developers won't acknowledge this bug then it doesn't
-give me confidence in their ability to keep the feature working as
-optimizations are added or changed.
-
-I still think a potential alternative exists: objtool could be used as a
-simple tree-wide object diff tool by generating a checksum for each
-function.  Then the patch can be applied and built to see exactly which
-functions have changed, based on the changed checksums.  In which case
-this feature would no longer be needed anyway, would you agree?
-
-I also think that could be a first step for converging our patch
-creation processes.
+config link,
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/am57xx-evm/lkft/linux-next/811/config
 
 -- 
-Josh
-
+Linaro LKFT
+https://lkft.linaro.org
