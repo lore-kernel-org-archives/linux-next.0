@@ -3,59 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B9BC433E5
-	for <linux-next@archiver.kernel.org>; Thu, 16 Jul 2020 10:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BD6C433E1
+	for <linux-next@archiver.kernel.org>; Thu, 16 Jul 2020 11:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0DC8204EA
-	for <linux-next@archiver.kernel.org>; Thu, 16 Jul 2020 10:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7CB20775
+	for <linux-next@archiver.kernel.org>; Thu, 16 Jul 2020 11:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbgGPKAO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 16 Jul 2020 06:00:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7874 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726027AbgGPKAO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 16 Jul 2020 06:00:14 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 65910E0921DE2CE7D799;
-        Thu, 16 Jul 2020 18:00:09 +0800 (CST)
-Received: from [127.0.0.1] (10.174.179.238) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Thu, 16 Jul 2020
- 18:00:01 +0800
-Subject: Re: [PATCH] net: neterion: vxge: reduce stack usage in
- VXGE_COMPLETE_VPATH_TX
-To:     Joe Perches <joe@perches.com>, <davem@davemloft.net>,
-        <kuba@kernel.org>, <linux-next@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <jdmason@kudzu.us>, <christophe.jaillet@wanadoo.fr>,
-        <john.wanghui@huawei.com>
-References: <20200716173247.78912-1-cuibixuan@huawei.com>
- <687734b1623965b154752252968adeca35740c88.camel@perches.com>
-From:   Bixuan Cui <cuibixuan@huawei.com>
-Message-ID: <bf277e52-df6f-1249-9af1-6eea4aa663af@huawei.com>
-Date:   Thu, 16 Jul 2020 17:59:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727851AbgGPLUw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 16 Jul 2020 07:20:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59204 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727118AbgGPLUw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 16 Jul 2020 07:20:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C15ACACB8;
+        Thu, 16 Jul 2020 11:20:54 +0000 (UTC)
+Date:   Thu, 16 Jul 2020 13:20:50 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        live-patching@vger.kernel.org, Yannick Cote <ycote@redhat.com>
+Subject: Re: linux-next: Tree for Jun 23 (objtool (2))
+In-Reply-To: <20200715162457.mhoz2rgjbl4okx6d@treble>
+Message-ID: <alpine.LSU.2.21.2007161315490.3958@pobox.suse.cz>
+References: <20200623162820.3f45feae@canb.auug.org.au> <61df2e8f-75e8-d233-9c3c-5b4fa2b7fbdc@infradead.org> <20200702123555.bjioosahrs5vjovu@treble> <alpine.LSU.2.21.2007141240540.5393@pobox.suse.cz> <20200714135747.lcgysd5joguhssas@treble>
+ <alpine.LSU.2.21.2007151250390.25290@pobox.suse.cz> <20200715121054.GH20226@alley> <20200715134155.GI20226@alley> <20200715162457.mhoz2rgjbl4okx6d@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <687734b1623965b154752252968adeca35740c88.camel@perches.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.179.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On Wed, 15 Jul 2020, Josh Poimboeuf wrote:
 
+> On Wed, Jul 15, 2020 at 03:41:55PM +0200, Petr Mladek wrote:
+> > On Wed 2020-07-15 14:10:54, Petr Mladek wrote:
+> > > On Wed 2020-07-15 13:11:14, Miroslav Benes wrote:
+> > > > Petr, would you agree to revert -flive-patching.
+> > > 
+> > > Yes, I agree.
+> > 
+> > Or better to say that I will not block it.
+> > 
+> > I see that it causes maintenance burden. There are questions about
+> > reliability and performance impact. I do not have a magic solution
+> > in the pocket.
+> > 
+> > Anyway, we need a solution to know what functions need to get livepatched.
+> > I do not have experience with comparing the assembly, so I do not know
+> > how it is complicated and reliable.
+> 
+> Thanks Petr/Miroslav.  I can do the revert patch.  It doesn't have to be
+> a permanent revert.  I'd certainly be willing to ACK it again in the
+> future if/when it becomes more ready.
 
-On 2020/7/16 17:46, Joe Perches wrote:
-> I doubt this is a good idea.
-> Check the callers interrupt status.
-yes, it's not good idea to alloc memory in interrupt handler,
-I will think more while fix warning. :)
-Thanks.
+Ok.
 
+> Yannick has agreed to start looking at the objtool function diff
+> feature.  It's purely theoretical at the moment, we'll see how it works
+> in practice.  We already do something similar in kpatch-build -- it
+> differs from the objtool model, but it at least shows that something
+> similar is possible.
+
+Great. I'm looking forward to seeing that.
+
+Thanks
+Miroslav
