@@ -2,58 +2,80 @@ Return-Path: <SRS0=kphl=BB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E78C433E0
-	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 18:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C73BC433E4
+	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 22:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64E7D207E8
-	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 18:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC2C520825
+	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 22:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fXAmA24J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oJvZq4zw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbgGVSX2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 22 Jul 2020 14:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60148 "EHLO
+        id S1726452AbgGVWTq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 22 Jul 2020 18:19:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbgGVSX1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2020 14:23:27 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCF8C0619DC;
-        Wed, 22 Jul 2020 11:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=JrD3G1WSRO2ACZGrzdo5vNTbMsFVg5sjgpFhLlIa/+M=; b=fXAmA24JXRO3SuO0hkx1FF5XHt
-        yg792tJwQ6zVUMj6Nmfi7PiHNZesrNBpPEJBhI4Ep/nXPugJWcnKpe9/cfh9kK7vWiUDIpe6bAYRR
-        7WylJu4yliWdoqssibniqd+FCWkZ0oBmV9uculJX5ixBLOwjoPlK/dGRRf83GU5XMHdsj+qdLAXvK
-        2PYvcHdxuK6LC/cUlugfEnK27SWPoK46feIUWvltYwV+TIBO5rKXVRRcRtC0NZIynY8W+qatpuS6C
-        xdt6YG2naeKlEuYJCmRlpHTGCea1ME2N5v8h7lQQYlXFDZ+yt4gTQgADt9OYieApZRAhd1fJsKSpl
-        yDoDvK4w==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jyJOi-00010t-4w; Wed, 22 Jul 2020 18:23:20 +0000
-Subject: Re: linux-next: Tree for Jul 22
- (sound/soc/tegra/snd-soc-tegra210-dmic)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        with ESMTP id S1726447AbgGVWTq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2020 18:19:46 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC751C0619DC;
+        Wed, 22 Jul 2020 15:19:45 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id u64so3575038qka.12;
+        Wed, 22 Jul 2020 15:19:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XrjykOZMjEbhEG4xYzx5TkMq0JyZVdIE71GzGgj+ZAw=;
+        b=oJvZq4zw920vtMakxOmhTZnFBQN2QldafEhIEKKnkn/XAOGY11njc1951eCgO6f4bV
+         z4cGbIKqik2Gd+h9vZhGV9waHFi5xqOXsZH4ASEiBcuM8fe29vlHHiELI6S/1fXtWLUy
+         ARKWNBRzYAOqoYmQMkV8FbAZ+VH2QxYLXUH6lHsi3dQB3KtWgl9YLkLjQDKVm3RLtamy
+         fC7kQYIM1ncSGPZ/FgLL0x8gbQnk/UiqwSdIdCt7aTFWyvBkUJ9WJWlRh701xUZk/bno
+         danH0cSZJ6tXCbsjp9TYbwWa5AZRdSYyXcnsyIrdoqMUogmA0SMgeHtwtGDT8B/9TQ1c
+         bxGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XrjykOZMjEbhEG4xYzx5TkMq0JyZVdIE71GzGgj+ZAw=;
+        b=IgOzcWimWNS6+UECl1hekp/dIPded6PPWe4nlrwcdtKI1wcvJkTVqqB5+34G1BJqNE
+         zdDKJWjvc3N+CIwqe0IS6KkAAsMStFEAeZWkCkMDRhzdtCmSexrVvIkih97R4bal18jT
+         0Y4J0any5A2Qco06DFkUcDgz4TVKtpyBzO7T6O9OfYxT5G6zBImkO1Fldfm0hDOexQrJ
+         263UCjCp+F/EMwhKjFGAzzsj79Uhv6Ghz8N6sZ8TjOVmwS5+iY8w+P5aDnTYVqcraAv4
+         b7IvHWXvHAwf3aUhrAZDAxMZHox+p8NzR/O+E0tVpDfaJz6Z4Z09CHx5MVw5kiQ7w+g3
+         haCg==
+X-Gm-Message-State: AOAM531Hw5ESh31ILO6suWFu6gyylEcxgCnChk1NjVs8TMmnrH6Fu8yK
+        kgxj9HL+RPwKGjRyyXYr02o=
+X-Google-Smtp-Source: ABdhPJzo4PZ4wOpwK4EPfptH0lcP6RkPlh6aS2taiOlx30gGCDmG92nQZzwYQf8t1jtnWjXdKTZgCQ==
+X-Received: by 2002:a37:d83:: with SMTP id 125mr2292115qkn.430.1595456385011;
+        Wed, 22 Jul 2020 15:19:45 -0700 (PDT)
+Received: from ?IPv6:2601:282:803:7700:5c10:aafb:1d38:5735? ([2601:282:803:7700:5c10:aafb:1d38:5735])
+        by smtp.googlemail.com with ESMTPSA id n127sm1079195qke.29.2020.07.22.15.19.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jul 2020 15:19:44 -0700 (PDT)
+Subject: Re: linux-next: Tree for Jul 22 (drivers/net/vrf)
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>,
-        Rahul Mittal <rmittal@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Ahern <dsahern@kernel.org>,
+        Shrijeet Mukherjee <shrijeet@gmail.com>,
+        David Miller <davem@davemloft.net>
 References: <20200722231640.3dae04cd@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8816636f-4b6c-5bb3-20d3-a240aceadc99@infradead.org>
-Date:   Wed, 22 Jul 2020 11:23:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <e1fc4765-db64-2876-2f3c-857c45d4fb45@infradead.org>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <76e94256-ccd6-2ba5-fa85-24e643dddb84@gmail.com>
+Date:   Wed, 22 Jul 2020 16:19:42 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200722231640.3dae04cd@canb.auug.org.au>
+In-Reply-To: <e1fc4765-db64-2876-2f3c-857c45d4fb45@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,18 +84,18 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/22/20 6:16 AM, Stephen Rothwell wrote:
-> Hi all,
+On 7/22/20 10:35 AM, Randy Dunlap wrote:
+> On 7/22/20 6:16 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20200721:
+>>
 > 
-> Changes since 20200721:
+> on i386:
+> when CONFIG_SYSCTL is not set/enabled:
+> 
+> ERROR: modpost: "sysctl_vals" [drivers/net/vrf.ko] undefined!
+> 
 > 
 
-
-on i386:
-
-ERROR: modpost: "__udivdi3" [sound/soc/tegra/snd-soc-tegra210-dmic.ko] undefined!
-ERROR: modpost: "__divdi3" [sound/soc/tegra/snd-soc-tegra210-dmic.ko] undefined!
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+thanks for the report; I'll send a patch when I get a few minutes.
