@@ -2,100 +2,97 @@ Return-Path: <SRS0=kphl=BB=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C73BC433E4
-	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 22:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94537C433DF
+	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 23:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC2C520825
-	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 22:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E3E622BEF
+	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 23:27:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oJvZq4zw"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oWSvgJnp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgGVWTq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 22 Jul 2020 18:19:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40440 "EHLO
+        id S1726539AbgGVX1X (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 22 Jul 2020 19:27:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbgGVWTq (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2020 18:19:46 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC751C0619DC;
-        Wed, 22 Jul 2020 15:19:45 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id u64so3575038qka.12;
-        Wed, 22 Jul 2020 15:19:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XrjykOZMjEbhEG4xYzx5TkMq0JyZVdIE71GzGgj+ZAw=;
-        b=oJvZq4zw920vtMakxOmhTZnFBQN2QldafEhIEKKnkn/XAOGY11njc1951eCgO6f4bV
-         z4cGbIKqik2Gd+h9vZhGV9waHFi5xqOXsZH4ASEiBcuM8fe29vlHHiELI6S/1fXtWLUy
-         ARKWNBRzYAOqoYmQMkV8FbAZ+VH2QxYLXUH6lHsi3dQB3KtWgl9YLkLjQDKVm3RLtamy
-         fC7kQYIM1ncSGPZ/FgLL0x8gbQnk/UiqwSdIdCt7aTFWyvBkUJ9WJWlRh701xUZk/bno
-         danH0cSZJ6tXCbsjp9TYbwWa5AZRdSYyXcnsyIrdoqMUogmA0SMgeHtwtGDT8B/9TQ1c
-         bxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XrjykOZMjEbhEG4xYzx5TkMq0JyZVdIE71GzGgj+ZAw=;
-        b=IgOzcWimWNS6+UECl1hekp/dIPded6PPWe4nlrwcdtKI1wcvJkTVqqB5+34G1BJqNE
-         zdDKJWjvc3N+CIwqe0IS6KkAAsMStFEAeZWkCkMDRhzdtCmSexrVvIkih97R4bal18jT
-         0Y4J0any5A2Qco06DFkUcDgz4TVKtpyBzO7T6O9OfYxT5G6zBImkO1Fldfm0hDOexQrJ
-         263UCjCp+F/EMwhKjFGAzzsj79Uhv6Ghz8N6sZ8TjOVmwS5+iY8w+P5aDnTYVqcraAv4
-         b7IvHWXvHAwf3aUhrAZDAxMZHox+p8NzR/O+E0tVpDfaJz6Z4Z09CHx5MVw5kiQ7w+g3
-         haCg==
-X-Gm-Message-State: AOAM531Hw5ESh31ILO6suWFu6gyylEcxgCnChk1NjVs8TMmnrH6Fu8yK
-        kgxj9HL+RPwKGjRyyXYr02o=
-X-Google-Smtp-Source: ABdhPJzo4PZ4wOpwK4EPfptH0lcP6RkPlh6aS2taiOlx30gGCDmG92nQZzwYQf8t1jtnWjXdKTZgCQ==
-X-Received: by 2002:a37:d83:: with SMTP id 125mr2292115qkn.430.1595456385011;
-        Wed, 22 Jul 2020 15:19:45 -0700 (PDT)
-Received: from ?IPv6:2601:282:803:7700:5c10:aafb:1d38:5735? ([2601:282:803:7700:5c10:aafb:1d38:5735])
-        by smtp.googlemail.com with ESMTPSA id n127sm1079195qke.29.2020.07.22.15.19.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jul 2020 15:19:44 -0700 (PDT)
-Subject: Re: linux-next: Tree for Jul 22 (drivers/net/vrf)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Ahern <dsahern@kernel.org>,
-        Shrijeet Mukherjee <shrijeet@gmail.com>,
-        David Miller <davem@davemloft.net>
-References: <20200722231640.3dae04cd@canb.auug.org.au>
- <e1fc4765-db64-2876-2f3c-857c45d4fb45@infradead.org>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <76e94256-ccd6-2ba5-fa85-24e643dddb84@gmail.com>
-Date:   Wed, 22 Jul 2020 16:19:42 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.10.0
+        with ESMTP id S1726447AbgGVX1X (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2020 19:27:23 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E55C0619DC;
+        Wed, 22 Jul 2020 16:27:23 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BBs7W0ychz9sQt;
+        Thu, 23 Jul 2020 09:27:18 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1595460440;
+        bh=UXbRC8qsJcxaXO7rHGDv/GKUgr2U5PIHydnZuXfQFBI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=oWSvgJnpV1uNV6fVUqwobGRcETqZ2Sx8RNvqv2rAs5Px+pVjdBqqhUN1q+qYGZrVY
+         nZbqEBDH3jqFRm7DlFB1ptwwg1YA3yBsrasrc/OXiVIWlDV1lo68Vgl6SO09hJyx3T
+         vNAFFNnmd9AMJyb7xrLfz+KFCHW383iv2DbJTgZrs8o9T26jq8xzsn4YfYoP6lhDF0
+         41mVyMqNz8kRy5aNGglx3f8rjOW6RfPzR3xiHvBjBaMFTh1gkwPmed5XFzwniBSWOb
+         IVxd3XUsR2CWKDkVQJYbrB30gnxSVY93HdPoZ/+btj9Y7eOA5p+trBLTuuHi7nUVNK
+         ZQyOmrC/APnFw==
+Date:   Thu, 23 Jul 2020 09:27:17 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the arm-soc tree
+Message-ID: <20200723092717.0f90fd26@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <e1fc4765-db64-2876-2f3c-857c45d4fb45@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/K./6MtM_RhTL74T8oyN4XUZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 7/22/20 10:35 AM, Randy Dunlap wrote:
-> On 7/22/20 6:16 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20200721:
->>
-> 
-> on i386:
-> when CONFIG_SYSCTL is not set/enabled:
-> 
-> ERROR: modpost: "sysctl_vals" [drivers/net/vrf.ko] undefined!
-> 
-> 
+--Sig_/K./6MtM_RhTL74T8oyN4XUZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-thanks for the report; I'll send a patch when I get a few minutes.
+Hi all,
+
+After merging the arm-soc tree, today's linux-next build (arm
+multi_v7_defconfig) produced these warnings:
+
+arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_bus_bridge): /soc/ap=
+b@d4000000/spi@d4037000: incorrect #address-cells for SPI bus
+  also defined at arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts:225.7-237.3
+arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_bus_bridge): /soc/ap=
+b@d4000000/spi@d4037000: incorrect #size-cells for SPI bus
+  also defined at arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts:225.7-237.3
+arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed prer=
+equisite 'spi_bus_bridge'
+
+I have no idea what causes these warnings.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/K./6MtM_RhTL74T8oyN4XUZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8Yy1UACgkQAVBC80lX
+0GwtaAf8CEQfYqYL092VhNFcPnHDsnd/elWcYbTKtTZJKdoX2Wknq9zU5DJUQVcC
+Mn/JfYPK58L9YrsgvhhpuYmYIBhk2pS0yGZScglmuHxbRbMZ6zsSpz+rI6SgkRcB
+9BaanZidN5NgfORUTZ4EpsNVivs7MuaJW6eqqx8Q8Apkz229SnWtA+54VBhnrCfP
+4h1O1OHfMW6FbybdcqLZtA/9ZoNHh9/h3Psycw3e8WNV72hM7Bvk1/SFbl6MYZSk
+YxhjSD7PlkaNNhO7/Wfwz1UCmihGk+VV16jAaZIVHscfllRcHQmMmC7NWXybMi8H
+iOnKLigu3mH3G3Lom6QhUIiCMeCe9g==
+=UvvD
+-----END PGP SIGNATURE-----
+
+--Sig_/K./6MtM_RhTL74T8oyN4XUZ--
