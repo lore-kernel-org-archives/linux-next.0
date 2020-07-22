@@ -6,111 +6,99 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B326CC433E1
-	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 00:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760BFC433E1
+	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 01:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8929A2077D
-	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 00:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 119E420771
+	for <linux-next@archiver.kernel.org>; Wed, 22 Jul 2020 01:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dPVC1J92"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="P7dBpETo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731138AbgGVAoG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 21 Jul 2020 20:44:06 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:60275 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726468AbgGVAoF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 21 Jul 2020 20:44:05 -0400
+        id S1728001AbgGVBjZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 21 Jul 2020 21:39:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbgGVBjZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 21 Jul 2020 21:39:25 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0185FC061794;
+        Tue, 21 Jul 2020 18:39:24 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BBGtW10frz9sR4;
-        Wed, 22 Jul 2020 10:44:03 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BBJ6K5JtDz9sPB;
+        Wed, 22 Jul 2020 11:39:21 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1595378643;
-        bh=HWIIhnG4c5m+8etDE8Vn31V6Al/spuQpJSoHGrnNFOA=;
+        s=201702; t=1595381961;
+        bh=WHwCUA6+aBBZaQRwlAjT9rFspJZTYA3kgO9KG2fmgYg=;
         h=Date:From:To:Cc:Subject:From;
-        b=dPVC1J92D4brCD7Vt1/F2txmldkjFMejL9zEkv7JznOtRCOUp14nZicBHzdbzyZIN
-         mfNMrdDCbSeOMkN5m5vD3wZd9mGwSEAK6B1DGW4AkEzxuE/kOCs2RC+JhyBu1Fopy2
-         WDMhpErApi1zxWYETMN3LHI8jGsQ5p14fpKnMeZ7mgEWmTLQJQhsv1Y511z53Vx7Y1
-         XrbyJq6wQa/XP92acKhlER+fshogiweN9S0baC/NOzd69Qz3X/IxYtYRJX+XgJrH2s
-         23lZWl2Qun0AF7fnq6p47ZZkLT1mn+SF693PzN73FseLHjgQqr+2AU2zbkmnH5DaaU
-         xicUsBYjOmFnA==
-Date:   Wed, 22 Jul 2020 10:44:02 +1000
+        b=P7dBpEToG6jN78/5fqn/BqoUjC7DEuOeZjPko8HcV3A3QKdU0ky1LqrwW/I90SiRo
+         dx1wUgcHnyzLTcykU06OooTJm5RkV7p2L7R3bMucTiMr/T00StVUxyufmg8Huht9EG
+         Qw4WuMDmv37wN6knwWtOJww3EENnYWvVSLzmdKpVZlP8ZxGSTvvL5d0d8x0U2hkrBa
+         aC80y4E3fGp6lUggPu53jayn5caxVz21qhRIxhp3idiOUD9M7OEDsiT3CBauBHVptX
+         Sy0PiEgS2l/LgvQPMbVSt+YX3ZgWqPyWg0WERzqaDWGT9+s/nV9VX31H+zD2cHTfrp
+         1XNJolzPUWkrA==
+Date:   Wed, 22 Jul 2020 11:39:20 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Max Filippov <jcmvbkbc@gmail.com>, Guo Ren <ren_guo@c-sky.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the xtensa tree with the csky tree
-Message-ID: <20200722104402.5f95bcc1@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Message-ID: <20200722113920.393deb21@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/29F/PfU2JgwE1THz1oU0DyX";
+Content-Type: multipart/signed; boundary="Sig_/AQZnIG.g1aGCXExNuR72w3i";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/29F/PfU2JgwE1THz1oU0DyX
+--Sig_/AQZnIG.g1aGCXExNuR72w3i
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the xtensa tree got a conflict in:
+After merging the pci tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  tools/testing/selftests/seccomp/seccomp_bpf.c
+drivers/pci/pci.c:2176:6: error: redefinition of 'pcie_clear_device_status'
+ 2176 | void pcie_clear_device_status(struct pci_dev *dev)
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/pci/pci.c:37:
+drivers/pci/pci.h:668:20: note: previous definition of 'pcie_clear_device_s=
+tatus' was here
+  668 | static inline void pcie_clear_device_status(struct pci_dev *dev) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
 
-between commit:
+Caused by commit
 
-  f4dd2edafba0 ("csky: add support for SECCOMP and SECCOMP_FILTER")
+  02c111e4a5a3 ("PCI/ERR: Rename pci_aer_clear_device_status() to pcie_clea=
+r_device_status()")
 
-from the csky tree and commit:
+CONFIG_PCIEAER is not set for this build.
 
-  deccfc9ce639 ("selftests/seccomp: add xtensa support")
-
-from the xtensa tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the pci tree from next-20200721 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/testing/selftests/seccomp/seccomp_bpf.c
-index 8d18a0ddafdd,1b445c2e7fbe..000000000000
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@@ -1704,7 -1704,7 +1714,7 @@@ void change_syscall(struct __test_metad
- =20
-  #if defined(__x86_64__) || defined(__i386__) || defined(__powerpc__) || \
-  	defined(__s390__) || defined(__hppa__) || defined(__riscv) || \
-- 	defined(__csky__)
- -	defined(__xtensa__)
-++	defined(__csky__) || defined(__xtensa__)
-  	{
-  		regs.SYSCALL_NUM =3D syscall;
-  	}
-
---Sig_/29F/PfU2JgwE1THz1oU0DyX
+--Sig_/AQZnIG.g1aGCXExNuR72w3i
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8Xi9IACgkQAVBC80lX
-0GzPpQf+IFV67SA3EFrfTacozaVBNTPDo/ZIBE0366Xu7i7j5jlXgU0GSX1OcIGx
-U/voFs7l1OuwpfCHuHycxTqsfYlnSLO/HUpbzjaSPePaFSspTAHZ8EKwgQbSgZs6
-2hucAjKtWx8AEsO6dVkkzIS/hAlckkajx5Iucz0WZQgEnlE6t+V7cGsm/YmtrDfI
-kwFah4ie5g1VDRS1pPJ+eb5WvtNVZDE4VlN9gjO/41UW5neCOi25fPFYADtBjnFV
-ArT/8reLSHxF05Nrqy//CyLwanjtgA87KLzgoOC/RTXMtGdxxyPmp750/0o6bMjL
-35HQ6WE1u4gp/XJ5UfSsNM9jbP5VvA==
-=Tqz2
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8XmMgACgkQAVBC80lX
+0GzTGgf/SmT8oqHfvhAe3Aqjgfr6BxtKDyZtBN1KiFKt+Hy1Re1HCSlHlnW6/ijr
+qvoB7Xp6qVc8vvIoE5+qrRCtYyncKlyGpG4x2dmtMBQRBrJmUTtC2xZA/wSCnH0V
+lI13kkvovCDAdQStSO3TzbqwI9nDirthtmHbp9R5Xr81eIb9TWpgX5BtmvILDYV+
+e0ZztxqTwDViIO8rDAC0lKKSl+OGp4pLN6Ol7vZ5+WtHvmO0e6dhwMa+kG7QdhMA
+rOe2LWQ3jdauwrj1mK+ZpzTHOEsbV4DmE+BTXlyKidHkf5SUq/1NA0S7vbFj4Nn9
+w28oULgZkR65+07Q1wnGjojGqBWGlw==
+=le/i
 -----END PGP SIGNATURE-----
 
---Sig_/29F/PfU2JgwE1THz1oU0DyX--
+--Sig_/AQZnIG.g1aGCXExNuR72w3i--
