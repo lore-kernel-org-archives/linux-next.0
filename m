@@ -1,128 +1,90 @@
-Return-Path: <SRS0=x04i=BE=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=KSrY=BF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C0C433E0
-	for <linux-next@archiver.kernel.org>; Sat, 25 Jul 2020 07:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1403C433DF
+	for <linux-next@archiver.kernel.org>; Sun, 26 Jul 2020 21:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08D04206F6
-	for <linux-next@archiver.kernel.org>; Sat, 25 Jul 2020 07:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7577206E3
+	for <linux-next@archiver.kernel.org>; Sun, 26 Jul 2020 21:39:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="G8Ur0Kqc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgGYHkE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 25 Jul 2020 03:40:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39740 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726434AbgGYHkE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 25 Jul 2020 03:40:04 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6C26CB54E9F1A10EBBCF;
-        Sat, 25 Jul 2020 15:39:59 +0800 (CST)
-Received: from huawei.com (10.175.100.227) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Sat, 25 Jul 2020
- 15:39:51 +0800
-From:   Ming Li <limingming.li@huawei.com>
-To:     <b.zolnierkie@samsung.com>
-CC:     <jslaby@suse.cz>, <gregkh@linuxfoundation.org>,
-        <john.wanghui@huawei.com>, <cuibixuan@huawei.com>,
-        <linux-next@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-fbdev@vger.kernel.org>
-Subject: [PATCH -next] vc: Fix build errors
-Date:   Sat, 25 Jul 2020 15:47:43 +0800
-Message-ID: <20200725074743.31740-1-limingming.li@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726674AbgGZVjQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 26 Jul 2020 17:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbgGZVjP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 26 Jul 2020 17:39:15 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC2FC0619D2;
+        Sun, 26 Jul 2020 14:39:15 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BFGXx4W2zz9sRR;
+        Mon, 27 Jul 2020 07:39:13 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1595799554;
+        bh=ApcFR71qrvKz8PioBoSbgRamVmbBxjSOU4Y5stNUvfE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=G8Ur0KqcCo0vCUJKVUVFLwgXHE2nJOX0ddeFv2ugY2rpPs+3p7WidQIdyBlpLrbZn
+         Y6YAGYUB3UwreFnIW12SB/kXHtDskfCA6zzXI2qjQMNu+uZIPicKJLECWjovecf+GE
+         bRSLI/yqkupd3e+OHnHvRI0ibyEh1zk6lmJCpwvm1h9pwIZY10D7tdHgTWRYxtdinZ
+         Kg7Vhv3uDryqTWh+4vnoz5m8ookGA3syecW4ImiLVeUu14WLus5yhQzJIfdVzwDlHR
+         e7BqSu9c9icj98K2imlU+XrMFAWtPg4mB6B/akc+vYeRP75lN7EHY+fugrXKUqs0/h
+         C4RdP4iQsatAQ==
+Date:   Mon, 27 Jul 2020 07:39:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Helge Deller <deller@gmx.de>,
+        Parisc List <linux-parisc@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the parisc-hd tree
+Message-ID: <20200727073912.688c802c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.100.227]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/BL4u6oDW_dp5CQnureH_gCr";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Build errors are seen on MIPS platforms because of
-vc state separation and the following build erros
-were reported.
+--Sig_/BL4u6oDW_dp5CQnureH_gCr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-../linux/drivers/video/console/newport_con.c: In function ‘newport_clear’:
-../linux/drivers/video/console/newport_con.c:365:15: error:
-‘struct vc_data’ has no member named ‘vc_color’; did you mean ‘vc_cols’?
-          (vc->vc_color & 0xf0) >> 4);
-               ^~~~~~~~
-               vc_cols
-../linux/drivers/video/console/newport_con.c:368:15: error:
-‘struct vc_data’ has no member named ‘vc_color’; did you mean ‘vc_cols’?
-          (vc->vc_color & 0xf0) >> 4);
-               ^~~~~~~~
-               vc_cols
-../linux/drivers/video/console/newport_con.c:370:15: error:
-‘struct vc_data’ has no member named ‘vc_color’; did you mean ‘vc_cols’?
-          (vc->vc_color & 0xf0) >> 4);
-               ^~~~~~~~
-               vc_cols
-../linux/drivers/video/console/newport_con.c: In function ‘newport_scroll’:
-../linux/drivers/video/console/newport_con.c:594:15: error:
-‘struct vc_data’ has no member named ‘vc_color’; did you mean ‘vc_cols’?
-          (vc->vc_color & 0xf0) >> 4);
-               ^~~~~~~~
-               vc_cols
-../linux/drivers/video/console/newport_con.c:598:15: error:
-‘struct vc_data’ has no member named ‘vc_color’; did you mean ‘vc_cols’?
-          (vc->vc_color & 0xf0) >> 4);
-               ^~~~~~~~
-               vc_cols
-make[4]: *** [/scratch/linux/scripts/Makefile.build:280: drivers/video/console/newport_con.o] Error 1
-make[3]: *** [/scratch/linux/scripts/Makefile.build:497: drivers/video/console] Error 2
-make[3]: *** Waiting for unfinished jobs....
+Hi all,
 
-Fixes: 28bc24fc46f9 ("vc: separate state")
-Signed-off-by: Ming Li <limingming.li@huawei.com>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/video/console/newport_con.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Commit
 
-diff --git a/drivers/video/console/newport_con.c b/drivers/video/console/newport_con.c
-index df3c52d72159..72f146d047d9 100644
---- a/drivers/video/console/newport_con.c
-+++ b/drivers/video/console/newport_con.c
-@@ -362,12 +362,12 @@ static void newport_clear(struct vc_data *vc, int sy, int sx, int height,
- 
- 	if (ystart < yend) {
- 		newport_clear_screen(sx << 3, ystart, xend, yend,
--				     (vc->vc_color & 0xf0) >> 4);
-+				     (vc->state.color & 0xf0) >> 4);
- 	} else {
- 		newport_clear_screen(sx << 3, ystart, xend, 1023,
--				     (vc->vc_color & 0xf0) >> 4);
-+				     (vc->state.color & 0xf0) >> 4);
- 		newport_clear_screen(sx << 3, 0, xend, yend,
--				     (vc->vc_color & 0xf0) >> 4);
-+				     (vc->state.color & 0xf0) >> 4);
- 	}
- }
- 
-@@ -591,11 +591,11 @@ static bool newport_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
- 			topscan = (topscan + (lines << 4)) & 0x3ff;
- 			newport_clear_lines(vc->vc_rows - lines,
- 					    vc->vc_rows - 1,
--					    (vc->vc_color & 0xf0) >> 4);
-+					    (vc->state.color & 0xf0) >> 4);
- 		} else {
- 			topscan = (topscan + (-lines << 4)) & 0x3ff;
- 			newport_clear_lines(0, lines - 1,
--					    (vc->vc_color & 0xf0) >> 4);
-+					    (vc->state.color & 0xf0) >> 4);
- 		}
- 		npregs->cset.topscan = (topscan - 1) & 0x3ff;
- 		return false;
--- 
-2.17.1
+  41fbb820b797 ("PARISC: elf.h: delete a duplicated word")
 
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BL4u6oDW_dp5CQnureH_gCr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8d+AAACgkQAVBC80lX
+0GzsrAf/cvb/eY37GetAVDcjr0384JEGyaMOiMe7WdQpfUChTKe4m5FLxSqT4mZZ
+r3G0+Ls4BdRA9+qZjqn4eRqu5d1vorNLsnbizl9YKlIyH+u3P88HV0y0/fmA2oAm
+GVNqsvKhtBnye4/VImBConJ+XrV7BwDEgqaZguw4Xz3doNWBFIoPs8nRMJ1xW9wR
++pM4+WXCQ+Iqe1CZXXoN1GY94OpI8F0jJtQqxSqV9H8Ftjoz7sArv1TeIuHgz2cM
+rLVeplLpj3BbLVWUlYez/5TUdt7jUo0g28TeC7if/DWbzjS4n+IWwg2l8R+tefwF
+m0IqxlteH5uo9Qb6dkSLxnWOvE+Ouw==
+=e5Ty
+-----END PGP SIGNATURE-----
+
+--Sig_/BL4u6oDW_dp5CQnureH_gCr--
