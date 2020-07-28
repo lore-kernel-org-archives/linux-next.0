@@ -2,183 +2,107 @@ Return-Path: <SRS0=kZrS=BH=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 264D7C433EB
-	for <linux-next@archiver.kernel.org>; Tue, 28 Jul 2020 08:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B7EC433DF
+	for <linux-next@archiver.kernel.org>; Tue, 28 Jul 2020 08:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0220920809
-	for <linux-next@archiver.kernel.org>; Tue, 28 Jul 2020 08:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D0020838
+	for <linux-next@archiver.kernel.org>; Tue, 28 Jul 2020 08:28:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KNilb2ZR"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="e2evAm/D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbgG1IYJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 28 Jul 2020 04:24:09 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:38548 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbgG1IYG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2020 04:24:06 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200728082403epoutp037bc31b4266c14d11529a32ab402d8476~l3QHikOVK0240402404epoutp03L
-        for <linux-next@vger.kernel.org>; Tue, 28 Jul 2020 08:24:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200728082403epoutp037bc31b4266c14d11529a32ab402d8476~l3QHikOVK0240402404epoutp03L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1595924643;
-        bh=lffFS9Qk7KyQhIt5idZnIw+cL7XP2ngNX4A36tfUE/E=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=KNilb2ZR8+G/UcIymCi8skSL8P3o0uPtosfBmyHGC+EIen5Tt8k7rW1yu6Nnemgz4
-         uitykU3XG1dQKOZu53XrClZ417uTq4baeg3eJ4KtnpCGS0uOptsKUsB7yRY6pdFNUf
-         oedzPBvuDWiIfoKXuBdinYxRSRHOD5nmf1wyzT8k=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20200728082402epcas5p28795d7bdd17e9f01703f028ca02ee1a8~l3QHKB8JP2028320283epcas5p2P;
-        Tue, 28 Jul 2020 08:24:02 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        31.96.09475.2A0EF1F5; Tue, 28 Jul 2020 17:24:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200728082402epcas5p333b3017f433ad9998564fbb8f3816f30~l3QGfRnz32645526455epcas5p3_;
-        Tue, 28 Jul 2020 08:24:02 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200728082401epsmtrp26ec2661f02fd4598740d88b635619f6c~l3QGeXCrz2759827598epsmtrp2h;
-        Tue, 28 Jul 2020 08:24:01 +0000 (GMT)
-X-AuditID: b6c32a4b-389ff70000002503-36-5f1fe0a2901b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D3.C1.08303.1A0EF1F5; Tue, 28 Jul 2020 17:24:01 +0900 (KST)
-Received: from alimakhtar02 (unknown [107.111.84.49]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200728082400epsmtip2aeb1eebe4e35d5115587fdb564990b7b~l3QEpektJ1407014070epsmtip2O;
-        Tue, 28 Jul 2020 08:23:59 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Randy Dunlap'" <rdunlap@infradead.org>,
-        "'Andrew Morton'" <akpm@linux-foundation.org>,
-        <broonie@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-next@vger.kernel.org>, <mhocko@suse.cz>,
-        <mm-commits@vger.kernel.org>, <sfr@canb.auug.org.au>,
-        "'linux-scsi'" <linux-scsi@vger.kernel.org>,
-        "'Seungwon Jeon'" <essuuj@gmail.com>
-In-Reply-To: <c99c3cef-1b03-0adf-62a6-373e692425b5@infradead.org>
-Subject: RE: mmotm 2020-07-27-18-18 uploaded (drivers/scsi/ufs/:
- SCSI_UFS_EXYNOS)
-Date:   Tue, 28 Jul 2020 13:53:58 +0530
-Message-ID: <000001d664b8$72cbd790$586386b0$@samsung.com>
+        id S1728148AbgG1I2e (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 28 Jul 2020 04:28:34 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:18127 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727878AbgG1I2e (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 28 Jul 2020 04:28:34 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1595924913; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=JsZFMI5l/wCWWGprGiEt11W9Nl9giP5BK5ShNxbLSLs=; b=e2evAm/DQ9rDOzKqrn4WEKAMUtYCxkCqgsmFFQ+37HtFNUU7yTGSJwb/vBIicG1zClnOKtPO
+ rKZXVy0zmq2+SkUBAjCqMzlT0OeiivnlXQPW7MPDozfcNFHJinZiHeC5YEhatICRRbERRqZs
+ G8YmFXVFIo1vUPXEIFAi9Onc4d0=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyJmNGRkZiIsICJsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 5f1fe134a61bb9e3f57d16be (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 28 Jul 2020 08:26:28
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 76611C433CB; Tue, 28 Jul 2020 08:26:27 +0000 (UTC)
+Received: from [192.168.0.102] (unknown [49.204.127.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sivaprak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8D6D3C433C9;
+        Tue, 28 Jul 2020 08:26:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D6D3C433C9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
+Subject: Re: linux-next: manual merge of the devicetree tree with the pci tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Rob Herring <robherring2@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <20200728154903.51a60b8e@canb.auug.org.au>
+From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Message-ID: <c7c752bc-2a06-fc56-6f87-dfdddd8a436e@codeaurora.org>
+Date:   Tue, 28 Jul 2020 13:56:21 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH6RHqNssVmezboDnOhfcuciV9AnAIQbK05Ag8N1j2os+oSEA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7bCmlu6iB/LxBvMvKFvMWb+GzWLqwyds
-        FssvLGGy2LP3JIvF5V1z2CzurfnPanFwYRujRff1HWwWr5q/s1q8nniB1eLtneksFlv3XmV3
-        4PFovHGDzWPnrLvsHptXaHlsWtXJ5rHp0yR2jxMzfrN4nFlwhN3j8ya5AI4oLpuU1JzMstQi
-        fbsErowv+z+zFVzkr7jS18zWwPiPp4uRk0NCwESi4ec1FhBbSGA3o8TXv7xdjFxA9idGiS0T
-        zjJCOJ8ZJS6ceMwE03FsXS9UYhejxJOVr1khnFeMEh+eHGUHqWIT0JXYsbiNDSQhItDNLPH5
-        YwsbSIJTwFHi2LVNYKOEBYIl9s4+zwxiswioSkzc+xPM5hWwlHg8eSsjhC0ocXLmE7ADmQW0
-        JZYtfM0McYaCxM+ny1hBbBEBJ4nnS0+wQ9SISxz92cMMslhC4AiHxK75ExkhGlwk3vR2skLY
-        whKvjm9hh7ClJD6/2wt0HAeQnS3Rs8sYIlwjsXTeMRYI217iwJU5LCAlzAKaEut36UOs4pPo
-        /f2ECaKTV6KjTQiiWlWi+d1VqE5piYnd3VBLPSR6evugYXWaUWJ6SzPjBEaFWUi+nIXky1lI
-        vpmFsHkBI8sqRsnUguLc9NRi0wLjvNRyveLE3OLSvHS95PzcTYzgtKblvYPx0YMPeocYmTgY
-        DzFKcDArifByi8rEC/GmJFZWpRblxxeV5qQWH2KU5mBREudV+nEmTkggPbEkNTs1tSC1CCbL
-        xMEp1cDkoBKWt9yjoVpCRTJjLsvXGzeTmc9rNZ/7UmbwQ6nL02nDto6in8liF+8r6jKnfpjZ
-        aCt+tbJH6/uH65ETWlqWzC6f8T3FcqpF2lIRTwGvA37KE7n+euyfOvvAaaPFTD/a0s39Eiz1
-        +i6/ygrYm9PBvjvrwULp/cJmzHMyDjhfsLr75lRliEzir+ZXDK/sVmYVJQtHdGmfPDzfvN3u
-        +ww25y0cvWJ3JixbHm147+nnQ1ZHex6orXybc4DNL3HvDi9n7t02s2IX5Zs6NP4qUM28GmN9
-        tbalbcc67RlnzDoTxM+1bHBX+MfXsm9KlWTYTpfNv36wWYjYPHmb/fje6kutri7P6iOU7H6L
-        l/g2dSmxFGckGmoxFxUnAgChHnJk2gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSvO7CB/LxBmtvGlvMWb+GzWLqwyds
-        FssvLGGy2LP3JIvF5V1z2CzurfnPanFwYRujRff1HWwWr5q/s1q8nniB1eLtneksFlv3XmV3
-        4PFovHGDzWPnrLvsHptXaHlsWtXJ5rHp0yR2jxMzfrN4nFlwhN3j8ya5AI4oLpuU1JzMstQi
-        fbsErox9D/rZC97zVaz4sYmpgXEBTxcjJ4eEgInEsXW9jF2MXBxCAjsYJRYu62KCSEhLXN84
-        gR3CFpZY+e85O0TRC0aJ8/u3soAk2AR0JXYsbmMDSYgITGeW+DHpOjNE1XFGiWmv1oCN4hRw
-        lDh2bROQzcEhLBAosWqnK0iYRUBVYuLen8wgNq+ApcTjyVsZIWxBiZMzn4AtYBbQlnh68ymc
-        vWzha2aIixQkfj5dxgpiiwg4STxfeoIdokZc4ujPHuYJjEKzkIyahWTULCSjZiFpWcDIsopR
-        MrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzgOtbR2MO5Z9UHvECMTB+MhRgkOZiURXm5R
-        mXgh3pTEyqrUovz4otKc1OJDjNIcLErivF9nLYwTEkhPLEnNTk0tSC2CyTJxcEo1MLXOk19S
-        IlLVqlhmdz3GobpbUWr9or+ij643Kr24u8LJaZ/MCr0fNYn+P4M8BfZHO4Xs8T7u9J77/Wff
-        Rfckph3byNAvNZu7b97MipeZhkKKFt+2iJ7sjijl+e/GlLN6stavI8tOtOdwbbb+nxrTv/9k
-        vod74ZslN3tlb51zuNKW/yVN8lx7iYSRptzqi0GvotqkuiXmPGJrtDziJLTGb8KPjRbvojqK
-        8gstLa984J7E86NSsbg/MylH/6jt5u/7ll072HXJ/rm4y6x3rdIbf9XtiJFt7Dy30Tl/zb0T
-        91wKPT+2Kj78FDllvtlkDfO3zXI/Das7OyrZGcXnNhV+nWPT+fvJRq+epA8eJU/WK7EUZyQa
-        ajEXFScCAH7AEroyAwAA
-X-CMS-MailID: 20200728082402epcas5p333b3017f433ad9998564fbb8f3816f30
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200728032310epcas5p27226ae967b93325ca145e70a14a8bdf8
-References: <20200728011914.S-8vAYUK0%akpm@linux-foundation.org>
-        <CGME20200728032310epcas5p27226ae967b93325ca145e70a14a8bdf8@epcas5p2.samsung.com>
-        <c99c3cef-1b03-0adf-62a6-373e692425b5@infradead.org>
+In-Reply-To: <20200728154903.51a60b8e@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Randy,
+On 7/28/2020 11:19 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the devicetree tree got a conflict in:
+>
+>    Documentation/devicetree/bindings/pci/qcom,pcie.txt
+>
+> between commits:
+>
+>    736ae5c91712 ("dt-bindings: PCI: qcom: Add missing clks")
+>    b11b8cc161de ("dt-bindings: PCI: qcom: Add ext reset")
+>    d511580ea9c2 ("dt-bindings: PCI: qcom: Add ipq8064 rev 2 variant")
+>
+> from the pci tree and commit:
+>
+>    70172d196947 ("dt-bindings: pci: convert QCOM pci bindings to YAML")
+>
+> from the devicetree tree.
+>
+> I don;t know how to fixed it up so I just left the latter one . This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-> -----Original Message-----
-> From: Randy Dunlap <rdunlap=40infradead.org>
-> Sent: 28 July 2020 08:53
-> To: Andrew Morton <akpm=40linux-foundation.org>; broonie=40kernel.org; li=
-nux-
-> fsdevel=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-mm=40kva=
-ck.org;
-> linux-next=40vger.kernel.org; mhocko=40suse.cz; mm-commits=40vger.kernel.=
-org;
-> sfr=40canb.auug.org.au; linux-scsi <linux-scsi=40vger.kernel.org>; Alim A=
-khtar
-> <alim.akhtar=40samsung.com>; Seungwon Jeon <essuuj=40gmail.com>
-> Subject: Re: mmotm 2020-07-27-18-18 uploaded (drivers/scsi/ufs/:
-> SCSI_UFS_EXYNOS)
->=20
-> On 7/27/20 6:19 PM, Andrew Morton wrote:
-> > The mm-of-the-moment snapshot 2020-07-27-18-18 has been uploaded to
-> >
-> >    http://www.ozlabs.org/=7Eakpm/mmotm/
-> >
-> > mmotm-readme.txt says
-> >
-> > README for mm-of-the-moment:
-> >
-> > http://www.ozlabs.org/=7Eakpm/mmotm/
-> >
-> > This is a snapshot of my -mm patch queue.  Uploaded at random
-> > hopefully more than once a week.
-> >
-> > You will need quilt to apply these patches to the latest Linus release
-> > (5.x or 5.x-rcY).  The series file is in broken-out.tar.gz and is
-> > duplicated in http://ozlabs.org/=7Eakpm/mmotm/series
-> >
->=20
-> on i386:
->=20
-> when CONFIG_OF is not set/enabled:
->=20
-> WARNING: unmet direct dependencies detected for PHY_SAMSUNG_UFS
->   Depends on =5Bn=5D: OF =5B=3Dn=5D && (ARCH_EXYNOS =7C=7C COMPILE_TEST =
-=5B=3Dy=5D)
->   Selected by =5Bm=5D:
->   - SCSI_UFS_EXYNOS =5B=3Dm=5D && SCSI_LOWLEVEL =5B=3Dy=5D && SCSI =5B=3D=
-y=5D &&
-> SCSI_UFSHCD_PLATFORM =5B=3Dm=5D && (ARCH_EXYNOS =7C=7C COMPILE_TEST =5B=
-=3Dy=5D)
->=20
-Have already posted a fix for this =5B1=5D
-=5B1=5D https://www.spinics.net/lists/linux-scsi/msg144970.html
+Rob/Bjorn,
 
->=20
-> Full randconfig file is attached.
->=20
-Thanks for config file, I can reproduce it and confirm that =5B1=5D above f=
-ixes this Warning.
+Please let me know if I can provide a patch rebased to linux-next.
 
->=20
-> --
-> =7ERandy
-> Reported-by: Randy Dunlap <rdunlap=40infradead.org>
+Bjorn can pick up the patch after review and Rob can drop the old pci 
+yaml conversion patch.
 
+let me know your thoughts.
+
+>
