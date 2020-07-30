@@ -2,67 +2,107 @@ Return-Path: <SRS0=WKqT=BJ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22B9C433DF
-	for <linux-next@archiver.kernel.org>; Thu, 30 Jul 2020 02:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F17F1C433E0
+	for <linux-next@archiver.kernel.org>; Thu, 30 Jul 2020 02:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AA2222B48
-	for <linux-next@archiver.kernel.org>; Thu, 30 Jul 2020 02:41:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD6D22BF5
+	for <linux-next@archiver.kernel.org>; Thu, 30 Jul 2020 02:55:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k2isr9KV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbgG3Cln (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 29 Jul 2020 22:41:43 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:39154 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbgG3Cln (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 29 Jul 2020 22:41:43 -0400
-X-Greylist: delayed 647 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 Jul 2020 22:41:42 EDT
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 06U2Ui4w007702;
-        Thu, 30 Jul 2020 04:30:44 +0200
-Date:   Thu, 30 Jul 2020 04:30:44 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Emese Revfy <re.emese@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the origin tree
-Message-ID: <20200730023044.GA7518@1wt.eu>
-References: <20200730090828.2349e159@canb.auug.org.au>
- <CAHk-=wjK8+12i8iDC41LXfZBcMjGsF+WyW_+ncPFmrexRT0yxw@mail.gmail.com>
- <CAHk-=whA7d4ug8-=TQWq_uR04+MqbfZemz+meFhfu_bCyGzvpw@mail.gmail.com>
- <CAHk-=wiFLA=TeG903JHPvRHSoMd=mE=7EC0OMajs+bo014A4Lw@mail.gmail.com>
+        id S1726341AbgG3CzI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 29 Jul 2020 22:55:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbgG3CzH (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 29 Jul 2020 22:55:07 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49786C061794;
+        Wed, 29 Jul 2020 19:55:07 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BHFPx5z7vz9sR4;
+        Thu, 30 Jul 2020 12:55:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1596077703;
+        bh=KeMsUgTTRQJUB2ALeA/VNpxNjkkQHAcqAD41AHy8QFA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=k2isr9KVTnTwNMTNwyKuK67O+quMJv4e32jfXdyEDlVy7ylhA4yHagA2H5kNYgIH2
+         ga9/j0CJTGLlhxJJPrcyWDI+uVPmGTilnvENj7F4idMQ2/hftGlVxkIFIU+Out5U8V
+         0895d2w2Jj6C1WC/UzH61duJcn7v8GQOYEiv6pXb17+uJ4LW9e9r8+3ADL9P/MLkNk
+         NaEvUaUy5fN8tmqUMUbSu+2VWYrTFy+XZCialTIVta+Oho2w+SxAPWhwpCJBS4jB7t
+         F1KpzrohVkTNrBq4qKw/APramRsi/bEd6GMST30qDw25ZmQ9rjoILsgQcCzbi/MhsH
+         a9cyExu4OnVYg==
+Date:   Thu, 30 Jul 2020 12:55:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Neal Liu <neal.liu@mediatek.com>,
+        Sami Tolvanen <samitolvanen@google.com>
+Subject: linux-next: build warning after merge of the pm tree
+Message-ID: <20200730125500.0947e1dd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiFLA=TeG903JHPvRHSoMd=mE=7EC0OMajs+bo014A4Lw@mail.gmail.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Type: multipart/signed; boundary="Sig_/A+5Dkh0co2cLrus.5Zan56l";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 07:12:58PM -0700, Linus Torvalds wrote:
-> On Wed, Jul 29, 2020 at 5:09 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Removing the __latent_entropy marker obviously fixes things.
-> 
-> Ok, I did that for now. I spent a few minutes looking at the gcc
-> plugin in case I'd be hit by some sudden stroke of genius, but that
-> didn't happen, so let's avoid the issue until somebody who knows the
-> gcc plugins better can come up with what the right solution is.
+--Sig_/A+5Dkh0co2cLrus.5Zan56l
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've looked if we couldn't we work around this by declaring another
-static variable with __latent_entropy and use it to initialize
-net_rand_state early, for example in prandom_init(), but there we
-already fill net_rand_state with randoms so I'm wondering if that
-__latent_entropy is used before prandom_init() or if its sole purpose
-is to provide extra initial entropy to be combined with the one
-prandom_init() will add.
+Hi all,
 
-Willy
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+drivers/acpi/processor_idle.c: In function 'acpi_idle_enter_s2idle':
+drivers/acpi/processor_idle.c:666:4: warning: 'return' with no value, in fu=
+nction returning non-void [-Wreturn-type]
+  666 |    return;
+      |    ^~~~~~
+drivers/acpi/processor_idle.c:657:12: note: declared here
+  657 | static int acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+drivers/acpi/processor_idle.c:670:4: warning: 'return' with no value, in fu=
+nction returning non-void [-Wreturn-type]
+  670 |    return;
+      |    ^~~~~~
+drivers/acpi/processor_idle.c:657:12: note: declared here
+  657 | static int acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  efe9711214e6 ("cpuidle: change enter_s2idle() prototype")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/A+5Dkh0co2cLrus.5Zan56l
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8iNoQACgkQAVBC80lX
+0Gw2vgf8D04zaNBUbkQJ3cFJ7Sx+BwSWJLsrs9iyIMlgVHw+rcMZEAxJEkD2WVCh
+0tp/JmsK385QFdXVObKNgGAlz8V5pFx+pLUO7tEY6pCok7JKaY7FyJz0Wa+mvDnV
+yOcv0YB/mct8EWsnupB9cKm0gcHKyUOcCEdNV/IQvXpjhwZWMQIyQfWNR7BP6bqP
+GHcZxjY2Aeghln+GIQNDFDJYAqKHtAHkFDgStPa6OfawwpWUWGnuDDqVCyTIXffY
+dmnfyIX9ASpEyFotmUNmukbMhJQ2Z0dL/LRd1Itk3+SwNVpp/5v1BEMOzqiOMTb5
+xjgIDLm7fWtSsCKWYEwSqa9vJGjm3w==
+=HtkD
+-----END PGP SIGNATURE-----
+
+--Sig_/A+5Dkh0co2cLrus.5Zan56l--
