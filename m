@@ -2,68 +2,43 @@ Return-Path: <SRS0=3/yW=BK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D0DC433DF
-	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 09:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4045EC433E0
+	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 10:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D88602074B
-	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 09:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596189460;
-	bh=ILVNYE1hS9VRq0SA0YddGcPwWd36YBYdClCwMc8CmNM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nf5YVrs9kUK4W7yDV29l6Q5l8vx9BFpBZ6YRujXfSTa8w8ZIE27xSCJnZdpPuqMW6
-	 fuIo8I8A95DBDVFIujTl7D4FPyo39Ttwk+nrJ1Cao7l2K+QaFdRrQMD+7EibcCqkZM
-	 0XYImMvJhuF1DrJZuxuy4pYNthfj1TrAheBUK82M=
+	by mail.kernel.org (Postfix) with ESMTP id 1B0A0208E4
+	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 10:02:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Nw8HPU51"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732140AbgGaJ5k (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 31 Jul 2020 05:57:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37170 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732075AbgGaJ5k (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2020 05:57:40 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDC2C061574;
-        Fri, 31 Jul 2020 02:57:39 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id v22so11179851edy.0;
-        Fri, 31 Jul 2020 02:57:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Me3xUsDymhPcO8yIS2fJXOcLNayPPxl0UjufSAtk0QQ=;
-        b=kxvKFcF9IRX5p1OSQZuczXxcXxEMYfRyt4Pm1z90XzI2+/WzxFlriRtuJZyGXYRUxX
-         BGDyeoKMtubeiDg2SqjwNkJZkJbL77lM0lbeEQu76C6J3jJSPFYf+EZIUQvgkOo8ml8z
-         npjepN5IAiqt2j7MOtETuNQHBbNEpcz0sSxXlo/x9T9zbUi3M/FxF6h5A78fCFTh8HP8
-         tUewH8sn4bR1aLuELsw49b8cZN/k91KPy9VWCJb3G+gAFR6YPem9pyyc0RH/QQRMfOTH
-         4cvIn974A/8/Q83WIOYgLbZzmwpsNioebnkodxzFUDzY9uDtnSn3v3fhZPGfMrYzOOSK
-         T2pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=Me3xUsDymhPcO8yIS2fJXOcLNayPPxl0UjufSAtk0QQ=;
-        b=oAkMSfEBia0Rysm3gJ+IKi8sNZmC+erYleLjonG0p1AFoyr79MhBUiHA+kZ6KWmpLf
-         JdFo9llT1y/NCFxz/bedL6lJd/UqC8S3Rb+VJJ9iHz06rqY/fEAzTtjXfpTp3v5dKkFs
-         opcPtnykwVTjG5e1fGy+x+kZbCbW0xEZk5X1I8cMvtEwuj0YmIP39aGK6VU7njCU2/2C
-         HHnzgeDfEtRsmgsO2Y7jALg0zQMuDnDsHk0iXw9k2cNMRdkJQxorPju1ebXvGqz6wUi6
-         IIkiGWXy8v22RdfCtZDV8qPeGUFIUy56LVwjz97sJC7eN/53BDXeB/j5Ni66XC77/S2d
-         qWMw==
-X-Gm-Message-State: AOAM531eOitM3AvgGDlqmE8NsEPWYvOq28ZI70vuJ7KFopICMeyqk28q
-        i5kXHR8yfWxj5thR3ABa2rs=
-X-Google-Smtp-Source: ABdhPJyqGwsB+cD1JkZTq22ptAkNdzVHkba5i11cloSa6VMJPbzzy4zSRI9iaQHy8+erdxXDmnl7ag==
-X-Received: by 2002:a50:e1c5:: with SMTP id m5mr3160715edl.138.1596189458374;
-        Fri, 31 Jul 2020 02:57:38 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id u16sm9277119edb.97.2020.07.31.02.57.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2020 02:57:37 -0700 (PDT)
-Date:   Fri, 31 Jul 2020 11:57:35 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        id S1732383AbgGaKCz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 31 Jul 2020 06:02:55 -0400
+Received: from ozlabs.org ([203.11.71.1]:45941 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732371AbgGaKCz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 31 Jul 2020 06:02:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BJ2s72nvnz9sRK;
+        Fri, 31 Jul 2020 20:02:51 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1596189773;
+        bh=cJ7Fx+1T8KQngnkpW8UTqNH1iSl1SEwAI6erXiCWh2c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Nw8HPU51CUksknfbpdLzbKZNzH1MN9mTw50gnRr/hIEoW06RAbtAyD1ykkCv5bieL
+         9G9EdkoJNaYQxEHdD+YprkX2v/hLyPyGxtnuF1RJM83YyfzoNkkUhOAk+vGklFrnRK
+         +Ft1yEvm+90rPCDwDzhxUEA6YOKl9fGayN32c+MOXcGTrYwPJvBvDbNkDmr/8YS4O+
+         OTFt/RA1SyA+X0pStTI5tuqbs3ssZwJ0lPImyBgAr58/wlOG+SRdHhOOdl709k4fA2
+         ugB6uReezf+xPpyDED+9w4EKY73qA+nneGXV1gIdHh6VqkFQuPIAJJtGOIX1Qm3cjR
+         ujtTrNLT+FY4Q==
+Date:   Fri, 31 Jul 2020 20:02:50 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -72,76 +47,59 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20200731095735.GB15126@gmail.com>
+Message-ID: <20200731200250.10150100@canb.auug.org.au>
+In-Reply-To: <20200731095735.GB15126@gmail.com>
 References: <20200731155304.06c67b0c@canb.auug.org.au>
+        <20200731095735.GB15126@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200731155304.06c67b0c@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/gj8XUanrCFZDAmq6x=kGhVz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/gj8XUanrCFZDAmq6x=kGhVz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Ingo,
 
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> In file included from include/asm-generic/getorder.h:8,
->                  from arch/arm/include/asm/page.h:166,
->                  from arch/arm/include/asm/thread_info.h:14,
->                  from arch/arm/include/asm/percpu.h:16,
->                  from include/linux/irqflags.h:17,
->                  from arch/arm/include/asm/bitops.h:28,
->                  from include/linux/bitops.h:29,
->                  from include/linux/kernel.h:12,
->                  from include/asm-generic/bug.h:20,
->                  from arch/arm/include/asm/bug.h:60,
->                  from include/linux/bug.h:5,
->                  from include/linux/page-flags.h:10,
->                  from kernel/bounds.c:10:
-> include/linux/log2.h: In function '__ilog2_u32':
-> include/linux/log2.h:24:9: error: implicit declaration of function 'fls' [-Werror=implicit-function-declaration]
->    24 |  return fls(n) - 1;
->       |         ^~~
-> 
-> And so on ...
-> 
-> Caused by commit
-> 
->   a21ee6055c30 ("lockdep: Change hardirq{s_enabled,_context} to per-cpu variables")
-> 
-> interacting with commit
-> 
->   00a30a5c9e6b ("arm: include asm/thread_info.h in asm/percpu.h")
-> 
-> (which was a fix of mine but now the equivalent is in Linus' tree as commit
-> 
->   aa54ea903abb ("ARM: percpu.h: fix build error")
-> )
-> 
-> I have reverted 00a30a5c9e6b since commit
-> 
->   a6342915881a ("arm: Break cyclic percpu include")
-> 
-> (which precedes a21ee6055c30) acomplishes the same thing differently.
-> Something will be required when this is merged with Linus' tree, though.
+On Fri, 31 Jul 2020 11:57:35 +0200 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> I've merged Linus's latest into tip:locking/core, keeping the simpler=20
+> solution of a6342915881a and reducing the dependency hell.
+>=20
+> Will push it all out hopefully later today (unrelated changes need=20
+> more testing), from that point on there should be no conflict in=20
+> -next.
+>=20
+> My plan would be to send that resolution to Linus, under the=20
+> assumption that a6342915881a is superior to the upstream aa54ea903abb=20
+> solution.
 
-I've merged Linus's latest into tip:locking/core, keeping the simpler 
-solution of a6342915881a and reducing the dependency hell.
+Sounds good to me, thanks.
 
-Will push it all out hopefully later today (unrelated changes need 
-more testing), from that point on there should be no conflict in 
--next.
+(though, no rush on my account as I won't do another linux-next until
+Monday)
+--=20
+Cheers,
+Stephen Rothwell
 
-My plan would be to send that resolution to Linus, under the 
-assumption that a6342915881a is superior to the upstream aa54ea903abb 
-solution.
+--Sig_/gj8XUanrCFZDAmq6x=kGhVz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-	Ingo
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8j7EoACgkQAVBC80lX
+0GzogwgAn/L0BwVfEWiCcOfzsDzk/bvcjPWvKo7EfK2hMb1lqUSaVXgW0DluqS2r
++5/5OrGdGXW/bXoQUSEUsQiIXsmiKDWy5OFS3H0PQ/sqxm0iPLQAvKjTImndJFRo
+mAezo00EfKLgJ/G1RZuaKe2/MayXJasU7HV7+I9nOJ4Y7N7+kxcBKgSFhQiaisHr
+G5XmxYGYtk6HU1uWcUh77Aw8KyFXduZcJA+x1VGGfCXp6ArY2hDkUn4wo3RZdlfM
+nsH8pqIvCsho00tMNJLEO+P+fK4e+DSFiDvBjgxRtKIYOIyGPIUPtcCOZCFCjVe5
+Ebsbn1nPovzNKIB2wBTXT0WlEt+kvQ==
+=tepQ
+-----END PGP SIGNATURE-----
+
+--Sig_/gj8XUanrCFZDAmq6x=kGhVz--
