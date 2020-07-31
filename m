@@ -2,100 +2,70 @@ Return-Path: <SRS0=3/yW=BK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7B9C433DF
-	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 09:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E789C433DF
+	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 09:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6264220829
-	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 09:42:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OX7uox3i"
+	by mail.kernel.org (Postfix) with ESMTP id 48BBE208E4
+	for <linux-next@archiver.kernel.org>; Fri, 31 Jul 2020 09:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbgGaJmK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 31 Jul 2020 05:42:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732140AbgGaJmJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2020 05:42:09 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9BDC061574;
-        Fri, 31 Jul 2020 02:42:09 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BJ2P95zscz9sRK;
-        Fri, 31 Jul 2020 19:42:05 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1596188527;
-        bh=E7SYofs3sMW60tu/UxfrKDzGsA1UHnaHaqiI9IRnDCE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OX7uox3ieemeIFlj4JzZZPDg0Nc2CggTVvpwCebcwFw2EZibEIbbIU53OXnw2rr8V
-         bmBGOn3oFio2eSIdoLcViGP88eSvT9wDmeJDuGvch1kfDpNAwBTbjnQttQS/3nZAdF
-         n8Vj0tUejgEYGnyN/TH2RcxrqJVaOvNIpr3uPdpof9S3PIHbgiwHZfY/G+PSRajCFG
-         U521TKfr1WHLCjWswW0McSlXnX13S384/1CN3YJnJ60tDjMH2m8Z5qUY737CIv0sC6
-         lwLY1jw/6kA7b3wS2DK2GtZ5EIoZMAXqliUSpKDZs7c82KsbJYw8gqgUz9WJhefRqb
-         1CH7s+MHSdZ3Q==
-Date:   Fri, 31 Jul 2020 19:42:04 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org
-Subject: Re: linux-next: Tree for Jul 30 [build failure on arm64]
-Message-ID: <20200731194204.1db950e4@canb.auug.org.au>
-In-Reply-To: <20200731090022.GB12930@lst.de>
-References: <20200730214659.0fbfdfc4@canb.auug.org.au>
-        <72b073ba-ee41-1a1c-ce6c-ffd8b5936b09@hisilicon.com>
-        <20200731140842.46abe589@canb.auug.org.au>
-        <CA+G9fYvykg9Ly=tRXLrf4hvd4siYKAt5eM0EMnwMgqVDHnbVYQ@mail.gmail.com>
-        <20200731185354.70926525@canb.auug.org.au>
-        <20200731090022.GB12930@lst.de>
+        id S1732357AbgGaJuG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 31 Jul 2020 05:50:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8744 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732134AbgGaJuF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 31 Jul 2020 05:50:05 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B63862F8C1D4E834E11B;
+        Fri, 31 Jul 2020 17:50:00 +0800 (CST)
+Received: from huawei.com (10.174.28.241) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.487.0; Fri, 31 Jul 2020
+ 17:49:55 +0800
+From:   Bixuan Cui <cuibixuan@huawei.com>
+To:     <davem@davemloft.net>, <kuba@kernel.org>
+CC:     <jeffrey.t.kirsher@intel.com>, <intel-wired-lan@lists.osuosl.org>,
+        <netdev@vger.kernel.org>, <linux-next@vger.kernel.org>
+Subject: [PATCH -next] net: ice: Fix pointer cast warnings
+Date:   Fri, 31 Jul 2020 18:57:21 +0800
+Message-ID: <20200731105721.18511-1-cuibixuan@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/c0WH2LaAi1TEoKiPoKTkYm3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-Originating-IP: [10.174.28.241]
+X-CFilter-Loop: Reflected
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/c0WH2LaAi1TEoKiPoKTkYm3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+pointers should be casted to unsigned long to avoid
+-Wpointer-to-int-cast warnings:
 
-Hi Christoph,
+drivers/net/ethernet/intel/ice/ice_flow.h:197:33: warning:
+    cast from pointer to integer of different size
 
-On Fri, 31 Jul 2020 11:00:22 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> Please just drop the branch for now.
+Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+---
+ drivers/net/ethernet/intel/ice/ice_flow.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I will revert those 4 commits from today's linux-next and all Al needs
-to do is reset his for-next branch to its parent.
+diff --git a/drivers/net/ethernet/intel/ice/ice_flow.h b/drivers/net/ethernet/intel/ice/ice_flow.h
+index 3913da2116d2..b9a5c208e484 100644
+--- a/drivers/net/ethernet/intel/ice/ice_flow.h
++++ b/drivers/net/ethernet/intel/ice/ice_flow.h
+@@ -194,7 +194,7 @@ struct ice_flow_entry {
+ 	u16 entry_sz;
+ };
 
---=20
-Cheers,
-Stephen Rothwell
+-#define ICE_FLOW_ENTRY_HNDL(e)	((u64)e)
++#define ICE_FLOW_ENTRY_HNDL(e)	((uintptr_t)e)
+ #define ICE_FLOW_ENTRY_PTR(h)	((struct ice_flow_entry *)(h))
 
---Sig_/c0WH2LaAi1TEoKiPoKTkYm3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ struct ice_flow_prof {
+--
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8j520ACgkQAVBC80lX
-0GzV8wf+OMAo3yzw67nuD1HXpg7J0cniGhaLNEZgsmnpcDmx141rZubVlhDIlqcI
-M7ehnnLRU42941YvFYHJpFHzIBxKDAKovv7rCoDb///oQLTCUsm875F5xcXSgrdv
-Pq3nI3+NvPOOe3p5MzzIVKrbwzIzrdZTMcw4m7Kbqd0Ss2iaV5njoM/Q45fCj7/8
-OC0UXDW8Roz0Gw0Oy8fXGY1X7J4ZNFz5RBIxr96VacTKXDNEZMnqD/T1oXKAtjby
-+MPscqToVP6RGrpeIzWwrdCEaEo0GvyMW+8l4/Hn/V63dDrMaBRhF+17mSmYJk9m
-g8FukOz0RD91f3yi6hfwUxgQRhTskA==
-=uoE7
------END PGP SIGNATURE-----
-
---Sig_/c0WH2LaAi1TEoKiPoKTkYm3--
