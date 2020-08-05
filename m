@@ -2,119 +2,120 @@ Return-Path: <SRS0=21CY=BP=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2D9C433DF
-	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAEBC433DF
+	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61AE62250E
-	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71DCD22B42
+	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:52:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance-com.20150623.gappssmtp.com header.i=@bytedance-com.20150623.gappssmtp.com header.b="uhBO0OpF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ezUi9XPX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbgHEQ72 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 5 Aug 2020 12:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728268AbgHEQ5p (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2020 12:57:45 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60308C001FCD
-        for <linux-next@vger.kernel.org>; Wed,  5 Aug 2020 08:52:16 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id mt12so4735025pjb.4
-        for <linux-next@vger.kernel.org>; Wed, 05 Aug 2020 08:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3rgPdx4FvPNj3L/b4d9eiz4Lukmw32rT0pYFOATs+yo=;
-        b=uhBO0OpFg/LYWCU/5Q95FYkvHAjv/6vqQnVWGZzffuTQK/Qt3glmHzfnFmhjJqC8RT
-         N0CiCQ6ukSeX5YVxSKoMGN9Qb1uJBgtNieq4cbiZZSukukLRsN2H4hGfYtlcRiwHyfs3
-         BvjqbigytY0sqh3GHRdYZ4Dp0GpMRo6dKqTWxcM19sUN5Y1Yv8qcNnh5Zt+epIcPsJ95
-         paI74rAQyMO4signAODc/PF3fcaVtAkg4y87a9W67Jz1Dchst1zaLxoEIQcm/vUWZJQh
-         m5f5buRbOnH0sv7xBuqOH/zDcxvvoc1xi8kLJC9YoO8EdYWn1DBBSpoZtiHLLljLBM0c
-         azHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3rgPdx4FvPNj3L/b4d9eiz4Lukmw32rT0pYFOATs+yo=;
-        b=SLnwFGzkFMZDgbAN/UdgWoTKVKuWhnAqB6jORTyvQvQutR/y2WM9GsgLFqR7fYH4Ah
-         bOeREvRaddkJOVskBvCd4gGI594JV+WBtJVxO67ONFCOYOJBIAxu6cjXV6s7EBu9Na06
-         agFjzdbJAc46kDo7KVW4dOS8ZohqT3clMiS9Amtu+hNuNGWeybHq6u2JjcE3S6N1ZPvo
-         iPnA5idBz2wghw3Z7P8xXH9XKcYEfElJGqsGkVeBOCXCynHYagUV+RSZ5CALl7J2deKT
-         K65pEjPpo/YUciZ2+2GT8N6qEwvruYKi4yaAZpuE8FpSXBCynPz1zIUDcTeQdMUrrRxX
-         pcJw==
-X-Gm-Message-State: AOAM532wFAPeltWmHhWEI6W7yY6icz0C8wCpuqXOcmk83og8/DyDwYSX
-        FK72zoNmrh/5kDXwS3wlyUMgKltBJ17tm8iXeOcRmw==
-X-Google-Smtp-Source: ABdhPJz+S08tQUWlf0uwerTLvPYHj7weeZ1Gqq2V3WinQnKdQtXh5JjIbGt6HHa9rGmGMGwnT3MhZnsWIgeaF+dLaW8=
-X-Received: by 2002:a17:90a:fa8c:: with SMTP id cu12mr4074109pjb.229.1596642731102;
- Wed, 05 Aug 2020 08:52:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200805142136.0331f7ea@canb.auug.org.au> <CAMZfGtX0a3tui_KQfCXLcARVcev9V-HV6HMkXgVXObq8w-4EQg@mail.gmail.com>
- <20200805111105.081276bb@oasis.local.home>
-In-Reply-To: <20200805111105.081276bb@oasis.local.home>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 5 Aug 2020 23:51:34 +0800
-Message-ID: <CAMZfGtU7iTFAZVRFgh5vgzB9nSOoDjm7F4Jqpd4uhEe8NListQ@mail.gmail.com>
-Subject: Re: [External] linux-next: build warning after merge of the ftrace tree
-To:     Steven Rostedt <rostedt@goodmis.org>
+        id S1728587AbgHETwE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 5 Aug 2020 15:52:04 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27151 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728182AbgHEQvf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2020 12:51:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596646294;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=r5xlMTb9c9iOlpIFXkzToRbyVMDVlpxS0zDqWUzYUZ0=;
+        b=ezUi9XPXJjjltcTQFgcIJwfZkTRdU4ckVBj8tezQOaQpkI74GGNIaLD/UYIY/oqnF+/gFl
+        +ylNV0KKbfw0ILfzkia9tvny8uDJuZfW18J+kD9EaKVSJMwtU3+q0K5L81uvu6FX6Q2vkF
+        3UtFCtjkHlTmqjIC/c2mUvh0JFpDSqU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-170-tJjPWY-gN66lMFBMVfSQzg-1; Wed, 05 Aug 2020 09:23:42 -0400
+X-MC-Unique: tJjPWY-gN66lMFBMVfSQzg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 53D62102C7E9;
+        Wed,  5 Aug 2020 13:23:41 +0000 (UTC)
+Received: from localhost (unknown [10.36.110.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D8D89712C5;
+        Wed,  5 Aug 2020 13:23:38 +0000 (UTC)
+Date:   Wed, 5 Aug 2020 15:23:34 +0200
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Heiko Carstens <hca@linux.ibm.com>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chengming Zhou <zhouchengming@bytedance.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Message-ID: <20200805152334.6b36a06d@redhat.com>
+In-Reply-To: <20200805132144.GA12227@osiris>
+References: <20200805223121.7dec86de@canb.auug.org.au>
+        <20200805150627.3351fe24@redhat.com>
+        <20200805132144.GA12227@osiris>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Aug 5, 2020 at 11:11 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 5 Aug 2020 12:53:39 +0800
-> Muchun Song <songmuchun@bytedance.com> wrote:
->
-> > On Wed, Aug 5, 2020 at 12:21 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
+On Wed, 5 Aug 2020 15:21:44 +0200
+Heiko Carstens <hca@linux.ibm.com> wrote:
+
+> On Wed, Aug 05, 2020 at 03:06:27PM +0200, Stefano Brivio wrote:
+> > On Wed, 5 Aug 2020 22:31:21 +1000
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >   
 > > > Hi all,
-> > >
-> > > After merging the ftrace tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) produced this warning:
-> > >
-> > > kernel/kprobes.c: In function 'kill_kprobe':
-> > > kernel/kprobes.c:1116:33: warning: statement with no effect [-Wunused-value]
-> > >  1116 | #define disarm_kprobe_ftrace(p) (-ENODEV)
-> > >       |                                 ^
-> > > kernel/kprobes.c:2154:3: note: in expansion of macro 'disarm_kprobe_ftrace'
-> > >  2154 |   disarm_kprobe_ftrace(p);
-> > >       |   ^~~~~~~~~~~~~~~~~~~~
-> > >
-> >
-> > Sorry, maybe we should rework the macro of disarm_kprobe_ftrace to an
-> > inline function like below.
-> >
-> > -#define disarm_kprobe_ftrace(p)        (-ENODEV)
-> > +static inline int disarm_kprobe_ftrace(struct kprobe *p)
-> > +{
-> > +       return -ENODEV
-> > +}
-> >  #endif
->
-> Looks like that would work. Care to send a formal patch. Could you also
-> change arm_kprobe_ftrace() as well?
+> > > 
+> > > After merging the net-next tree, today's linux-next build (s390 defconfig)
+> > > failed like this:
+> > > 
+> > > net/ipv4/ip_tunnel_core.c:335:2: error: implicit declaration of function 'csum_ipv6_magic' [-Werror=implicit-function-declaration]
+> > > 
+> > > Caused by commit
+> > > 
+> > >   4cb47a8644cc ("tunnels: PMTU discovery support for directly bridged IP packets")  
+> > 
+> > Ouch, sorry for that.
+> > 
+> > I'm getting a few of them by the way:
+> > 
+> > ---
+> > net/core/skbuff.o: In function `skb_checksum_setup_ipv6':
+> > /home/sbrivio/net-next/net/core/skbuff.c:4980: undefined reference to `csum_ipv6_magic'
+> > net/core/netpoll.o: In function `netpoll_send_udp':
+> > /home/sbrivio/net-next/net/core/netpoll.c:419: undefined reference to `csum_ipv6_magic'
+> > net/netfilter/utils.o: In function `nf_ip6_checksum':
+> > /home/sbrivio/net-next/net/netfilter/utils.c:74: undefined reference to `csum_ipv6_magic'
+> > /home/sbrivio/net-next/net/netfilter/utils.c:84: undefined reference to `csum_ipv6_magic'
+> > net/netfilter/utils.o: In function `nf_ip6_checksum_partial':
+> > /home/sbrivio/net-next/net/netfilter/utils.c:112: undefined reference to `csum_ipv6_magic'
+> > net/ipv4/ip_tunnel_core.o:/home/sbrivio/net-next/net/ipv4/ip_tunnel_core.c:335: more undefined references to `csum_ipv6_magic' follow
+> > ---
+> > 
+> > ...checking how it should be fixed now.
+> > 
+> > Heiko, by the way, do we want to provide a s390 version similar to the
+> > existing csum_partial() implementation in
+> > arch/s390/include/asm/checksum.h right away? Otherwise, I'll just take
+> > care of the ifdeffery.  
+> 
+> You probably only need to include include/net/ip6_checksum.h which
+> contains the default implementation.
 
-OK, I will do that. Thanks.
-
->
-> Thanks!
->
-> -- Steve
-
-
+Yes, patch already sent a couple of minutes ago, still waiting for it to
+reach the lists. Thanks!
 
 -- 
-Yours,
-Muchun
+Stefano
+
