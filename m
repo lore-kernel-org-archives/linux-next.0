@@ -2,96 +2,82 @@ Return-Path: <SRS0=21CY=BP=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FFBC433E1
-	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85371C433E0
+	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 20:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EAB320842
-	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:59:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pLUXTHxN"
+	by mail.kernel.org (Postfix) with ESMTP id 61F9522B42
+	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 20:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbgHEQmL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 5 Aug 2020 12:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbgHEQkH (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2020 12:40:07 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CEECC034616;
-        Wed,  5 Aug 2020 05:31:32 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728712AbgHEUGo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 5 Aug 2020 16:06:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbgHEQeg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 5 Aug 2020 12:34:36 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BM9wD3YVbz9sPB;
-        Wed,  5 Aug 2020 22:31:24 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1596630685;
-        bh=j8w8EuBO1+cpbq1KuEU666Od/hNNRqCbcp1rNpt5oEw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pLUXTHxN42q9ByPuE33ruB4nmahaXsszt8bpAIpPTfA6RA1vO3vbs/fHmKQ+Hon7N
-         Rafklf5W/B5SmRE6vzqx9F2Y7PsQwz4/mIPgrol71jEPN6wJrmRmjra7ujp74MvY+2
-         qZShvYTEL+37aiR7F4zoRwfN+OHIdBjBMY8EkLhBMBIXxI4WJMysVIQYXHugBfP8vJ
-         zHllSfM+6WcZadDDNLzl2oopZTBVZcVRYkV+QjeIsJ1Z0esXc6Z26NdfLOx+WxUDvr
-         DpLa2OG6x8bvZ3ZagFq/OnaM6lTv4npM9iU2hiqUDcF3JlSAyQPYiP472j3D3/3uhY
-         ZPMww51D7nJLA==
-Date:   Wed, 5 Aug 2020 22:31:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 181BB23339;
+        Wed,  5 Aug 2020 15:11:07 +0000 (UTC)
+Date:   Wed, 5 Aug 2020 11:11:05 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        <heiko.carstens@de.ibm.com>
-Subject: linux-next: build failure after merge of the net-next tree
-Message-ID: <20200805223121.7dec86de@canb.auug.org.au>
+        Chengming Zhou <zhouchengming@bytedance.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [External] linux-next: build warning after merge of the ftrace
+ tree
+Message-ID: <20200805111105.081276bb@oasis.local.home>
+In-Reply-To: <CAMZfGtX0a3tui_KQfCXLcARVcev9V-HV6HMkXgVXObq8w-4EQg@mail.gmail.com>
+References: <20200805142136.0331f7ea@canb.auug.org.au>
+        <CAMZfGtX0a3tui_KQfCXLcARVcev9V-HV6HMkXgVXObq8w-4EQg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iGNImgk4v6HDXIvgTQwoqbm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/iGNImgk4v6HDXIvgTQwoqbm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 5 Aug 2020 12:53:39 +0800
+Muchun Song <songmuchun@bytedance.com> wrote:
 
-Hi all,
+> On Wed, Aug 5, 2020 at 12:21 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > After merging the ftrace tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced this warning:
+> >
+> > kernel/kprobes.c: In function 'kill_kprobe':
+> > kernel/kprobes.c:1116:33: warning: statement with no effect [-Wunused-value]
+> >  1116 | #define disarm_kprobe_ftrace(p) (-ENODEV)
+> >       |                                 ^
+> > kernel/kprobes.c:2154:3: note: in expansion of macro 'disarm_kprobe_ftrace'
+> >  2154 |   disarm_kprobe_ftrace(p);
+> >       |   ^~~~~~~~~~~~~~~~~~~~
+> >  
+> 
+> Sorry, maybe we should rework the macro of disarm_kprobe_ftrace to an
+> inline function like below.
+> 
+> -#define disarm_kprobe_ftrace(p)        (-ENODEV)
+> +static inline int disarm_kprobe_ftrace(struct kprobe *p)
+> +{
+> +       return -ENODEV
+> +}
+>  #endif
 
-After merging the net-next tree, today's linux-next build (s390 defconfig)
-failed like this:
+Looks like that would work. Care to send a formal patch. Could you also
+change arm_kprobe_ftrace() as well?
 
-net/ipv4/ip_tunnel_core.c:335:2: error: implicit declaration of function 'c=
-sum_ipv6_magic' [-Werror=3Dimplicit-function-declaration]
+Thanks!
 
-Caused by commit
-
-  4cb47a8644cc ("tunnels: PMTU discovery support for directly bridged IP pa=
-ckets")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iGNImgk4v6HDXIvgTQwoqbm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8qppkACgkQAVBC80lX
-0Gz4Hgf5AcOL3mJwLlnnFj7+zFUXWc6JxU8HniK9p2KGwMa5ISQE9lbmSUVTOXoC
-ssxig80+QPKSO4XASSwEcB7RzdfkdE/phan/zxIKirQlPFlbaOlSb209yzGsyZLe
-WaMCkuMIdPcT7Fi8clOk+yjwyujx7FTfxDcayUqphOmMMb+CxKKcqnXhe7Fv0sPc
-25na5ErrG9A02+zS25XzE/KCielqumhgKfEyDmJDH7kZvQJrNlG8h8zof8juLIww
-7o5UdQt9VIzVwlBy7FKZo9Pu0tltbL6tSm0DXtO5tRwYbd7Qub6QeZig34u0rtfB
-zEMFJTpJriTcP3EHxbpo3vP4AVTn7g==
-=216g
------END PGP SIGNATURE-----
-
---Sig_/iGNImgk4v6HDXIvgTQwoqbm--
+-- Steve
