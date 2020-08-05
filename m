@@ -5,149 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AF4C433E0
-	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 17:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D570EC433DF
+	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1DD2177B
-	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 17:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE3E2075A
+	for <linux-next@archiver.kernel.org>; Wed,  5 Aug 2020 19:15:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dGp6Jrli"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UiGa/Qok"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbgHERUs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 5 Aug 2020 13:20:48 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43327 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728669AbgHERSR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2020 13:18:17 -0400
+        id S1728146AbgHETPp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 5 Aug 2020 15:15:45 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32198 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728652AbgHESGX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2020 14:06:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596647894;
+        s=mimecast20190719; t=1596650782;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7dizVWiIXd9zC97fZn3S5tjxTFtcwUz/YOaFNcDsaNo=;
-        b=dGp6JrlikQJ5bObcSBC86bFo7WkJigMXS7eqhbPkazSDNkb/JtvOwbQEUTNUjg8Z42zDCJ
-        q1Xk89ngC6ILBr7KPPvus+SCDqV4rqFrRfCsZN7GTLh/VH0ZDuHSkeTAUTqW8TEA2aAPcb
-        DcKIPMeNqar8tC2O7s47jqv92nLPvt8=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BJTmQpoAkIpbguLFUsJigmbm7ftZPVlO31weMkCEohw=;
+        b=UiGa/QokDYZB9RfiJj4gFl6RVxi9mqsirNfMPFonruCupTcTFpPJXFlT8gzUsS+FDFaR53
+        ifWrIZezC7kLOh/ZNYIyRT0KYDyc7Bo6Ripmlad4Kf6oBKpttlI98Gp5YCvBqJEbHaPn4G
+        lMxKmMp8rqpkFHk/zWWg2ZbtQn3FQOU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-511-iDJLuTjkO4KTzKuCgAPGSg-1; Wed, 05 Aug 2020 09:59:47 -0400
-X-MC-Unique: iDJLuTjkO4KTzKuCgAPGSg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-138-FgJlMIBBOEqWZYWlkZ1Vjw-1; Wed, 05 Aug 2020 09:39:35 -0400
+X-MC-Unique: FgJlMIBBOEqWZYWlkZ1Vjw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 819D718C63C0;
-        Wed,  5 Aug 2020 13:59:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E9CD1002382;
-        Wed,  5 Aug 2020 13:59:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <cb34df80-d6af-507d-9935-1685b787f7a3@infradead.org>
-References: <cb34df80-d6af-507d-9935-1685b787f7a3@infradead.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     dhowells@redhat.com,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 390D5100A8DF;
+        Wed,  5 Aug 2020 13:39:34 +0000 (UTC)
+Received: from maya.cloud.tilaa.com (unknown [10.36.110.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDB792DE95;
+        Wed,  5 Aug 2020 13:39:33 +0000 (UTC)
+Received: from localhost (055-041-157-037.ip-addr.inexio.net [37.157.41.55])
+        by maya.cloud.tilaa.com (Postfix) with ESMTPSA id D853F40093;
+        Wed,  5 Aug 2020 15:39:32 +0200 (CEST)
+Date:   Wed, 5 Aug 2020 15:39:31 +0200
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     "David S. Miller" <davem@davemloft.net>,
         Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] fs: mount_notify.c: fix build without CONFIG_FSINFO
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, heiko.carstens@de.ibm.com,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [PATCH RESEND net-next] ip_tunnel_core: Fix build for archs without
+ _HAVE_ARCH_IPV6_CSUM
+Message-ID: <20200805153931.50a3d518@redhat.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2303938.1596635984.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 05 Aug 2020 14:59:44 +0100
-Message-ID: <2303939.1596635984@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Randy,
+On architectures defining _HAVE_ARCH_IPV6_CSUM, we get
+csum_ipv6_magic() defined by means of arch checksum.h headers. On
+other architectures, we actually need to include net/ip6_checksum.h
+to be able to use it.
 
-> From: Randy Dunlap <rdunlap@infradead.org>
-> =
+Without this include, building with defconfig breaks at least for
+s390.
 
-> Fix mount_notify.c build errors when CONFIG_FSINFO is not set/enabled:
-> =
-
-> ../fs/mount_notify.c:94:28: error: 'struct mount' has no member named 'm=
-nt_unique_id'; did you mean 'mnt_group_id'?
-> ../fs/mount_notify.c:109:28: error: 'struct mount' has no member named '=
-mnt_unique_id'; did you mean 'mnt_group_id'?
-> =
-
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-
-That's not quite the right solution.  I'm going to use the attached instea=
-d.
-
-David
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 4cb47a8644cc ("tunnels: PMTU discovery support for directly bridged IP packets")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
 ---
-commit 830d864747b00d979914f15adaad58ccb9fd77f6
-Author: Randy Dunlap <rdunlap@infradead.org>
-Date:   Wed Aug 5 06:11:32 2020 -0700
+I'm submitting this for net-next despite the fact it's closed, as
+the offending code isn't merged to net.git yet. Should I rather
+submit this to... linux-next?
 
-    fs: mount_notify.c: fix build without CONFIG_FSINFO
-    =
+Re-sending as original copy seems to be stuck in some SMTP queue.
 
-    Fix mount_notify.c build errors when CONFIG_FSINFO is not set/enabled:
-    =
+ net/ipv4/ip_tunnel_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-    ../fs/mount_notify.c:94:28: error: 'struct mount' has no member named =
-'mnt_unique_id'; did you mean 'mnt_group_id'?
-    ../fs/mount_notify.c:109:28: error: 'struct mount' has no member named=
- 'mnt_unique_id'; did you mean 'mnt_group_id'?
-    =
-
-    [DH: Fix this to use mnt_id if CONFIG_FSINFO=3Dn rather than not setti=
-ng
-    anything]
-    =
-
-    Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-    Cc: David Howells <dhowells@redhat.com>
-    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-    Cc: linux-fsdevel@vger.kernel.org
-    Signed-off-by: David Howells <dhowells@redhat.com>
-
-diff --git a/fs/mount_notify.c b/fs/mount_notify.c
-index 57995c27ca88..254090b6d5ac 100644
---- a/fs/mount_notify.c
-+++ b/fs/mount_notify.c
-@@ -91,7 +91,11 @@ void notify_mount(struct mount *trigger,
- 	n.watch.type	=3D WATCH_TYPE_MOUNT_NOTIFY;
- 	n.watch.subtype	=3D subtype;
- 	n.watch.info	=3D info_flags | watch_sizeof(n);
-+#ifdef CONFIG_FSINFO
- 	n.triggered_on	=3D trigger->mnt_unique_id;
-+#else
-+	n.triggered_on	=3D trigger->mnt_id;
-+#endif
- =
-
- 	smp_wmb(); /* See fsinfo_generic_mount_info(). */
- =
-
-@@ -106,7 +110,11 @@ void notify_mount(struct mount *trigger,
- 	case NOTIFY_MOUNT_UNMOUNT:
- 	case NOTIFY_MOUNT_MOVE_FROM:
- 	case NOTIFY_MOUNT_MOVE_TO:
-+#ifdef CONFIG_FSINFO
- 		n.auxiliary_mount =3D aux->mnt_unique_id;
-+#else
-+		n.auxiliary_mount =3D aux->mnt_id;
-+#endif
- 		atomic_long_inc(&trigger->mnt_topology_changes);
- 		atomic_long_inc(&aux->mnt_topology_changes);
- 		break;
+diff --git a/net/ipv4/ip_tunnel_core.c b/net/ipv4/ip_tunnel_core.c
+index 9ddee2a0c66d..75c6013ff9a4 100644
+--- a/net/ipv4/ip_tunnel_core.c
++++ b/net/ipv4/ip_tunnel_core.c
+@@ -25,6 +25,7 @@
+ #include <net/protocol.h>
+ #include <net/ip_tunnels.h>
+ #include <net/ip6_tunnel.h>
++#include <net/ip6_checksum.h>
+ #include <net/arp.h>
+ #include <net/checksum.h>
+ #include <net/dsfield.h>
+-- 
+2.27.0
 
