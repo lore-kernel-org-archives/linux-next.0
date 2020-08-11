@@ -4,1609 +4,599 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2EEC433E0
-	for <linux-next@archiver.kernel.org>; Tue, 11 Aug 2020 08:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80173C433E0
+	for <linux-next@archiver.kernel.org>; Tue, 11 Aug 2020 11:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEEB420658
-	for <linux-next@archiver.kernel.org>; Tue, 11 Aug 2020 08:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 465AF20768
+	for <linux-next@archiver.kernel.org>; Tue, 11 Aug 2020 11:57:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="DTbHeS3f"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="R2+OxbcB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbgHKI1m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Aug 2020 04:27:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51646 "EHLO
+        id S1728791AbgHKL5U (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Aug 2020 07:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbgHKI1m (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2020 04:27:42 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CADA8C06174A
-        for <linux-next@vger.kernel.org>; Tue, 11 Aug 2020 01:27:41 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id t10so6454939plz.10
-        for <linux-next@vger.kernel.org>; Tue, 11 Aug 2020 01:27:41 -0700 (PDT)
+        with ESMTP id S1728469AbgHKL5U (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2020 07:57:20 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D90CC06174A
+        for <linux-next@vger.kernel.org>; Tue, 11 Aug 2020 04:57:20 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id mw10so1761221pjb.2
+        for <linux-next@vger.kernel.org>; Tue, 11 Aug 2020 04:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=w6tjxoH/YgC/oiZfyB7P14txS6yYCY6aGWxGBnR1Gro=;
-        b=DTbHeS3fbCJMwdHEHaVfVICMoxtKDMBG9vcoAxCeLRkGU8iezTIjuiO3kDd8keKpxC
-         QiVxfLPhucFoA/UhbtN2iShszetuv8A499N7j270E6QS+c7nuI17ZufF26RNJV4nsmf+
-         17BYzX+JzWUqdOFiavT+6GpdQb4Z7kDSaZ9zGHoV3gzfmd4lXG8iSAd7D/zo/fcW0PR5
-         PoxqfI7ge+ml+2WF6Jb78PbmPDsu8mxPdXE9vdpx/o0bPEpmuXVp2hG5DhTb9NIsjTA9
-         rCzQw1lYCtykoQNy0YYdXNKqCTZtgQxO/2ZxQthgfMs1ZckZPsbg7uY95any75/xwxdF
-         kFaQ==
+        bh=OyjgbwNAqjF3wNsHyZU+JMWgcIOIgWs2H+X4eOitHmM=;
+        b=R2+OxbcBaiJkdT4hwtJIxL5OHcQgNV9w3gSkgHCazuUZhYSk4o9Yhk3KkVHhHLcYCs
+         L+o7dcwn+S6oyQPQnNtEisXBu/MSGdywX7FPojdPPAdsyoZRik1cgQuDjZk2UMdXVLIK
+         3RnRxmWBZ79KKIat9jR33CQpWzjemWUuRjdauNSa8bM7WiB3UKYFVf174EUnmnwLv7pv
+         pWoaDlHxpdpXjSKetGWAPveuJebmBdIlM2t1VkU1LAeysYqh6OfjlRhu+L2PuuWihwG5
+         a9NPqPpRiDlWogjNoDpi2U51/6k/SpJNYtIQXKHd3kaEc52C/UFTuqgva053TXFXfEto
+         N1VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=w6tjxoH/YgC/oiZfyB7P14txS6yYCY6aGWxGBnR1Gro=;
-        b=kNAd2yZ/3FbbofE2vMpVRlr427XSQUewIzD27dz5LmWh89EvyMGlSNmxGVi1yhjMXf
-         hD3JneTg6QvQ1uEHbhQ/fu2DiGtasklXXAgdlIiG8RlO7xaiycd35ol792rnFhgZLVvb
-         +jMT7skqTjAbjLe2RDLRyKv8PQ6FEdeK3matg/+l0G8GIIF5Czt2QlKky9kupyQW7oVy
-         0rRAV2Ti/YAqrAUTgR3G6Tlf9U9regEG7UPlTp9XGf5N6Ae1KJ1oUKUBT5coHEsCjZRv
-         KmGKZrklTw+6oqx9AipC2B3MGIDVF1sZl/tK23lgtV6E0T68s8xRH3AbZA1JfC2viLBy
-         STag==
-X-Gm-Message-State: AOAM533BeWIzjoSciJG7OuxplXseYVLywFYwUbiEhlyHsOxKPNRg/8sb
-        Y2AbUi95/paRzvl8OVk//GpNhHhge7g=
-X-Google-Smtp-Source: ABdhPJyiNJkd1AMTO+rwT0SZ/82db3FghtdLnslt3debB0HfDcjTEnpaIIlbiohAlrylcoDOX1mGcw==
-X-Received: by 2002:a17:902:10e:: with SMTP id 14mr26475084plb.297.1597134459682;
-        Tue, 11 Aug 2020 01:27:39 -0700 (PDT)
+        bh=OyjgbwNAqjF3wNsHyZU+JMWgcIOIgWs2H+X4eOitHmM=;
+        b=eEjO8HYl2gVO8rr+irX/LSbVvFozWq1XolnX1kzMNARFnvjvRtUdVe/Z7zAd+8Es4j
+         zxgQgUoOJUMNrbK09yWe3y5brgyBsSrrJgGg4jbSmJfAmpmOOz75zdlchstsYtGTGK5i
+         380krKhT7NCvvf0iM02zkgkNd1iAYx2Kw7hjtfFdTcyQfxecS+ZzS1/cgQlDip9wIxUZ
+         KTYfjQTxHA3JxY19UrNLkexzAJpPY5pisGhtQ89y7fccctZ3wwdw5IFlKmo3LzZbozAl
+         CYNt5h3Sdboc5NSljdrQucH5nuvvA6ToUy/Y8zgrLyhQycXyyudc3GyCUqve3ZG0D+bz
+         lrqw==
+X-Gm-Message-State: AOAM531lvBxOkW7tQR3czbx1XxM2PqYmgEYucp6VpijfIr3umEQwJl0X
+        2XLrXUnKfjNxLCqmQGxglPKCaVut9sc=
+X-Google-Smtp-Source: ABdhPJzJHYt6onaQam8EYpj9N2FmkwsfNhwLLofj2bWNfh97yymPgoRJ8KIa5H7OeMZIFUleJyH0Sw==
+X-Received: by 2002:a17:902:d206:: with SMTP id t6mr544637ply.131.1597147037460;
+        Tue, 11 Aug 2020 04:57:17 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id z26sm21416406pgc.44.2020.08.11.01.27.38
-        for <linux-next@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id u1sm7139638pgf.69.2020.08.11.04.57.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2020 01:27:38 -0700 (PDT)
-Message-ID: <5f32567a.1c69fb81.f06b5.a370@mx.google.com>
-Date:   Tue, 11 Aug 2020 01:27:38 -0700 (PDT)
+        Tue, 11 Aug 2020 04:57:16 -0700 (PDT)
+Message-ID: <5f32879c.1c69fb81.408e6.c0a1@mx.google.com>
+Date:   Tue, 11 Aug 2020 04:57:16 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: build
+X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v5.8-12146-gc063c7b30ed0
 X-Kernelci-Branch: pending-fixes
 X-Kernelci-Tree: next
-Subject: next/pending-fixes build: 211 builds: 4 failed, 207 passed, 5 errors,
- 90 warnings (v5.8-12146-gc063c7b30ed0)
-To:     linux-next@vger.kernel.org
+Subject: next/pending-fixes baseline: 294 runs,
+ 15 regressions (v5.8-12146-gc063c7b30ed0)
+To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
+        kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes build: 211 builds: 4 failed, 207 passed, 5 errors, 90 wa=
-rnings (v5.8-12146-gc063c7b30ed0)
-
-Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
-rnel/v5.8-12146-gc063c7b30ed0/
-
-Tree: next
-Branch: pending-fixes
-Git Describe: v5.8-12146-gc063c7b30ed0
-Git Commit: c063c7b30ed0fc4824bcde48afa5902e1e5b13d3
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Built: 7 unique architectures
-
-Build Failures Detected:
-
-arm:
-    allmodconfig: (gcc-8) FAIL
-    imx_v6_v7_defconfig: (gcc-8) FAIL
-
-mips:
-    32r2el_defconfig+kselftest: (gcc-8) FAIL
-    loongson3_defconfig: (gcc-8) FAIL
-
-Errors and Warnings Detected:
-
-arc:
-    hsdk_defconfig (gcc-8): 2 warnings
-
-arm64:
-    allmodconfig (gcc-8): 8 warnings
-    defconfig (gcc-8): 8 warnings
-    defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (gcc-8): 8 warnings
-    defconfig+CONFIG_RANDOMIZE_BASE=3Dy (gcc-8): 8 warnings
-    defconfig+kselftest (gcc-8): 8 warnings
-
-arm:
-    allmodconfig (gcc-8): 1 error, 1 warning
-    aspeed_g4_defconfig (gcc-8): 1 warning
-    bcm2835_defconfig (gcc-8): 1 warning
-    imx_v6_v7_defconfig (gcc-8): 1 error, 1 warning
-    multi_v7_defconfig (gcc-8): 3 warnings
-    multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (gcc-8): 3 warnings
-    multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (gcc-8): 3 warnin=
-gs
-    multi_v7_defconfig+CONFIG_SMP=3Dn (gcc-8): 3 warnings
-    multi_v7_defconfig+kselftest (gcc-8): 3 warnings
-    omap1_defconfig (gcc-8): 3 warnings
-    omap2plus_defconfig (gcc-8): 1 warning
-    pxa168_defconfig (gcc-8): 3 warnings
-    pxa910_defconfig (gcc-8): 3 warnings
-
-i386:
-
-mips:
-    32r2el_defconfig+kselftest (gcc-8): 2 errors, 1 warning
-    gcw0_defconfig (gcc-8): 2 warnings
-    loongson3_defconfig (gcc-8): 1 error, 1 warning
-    malta_qemu_32r6_defconfig (gcc-8): 1 warning
-    mtx1_defconfig (gcc-8): 1 warning
-    qi_lb60_defconfig (gcc-8): 2 warnings
-    rm200_defconfig (gcc-8): 1 warning
-    rs90_defconfig (gcc-8): 3 warnings
-
-riscv:
-    rv32_defconfig (gcc-8): 6 warnings
-
-x86_64:
-    tinyconfig (gcc-8): 1 warning
-
-Errors summary:
-
-    2    /scratch/linux/include/asm-generic/percpu.h:31:40: error: implicit=
- declaration of function =E2=80=98raw_smp_processor_id=E2=80=99 [-Werror=3D=
-implicit-function-declaration]
-    1    /scratch/linux/include/asm-generic/percpu.h:31:40: error: implicit=
- declaration of function =E2=80=98raw_smp_processor_id=E2=80=99; did you me=
-an =E2=80=98mips_set_process_fp_mode=E2=80=99? [-Werror=3Dimplicit-function=
--declaration]
-    1    /scratch/linux/arch/mips/kvm/emulate.c:1937:21: error: this statem=
-ent may fall through [-Werror=3Dimplicit-fallthrough=3D]
-    1    /scratch/linux/arch/mips/include/asm/smp.h:28:19: error: static de=
-claration of =E2=80=98raw_smp_processor_id=E2=80=99 follows non-static decl=
-aration
-
-Warnings summary:
-
-    15   /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.=
-dtsi:7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-range=
-s" property but its #size-cells (1) differs from / (2)
-    15   /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.=
-dtsi:7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-range=
-s" property but its #address-cells (1) differs from / (2)
-    7    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Fa=
-iled prerequisite 'spi_bus_bridge'
-    7    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (=
-spi_bus_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for =
-SPI bus
-    7    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (=
-spi_bus_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells f=
-or SPI bus
-    5    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: War=
-ning (dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but =
-its #size-cells (1) differs from / (2)
-    5    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: War=
-ning (dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (1) differs from / (2)
-    3    cc1: some warnings being treated as errors
-    3    /scratch/linux/drivers/iio/iio_core_trigger.h:42:13: warning: =E2=
-=80=98iio_device_unregister_trigger_consumer=E2=80=99 defined but not used =
-[-Wunused-function]
-    3    /scratch/linux/drivers/iio/iio_core_trigger.h:33:12: warning: =E2=
-=80=98iio_device_register_trigger_consumer=E2=80=99 defined but not used [-=
-Wunused-function]
-    2    WARNING: unmet direct dependencies detected for CLK_HSDK
-    2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
--Wcpp]
-    2    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
--Wcpp]
-    2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
-d [-Wcpp]
-    2    /scratch/linux/kernel/rcu/tasks.h:593:13: warning: =E2=80=98show_r=
-cu_tasks_classic_gp_kthread=E2=80=99 defined but not used [-Wunused-functio=
-n]
-    2    /scratch/linux/include/linux/compiler_attributes.h:214:41: warning=
-: statement will never be executed [-Wswitch-unreachable]
-    1    {standard input}:141: Warning: macro instruction expanded into mul=
-tiple instructions
-    1    cc1: all warnings being treated as errors
-    1    /scratch/linux/drivers/gpu/drm/omapdrm/omap_connector.c:92:9: warn=
-ing: braces around scalar initializer
-    1    /scratch/linux/drivers/gpio/gpio-omap.c:1531:12: warning: =E2=80=
-=98omap_gpio_resume=E2=80=99 defined but not used [-Wunused-function]
-    1    /scratch/linux/drivers/gpio/gpio-omap.c:1519:12: warning: =E2=80=
-=98omap_gpio_suspend=E2=80=99 defined but not used [-Wunused-function]
-    1    /scratch/linux/drivers/block/paride/bpck.c:32: warning: "PC" redef=
-ined
-    1    /scratch/linux/arch/arm/mach-omap1/board-ams-delta.c:462:12: warni=
-ng: =E2=80=98ams_delta_camera_power=E2=80=99 defined but not used [-Wunused=
--function]
-    1    .config:1168:warning: override: UNWINDER_GUESS changes choice state
-
-Section mismatches summary:
-
-    1    WARNING: modpost: vmlinux.o(.text.unlikely+0x2ba8): Section mismat=
-ch in reference from the function pmax_setup_memory_region() to the functio=
-n .init.text:add_memory_region()
-    1    WARNING: modpost: vmlinux.o(.text.unlikely+0x2944): Section mismat=
-ch in reference from the function pmax_setup_memory_region() to the functio=
-n .init.text:add_memory_region()
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig+kselftest (mips, gcc-8) =E2=80=94 FAIL, 2 errors, 1 warnin=
-g, 0 section mismatches
-
-Errors:
-    /scratch/linux/include/asm-generic/percpu.h:31:40: error: implicit decl=
-aration of function =E2=80=98raw_smp_processor_id=E2=80=99; did you mean =
-=E2=80=98mips_set_process_fp_mode=E2=80=99? [-Werror=3Dimplicit-function-de=
-claration]
-    /scratch/linux/arch/mips/include/asm/smp.h:28:19: error: static declara=
-tion of =E2=80=98raw_smp_processor_id=E2=80=99 follows non-static declarati=
-on
-
-Warnings:
-    cc1: some warnings being treated as errors
-
----------------------------------------------------------------------------=
------
-allmodconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-allmodconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 section mis=
-matches
-
-Errors:
-    /scratch/linux/include/asm-generic/percpu.h:31:40: error: implicit decl=
-aration of function =E2=80=98raw_smp_processor_id=E2=80=99 [-Werror=3Dimpli=
-cit-function-declaration]
-
-Warnings:
-    cc1: some warnings being treated as errors
-
----------------------------------------------------------------------------=
------
-allmodconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 8 warnings, 0 section=
- mismatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-allnoconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-am200epdkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-ar7_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-aspeed_g4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    /scratch/linux/kernel/rcu/tasks.h:593:13: warning: =E2=80=98show_rcu_ta=
-sks_classic_gp_kthread=E2=80=99 defined but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-aspeed_g5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-assabet_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-at91_dt_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-ath25_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ath79_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-axm55xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-axs103_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-axs103_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-badge4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-bcm2835_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    /scratch/linux/kernel/rcu/tasks.h:593:13: warning: =E2=80=98show_rcu_ta=
-sks_classic_gp_kthread=E2=80=99 defined but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-bcm47xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-bcm63xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-bigsur_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-bmips_be_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-bmips_stb_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-capcella_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-cavium_octeon_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cerfcube_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-ci20_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-clps711x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-cm_x300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-cns3420vb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-cobalt_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-collie_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-corgi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-cu1000-neo_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-cu1830-neo_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-davinci_all_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-db1xxx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-decstation_64_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-decstation_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
-Section mismatches:
-    WARNING: modpost: vmlinux.o(.text.unlikely+0x2ba8): Section mismatch in=
- reference from the function pmax_setup_memory_region() to the function .in=
-it.text:add_memory_region()
-
----------------------------------------------------------------------------=
------
-decstation_r4k_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
-Section mismatches:
-    WARNING: modpost: vmlinux.o(.text.unlikely+0x2944): Section mismatch in=
- reference from the function pmax_setup_memory_region() to the function .in=
-it.text:add_memory_region()
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 8 warnings, 0 section mi=
-smatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
-, 8 warnings, 0 section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
-, 8 warnings, 0 section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 8 warnings, 0 =
-section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-e55_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-ebsa110_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-efm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ep93xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-eseries_pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-exynos_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ezx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-footbridge_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-fuloong2e_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-gcw0_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
-n mismatches
-
-Warnings:
-    /scratch/linux/drivers/iio/iio_core_trigger.h:42:13: warning: =E2=80=98=
-iio_device_unregister_trigger_consumer=E2=80=99 defined but not used [-Wunu=
-sed-function]
-    /scratch/linux/drivers/iio/iio_core_trigger.h:33:12: warning: =E2=80=98=
-iio_device_register_trigger_consumer=E2=80=99 defined but not used [-Wunuse=
-d-function]
-
----------------------------------------------------------------------------=
------
-gemini_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-gpr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-h3600_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-h5000_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-hackkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig+kselftest (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 wa=
-rnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-hisi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-hsdk_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
- mismatches
-
-Warnings:
-    WARNING: unmet direct dependencies detected for CLK_HSDK
-    WARNING: unmet direct dependencies detected for CLK_HSDK
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-i386_defconfig+kselftest (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-imote2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-imx_v4_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-imx_v6_v7_defconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 sect=
-ion mismatches
-
-Errors:
-    /scratch/linux/include/asm-generic/percpu.h:31:40: error: implicit decl=
-aration of function =E2=80=98raw_smp_processor_id=E2=80=99 [-Werror=3Dimpli=
-cit-function-declaration]
-
-Warnings:
-    cc1: some warnings being treated as errors
-
----------------------------------------------------------------------------=
------
-integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-iop32x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ip22_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ip27_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ip28_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ip32_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ixp4xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-jazz_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-jmr3927_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-jornada720_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-keystone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-lart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-lemote2f_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-loongson1b_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-loongson1c_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-loongson3_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 sec=
-tion mismatches
-
-Errors:
-    /scratch/linux/arch/mips/kvm/emulate.c:1937:21: error: this statement m=
-ay fall through [-Werror=3Dimplicit-fallthrough=3D]
-
-Warnings:
-    cc1: all warnings being treated as errors
-
----------------------------------------------------------------------------=
------
-lpc18xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-lpc32xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-lpd270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-lubbock_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-magician_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-mainstone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-malta_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_guest_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warning=
-s, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-malta_qemu_32r6_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning=
-, 0 section mismatches
-
-Warnings:
-    {standard input}:141: Warning: macro instruction expanded into multiple=
- instructions
-
----------------------------------------------------------------------------=
------
-maltaaprp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-maltasmvp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-maltasmvp_eva_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-maltaup_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-milbeaut_m10v_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-mini2440_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-moxart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-mpc30x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-mps2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-mtx1_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    /scratch/linux/include/linux/compiler_attributes.h:214:41: warning: sta=
-tement will never be executed [-Wswitch-unreachable]
-
----------------------------------------------------------------------------=
------
-multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sec=
-tion mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm, gcc-8) =E2=80=94 PASS, 0=
- errors, 3 warnings, 0 section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
-=94 PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 =
-warnings, 0 section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig+kselftest (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warni=
-ngs, 0 section mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-mv78xx0_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-mvebu_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-mvebu_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-mxs_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-neponset_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-netwinder_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-nhk8815_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-nlm_xlp_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-nlm_xlr_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-nommu_k210_defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-nommu_virt_defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-nsimosci_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-nsimosci_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-omap1_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
-n mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/mach-omap1/board-ams-delta.c:462:12: warning: =
-=E2=80=98ams_delta_camera_power=E2=80=99 defined but not used [-Wunused-fun=
-ction]
-    /scratch/linux/drivers/gpio/gpio-omap.c:1531:12: warning: =E2=80=98omap=
-_gpio_resume=E2=80=99 defined but not used [-Wunused-function]
-    /scratch/linux/drivers/gpio/gpio-omap.c:1519:12: warning: =E2=80=98omap=
-_gpio_suspend=E2=80=99 defined but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-omap2plus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    /scratch/linux/drivers/gpu/drm/omapdrm/omap_connector.c:92:9: warning: =
-braces around scalar initializer
-
----------------------------------------------------------------------------=
------
-omega2p_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-orion5x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-oxnas_v6_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-palmz72_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pcm027_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-pic32mzda_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-pistachio_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-pnx8335_stb225_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-prima2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-pxa168_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 secti=
-on mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-pxa255-idp_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-pxa3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-pxa910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 secti=
-on mismatches
-
-Warnings:
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #address-cells for SP=
-I bus
-    /scratch/linux/arch/arm/boot/dts/mmp2.dtsi:472.23-480.6: Warning (spi_b=
-us_bridge): /soc/apb@d4000000/spi@d4037000: incorrect #size-cells for SPI b=
-us
-    arch/arm/boot/dts/mmp2-olpc-xo-1-75.dtb: Warning (spi_bus_reg): Failed =
-prerequisite 'spi_bus_bridge'
-
----------------------------------------------------------------------------=
------
-pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-qi_lb60_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
-tion mismatches
-
-Warnings:
-    /scratch/linux/drivers/iio/iio_core_trigger.h:42:13: warning: =E2=80=98=
-iio_device_unregister_trigger_consumer=E2=80=99 defined but not used [-Wunu=
-sed-function]
-    /scratch/linux/drivers/iio/iio_core_trigger.h:33:12: warning: =E2=80=98=
-iio_device_register_trigger_consumer=E2=80=99 defined but not used [-Wunuse=
-d-function]
-
----------------------------------------------------------------------------=
------
-rb532_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-rbtx49xx_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-rm200_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    /scratch/linux/drivers/block/paride/bpck.c:32: warning: "PC" redefined
-
----------------------------------------------------------------------------=
------
-rpc_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-rs90_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
-n mismatches
-
-Warnings:
-    /scratch/linux/include/linux/compiler_attributes.h:214:41: warning: sta=
-tement will never be executed [-Wswitch-unreachable]
-    /scratch/linux/drivers/iio/iio_core_trigger.h:42:13: warning: =E2=80=98=
-iio_device_unregister_trigger_consumer=E2=80=99 defined but not used [-Wunu=
-sed-function]
-    /scratch/linux/drivers/iio/iio_core_trigger.h:33:12: warning: =E2=80=98=
-iio_device_register_trigger_consumer=E2=80=99 defined but not used [-Wunuse=
-d-function]
-
----------------------------------------------------------------------------=
------
-rt305x_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-rv32_defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 secti=
-on mismatches
-
-Warnings:
-    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
-    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
-cpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
-    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
-cpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-s3c2410_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-s5pv210_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-sama5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-sb1250_swarm_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-shannon_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-shmobile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-simpad_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-socfpga_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-spear13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-spear3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-spear6xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-spitz_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-stm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-sunxi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-tango4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-tb0219_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-tb0226_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-tb0287_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-tct_hammer_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-tegra_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mis=
-matches
-
----------------------------------------------------------------------------=
------
-tinyconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
-ismatches
-
-Warnings:
-    .config:1168:warning: override: UNWINDER_GUESS changes choice state
-
----------------------------------------------------------------------------=
------
-tinyconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mis=
-matches
-
----------------------------------------------------------------------------=
------
-trizeps4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-u8500_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-vdk_hs38_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-vdk_hs38_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-versatile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-vexpress_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-vf610m4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-viper_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-vocore2_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-workpad_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+kselftest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warn=
-ings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+kvm_guest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warn=
-ings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-xcep_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-xway_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-zeus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-zx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----
-For more info write to <info@kernelci.org>
+next/pending-fixes baseline: 294 runs, 15 regressions (v5.8-12146-gc063c7b3=
+0ed0)
+
+Regressions Summary
+-------------------
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+at91-sama5d4_xplained | arm   | lab-baylibre  | gcc-8    | sama5_defconfig =
+             | 0/1    =
+
+bcm2837-rpi-3-b       | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+             | 4/5    =
+
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | exynos_defconfig=
+             | 0/1    =
+
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 0/1    =
+
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | multi_v7_defconf=
+ig           | 0/1    =
+
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+G_ARM_LPAE=3Dy | 0/1    =
+
+mt8173-elm-hana       | arm64 | lab-collabora | gcc-8    | defconfig       =
+             | 0/1    =
+
+mt8173-elm-hana       | arm64 | lab-collabora | gcc-8    | defconfig+CON...=
+OMIZE_BASE=3Dy | 0/1    =
+
+omap4-panda           | arm   | lab-baylibre  | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 4/5    =
+
+omap4-panda           | arm   | lab-baylibre  | gcc-8    | multi_v7_defconf=
+ig           | 4/5    =
+
+omap4-panda           | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 4/5    =
+
+omap4-panda           | arm   | lab-baylibre  | gcc-8    | omap2plus_defcon=
+fig          | 0/1    =
+
+omap4-panda           | arm   | lab-collabora | gcc-8    | omap2plus_defcon=
+fig          | 0/1    =
+
+rk3399-gru-kevin      | arm64 | lab-collabora | gcc-8    | defconfig       =
+             | 84/88  =
+
+rk3399-gru-kevin      | arm64 | lab-collabora | gcc-8    | defconfig+CON...=
+OMIZE_BASE=3Dy | 84/88  =
+
+
+  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
+v5.8-12146-gc063c7b30ed0/plan/baseline/
+
+  Test:     baseline
+  Tree:     next
+  Branch:   pending-fixes
+  Describe: v5.8-12146-gc063c7b30ed0
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git
+  SHA:      c063c7b30ed0fc4824bcde48afa5902e1e5b13d3 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+at91-sama5d4_xplained | arm   | lab-baylibre  | gcc-8    | sama5_defconfig =
+             | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f324de474a782a07e52c1ae
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: sama5_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_=
+xplained.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_=
+xplained.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f324de474a782a07e52c=
+1af
+      failing since 98 days (last pass: v5.7-rc3-277-ga37f92ef57b2, first f=
+ail: v5.7-rc4-211-g6d4315023bc9) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+bcm2837-rpi-3-b       | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+             | 4/5    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f324db0e0aedba97752c1ad
+
+  Results:     4 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.t=
+xt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.h=
+tml
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/arm64/baseline/rootfs.cpio.gz =
+
+
+  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f324db0e0aedba9=
+7752c1b0
+      failing since 7 days (last pass: v5.8-54-gefd7bdec601b, first fail: v=
+5.8-1558-g0359180fcb42)
+      2 lines =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | exynos_defconfig=
+             | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f3255135f49047fbe52c1a7
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: exynos_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/exynos_defconfig/gcc-8/lab-collabora/baseline-exynos5422-=
+odroidxu3.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/exynos_defconfig/gcc-8/lab-collabora/baseline-exynos5422-=
+odroidxu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f3255135f49047fbe52c=
+1a8
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f32564dec90b53a1c52c1a7
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/bas=
+eline-exynos5422-odroidxu3.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/bas=
+eline-exynos5422-odroidxu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f32564dec90b53a1c52c=
+1a8
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | multi_v7_defconf=
+ig           | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f32599cea1ed602e452c1a7
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-exynos542=
+2-odroidxu3.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-exynos542=
+2-odroidxu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f32599cea1ed602e452c=
+1a8
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+exynos5422-odroidxu3  | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+G_ARM_LPAE=3Dy | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f325d6aa2f1c3f91152c1c5
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc=
+-8/lab-collabora/baseline-exynos5422-odroidxu3.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc=
+-8/lab-collabora/baseline-exynos5422-odroidxu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f325d6aa2f1c3f91152c=
+1c6
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+mt8173-elm-hana       | arm64 | lab-collabora | gcc-8    | defconfig       =
+             | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f324e74b3924c888152c1ae
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.=
+txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.=
+html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/arm64/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f324e74b3924c888152c=
+1af
+      failing since 1 day (last pass: v5.8-1558-g0359180fcb42, first fail: =
+v5.8-12062-g26dee840e516) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+mt8173-elm-hana       | arm64 | lab-collabora | gcc-8    | defconfig+CON...=
+OMIZE_BASE=3Dy | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f324fb2158a0bf99f52c1a6
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-collabora=
+/baseline-mt8173-elm-hana.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-collabora=
+/baseline-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/arm64/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f324fb2158a0bf99f52c=
+1a7
+      failing since 1 day (last pass: v5.8-1558-g0359180fcb42, first fail: =
+v5.8-12062-g26dee840e516) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+omap4-panda           | arm   | lab-baylibre  | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 4/5    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f3250868aba45774452c1cf
+
+  Results:     4 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/base=
+line-omap4-panda.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/base=
+line-omap4-panda.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f3250868aba457=
+74452c1d3
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35)
+      60 lines =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+omap4-panda           | arm   | lab-baylibre  | gcc-8    | multi_v7_defconf=
+ig           | 4/5    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f325265ed01af269352c1bf
+
+  Results:     4 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-omap4-pand=
+a.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-omap4-pand=
+a.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f325265ed01af2=
+69352c1c3
+      new failure (last pass: v5.8-rc7-210-gb684091a3d8c)
+      60 lines =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+omap4-panda           | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 4/5    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f32505f2827e6596752c1e5
+
+  Results:     4 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/bas=
+eline-omap4-panda.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/bas=
+eline-omap4-panda.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f32505f2827e65=
+96752c1e9
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35)
+      60 lines =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+omap4-panda           | arm   | lab-baylibre  | gcc-8    | omap2plus_defcon=
+fig          | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f3251e5a54005e44152c1a6
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/omap2plus_defconfig/gcc-8/lab-baylibre/baseline-omap4-pan=
+da.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/omap2plus_defconfig/gcc-8/lab-baylibre/baseline-omap4-pan=
+da.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f3251e5a54005e44152c=
+1a7
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+omap4-panda           | arm   | lab-collabora | gcc-8    | omap2plus_defcon=
+fig          | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f32519df0f265b48752c1d5
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/omap2plus_defconfig/gcc-8/lab-collabora/baseline-omap4-pa=
+nda.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm/omap2plus_defconfig/gcc-8/lab-collabora/baseline-omap4-pa=
+nda.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f32519df0f265b48752c=
+1d6
+      failing since 6 days (last pass: v5.8-1558-g0359180fcb42, first fail:=
+ v5.8-3221-g983112062f35) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+rk3399-gru-kevin      | arm64 | lab-collabora | gcc-8    | defconfig       =
+             | 84/88  =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f324d9d3f5a60b6f152c1ee
+
+  Results:     84 PASS, 4 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig/gcc-8/lab-collabora/baseline-rk3399-gru-kevin=
+.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig/gcc-8/lab-collabora/baseline-rk3399-gru-kevin=
+.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/arm64/baseline/rootfs.cpio.gz =
+
+
+  * baseline.bootrr.rockchip-pcie-probed: https://kernelci.org/test/case/id=
+/5f324d9d3f5a60b6f152c22e
+      failing since 1 day (last pass: v5.8-1558-g0359180fcb42, first fail: =
+v5.8-12062-g26dee840e516) =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+rk3399-gru-kevin      | arm64 | lab-collabora | gcc-8    | defconfig+CON...=
+OMIZE_BASE=3Dy | 84/88  =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f324e2cdd8fd8744852c1a6
+
+  Results:     84 PASS, 4 FAIL, 0 SKIP
+  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-collabora=
+/baseline-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.8-12146-=
+gc063c7b30ed0/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-collabora=
+/baseline-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05/arm64/baseline/rootfs.cpio.gz =
+
+
+  * baseline.bootrr.rockchip-pcie-probed: https://kernelci.org/test/case/id=
+/5f324e2cdd8fd8744852c1e6
+      failing since 1 day (last pass: v5.8-1558-g0359180fcb42, first fail: =
+v5.8-12062-g26dee840e516) =20
