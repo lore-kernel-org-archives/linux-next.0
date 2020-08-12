@@ -1,4 +1,4 @@
-Return-Path: <SRS0=bX0t=BV=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=3+ja=BW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,93 +6,115 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70B7C433DF
-	for <linux-next@archiver.kernel.org>; Tue, 11 Aug 2020 23:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291A1C433E0
+	for <linux-next@archiver.kernel.org>; Wed, 12 Aug 2020 01:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF9C2076C
-	for <linux-next@archiver.kernel.org>; Tue, 11 Aug 2020 23:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D710420678
+	for <linux-next@archiver.kernel.org>; Wed, 12 Aug 2020 01:21:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Serdodq7"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V27m89sQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726235AbgHKXVZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Aug 2020 19:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbgHKXVY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2020 19:21:24 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9428C06174A;
-        Tue, 11 Aug 2020 16:21:24 -0700 (PDT)
+        id S1726173AbgHLBVT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Aug 2020 21:21:19 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:35097 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726143AbgHLBVS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 11 Aug 2020 21:21:18 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BR83N6h2Xz9sTF;
-        Wed, 12 Aug 2020 09:21:20 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BRBjl2xGFz9sTR;
+        Wed, 12 Aug 2020 11:21:15 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1597188081;
-        bh=Y2vW2Epp8nTTxxe83f4Ui3It8Mqs0UxYWMCHKIcXLJk=;
+        s=201702; t=1597195276;
+        bh=QBHyCva9zEOwk3HWDt2SuYf4ktc43CEMAm9+qAb06+U=;
         h=Date:From:To:Cc:Subject:From;
-        b=Serdodq7YpCGYgosG96NAHtfdDy1lsToeReIeHp/XtAcU/5fh5lgFZHAKKP8cFC5t
-         ib0k2cw8oBXLs7aG7JWCaNu4iZ/K3DOSwWmAsWXy3ZaWJauFnnWoqHQ4hpjwjHhSGK
-         mblgiR0S4DCl1CFAWGzDowXTJyPQYTDws8cuZKoh8nCUVwYF2U4X4huJlNiMxtYYL9
-         sSIWoG7wABhqMdMsDPQPL3uLeJ7W8K0blihWvB98kxGKlhfhXeanq6Em+QyJ716dtc
-         ZqW2DCqaL+gfgQKuQUtSNUQAyQW6pIRIn9f9q9OdaVPLw2qt/Cd9AfmoMTgnGSnN50
-         JWONHJxs1L6wQ==
-Date:   Wed, 12 Aug 2020 09:21:19 +1000
+        b=V27m89sQk3Tf9htHNPwxaPbJMuHI3HND9bv95NQ4Ohb6sDA49etPYgAGpNbKcdKPX
+         Q6NYsU+gf+NL2FP0vjVpv/mSBz3u8ycoHa77vz8pWfKsjo3COgRNXYEWTeiF2S+mMO
+         /zmP8qGDHWHX1ZELXn1qU9BKp3St7Gig3IzDEIp+QSJfMgdXh0egrUMpUV9l0n8oLh
+         y3q0WAj+kWpnvNlKDJPqigHrC1aYAiKwKOlJZojNUhCmE1UDO8ccBp26D45CCz3AjH
+         QFR7Qxx+rbP3gHA2xc550W1zqo/pVw/HLBucuFEIPR2A24DUS07NDUg/5JI7OnrzZW
+         3vdZeUt6lJoMQ==
+Date:   Wed, 12 Aug 2020 11:21:13 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Takashi Iwai <tiwai@suse.de>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hui Wang <hui.wang@canonical.com>
-Subject: linux-next: build warning after merge of the sound-current tree
-Message-ID: <20200812092119.710d92ec@canb.auug.org.au>
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Message-ID: <20200812112113.4234eb58@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/N8rC=SW9_Z70GIOlKuDN2Pz";
+Content-Type: multipart/signed; boundary="Sig_/Z53MucyYlPMirJyzsMcZgLy";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/N8rC=SW9_Z70GIOlKuDN2Pz
+--Sig_/Z53MucyYlPMirJyzsMcZgLy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sound-current tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Today's linux-next merge of the tip tree got a conflict in:
 
-sound/pci/hda/patch_realtek.c: In function 'alc285_fixup_hp_gpio_led':
-sound/pci/hda/patch_realtek.c:4163:19: warning: unused variable 'spec' [-Wu=
-nused-variable]
- 4163 |  struct alc_spec *spec =3D codec->spec;
-      |                   ^~~~
+  kernel/time/timekeeping.c
 
-Introduced by commit
+between commit:
 
-  404690649e6a ("ALSA: hda - reverse the setting value in the micmute_led_s=
-et")
+  025e82bcbc34 ("timekeeping: Use sequence counter with associated raw spin=
+lock")
+
+from Linus' tree and commit:
+
+  19d0070a2792 ("timekeeping/vsyscall: Provide vdso_update_begin/end()")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/N8rC=SW9_Z70GIOlKuDN2Pz
+diff --cc kernel/time/timekeeping.c
+index 406306b33452,4c7212f3c603..000000000000
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@@ -39,8 -39,6 +39,8 @@@ enum timekeeping_adv_mode=20
+  	TK_ADV_FREQ
+  };
+ =20
+- static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+++DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ +
+  /*
+   * The most important data for readout fits into a single 64 byte
+   * cache line.
+
+--Sig_/Z53MucyYlPMirJyzsMcZgLy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8zJ/AACgkQAVBC80lX
-0Gw6FQf/XlUYJEIXpWSeKfVYd/oIa6KCjtEQw7DyvvBDI7FYzdENg7Kbohkghsgp
-UMTru+QX84d6Z7gzjiKC6djaa6DL1Be/g8Ycjw0J6KQSDWm2kUaUA1RDN0+6I+of
-prJzmDe7N+sULAX2gZAC5GC8vTTsFTGXOBPHwWlYhtlT0zDWgG6r70/rt6SdnTfJ
-W/aqwRwATt5Hk39sN0zBMjuBAxEZ6XcFNGZTdRNAwhpdy/wTfiHMM/SF5oodUrDk
-x1WFCnWitNJhMUq/dlCeCsyBkYVecLnyrvBpvvPP6YIzvJAlmzhVOTs6nwoVM45V
-FT59gSxCHyyq2sz1fB9sRhMR4F6GVQ==
-=/88z
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8zRAkACgkQAVBC80lX
+0Gy6owf+LqSPbYCgCg4vUHyZzgckHki7mmlfzXTbeMAjWoqZTIx22rVumNYIDvVL
+AQuviDspD3CmuCShL2VhhQA5NkLeCncnth2WUfz5eb8/ftZG6+OSZFCvtMyzXHuP
+rt35BfuaUEd+PuXLaoqS5dkO2Gc/IWZtlTDChdJozh9ZTC/rOBuGZL56bKlFbFvb
+ruX18jpVoVJOLr3pc6PpW3M0Rw4PvkgWd2QsM+ErxFjEAiFqdQ2EIef4pLlTw4B9
+MdH88azzZSqAzCK48r6Q4g1+haGPPfQmfBbL3TYwhQcf896Z30aJPuwismsfknkq
+Ys0hR1fBFfZxXYVblaK/5oMJKbtdcg==
+=Rkfl
 -----END PGP SIGNATURE-----
 
---Sig_/N8rC=SW9_Z70GIOlKuDN2Pz--
+--Sig_/Z53MucyYlPMirJyzsMcZgLy--
