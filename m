@@ -2,96 +2,92 @@ Return-Path: <SRS0=5C1F=B3=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE00C433E1
-	for <linux-next@archiver.kernel.org>; Mon, 17 Aug 2020 21:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ABEC433E3
+	for <linux-next@archiver.kernel.org>; Mon, 17 Aug 2020 22:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF08220738
-	for <linux-next@archiver.kernel.org>; Mon, 17 Aug 2020 21:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DFC120674
+	for <linux-next@archiver.kernel.org>; Mon, 17 Aug 2020 22:09:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F+L43MZy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3/d+es/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbgHQV7a (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 17 Aug 2020 17:59:30 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37975 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbgHQV72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 17 Aug 2020 17:59:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BVny51Jg3z9sR4;
-        Tue, 18 Aug 2020 07:59:24 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1597701565;
-        bh=yM/Mgdu+FG9MC2whcR8iLT1N9AqLP/cfNnUw3I8bLms=;
-        h=Date:From:To:Cc:Subject:From;
-        b=F+L43MZybxUPHpbR0Fk8EA3DckQo/ExKKTUb9UAkMEzVburVfT009k4X4PT7rncgp
-         dYOO3OrdmhELi9RVKFxdhwocZA5nAPcfohjMFcASP+H6lISRJ4GA8+2OmvoYxdgeg1
-         MYXNRSSUrJABAYng7RG32GOqObGWKjUscs0TiZBqiFOi283SHQnPbevPgunpfRUABO
-         sox5hggCTflwXHS41CoTB+UyWBf6GLrQiZMcNRuve/umj89Qj+83tOZjgI4G07wPSj
-         L2DeNOx6ehBehBpN9FjTBHTMH58JyfEYpmtzgz1s7xLklPQpEc7TDQ0/+eeZEv72Yw
-         +Fbt1bRjMz0Fg==
-Date:   Tue, 18 Aug 2020 07:59:18 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1730016AbgHQWJR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 17 Aug 2020 18:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728741AbgHQWJN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2020 18:09:13 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02EDEC061389;
+        Mon, 17 Aug 2020 15:09:13 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id u126so19121443iod.12;
+        Mon, 17 Aug 2020 15:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=kmrZR8ILE+zMSpiGsSvpHpAliJOJWWuFzBlFgpRJThM=;
+        b=Z3/d+es/kdHvkLa0W7gppN/H/5OCefRnXFXYL5XOxmZdrEwTmYriZJlrnwhnBSncWi
+         ZHwtmh9jr60Y7Uc4Aamj0QIYC9gLSaiGYeyi6YNCXmMl2qbmkXr/XEx5nczunm5GBHOD
+         WBkLsw0zMDSECa1fHTIrAu5SMZ1VCrIpE4ugwI8gOOxSIh0XhvJpzK7Kt8tRzVTF33V2
+         j5r/4W4ZMebBV9PCBn3ctQrXfdD6qNHGWkRS2jBxa1HlFo4KhYvavHipC5j0rHzfDj5R
+         ine/7gKGqkzY028YoTmtsN286QS0m5mZzAvHYbsLppweXTOZhlWqgX1IJcJn7PxOr+po
+         8HLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=kmrZR8ILE+zMSpiGsSvpHpAliJOJWWuFzBlFgpRJThM=;
+        b=o/LmgytehrZfhw31fAFHcx8WYxV7+TkbFxsQYU0zENhA3x3HrLykxlwB54/aif+Lzb
+         QTycNeClBEo6sxQXQVQsacFkDSCgkkp4Y4xHUAQ7KOOQ9GYy/sY4fZ9eVAaRm3wY9mAY
+         ptpmsu6oz2LIARDwcWLUDtZ34Ef2/lYejf2hCmAEDKqQmyvbE1xef/j5N1mXl2njY+Su
+         w8hzY7KapDl885Rlqz0nsvAlIYDC+9sHa/MEyp1phBfns6f2Dl+7h3hgCbSZdStbb6Am
+         YvPJjoYU0NDOryAP131xcV6yavfThjmM/7L5f3CA2u3DRH2M/qkUBSmBqhQEGXcWyC6m
+         N3HQ==
+X-Gm-Message-State: AOAM532+CqeryxUp/ECAQsufMqDps/N6xFCis2FtWX76Kk89U/YoldfI
+        3z8Epp/Ii3PpTj44VSZB97xMrDTU9IZGP3iNwmY=
+X-Google-Smtp-Source: ABdhPJzxHAUdEQ/PzDpP6mC6eDteoLkBCEtX33rbqiPackUZdVk8CHeMrK2hL0BcCcXjMSPnGlmprmniIbZ0RFgsLjU=
+X-Received: by 2002:a02:1988:: with SMTP id b130mr15917005jab.15.1597702151428;
+ Mon, 17 Aug 2020 15:09:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200818075918.15ac1099@canb.auug.org.au>
+In-Reply-To: <20200818075918.15ac1099@canb.auug.org.au>
+Reply-To: bjorn@helgaas.com
+From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
+Date:   Mon, 17 Aug 2020 17:09:00 -0500
+Message-ID: <CABhMZUUzSQQZbySX6-E6JL8nBd8fc=cfSjih9LWJk0C-H8C=eQ@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the pci-current tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: linux-next: Fixes tag needs some work in the pci-current tree
-Message-ID: <20200818075918.15ac1099@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oxq4VH/O44VwC9E6N9Xi50c";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/oxq4VH/O44VwC9E6N9Xi50c
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 17, 2020 at 4:59 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   35150fc886a0 ("PCI/P2PDMA: Fix build without DMA ops")
+>
+> Fixes tag
+>
+>   Fixes: 2f9237d4f6d ("dma-mapping: make support for dma ops optional")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-Hi all,
-
-In commit
-
-  35150fc886a0 ("PCI/P2PDMA: Fix build without DMA ops")
-
-Fixes tag
-
-  Fixes: 2f9237d4f6d ("dma-mapping: make support for dma ops optional")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-Not worth a rebase, but worth remembering for next time.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/oxq4VH/O44VwC9E6N9Xi50c
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl86/bYACgkQAVBC80lX
-0GxW/wf/XVCcXwhw9gTHGhQHpWOKfn1/WSPlYE8UGeMvq4S4r7ZcYzMlKBEK9y3V
-MwqnRXUgCpgmEtmFt0tu6rbK13nNaHERExiGNDEz5T9aKoF7AvZKnnCkZiy0uxRL
-1O/d7YsgR8hv7yZTckbNYNB2jsD5n4+L6EnxCRFuy7lXxJV9nT+Pk31SxdDWSYLs
-CN14XF/694F9wV4Xvt4Fe5UeWs549CfzratL3gOnoMhBpApbEXslqEV9U6SZ1pDH
-thWc3f+ib3Q4BEuhFiuNqtiAGP4QP/IzQKGXBLO0CIimRstsYgwKueafv1tl4Z64
-Dl9y7RTmE6z54TQctQdJK454PxyJeQ==
-=83xk
------END PGP SIGNATURE-----
-
---Sig_/oxq4VH/O44VwC9E6N9Xi50c--
+Fixed, thanks.
