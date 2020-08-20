@@ -6,68 +6,79 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB8DC433E1
-	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 09:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AC0C433E1
+	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 13:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFCC21744
-	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 09:27:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4B71207DA
+	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 13:01:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgHTJ1H (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Aug 2020 05:27:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59310 "EHLO mx2.suse.de"
+        id S1727792AbgHTNBz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Aug 2020 09:01:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:44475 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727866AbgHTJ0N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Aug 2020 05:26:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 11E3EAC7D;
-        Thu, 20 Aug 2020 09:26:39 +0000 (UTC)
-Date:   Thu, 20 Aug 2020 11:26:11 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luca Stefani <luca.stefani.ge1@gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the tip tree
-Message-ID: <20200820092611.GD17365@zn.tnic>
-References: <20200820161239.25a9b3f4@canb.auug.org.au>
- <20200820082149.GB17365@zn.tnic>
- <20200820191502.1df900be@canb.auug.org.au>
- <20200820092221.GU2026@twin.jikos.cz>
+        id S1729033AbgHTJkl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Aug 2020 05:40:41 -0400
+IronPort-SDR: ZLFWryVtWQ2sbvEQWyNXSFbHoj79jmR0bGsufnMp9JmdvE+ZmSEwEodLn1QOxUonp9DqZMRRbR
+ ClI/Kr3sJi9A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9718"; a="240093999"
+X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
+   d="scan'208";a="240093999"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2020 02:40:38 -0700
+IronPort-SDR: E40CW/24bwrXLELWjiM6ePuqcHQIEYJyWgdOpngCph/tENCwJFg+8CovzvyYfMS1FKZoIu8e0O
+ nlaEONdqORFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
+   d="scan'208";a="327377344"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 20 Aug 2020 02:40:37 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1k8h3k-00A50Z-2Y; Thu, 20 Aug 2020 12:40:36 +0300
+Date:   Thu, 20 Aug 2020 12:40:36 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the pinctrl-intel tree
+Message-ID: <20200820094036.GU1891694@smile.fi.intel.com>
+References: <20200820113039.71120e6a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200820092221.GU2026@twin.jikos.cz>
+In-Reply-To: <20200820113039.71120e6a@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 11:22:21AM +0200, David Sterba wrote:
-> (Dunno why not an alias but it works the same way.)
+On Thu, Aug 20, 2020 at 11:30:39AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the pinctrl-intel tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> x86_64-linux-gnu-ld: drivers/pinctrl/intel/pinctrl-baytrail.o: in function `byt_pinctrl_probe':
+> pinctrl-baytrail.c:(.text+0x12bf): undefined reference to `intel_pinctrl_get_soc_data'
+> 
+> Caused by commit
+> 
+>   2db97df9f29d ("pinctrl: baytrail: Switch to use intel_pinctrl_get_soc_data()")
 
-I have this alias:
+Right, I have updated it. Shouldn't be issues now.
 
-	one = show -s --pretty='format:%h (\"%s\")'
+> CONFIG_PINCTRL_BAYTRAIL=y
+> CONFIG_PINCTRL_INTEL=m
+> 
+> I have ised the pinctrl-intel tree from next-20200819 for today.
 
-and so I do
-
-$ git one <sha1>
-
-and then paste it after Fixes:
-
-I have it this way because quoting commits is kinda very frequent
-operation, not only for Fixes: tags.
-
-:-)
+Thanks!
 
 -- 
-Regards/Gruss,
-    Boris.
+With Best Regards,
+Andy Shevchenko
 
-SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
+
