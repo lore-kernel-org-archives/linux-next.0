@@ -4,63 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5AFC433DF
-	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 13:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8196C433E1
+	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 13:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C771208E4
-	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 13:11:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1DAE22B43
+	for <linux-next@archiver.kernel.org>; Thu, 20 Aug 2020 13:39:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q6l7e3aB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eETmXHMW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbgHTNKo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 20 Aug 2020 09:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57966 "EHLO
+        id S1729210AbgHTNjN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 20 Aug 2020 09:39:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728724AbgHTJhW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Aug 2020 05:37:22 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB2BC061383
-        for <linux-next@vger.kernel.org>; Thu, 20 Aug 2020 02:37:21 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id a1so729950vsp.4
-        for <linux-next@vger.kernel.org>; Thu, 20 Aug 2020 02:37:21 -0700 (PDT)
+        with ESMTP id S1726752AbgHTJaF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Aug 2020 05:30:05 -0400
+Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383CFC061383
+        for <linux-next@vger.kernel.org>; Thu, 20 Aug 2020 02:30:05 -0700 (PDT)
+Received: by mail-vs1-xe2d.google.com with SMTP id k25so699107vsm.11
+        for <linux-next@vger.kernel.org>; Thu, 20 Aug 2020 02:30:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5ST+s1VgrChigIylT4K0fDa+xlZ9DEdl2V2OEw6xk/A=;
-        b=Q6l7e3aB6cXvDGQDWPmsO6nE8jKBpLQECvMRYe8Lv0fwF1uKRy3O9LStHPIlg5F1Li
-         /ZYJ4VffxOWSR+jebqLcjxeZ/MI36sP7LKWcMWrdV5ggv0+cQ+vAKjNYjB+/UDX0enrQ
-         sDH08Zs7pC7hlzdthniOPY45mIpDgq+nEpsSjljUbApMMXuCM4CGv1+crVue021L61Cq
-         liSfhbH2oEpNSlhQke/evvT8o1faVARSDooE05p9qbq3/5ZqUtmiA8sWYC6EeFsJnf7j
-         REogkKt9AmqYlPlq3n/7tvLM6VGPZrSSoObfENQtxMcyouJ59FIXRXG4iCKJDbI8WkSb
-         iT9A==
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=6apwous/HgYA9e9mDqfrOOmq5wxR8eDdobsnINeJ2Ak=;
+        b=eETmXHMWgfN31+kZjG7CG3fcmrCL+QERYJYc7EZzYmZ/iyBm5vlKvOgbCCqNZxA+XN
+         10DkxJfP4eEu/UlvRJDammSXb+HlcfLo/fsFf2aSFcRcqIBQ+7RjdJr38r2T4P+8cYKO
+         8d/CnJ8R9svj2hUovuPzmNxBKfCNxtu6eLdBKKXWJVho4oL/RoLTArsoGOYd0BIX4/qh
+         +UqJMgXb82l+X/lNn+LZEZ6OyBAE3uKibnk1yh8wKFDHh+ShOt7pHuNUpHZjMK/Qj8+B
+         5xpyiCvymikyE0YC0aGlESFBcdypcqQY4fBWYVaeZr3tCYVHbpKA/DJkxajl5oNxBOLv
+         96Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5ST+s1VgrChigIylT4K0fDa+xlZ9DEdl2V2OEw6xk/A=;
-        b=esNt3EV27NvXeZ9qee+Zl9rT+7j4GB6NynuLX5GrJ39eghg9jYIpWWCBe+Qkw/Mnuz
-         v01ZXXTiTEHxif9snt0E+n2WC4z6xh2MxErelMVUpzthp8m+H3AJ+YWdH+UptviZNAJU
-         QG1Sy5Y70S/1BzogJRoE4xovXMdkjlgH/O04BdzAlAB+vkeIXv3YI/afFLD7wiC7FjpQ
-         HgdBy+jP84Xrb4bEj5JkxInkEjCzlnyfrE9AGbVxiYnXDHD3/XgI2DeVsCt3AJIDfLfc
-         yonBrh+xe7gFAZL++ZbDR5x1pT+T+UMcfeYAUg0R5vN/ryomPGUAQIFsf1KpQfO/utL2
-         xJ4Q==
-X-Gm-Message-State: AOAM532snLql3py3Q+nGAHp3zVWeicDyr2OQG+2OeV/Bym/9dmveT+z0
-        RaTkO+Ia/hVMmDEqaWImdZObv29HvqjxJKJwVpBqU67oMdUlqA==
-X-Google-Smtp-Source: ABdhPJykM/Ah+8o5lls+LOP2kgmsthnXq9FjKqghIi9CrMLYv2Lea57WiTqrBpVnWKZxBKh0GsNVTIk/VCu+skb80FE=
-X-Received: by 2002:a67:6996:: with SMTP id e144mr1285283vsc.185.1597916239685;
- Thu, 20 Aug 2020 02:37:19 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=6apwous/HgYA9e9mDqfrOOmq5wxR8eDdobsnINeJ2Ak=;
+        b=Fe5JDvSCDDN2W4j9BY+tYSZLmOgumyt6dUWEWIaebr3Y8rc9sdp1UTQfD2p0gscPxo
+         JxejEgMdizEama20CHQvASnAOsajEl0NbT6WSZTldl4WbO9fCylNYwoYdRmxYpKBtNPm
+         vOXC0DatZaNa8BFgTtytMfz3egZlOIMcN7gAiq/6Ix0mbsapUOSHA+PCN3T1/wiklIbm
+         m6jTF7QfniO9PvcuO59NFPlpxmOtw533O5zizY/p/2HyuUVnfa3Fqnioj/lYz4cJe/we
+         XDNraGOFIXeqiaizTvwIR/ULPpivzsBDwAzWmTRNA8to24+LMudXPAs85OBMkJgVYfE4
+         WvXg==
+X-Gm-Message-State: AOAM530v3ID5SImxgA9ne/+T8P+KgGHJc0pDAJkLU0Zt5EylfnVsvSlU
+        BvTjy6HqpfqZOmdiOwPNrGE3Af38mFhKY4BAcYb2UyHXGJ4XIyzS
+X-Google-Smtp-Source: ABdhPJxnX/aP9f1YYTlY9xogXia5cP6a2JVmyDFGvwr+8ZISnTbDnkGzsLz43KbFCYTyN0PDQwvWxV+jgNeZmbRKM00=
+X-Received: by 2002:a67:e45:: with SMTP id 66mr1205335vso.191.1597915803707;
+ Thu, 20 Aug 2020 02:30:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <CA+G9fYuNS3k0DVT62twfV746pfNhCSrk5sVMcOcQ1PGGnEseyw@mail.gmail.com>
-In-Reply-To: <CA+G9fYuNS3k0DVT62twfV746pfNhCSrk5sVMcOcQ1PGGnEseyw@mail.gmail.com>
 From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 20 Aug 2020 15:07:07 +0530
-Message-ID: <CA+G9fYusZnYMYjKNcjf4cHwFUmV_=fXRHahsbtdsKwUzB98zEQ@mail.gmail.com>
-Subject: =?UTF-8?B?UmU6IG1tL2d1cC5jOjE5MjI6NzogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIA==?=
-        =?UTF-8?B?ZnVuY3Rpb24g4oCYaXNfdmFsaWRfZ3VwX2ZsYWdz4oCZ?=
+Date:   Thu, 20 Aug 2020 14:59:52 +0530
+Message-ID: <CA+G9fYuNS3k0DVT62twfV746pfNhCSrk5sVMcOcQ1PGGnEseyw@mail.gmail.com>
+Subject: =?UTF-8?B?bW0vZ3VwLmM6MTkyMjo3OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuYw==?=
+        =?UTF-8?B?dGlvbiDigJhpc192YWxpZF9ndXBfZmxhZ3PigJk=?=
 To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
         linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
@@ -85,30 +83,25 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, 20 Aug 2020 at 14:59, Naresh Kamboju <naresh.kamboju@linaro.org> wr=
-ote:
->
-> arm and riscv architecture build failed on linux next 20200820 tag.
+arm and riscv architecture build failed on linux next 20200820 tag.
 
-The pass with defconfig but failed with tinyconfig and allnoconfig.
+make -sk KBUILD_BUILD_USER=3DTuxBuild -C/linux -j16 ARCH=3Darm
+CROSS_COMPILE=3Darm-linux-gnueabihf- HOSTCC=3Dgcc CC=3D"sccache
+arm-linux-gnueabihf-gcc" O=3Dbuild zImage
 
-> make -sk KBUILD_BUILD_USER=3DTuxBuild -C/linux -j16 ARCH=3Darm
-> CROSS_COMPILE=3Darm-linux-gnueabihf- HOSTCC=3Dgcc CC=3D"sccache
-> arm-linux-gnueabihf-gcc" O=3Dbuild zImage
->
-> 348#
-> 349../mm/gup.c: In function =E2=80=98get_user_pages=E2=80=99:
-> 350../mm/gup.c:1922:7: error: implicit declaration of function
-> =E2=80=98is_valid_gup_flags=E2=80=99 [-Werror=3Dimplicit-function-declara=
-tion]
-> 351 1922 | if (!is_valid_gup_flags(gup_flags))
-> 352 | ^~~~~~~~~~~~~~~~~~
-> 353cc1: some warnings being treated as errors
->
-> Full build log,
-> https://gitlab.com/Linaro/lkft/kernel-runs/-/jobs/695005038
-> https://gitlab.com/Linaro/lkft/kernel-runs/-/jobs/695005042
->
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+348#
+349../mm/gup.c: In function =E2=80=98get_user_pages=E2=80=99:
+350../mm/gup.c:1922:7: error: implicit declaration of function
+=E2=80=98is_valid_gup_flags=E2=80=99 [-Werror=3Dimplicit-function-declarati=
+on]
+351 1922 | if (!is_valid_gup_flags(gup_flags))
+352 | ^~~~~~~~~~~~~~~~~~
+353cc1: some warnings being treated as errors
+
+Full build log,
+https://gitlab.com/Linaro/lkft/kernel-runs/-/jobs/695005038
+https://gitlab.com/Linaro/lkft/kernel-runs/-/jobs/695005042
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
