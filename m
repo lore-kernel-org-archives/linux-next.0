@@ -2,87 +2,173 @@ Return-Path: <SRS0=LFbU=CD=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362F7C433DF
-	for <linux-next@archiver.kernel.org>; Tue, 25 Aug 2020 09:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAB5C433DF
+	for <linux-next@archiver.kernel.org>; Tue, 25 Aug 2020 11:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 163122068F
-	for <linux-next@archiver.kernel.org>; Tue, 25 Aug 2020 09:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BEFD2071E
+	for <linux-next@archiver.kernel.org>; Tue, 25 Aug 2020 11:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vjpbkbla"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BW+nd92d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgHYJRN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Aug 2020 05:17:13 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:38085 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726095AbgHYJRM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 25 Aug 2020 05:17:12 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BbNfr5s2Nz9sSP;
-        Tue, 25 Aug 2020 19:17:08 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1598347030;
-        bh=8+HCk3p1QLwmXwB6X50SNetgu111UDw1AjiCvBM1Qoc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VjpbkblajU7mqY192XaSvH07JYOT7dIP0r2K67EFTD1QN5Rjx61EmDnEqE9jiSPXG
-         97jJNo9a388hhQQ/84o/6/nHx/VSCMAyjV5E7jSE7KQ+qGNA+qTWjkakLKPbFldMlu
-         abxbDo0eM12E8B8p4LT76udOlpl5mZASdfSWjIqEUMB16qQ/ehJHKRf1e3Eax+EdBx
-         VIFvm2bNHKGES27gzqd1/PiacoZ1Ih4aM+BJoiTSRvACxLV3j7EVeJu7D/ntZWujpM
-         Ma/O25A6iL+3AC5MWjr08nMQUQ4rf3y9jLfYOwJqoIMTY5QopiClq08e/e3WP6Jxrj
-         GJKBz+VhCxQkw==
-Date:   Tue, 25 Aug 2020 19:17:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: linux-next: Signed-off-by missing for commit in the net-next tree
-Message-ID: <20200825191707.3c244b4f@canb.auug.org.au>
+        id S1729477AbgHYLNe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Aug 2020 07:13:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:65236 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728117AbgHYLNc (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Aug 2020 07:13:32 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07PB3t0f068199;
+        Tue, 25 Aug 2020 07:13:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=NCSDhqHannG42tt3LoU0vm6cDgbpbWzA2ffRChqRUg4=;
+ b=BW+nd92dnKCyZloBrICqlkJTdmuycQOr7iExT3merVZMCYJM0XCTmCtIzuhOuX6PRfzW
+ 2DTftP8QqK8nX0FosShB4ISQe9QIVTVY55S5g2LnbBq0ZsKTwBoM4/hfVYhEJxEbDxY0
+ 7dOAVt4I4eiVMxZWG1Zaw3qzx1KMifRUvoraJIK26cumeAySATSCHhdpAOthRiOZ+wDc
+ s2ZnAiU1B27REZfW2qkiSpHtXsdQIS9LIq1NZrjh3VYrmtNmKnmkw1EXG5F1B3f+TAlY
+ frI+t60DqFmEWiqcOlBLcdBTNmKVQaJkhaehoKCfDv/EoUVOGHtNJjfChyBwFaWQv9VA Zg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33515vrp39-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 07:13:11 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07PB4VL5070334;
+        Tue, 25 Aug 2020 07:13:11 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33515vrp2k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 07:13:11 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07PBD9Qk000946;
+        Tue, 25 Aug 2020 11:13:09 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 332utq21hu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 11:13:09 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07PBD7Eh31326598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Aug 2020 11:13:07 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B6844C059;
+        Tue, 25 Aug 2020 11:13:07 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0EBB74C040;
+        Tue, 25 Aug 2020 11:13:05 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.145.152.21])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 25 Aug 2020 11:13:04 +0000 (GMT)
+Date:   Tue, 25 Aug 2020 14:13:03 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Anders Roxell <anders.roxell@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, LTP List <ltp@lists.linux.it>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Xu <peterx@redhat.com>, opendmb@gmail.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        afzal.mohd.ma@gmail.com, Will Deacon <will@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] arm: __pmd_free_tlb(): call page table desctructor (Was:
+ BUG: Bad page state in process true pfn:a8fed on arm)
+Message-ID: <20200825111303.GB69694@linux.ibm.com>
+References: <CA+G9fYt=oYWHEG6VNkfEh8+UxbReS6_+9hnz+1bOYZHj5j1F_Q@mail.gmail.com>
+ <20200824110645.GC17456@casper.infradead.org>
+ <CA+G9fYvjKGF3HZXyd=JQHzRG=r=bmD0hYQn02VL4Y=5y57OgaA@mail.gmail.com>
+ <20200825083119.GA69694@linux.ibm.com>
+ <CADYN=9+2RDeUdbNT+XT6WgTW70UCdsARqaAL7PQ0+OPLvrkNng@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Qee=H7JH_MGf+Bt0fL0_Jdo";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADYN=9+2RDeUdbNT+XT6WgTW70UCdsARqaAL7PQ0+OPLvrkNng@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-25_02:2020-08-25,2020-08-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=5
+ spamscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1011 priorityscore=1501 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008250079
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Qee=H7JH_MGf+Bt0fL0_Jdo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 25, 2020 at 10:53:22AM +0200, Anders Roxell wrote:
+> On Tue, 25 Aug 2020 at 10:32, Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > On Tue, Aug 25, 2020 at 01:03:53PM +0530, Naresh Kamboju wrote:
+> > > On Mon, 24 Aug 2020 at 16:36, Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > On Mon, Aug 24, 2020 at 03:14:55PM +0530, Naresh Kamboju wrote:
+> > > > > [   67.545247] BUG: Bad page state in process true  pfn:a8fed
+> > > > > [   67.550767] page:9640c0ab refcount:0 mapcount:-1024
+> > > >
+> > > > Somebody freed a page table without calling __ClearPageTable() on it.
+> > >
+> > > After running git bisect on this problem,
+> > > The first suspecting of this problem on arm architecture this patch.
+> > > 424efe723f7717430bec7c93b4d28bba73e31cf6
+> > > ("mm: account PMD tables like PTE tables ")
+> > >
+> > > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > > Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> >
+> > Can you please check if this fix helps?
+> 
+> That fixed the problem.
 
-Hi all,
+Since this is still in -mm tree, I've omitted commit sha and Fixes.
 
-Commit
+Andrew, is it possible to add this as a fixup to for the original
+commit?
 
-  0093870aa891 ("batman-adv: Migrate to linux/prandom.h")
 
-is missing a Signed-off-by from its committer.
+From db2efd7b89b1d943eb250e7e195c8cbaaa2e6ac9 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Tue, 25 Aug 2020 13:57:12 +0300
+Subject: [PATCH] arm: __pmd_free_tlb(): call page table desctructor
 
---=20
-Cheers,
-Stephen Rothwell
+As long as PMD tables are accounted as PTE tables ("mm: account PMD tables
+like PTE tables") they can be freed only after pgtable_pmd_page_dtor() is
+called.
 
---Sig_/Qee=H7JH_MGf+Bt0fL0_Jdo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Add the missing call in ARM's version of __pmd_free_tlb for
+CONFIG_ARM_LPAE=y case.
 
------BEGIN PGP SIGNATURE-----
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ arch/arm/include/asm/tlb.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9E1xMACgkQAVBC80lX
-0Gwh7ggAnnBLs/I+UEtLEoB8fQg2672yo7GLfnZFpN9+LrY4i5vhF2YTPXAQU1en
-A4KVU9QxZbt5k7ZZW2u0Dx1+h8XXTjmn6cQR28i+JXcv7BFwsCGKM3VCVhrQZzJj
-OklyzKb0OIrytVvQBnScuOhQAaunFFj9zMH1iTAapfzco9NTVyv+gQG+rrubR2uV
-SFZVqY5ShtTqM5MybBvHGImK6cm0XnLFNwrAFwUQeeHysMpkuYq5FQcVotH74Yd5
-BOp+ixOvuvWBmQrkuvesAMmonXHADgSgPkWCFXIkwEHriQfH+uWOD9U0jFor+pK/
-jIBlD63YZb2Eedqiy2b3+BwgMrvYrA==
-=Qoeq
------END PGP SIGNATURE-----
-
---Sig_/Qee=H7JH_MGf+Bt0fL0_Jdo--
+diff --git a/arch/arm/include/asm/tlb.h b/arch/arm/include/asm/tlb.h
+index 9415222b49ad..b8cbe03ad260 100644
+--- a/arch/arm/include/asm/tlb.h
++++ b/arch/arm/include/asm/tlb.h
+@@ -59,6 +59,7 @@ __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp, unsigned long addr)
+ #ifdef CONFIG_ARM_LPAE
+ 	struct page *page = virt_to_page(pmdp);
+ 
++	pgtable_pmd_page_dtor(page);
+ 	tlb_remove_table(tlb, page);
+ #endif
+ }
+-- 
+2.26.2
