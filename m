@@ -2,95 +2,89 @@ Return-Path: <SRS0=1JxV=CN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE7BC433E2
-	for <linux-next@archiver.kernel.org>; Fri,  4 Sep 2020 01:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70718C43461
+	for <linux-next@archiver.kernel.org>; Fri,  4 Sep 2020 06:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D502A206EF
-	for <linux-next@archiver.kernel.org>; Fri,  4 Sep 2020 01:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F589206E7
+	for <linux-next@archiver.kernel.org>; Fri,  4 Sep 2020 06:12:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aktlAcIF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lo+Ecl82"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbgIDBve (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 3 Sep 2020 21:51:34 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:32770 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728311AbgIDBve (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 3 Sep 2020 21:51:34 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0841oHAR044024;
-        Fri, 4 Sep 2020 01:51:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : mime-version :
- content-type; s=corp-2020-01-29;
- bh=xTerveg1iM7HE8a+DezgguAb27685KYqWJzn3VkF2tg=;
- b=aktlAcIFOXohC+9B8MlRPIDBlIWpScAstl4WeVB+NMDfnqlc1qLQv588WkjVBqWhONJI
- ymu/pfI3wrltLIIXdy6ZNBM7Q+6xU7ar88gB6J8dyhprMxXxqhBuH9twppvLE0FNt9/q
- 6RyN8ZN2uyVdYXPx2dKvQNC163oogM9dXTmr2HT056+uQK43wl8uXlGxTZ5CIzpQ5ctk
- 7ppqEGqYffFg38bI54lkjdGao+u9yVFoGV5ZNadHdNnp5uXz3bxt0LwHU7jaGU0CDshc
- kel+DLtyd0nqvhxRkDk6D0Jf5fZ1wPC4ofUQmrpqWfRN4dIgjWqhPju3iuXL38rt3/Zq xg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 337eymkym5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 04 Sep 2020 01:51:23 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0841jmnG092059;
-        Fri, 4 Sep 2020 01:51:23 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 33b7v1mtu2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Sep 2020 01:51:23 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0841pJuq026995;
-        Fri, 4 Sep 2020 01:51:20 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Sep 2020 18:51:19 -0700
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomas Henzl <thenzl@redhat.com>
-Subject: Re: linux-next: Fixes tag needs some work in the scsi-fixes tree
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1lfhqb9aj.fsf@ca-mkp.ca.oracle.com>
-References: <20200903184738.53f62617@canb.auug.org.au>
-Date:   Thu, 03 Sep 2020 21:51:17 -0400
-In-Reply-To: <20200903184738.53f62617@canb.auug.org.au> (Stephen Rothwell's
-        message of "Thu, 3 Sep 2020 18:47:38 +1000")
+        id S1726127AbgIDGMJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 4 Sep 2020 02:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbgIDGMJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 4 Sep 2020 02:12:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A49C061244;
+        Thu,  3 Sep 2020 23:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=ytK8UiWzHHegMm41JlHypigctQNmCJQNBkvErIXfdHw=; b=lo+Ecl82biNs2e0KfP/1bUeKyR
+        0hXUqn3XQ+/Sl6r0zNPzXBQyduGVLY3nvMJ4sL1RIAXfFwGup/GUEpOu0gRrl7MN4+5oOmbCL1lrv
+        t/At9U5k+3LkGBWDvry8uLVCJewPrOVSH2UkS21T6RrxfruRqLIy0855WI0c67ZTmaLSwzACwCX5X
+        aUfJNAqQ+Nmn3XdqJoXFtLJRxbPFZKK8GQ++YQPRSrvoHqhg/CFC/vWmZJ8peJHQeqGO54pDqjmRY
+        RC2LDv7witgtssys4nUXLOB0J1RWhayaDEKuDo/6tQrL0lO2xaSNLoS4DN9NHgOubEJiW2fIR3ANU
+        iC24wndg==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kE4xB-0001YN-Ds; Fri, 04 Sep 2020 06:12:05 +0000
+Subject: Re: linux-next: Tree for Sep 2 (lib/ubsan.c)
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
+References: <20200902180950.4bc7c4de@canb.auug.org.au>
+ <3abfa193-a56e-66ba-1080-885906fa0196@infradead.org>
+Message-ID: <fdf322d4-cc01-2c85-67cd-86b2d6f4ebff@infradead.org>
+Date:   Thu, 3 Sep 2020 23:12:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9733 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 spamscore=0
- mlxlogscore=950 phishscore=0 bulkscore=0 suspectscore=1 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009040014
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9733 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 adultscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=972 mlxscore=0
- lowpriorityscore=0 clxscore=1011 spamscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009040014
+In-Reply-To: <3abfa193-a56e-66ba-1080-885906fa0196@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On 9/2/20 8:44 AM, Randy Dunlap wrote:
+> On 9/2/20 1:09 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20200828:
+>>
+> 
+> 
+> on i386:
+> 
+> ../lib/ubsan.c: In function ‘ubsan_prologue’:
+> ../lib/ubsan.c:141:2: error: implicit declaration of function ‘kunit_fail_current_test’; did you mean ‘kunit_init_test’? [-Werror=implicit-function-declaration]
+>   kunit_fail_current_test();
+> 
+> 
+> Full randconfig file is attached.
+> 
 
-Stephen,
+Hi Brendan,
 
->   Fixes: 320e77acb3 scsi: mpt3sas: Irq poll to avoid CPU hard lockups
->   Fixes: a6ffd5bf681 scsi: megaraid_sas: Call disable_irq from process IRQ poll
+Do you know anything about this build error?
 
-Ah, my regex missed the short SHAs due to the missing description
-quotation marks. Fixed my script and fixed up the commits.
+I can't find kunit_fail_current_test() anywhere.
 
-Thanks!
-
+thanks.
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+~Randy
+
