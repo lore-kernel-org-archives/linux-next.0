@@ -2,144 +2,78 @@ Return-Path: <SRS0=xNaP=CR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC94C43461
-	for <linux-next@archiver.kernel.org>; Tue,  8 Sep 2020 16:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFEFC43461
+	for <linux-next@archiver.kernel.org>; Tue,  8 Sep 2020 17:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA2252080A
-	for <linux-next@archiver.kernel.org>; Tue,  8 Sep 2020 16:54:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaiKCfdB"
+	by mail.kernel.org (Postfix) with ESMTP id 5E1632087C
+	for <linux-next@archiver.kernel.org>; Tue,  8 Sep 2020 17:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599584745;
+	bh=vLaUN9zRc4TCVPRchoos4WMZYnabeJYrgfEpXzOtFxk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
+	 From;
+	b=UAypXj++qp5O6NbUApFW4CRwJykZPKucJtFswQD6sbYOL4MD3xDOdK/9hoeRX31t6
+	 3PxLuSFvvcgIkHhVouDTlBUf/uBmKRz/VjmY1LU1343Tt812PNOsAMmrgUz+ECyhVs
+	 In9JNghfMjZmaAbJ7mUFnurfnKgO9buznQ1v6yHY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbgIHQyv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Sep 2020 12:54:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:23030 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731947AbgIHQsF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Sep 2020 12:48:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599583682;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kk/MzQpl2YW+BRjUs+jKB6CtH3juIQy3EW0uS3+0BVs=;
-        b=FaiKCfdB8+U66neeWsffP/LUV0GoQtx+Cy1IXNrbabf5j2Ukf6E+ySYzCTCgbItvaCgN+7
-        T8BEIHHxpjZDN/IVIejmPgJSLMH2fSCnk9XL6QqStg05DQQTcALlN0y3ipFKHy/FKYvqVo
-        l8y8MA2HTwN/4Uv+VVYEh5yHNXm5VU8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-528-TEoiJfnqOq-mdCSx_HDX3w-1; Tue, 08 Sep 2020 09:20:26 -0400
-X-MC-Unique: TEoiJfnqOq-mdCSx_HDX3w-1
-Received: by mail-ed1-f72.google.com with SMTP id x14so2290987edv.8
-        for <linux-next@vger.kernel.org>; Tue, 08 Sep 2020 06:20:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kk/MzQpl2YW+BRjUs+jKB6CtH3juIQy3EW0uS3+0BVs=;
-        b=NTxQOONoYGlgAIPh5K/b2uuA88YzX5mgEXPj9BCYn8RyAdR+zxYyScAdgmI7CLvxjI
-         kuxB0zDDxj4mHhEuwWityqNsNYlafEcCjNp0h05eu7K5+th/N3hOajmmltH+UUZkFiLa
-         jgD/fYzmGFGOtITwfD10xKxH0VwM9Xc+ybIh9zI1qLSXJvz2easrAZIcyFBzW4HNStal
-         pxl9+S55peykhq00ft7cGBpnstuzwSkpHN9inv9t43AmetaxjDVb0DTOHS4EzsxicaxW
-         okLt7+I9yF+qPTWasQB858CtSjVm0NzB4ydEIK2lzzFxdO/k8ahy3uUuO9+L35/GChVW
-         4Odg==
-X-Gm-Message-State: AOAM533CqloENO2SAmu4xTWz4K6ew+Ntyj1QBZcsUUeQpabVR77QaYHn
-        S7seiQSYH5RcJyH+l4QB4fUqa8OOPhInPd8yEtQ/hg8khYj+aCYyACbiMF/zlnhZcXfWllhH0hp
-        8KWVkE543ofHEINhaxp9rBw==
-X-Received: by 2002:aa7:d697:: with SMTP id d23mr27729544edr.13.1599571225487;
-        Tue, 08 Sep 2020 06:20:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyJSCXKpUVVYMUY6y6pGIlWBQF6oylam73BShkdtH0Ngf5e1fkNihiTDrhP7Zi2Gs3qSlHKgQ==
-X-Received: by 2002:aa7:d697:: with SMTP id d23mr27729530edr.13.1599571225337;
-        Tue, 08 Sep 2020 06:20:25 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id n11sm14190638ejs.38.2020.09.08.06.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 06:20:24 -0700 (PDT)
-Subject: Re: linux-next: manual merge of the drm-intel tree with Linus' tree
+        id S1731831AbgIHRF0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59008 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731830AbgIHQTi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:19:38 -0400
+Received: from paulmck-ThinkPad-P72.home (unknown [50.45.173.55])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 218AA23C2E;
+        Tue,  8 Sep 2020 13:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599573264;
+        bh=vLaUN9zRc4TCVPRchoos4WMZYnabeJYrgfEpXzOtFxk=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=0ZFAritFLs9rFGY7zAgtDNSztLI6xOA5Fn52R4tYSrj9HW7UwtNYznmOGLjvyvoOO
+         y2UqdowraycAeL++ZM3YqjsHdlmGroa/Jdsgk7lH425/ftxV+X3YpEtlw0k8In0jxE
+         sDOkBoSJLesPs0O47vpOljPp1Rjz0hNl8s7acMVY=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id D2C2E352162B; Tue,  8 Sep 2020 06:54:23 -0700 (PDT)
+Date:   Tue, 8 Sep 2020 06:54:23 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Guru Das Srinagesh <gurus@codeaurora.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200908140022.67dd3801@canb.auug.org.au>
- <db369f50-a3a0-2504-0628-ce5e6780d31b@redhat.com>
- <20200908210449.1a4f8e52@canb.auug.org.au>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d5c2cb83-8fc0-069e-7d4b-64a8ecf9a6b4@redhat.com>
-Date:   Tue, 8 Sep 2020 15:20:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Message-ID: <20200908135423.GD29330@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200908153830.0a23e401@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20200908210449.1a4f8e52@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200908153830.0a23e401@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi,
-
-On 9/8/20 1:04 PM, Stephen Rothwell wrote:
-> Hi Hans,
+On Tue, Sep 08, 2020 at 03:38:30PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Tue, 8 Sep 2020 10:22:06 +0200 Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> On 9/8/20 6:00 AM, Stephen Rothwell wrote:
->>>
->>> Today's linux-next merge of the drm-intel tree got a conflict in:
->>>
->>>     drivers/gpu/drm/i915/display/intel_panel.c
->>>
->>> between commit:
->>>
->>>     f8bd54d21904 ("drm/i915: panel: Use atomic PWM API for devs with an external PWM controller")
+> After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> This should have been
+> ERROR: modpost: "resched_cpu" [kernel/scftorture.ko] undefined!
 > 
->    899c537c25f9 ("drm/i915: Use 64-bit division macro")
-
-Yes that makes more sense.
-
->>> from Linus' tree and commit:
->>>
->>>     6b51e7d23aa8 ("drm/i915: panel: Honor the VBT PWM frequency for devs with an external PWM controller")
->>
->> That doesn't sound correct, those are both commits from the drm-intel tree.
->>
->>> from the drm-intel tree.
->>>
->>> I fixed it up (I just used the latter)
->>
->> Just taking the drivers/gpu/drm/i915/display/intel_panel.c contents of:
->>
->> f8bd54d21904 ("drm/i915: panel: Use atomic PWM API for devs with an external PWM controller")
->>
->> Is the right thing to do, the problem is a difference in a line which gets
->> removed in that commit.
+> Caused by commit
 > 
-> Which is what I actually did, I guess :-)
+>   20c881d0592c ("scftorture: Add an alternative IPI vector")
+> 
+> I have reverted that commit for today.
 
-Yes, looks good.
+Good catch, (crudely) fixed by 007d16a07735 ("scftorture: Add an
+alternative IPI vector") in the new rcu/next branch.
 
-> Sorry about that.
-
-No problem and thank you for all the work you do on -next.
-
-Regards,
-
-Hans
-
+							Thanx, Paul
