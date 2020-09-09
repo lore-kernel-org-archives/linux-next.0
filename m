@@ -7,66 +7,67 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 230EEC10DAA
-	for <linux-next@archiver.kernel.org>; Wed,  9 Sep 2020 16:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B98FC43461
+	for <linux-next@archiver.kernel.org>; Wed,  9 Sep 2020 17:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4292206A5
-	for <linux-next@archiver.kernel.org>; Wed,  9 Sep 2020 16:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 383E321919
+	for <linux-next@archiver.kernel.org>; Wed,  9 Sep 2020 17:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="NALkRTVH"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="d96Q/vGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731007AbgIIQzL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 9 Sep 2020 12:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50796 "EHLO
+        id S1730319AbgIIRGV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 9 Sep 2020 13:06:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730699AbgIIPwj (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Sep 2020 11:52:39 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F92C06136D
-        for <linux-next@vger.kernel.org>; Wed,  9 Sep 2020 07:13:09 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id m5so2145991pgj.9
-        for <linux-next@vger.kernel.org>; Wed, 09 Sep 2020 07:13:09 -0700 (PDT)
+        with ESMTP id S1730326AbgIIPlg (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Sep 2020 11:41:36 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4095EC061756
+        for <linux-next@vger.kernel.org>; Wed,  9 Sep 2020 08:41:19 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id l191so2346563pgd.5
+        for <linux-next@vger.kernel.org>; Wed, 09 Sep 2020 08:41:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=dOFu0ijUgv7w8BBWoOzQ6rXl2M6HsXqqu8P0+QLRG6o=;
-        b=NALkRTVH7jPo3Ig29xVmQejoBQOxhzHHsDUEhx4pVwhejckSS4910wGdBOQjvz/6X+
-         Vu/r+Po0vZjyDUI8uHJf6xQjhAczmlJPpn9lQQ/khdR1cuDqCaIQBTpR9XMNrAondynh
-         l2zBjYTxhqmk1QWW2TukyyhHz1VgTwBF6zrvOI76fVwvd452Dz4N9m4rYCG6ZYAVF7OH
-         sUY9YWlt02hxSopLeJ56Tp+X+I1p+7BIDSMZ5f5LTeVZAfA6lTg0t/Ovk3EAZqWLkN+2
-         7JOVMRGA2biiR5MAPzszKD336fJcqIBnYfSvZ0lym2lR3rzSGMNzA0UtB8QwIkuaBkoK
-         p6hA==
+        bh=Ae/BAeKKGrpJE9nNNmtzkkiow2Q6ivSY5feho4meiq8=;
+        b=d96Q/vGFD19bZBMu4eY3CQcpcPIm9C5RVKSZSbC9H/AJWRqGaeNctCamiTQ5lrR3II
+         4CzDa4yGIyzcOKtWnK7RkGL0UVoBpZzYmiUDrRc9/0f9U9PzXa4eFt9PNz9qz4nbL/SC
+         ljlPNS5/3gkghsD2zef900W7Oc0UxmyiR1YEtLYzuo6vZ/Z9Z51PnHruYKttzRC7b0NI
+         k76ABSpIsqlRd7TUbt4An1GmUQzWVZEAGpqYl78LDtleHFlnXzlo+3VUjZ+/SDWxxve3
+         Gj+0BmOM5fCUPM6BBAqL6vSfAD2PxH0h3sdaypPeC8LaqBXdsz3mxuGD3RP0qGxRkRYT
+         tsaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=dOFu0ijUgv7w8BBWoOzQ6rXl2M6HsXqqu8P0+QLRG6o=;
-        b=JxsJvvlVMfwFHTYzV/L7j5vhli2mKrAz62MRZs79ia2x7i1LNUJRinKZpE1Luf0uhh
-         0+41wE1HYKTx1cujogN/j2UtqMHYzG/A8UA69w1o4suZ58Obe/PCmkmUMndwse3ijahO
-         G02LXLqbtFOicXjUUDRZDGjchdhdt+tV7wT+YJdbA4VMmu9SDuNVgSfz1V++bXKd2qtQ
-         +LAbwpqWl1Tkw7+P4vNiJE+KQDeOsHOFT0MZDyQLb5K/lwC5UjoBpBebTJUXEXlH3cgY
-         lSKYasrceIVN9p7r275j62xvcaotpIexugaErhJTwCqWLiLviwuLFvfnsLMWbUNrPd1P
-         sTKQ==
-X-Gm-Message-State: AOAM532nVyelYyh/svysOH0hZkABAK2IuIDKLLbUnzkNH+SKfXnTIAug
-        3YYgGAxvCJkptiDmIvoWhyhKXD2C2xPFsg==
-X-Google-Smtp-Source: ABdhPJyZm3AJBcO6gp/LtG9SNl5FHh1Lmzc9GapIwh3DBJni6m3pXNb37oHwPgdGEGYItTFE3RiqCg==
-X-Received: by 2002:a63:7f59:: with SMTP id p25mr779454pgn.146.1599660787399;
-        Wed, 09 Sep 2020 07:13:07 -0700 (PDT)
+        bh=Ae/BAeKKGrpJE9nNNmtzkkiow2Q6ivSY5feho4meiq8=;
+        b=myNlFn1ToUbAtJzL4H2llCDKG2xRGnUMh4IUeLg6luDEzHbY2yjxQtLrnrHRG6PiCQ
+         tJa7qCy1Juqpxq0yy2HYuP/ykUPRm4ZlYeHmg/idvWvsvP0mRJBa8wkYrpfrkit6fpDC
+         EU/+nmTCpAQnVjBWdqHDSfw1AYskxzd2EYzoLBmwrLX3AMZJZIZUC/NeP6fh5soXbYbc
+         Zt64Y9XkE3LbH8G13A6P00bw5xuRCvnkcTMhgOuLBLcJy5lfzpXY5HBqLlP9N+1UpDFT
+         8MxFigAKAq5man1MklPCyPDDRJbcdr4wRhdYJtLNF0Bpp93GuUq0+OY4EyzdL+W1ZyC4
+         TYiA==
+X-Gm-Message-State: AOAM532Piec7GJSpcs1VHL+IOA/Hnm5qNbq1Qepx9d2A+Cpv/Us5O+Wv
+        jsrKM5xtBcq0UrQn6BLg/MdnAcMglEOEPA==
+X-Google-Smtp-Source: ABdhPJxdQ8xgtavpkbwGb6PurYRNILjBxcuUCC8VgT2I5ynla7CXuFTHxYKfPXWBceJr0GMsm52gQg==
+X-Received: by 2002:a17:902:aa0a:b029:d0:89f4:6224 with SMTP id be10-20020a170902aa0ab02900d089f46224mr1451741plb.12.1599666066623;
+        Wed, 09 Sep 2020 08:41:06 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id m21sm2954128pfo.13.2020.09.09.07.13.05
+        by smtp.gmail.com with ESMTPSA id 2sm2560738pjg.32.2020.09.09.08.41.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2020 07:13:06 -0700 (PDT)
-Message-ID: <5f58e2f2.1c69fb81.3f1f.7fd0@mx.google.com>
-Date:   Wed, 09 Sep 2020 07:13:06 -0700 (PDT)
+        Wed, 09 Sep 2020 08:41:05 -0700 (PDT)
+Message-ID: <5f58f791.1c69fb81.52745.6c48@mx.google.com>
+Date:   Wed, 09 Sep 2020 08:41:05 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: next-20200908
-X-Kernelci-Branch: master
+X-Kernelci-Kernel: v5.9-rc4-322-g03ef16f8dff9
+X-Kernelci-Branch: pending-fixes
 X-Kernelci-Tree: next
-Subject: next/master baseline: 288 runs, 7 regressions (next-20200908)
+Subject: next/pending-fixes baseline: 327 runs,
+ 3 regressions (v5.9-rc4-322-g03ef16f8dff9)
 To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
         kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -75,44 +76,36 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master baseline: 288 runs, 7 regressions (next-20200908)
+next/pending-fixes baseline: 327 runs, 3 regressions (v5.9-rc4-322-g03ef16f=
+8dff9)
 
 Regressions Summary
 -------------------
 
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-odroid-xu3        | arm  | lab-collabora | clang-10 | multi_v7_defconfig   =
-        | 0/1    =
+platform        | arch  | lab           | compiler | defconfig             =
+       | results
+----------------+-------+---------------+----------+-----------------------=
+-------+--------
+bcm2837-rpi-3-b | arm64 | lab-baylibre  | gcc-8    | defconfig             =
+       | 3/4    =
 
-odroid-xu3        | arm  | lab-collabora | gcc-8    | multi_v7_defc...CONFI=
-G_SMP=3Dn | 0/1    =
+panda           | arm   | lab-collabora | gcc-8    | multi_v7_defc...CONFIG=
+_SMP=3Dn | 4/5    =
 
-panda             | arm  | lab-collabora | gcc-8    | multi_v7_defconfig   =
-        | 4/5    =
-
-panda             | arm  | lab-collabora | gcc-8    | multi_v7_defc...CONFI=
-G_SMP=3Dn | 4/5    =
-
-panda             | arm  | lab-collabora | gcc-8    | omap2plus_defconfig  =
-        | 0/1    =
-
-rk3288-veyron-jaq | arm  | lab-collabora | gcc-8    | multi_v7_defc...G_ARM=
-_LPAE=3Dy | 67/69  =
+panda           | arm   | lab-collabora | gcc-8    | omap2plus_defconfig   =
+       | 0/1    =
 
 
-  Details:  https://kernelci.org/test/job/next/branch/master/kernel/next-20=
-200908/plan/baseline/
+  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
+v5.9-rc4-322-g03ef16f8dff9/plan/baseline/
 
   Test:     baseline
   Tree:     next
-  Branch:   master
-  Describe: next-20200908
+  Branch:   pending-fixes
+  Describe: v5.9-rc4-322-g03ef16f8dff9
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
 .git
-  SHA:      dff9f829e5b0181d4ed9d35aa62d695292399b54 =
+  SHA:      03ef16f8dff93dcaf454582ffb92d47b62db096a =
 
 
 
@@ -121,251 +114,133 @@ Test Regressions
 
 
 
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-odroid-xu3        | arm  | lab-collabora | clang-10 | multi_v7_defconfig   =
-        | 0/1    =
+platform        | arch  | lab           | compiler | defconfig             =
+       | results
+----------------+-------+---------------+----------+-----------------------=
+-------+--------
+bcm2837-rpi-3-b | arm64 | lab-baylibre  | gcc-8    | defconfig             =
+       | 3/4    =
 
 
-  Details:     https://kernelci.org/test/plan/id/5f58dee27827216f73d35396
+  Details:     https://kernelci.org/test/plan/id/5f58bf7904a34619f4d3537f
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    clang-10 (Debian clang version 10.0.1-++20200708124224+ef32c=
-611aa2-1~exp1~20200707224822.188 )
-  Plain log:   https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig/clang-10/lab-collabora/baseline-odroid-xu3.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig/clang-10/lab-collabora/baseline-odroid-xu3.html
+  Results:     3 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-rc4-32=
+2-g03ef16f8dff9/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b=
+.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-rc4-32=
+2-g03ef16f8dff9/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b=
+.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
+.05/arm64/baseline/rootfs.cpio.gz =
 
 
-  * baseline.login: https://kernelci.org/test/case/id/5f58dee27827216f73d35=
-397
-      failing since 19 days (last pass: next-20200820, first fail: next-202=
-00821)  =
+  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f58bf7904a34619=
+f4d35381
+      failing since 5 days (last pass: v5.9-rc3-380-g4d386b9bd46d, first fa=
+il: v5.9-rc3-474-gc41730a9bddc)
+      2 lines
 
+    2020-09-09 11:39:29.716000  Connected to bcm2837-rpi-3-b console [chann=
+el connected] (~$quit to exit)
+    2020-09-09 11:39:29.716000  (user:khilman) is already connected
+    2020-09-09 11:39:45.653000  =00
+    2020-09-09 11:39:45.653000  =
 
+    2020-09-09 11:39:45.669000  U-Boot 2018.11 (Dec 04 2018 - 10:54:32 -080=
+0)
+    2020-09-09 11:39:45.669000  =
 
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-odroid-xu3        | arm  | lab-collabora | gcc-8    | multi_v7_defc...CONFI=
-G_SMP=3Dn | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f58dda33cd5fce187d35381
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/baseline-odroid-xu3.t=
-xt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/baseline-odroid-xu3.h=
-tml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f58dda33cd5fce187d35=
-382
-      failing since 46 days (last pass: next-20200723, first fail: next-202=
-00724)  =
-
-
-
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-panda             | arm  | lab-collabora | gcc-8    | multi_v7_defconfig   =
-        | 4/5    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f58b015e02dd41fe8d3538b
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f58b015e02dd41=
-fe8d3538f
-      failing since 56 days (last pass: next-20200706, first fail: next-202=
-00715)
-      60 lines
-
-    2020-09-09 10:35:59.213000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c802
-    2020-09-09 10:35:59.219000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c803
-    2020-09-09 10:35:59.225000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c804
-    2020-09-09 10:35:59.231000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c805
-    2020-09-09 10:35:59.238000  kern  :alert : BUG: Bad page state in proce=
-s<6>[   34.075927] smsc95xx v2.0.0
-    2020-09-09 10:35:59.240000  s swapper/0  pfn:9c806
-    2020-09-09 10:35:59.246000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c807
-    2020-09-09 10:35:59.252000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c808
-    2020-09-09 10:35:59.258000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c809
-    2020-09-09 10:35:59.264000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c80a
-    ... (52 line(s) more)
+    2020-09-09 11:39:45.669000  DRAM:  948 MiB
+    2020-09-09 11:39:45.685000  RPI 3 Model B (0xa02082)
+    2020-09-09 11:39:45.776000  MMC:   mmc@7e202000: 0, sdhci@7e300000: 1
+    2020-09-09 11:39:45.808000  Loading Environment from FAT... *** Warning=
+ - bad CRC, using default environment
+    ... (382 line(s) more)
       =
 
 
 
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-panda             | arm  | lab-collabora | gcc-8    | multi_v7_defc...CONFI=
-G_SMP=3Dn | 4/5    =
+platform        | arch  | lab           | compiler | defconfig             =
+       | results
+----------------+-------+---------------+----------+-----------------------=
+-------+--------
+panda           | arm   | lab-collabora | gcc-8    | multi_v7_defc...CONFIG=
+_SMP=3Dn | 4/5    =
 
 
-  Details:     https://kernelci.org/test/plan/id/5f58b22042ac856e8fd35373
+  Details:     https://kernelci.org/test/plan/id/5f58c7951e7cb6c053d35382
 
   Results:     4 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/baseline-panda.html
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-rc4-32=
+2-g03ef16f8dff9/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/b=
+aseline-panda.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-rc4-32=
+2-g03ef16f8dff9/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/b=
+aseline-panda.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
 .05/armel/baseline/rootfs.cpio.gz =
 
 
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f58b22042ac856=
-e8fd35377
-      failing since 56 days (last pass: next-20200706, first fail: next-202=
-00715)
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f58c7951e7cb6c=
+053d35386
+      failing since 35 days (last pass: v5.8-1558-g0359180fcb42, first fail=
+: v5.8-3221-g983112062f35)
       60 lines
 
-    2020-09-09 10:43:52.817000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.263000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c802
-    2020-09-09 10:43:52.823000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.268000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c803
-    2020-09-09 10:43:52.829000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.274000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c804
-    2020-09-09 10:43:52.834000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.283000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c805
-    2020-09-09 10:43:52.840000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.286000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c806
-    2020-09-09 10:43:52.846000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.292000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c807
-    2020-09-09 10:43:52.852000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.297000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c808
-    2020-09-09 10:43:52.857000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.303000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c809
-    2020-09-09 10:43:52.863000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.309000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c80a
-    2020-09-09 10:43:52.869000  kern  :alert : BUG: Bad page state in proce=
+    2020-09-09 12:16:15.314000  kern  :alert : BUG: Bad page state in proce=
 ss swapper  pfn:9c80b
     ... (49 line(s) more)
       =
 
 
 
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-panda             | arm  | lab-collabora | gcc-8    | omap2plus_defconfig  =
-        | 0/1    =
+platform        | arch  | lab           | compiler | defconfig             =
+       | results
+----------------+-------+---------------+----------+-----------------------=
+-------+--------
+panda           | arm   | lab-collabora | gcc-8    | omap2plus_defconfig   =
+       | 0/1    =
 
 
-  Details:     https://kernelci.org/test/plan/id/5f58b628cc31c28279d35380
+  Details:     https://kernelci.org/test/plan/id/5f58c3d06aa0f03755d35382
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: omap2plus_defconfig
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200908/arm/=
-omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200908/arm/=
-omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.html
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-rc4-32=
+2-g03ef16f8dff9/arm/omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.=
+txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-rc4-32=
+2-g03ef16f8dff9/arm/omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.=
+html
   Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
 .05/armel/baseline/rootfs.cpio.gz =
 
 
-  * baseline.login: https://kernelci.org/test/case/id/5f58b628cc31c28279d35=
-381
-      failing since 49 days (last pass: next-20200706, first fail: next-202=
-00721)  =
-
-
-
-platform          | arch | lab           | compiler | defconfig            =
-        | results
-------------------+------+---------------+----------+----------------------=
---------+--------
-rk3288-veyron-jaq | arm  | lab-collabora | gcc-8    | multi_v7_defc...G_ARM=
-_LPAE=3Dy | 67/69  =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f58b4013eeca170f9d35379
-
-  Results:     67 PASS, 2 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc-8/lab-collabora/b=
-aseline-rk3288-veyron-jaq.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20200908/arm/=
-multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc-8/lab-collabora/b=
-aseline-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f58b4013eeca17=
-0f9d3537d
-      new failure (last pass: next-20200903)
-      4 lines
-
-    2020-09-09 10:52:42.283000  kern  :alert : pgd =3D 03b9de52
-    2020-09-09 10:52:42.295000  kern  :alert : [003bffc4] *pgd=3D8000000020=
-4003, *pmd=3D00000000
-     * baseline.dmesg.emerg: https://kernelci.org/test/case/id/5f58b4013eec=
-a170f9d3537e
-      new failure (last pass: next-20200903)
-      42 lines
-
-    2020-09-09 10:52:42.320000  kern  :emerg : Process kworker/0:1 (pid: 29=
-, stack limit =3D 0x76c2a364)
-    2020-09-09 10:52:42.320000  kern  :emerg : Stack: (0xea1fdd70 to 0xea1f=
-e000)
-    2020-09-09 10:52:42.332000  kern  :emerg : dd60:                       =
-              ea1fdda2 00000001 ffffffff c08312e4
-    2020-09-09 10:52:42.332000  kern  :emerg : dd80: ea1fddf0 ffffff04 ffff=
-0a00 c0da4628 00000016 e9224000 ea1fdda2 e9224000
-    2020-09-09 10:52:42.345000  kern  :emerg : dda0: c16bb5ec c0835140 c16b=
-b5ec ffffff04 ffff0a00 c0af5194 e941e420 e9224000
-    2020-09-09 10:52:42.357000  kern  :emerg : ddc0: 16ddbfff ea1fc000 e941=
-e400 ffffff04 ffff0a00 2d8e927c e90afac0 ea1fc000
-    2020-09-09 10:52:42.370000  kern  :emerg : dde0: ea1fc000 00000002 e922=
-4000 e941e420 c1bc1930 e941e400 e940a000 c08354c0
-    2020-09-09 10:52:42.370000  kern  :emerg : de00: ea1fde18 2d8e927c e922=
-4000 00000000 c0dd3fa4 c16bb5ec 003bffc4 2d8e927c
-    2020-09-09 10:52:42.382000  kern  :emerg : de20: ffff0a00 2d8e927c 003b=
-ffc4 2d8e927c ea1fc000 c1bc07b4 e9224000 0000004a
-    2020-09-09 10:52:42.394000  kern  :emerg : de40: e940a000 e940a000 e922=
-4000 c1692f20 e940a000 c0dd4048 0000000f 00000000
-    ... (31 line(s) more)
-      =20
+  * baseline.login: https://kernelci.org/test/case/id/5f58c3d06aa0f03755d35=
+383
+      failing since 35 days (last pass: v5.8-1558-g0359180fcb42, first fail=
+: v5.8-3221-g983112062f35)  =20
