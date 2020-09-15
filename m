@@ -2,221 +2,116 @@ Return-Path: <SRS0=UXhA=CY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F954C2D0E0
-	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 13:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BDAC43461
+	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 13:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 012DB20872
-	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 13:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EDC520872
+	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 13:18:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oqj/bAON"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Ao6JMC6M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgIONNL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 15 Sep 2020 09:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        id S1726622AbgIONSg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 15 Sep 2020 09:18:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbgIONLF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Sep 2020 09:11:05 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7181C06178A;
-        Tue, 15 Sep 2020 06:11:04 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id ef16so1650609qvb.8;
-        Tue, 15 Sep 2020 06:11:04 -0700 (PDT)
+        with ESMTP id S1726616AbgIONRd (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Sep 2020 09:17:33 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA44C06178B
+        for <linux-next@vger.kernel.org>; Tue, 15 Sep 2020 06:16:55 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id y9so2960919ilq.2
+        for <linux-next@vger.kernel.org>; Tue, 15 Sep 2020 06:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Op4Uh59qL63YT0usxFuHkJ5g//0WvryB7nEITuGpAyc=;
-        b=Oqj/bAONA2sJIdV5yutBnpoAGEHbw9fTdjKwNzNrTZz2NxlgFczbBVmY8gsXFf/xAk
-         cTykHtIbYNMs4svrJOp3ggc3OMr9jmSpDfMdyQK0DWd8xf1HnlAfnETAflX/jvpnEaTd
-         Gg9Mv+xbQgn2TaS91TAqnm4D6N969BlA10Hbf6IWCkTGpDeVX5OzLVpjUGp2wDhx3Wbt
-         kZzW4CJABhvSEK+fdgiGs/9QWGc0BA403RLbf7FVs/fF58dLTLCL3cTcfjbFZxW605gn
-         vNrImzCGQaerPs/HUmNASonfnOaQIoPm9n1Zh4pVbeeTTeFYElMJ6HCQc9OrB+MoBXNk
-         nLhg==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v/HlO2pz67e4hxYirmZqk4ySGJecTpWx3uH4onJVbvU=;
+        b=Ao6JMC6MHz4vIH5oPcx8XvXMXNBpuT6aZgdgvKvyHV/hNMlBoELCsvdTJFmmq14gbE
+         wpEde/KfyVyFa+9WwWJkJYfVu6a0Q3aJcrFAORKIbcdpmNJ2v9vG5QLHqNVDqT2mL71e
+         0YXAHgkC4RSoeJ2fQ0H4LNQ5DhFhFDiAX6dY7pFYVOS7ENh31SSkeYZhK+Y+PZ8GXtni
+         it5g8WftJxlJ6qHd3exqCyuQIyIaqVW0k8SqqAOp7WiqgFAbXPp2vkFA7GJeDXi7QWuN
+         4Y0cLMfUJtcUKC9g6CzlkkBxSrMKYD2mmLINKs5X/rS/b0CeqJhOTjO/+4aMQTc3iy6N
+         nSow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Op4Uh59qL63YT0usxFuHkJ5g//0WvryB7nEITuGpAyc=;
-        b=tFre3+Nkj9dYA61VniZDPenc/xHh7whGbG/5HzpGRhe+vIYEVcRZogl85LhofWgpNs
-         mmz0sd8MFf0Cc1w9MF4QhOBPiq0BbKmfrOIHxON3Gz5GhWU3Fr3aVDvPSG0jW9IoxAJm
-         4mo31Lr/2sa+KUKNB41V2Fu0dt8U4yWniOxljMv6Tzpj6x+Kinw72DOiEJQfdYRvcpdn
-         MSUEZlE5Cg38OEiRnnCgC3lcUM5Gdd/dHOFDpr53XpLGxaDavVhQELJIO6kKEjhDceMp
-         xNuc/Zy6hIfMa76pBtAYPXjzyuPfrumaUsQ63wZ1SIN35bleENhua6fvm2PlvPGsZUat
-         evNA==
-X-Gm-Message-State: AOAM532Lc7plTz8b0yl1U9KFqKPiUVeO6msEhU/+0SaIUbM/XoNHeBej
-        yOkSgr7FiykSmzOYFleccBA=
-X-Google-Smtp-Source: ABdhPJy05oYi7s4PC56Edy9zJPTT0/PPHMpyT8eWNskZGJZtl2QRbpSCK/nd/kMp4G/ZZcJxS/ftvw==
-X-Received: by 2002:a0c:b3d7:: with SMTP id b23mr1621388qvf.33.1600175464043;
-        Tue, 15 Sep 2020 06:11:04 -0700 (PDT)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id 192sm16643833qkm.110.2020.09.15.06.11.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Sep 2020 06:11:03 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 946BB27C005A;
-        Tue, 15 Sep 2020 09:11:02 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 15 Sep 2020 09:11:02 -0400
-X-ME-Sender: <xms:Zb1gX8qRDhtX5w6CZFFdZGmlnCTO-MftyszEDnH7GAhlo2nmHK6nNQ>
-    <xme:Zb1gXyqrXXb6aVbxaa9S3rLNb81AADl9V3pnuNI7UxW19fDO70RP0Y3oazy3Zmabp
-    oUeVYQOMB1pV-DtNw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrtddtgdeftdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeevieejtdfhieejfeduheehvdevgedugeethefggfdtvdeutdevgeetvddvfeeg
-    tdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeehvddrudehhedrudduud
-    drjedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
-    sghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtie
-    egqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhi
-    gihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:Zb1gXxP1wbur_9-ZJOtcxBZYh6hMkSfVy7A3KORuuq-XSsoOOWpIwQ>
-    <xmx:Zb1gXz7XK-AqXKCYD0YFvwGudQinH4lYr57_1QBnv14eh01PdQGnFg>
-    <xmx:Zb1gX74deEO9sXVagDCHd4qa5IReZtpVNfFXTWqFHb4nD84ntK_7yA>
-    <xmx:Zr1gX_gK1QexdA2I8iiWXgA9X-F4ABBK1FNdmOahRaI7vo2BgKhW6PLpwF0>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0CDD4328005D;
-        Tue, 15 Sep 2020 09:11:00 -0400 (EDT)
-Date:   Tue, 15 Sep 2020 21:10:59 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Qian Cai <cai@redhat.com>
-Cc:     "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Sebastian A. Siewior" <bigeasy@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 0/5] seqlock: Introduce PREEMPT_RT support
-Message-ID: <20200915131059.GB127490@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <20200904153231.11994-1-a.darwish@linutronix.de>
- <224bd11b533dd2acff3f6cce51ab4ca676eb4f9f.camel@redhat.com>
- <20200915124817.GA127490@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v/HlO2pz67e4hxYirmZqk4ySGJecTpWx3uH4onJVbvU=;
+        b=C/dGgVkJa9wdlpA1glrvmBMrQBMZOmgqXGEKtvdRu4c53kuBqDD4Wp0+npRXmWioI8
+         mXBva3eQtFJc6KgAFbjMDdXQZcIB/LDxkiZNsDL4wDl6n571jm+xTiXLu9dfDb2zqVY7
+         ephwBiVb3SHGlTRgwopc82wasYIwz052Eba2HtJI8KPwse8ygMTlLULO5145QUNmdz3T
+         atYxifTvY1EZPssyWAHmbIwvCFoatwVFmMCQnQq4sLiaoXyhdyTvs5SjtZAI9VEfwyn2
+         qtZkaqp1ORKDai1MXgr5Q98Ti8ow2MUVeCfL71rcw/jitLkKBxFWKIZcUfgv3uG8C6iG
+         Xaug==
+X-Gm-Message-State: AOAM533gvunhUEqfnBlTEKOq12FdYuZNCzw/TZRiQcZaY7GhoiCn/TVR
+        rbcwkNB8L65OnNO9Vurk3fvMB2NmNqKexwdF9ERBdg==
+X-Google-Smtp-Source: ABdhPJzSPncGLKmwONqIrR5yKoPLvcW5c4OXIAKLZmbI58H8i0gsT7/X+baLgsqUByC1c10NX7cSCvumNCkKi81cKhE=
+X-Received: by 2002:a92:c8c4:: with SMTP id c4mr16457759ilq.287.1600175813496;
+ Tue, 15 Sep 2020 06:16:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915124817.GA127490@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <20200908125813.8809-1-brgl@bgdev.pl> <CADYN=9+3kHG0CexzZiMQoXdF2piN2ZhOTObhY=7VCKrnFVN0Kw@mail.gmail.com>
+ <20200915131228.GX3956970@smile.fi.intel.com>
+In-Reply-To: <20200915131228.GX3956970@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 15 Sep 2020 15:16:42 +0200
+Message-ID: <CAMRc=MdGwkEp4sL=oBuk-x4cd7BWga76X0Rvq8PN-P+vjvp=Fg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpiolib: generalize GPIO line names property
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 08:48:17PM +0800, Boqun Feng wrote:
-> On Mon, Sep 14, 2020 at 08:20:53PM -0400, Qian Cai wrote:
-> > On Fri, 2020-09-04 at 17:32 +0200, Ahmed S. Darwish wrote:
-> > > Hi,
-> > > 
-> > > Changelog-v2
-> > > ============
-> > > 
-> > >   - Standardize on seqcount_LOCKNAME_t as the canonical reference for
-> > >     sequence counters with associated locks, instead of v1
-> > >     seqcount_LOCKTYPE_t.
-> > > 
-> > >   - Use unique prefix "seqprop_*" for all seqcount_t/seqcount_LOCKNAME_t
-> > >     property accessors.
-> > > 
-> > >   - Touch-up the lock-unlock rationale for more clarity. Enforce writer
-> > >     non-preemitiblity using "__seq_enforce_writer_non_preemptibility()".
-> > > 
-> > > Cover letter (v1)
-> > > =================
-> > > 
-> > > https://lkml.kernel.org/r/20200828010710.5407-1-a.darwish@linutronix.de
-> > > 
-> > > Preemption must be disabled before entering a sequence counter write
-> > > side critical section.  Otherwise the read side section can preempt the
-> > > write side section and spin for the entire scheduler tick.  If that
-> > > reader belongs to a real-time scheduling class, it can spin forever and
-> > > the kernel will livelock.
-> > > 
-> > > Disabling preemption cannot be done for PREEMPT_RT though: it can lead
-> > > to higher latencies, and the write side sections will not be able to
-> > > acquire locks which become sleeping locks (e.g. spinlock_t).
-> > > 
-> > > To remain preemptible, while avoiding a possible livelock caused by the
-> > > reader preempting the writer, use a different technique: let the reader
-> > > detect if a seqcount_LOCKNAME_t writer is in progress. If that's the
-> > > case, acquire then release the associated LOCKNAME writer serialization
-> > > lock. This will allow any possibly-preempted writer to make progress
-> > > until the end of its writer serialization lock critical section.
-> > > 
-> > > Implement this lock-unlock technique for all seqcount_LOCKNAME_t with
-> > > an associated (PREEMPT_RT) sleeping lock, and for seqlock_t.
-> > 
-> > Reverting this patchset [1] from today's linux-next fixed a splat below. The
-> > splat looks like a false positive anyway because the existing locking dependency
-> > chains from the task #1 here:
-> > 
-> > &s->seqcount#2 ---> pidmap_lock
-> > 
-> > [  528.078061][ T7867] -> #1 (pidmap_lock){....}-{2:2}:
-> > [  528.078078][ T7867]        lock_acquire+0x10c/0x560
-> > [  528.078089][ T7867]        _raw_spin_lock_irqsave+0x64/0xb0
-> > [  528.078108][ T7867]        free_pid+0x5c/0x160
-> > free_pid at kernel/pid.c:131
-> > [  528.078127][ T7867]        release_task.part.40+0x59c/0x7f0
-> > __unhash_process at kernel/exit.c:76
-> > (inlined by) __exit_signal at kernel/exit.c:147
-> > (inlined by) release_task at kernel/exit.c:198
-> > [  528.078145][ T7867]        do_exit+0x77c/0xda0
-> > exit_notify at kernel/exit.c:679
-> > (inlined by) do_exit at kernel/exit.c:826
-> > [  528.078163][ T7867]        kthread+0x148/0x1d0
-> > [  528.078182][ T7867]        ret_from_kernel_thread+0x5c/0x80
-> > 
-> > It is write_seqlock(&sig->stats_lock) in __exit_signal(), but the &s->seqcount#2 
-> > in read_mems_allowed_begin() is read_seqcount_begin(&current->mems_allowed_seq), 
-> > so there should be no deadlock?
-> > 
-> 
-> I think this happened because seqcount_##lockname##_init() is defined at
-> function rather than macro, so when the seqcount_init() gets expand in
-> that function, the lock_class_key of seqcount will be a static variable
-> of seqcount_##lockname##_init() function, as a result, all
-> seqcount_##lockname##_t in the same compile unit (in this case it's
-> kernel/fork.c) share the same lock class key, and lockdep thought they
-> are the same lock ;-)
-> 
+On Tue, Sep 15, 2020 at 3:12 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Sep 15, 2020 at 02:01:56PM +0200, Anders Roxell wrote:
+> > On Tue, 8 Sep 2020 at 18:40, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > >
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > >
+> > > I initially sent this as part of the gpio-mockup overhaul but since
+> > > these patches are indepentent and the work on gpio-mockup may become
+> > > more complicated - I'm sending these separately.
+> > >
+> > > The only change is adding additional property helpers to count strings
+> > > in array.
+> > >
+> > > Bartosz Golaszewski (3):
+> > >   device: property: add helpers to count items in string arrays
+> > >   gpiolib: generalize devprop_gpiochip_set_names() for device properties
+> > >   gpiolib: unexport devprop_gpiochip_set_names()
+>
+> Ha-ha, OF unittest is of_node centric. definitely there is no backed device.
+>
+> Bart, it seems we are stuck with fwnode interface.
+>
 
-Don't know how to fix this properly, but below is an ugly attemption,
-only build test, just food for thoughts.
+Wait what?! This means the implementation is wrong - the whole concept
+of device properties is to be generic and to hide the underlying
+fwnode or OF properties. If anything we should fix
+device/base/property.c to fall back to OF.
 
-Regards,
-Boqun
+What is happening exactly? If all fwnode code compiled out?
 
---------------->8
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index f73c7eb68f27..938a5053def3 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -84,14 +84,18 @@ static inline void __seqcount_init(seqcount_t *s, const char *name,
- # define SEQCOUNT_DEP_MAP_INIT(lockname)				\
- 		.dep_map = { .name = #lockname }
- 
-+# define MSIOCU 8 /* MAX SEQCOUNT IN ON COMPILE UNIT */
- /**
-  * seqcount_init() - runtime initializer for seqcount_t
-  * @s: Pointer to the seqcount_t instance
-  */
- # define seqcount_init(s)						\
- 	do {								\
--		static struct lock_class_key __key;			\
--		__seqcount_init((s), #s, &__key);			\
-+		static struct lock_class_key __key[MSIOCU];		\
-+		static int idx = 0;					\
-+									\
-+		BUG_ON(idx >= MSIOCU);					\
-+		__seqcount_init((s), #s, &__key[idx++]);		\
- 	} while (0)
- 
- static inline void seqcount_lockdep_reader_access(const seqcount_t *s)
+I'll try to give it a spin and see what can be done but I don't like
+that device_property_* functions fail if you have OF but not fwnode.
+
+Bart
