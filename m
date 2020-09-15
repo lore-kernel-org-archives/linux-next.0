@@ -2,87 +2,136 @@ Return-Path: <SRS0=UXhA=CY=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAB5C43461
-	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 18:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9CCC433E2
+	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 22:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 776B52193E
-	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 18:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6280E2080C
+	for <linux-next@archiver.kernel.org>; Tue, 15 Sep 2020 22:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600196256;
-	bh=vZaOdC9zd2ZYi/o8U519NqAOticZXrG0R+WZlDkyJyk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=bjEWDH6oEOiw62ax+vE6r4ob8Zy0DGQHHbe9nEB/wSRWfg7rlOUxub3euTyMah5Cp
-	 3z5xkaJ0JJ0l5LE8CXQTHuonN8fieRWp8CSIEnne3C8wFHrNvbfO9sGf1IiZwqwJDB
-	 B+v18V4GWPmSdJV1BMnDM73J6QhLLXbZpc+4FRzw=
+	s=default; t=1600207795;
+	bh=jYZRqQlZ3QZomHdhco/JFmKLLhqWYHVqLU/oEGlxUWY=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=vR66diIpNavzhuA92v6IwS6wKFQZFL8y9XQZbXVaOsALk9eMLbiiX5LpBHfKX3+KB
+	 VpLnwSbPu4CPbakxxjM/o0vbQbt+uulco9t9gDvYWOMZ5bIc6sImO1poEe34+bZ1Vt
+	 6JYN/6Iepb6z95n6wswh0Ynl88LaX4SoAxWhH4Go=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbgIOS5d (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 15 Sep 2020 14:57:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbgIORXI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 15 Sep 2020 13:23:08 -0400
-Received: from localhost (52.sub-72-107-123.myvzw.com [72.107.123.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4A2321D1B;
-        Tue, 15 Sep 2020 17:22:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600190554;
-        bh=vZaOdC9zd2ZYi/o8U519NqAOticZXrG0R+WZlDkyJyk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=qTmRhYpq+VQS/UwssViSYfiAHzDnWUkc+I+1dxcviT7PtmKnlQVvtUefOW1mqQFX8
-         tHPqMcOjK7WnfZl9RFu/mHtSUVoINwXbega1S5LQjZS9H4PUXqH/FD4W2FK/GIzosa
-         0mEVmlCOYr/xVLOnFuw0WmqSZKcCwag/ioi2VT8w=
-Date:   Tue, 15 Sep 2020 12:22:32 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Message-ID: <20200915172232.GA1403447@bjorn-Precision-5520>
+        id S1727977AbgIOWJe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 15 Sep 2020 18:09:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbgIOUSp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Sep 2020 16:18:45 -0400
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD3DC06174A
+        for <linux-next@vger.kernel.org>; Tue, 15 Sep 2020 13:18:42 -0700 (PDT)
+Received: by mail-oo1-xc34.google.com with SMTP id z1so1104134ooj.3
+        for <linux-next@vger.kernel.org>; Tue, 15 Sep 2020 13:18:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7Pxy8XuN4H9/39l6P169WyiunvVoa6/MHSiTUzpc2H0=;
+        b=StKfSTomujrlgFk7a+XxdsRkBonWZLkkibhHZMq5mmkqzeaXSUoJHCzAwYq+CzHJNp
+         UvGlWzUtFUw2x1sb+ZEOxNkUAvZKfMpTdP96SHWdVVg3EBAJA7VV9xG8wkTTJim5TZi3
+         Q/NOlPnYgwcNUJUy3Z0G+9jbsSx+wRYV6/aAI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7Pxy8XuN4H9/39l6P169WyiunvVoa6/MHSiTUzpc2H0=;
+        b=awvobNRnlvKYo/ZAC1Tt09OqRu2UETFsamCTMySVPjJUc6Zj51Cog3ufVt2ryj3XJG
+         wRvlpczIL9iaeM3h1QRdM+bJYUt9Gj+T9VJsKVKFlDV5Zo003o4mYJGp9gqWIxdr5IKv
+         RzjLOcavF9jYU95FQHtNfTV5rLJNwtfeWgKso+U3704lPMkWqPSZgFmzSait5p53cM9F
+         R4w9eusLe/C62vOeg4XocM0Cv3dIGebrYawIgiHjktdODWXTwdfhXkKDSts/Mcw9W5Im
+         MddcK7+vonSxVqFKM6KEqxjAtld8bMxq11fcg+7NShu+UlfdKktqUziLTXFxmqtizO5N
+         GRtA==
+X-Gm-Message-State: AOAM533g/xz+5ncP77Hn0h3IGwZCvz5l4Sk+ZPOU2btURz12xP0/ZF+Q
+        IP9xV0o6Nx2XT2lrENqovXN72Q==
+X-Google-Smtp-Source: ABdhPJzryCOcoMZBw1SZnsYqoffKa4MsGINM/LYQGkRr4W88hKIyCvYanE+t8tLIvSwSXkBG6dFSNA==
+X-Received: by 2002:a4a:81:: with SMTP id 123mr15461886ooh.80.1600201122088;
+        Tue, 15 Sep 2020 13:18:42 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id u9sm6595084otq.54.2020.09.15.13.18.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2020 13:18:41 -0700 (PDT)
+Subject: Re: [REGRESSION] kselftest: next-20200915
+To:     Justin Cook <justin.cook@linaro.org>, LKFT <lkft@linaro.org>
+Cc:     lkft-triage@lists.linaro.org, linux-kselftest@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au, shuah@kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <0100017492de8180-c524cff4-bd4e-4777-9f33-7e1da2c986d2-000000@email.amazonses.com>
+ <CANKHsTfyE64ygNB0H0Nx=P63D-kqYa6aGOXS6ZmNUspLJJtS=Q@mail.gmail.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <f9144c49-d39a-af67-2a5a-3828b86ea86c@linuxfoundation.org>
+Date:   Tue, 15 Sep 2020 14:18:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915105326.GA3351@e121166-lin.cambridge.arm.com>
+In-Reply-To: <CANKHsTfyE64ygNB0H0Nx=P63D-kqYa6aGOXS6ZmNUspLJJtS=Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 11:53:26AM +0100, Lorenzo Pieralisi wrote:
-> On Tue, Sep 15, 2020 at 01:47:21PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > On Wed, 9 Sep 2020 10:06:20 -0600 Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Tue, Sep 8, 2020 at 8:37 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > After merging the pci tree, today's linux-next build (arm
-> > > > multi_v7_defconfig) produced this warning:  
-> > > 
-> > > Uggg. I guess 0-day just doesn't do arm32 builds anymore as it caught
-> > > more obscure build issues, but not this one (and some others I've had
-> > > recently).
-> > > 
-> > > > drivers/pci/controller/dwc/pci-dra7xx.c: In function 'dra7xx_pcie_establish_link':
-> > > > drivers/pci/controller/dwc/pci-dra7xx.c:142:6: warning: unused variable 'exp_cap_off' [-Wunused-variable]
-> > > >   142 |  u32 exp_cap_off = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> > > >       |      ^~~~~~~~~~~
-> > > >
-> > > > Introduced by commit
-> > > >
-> > > >   3af45d34d30c ("PCI: dwc: Centralize link gen setting")
-> > 
-> > I am still getting this warning.
+On 9/15/20 11:52 AM, Justin Cook wrote:
+> Hello,
 > 
-> I have pushed out a fix-up on my pci/dwc branch, the warning should
-> disappear as soon as Bjorn pulls it.
+> Linaro had previously been sending out a report based on our testing of 
+> the linux kernel using kselftest. We paused sending that report to fix a 
+> few issues. We are now continuing the process, starting with this report.
+> 
+> If you have any questions, comments, feedback, or concerns please email 
+> lkft@linaro.org <mailto:lkft@linaro.org>.
+> 
+> Thanks,
+> 
+> Justin
+> 
 
-Thanks for the reminder.  Should be fixed.
+Hi Justin,
+
+Thanks for the report. It would be nice to see the reports. However, it
+is hard for me to determine which tests failed and why.
+
+> On Tue, 15 Sep 2020 at 12:44, LKFT <lkft@linaro.org 
+> <mailto:lkft@linaro.org>> wrote:
+> 
+>     ## Kernel
+>     * kernel: 5.9.0-rc5
+>     * git repo:
+>     ['https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git',
+>     'https://gitlab.com/Linaro/lkft/mirrors/next/linux-next']
+>     * git branch: master
+>     * git commit: 6b02addb1d1748d21dd1261e46029b264be4e5a0
+>     * git describe: next-20200915
+>     * Test details:
+>     https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20200915
+> 
+>     ## Regressions (compared to build next-20200914)
+> 
+>     juno-r2:
+>        kselftest:
+>          * memfd_memfd_test
+> 
+>     x86:
+>        kselftest-vsyscall-mode-native:
+>          * kvm_vmx_preemption_timer_test
+
+I looked for the above two failures to start with since these
+are regressions and couldn't find them.
+
+Are the regressions tied to new commits in linux-next from the
+mm and kvm trees?
+
+thanks,
+-- Shuah
+
