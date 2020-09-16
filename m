@@ -2,139 +2,109 @@ Return-Path: <SRS0=I1Kz=CZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D3C43461
-	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 18:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE31DC43461
+	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 19:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A66D20809
-	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 18:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D546206DB
+	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 19:03:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IaCPdRAB"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="i9BalPT4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbgIPSwy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38968 "EHLO
+        id S1728344AbgIPTD0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 16 Sep 2020 15:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbgIPSJL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2020 14:09:11 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAD7C02526D
-        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 05:20:52 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id u48so2143882uau.0
-        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 05:20:52 -0700 (PDT)
+        with ESMTP id S1727347AbgIPRsf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2020 13:48:35 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49B7C0086B8
+        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 06:43:46 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id m6so7030677wrn.0
+        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 06:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=/mmyXwgKk0v94wDR5wziYxYkecNHTpk6pOU5axrJVv8=;
-        b=IaCPdRABMD+D9OJ14XC6hu6h0zPzssklKhz8NgsTkmOwj7NZrylAheg2gsWR8PYGdQ
-         CDHnsyv9rlpZToNF8uA/xSu7bQb6kfQEcGipyGMEDBVOHMkZ/8Werbeyym7YFFru2STJ
-         3dajgIzTLtl9SEzAmlArh2UvJQcqUkKmmAmiSxR2N9qJOYJ3CG+KsXmkFnJovKeCk0Mk
-         Ld8UVjf1zEcjtQe9nnx/BbnrM5mfMmkAKY5DymHINsN2zH+1w5aTJ6qlb7cEuU0mZQUc
-         QUCp+Bti2y83cyJ0HnHdtOJEW1AUCC+BxMyitOAsH4peXpUCRk6k+GlbxbrZas6qYFhm
-         DLtg==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KWaDQ7uhIqw2OfY7WhIv98jjbgPy0IbYqKs55rRj5Ms=;
+        b=i9BalPT4mWy0zyrOLfTWbIOF6KnoctQ96zFUjXi1v5Y4OjC11p6V2XZlW9IXv2YUA+
+         RULN16fN1TvTqYSHWiIBKnGFZNdIC317uMj6SJzcbar9WeItWypLMMHI4wGzYAHqPJXW
+         cTtDv9q5DKw+EmrS0E+asIx9o5mZjlcC3+cv1Pe4gKL8MxdWYi8otF3RzIG5HJKWCv1/
+         MYqAR1bKomXraD48pOFvLCvjtF27vYtQVqtIjTKC99MVFheSfOsl8OACeTV0SA4mzXPy
+         ozAk2zBwF7g47bPxnQconu8gXT7DGul3kQS8wMnXHt/ma+QPDwiw/USCwL2/NhAkmiD3
+         5NOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=/mmyXwgKk0v94wDR5wziYxYkecNHTpk6pOU5axrJVv8=;
-        b=Q837Lc2Al2xC3qSx3kUYOiUO/YG4DwdaGXApSrIjd0QV9z2A8zJYn8cG981MqumgpC
-         6uNM9hIh2zizur73wHu8N4/00Rr4jczZLV9j9zRlYIOFX3NGfxMmh2wgKoSS9LGBaJng
-         DiS3qzF0mgFsVfWqKeefA/HtE0a1/SgqOkhZlZmYyFWqLD1SZjPlRLcoWzjn3J8aoMYC
-         p3kLHHh63n9D/qCBT128nQeENxTxsvoJk6FwB1mPZA4iV76LtI+faRreMp9/WQnmLtbR
-         vfOQ1kHt8N1MchQDMQnFiTI6vPXYePPdDiK0I63OgEPCPjqCXBz+snUh0wgzF+uEIOmz
-         a+cQ==
-X-Gm-Message-State: AOAM530SP3qyAgdWVtNmz9oZYr8HHMtLi+xx/Zfff1f+lfkGrvyMuKPQ
-        cG+am7A924dsvZwvK6AxtgNGmb5mYAGdm7+FgCKN04jsC7TA51/3
-X-Google-Smtp-Source: ABdhPJzga6i0E1Il8boIzaPNvfTb4mKEsRnw2K/8gqZFu0jDG1Hh8IhL3Abx/XRt/I5j/dV5SS1UsX7miMG+bx+hlA8=
-X-Received: by 2002:ab0:2c1a:: with SMTP id l26mr13094715uar.6.1600258845405;
- Wed, 16 Sep 2020 05:20:45 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KWaDQ7uhIqw2OfY7WhIv98jjbgPy0IbYqKs55rRj5Ms=;
+        b=PBRl/+5mYiLGZeCAs5lDyE7gXNB0LFq50r3YGof5O7o7C4Wv5G8BiQ2YRwY0zijGyn
+         JQ9cXGsLTJOqavaj/BOLNB/OAGbsTR55iCpMrFE3bunrRBM67zJn/mupcTK6VBwi4rz0
+         7EqRlVixVGtkIKoTOA4r2BSlTZ2WCtt1n/HdSrQixubrav0kw7JAE5f8ksrJAjGUG9c/
+         mezUTfAroUuaKbG3E0lD0pJ6qna81bhJ4HUydN3mTHIKV2KCrdhT9DBPRmoPEBq2i+sJ
+         33fJ7W0IZ2EwK5T7OXzu6ZN3oGJbq8iH1MPNXoLeNhsvIaMrmH7IEFOG84vkmZMKazLL
+         d2wA==
+X-Gm-Message-State: AOAM532923xhhJfghwg5AnXZ+tWRpKk6KrDhRjb6Vl77vYhlGF0CbdP3
+        6JzeW+FSnZ/WES5rwheXhlwikQ==
+X-Google-Smtp-Source: ABdhPJxz9AZg7VWUTlAzS3yFXuC9HGuABP1fBBplZ8AZKiRrWDbYPIflkTEfUkBKzRBZWPgG0ngpSA==
+X-Received: by 2002:a5d:4842:: with SMTP id n2mr27318888wrs.260.1600263825354;
+        Wed, 16 Sep 2020 06:43:45 -0700 (PDT)
+Received: from debian-brgl.home (lfbn-nic-1-68-20.w2-15.abo.wanadoo.fr. [2.15.159.20])
+        by smtp.gmail.com with ESMTPSA id 2sm5255813wmf.25.2020.09.16.06.43.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 06:43:44 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH next] gpiolib: check for parent device in devprop_gpiochip_set_names()
+Date:   Wed, 16 Sep 2020 15:43:27 +0200
+Message-Id: <20200916134327.3435-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 16 Sep 2020 17:50:34 +0530
-Message-ID: <CA+G9fYtz4=fO++JsL4McMWecFnFGWzm7kJvKKmfHOspjvMU9yQ@mail.gmail.com>
-Subject: [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader
-To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Cc:     lkft-triage@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>, rppt@kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-next-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-arm64 boot failed on linux next 20200916.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-[    0.000000] Linux version 5.9.0-rc5-next-20200916
-(TuxBuild@3aa8232c0e38) (aarch64-linux-gnu-gcc (Debian 9.3.0-8) 9.3.0,
-GNU ld (GNU Binutils for Debian) 2.34) #1 SMP PREEMPT Wed Sep 16
-10:13:15 UTC 2020
-[    0.000000] Machine model: Freescale Layerscape 2088A RDB Board
-[    0.000000] earlycon: uart8250 at MMIO 0x00000000021c0600 (options '')
-[    0.000000] printk: bootconsole [uart8250] enabled
-[    0.000000] efi: UEFI not found.
-[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please
-fix your bootloader!
-[    0.000000] Unable to handle kernel paging request at virtual
-address ffff0082ffffff70
-[    0.000000] Mem abort info:
-[    0.000000]   ESR = 0x96000044
-[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    0.000000]   SET = 0, FnV = 0
-[    0.000000]   EA = 0, S1PTW = 0
-[    0.000000] Data abort info:
-[    0.000000]   ISV = 0, ISS = 0x00000044
-[    0.000000]   CM = 0, WnR = 1
-[    0.000000] swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000827f9000
-[    0.000000] [ffff0082ffffff70] pgd=0000000000000000, p4d=0000000000000000
-[    0.000000] Internal error: Oops: 96000044 [#1] PREEMPT SMP
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
-5.9.0-rc5-next-20200916 #1
-[    0.000000] Hardware name: Freescale Layerscape 2088A RDB Board (DT)
-[    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO BTYPE=--)
-[    0.000000] pc : __memset+0x148/0x188
-[    0.000000] lr : memblock_alloc_try_nid+0xc4/0xdc
-[    0.000000] sp : ffffc305b2393cd0
-[    0.000000] x29: ffffc305b2393cd0 x28: 000000008116237c
-[    0.000000] x27: 0000000080000000 x26: ffffc305b1b51000
-[    0.000000] x25: 0000008380000000 x24: ffffc305b18014f8
-[    0.000000] x23: ffffc305b27a0f30 x22: 0000000000000000
-[    0.000000] x21: 00000000ffffffff x20: ffff0082ffffff70
-[    0.000000] x19: 0000000000000090 x18: 0000000000000010
-[    0.000000] x17: 0000000000001400 x16: 0000000000001c00
-[    0.000000] x15: ffffc305b23a48c0 x14: ffffc305b23a48c0
-[    0.000000] x13: fffffdfffe600000 x12: ffffc305b2393e44
-[    0.000000] x11: 0000000000004aa8 x10: ffffc305b2393df4
-[    0.000000] x9 : 0000000000000000 x8 : ffff0082ffffff70
-[    0.000000] x7 : 0000000000000000 x6 : 000000000000003f
-[    0.000000] x5 : 0000000000000040 x4 : 0000000000000010
-[    0.000000] x3 : 0000000000000080 x2 : 0000000000000080
-[    0.000000] x1 : 0000000000000000 x0 : ffff0082ffffff70
-[    0.000000] Call trace:
-[    0.000000]  __memset+0x148/0x188
-[    0.000000]  cma_init_reserved_mem+0x9c/0x15c
-[    0.000000]  cma_declare_contiguous_nid+0x288/0x308
-[    0.000000]  dma_contiguous_reserve_area+0x50/0x80
-[    0.000000]  dma_contiguous_reserve+0xfc/0x114
-[    0.000000]  arm64_memblock_init+0x42c/0x464
-[    0.000000]  setup_arch+0x27c/0x64c
-[    0.000000]  start_kernel+0xa0/0x56c
-[    0.000000] Code: f101007f fa45a068 54fffc0b aa0303e2 (a9001d07)
-[    0.000000] random: get_random_bytes called from
-print_oops_end_marker+0x34/0x78 with crng_init=0
-[    0.000000] ---[ end trace 0000000000000000 ]---
-[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-[    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill
-the idle task! ]---
+It's possible for a GPIO chip to not have a parent device (whose
+properties we inspect for 'gpio-line-names'). In this case we should
+simply return from devprop_gpiochip_set_names(). Add an appropriate
+check for this use-case.
 
+Fixes: 7cba1a4d5e16 ("gpiolib: generalize devprop_gpiochip_set_names() for device properties")
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpiolib.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index b7b608ef9..ac2c77edc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -375,6 +375,9 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
+ 	int ret, i;
+ 	int count;
+ 
++	if (!dev)
++		return 0;
++
+ 	count = device_property_string_array_count(dev, "gpio-line-names");
+ 	if (count < 0)
+ 		return 0;
 -- 
-Linaro LKFT
-https://lkft.linaro.org
+2.26.1
+
