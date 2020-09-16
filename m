@@ -2,95 +2,106 @@ Return-Path: <SRS0=I1Kz=CZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A63C433E2
-	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 22:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3F2C433E2
+	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 22:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 022A320770
-	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 22:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EA1D2087D
+	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 22:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NoKXXjta"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Bg5xRTNP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbgIPWm6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 16 Sep 2020 18:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53522 "EHLO
+        id S1726304AbgIPWzB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 16 Sep 2020 18:55:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbgIPWm5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2020 18:42:57 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEA9C06121F
-        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 14:25:28 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id q8so8523546lfb.6
-        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 14:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7GiT9eDSqdWyYzWccMuLBu4d8BPz/ksICennMbNChNM=;
-        b=NoKXXjtajoWY4tEFRPv2OskWdH4HGzBP1P/qSWuc9FaxXQ+8jqAufht1vLsf99B80m
-         riS1+DGjBqL6gylbik034bUF17j9V99bs70Y39lHhiPe/wMIYMIz2lBihGBf7VXA18TC
-         x/1r0GtDrUau+gBq35J351RVX/wmtLLAbQfhrLLHoTXxuAlZPWZmJF9CfnGH2lPNg7ky
-         G+Wvyg19qnDvcL5dQN6srKoGXQIWyBR2ty79taasZeDEJ9vriuypOmN/LvMPVhL8WhZx
-         vvqQpJILvKOL/cwoOgWCByZr7zkqmbwEeYvHTObSbVXIPOLwa6PKMEkITFWYytcqnf8b
-         fSGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7GiT9eDSqdWyYzWccMuLBu4d8BPz/ksICennMbNChNM=;
-        b=JR1e3NvNBsuHBnDlkvCWlmWorjFSnEXVeXZ/svI84aq+9DfQV42UCix12YFjcRwpK7
-         pZIv2LIb9QUlcYstBYCQ3WAXHUTMLGHJbD5QSoKMZaa9CxtZ7h9fdsD964bfDfIpJ1KQ
-         cxQnAQTqUvAqqXC7uF8ijexBNJWh7eQ7MhP7jnZeE0by/BUztlSnkHq7LQt69cPs5MJC
-         3c0tJ0hhzEJ0ZtbAVnKo2oqf9NPLs6m2OHVi4/gyWXOc1mGPHBy1QpZVZnPwLlALmX3x
-         q6qdDVmkF4WRrFJWA3Tigqx5gPpziiTVOWspGiTQn5lorvSfLwoYMjgikatVMDaXOa8+
-         MqnQ==
-X-Gm-Message-State: AOAM533kPaD+M0DGs5ldGgsWjj+ZfVpSjmqu1u8x5SsuoqKoB5w0zCL1
-        NHD/OswO7MfHyHsGtERT48TOvUcNDaANdzAQIebziQ==
-X-Google-Smtp-Source: ABdhPJzs5b4eYGb5oM4j7BucCL1k9GFEUi9CJ1alb6woPq/13hXbCACv89mQmtJYmPgH7ogIwt1+WAgGpNdk80Nlso4=
-X-Received: by 2002:ac2:51a8:: with SMTP id f8mr9031976lfk.472.1600291526503;
- Wed, 16 Sep 2020 14:25:26 -0700 (PDT)
+        with ESMTP id S1726189AbgIPWy7 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2020 18:54:59 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7EDDC06174A
+        for <linux-next@vger.kernel.org>; Wed, 16 Sep 2020 15:54:58 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BsFm35pmgz9sVC;
+        Thu, 17 Sep 2020 08:54:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1600296890;
+        bh=ALfqkhXecz3xjiWH5VA0Zac2vyZx14+HCwEv1KacsOA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Bg5xRTNPkO10k87vvPh7pb6et+RraAS/Hn+HiP2QVYnLOZpSEyW+acSgExuYcLV5S
+         0Qp/dSpiA8gkz8LU+EiqDBrSlvAfaZ1cUiG4yEoVzIXl9hVew2eVjiuvWpFJdl677T
+         L13pPRig1f4sydP5kdSEdeyBA9c09tgXeIiQo10KTqO66zusmIOrudxqqbGqmLT9eJ
+         t7EVf6hvuonX0U3NNqrCzcqbpnhhRDtzY20kRgLu6d12D4ZaSAU00bgZDk37llka0c
+         vEspIsWWqsbK8OJO0O3gYAoYLx0r8C3GzBd0DX/MPD5EFBjY5eowY6ECjad0UHXkGq
+         Tvhc9OUOAfdaA==
+Date:   Thu, 17 Sep 2020 08:54:29 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Heiko Carstens <hca@linux.ibm.com>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-next@vger.kernel.org
+Subject: Re: linux-next: add s390 set_fs branch?
+Message-ID: <20200917085138.0bd1998e@canb.auug.org.au>
+In-Reply-To: <20200916162846.GE7076@osiris>
+References: <20200915155534.GA11180@osiris>
+        <20200916095437.77e7365d@canb.auug.org.au>
+        <20200916162846.GE7076@osiris>
 MIME-Version: 1.0
-References: <20200916134327.3435-1-brgl@bgdev.pl> <20200916142930.GK3956970@smile.fi.intel.com>
- <CAMRc=Md5diJd+C2j_sHcZN5tM+r_W0Tz-naK1s=qd1bx-_g0Ng@mail.gmail.com>
-In-Reply-To: <CAMRc=Md5diJd+C2j_sHcZN5tM+r_W0Tz-naK1s=qd1bx-_g0Ng@mail.gmail.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Wed, 16 Sep 2020 23:25:15 +0200
-Message-ID: <CADYN=9Jc54usoTcJs0-yZm6MV6Txhh+g7CwiR+PWszr2Ndh6xw@mail.gmail.com>
-Subject: Re: [PATCH next] gpiolib: check for parent device in devprop_gpiochip_set_names()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/5Y/wiLZmVkb=.jqa8IBPGzQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 16 Sep 2020 at 16:47, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> On Wed, Sep 16, 2020 at 4:29 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > On Wed, Sep 16, 2020 at 03:43:27PM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > It's possible for a GPIO chip to not have a parent device (whose
-> > > properties we inspect for 'gpio-line-names'). In this case we should
-> > > simply return from devprop_gpiochip_set_names(). Add an appropriate
-> > > check for this use-case.
-> >
-> > Ah, nice!
-> > Can we also add a small comment in the code, b/c w/o it I would stumble over
-> > and eager to remove looks-as-unneeded check?
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--Sig_/5Y/wiLZmVkb=.jqa8IBPGzQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Hi Heiko,
+
+On Wed, 16 Sep 2020 18:28:46 +0200 Heiko Carstens <hca@linux.ibm.com> wrote:
+>
+> Ok, so we have a "for-next" branch now:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-next
+>=20
+> If you would include that in linux-next then you can drop the
+> following ones:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git#fixes
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git#features
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git#set_fs
+
+I have removed the s390-setfs tree and updated the s390 tree.  I like
+to keep the s390-fixes tree separate as I merge all the pending fixes
+early and they get tested separately.   That should not stop you
+merging your fixes branch into your for-next branch as well (to get rid
+of conflicts or you local testing).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5Y/wiLZmVkb=.jqa8IBPGzQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9il6UACgkQAVBC80lX
+0GwNIQf+IBIvRgq8sWJvLCoFD3RkW9x0jzjuzWQWngAMWYn6doECKKdGMu2XUsdl
+dlI0mhC18uNKhzLhd/Bss0Srx+dhSvJzQPIJrxo6YqgmxAHD8cukTWNegHtVabgn
+DABuCZy3360Xyq9yHu1oJqUEzTcXO5xyIiG/uDUgBCCrH+bY7PAMRPQ2GohxjEns
+IDrirWT54+dZrcq09LKIfoyLz2DAE/BPWU36TmzG7u+sOykaJ0lodUDizsjDF2Tk
+3AIgB523dGJGCBz2IoKrGgmFyvOHvUFdn5v58/TBTGA1KUa4mCnJjaeDAjiMmiov
+/DcuJ5ZUzAFnc5FZGhvgt5yMsO5fyA==
+=Thgv
+-----END PGP SIGNATURE-----
+
+--Sig_/5Y/wiLZmVkb=.jqa8IBPGzQ--
