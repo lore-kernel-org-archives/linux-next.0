@@ -2,97 +2,77 @@ Return-Path: <SRS0=I1Kz=CZ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7B2C433E2
-	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 21:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDDAC433E2
+	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 22:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14EFE206D4
-	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 21:07:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iL8S8Pmj"
+	by mail.kernel.org (Postfix) with ESMTP id 0FA5720732
+	for <linux-next@archiver.kernel.org>; Wed, 16 Sep 2020 22:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgIPVG5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:06:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21519 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726399AbgIPQOd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2020 12:14:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600272841;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=npu0gC9sM6MERj6/pQxIj4SF007TuYAcmo+pEdbn1Ho=;
-        b=iL8S8PmjXIVw1TgxYpr+urdNDrIYQgLBptRxFNVrBOPk6yhq4t/2hmJsYZiLD1twexKgPC
-        IFhrqWwLM2LRD5IbcuM5rT9yTCkRHoGWjAm2IoqII9zm/9/MnboUCAFY8G0xsH6BMHmgmp
-        A/+Nt4PYU/GYEoYK5/OSaeydE+1jsms=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-395-dl85R3dsOhO1R8aT0Wv52g-1; Wed, 16 Sep 2020 09:01:02 -0400
-X-MC-Unique: dl85R3dsOhO1R8aT0Wv52g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726572AbgIPWR5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 16 Sep 2020 18:17:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbgIPWR4 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2020 18:17:56 -0400
+X-Greylist: delayed 345 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Sep 2020 14:41:24 PDT
+Received: from pasta.tip.net.au (pasta.tip.net.au [IPv6:2401:fc00:0:129::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944C7C0611BC;
+        Wed, 16 Sep 2020 14:41:24 -0700 (PDT)
+Received: from canb.auug.org.au (203-206-41-51.dyn.iinet.net.au [203.206.41.51])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29FFE10BBEC8;
-        Wed, 16 Sep 2020 13:01:00 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BC285DE77;
-        Wed, 16 Sep 2020 13:01:00 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 031D118408A0;
-        Wed, 16 Sep 2020 13:01:00 +0000 (UTC)
-Date:   Wed, 16 Sep 2020 09:00:59 -0400 (EDT)
-From:   Qian Cai <caiqian@redhat.com>
-To:     peterz@infradead.org
-Cc:     Qian Cai <cai@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Sebastian A. Siewior" <bigeasy@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org,
-        Waiman Long <longman@redhat.com>
-Message-ID: <1750732498.13475000.1600261259894.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20200916125402.GR2674@hirez.programming.kicks-ass.net>
-References: <20200904153231.11994-1-a.darwish@linutronix.de> <224bd11b533dd2acff3f6cce51ab4ca676eb4f9f.camel@redhat.com> <20200915124817.GA127490@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net> <20200915143028.GB2674@hirez.programming.kicks-ass.net> <32bfdec1ad4e11cfecd840e1b83d95ba2bab1abc.camel@redhat.com> <20200916125402.GR2674@hirez.programming.kicks-ass.net>
-Subject: Re: [PATCH v2 0/5] seqlock: Introduce PREEMPT_RT support
+        by pasta.tip.net.au (Postfix) with ESMTPSA id 4BsD7Q46SRz9BVX;
+        Thu, 17 Sep 2020 07:41:22 +1000 (AEST)
+Date:   Thu, 17 Sep 2020 07:41:21 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the irqchip tree
+Message-ID: <20200917074121.2af9e668@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.66.86, 10.4.195.1]
-Thread-Topic: seqlock: Introduce PREEMPT_RT support
-Thread-Index: Tg6sDWWWIDujY6pd6Ow2PSYcTCsq5g==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Sender: linux-next-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/RqNR1VWtnxK_CcJr1T23cTW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/RqNR1VWtnxK_CcJr1T23cTW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
------ Original Message -----
-> On Wed, Sep 16, 2020 at 08:52:07AM -0400, Qian Cai wrote:
-> > On Tue, 2020-09-15 at 16:30 +0200, peterz@infradead.org wrote:
-> > > On Tue, Sep 15, 2020 at 08:48:17PM +0800, Boqun Feng wrote:
-> > > > I think this happened because seqcount_##lockname##_init() is defined
-> > > > at
-> > > > function rather than macro, so when the seqcount_init() gets expand in
-> > > 
-> > > Bah! I hate all this :/
-> > > 
-> > > I suspect the below, while more verbose than I'd like is the best
-> > > option.
-> > 
-> > Stephen, can you add this patch for now until Peter beats you to it?
-> 
-> Did you verify it works? I only wrote it..
+Commit
 
-Yes, I did.
+  0502fd082b11 ("fixup! irqchip/gic: Handle non-standard SGI deactivation o=
+n Samsung's Franken-GIC")
 
+is missing a Signed-off-by from its author and committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/RqNR1VWtnxK_CcJr1T23cTW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9ihoEACgkQAVBC80lX
+0GzcLQf8CE943EKN59HmWtzQKL2AXdfSITR7JBDBnjkskpJ2S5lIZ3vpKAL+OBii
+VfKRGeISfaijXKKJrMhlyFhJ3e9G0pH6f6lyUX/z90hHQQmQFa06iJDJzFMY6dsJ
+l5MY0I3biBHPpVlqrxdPN9wmbTey/mkMGRZXTiveGX2/jx+ThCjFoMwURZKNGi5+
+ojUL4PWWWKBHhXv++bWnVOIcal2u6ohOq9RMOUf1HJ6PciKsoLNNPH1dhEpq5EIL
+PTO/HoyX9ZqvMWR5sTRef0M7IzuVj5tpf7ENuXHmomQQz78Oi4KoBZ8QW2qhdl4t
+IT1iKeb3PmdY1a0vabCsOcK7tCXBgQ==
+=EGvw
+-----END PGP SIGNATURE-----
+
+--Sig_/RqNR1VWtnxK_CcJr1T23cTW--
