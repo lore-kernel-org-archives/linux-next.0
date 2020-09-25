@@ -2,196 +2,108 @@ Return-Path: <SRS0=BE1Q=DC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14FFC4727E
-	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 23:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A00AC4727E
+	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 23:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9126520758
-	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 23:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34B5B20878
+	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 23:45:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D3Cu1hB1"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UaBaPWPO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbgIYXpi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 25 Sep 2020 19:45:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55680 "EHLO
+        id S1729480AbgIYXpk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 25 Sep 2020 19:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729366AbgIYXph (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Sep 2020 19:45:37 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC09C0613D3
-        for <linux-next@vger.kernel.org>; Fri, 25 Sep 2020 16:45:37 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id t7so277168pjd.3
-        for <linux-next@vger.kernel.org>; Fri, 25 Sep 2020 16:45:37 -0700 (PDT)
+        with ESMTP id S1729478AbgIYXpi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Sep 2020 19:45:38 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4D6C0613D5
+        for <linux-next@vger.kernel.org>; Fri, 25 Sep 2020 16:45:38 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id k8so4765061pfk.2
+        for <linux-next@vger.kernel.org>; Fri, 25 Sep 2020 16:45:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f1jwHVzfZHrVmqikaqf6fuMg9CXwRG2rrwLcl0E/Pb4=;
-        b=D3Cu1hB1m1lprTGmLAyG6xV6ny/FBHq9zXv9pEvu7WhFaxncAb+SrVuCLTeD4Zf3xq
-         FbfynQPNXe70ufCEMGMqt7qt0AlHlEW0BauITWLILYYQKogCVBUPBhCjQUy9cYCksHOS
-         Os/7DZ9Ovw3UDeMuB1PlKY42Dpa8mwL4kVRCk=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cCvjyh3GAWHODp3gNqO/cxpjyT+UK9hE3i+NYvWYWug=;
+        b=UaBaPWPOtq6Ku6r+E/aktfyx2R2zJ+wD62Bxd9SCvodOkjq446bGgfddVvHaqJ5ZQv
+         tievxaUuKaBeq+7npte/4zLwlBxDDR3mz9dCXRJcIJkGTv4dIDWeyziPvNaRxHbd+ThX
+         hJzLkj0XnH6NjDHuGuo8XH+MMqxth9IEeOwF8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f1jwHVzfZHrVmqikaqf6fuMg9CXwRG2rrwLcl0E/Pb4=;
-        b=JERtaNVEDX4z3aYu5WqwM9gfbywlR90tuFI6/X5S0SX0NuvUvJ4hXeMqKENFwmnT2g
-         BZSft/cFUmvIuN9f91x33uBz8XzKnxoP6S21tDS2b7/SyuLeT9jz2jtKNHxiUr/D5U1a
-         +/9Xws5GvyGOtBgimIr0VhwneaUwnKj5Wkhm+Z8734f2f73qAh9rXmFQKgxpcQ8KtMr+
-         h9L99QFBLeLdC9DFQDUkBRP+ShBdHoEaecDpXBbxV5CuHtDOSUhwxNSttuzjgSztVZvG
-         ZYHIxfemF5e/vgltzJpEGtwhier9I3rdn35wIxFCkMVkot2tsNGaSdCABy2SaWBV8dVR
-         kU5A==
-X-Gm-Message-State: AOAM530eGJjsLE4s0WU1h/Fl6+EmKiH7nAGkb+WDwDy0xawDVsvdFvZp
-        D7FOZcuG+3BfmvUZ3bjNf2QAPw==
-X-Google-Smtp-Source: ABdhPJzRvAfa55DSVx0WFW/fZb8aSLunHIeiClcmR33X4CbdS1acmEeXw4jf2Xi4RN85U3OCU4C2vg==
-X-Received: by 2002:a17:90b:f83:: with SMTP id ft3mr17057pjb.234.1601077537186;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cCvjyh3GAWHODp3gNqO/cxpjyT+UK9hE3i+NYvWYWug=;
+        b=QbyUFQDhTWjVyy8aJh0aBQDoDXDGDHGGBf5HgaPHH/D/cwcj1Tw6LrWDU76nGzhET5
+         JepewYPlB+jT2ZVwnh6fjRxHeZG5U/k5zowjHTMcpJuJXFADtmOSTelWVMgEsiQwJo7S
+         wExIAZtUh5yz8Y/1oiLacloZxYs7RkICa0BzvHHi65hdkfbPg4DBEuBmUgjION8mQNRq
+         Xd4mlnDY3t3mF1eNAESmDzND0vgGjzS9X448l5Kg+tpEWcZrrruk0nRjudB3SCaBXuQP
+         3SY9jC9iK/o9a2mQd24lMXm+jg2XHklCHOnXndbgU+8LKQ+2Gg9PIyWHWoDG5iVLhQah
+         W32Q==
+X-Gm-Message-State: AOAM5319Oqjb24zfgixKC2RFCdCxyFZSwf7PQanNqTVjVTOFlek3ouTb
+        He8xbq1YDQZEorpY2I1/Fb5OFA==
+X-Google-Smtp-Source: ABdhPJx/ssB0AJWYYp3cLL8gzai0BTOQP/wl4iZKIWPv0+GRei9MwCIslR5o26fmdgEwQGo/+OrXgg==
+X-Received: by 2002:aa7:96f1:0:b029:142:2501:39ed with SMTP id i17-20020aa796f10000b0290142250139edmr859126pfq.60.1601077537908;
         Fri, 25 Sep 2020 16:45:37 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c20sm3660942pfc.209.2020.09.25.16.45.35
+        by smtp.gmail.com with ESMTPSA id n9sm3119447pgi.2.2020.09.25.16.45.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 25 Sep 2020 16:45:36 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Shuah Khan <shuah@kernel.org>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Hangbin Liu <liuhangbin@gmail.com>,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Hangbin Liu <liuhangbin@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         Tim.Bird@sony.com, lkft-triage@lists.linaro.org,
         Anders Roxell <anders.roxell@linaro.org>,
         Justin Cook <justin.cook@linaro.org>,
         Linux-Next Mailing List <linux-next@vger.kernel.org>,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] selftests/run_kselftest.sh: Make each test individually selectable
-Date:   Fri, 25 Sep 2020 16:45:27 -0700
-Message-Id: <20200925234527.1885234-3-keescook@chromium.org>
+Subject: [PATCH 0/2] selftests: Extract run_kselftest.sh and generate stand-alone test list
+Date:   Fri, 25 Sep 2020 16:45:25 -0700
+Message-Id: <20200925234527.1885234-1-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200925234527.1885234-1-keescook@chromium.org>
-References: <20200925234527.1885234-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Currently with run_kselftest.sh there is no way to choose which test
-we could run. All the tests listed in kselftest-list.txt are all run
-every time. This patch enhanced the run_kselftest.sh to make the test
-collections (or tests) individually selectable. e.g.:
+Hi!
 
-$ ./run_kselftest.sh -c seccomp -t timers:posix_timers -t timers:nanosleep
+I really like Hangbin Liu's intent[1] but I think we need to be a little
+more clean about the implementation. This extracts run_kselftest.sh from
+the Makefile so it can actually be changed without embeds, etc. Instead,
+generate the test list into a text file. Everything gets much simpler.
+:)
 
-Additionally adds a way to list all known tests with "-l", usage
-with "-h", and perform a dry run without running tests with "-n".
+And in patch 2, I add back Hangin Liu's new options (with some extra
+added) with knowledge of "collections" (i.e. Makefile TARGETS) and
+subtests. This should work really well with LAVA too, which needs to
+manipulate the lists of tests being run.
 
-Co-developed-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- tools/testing/selftests/run_kselftest.sh | 77 ++++++++++++++++++++++--
- 1 file changed, 71 insertions(+), 6 deletions(-)
+Thoughts?
 
-diff --git a/tools/testing/selftests/run_kselftest.sh b/tools/testing/selftests/run_kselftest.sh
-index e07344be28ae..c08089f80e28 100755
---- a/tools/testing/selftests/run_kselftest.sh
-+++ b/tools/testing/selftests/run_kselftest.sh
-@@ -4,21 +4,86 @@ cd $BASE_DIR
- TESTS="$BASE_DIR"/kselftest-list.txt
- if [ ! -r "$TESTS" ] ; then
- 	echo "$0: Could not find list of tests to run ($TESTS)" >&2
--	exit 1
-+	available=""
-+else
-+	available="$(cat "$TESTS")"
- fi
--available="$(cat "$TESTS")"
- 
- . ./kselftest/runner.sh
- ROOT=$PWD
- 
--if [ "$1" = "--summary" ] ; then
--	logfile="$BASE_DIR"/output.log
--	cat /dev/null > $logfile
-+usage()
-+{
-+	cat <<EOF
-+Usage: $0 [OPTIONS]
-+  -s | --summary		Print summary with detailed log in output.log
-+  -t | --test COLLECTION:TEST	Run TEST from COLLECTION
-+  -c | --collection COLLECTION	Run all tests from COLLECTION
-+  -l | --list			List the available collection:test entries
-+  -d | --dry-run		Don't actually run any tests
-+  -h | --help			Show this usage info
-+EOF
-+	exit $1
-+}
-+
-+COLLECTIONS=""
-+TESTS=""
-+dryrun=""
-+while true; do
-+	case "$1" in
-+		-s | --summary)
-+			logfile="$BASE_DIR"/output.log
-+			cat /dev/null > $logfile
-+			shift ;;
-+		-t | --test)
-+			TESTS="$TESTS $2"
-+			shift 2 ;;
-+		-c | --collection)
-+			COLLECTIONS="$COLLECTIONS $2"
-+			shift 2 ;;
-+		-l | --list)
-+			echo "$available"
-+			exit 0 ;;
-+		-n | --dry-run)
-+			dryrun="echo"
-+			shift ;;
-+		-h | --help)
-+			usage 0 ;;
-+		"")
-+			break ;;
-+		*)
-+			usage 1 ;;
-+	esac
-+done
-+
-+# Add all selected collections to the explicit test list.
-+if [ -n "$COLLECTIONS" ]; then
-+	for collection in $COLLECTIONS ; do
-+		found="$(echo "$available" | grep "^$collection:")"
-+		if [ -z "$found" ] ; then
-+			echo "No such collection '$collection'" >&2
-+			exit 1
-+		fi
-+		TESTS="$TESTS $found"
-+	done
-+fi
-+# Replace available test list with explicitly selected tests.
-+if [ -n "$TESTS" ]; then
-+	valid=""
-+	for test in $TESTS ; do
-+		found="$(echo "$available" | grep "^${test}$")"
-+		if [ -z "$found" ] ; then
-+			echo "No such test '$test'" >&2
-+			exit 1
-+		fi
-+		valid="$valid $found"
-+	done
-+	available="$(echo "$valid" | sed -e 's/ /\n/g')"
- fi
- 
- collections=$(echo "$available" | cut -d: -f1 | uniq)
- for collection in $collections ; do
- 	[ -w /dev/kmsg ] && echo "kselftest: Running tests in $collection" >> /dev/kmsg
- 	tests=$(echo "$available" | grep "^$collection:" | cut -d: -f2)
--	(cd "$collection" && run_many $tests)
-+	($dryrun cd "$collection" && $dryrun run_many $tests)
- done
+-Kees
+
+[1] https://lore.kernel.org/lkml/20200914022227.437143-1-liuhangbin@gmail.com/
+
+Kees Cook (2):
+  selftests: Extract run_kselftest.sh and generate stand-alone test list
+  selftests/run_kselftest.sh: Make each test individually selectable
+
+ tools/testing/selftests/Makefile         | 26 ++-----
+ tools/testing/selftests/lib.mk           |  5 +-
+ tools/testing/selftests/run_kselftest.sh | 89 ++++++++++++++++++++++++
+ 3 files changed, 98 insertions(+), 22 deletions(-)
+ create mode 100755 tools/testing/selftests/run_kselftest.sh
+
 -- 
 2.25.1
 
