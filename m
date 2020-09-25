@@ -2,104 +2,202 @@ Return-Path: <SRS0=BE1Q=DC=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06711C4363D
-	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 05:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F23C4727F
+	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 08:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA52721775
-	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 05:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE3F6208B6
+	for <linux-next@archiver.kernel.org>; Fri, 25 Sep 2020 08:22:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kydefUcf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yTnQ4SV+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgIYFfO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 25 Sep 2020 01:35:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:51433 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbgIYFfO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 25 Sep 2020 01:35:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4ByLGR3BFLz9sRf;
-        Fri, 25 Sep 2020 15:35:11 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1601012112;
-        bh=8p3sauSbq+mpYhld9DyFAUnuEStxI7MV+6sDacV3WBA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kydefUcfHZoxG7MEvE37q4eBVh3fiNGoBQA0eHzwBDciO4oU4G0BrhVcxlN6DsmdY
-         nj4m7jaOcWyavPGvC8L1qVYCHaZYhy3kPaoWiQ1OFZWd04KIADjSB02MIJewZ3lCzk
-         DcMvLGyCldJyC8Vq5qmVKXD5fBqN/TVynqIIbM3YDn22F9WiF+NOWwBijJIFjsL4hL
-         02MzajC/tH9DG+UQgmsbxAAQxuhprvnO713+pzYWvP9hy9bvYGL7FvP+ucrCMOonEx
-         hQLOU3VBlITFcJh3+knHawsTd1x4lfpns8pTBhZPVFeaD+SmTde1MS9suT3Kp2y6wS
-         pclk7uHsiYz5w==
-Date:   Fri, 25 Sep 2020 15:35:10 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jon Derrick <jonathan.derrick@intel.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the tip tree with the pci tree
-Message-ID: <20200925153510.5fe319ca@canb.auug.org.au>
+        id S1727647AbgIYIWG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 25 Sep 2020 04:22:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53496 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727248AbgIYIWF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Sep 2020 04:22:05 -0400
+Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A8DC0613CE
+        for <linux-next@vger.kernel.org>; Fri, 25 Sep 2020 01:22:05 -0700 (PDT)
+Received: by mail-ua1-x936.google.com with SMTP id d18so659275uav.4
+        for <linux-next@vger.kernel.org>; Fri, 25 Sep 2020 01:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WvDyteRu76pYPa4UAHUwSYLYJxuuyxc2Dt1PKdTqcpM=;
+        b=yTnQ4SV+hkPVxsQOZuljNgG+ll2vkUcmkTeES9wkAB2E6MwbdALDRKC5/qErzxHexZ
+         70H9PmgMHqXNxxZIIjZGiKvr2WozB4tuEMjUho6Xp9AT5Y/zRF5qQCJ7qulTMbtogqoz
+         isGEDVKW+sgSMRbs/PJV8waGVvK8XpmEIRI8gm1t6JTpicOBLWftuIWzMlMzjmw16tyt
+         BVKhk9gLbpJPVej+XcRMQlOxXCM3ZqVob/MbQz+/+hQPeKos8VHuZTutglw2wY5TUFq5
+         PxGaWlGgp7KiDuOq18dRuA6kjn9PGg9ur8FI/N4bggCtUJXjvo2hGb7IFjVa1fGufd3F
+         IYCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WvDyteRu76pYPa4UAHUwSYLYJxuuyxc2Dt1PKdTqcpM=;
+        b=TXtGNGAHbmuu6vHNlfWUTYhcYJLv+bAF263vwh+mfa+TzE3alZBF6SmYKieRceHBS4
+         qS5PRjxql6/21q/xmjW7PdewO3q6kxkroueXT3qNH5n7ezu3cnpHCNwR2kvIRM29ca0M
+         EKZugfy9Zdq/l01ccaWGZ+3uIIXB4Jre3ackTzlV4SY6LwC7HLMpo/o06Y0QFB/zYTOd
+         ULBiGM1sRWKRGHsrLh/I6MGQVmiTBs8K/ab1aTeZlVjw6/FQCq2tC1DK0zsaFLtYVIZc
+         S/aBegVeG4ebR6v5a03cx6zmMIGCZREYtkbyj0LiJueGIXUSbiFrLDkBrbOiqBWOeN3b
+         lVMg==
+X-Gm-Message-State: AOAM531a0FL7b/Jj6/Xfd2MZopAg5TbnEa+XGQBlGRUVEtUIBNpu9Xcp
+        ZwaHIDzNBA1bdblwAcPeP6Awd+sBdItbqATck7/FIg==
+X-Google-Smtp-Source: ABdhPJzLpE+AUK3XJTcofgSAmKvjhVK7+3tvguttC5HmiCpeMiYmNklBnlRfzt2LXLjnlt0nX+EaErShGSTZoNR/zHY=
+X-Received: by 2002:ab0:1450:: with SMTP id c16mr1693683uae.27.1601022124294;
+ Fri, 25 Sep 2020 01:22:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8uqibGxB7=sDaTlJ+RM2ylQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20200914021758.420874-1-liuhangbin@gmail.com/> <20200914022227.437143-1-liuhangbin@gmail.com>
+In-Reply-To: <20200914022227.437143-1-liuhangbin@gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 25 Sep 2020 13:51:53 +0530
+Message-ID: <CA+G9fYvT6Mw2BamoiVyw=wLUqD-3LB2oaDqcuabOyWfFxEN1qg@mail.gmail.com>
+Subject: Re: [PATCHv5 kselftest next] selftests/run_kselftest.sh: make each
+ test individually selectable
+To:     Hangbin Liu <liuhangbin@gmail.com>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>, Tim.Bird@sony.com,
+        lkft-triage@lists.linaro.org, Kees Cook <keescook@chromium.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Justin Cook <justin.cook@linaro.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/8uqibGxB7=sDaTlJ+RM2ylQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 14 Sep 2020 at 07:53, Hangbin Liu <liuhangbin@gmail.com> wrote:
+>
+> Currently, after generating run_kselftest.sh, there is no way to choose
+> which test we could run. All the tests are listed together and we have
+> to run all every time. This patch enhanced the run_kselftest.sh to make
+> the tests individually selectable. e.g.
+>
+>   $ ./run_kselftest.sh -t "bpf size timers"
 
-Hi all,
+My test run break on linux next
 
-Today's linux-next merge of the tip tree got a conflict in:
+./run_kselftest.sh: line 1331: syntax error near unexpected token `)'
+./run_kselftest.sh: line 1331: `-e -s | --summary )
+logfile=$BASE_DIR/output.log; cat /dev/null > $logfile; shift ;;'
 
-  arch/x86/kernel/apic/msi.c
+steps do run:
+# run_kselftest.sh file generated by kselftest Makefile and included in tarball
+./run_kselftest.sh 2>&1 | tee "${LOGFILE}"
 
-between commit:
+ref:
+https://github.com/nareshkamboju/test-definitions/blob/master/automated/linux/kselftest/kselftest.sh#L222
 
-  2705b8e4d46f ("x86/apic/msi: Use Real PCI DMA device when configuring IRT=
-E")
+full test run log:
+https://lkft.validation.linaro.org/scheduler/job/1786826#L1391
 
-from the pci tree and commit:
+>
+> Before the patch:
+> ================
+>
+> $ cat run_kselftest.sh
+> \#!/bin/sh
+> BASE_DIR=$(realpath $(dirname $0))
+> cd $BASE_DIR
+> . ./kselftest/runner.sh
+> ROOT=$PWD
+> if [ "$1" = "--summary" ]; then
+>   logfile=$BASE_DIR/output.log
+>   cat /dev/null > $logfile
+> fi
+> [ -w /dev/kmsg ] && echo "kselftest: Running tests in android" >> /dev/kmsg
+> cd android
+> run_many        \
+>         "run.sh"
+> cd $ROOT
+> ...<snip>...
+> [ -w /dev/kmsg ] && echo "kselftest: Running tests in zram" >> /dev/kmsg
+> cd zram
+> run_many        \
+>         "zram.sh"
+> cd $ROOT
+>
+> After the patch:
+> ===============
+>
+> $ cat run_kselftest.sh
+> \#!/bin/sh
+> BASE_DIR=$(realpath $(dirname $0))
+> . ./kselftest/runner.sh
+> TESTS="android ...<snip>... filesystems/binderfs ...<snip>... zram"
+>
+> run_android()
+> {
+>         [ -w /dev/kmsg ] && echo "kselftest: Running tests in android" >> /dev/kmsg
+>         cd android
+>         run_many        \
+>                 "run.sh"
+>         cd $ROOT
+> }
+>
+> ...<snip>...
+>
+> run_filesystems_binderfs()
+> {
+>         [ -w /dev/kmsg ] && echo "kselftest: Running tests in filesystems/binderfs" >> /dev/kmsg
+>         cd filesystems/binderfs
+>         run_many        \
+>                 "binderfs_test"
+>         cd $ROOT
+> }
+>
+> ...<snip>...
+>
+> run_zram()
+> {
+>         [ -w /dev/kmsg ] && echo "kselftest: Running tests in zram" >> /dev/kmsg
+>         cd zram
+>         run_many        \
+>                 "zram.sh"
+>         cd $ROOT
+> }
+>
+> usage()
+> {
+>         cat <<EOF
+> usage: ${0##*/} OPTS
+>         -s | --summary          Only print summary info and put detailed log in output.log
+>         -t | --tests            Test name you want to run specifically
+>         -h | --help             Show this usage info
+> EOF
+> }
+>
+> while true; do
+>         case "$1" in
+>         -s | --summary ) logfile=$BASE_DIR/output.log; cat /dev/null > $logfile; shift ;;
+>         -t | --tests ) TESTS=$2; shift 2 ;;
+>         -l | --list ) echo $TESTS; exit 0 ;;
+>         -h | --help ) usage; exit 0 ;;
+>         "" ) break;;
+>         * ) usage; exit 1;;
+>         esac
+> done
+>
+> cd $BASE_DIR
+> ROOT=$PWD
+> for folder in $TESTS; do
+>         folder=$(echo $folder | tr -s '/-' '_')
+>         run_$folder
+> done
+>
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 
-  7ca435cf857d ("x86/irq: Cleanup the arch_*_msi_irqs() leftovers")
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-from the tip tree.
-
-I fixed it up (the latter removed the code updated by the former, so I
-did that) and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be mentioned
-to your upstream maintainer when your tree is submitted for merging.
-You may also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8uqibGxB7=sDaTlJ+RM2ylQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9tgY4ACgkQAVBC80lX
-0GxLIwf/XcPNTx97V81j4bVcef5/dFKroEXLMTT/n5ai06CnTmfDgAQNM4IFPAo9
-Ty8UCknGmKZTd5+V/anks3pKXzuBFmpM4UDgzxgMJpCHzDbMJaWiMHrrv48j2iDb
-1ypXzbIe1BkEhlX6ZcHX153JzEyRi7xtgsOQXLWkqWrNGeR5Lt0n/Bp7VUqGRtBq
-7pdmI65ESpg1TxpzYTGDBjWTIPwE4thyR5EkaMdNDwaM1E+MxlN94FU004iAbJzG
-2I/oT50//kamoeUUCJ3y+rCe+Ej1ozILPcSIHl0UNHL7OE/eZs86JNDa3FP/M+Q1
-zkh6AHEZAxtYtbNbZJCi+QccmZN/IA==
-=K1ta
------END PGP SIGNATURE-----
-
---Sig_/8uqibGxB7=sDaTlJ+RM2ylQ--
+-- 
+Linaro LKFT
+https://lkft.linaro.org
