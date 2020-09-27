@@ -1,171 +1,146 @@
-Return-Path: <SRS0=7Epd=DD=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=cmI2=DE=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13344C2D0A8
-	for <linux-next@archiver.kernel.org>; Sat, 26 Sep 2020 12:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A401C4741F
+	for <linux-next@archiver.kernel.org>; Sun, 27 Sep 2020 01:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A695D2396D
-	for <linux-next@archiver.kernel.org>; Sat, 26 Sep 2020 12:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E985E221ED
+	for <linux-next@archiver.kernel.org>; Sun, 27 Sep 2020 01:53:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="stYoAHM4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nf+wkl5y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728861AbgIZMjs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 26 Sep 2020 08:39:48 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11546 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbgIZMjr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Sat, 26 Sep 2020 08:39:47 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08QCWRe0111727;
-        Sat, 26 Sep 2020 08:39:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=3MYKY040lEuw5jDKzV3PF147mCVYwbqY92Kcs2d9pHM=;
- b=stYoAHM4Idv9dsIru0fmgGg81Du4QTVpzAy3h7TyNOJeQLokKMLrJqIE4dCviuU9KwBb
- IsZSYnrpNZ+wsMMBawyZaunEhq0onbMYGNEe3hcH/FWrMyy7MwDtDDOGWflQ+m9zqGz8
- SsbpFbkp1/Tpa5IRfDPQPQ7KG60pXTMaQXHCKb/xbK9mrXkL4uqw+1nFonDjSDncarcQ
- Is+gIoez8CG1++CbuoWEy2GgeDRN8bzXXmZFe5+IyxB5C1JmLB1TjPvIbd2hJGmhxXuy
- 1EErU5N4KtdBp5+VG58W6XUpLKMHS7LRSJzpbkuYAontzSSvj8OuNtPZc3DTB00JxD2Z iA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33t5er8cv1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 26 Sep 2020 08:39:04 -0400
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08QCWWxS111972;
-        Sat, 26 Sep 2020 08:39:03 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33t5er8cuc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 26 Sep 2020 08:39:03 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08QCRuOI023314;
-        Sat, 26 Sep 2020 12:39:00 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma03ams.nl.ibm.com with ESMTP id 33sw980bk9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 26 Sep 2020 12:39:00 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08QCcva320513094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 26 Sep 2020 12:38:57 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57D25A4040;
-        Sat, 26 Sep 2020 12:38:57 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 36400A4057;
-        Sat, 26 Sep 2020 12:38:55 +0000 (GMT)
-Received: from localhost (unknown [9.145.18.16])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 26 Sep 2020 12:38:55 +0000 (GMT)
-Date:   Sat, 26 Sep 2020 14:38:53 +0200
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>, Qian Cai <cai@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org, x86@kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-hyperv@vger.kernel.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Russ Anderson <rja@hpe.com>, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Megha Dey <megha.dey@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jacob Pan <jacob.jun.pan@intel.com>,
-        Baolu Lu <baolu.lu@intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch V2 34/46] PCI/MSI: Make arch_.*_msi_irq[s] fallbacks
- selectable
-Message-ID: <your-ad-here.call-01601123933-ext-6476@work.hours>
-References: <20200826111628.794979401@linutronix.de>
- <20200826112333.992429909@linutronix.de>
- <cdfd63305caa57785b0925dd24c0711ea02c8527.camel@redhat.com>
+        id S1730018AbgI0Bxr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 26 Sep 2020 21:53:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42030 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbgI0Bxr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 26 Sep 2020 21:53:47 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE87EC0613CE;
+        Sat, 26 Sep 2020 18:53:46 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id d13so5399421pgl.6;
+        Sat, 26 Sep 2020 18:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=63gTB/opngvWQpxsqyyVmbz485xcMBG552lLah4TntY=;
+        b=nf+wkl5yx8wpRiM7+3p7Kvxjbp54f85aDPU7nfrglXIbeitshFVNeHQn4xeNO1LMOI
+         Xh19u6fShKUbL+djFQzBpBoNfjpOVtX0DuufNvHnvpgFJzGWR9Wle+bp1V78e6gJeEWT
+         iHfXHXbL2UyVFNe+RnFxvt16HL76igfk+2LJdJ1OcYMcUsotWc3bXGOSd+Qy78lmegaK
+         y7MXNWdQRGf5lPeANQ70zqcaECDpdZhf5C08GZsiMC5Be+WlwTIX1daRFLAMplUiNYJ2
+         4qPmw+Una7M6l+rVovJW6eLWnr5Gi33N17okqMFHVMGBtdy2dlPvRWxJdPZePcPlLb/z
+         xsDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=63gTB/opngvWQpxsqyyVmbz485xcMBG552lLah4TntY=;
+        b=JzNE7T7Rl5U3YfXHyy2Dzrg8uHe3Pt4I7Pj35uxoszjY6JET/ESdyXNHlyNyUzpNXL
+         DwdRHOzxcELZmb2pmmTYQzfVj8R5x23AMcl0gwn4rr6HMcr73g7tqf2aHZvrk7g8wdud
+         7wD+8mNDSirPSULvFgIR7QX1veHgu6+D2PBwlEwK3ZsaW6yLltZFsh7S0Hd8Hg6I/za2
+         Zu7FFMWOrY16KjrNBGKuMHhec07Jq8B7EReADHA+QwUXhamsmZIXrJFQsHLyPZNEnGE6
+         U88PqJgkenM6z3xFq2XWbes357EFwL2ig4RFSco80Xyomfkv5753gYxbRikSJkbfHLX1
+         H5rw==
+X-Gm-Message-State: AOAM533yQi5e0AJlXaGWAropgVGqZvqNCnoX/Rx4swW4TE9cu1H4DOgD
+        hbqCeBuICagbDqFcN2suQfg=
+X-Google-Smtp-Source: ABdhPJzeGzXSb8Xqr+qYPObX4r2M6kOGPtBlgo4hIZrbnCIeD1OGQBR8N9BX/MTdkDzxguPs2FfNGg==
+X-Received: by 2002:aa7:9850:0:b029:142:2501:34f0 with SMTP id n16-20020aa798500000b0290142250134f0mr5425247pfq.73.1601171626422;
+        Sat, 26 Sep 2020 18:53:46 -0700 (PDT)
+Received: from dhcp-12-153.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id b11sm6609285pfo.15.2020.09.26.18.53.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Sep 2020 18:53:45 -0700 (PDT)
+Date:   Sun, 27 Sep 2020 09:53:34 +0800
+From:   Hangbin Liu <liuhangbin@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        linux-doc@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>, Tim.Bird@sony.com,
+        lkft-triage@lists.linaro.org,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Justin Cook <justin.cook@linaro.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCHv5 kselftest next] selftests/run_kselftest.sh: make each
+ test individually selectable
+Message-ID: <20200927015334.GC2531@dhcp-12-153.nay.redhat.com>
+References: <20200914021758.420874-1-liuhangbin@gmail.com/>
+ <20200914022227.437143-1-liuhangbin@gmail.com>
+ <CA+G9fYvT6Mw2BamoiVyw=wLUqD-3LB2oaDqcuabOyWfFxEN1qg@mail.gmail.com>
+ <202009251414.15274C0@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cdfd63305caa57785b0925dd24c0711ea02c8527.camel@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-26_10:2020-09-24,2020-09-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- adultscore=0 priorityscore=1501 phishscore=0 mlxlogscore=948
- suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009260111
+In-Reply-To: <202009251414.15274C0@keescook>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Sep 25, 2020 at 09:54:52AM -0400, Qian Cai wrote:
-> On Wed, 2020-08-26 at 13:17 +0200, Thomas Gleixner wrote:
-> > From: Thomas Gleixner <tglx@linutronix.de>
+On Fri, Sep 25, 2020 at 02:16:14PM -0700, Kees Cook wrote:
+> On Fri, Sep 25, 2020 at 01:51:53PM +0530, Naresh Kamboju wrote:
+> > On Mon, 14 Sep 2020 at 07:53, Hangbin Liu <liuhangbin@gmail.com> wrote:
+> > >
+> > > Currently, after generating run_kselftest.sh, there is no way to choose
+> > > which test we could run. All the tests are listed together and we have
+> > > to run all every time. This patch enhanced the run_kselftest.sh to make
+> > > the tests individually selectable. e.g.
+> > >
+> > >   $ ./run_kselftest.sh -t "bpf size timers"
 > > 
-> > The arch_.*_msi_irq[s] fallbacks are compiled in whether an architecture
-> > requires them or not. Architectures which are fully utilizing hierarchical
-> > irq domains should never call into that code.
+> > My test run break on linux next
 > > 
-> > It's not only architectures which depend on that by implementing one or
-> > more of the weak functions, there is also a bunch of drivers which relies
-> > on the weak functions which invoke msi_controller::setup_irq[s] and
-> > msi_controller::teardown_irq.
-> > 
-> > Make the architectures and drivers which rely on them select them in Kconfig
-> > and if not selected replace them by stub functions which emit a warning and
-> > fail the PCI/MSI interrupt allocation.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > ./run_kselftest.sh: line 1331: syntax error near unexpected token `)'
+> > ./run_kselftest.sh: line 1331: `-e -s | --summary )
+> > logfile=$BASE_DIR/output.log; cat /dev/null > $logfile; shift ;;'
 > 
-> Today's linux-next will have some warnings on s390x:
+> Yes, please revert this patch. The resulting script is completely
+> trashed:
 > 
-> .config: https://gitlab.com/cailca/linux-mm/-/blob/master/s390.config
+> BASE_DIR=$(realpath $(dirname $0))
+> . ./kselftest/runner.sh
+> TESTS="seccomp"
 > 
-> WARNING: unmet direct dependencies detected for PCI_MSI_ARCH_FALLBACKS
->   Depends on [n]: PCI [=n]
->   Selected by [y]:
->   - S390 [=y]
+> run_seccomp()
+> {
+> -e      [ -w /dev/kmsg ] && echo "kselftest: Running tests in seccomp" >> /dev/kmsg
+> -e      cd seccomp
+> -en     run_many
+>         \
+> -ne             "seccomp_bpf"
+>         \
+> -ne             "seccomp_benchmark"
 > 
-> WARNING: unmet direct dependencies detected for PCI_MSI_ARCH_FALLBACKS
->   Depends on [n]: PCI [=n]
->   Selected by [y]:
->   - S390 [=y]
->
+> -e      cd $ROOT
+> }
 
-Yes, as well as on mips and sparc which also don't FORCE_PCI.
-This seems to work for s390:
+I'm really sorry to make this trouble. And I'm OK to revert the patch.
+I just a little wondering how do you generate this script.
+I tested with 'make -C tools/testing/selftests gen_tar FORMAT=.xz' before
+post the patch and all looks good to me.
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index b0b7acf07eb8..41136fbe909b 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -192,3 +192,3 @@ config S390
-        select PCI_MSI                  if PCI
--       select PCI_MSI_ARCH_FALLBACKS
-+       select PCI_MSI_ARCH_FALLBACKS   if PCI
-        select SET_FS
+```
+
+run_seccomp()
+{
+        [ -w /dev/kmsg ] && echo "kselftest: Running tests in seccomp" >> /dev/kmsg
+        cd seccomp
+        run_many        \
+                "seccomp_bpf"   \
+                "seccomp_benchmark"
+        cd $ROOT
+}
+
+```
+
+Thanks
+Hangbin
