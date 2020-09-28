@@ -2,53 +2,70 @@ Return-Path: <SRS0=aXXK=DF=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BC7C2D0A8
-	for <linux-next@archiver.kernel.org>; Mon, 28 Sep 2020 12:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D09C2D0A8
+	for <linux-next@archiver.kernel.org>; Mon, 28 Sep 2020 12:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1B520774
-	for <linux-next@archiver.kernel.org>; Mon, 28 Sep 2020 12:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0BFE2158C
+	for <linux-next@archiver.kernel.org>; Mon, 28 Sep 2020 12:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbgI1MKH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 28 Sep 2020 08:10:07 -0400
-Received: from verein.lst.de ([213.95.11.211]:35339 "EHLO verein.lst.de"
+        id S1726497AbgI1Mho (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 28 Sep 2020 08:37:44 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:59340 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726409AbgI1MKH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Sep 2020 08:10:07 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 5840C68AFE; Mon, 28 Sep 2020 14:10:03 +0200 (CEST)
-Date:   Mon, 28 Sep 2020 14:10:02 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
+        id S1726281AbgI1Mho (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 28 Sep 2020 08:37:44 -0400
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1kMsPK-00GXDC-Tw; Mon, 28 Sep 2020 14:37:30 +0200
+Date:   Mon, 28 Sep 2020 14:37:30 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Message-ID: <20200928121002.GA3219@lst.de>
-References: <20200928135405.73404219@canb.auug.org.au> <20200928060427.GA15041@lst.de> <KU5DHQ.C9RVOLP69UO81@crapouillou.net> <20200928113415.GA555@lst.de> <72ADHQ.T6LL1SHQF0RG3@crapouillou.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20200928123730.GA3940833@lunn.ch>
+References: <20200928124608.2f527504@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <72ADHQ.T6LL1SHQF0RG3@crapouillou.net>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200928124608.2f527504@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 01:46:55PM +0200, Paul Cercueil wrote:
->> dma_mmap_attrs can only be used on allocations from dma_mmap_attrs with
->> the same attrs.  As there is no allocation using DMA_ATTR_NON_CONSISTENT
->> in the drm core, something looks very fishy here.
->
-> Is that a fact? I don't see why you couldn't change the cache settings 
-> after allocation. In practice it works just fine.
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 28 Sep 2020 12:42:10 +1000
+> Subject: [PATCH] merge fix for "mdio: fix mdio-thunder.c dependency & build error"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/mdio/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/mdio/Kconfig b/drivers/net/mdio/Kconfig
+> index 840727cc9499..27a2a4a3d943 100644
+> --- a/drivers/net/mdio/Kconfig
+> +++ b/drivers/net/mdio/Kconfig
+> @@ -164,6 +164,7 @@ config MDIO_THUNDER
+>  	depends on 64BIT
+>  	depends on PCI
+>  	select MDIO_CAVIUM
+> +	select MDIO_DEVRES
+>  	help
+>  	  This driver supports the MDIO interfaces found on Cavium
+>  	  ThunderX SoCs when the MDIO bus device appears as a PCI
+> -- 
+> 2.28.0
 
-Accessing the same physical address using different caching attributes
-is undefined behavior and fairly dangerous on most architectures, and
-thus not supported by the DMA API.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
+
