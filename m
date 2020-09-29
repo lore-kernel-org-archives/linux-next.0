@@ -2,117 +2,85 @@ Return-Path: <SRS0=D18E=DG=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68CDC4741F
-	for <linux-next@archiver.kernel.org>; Tue, 29 Sep 2020 07:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD29CC4346E
+	for <linux-next@archiver.kernel.org>; Tue, 29 Sep 2020 08:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49789207F7
-	for <linux-next@archiver.kernel.org>; Tue, 29 Sep 2020 07:32:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="gfrIyw4l";
-	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ega3JuZK"
+	by mail.kernel.org (Postfix) with ESMTP id 9EC65206DC
+	for <linux-next@archiver.kernel.org>; Tue, 29 Sep 2020 08:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725776AbgI2HcK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 29 Sep 2020 03:32:10 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:43757 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725535AbgI2HcI (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 29 Sep 2020 03:32:08 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 259875C0105;
-        Tue, 29 Sep 2020 03:32:08 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 29 Sep 2020 03:32:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm1; bh=i
-        agB2LUS1CCbxMstdb45o3Und7M5dIrnvWY92w//hVU=; b=gfrIyw4lobRU0cqRq
-        Png8qGruUEeFaP4xF5SQaNoIgVDONkhFC+6dVCACZewyo335vM4xYXyXUqIDZcZH
-        mVgquuPGGxIwaAQh3enUswKeYYAlt3NYEmPuieszpFHFDYT1oVIznpi0EuqPVsOU
-        2kACYvL9tCdhOhlWnzXVctUQut70qjdVZIsU33lF3wAMqh8GR11lpe1x35TysQNO
-        U5Ahe0/X5/tAprEcgLIa3IFaGN6N8Waoa3GQlNn6JDcCERUglsMJTDTjBv0PFfEd
-        98a2y4QIvnNjkRkLIOgXqVwOCb/HjLbuUbfRXYq6mXKLuoA/UHGHfHNKA4MRtA2o
-        utTFA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=iagB2LUS1CCbxMstdb45o3Und7M5dIrnvWY92w//h
-        VU=; b=ega3JuZKHw7a8CHW9DOGsMIO2Noes2zJ8PP8WOZLPSMFMhAz6QY1pNqcf
-        eJwXYbBCqizEXnM3y2ShMxUry8E44J+RMvIKLTwvRDC63kriR03XnoCe6LqKuxh7
-        SfkCMJ82xOXK+Zq+JvIJbr7bRrz5eC+X7LD/mpPlX59pssFvpSl7kDxwZqHDH7XL
-        oDr/HJ50SfCg0z3ORIC4dE8+gnGi5BWkf3oAUaX0YOIPXvaSS6fBq1J9CckiL8g5
-        ASYotn4J/ZXjc/jgtJ8fBmg/ioiJyJ8rJmsKLWpacQ7LUQZ0gezz7tcclTVfvufQ
-        kiZ4mfY4yBLEPAC81PmF8N+hqdkow==
-X-ME-Sender: <xms:9-JyX5WLump78Ly-r9HwXKXkiwq7zjhNmZ9Rc9PJ_0ILNs-HEvcRVg>
-    <xme:9-JyX5loJzYxn7yuq30_mRCwXlY10pTtgn3ub1Hpjj6AEEY7Ys_LrtnjKXWBkIlB4
-    Lrf4f7yavE7rw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdejgdduvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepueehke
-    ehlefffeeiudetfeekjeffvdeuheejjeffheeludfgteekvdelkeduuddvnecukfhppeek
-    fedrkeeirdejgedrieegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:9-JyX1ZXLYkyYpU0tN779gascUb7cveCr2E9updImwjtPDMOmydoRQ>
-    <xmx:9-JyX8Xf8IByEn_xs-FBRJG9oarO2_lpJixw7NKFSPiwVBP0RMJIoQ>
-    <xmx:9-JyXzkJeqtigx0CUJVFTDepQB3XFi3hsyvcde-gXkLkm-jFA2cfPA>
-    <xmx:-OJyX7s-2AcZXCU-SBHs8Q5XFqFxU1V66LJZay_O8OJQLDybnSTlDw>
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AC5FA3280059;
-        Tue, 29 Sep 2020 03:32:06 -0400 (EDT)
-Date:   Tue, 29 Sep 2020 09:32:13 +0200
-From:   Greg KH <greg@kroah.com>
-To:     miaoqinglang <miaoqinglang@huawei.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S1727495AbgI2I6T (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 29 Sep 2020 04:58:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14705 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727403AbgI2I6S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 29 Sep 2020 04:58:18 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1D71CC3F387B2EA285FF;
+        Tue, 29 Sep 2020 16:58:17 +0800 (CST)
+Received: from [10.174.179.91] (10.174.179.91) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 29 Sep 2020 16:58:12 +0800
+Subject: Re: linux-next: build warning after merge of the tty tree
+To:     Greg KH <greg@kroah.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tty tree
-Message-ID: <20200929073213.GA409833@kroah.com>
 References: <20200929160111.18719071@canb.auug.org.au>
  <2e36e978-1276-6b86-3956-4346fc04093f@huawei.com>
+ <20200929073213.GA409833@kroah.com>
+From:   miaoqinglang <miaoqinglang@huawei.com>
+Message-ID: <0993ddd8-dc95-c08b-2d6e-5a057519fa35@huawei.com>
+Date:   Tue, 29 Sep 2020 16:58:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20200929073213.GA409833@kroah.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2e36e978-1276-6b86-3956-4346fc04093f@huawei.com>
+X-Originating-IP: [10.174.179.91]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 02:41:27PM +0800, miaoqinglang wrote:
-> 
-> 
-> 在 2020/9/29 14:01, Stephen Rothwell 写道:
-> > Hi all,
-> > 
-> > After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-> > produced this warning:
-> > 
-> > drivers/tty/serial/mvebu-uart.c: In function 'mvebu_uart_probe':
-> > drivers/tty/serial/mvebu-uart.c:806:6: warning: unused variable 'ret' [-Wunused-variable]
-> >    806 |  int ret, id, irq;
-> >        |      ^~~
-> > 
-> > Introduced by commit
-> > 
-> >    b63537020db3 ("serial: mvebu-uart: simplify the return expression of mvebu_uart_probe()")
-> > 
-> Hi Greg,
-> 
-> Sorry about the noise for remaining the unused variable 'ret' in commit
-> b63537020db3.
-> 
-> Should I send another patch to clean up this warning or send another v2
-> patch instead?
 
-A fix-up patch would be best, as this is already in my tree.
 
-thanks,
-
-greg k-h
+在 2020/9/29 15:32, Greg KH 写道:
+> On Tue, Sep 29, 2020 at 02:41:27PM +0800, miaoqinglang wrote:
+>>
+>>
+>> 在 2020/9/29 14:01, Stephen Rothwell 写道:
+>>> Hi all,
+>>>
+>>> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+>>> produced this warning:
+>>>
+>>> drivers/tty/serial/mvebu-uart.c: In function 'mvebu_uart_probe':
+>>> drivers/tty/serial/mvebu-uart.c:806:6: warning: unused variable 'ret' [-Wunused-variable]
+>>>     806 |  int ret, id, irq;
+>>>         |      ^~~
+>>>
+>>> Introduced by commit
+>>>
+>>>     b63537020db3 ("serial: mvebu-uart: simplify the return expression of mvebu_uart_probe()")
+>>>
+>> Hi Greg,
+>>
+>> Sorry about the noise for remaining the unused variable 'ret' in commit
+>> b63537020db3.
+>>
+>> Should I send another patch to clean up this warning or send another v2
+>> patch instead?
+> 
+> A fix-up patch would be best, as this is already in my tree.
+> 
+> thanks,
+> 
+> greg k-h
+> .A fix-up patch has been sent.
+Thanks
+> 
