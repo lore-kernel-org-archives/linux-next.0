@@ -2,107 +2,96 @@ Return-Path: <SRS0=Edkf=DJ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D019BC4363D
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 06:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D503C4363D
+	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 06:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB91206E3
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 06:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1575206E3
+	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 06:48:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2nze4duo"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Z3AyhWXZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725968AbgJBGhP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 2 Oct 2020 02:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbgJBGhP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2020 02:37:15 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F4D4C0613D0;
-        Thu,  1 Oct 2020 23:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=37Og0eWGWeq4YVLKCVhVrI41YwZWtTzwTczGuBNnLts=; b=2nze4duoYFHTM/7wsBFerScghC
-        LR1FFg+xNVz7Ir4UGhyjChtl9OKKAy5UNca+yKezw1ogWgs4TZwgPl68c5+mdWZYMGuxkDqWTXgh2
-        hytpBgxvC8nDIAfqMsYQvsAOMSz1YZ5rviMCpSJr28zmI6hDVHPQVajgAgQ+Kee0iXr+5G80xZ7mT
-        lh12FvzbzPKC+8/p9od33nTCKWc80+gQ/Ifgow4TGay/B/YMuL111lzQntIgHdl9uSi/+p2JXOlJx
-        BqPM6NUxw8k0AvrxZhkmN4RV9/qfXmekLSk6xbPi6SZDJr/ae8PE0ZTvflKJrMznWbcPqIYGEDKMk
-        nifipduA==;
-Received: from [2601:1c0:6280:3f0::863]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kOEgq-0003Qf-4i; Fri, 02 Oct 2020 06:37:12 +0000
-Subject: Re: linux-next: Tree for Oct 1 (drivers/mfd/simple-mfd-i2c.o)
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20201001213929.241c1006@canb.auug.org.au>
- <0dca758e-1b61-a4cd-db12-2e2060f7cf60@infradead.org>
- <20201002063203.GP6148@dell>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5974d448-a704-fd74-704c-b902b0ac9a8f@infradead.org>
-Date:   Thu, 1 Oct 2020 23:37:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1725968AbgJBGsN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 2 Oct 2020 02:48:13 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17874 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbgJBGsN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2020 02:48:13 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f76ccc50000>; Thu, 01 Oct 2020 23:46:29 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Oct
+ 2020 06:48:12 +0000
+Received: from sandstorm.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 2 Oct 2020 06:48:12 +0000
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Linux Next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH] selftests/vm: fix: make check_config.sh executable
+Date:   Thu, 1 Oct 2020 23:48:11 -0700
+Message-ID: <20201002064811.435769-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201002063203.GP6148@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601621189; bh=YxVI9lNPw6FH2PZxFouloQcRzoKxiMmyEXc7wrpbuJQ=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=Z3AyhWXZ2oH7XePndDjhqsSYxssrS2nU5h9mErdEXbV0/5qDdTQYacp7AnXgBJneC
+         9ybJDAzUNXETcfQhre5r0LcsnLtWta+bnJXc6bd9mevvvIy23NYp5ZNmxnwGrD/oyg
+         A8X1gmqDcoZNGi2X+EM37hJWPn1NZTS+/4AZyI670cIcG5qolh0x2FSWgslx7ng84d
+         gvQ0LXcADLiBbbsQGfX9D3HvDWV3Wl2MqR5sDv08tUuaQOM4r/DQSDbaSIG9va6fw2
+         fONlkzLmRhDV9wU1y3UhPNL9jaL6LP3NVgeUfhwJvXITuoE3q5r+NaTXSo+EaQTlsm
+         altdnvWrfwA2w==
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 10/1/20 11:32 PM, Lee Jones wrote:
-> On Thu, 01 Oct 2020, Randy Dunlap wrote:
-> 
->> On 10/1/20 4:39 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20200930:
->>>
->>
->> on x86_64:
->>
->> ld: drivers/mfd/simple-mfd-i2c.o: in function `simple_mfd_i2c_probe':
->> simple-mfd-i2c.c:(.text+0x48): undefined reference to `__devm_regmap_init_i2c'
->> ld: drivers/mfd/simple-mfd-i2c.o: in function `simple_mfd_i2c_driver_init':
->> simple-mfd-i2c.c:(.init.text+0x14): undefined reference to `i2c_register_driver'
->> ld: drivers/mfd/simple-mfd-i2c.o: in function `simple_mfd_i2c_driver_exit':
->> simple-mfd-i2c.c:(.exit.text+0xd): undefined reference to `i2c_del_driver'
->>
->>
->> CONFIG_I2C=m
->> CONFIG_MFD_SIMPLE_MFD_I2C=y
->> CONFIG_MFD_SL28CPLD=y
->>
->>
->> Is linux-next missing the source code for CONFIG_MFD_SL28CPLD?
-> 
-> There isn't any associated source code.  It's a virtual symbol.
-> 
->> The build error is caused by:
->>
->> config MFD_SL28CPLD
->> 	tristate "Kontron sl28cpld Board Management Controller"
->> 	select MFD_SIMPLE_MFD_I2C
->>
->> that "select" when "depends on I2C" is absent/missing.
-> 
-> Okay, so CONFIG_MFD_SIMPLE_MFD_I2C needs to depend on I2C too?  I made
-> the assumption that 'select REGMAP_I2C' would do the right thing.
+commit 30fb9454ab23 ("selftests/vm: hmm-tests: remove the libhugetlbfs
+dependency") created the new check_config.sh file without the execute
+bits set. This is a problem because the Makefile runs it with "./", so
+now "make" is failing in that directory.
 
-"select" never follows any dependency chains, so Yes, the other symbol
-needs to depend on I2C also.
+The posted patch [1] does seem to have it as an executable file, so I'm
+not sure how this happened. But in any case, make check_config.sh
+executable again, so that "make" in selftests/vm works once again.
+
+[1] https://lore.kernel.org/linux-doc/20200929212747.251804-9-jhubbard@nvid=
+ia.com/
+
+Fixes: commit 30fb9454ab23 ("selftests/vm: hmm-tests: remove the libhugetlb=
+fs dependency")
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+
+Hi,
+
+This applies to today's 20201001) linux-next. I forgot if this needs to
+be a separate patch or if it can be fixed up in Andrew's tree.
+
+thanks,
+John Hubbard
+NVIDIA
 
 
-thanks.
--- 
-~Randy
+ tools/testing/selftests/vm/check_config.sh | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100644 =3D> 100755 tools/testing/selftests/vm/check_config.sh
+
+diff --git a/tools/testing/selftests/vm/check_config.sh b/tools/testing/sel=
+ftests/vm/check_config.sh
+old mode 100644
+new mode 100755
+--=20
+2.28.0
 
