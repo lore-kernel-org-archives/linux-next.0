@@ -2,89 +2,88 @@ Return-Path: <SRS0=Edkf=DJ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E24C4363D
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 08:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFD8C4363D
+	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 08:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23DB5206B8
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 08:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36C6C2072E
+	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 08:40:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="W1Kldw2Z"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ey0GdtH8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbgJBIg7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 2 Oct 2020 04:36:59 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33503 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbgJBIg7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 2 Oct 2020 04:36:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C2jyw2Mtrz9sSn;
-        Fri,  2 Oct 2020 18:36:56 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1601627816;
-        bh=aT6kASu8PU8K5QlSgosl5J3asF6w7hR4XHWzKbGF+l0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=W1Kldw2ZOYJXq/pyfbIHhOS8ipSXREmRNaRAgN3bQ/6R1JryBMc5WncRp3LX38grH
-         rQlspK1bI2TMKQtjSBsuW7Q3mJ2vsag/IiKa2nS8E0imsh1dP7TyWIaspCaH1514CA
-         9IIt9ZHABHQkqpJk4p07c8x0MPszhGC+GNjg5rToYq1gj5nT/fP+rYoL+3mcPDZdG/
-         dp55hupwLuiCalZZ+OmvVJuOKKWhc5/5540pwDIAvab6KW1maE6T5CYNImgNj6FgcW
-         QaW66MV+uuQaT05mNjX7THmvF/XBwFLjGWXgHSZ7Y78N++69JUFw+OMwyDWqL71Kai
-         KrZFD7XDVHXCg==
-Date:   Fri, 2 Oct 2020 18:36:55 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the gpio tree
-Message-ID: <20201002183655.78d25c5d@canb.auug.org.au>
+        id S2387681AbgJBIkz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 2 Oct 2020 04:40:55 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3822 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgJBIku (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2020 04:40:50 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f76e75e0000>; Fri, 02 Oct 2020 01:39:58 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Oct
+ 2020 08:40:50 +0000
+Received: from sandstorm.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 2 Oct 2020 08:40:50 +0000
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Linux Next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v2 1/2] selftests/vm: fix: make check_config.sh executable
+Date:   Fri, 2 Oct 2020 01:40:48 -0700
+Message-ID: <20201002084049.556824-2-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201002084049.556824-1-jhubbard@nvidia.com>
+References: <20201002084049.556824-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//Y3dGG.C.1F=B9ZI/9FOlhQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601627998; bh=2c1rESw+DwJTg5O2isLQ/PB/pSyBX7EQpiDns9fBvMM=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=Ey0GdtH8vTlp5i2Zc9G0Xw1s2znFHzSHc/1mG0bFGeoB6KxqUfahj/CxSVO1nzGEk
+         fNgA6OnNiKS1Eay3NkECjLeJ7R58DxaRhneDbBjVDAU9G+ecVRnca23Ig1i3P0356r
+         XsZgR7E86AyQhh9YxkGhU292QI9+l4xawVnqj0FmMOmNH2B3rfwkvdl4l/RIbtMwRs
+         26kVS52fwxW+o+sd4Fk+g1CMLkBF1P5NE+bFTjlyySMeJ3mLyvl3ulwzWtiYEpcSat
+         sIw90fCLwbUSrL8/WAdB63taVEFpH74L04RVVpZ28qZIqbCsjl1SxOL/4jbXNd37rr
+         u0tu0qOCCL8DA==
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//Y3dGG.C.1F=B9ZI/9FOlhQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+commit 30fb9454ab23 ("selftests/vm: hmm-tests: remove the libhugetlbfs
+dependency") created the new check_config.sh file without the execute
+bits set. This is a problem because the Makefile runs it with "./", so
+now "make" is failing in that directory.
 
-Hi all,
+The posted patch [1] does seem to have it as an executable file, so I'm
+not sure how this happened. But in any case, make check_config.sh
+executable again, so that "make" in selftests/vm works once again.
 
-After merging the gpio tree, today's linux-next build (htmldocs) produced
-this warning:
+[1] https://lore.kernel.org/linux-doc/20200929212747.251804-9-jhubbard@nvid=
+ia.com/
 
-Documentation/admin-guide/gpio/gpio-mockup.rst: WARNING: document isn't inc=
-luded in any toctree
+Fixes: commit 30fb9454ab23 ("selftests/vm: hmm-tests: remove the libhugetlb=
+fs dependency")
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ tools/testing/selftests/vm/check_config.sh | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100644 =3D> 100755 tools/testing/selftests/vm/check_config.sh
 
-Introduced by commit
-
-  2fd1abe99e5f ("Documentation: gpio: add documentation for gpio-mockup")
-
+diff --git a/tools/testing/selftests/vm/check_config.sh b/tools/testing/sel=
+ftests/vm/check_config.sh
+old mode 100644
+new mode 100755
 --=20
-Cheers,
-Stephen Rothwell
+2.28.0
 
---Sig_//Y3dGG.C.1F=B9ZI/9FOlhQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl925qcACgkQAVBC80lX
-0GyRjAf/dS/YRbsslH7h+ImoAYIEuhZvjN23XAfPq9MPAULSigtBoudFz2/qGmKZ
-kfrPyl3xJuW/M4SVGAsGHCb8RBi7dNTCVUFCA4pc0uo4O8sO2rgywREkhkqvQxIA
-6iLGxm9oOG5ZvjiI81ivrXBQ763rwt+uMnbhnZriPNmiCqL61DQKTXh1dlNzwcdK
-V7sAn26A0NYhFQqu5JSSHT1qEtwqllOx3QheHHa6nPm8P22HzaQ9mFH9rdzUjUdA
-zHX1RM2JbyiSrWkxDD/Q0BdNqd/nFICULEQIVccEpgNqudII6v1V2bqItQscbZqd
-PXVLNrk44kwummSIBxkzTdzenj5nNA==
-=TPxP
------END PGP SIGNATURE-----
-
---Sig_//Y3dGG.C.1F=B9ZI/9FOlhQ--
