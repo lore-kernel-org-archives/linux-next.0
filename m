@@ -2,67 +2,112 @@ Return-Path: <SRS0=Edkf=DJ=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2419C4727E
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 01:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A10C4727E
+	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 02:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 915A4206DB
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 01:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D43920719
+	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 02:00:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NtH+Bd/r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387483AbgJBBkO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 1 Oct 2020 21:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48642 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733275AbgJBBkO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2020 21:40:14 -0400
-Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E273C0613D0;
-        Thu,  1 Oct 2020 18:40:14 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3C8CF1285CF60;
-        Thu,  1 Oct 2020 18:23:26 -0700 (PDT)
-Date:   Thu, 01 Oct 2020 18:40:13 -0700 (PDT)
-Message-Id: <20201001.184013.1373555560291108341.davem@davemloft.net>
-To:     sfr@canb.auug.org.au
+        id S2387498AbgJBCAW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 1 Oct 2020 22:00:22 -0400
+Received: from ozlabs.org ([203.11.71.1]:42449 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727780AbgJBCAV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Oct 2020 22:00:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C2Y9H3hQKz9sSG;
+        Fri,  2 Oct 2020 12:00:19 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1601604019;
+        bh=JJU/m7iI6vnJda2OoX/uTcHMjyjyAn9guGzBAmlcufw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NtH+Bd/rBWVaYnlBxCTcKgk5XuLXXD79RNrTCknWBrHn2ajTPndPiaK1jmiAhwQTn
+         sNh9Z7b+I7EhpjX8xAXcfmn/kRq9477rpWv7JCmjrlwdnHbHNPjmxEaLXH0Ecvg5r8
+         DYHXvbMa3G4FddSoRcmr+sHQrSalNhDGAbfsqTFy6COchQHPrKztgBxvXtIR84wvf/
+         GNAfrOKxjW+nm7NuWUUay6OeabrlGd2xVCF0hVWPascaChmmhmhm1PsMYRNUAmzUqY
+         +51E+0Mf+xvpguywkCMDpJEAIXkK4j/HivYihIjK9z7gtG+SFLxWFRp0Ddp5E+BoVU
+         Lad2T1E7AJo1w==
+Date:   Fri, 2 Oct 2020 12:00:18 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>
 Cc:     netdev@vger.kernel.org, vadym.kochan@plvision.eu,
         ap420073@gmail.com, linux-next@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: linux-next: build failure after merge of the net-next tree
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200929130446.0c2630d2@canb.auug.org.au>
+Message-ID: <20201002120018.1aa3c0f6@canb.auug.org.au>
+In-Reply-To: <20201001.184013.1373555560291108341.davem@davemloft.net>
 References: <20200929130446.0c2630d2@canb.auug.org.au>
-X-Mailer: Mew version 6.8 on Emacs 27.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [2620:137:e000::1:9]); Thu, 01 Oct 2020 18:23:26 -0700 (PDT)
+        <20201001.184013.1373555560291108341.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/mkjmDzZTlS+AR_CZfZ/1Dsf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 29 Sep 2020 13:04:46 +1000
+--Sig_/mkjmDzZTlS+AR_CZfZ/1Dsf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Caused by commit
-> 
->   eff7423365a6 ("net: core: introduce struct netdev_nested_priv for nested interface infrastructure")
-> 
-> interacting with commit
-> 
->   e1189d9a5fbe ("net: marvell: prestera: Add Switchdev driver implementation")
-> 
-> also in the net-next tree.
+Hi Dave,
 
-I would argue against that "also" as the first commit is only in the
-'net' tree right now. :-)
+On Thu, 01 Oct 2020 18:40:13 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 29 Sep 2020 13:04:46 +1000
+>=20
+> > Caused by commit
+> >=20
+> >   eff7423365a6 ("net: core: introduce struct netdev_nested_priv for nes=
+ted interface infrastructure")
+> >=20
+> > interacting with commit
+> >=20
+> >   e1189d9a5fbe ("net: marvell: prestera: Add Switchdev driver implement=
+ation")
+> >=20
+> > also in the net-next tree. =20
+>=20
+> I would argue against that "also" as the first commit is only in the
+> 'net' tree right now. :-)
 
-This is simply something I'll have to resolve the next time net is merged
-into net-next.
+Sorry, my mistake.  I was wondering why your testing did not seem to be
+affected.
 
-Thanks.
+> This is simply something I'll have to resolve the next time net is merged
+> into net-next.
+
+Absolutely, no problem.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/mkjmDzZTlS+AR_CZfZ/1Dsf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl92ibIACgkQAVBC80lX
+0GxGHQf/UpWz/P9C5wlbk0Qua0KmG9dmTNPHDQi/qZ6KVADYQYn53P5fVQo2CSSh
+juKMQa3tJTYSn3euNOupLKILn98asxzQpkl3X1MX60n2yI4uysocZMAIw8DJ6bCF
+uB305I5lpCBLvCbWbRmUduxZERf8pb9BTcaX0tiesZFTC59c3cj8OuUfXaH1T3j+
+9oPL0qCYPpSJSM8iQqBEmI89oJgO4RFBU6Ieh98RVN111xEklGqhC8ngOhBdy7DK
+5q6h30i+miHrsD2uOIz893MWT5kHmkgvrlZkiZKUzQCjMTDWwnhb5hm/deJQCLGK
+kofqZ35EM9YuuLEa6iwxFthSJGQ64g==
+=Jfgd
+-----END PGP SIGNATURE-----
+
+--Sig_/mkjmDzZTlS+AR_CZfZ/1Dsf--
