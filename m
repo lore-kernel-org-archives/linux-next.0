@@ -1,113 +1,90 @@
-Return-Path: <SRS0=Edkf=DJ=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=KaWh=DK=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC32C35257
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 22:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BC5C47095
+	for <linux-next@archiver.kernel.org>; Sat,  3 Oct 2020 00:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6920420719
-	for <linux-next@archiver.kernel.org>; Fri,  2 Oct 2020 22:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA5D2193E
+	for <linux-next@archiver.kernel.org>; Sat,  3 Oct 2020 00:21:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lgmveYo2"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SfTatwCk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725446AbgJBWqE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 2 Oct 2020 18:46:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47056 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbgJBWqD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2020 18:46:03 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFCCC0613D0
-        for <linux-next@vger.kernel.org>; Fri,  2 Oct 2020 15:46:03 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id q4so1909781pjh.5
-        for <linux-next@vger.kernel.org>; Fri, 02 Oct 2020 15:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zc5L4nr4dVUi+rfFZrY/83BZu7OKCaVrudFyrQwC9tk=;
-        b=lgmveYo2LZNOyCCahKX3gYNXSR3RDqXa3gUFBFTRX+E3jlo6amPHHvDkGBdVZzw0S5
-         yCBevr+ldYOBy1MyfDBpySf9J71K/FcfemZSHz9pDdVDnuen5uaUQILTXHGLhCC9+e4p
-         IR7OLTltI1w9YlOQek3CVC6P86srTSv79sgjc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zc5L4nr4dVUi+rfFZrY/83BZu7OKCaVrudFyrQwC9tk=;
-        b=KrD+h7wcQ34nerHFwUClaIqpHcwTAh7pbzuXBuWqaG5KA6kTpvnha8GwGPVB4ztQcE
-         FvAApVkJ/CQJ4egI6LIsHEr1uMMSjtr9zeUeu11CUnqaASx9CguWzW3r+Lmwq0/8TnL1
-         tL+ZtWM+5pXQAzzSbPrdW6KwOjoaPAnVCcHps78yzXBUGEsvRmwXAwn03Mpqms5fjcEM
-         sEStRKIul+jD7N+xyrGzq66TTKzSsscaC9EQ2qoCBTx21Z0Cqi/lXbsEdw09orRTFzNg
-         dCSqvm3npruANEfs9wgu1KEMS5RY10yNwwGC+Zs0hTxy+kMeQUWOPvCSdI1SXow0XyOn
-         VFnQ==
-X-Gm-Message-State: AOAM532KPxfR8aEZbW0YjNYbVqQly5xf4lDrF608/caeaIVPlD+laZCJ
-        mD/zyR+1AderUXXGO8sRfUeOqQ==
-X-Google-Smtp-Source: ABdhPJz86F/vlBMKar8+F1ffAI2X8jj8iZZYcvXnBR9Ubx8INdUjL7Nov24GYM3V1b/HsaljIHU8QA==
-X-Received: by 2002:a17:90a:3984:: with SMTP id z4mr4851276pjb.131.1601678763400;
-        Fri, 02 Oct 2020 15:46:03 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m21sm3090187pfo.13.2020.10.02.15.46.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2020 15:46:02 -0700 (PDT)
-Date:   Fri, 2 Oct 2020 15:46:01 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Message-ID: <202010021545.43A9454E@keescook>
-References: <20200914132249.40c88461@canb.auug.org.au>
- <202009141310.C668784@keescook>
- <20200915083553.144aabef@canb.auug.org.au>
- <20201001210257.19bc53f8@canb.auug.org.au>
+        id S1725379AbgJCAVo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 2 Oct 2020 20:21:44 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2470 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbgJCAVn (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2020 20:21:43 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f77c3e30000>; Fri, 02 Oct 2020 17:20:51 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 3 Oct
+ 2020 00:21:43 +0000
+Received: from sandstorm.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Sat, 3 Oct 2020 00:21:43 +0000
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Linux Next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v3 2/2] selftests/vm: fix a rename typo: run_vmtest.sh --> run_vmtests.sh
+Date:   Fri, 2 Oct 2020 17:21:42 -0700
+Message-ID: <20201003002142.32671-3-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201003002142.32671-1-jhubbard@nvidia.com>
+References: <20201003002142.32671-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201001210257.19bc53f8@canb.auug.org.au>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601684451; bh=7649XB784jdtUWB6zIb9HMx3JPfJ1MQk7wdl4wK+r0c=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=SfTatwCkGJWpCz0D7Gn283XAxrCthD3te5CvJDL3unDOhblMYyQtIF+7i/sSl8NJN
+         w7taLfG6w810x6ljmnH3xtAIVMHGxbQhAg0dN+u0vm9WfiT5+DS8OxHU8F3Ki+0av6
+         nePduIw3MkV4IrzK9v0eFLF/uXK10rLOKR9msplWUwolMftPqJm0jTGxL9U1ZAQtCr
+         pPECrqPRQG2ZiOHz1c0UhGmZ4Rb1zV0nfeF028i4gaQpCXDZ4dywSvR21dJwOssP1f
+         Ig7zeQcdlYdlfS834BnfT+yRaq338gwi/X2lgoFzx6Om5pXpR9fyex97GZnRx3pOAZ
+         uUsJTH0kBprGg==
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 09:02:57PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Tue, 15 Sep 2020 08:35:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi Kees,
-> > 
-> > On Mon, 14 Sep 2020 13:11:37 -0700 Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Mon, Sep 14, 2020 at 01:22:49PM +1000, Stephen Rothwell wrote:  
-> > > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> > > > produced this warning:
-> > > > 
-> > > > x86_64-linux-gnu-ld: warning: orphan section `.ctors.65435' from `kernel/trace/trace_selftest_dynamic.o' being placed in section `.ctors.65435'
-> > > > [...]    
-> > > 
-> > > Hmm, I wasn't seeing that...
-> > > 
-> > > Which gcc and bintuils versions are you using?  
-> > 
-> > gcc (Debian 10.2.0-5) 10.2.0
-> > GNU ld (GNU Binutils for Debian) 2.35
-> 
-> Any progress on this?
+commit cb2ab76685d7 ("selftests/vm: rename run_vmtests -->
+run_vmtests.sh") claims to rename this file to run_vmtests.sh, but the
+actual commit botched the job and left out an "s". We all miss the "s",
+so let's restore it. :)
 
-Hi!
+This patch also restores the executable bit on that same file, as a
+nice touch if it sticks. (Which it won't, if someone uses patch(1) to
+apply this, but it's worth setting it for everyone else.)
 
-I needed to get by build environment set up with the newer toolchain,
-and I've finally gotten that done today. I'll be investigating it
-shortly; thanks for waiting on me!
+Fixes: cb2ab76685d7 ("selftests/vm: rename run_vmtests --> run_vmtests.sh")
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ tools/testing/selftests/vm/{run_vmtest.sh =3D> run_vmtests.sh} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename tools/testing/selftests/vm/{run_vmtest.sh =3D> run_vmtests.sh} (100=
+%)
+ mode change 100644 =3D> 100755
 
--Kees
+diff --git a/tools/testing/selftests/vm/run_vmtest.sh b/tools/testing/selft=
+ests/vm/run_vmtests.sh
+old mode 100644
+new mode 100755
+similarity index 100%
+rename from tools/testing/selftests/vm/run_vmtest.sh
+rename to tools/testing/selftests/vm/run_vmtests.sh
+--=20
+2.28.0
 
--- 
-Kees Cook
