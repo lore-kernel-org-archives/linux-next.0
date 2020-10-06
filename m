@@ -4,133 +4,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BADAC41604
-	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 08:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2296FC41604
+	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 09:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 509D82080A
-	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 08:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BFDA2078E
+	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 09:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ulBkd0T6";
-	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ctGZbV8L"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EM5mBZ22"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbgJFIbO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Oct 2020 04:31:14 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44201 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725891AbgJFIbO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Oct 2020 04:31:14 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id B79D25C00A6;
-        Tue,  6 Oct 2020 04:31:12 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 06 Oct 2020 04:31:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=A0uEjs8ek2TiwpBw4iCwjm/gIfz
-        YDZHLIda4slMrPSM=; b=ulBkd0T64OyDJ/OlIOUECTmcUqo2QHTWX7zo5FVgevj
-        wrhSV3KJyGFQN0rurHEgjDB1jDIOJWEndsq3R0Q6xTZqcN0NNy3qr8W+yjGcQuPe
-        LEVJiDh7gyRmZme2hiyfPJbSx+AtHiZMZuK5yHhoYjckyg8k9jk4iqOXz8BROjdE
-        pkBAr9MRm7ZaQMtIEcVPeyEgEGZ/vu8gPW66z45Mcom2iiUthNxoLe8y4pDTy74X
-        TzmdCeReg+bS6u4iLJTCm7n5E0WuVeWzHYeXhNlcrMdcIlrSzALRkZzpisIy+iZ2
-        AfJF9bh3P60/ZBRHF23v/87mjJPytWGEOEDzcd1gC7Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=A0uEjs
-        8ek2TiwpBw4iCwjm/gIfzYDZHLIda4slMrPSM=; b=ctGZbV8LA4l7ydxU6/Vd4t
-        bSZmojZ9v8MxvAqwbNzuNIpgLNfj9gYOb65xpGNf2LtBturD60mTYD7g5CdofTxH
-        aGy5e8hvRGN2Cqmni9zJoW9PrP+v/ro5d5C8SMTe8SarC0CPuoFIePqosjbPHO/H
-        hHs4gQ2LtBv0qXU+5522uVnXAs+bqgEdwVv21rAT4eH3n1K4g0aoK3BkJ+heiT5Q
-        Ao9UnetDwnlADXCkelL87ORieofkIpWVGHLxr+2ewyZQNQChYdhigSqMJ5hUBc//
-        9ZnUf5oMJ3a0eCcKqoTA9oBJXaYxrkZakQSbCS52IPgAWeexw8PHyMj+T8HzK23Q
-        ==
-X-ME-Sender: <xms:Tyt8X4enpkdT1-Uq0nPdeRM0MEBeV_zbl4CxeCTqSQZutMjM9-65gg>
-    <xme:Tyt8X6O64gafeyQIPC7qgL4bhEfVi8CAJGqJcB64Hg0oDLNgNoKvq2w0MfjyNHCmU
-    Iz4cbyKabV4VQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrgeeggddtgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepveeuheejgf
-    ffgfeivddukedvkedtleelleeghfeljeeiueeggeevueduudekvdetnecukfhppeekfedr
-    keeirdejgedrieegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:Tyt8X5hB3AHUz3lh9Bbc_QDl7NF4Qz2Q5EJU3zMDB80iTQAOrxYN6w>
-    <xmx:Tyt8X9_puTqns5Mc0kWxLrF6ER9VRBzJp_ip2ZXCwF6h9ddl-Rs4Kg>
-    <xmx:Tyt8X0uyHkGAGsu0iglT9wyzU25hqu88wZj0xuCTmXvUbHICDA5dYw>
-    <xmx:UCt8X-Vk-jVakxAcWO4_F78H2lr3HXf7BDUqK3uBUv7UJGDq-aUf5Q>
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9FB5F3064684;
-        Tue,  6 Oct 2020 04:31:11 -0400 (EDT)
-Date:   Tue, 6 Oct 2020 10:21:30 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1725912AbgJFJAP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Oct 2020 05:00:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:34613 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725891AbgJFJAP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Oct 2020 05:00:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C5BHm6nJYz9sT6;
+        Tue,  6 Oct 2020 20:00:04 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1601974812;
+        bh=8CfOUIbMt8fnTJfPAaJni1imQZSSTLb8IdHxm/8lC9A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EM5mBZ22SlHV3CHVixJkaN3v3ud9mmjXLADtHfAOEvwKw7p7+DCFrTjSJQKktY2Iz
+         3v2N7Ldue/9u51p2lZ0RLyOpxeM2Gro17oot2pnj25rtDOk+pzC/ulC8TixhZZkCwG
+         AS5UWYwHwwZ5ZBODbSL69s+T4HKqb+KnhoJQf3wVXBSdRsy0Gj7ArgfU0Omj8WJ8SQ
+         Zkf+PeKurTftZGSJVbXz3axeeU3mILyI+qcQLrd9r8pGaV99ypbeQVE9jUJ7lIr9V3
+         zAn2bUdsK8gA5hVi9I9lanz2WAJm8Cs/+5dkFJqWK44J0OfxmUwBMQSCMwIJSgkPSs
+         m4jwhgVhidXPg==
+Date:   Tue, 6 Oct 2020 20:00:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>, Greg KH <greg@kroah.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the powerpc
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the extcon tree with the drm-misc
  tree
-Message-ID: <20201006082130.GB12331@kroah.com>
-References: <20201006183506.186a3562@canb.auug.org.au>
+Message-ID: <20201006200003.1be00223@canb.auug.org.au>
+In-Reply-To: <20200910141854.1d4b1b10@canb.auug.org.au>
+References: <20200910141854.1d4b1b10@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201006183506.186a3562@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/HrwGoabrIGrrkf8jEjgNMeZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 06:35:06PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   drivers/misc/ocxl/Kconfig
-> 
+--Sig_/HrwGoabrIGrrkf8jEjgNMeZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Thu, 10 Sep 2020 14:18:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the extcon tree got a conflict in:
+>=20
+>   MAINTAINERS
+>=20
 > between commit:
-> 
->   dde6f18a8779 ("ocxl: Don't return trigger page when allocating an interrupt")
-> 
-> from the powerpc tree and commit:
-> 
->   4b53a3c72116 ("ocxl: fix kconfig dependency warning for OCXL")
-> 
-> from the char-misc tree.
-> 
+>=20
+>   f61249dddecc ("MAINTAINERS: Add entry for i.MX 8MQ DCSS driver")
+>=20
+> from the drm-misc tree and commit:
+>=20
+>   d0e3c25150dd ("MAINTAINERS: Add entry for NXP PTN5150A CC driver")
+>=20
+> from the extcon tree.
+>=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
 > conflicts should be mentioned to your upstream maintainer when your tree
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
-> 
-> -- 
+>=20
+> --=20
 > Cheers,
 > Stephen Rothwell
-> 
-> diff --cc drivers/misc/ocxl/Kconfig
-> index 0d815b2a40b3,947294f6d7f4..000000000000
-> --- a/drivers/misc/ocxl/Kconfig
-> +++ b/drivers/misc/ocxl/Kconfig
-> @@@ -9,9 -9,8 +9,9 @@@ config OCXL_BAS
->   
->   config OCXL
->   	tristate "OpenCAPI coherent accelerator support"
->  -	depends on PPC_POWERNV && PCI && EEH && HOTPLUG_PCI_POWERNV
->  +	depends on PPC_POWERNV && PCI && EEH && PPC_XIVE_NATIVE
-> ++	depends on HOTPLUG_PCI_POWERNV
->   	select OCXL_BASE
-> - 	select HOTPLUG_PCI_POWERNV
->   	default m
->   	help
->   	  Select this option to enable the ocxl driver for Open
+>=20
+> diff --cc MAINTAINERS
+> index 623c53ab5bd5,da94c9b12f1b..000000000000
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@@ -12496,14 -12430,13 +12496,21 @@@ F:	drivers/iio/gyro/fxas21002c_core.
+>   F:	drivers/iio/gyro/fxas21002c_i2c.c
+>   F:	drivers/iio/gyro/fxas21002c_spi.c
+>  =20
+>  +NXP i.MX 8MQ DCSS DRIVER
+>  +M:	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+>  +R:	Lucas Stach <l.stach@pengutronix.de>
+>  +L:	dri-devel@lists.freedesktop.org
+>  +S:	Maintained
+>  +F:	Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+>  +F:	drivers/gpu/drm/imx/dcss/
+>  +
+> + NXP PTN5150A CC LOGIC AND EXTCON DRIVER
+> + M:	Krzysztof Kozlowski <krzk@kernel.org>
+> + L:	linux-kernel@vger.kernel.org
+> + S:	Maintained
+> + F:	Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
+> + F:	drivers/extcon/extcon-ptn5150.c
+> +=20
+>   NXP SGTL5000 DRIVER
+>   M:	Fabio Estevam <festevam@gmail.com>
+>   L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
 
-Looks good, thanks!
+This is now a conflict between the char-misc tree and the drm tree.
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HrwGoabrIGrrkf8jEjgNMeZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl98MhMACgkQAVBC80lX
+0GxtOQf/Qsg+ZvC10zGeMGUucLd6WO1c+qikncq8KpWaOiPfL+qcfJylSpDAwF26
+soTu4wodcX1Mmz5jtKURs9tF4p25YmHN5C49v+1WVLlSznSS7a1qa5SUz4KIfyNz
+PftRDbswJPE5V4L/G1TGreoK8dcsfF6/zjlBkAvHGxugfwn+1xAloWwzUIH53hiK
+RIBPF1QLF9tpRyHNlSF0nGHFrjAyW98hhqapLze1Tgv95bb1w9Tuw/2HS+FODY54
+BDE8irKOz+qBNoQ4rqsVumQQpQyB6nZnIeP6aLGH3rKey1zUCx9VJuck+OGuUCZw
+arSyIx4vrOy5irLITAtJPU8nZXWeiw==
+=EzTU
+-----END PGP SIGNATURE-----
+
+--Sig_/HrwGoabrIGrrkf8jEjgNMeZ--
