@@ -2,81 +2,147 @@ Return-Path: <SRS0=PxEu=DN=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 488F3C47095
-	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 09:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8944C41604
+	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 09:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E662020870
-	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 09:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247B1206F7
+	for <linux-next@archiver.kernel.org>; Tue,  6 Oct 2020 09:35:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j6alsdsA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725947AbgJFJQE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Oct 2020 05:16:04 -0400
-Received: from www62.your-server.de ([213.133.104.62]:33186 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgJFJQE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Oct 2020 05:16:04 -0400
-X-Greylist: delayed 1343 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Oct 2020 05:16:03 EDT
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1kPiiu-0008NA-2X; Tue, 06 Oct 2020 10:53:28 +0200
-Received: from [178.196.57.75] (helo=pc-9.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1kPiit-0000Io-S3; Tue, 06 Oct 2020 10:53:27 +0200
-Subject: Re: linux-next: build failure after merge of the net-next tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
+        id S1726002AbgJFJfM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Oct 2020 05:35:12 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:42795 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725981AbgJFJfM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Oct 2020 05:35:12 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C5C4F28Gxz9sS8;
+        Tue,  6 Oct 2020 20:35:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1601976910;
+        bh=a12/UVDR6zr+BYph3qJOSxMnY7GGVoasy0f3LxNxy2g=;
+        h=Date:From:To:Cc:Subject:From;
+        b=j6alsdsA3Uln7mQ1aTXbEIv6ck8MLWm+kik2fXDXlCvb1+f5H7f5GshceE8MR1Ntd
+         6dygfzpZ/zjhz59ckiWYO/mmODHqDg3qmrKSUT5819V0CG7rmYC2Cc84A6Hrnd58EC
+         PJd4Wy2miyf/MU0oD0gxTXBCBtJ30t86Vq5rLliMFzRxrsbHFvsaHAiXHeB6CLdUjp
+         ZVq9+lD5A0DZ1J/vHMnVoC3xNh70XqMNtzN0Pq0grjEjcb9RTHzbCpcXc8YRZnSGOy
+         IzHqdU69tALbls1TGgJWHE6ik/jSJCycjZvOOQZTq3ebf9lUJdSKztYO2W7rKDaG0V
+         +5Qwdr1Lz1wFw==
+Date:   Tue, 6 Oct 2020 20:35:08 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>, Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Leon Romanovsky <leonro@nvidia.com>,
+        Maor Gottlieb <maorg@nvidia.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>
-References: <20201006145847.14093e47@canb.auug.org.au>
- <20201006051301.GA5917@lst.de> <20201006164124.1dfa2543@canb.auug.org.au>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <173e6f80-2211-a614-2953-0f3df35491a9@iogearbox.net>
-Date:   Tue, 6 Oct 2020 10:53:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the hmm tree
+Message-ID: <20201006203508.3cb3d0e3@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20201006164124.1dfa2543@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.102.4/25948/Mon Oct  5 16:02:22 2020)
+Content-Type: multipart/signed; boundary="Sig_/6sFO0+9XXkLgtCyzVp9ZubH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 10/6/20 7:41 AM, Stephen Rothwell wrote:
-> On Tue, 6 Oct 2020 07:13:01 +0200 Christoph Hellwig <hch@lst.de> wrote:
->>
->> On Tue, Oct 06, 2020 at 02:58:47PM +1100, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> After merging the net-next tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>
->> It actually doesn't need that or the two other internal headers.
->> Bjoern has a fixed, and it was supposed to be queued up according to
->> patchwork.
-> 
-> Yeah, it is in the bpf-next tree but not merged into the net-next tree
-> yet.
+--Sig_/6sFO0+9XXkLgtCyzVp9ZubH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yep, applied yesterday. Given a3cf77774abf ("dma-mapping: merge <linux/dma-noncoherent.h>
-into <linux/dma-map-ops.h>") is in dma-mapping tree and not yet affecting bpf-next
-nor net-next, we were planning to ship bpf-next at the usual cadence this week, so it'll
-be in net-next end of week for sure. (If there is urgent reason to have it in net-next
-today, please let us know of course.)
+Hi all,
 
-Thanks,
-Daniel
+After merging the hmm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+
+Caused by commit
+
+  07da1223ec93 ("lib/scatterlist: Add support in dynamic allocation of SG t=
+able from pages")
+
+interacting with commit
+
+  707d561f77b5 ("drm: allow limiting the scatter list size.")
+
+from the drm tree.
+
+I have added the following merge fix patch
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 6 Oct 2020 20:22:51 +1100
+Subject: [PATCH] lib/scatterlist: merge fix for "drm: allow limiting the
+ scatter list size."
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/drm_prime.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 11fe9ff76fd5..83ac901b65a2 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -807,6 +807,7 @@ struct sg_table *drm_prime_pages_to_sg(struct drm_devic=
+e *dev,
+ 				       struct page **pages, unsigned int nr_pages)
+ {
+ 	struct sg_table *sg =3D NULL;
++	struct scatterlist *sl;
+ 	size_t max_segment =3D 0;
+ 	int ret;
+=20
+@@ -820,11 +821,13 @@ struct sg_table *drm_prime_pages_to_sg(struct drm_dev=
+ice *dev,
+ 		max_segment =3D dma_max_mapping_size(dev->dev);
+ 	if (max_segment =3D=3D 0 || max_segment > SCATTERLIST_MAX_SEGMENT)
+ 		max_segment =3D SCATTERLIST_MAX_SEGMENT;
+-	ret =3D __sg_alloc_table_from_pages(sg, pages, nr_pages, 0,
++	sl =3D __sg_alloc_table_from_pages(sg, pages, nr_pages, 0,
+ 					  nr_pages << PAGE_SHIFT,
+-					  max_segment, GFP_KERNEL);
+-	if (ret)
++					  max_segment, NULL, 0, GFP_KERNEL);
++	if (IS_ERR(sl)) {
++		ret =3D PTR_ERR(sl);
+ 		goto out;
++	}
+=20
+ 	return sg;
+ out:
+--=20
+2.28.0
+
+
+I assume that there may be more needed.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6sFO0+9XXkLgtCyzVp9ZubH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl98OkwACgkQAVBC80lX
+0GzOCQf+PBJgkIRZDEm5TYTOzNpFmT0Pl/eg915A/wCde0kLoswfxghraZDnlMwp
+AAU+CjSrdnnvYLX+AbU7+Vo281UYkyNaWhpv4DV/UZwO7xhog2EkOvZQoYuJRWdv
+fvcMIWyZ+Dyz61RmpluVOEmKapF8qRASCBlWwJc3YwQFrfiRk4Re/TDufFtlK9TE
+rTYmN7ZYW21kVHXyBRX69KhbMl2a4jTyReBFUEOB+BYytYB8CSQqEOrd1Gjs3BoB
+79gG0uh2rQhJ/ajjg+EGQBTF/YwjlB1Vqmy5gpc8q1IWZVBiWE8m6fdXUtccXSqX
+/GUbtuKVBF/MzdmMsdppRZHDIwywCw==
+=8ADh
+-----END PGP SIGNATURE-----
+
+--Sig_/6sFO0+9XXkLgtCyzVp9ZubH--
