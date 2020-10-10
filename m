@@ -1,279 +1,94 @@
-Return-Path: <SRS0=MvKh=DQ=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=P9OP=DR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EC5C433DF
-	for <linux-next@archiver.kernel.org>; Fri,  9 Oct 2020 22:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4900C433E7
+	for <linux-next@archiver.kernel.org>; Sat, 10 Oct 2020 02:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2764C2225D
-	for <linux-next@archiver.kernel.org>; Fri,  9 Oct 2020 22:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B672225D
+	for <linux-next@archiver.kernel.org>; Sat, 10 Oct 2020 02:16:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="eCg8LZ3U"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a5mX9SZR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389760AbgJIWGL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 9 Oct 2020 18:06:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389431AbgJIWGL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Oct 2020 18:06:11 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C2FC0613D2
-        for <linux-next@vger.kernel.org>; Fri,  9 Oct 2020 15:06:11 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id m15so5114881pls.8
-        for <linux-next@vger.kernel.org>; Fri, 09 Oct 2020 15:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=7nUB4R/sMZ5U2JHa0Mrsju3ZIspBFD2Nf6b5dDfg6wk=;
-        b=eCg8LZ3UwPqqOqbY278yPd3cFrp83rPwvynGdYIohoVOZAlr3lCAFmy+ErgKw9b2Mo
-         +06FNyOfKuWEv/pnvGJPVi335ZeV532c/Gov2KlB4KKMByyre4tLjYZ6F7yoLjTdW3oQ
-         PaG5WJDuKi6sP7OMxTvi6cOwqOChuvzWNCA1NLpF4+CZGR/l16N+adJb9DK4Bko8UQ2a
-         PxOnth5jaQk6Roz+2h23Y7d375fsBSjgzqA+a0JfvXwDAC8BbF9+5mhdYhFbJEW8DWO1
-         BNtsDFjR0m8mjf75PA1hSqx12e6UbTTxhwLNgqjmVP5ZOQfoychHGiPi5u0MrsP3Ocuk
-         6Bag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=7nUB4R/sMZ5U2JHa0Mrsju3ZIspBFD2Nf6b5dDfg6wk=;
-        b=oIskITN44Iryc/JA5eCZcMIVnDfKP1UWK24Lej7H3SgnFQapUbUC8arH8IOVoHHa08
-         lVUbxtul8MSVoyMq4edGD0RIR/V2aPhzAyeaSWUVM/xnnT7/zW3zib777sbOsoB4DFeh
-         uwgcQitmFYhNmPdZ5RXIA9ODSWXG/xnUQijXBVb1ds+cqzqq4GVpxcWupyKaKArE4mYg
-         n+VX/9ar9rbm4rrocHSZ5RjMgAcAkrRh5JGlrR4/juaMhGljHvtFQoC1Id73N/oUI/Sh
-         n/HbVlog9RWB+7gaiL7M62EKIWxGYUxkzQ/Y+Va3EweaFRCbIiGc1ZnFYoKsqQoa/ZBt
-         t7PQ==
-X-Gm-Message-State: AOAM5316oiKCk0ZKGCqsMgYb73jIKxzOJzSRk3Wmw/hvaHzuf99lfou1
-        uezGQ7xyXSroEd6RzpRrtbckwAZWO6r25g==
-X-Google-Smtp-Source: ABdhPJxMfUcv8G39NZugmqiyvpvu4v0I9P3+e3jfZwUsCZfacKOZEtlMZ9Xuts5q3JKaoYo5ZXJQcQ==
-X-Received: by 2002:a17:902:b711:b029:d3:f1e5:c9c1 with SMTP id d17-20020a170902b711b02900d3f1e5c9c1mr14212692pls.3.1602281170513;
-        Fri, 09 Oct 2020 15:06:10 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id az18sm12893689pjb.35.2020.10.09.15.06.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2020 15:06:09 -0700 (PDT)
-Message-ID: <5f80ded1.1c69fb81.cbfdc.77e2@mx.google.com>
-Date:   Fri, 09 Oct 2020 15:06:09 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1730116AbgJJCLq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 9 Oct 2020 22:11:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:41011 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729998AbgJJB4e (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 9 Oct 2020 21:56:34 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C7Sj26rZrz9sSC;
+        Sat, 10 Oct 2020 12:56:22 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1602294983;
+        bh=eYPbb6ElmOJQvXN3d1n2Sgf+vSxFgjwhseVmuM/8sCw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=a5mX9SZRU7sYyzYHqLx4D9WX51ATtQivy7eRM5kigd6wzxSjsxVSL0xQbky51JISz
+         47lCPGcdIwF/nEucbC7kTOncQc9qn/HJATA05qIiFBjp0K+6oecQsOI6AQRw28KNR/
+         8FFS3g0TrxeKk/TCSjquaMapz/DGYkUyMlGvWj8m1javflUZPGpuk3AM6/4UfxC7TC
+         EjRAUqJzscDpKAc7CITDl2tKnSFSAqWm4R7ughLn876Bs1CLEHUbBi+R2go+hBbLr7
+         JtvpLrij4DlPh+mhPJT1xhPy/jv+u+0iTYJPjHgMDRuWhS/IcLkNCG2X3dwFvk2esu
+         uTrRETrBkLpaw==
+Date:   Sat, 10 Oct 2020 12:56:21 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: Request to add counters branch to linux-next
+Message-ID: <20201010125621.1191879a@canb.auug.org.au>
+In-Reply-To: <ed25ab31-0e76-233c-34de-4e227c0b5801@linuxfoundation.org>
+References: <ed25ab31-0e76-233c-34de-4e227c0b5801@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: next-20201009
-X-Kernelci-Branch: master
-X-Kernelci-Tree: next
-Subject: next/master baseline: 394 runs, 5 regressions (next-20201009)
-To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; boundary="Sig_/RTnJO3AjqSS3m45M9.L=8s4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master baseline: 394 runs, 5 regressions (next-20201009)
+--Sig_/RTnJO3AjqSS3m45M9.L=8s4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Regressions Summary
--------------------
+Hi Shuah,
 
-platform              | arch   | lab           | compiler | defconfig      =
-              | results
-----------------------+--------+---------------+----------+----------------=
---------------+--------
-at91-sama5d4_xplained | arm    | lab-baylibre  | gcc-8    | sama5_defconfig=
-              | 0/1    =
+On Fri, 9 Oct 2020 18:44:15 -0600 Shuah Khan <skhan@linuxfoundation.org> wr=
+ote:
+>
+> Please add counters branch to linux-next
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/log/?h=3D=
+counters
 
-bcm2836-rpi-2-b       | arm    | lab-collabora | gcc-8    | multi_v7_defc..=
-.CONFIG_SMP=3Dn | 0/1    =
+Does this contain stuff for the 5.10 merge window (if so, it is a bit
+late - but I will add it, if not then I would prefer not to add it
+until after the merge window closes).  Will it be merged directly to
+Linus Torvalds or via some other tree?
 
-bcm2837-rpi-3-b       | arm64  | lab-baylibre  | clang-10 | defconfig+CON..=
-._64K_PAGES=3Dy | 3/4    =
+--=20
+Cheers,
+Stephen Rothwell
 
-panda                 | arm    | lab-collabora | gcc-8    | omap2plus_defco=
-nfig          | 0/1    =
+--Sig_/RTnJO3AjqSS3m45M9.L=8s4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-qemu_x86_64-uefi      | x86_64 | lab-cip       | gcc-8    | x86_64_defconfi=
-g+kvm_guest   | 0/1    =
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+BFMUACgkQAVBC80lX
+0Gy/4gf/VvS2c/jKbsYnBGSvZD8EM5gePxLP5Pj5e3uf7xm3GU05ea+c9y9rv5ZE
+MsDnbL0Pkgee8DT5Y+zPyry8iQJfkgVh5icj8LNC3IVqay2bnFid4BWPyYKVxqkK
+i+by3ZPjWCrrS4svRe26zLN5Yj4GQg09zHMIhzK5wOJjfHhheLMQMIkQ6YuCwQGf
+fAnBAEa28jIwzRKz1ZoCd4joW4S7RKlxk0/xeYyB7SHhG91De31ZoLmT8r56T3oT
+Eggg7WHZIIs61abWjma8VUV1k351fxQAWMyhlfmiIXn+VVnTRC938A4QcCVytGjd
+ZjPX/OE764HsEODKm8Hf1ZCyQAnxWg==
+=+zN3
+-----END PGP SIGNATURE-----
 
-  Details:  https://kernelci.org/test/job/next/branch/master/kernel/next-20=
-201009/plan/baseline/
-
-  Test:     baseline
-  Tree:     next
-  Branch:   master
-  Describe: next-20201009
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  SHA:      d67bc7812221606e1886620a357b13f906814af7 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-              | results
-----------------------+--------+---------------+----------+----------------=
---------------+--------
-at91-sama5d4_xplained | arm    | lab-baylibre  | gcc-8    | sama5_defconfig=
-              | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f809d60bae76109c64ff42b
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: sama5_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20201009/arm/=
-sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_xplained.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20201009/arm/=
-sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_xplained.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f809d60bae76109c64ff=
-42c
-      failing since 164 days (last pass: next-20200424, first fail: next-20=
-200428)  =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-              | results
-----------------------+--------+---------------+----------+----------------=
---------------+--------
-bcm2836-rpi-2-b       | arm    | lab-collabora | gcc-8    | multi_v7_defc..=
-.CONFIG_SMP=3Dn | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f8099fe4e08c079b64ff3fc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20201009/arm/=
-multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/baseline-bcm2836-rpi-=
-2-b.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20201009/arm/=
-multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/baseline-bcm2836-rpi-=
-2-b.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f8099fe4e08c079b64ff=
-3fd
-      failing since 9 days (last pass: next-20200929, first fail: next-2020=
-0930)  =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-              | results
-----------------------+--------+---------------+----------+----------------=
---------------+--------
-bcm2837-rpi-3-b       | arm64  | lab-baylibre  | clang-10 | defconfig+CON..=
-._64K_PAGES=3Dy | 3/4    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f80794ee3fd2c53084ff3f1
-
-  Results:     3 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_ARM64_64K_PAGES=3Dy
-  Compiler:    clang-10 (Debian clang version 10.0.1-++20200708124224+ef32c=
-611aa2-1~exp1~20200707224822.188 )
-  Plain log:   https://storage.kernelci.org//next/master/next-20201009/arm6=
-4/defconfig+CONFIG_ARM64_64K_PAGES=3Dy/clang-10/lab-baylibre/baseline-bcm28=
-37-rpi-3-b.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20201009/arm6=
-4/defconfig+CONFIG_ARM64_64K_PAGES=3Dy/clang-10/lab-baylibre/baseline-bcm28=
-37-rpi-3-b.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-3-g27eeeac7da2d/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f80794ee3fd2c53=
-084ff3f5
-      failing since 8 days (last pass: next-20200930, first fail: next-2020=
-1001)
-      1 lines
-
-    2020-10-09 14:50:21.680000  Connected to bcm2837-rpi-3-b console [chann=
-el connected] (~$quit to exit)
-    2020-10-09 14:50:21.680000  (user:khilman) is already connected
-    2020-10-09 14:50:37.363000  =00
-    2020-10-09 14:50:37.364000  =
-
-    2020-10-09 14:50:37.380000  U-Boot 2018.11 (Dec 04 2018 - 10:54:32 -080=
-0)
-    2020-10-09 14:50:37.380000  =
-
-    2020-10-09 14:50:37.380000  DRAM:  948 MiB
-    2020-10-09 14:50:37.396000  RPI 3 Model B (0xa02082)
-    2020-10-09 14:50:37.485000  MMC:   mmc@7e202000: 0, sdhci@7e300000: 1
-    2020-10-09 14:50:37.517000  Loading Environment from FAT... *** Warning=
- - bad CRC, using default environment
-    ... (385 line(s) more)
-      =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-              | results
-----------------------+--------+---------------+----------+----------------=
---------------+--------
-panda                 | arm    | lab-collabora | gcc-8    | omap2plus_defco=
-nfig          | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f809b98da0c172a474ff3ea
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20201009/arm/=
-omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20201009/arm/=
-omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f809b98da0c172a474ff=
-3eb
-      failing since 79 days (last pass: next-20200706, first fail: next-202=
-00721)  =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-              | results
-----------------------+--------+---------------+----------+----------------=
---------------+--------
-qemu_x86_64-uefi      | x86_64 | lab-cip       | gcc-8    | x86_64_defconfi=
-g+kvm_guest   | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f809b271ecb6bfbdc4ff3f5
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+kvm_guest
-  Compiler:    gcc-8 (gcc (Debian 8.3.0-6) 8.3.0)
-  Plain log:   https://storage.kernelci.org//next/master/next-20201009/x86_=
-64/x86_64_defconfig+kvm_guest/gcc-8/lab-cip/baseline-qemu_x86_64-uefi.txt
-  HTML log:    https://storage.kernelci.org//next/master/next-20201009/x86_=
-64/x86_64_defconfig+kvm_guest/gcc-8/lab-cip/baseline-qemu_x86_64-uefi.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-3-g27eeeac7da2d/x86/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f809b271ecb6bfbdc4ff=
-3f6
-      new failure (last pass: next-20201008)  =20
+--Sig_/RTnJO3AjqSS3m45M9.L=8s4--
