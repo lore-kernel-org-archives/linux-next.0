@@ -2,88 +2,122 @@ Return-Path: <SRS0=P9OP=DR=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCC3C433E7
-	for <linux-next@archiver.kernel.org>; Sat, 10 Oct 2020 02:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316A0C433E7
+	for <linux-next@archiver.kernel.org>; Sat, 10 Oct 2020 11:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE02B22247
-	for <linux-next@archiver.kernel.org>; Sat, 10 Oct 2020 02:31:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602297080;
-	bh=Hr4iqz1zXiGE5F8nA2GbUk9IFxQda7DmEEnM9pjKIvk=;
-	h=To:Cc:From:Subject:Date:List-ID:From;
-	b=feUm8lgkeBhULZoVmSCCeU0uGkZa5M02u0HgRv60bECi/iHJwZenZKzS6rmJ7RGD7
-	 23/0xwLRKr7IQdEQZudO2OgD56N0tVF5gq6GgG6yHr12okA4ApaprSijBrFPLgxUHl
-	 QBVyrfFKBGCTvSyRx/bbEhppnyqXn8YvVzGIgM1o=
+	by mail.kernel.org (Postfix) with ESMTP id F0DDD22251
+	for <linux-next@archiver.kernel.org>; Sat, 10 Oct 2020 11:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbgJJBmx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 9 Oct 2020 21:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39546 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729477AbgJJBJd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Oct 2020 21:09:33 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9810CC0613D7
-        for <linux-next@vger.kernel.org>; Fri,  9 Oct 2020 17:44:17 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id o8so10635867otl.4
-        for <linux-next@vger.kernel.org>; Fri, 09 Oct 2020 17:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=Hr4iqz1zXiGE5F8nA2GbUk9IFxQda7DmEEnM9pjKIvk=;
-        b=eL0WG8mhu0NUkj8rsFaLL8jlh084Z9GrApbIiHLw9ENO1Pnvqb4sLtYR4nDBcCdMDm
-         e6aHLTC+KrMtiLMoisPTr5mnFMp3j/UsUlUAShRlx7TnSvwvNU68frVz0cJdHW5GU0uC
-         KaisKf4Mqy42md6I6QTamhWnjKnglK8ZqNpoI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=Hr4iqz1zXiGE5F8nA2GbUk9IFxQda7DmEEnM9pjKIvk=;
-        b=MKK1ui2Hu/8YiiknZq+Qk0nEcFL00haywk1oN9mWHHPxEvn5D0TKiOIZofOjfPk9tx
-         7Cv9k+ned+3QlznTrjTKSvgeZoCApWhG2vYGx1AsveRQt1teFrubWOhOonMnvg1ecfa0
-         nYrUq18Tiy4pfTxRRvC9QVOcQ9AYYbjXFGevcszuijtK+FBxUcCI3L/EbwGqCa5+U5Eo
-         ASNtBSWHIqygioI0DdOjFZRKo1z5ZqhJn7sXC/qj39yE6SA0+l/uqmtcDqJ2Q+i8yt8l
-         EUU/vohcsfR/1eXQzUtiTo8lqWqS8MTYqVJvPQihDGzd5BFuL2IO9JAH9DBgFGPGouRV
-         Cnhw==
-X-Gm-Message-State: AOAM530OvC0SReLNnnOkXx9+ZOqalsbQVX3op4T3LR0t8qlvAvFUwZVc
-        mCLLZUzeG6bioNejtxvxlW78HYVQdnMNlw==
-X-Google-Smtp-Source: ABdhPJzOJP5s/gDHeCShOQNHz7yquri9d0ZmoGsyOaPzehSG6/CknsOKpJdoZvfRcb0TuF0Kz8wH9Q==
-X-Received: by 2002:a9d:68c2:: with SMTP id i2mr10671947oto.166.1602290656636;
-        Fri, 09 Oct 2020 17:44:16 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id t65sm1329637oib.50.2020.10.09.17.44.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Oct 2020 17:44:15 -0700 (PDT)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     skhan@linuxfoundation.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Subject: Request to add counters branch to linux-next
-Message-ID: <ed25ab31-0e76-233c-34de-4e227c0b5801@linuxfoundation.org>
-Date:   Fri, 9 Oct 2020 18:44:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1729613AbgJJLfr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 10 Oct 2020 07:35:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33306 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728618AbgJJKUD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 10 Oct 2020 06:20:03 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 18B378A4D91A19AD4512;
+        Sat, 10 Oct 2020 18:01:52 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.134) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Sat, 10 Oct 2020
+ 18:01:48 +0800
+Subject: Re: linux-next: manual merge of the devicetree tree with the mfd tree
+To:     Rob Herring <robherring2@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+References: <20201001162237.633d6043@canb.auug.org.au>
+ <CAJKOXPdyCYkSE1ie_t5G5X4JStU0zxxuoovLFnUxJP4aQbvM=g@mail.gmail.com>
+ <CAL_JsqKKaStNsDxfJw0UOzU6rTyeeJtVkaE4-nJXKHA5A1pOLg@mail.gmail.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <4ecdefed-c047-a318-a3bf-14bc4bc50b23@huawei.com>
+Date:   Sat, 10 Oct 2020 18:01:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAL_JsqKKaStNsDxfJw0UOzU6rTyeeJtVkaE4-nJXKHA5A1pOLg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.134]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
-
-Please add counters branch to linux-next
-
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/log/?h=counters
-
-thanks,
--- Shuah
 
 
+On 2020/10/1 20:31, Rob Herring wrote:
+> On Thu, Oct 1, 2020 at 1:26 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Thu, 1 Oct 2020 at 08:22, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>> Hi all,
+>>>
+>>> Today's linux-next merge of the devicetree tree got a conflict in:
+>>>
+>>>   Documentation/devicetree/bindings/mfd/syscon.yaml
+>>>
+>>> between commit:
+>>>
+>>>   18394297562a ("dt-bindings: mfd: syscon: Merge Samsung Exynos Sysreg bindings")
+>>>   05027df1b94f ("dt-bindings: mfd: syscon: Document Exynos3 and Exynos5433 compatibles")
+>>>
+>>> from the mfd tree and commit:
+>>>
+>>>   35b096dd6353 ("dt-bindings: mfd: syscon: add some compatible strings for Hisilicon")
+>>>
+>>> from the devicetree tree.
+>>>
+>>> I fixed it up (see below) and can carry the fix as necessary. This
+>>> is now fixed as far as linux-next is concerned, but any non trivial
+>>> conflicts should be mentioned to your upstream maintainer when your tree
+>>> is submitted for merging.  You may also want to consider cooperating
+>>> with the maintainer of the conflicting tree to minimise any particularly
+>>> complex conflicts.
+>>>
+>>> --
+>>> Cheers,
+>>> Stephen Rothwell
+>>>
+>>> diff --cc Documentation/devicetree/bindings/mfd/syscon.yaml
+>>> index 0f21943dea28,fc2e85004d36..000000000000
+>>> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+>>> @@@ -40,11 -40,10 +40,14 @@@ properties
+>>>                 - allwinner,sun50i-a64-system-controller
+>>>                 - microchip,sparx5-cpu-syscon
+>>>                 - mstar,msc313-pmsleep
+>>>  +              - samsung,exynos3-sysreg
+>>>  +              - samsung,exynos4-sysreg
+>>>  +              - samsung,exynos5-sysreg
+>>>  +              - samsung,exynos5433-sysreg
+>>> -
+>>> +               - hisilicon,hi6220-sramctrl
+>>> +               - hisilicon,pcie-sas-subctrl
+>>> +               - hisilicon,peri-subctrl
+>>> +               - hisilicon,dsa-subctrl
+>>
+>> Thanks Stephen, looks good.
+>>
+>> Zhei,
+>> However the Huawei compatibles in the original patch were added not
+>> alphabetically which messes the order and increases the possibility of
+>> conflicts. It would be better if the entries were kept ordered.
+> 
+> I've fixed up the order.
+
+Thanks.
+
+> 
+> Rob
+> 
+> .
+> 
 
