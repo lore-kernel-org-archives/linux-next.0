@@ -2,87 +2,141 @@ Return-Path: <SRS0=Edx9=DT=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22637C433DF
-	for <linux-next@archiver.kernel.org>; Mon, 12 Oct 2020 14:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D035DC433DF
+	for <linux-next@archiver.kernel.org>; Mon, 12 Oct 2020 14:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3B42076E
-	for <linux-next@archiver.kernel.org>; Mon, 12 Oct 2020 14:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98A9320776
+	for <linux-next@archiver.kernel.org>; Mon, 12 Oct 2020 14:14:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FPglRbBD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R6nh+0Tc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389700AbgJLOK5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 12 Oct 2020 10:10:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56739 "EHLO
+        id S1729402AbgJLOOl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 12 Oct 2020 10:14:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:39913 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389554AbgJLOK4 (ORCPT
+        by vger.kernel.org with ESMTP id S1728336AbgJLOOl (ORCPT
         <rfc822;linux-next@vger.kernel.org>);
-        Mon, 12 Oct 2020 10:10:56 -0400
+        Mon, 12 Oct 2020 10:14:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602511856;
+        s=mimecast20190719; t=1602512079;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=qeLRzZ2kmlgn/5uncvk+yQgdLuVN4fv/HfcAAmZlzhY=;
-        b=FPglRbBDzMs6Ce0yDbhDIEtEigVvVQojDFaZFpaxStvZ2Lc/bPMeT+8B0KsFeIKyW0kdE9
-        L2AyTUZ2jrsjZwFHnW3GPzscazr4b3rrGONs6ibic1Tahbsc5Tu0D4VAcK39sUyvSQgAxc
-        +RF+x9+8dyRDBtujfVs6LWaT4TMJpSk=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eKB8Wqie7OYpl/UN0uXAxDePkSzH8tlrt66e/5fdk04=;
+        b=R6nh+0Tciwy2+WQmiIe8nDONAkjoIHyKkTg+zEz/TnJKEZ5gBYLnWQ83OUJgGxl706HFkb
+        HEwJtHMMJtNnu/vI/O8jEoDdslPtQaEiKGZcxDuPs1Y5lrgx9IFuicQrOzDwYNBOAyqD0f
+        8nzfGvbJvO4t/AT+G00d64j/N//MZnM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-492-R7YYZCLVOIC0kqtErudtYQ-1; Mon, 12 Oct 2020 10:10:52 -0400
-X-MC-Unique: R7YYZCLVOIC0kqtErudtYQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-154-wZbc90LRMe-CAiE1EI5y8w-1; Mon, 12 Oct 2020 10:14:36 -0400
+X-MC-Unique: wZbc90LRMe-CAiE1EI5y8w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 655F1104D3E0;
-        Mon, 12 Oct 2020 14:10:50 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-117-187.rdu2.redhat.com [10.10.117.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 166B760C0F;
-        Mon, 12 Oct 2020 14:10:48 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 30C631868403;
+        Mon, 12 Oct 2020 14:14:35 +0000 (UTC)
+Received: from ovpn-117-187.rdu2.redhat.com (ovpn-117-187.rdu2.redhat.com [10.10.117.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E63CA5C225;
+        Mon, 12 Oct 2020 14:14:33 +0000 (UTC)
+Message-ID: <7891baff68cef09f36c0cba88d9ae09eeff8e569.camel@redhat.com>
+Subject: Re: [tip: locking/core] lockdep: Fix lockdep recursion
 From:   Qian Cai <cai@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] arm64: Fix redefinition of init_new_context()
-Date:   Mon, 12 Oct 2020 10:10:32 -0400
-Message-Id: <20201012141032.6333-1-cai@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Date:   Mon, 12 Oct 2020 10:14:33 -0400
+In-Reply-To: <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <160223032121.7002.1269740091547117869.tip-bot2@tip-bot2>
+         <e438b231c5e1478527af6c3e69bf0b37df650110.camel@redhat.com>
+         <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-The linux-next commit c870baeede75 ("asm-generic: add generic MMU
-versions of mmu context functions") missed a case in the arm64/for-next
-branch.
+On Mon, 2020-10-12 at 11:11 +0800, Boqun Feng wrote:
+> Hi,
+> 
+> On Fri, Oct 09, 2020 at 09:41:24AM -0400, Qian Cai wrote:
+> > On Fri, 2020-10-09 at 07:58 +0000, tip-bot2 for Peter Zijlstra wrote:
+> > > The following commit has been merged into the locking/core branch of tip:
+> > > 
+> > > Commit-ID:     4d004099a668c41522242aa146a38cc4eb59cb1e
+> > > Gitweb:        
+> > > https://git.kernel.org/tip/4d004099a668c41522242aa146a38cc4eb59cb1e
+> > > Author:        Peter Zijlstra <peterz@infradead.org>
+> > > AuthorDate:    Fri, 02 Oct 2020 11:04:21 +02:00
+> > > Committer:     Ingo Molnar <mingo@kernel.org>
+> > > CommitterDate: Fri, 09 Oct 2020 08:53:30 +02:00
+> > > 
+> > > lockdep: Fix lockdep recursion
+> > > 
+> > > Steve reported that lockdep_assert*irq*(), when nested inside lockdep
+> > > itself, will trigger a false-positive.
+> > > 
+> > > One example is the stack-trace code, as called from inside lockdep,
+> > > triggering tracing, which in turn calls RCU, which then uses
+> > > lockdep_assert_irqs_disabled().
+> > > 
+> > > Fixes: a21ee6055c30 ("lockdep: Change hardirq{s_enabled,_context} to per-
+> > > cpu
+> > > variables")
+> > > Reported-by: Steven Rostedt <rostedt@goodmis.org>
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > 
+> > Reverting this linux-next commit fixed booting RCU-list warnings everywhere.
+> > 
+> 
+> I think this happened because in this commit debug_lockdep_rcu_enabled()
+> didn't adopt to the change that made lockdep_recursion a percpu
+> variable?
+> 
+> Qian, mind to try the following?
 
-Signed-off-by: Qian Cai <cai@redhat.com>
----
- arch/arm64/include/asm/mmu_context.h | 1 +
- 1 file changed, 1 insertion(+)
+Yes, it works fine.
 
-diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
-index da5f146e665b..cd5c33a50469 100644
---- a/arch/arm64/include/asm/mmu_context.h
-+++ b/arch/arm64/include/asm/mmu_context.h
-@@ -176,6 +176,7 @@ static inline void cpu_replace_ttbr1(pgd_t *pgdp)
-  */
- void check_and_switch_context(struct mm_struct *mm);
- 
-+#define init_new_context init_new_context
- static inline int
- init_new_context(struct task_struct *tsk, struct mm_struct *mm)
- {
--- 
-2.28.0
+> 
+> Although, arguably the problem still exists, i.e. we still have an RCU
+> read-side critical section inside lock_acquire(), which may be called on
+> a yet-to-online CPU, which RCU doesn't watch. I think this used to be OK
+> because we don't "free" anything from lockdep, IOW, there is no
+> synchronize_rcu() or call_rcu() that _needs_ to wait for the RCU
+> read-side critical sections inside lockdep. But now we lock class
+> recycling, so it might be a problem.
+> 
+> That said, currently validate_chain() and lock class recycling are
+> mutually excluded via graph_lock, so we are safe for this one ;-)
+> 
+> ----------->8
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index 39334d2d2b37..35d9bab65b75 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -275,8 +275,8 @@ EXPORT_SYMBOL_GPL(rcu_callback_map);
+>  
+>  noinstr int notrace debug_lockdep_rcu_enabled(void)
+>  {
+> -	return rcu_scheduler_active != RCU_SCHEDULER_INACTIVE && debug_locks &&
+> -	       current->lockdep_recursion == 0;
+> +	return rcu_scheduler_active != RCU_SCHEDULER_INACTIVE &&
+> +	       __lockdep_enabled;
+>  }
+>  EXPORT_SYMBOL_GPL(debug_lockdep_rcu_enabled);
+> 
 
