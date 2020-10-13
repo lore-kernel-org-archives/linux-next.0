@@ -2,172 +2,306 @@ Return-Path: <SRS0=l8Jx=DV=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02884C433E7
-	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 07:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C4AC4363A
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 09:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 830E3212CC
-	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 07:15:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602659755;
-	bh=ZuxiTLpOjgmSEct1VF34ah8PXnFRIr0Eid7rG/i7VkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HhXj5IOC9iJc+fvxJPK6SKEyLColEw+4KMgViw8eiP4YEOgqpQrowxtUMDaGyFnAH
-	 lnO1hj8FDPiDGkPi/I9bRyAuzlSnuN66zJi/+CupJo5V2i2NT5tUWgWP5KbQe6UfHu
-	 UWHAju6HuYpxsBY2WV80/TYjOyGSQThrt95Yjwww=
+	by mail.kernel.org (Postfix) with ESMTP id E8022206D9
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 09:22:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="x0BZm7aC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbgJNHPy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 14 Oct 2020 03:15:54 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:40358 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbgJNHPy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 03:15:54 -0400
-Received: by mail-ej1-f67.google.com with SMTP id p15so3309842ejm.7;
-        Wed, 14 Oct 2020 00:15:52 -0700 (PDT)
+        id S1729208AbgJNJW1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 05:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39948 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731138AbgJNJVv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 05:21:51 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64777C08EC70
+        for <linux-next@vger.kernel.org>; Tue, 13 Oct 2020 16:59:17 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id j8so479793pjy.5
+        for <linux-next@vger.kernel.org>; Tue, 13 Oct 2020 16:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=9P/TMr16Dm58cS82Z+yl1d28qKeY+wAM0H6Y4gS85Hw=;
+        b=x0BZm7aCyDfDtYI/p2YvQv0tOzbvB7W/IAUL+ItRdKbakg+5OXvUEbc/0ecYMbBbnE
+         79rNIPVF8Q1LzEpoEPU3K5o7+74knsDFzRzAsBMDtwONq52K/OowOTaZTmTeUnETiU+Y
+         V/49WznKyBBefz4tu8ldyx7w7XjRDBXeF/YsgWqPFvVIDZJu8za7I9LbZOhYxnspXiPS
+         fFy5luY1eKIzT2sngLxgkQKcIekbltOfAYbRwihcPS+35sYBMECFHLHZAVFzBnw+NHKs
+         rNSGR4L1f8ZKZHlQAJkn6EUEnS60ddWHIS+/+6BIBoMLbeGvJilWTJYmJIKe0LPGtDB4
+         sMkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4MB/WEv7WVbXZ32vpSI6tjTzebAt77Hp+rVbyGH87qE=;
-        b=dvDSGQ0rBl3xy0xVJA73IF0AvHun8UjcSHxYrCJwvysNenGwvvlO5DxOOvmi3A+IwP
-         PUmUcm2AJuLf44TItHxHeaU77UAmeh/GkPwcvtGy/wSKxnyl+l9M6Gvul2Q0bsOpmE4o
-         xxeKDz3qFgu2ix4ojbAnWj4RRY1ErTpViIAkLL3lwMXFDas7XuKp+5VB40qT355PTahe
-         8D1ycfQ30wLNGZl8QVDHst3prXKB2EpZkMvynRa8A6KjOMjlOQXr+uguJLY5OCUIPMXW
-         jTZCH+hvG/sc1T8/iZU5tO+FRVpvzpLDh3NuMZu8YiffEk+wkcBggYPGnLSgjFSaqWL9
-         MXew==
-X-Gm-Message-State: AOAM5330Z1O51wRKJJihDPc/+7gQTT/CQ87cMjO+cwSjrsct5PX0N7uy
-        tMcbr2ZLDvnBs5Dy0Z6TsX0=
-X-Google-Smtp-Source: ABdhPJxuCAYjKRp/eva7cZT3owH1+7r57Z5oPnyVCvomekbZaEZKPotTUv597H2IZrn48haP5D4yzg==
-X-Received: by 2002:a17:906:f151:: with SMTP id gw17mr3759548ejb.119.1602659751468;
-        Wed, 14 Oct 2020 00:15:51 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.240])
-        by smtp.googlemail.com with ESMTPSA id me12sm1104240ejb.108.2020.10.14.00.15.49
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Oct 2020 00:15:50 -0700 (PDT)
-Date:   Wed, 14 Oct 2020 09:15:47 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Sven Schnelle <svens@linux.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: autofs crash with latest linux-next
-Message-ID: <20201014071547.GA2459@kozik-lap>
-References: <yt9d1ri3nakg.fsf@linux.ibm.com>
- <8a4c7324-4637-7f25-82b6-2fd30aacb73e@de.ibm.com>
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=9P/TMr16Dm58cS82Z+yl1d28qKeY+wAM0H6Y4gS85Hw=;
+        b=IEQQErv+lthKeocZDopV2mRccA4Y9KzhIqZ2t+J/DHeazVyd3xxbK/oa0Ry41nX/ig
+         HNOwAlbMaxem7zonPsJogArS5dqMH4K5kDIuZ4qM/Qm/HzDGc+S9jwdvA7DcYaxobXO6
+         VihjpQqgdIqaS5cHRWcFnPvFzDiuicoGI7DFZxcS2SkVd6I4aA19yE36GiSgfoJ1zoUj
+         3Lpm+D3RGmxPVrj/WI+6G8rqSpixkLXmyLxSgMuvwQTOaQuvPd3xxWATn2Gw8HQZJbuk
+         CTix9nVg0+rlBl1/UFsRWT27tv9AOE/tTqnWxTLRaAygZm4P4ZVTT2/a+gyQFGJ1U+ff
+         mUFQ==
+X-Gm-Message-State: AOAM530Pj3dNGQU3yhJLChDgPYQhMs2pg28BVMcOSS0DIOT4pLrGba1F
+        QlQX+nf1W5KjFaPGQMgDZlwOQ/dpv+88DQ==
+X-Google-Smtp-Source: ABdhPJzAdXZoXv6Ffls3mZ8vNzJt/GpRudQ/L5K6t/sQ+mu5bikh8+ibv+6owpfYWXZ0Z8ICbjrVlA==
+X-Received: by 2002:a17:90a:a389:: with SMTP id x9mr729057pjp.99.1602633556108;
+        Tue, 13 Oct 2020 16:59:16 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id 189sm850533pfw.123.2020.10.13.16.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2020 16:59:15 -0700 (PDT)
+Message-ID: <5f863f53.1c69fb81.9e269.250d@mx.google.com>
+Date:   Tue, 13 Oct 2020 16:59:15 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8a4c7324-4637-7f25-82b6-2fd30aacb73e@de.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v5.9-3938-gf4dd85cd788b
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Tree: next
+Subject: next/pending-fixes baseline: 354 runs,
+ 5 regressions (v5.9-3938-gf4dd85cd788b)
+To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
+        kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 09:20:12AM +0200, Christian Borntraeger wrote:
-> CC linux-next, Al Viro.
-> 
-> On 12.10.20 09:54, Sven Schnelle wrote:
-> > Hi,
-> > 
-> > on s390 i see the following crash with linux-next:
-> > 
-> > [ 4525.432605] Unable to handle kernel pointer dereference in virtual kernel address space
-> > [ 4525.432612] Failing address: 0000000000000000 TEID: 0000000000000483
-> > [ 4525.432613] Fault in home space mode while using kernel ASCE.
-> > [ 4525.432616] AS:00000000cf048007 R3:00000001fffec007 S:00000001ffff1800 P:000000000000003d 
-> > [ 4525.432640] Oops: 0004 ilc:3 [#1] SMP 
-> > [ 4525.432644] Modules linked in: dm_crypt encrypted_keys lcs ctcm fsm nfsv3 nfs_acl nfs lockd grace quota_v2 quota_tree tun overlay ntfs exfat vfat fat sctp vfio_pci irqbypass vfio_virqfd scsi_debug vhost_vsock vmw_vsock_virtio_transport_common vsock vhost vhost_iotlb vfio_ap kvm loop nft_counter bridge stp llc dm_service_time nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables nfnetlink sunrpc dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua s390_trng vfio_ccw vfio_mdev mdev vfio_iommu_type1 vfio zcrypt_cex4 eadm_sch sch_fq_codel ip_tables x_tables ghash_s390 prng aes_s390 des_s390 libdes sha3_512_s390 sha3_256_s390 sha512_s390 sha256_s390 sha1_s390 sha_common pkey zcrypt rng_core autofs4 [last unloaded: dummy_del_mod]
-> > [ 4525.432691] CPU: 9 PID: 1050921 Comm: find Tainted: G           OE     5.9.0-20201011.rc8.git0.d67bc7812221.300.fc32.s390x+next #1
-> > [ 4525.432693] Hardware name: IBM 3906 M04 704 (LPAR)
-> > [ 4525.432694] Krnl PSW : 0704d00180000000 00000000cde29f70 (__kernel_write+0x1a0/0x2a0)
-> > [ 4525.432702]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
-> > [ 4525.432704] Krnl GPRS: 0000000100067343 0000000000000000 0000000000000130 0000000000000001
-> > [ 4525.432705]            0000000000000006 000000005f82be2f 0000000000000130 000000008c6ab568
-> > [ 4525.432728]            0000000084441f00 0000000000000000 0000000000000130 0000000084441f00
-> > [ 4525.432729]            0000000081476000 0000000000000001 00000000cde29ef4 000003e002f5b6f0
-> > [ 4525.432735] Krnl Code: 00000000cde29f62: a7280000		lhi	%r2,0
-> >                           00000000cde29f66: a7f4ff9d		brc	15,00000000cde29ea0
-> >                          #00000000cde29f6a: e310f0f00004	lg	%r1,240(%r15)
-> >                          >00000000cde29f70: e31090000024	stg	%r1,0(%r9)
-> >                           00000000cde29f76: 9104b044		tm	68(%r11),4
-> >                           00000000cde29f7a: a784000f		brc	8,00000000cde29f98
-> >                           00000000cde29f7e: e31003400004	lg	%r1,832
-> >                           00000000cde29f84: b904002a		lgr	%r2,%r10
-> > [ 4525.432748] Call Trace:
-> > [ 4525.432750]  [<00000000cde29f70>] __kernel_write+0x1a0/0x2a0 
-> > [ 4525.432752] ([<00000000cde29ef4>] __kernel_write+0x124/0x2a0)
-> > [ 4525.432756]  [<000003ff80004cfa>] autofs_write+0x5a/0x140 [autofs4] 
-> > [ 4525.432758]  [<000003ff80005262>] autofs_notify_daemon.constprop.0+0x10a/0x1c8 [autofs4] 
-> > [ 4525.432760]  [<000003ff80005872>] autofs_wait+0x552/0x718 [autofs4] 
-> > [ 4525.432762]  [<000003ff800033ca>] autofs_mount_wait+0x5a/0xb0 [autofs4] 
-> > [ 4525.432764]  [<000003ff800048b2>] autofs_d_automount+0x102/0x278 [autofs4] 
-> > [ 4525.432766]  [<00000000cde398fe>] __traverse_mounts+0x9e/0x270 
-> > [ 4525.432768]  [<00000000cde3e7ee>] step_into+0x1de/0x280 
-> > [ 4525.432770]  [<00000000cde3f000>] open_last_lookups+0xb8/0x3f8 
-> > [ 4525.432772]  [<00000000cde3f726>] path_openat+0x86/0x1d0 
-> > [ 4525.432773]  [<00000000cde425b0>] do_filp_open+0x78/0x118 
-> > [ 4525.432776]  [<00000000cde278d0>] do_sys_openat2+0xa8/0x168 
-> > [ 4525.432778]  [<00000000cde27cfa>] __s390x_sys_openat+0x6a/0x98 
-> > [ 4525.432781]  [<00000000ce64f2e8>] system_call+0xdc/0x2a4 
-> > [ 4525.432782] Last Breaking-Event-Address:
-> > [ 4525.432783]  [<00000000cde29efc>] __kernel_write+0x12c/0x2a0
-> > 
-> > This seems to be caused by the result of merging 0fb702791bf ("autofs:
-> > use __kernel_write() for the autofs pipe writing") and 4d03e3cc5982
-> 
-> I cannot find the first commit ids. To me it looks like this should be 
-> 
-> commit 90fb702791bf99b959006972e8ee7bb4609f441b
-> Author:     Linus Torvalds <torvalds@linux-foundation.org>
-> AuthorDate: Tue Sep 29 17:18:34 2020 -0700
-> Commit:     Linus Torvalds <torvalds@linux-foundation.org>
-> CommitDate: Tue Sep 29 17:18:34 2020 -0700
-> 
->     autofs: use __kernel_write() for the autofs pipe writing
-> 
-> instead?
-> 
-> 
-> > ("fs: don't allow kernel reads and writes without iter
-> > ops"). __kernel_write() gets now called with a NULL pointer as pos
-> > argument, but __kernel_write expects a valid pointer as it
-> > fetches/stores the pos value there. Is there a fix pending somewhere?
+next/pending-fixes baseline: 354 runs, 5 regressions (v5.9-3938-gf4dd85cd78=
+8b)
 
-Hi All,
+Regressions Summary
+-------------------
 
-+CC Kees Cook (reviewer),
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+at91-sama5d4_xplained | arm   | lab-baylibre  | gcc-8    | sama5_defconfig =
+             | 0/1    =
 
-I hit this since few days as well. Although the bisect points to the
-merge, the issue looks like a result of mentioned commit 4d03e3cc5982
-("fs: don't allow kernel reads and writes without iter ops").
+bcm2837-rpi-3-b       | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+             | 3/4    =
 
-The __kernel_read() last argument 'pos' can be NULL and it is
-dereferenced here (added by the commit):
+panda                 | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 4/5    =
 
- 525 ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
-...
- 547         kiocb.ki_pos = *pos;
- 548         iov_iter_kvec(&iter, WRITE, &iov, 1, iov.iov_len);
+panda                 | arm   | lab-collabora | gcc-8    | omap2plus_defcon=
+fig          | 0/1    =
+
+rk3288-veyron-jaq     | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 0/1    =
 
 
-The __kernel_read() is called with NULL in fs/autofs/waitq.c:
+  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
+v5.9-3938-gf4dd85cd788b/plan/baseline/
 
- 45 static int autofs_write(struct autofs_sb_info *sbi,
- 46                         struct file *file, const void *addr, int bytes)
+  Test:     baseline
+  Tree:     next
+  Branch:   pending-fixes
+  Describe: v5.9-3938-gf4dd85cd788b
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git
+  SHA:      f4dd85cd788b42bad73ffd0ae6d3f954fb746ed6 =
 
-...
- 54         mutex_lock(&sbi->pipe_mutex);
- 55         while (bytes) {
- 56                 wr = __kernel_write(file, data, bytes, NULL);
 
-Best regards,
-Krzysztof
 
+Test Regressions
+---------------- =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+at91-sama5d4_xplained | arm   | lab-baylibre  | gcc-8    | sama5_defconfig =
+             | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f860385ebc40084544ff3e4
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: sama5_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_x=
+plained.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/sama5_defconfig/gcc-8/lab-baylibre/baseline-at91-sama5d4_x=
+plained.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f860385ebc40084544ff=
+3e5
+      failing since 161 days (last pass: v5.7-rc3-277-ga37f92ef57b2, first =
+fail: v5.7-rc4-211-g6d4315023bc9)  =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+bcm2837-rpi-3-b       | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+             | 3/4    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f860500c5428220dc4ff3ec
+
+  Results:     3 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.ht=
+ml
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-3-g27eeeac7da2d/arm64/baseline/rootfs.cpio.gz =
+
+
+  * baseline.dmesg.crit: https://kernelci.org/test/case/id/5f860500c5428220=
+dc4ff3f0
+      failing since 1 day (last pass: v5.9-rc8-340-g65849916deb5, first fai=
+l: v5.9-162-g560c51a7f3d5)
+      2 lines
+
+    2020-10-13 19:48:06.766000  Connected to bcm2837-rpi-3-b console [chann=
+el connected] (~$quit to exit)
+    2020-10-13 19:48:06.767000  (user:khilman) is already connected
+    2020-10-13 19:48:23.375000  =00
+    2020-10-13 19:48:23.376000  =
+
+    2020-10-13 19:48:23.376000  U-Boot 2018.11 (Dec 04 2018 - 10:54:32 -080=
+0)
+    2020-10-13 19:48:23.376000  =
+
+    2020-10-13 19:48:23.376000  DRAM:  948 MiB
+    2020-10-13 19:48:23.392000  RPI 3 Model B (0xa02082)
+    2020-10-13 19:48:23.477000  MMC:   mmc@7e202000: 0, sdhci@7e300000: 1
+    2020-10-13 19:48:23.509000  Loading Environment from FAT... *** Warning=
+ - bad CRC, using default environment
+    ... (383 line(s) more)
+      =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+panda                 | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 4/5    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f860637d1e1b4a6e74ff3ee
+
+  Results:     4 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/base=
+line-panda.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/base=
+line-panda.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f860637d1e1b4a=
+6e74ff3f4
+      failing since 69 days (last pass: v5.8-1558-g0359180fcb42, first fail=
+: v5.8-3221-g983112062f35)
+      60 lines
+
+    2020-10-13 19:55:28.196000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c802
+    2020-10-13 19:55:28.201000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c803
+    2020-10-13 19:55:28.207000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c804
+    2020-10-13 19:55:28.213000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c805
+    2020-10-13 19:55:28.218000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c806
+    2020-10-13 19:55:28.224000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c807
+    2020-10-13 19:55:28.230000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c808
+    2020-10-13 19:55:28.236000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c809
+    2020-10-13 19:55:28.242000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c80a
+    2020-10-13 19:55:28.247000  kern  :alert : BUG: Bad page state in proce=
+ss swapper  pfn:9c80b
+    ... (49 line(s) more)
+      =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+panda                 | arm   | lab-collabora | gcc-8    | omap2plus_defcon=
+fig          | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f860791f06652fe084ff3e0
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/omap2plus_defconfig/gcc-8/lab-collabora/baseline-panda.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f860791f06652fe084ff=
+3e1
+      failing since 69 days (last pass: v5.8-1558-g0359180fcb42, first fail=
+: v5.8-3221-g983112062f35)  =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+             | results
+----------------------+-------+---------------+----------+-----------------=
+-------------+--------
+rk3288-veyron-jaq     | arm   | lab-collabora | gcc-8    | multi_v7_defc...=
+CONFIG_SMP=3Dn | 0/1    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5f86106960a90017a94ff3f4
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/base=
+line-rk3288-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.9-3938-g=
+f4dd85cd788b/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/base=
+line-rk3288-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-3-g27eeeac7da2d/armel/baseline/rootfs.cpio.gz =
+
+
+  * baseline.login: https://kernelci.org/test/case/id/5f86106960a90017a94ff=
+3f5
+      new failure (last pass: v5.9-162-g560c51a7f3d5)  =20
