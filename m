@@ -6,124 +6,123 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4EAC433E7
-	for <linux-next@archiver.kernel.org>; Tue, 13 Oct 2020 07:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E197C433E7
+	for <linux-next@archiver.kernel.org>; Tue, 13 Oct 2020 07:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D413208D5
-	for <linux-next@archiver.kernel.org>; Tue, 13 Oct 2020 07:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB10A207C3
+	for <linux-next@archiver.kernel.org>; Tue, 13 Oct 2020 07:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RNv04j0G"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S88ueZzM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732565AbgJMHAH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 13 Oct 2020 03:00:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:54127 "EHLO ozlabs.org"
+        id S2389896AbgJMHU3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 13 Oct 2020 03:20:29 -0400
+Received: from ozlabs.org ([203.11.71.1]:38799 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727353AbgJMHAG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Oct 2020 03:00:06 -0400
+        id S2389829AbgJMHU2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 13 Oct 2020 03:20:28 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C9RHw4RCtz9sSs;
-        Tue, 13 Oct 2020 17:59:56 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C9RlY02vRz9sTs;
+        Tue, 13 Oct 2020 18:20:24 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1602572400;
-        bh=x1KWFCxITrWKOyi5Mv/0ObqK/R6h8Do789neFaZAftg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=RNv04j0Gn68mDN9Vgz52ZLJ/kY32JuKqR0hhpozs+9JwS0F3231vW19sQ6+hgynAs
-         qOto7UY456E6BN2UCg31wH3TXpddcsNZXkA0kCMX7pxwe2RvSNZOUlCbWkm1uA6c5V
-         nRFVvSasa/5Uxng3Q4vuTqXy2XTxdbtzZbqkMGSNACHZELUpfe1XxKK5GMo3GfY7r/
-         p641mcKNGMgliuHRAJSo7I/RGFZj07Q/o5JIUPMUJ/uDEZN2P8RVI5/R2jFErplk7q
-         Ibu7ZGKtCk1UyUPZypoqhaoYEXBYY2gdKwrNz+qyAdGzOivL7ZgqHVTWdnhm812TK3
-         a9p5+v6XCBGkw==
-Date:   Tue, 13 Oct 2020 17:59:53 +1100
+        s=201702; t=1602573626;
+        bh=zc52PmRF4enBb3KdNeN/lkY7V5Sj3aLRPfM9ZwiVhy4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S88ueZzMmWtgouo3f290oK8XH4AqwetRWbtM+P91NL+EvcurOwir41hoqYu1EqzzS
+         oajqb8/R1hpSYoDVaV1MxIXApL5frR54vp8prruEtM5Hh0uyYwWrMKJeWWg9OZkwG5
+         3AJbazqKcQRF+aJ40vJNhBQC64e0aiLLe+EIIDBXhSVA7uSOKo2XL1okHLVP9P8Fj+
+         D8hKCtztN1cP01Zw57S0q6vkEUUVzFwNuCNRbrCf29Qa84cqduCQa5ZPXCXoCDyNwv
+         8qmJJM7K9eJh0QoFxngsgF1UUsFxwaBSX9dcvFXXFmG3ALzpTQmXU+BwUqdo5FvwLB
+         70I6FG8qoRFYg==
+Date:   Tue, 13 Oct 2020 18:20:24 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: linux-next: manual merge of the akpm-current tree with the tip tree
-Message-ID: <20201013175953.4cc33c06@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mmc tree with the samsung-krzk
+ tree
+Message-ID: <20201013182024.70938a91@canb.auug.org.au>
+In-Reply-To: <20200908144622.09385c88@canb.auug.org.au>
+References: <20200908144622.09385c88@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/S5OI6YLhuOrH2lenvc3BufR";
+Content-Type: multipart/signed; boundary="Sig_/0jvQS_1F3Tf7P_dHTbis07l";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/S5OI6YLhuOrH2lenvc3BufR
+--Sig_/0jvQS_1F3Tf7P_dHTbis07l
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+On Tue, 8 Sep 2020 14:46:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the mmc tree got a conflict in:
+>=20
+>   drivers/mmc/host/Kconfig
+>=20
+> between commits:
+>=20
+>   cb6c03019cdd ("ARM: exynos: stop selecting PLAT_SAMSUNG")
+>   db8230d29c3a ("ARM: s5pv210: don't imply CONFIG_PLAT_SAMSUNG")
+>=20
+> from the samsung-krzk tree and commit:
+>=20
+>   54d8454436a2 ("mmc: host: Enable compile testing of multiple drivers")
+>=20
+> from the mmc tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc drivers/mmc/host/Kconfig
+> index 0d7c61d8d1d9,dc646359b4ff..000000000000
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@@ -289,7 -301,8 +301,8 @@@ config MMC_SDHCI_TEGR
+>  =20
+>   config MMC_SDHCI_S3C
+>   	tristate "SDHCI support on Samsung S3C SoC"
+> - 	depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS)
+> + 	depends on MMC_SDHCI
+>  -	depends on PLAT_SAMSUNG || COMPILE_TEST
+> ++	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+>   	help
+>   	  This selects the Secure Digital Host Controller Interface (SDHCI)
+>   	  often referrered to as the HSMMC block in some of the Samsung S3C
 
-  include/linux/sched.h
-
-between commit:
-
-  d741bf41d7c7 ("kprobes: Remove kretprobe hash")
-
-from the tip tree and commit:
-
-  faf4ffbfd1c5 ("fs/buffer.c: add debug print for __getblk_gfp() stall prob=
-lem")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+This is now a conflict between the mmc tree and the arm-soc tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/sched.h
-index 1695d45c2d7a,a360da173c32..000000000000
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@@ -1322,10 -1320,13 +1327,17 @@@ struct task_struct=20
-  	struct callback_head		mce_kill_me;
-  #endif
- =20
- +#ifdef CONFIG_KRETPROBES
- +	struct llist_head               kretprobe_instances;
- +#endif
- +
-+ #ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
-+ 	unsigned long			getblk_stamp;
-+ 	unsigned int			getblk_executed;
-+ 	unsigned int			getblk_bh_count;
-+ 	unsigned long			getblk_bh_state;
-+ #endif
-+=20
-  	/*
-  	 * New fields for task_struct should be added above here, so that
-  	 * they are included in the randomized portion of task_struct.
-
---Sig_/S5OI6YLhuOrH2lenvc3BufR
+--Sig_/0jvQS_1F3Tf7P_dHTbis07l
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+FUGkACgkQAVBC80lX
-0GzufQf+Ll91i6oCweRhM0PU25xD/psSPnXp11dDTujWUyWUxHuIynTdcbUuiSGi
-duGBzmAzh7gYUSn743m44bCQdDtQG8e2x0SVzb/bqSaYlww63GbF/DcT/fSoZpNr
-IZxUJDgXa/2w43uXu0ntgBbjqIMLPS+f8FB6BW02FI2PUnf9Ju1HlsfahmLzpKmD
-m4tCjr2LRE7j/6RIOHOoKAVgEw7PeFACBKwni6ib5feNqgn+K9BuleyoMMce39jB
-IhC9LDAxPoLrnljJCzlWaXXsMoTlJJLgBAHE4NlDkbv9vu31bezL1Mdukt36/4iT
-NT8/IqIzWzLymO7GKbL+FafXuJkOlQ==
-=ehVY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+FVTgACgkQAVBC80lX
+0GyZ7wgAj3Lt90XXfhTOJCW8tl887N62mOXdr097J3Ogr+0NyyEkaudfhqQBd/0m
+D39j+aVlSLzaEXuGZcSsayEUvQ88mOsQVZIsIwRLY/kO+kjsjBpSwhPkMJ0DSb49
+KvqvnKD/gRVNK8V7e8LEuwzH5TGe2Dcw0gqEJq4ozPSkpl96RqvUBbCw08h4m/4y
+dTEBR0aeYqPTBLMrH7julZUZzqwr8dirN2oAhQxStUJtw1o3LwVjk7JgBoep9MXN
+3zrO49+J51nGHC21carbaGEvRgOSUz2QuRW0ZG891jaO1F2ju2k3n3RFpIsX8jy3
+2tI5ddo0AFi6gQXIsnGEnp/kVL7D+Q==
+=3VR4
 -----END PGP SIGNATURE-----
 
---Sig_/S5OI6YLhuOrH2lenvc3BufR--
+--Sig_/0jvQS_1F3Tf7P_dHTbis07l--
