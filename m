@@ -1,161 +1,173 @@
-Return-Path: <SRS0=mT+L=DU=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=l8Jx=DV=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9528C433E7
-	for <linux-next@archiver.kernel.org>; Tue, 13 Oct 2020 22:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02884C433E7
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 07:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCBAA2177B
-	for <linux-next@archiver.kernel.org>; Tue, 13 Oct 2020 22:17:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HsPWea3p"
+	by mail.kernel.org (Postfix) with ESMTP id 830E3212CC
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 07:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602659755;
+	bh=ZuxiTLpOjgmSEct1VF34ah8PXnFRIr0Eid7rG/i7VkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HhXj5IOC9iJc+fvxJPK6SKEyLColEw+4KMgViw8eiP4YEOgqpQrowxtUMDaGyFnAH
+	 lnO1hj8FDPiDGkPi/I9bRyAuzlSnuN66zJi/+CupJo5V2i2NT5tUWgWP5KbQe6UfHu
+	 UWHAju6HuYpxsBY2WV80/TYjOyGSQThrt95Yjwww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbgJMWRA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 13 Oct 2020 18:17:00 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:51161 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbgJMWRA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Oct 2020 18:17:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C9qf016MZz9sVR;
-        Wed, 14 Oct 2020 09:16:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1602627416;
-        bh=sDFrJVbSjAb4Na2vQERtLv1Si0Dy6RHu1h+e/9rQT34=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HsPWea3puPQlbnlAT0ovVwBHrFlhULVQTFVOmqmFHRbOLH2seV9zxxTY5KWS9t6Jp
-         d5b4mU1ZK1PCzlARXtyd9f8g/dv8frdeCOcwenSOsLNtFXLAqg0aCcFnBV2LNF9wjl
-         FJ272d4tklKQdz9kl63d2d4kupiEQrkIReyDar8zkGebeTMGnEdwUmUUq2GNOlc8i4
-         /sYg/hJ55rNKiI9cCN/FPjDrqf4WJdshFZZLHm/m6rWvde6mTD5h0IlgDJNtc4yV4N
-         K72pg3Ic1QRnAyxQt+IrWf+OBtoJ+LEoRinyeoXm79R1LwOmj6dUGmmFptPaLznYdt
-         7k2TQ+e+tvL8A==
-Date:   Wed, 14 Oct 2020 09:16:53 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Diana Craciun OSS <diana.craciun@oss.nxp.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Bharat Bhushan <Bharat.Bhushan@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfio tree
-Message-ID: <20201014091653.0ec43501@canb.auug.org.au>
-In-Reply-To: <276bf3f3-108b-fe60-4d17-d3f314e61db4@oss.nxp.com>
-References: <20201013140744.64937ecd@canb.auug.org.au>
-        <276bf3f3-108b-fe60-4d17-d3f314e61db4@oss.nxp.com>
+        id S1728084AbgJNHPy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 03:15:54 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:40358 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728036AbgJNHPy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 03:15:54 -0400
+Received: by mail-ej1-f67.google.com with SMTP id p15so3309842ejm.7;
+        Wed, 14 Oct 2020 00:15:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4MB/WEv7WVbXZ32vpSI6tjTzebAt77Hp+rVbyGH87qE=;
+        b=dvDSGQ0rBl3xy0xVJA73IF0AvHun8UjcSHxYrCJwvysNenGwvvlO5DxOOvmi3A+IwP
+         PUmUcm2AJuLf44TItHxHeaU77UAmeh/GkPwcvtGy/wSKxnyl+l9M6Gvul2Q0bsOpmE4o
+         xxeKDz3qFgu2ix4ojbAnWj4RRY1ErTpViIAkLL3lwMXFDas7XuKp+5VB40qT355PTahe
+         8D1ycfQ30wLNGZl8QVDHst3prXKB2EpZkMvynRa8A6KjOMjlOQXr+uguJLY5OCUIPMXW
+         jTZCH+hvG/sc1T8/iZU5tO+FRVpvzpLDh3NuMZu8YiffEk+wkcBggYPGnLSgjFSaqWL9
+         MXew==
+X-Gm-Message-State: AOAM5330Z1O51wRKJJihDPc/+7gQTT/CQ87cMjO+cwSjrsct5PX0N7uy
+        tMcbr2ZLDvnBs5Dy0Z6TsX0=
+X-Google-Smtp-Source: ABdhPJxuCAYjKRp/eva7cZT3owH1+7r57Z5oPnyVCvomekbZaEZKPotTUv597H2IZrn48haP5D4yzg==
+X-Received: by 2002:a17:906:f151:: with SMTP id gw17mr3759548ejb.119.1602659751468;
+        Wed, 14 Oct 2020 00:15:51 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.240])
+        by smtp.googlemail.com with ESMTPSA id me12sm1104240ejb.108.2020.10.14.00.15.49
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Oct 2020 00:15:50 -0700 (PDT)
+Date:   Wed, 14 Oct 2020 09:15:47 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Sven Schnelle <svens@linux.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: autofs crash with latest linux-next
+Message-ID: <20201014071547.GA2459@kozik-lap>
+References: <yt9d1ri3nakg.fsf@linux.ibm.com>
+ <8a4c7324-4637-7f25-82b6-2fd30aacb73e@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CI==/4.E8yuciQQGB_eKTuJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8a4c7324-4637-7f25-82b6-2fd30aacb73e@de.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/CI==/4.E8yuciQQGB_eKTuJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 13, 2020 at 09:20:12AM +0200, Christian Borntraeger wrote:
+> CC linux-next, Al Viro.
+> 
+> On 12.10.20 09:54, Sven Schnelle wrote:
+> > Hi,
+> > 
+> > on s390 i see the following crash with linux-next:
+> > 
+> > [ 4525.432605] Unable to handle kernel pointer dereference in virtual kernel address space
+> > [ 4525.432612] Failing address: 0000000000000000 TEID: 0000000000000483
+> > [ 4525.432613] Fault in home space mode while using kernel ASCE.
+> > [ 4525.432616] AS:00000000cf048007 R3:00000001fffec007 S:00000001ffff1800 P:000000000000003d 
+> > [ 4525.432640] Oops: 0004 ilc:3 [#1] SMP 
+> > [ 4525.432644] Modules linked in: dm_crypt encrypted_keys lcs ctcm fsm nfsv3 nfs_acl nfs lockd grace quota_v2 quota_tree tun overlay ntfs exfat vfat fat sctp vfio_pci irqbypass vfio_virqfd scsi_debug vhost_vsock vmw_vsock_virtio_transport_common vsock vhost vhost_iotlb vfio_ap kvm loop nft_counter bridge stp llc dm_service_time nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables nfnetlink sunrpc dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua s390_trng vfio_ccw vfio_mdev mdev vfio_iommu_type1 vfio zcrypt_cex4 eadm_sch sch_fq_codel ip_tables x_tables ghash_s390 prng aes_s390 des_s390 libdes sha3_512_s390 sha3_256_s390 sha512_s390 sha256_s390 sha1_s390 sha_common pkey zcrypt rng_core autofs4 [last unloaded: dummy_del_mod]
+> > [ 4525.432691] CPU: 9 PID: 1050921 Comm: find Tainted: G           OE     5.9.0-20201011.rc8.git0.d67bc7812221.300.fc32.s390x+next #1
+> > [ 4525.432693] Hardware name: IBM 3906 M04 704 (LPAR)
+> > [ 4525.432694] Krnl PSW : 0704d00180000000 00000000cde29f70 (__kernel_write+0x1a0/0x2a0)
+> > [ 4525.432702]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
+> > [ 4525.432704] Krnl GPRS: 0000000100067343 0000000000000000 0000000000000130 0000000000000001
+> > [ 4525.432705]            0000000000000006 000000005f82be2f 0000000000000130 000000008c6ab568
+> > [ 4525.432728]            0000000084441f00 0000000000000000 0000000000000130 0000000084441f00
+> > [ 4525.432729]            0000000081476000 0000000000000001 00000000cde29ef4 000003e002f5b6f0
+> > [ 4525.432735] Krnl Code: 00000000cde29f62: a7280000		lhi	%r2,0
+> >                           00000000cde29f66: a7f4ff9d		brc	15,00000000cde29ea0
+> >                          #00000000cde29f6a: e310f0f00004	lg	%r1,240(%r15)
+> >                          >00000000cde29f70: e31090000024	stg	%r1,0(%r9)
+> >                           00000000cde29f76: 9104b044		tm	68(%r11),4
+> >                           00000000cde29f7a: a784000f		brc	8,00000000cde29f98
+> >                           00000000cde29f7e: e31003400004	lg	%r1,832
+> >                           00000000cde29f84: b904002a		lgr	%r2,%r10
+> > [ 4525.432748] Call Trace:
+> > [ 4525.432750]  [<00000000cde29f70>] __kernel_write+0x1a0/0x2a0 
+> > [ 4525.432752] ([<00000000cde29ef4>] __kernel_write+0x124/0x2a0)
+> > [ 4525.432756]  [<000003ff80004cfa>] autofs_write+0x5a/0x140 [autofs4] 
+> > [ 4525.432758]  [<000003ff80005262>] autofs_notify_daemon.constprop.0+0x10a/0x1c8 [autofs4] 
+> > [ 4525.432760]  [<000003ff80005872>] autofs_wait+0x552/0x718 [autofs4] 
+> > [ 4525.432762]  [<000003ff800033ca>] autofs_mount_wait+0x5a/0xb0 [autofs4] 
+> > [ 4525.432764]  [<000003ff800048b2>] autofs_d_automount+0x102/0x278 [autofs4] 
+> > [ 4525.432766]  [<00000000cde398fe>] __traverse_mounts+0x9e/0x270 
+> > [ 4525.432768]  [<00000000cde3e7ee>] step_into+0x1de/0x280 
+> > [ 4525.432770]  [<00000000cde3f000>] open_last_lookups+0xb8/0x3f8 
+> > [ 4525.432772]  [<00000000cde3f726>] path_openat+0x86/0x1d0 
+> > [ 4525.432773]  [<00000000cde425b0>] do_filp_open+0x78/0x118 
+> > [ 4525.432776]  [<00000000cde278d0>] do_sys_openat2+0xa8/0x168 
+> > [ 4525.432778]  [<00000000cde27cfa>] __s390x_sys_openat+0x6a/0x98 
+> > [ 4525.432781]  [<00000000ce64f2e8>] system_call+0xdc/0x2a4 
+> > [ 4525.432782] Last Breaking-Event-Address:
+> > [ 4525.432783]  [<00000000cde29efc>] __kernel_write+0x12c/0x2a0
+> > 
+> > This seems to be caused by the result of merging 0fb702791bf ("autofs:
+> > use __kernel_write() for the autofs pipe writing") and 4d03e3cc5982
+> 
+> I cannot find the first commit ids. To me it looks like this should be 
+> 
+> commit 90fb702791bf99b959006972e8ee7bb4609f441b
+> Author:     Linus Torvalds <torvalds@linux-foundation.org>
+> AuthorDate: Tue Sep 29 17:18:34 2020 -0700
+> Commit:     Linus Torvalds <torvalds@linux-foundation.org>
+> CommitDate: Tue Sep 29 17:18:34 2020 -0700
+> 
+>     autofs: use __kernel_write() for the autofs pipe writing
+> 
+> instead?
+> 
+> 
+> > ("fs: don't allow kernel reads and writes without iter
+> > ops"). __kernel_write() gets now called with a NULL pointer as pos
+> > argument, but __kernel_write expects a valid pointer as it
+> > fetches/stores the pos value there. Is there a fix pending somewhere?
 
-Hi Diana,
+Hi All,
 
-On Tue, 13 Oct 2020 18:56:07 +0300 Diana Craciun OSS <diana.craciun@oss.nxp=
-.com> wrote:
->
-> Hi,
->=20
-> How does it fail? What's the error?
++CC Kees Cook (reviewer),
 
-Sorry about that:
+I hit this since few days as well. Although the bisect points to the
+merge, the issue looks like a result of mentioned commit 4d03e3cc5982
+("fs: don't allow kernel reads and writes without iter ops").
 
-drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c: In function 'vfio_fsl_mc_set_irq_tr=
-igger':
-drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c:121:8: error: implicit declaration o=
-f function 'fsl_mc_populate_irq_pool' [-Werror=3Dimplicit-function-declarat=
-ion]
-  121 |  ret =3D fsl_mc_populate_irq_pool(mc_cont,
-      |        ^~~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c:122:4: error: 'FSL_MC_IRQ_POOL_MAX_T=
-OTAL_IRQS' undeclared (first use in this function)
-  122 |    FSL_MC_IRQ_POOL_MAX_TOTAL_IRQS);
-      |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c: In function 'vfio_fsl_mc_release':
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:178:9: error: implicit declaration of fun=
-ction 'dprc_reset_container' [-Werror=3Dimplicit-function-declaration]
-  178 |   ret =3D dprc_reset_container(mc_cont->mc_io, 0,
-      |         ^~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:181:6: error: 'DPRC_RESET_OPTION_NON_RECU=
-RSIVE' undeclared (first use in this function)
-  181 |      DPRC_RESET_OPTION_NON_RECURSIVE);
-      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:181:6: note: each undeclared identifier i=
-s reported only once for each function it appears in
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:191:3: error: implicit declaration of fun=
-ction 'fsl_mc_cleanup_irq_pool' [-Werror=3Dimplicit-function-declaration]
-  191 |   fsl_mc_cleanup_irq_pool(mc_cont);
-      |   ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c: In function 'vfio_fsl_mc_ioctl':
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:316:9: error: 'DPRC_RESET_OPTION_NON_RECU=
-RSIVE' undeclared (first use in this function)
-  316 |         DPRC_RESET_OPTION_NON_RECURSIVE);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c: In function 'vfio_fsl_mc_mmap_mmio':
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:455:36: error: 'FSL_MC_REGION_CACHEABLE' =
-undeclared (first use in this function)
-  455 |  region_cacheable =3D (region.type & FSL_MC_REGION_CACHEABLE) &&
-      |                                    ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:456:22: error: 'FSL_MC_REGION_SHAREABLE' =
-undeclared (first use in this function)
-  456 |       (region.type & FSL_MC_REGION_SHAREABLE);
-      |                      ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c: In function 'vfio_fsl_mc_bus_notifier':
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:522:9: error: 'struct fsl_mc_device' has =
-no member named 'driver_override'
-  522 |   mc_dev->driver_override =3D kasprintf(GFP_KERNEL, "%s",
-      |         ^~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:524:14: error: 'struct fsl_mc_device' has=
- no member named 'driver_override'
-  524 |   if (!mc_dev->driver_override)
-      |              ^~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c: In function 'vfio_fsl_mc_init_device':
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:561:8: error: implicit declaration of fun=
-ction 'dprc_setup' [-Werror=3Dimplicit-function-declaration]
-  561 |  ret =3D dprc_setup(mc_dev);
-      |        ^~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:567:8: error: implicit declaration of fun=
-ction 'dprc_scan_container' [-Werror=3Dimplicit-function-declaration]
-  567 |  ret =3D dprc_scan_container(mc_dev, false);
-      |        ^~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:576:2: error: implicit declaration of fun=
-ction 'dprc_remove_devices' [-Werror=3Dimplicit-function-declaration]
-  576 |  dprc_remove_devices(mc_dev, NULL, 0);
-      |  ^~~~~~~~~~~~~~~~~~~
-drivers/vfio/fsl-mc/vfio_fsl_mc.c:577:2: error: implicit declaration of fun=
-ction 'dprc_cleanup' [-Werror=3Dimplicit-function-declaration]
-  577 |  dprc_cleanup(mc_dev);
-      |  ^~~~~~~~~~~~
+The __kernel_read() last argument 'pos' can be NULL and it is
+dereferenced here (added by the commit):
 
---=20
-Cheers,
-Stephen Rothwell
+ 525 ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
+...
+ 547         kiocb.ki_pos = *pos;
+ 548         iov_iter_kvec(&iter, WRITE, &iov, 1, iov.iov_len);
 
---Sig_/CI==/4.E8yuciQQGB_eKTuJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+The __kernel_read() is called with NULL in fs/autofs/waitq.c:
 
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+GJ1UACgkQAVBC80lX
-0Gz29Af3UcKOzLkYILRdwuiN0dJanPLzvu/R2p7yQsD53/wt1D+vUUZ8unxLFzVl
-hMO86Ih450hhSfP50/oKJEgdxo+Azz1spE5Cgv7/LjmbqeDP2/dDWiTe44ZIerHH
-Ui3sj2wEQsxdovU2v7/UwMNGRlSNcLIKhXpJ5gjpFG+sZUCCrTnZffwbIXxAZcLO
-lmCA90c9szn0O6wajVSS6FDx9uFSCq4avYfevUJvsFPTJ4c/U7UkiDCKZjFwpwdG
-3E7w8oY0OWOXjPWXE4YC7CcmexpYefkQ0uMSkUv04gch6eQJX1RDZiDLotTGGhTW
-2J7d1NjSEhNh+O4je0GD2+k6fMU8
-=mi1u
------END PGP SIGNATURE-----
+ 45 static int autofs_write(struct autofs_sb_info *sbi,
+ 46                         struct file *file, const void *addr, int bytes)
 
---Sig_/CI==/4.E8yuciQQGB_eKTuJ--
+...
+ 54         mutex_lock(&sbi->pipe_mutex);
+ 55         while (bytes) {
+ 56                 wr = __kernel_write(file, data, bytes, NULL);
+
+Best regards,
+Krzysztof
+
