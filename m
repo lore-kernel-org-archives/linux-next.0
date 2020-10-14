@@ -2,83 +2,107 @@ Return-Path: <SRS0=l8Jx=DV=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CC5C433E7
-	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 20:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4239C433E7
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 22:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 036D522247
-	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 20:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EFC022250
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 22:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602707070;
-	bh=Os2UxVsxzmhTbMvce37WirEBM9B8sreN6vfIOrjcDQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mhZ92Q3Ghw+KT/4YpGmAyWITLeQax4ysauRiKC1b5MW4d1nT2tsr9XvEgx2HOT4IC
-	 /iHGc0f7qtxCLbHuImdjTOmek6NdAreluaZxk0fl3Nk1YZFrHgJlGsCwbj5hVPvxsJ
-	 A0xM1N+9ARe6uCMSmRRGbxcskDvaESjjTSrl38aw=
+	s=default; t=1602713517;
+	bh=KCd/b7zXWFnEvn+OpcWIQfUR0Qcchqo3tF29cvgpucw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
+	 From;
+	b=ylgo6Oou73++actjZnI1XrSh8h92XbkHtXPLYDXGseXTXDaFid2MhHHG/sOmKE0YD
+	 NVDIBllk+139S6aHIW6yTxrJy1zYgMKT0iKMsQCWIXLRc1abawhGL2onNF2+nNmGO5
+	 W2yg+7S3ndrXwvzF4rZE5rpQKCCvbX+sNPmhsu48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbgJNUY3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 14 Oct 2020 16:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38236 "EHLO mail.kernel.org"
+        id S1727991AbgJNWLy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 18:11:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbgJNUY3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 14 Oct 2020 16:24:29 -0400
-Received: from localhost (unknown [104.132.1.66])
+        id S1726747AbgJNWLy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Oct 2020 18:11:54 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-104-11.bvtn.or.frontiernet.net [50.39.104.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE3252222C;
-        Wed, 14 Oct 2020 20:24:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FF53221FF;
+        Wed, 14 Oct 2020 22:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602707068;
-        bh=Os2UxVsxzmhTbMvce37WirEBM9B8sreN6vfIOrjcDQ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CWa1mq0ILaQeCRNgtiSGecmKBtJ7hXulY9rqblcFRNsRrmnIFqElVJ/EUag6YT8Pp
-         rdIRdW3lox7PtPA6kCe9nZa51LKctvbk48o529ERVXDOY2T3wsTIXY3Aa7OcV6pTEe
-         Kq49jblpG9Cfrsle3VKeZ7EoJTz7kwXiIlrh/WUw=
-Date:   Wed, 14 Oct 2020 13:24:28 -0700
-From:   jaegeuk@kernel.org
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Jamie Iles <jamie@nuviainc.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the f2fs tree
-Message-ID: <20201014202428.GA1536937@google.com>
-References: <20201015071617.1f5ab26f@canb.auug.org.au>
+        s=default; t=1602713513;
+        bh=KCd/b7zXWFnEvn+OpcWIQfUR0Qcchqo3tF29cvgpucw=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=T3VFUa3BYH1Waat1be1aCt35tnSG8rKNNh1k0fyyw5IbRevq68+LCiJK2jzTfQUU9
+         63sqCBUuJpa1fh4mIFADcF0VSOm2iWqLFEjOL/qOJiLf1z4mpNLDjTIRVO0UrK+Kzl
+         Lxxtc69EwOLgqKdOh8tsheg22uZvQNDbNGCHmmQo=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id D4F1C35229EB; Wed, 14 Oct 2020 15:11:52 -0700 (PDT)
+Date:   Wed, 14 Oct 2020 15:11:52 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Boqun Feng <boqun.feng@gmail.com>, Qian Cai <cai@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [tip: locking/core] lockdep: Fix lockdep recursion
+Message-ID: <20201014221152.GS3249@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <e438b231c5e1478527af6c3e69bf0b37df650110.camel@redhat.com>
+ <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <20201012212812.GH3249@paulmck-ThinkPad-P72>
+ <20201013103406.GY2628@hirez.programming.kicks-ass.net>
+ <20201013104450.GQ2651@hirez.programming.kicks-ass.net>
+ <20201013112544.GZ2628@hirez.programming.kicks-ass.net>
+ <20201013162650.GN3249@paulmck-ThinkPad-P72>
+ <20201013193025.GA2424@paulmck-ThinkPad-P72>
+ <20201014183405.GA27666@paulmck-ThinkPad-P72>
+ <20201014215319.GF2974@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201015071617.1f5ab26f@canb.auug.org.au>
+In-Reply-To: <20201014215319.GF2974@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Thanks,
+On Wed, Oct 14, 2020 at 11:53:19PM +0200, Peter Zijlstra wrote:
+> On Wed, Oct 14, 2020 at 11:34:05AM -0700, Paul E. McKenney wrote:
+> > commit 7deaa04b02298001426730ed0e6214ac20d1a1c1
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Tue Oct 13 12:39:23 2020 -0700
+> > 
+> >     rcu: Prevent lockdep-RCU splats on lock acquisition/release
+> >     
+> >     The rcu_cpu_starting() and rcu_report_dead() functions transition the
+> >     current CPU between online and offline state from an RCU perspective.
+> >     Unfortunately, this means that the rcu_cpu_starting() function's lock
+> >     acquisition and the rcu_report_dead() function's lock releases happen
+> >     while the CPU is offline from an RCU perspective, which can result in
+> >     lockdep-RCU splats about using RCU from an offline CPU.  In reality,
+> >     aside from the splats, both transitions are safe because a new grace
+> >     period cannot start until these functions release their locks.
+> 
+> But we call the trace_* crud before we acquire the lock. Are you sure
+> that's a false-positive? 
 
-I fixed it in f2fs-next branch.
+You lost me on this one.
 
-Thanks,
+I am assuming that you are talking about rcu_cpu_starting(), because
+that is the one where RCU is not initially watching, that is, the
+case where tracing before the lock acquisition would be a problem.
+You cannot be talking about rcu_cpu_starting() itself, because it does
+not do any tracing before acquiring the lock.  But if you are talking
+about the caller of rcu_cpu_starting(), then that caller should put the
+rcu_cpu_starting() before the tracing.  But that would be the other
+patch earlier in this thread that was proposing moving the call to
+rcu_cpu_starting() much earlier in CPU bringup.
 
-On 10/15, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   e965857201e0 ("f2fs: wait for sysfs kobject removal before freeing f2fs_sb_info")
-> 
-> Fixes tag
-> 
->   Fixes: bf9e697ecd4 ("f2fs: expose features to sysfs entry")
-> 
-> has these problem(s):
-> 
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+So what am I missing here?
 
-
+							Thanx, Paul
