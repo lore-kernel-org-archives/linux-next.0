@@ -2,120 +2,225 @@ Return-Path: <SRS0=l8Jx=DV=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D674C433DF
-	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 09:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1831C43467
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 10:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE6AA221FE
-	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 09:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75DC820878
+	for <linux-next@archiver.kernel.org>; Wed, 14 Oct 2020 10:49:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="c89tubCZ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="haUlUbdF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbgJNJas (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 14 Oct 2020 05:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39930 "EHLO
+        id S1728419AbgJNKtc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 06:49:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729245AbgJNJTh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 05:19:37 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60D3C08EADF;
-        Tue, 13 Oct 2020 16:42:49 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4C9sY21xJrz9sSs;
-        Wed, 14 Oct 2020 10:42:46 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1602632566;
-        bh=+8RyoDLMFzreOntocD8MmB6tkfPzeL+BTWjzBX1T9v4=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=c89tubCZfxUFVdVaNfg1zCZGZni9WmGy0pGadJpxfmztYJy7XSY296aMWhD1XdDMl
-         FW32VW5JzIJqKVchFmF7seTXxF40q+xP/tNLk5HUBNIrLBoBgSOsWNScMjPF7ns7tT
-         28K9LlRgf0Q56x0AAr64Ifhaxe4/6UsN9/dL0TMCihMJjDVlM2W/Wgdv97qyl0gFC6
-         ek5mOnPZKRThm0MPt3qldw8zZNC9KRD0TPI9Acj5kiYR6ynnX2u9nfZTMsAfVOImvh
-         zBeXZdphTxNmpeX8V/U2P+pCrn0l6+yWhB5ksnKAeoXc/ldZkkKh+fddRiTopE4gTC
-         Le6/LRva41uZQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Qian Cai <cai@redhat.com>,
-        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        Oliver O'Halloran <oohall@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] powerpc/pci: unmap legacy INTx interrupts when a PHB is removed
-In-Reply-To: <90922c43c670e4b55e6cf421be19146333e2ae7b.camel@redhat.com>
-References: <20200807101854.844619-1-clg@kaod.org> <9c5eca863c63e360662fae7597213e8927c2a885.camel@redhat.com> <fce8ffe1-521c-8344-c7ad-53550e408cdc@kaod.org> <90922c43c670e4b55e6cf421be19146333e2ae7b.camel@redhat.com>
-Date:   Wed, 14 Oct 2020 10:42:45 +1100
-Message-ID: <87tuuxzo96.fsf@mpe.ellerman.id.au>
+        with ESMTP id S1725922AbgJNKtb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 06:49:31 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E88C061755
+        for <linux-next@vger.kernel.org>; Wed, 14 Oct 2020 03:49:31 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id k6so4462679ior.2
+        for <linux-next@vger.kernel.org>; Wed, 14 Oct 2020 03:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=HgHUYfl/RqdxqpyW+AYcy5yFjZFOcQH7eO1Foilj7+M=;
+        b=haUlUbdFu1nX6ivBcGnXd/sIrfe2L1qsMdVWShpufVqQ7p0owplfL1Z4v0KQPG/Xjj
+         diCS/zQrPg/IYK8pftdkIKiG5kxSati1CEPX0Kw62Dsjh5pQKfz2xZjzGNteU6vLXX0T
+         IWL1Ro/r26qkZxVYM0fCAy2LIzBgPQqNJ1siPtdSUkiwLUVcRVfuRn5tQDa4mr+FHYaT
+         GBWXd/qOx2OkpyjdaqnRTTmS6DnQlcmzIen8DllsRNOO6d/okNB9NncyQP9PQ/N1H7cy
+         7ZqgoXmhVmF1MWKZvpbMX+S/imATcAifojuGbYmTGjsEGn8Vmv+6JVe5wCD+KKmBdurU
+         heqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=HgHUYfl/RqdxqpyW+AYcy5yFjZFOcQH7eO1Foilj7+M=;
+        b=icKRJoMxcoJlDSe9y/i7PI/V9FUXkJPPoArmB0WbJiYyzseSVep5VQpjH4xiKj0MQC
+         kKcQVZNTSB6A/x6sOsl6aYv9IUeuE05qg7hhB7hSubQWDMtJHYMceoNJqlcoe4IQU/c4
+         uVW0K9rCXF1ud3dbS243TazfPqCInXiT9+5kZCx/VbgMbLTr4aqUU77CoUkQTWXZrxst
+         a/ncsjm8Oiycadz7h5h4hBv1514ttfWD9AQ2e3+GrGtEt5ZTW0BwClYzIxt3FLdYmRMz
+         Ls0JItMcqO+O0SfK14jeVy3stbGaCbKn8iK/lUCdCMQC8aGH4DNoFlwnjcocmsmFsmG1
+         NBog==
+X-Gm-Message-State: AOAM5322lHSiIEsCJDMuOm9gRFs9jzlOjBDmlMiH3ylkfivMlgLTWF8T
+        d4Iou0bdYKa0yTxWec5dDfAXL9wnB01AA/Dk+kzc2T55sFqT6DgI
+X-Google-Smtp-Source: ABdhPJxrp5zVb72tEMqowWicQw1OH+2Aa2RXOawH6E7+WcmWA+b7TR1yip3sSjUy6V20MblnkIzEHslZQ53oqAm9cys=
+X-Received: by 2002:a02:c785:: with SMTP id n5mr2574048jao.128.1602672570049;
+ Wed, 14 Oct 2020 03:49:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 14 Oct 2020 16:19:18 +0530
+Message-ID: <CA+G9fYt46oC7-BKryNDaaXPJ9GztvS2cs_7GjYRjanRi4+ryCQ@mail.gmail.com>
+Subject: BUG: KASAN: global-out-of-bounds in vprintk_store on x86_64
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, LTP List <ltp@lists.linux.it>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        John Ogness <john.ogness@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Qian Cai <cai@redhat.com> writes:
-> On Wed, 2020-09-23 at 09:06 +0200, C=C3=A9dric Le Goater wrote:
->> On 9/23/20 2:33 AM, Qian Cai wrote:
->> > On Fri, 2020-08-07 at 12:18 +0200, C=C3=A9dric Le Goater wrote:
->> > > When a passthrough IO adapter is removed from a pseries machine using
->> > > hash MMU and the XIVE interrupt mode, the POWER hypervisor expects t=
-he
->> > > guest OS to clear all page table entries related to the adapter. If
->> > > some are still present, the RTAS call which isolates the PCI slot
->> > > returns error 9001 "valid outstanding translations" and the removal =
-of
->> > > the IO adapter fails. This is because when the PHBs are scanned, Lin=
-ux
->> > > maps automatically the INTx interrupts in the Linux interrupt number
->> > > space but these are never removed.
->> > >=20
->> > > To solve this problem, we introduce a PPC platform specific
->> > > pcibios_remove_bus() routine which clears all interrupt mappings when
->> > > the bus is removed. This also clears the associated page table entri=
-es
->> > > of the ESB pages when using XIVE.
->> > >=20
->> > > For this purpose, we record the logical interrupt numbers of the
->> > > mapped interrupt under the PHB structure and let pcibios_remove_bus()
->> > > do the clean up.
->> > >=20
->> > > Since some PCI adapters, like GPUs, use the "interrupt-map" property
->> > > to describe interrupt mappings other than the legacy INTx interrupts,
->> > > we can not restrict the size of the mapping array to PCI_NUM_INTX. T=
-he
->> > > number of interrupt mappings is computed from the "interrupt-map"
->> > > property and the mapping array is allocated accordingly.
->> > >=20
->> > > Cc: "Oliver O'Halloran" <oohall@gmail.com>
->> > > Cc: Alexey Kardashevskiy <aik@ozlabs.ru>
->> > > Signed-off-by: C=C3=A9dric Le Goater <clg@kaod.org>
->> >=20
->> > Some syscall fuzzing will trigger this on POWER9 NV where the traces p=
-ointed
->> > to
->> > this patch.
->> >=20
->> > .config: https://gitlab.com/cailca/linux-mm/-/blob/master/powerpc.conf=
-ig
->>=20
->> OK. The patch is missing a NULL assignement after kfree() and that
->> might be the issue.=20
->>=20
->> I did try PHB removal under PowerNV, so I would like to understand=20
->> how we managed to remove twice the PCI bus and possibly reproduce.=20
->> Any chance we could grab what the syscall fuzzer (syzkaller) did ?=20
->
-> Any update on this? Maybe Michael or Stephen could drop this for now, so =
-our
-> fuzzing could continue to find something else new?
+While testing LTP controllers testing on x86_64 KASAN enabled linux
+next 20201013 tag
+kernel this kernel BUG noticed. The oom-killer log also noticed while
+running tests.
 
-Someone send me a revert?
+metadata:
+  git branch: master
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git commit: f2fb1afc57304f9dd68c20a08270e287470af2eb
+  git describe: next-20201013
+  make_kernelversion: 5.9.0
+  kernel-config:
+https://builds.tuxbuild.com/TXP6cqokP8BCYJrv7zf6kw/kernel.config
 
-cheers
+
+steps to reproduce:
+-------------------------
+# cd /opt/ltp
+# ./runltp  -f controllers
+
+Crash log:
+--------------
+[  221.921944] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=c,mems_allowed=0,oom_memcg=/0,task_memcg=in
+[  221.922108] ==================================================================
+[  221.922111] BUG: KASAN: global-out-of-bounds in vprintk_store+0x362/0x3d0
+[  221.922112] Write of size 2 at addr ffffffffba51dbcd by task
+memcg_test_1/11282
+[  221.922113]
+[  221.922114] CPU: 1 PID: 11282 Comm: memcg_test_1 Not tainted
+5.9.0-next-20201013 #1
+[  221.922116] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[  221.922116] Call Trace:
+[  221.922117]  dump_stack+0xa4/0xd9
+[  221.922118]  print_address_description.constprop.0+0x21/0x210
+[  221.922119]  ? _raw_write_lock_bh+0xe0/0xe0
+[  221.922120]  ? vprintk_store+0x362/0x3d0
+[  221.922121]  kasan_report.cold+0x37/0x7c
+[  221.922122]  ? vprintk_store+0x362/0x3d0
+[  221.922123]  check_memory_region+0x18c/0x1f0
+[  221.922124]  memcpy+0x3c/0x60
+[  221.922125]  vprintk_store+0x362/0x3d0
+[  221.922125]  ? __ia32_sys_syslog+0x50/0x50
+[  221.922126]  ? _raw_spin_lock_irqsave+0x9b/0x100
+[  221.922127]  ? _raw_spin_lock_irq+0xf0/0xf0
+[  221.922128]  ? __kasan_check_write+0x14/0x20
+[  221.922129]  vprintk_emit+0x8d/0x1f0
+[  221.922130]  vprintk_default+0x1d/0x20
+[  221.922131]  vprintk_func+0x5a/0x100
+[  221.922132]  printk+0xb2/0xe3
+[  221.922133]  ? swsusp_write.cold+0x189/0x189
+[  221.922134]  ? kernfs_vfs_xattr_set+0x60/0x60
+[  221.922134]  ? _raw_write_lock_bh+0xe0/0xe0
+[  221.922135]  ? trace_hardirqs_on+0x38/0x100
+[  221.922136]  pr_cont_kernfs_path.cold+0x49/0x4b
+[  221.922137]  mem_cgroup_print_oom_context.cold+0x74/0xc3
+[  221.922138]  dump_header+0x340/0x3bf
+[  221.922139]  oom_kill_process.cold+0xb/0x10
+[  221.922140]  out_of_memory+0x1e9/0x860
+[  221.922141]  ? oom_killer_disable+0x210/0x210
+[  221.922142]  mem_cgroup_out_of_memory+0x198/0x1c0
+[  221.922143]  ? mem_cgroup_count_precharge_pte_range+0x250/0x250
+[  221.922144]  try_charge+0xa9b/0xc50
+[  221.922145]  ? arch_stack_walk+0x9e/0xf0
+[  221.922146]  ? memory_high_write+0x230/0x230
+[  221.922146]  ? avc_has_extended_perms+0x830/0x830
+[  221.922147]  ? stack_trace_save+0x94/0xc0
+[  221.922148]  ? stack_trace_consume_entry+0x90/0x90
+[  221.922149]  __memcg_kmem_charge+0x73/0x120
+[  221.922150]  ? cred_has_capability+0x10f/0x200
+[  221.922151]  ? mem_cgroup_can_attach+0x260/0x260
+[  221.922152]  ? selinux_sb_eat_lsm_opts+0x2f0/0x2f0
+[  221.922153]  ? obj_cgroup_charge+0x16b/0x220
+[  221.922154]  ? kmem_cache_alloc+0x78/0x4c0
+[  221.922155]  obj_cgroup_charge+0x122/0x220
+[  221.922156]  ? vm_area_alloc+0x20/0x90
+[  221.922156]  kmem_cache_alloc+0x78/0x4c0
+[  221.922157]  vm_area_alloc+0x20/0x90
+[  221.922158]  mmap_region+0x3ed/0x9a0
+[  221.922159]  ? cap_mmap_addr+0x1d/0x80
+[  221.922160]  do_mmap+0x3ee/0x720
+[  221.922161]  vm_mmap_pgoff+0x16a/0x1c0
+[  221.922162]  ? randomize_stack_top+0x90/0x90
+[  221.922163]  ? copy_page_range+0x1980/0x1980
+[  221.922163]  ksys_mmap_pgoff+0xab/0x350
+[  221.922164]  ? find_mergeable_anon_vma+0x110/0x110
+[  221.922165]  ? __audit_syscall_entry+0x1a6/0x1e0
+[  221.922166]  __x64_sys_mmap+0x8d/0xb0
+[  221.922167]  do_syscall_64+0x38/0x50
+[  221.922168]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  221.922169] RIP: 0033:0x7fe8f5e75103
+[  221.922172] Code: 54 41 89 d4 55 48 89 fd 53 4c 89 cb 48 85 ff 74
+56 49 89 d9 45 89 f8 45 89 f2 44 89 e2 4c 89 ee 48 89 ef b8 09 00 00
+00 0f 05 <48> 3d 00 f0 ff ff 77 7d 5b 5d 41 5c 41 5d 41 5e 41 5f c3 66
+2e 0f
+[  221.922173] RSP: 002b:00007ffd38c90198 EFLAGS: 00000246 ORIG_RAX:
+0000000000000009
+[  221.922175] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fe8f5e75103
+[  221.922176] RDX: 0000000000000003 RSI: 0000000000001000 RDI: 0000000000000000
+[  221.922178] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[  221.922179] R10: 0000000000002022 R11: 0000000000000246 R12: 0000000000000003
+[  221.922180] R13: 0000000000001000 R14: 0000000000002022 R15: 0000000000000000
+[  221.922181]
+[  213O[  221.922182] The buggy address belongs to the variable:
+[  221.922183]  clear_seq+0x2d/0x40
+[  221.922183]
+[  221.922184] Memory state around the buggy address:
+[  221.922185]  ffffffffba51da80: 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00
+[  221.922187]  ffffffffba51db00: 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00
+[  221.922188] >ffffffffba51db80: f9 f9 f9 f9 00 f9 f9 f9 f9 f9 f9 f9
+00 f9 f9 f9
+[  221.922189]                                               ^
+[  221.922190]  ffffffffba51dc00: f9 f9 f9 f9 00 f9 f9 f9 f9 f9 f9 f9
+00 f9 f9 f9
+[  221.922191]  ffffffffba51dc80: f9 f9 f9 f9 01 f9 f9 f9 f9 f9 f9 f9
+00 f9 f9 f9
+[  221.922193] ==================================================================
+[  221.922194] Disabling lock debugging due to kernel taint
+[  221.922196] ,task=memcg_test_1,pid=11280,uid=0
+[  221.922205] Memory cgroup out of memory: Killed process 11280
+(memcg_test_1) total-vm:4124kB, anon-rss:72kB, file-rss:0kB,
+shmem-rss:0kB, UID:0 pgtables:48kB oom_score_adj:0
+[  221.922509] memcg_test_1 invoked oom-killer:
+gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0
+[  222.885676] CPU: 2 PID: 11283 Comm: memcg_test_1 Tainted: G    B
+         5.9.0-next-20201013 #1
+[  222.885678] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[  222.885679] Call Trace:
+[  222.885683]  dump_stack+0xa4/0xd9
+[  222.885686]  dump_header+0x8f/0x3bf
+[  222.885689]  oom_kill_process.cold+0xb/0x10
+[  222.885692]  out_of_memory+0x1e9/0x860
+[  222.885697]  ? oom_killer_disable+0x210/0x210
+[  222.923728]  mem_cgroup_out_of_memory+0x198/0x1c0
+[  222.923731]  ? mem_cgroup_count_precharge_pte_range+0x250/0x250
+
+
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+
+full test details and log link,
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20201013/testrun/3302398/suite/linux-log-parser/tests/
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
