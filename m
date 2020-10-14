@@ -2,89 +2,84 @@ Return-Path: <SRS0=dTEO=DW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF0BC433E7
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4737DC43467
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0F6122257
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9E2C22258
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MEBAfDuo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCnK8mL9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732252AbgJOB3i (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        id S1732245AbgJOB3i (ORCPT <rfc822;linux-next@archiver.kernel.org>);
         Wed, 14 Oct 2020 21:29:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49018 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732233AbgJOB3i (ORCPT
+        with ESMTP id S1732228AbgJOB3i (ORCPT
         <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 21:29:38 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A6BC0613B7;
-        Wed, 14 Oct 2020 14:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=k5LMo/WihQfqVxsipO2PP33WiLpe0x7Mx129RI9WJZk=; b=MEBAfDuoNqohSf8ZN86sNz4MbK
-        gpXKrYBYsRI5SytFins8/2EV5vHN0PKnyO/SKX5dP5UlPQJij4G1EeQEBXG15hF4KiVlOKsAD9dBP
-        52k6XNGhRL0smAgHjP1nvYNb/G+RT3+pwsBzM06cDyZqTO83zmQGu4cTJtPGiVoW+3ysZ0xf4ZO2n
-        YCPAFH37C/DLtjnuto79J+5qE+0mLpcsws1JMoIDCyRyIR8UzWlckQ4hzfmEm3Vpbbv0Uqn787Oa2
-        HX1udI3LiKx9bxHLGgp73l+MjBsfOV73RLjasNUzjJrQ+FtuXXuCm20Qvvu63su94lf2eiIGbvIYB
-        6QN5dOkA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSoi1-0001QN-22; Wed, 14 Oct 2020 21:53:21 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9E34A980F54; Wed, 14 Oct 2020 23:53:19 +0200 (CEST)
-Date:   Wed, 14 Oct 2020 23:53:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Boqun Feng <boqun.feng@gmail.com>, Qian Cai <cai@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [tip: locking/core] lockdep: Fix lockdep recursion
-Message-ID: <20201014215319.GF2974@worktop.programming.kicks-ass.net>
-References: <160223032121.7002.1269740091547117869.tip-bot2@tip-bot2>
- <e438b231c5e1478527af6c3e69bf0b37df650110.camel@redhat.com>
- <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <20201012212812.GH3249@paulmck-ThinkPad-P72>
- <20201013103406.GY2628@hirez.programming.kicks-ass.net>
- <20201013104450.GQ2651@hirez.programming.kicks-ass.net>
- <20201013112544.GZ2628@hirez.programming.kicks-ass.net>
- <20201013162650.GN3249@paulmck-ThinkPad-P72>
- <20201013193025.GA2424@paulmck-ThinkPad-P72>
- <20201014183405.GA27666@paulmck-ThinkPad-P72>
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B83C05111E;
+        Wed, 14 Oct 2020 16:01:01 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id u19so1752544ion.3;
+        Wed, 14 Oct 2020 16:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ikC4LAwwb2/OL3dDYceqRFTwnIoFZSQn/I33psN0qjs=;
+        b=TCnK8mL9NI6hpr3zEveS0JTuNaHtXCx/qfHBGzgIQgrYKIyFfbL469h0Y911PX4qYA
+         HA3PFnu9h7bUViHMzKVqrdtDhIfan/01bAJrm+iH8HVsCMbrGoUBCi+EwDuHU09Bq9xD
+         0zniDvdoMkczvwrfTymICG2b2JPXMk43+A7TFV6EwFWXjhcXv0Zr0g7isA+HBzM1ygDz
+         HielqMai2yM1V5M7vYrESoEcbxMQbPPGpBkxbresU1sEHhWVlG/vNZSnpIukEp2FJExo
+         3VAds5Vc5Pir8QMG6owXKfyujHcVGoAHhUjdCq3iSTks6Ul93abkR08dX/ws2fLr75Qd
+         P1CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ikC4LAwwb2/OL3dDYceqRFTwnIoFZSQn/I33psN0qjs=;
+        b=PWAa163szEnrFqyh0zDo4arnEmQpbqY+QsdGs0p1NJMeH3u2iuN+3afnbQRi63A/dP
+         WAN9uQ4564srgQFMUS/7J/bFnQiUF2MAQFQjeSXleGCnD3Pae2YmOkkIeTjlUrAFpvuP
+         X17Whcr2F9NtfzFBpw7JsMHDih+S4DgQB7Azc7qRTzs87svwpBuvCjOS6AZUHHziFEJv
+         ibb3fJ8kg0HR3DPzmNCCJz1yUcvl3HR8uPHEdyP0RI1HtWzPFAX1I8lVK7Ah60rY2lwa
+         6/jFHy86bMXAh7wkXqW72HyIZpswGD7TDKkF2Llj/BXLOsa4VIETaAvm+XAno0l1AVM6
+         8a7A==
+X-Gm-Message-State: AOAM533UMpgP5/GU9jSsp9bC7vYvLteCFjYSJMftPaWeP/KcFOT16rXB
+        E8lhlCZSwTSXu9Zkc6TiDMMC7NJLne3tDJNa5sxRYRiR197H6A==
+X-Google-Smtp-Source: ABdhPJzGna7kT8ytBKEMRmafA605hdoj/96Adf60Do8VLRmdj9ntw6bzrJXYjfcdcZHwC8be0AHpI8yUwC0EME90ntk=
+X-Received: by 2002:a5d:80cc:: with SMTP id h12mr1218936ior.73.1602716460855;
+ Wed, 14 Oct 2020 16:01:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201014183405.GA27666@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20201014182811.12027-1-cai@lca.pw>
+In-Reply-To: <20201014182811.12027-1-cai@lca.pw>
+From:   "Oliver O'Halloran" <oohall@gmail.com>
+Date:   Thu, 15 Oct 2020 10:00:49 +1100
+Message-ID: <CAOSf1CFT_Y67Q8caH2uFOYtwpRgFozh30ZWWZzzR-x18LBsG8g@mail.gmail.com>
+Subject: Re: [PATCH -next] Revert "powerpc/pci: unmap legacy INTx interrupts
+ when a PHB is removed"
+To:     Qian Cai <cai@lca.pw>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 11:34:05AM -0700, Paul E. McKenney wrote:
-> commit 7deaa04b02298001426730ed0e6214ac20d1a1c1
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Tue Oct 13 12:39:23 2020 -0700
-> 
->     rcu: Prevent lockdep-RCU splats on lock acquisition/release
->     
->     The rcu_cpu_starting() and rcu_report_dead() functions transition the
->     current CPU between online and offline state from an RCU perspective.
->     Unfortunately, this means that the rcu_cpu_starting() function's lock
->     acquisition and the rcu_report_dead() function's lock releases happen
->     while the CPU is offline from an RCU perspective, which can result in
->     lockdep-RCU splats about using RCU from an offline CPU.  In reality,
->     aside from the splats, both transitions are safe because a new grace
->     period cannot start until these functions release their locks.
+On Thu, Oct 15, 2020 at 5:28 AM Qian Cai <cai@lca.pw> wrote:
+>
+> This reverts commit 3a3181e16fbde752007759f8759d25e0ff1fc425 which
+> causes memory corruptions on POWER9 NV.
 
-But we call the trace_* crud before we acquire the lock. Are you sure
-that's a false-positive? 
+I was going to post this along with a fix for Cedric's original bug,
+but I can do that separately so:
 
+Acked-by: Oliver O'Halloran <oohall@gmail.com>
