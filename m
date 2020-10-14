@@ -2,102 +2,89 @@ Return-Path: <SRS0=dTEO=DW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1D7C433DF
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 00:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF0BC433E7
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B53D22257
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 00:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0F6122257
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hcgW0gdK"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MEBAfDuo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbgJOA7H (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 14 Oct 2020 20:59:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:39667 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728153AbgJOA7H (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 14 Oct 2020 20:59:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CBWBc4Yn7z9sTD;
-        Thu, 15 Oct 2020 11:59:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1602723545;
-        bh=xec6CFJNV9KEE6VPmqvRfa9FGlrIRQOGjUIa0dPGn/o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hcgW0gdKxHSFu9woY4I/de1djrC3YaAGjuTuKaXK/ZFyQ1xpF0u+QF2JdF4YFscNR
-         WceoKV2J/FVFkFESZG4lugXUrqn7whnTaZGM+2rcwQxvTLEZ7NqhAuE0GZ/ijIJGNq
-         EKkD/rjfkayaD2q6IBllFs/mU5SkA8l1ECKW5liT5CUfcYOVKn27beHkOmBXvj4eLY
-         OFSCHVkyi7+4FqTYXpp1Ydi7+v8VHpRuVHDXho3C6pPuwZDbQnEbklrvJ1YXKXP2Nn
-         3RSMJDFcFBtJSiPFWvca7YFjQIUKa2yVLvwya8Flq6iYpb/5m1IhRoWfe/GExvrlaE
-         w7XybFlvUqYvA==
-Date:   Thu, 15 Oct 2020 11:59:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Diana Craciun OSS <diana.craciun@oss.nxp.com>,
-        Bharat Bhushan <Bharat.Bhushan@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfio tree
-Message-ID: <20201015115903.3399b116@canb.auug.org.au>
-In-Reply-To: <20201013132016.44af05f1@w520.home>
-References: <20201013140744.64937ecd@canb.auug.org.au>
-        <276bf3f3-108b-fe60-4d17-d3f314e61db4@oss.nxp.com>
-        <20201013132016.44af05f1@w520.home>
+        id S1732252AbgJOB3i (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 21:29:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49018 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732233AbgJOB3i (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 21:29:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A6BC0613B7;
+        Wed, 14 Oct 2020 14:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=k5LMo/WihQfqVxsipO2PP33WiLpe0x7Mx129RI9WJZk=; b=MEBAfDuoNqohSf8ZN86sNz4MbK
+        gpXKrYBYsRI5SytFins8/2EV5vHN0PKnyO/SKX5dP5UlPQJij4G1EeQEBXG15hF4KiVlOKsAD9dBP
+        52k6XNGhRL0smAgHjP1nvYNb/G+RT3+pwsBzM06cDyZqTO83zmQGu4cTJtPGiVoW+3ysZ0xf4ZO2n
+        YCPAFH37C/DLtjnuto79J+5qE+0mLpcsws1JMoIDCyRyIR8UzWlckQ4hzfmEm3Vpbbv0Uqn787Oa2
+        HX1udI3LiKx9bxHLGgp73l+MjBsfOV73RLjasNUzjJrQ+FtuXXuCm20Qvvu63su94lf2eiIGbvIYB
+        6QN5dOkA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSoi1-0001QN-22; Wed, 14 Oct 2020 21:53:21 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9E34A980F54; Wed, 14 Oct 2020 23:53:19 +0200 (CEST)
+Date:   Wed, 14 Oct 2020 23:53:19 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Boqun Feng <boqun.feng@gmail.com>, Qian Cai <cai@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [tip: locking/core] lockdep: Fix lockdep recursion
+Message-ID: <20201014215319.GF2974@worktop.programming.kicks-ass.net>
+References: <160223032121.7002.1269740091547117869.tip-bot2@tip-bot2>
+ <e438b231c5e1478527af6c3e69bf0b37df650110.camel@redhat.com>
+ <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <20201012212812.GH3249@paulmck-ThinkPad-P72>
+ <20201013103406.GY2628@hirez.programming.kicks-ass.net>
+ <20201013104450.GQ2651@hirez.programming.kicks-ass.net>
+ <20201013112544.GZ2628@hirez.programming.kicks-ass.net>
+ <20201013162650.GN3249@paulmck-ThinkPad-P72>
+ <20201013193025.GA2424@paulmck-ThinkPad-P72>
+ <20201014183405.GA27666@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zR4_.Oj_lERxXh4PE_i3BJW";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201014183405.GA27666@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/zR4_.Oj_lERxXh4PE_i3BJW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 14, 2020 at 11:34:05AM -0700, Paul E. McKenney wrote:
+> commit 7deaa04b02298001426730ed0e6214ac20d1a1c1
+> Author: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Tue Oct 13 12:39:23 2020 -0700
+> 
+>     rcu: Prevent lockdep-RCU splats on lock acquisition/release
+>     
+>     The rcu_cpu_starting() and rcu_report_dead() functions transition the
+>     current CPU between online and offline state from an RCU perspective.
+>     Unfortunately, this means that the rcu_cpu_starting() function's lock
+>     acquisition and the rcu_report_dead() function's lock releases happen
+>     while the CPU is offline from an RCU perspective, which can result in
+>     lockdep-RCU splats about using RCU from an offline CPU.  In reality,
+>     aside from the splats, both transitions are safe because a new grace
+>     period cannot start until these functions release their locks.
 
-Hi Alex,
+But we call the trace_* crud before we acquire the lock. Are you sure
+that's a false-positive? 
 
-On Tue, 13 Oct 2020 13:20:16 -0600 Alex Williamson <alex.williamson@redhat.=
-com> wrote:
->
-> Thanks, Stephen.  Diana has posted a 32bit build fix which I've merged,
-> maybe that was the error.  Also Diana's series in my branch is currently
-> dependent on fsl-bus support in GregKH's char-misc-next branch.  Looking
-> at the log from the successful build, I wonder if our branches are just
-> in the wrong order (vfio/next processed on line 341, char-misc-next
-> processed on 387).  I don't know if you regularly re-order for this
-> sort of thing, otherwise it should work out when Greg's branch gets
-> merged, but testing sooner in next would be preferred.
-
-I have put the vfio tree after the char-misc tree today (so hopefully
-it will build).  The proper way to do this is for you and Greg to have
-a shared branch with the commits you both depend on and bot merge that
-branch.  That way, it doesn't matter what order the tress are merged
-(by me or Linus).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zR4_.Oj_lERxXh4PE_i3BJW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+HntcACgkQAVBC80lX
-0GxTtAf4yc7xWhoGoCFeGsRi2+kdzuflkHfcqGNZLuXhs6WYn9qJBdszO6/8K7O6
-U19EVm6oY7LJn4+DlAMNA0ldy7eaKntVEHZlIs6X+XudvnJULnd31drQVc/G7CxI
-rtAtjBGjkjTG+BQJkeXM7Szi2zqWOdjVeOMomc9an/F8kn7bLoOnX4svlYzus7d6
-+jWzwTNPO18DEChXaJo/YYPnQx2MgjsI91p2bEUksfz4a2QJF1X1uOPOpO2bSUkh
-iehFJOcpyF27s6l6cC+kUAP3Za4WxkFQ8b8ToXhsZmxFbEb/Fs6e2S4IvVNsmTnQ
-dnLsLNFtfki5/pCBGIIeFKhXJ2Ti
-=kcqa
------END PGP SIGNATURE-----
-
---Sig_/zR4_.Oj_lERxXh4PE_i3BJW--
