@@ -2,84 +2,104 @@ Return-Path: <SRS0=dTEO=DW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4737DC43467
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0E5C433DF
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9E2C22258
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3FD022259
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:39:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCnK8mL9"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FUx+//vx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbgJOB3i (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 14 Oct 2020 21:29:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
+        id S2389169AbgJOBjj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 21:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732228AbgJOB3i (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 21:29:38 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B83C05111E;
-        Wed, 14 Oct 2020 16:01:01 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id u19so1752544ion.3;
-        Wed, 14 Oct 2020 16:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ikC4LAwwb2/OL3dDYceqRFTwnIoFZSQn/I33psN0qjs=;
-        b=TCnK8mL9NI6hpr3zEveS0JTuNaHtXCx/qfHBGzgIQgrYKIyFfbL469h0Y911PX4qYA
-         HA3PFnu9h7bUViHMzKVqrdtDhIfan/01bAJrm+iH8HVsCMbrGoUBCi+EwDuHU09Bq9xD
-         0zniDvdoMkczvwrfTymICG2b2JPXMk43+A7TFV6EwFWXjhcXv0Zr0g7isA+HBzM1ygDz
-         HielqMai2yM1V5M7vYrESoEcbxMQbPPGpBkxbresU1sEHhWVlG/vNZSnpIukEp2FJExo
-         3VAds5Vc5Pir8QMG6owXKfyujHcVGoAHhUjdCq3iSTks6Ul93abkR08dX/ws2fLr75Qd
-         P1CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ikC4LAwwb2/OL3dDYceqRFTwnIoFZSQn/I33psN0qjs=;
-        b=PWAa163szEnrFqyh0zDo4arnEmQpbqY+QsdGs0p1NJMeH3u2iuN+3afnbQRi63A/dP
-         WAN9uQ4564srgQFMUS/7J/bFnQiUF2MAQFQjeSXleGCnD3Pae2YmOkkIeTjlUrAFpvuP
-         X17Whcr2F9NtfzFBpw7JsMHDih+S4DgQB7Azc7qRTzs87svwpBuvCjOS6AZUHHziFEJv
-         ibb3fJ8kg0HR3DPzmNCCJz1yUcvl3HR8uPHEdyP0RI1HtWzPFAX1I8lVK7Ah60rY2lwa
-         6/jFHy86bMXAh7wkXqW72HyIZpswGD7TDKkF2Llj/BXLOsa4VIETaAvm+XAno0l1AVM6
-         8a7A==
-X-Gm-Message-State: AOAM533UMpgP5/GU9jSsp9bC7vYvLteCFjYSJMftPaWeP/KcFOT16rXB
-        E8lhlCZSwTSXu9Zkc6TiDMMC7NJLne3tDJNa5sxRYRiR197H6A==
-X-Google-Smtp-Source: ABdhPJzGna7kT8ytBKEMRmafA605hdoj/96Adf60Do8VLRmdj9ntw6bzrJXYjfcdcZHwC8be0AHpI8yUwC0EME90ntk=
-X-Received: by 2002:a5d:80cc:: with SMTP id h12mr1218936ior.73.1602716460855;
- Wed, 14 Oct 2020 16:01:00 -0700 (PDT)
+        with ESMTP id S2389114AbgJOBji (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 21:39:38 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2950C0F26D2;
+        Wed, 14 Oct 2020 17:19:44 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CBVK76dyWz9sTL;
+        Thu, 15 Oct 2020 11:19:39 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1602721181;
+        bh=2Tcp5S732htwqUBy5RB+MjIuctB4QUMXobgmn0fnjNM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FUx+//vxnKoP75TV5gzGLH3Ec0olLPSPR+6thvoT15s1ewq9pJuRXJEoomDDkxnyM
+         RJSssJ3osfNTVSukP/rprI/TCm/cRlYeZlkaeEt3tnAZPchz/q8ygUxg4HudeLx927
+         gyR1fXe8fUTPc6sT6Kojj5wQlh1ormNAci6Cc8eeNGkXXTCyEH0K87WfjOGbjeTFS0
+         UN4XPODiwg5Nhy+8Wc3W7F8NfuG2vVH+0bC2z1eQtE1AnruvrRf1maJZlFaK23xqQB
+         M/2HyNLHr5v1CsXHTm3EFo8Gax1K0SIrGCOzPtl4C2SqUuXI0R5T9wTOUWXS/xdTLq
+         rxSNXPrYAsrig==
+Date:   Thu, 15 Oct 2020 11:19:38 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Message-ID: <20201015111938.5bd779c3@canb.auug.org.au>
+In-Reply-To: <202010141607.E9A032C686@keescook>
+References: <20200914132249.40c88461@canb.auug.org.au>
+        <202010031451.ABC49D88@keescook>
+        <20201004102437.12fb0442@canb.auug.org.au>
+        <202010040125.B5AD5B757@keescook>
+        <20201004210018.5bbc6126@canb.auug.org.au>
+        <202010041944.7FEE22407B@keescook>
+        <20201015092526.144df583@canb.auug.org.au>
+        <202010141607.E9A032C686@keescook>
 MIME-Version: 1.0
-References: <20201014182811.12027-1-cai@lca.pw>
-In-Reply-To: <20201014182811.12027-1-cai@lca.pw>
-From:   "Oliver O'Halloran" <oohall@gmail.com>
-Date:   Thu, 15 Oct 2020 10:00:49 +1100
-Message-ID: <CAOSf1CFT_Y67Q8caH2uFOYtwpRgFozh30ZWWZzzR-x18LBsG8g@mail.gmail.com>
-Subject: Re: [PATCH -next] Revert "powerpc/pci: unmap legacy INTx interrupts
- when a PHB is removed"
-To:     Qian Cai <cai@lca.pw>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/fBXYlQhN7kmOsjyMuhj6N.e";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 5:28 AM Qian Cai <cai@lca.pw> wrote:
->
-> This reverts commit 3a3181e16fbde752007759f8759d25e0ff1fc425 which
-> causes memory corruptions on POWER9 NV.
+--Sig_/fBXYlQhN7kmOsjyMuhj6N.e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I was going to post this along with a fix for Cedric's original bug,
-but I can do that separately so:
+Hi Kees,
 
-Acked-by: Oliver O'Halloran <oohall@gmail.com>
+On Wed, 14 Oct 2020 16:10:05 -0700 Kees Cook <keescook@chromium.org> wrote:
+>=20
+> I've pinged the thread of the patch (from Oct 4th) that fixes this.
+> Hopefully that or this email will float to the top for an x86
+> maintainer. :) If it doesn't get picked up soon, I can try sending this
+> direct to Linus, though it makes more sense that it come through Ingo
+> (as he'd done the orphan tree pull request).
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fBXYlQhN7kmOsjyMuhj6N.e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+HlZoACgkQAVBC80lX
+0Gz/FQf/Rx+9JlWEpBOajoa+TegPawUWU2z2r2/P3a6yM7qYdVuqOwvED1ghkuTs
++fN28pYe2G9Q8OsvVywJfZv/oTKJfjX9ySEOnq/lRTvvN9VlHBN1z0AiX6x+2vgx
+2f1iHBZzHFSKzq3R52NfwZWeFOjPsAHekE0wS+zq2k5FA+9YLWTNFzp1WB1fT0hM
+UzcNYcwLncQRDAXR+noE0XKE08bTY35HIysYg8AkIPg2cVTU1jsSS52qRA5AMs9h
+Hjku9WAOpwqw02344AI4PfeM3HOa1FjkzOp3zChKTPznvetgP4iZexMVm380bHtw
+paPMstiIP+wkYUiYlO8x89/ziODpMA==
+=c0IV
+-----END PGP SIGNATURE-----
+
+--Sig_/fBXYlQhN7kmOsjyMuhj6N.e--
