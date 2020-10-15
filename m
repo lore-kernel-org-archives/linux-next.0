@@ -2,126 +2,134 @@ Return-Path: <SRS0=dTEO=DW=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF92CC43457
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 560A9C433DF
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C65722257
-	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5EF22258
+	for <linux-next@archiver.kernel.org>; Thu, 15 Oct 2020 01:57:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oGRZNzoY"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="THGFwqki"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732280AbgJOBko (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 14 Oct 2020 21:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50620 "EHLO
+        id S1732405AbgJOB5u (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 14 Oct 2020 21:57:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389013AbgJOBjh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 21:39:37 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92487C051133
-        for <linux-next@vger.kernel.org>; Wed, 14 Oct 2020 16:10:07 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id w11so501342pll.8
-        for <linux-next@vger.kernel.org>; Wed, 14 Oct 2020 16:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5i9RX/7LLxmrH8rBcOGx5ZAh0fv2U4CKPToQx716NOw=;
-        b=oGRZNzoYxfLBq+jYkh15LST+vJruXffi/oGyCk1fcTDUTinUUqCNlCjHiWEH1loun3
-         D99Y7uXme1RJ+x03S1ZRfVIfehyyKMQSm4JjX/z6yjerFgaNY2Q4dcCQzR3YB9o6wphs
-         9W5yNldSPU2aFLGvMKd6fjTNpIDd26ZPf4lVg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5i9RX/7LLxmrH8rBcOGx5ZAh0fv2U4CKPToQx716NOw=;
-        b=r0YUTeEgDxQD3avky5mjDnUjeSKs2tM+5odAcTHW+0ANVdm6EIgmygtmaKYknCObdj
-         8NnC1GOjleJT0ngYUi7MLi/D0zzqsdY17kfCgD/+9M4+TBvmp4vNChk6eLAJhwiulyR9
-         jHbZp4b4JwGtuAg0UwQPVJOFeY9WXSrvyxasGvmyrQ7CuyipvNidN+KscmWEtPviUrUI
-         T9ol+35MrdJPdbgX1eW2FJ/cz7yjz9HG9A1sB4v7KkqtBdMd74RJV77+C139x7zaSbBj
-         ujgwMO8cVwF+zO69BVykYnHdogcH0D5IPqGFLtHtMkDe15Ec/s3G7l+I1Xao18DAwL5P
-         BdlQ==
-X-Gm-Message-State: AOAM5306LgpItNWKpKj96SlN7QINja1BGk7H+/fthGw3eOIO0Nw54szz
-        sEiVS82Zg3KoArZs1NtQhzJM2w==
-X-Google-Smtp-Source: ABdhPJyT0qwmZMqs3tfgsmGgYZuiVnPj6eFP9zB9CYcBCgdImi4JnPhHrMxTOyMKNMeqX48hJ1m8hQ==
-X-Received: by 2002:a17:902:aa06:b029:d3:7e55:ad75 with SMTP id be6-20020a170902aa06b02900d37e55ad75mr1150077plb.37.1602717007102;
-        Wed, 14 Oct 2020 16:10:07 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b15sm652405pju.16.2020.10.14.16.10.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2020 16:10:06 -0700 (PDT)
-Date:   Wed, 14 Oct 2020 16:10:05 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
+        with ESMTP id S1732382AbgJOB5u (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2020 21:57:50 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDF72C061755;
+        Wed, 14 Oct 2020 18:57:49 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CBXVG5pVVz9sTD;
+        Thu, 15 Oct 2020 12:57:42 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1602727066;
+        bh=toLc+QRxQ7GiJM66AMtu5RHjmWqmkH84Q0Iih67+Ffc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=THGFwqkib2b1LJdoVHlxMUH182sAPURvg1N5Xgvt0FjADqCwWYndC7Nn5+nSnqWer
+         BH5biK9KNJ1vcvrE1JSttyqrGGywNM+83t84N5dKSCxMwmplJf9ErywBGI97unVyOo
+         CKzQcw1ldX8479o8EXaTZSDwX5XC+9zieCvvTbMTXbI2bIFQ7fr6kwKYBsZixLZLVP
+         soxE/Z9ojdQHg/TUISwbp1H4YtJTDROSDvgznmlluliUl1OEzjVv2czY77eW6RUx4a
+         nDec6OPQbdW3DdXgSxDYqWhprSl8jjpkwcvgE+8FmTrXprPI44aHfq0PGjeXLc89mG
+         PFPyuOZxexRcA==
+Date:   Thu, 15 Oct 2020 12:57:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <masahiroy@kernel.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Peter Zijlstra <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Message-ID: <202010141607.E9A032C686@keescook>
-References: <20200914132249.40c88461@canb.auug.org.au>
- <202010031451.ABC49D88@keescook>
- <20201004102437.12fb0442@canb.auug.org.au>
- <202010040125.B5AD5B757@keescook>
- <20201004210018.5bbc6126@canb.auug.org.au>
- <202010041944.7FEE22407B@keescook>
- <20201015092526.144df583@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
+Message-ID: <20201015125741.655deb8a@canb.auug.org.au>
+In-Reply-To: <20200925152545.60cccb7b@canb.auug.org.au>
+References: <20200925152545.60cccb7b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201015092526.144df583@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/Duat.Bz8_S2d4wuh_oAKb.I";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 09:25:26AM +1100, Stephen Rothwell wrote:
-> Hi Kees,
-> 
-> On Sun, 4 Oct 2020 19:44:52 -0700 Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Sun, Oct 04, 2020 at 09:00:18PM +1100, Stephen Rothwell wrote:
-> > > Hi Kees,
-> > > 
-> > > On Sun, 4 Oct 2020 01:27:01 -0700 Kees Cook <keescook@chromium.org> wrote:  
-> > > >
-> > > > I assume CONFIG_CONSTRUCTORS is enabled for your build (it should be for  
-> > > 
-> > > yes, indeed.
-> > >   
-> > > > allmodconfig). Does this patch fix it? (I'm kind of blindly guessing
-> > > > based on my understanding of where this could be coming from...)
-> > > > 
-> > > > 
-> > > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > > > index e1843976754a..22f14956214a 100644
-> > > > --- a/include/asm-generic/vmlinux.lds.h
-> > > > +++ b/include/asm-generic/vmlinux.lds.h
-> > > > @@ -701,6 +701,7 @@
-> > > >  #ifdef CONFIG_CONSTRUCTORS
-> > > >  #define KERNEL_CTORS()	. = ALIGN(8);			   \
-> > > >  			__ctors_start = .;		   \
-> > > > +			KEEP(*(SORT(.ctors.*)))		   \
-> > > >  			KEEP(*(.ctors))			   \
-> > > >  			KEEP(*(SORT(.init_array.*)))	   \
-> > > >  			KEEP(*(.init_array))		   \  
-> > > 
-> > > And that makes the messages go away.  
-> > 
-> > Okay then! Thanks for testing. :) I'm not sure why the ppc-hosted
-> > compiler generates those. Regardless, I'll send a proper patch...
-> 
-> I get these warnings from Linus' tree now ...
+--Sig_/Duat.Bz8_S2d4wuh_oAKb.I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've pinged the thread of the patch (from Oct 4th) that fixes this.
-Hopefully that or this email will float to the top for an x86
-maintainer. :) If it doesn't get picked up soon, I can try sending this
-direct to Linus, though it makes more sense that it come through Ingo
-(as he'd done the orphan tree pull request).
+Hi all,
 
--- 
-Kees Cook
+On Fri, 25 Sep 2020 15:25:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   arch/arm/Makefile
+>=20
+> between commit:
+>=20
+>   596b0474d3d9 ("kbuild: preprocess module linker script")
+>=20
+> from the kbuild tree and commit:
+>=20
+>   5a17850e251a ("arm/build: Warn on orphan section placement")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc arch/arm/Makefile
+> index e15f76ca2887,e589da3c8949..000000000000
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@@ -16,6 -16,14 +16,10 @@@ LDFLAGS_vmlinux	+=3D --be
+>   KBUILD_LDFLAGS_MODULE	+=3D --be8
+>   endif
+>  =20
+> + # We never want expected sections to be placed heuristically by the
+> + # linker. All sections should be explicitly named in the linker script.
+> + LDFLAGS_vmlinux +=3D $(call ld-option, --orphan-handling=3Dwarn)
+> +=20
+>  -ifeq ($(CONFIG_ARM_MODULE_PLTS),y)
+>  -KBUILD_LDS_MODULE	+=3D $(srctree)/arch/arm/kernel/module.lds
+>  -endif
+>  -
+>   GZFLAGS		:=3D-9
+>   #KBUILD_CFLAGS	+=3D-pipe
+>  =20
+
+This is now a conflict between the kbuild tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Duat.Bz8_S2d4wuh_oAKb.I
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+HrJUACgkQAVBC80lX
+0GwkYwf/cu/DZv6PluM8CrfGyXV8KbWAqHG1ceeADeYIHJUfNFL/DWUl+/rpErlB
+XWkTzTRMrHxEsRaXgLHlMdiTUN5fq4akozw6X4Kb2QWnnJMJta18/vjTb+Yle5tv
+8KsKKiFwJt5M0PJEigB4m3Bb47FAAQGiuVmz+xzF70PXUPGPbK2MEu6ae9j+MpZs
+RN3SjsDVRERAYltTBwk30l518fQA7TpH40B8LI5iBpvw6xFYmXi/DcrVSZwq+52/
+23bxA4C1PD/hggzyVda69uZym8WYLfnFs/g0t/Vgrgn+wW5awct5YtTeyDXOnj4Z
+lbkt5W+S1w4tJSDEsQ5lBQtL/oa+Ig==
+=Hnsh
+-----END PGP SIGNATURE-----
+
+--Sig_/Duat.Bz8_S2d4wuh_oAKb.I--
