@@ -2,118 +2,89 @@ Return-Path: <SRS0=0UPh=ED=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B10C55179
-	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 22:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD36C55179
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 23:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 113BD20757
-	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 22:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE8E220757
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 23:02:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q3baMf2Z"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hzvcafzs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732980AbgJ1W6H (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:58:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:56585 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389712AbgJ1W4k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:56:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CM3pr470Gz9sPB;
-        Thu, 29 Oct 2020 09:56:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1603925798;
-        bh=U7zRT4tgTv+o0KJnAOrrNaeHKJdfAIbgnQrSPG9X1JQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Q3baMf2ZiOMF06wTH2gfWFTazBRfijWDGQpM5bPlX+GoCUyymmUbbljxb2N9ZTnIG
-         kZgzTOHZa5txc2vRbjV3nt8L0ZimviHF+mZI0Iv6IWq7xbBDhhTsBUjXZbSSzSE4ic
-         4vhOz2frhRoWbrz3RAXfg0rSZ2XLs+y3KAm5HD+8MANcW+VhOUNLPlN6Y4QFPOF0DR
-         FT93rwWzsc916cgoR2uOByrWbZqJAreDAt5iHnFJBi4S1YeiZK9D8qOOD2toKqTWr6
-         aPlUPARIBQv3kBDOfB7GhNVZs6olouH5Zaj+mc9rzg6dLBdusCB4JCtF5f5fi8nr7X
-         IPKyDMomf7n0w==
-Date:   Thu, 29 Oct 2020 09:56:35 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the samsung-krzk-fixes tree with the
- arm-soc-fixes tree
-Message-ID: <20201029095635.3c3996a3@canb.auug.org.au>
+        id S2389998AbgJ1XCd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731811AbgJ1XBi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Oct 2020 19:01:38 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80023C0613D1
+        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2020 16:01:37 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id n18so790903wrs.5
+        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2020 16:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pmlvkQeg7H6smcBHZ5aZgeUaLRlAx0R+iCDWXBgF8Uk=;
+        b=hzvcafzsTDtVUUVH1kS94mVKvKXmE4c6gcOeNA5ca8NF7hzCPzx9Az8oU7QVR3E5Cy
+         C347ZJks3MzRvNGt8HqF6kIaNBzMySi+oOthiNzV0QTHVM45eKqOzoaE39gklCRwa9Ou
+         UvDZs3x4mc9w0tfwkHoxd3L3LiCuWFZxjKskc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pmlvkQeg7H6smcBHZ5aZgeUaLRlAx0R+iCDWXBgF8Uk=;
+        b=ns8ZbFTdtjvN2kzih4GM9MElT1QOcenuNCPTffqgUw9xNGYU3sBafVmXw0ogT876vL
+         0l0B05HzdFryR0j/b1wnALbB6C60kHLo2CueYqp5UR54GW72XWp6q7wyHk53XWFJ55SG
+         LJT6Uzzac6hIs3lWVFltYk/mZPCN5/iKn3GLbGIXVuBcRiYRCFw/m2cVyC/OZBfVr/Tu
+         R3WEDjrxvtlMKFNez5KVG/Ego3yjlEG6sEspDZh7AVLxK73U1AHSoO2w55ezOKZz8YRm
+         YVnYdbX67WrnQoJ9J+HrYLjok3qOCTrc8wv13v0IhJm+vPC9exxC5Vozh60nQQiCTDLR
+         +Kww==
+X-Gm-Message-State: AOAM533t9eSKhwaQG61IjkKEClgVTgF2UfH8wlY4VLgqi1JoIXGnEYa7
+        RHznvZ3B6Ixtmeqx8BCeX4Vx5ia0Ze853ahz1jiBICa/zuG2TQ==
+X-Google-Smtp-Source: ABdhPJzj9kyuupHG0/DfPab48BJrhIBCY+xoQNy6Ur/hkxg1PpSleXYOCl+TPbZZbePCJaxaotpYYjkpmW9vfAUOCi8=
+X-Received: by 2002:aa7:d65a:: with SMTP id v26mr8622930edr.82.1603900571122;
+ Wed, 28 Oct 2020 08:56:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/na9cRuTQKJHtlLNtLtJU.PA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20201028142809.09f7f4b4@canb.auug.org.au>
+In-Reply-To: <20201028142809.09f7f4b4@canb.auug.org.au>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Wed, 28 Oct 2020 08:56:00 -0700
+Message-ID: <CAJ-EccOQCADagAb8YqRHL6aUVCrMuGOO=tA-TBorjO_AiXT7Gw@mail.gmail.com>
+Subject: Re: linux-next: build warning in Linus' tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Thomas Cedeno <thomascedeno@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/na9cRuTQKJHtlLNtLtJU.PA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 27, 2020 at 8:28 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> In Linus' tree, today's linux-next build (htmldocs) produced
+> this warning:
+>
+> Documentation/admin-guide/LSM/SafeSetID.rst:110: WARNING: Title underline too short.
 
-Hi all,
+Thanks for the heads up. I think someone sent a patch to fix this
+yesterday: https://marc.info/?l=linux-doc&m=160379233902729&w=2
 
-Today's linux-next merge of the samsung-krzk-fixes tree got a conflict in:
+Do I need to do anything else or should that cover it?
 
-  MAINTAINERS
-
-between commit:
-
-  421f2597bf42 ("MAINTAINERS: Move Kukjin Kim to credits")
-
-from the arm-soc-fixes tree and commit:
-
-  215f06d7efc2 ("MAINTAINERS: move Kyungmin Park to credits")
-
-from the samsung-krzk-fixes tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 9bff94560b42,40b4a582b4cc..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -2374,7 -2374,8 +2374,7 @@@ F:	drivers/i2c/busses/i2c-rk3x.
-  F:	sound/soc/rockchip/
-  N:	rockchip
- =20
-- ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
-+ ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES
- -M:	Kukjin Kim <kgene@kernel.org>
-  M:	Krzysztof Kozlowski <krzk@kernel.org>
-  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-  L:	linux-samsung-soc@vger.kernel.org
-
---Sig_/na9cRuTQKJHtlLNtLtJU.PA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+Z9yMACgkQAVBC80lX
-0GzYWgf/VfHkAXBwa0wdo2/ometxew1bu3V65UyDqgpkEQUGcSHZfKxdYkNiGezb
-iat9HAWPaAykx5GC2ParPFTpzJ9iCcfReKxAl+NRtPNRPxbk9gCmQnpbkWZPbBtQ
-RkGonxF5okE6x22fFteYZN3LuFAK+tWXSok3qO8HUq/Ome+I2h2cHVamvy/EGQje
-ny6O3qOhWXgWyFQtIPp93snZMrDaxyqDfmb+Nxz6lemcE69NFbDUV+SmU+bWRL6n
-MUhwfMR6Y2kSrVHBCFY4RnOs4vZO6pomH7g+p8Gjr/AX5X1LtBrJLYWC2kexgs9P
-Kw9W50GGeDSCkgL+jhO9NqCdVrJCZA==
-=nNNA
------END PGP SIGNATURE-----
-
---Sig_/na9cRuTQKJHtlLNtLtJU.PA--
+>
+> Introduced by commit
+>
+>   5294bac97e12 ("LSM: SafeSetID: Add GID security policy handling")
+>
+> --
+> Cheers,
+> Stephen Rothwell
