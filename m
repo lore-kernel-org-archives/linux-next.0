@@ -1,86 +1,113 @@
-Return-Path: <SRS0=G6w6=EC=vger.kernel.org=linux-next-owner@kernel.org>
+Return-Path: <SRS0=0UPh=ED=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74069C55178
-	for <linux-next@archiver.kernel.org>; Tue, 27 Oct 2020 21:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D508EC388F7
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 21:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0990C22249
-	for <linux-next@archiver.kernel.org>; Tue, 27 Oct 2020 21:34:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XP2KaI+M"
+	by mail.kernel.org (Postfix) with ESMTP id 8232C24680
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 21:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603921340;
+	bh=/a1vKHtRcYNZhFqr78exekxf/5Z2U77CbIoUFZXDWZs=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=v/m57iuXzglHQcaxDLz4JaOM9eKM3Jm3C9QWIzc9/zSCPtehcQFUpukBF+dAVDJpw
+	 P0wVX4EhxDJHBuDsNT3NR5CqucgWO4LaHHu5FWU6JPUb8stFmi5h28vu7DURiM70KV
+	 FHGLYs3ydixSR2cbNam4FUtrPuhBfoENQDouEY2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S374024AbgJ0V0J (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 27 Oct 2020 17:26:09 -0400
-Received: from ozlabs.org ([203.11.71.1]:50495 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S374082AbgJ0VZ5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 27 Oct 2020 17:25:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CLPrg2QqJz9sRk;
-        Wed, 28 Oct 2020 08:25:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1603833955;
-        bh=5TzWojLfR5wPPCfBJL59xdfX/iM136TguBSnvWAqY/E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XP2KaI+M1foSz93/SN+jvmJbI7D37Dgm1sW2UmD8u/k7h8LREziAWEKbdpcU9xm+z
-         GYgtvAng+XFqvfZRIBX92khUROea2q8vzyaqn6wC5qGRXz8IrhN5MS3Nc7ApO104ij
-         if6N3/49JCRvj5dzG4sYoBcrapDc1imdtgbzapxB/Hr5xYKvYLreu4SiNB7n69T10S
-         wQP2g0jP6Qt2qIuhdEyeMOHLm0Nh4LKJzE6sXdOl66+5Gtil4x5XYEl6BD4mk6Awyi
-         vzRvE3rubPhKxjyDaanm+ojB9xH0tf4ARZ0PGMkFGUWwDBjloX3NqlOT0YJp6oZT7T
-         bmtg79fVPr2ug==
-Date:   Wed, 28 Oct 2020 08:25:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
+        id S1725812AbgJ1VmR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:42:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbgJ1VmQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Oct 2020 17:42:16 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B0AC0613CF
+        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2020 14:42:16 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id o3so579140pgr.11
+        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2020 14:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=w1/8IrO8sx/YyG3QLb2LPvf5Eh9es6JpHKDrqMRrszo=;
+        b=ZBZ5kVEOIS02s7h9dKCzwFiyJFIitPQF7K2Zamgd+7ssGuXsVjhLdUtNZVPWpSyowI
+         VGsjGEME7y7+ytVh4AfbkfnJtcShmwhjFW1SGDy2sJyzbj/VuWN9Qn34ULKkw9edimXC
+         XBEp3rpuHaVVa6FXMsPR2Oha6jeDppF8SHDPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w1/8IrO8sx/YyG3QLb2LPvf5Eh9es6JpHKDrqMRrszo=;
+        b=OuaylSkp9u/5mdSf1bbj22H0x3KLrWKRAspu1Tb7iTqkXSn2/gUen0qiOn86ZBu6Q0
+         U0g5U3UjdVLlrC37OcLEI/CTKYE3TpAER1L88Jge1pm9ovvpqGfO0bRvLHNtkE4M/Y9Y
+         QIvLCFplGH643Be9hz166P1M+z4KgiFw0Y2fUt4h4cc3Ahp7wDPsG22XL8vavMfNM9Ws
+         YbYdziPg+ZfYMI0+gPP7/6XFU9xFDPsAapHa8lm+jDZdAEmTbbXHZcVgCJS+7kLkJw+n
+         DV10wXPro0dc99UxcxUEwC63WP9XMOL73WWw302RYCDIiu3G9uiU/7jZnXNVjTF3xTtX
+         1O2Q==
+X-Gm-Message-State: AOAM530jAKMhEItq54m/QlcH7DOwogKN/8CjKMizRsTWOqYuIA2ShLbb
+        8OcbWKQJDx1DvSF9/iu6EZfDnR5G7Js4Pg==
+X-Google-Smtp-Source: ABdhPJxAkhbJrCYboUrSVTzSaLQQA/LDRJyFEr4ekcyxOGjc0AuhcZIRoF7aNuuJRohG6nL5wWP0/Q==
+X-Received: by 2002:a5d:9819:: with SMTP id a25mr6472582iol.156.1603895903544;
+        Wed, 28 Oct 2020 07:38:23 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id c2sm2531544ioc.29.2020.10.28.07.38.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Oct 2020 07:38:22 -0700 (PDT)
+Subject: Re: linux-next: build warnings after merge of the counters tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the mmc tree
-Message-ID: <20201028082554.3a486ebe@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20201028142039.6c7eb38a@canb.auug.org.au>
+ <20201028142354.11d42e47@canb.auug.org.au>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <9b2593f6-b160-52d8-521e-3ad9b059d5a4@linuxfoundation.org>
+Date:   Wed, 28 Oct 2020 08:38:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7FvpXCn_KqDi/gk2yyWsDrt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20201028142354.11d42e47@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/7FvpXCn_KqDi/gk2yyWsDrt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/27/20 9:23 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Wed, 28 Oct 2020 14:20:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the counters tree, today's linux-next build (htmldocs)
+>> produced these warnings:
+>>
+>>
+>> Documentation/core-api/counters.rst:45: WARNING: undefined label: test counters module (if the link has no caption the label must precede a section header)
+>> Documentation/core-api/counters.rst:48: WARNING: undefined label: selftest for counters (if the link has no caption the label must precede a section header)
+>> Documentation/core-api/counters.rst:61: WARNING: undefined label: atomic_ops (if the link has no caption the label must precede a section header)
+>>
+>> Introduced by commit
+>>
+>>    37a0dbf631f6 ("counters: Introduce counter_atomic* counters")
+> 
+> Also:
+> 
+> Documentation/core-api/counters.rst: WARNING: document isn't included in any toctree
+> 
 
-Hi all,
+Hi Stephen,
 
-Commit
+This patch series is still is progress. I will drop them from this
+topic branch.
 
-  4a890911ffdb ("mmc: sdhci-of-esdhc: make sure delay chain locked for HS40=
-0")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7FvpXCn_KqDi/gk2yyWsDrt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+YkGIACgkQAVBC80lX
-0Gyg5gf6AxlZpWys4faOk0cWcrUjX34Ao0JCe3Bwp5ZKlHDB9tQSSIrtxdpLIdTy
-TE5eCabRNSq/hp0vfFFTbLBz4kk+VScTZQmSHAGDn9ObRXvOm1OyfK+RIsMEzuSS
-X0O9NVvPbSfZ4io+ppS9hEKB89R0lnVFu+V117yrqJAgdB4xOPWQgKFtkqtG1tEn
-As23zNWUaKPuYW5HYAqX2OdCCPz6GGvysZmSTZTzYjt7RyHy7uEipDYWfB9u0/mk
-2+cY9eHTeaWvg7d/0cnjoLRCExZ8qg4ndvVm1ovSb6orcbO4vCzgts1+/Hf1+KAC
-gdkUv8u3dh+EEf88qx9gfmmMOdhirw==
-=vgwK
------END PGP SIGNATURE-----
-
---Sig_/7FvpXCn_KqDi/gk2yyWsDrt--
+thanks,
+-- Shuah
