@@ -2,112 +2,126 @@ Return-Path: <SRS0=0UPh=ED=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D508EC388F7
-	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 21:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4EEC55179
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 21:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8232C24680
-	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 21:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D561246AB
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 21:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603921340;
-	bh=/a1vKHtRcYNZhFqr78exekxf/5Z2U77CbIoUFZXDWZs=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=v/m57iuXzglHQcaxDLz4JaOM9eKM3Jm3C9QWIzc9/zSCPtehcQFUpukBF+dAVDJpw
-	 P0wVX4EhxDJHBuDsNT3NR5CqucgWO4LaHHu5FWU6JPUb8stFmi5h28vu7DURiM70KV
-	 FHGLYs3ydixSR2cbNam4FUtrPuhBfoENQDouEY2Q=
+	s=default; t=1603921378;
+	bh=+Cj4JDv/9Kdz/kOl1C3lm3VVi/UOikFi55ZuJNA/YoI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
+	 From;
+	b=ydiehO+satAXdbrA8aOvkSASq7IJIKwh3YoFtbsL6rtne2tqv1bua43lRVUiv5O4/
+	 i/B4q9+wM5ZbiY96/Bw5SB1L/zl9rb7uGBjZi1VB14B8wYNfm94y704fLAwrzsheTO
+	 hkUas1N2aBTotueSC05hx3BZhl5EhvurkFBI1a2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725812AbgJ1VmR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbgJ1VmQ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Oct 2020 17:42:16 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B0AC0613CF
-        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2020 14:42:16 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id o3so579140pgr.11
-        for <linux-next@vger.kernel.org>; Wed, 28 Oct 2020 14:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w1/8IrO8sx/YyG3QLb2LPvf5Eh9es6JpHKDrqMRrszo=;
-        b=ZBZ5kVEOIS02s7h9dKCzwFiyJFIitPQF7K2Zamgd+7ssGuXsVjhLdUtNZVPWpSyowI
-         VGsjGEME7y7+ytVh4AfbkfnJtcShmwhjFW1SGDy2sJyzbj/VuWN9Qn34ULKkw9edimXC
-         XBEp3rpuHaVVa6FXMsPR2Oha6jeDppF8SHDPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w1/8IrO8sx/YyG3QLb2LPvf5Eh9es6JpHKDrqMRrszo=;
-        b=OuaylSkp9u/5mdSf1bbj22H0x3KLrWKRAspu1Tb7iTqkXSn2/gUen0qiOn86ZBu6Q0
-         U0g5U3UjdVLlrC37OcLEI/CTKYE3TpAER1L88Jge1pm9ovvpqGfO0bRvLHNtkE4M/Y9Y
-         QIvLCFplGH643Be9hz166P1M+z4KgiFw0Y2fUt4h4cc3Ahp7wDPsG22XL8vavMfNM9Ws
-         YbYdziPg+ZfYMI0+gPP7/6XFU9xFDPsAapHa8lm+jDZdAEmTbbXHZcVgCJS+7kLkJw+n
-         DV10wXPro0dc99UxcxUEwC63WP9XMOL73WWw302RYCDIiu3G9uiU/7jZnXNVjTF3xTtX
-         1O2Q==
-X-Gm-Message-State: AOAM530jAKMhEItq54m/QlcH7DOwogKN/8CjKMizRsTWOqYuIA2ShLbb
-        8OcbWKQJDx1DvSF9/iu6EZfDnR5G7Js4Pg==
-X-Google-Smtp-Source: ABdhPJxAkhbJrCYboUrSVTzSaLQQA/LDRJyFEr4ekcyxOGjc0AuhcZIRoF7aNuuJRohG6nL5wWP0/Q==
-X-Received: by 2002:a5d:9819:: with SMTP id a25mr6472582iol.156.1603895903544;
-        Wed, 28 Oct 2020 07:38:23 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id c2sm2531544ioc.29.2020.10.28.07.38.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2020 07:38:22 -0700 (PDT)
-Subject: Re: linux-next: build warnings after merge of the counters tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1726174AbgJ1VmZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:42:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725849AbgJ1VmY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Oct 2020 17:42:24 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-104-11.bvtn.or.frontiernet.net [50.39.104.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19729246CD;
+        Wed, 28 Oct 2020 21:02:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603918949;
+        bh=+Cj4JDv/9Kdz/kOl1C3lm3VVi/UOikFi55ZuJNA/YoI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=us4bztrI2KapLmU1CUulDdhGbWUnIfT0eq/O/r7fhD/uj1XbHv/m0fp59fI6Q6/ru
+         b9toWkeNm6ZmXCQHNgJQkal5IBZV89lV/0ZK5Xdn6K8bdbVp8uLd5lEhjPX7erC+Ub
+         AZ3EziopAvHlTGvy2wkA7iesN2CZyU4nwB2Kke6Q=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id B408435229CE; Wed, 28 Oct 2020 14:02:28 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 14:02:28 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Qian Cai <cai@redhat.com>
+Cc:     Boqun Feng <boqun.feng@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20201028142039.6c7eb38a@canb.auug.org.au>
- <20201028142354.11d42e47@canb.auug.org.au>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <9b2593f6-b160-52d8-521e-3ad9b059d5a4@linuxfoundation.org>
-Date:   Wed, 28 Oct 2020 08:38:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [tip: locking/core] lockdep: Fix lockdep recursion
+Message-ID: <20201028210228.GI3249@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <160223032121.7002.1269740091547117869.tip-bot2@tip-bot2>
+ <e438b231c5e1478527af6c3e69bf0b37df650110.camel@redhat.com>
+ <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <1db80eb9676124836809421e85e1aa782c269a80.camel@redhat.com>
+ <20201028030130.GB3249@paulmck-ThinkPad-P72>
+ <8194dca3b2e871f04c7f6e49672837f8df22546f.camel@redhat.com>
+ <20201028155328.GC3249@paulmck-ThinkPad-P72>
+ <7cd579ccdacb4f672cf2dc3a0d4553d1845e7ebf.camel@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20201028142354.11d42e47@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7cd579ccdacb4f672cf2dc3a0d4553d1845e7ebf.camel@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 10/27/20 9:23 PM, Stephen Rothwell wrote:
-> Hi all,
+On Wed, Oct 28, 2020 at 04:08:59PM -0400, Qian Cai wrote:
+> On Wed, 2020-10-28 at 08:53 -0700, Paul E. McKenney wrote:
+> > On Wed, Oct 28, 2020 at 10:39:47AM -0400, Qian Cai wrote:
+> > > On Tue, 2020-10-27 at 20:01 -0700, Paul E. McKenney wrote:
+> > > > If I have the right email thread associated with the right fixes, these
+> > > > commits in -rcu should be what you are looking for:
+> > > > 
+> > > > 73b658b6b7d5 ("rcu: Prevent lockdep-RCU splats on lock
+> > > > acquisition/release")
+> > > > 626b79aa935a ("x86/smpboot:  Move rcu_cpu_starting() earlier")
+> > > > 
+> > > > And maybe this one as well:
+> > > > 
+> > > > 3a6f638cb95b ("rcu,ftrace: Fix ftrace recursion")
+> > > > 
+> > > > Please let me know if these commits do not fix things.
+> > > While those patches silence the warnings for x86. Other arches are still
+> > > suffering. It is only after applying the patch from Boqun below fixed
+> > > everything.
+> > 
+> > Fair point!
+> > 
+> > > Is it a good idea for Boqun to write a formal patch or we should fix all
+> > > arches
+> > > individually like "x86/smpboot: Move rcu_cpu_starting() earlier"?
+> > 
+> > By Boqun's patch, you mean the change to debug_lockdep_rcu_enabled()
+> > shown below?  Peter Zijlstra showed that real failures can happen, so we
 > 
-> On Wed, 28 Oct 2020 14:20:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the counters tree, today's linux-next build (htmldocs)
->> produced these warnings:
->>
->>
->> Documentation/core-api/counters.rst:45: WARNING: undefined label: test counters module (if the link has no caption the label must precede a section header)
->> Documentation/core-api/counters.rst:48: WARNING: undefined label: selftest for counters (if the link has no caption the label must precede a section header)
->> Documentation/core-api/counters.rst:61: WARNING: undefined label: atomic_ops (if the link has no caption the label must precede a section header)
->>
->> Introduced by commit
->>
->>    37a0dbf631f6 ("counters: Introduce counter_atomic* counters")
+> Yes.
 > 
-> Also:
+> > do not want to cover them up.  So we are firmly in "fix all architectures"
+> > space here, sorry!
+> > 
+> > I am happy to accumulate those patches, but cannot commit to creating
+> > or testing them.
 > 
-> Documentation/core-api/counters.rst: WARNING: document isn't included in any toctree
-> 
+> Okay, I posted 3 patches for each arch and CC'ed you.
 
-Hi Stephen,
+Very good!  I have acked them.
 
-This patch series is still is progress. I will drop them from this
-topic branch.
+>                                                       BTW, it looks like
+> something is wrong on @vger.kernel.org today where I received many of those,
+> 
+> 4.7.1 Hello [216.205.24.124], for recipient address <linux-kernel@vger.kernel.org> the policy analysis reported: zpostgrey: connect: Connection refused
+> 
+> and I can see your previous mails did not even reach there either.
+> 
+> https://lore.kernel.org/lkml/
 
-thanks,
--- Shuah
+It does seem to be having some difficulty, and some people are looking
+into it.  Hopefully soon someone who can actually make the needed
+changes.  ;-)
+
+							Thanx, Paul
