@@ -2,136 +2,118 @@ Return-Path: <SRS0=0UPh=ED=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47092C4363A
-	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 22:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B10C55179
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 22:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E11E7246CD
-	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 22:16:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 113BD20757
+	for <linux-next@archiver.kernel.org>; Wed, 28 Oct 2020 22:58:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Gsi0VMxb"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q3baMf2Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbgJ1WQs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:16:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:53219 "EHLO ozlabs.org"
+        id S1732980AbgJ1W6H (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:58:07 -0400
+Received: from ozlabs.org ([203.11.71.1]:56585 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731136AbgJ1WNu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:13:50 -0400
+        id S2389712AbgJ1W4k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:56:40 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CLVlM2rJzz9sTq;
-        Wed, 28 Oct 2020 12:06:36 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CM3pr470Gz9sPB;
+        Thu, 29 Oct 2020 09:56:36 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1603847200;
-        bh=dQeqXgWR06YHwPZ477txv8BZg5dzsetxbE1eJPSomD0=;
+        s=201702; t=1603925798;
+        bh=U7zRT4tgTv+o0KJnAOrrNaeHKJdfAIbgnQrSPG9X1JQ=;
         h=Date:From:To:Cc:Subject:From;
-        b=Gsi0VMxb/T7fRrQIU+mFpipdv3qtKNaufOUrbEBwmX04nt1bN9rZgbDLZRVjTmFJt
-         SgqgaOqFJC+oNfjNJ5E/NDEUZpj2Mm/SoEHFUeJUoKneYf+KD9LDJribBb0wRSZ/wG
-         HTMRl2iNr7WWbuMjAUYkiM2DPHxqovn+7W4MnFay6kBv53d0yMUeLMwB6jkR60dd9g
-         aCUXSXJBihjc9bte0NvJowj4aYDRTQgVXahAldZ6iVXSJf8j3v5vo50SPEcleICsOg
-         oUE7iwjUYo+jRquNqLNfRG87f1PGpgjTXWgjxXHHB/OmZ2IXVzgo91TqU1ksYiuWvJ
-         H2Ag/0KmDtQgw==
-Date:   Wed, 28 Oct 2020 12:06:31 +1100
+        b=Q3baMf2ZiOMF06wTH2gfWFTazBRfijWDGQpM5bPlX+GoCUyymmUbbljxb2N9ZTnIG
+         kZgzTOHZa5txc2vRbjV3nt8L0ZimviHF+mZI0Iv6IWq7xbBDhhTsBUjXZbSSzSE4ic
+         4vhOz2frhRoWbrz3RAXfg0rSZ2XLs+y3KAm5HD+8MANcW+VhOUNLPlN6Y4QFPOF0DR
+         FT93rwWzsc916cgoR2uOByrWbZqJAreDAt5iHnFJBi4S1YeiZK9D8qOOD2toKqTWr6
+         aPlUPARIBQv3kBDOfB7GhNVZs6olouH5Zaj+mc9rzg6dLBdusCB4JCtF5f5fi8nr7X
+         IPKyDMomf7n0w==
+Date:   Thu, 29 Oct 2020 09:56:35 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Mihir Bhogilal Patel <Mihir.Patel@amd.com>
-Subject: linux-next: manual merge of the drm-misc tree with the amdgpu tree
-Message-ID: <20201028120631.1a1e239c@canb.auug.org.au>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the samsung-krzk-fixes tree with the
+ arm-soc-fixes tree
+Message-ID: <20201029095635.3c3996a3@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/D7gmgiTqdCVEH3_nLdCS9s7";
+Content-Type: multipart/signed; boundary="Sig_/na9cRuTQKJHtlLNtLtJU.PA";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/D7gmgiTqdCVEH3_nLdCS9s7
+--Sig_/na9cRuTQKJHtlLNtLtJU.PA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+Today's linux-next merge of the samsung-krzk-fixes tree got a conflict in:
 
-  drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+  MAINTAINERS
 
 between commit:
 
-  ff72bc403170 ("drm/amdgpu: Add debugfs entry for printing VM info")
+  421f2597bf42 ("MAINTAINERS: Move Kukjin Kim to credits")
 
-from the amdgpu tree and commit:
+from the arm-soc-fixes tree and commit:
 
-  4671078eb8e3 ("drm/amdgpu: switch over to the new pin interface")
+  215f06d7efc2 ("MAINTAINERS: move Kyungmin Park to credits")
 
-from the drm-misc tree.
+from the samsung-krzk-fixes tree.
 
-I fixed it up (I used the former version of this file and added the
-following patch) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted
-for merging.  You may also want to consider cooperating with the
-maintainer of the conflicting tree to minimise any particularly complex
-conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 Oct 2020 11:52:31 +1100
-Subject: [PATCH] merge fix up for "drm/amdgpu: Add debugfs entry for printi=
-ng
- VM info"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_object.c
-index baca32263ec4..06dfe9b1c7e6 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -1555,7 +1555,7 @@ u64 amdgpu_bo_print_info(int id, struct amdgpu_bo *bo=
-, struct seq_file *m)
- 	seq_printf(m, "\t\t0x%08x: %12lld byte %s",
- 			id, size, placement);
-=20
--	pin_count =3D READ_ONCE(bo->pin_count);
-+	pin_count =3D READ_ONCE(bo->tbo.pin_count);
- 	if (pin_count)
- 		seq_printf(m, " pin count %d", pin_count);
-=20
---=20
-2.28.0
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/D7gmgiTqdCVEH3_nLdCS9s7
+diff --cc MAINTAINERS
+index 9bff94560b42,40b4a582b4cc..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -2374,7 -2374,8 +2374,7 @@@ F:	drivers/i2c/busses/i2c-rk3x.
+  F:	sound/soc/rockchip/
+  N:	rockchip
+ =20
+- ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
++ ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES
+ -M:	Kukjin Kim <kgene@kernel.org>
+  M:	Krzysztof Kozlowski <krzk@kernel.org>
+  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+  L:	linux-samsung-soc@vger.kernel.org
+
+--Sig_/na9cRuTQKJHtlLNtLtJU.PA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+YxBcACgkQAVBC80lX
-0GyGyQf/W8AS24xM+LuAbD7K+TnxKAQPBAwUY5YWJZiLBx/vdxsRPnJP/NZ4saM2
-4ntUNF2DIRJN/fqsDOYPgkTF8y6kRRDfPVnBwEMNuV5u8WAvuIX3Rk+HBbAfUae3
-fs0yfeYDslTmcKbYKnbjr+WhWD0APv6Lj3ETFjQ4mGTEOKzcvTJaeNhAMDwfva7/
-kazP5IG9/L2hPZTaaTGbZYicc0Y6TbgFzmOEDg7lPQ5D6p/daIKZq/NAC8IXfi3Q
-E/Zm8uP634hT90JO7nAMdfPzlNzDtxylBY7pXbUQAtvBvtLl6WQ5ZRFZZodEkwsR
-mdWEJ2g3idZnJIUWSlU2g3u9a3+hsA==
-=epSp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+Z9yMACgkQAVBC80lX
+0GzYWgf/VfHkAXBwa0wdo2/ometxew1bu3V65UyDqgpkEQUGcSHZfKxdYkNiGezb
+iat9HAWPaAykx5GC2ParPFTpzJ9iCcfReKxAl+NRtPNRPxbk9gCmQnpbkWZPbBtQ
+RkGonxF5okE6x22fFteYZN3LuFAK+tWXSok3qO8HUq/Ome+I2h2cHVamvy/EGQje
+ny6O3qOhWXgWyFQtIPp93snZMrDaxyqDfmb+Nxz6lemcE69NFbDUV+SmU+bWRL6n
+MUhwfMR6Y2kSrVHBCFY4RnOs4vZO6pomH7g+p8Gjr/AX5X1LtBrJLYWC2kexgs9P
+Kw9W50GGeDSCkgL+jhO9NqCdVrJCZA==
+=nNNA
 -----END PGP SIGNATURE-----
 
---Sig_/D7gmgiTqdCVEH3_nLdCS9s7--
+--Sig_/na9cRuTQKJHtlLNtLtJU.PA--
