@@ -2,122 +2,81 @@ Return-Path: <SRS0=61Hx=EE=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A83DC55179
-	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 07:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE439C2D0A3
+	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 08:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 304BE20719
-	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 07:57:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603958250;
-	bh=OcoVnUg27s7RybaaylSXl4zThcBO61r0ewug7GA2D98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZMkNcerH1xE3IpflCfo4jgWZY5BBVPfDAPw3Km3F1vnKf5BvYEZSPt9AZRw9NMYu0
-	 Z7bq+Zf099CSPNYH6qkImFl/kTd+5zRKKopqkvTev+Z5GPJxOdgHJcXzqReSBXuE9Y
-	 A7U6wW31OsOMWNMlVIcok1cTKnyA6vgpj0P/ojkc=
+	by mail.kernel.org (Postfix) with ESMTP id 67A772076E
+	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 08:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbgJ2H5Y (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 29 Oct 2020 03:57:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58172 "EHLO mail.kernel.org"
+        id S1726094AbgJ2IKZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 29 Oct 2020 04:10:25 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15298 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728264AbgJ2H5X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 29 Oct 2020 03:57:23 -0400
-Received: from localhost (unknown [122.171.163.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F17C920780;
-        Thu, 29 Oct 2020 03:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603940909;
-        bh=OcoVnUg27s7RybaaylSXl4zThcBO61r0ewug7GA2D98=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SdufBAN/sF9gGK8YLBBjC+apUg9LdYBaT9DBZ94ZQNfKx/EhGGqIao4bweEYNk7fD
-         9Z1tIQCvJ8Fb54C7MDcrTkzQzGZwIIznHYJsklVZkg4al2Dsz8ZwPznmeYnsOrzbsG
-         +bwEaCdrTXkDVArdQ4U1j2WnPmpRPwg2c6Ggy0mA=
-Date:   Thu, 29 Oct 2020 08:38:24 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1727157AbgJ2IIL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Oct 2020 04:08:11 -0400
+IronPort-SDR: x4KLtTgzdcjIoyJPlb5upHQmYyXCpPv2v26yBgsP1C/fioHqnRnb75xtU4bTyUBx1OzJW0jdNa
+ b8Ar2uZ0vuzg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9788"; a="167614153"
+X-IronPort-AV: E=Sophos;i="5.77,429,1596524400"; 
+   d="scan'208";a="167614153"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 01:08:11 -0700
+IronPort-SDR: 1ERdDjGrx/J7sOsH3QvG4gMY/zSofpPUx8j92Nia8y6n1gFb3aB4W/qKviNg/UNmNdF0iSZKFC
+ J46fCuGFZ+kw==
+X-IronPort-AV: E=Sophos;i="5.77,429,1596524400"; 
+   d="scan'208";a="536574275"
+Received: from rsexton-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.5.42])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2020 01:08:07 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Chris Wilson <chris@chris-wilson.co.uk>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Robert Marko <robert.marko@sartura.hr>
-Subject: Re: linux-next: manual merge of the phy-next tree with the
- regulator-fixes tree
-Message-ID: <20201029030824.GY3550@vkoul-mobl>
-References: <20201029132052.1ac29c18@canb.auug.org.au>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the drm-intel-fixes tree
+In-Reply-To: <160392160276.31966.3847690661999837078@build.alporthouse.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20201029082823.5607849a@canb.auug.org.au> <160392160276.31966.3847690661999837078@build.alporthouse.com>
+Date:   Thu, 29 Oct 2020 10:08:05 +0200
+Message-ID: <87ft5xihei.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201029132052.1ac29c18@canb.auug.org.au>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 29-10-20, 13:20, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the phy-next tree got a conflict in:
-> 
->   MAINTAINERS
-> 
-> between commit:
-> 
->   43c3e148830a ("MAINTAINERS: Add entry for Qualcomm IPQ4019 VQMMC regulator")
-> 
-> from the regulator-fixes tree and commit:
-> 
->   c36f74566cef ("MAINTAINERS: Add entry for Qualcomm IPQ4019 USB PHY")
-> 
-> from the phy-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Wed, 28 Oct 2020, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> Quoting Stephen Rothwell (2020-10-28 21:28:23)
+>> Hi all,
+>> 
+>> Commit
+>> 
+>>   d13208a88f41 ("lockdep: Fix nr_unused_locks")
+>> 
+>> is missing a Signed-off-by from its author.
+>> 
+>> Also, the author's email name is missing the leading 'P'.
+>
+> And it shouldn't be in the drm-intel-fixes tree.
 
-lgtm, thanks Stephen
+It's temporarily on top of the fixes branch to allow our CI to test the
+branch. We weren't getting results on anything -rc1 based because of
+this.
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc MAINTAINERS
-> index 0e8f57817184,f01ce8f451c8..000000000000
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@@ -14552,14 -14547,14 +14552,22 @@@ F:	Documentation/devicetree/bindings/ma
->   F:	drivers/mailbox/qcom-ipcc.c
->   F:	include/dt-bindings/mailbox/qcom-ipcc.h
->   
-> + QUALCOMM IPQ4019 USB PHY DRIVER
-> + M:	Robert Marko <robert.marko@sartura.hr>
-> + M:	Luka Perkov <luka.perkov@sartura.hr>
-> + L:	linux-arm-msm@vger.kernel.org
-> + S:	Maintained
-> + F:	Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
-> + F:	drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
-> + 
->  +QUALCOMM IPQ4019 VQMMC REGULATOR DRIVER
->  +M:	Robert Marko <robert.marko@sartura.hr>
->  +M:	Luka Perkov <luka.perkov@sartura.hr>
->  +L:	linux-arm-msm@vger.kernel.org
->  +S:	Maintained
->  +F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
->  +F:	drivers/regulator/vqmmc-ipq4019-regulator.c
->  +
->   QUALCOMM RMNET DRIVER
->   M:	Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
->   M:	Sean Tranchetti <stranche@codeaurora.org>
-
+BR,
+Jani.
 
 
 -- 
-~Vinod
+Jani Nikula, Intel Open Source Graphics Center
