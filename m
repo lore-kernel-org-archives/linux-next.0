@@ -2,158 +2,121 @@ Return-Path: <SRS0=61Hx=EE=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303A0C388F7
-	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 01:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8269FC4363A
+	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 01:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D21C9207BC
-	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 01:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603933300;
-	bh=CYqqIQeLVQ2GDg8Qk4O7/yPF87bpo8HOJdgeKmVSG7M=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
-	 From;
-	b=w1wXD2ZmPTP/Ktw2YH2oaIc+p48PH0InMxdW6AcINimG3zJUz48pc093CAPO5FS1o
-	 6TaBNuMfhyfpzTIKd5tlcgGbzCvi2kc9JksV6ntgfGFzIvcsAoGop1o4RndDWvER37
-	 cXkz0+rNCT8jLV/fY8Qo1C201NSFZzX2G99jOZrU=
+	by mail.kernel.org (Postfix) with ESMTP id F0B8B20791
+	for <linux-next@archiver.kernel.org>; Thu, 29 Oct 2020 01:19:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TrGWt2Xr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403950AbgJ2BBk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 28 Oct 2020 21:01:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60476 "EHLO mail.kernel.org"
+        id S1730873AbgJ2BTK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 28 Oct 2020 21:19:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:46291 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731506AbgJ1WRY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:17:24 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-104-11.bvtn.or.frontiernet.net [50.39.104.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732707AbgJ2BSO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Oct 2020 21:18:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 943282244C;
-        Wed, 28 Oct 2020 03:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603854090;
-        bh=CYqqIQeLVQ2GDg8Qk4O7/yPF87bpo8HOJdgeKmVSG7M=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=J34e3ugmDw0+RgNgHi7V7cZnahdwYN5VL3pKtKMK88THY++wGQRPmSL5RXWpre6+W
-         dWeTJBj1I+WlGeDc66wKb3HdjZ9gD2JJuoYHopHiwAwVcrUqKcuCX5kGYHh509xQ1f
-         fKaxChn52bKktbUlgXICpAo1sIW2WgfYZSTyDnaU=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 4F3683521849; Tue, 27 Oct 2020 20:01:30 -0700 (PDT)
-Date:   Tue, 27 Oct 2020 20:01:30 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Qian Cai <cai@redhat.com>
-Cc:     Boqun Feng <boqun.feng@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CM6y71X4Yz9s0b;
+        Thu, 29 Oct 2020 12:18:05 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1603934291;
+        bh=b9wJS3nbAyZxMqjtljWotEpr2D5lHXOSdWj9oai4MXQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TrGWt2XrpCTnwhyit4+PYTRMuHyGPddji07e/02rtX1DwoJ2Fwjl7o25gnUFm/XyK
+         yonpwRBeHH16eXnqW9qbXjxcKZcCA+76uiAwkS5Xc7baVLVaT/Bq9ANSgXHDTFzj0T
+         w76UO9LBWS3sGxfMpJusIO+PjTcnHSi+6nd7D9ewAXfY24wrGi6LhKrwqbwhzNuSkS
+         DO3BvZ9/a4qJ/Jm4AarqMpcZWqgoHKuYxFlAden1uKX0D1IDdY/HpQo60bMDuAwDjY
+         5tWugoU1nvh/knq0Z1wvcd9Bxpr+Sdh5XPWZQgm4prOv91VUdq9kNrQrl32rDRzuak
+         ohAGcJ0+a0VLQ==
+Date:   Thu, 29 Oct 2020 12:18:01 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [tip: locking/core] lockdep: Fix lockdep recursion
-Message-ID: <20201028030130.GB3249@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <160223032121.7002.1269740091547117869.tip-bot2@tip-bot2>
- <e438b231c5e1478527af6c3e69bf0b37df650110.camel@redhat.com>
- <20201012031110.GA39540@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <1db80eb9676124836809421e85e1aa782c269a80.camel@redhat.com>
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: linux-next: manual merge of the drm-misc tree with the
+ drm-misc-fixes tree
+Message-ID: <20201029121801.205e6e34@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1db80eb9676124836809421e85e1aa782c269a80.camel@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="Sig_/eU5nSNYdUr8Mw9jM3kranNC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 03:31:41PM -0400, Qian Cai wrote:
-> On Mon, 2020-10-12 at 11:11 +0800, Boqun Feng wrote:
-> > Hi,
-> > 
-> > On Fri, Oct 09, 2020 at 09:41:24AM -0400, Qian Cai wrote:
-> > > On Fri, 2020-10-09 at 07:58 +0000, tip-bot2 for Peter Zijlstra wrote:
-> > > > The following commit has been merged into the locking/core branch of tip:
-> > > > 
-> > > > Commit-ID:     4d004099a668c41522242aa146a38cc4eb59cb1e
-> > > > Gitweb:        
-> > > > https://git.kernel.org/tip/4d004099a668c41522242aa146a38cc4eb59cb1e
-> > > > Author:        Peter Zijlstra <peterz@infradead.org>
-> > > > AuthorDate:    Fri, 02 Oct 2020 11:04:21 +02:00
-> > > > Committer:     Ingo Molnar <mingo@kernel.org>
-> > > > CommitterDate: Fri, 09 Oct 2020 08:53:30 +02:00
-> > > > 
-> > > > lockdep: Fix lockdep recursion
-> > > > 
-> > > > Steve reported that lockdep_assert*irq*(), when nested inside lockdep
-> > > > itself, will trigger a false-positive.
-> > > > 
-> > > > One example is the stack-trace code, as called from inside lockdep,
-> > > > triggering tracing, which in turn calls RCU, which then uses
-> > > > lockdep_assert_irqs_disabled().
-> > > > 
-> > > > Fixes: a21ee6055c30 ("lockdep: Change hardirq{s_enabled,_context} to per-
-> > > > cpu
-> > > > variables")
-> > > > Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > > 
-> > > Reverting this linux-next commit fixed booting RCU-list warnings everywhere.
-> > > 
-> > 
-> > I think this happened because in this commit debug_lockdep_rcu_enabled()
-> > didn't adopt to the change that made lockdep_recursion a percpu
-> > variable?
-> > 
-> > Qian, mind to try the following?
-> 
-> Boqun, Paul, may I ask what's the latest with the fixes? I must admit that I got
-> lost in this thread, but I remember that the patch from Boqun below at least
-> silence quite some of those warnings if not all. The problem is that some of
-> those warnings would trigger a lockdep circular locks warning due to printk()
-> with some locks held which in turn disabling the lockdep, makes our test runs
-> inefficient.
+--Sig_/eU5nSNYdUr8Mw9jM3kranNC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If I have the right email thread associated with the right fixes, these
-commits in -rcu should be what you are looking for:
+Hi all,
 
-73b658b6b7d5 ("rcu: Prevent lockdep-RCU splats on lock acquisition/release")
-626b79aa935a ("x86/smpboot:  Move rcu_cpu_starting() earlier")
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-And maybe this one as well:
+  drivers/gpu/drm/drm_gem.c
 
-3a6f638cb95b ("rcu,ftrace: Fix ftrace recursion")
+between commit:
 
-Please let me know if these commits do not fix things.
+  f49a51bfdc8e ("drm/shme-helpers: Fix dma_buf_mmap forwarding bug")
 
-							Thanx, Paul
+from the drm-misc-fixes tree and commit:
 
-> > Although, arguably the problem still exists, i.e. we still have an RCU
-> > read-side critical section inside lock_acquire(), which may be called on
-> > a yet-to-online CPU, which RCU doesn't watch. I think this used to be OK
-> > because we don't "free" anything from lockdep, IOW, there is no
-> > synchronize_rcu() or call_rcu() that _needs_ to wait for the RCU
-> > read-side critical sections inside lockdep. But now we lock class
-> > recycling, so it might be a problem.
-> > 
-> > That said, currently validate_chain() and lock class recycling are
-> > mutually excluded via graph_lock, so we are safe for this one ;-)
-> > 
-> > ----------->8
-> > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> > index 39334d2d2b37..35d9bab65b75 100644
-> > --- a/kernel/rcu/update.c
-> > +++ b/kernel/rcu/update.c
-> > @@ -275,8 +275,8 @@ EXPORT_SYMBOL_GPL(rcu_callback_map);
-> >  
-> >  noinstr int notrace debug_lockdep_rcu_enabled(void)
-> >  {
-> > -	return rcu_scheduler_active != RCU_SCHEDULER_INACTIVE && debug_locks &&
-> > -	       current->lockdep_recursion == 0;
-> > +	return rcu_scheduler_active != RCU_SCHEDULER_INACTIVE &&
-> > +	       __lockdep_enabled;
-> >  }
-> >  EXPORT_SYMBOL_GPL(debug_lockdep_rcu_enabled);
-> 
-> 
+  d693def4fd1c ("drm: Remove obsolete GEM and PRIME callbacks from struct d=
+rm_driver")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/drm_gem.c
+index 69c2c079d803,1da67d34e55d..000000000000
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@@ -1085,9 -1076,7 +1076,9 @@@ int drm_gem_mmap_obj(struct drm_gem_obj
+  	 */
+  	drm_gem_object_get(obj);
+ =20
+ +	vma->vm_private_data =3D obj;
+ +
+- 	if (obj->funcs && obj->funcs->mmap) {
++ 	if (obj->funcs->mmap) {
+  		ret =3D obj->funcs->mmap(obj, vma);
+  		if (ret) {
+  			drm_gem_object_put(obj);
+
+--Sig_/eU5nSNYdUr8Mw9jM3kranNC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+aGEkACgkQAVBC80lX
+0GzrUgf/RQeU2mi6hs0UPwt+oP5FUCiRHXbk3B1VVPzT1VT//NX/H4yYgGwvrWFp
+g6/lxV8j52eTSI29H1wTA+8ZBrgmCd5NZ1+BOLobaJmF50cvq2TephizSk5mmOIw
+uPY0863i0jtrdZHiwtw4wVl7RBTX5I7x9PFZOpYrOxsjfMdDtBMNh3TrpgoORbYE
+qz/Dd4awTaD4k7Mz+NZSs4iTIv4jtxPzTYMQbAx7jFaUuBkPJvKz+/UkuDvk7FWo
+58DGw1N+rLQB85dm8G7hcU1VTxdv95x6pBRTd/aK/hnty9H3zct94LXV0uKwjDC+
+g4tvpJk9tyGmCyUBRzvaSQXJZVmuLg==
+=zUl5
+-----END PGP SIGNATURE-----
+
+--Sig_/eU5nSNYdUr8Mw9jM3kranNC--
