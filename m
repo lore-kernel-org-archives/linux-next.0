@@ -2,100 +2,93 @@ Return-Path: <SRS0=PU4T=EL=vger.kernel.org=linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2666CC00A89
-	for <linux-next@archiver.kernel.org>; Thu,  5 Nov 2020 05:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A975C00A89
+	for <linux-next@archiver.kernel.org>; Thu,  5 Nov 2020 05:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 333EF21556
-	for <linux-next@archiver.kernel.org>; Thu,  5 Nov 2020 05:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACE9B2083B
+	for <linux-next@archiver.kernel.org>; Thu,  5 Nov 2020 05:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Gc79O+/R"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="IAL9rcqK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbgKEFFC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 5 Nov 2020 00:05:02 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59221 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725275AbgKEFFC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 5 Nov 2020 00:05:02 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CRWfc6w5tz9sSs;
-        Thu,  5 Nov 2020 16:04:56 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1604552697;
-        bh=aWjAfrWPkG3i+AEKwfdJI8GNgcEXmCMKx67l27nb/oA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Gc79O+/RywaKRQ2GfLOeq/yqZ6/E6cXnfR1sXFNRuFEyxpF+oIoWdtQWEbvo7bmld
-         zCYddUjHWWjH8pJTYSeMu1Nu8Z8M1QYavklGCtxEeuPrHvLMZ4b5zyv0kVC6VSVtrU
-         6DYeM23rO4PQSuutyyX6aPMlucYv1l0bXQJw8cgSGLWvy0ApMGKgRJMtk3gmm+8Tfn
-         0gsVsc2T7Aln82hi8tW2rAr8WHRDa+wLiZ5VwIcN1sZ2FwrKQ+W3vl7FsOukvklhoJ
-         783fLsy4HlXjRnndcJDS/ffSjj86qCTeYI4h+y6CjlRAI8lruh7ED0Z9ZVckcJUvOB
-         etNFifEqXrd8w==
-Date:   Thu, 5 Nov 2020 16:04:53 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
+        id S1728045AbgKEFhV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 5 Nov 2020 00:37:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgKEFhU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Nov 2020 00:37:20 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D36C0613CF
+        for <linux-next@vger.kernel.org>; Wed,  4 Nov 2020 21:37:20 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id dk16so777132ejb.12
+        for <linux-next@vger.kernel.org>; Wed, 04 Nov 2020 21:37:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EfJjL1akExmM7MryZh1gsP+atrfYQFsCn4uSXTzdFys=;
+        b=IAL9rcqKhpT6r323u029j5TlagQx0L3D0AAGR1yoYNnvILrTVe9xtX8YXqpJxTL9fO
+         +sEz56pVfIzLZxT9ZhROLYQue/XaR0gP4/xX1LhE1RlQOjrhUV/4BTBU1zGRm1FF4c77
+         IvH/KFb2Z8JjIEUSMX2TfC7qnISIgV6lNfHYuH4A8EPDYFcJAYpFFaRIrDMzIm4z1U7q
+         buy60rFZlSl2X0PjrJMBOGmdsOxNqHsYTMkU/5MdnulLCwiMg/uo3jvoNAZ6Kx8OxgvK
+         xIOlgu/g5hH59GfrnucDLCcPZvFraHDHYUYhLiDE7gtZ5/dHIPTdi8H7tlHhHF7ldmUd
+         OmOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EfJjL1akExmM7MryZh1gsP+atrfYQFsCn4uSXTzdFys=;
+        b=kc8L5tY8LdUCALsWefJsU3/B/zNlfC6TS7tMWx9BIOOeMblAKMjSDO9bcm0oaYWEhB
+         gIMB9urXXWH6JLuhgaciCO4cdjKOtT32Rk/qBCjRkU9a5Cl0FvaciZXM01QFIcWH5yh8
+         uihT4i4rcM+oj8wwTZr3at3+ql+Zo8P+voJ7Em6+YFsfsgJE7dowcQTSZMY4rH2srN4Z
+         /ZqHBkWK/NV1uTcvF5JQm4S4rIFh4oMTqx0LdilcxADiwHTE+KCQSRTf//2juONYYhE8
+         SraEgkrudiPGhYi+HzSTFBdMJ3DV/Va0Z+gZBmz5bzt9UTcjjvn4Qz9QIJ3cKozie6ZS
+         616w==
+X-Gm-Message-State: AOAM530SRB7hfpnVRpAg8XHjblR86jK+MLdSSMiRO3tNESDE1gT00QtL
+        dfrDkFE42ITG7Lp0+GfdsLNdWe7bAOhIazT1hWWeChi0ngk=
+X-Google-Smtp-Source: ABdhPJznzbYV8sguutlJP+ym2wYmSr3JSs6Lt8G4t20KrAZBP5q9G8BwybKouTwwoVsrNXznzC+Bjxp4MJa1URC+4jk=
+X-Received: by 2002:a17:906:280a:: with SMTP id r10mr649101ejc.45.1604554639040;
+ Wed, 04 Nov 2020 21:37:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20201105160453.0c2283b1@canb.auug.org.au>
+In-Reply-To: <20201105160453.0c2283b1@canb.auug.org.au>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 4 Nov 2020 21:37:06 -0800
+Message-ID: <CAPcyv4jLUp=h+mthXca67DW-OvS10sOtz78ESjMcKF9BOB8uTw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20201105160453.0c2283b1@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BlJxXBQw+gIIO4Epfz0pJEJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/BlJxXBQw+gIIO4Epfz0pJEJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 4, 2020 at 9:05 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the akpm-current tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> In file included from include/linux/numa.h:25,
+>                  from include/linux/nodemask.h:96,
+>                  from include/linux/mount.h:15,
+>                  from fs/pnode.c:9:
+> arch/powerpc/include/asm/sparsemem.h:17:16: error: unknown type name 'pgprot_t'
+>    17 |       int nid, pgprot_t prot);
+>       |                ^~~~~~~~
+>
+> Caused by commit
+>
+>   45339c019cbc ("mm: fix phys_to_target_node() and memory_add_physaddr_to_nid() exports")
+>
+> I have reverted that commit for today (maybe I should not have added
+> it :-().
 
-Hi all,
-
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-In file included from include/linux/numa.h:25,
-                 from include/linux/nodemask.h:96,
-                 from include/linux/mount.h:15,
-                 from fs/pnode.c:9:
-arch/powerpc/include/asm/sparsemem.h:17:16: error: unknown type name 'pgpro=
-t_t'
-   17 |       int nid, pgprot_t prot);
-      |                ^~~~~~~~
-
-Caused by commit
-
-  45339c019cbc ("mm: fix phys_to_target_node() and memory_add_physaddr_to_n=
-id() exports")
-
-I have reverted that commit for today (maybe I should not have added
-it :-().
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BlJxXBQw+gIIO4Epfz0pJEJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+jh/UACgkQAVBC80lX
-0GwtbwgAlFRrwBZlMJpew2EAgK+OAFB5HgIBa/ipnijlhDqcavRT+DsKsyVyKyl2
-zivBnP2iSFdGeHlWxe4I5deL0CnDnMyaNfO91GCOUgeHt4nSZCbGrgP/jfpZwroo
-FyPzH7Dlb4kbvFMWbc22yhovO1e66g5bFXfaMzP3fO6FN/phx8eq68l8ZJjaMr3x
-cArGaEJvgImaaOhxeooFpIvloY2iHyzGVZKJA+auO7svQPwPdbJoGLI+R8tuCqT6
-FP+rpzxeOv5U69x3tkj/kWMdjs7lJKXACVrE8aWk/S47wHQt+YLFWdkmWbplieo7
-7TV6xhvlIi5IMGju1tEBztAdY6fL+Q==
-=DVAU
------END PGP SIGNATURE-----
-
---Sig_/BlJxXBQw+gIIO4Epfz0pJEJ--
+Ugh, I'll check my cross-compile coverage.
