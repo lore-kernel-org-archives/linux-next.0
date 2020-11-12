@@ -2,118 +2,89 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE829C5517A
-	for <linux-next@archiver.kernel.org>; Wed, 11 Nov 2020 19:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D16C2D0A3
+	for <linux-next@archiver.kernel.org>; Thu, 12 Nov 2020 05:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58DFD208B3
-	for <linux-next@archiver.kernel.org>; Wed, 11 Nov 2020 19:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8634721534
+	for <linux-next@archiver.kernel.org>; Thu, 12 Nov 2020 05:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="se9v8enf"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kKBT9Tqk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgKKToV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 11 Nov 2020 14:44:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbgKKToU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 11 Nov 2020 14:44:20 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C519C0613D1
-        for <linux-next@vger.kernel.org>; Wed, 11 Nov 2020 11:44:20 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id s2so1503086plr.9
-        for <linux-next@vger.kernel.org>; Wed, 11 Nov 2020 11:44:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T6+8pW5jZmBDXZbPZRIztWDaBT2x4DmsxSLQ6azETAc=;
-        b=se9v8enfPUYbJTt74HhR/SX2RmXprJ24MmSz0B6V6vVydIBGmJrjoTIm2zNBupmNFO
-         GJflYMImUSVaWMip1XV6MIJvQk82VwB1y+EnGYIkN2n/kRU+haT6WrD9zXhdlSZ4p6Cp
-         ULCa12b5tboh7sjLVMaGR+hf4Z3Bd3PFQ3QmddVufhjy0HTI8Q6Ixh0F9m9t1K9qRI7n
-         osu4eF9sgLT3VBpn0FLT5rTt7wtOGFsgb0lzjQQLDH8Jv6bywYx1l9Ry35K0eRZZBDbp
-         s9+EBy8mW+KuK+gots4IIw0zgZX+zl9EbkwM9xZYdF5PQ3se2xIfqNRAy04N9t5Kpfot
-         +oVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T6+8pW5jZmBDXZbPZRIztWDaBT2x4DmsxSLQ6azETAc=;
-        b=F3D+f80FbjaXHId8EKAJq9dkHMbpliqJy9S8WVDE7jLiUPmT+nYZf5BH2ei5Fu2n47
-         bDSBllzTOjCnKKv4YkaDA3dqmZkORlQ+GB/qMt2ZAgr0CXLQzQFWm2OEVPDX33wr4nig
-         L8sa/rX/FWLx25PBsMogH9q8CH+byFTlnxhnrtR38UNNxosecOeVyZa0DYzLv4X7sdCr
-         GZUaGxF8DAr8kOhYRcrbh/ptuI//sqWvJRKtQh8YI6V8TJdrOL9QhVHslB+bO49Q+hdA
-         s5n34h6nxFoyfeJAxsXD/uYN8nEG98jv6V+6Ny41p0GeYvbGnskF3M7oMO2+L8pANkp0
-         9OQQ==
-X-Gm-Message-State: AOAM533QL17PPJ6v9gZUtzYd12v0Hd13WvrUQi59FAwpbvGrp7HmMCQq
-        IaANRubF7Q3hT6UTCycfGshtYk4w5OhJzC1edkzFtA==
-X-Google-Smtp-Source: ABdhPJyritjwALZYYkqE++zh/C6zeAGTLmlgOvj2cpbxrtYI+S9Fb6PTPQ53iLb1vLxINgC437M7aggmL3FxpAymu/k=
-X-Received: by 2002:a17:902:8d95:b029:d8:c2ee:7dc with SMTP id
- v21-20020a1709028d95b02900d8c2ee07dcmr2295427plo.57.1605123860032; Wed, 11
- Nov 2020 11:44:20 -0800 (PST)
+        id S1727976AbgKLFjL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 12 Nov 2020 00:39:11 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40439 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728849AbgKLEcg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 11 Nov 2020 23:32:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CWpbz0Rpkz9s0b;
+        Thu, 12 Nov 2020 15:32:30 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1605155553;
+        bh=PDWmW54yXwo0yC2KfQdz8KGggoSumwekoMjsgIgwcLI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kKBT9TqkxWKo0yw30ovbfjcar4UhI+MdPVivwEHB+4onCWJvsrUB34RUREj1CvdsG
+         lcnFQApu+uhzn+OsTGqGQwqap3MQBOwd55nTPtlpdw1deSjrYz2iIAXxNfORbVkvq1
+         5f9CbotFzFASB+bB/DjMjQfHnLIiF5DHznbZgf+F+r+3yp3PwatvrzC2DRJ6OwkHmq
+         Wf2A/BpbUZ+em2Rt5I/3KC0HBXFmOLZNsxOqqZIhyKT1oKe0b3yY97xGG+7sqVjCqu
+         eIlgGI6oqd5oTuP4keACYajn3mv1N+Vq73aEBC+djCl+JcY2VjG7s5LVsRa7ULr9ad
+         YkFksjCDnV9mQ==
+Date:   Thu, 12 Nov 2020 15:32:26 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the block tree
+Message-ID: <20201112153226.10561c8d@canb.auug.org.au>
 MIME-Version: 1.0
-References: <000000000000fe575905b3cff92c@google.com> <bf31020f4e50b303fd0dd3dfda0e50de79ed25db.camel@redhat.com>
- <CAAeHK+yLgDYOS35sWT8=4_d-gZKU_B10D9ZEBPZDC1P6MO2D6Q@mail.gmail.com> <CAA5enKY8mBicpc7kZKKLG5LeVFhVJtRQ73MYVFM0Az2bbiGv8g@mail.gmail.com>
-In-Reply-To: <CAA5enKY8mBicpc7kZKKLG5LeVFhVJtRQ73MYVFM0Az2bbiGv8g@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Wed, 11 Nov 2020 20:44:09 +0100
-Message-ID: <CAAeHK+x4tWTY0ZuR6LHhm071bOnvZcfa=A-KLpSfUTkaxZHieA@mail.gmail.com>
-Subject: Re: linux-next boot error: BUG: unable to handle kernel NULL pointer
- dereference in mempool_init_node
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Qian Cai <cai@redhat.com>,
-        syzbot <syzbot+2d6f3dad1a42d86a5801@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/XTGP/.Nns9J1GX9AqrF6nJ_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 8:27 PM Lorenzo Stoakes <lstoakes@gmail.com> wrote:
->
-> On Wed, 11 Nov 2020 at 17:44, Andrey Konovalov <andreyknvl@google.com> wrote:
-> > I'll try to reproduce this and figure out the issue. Thanks for letting us know!
->
-> I hope you don't mind me diving in here, I was taking a look just now
-> and managed to reproduce this locally - I bisected the issue to
-> 105397399 ("kasan: simplify kasan_poison_kfree").
->
-> If I stick a simple check in as below it fixes the issue, so I'm
-> guessing something is violating the assumptions in 105397399?
->
->
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index 7a94cebc0324..16163159a017 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -387,6 +387,11 @@ void __kasan_slab_free_mempool(void *ptr, unsigned long ip)
->         struct page *page;
->
->         page = virt_to_head_page(ptr);
-> +
-> +       if (!PageSlab(page)) {
-> +               return;
-> +       }
-> +
->         ____kasan_slab_free(page->slab_cache, ptr, ip, false);
->  }
+--Sig_/XTGP/.Nns9J1GX9AqrF6nJ_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ah, by the looks of it, ceph's init_caches() functions asks for
-kmalloc-backed mempool, but at the same time provides a size that
-doesn't fit into any kmalloc cache, and kmalloc falls back onto
-page_alloc. Hard to say whether this is an issue in ceph, but I guess
-we'll have to make KASAN fool proof either way and keep the PageSlab()
-check in kasan_slab_free_mempool().
+Hi all,
 
-Thank you for debugging this, Lorenzo. I'll fix this in v10.
+After merging the block tree, today's linux-next build (htmldocs)
+produced this warning:
+
+block/genhd.c:439: warning: Function parameter or member 'probe' not descri=
+bed in '__register_blkdev'
+
+Introduced by commit
+
+  3da1a61e7046 ("block: add an optional probe callback to major_names")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/XTGP/.Nns9J1GX9AqrF6nJ_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+sutoACgkQAVBC80lX
+0Gz27wf9G625GLonUt+tZvYBFhzpFt73Gd3P418b9O42Wq71eTGZt7lAfcE5qExP
+ZAsY4ew8KlKtxElWYNX0NralD+gluS1r/eiIkVey2j/BCn3fRVWYx3GexcvwfrwI
+LiqJUdSzSU5l9H5otVGk3eUwt90tNpDMAPYAYhGi8uFjzep5FtwG+yRPwMRwcP6s
+UoQy8X8Db9BF7QTNF1gOKzK6K7qPDJ9ga05RymwvFldjjwMNX/palb6ENyIgoPOV
+jyYA3/gvQOGzj6jjEaxjoEKLgt+bEip32EbvoPw2heT8pD3wT3uS+jN2eBk3j8d1
+oyXP8pl+jZ1KPMZC40YXPNY4tYTAPA==
+=m3j4
+-----END PGP SIGNATURE-----
+
+--Sig_/XTGP/.Nns9J1GX9AqrF6nJ_--
