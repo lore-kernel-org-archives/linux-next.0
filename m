@@ -2,122 +2,123 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF131C71156
-	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 17:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DFFC83011
+	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 17:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B33D2074A
-	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 17:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C0C42074A
+	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 17:41:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYO+8RMd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387573AbgK3RbZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 30 Nov 2020 12:31:25 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:34036 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387570AbgK3RbZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2020 12:31:25 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kjn0a-004dt6-HG; Mon, 30 Nov 2020 10:30:40 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kjn0U-001x1h-Rk; Mon, 30 Nov 2020 10:30:40 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S2387728AbgK3Rkt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 30 Nov 2020 12:40:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387585AbgK3Rkr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 30 Nov 2020 12:40:47 -0500
+Received: from localhost (129.sub-72-107-112.myvzw.com [72.107.112.129])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F37720789;
+        Mon, 30 Nov 2020 17:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606758006;
+        bh=Po0Vni3vuUdizhdl3Kfio3Vs8WN0WIvGW+tvezPdIWM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=VYO+8RMd1QSy/WXiWvosT497TGV+uAL9sNSFnR/1XRVx9xodVjlHd25Fm8lYoZrZz
+         ruJcQFINYTk8LOaj1lXFNHznM7c5lSFXJYU6Y4f5M0Thtc4MY4b/HpxZUIoLbUaWcn
+         /oXffkOiWW50cc+Xycx9i4+0K+AHoT19YuiShj7U=
+Date:   Mon, 30 Nov 2020 11:40:04 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <20201127200457.1ffb6aaf@canb.auug.org.au>
-        <155a20fd-09c4-df35-9cc6-8526a89c2933@infradead.org>
-        <20201128084414.3daa87d2@canb.auug.org.au>
-        <87pn3unbtv.fsf@x220.int.ebiederm.org>
-Date:   Mon, 30 Nov 2020 11:30:05 -0600
-In-Reply-To: <87pn3unbtv.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Mon, 30 Nov 2020 08:44:44 -0600")
-Message-ID: <87blfen46a.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the pci tree
+Message-ID: <20201130174004.GA1090686@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kjn0U-001x1h-Rk;;;mid=<87blfen46a.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18RelCMmMbZtHThwNkcw42rNjvm/YjAkTk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH] signal/parics: Remove parsic specific definition of __ARCH_UAPI_SA_FLAGS
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201130102120.GB6586@zn.tnic>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On Mon, Nov 30, 2020 at 11:21:20AM +0100, Borislav Petkov wrote:
+> On Mon, Nov 30, 2020 at 03:03:36PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the tip tree got a conflict in:
+> > 
+> >   arch/x86/pci/i386.c
+> > 
+> > between commit:
+> > 
+> >   ace091d17272 ("x86/PCI: Fix kernel-doc markup")
+> > 
+> > from the pci tree and commit:
+> > 
+> >   638920a66a17 ("x86/PCI: Make a kernel-doc comment a normal one")
+> > 
+> > from the tip tree.
+> 
+> Bjorn, I fixed up the comment too, while picking up, see below. But I
+> don't care all that much which one to take so I leave it up to you to
+> decide. :-)
 
-Randy Dunlap wrote:
-> On 11/27/20 10:43 AM, Randy Dunlap wrote:
->
-> > on parisc, _SA_SIGGFAULT is undefined and causing build errors.
-> >
-> > commit 23acdc76f1798b090bb9dcc90671cd29d929834e
-> > Author: Peter Collingbourne <pcc@google.com>
-> > Date:   Thu Nov 12 18:53:34 2020 -0800
-> >
-> >     signal: clear non-uapi flag bits when passing/returning sa_flags
-> >
-> >
-> >
-> > _SA_SIGGFAULT is not used or defined anywhere else in the
-> > kernel source tree.
->
->
-> Here is the build error (although it should be obvious):
->
-> ../kernel/signal.c: In function 'do_sigaction':
-> ../arch/parisc/include/asm/signal.h:24:30: error: '_SA_SIGGFAULT' undeclared (first use in this function)
->    24 | #define __ARCH_UAPI_SA_FLAGS _SA_SIGGFAULT
->       |                              ^~~~~~~~~~~~~
+I dropped ace091d17272 ("x86/PCI: Fix kernel-doc markup") from my
+tree so we keep your comment improvements.  Thanks!
 
-Stephen Rothwell pointed out:
-> _SA_SIGGFAULT was removed by commit
->
->   41f5a81c07cd ("parisc: Drop HP-UX specific fcntl and signal flags")
->
-> which was added to Linus' tree in v5.10-rc1.
-
-Solve this by removing the the parisc specific definition of
-__ARCH_UAPI_SA_FLAGS that was just added.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: 23acdc76f179 ("signal: clear non-uapi flag bits when passing/returning sa_flags")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- arch/parisc/include/asm/signal.h | 2 --
- 1 file changed, 2 deletions(-)
-
-I am applying this trivial fix to my signal-for-v5.11 branch.  Catalin
-you shouldn't need to do anything unless someone tests your tree on
-parisc.
-
-diff --git a/arch/parisc/include/asm/signal.h b/arch/parisc/include/asm/signal.h
-index 30dd1e43ef88..715c96ba2ec8 100644
---- a/arch/parisc/include/asm/signal.h
-+++ b/arch/parisc/include/asm/signal.h
-@@ -21,8 +21,6 @@ typedef struct {
- 	unsigned long sig[_NSIG_WORDS];
- } sigset_t;
- 
--#define __ARCH_UAPI_SA_FLAGS	_SA_SIGGFAULT
--
- #include <asm/sigcontext.h>
- 
- #endif /* !__ASSEMBLY */
--- 
-2.20.1
-
+> commit 638920a66a17c8e1f4415cbab0d49dc4a344c2a7
+> Author: Alex Shi <alex.shi@linux.alibaba.com>
+> Date:   Fri Nov 13 16:58:14 2020 +0800
+> 
+>     x86/PCI: Make a kernel-doc comment a normal one
+>     
+>     The comment is using kernel-doc markup but that comment isn't a
+>     kernel-doc comment so make it a normal one to avoid:
+>     
+>       arch/x86/pci/i386.c:373: warning: Function parameter or member \
+>               'pcibios_assign_resources' not described in 'fs_initcall'
+>     
+>      [ bp: Massage and fixup comment while at it. ]
+>     
+>     Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+>     Signed-off-by: Borislav Petkov <bp@suse.de>
+>     Link: https://lkml.kernel.org/r/1605257895-5536-5-git-send-email-alex.shi@linux.alibaba.com
+> 
+> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
+> index fa855bbaebaf..f2f4a5d50b27 100644
+> --- a/arch/x86/pci/i386.c
+> +++ b/arch/x86/pci/i386.c
+> @@ -366,9 +366,9 @@ static int __init pcibios_assign_resources(void)
+>  	return 0;
+>  }
+>  
+> -/**
+> - * called in fs_initcall (one below subsys_initcall),
+> - * give a chance for motherboard reserve resources
+> +/*
+> + * This is an fs_initcall (one below subsys_initcall) in order to reserve
+> + * resources properly.
+>   */
+>  fs_initcall(pcibios_assign_resources);
+>  
+> 
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
