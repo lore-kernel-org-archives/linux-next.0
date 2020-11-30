@@ -2,151 +2,122 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2D1C63777
-	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 16:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF131C71156
+	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 17:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E47C8207FF
-	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 16:45:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RWTVM2Rm"
+	by mail.kernel.org (Postfix) with ESMTP id 9B33D2074A
+	for <linux-next@archiver.kernel.org>; Mon, 30 Nov 2020 17:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbgK3Qpr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 30 Nov 2020 11:45:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728443AbgK3Qpr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2020 11:45:47 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B444BC0613CF;
-        Mon, 30 Nov 2020 08:45:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=GFqvAPo7D6KlbvsNo07Q/7Bk8z8TPhjSBF/80g1vgTw=; b=RWTVM2RmyOuc4swcxfe6XdEK+7
-        PeB1sSKEtNQDiVvmGbx4UaIwdsvNVW+5gddcDS8zbKoJ0j26o9Jp5TyhowIZZggyEYyhtk608ydpS
-        dOIp6kEWgsh//BDG/wtc1Vh++wfYbdtV53cib9BktXLWkcQanRgyRREdn9pB6huDAFR0X2lm9d849
-        xqIEmA6cSaVyFtbxqpNhbLEHAJeJcLOD14ysE1Fm22tDHG3Bcyl9LoaYUmD7qow+1OJT9rs49kU0H
-        pPfpoUfVtEDpfSnsgx3Mh1SbX5RYdCTtxGa492ZDoa3jJb9zKyK/dzCH4DyG6ErrUWzYLSGrpzWbx
-        7tKxaQeg==;
-Received: from [2601:1c0:6280:3f0::cc1f]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kjmIN-0001K1-Bo; Mon, 30 Nov 2020 16:45:00 +0000
-Subject: Re: linux-next: Tree for Nov 27 (drivers/idle/intel_idle.c)
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S2387573AbgK3RbZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 30 Nov 2020 12:31:25 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:34036 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387570AbgK3RbZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2020 12:31:25 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kjn0a-004dt6-HG; Mon, 30 Nov 2020 10:30:40 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kjn0U-001x1h-Rk; Mon, 30 Nov 2020 10:30:40 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
+        Peter Collingbourne <pcc@google.com>,
+        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>
 References: <20201127200457.1ffb6aaf@canb.auug.org.au>
- <0a6cc4c9-c48d-dbc4-6044-3b22cd133b76@infradead.org>
- <20201128083617.50021fff@canb.auug.org.au>
- <20201130115402.GO3040@hirez.programming.kicks-ass.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7170bbdb-1603-8aa6-144a-91ad99e6d579@infradead.org>
-Date:   Mon, 30 Nov 2020 08:44:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        <155a20fd-09c4-df35-9cc6-8526a89c2933@infradead.org>
+        <20201128084414.3daa87d2@canb.auug.org.au>
+        <87pn3unbtv.fsf@x220.int.ebiederm.org>
+Date:   Mon, 30 Nov 2020 11:30:05 -0600
+In-Reply-To: <87pn3unbtv.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Mon, 30 Nov 2020 08:44:44 -0600")
+Message-ID: <87blfen46a.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20201130115402.GO3040@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1kjn0U-001x1h-Rk;;;mid=<87blfen46a.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18RelCMmMbZtHThwNkcw42rNjvm/YjAkTk=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH] signal/parics: Remove parsic specific definition of __ARCH_UAPI_SA_FLAGS
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 11/30/20 3:54 AM, Peter Zijlstra wrote:
-> On Sat, Nov 28, 2020 at 08:36:17AM +1100, Stephen Rothwell wrote:
->> Hi Randy,
->>
->> On Fri, 27 Nov 2020 07:57:32 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
->>>
->>> On 11/27/20 1:04 AM, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20201126:
->>>>   
->>>
->>> (This looks strange to me.)
->>>
->>>
->>> on i386 or x86_64:
->>>
->>> # CONFIG_ACPI is not set
->>>
->>> ../drivers/idle/intel_idle.c: In function ‘intel_idle_init_cstates_icpu’:
->>> ../drivers/idle/intel_idle.c:1510:7: error: implicit declaration of function ‘intel_idle_state_needs_timer_stop’; did you mean ‘intel_idle_init_cstates_icpu’? [-Werror=implicit-function-declaration]
->>>    if (intel_idle_state_needs_timer_stop(&drv->states[drv->state_count]))
->>>        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>
->> intel_idle_state_needs_timer_stop() is only defined when
->> CONFIG_ACPI_PROCESSOR_CSTATE is set, but is used once where that is not
->> necessarily set.  I assume CONFIG_ACPI_PROCESSOR_CSTATE is not set in
->> your config?
-> 
-> Bah... :/
 
-Yep, thanks.
+Randy Dunlap wrote:
+> On 11/27/20 10:43 AM, Randy Dunlap wrote:
+>
+> > on parisc, _SA_SIGGFAULT is undefined and causing build errors.
+> >
+> > commit 23acdc76f1798b090bb9dcc90671cd29d929834e
+> > Author: Peter Collingbourne <pcc@google.com>
+> > Date:   Thu Nov 12 18:53:34 2020 -0800
+> >
+> >     signal: clear non-uapi flag bits when passing/returning sa_flags
+> >
+> >
+> >
+> > _SA_SIGGFAULT is not used or defined anywhere else in the
+> > kernel source tree.
+>
+>
+> Here is the build error (although it should be obvious):
+>
+> ../kernel/signal.c: In function 'do_sigaction':
+> ../arch/parisc/include/asm/signal.h:24:30: error: '_SA_SIGGFAULT' undeclared (first use in this function)
+>    24 | #define __ARCH_UAPI_SA_FLAGS _SA_SIGGFAULT
+>       |                              ^~~~~~~~~~~~~
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Stephen Rothwell pointed out:
+> _SA_SIGGFAULT was removed by commit
+>
+>   41f5a81c07cd ("parisc: Drop HP-UX specific fcntl and signal flags")
+>
+> which was added to Linus' tree in v5.10-rc1.
 
+Solve this by removing the the parisc specific definition of
+__ARCH_UAPI_SA_FLAGS that was just added.
 
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 7ee7ffe22ae3..d79335506ecd 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -1140,6 +1140,20 @@ static bool __init intel_idle_max_cstate_reached(int cstate)
->  	return false;
->  }
->  
-> +static bool __init intel_idle_state_needs_timer_stop(struct cpuidle_state *state)
-> +{
-> +	unsigned long eax = flg2MWAIT(state->flags);
-> +
-> +	if (boot_cpu_has(X86_FEATURE_ARAT))
-> +		return false;
-> +
-> +	/*
-> +	 * Switch over to one-shot tick broadcast if the target C-state
-> +	 * is deeper than C1.
-> +	 */
-> +	return !!((eax >> MWAIT_SUBSTATE_SIZE) & MWAIT_CSTATE_MASK);
-> +}
-> +
->  #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
->  #include <acpi/processor.h>
->  
-> @@ -1210,20 +1224,6 @@ static bool __init intel_idle_acpi_cst_extract(void)
->  	return false;
->  }
->  
-> -static bool __init intel_idle_state_needs_timer_stop(struct cpuidle_state *state)
-> -{
-> -	unsigned long eax = flg2MWAIT(state->flags);
-> -
-> -	if (boot_cpu_has(X86_FEATURE_ARAT))
-> -		return false;
-> -
-> -	/*
-> -	 * Switch over to one-shot tick broadcast if the target C-state
-> -	 * is deeper than C1.
-> -	 */
-> -	return !!((eax >> MWAIT_SUBSTATE_SIZE) & MWAIT_CSTATE_MASK);
-> -}
-> -
->  static void __init intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
->  {
->  	int cstate, limit = min_t(int, CPUIDLE_STATE_MAX, acpi_state_table.count);
-> 
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: 23acdc76f179 ("signal: clear non-uapi flag bits when passing/returning sa_flags")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/parisc/include/asm/signal.h | 2 --
+ 1 file changed, 2 deletions(-)
 
+I am applying this trivial fix to my signal-for-v5.11 branch.  Catalin
+you shouldn't need to do anything unless someone tests your tree on
+parisc.
 
+diff --git a/arch/parisc/include/asm/signal.h b/arch/parisc/include/asm/signal.h
+index 30dd1e43ef88..715c96ba2ec8 100644
+--- a/arch/parisc/include/asm/signal.h
++++ b/arch/parisc/include/asm/signal.h
+@@ -21,8 +21,6 @@ typedef struct {
+ 	unsigned long sig[_NSIG_WORDS];
+ } sigset_t;
+ 
+-#define __ARCH_UAPI_SA_FLAGS	_SA_SIGGFAULT
+-
+ #include <asm/sigcontext.h>
+ 
+ #endif /* !__ASSEMBLY */
 -- 
-~Randy
+2.20.1
+
