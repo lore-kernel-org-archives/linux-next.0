@@ -2,113 +2,99 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C0AC64E7B
-	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 830AEC64E7B
+	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3A5B207FF
-	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BED7207FF
+	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t2gZR19p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7y35IPy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgLAKQ5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 1 Dec 2020 05:16:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34350 "EHLO
+        id S1728222AbgLAKRA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 1 Dec 2020 05:17:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726688AbgLAKQ4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Dec 2020 05:16:56 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A28AC0613CF;
-        Tue,  1 Dec 2020 02:16:16 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id h21so3853343wmb.2;
-        Tue, 01 Dec 2020 02:16:16 -0800 (PST)
+        with ESMTP id S1729729AbgLAKQ7 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Dec 2020 05:16:59 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C159C0613D4;
+        Tue,  1 Dec 2020 02:16:19 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id e7so1771755wrv.6;
+        Tue, 01 Dec 2020 02:16:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oWpOYPqDXcaHQ+GA9gFX+bGGwx0YRkUwwB7v6yS/9a8=;
-        b=t2gZR19pDQassvzDElYJl9mBW/3Pf/oqaRpETPyAekGnxqeplxh9cIpxxqDS6CDs1W
-         KnfcIbnPEq8Y0PnoINDfGGAKrPTXZ4jsIAYp2oQrcTjt4vmIzGPg3oMM6fU7FhXqRccF
-         NmcTOV/bm2Ibg2npioyKB2hXctC5uFpGya6uzF3e0wBn04aiB1TqNv5Ot15/rY4DaoJL
-         bsOwTKFG3o5m29woTHrVEIx303Rh12YkMSlqmqS1zjpBMaCqSWHI7KSytuyEIVYqATpO
-         PCbCgOr+xMXp74RUD+Pqbkys+vk3RNws4RgM68SRb6Eli2QgTYVnAykrHD0V68RZL4A9
-         Z3/A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Z6ol6e7klFedDuDmZExZMrwFT1Yc7vGtnMGzME94CxM=;
+        b=I7y35IPyBJbVJ/Aeb2S52R5I2DVvSFEv672cs2gl8mAMYUMSdb0KzDez4etdpFNObM
+         IB2Nah3ym59ESogCor6cyXpBmWywziPakSOJ/Z/lSjvJznxnR+iQCeJRJoa+cITNWGl5
+         Lz1lQylsPuSknuYAqlfcNs/XwNfmcc6rno1tcZtv1vaPfk6VBvsx9ITxbYpZq5LJJDNT
+         9hlgd5+KOJxSqjaSZhQPsWhtoWgQrHjkCrugy7udlNNQcOqXtZdA5SYEXVrcvxDL9Aji
+         3poHv8IVueJ9vAk/uo1URoTvgcqDFltGGl/ocP+ecj76vpbGx+UCsMES6B4ebIZok2yu
+         wScg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oWpOYPqDXcaHQ+GA9gFX+bGGwx0YRkUwwB7v6yS/9a8=;
-        b=drKui3OWibvusWahrICpxQo9O+EyLAWru+WY8f1FJ0+iZgOmJMclI1lH9NlOLo9SRN
-         Aa3+f1LWS4+2ib1YQw1+agrG+vY8lvLo9KLUgwN4iG7ksm9hNGzxwfPMcliayybhgq6C
-         ygpVJogEshQzYM+2gmkW0c4txl7VYTA1hD8bR3CYY7gZFvJo3W1JNLPCNLe09xjrrUNI
-         2lKNU8c9Hrds57SlAIhrbd4WI8j/TqL1SPURhKroHxT0bKeXPdd4/iPM31mfG39EZc+8
-         Qms3XqCfXm3VFiD07W7/17o4ZFiZcpf/X4cs+YbXRlWu+5HwVj9HYfWzx391YRPoh6fC
-         9VLQ==
-X-Gm-Message-State: AOAM5324Rm3fX1oTg/ydtdRb6BS65/dyt6Fo/T95LV8RJK3ofHWHM4OY
-        araHq6fdN+5dRFXa8p16voo=
-X-Google-Smtp-Source: ABdhPJxN/l2E3yqoUeysVjeiMXi3GCK2DLgcwxhpoEf5+NH3k6WA+lfBZUqV8zWDZDP0zoyKkEfFkA==
-X-Received: by 2002:a1c:6746:: with SMTP id b67mr1994382wmc.8.1606817775272;
-        Tue, 01 Dec 2020 02:16:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Z6ol6e7klFedDuDmZExZMrwFT1Yc7vGtnMGzME94CxM=;
+        b=ONsXHGQozCvp0fPd+Oz0VxjR6s6NX5ROnTm8Sl4nkv6F8CfjB4+9Z4eFQhsJxSyzZD
+         4UEvYSUKRnLwbSrnZUrxdYu4VMZV/Yu2IR6Am6fMgFDxPSna8kiKq8WOtT2SuYgc0UrE
+         1XopPleryj870vmkJPdkt0IgbdQg4tkoloOJDegankOJI1OwUbij25NauTr79nMAxpwq
+         5ihQBHB9ehy3Aqrsuglo2WdnKNkdCBGNXGswhi2lP+6KfUiH2JxaN6x2EBhmndM0WjQX
+         J0eDXEp2IuHjSdmXjndJYabIv1JbWO/jYj9FpgcfQNOKC1gCnDj4vwslApDZ7Oebmubs
+         Vqug==
+X-Gm-Message-State: AOAM531pmZT7FdkjCcEApfxbJOOTy3d4fajUIhsIZGUMHoBNjrsYdCG2
+        Nez2SwiN9fY0dbjALGMp+bc=
+X-Google-Smtp-Source: ABdhPJw3oqpUIUXCxNPGkicoJFlnt2ITESDWscm+NfUxSOZR4jOC1qnvOGSQ/sTTjIqZWELaCf3wlQ==
+X-Received: by 2002:adf:fe48:: with SMTP id m8mr2863213wrs.89.1606817778278;
+        Tue, 01 Dec 2020 02:16:18 -0800 (PST)
 Received: from localhost.localdomain (188.red-81-44-87.dynamicip.rima-tde.net. [81.44.87.188])
-        by smtp.gmail.com with ESMTPSA id h2sm2253347wme.45.2020.12.01.02.16.13
+        by smtp.gmail.com with ESMTPSA id h2sm2253347wme.45.2020.12.01.02.16.17
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Dec 2020 02:16:14 -0800 (PST)
+        Tue, 01 Dec 2020 02:16:17 -0800 (PST)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     vkoul@kernel.org
 Cc:     kishon@ti.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org,
         linux-next@vger.kernel.org
-Subject: [PATCH 0/3] phy: ralink: phy-mt7621-pci: some fixes for COMPILE_TEST
-Date:   Tue,  1 Dec 2020 11:16:09 +0100
-Message-Id: <20201201101612.28458-1-sergio.paracuellos@gmail.com>
+Subject: [PATCH 3/3] phy: ralink: phy-mt7621-pci: set correct name in MODULE_DEVICE_TABLE macro
+Date:   Tue,  1 Dec 2020 11:16:12 +0100
+Message-Id: <20201201101612.28458-4-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201201101612.28458-1-sergio.paracuellos@gmail.com>
+References: <20201201101612.28458-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Vinod,
+Correct name passed into 'MODULE_DEVICE_TABLE' which was wrong and
+was showing a warning when the driver is enabled for 'COMPILE_TEST'.
 
-After merging the phy-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/phy/ralink/phy-mt7621-pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/phy/ralink/phy-mt7621-pci.c:17:10: fatal error: mt7621.h: No such file or directory
-17 | #include <mt7621.h>
- |          ^~~~~~~~~~
-
-This driver has two includes which are in
-"arch/mips/include/asm/mach-ralink" and are directly included in the
-driver:
-* mt7621.h
-* ralink_regs.h
-
-This is because this path is directly included in 'arch/mips/ralink/Platform'
-for "ralink".
-
-Adding the include search path to the phy ralink directory fix the problem.
-
-Making 'allmodconfig' in x86_64 also showed two warnings for this driver
-because of pointer size and not valid name for MODULE_DEVICE_TABLE ids.
-
-This two have been also fixed and included in this series.
-
-Best regards,
-    Sergio Paracuellos
-
-Sergio Paracuellos (3):
-  phy: ralink: phy-mt7621-pci: add include search path in Makefile
-  phy: ralink: phy-mt7621-pci: avoid warning if COMPILE_TEST is enabled
-  phy: ralink: phy-mt7621-pci: set correct name in MODULE_DEVICE_TABLE
-    macro
-
- drivers/phy/ralink/Makefile         | 3 +++
- drivers/phy/ralink/phy-mt7621-pci.c | 6 +++---
- 2 files changed, 6 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/phy/ralink/phy-mt7621-pci.c b/drivers/phy/ralink/phy-mt7621-pci.c
+index befa282e2447..072f848ec0cf 100644
+--- a/drivers/phy/ralink/phy-mt7621-pci.c
++++ b/drivers/phy/ralink/phy-mt7621-pci.c
+@@ -335,7 +335,7 @@ static const struct of_device_id mt7621_pci_phy_ids[] = {
+ 	{ .compatible = "mediatek,mt7621-pci-phy" },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, mt7621_pci_ids);
++MODULE_DEVICE_TABLE(of, mt7621_pci_phy_ids);
+ 
+ static struct platform_driver mt7621_pci_phy_driver = {
+ 	.probe = mt7621_pci_phy_probe,
 -- 
 2.25.1
 
