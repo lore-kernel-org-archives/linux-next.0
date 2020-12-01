@@ -2,104 +2,170 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA27C83012
-	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8503C64E8A
+	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C853207FF
-	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5EE1207FF
+	for <linux-next@archiver.kernel.org>; Tue,  1 Dec 2020 10:24:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBi9240s"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ByvIkxMG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbgLAKQ7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 1 Dec 2020 05:16:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34358 "EHLO
+        id S1726688AbgLAKYl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 1 Dec 2020 05:24:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbgLAKQ6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Dec 2020 05:16:58 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7161EC0613D3;
-        Tue,  1 Dec 2020 02:16:18 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id d3so1965772wmb.4;
-        Tue, 01 Dec 2020 02:16:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=R4ckBwxZKMeIrRYpqbJom2hXs/293kRyY1Ug4C+A7wo=;
-        b=LBi9240sJt51av5HQ9+PaWrXSxc48EJYc5b7XIZOE2Ow+F85rfnhOVfJgRFWnOLW+e
-         k2AEoclIo8hnXaTd2YsGQV/RGdS9ZCizv2GvvkmNpgAGob9ycWiSaTMc65xm6OEz7M6+
-         0N2Mbi+MGkxlsxxtWY5p/8q5ZpYF4pn+gg/K9qEYMYeU+0U56RMtlUwH1+RSo6S5rq54
-         lopULDdyG0dLrbaTJzVlvUGMEhXBvspfZhEdbLvC9f3RPjTku/zXjhqFBbl3OMvIJD95
-         s8xqQV2Kk/zrqiCfImBszPLuoHfc9YRogrNv9IfnuGCNBjUtXEGIhjBaypjUU6bVeNUa
-         db6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=R4ckBwxZKMeIrRYpqbJom2hXs/293kRyY1Ug4C+A7wo=;
-        b=SGqRJhvtPGndTWa5R4lyojk2yCjwCPbUE67Ers9c9CfzO3Ot1h3qcpftdzK3uYOv/1
-         C7r1XFDD50g+G9JdWhBTOQEYBW90oAJ8h3pKXeT0QykXm5TcqplhILA38RHuZ1SQMMrD
-         dcnSAg3zpyXrpixBEbtKLEufmedsj0JthO+KoYSl9AxiFKrmQy+HWX4807Wx5ZlHXJJ1
-         QW6zppj3WRI2aAaOWLJDUiIw04+KLelUinsPEAxQys6LWqwnxq0xp0t9n/Cl3nubcTVW
-         Q7j8RswaSvxmrBGHcz2oeikQBVNjQhriNhgysQfadIuwRnpjAgZs+s0MyCIq+6zWxGmq
-         fSwg==
-X-Gm-Message-State: AOAM530/F0ugjc/czPOi4t+mYzkY80pB3Mxb9Jc98oXCY5Fn8+hkr4ai
-        XpGluDGGjpdfPa8McAG+BK8=
-X-Google-Smtp-Source: ABdhPJyNlJcffcUfhagGACh6tzgtaDdjShZ22jqzyPFBlXs8kfUVRhAawHCAYW38dexdEoPXEFFujw==
-X-Received: by 2002:a1c:ddc4:: with SMTP id u187mr1937935wmg.55.1606817777215;
-        Tue, 01 Dec 2020 02:16:17 -0800 (PST)
-Received: from localhost.localdomain (188.red-81-44-87.dynamicip.rima-tde.net. [81.44.87.188])
-        by smtp.gmail.com with ESMTPSA id h2sm2253347wme.45.2020.12.01.02.16.16
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Dec 2020 02:16:16 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     vkoul@kernel.org
-Cc:     kishon@ti.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org
-Subject: [PATCH 2/3] phy: ralink: phy-mt7621-pci: avoid warning if COMPILE_TEST is enabled
-Date:   Tue,  1 Dec 2020 11:16:11 +0100
-Message-Id: <20201201101612.28458-3-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201201101612.28458-1-sergio.paracuellos@gmail.com>
-References: <20201201101612.28458-1-sergio.paracuellos@gmail.com>
+        with ESMTP id S1726803AbgLAKYk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Dec 2020 05:24:40 -0500
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D48E1C0613CF;
+        Tue,  1 Dec 2020 02:23:59 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CldVg3bTCz9s1l;
+        Tue,  1 Dec 2020 21:23:55 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1606818235;
+        bh=Jzpei87lhgOAYiHlyFlOES389KM0y/qUuZ6tDKJzaNU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ByvIkxMGtJEQt4L/YQB7pgSISb11LwXH5xm0l57PSFHJDeR9evSksfozuMY7MbA+Z
+         dQSWMPNNAp+hZ8l4+eP3UoybkRyTYAL4ZUWVASUqMpLSKFbUMX9jK4jpuYze2/M4yl
+         eYelP1wTm30AcnYbyTgWxDFme8ytFGKJy+iocAi9q7CEY4zmOVgtGA1FAXTfgcoXvW
+         wl9cQQnsaOQikqurarEQaLi3kWUDJ4/9aj0YI0idXN5fb1GrFGbo4SOiXIzqnJuw0y
+         QJW08o+exMNSstD4razXtGJIGh84Hy6U7fbEbxftIyAkN2z1JFPYSz3vtlJQDFibh7
+         QbQhlp1cNz4SQ==
+Date:   Tue, 1 Dec 2020 21:23:54 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Peter Chen <peter.chen@nxp.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Greg KH <greg@kroah.com>
+Subject: linux-next: Signed-off-by missing for commit in the
+ usb-chipidea-next tree
+Message-ID: <20201201212354.3e9f09b3@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/BZxHp_ilKP/BEhfkLTO.P7=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-This driver can be enabled for COMPILE_TEST. Casting to unsigned
-int for address shows a compilation warning because of size of the
-pointer in x86_64 architecture using 'make allmodconfig' target.
-Avoid the warning in any architecture casting to unsigned long and
-properly setting format also for 'dev_info' macro.
+--Sig_/BZxHp_ilKP/BEhfkLTO.P7=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/phy/ralink/phy-mt7621-pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/phy/ralink/phy-mt7621-pci.c b/drivers/phy/ralink/phy-mt7621-pci.c
-index db79088d5362..befa282e2447 100644
---- a/drivers/phy/ralink/phy-mt7621-pci.c
-+++ b/drivers/phy/ralink/phy-mt7621-pci.c
-@@ -272,8 +272,8 @@ static struct phy *mt7621_pcie_phy_of_xlate(struct device *dev,
- 
- 	mt7621_phy->has_dual_port = args->args[0];
- 
--	dev_info(dev, "PHY for 0x%08x (dual port = %d)\n",
--		 (unsigned int)mt7621_phy->port_base, mt7621_phy->has_dual_port);
-+	dev_info(dev, "PHY for 0x%08lx (dual port = %d)\n",
-+		 (unsigned long)mt7621_phy->port_base, mt7621_phy->has_dual_port);
- 
- 	return mt7621_phy->phy;
- }
--- 
-2.25.1
+Commits
 
+  b140b354d127 ("usb: typec: Add type sysfs attribute file for partners")
+  a67ad71c6468 ("usb: common: ulpi: Constify static attribute_group struct")
+  61336e5db8f9 ("usb: typec: Constify static attribute_group structs")
+  f18890ead25d ("USB: core: Constify static attribute_group structs")
+  137bd0e04f46 ("usb: typec: tcpm: Stay in SNK_TRY_WAIT_DEBOUNCE_CHECK_VBUS=
+ till Rp is seen")
+  2413711487c3 ("usb: typec: tcpm: Disregard vbus off while in PR_SWAP_SNK_=
+SRC_SOURCE_ON")
+  38707ad78e16 ("usb: typec: Expose Product Type VDOs via sysfs")
+  581140741224 ("usb: typec: Consolidate sysfs ABI documentation")
+  5b63ba7f3f62 ("usb: pd: DFP product types")
+  b5325e0017d7 ("usb: isp1301-omap: Convert to use GPIO descriptors")
+  9e7290cb419d ("usb: Fix fall-through warnings for Clang")
+  cf8314bb9f26 ("usb: typec: Fix num_altmodes kernel-doc error")
+  442fa9c05cab ("usb: typec: Add plug num_altmodes sysfs attr")
+  1193103c1076 ("usb: typec: tcpci_maxim: Fix the compatible string")
+  13c53c00e81f ("dt-bindings: usb: Maxim type-c controller device tree bind=
+ing document")
+  f5a98cc36225 ("usb: typec: tcpci_maxim: Fix uninitialized return variable=
+")
+  203fd830a193 ("usb: typec: tcpci_maxim: Enable auto discharge disconnect")
+  ebcf6c255080 ("usb: typec: tcpci: Implement Auto discharge disconnect cal=
+lbacks")
+  428804eed4cd ("usb: typec: tcpm: Implement enabling Auto Discharge discon=
+nect support")
+  cece16630a9c ("usb: typec: tcpci_maxim: Fix vbus stuck on upon diconnecti=
+ng sink")
+  294a8e667ad9 ("usb: typec: tcpci: frs sourcing vbus callback")
+  1c109ebc0134 ("usb: typec: tcpm: frs sourcing vbus callback")
+  85c16dc068ed ("usb: typec: tcpm: Refactor logic for new-source-frs-typec-=
+current")
+  66d004aff708 ("usb: typec: Add number of altmodes partner attr")
+  259fcae90f7e ("usb: pd: Add captive Type C cable type")
+  1090d1e366ea ("USB: apple-mfi-fastcharge: Fix kfree after failed kzalloc")
+  44e0bf239206 ("usb/max3421: fix return error code in max3421_probe()")
+  ff5e0488d7fe ("usb: typec: Remove one bit support for the Thunderbolt rou=
+nded/non-rounded cable")
+  bb328b790edb ("usb: typec: intel_pmc_mux: Configure Thunderbolt cable gen=
+eration bits")
+  235920c3c80e ("platform/chrome: cros_ec_typec: Correct the Thunderbolt ro=
+unded/non-rounded cable support")
+  9d11b7220dff ("usb: typec: Correct the bit values for the Thunderbolt rou=
+nded/non-rounded cable support")
+  dd07e75a143a ("usb: hcd.h: Remove RUN_CONTEXT")
+  997d2edc58ed ("usb: host: ehci-mxc: Remove the driver")
+  1261e818b439 ("usb: host: imx21-hcd: Remove the driver")
+  170408f6e69a ("USB: storage: avoid use of uninitialized values in error p=
+ath")
+  2de743b08132 ("usb: fix a few cases of -Wfallthrough")
+  69f7421c6160 ("usb: misc: brcmstb-usb-pinmap: Make sync_all_pins static")
+  0f399ba93d3e ("usb: typec: ucsi: Work around PPM losing change informatio=
+n")
+  c1a6cb538802 ("usb: typec: ucsi: acpi: Always decode connector change inf=
+ormation")
+  dcb4ce0e4492 ("usb: misc: brcmstb-usb-pinmap: Fix an IS_ERR() vs NULL che=
+ck")
+  68d6f2bcbfd0 ("kcov, usb: only collect coverage from __usb_hcd_giveback_u=
+rb in softirq")
+  a7d43316e47c ("USB: host: isp1362: delete isp1362_show_regs()")
+  74bfec445b03 ("dt-bindings: connector: Add property to set initial curren=
+t cap for FRS")
+  922a8008fe76 ("usb: xhci: Remove in_interrupt() checks")
+  9b28508e2a86 ("usbip: Remove in_interrupt() check")
+  b3cbc18f80c6 ("usb: gadget: pxa27x_udc: Replace in_interrupt() usage in c=
+omments")
+  ff6f2b42ea3a ("usb: core: Replace in_interrupt() in comments")
+  b6d8ac49953b ("usb: gadget: udc: Remove in_interrupt()/in_irq() from comm=
+ents")
+  399452b463eb ("USB: host: ehci-pmcmsp: Cleanup usb_hcd_msp_remove()")
+  87d64cb083fa ("usb: hosts: Remove in_interrupt() from comments")
+  6a700d8af537 ("usb: atm: Replace in_interrupt() usage in comment")
+  9573d69a7657 ("USB: sisusbvga: Make console support depend on BROKEN")
+  3d30c6e0bb36 ("usb: Add driver to allow any GPIO to be used for 7211 USB =
+signals")
+  e7ed6422dd9c ("dt-bindings: Add support for Broadcom USB pin map driver")
+  7f08972e12f0 ("usb: host: xhci-mem: remove unneeded break")
+  8a508616ef64 ("usb: storage: freecom: remove unneeded break")
+  597335205373 ("usb: misc: iowarrior: remove unneeded break")
+  c902d58d8b24 ("usb: host: ehci-sched: add comment about find_tt() not ret=
+urning error")
+
+are missing a Signed-off-by from their committers.
+
+It look like you have rebased (part of) Greg's usb tree into your tree :-(
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BZxHp_ilKP/BEhfkLTO.P7=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/GGboACgkQAVBC80lX
+0Gyaxwf/dRllNSQUkxkv40hjafVIPngB/y7wbs1bWzPRdO6DH+i7xtxzwaAq5mOD
+ghqK/FCShmLBrfypuYZAp9lW0Tk7ZMKuT2TEABQ0FcEvKOVVG385EuHU1YIImaVx
+5Ur6WgE+pjM3/EHN4f3EW/+jfCDtK/Uh/jNe9jTH2WpCKjblvd7iFP2t5f6Ea/WB
+ASgXcX30tF8HgnDnCgEdYnyHH7MCB7PFRVZpTWGHHJ+RlxfugIqrJHWDfnXxhEaF
+iaK4J7VPXbK0c4f+fu3jii2eJcE0QlyjP3cWQWpmdO7c68XWXM+dJoyAJCwwfeSr
+kAx/tjUVVjHz3NRE1AtWayVBRRBdEQ==
+=RUP0
+-----END PGP SIGNATURE-----
+
+--Sig_/BZxHp_ilKP/BEhfkLTO.P7=--
