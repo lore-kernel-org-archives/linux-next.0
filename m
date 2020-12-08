@@ -2,128 +2,83 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3DFC433FE
-	for <linux-next@archiver.kernel.org>; Tue,  8 Dec 2020 17:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557CEC3526A
+	for <linux-next@archiver.kernel.org>; Tue,  8 Dec 2020 20:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7504223B31
-	for <linux-next@archiver.kernel.org>; Tue,  8 Dec 2020 17:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DCEC23A7B
+	for <linux-next@archiver.kernel.org>; Tue,  8 Dec 2020 20:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730851AbgLHR4I (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Dec 2020 12:56:08 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:56057 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1730740AbgLHR4H (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Dec 2020 12:56:07 -0500
-Received: (qmail 1305181 invoked by uid 1000); 8 Dec 2020 12:55:26 -0500
-Date:   Tue, 8 Dec 2020 12:55:26 -0500
-From:   Alan Stern <stern@rowland.harvard.edu>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Can Guo <cang@codeaurora.org>, Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Message-ID: <20201208175526.GH1298255@rowland.harvard.edu>
-References: <20201208202853.186ae136@canb.auug.org.au>
- <20201208203859.686f83eb@canb.auug.org.au>
+        id S1727920AbgLHUUH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Dec 2020 15:20:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbgLHUUG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Dec 2020 15:20:06 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A55DC06179C
+        for <linux-next@vger.kernel.org>; Tue,  8 Dec 2020 12:19:26 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id x22so3031139wmc.5
+        for <linux-next@vger.kernel.org>; Tue, 08 Dec 2020 12:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=BUN76cwequ+/VYM+TfjP/RsLBiO7tCwwH45rVFT1fYU=;
+        b=GB9bF4dH48O1e0DK+jTsZh4B37OqnHwxnW+X5RHvICetlFihb9vuCkPErxfa23tjrb
+         Pet2IVW6VLn5YeD89+e5zaijde05qQ4JWh83Pt17ENTtvzAzVkliryrrbMcqEsxJE6QH
+         B4TGkcNp24Rpfo2uezXlz/XhLgR1KdnggvwIY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=BUN76cwequ+/VYM+TfjP/RsLBiO7tCwwH45rVFT1fYU=;
+        b=CmEFziLl7qGfAApleLbhs8gM77bMLSwMDRXSDq4k4ND9ygUmNLWXlH5s3Z1Je3Rnyq
+         wKh2yXTmjX6F2nZp9ZrvOnP0MM8WvzVz6dZjBaSS3zMvlcJXwq6Is+0PDltl9HaCaf+I
+         yqtCdKIdY6c13HeoxOhtVGhnsmrr4iWaZKmCtPi/jCnOUiaLjO8sRDJqy4dIIp7783W2
+         3XNo7nrJ2ZI0wRi6/PyltK48r08ejv1oa1PNb8UUQV7itNkkeQbVQXhwUij19IjXXfrT
+         OblRK3jHhAn8bzKcCgo+/Rd4tWRV3PTXwdMkz3WivryVr6U1pzOvOIgv+KW5ZKNUHTDY
+         hK/g==
+X-Gm-Message-State: AOAM5302NySqguM8dq8k32nAMpwXYSnqsYexT/T3zK+ghUp+HyrUX2l6
+        1F3tGe7HVkveHLhxo8lUeNlszQ==
+X-Google-Smtp-Source: ABdhPJy9OAXN0byqbLPrYyv3q1GNjdlrT9zw1o/Vgfw3TCvskm6gQE5bhU9On/i/pWGL2X7bDHg0xw==
+X-Received: by 2002:a1c:6a0e:: with SMTP id f14mr5240281wmc.102.1607458765212;
+        Tue, 08 Dec 2020 12:19:25 -0800 (PST)
+Received: from ?IPv6:2a04:ee41:4:1318:ea45:a00:4d43:48fc? ([2a04:ee41:4:1318:ea45:a00:4d43:48fc])
+        by smtp.gmail.com with ESMTPSA id k18sm10472971wrd.45.2020.12.08.12.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Dec 2020 12:19:24 -0800 (PST)
+Message-ID: <a057c7ee47aa82acebd0438b786cd424ad67f6d8.camel@chromium.org>
+Subject: Re: [PATCH bpf-next v3] bpf: Only provide bpf_sock_from_file with
+ CONFIG_NET
+From:   Florent Revest <revest@chromium.org>
+To:     Randy Dunlap <rdunlap@infradead.org>, bpf@vger.kernel.org
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kpsingh@chromium.org, kafai@fb.com, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Date:   Tue, 08 Dec 2020 21:19:17 +0100
+In-Reply-To: <c8dd9a41-3e45-fb32-1074-e23ebe3cb2e5@infradead.org>
+References: <20201208173623.1136863-1-revest@chromium.org>
+         <c8dd9a41-3e45-fb32-1074-e23ebe3cb2e5@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201208203859.686f83eb@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 08:38:59PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Tue, 2020-12-08 at 12:06 -0800, Randy Dunlap wrote:
+> On 12/8/20 9:36 AM, Florent Revest wrote:
+> > Acked-by: Randy Dunlap <rdunlap@infradead.org>
 > 
-> On Tue, 8 Dec 2020 20:28:53 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi all,
-> > 
-> > After merging the scsi-mkp tree, today's linux-next build (sparc64
-> > defconfig) failed like this:
-> > 
-> > drivers/mtd/nand/raw/intel-nand-controller.c:17:10: fatal error: linux/mtd/nand_ecc.h: No such file or directory
-> >    17 | #include <linux/mtd/nand_ecc.h>
-> >       |          ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> Clearly, it did not fail like that :-)
-> 
-> block/blk-core.c: In function 'blk_queue_enter':
-> block/blk-core.c:443:18: error: 'struct request_queue' has no member named 'rpm_status'; did you mean 'stats'?
->     if ((pm && q->rpm_status != RPM_SUSPENDED) ||
->                   ^~~~~~~~~~
->                   stats
-> 
-> > Caused by commit
-> > 
-> >   81a395cdc176 ("scsi: block: Do not accept any requests while suspended")
-> > 
-> > # CONFIG_PM is not set
-> > 
-> > I have applied the following patch:
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Tue, 8 Dec 2020 20:12:33 +1100
-> > Subject: [PATCH] scsi: block: fix for "scsi: block: Do not accept any requests while suspended"
-> > 
-> > Fixes: 81a395cdc176 ("scsi: block: Do not accept any requests while suspended")
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  block/blk-core.c | 18 ++++++++++++++----
-> >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/block/blk-core.c b/block/blk-core.c
-> > index a71a5c9429d6..9c9aec1382be 100644
-> > --- a/block/blk-core.c
-> > +++ b/block/blk-core.c
-> > @@ -421,6 +421,18 @@ void blk_cleanup_queue(struct request_queue *q)
-> >  }
-> >  EXPORT_SYMBOL(blk_cleanup_queue);
-> >  
-> > +#ifdef CONFIG_PM
-> > +static bool rq_suspended(struct request_queue *q)
-> > +{
-> > +	return q->rpm_status == RPM_SUSPENDED;
-> > +}
-> > +#else
-> > +static bool rq_suspended(struct request_queue *q)
-> > +{
-> > +	return false;
-> > +}
-> > +#endif
-> > +
-> >  /**
-> >   * blk_queue_enter() - try to increase q->q_usage_counter
-> >   * @q: request queue pointer
-> > @@ -440,12 +452,10 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
-> >  			 * responsible for ensuring that that counter is
-> >  			 * globally visible before the queue is unfrozen.
-> >  			 */
-> > -			if ((pm && q->rpm_status != RPM_SUSPENDED) ||
-> > -			    !blk_queue_pm_only(q)) {
-> > +			if ((pm && !rq_suspended(q)) || !blk_queue_pm_only(q))
-> >  				success = true;
-> > -			} else {
-> > +			else
-> >  				percpu_ref_put(&q->q_usage_counter);
-> > -			}
-> >  		}
-> >  		rcu_read_unlock();
+> I would say that I didn't ack this version of the patch (hey,
+> it's 3x the size of the v1/v2 patches), but I have just
+> rebuilt with v3, so the Ack is OK.  :)
 
-Yes, that certainly is the proper fix.  It's all to easy to miss these 
-issues that depend on your kernel configuration.
+Oops! I'll be more careful in the future, thank you Randy. ;)
 
-Bart, can you fold it into a new version of the patch?
-
-Alan Stern
