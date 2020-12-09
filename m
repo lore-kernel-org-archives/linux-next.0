@@ -2,103 +2,91 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB84C1B0E3
-	for <linux-next@archiver.kernel.org>; Wed,  9 Dec 2020 22:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCED6C4167B
+	for <linux-next@archiver.kernel.org>; Wed,  9 Dec 2020 22:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBA1A23B51
-	for <linux-next@archiver.kernel.org>; Wed,  9 Dec 2020 22:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DF0023BAE
+	for <linux-next@archiver.kernel.org>; Wed,  9 Dec 2020 22:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388611AbgLIWhX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 9 Dec 2020 17:37:23 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:46993 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388697AbgLIWZY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 9 Dec 2020 17:25:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Crs6X0GD4z9sW9;
-        Thu, 10 Dec 2020 09:24:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1607552676;
-        bh=eD9NmmPLfPrzRjcCyxUuWyfspWk7eDWvfnBR1mLbYaE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AObb2KGsGKpSOxhuBKtuCXVomssgi2HG5rVoZS5kbFB2hXb3Yv5qxCbsDhgUXpWH0
-         qw3oHSg6iol+gmzTEx9chG4FyjWuvxJcnWR5v7soZigTBDfEmTqR7XqV7Jlpor13kl
-         Z3/3j0wSW0As2GBoNAL/zk1gLn3P0JHQarLObXp1uVb5WPUArfqXRBwJXHHq804n9Z
-         N6yxLYIVhoik9P08W0KgJNZ6Knu5u4kcu2DYcKmnlM0fDaxkKwvUYnDmTPINqwr7Rl
-         7SR8vgH8mJjswANQkRWGx6PruA4Ml+ek7UYFBU87Ol3mO/IG2dxerziJbSUZ31ziW3
-         MaB7N969VCuvA==
-Date:   Thu, 10 Dec 2020 09:24:35 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Luben Tuikov <luben.tuikov@amd.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [PATCH] drm/sched: Add missing structure comment
-Message-ID: <20201210092435.253b12aa@canb.auug.org.au>
-In-Reply-To: <20201209215807.75983-1-luben.tuikov@amd.com>
-References: <20201209210211.306f3c61@canb.auug.org.au>
-        <20201209215807.75983-1-luben.tuikov@amd.com>
+        id S2387942AbgLIWxe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 9 Dec 2020 17:53:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbgLIWx3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Dec 2020 17:53:29 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563D5C061793;
+        Wed,  9 Dec 2020 14:52:48 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id h19so5372836lfc.12;
+        Wed, 09 Dec 2020 14:52:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wb+z1pmC/hmsna9AIN3/6i/IjCD8CyLmac0/LOw4dcg=;
+        b=bFowHgS273+COXbKW051BdbZ0gqahkC2vybuERumDzraI+4ajGUFkzvTIYE3RzK8wX
+         FkutxuMC4a1isUGLRyKmLZJUtJQEJ1G4z4XQNwGg0iyvULBF5BN8xiP8ul8r4HOFX7Db
+         7DSTJ4xzviLgs88KL2OmNPx1pb3R0WUd4zzwnWrumffQPwE/cTCnaLJ6QLG1gmmKju5D
+         MP/pKmi0nRMECAf7UFx8/TU0V9H8x/ne52B1YVCAYnsUbkx5GNw8F5EqwyQFeEI0ZhT+
+         fx4dVd7cZjhVp5hdl9aWW37l0att/vcUOUcFZQwtv614WfkBZWLGFNSUmePKFUT/+gQq
+         ljMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wb+z1pmC/hmsna9AIN3/6i/IjCD8CyLmac0/LOw4dcg=;
+        b=alSnoZTZuGDFJWTM1Cl0s3125mzQqQF7cP/W99oH6CffU2zrKX5VMxgR1biAhA8Mo8
+         u+hNvqa6FQt3+pDSAh+Aler6Dk9HX9oEehUohQg1YalAOxxbSfd6ITz1O5P2OhgG5MnZ
+         Z5SKJyFeV3gAn2ZTEMRXFYVokchrsbKiQwWnsnE568DB4lNLk1hh/xTuPOqrEXzyW8lF
+         wZMwS9tGUskpwaq2Cj2JfpotjXfrCiYtvrU0qr47opDHukrUIugEp7q3Hz79Cb6FXt+u
+         V51zSTgiKHBzgao8SN7T08qIMkF13thytuE5ZG3Z25wfSduS+hm0SXxcc/ZGpAC5+ZaZ
+         V4Xg==
+X-Gm-Message-State: AOAM533gDQlmP6NrpqrAXkFkSb20vY2531NvlSOPi5uWucf1gJBnjJz+
+        QXaMmPWTFXlaW9WkD89tfBntrvD85O36UaDocJsSS9rqT2E=
+X-Google-Smtp-Source: ABdhPJxAgeR3o39VqIfQvd8eviGZwWcc9dxUIAkfnevbunlNdfgaa/0Tp1D7iMbn3X3+fKDpnvusZ95Roiuv9vioJzw=
+X-Received: by 2002:a19:f11e:: with SMTP id p30mr1590021lfh.395.1607554366825;
+ Wed, 09 Dec 2020 14:52:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iZBsxxsKc+8aoxExqRynEoN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20201210082309.73935d33@canb.auug.org.au>
+In-Reply-To: <20201210082309.73935d33@canb.auug.org.au>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 9 Dec 2020 16:52:35 -0600
+Message-ID: <CAH2r5mujrnAVMTmYdzH0EiGJ8YJVoA6w6ZpyDWqHWhDM_nwE_w@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the cifs tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/iZBsxxsKc+8aoxExqRynEoN
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Fixed - thx
 
-Hi Luben,
-
-On Wed,  9 Dec 2020 16:58:07 -0500 Luben Tuikov <luben.tuikov@amd.com> wrot=
-e:
+On Wed, Dec 9, 2020 at 3:23 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Add a missing structure comment for the recently
-> added @list member.
->=20
-> Signed-off-by: Luben Tuikov <luben.tuikov@amd.com>
->=20
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Hi all,
+>
+> Commits
+>
+>   d24e661920cb ("cifs: Enable sticky bit with cifsacl mount option.")
+>   4bcfb51f82f0 ("cifs: Fix unix perm bits to cifsacl conversion for "other" bits.")
+>
+> are missing a Signed-off-by from their committer.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-The commit message tags should all be together at the end of the commit
-message (probably with your SoB last).  Also:
 
-Fixes:  8935ff00e3b1 ("drm/scheduler: "node" --> "list"")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Thanks
---=20
-Cheers,
-Stephen Rothwell
+-- 
+Thanks,
 
---Sig_/iZBsxxsKc+8aoxExqRynEoN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/RTqMACgkQAVBC80lX
-0GzvvAf9GDpGt0VwRySC78qWiw0UCoft1kDhmL80tGvkQMWChGLzHDLPwEzlkTk6
-6HoF2UUmHSezITb+TQyStq/ckofIWorPHVw4ANagCy7OJ+CY2jVXtvZgjsQ55iRj
-WtrtznFi9NKLVB7wvsgEd7gLZlTpfvSAT0Fq+BtAV44Fyq32IninTiT9devkru3m
-Ubw1XV7sHWN/sKy03+yrbS3mBBLjFTxkkBTJ7IIvoTAEWmc6YBBYOl+e9uJ2eZW5
-2XMJPCtK8fGJWLiKpSLKJv9yZWJQSylmnlLS17/RRTw9L3TVOi5Z39xJBfIv1PSL
-BY6grzGQPvw+HBJshU3vFARfRLp3dw==
-=X8oC
------END PGP SIGNATURE-----
-
---Sig_/iZBsxxsKc+8aoxExqRynEoN--
+Steve
