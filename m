@@ -2,91 +2,108 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDDCC2BB40
-	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 19:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F35C4361B
+	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 19:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC91222509
-	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 19:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FC442250F
+	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 19:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501915AbgLNTnJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 14 Dec 2020 14:43:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439971AbgLNTnB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 14 Dec 2020 14:43:01 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61032C0613D3;
-        Mon, 14 Dec 2020 11:42:20 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id u18so33184702lfd.9;
-        Mon, 14 Dec 2020 11:42:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/t4z4WwZ36NZTAJ5eyPXe30LddGYenvCpdMm+/jg/bY=;
-        b=gOLbBg/EeBwd1LNpx+M7RmO7pYnBO/wrdsnLLt3FIFWQQCaWRGiNmo798ODVMN+ju/
-         BCKdxlGkURm+U65VzYk+PxltxNiTy1JtSRU1rUO+jgFM5uptlRPp2HgyafRukDrP0UFJ
-         UwKM5A0N5jc/w/cxis53KlRETa7z8F/ZsXYSBh+W/7DGkxpf0wSoTi9B/Ng7hd2tYbOn
-         Lc7wUBIVhRuQM/SQI3So7FBZ4QIQM9xcENQHfdAPP3s3Bkv4eersCN+yN9hVRDQxxopV
-         zFvEMewtOzgLTL3nAoI2UGRqm+psl8EHMVmUh7P+1QnZJmpR8JkEKvF5MsfikyoYSsNI
-         M2hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/t4z4WwZ36NZTAJ5eyPXe30LddGYenvCpdMm+/jg/bY=;
-        b=fZzUx+qKn4FNx3ZNGLKgpN6yKhCf9JrVaNjc3lze3jO4asEv4Dbe3n7gBPS7V3RY7M
-         CQXtetFRSxgBmzOv6M7y12t0uWnC60aaQL+GF4OQXJqUkmbLTyEvnUtcia0xDAhsrXgw
-         uuT2YJgpt07nZTmOxyM8d1K44N14CfYkYVhahFG36xLtbtuoc0R/xT+PNuMeqPtmT604
-         jdQ2RLXA3x/Q+aMZkm4CgNAjw1MRxvB+peudPS95xMA5jQjSJvXp7wWILV6ujeP4mzQo
-         ndgYtoZ58DTqkxUjS9LWxIICBf0xpstJbvpAZisLRRgS1rm9MNvyDmT+ds9Jo5GtZ8mf
-         q7ZQ==
-X-Gm-Message-State: AOAM530uloYreivA1mJsiaji+ord24ia0qqV2kATTzNsVMdD04EEsOut
-        dOZ166xB1BWHg14FQqvRFLvB3rAkzChbKMSfa8MpSQg1wZ4=
-X-Google-Smtp-Source: ABdhPJxbRo8k+1r98gg2svxCgmwQqePl6KchVviBdtK329G2One8zxj8IDdilsVFDLjCKZUAtLuYbd1T11aaBUFsuGY=
-X-Received: by 2002:ac2:5689:: with SMTP id 9mr10826067lfr.175.1607974938823;
- Mon, 14 Dec 2020 11:42:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20201215063243.236b2a60@canb.auug.org.au>
-In-Reply-To: <20201215063243.236b2a60@canb.auug.org.au>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 14 Dec 2020 13:42:07 -0600
-Message-ID: <CAH2r5mvbBjDQiaT9RPzkyUmmXeT5tAukrCvrrzDej3F592fx+A@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S2502251AbgLNTtd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 14 Dec 2020 14:49:33 -0500
+Received: from ozlabs.org ([203.11.71.1]:58217 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731027AbgLNTtc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 14 Dec 2020 14:49:32 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CvsQV0N0Cz9sSC;
+        Tue, 15 Dec 2020 06:48:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1607975330;
+        bh=/XUJ/f62xB+BtpCeFkBYMW89n9Z307JH8sKXLrbJbGM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DZfXFXs/55hetcedt1lkjHV92lrM+RYzpM0tWfARwjw8wuZP3zbSbYxdlaAf4WEvd
+         pjX3/3+DAOpKsmIxceke7zeVZXX2GvM5+tUsldGv9zeEef6tVcVBZuAVk9kj4pjrW2
+         IpW0tsWuwuVoEeL+QjiuDeVYEAagg+KU3gvN4QvyhOIWLlRtf6iuQl4pVw5C2yUaKS
+         HU3mOotY8WZo5oRx7op7OETgbXAfZEVcxas/jwaESZwVvS63R4aNSg9Z/FyCahffWQ
+         X8HR3J2YEg3c9QATSnJXtHa3TLn8Kds5Ok1HThJeKPFTCMvZGE8wXebUi9Vx8oCvbN
+         SCyjbsuRod5CA==
+Date:   Tue, 15 Dec 2020 06:48:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Helge Deller <deller@gmx.de>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: linux-next: manual merge of the parisc-hd tree with the
+ asm-generic tree
+Message-ID: <20201215064847.3676d9bf@canb.auug.org.au>
+In-Reply-To: <20201102123841.39eb4216@canb.auug.org.au>
+References: <20201102123841.39eb4216@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/qtK.EFTpCXVkUm_tXdqZ3k7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-fixed
+--Sig_/qtK.EFTpCXVkUm_tXdqZ3k7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 14, 2020 at 1:32 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commits
->
->   425f40482491 ("cifs: fix uninitialized variable in smb3_fs_context_parse_param")
->   8cc9a66ea70e ("cifs: update mnt_cifs_flags during reconfigure")
->
-> are missing a Signed-off-by from their committer.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Hi all,
 
+On Mon, 2 Nov 2020 12:38:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the parisc-hd tree got a conflict in:
+>=20
+>   arch/parisc/kernel/time.c
+>=20
+> between commit:
+>=20
+>   686092e7daaa ("parisc: use legacy_timer_tick")
+>=20
+> from the asm-generic tree and commit:
+>=20
+>   3b7ab4a74a2d ("parisc: Switch to clockevent based timers")
+>=20
+> from the parisc-hd tree.
+>=20
+> I fixed it up (I effectively reverted the former commit) and can carry the
+> fix as necessary. This is now fixed as far as linux-next is concerned,
+> but any non trivial conflicts should be mentioned to your upstream
+> maintainer when your tree is submitted for merging.  You may also want
+> to consider cooperating with the maintainer of the conflicting tree to
+> minimise any particularly complex conflicts.
 
+This is just a reminder that this conflict still exists.
 
--- 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell
 
-Steve
+--Sig_/qtK.EFTpCXVkUm_tXdqZ3k7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/XwZ8ACgkQAVBC80lX
+0Gwz/wf+Nkz5FSqhuNAExXPlerbEhnCScJloRr+ULcBr+2AEhQMP8G4UQzbOwm1N
+Vdd4IGZYK98SoMMqXtsXSZqRPpeB1+kw5nfbIuoHnw9s0KFQRcIR+pAaBV6SL8b7
+ssP8NwAwYiMGMBI3KtdZhy/9/qt8hgM/1akOoBv72KRZmZ1qvW/FX/zJzRtYqGOg
+k4GNRCzRly+PUdtXn1XvhWaXQHj89v07Rmzlt5oAIA4YeBFiN42fd9/WtEb+zKID
+cgUZ25xxrm+4FCA+nFcv8qA1CxjBR2wIAJH2iwX1yYMudhWYB40/UTCyuP2i+vJP
+M0G8yU+a8ZNMPDX4sobJh1YfcYBGmQ==
+=wrK2
+-----END PGP SIGNATURE-----
+
+--Sig_/qtK.EFTpCXVkUm_tXdqZ3k7--
