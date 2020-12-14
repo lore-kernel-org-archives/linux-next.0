@@ -2,176 +2,136 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B58AC2BB9A
-	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 20:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796F4C4361B
+	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 20:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49EA9207A0
-	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 20:17:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF64207A0
+	for <linux-next@archiver.kernel.org>; Mon, 14 Dec 2020 20:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502931AbgLNURS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 14 Dec 2020 15:17:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42120 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729523AbgLNUKr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 14 Dec 2020 15:10:47 -0500
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9CF4C0613D3;
-        Mon, 14 Dec 2020 12:10:00 -0800 (PST)
+        id S2502934AbgLNUR4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 14 Dec 2020 15:17:56 -0500
+Received: from ozlabs.org ([203.11.71.1]:52253 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2503137AbgLNURt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 14 Dec 2020 15:17:49 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Cvsts4m7Dz9sTX;
-        Tue, 15 Dec 2020 07:09:57 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Cvt364hHFz9sSC;
+        Tue, 15 Dec 2020 07:17:06 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1607976598;
-        bh=bOGZIK/EC9dOWE8oJ5/EF1E5GiCSPIErQvZ4/oVKtHk=;
+        s=201702; t=1607977027;
+        bh=xAQjEWZYRy/0ACS8i64gbqRXnwwQuolLHTU6ZvyQSDI=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZH6JVIgfgS5BqpFH6DYnnCcxYmySaWdzxYDUB7ubFw7A4JeioJko7wED2SyY7Y3xs
-         beCWzatZoHKsF0BJou/BJKd1zB9/RS3U7XGlvFuqgjo5tGlQgvGFlO2JP66hF9iYtJ
-         uLtyGZ/XXmWE4YYn846uyLdXV4BJ7xUlFhstdCJnfoLj7BRP1HgsdhXBIGswJRnyXN
-         ie8el/QzC2hBUx3fsrRHAyqNyGuvlkZkTcR5W+MxzPXUv4Xd/K44T1fLu5bZYFRWTK
-         83l3TDD937xlIwnE5mkK+zkaHUDYZOH0+Fl2V3CSyaOfsjYJ8ZyzLm5K/CAdk8eew6
-         s6YvfS/Mlmw4w==
-Date:   Tue, 15 Dec 2020 07:09:56 +1100
+        b=AOUMOU8BsVSrcTv4iAFNPdodd9Tk/wDrE+7mSg1zrEEngR42QHKmpPjjPaHrUJxQk
+         855ty+pyTtFovm7PAgjNsOPV5vLNMxB5J8J9C/QRGzW2+GuYwyIq4/S9C9ZdgVp4dL
+         z/4U/HAcnaqpDyPQf5rPIYoaYfh1aNkGxtshwY5GbMn25SOLZZTckKjVYahmhK5oFj
+         ihHbpXdw1u73QYLFvJ2AYDnKmsqaYm/hlWCdymc6Z6vKVe2DrN/aLvje02vz8Mq7Ip
+         m0EQdWRB3nTrri7jy8fwnl5jC9y27AZ1viKqhwPH2x/ltPYTplditD4puShKenU+lM
+         6jv9WX5OsXipA==
+Date:   Tue, 15 Dec 2020 07:17:05 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>, David Sterba <dsterba@suse.com>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the block tree
-Message-ID: <20201215070956.6852e939@canb.auug.org.au>
-In-Reply-To: <20201202150149.42543862@canb.auug.org.au>
-References: <20201202150149.42543862@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: linux-next: manual merge of the block tree with the arm64 tree
+Message-ID: <20201215071705.09df4f1a@canb.auug.org.au>
+In-Reply-To: <20201203142530.4d962ea5@canb.auug.org.au>
+References: <20201203142530.4d962ea5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/V+8HwfLtgijqLM864dR=WCo";
+Content-Type: multipart/signed; boundary="Sig_/4eAMd=wntc8LGknjiIt36yx";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/V+8HwfLtgijqLM864dR=WCo
+--Sig_/4eAMd=wntc8LGknjiIt36yx
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 2 Dec 2020 15:01:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+On Thu, 3 Dec 2020 14:25:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
 >
-> Hi all,
+> Today's linux-next merge of the block tree got a conflict in:
 >=20
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+>   arch/arm64/include/asm/thread_info.h
 >=20
-> fs/btrfs/zoned.c: In function 'btrfs_get_dev_zone_info':
-> fs/btrfs/zoned.c:168:21: error: 'struct block_device' has no member named=
- 'bd_part'; did you mean 'bd_partno'?
->   168 |  nr_sectors =3D bdev->bd_part->nr_sects;
->       |                     ^~~~~~~
->       |                     bd_partno
-> fs/btrfs/zoned.c: In function 'btrfs_sb_log_location_bdev':
-> fs/btrfs/zoned.c:508:21: error: 'struct block_device' has no member named=
- 'bd_part'; did you mean 'bd_partno'?
->   508 |  nr_sectors =3D bdev->bd_part->nr_sects;
->       |                     ^~~~~~~
->       |                     bd_partno
-> fs/btrfs/zoned.c: In function 'btrfs_reset_sb_log_zones':
-> fs/btrfs/zoned.c:606:21: error: 'struct block_device' has no member named=
- 'bd_part'; did you mean 'bd_partno'?
->   606 |  nr_sectors =3D bdev->bd_part->nr_sects;
->       |                     ^~~~~~~
->       |                     bd_partno
+> between commit:
 >=20
-> Caused by commits
+>   b5a5a01d8e9a ("arm64: uaccess: remove addr_limit_user_check()")
 >=20
->   a782483cc1f8 ("block: remove the nr_sects field in struct hd_struct")
->   0d02129e76ed ("block: merge struct block_device and struct hd_struct")
+> from the arm64 tree and commit:
 >=20
-> interacting with commits
+>   192caabd4dd9 ("arm64: add support for TIF_NOTIFY_SIGNAL")
 >=20
->   ab3ea6d0e65c ("btrfs: get zone information of zoned block devices")
->   1a4b440a1c2b ("btrfs: implement log-structured superblock for ZONED mod=
-e")
+> from the block tree.
 >=20
-> from the btrfs tree.
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 >=20
-> I applied the following merge fix patch (which may, or may not, be
-> correct but fixes the build).
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 2 Dec 2020 14:55:04 +1100
-> Subject: [PATCH] fixup for "block: merge struct block_device and struct
->  hd_struct"
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/btrfs/zoned.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index 155545180046..c38846659019 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -165,7 +165,7 @@ int btrfs_get_dev_zone_info(struct btrfs_device *devi=
-ce)
->  	if (!zone_info)
->  		return -ENOMEM;
-> =20
-> -	nr_sectors =3D bdev->bd_part->nr_sects;
-> +	nr_sectors =3D bdev_nr_sectors(bdev);
->  	zone_sectors =3D bdev_zone_sectors(bdev);
->  	/* Check if it's power of 2 (see is_power_of_2) */
->  	ASSERT(zone_sectors !=3D 0 && (zone_sectors & (zone_sectors - 1)) =3D=
-=3D 0);
-> @@ -505,7 +505,7 @@ int btrfs_sb_log_location_bdev(struct block_device *b=
-dev, int mirror, int rw,
->  		return -EINVAL;
->  	zone_size =3D zone_sectors << SECTOR_SHIFT;
->  	zone_sectors_shift =3D ilog2(zone_sectors);
-> -	nr_sectors =3D bdev->bd_part->nr_sects;
-> +	nr_sectors =3D bdev_nr_sectors(bdev);
->  	nr_zones =3D nr_sectors >> zone_sectors_shift;
-> =20
->  	sb_zone =3D sb_zone_number(zone_sectors_shift + SECTOR_SHIFT, mirror);
-> @@ -603,7 +603,7 @@ int btrfs_reset_sb_log_zones(struct block_device *bde=
-v, int mirror)
-> =20
->  	zone_sectors =3D bdev_zone_sectors(bdev);
->  	zone_sectors_shift =3D ilog2(zone_sectors);
-> -	nr_sectors =3D bdev->bd_part->nr_sects;
-> +	nr_sectors =3D bdev_nr_sectors(bdev);
->  	nr_zones =3D nr_sectors >> zone_sectors_shift;
-> =20
->  	sb_zone =3D sb_zone_number(zone_sectors_shift + SECTOR_SHIFT, mirror);
+> diff --cc arch/arm64/include/asm/thread_info.h
+> index 015beafe58f5,cdcf307764aa..000000000000
+> --- a/arch/arm64/include/asm/thread_info.h
+> +++ b/arch/arm64/include/asm/thread_info.h
+> @@@ -63,7 -66,9 +63,8 @@@ void arch_release_task_struct(struct ta
+>   #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+>   #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
+>   #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
+> - #define TIF_MTE_ASYNC_FAULT	5	/* MTE Asynchronous Tag Check Fault */
+>  -#define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
+> ++#define TIF_NOTIFY_SIGNAL	5	/* signal notifications exist */
+> + #define TIF_MTE_ASYNC_FAULT	6	/* MTE Asynchronous Tag Check Fault */
+>  -#define TIF_NOTIFY_SIGNAL	7	/* signal notifications exist */
+>   #define TIF_SYSCALL_TRACE	8	/* syscall trace active */
+>   #define TIF_SYSCALL_AUDIT	9	/* syscall auditing */
+>   #define TIF_SYSCALL_TRACEPOINT	10	/* syscall tracepoint for ftrace */
+> @@@ -96,7 -103,8 +98,8 @@@
+>  =20
+>   #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
+>   				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
+> - 				 _TIF_UPROBE | _TIF_MTE_ASYNC_FAULT)
+>  -				 _TIF_UPROBE | _TIF_FSCHECK | _TIF_MTE_ASYNC_FAULT | \
+> ++				 _TIF_UPROBE | _TIF_MTE_ASYNC_FAULT | \
+> + 				 _TIF_NOTIFY_SIGNAL)
+>  =20
+>   #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
+>   				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
 
-Just a reminder that I am still applying the above merge fix.
+Just a reminder that this conflict still exists.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/V+8HwfLtgijqLM864dR=WCo
+--Sig_/4eAMd=wntc8LGknjiIt36yx
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/XxpQACgkQAVBC80lX
-0GxhNwgAhiawlO9QrGibxvUMdbTgEUUrZd+IUONEPsj8nwuflNiyn3wDnIEwetlS
-9eF4TbD47ETTC588SASuLdfyOwDuC8VzbW570n6wzk6qNrtsYha0Uq4w2Ye+SC9n
-lrCYhYlRXySq9YajvAGaS+uUJkVd2O5nhqXbQVfj4dFAmL4Q6I3BP2Ln8k+RZYUl
-KjJpLFHpOCemUGdiEc+HxQlb8gI+cjhLvT5ttLzVGUBmIZsH98MvjsIcGfV3NeBp
-UH2U2sPxZwD6EzwLlhALDKjaK/oV2LMNmBd6svf5R7QSbuhPXqJ4yh4nwZGC4o43
-HnxWCKVTF5El1ZDz8QluIA0Mp8HyYg==
-=OCtM
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/XyEEACgkQAVBC80lX
+0GxjSAf/RnqycqI23zexQq10ZD9Z35PYnc3Befoq0cNqAGBQnwolXfhlLWACLOuT
+z2HE89HiKtuDrNhMtAL+cwlhz6dHUj0/MknnxCd/LBPR5/hBlr5vsCHZjV3g3MFy
+K2XzV8yVXCCqG6XmjJPJGKjWGRGqJu+zLrOzvDOZ/ALoZw7EkaegRn8dyJA6HBfZ
+eJnFmO3Sniu5yqlSbBfACkq7capFE0m2Lc4RdVfvgC5nEiE5fsiz32WkDH5zEYZc
+P544j7/SLkpu9n8B7fl5bhID5qCEUMrJAH6pP39yRLIV6JnkpjtY9zyvqWIB7eXS
+JqyI94qJBqhLaznEBkg9mmesXS0BzQ==
+=p304
 -----END PGP SIGNATURE-----
 
---Sig_/V+8HwfLtgijqLM864dR=WCo--
+--Sig_/4eAMd=wntc8LGknjiIt36yx--
