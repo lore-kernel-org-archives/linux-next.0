@@ -4,87 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F99C433E0
-	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 02:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428CFC43381
+	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 02:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD5923442
-	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 02:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1240023447
+	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 02:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbhANB7o (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 13 Jan 2021 20:59:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43122 "EHLO
+        id S1729815AbhANCCG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 13 Jan 2021 21:02:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729538AbhAMXj5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 13 Jan 2021 18:39:57 -0500
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B44C0617BC;
-        Wed, 13 Jan 2021 15:30:15 -0800 (PST)
-Received: from lwn.net (unknown [IPv6:2601:281:8300:104d::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S1729434AbhAMXWY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 13 Jan 2021 18:22:24 -0500
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF964C0617A2;
+        Wed, 13 Jan 2021 14:49:00 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 51BD96132;
-        Wed, 13 Jan 2021 23:27:31 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 51BD96132
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1610580451; bh=AfOuwhmfaD02ekVU1GGni51IgmEpyeh7+rhK6G6gXxs=;
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DGN0T2DFWz9sVt;
+        Thu, 14 Jan 2021 09:48:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1610578137;
+        bh=rSlG+5hH3vveBshdy0agavRSc9dp2BwEkqQAjM4ytao=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dWMJqd/cgurptoBg3bh1legndEL0hYObyySvktxE2qBEIAw7XoD7gY+tiwxQFulGp
-         VA9F4+Bi8QgAnEZ5DQN4cHsQYa3tVtG9Vc3SBC7wH/0r483ZlqjEauw/f/iyyFr8sT
-         7ifKUmimdy001OjsD4UT/ZTfDPrOXe7nIEgk3R9BMU8ba+2sqwbCxFJLczkVowX6xp
-         ZGpUiPM7ps+QXjRygWsHv38bqJtxDyIzQE0DMjNxPHdPAW221jhPlsie7EsG+r2WLl
-         QCU1mz7lzevEerVRCPO3IvuDgWvII82lcLfzKns+wMfpIbqBFluEL18cZEbJZvTgRz
-         POle3BjId1tQg==
-Date:   Wed, 13 Jan 2021 16:27:30 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Yanteng Si <siyanteng@loongson.cn>,
+        b=FVRU8/nvYWBjuKO0zYL0X38aYK2qvoDfnOueM040Tni/sVhOeaavQeZcJpqfgJjUd
+         qFCYcCjhtxBz8LD26I/dSgnbytsLIqH695S4wRwt6NZulJ/9sp6FI2FupFDpZXTEv8
+         xJcl/S8Nfk8SgPf9T6Ts+QUw2vMSIPfdb7H4pRM+XR1Wpdr770/ewZrO/Q37DKYiBr
+         fOQDI/32rKFlbua4qOZwZtqQJOI7yFK1+nQsJYwAyNsdCH6zBzWgF1RtulOYiybd5p
+         DT5SHDPVJdRmYyLqHCEHSAQMPJKhl8QvQlghvgjbx9S/8GwsbeQmI6SZvSXk/zvd5p
+         6Q6JY1PoLUpCw==
+Date:   Thu, 14 Jan 2021 09:48:56 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Wesley Cheng <wcheng@codeaurora.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the jc_docs tree
-Message-ID: <20210113162730.4f6dc0ac@lwn.net>
-In-Reply-To: <20210113150748.1efc75aa@canb.auug.org.au>
-References: <20210113150748.1efc75aa@canb.auug.org.au>
-Organization: LWN.net
+Subject: Re: linux-next: build warning after merge of the usb tree
+Message-ID: <20210114094856.0ca5c6e9@canb.auug.org.au>
+In-Reply-To: <20210106131225.66e82b5c@canb.auug.org.au>
+References: <20210106131225.66e82b5c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/STkDvZXJOvTkQzW/p13qgyl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, 13 Jan 2021 15:07:48 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/STkDvZXJOvTkQzW/p13qgyl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> After merging the jc_docs tree, today's linux-next build (htmldocs)
-> produced this warning:
-> 
-> Documentation/translations/zh_CN/mips/ingenic-tcu.rst:61: WARNING: Malformed table.
-> Text in column margin in table line 6.
-> 
-> ===========         =====
-> 时钟                drivers/clk/ingenic/tcu.c
-> 中断                drivers/irqchip/irq-ingenic-tcu.c
-> 定时器              drivers/clocksource/ingenic-timer.c
-> OST                 drivers/clocksource/ingenic-ost.c
-> 脉冲宽度调制器      drivers/pwm/pwm-jz4740.c
-> 看门狗              drivers/watchdog/jz4740_wdt.c
-> ===========         =====
-> 
+Hi all,
+
+On Wed, 6 Jan 2021 13:12:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the usb tree, today's linux-next build (htmldocs) produced
+> this warning:
+>=20
+> drivers/usb/dwc3/core.h:1259: warning: Function parameter or member 'gadg=
+et_max_speed' not described in 'dwc3'
+>=20
 > Introduced by commit
-> 
->   419b1d4ed1cb ("doc/zh_CN: add mips ingenic-tcu.rst translation")
+>=20
+>   7c9a2598463a ("usb: dwc3: gadget: Preserve UDC max speed setting")
 
-Memo to self: you can't skip doing a new build even for simple
-translations that obviously shouldn't add any new problems.  Sorry for the
-noise, I've applied fixes from Lukas Bulwahn for all of this whole mess of
-errors.
+I am still getting this warning.
 
-Yantang, *please* do not submit documentation patches without having done
-a docs build to make sure things work as expected!
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
+--Sig_/STkDvZXJOvTkQzW/p13qgyl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-jon
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl//eNgACgkQAVBC80lX
+0Gx8EAgAkpGlEYyPUYdUsQfNzzCV4+a0L2aDwKk0CE+/IDf8gF800DVAtblX/euL
+1seb7+Zre2AX17p/rPvKSIUSF8PVqqltyBVpyIoGBbgvCheVOETjrFpGd04KnLI5
+ft4TSA0oiPx725N3KsR95ghwr7O8OVAQZ9v5ROnUzeWByi2TmfOImT7quqbRxOcM
+jLL5FGmQZaHgRB/SDxBTwyU5zbbZSfbALgYyEMgRuIEhWmzEb3DtxSoLwZ1J1rgR
+RfPhJ07iL7iTC+tMM87R7BDziBUdru3KBa/qyaq2zX/B8OGddVbOTs9hDDHaz5Ao
+P69eTPCVQwUUYwUlgmDgzlux40MYwQ==
+=ROqI
+-----END PGP SIGNATURE-----
+
+--Sig_/STkDvZXJOvTkQzW/p13qgyl--
