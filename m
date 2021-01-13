@@ -4,96 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D75F4C433E9
-	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 01:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F99C433E0
+	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 02:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99FC12343F
-	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 01:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD5923442
+	for <linux-next@archiver.kernel.org>; Thu, 14 Jan 2021 02:00:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbhANBtc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 13 Jan 2021 20:49:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54320 "EHLO
+        id S1727746AbhANB7o (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 13 Jan 2021 20:59:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729889AbhANAcY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 13 Jan 2021 19:32:24 -0500
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6013FC061786;
-        Wed, 13 Jan 2021 16:31:14 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S1729538AbhAMXj5 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 13 Jan 2021 18:39:57 -0500
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B44C0617BC;
+        Wed, 13 Jan 2021 15:30:15 -0800 (PST)
+Received: from lwn.net (unknown [IPv6:2601:281:8300:104d::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DGQGQ2Jmmz9sVw;
-        Thu, 14 Jan 2021 11:31:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1610584272;
-        bh=It9u9AKn8AqBdEwES376MSZ2+L2Lf5GTcdM2JalDxYM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=q98T5wVzCNjJktmx2+1FOtj7sQImUpqYcy0fQPY0+Torhr+Xfw9453WacLy1wXVaM
-         IVpxEFG5LZ7lltJkDI8SY9CoZ5d4Lu5/9Ey23znTPXn5Oov/f4Z206iLfedsP2zX1v
-         9p1gRN6gFB+yjARaPX5XYu+5U+So7m4Je8jMkeo73h43zoT4N3uIIdFMpo/2iFPCin
-         joggwauko+vU4xegW/hiBkMZDosMwL+F4NqwQo8sdUhynId4ZhoQosTEdzokcCSW3v
-         9spztwD1RIms1nUNwdbnX1Ku7aMTZ6pz1p8y1YTmnlqcjnaQ6VbdIBpvCbpk5Vw70y
-         Q9CSxN7ROv4LA==
-Date:   Thu, 14 Jan 2021 11:31:07 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        by ms.lwn.net (Postfix) with ESMTPSA id 51BD96132;
+        Wed, 13 Jan 2021 23:27:31 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 51BD96132
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1610580451; bh=AfOuwhmfaD02ekVU1GGni51IgmEpyeh7+rhK6G6gXxs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dWMJqd/cgurptoBg3bh1legndEL0hYObyySvktxE2qBEIAw7XoD7gY+tiwxQFulGp
+         VA9F4+Bi8QgAnEZ5DQN4cHsQYa3tVtG9Vc3SBC7wH/0r483ZlqjEauw/f/iyyFr8sT
+         7ifKUmimdy001OjsD4UT/ZTfDPrOXe7nIEgk3R9BMU8ba+2sqwbCxFJLczkVowX6xp
+         ZGpUiPM7ps+QXjRygWsHv38bqJtxDyIzQE0DMjNxPHdPAW221jhPlsie7EsG+r2WLl
+         QCU1mz7lzevEerVRCPO3IvuDgWvII82lcLfzKns+wMfpIbqBFluEL18cZEbJZvTgRz
+         POle3BjId1tQg==
+Date:   Wed, 13 Jan 2021 16:27:30 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Yanteng Si <siyanteng@loongson.cn>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20210114113107.622102e0@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the jc_docs tree
+Message-ID: <20210113162730.4f6dc0ac@lwn.net>
+In-Reply-To: <20210113150748.1efc75aa@canb.auug.org.au>
+References: <20210113150748.1efc75aa@canb.auug.org.au>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.60J4ibaN=8y4IZ8pGCRClm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/.60J4ibaN=8y4IZ8pGCRClm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 13 Jan 2021 15:07:48 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> After merging the jc_docs tree, today's linux-next build (htmldocs)
+> produced this warning:
+> 
+> Documentation/translations/zh_CN/mips/ingenic-tcu.rst:61: WARNING: Malformed table.
+> Text in column margin in table line 6.
+> 
+> ===========         =====
+> 时钟                drivers/clk/ingenic/tcu.c
+> 中断                drivers/irqchip/irq-ingenic-tcu.c
+> 定时器              drivers/clocksource/ingenic-timer.c
+> OST                 drivers/clocksource/ingenic-ost.c
+> 脉冲宽度调制器      drivers/pwm/pwm-jz4740.c
+> 看门狗              drivers/watchdog/jz4740_wdt.c
+> ===========         =====
+> 
+> Introduced by commit
+> 
+>   419b1d4ed1cb ("doc/zh_CN: add mips ingenic-tcu.rst translation")
 
-After merging the drm-misc tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Memo to self: you can't skip doing a new build even for simple
+translations that obviously shouldn't add any new problems.  Sorry for the
+noise, I've applied fixes from Lukas Bulwahn for all of this whole mess of
+errors.
 
-drivers/gpu/drm/drm_cache.c: In function 'drm_need_swiotlb':
-drivers/gpu/drm/drm_cache.c:202:6: error: implicit declaration of function =
-'mem_encrypt_active' [-Werror=3Dimplicit-function-declaration]
-  202 |  if (mem_encrypt_active())
-      |      ^~~~~~~~~~~~~~~~~~
+Yantang, *please* do not submit documentation patches without having done
+a docs build to make sure things work as expected!
 
+Thanks,
 
-Caused by commit
-
-  3abc66706385 ("drm: Implement drm_need_swiotlb() in drm_cache.c")
-
-I have used the drm-misc tree from next-20210107 again for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.60J4ibaN=8y4IZ8pGCRClm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl//kMsACgkQAVBC80lX
-0Gzqswf/ULSfqCkg299tDBU1Jv00UQUpTkd2drH/SRDVl76H3qegClo8UzQnkpNS
-g4xUBFGhY5gnjwrT7lbeDobdFaZxDA6pJWfAESEYev7/Sm31gKxNXQBTVDF/+yEk
-8gIcSjyg24WYTjSZCNLOd4Fo9GoDur5nReYvjz0aSF3+YwHi8QcFKVawcgtiufEj
-QK/hjDBQfWuULsFe2I1VeXP+Z9MGRMvm2udW/Pok1vh1GmKLSGCIcRrdAQD0u9Dc
-uYHXUAFNRC/+mpWEOcAXXJUbwHwMiI5rb9GjqZmd/JWM1hhidDcbtZg/CqpsMYMk
-maZV82UkTtFvMKEo3DhJQBBREE+wiA==
-=V+bW
------END PGP SIGNATURE-----
-
---Sig_/.60J4ibaN=8y4IZ8pGCRClm--
+jon
