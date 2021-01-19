@@ -6,146 +6,232 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93D4C433E0
-	for <linux-next@archiver.kernel.org>; Tue, 19 Jan 2021 07:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04587C433E0
+	for <linux-next@archiver.kernel.org>; Tue, 19 Jan 2021 07:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 846372312C
-	for <linux-next@archiver.kernel.org>; Tue, 19 Jan 2021 07:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D182312D
+	for <linux-next@archiver.kernel.org>; Tue, 19 Jan 2021 07:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbhASHOU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 19 Jan 2021 02:14:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48880 "EHLO
+        id S1726985AbhASHS7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 19 Jan 2021 02:18:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390101AbhASF1F (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Jan 2021 00:27:05 -0500
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53EE2C061573;
-        Mon, 18 Jan 2021 21:26:25 -0800 (PST)
+        with ESMTP id S1728012AbhASHS3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Jan 2021 02:18:29 -0500
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E16BC061575;
+        Mon, 18 Jan 2021 23:16:25 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DKcZj2q2kz9sVF;
-        Tue, 19 Jan 2021 16:26:20 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DKg1g36gLz9sSs;
+        Tue, 19 Jan 2021 18:16:22 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1611033981;
-        bh=Fh0OV3SBtvG+RwPC7R1yZ9jUdVExiasmtVqnj4Jqa7o=;
+        s=201702; t=1611040583;
+        bh=WKkdjV/ft3DAYhjarpX7H1vxGTvxkc5ReQpjqLIK9kI=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZTK2wn+e3S+JP0CjhWndRy93UllRHg/gceUzzZo7Qume/uZy20Pw3OH4lGPC15zPL
-         SwmAmat0Qdhj/lhjDiRmXethHlFwL+EfCtGMuGrBZvWpmQ7uYrV33P5xmlAv41GsoJ
-         XaR1Fp23I83k5Lh7uYDuqo3y9v905wenhkGoX7thEh0vMTWmJGL2Z+hQO7M6UGdEhb
-         fXl1eDQJ/7TTxSS0/1AtS3qEguVzZj/m7twQ017lu/MGRVcaDPy6PydZx0iYrpu9j7
-         i4r7aMa7m0YBf4DffuYB4d5EYkDJBbV9XEgL1q1hAI2uVdBPMqnVgzaeKw15/s0rK0
-         EOXFwcbbOWOpA==
-Date:   Tue, 19 Jan 2021 16:26:19 +1100
+        b=Tb5vmvw1JONzi3ecdADOMHYKMqiPX7xw98ghPmTgqXVSW+mYH0YmjsyVkDgcJj6FI
+         uS0T0r4dj2kl/oJrhTW+aPLh11ft83FkRJHr9Z+Kuqz6T5WwIkA8MWGDcO7HYkIo3z
+         C5rGuaGUMVhtS/MFo3VcHmDEKoIJDHQs1zUOAp/RAcuGEBJpe+0bg4pUCovxd//D7j
+         G7m1l3uTdmCohGITRiv4gMmdUKJYv0E/hMpf/26bXe0QMgp/qLX3zVE4CW9IZCA67i
+         z2X5sL9Q7v8dH6vsdTKQWPRckw63pZB2wUeXK31J+kN0gClJ3tCRCbn5KLJALAjqXs
+         jtUiH8pbOwyrA==
+Date:   Tue, 19 Jan 2021 18:16:22 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: boot failure after merge of the iomem-mmap-vs-gup
- tree
-Message-ID: <20210119162619.6782c5d2@canb.auug.org.au>
-In-Reply-To: <20210113162948.45b0fbfd@canb.auug.org.au>
-References: <20210113162948.45b0fbfd@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the jc_docs tree
+Message-ID: <20210119181622.15ed82fe@canb.auug.org.au>
+In-Reply-To: <20210119171303.6be1bb1f@canb.auug.org.au>
+References: <20210119171303.6be1bb1f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wWPaKYBp9I_oUu9weKHPJhT";
+Content-Type: multipart/signed; boundary="Sig_/31zvJXxmV2vo8_toHVssu8S";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/wWPaKYBp9I_oUu9weKHPJhT
+--Sig_/31zvJXxmV2vo8_toHVssu8S
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 13 Jan 2021 16:29:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Tue, 19 Jan 2021 17:13:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
+>
+> Hi all,
 >=20
-> After merging the iomem-mmap-vs-gup tree, today's linux-next boot test
-> (powerpc pseries_le_defconfig) failed like this:
+> After merging the jc_docs tree, today's linux-next build (KCONFIG_NAME)
+> produced these warnings:
 >=20
->     EEH: pSeries platform initialized
->     PCI: Probing PCI hardware
->     BUG: Kernel NULL pointer dereference on write at 0x00000030
->     Faulting instruction address: 0xc00000000013bf4c
->     Oops: Kernel access of bad area, sig: 11 [#1]
->     LE PAGE_SIZE=3D64K MMU=3DHash SMP NR_CPUS=3D2048 NUMA pSeries
->     Modules linked in:
->     CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.11.0-rc3 #2
->     NIP:  c00000000013bf4c LR: c0000000007a9ee8 CTR: 0000000000000000
->     REGS: c0000000063a3610 TRAP: 0380   Not tainted  (5.11.0-rc3)
->     MSR:  8000000002009033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 84002440  XER:=
- 00000000
->     CFAR: c0000000007a9ee4 IRQMASK: 0=20
->     GPR00: c0000000007a9ee8 c0000000063a38b0 c0000000013d8100 c0000000060=
-61300=20
->     GPR04: 0000000000000000 0000000000000b20 c000000000f11738 00000000000=
-0ffff=20
->     GPR08: c0000000007a7ab0 0000000000000000 c0000000007a7a40 2d6770696f7=
-30000=20
->     GPR12: 0000000000000000 c0000000015b0000 c000000000013120 00000000000=
-00000=20
->     GPR16: 0000000000000000 0000000000000000 0000000000000000 00000000000=
-00000=20
->     GPR20: 0000000000000000 0000000000000000 0000000000000000 00000000000=
-00000=20
->     GPR24: c000000006210de8 c000000006167120 c000000006620b20 00000000000=
-00000=20
->     GPR28: c000000006167120 0000000000000180 c000000006061300 c0000000061=
-67000=20
->     NIP [c00000000013bf4c] iomem_get_mapping+0x1c/0x30
->     LR [c0000000007a9ee8] pci_create_legacy_files+0xa8/0x1c0
->     Call Trace:
->     [c0000000063a38b0] [c0000000007a9e84] pci_create_legacy_files+0x44/0x=
-1c0 (unreliable)
->     [c0000000063a3930] [c000000000795198] pci_register_host_bridge+0x288/=
-0x510
->     [c0000000063a3a60] [c000000000795514] pci_create_root_bus+0xf4/0x150
->     [c0000000063a3ac0] [c00000000006d424] pcibios_scan_phb+0xe4/0x270
->     [c0000000063a3b70] [c000000001010b40] pcibios_init+0x8c/0x128
->     [c0000000063a3bf0] [c000000000012b70] do_one_initcall+0x60/0x2c0
->     [c0000000063a3cc0] [c0000000010046b4] kernel_init_freeable+0x2e8/0x380
->     [c0000000063a3da0] [c000000000013144] kernel_init+0x2c/0x168
->     [c0000000063a3e10] [c00000000000dff0] ret_from_kernel_thread+0x5c/0x6c
->     Instruction dump:
->     7c634850 4e800020 60000000 60000000 60420000 3c4c012a 3842c1d0 7c0802=
-a6=20
->     60000000 3d22000d e929caf8 7c2004ac <e8690030> 4e800020 60000000 6000=
-0000=20
->     ---[ end trace 77f55ece72f02708 ]---
->    =20
->     Kernel panic - not syncing: Attempted to kill init! exitcode=3D0x0000=
-000b
->=20
-> Caused by commit
->=20
->   85482fbab59e ("PCI: Revoke mappings like devmem")
->=20
-> Reverting that commit fixes the boot, so I have done that for today.
 
-I am still reverting this commit.
+Also, these:
+
+tools/testing/selftests/kselftest_harness.h:82: warning: wrong kernel-doc i=
+dentifier on line:
+ * TH_LOG(fmt, ...)
+tools/testing/selftests/kselftest_harness.h:116: warning: wrong kernel-doc =
+identifier on line:
+ * SKIP(statement, fmt, ...)
+tools/testing/selftests/kselftest_harness.h:139: warning: wrong kernel-doc =
+identifier on line:
+ * TEST(test_name) - Defines the test function and creates the registration
+tools/testing/selftests/kselftest_harness.h:158: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_SIGNAL(test_name, signal)
+tools/testing/selftests/kselftest_harness.h:198: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_DATA(datatype_name) - Wraps the struct name so we have one less
+tools/testing/selftests/kselftest_harness.h:215: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE(fixture_name) - Called once per fixture to setup the data and
+tools/testing/selftests/kselftest_harness.h:242: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_SETUP(fixture_name) - Prepares the setup function for the fixtur=
+e.
+tools/testing/selftests/kselftest_harness.h:268: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_TEARDOWN(fixture_name)
+tools/testing/selftests/kselftest_harness.h:289: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT(fixture_name) - Optionally called once per fixture
+tools/testing/selftests/kselftest_harness.h:308: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT_ADD(fixture_name, variant_name) - Called once per fixture
+tools/testing/selftests/kselftest_harness.h:342: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_F(fixture_name, test_name) - Emits test registration and helpers for
+include/linux/seqlock.h:829: warning: wrong kernel-doc identifier on line:
+ * DEFINE_SEQLOCK(sl) - Define a statically allocated seqlock_t
+tools/testing/selftests/kselftest_harness.h:82: warning: wrong kernel-doc i=
+dentifier on line:
+ * TH_LOG(fmt, ...)
+tools/testing/selftests/kselftest_harness.h:116: warning: wrong kernel-doc =
+identifier on line:
+ * SKIP(statement, fmt, ...)
+tools/testing/selftests/kselftest_harness.h:139: warning: wrong kernel-doc =
+identifier on line:
+ * TEST(test_name) - Defines the test function and creates the registration
+tools/testing/selftests/kselftest_harness.h:158: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_SIGNAL(test_name, signal)
+tools/testing/selftests/kselftest_harness.h:198: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_DATA(datatype_name) - Wraps the struct name so we have one less
+tools/testing/selftests/kselftest_harness.h:215: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE(fixture_name) - Called once per fixture to setup the data and
+tools/testing/selftests/kselftest_harness.h:242: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_SETUP(fixture_name) - Prepares the setup function for the fixtur=
+e.
+tools/testing/selftests/kselftest_harness.h:268: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_TEARDOWN(fixture_name)
+tools/testing/selftests/kselftest_harness.h:289: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT(fixture_name) - Optionally called once per fixture
+tools/testing/selftests/kselftest_harness.h:308: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT_ADD(fixture_name, variant_name) - Called once per fixture
+tools/testing/selftests/kselftest_harness.h:342: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_F(fixture_name, test_name) - Emits test registration and helpers for
+tools/testing/selftests/kselftest_harness.h:82: warning: wrong kernel-doc i=
+dentifier on line:
+ * TH_LOG(fmt, ...)
+tools/testing/selftests/kselftest_harness.h:116: warning: wrong kernel-doc =
+identifier on line:
+ * SKIP(statement, fmt, ...)
+tools/testing/selftests/kselftest_harness.h:139: warning: wrong kernel-doc =
+identifier on line:
+ * TEST(test_name) - Defines the test function and creates the registration
+tools/testing/selftests/kselftest_harness.h:158: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_SIGNAL(test_name, signal)
+tools/testing/selftests/kselftest_harness.h:198: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_DATA(datatype_name) - Wraps the struct name so we have one less
+tools/testing/selftests/kselftest_harness.h:215: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE(fixture_name) - Called once per fixture to setup the data and
+tools/testing/selftests/kselftest_harness.h:242: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_SETUP(fixture_name) - Prepares the setup function for the fixtur=
+e.
+tools/testing/selftests/kselftest_harness.h:268: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_TEARDOWN(fixture_name)
+tools/testing/selftests/kselftest_harness.h:289: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT(fixture_name) - Optionally called once per fixture
+tools/testing/selftests/kselftest_harness.h:308: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT_ADD(fixture_name, variant_name) - Called once per fixture
+tools/testing/selftests/kselftest_harness.h:342: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_F(fixture_name, test_name) - Emits test registration and helpers for
+tools/testing/selftests/kselftest_harness.h:82: warning: wrong kernel-doc i=
+dentifier on line:
+ * TH_LOG(fmt, ...)
+tools/testing/selftests/kselftest_harness.h:116: warning: wrong kernel-doc =
+identifier on line:
+ * SKIP(statement, fmt, ...)
+tools/testing/selftests/kselftest_harness.h:139: warning: wrong kernel-doc =
+identifier on line:
+ * TEST(test_name) - Defines the test function and creates the registration
+tools/testing/selftests/kselftest_harness.h:158: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_SIGNAL(test_name, signal)
+tools/testing/selftests/kselftest_harness.h:198: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_DATA(datatype_name) - Wraps the struct name so we have one less
+tools/testing/selftests/kselftest_harness.h:215: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE(fixture_name) - Called once per fixture to setup the data and
+tools/testing/selftests/kselftest_harness.h:242: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_SETUP(fixture_name) - Prepares the setup function for the fixtur=
+e.
+tools/testing/selftests/kselftest_harness.h:268: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_TEARDOWN(fixture_name)
+tools/testing/selftests/kselftest_harness.h:289: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT(fixture_name) - Optionally called once per fixture
+tools/testing/selftests/kselftest_harness.h:308: warning: wrong kernel-doc =
+identifier on line:
+ * FIXTURE_VARIANT_ADD(fixture_name, variant_name) - Called once per fixture
+tools/testing/selftests/kselftest_harness.h:342: warning: wrong kernel-doc =
+identifier on line:
+ * TEST_F(fixture_name, test_name) - Emits test registration and helpers for
+fs/seq_file.c:672: warning: wrong kernel-doc identifier on line:
+ * A helper routine for putting decimal numbers without rich format of prin=
+tf().
+lib/crc7.c:1: warning: no structured comments found
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/wWPaKYBp9I_oUu9weKHPJhT
+--Sig_/31zvJXxmV2vo8_toHVssu8S
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAGbXsACgkQAVBC80lX
-0Gwh4wf9E+bcpwYY1ecMHrRNai6xzN3O4jJ39oVJ65WfBn5sa7uHPQc9M+T9pxUq
-YcezZEuoJSpek7xwM7gl5GbVbSRbiomA2H6vrCZjNdz+J/kQDu0AgeSpnYnhGka+
-DGKTQ0AtMk+82rKgbKOGp9lTKUjLxjw5dTbA2es8RPfe7ihQ/L9gImfVWq7bjEw8
-WmOxx8gUwdPZFv+ftqhaYTraYp8IwNZoYGkANnQbaEyORNhzf9PZvhnMxIVXlIh3
-EacyskKn7jW/7/8qtvFv51TyZd/8itM6Czpe/gmxD56KpbV7agv5aJ67W3x1Hpw8
-+zXOOK/cyGSgGgEm95M8AgxiehI+MQ==
-=R6Fw
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAGh0YACgkQAVBC80lX
+0GzPNQf/TVUEWrvQ2jdOsXWCQEpJugIGET42R+MUtpJfjP2VGob1CxzpK+RjlOHk
+xkOMYpZFxgaejTTovBddd0Stb/mK/+XMQepXLmAJZbIijCAu0cEQzNoLgdzq6v13
+PodMnEUiovy5cPT6g9Qo47ppprHL/J4htx9Ib6D7oCHkbIoNFrBiY0CViiXC3CxJ
+P4BBXaeVivpsDzWV/wQpfiOdx/rSew/XuP1hlDlnRp9R8ePmZ+yYvIQJ+gtRYvgu
+UVHgBZCONPtZBn46qOW7yPVcVKXwWO/lKSWgpZQWDl8sK/Gyl+rl0gtfQ3qSTZae
+u286lf+g2uyuM3p6GkVK2Zg+sqgQhw==
+=Kof9
 -----END PGP SIGNATURE-----
 
---Sig_/wWPaKYBp9I_oUu9weKHPJhT--
+--Sig_/31zvJXxmV2vo8_toHVssu8S--
