@@ -2,88 +2,104 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCC3C43331
-	for <linux-next@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360B9C43333
+	for <linux-next@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 986E2238A1
-	for <linux-next@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA422389A
+	for <linux-next@archiver.kernel.org>; Thu, 21 Jan 2021 03:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbhAUDfs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 20 Jan 2021 22:35:48 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:60436 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2436671AbhAUCIr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 20 Jan 2021 21:08:47 -0500
-Received: by ajax-webmail-mail.loongson.cn (Coremail) ; Thu, 21 Jan 2021
- 10:07:48 +0800 (GMT+08:00)
-X-Originating-IP: [112.3.198.184]
-Date:   Thu, 21 Jan 2021 10:07:48 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From:   =?UTF-8?B?5Y+45bu26IW+?= <siyanteng@loongson.cn>
-To:     "Jonathan Corbet" <corbet@lwn.net>
-Cc:     "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "Linux Next Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: Re: linux-next: build warning after merge of the jc_docs tree
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.10a build 20191018(4c4f6d15)
- Copyright (c) 2002-2021 www.mailtech.cn .loongson.cn
-In-Reply-To: <20210113162730.4f6dc0ac@lwn.net>
-References: <20210113150748.1efc75aa@canb.auug.org.au>
- <20210113162730.4f6dc0ac@lwn.net>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+        id S1727307AbhAUDhF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 20 Jan 2021 22:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46850 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbhAUDIS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2021 22:08:18 -0500
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA68C061575;
+        Wed, 20 Jan 2021 19:07:35 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id 15so680660oix.8;
+        Wed, 20 Jan 2021 19:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BG1xLGWcnyY9xQR12boOLCRylQDrIp7cDoolAVHFjIY=;
+        b=GcOMpy6ipAWgydQzaw2NMeLsPnmNTu8VU43mYpvLc+MvOT3YxULe4T31AL7VE0WZ7t
+         PSwY2DegOZXBphfMoWMp+/qxtmymjpf9D6F+2fIBLyrjLabAzdDVlj38eRGXpJvsj+X7
+         UTSlPMYRMCFLP7a4NDbbr8eqZT85YdppPZ2AqT74Pusow2p/onJOCdQWvuT9RjuYH//t
+         q2wRZNTWgKOWwaGNqT/UUJSrg20+f4ItRlckLfSec8DWqq2fMM4L0BAMA4mEzkl375MB
+         ULn7/qmE8pHD91XWdaWA1GsmTrlB5oNwj81Q44V3UCbnsGSLQt6GO24yCD8EDRMnLHPT
+         p3DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BG1xLGWcnyY9xQR12boOLCRylQDrIp7cDoolAVHFjIY=;
+        b=V5hRlmwmxnLLguGBWHExjoEJxcI//ONuu/nu32Vg64ToQz75JJY3Sa6sBODXLp2c5z
+         oCkde0YLowCQMPKo+/7nJEJV6Y73659G9gL/RBKqzk/KfpeTW860046jrzK6H0Yy72vd
+         9h/jFRHhFuySAbpznJePNDwrHt4N/9Vh7Gh/WmxdTMyAJTnJm4AKBNc+zRLsQzSCRqN6
+         DEm3Ttn+TDlPGcPcYEdlzr2YeVqrH0WnV7TEElyA4AuqPZNjccDaTPyxpph+s3R943D/
+         NXPYuCe2dAX0W2lACKTz8sQzinRZHZmUAUgmgW3L7oFRRemvqx7TIYlBCq2n4ydaYXUG
+         M8XA==
+X-Gm-Message-State: AOAM533lmd6Rpt1rpHukUqAgwF/fnsI1YGPV9XqLQ/dIWvk0YBprDbpp
+        2NzCZrm3KqwAaRpEqNAzkMvL7UbIbn9CtVnqrrk=
+X-Google-Smtp-Source: ABdhPJzLb2aGPpWZaLInDmWBYV6zXb9BIywLTNbMJZ2rVC4CBpAmeacPihmMLdnl1xm6+LBEpB3z9zH6KUEINwdM2Z0=
+X-Received: by 2002:aca:1a17:: with SMTP id a23mr4749105oia.120.1611198454758;
+ Wed, 20 Jan 2021 19:07:34 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <4b5a642b.4d7e.17722b2a4af.Coremail.siyanteng@loongson.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: AQAAf9Dx2+T14QhgKVwIAA--.3865W
-X-CM-SenderInfo: pvl1t0pwhqwqxorr0wxvrqhubq/1tbiAQAGEV3QvM3eFwAbs4
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-        daVFxhVjvjDU=
+References: <20210115120014.4211dec6@canb.auug.org.au> <20210120171501.61aa0786@canb.auug.org.au>
+ <20210121115341.012c1a55@canb.auug.org.au>
+In-Reply-To: <20210121115341.012c1a55@canb.auug.org.au>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 20 Jan 2021 22:07:23 -0500
+Message-ID: <CADnq5_PuH6RNpkAKfUD011rDEXCRd5-0_ad0Rv40k_2gqiQaYA@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the amdgpu tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-U29ycnksIEkgYXBvbG9naXplIGZvciB0aGUgaW5jb252ZW5pZW5jZSBjYXVzZWQgdG8geW91LCBJ
-IGRvIG5vdCBxdWliYmxlLCBidXQgSSBoYXZlIGJlZW4gc3R1ZHlpbmcgZm9yIG5lYXJseSBhIHdl
-ZWssIHBsZWFzZSBwYXkgYXR0ZW50aW9uIHRvIG15IGZ1dHVyZSBwYXRjaGVzLgoKVGhhbmtzCllh
-bnRlbmcKCgomZ3Q7IC0tLS0t5Y6f5aeL6YKu5Lu2LS0tLS0KJmd0OyDlj5Hku7bkuro6ICJKb25h
-dGhhbiBDb3JiZXQiIDxjb3JiZXRAbHduLm5ldD4KJmd0OyDlj5HpgIHml7bpl7Q6IDIwMjEtMDEt
-MTQgMDc6Mjc6MzAgKOaYn+acn+WbmykKJmd0OyDmlLbku7bkuro6ICJTdGVwaGVuIFJvdGh3ZWxs
-IiA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CiZndDsg5oqE6YCBOiAiWWFudGVuZyBTaSIgPHNpeWFu
-dGVuZ0Bsb29uZ3Nvbi5jbj4sICJMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0IiA8bGludXgta2Vy
-bmVsQHZnZXIua2VybmVsLm9yZz4sICJMaW51eCBOZXh0IE1haWxpbmcgTGlzdCIgPGxpbnV4LW5l
-eHRAdmdlci5rZXJuZWwub3JnPgomZ3Q7IOS4u+mimDogUmU6IGxpbnV4LW5leHQ6IGJ1aWxkIHdh
-cm5pbmcgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIGpjX2RvY3MgdHJlZQomZ3Q7IAomZ3Q7IE9uIFdlZCwg
-MTMgSmFuIDIwMjEgMTU6MDc6NDggKzExMDAKJmd0OyBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
-Yi5hdXVnLm9yZy5hdT4gd3JvdGU6CiZndDsgCiZndDsgJmd0OyBBZnRlciBtZXJnaW5nIHRoZSBq
-Y19kb2NzIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoaHRtbGRvY3MpCiZndDsgJmd0
-OyBwcm9kdWNlZCB0aGlzIHdhcm5pbmc6CiZndDsgJmd0OyAKJmd0OyAmZ3Q7IERvY3VtZW50YXRp
-b24vdHJhbnNsYXRpb25zL3poX0NOL21pcHMvaW5nZW5pYy10Y3UucnN0OjYxOiBXQVJOSU5HOiBN
-YWxmb3JtZWQgdGFibGUuCiZndDsgJmd0OyBUZXh0IGluIGNvbHVtbiBtYXJnaW4gaW4gdGFibGUg
-bGluZSA2LgomZ3Q7ICZndDsgCiZndDsgJmd0OyA9PT09PT09PT09PSAgICAgICAgID09PT09CiZn
-dDsgJmd0OyDml7bpkp8gICAgICAgICAgICAgICAgZHJpdmVycy9jbGsvaW5nZW5pYy90Y3UuYwom
-Z3Q7ICZndDsg5Lit5patICAgICAgICAgICAgICAgIGRyaXZlcnMvaXJxY2hpcC9pcnEtaW5nZW5p
-Yy10Y3UuYwomZ3Q7ICZndDsg5a6a5pe25ZmoICAgICAgICAgICAgICBkcml2ZXJzL2Nsb2Nrc291
-cmNlL2luZ2VuaWMtdGltZXIuYwomZ3Q7ICZndDsgT1NUICAgICAgICAgICAgICAgICBkcml2ZXJz
-L2Nsb2Nrc291cmNlL2luZ2VuaWMtb3N0LmMKJmd0OyAmZ3Q7IOiEieWGsuWuveW6puiwg+WItuWZ
-qCAgICAgIGRyaXZlcnMvcHdtL3B3bS1qejQ3NDAuYwomZ3Q7ICZndDsg55yL6Zeo54uXICAgICAg
-ICAgICAgICBkcml2ZXJzL3dhdGNoZG9nL2p6NDc0MF93ZHQuYwomZ3Q7ICZndDsgPT09PT09PT09
-PT0gICAgICAgICA9PT09PQomZ3Q7ICZndDsgCiZndDsgJmd0OyBJbnRyb2R1Y2VkIGJ5IGNvbW1p
-dAomZ3Q7ICZndDsgCiZndDsgJmd0OyAgIDQxOWIxZDRlZDFjYiAoImRvYy96aF9DTjogYWRkIG1p
-cHMgaW5nZW5pYy10Y3UucnN0IHRyYW5zbGF0aW9uIikKJmd0OyAKJmd0OyBNZW1vIHRvIHNlbGY6
-IHlvdSBjYW4ndCBza2lwIGRvaW5nIGEgbmV3IGJ1aWxkIGV2ZW4gZm9yIHNpbXBsZQomZ3Q7IHRy
-YW5zbGF0aW9ucyB0aGF0IG9idmlvdXNseSBzaG91bGRuJ3QgYWRkIGFueSBuZXcgcHJvYmxlbXMu
-ICBTb3JyeSBmb3IgdGhlCiZndDsgbm9pc2UsIEkndmUgYXBwbGllZCBmaXhlcyBmcm9tIEx1a2Fz
-IEJ1bHdhaG4gZm9yIGFsbCBvZiB0aGlzIHdob2xlIG1lc3Mgb2YKJmd0OyBlcnJvcnMuCiZndDsg
-CiZndDsgWWFudGFuZywgKnBsZWFzZSogZG8gbm90IHN1Ym1pdCBkb2N1bWVudGF0aW9uIHBhdGNo
-ZXMgd2l0aG91dCBoYXZpbmcgZG9uZQomZ3Q7IGEgZG9jcyBidWlsZCB0byBtYWtlIHN1cmUgdGhp
-bmdzIHdvcmsgYXMgZXhwZWN0ZWQhCiZndDsgCiZndDsgVGhhbmtzLAomZ3Q7IAomZ3Q7IGpvbgoK
-Cjwvc2ZyQGNhbmIuYXV1Zy5vcmcuYXU+PC9saW51eC1uZXh0QHZnZXIua2VybmVsLm9yZz48L2xp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+PC9zaXlhbnRlbmdAbG9vbmdzb24uY24+PC9zZnJA
-Y2FuYi5hdXVnLm9yZy5hdT48L2NvcmJldEBsd24ubmV0Pg==
+On Wed, Jan 20, 2021 at 7:53 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> On Wed, 20 Jan 2021 17:15:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Fri, 15 Jan 2021 12:00:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the amdgpu tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'dm_set_vblank':
+> > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:5380:33: warning: unused variable 'dm' [-Wunused-variable]
+> > >  5380 |  struct amdgpu_display_manager *dm = &adev->dm;
+> > >       |                                 ^~
+> > >
+> > > Caused by commit
+> > >
+> > >   98ab5f3513f9 ("drm/amd/display: Fix deadlock during gpu reset v3")
+> >
+> > I am still getting this warning.
+>
+> I now get this warning from the drm tree merge.
+
+Bhawan sent out the fix today:
+https://patchwork.freedesktop.org/patch/415092/
+
+Alex
+
+>
+> --
+> Cheers,
+> Stephen Rothwell
