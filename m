@@ -2,72 +2,150 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC942C433E6
-	for <linux-next@archiver.kernel.org>; Fri, 22 Jan 2021 18:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8F8C433E9
+	for <linux-next@archiver.kernel.org>; Fri, 22 Jan 2021 23:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8649523AC0
-	for <linux-next@archiver.kernel.org>; Fri, 22 Jan 2021 18:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F0B23B51
+	for <linux-next@archiver.kernel.org>; Fri, 22 Jan 2021 23:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbhAVSKb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 22 Jan 2021 13:10:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729593AbhAVSCY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 22 Jan 2021 13:02:24 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2F2C0613D6;
-        Fri, 22 Jan 2021 10:02:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=9NCYCn2uu0Groq7HNmcJIKyI4plVDNVRCWewLnn9RN8=; b=cXJUHCxcSZmb3WBbTCOSR35MIH
-        SKSZ/AI9tzSgOHhz++Q5LuNVk/ofOefgqfOGpcSMlZwWBvgsKoeC1nEyEVjBVv3ZS6oB2/lECoM+s
-        Zv5elCywH+h7Nmoy/IN2QsQCb1IraI5aaHYbGpWAoLx6TqwwJD1DaCPhX+yrN3IJWyrjE5wDWB7Zp
-        3xny6jzWKrsozJ6vFU+CStctgeG0CmgnZfCzrajZAcPc1rvIU4rAgpTNufmzG17Q2jvk2AzSezD5u
-        6yh3gAOHP6dzU+/9IjeChfFqrTewesgwEUZIEb03HkrEcTX3wimImj/NLUduZmdqclatfa940PiJX
-        YC8/qVBw==;
-Received: from [2601:1c0:6280:3f0::9abc]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1l30l4-0007me-0q; Fri, 22 Jan 2021 18:02:06 +0000
-Subject: Re: linux-next: Tree for Jan 22 (amdgpu)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-References: <20210122180643.7039571c@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <64dd3a50-a836-c1b7-738e-6b6b5433117a@infradead.org>
-Date:   Fri, 22 Jan 2021 10:02:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1728151AbhAVXY2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 22 Jan 2021 18:24:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728270AbhAVXYZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 22 Jan 2021 18:24:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0971923B51;
+        Fri, 22 Jan 2021 23:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611357820;
+        bh=gBpq+x+WrBcMxLANHAJZem6iOs03mqvdVd0gvK3+OyI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=QOsTrl7lxfr1poYM95xiUaJij33Pip75daCvAm+iZOO8v3sYwJbm8LsRit9VjiJNV
+         WL83gM6kvXnS7LIYkKWu/T4D43d52jY3rhLgzVuRZJ028lyCm0QdEVz+VyF0TrApct
+         1iM2ihJcofHiUv0/jOtX59GaZS1O0rElYmQAYfqs2B71ci4+xlt4yrykgM9bzX9t2h
+         ef6KP4+baiDX5W9wx7Roq1hjuAh21P/xp4V+jQ7TZoVa3ieoR+uAnIalRd/bF8opfW
+         YLWm+HbyL2c+/bref1hEprUEXhpuYFLY9Mwd1+JE45oCHk9pbEgRUruwNEeMyZp9Hl
+         RvjOrAbRcuk2Q==
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id DA940352267C; Fri, 22 Jan 2021 15:23:39 -0800 (PST)
+Date:   Fri, 22 Jan 2021 15:23:39 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Will Deacon <will@kernel.org>, rcu@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: rcu-torture: Internal error: Oops: 96000006
+Message-ID: <20210122232339.GI2743@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYvV5SZ47M-XpABya11okgR7BJQk-3dDuFWzgVmGN3Lurg@mail.gmail.com>
+ <20210121185521.GQ2743@paulmck-ThinkPad-P72>
+ <20210121213110.GB23234@willie-the-truck>
+ <20210121214314.GW2743@paulmck-ThinkPad-P72>
+ <CA+G9fYvZ5oE2bAkZqTYE87N0ONWoo2Q6VZBXihu4NQ_+C07qgA@mail.gmail.com>
+ <20210122153704.GG2743@paulmck-ThinkPad-P72>
+ <CA+G9fYt=waJnq7N=109eapXZkz-xNWg91Yno6fKXmovvFUVpsQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210122180643.7039571c@canb.auug.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYt=waJnq7N=109eapXZkz-xNWg91Yno6fKXmovvFUVpsQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 1/21/21 11:06 PM, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Jan 22, 2021 at 09:16:38PM +0530, Naresh Kamboju wrote:
+> On Fri, 22 Jan 2021 at 21:07, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Fri, Jan 22, 2021 at 03:21:07PM +0530, Naresh Kamboju wrote:
+> > > On Fri, 22 Jan 2021 at 03:13, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > On Thu, Jan 21, 2021 at 09:31:10PM +0000, Will Deacon wrote:
+> > > > > On Thu, Jan 21, 2021 at 10:55:21AM -0800, Paul E. McKenney wrote:
+> > > > > > On Thu, Jan 21, 2021 at 10:37:21PM +0530, Naresh Kamboju wrote:
+> > > > > > > While running rcu-torture test on qemu_arm64 and arm64 Juno-r2 device
+> > > > > > > the following kernel crash noticed. This started happening from Linux next
+> > > > > > > next-20210111 tag to next-20210121.
+> > > > > > >
+> > > > > > > metadata:
+> > > > > > >   git branch: master
+> > > > > > >   git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+> > > > > > >   git describe: next-20210111
+> > > > > > >   kernel-config: https://builds.tuxbuild.com/1muTTn7AfqcWvH5x2Alxifn7EUH/config
+> > > > > > >
+> > > > > > > output log:
+> > > > > > >
+> > > > > > > [  621.538050] mem_dump_obj() slab test: rcu_torture_stats =
+> > > > > > > ffff0000c0a3ac40, &rhp = ffff800012debe40, rhp = ffff0000c8cba000, &z
+> > > > > > > = ffff8000091ab8e0
+> > > > > > > [  621.546662] mem_dump_obj(ZERO_SIZE_PTR):
+> > > > > > > [  621.546696] Unable to handle kernel NULL pointer dereference at
+> > > > > > > virtual address 0000000000000008
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > Huh.  I am relying on virt_addr_valid() rejecting NULL pointers and
+> > > > > > things like ZERO_SIZE_PTR, which is defined as ((void *)16).  It looks
+> > > > > > like your configuration rejects NULL as an invalid virtual address,
+> > > > > > but does not reject ZERO_SIZE_PTR.  Is this the intent, given that you
+> > > > > > are not allowed to dereference a ZERO_SIZE_PTR?
+> > > > > >
+> > > > > > Adding the ARM64 guys on CC for their thoughts.
+> > > > >
+> > > > > Spooky timing, there was a thread _today_ about that:
+> > > > >
+> > > > > https://lore.kernel.org/r/ecbc7651-82c4-6518-d4a9-dbdbdf833b5b@arm.com
+> > > >
+> > > > Very good, then my workaround (shown below for Naresh's ease of testing)
+> > > > is only a short-term workaround.  Yay!  ;-)
+> > >
+> > > Paul, thanks for your (short-term workaround) patch.
+> > >
+> > > I have applied your patch and tested rcu-torture test on qemu_arm64 and
+> > > the reported issues has been fixed.
+> >
+> > May I add your Tested-by?
 > 
-> Changes since 20210121:
+> Yes.  Please add Reported-by and Tested-by.
+
+Very good!  I have added:
+
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+
+Because I folded the workaround into the first commit in the series,
+instead of adding your Reported-by, I added the following to that commit:
+
+[ paulmck: Explicitly check for small pointers per Naresh Kamboju. ]
+
+> > And before I forget again, good to see the rcutorture testing on a
+> > non-x86 platform!
 > 
+> We are running rcutorture tests on arm, arm64, i386 and x86_64.
 
-on i386:
+Nice!!!
 
-ERROR: modpost: "__udivdi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-ERROR: modpost: "__divdi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+Some ARMv8 people are getting bogus (but harmless) error messages
+because parts of rcutorture think that all the world is an x86.
+I am looking at a fix, but need to work out what the system is.
+To that end, coul you please run the following on the arm, arm64,
+and i386 systems and tell me what the output is?
 
+	gcc -dumpmachine
 
+> Happy to test !
 
--- 
-~Randy
+And thank you very much for your testing efforts!!!
+
+							Thanx, Paul
