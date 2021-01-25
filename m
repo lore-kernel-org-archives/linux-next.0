@@ -2,89 +2,113 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA00C43381
-	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 18:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC84DC433E6
+	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 19:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 529362310E
-	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 18:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B274B2228A
+	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 19:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390344AbhAZRS2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:18:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57494 "EHLO
+        id S1730312AbhAZF6N (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:58:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390687AbhAZIz1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2021 03:55:27 -0500
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CF7C0613ED;
-        Tue, 26 Jan 2021 00:54:46 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DQ0sw029nz9sCD;
-        Tue, 26 Jan 2021 19:54:41 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1611651284;
-        bh=I3s1EpOWv+y62ui6MVTuNwPkXzAWpBfawc34KNcJQLY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XgNPtOths/PcYpcPvxamvHx/uIUFcyMdEoOBn6m39GsNjW3UyBPhk/qOE6gVtBQGs
-         GXO7r1t1m26z3/K0viBmGh+3FxeYA8d9qXjH9qI7C1tHzK4MqVx3LBpYKk6u0sySY7
-         zjq4/yXfZunh5wyemRFGZ/I0SY6u00SFe61BMlc3mVneaCfkOiXk2MBL0U2eQKvEAK
-         Ay0RVoB6d+lbevVXMXT3VqGWB+wUXjMX6XWFRFyY/+pv9P151fFM/4UNNeJc3aYChV
-         KZMqWUjgzIF8fiBRcI9CZNSi9YFhvdemzjC86xvJB4Ebl/M56kp3MUsrT6ipqqRU2l
-         ETNk4h/kZgvFA==
-Date:   Tue, 26 Jan 2021 19:54:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     Bastien Nocera <hadess@hadess.net>,
-        Florian Dollinger <dollinger.florian@gmx.de>,
+        with ESMTP id S1727154AbhAYSki (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Jan 2021 13:40:38 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A8B4C061756
+        for <linux-next@vger.kernel.org>; Mon, 25 Jan 2021 10:39:55 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id d4so8213861plh.5
+        for <linux-next@vger.kernel.org>; Mon, 25 Jan 2021 10:39:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=b6u/WUCmSU0QAscUYeApKxm+wOPUgy+KJoomzmcMtkA=;
+        b=x8n5OMDuJTuBtD8qL2jC9B3zbNtOqc6UvqcsRIY/thgsr/zx5cks19UjYDDHvlh4jq
+         zj0LzTf98OxxLCUeFaMJ4ZuOv2GzCBx9qXdsQGMtNzAnhyPMybYSYg/EogMP9E6+wLlq
+         h4zRasUObh55p+m0x415+DsOYp1IpoWW+VraziUNzosFjXq2KFIuRa678sw5sqH8vrYJ
+         c9gUI318hZCtg34qO0eQvUUiQg4fH6zBib2c0WfoUFZgBT6r9fhYmjLJxQpYSC1GUFf1
+         MFngmZAA6N/JbSAHLCw7U8tu2g+xv2eb0+HVlIWEpMd1H+GqxbZLqELOV6/37zIRB9jt
+         4dWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=b6u/WUCmSU0QAscUYeApKxm+wOPUgy+KJoomzmcMtkA=;
+        b=Ab1uPN+Yu6KCtZYSFfYpiiVmENOGMPBh3ZH246FDv8C2AcW24FSxwjsA1YXqtjY3dc
+         QUL278ShaiTGZIZHyMspJFuivQoHmdi+PNcKGdy0eLVDhmVtoEdz6MDWIXIf8oFMyBDc
+         CabeKxjcf1fyTTJSjDSyBPWUzJBNqvQFyuIt+gfEqwe3O/7sfXBbtVO603Z+aKKleWBV
+         iiiTVldymSSJ9gmvmg2XsOwa8RoupT6T6kPaMchCW7BZIVT5GmfrvO8moJ71XldwY4S7
+         Jg+DeIOsd4wXkXvninC72BWMUINhKZwNnaGHqOp1Y6xn99qJNA+Dm4vjqJ/G1vJrsljT
+         vyqw==
+X-Gm-Message-State: AOAM532uyYptWYLZEvXv04ePA5Mrb0mSl8c1JKKzw5ziUgP2XxxZpxbJ
+        Jvh6VXJfwcJuhFmMHCtZKxLSgC3LtEtQog==
+X-Google-Smtp-Source: ABdhPJxOmd0snia3sFjZWkCv9trJwxeRXB4Uc9Rz4QAcT+/+MAHdqB4bsn6P39CPw4rADbhEtKkKLA==
+X-Received: by 2002:a17:902:e74b:b029:df:e5d6:c35f with SMTP id p11-20020a170902e74bb02900dfe5d6c35fmr2001982plf.57.1611599992853;
+        Mon, 25 Jan 2021 10:39:52 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id a4sm17446049pfg.41.2021.01.25.10.39.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Jan 2021 10:39:52 -0800 (PST)
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+To:     Paolo Valente <paolo.valente@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Jia Cheng Hu <jia.jiachenghu@gmail.com>, Jan Kara <jack@suse.cz>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the bluetooth tree
-Message-ID: <20210126195441.69c45ad9@canb.auug.org.au>
+References: <20210125204032.6b6a604b@canb.auug.org.au>
+ <3F91181A-EDF2-4F01-9839-17B40D6EA07F@linaro.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fb60bac7-f572-d131-d761-f6ce10a05f69@kernel.dk>
+Date:   Mon, 25 Jan 2021 11:39:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BmVtMDl89ADAvxfWA1h0GMF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <3F91181A-EDF2-4F01-9839-17B40D6EA07F@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/BmVtMDl89ADAvxfWA1h0GMF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/25/21 11:35 AM, Paolo Valente wrote:
+> 
+> 
+>> Il giorno 25 gen 2021, alle ore 10:40, Stephen Rothwell <sfr@canb.auug.org.au> ha scritto:
+>>
+>> Hi all,
+>>
+>> In commit
+>>
+>>  d4fc3640ff36 ("block, bfq: set next_rq to waker_bfqq->next_rq in waker injection")
+>>
+>> Fixes tag
+>>
+>>  Fixes: c5089591c3ba ("block, bfq: detect wakers and unconditionally inject their I/O")
+>>
+>> has these problem(s):
+>>
+>>  - Target SHA1 does not exist
+>>
+>> Maybe you meant
+>>
+>> Fixes: 13a857a4c4e8 ("block, bfq: detect wakers and unconditionally inject their I/O")
+>>
+> 
+> Hi Jens,
+> how to proceed in such a case (with patches already applied by you)?
+> Shall I send you a v2 with only this change?
 
-Hi all,
+We just have to ignore it... But in the future, always double check that
+you are using the right shas, not some sha from an internal tree.
 
-Commit
+-- 
+Jens Axboe
 
-  98d2c3e17310 ("Bluetooth: L2CAP: Try harder to accept device not knowing =
-options")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BmVtMDl89ADAvxfWA1h0GMF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAP2NEACgkQAVBC80lX
-0GwKwAgAmU5gtV87Z+KrIlM1yHD2+tDHiaT5i9Qmxk5l0iHZW/eKcz1AtEeOyiEh
-So7JtLfJWOZbNkgvgdM+AEOWfar+SFRIWvzIWW36awJoPfS4+k6pgI1/HEWlUF+6
-P1d7jcSzWAKbDykaRaJPdfSTwsieRGWFNIXrjAv2CifeqYu3iIJI1cKPNReGPn1m
-a6XKSHvHX+wNmmmWHdrBtUljW1RbrM08IBA/m5D2PDNMjnhrxO5tEqWjXV/7Lw8r
-bCKBqDqzgWR8+I2cFTtmRoNuDuNXOFR1N/thmn0ha3sL2acVHvImKy+690yCubdE
-N4THJQtRwCexejXjPw/M1BXUElOv/g==
-=4jbi
------END PGP SIGNATURE-----
-
---Sig_/BmVtMDl89ADAvxfWA1h0GMF--
