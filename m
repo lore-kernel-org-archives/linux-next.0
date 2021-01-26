@@ -2,93 +2,83 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD77C433E0
-	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 17:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19ED3C433DB
+	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 18:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4620922795
-	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 17:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E52AA22B3F
+	for <linux-next@archiver.kernel.org>; Tue, 26 Jan 2021 18:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390370AbhAZRSc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:18:32 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59533 "EHLO ozlabs.org"
+        id S2390411AbhAZRSh (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:18:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57550 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390663AbhAZI7G (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 26 Jan 2021 03:59:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DQ0xs4kd3z9sCD;
-        Tue, 26 Jan 2021 19:58:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1611651489;
-        bh=TBpZeftSzKSn8HpL/hx97ig1oEsAGu1xl/QL1rnKROU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=T2V2WN9UbiHShKhdc0MazIppoH9JqzBHmVv70R4K0mbz3Nej1UyAlW70Kvkeg2Uo1
-         RV5oJa0R0xwaUD/b38NPv55iHAk2Wf9/bLrEzrG31IZRMNPyJErsovaX974UXEf1Mg
-         JQKmgMkgSgwJ/II79xkg2CLVlCmwx0A2XWN8lpYxTCg4VVYqc7Cfm6pIGM9GTtZYoL
-         3U+kTDFrJMmzijmEfMj/aeyofhi54z8efokPS6sgvqJPwllIQoXlfnMMCRch5gmgJd
-         qMr1gU1bh0wmGOevCKGdkBBWeH+2Og1mgFqU72T4XAPJLBNRntvog+FA8gATy2J15T
-         9fOC11JOBQ87A==
-Date:   Tue, 26 Jan 2021 19:58:07 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S2389259AbhAZJTl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 26 Jan 2021 04:19:41 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 1A990AF85;
+        Tue, 26 Jan 2021 09:17:16 +0000 (UTC)
+Message-ID: <3f563185539b346477ca19b350d0ac8c96632398.camel@suse.de>
+Subject: Re: linux-next: Signed-off-by missing for commit in the raspberrypi
+ tree
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the amdgpu tree
-Message-ID: <20210126195807.668bdcef@canb.auug.org.au>
+Date:   Tue, 26 Jan 2021 10:17:14 +0100
+In-Reply-To: <20210126191117.47fffe80@canb.auug.org.au>
+References: <20210126191117.47fffe80@canb.auug.org.au>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-XT0h9IerV7y34lokR1n/"
+User-Agent: Evolution 3.38.3 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YcQgAf.64RqVBy72W9Tayh8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/YcQgAf.64RqVBy72W9Tayh8
-Content-Type: text/plain; charset=US-ASCII
+
+--=-XT0h9IerV7y34lokR1n/
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 2021-01-26 at 19:11 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Commits
+>=20
+> =C2=A0=C2=A07a5936445053 ("ARM: dts: bcm2711: Add the BSC interrupt contr=
+oller")
+> =C2=A0=C2=A069894e0baa0c ("ARM: bcm: Select BRCMSTB_L2_IRQ for bcm2835")
+>=20
+> are missing a Signed-off-by from their committer.
+>=20
 
-In commit
+Sorry for that, I fixed the branch right away but forgot to push it.
 
-  289970f0be61 ("drm/amd/display: Fix unused variable warning")
+Regards,
+Nicolas
 
-Fixes tag
 
-  Fixes: e177af8a43da ("drm/amd/display: Fix deadlock during gpu reset v3")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 98ab5f3513f9 ("drm/amd/display: Fix deadlock during gpu reset v3")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YcQgAf.64RqVBy72W9Tayh8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--=-XT0h9IerV7y34lokR1n/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAP2Z8ACgkQAVBC80lX
-0Gw0dAf7Bbz5boTMU/5m+LKYTMhbC2lLTlKsk9BIoaHDt6HYhes4zH0MsfqUnG5H
-nTcZk8MLKkz3MB/EjvKdYdZNNmWGjTSlydk4l67CvbS9fpDr1mbrqoxxsLnReIjL
-s7+A3aclHkR23eDDe1wvIUXmkiXi91lOdbVUlo9R8dvp0f0ElKmiVTYefXV5i2Gl
-+mq/JxlsfpxGLjluyzoBBihc07xgGFegiOSx8aHao0xx73O1b2fUH7yLdAEoNsGQ
-/xEBXvmybbCppf1mU6VO9kB8zudvjWEAgoiDH9MGjuS9X4x7Gog2LXDilhphbmfR
-XgtlArBmUrBgoPgzqyCWkYnQgx9lyQ==
-=Sdka
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmAP3hoACgkQlfZmHno8
+x/7RMgf/VIKtjrAqjvBP4Ymnv8dC/4VMnq2Y2C2Ki7LRJIH/+5c2G9L45uk7dC4e
+RhQv4An+byKbow90CYp+SmWoTpnWX8EXjF6/eCD5r5+WnltmkaTgIYcwkcvEkbWk
+KMxwRzR+fQu87oRfMP/likuPVk1o6WPEyuP9UGrVmRdEKebmo5of1vNJ0WI0iZBV
+wZIQysAq0Qi2Rb6GT1ryYgxk0zAUvvthY5BMs8MhVLC1vqaa6bBbEGAkXe+RM8Md
+WZNV/zOFAVpXRg1LDRnm4VSsokIwilOp7tPt6i4YM5IY/g6ZhoppRxh8tc74JTBu
+09XfJfW8aTWweNWv3Zl+hWnR9XOa9A==
+=Ip+l
 -----END PGP SIGNATURE-----
 
---Sig_/YcQgAf.64RqVBy72W9Tayh8--
+--=-XT0h9IerV7y34lokR1n/--
+
