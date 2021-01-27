@@ -4,85 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949DEC433E0
-	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 04:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08432C433E0
+	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 04:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43F332070E
-	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 04:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE4D22070E
+	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 04:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239349AbhA0Elc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 26 Jan 2021 23:41:32 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:58347 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1343614AbhA0EUR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 26 Jan 2021 23:20:17 -0500
+        id S239339AbhA0ElO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 26 Jan 2021 23:41:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233507AbhA0D3R (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2021 22:29:17 -0500
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D90C0613D6;
+        Tue, 26 Jan 2021 19:28:31 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DQVjw2rdQz9sSs;
-        Wed, 27 Jan 2021 15:19:32 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DQTZy73hLz9sWH;
+        Wed, 27 Jan 2021 14:28:26 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1611721173;
-        bh=hcMVls7/rWUAocZd0P28uIj8Y0Eh18tkBzcPYsyo+VA=;
+        s=201702; t=1611718107;
+        bh=JbVRN4XtgmApcPwHmmXTSEhO8JsUiQGRisESwApMoxI=;
         h=Date:From:To:Cc:Subject:From;
-        b=mYDysqBSFLze7BgXbbcXvcRGKhJxIQzJJRpRWCuezqicyh6QlziEXHOWxjdnbbBD4
-         acmcXwUQh2N2g2CiSGTw9NJdIWEKcqyoZ613e0rSKKJufPfUKhVqynUZLADWVdWhLR
-         k36YHYRDGlDM3YTtdMnDyi27aNWwce27xpukpYD1vMvO16zHgbT/2ODqFD3FzJ3HSH
-         Tt3o+y123dfufStItIxvR/8FLN36SScYq+nkIHq1KNVRt+O6q+dCt49f5z2dK8kIug
-         dhA+DKHS6g4jwEOFsjrF/KoE2FwvxZU1/g2CxbFj5O2XwD3WjBEDTeGUB4IcDWb07P
-         laJtQOGwa3fxA==
-Date:   Wed, 27 Jan 2021 15:19:31 +1100
+        b=YGp26eAP1J96nplaP0feRoO1vIiX3s3lBrPj9XgSlygh9gQwhrwYOSJL6DL2vNJQq
+         j7UbDMfuw3XpmxYvCu09avwhK1zAzLUtbHH66f2tPBo8y+DmaT/NJ2qJYm9llZd8Z2
+         d/NVqv56AUBPx0I3mTAGuFPjxxsPgKesB/zhIDZRXkQKt8ns9Dm40x8y8Q33iyPMU3
+         GmR7xaXik/fQGhv3yz6YTbR0Ox4ATkhw6JiALxiyepd5Ap/G0xxHw60tmb2SQJbSHm
+         kX6+z4T8B4epY0cYOzduTE4FxmCvZa+4LrgdRjDNyQW9/1KIN6N2yrTSDRElSlBgDk
+         /1Ub5RtW78Dsw==
+Date:   Wed, 27 Jan 2021 14:28:25 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jens Axboe <axboe@kernel.dk>, David Howells <dhowells@redhat.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Subject: linux-next: manual merge of the integrity tree with the pidfd tree
-Message-ID: <20210127151931.530d7aa9@canb.auug.org.au>
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: linux-next: manual merge of the block tree with the fscache tree
+Message-ID: <20210127142825.625c45bc@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/X+mOyQpyJ7UhJU.3fj3vIA1";
+Content-Type: multipart/signed; boundary="Sig_/ZpWqrVT1DuQ7yX/Jk=L3U7Y";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/X+mOyQpyJ7UhJU.3fj3vIA1
+--Sig_/ZpWqrVT1DuQ7yX/Jk=L3U7Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-FIXME: Add owner of second tree to To:
-       Add author(s)/SOB of conflicting commits.
+Today's linux-next merge of the block tree got a conflict in:
 
-Today's linux-next merge of the integrity tree got a conflict in:
-
-  security/integrity/ima/ima_main.c
+  lib/iov_iter.c
 
 between commit:
 
-  a2d2329e30e2 ("ima: handle idmapped mounts")
+  11432a3cc061 ("iov_iter: Add ITER_XARRAY")
 
-from the pidfd tree and commits:
+from the fscache tree and commit:
 
-  2b4a2474a202 ("IMA: generalize keyring specific measurement constructs")
-  291af651b350 ("IMA: add support to measure buffer data hash")
-  d6e645012d97 ("IMA: define a hook to measure kernel integrity critical da=
-ta")
+  54c8195b4ebe ("iov_iter: optimise bvec iov_iter_advance()")
 
-from the integrity tree.
-
-In ima_measure_critical_data(), process_buffer_measurement() is called
-with a NULL inode and func set to CRITCTAL_DATA.  In this case, the
-mnt_userns parameter is not used (I followed the call chain down) and
-so I just passed a NULL for it.
+from the block tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -95,115 +84,43 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc security/integrity/ima/ima_main.c
-index cb1c56eccd6d,6a429846f90a..000000000000
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@@ -816,22 -809,22 +816,24 @@@ int ima_post_load_data(char *buf, loff_
-  }
- =20
-  /*
--  * process_buffer_measurement - Measure the buffer to ima log.
-+  * process_buffer_measurement - Measure the buffer or the buffer data hash
- + * @mnt_userns:	user namespace of the mount the inode was found from
-   * @inode: inode associated with the object being measured (NULL for KEY_=
-CHECK)
-   * @buf: pointer to the buffer that needs to be added to the log.
-   * @size: size of buffer(in bytes).
-   * @eventname: event name to be used for the buffer entry.
-   * @func: IMA hook
-   * @pcr: pcr to extend the measurement
--  * @keyring: keyring name to determine the action to be performed
-+  * @func_data: func specific data, may be NULL
-+  * @buf_hash: measure buffer data hash
-   *
--  * Based on policy, the buffer is measured into the ima log.
-+  * Based on policy, either the buffer data or buffer data hash is measured
-   */
- -void process_buffer_measurement(struct inode *inode, const void *buf, int=
- size,
- +void process_buffer_measurement(struct user_namespace *mnt_userns,
- +				struct inode *inode, const void *buf, int size,
-  				const char *eventname, enum ima_hooks func,
-- 				int pcr, const char *keyring)
-+ 				int pcr, const char *func_data,
-+ 				bool buf_hash)
-  {
-  	int ret =3D 0;
-  	const char *audit_cause =3D "ENOMEM";
-@@@ -869,9 -864,8 +873,9 @@@
-  	 */
-  	if (func) {
-  		security_task_getsecid(current, &secid);
- -		action =3D ima_get_action(inode, current_cred(), secid, 0, func,
- -					&pcr, &template, func_data);
- +		action =3D ima_get_action(mnt_userns, inode, current_cred(),
- +					secid, 0, func, &pcr, &template,
-- 					keyring);
-++					func_data);
-  		if (!(action & IMA_MEASURE))
-  			return;
-  	}
-@@@ -929,12 -937,38 +947,38 @@@ void ima_kexec_cmdline(int kernel_fd, c
-  	if (!f.file)
+diff --cc lib/iov_iter.c
+index f53a57588489,e55357f09f71..000000000000
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@@ -1145,12 -1090,11 +1158,16 @@@ void iov_iter_advance(struct iov_iter *
+  		i->count -=3D size;
   		return;
- =20
- -	process_buffer_measurement(file_inode(f.file), buf, size,
- -				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL,
- -				   false);
- +	process_buffer_measurement(file_mnt_user_ns(f.file), file_inode(f.file),
- +				   buf, size, "kexec-cmdline", KEXEC_CMDLINE, 0,
-- 				   NULL);
-++				   NULL, false);
-  	fdput(f);
-  }
- =20
-+ /**
-+  * ima_measure_critical_data - measure kernel integrity critical data
-+  * @event_label: unique event label for grouping and limiting critical da=
-ta
-+  * @event_name: event name for the record in the IMA measurement list
-+  * @buf: pointer to buffer data
-+  * @buf_len: length of buffer data (in bytes)
-+  * @hash: measure buffer data hash
-+  *
-+  * Measure data critical to the integrity of the kernel into the IMA log
-+  * and extend the pcr.  Examples of critical data could be various data
-+  * structures, policies, and states stored in kernel memory that can
-+  * impact the integrity of the system.
-+  */
-+ void ima_measure_critical_data(const char *event_label,
-+ 			       const char *event_name,
-+ 			       const void *buf, size_t buf_len,
-+ 			       bool hash)
-+ {
-+ 	if (!event_name || !event_label || !buf || !buf_len)
+  	}
++ 	if (iov_iter_is_bvec(i)) {
++ 		iov_iter_bvec_advance(i, size);
 + 		return;
-+=20
- -	process_buffer_measurement(NULL, buf, buf_len, event_name,
-++	process_buffer_measurement(NULL, NULL, buf, buf_len, event_name,
-+ 				   CRITICAL_DATA, 0, event_label,
-+ 				   hash);
-+ }
-+=20
-  static int __init init_ima(void)
-  {
-  	int error;
++ 	}
+ -	iterate_and_advance(i, size, v, 0, 0, 0)
+ +	if (unlikely(iov_iter_is_xarray(i))) {
+ +		i->iov_offset +=3D size;
+ +		i->count -=3D size;
+ +		return;
+ +	}
+ +	iterate_and_advance(i, size, v, 0, 0, 0, 0)
+  }
+  EXPORT_SYMBOL(iov_iter_advance);
+ =20
 
---Sig_/X+mOyQpyJ7UhJU.3fj3vIA1
+--Sig_/ZpWqrVT1DuQ7yX/Jk=L3U7Y
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAQ6dMACgkQAVBC80lX
-0GzKXAf/RZl7tG3seTEZtjpJpsBTRyUnbS4DD8xqHdpYt+HNcRIJbgGPNx/qmvi8
-HpMfo7KFfAv+AKpOAN1E/gBxXYYQU1H0lhgB+eCMcV5xMLIace1uPZ3NNjpLBx1x
-VywqlSuUYv2uSQp534bFQdVevlFSdCMXZZ93/QZ0k/d2fXgd0JApA3BP/py4gA56
-BWOE9J+iHjKIIpilA3XtQURyGVNwdCExhbFCA+kvu7jH79mPpv85LJgmOPufbhgh
-49j95Lw1rg1K4j6anKTiS4IFn2MJfTXLjo/PzIMpwBElnL+XIFErCpSKVG4gZRGu
-MUmtmgfGvgVw/KlDGDhnuGLF5pJzMQ==
-=nk4Y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAQ3dkACgkQAVBC80lX
+0GzhXAgAjcBxg1f6r2G8oZOuZG4XM/IDmFPAnyprOjtmIma0IER6cpar2wE2uatl
+ROw9M0RXnfTiwmReiBdHYJwQ8v6ajv5nWtibr81GO443FO7nFBbqbhe1+Jd1o4Vm
+FNa3LORottAu3+atWz7AnmO4ZuLNjpRKl+/4nP/xZxVXTZmmsewwFGHrqfO2WQj0
+TXguxFZNvb7mkvt6F5Wr9jmYPaEN6Zt9PMCaOUTkvk1l8JdeGsUa9peovxx/dQgX
+xRd6HqYRSX0l6prvYl8XOcI4YLAPRRKnwTt9xUG7RjW9RFOpm/KheexyOn4/M6EW
+T6Buq2lgFx8OlOyySsp54RvX2nQgvQ==
+=XrSz
 -----END PGP SIGNATURE-----
 
---Sig_/X+mOyQpyJ7UhJU.3fj3vIA1--
+--Sig_/ZpWqrVT1DuQ7yX/Jk=L3U7Y--
