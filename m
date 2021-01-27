@@ -2,117 +2,152 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56DDC4332B
-	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 05:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B000FC433DB
+	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 05:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1BE020725
-	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 05:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B40C2070E
+	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 05:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233052AbhA0F7I (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 27 Jan 2021 00:59:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59378 "EHLO mail.kernel.org"
+        id S232460AbhA0F71 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 27 Jan 2021 00:59:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:42570 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235008AbhA0DPR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 26 Jan 2021 22:15:17 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F7F0205CA;
-        Wed, 27 Jan 2021 03:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611717276;
-        bh=D0Qq+Fw7Ddpu0yizF3n5QBzokiqxWrewo5KH/Easwik=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fYWt+0D25u7m4Iq1090WJSF102xxsHTBSVde3fj9qpWZTIFJNRCq2YJIMyX8sPprW
-         pUCd7qr/nvaZRES0gBYmtLm5Qx4GIKOelnPMlNH5EjgkAndsfH/8qEdgZSbtXRs6U/
-         9eItQFngZuPySenDulB9lX+ZhcDRMnKxW9Z6bZzAXlPHMgsF6sMmOnkEdB8/66qoNQ
-         FVt9rhhyVrXvbPNZX7/+0k0Inl2MAyDzoQOu7U9UsyYZHktIE35SYCBAboT2xNIqgS
-         SJNq4zClby/GkEeWJ0YyYo113vyObZG8w26okc3VhHJd/X0T1iXH/Z/rVAcoUvHo+j
-         8Vl4pUp/eDKfQ==
-Date:   Tue, 26 Jan 2021 19:14:35 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S237608AbhA0Dzf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 26 Jan 2021 22:55:35 -0500
+IronPort-SDR: 4neyQmTp2DOKMZJuGVDs3fR8/QFsQotwmgwOREQAU85OiK5MfOIwuV+XwR5JHcDTr2yG/6QB5s
+ H0aSLWKfJvhA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="167684743"
+X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
+   d="scan'208";a="167684743"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 19:54:54 -0800
+IronPort-SDR: zUQpenv7S1YPTdoCBnbHAiu/wM0L/F0BKuoVZbQJ78z1FKrzRPZThfc/ZEYvVgPHqjCfKsTLBO
+ yWxpBD5vmXPg==
+X-IronPort-AV: E=Sophos;i="5.79,378,1602572400"; 
+   d="scan'208";a="362253675"
+Received: from yuankuns-mobl.ccr.corp.intel.com ([10.249.169.180])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 19:54:53 -0800
+Message-ID: <e1fcf35b21e7e4af67621bd4f037e3f07af756e1.camel@intel.com>
+Subject: Re: linux-next: build warning after merge of the pm tree
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the xfs tree
-Message-ID: <20210127031435.GB7695@magnolia>
-References: <20210125095532.64288d47@canb.auug.org.au>
- <20210125132616.GB2047559@bfoster>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210125132616.GB2047559@bfoster>
+Date:   Wed, 27 Jan 2021 11:54:50 +0800
+In-Reply-To: <20210127124324.29b7c4d4@canb.auug.org.au>
+References: <20210127124324.29b7c4d4@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 08:26:16AM -0500, Brian Foster wrote:
-> On Mon, Jan 25, 2021 at 09:55:32AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the xfs tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> > 
-> > fs/xfs/xfs_log.c: In function 'xfs_log_cover':
-> > fs/xfs/xfs_log.c:1111:16: warning: unused variable 'log' [-Wunused-variable]
-> >  1111 |  struct xlog  *log = mp->m_log;
-> >       |                ^~~
-> > 
-> > Introduced by commit
-> > 
-> >   303591a0a947 ("xfs: cover the log during log quiesce")
-> > 
-> 
-> Oops, patch below. Feel free to apply or squash into the original
-> commit.
-> 
-> Brian
-> 
-> --- 8< ---
-> 
-> From 6078f06e2bd4c82111a85a2032c39a56654b0be6 Mon Sep 17 00:00:00 2001
-> From: Brian Foster <bfoster@redhat.com>
-> Date: Mon, 25 Jan 2021 08:22:56 -0500
-> Subject: [PATCH] xfs: fix unused log variable in xfs_log_cover()
-> 
-> The log variable is only used in kernels with asserts enabled.
-> Remove it and open code the dereference to avoid unused variable
-> warnings.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
+Hi, Stephen,
 
-Looks ok to me...
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Sorry that I missed this build warning in the first place, thanks for
+reporting.
+The patch below fixes it.
 
---D
+BTW, Rafael, I think acpi_fpdt_init() also needs to be fixed to have
+proper return value.
+Do you prefer an incremental patch or a V2 of 208757d71098 ("ACPI:
+tables: introduce support for FPDT table"), which includes all these
+fixes?
 
-> ---
->  fs/xfs/xfs_log.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+thanks,
+rui
+
+From 2b8ed148351875b4bf227602a97edba12d08af7e Mon Sep 17 00:00:00 2001
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Wed, 27 Jan 2021 11:33:33 +0800
+Subject: [PATCH] ACPI: FPDT: fix build warning
+
+Fix a build warning,
+In file included from ./include/linux/printk.h:7:0,
+                 from ./include/linux/kernel.h:16,
+                 from ./include/linux/list.h:9,
+                 from ./include/linux/kobject.h:19,
+                 from ./include/linux/of.h:17,
+                 from ./include/linux/irqdomain.h:35,
+                 from ./include/linux/acpi.h:13,
+                 from drivers/acpi/acpi_fpdt.c:11:
+drivers/acpi/acpi_fpdt.c: In function ‘acpi_init_fpdt’:
+./include/linux/kern_levels.h:5:18: warning: too many arguments for format [-Wformat-extra-args]
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^
+./include/linux/kern_levels.h:14:19: note: in expansion of macro ‘KERN_SOH’
+ #define KERN_INFO KERN_SOH "6" /* informational */
+                   ^~~~~~~~
+./include/linux/printk.h:373:9: note: in expansion of macro ‘KERN_INFO’
+  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         ^~~~~~~~~
+drivers/acpi/acpi_fpdt.c:255:4: note: in expansion of macro ‘pr_info’
+    pr_info(FW_BUG, "Invalid subtable type %d found.\n",
+    ^~~~~~~
+
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+---
+ drivers/acpi/acpi_fpdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpi_fpdt.c b/drivers/acpi/acpi_fpdt.c
+index b8108117262a..64d5733dca0b 100644
+--- a/drivers/acpi/acpi_fpdt.c
++++ b/drivers/acpi/acpi_fpdt.c
+@@ -252,7 +252,7 @@ void acpi_init_fpdt(void)
+ 					      subtable->type);
+ 			break;
+ 		default:
+-			pr_info(FW_BUG, "Invalid subtable type %d found.\n",
++			pr_info(FW_BUG "Invalid subtable type %d found.\n",
+ 			       subtable->type);
+ 			return;
+ 		}
+-- 
+2.17.1
+
+
+On Wed, 2021-01-27 at 12:43 +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-> index 58699881c100..d8b814227734 100644
-> --- a/fs/xfs/xfs_log.c
-> +++ b/fs/xfs/xfs_log.c
-> @@ -1108,12 +1108,11 @@ static int
->  xfs_log_cover(
->  	struct xfs_mount	*mp)
->  {
-> -	struct xlog		*log = mp->m_log;
->  	int			error = 0;
->  	bool			need_covered;
->  
-> -	ASSERT((xlog_cil_empty(log) && xlog_iclogs_empty(log) &&
-> -	        !xfs_ail_min_lsn(log->l_ailp)) ||
-> +	ASSERT((xlog_cil_empty(mp->m_log) && xlog_iclogs_empty(mp->m_log) &&
-> +	        !xfs_ail_min_lsn(mp->m_log->l_ailp)) ||
->  	       XFS_FORCED_SHUTDOWN(mp));
->  
->  	if (!xfs_log_writable(mp))
-> -- 
-> 2.26.2
+> After merging the pm tree, today's linux-next build (x86_64
+> allmodconfig)
+> produced this warning:
 > 
+> In file included from include/linux/printk.h:7,
+>                  from include/linux/kernel.h:16,
+>                  from include/linux/list.h:9,
+>                  from include/linux/kobject.h:19,
+>                  from include/linux/of.h:17,
+>                  from include/linux/irqdomain.h:35,
+>                  from include/linux/acpi.h:13,
+>                  from drivers/acpi/acpi_fpdt.c:11:
+> drivers/acpi/acpi_fpdt.c: In function 'acpi_init_fpdt':
+> include/linux/kern_levels.h:5:18: warning: too many arguments for
+> format [-Wformat-extra-args]
+>     5 | #define KERN_SOH "\001"  /* ASCII Start Of Header */
+>       |                  ^~~~~~
+> include/linux/kern_levels.h:14:19: note: in expansion of macro
+> 'KERN_SOH'
+>    14 | #define KERN_INFO KERN_SOH "6" /* informational */
+>       |                   ^~~~~~~~
+> include/linux/printk.h:373:9: note: in expansion of macro 'KERN_INFO'
+>   373 |  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+>       |         ^~~~~~~~~
+> drivers/acpi/acpi_fpdt.c:255:4: note: in expansion of macro 'pr_info'
+>   255 |    pr_info(FW_BUG, "Invalid subtable type %d found.\n",
+>       |    ^~~~~~~
+> 
+> Introduced by commit
+> 
+>   208757d71098 ("ACPI: tables: introduce support for FPDT table")
+> 
+
