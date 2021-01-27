@@ -2,132 +2,105 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F78C433E0
-	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 06:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3014FC433DB
+	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 06:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDB6720717
-	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 06:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C163820715
+	for <linux-next@archiver.kernel.org>; Wed, 27 Jan 2021 06:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233455AbhA0F7R (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 27 Jan 2021 00:59:17 -0500
-Received: from ozlabs.org ([203.11.71.1]:33411 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235764AbhA0DZF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 26 Jan 2021 22:25:05 -0500
+        id S233477AbhA0F7b (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 27 Jan 2021 00:59:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234826AbhA0FY4 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Jan 2021 00:24:56 -0500
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEFD0C061573;
+        Tue, 26 Jan 2021 21:24:15 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DQTVC5dnlz9sSs;
-        Wed, 27 Jan 2021 14:24:19 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DQX8X31Xzz9sW8;
+        Wed, 27 Jan 2021 16:24:11 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1611717861;
-        bh=jGXNNioRjxhhBdPPzy6DBCKYQDkMAd7+JXFGN0Jy8+8=;
+        s=201702; t=1611725053;
+        bh=/JAM5q+VErmzCB+wD8zfoahFNxWaRfiQ7fX/mkhZKyk=;
         h=Date:From:To:Cc:Subject:From;
-        b=Um70XnqDdWg93cTcjjo7lchBYRC3VaKtJjp6dct8AEV6YjEvk1KYVnhkfsUN2JqdZ
-         O14GQnMgec+ZiJPYiswap8B2R5lEHHl0rnEhVvkbw3SGEvj9u8IstabQk1viai2bzW
-         ir7I6gSv6haKqBR5jBOfbidfw9lQLnX/36bwmMyGkJYJDQlJfpfBMPI/WLbhyCXvZ8
-         sdB0oTVNeG7k6e3t4Sd6Zauy+I/T6NnVefjJ2c+Yng7XFNjuEAbf4Idwtf/3HXQPR5
-         Dh12f2JISoNVPdcEXX0iOAcLeyz7md2iEbHyYgRLzE3ZI4Fr0a4utVw5myjvJUsGYK
-         sTbhImx1LPH1A==
-Date:   Wed, 27 Jan 2021 14:24:18 +1100
+        b=JnSqVluGrJnRM/QpLmJDBPW3coy9++a20HOI1EIjdxyukkqVG1NnZ5ERrF5PKzPeI
+         9O3nmnvHp8fgG1jUqYXDzXpB/6ePxFfATtK4oh3zbMgwXFKN3HNusudHElG/+l7wE9
+         vS3fRazrdU2Kp382x3VhURX2GF4eSRxZR2wkw/w84tsIZOgAJvpKWLI5SuDw4h3DMl
+         XOQDyu09KJlz0+A/a8U7Sv/HkfBREQYsAyoZK7uWg9OHAiWgFn1tW7C83sTBcrQ3hQ
+         8aSDaJ1xy6tKulnIx7+h4IMUQC6fvhrKvodxwtDmo8qxYn9+ZRr5fouiCrcWKJjrXm
+         6EhQK6FnTN2Lg==
+Date:   Wed, 27 Jan 2021 16:24:09 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Eric Biggers <ebiggers@google.com>,
+To:     Christoffer Dall <cdall@cs.columbia.edu>,
+        Marc Zyngier <maz@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     David Brazdil <dbrazdil@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: linux-next: manual merge of the block tree with the vfs tree
-Message-ID: <20210127142418.460bcffc@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20210127162409.45bea5e8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zQLd6BQQ_sfHy6ZkmD6hko7";
+Content-Type: multipart/signed; boundary="Sig_/ujyzvWu02HsuFo04IhnRn=+";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/zQLd6BQQ_sfHy6ZkmD6hko7
+--Sig_/ujyzvWu02HsuFo04IhnRn=+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the block tree got a conflict in:
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-  Documentation/filesystems/porting.rst
+  arch/arm64/include/asm/kvm_asm.h
 
 between commit:
 
-  14e43bf43561 ("vfs: don't unnecessarily clone write access for writable f=
-ds")
+  7001d4af926b ("arm64: Drop workaround for broken 'S' constraint with GCC =
+4.9")
 
-from the vfs tree and commits:
+from the arm64 tree and commit:
 
-  9b2e0016d04c ("bvec/iter: disallow zero-length segment bvecs")
-  c42bca92be92 ("bio: don't copy bvec for direct IO")
+  247bc166e6b3 ("KVM: arm64: Remove hyp_symbol_addr")
 
-from the block tree.
+from the kvm-arm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the latter removed the code updated by the former) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc Documentation/filesystems/porting.rst
-index c2161de0f4ef,1f8cf8e10b34..000000000000
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@@ -872,5 -870,14 +872,21 @@@ its result is kern_unmount() or kern_un
- =20
-  **mandatory**
- =20
- +mnt_want_write_file() can now only be paired with mnt_drop_write_file(),
- +whereas previously it could be paired with mnt_drop_write() as well.
-++
-++---
-++
-++**mandatory**
-++
-+ zero-length bvec segments are disallowed, they must be filtered out before
-+ passed on to an iterator.
-+=20
-+ ---
-+=20
-+ **mandatory**
-+=20
-+ For bvec based itererators bio_iov_iter_get_pages() now doesn't copy bvec=
-s but
-+ uses the one provided. Anyone issuing kiocb-I/O should ensure that the bv=
-ec and
-+ page references stay until I/O has completed, i.e. until ->ki_complete() =
-has
-+ been called or returned with non -EIOCBQUEUED code.
-
---Sig_/zQLd6BQQ_sfHy6ZkmD6hko7
+--Sig_/ujyzvWu02HsuFo04IhnRn=+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAQ3OIACgkQAVBC80lX
-0Gxmzwf/TWyTUbUq4GQld2ZlD2RCvZxWVBMjvwSpmnGtfRw5+g9MN7BDVSrB4JiA
-ghY3JzbK2x9rZ9H57K3rAyHrT74kUgyDIoUBj0WIEBg3KMOQHovJARJF29CSaNt8
-KmUDr1AhAY8mgNtiGEJHphGtMs0mUfOAx1BMMKqDBWw+86dBjnr/cANiDhqCCzi3
-dsoSkAToqUb3bD8hhLueAkObXoNVPINRnGYXoUPB+158HpjXMe9GFcaaVZ0EuRR4
-Qa9mivBoYeegXg1exy4o7EAzre8d7vA5NNl0Q4SubaKjsyxWCN+EI8KGbkLKYLub
-EN+BElVKLvkchIIsv7HGbnG2411WcA==
-=esFZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAQ+PkACgkQAVBC80lX
+0GxLjAgAnIhWZRcid/ixaJYoXKZ8X+9yUi5rB6P/y40jZOkGTYR2EAvYa3yaX0b3
+ENG/+ncuG3NkEpj/c5fWCVBn/z35ukmhT8AJJiatjKr3k90Wfx9m4lpzQZbamiwu
+ZvqCFswL1pPEkU+VcI0Gp/EOWS7hwYIE58+IH4Zvd5efKIkjd3MSt0tXrMy+cxri
+Kw7r/QL2kJOg0WpV7OBac4TnaJj+MGA+bQrMWVUvvXwZhIsz4MDEcoLv/lXOuQt7
+HaXXV9XEq3eki498CUW0pvhB32wFQfJAj0RwfvHfMYz4GcMIEE53E6kHs6ngIJYb
+t/ZUR6dcLOQB0wK/9DRp5a2LoUuRtA==
+=kChN
 -----END PGP SIGNATURE-----
 
---Sig_/zQLd6BQQ_sfHy6ZkmD6hko7--
+--Sig_/ujyzvWu02HsuFo04IhnRn=+--
