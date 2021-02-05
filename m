@@ -2,96 +2,97 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1871C433E0
-	for <linux-next@archiver.kernel.org>; Fri,  5 Feb 2021 02:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2FEC433E0
+	for <linux-next@archiver.kernel.org>; Fri,  5 Feb 2021 03:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64DBA64F7C
-	for <linux-next@archiver.kernel.org>; Fri,  5 Feb 2021 02:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F35E364F87
+	for <linux-next@archiver.kernel.org>; Fri,  5 Feb 2021 03:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbhBECMz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 4 Feb 2021 21:12:55 -0500
-Received: from ozlabs.org ([203.11.71.1]:48531 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229487AbhBECMz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 4 Feb 2021 21:12:55 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DWzSn0Q8yz9sWd;
-        Fri,  5 Feb 2021 13:12:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1612491132;
-        bh=9+YNYgOvs+LvDUb5QbSEuc4VS2ZKmFRzV9IFnBYP47c=;
-        h=Date:From:To:Cc:Subject:From;
-        b=RXStvPBpmTG/hL0RIHUavwUxVKDPK79dbRVeGANdInTCB3KZV418Lm3KS3OyQ+4++
-         ed9U0eY5x2T2mO9vsmhbVWacqmzmS8EvmMqDRLJJzpNXNhSQSNFdZ3F3HD8Jhvfp5l
-         uS7+O3c15NGDlfjYb8g6ubObuB078FZaBuR86SdyQoz3oMGbsaVKLWsSZuGDhXBMBc
-         fAR0pNMFc2WA1McV98Vvw1CD+NL1M49VSbP59VcUHup7CBtBem7Lu5l+7ZQ9of+N++
-         +Tz6DRCj9pOgOJapoE1kjuygrYf5j5eTQU0fQNmSo1sTMqwQgxuF7ahh9C2BGfG4Ff
-         LmwcZp6PYaiNg==
-Date:   Fri, 5 Feb 2021 13:12:08 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the amdgpu tree
-Message-ID: <20210205131208.3c1bfcc6@canb.auug.org.au>
+        id S229870AbhBEDT0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 4 Feb 2021 22:19:26 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18130 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229772AbhBEDTY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 4 Feb 2021 22:19:24 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B601cb9130000>; Thu, 04 Feb 2021 19:18:43 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 5 Feb
+ 2021 03:18:43 +0000
+Received: from sandstorm.attlocal.net (172.20.145.6) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 5 Feb 2021 03:18:43 +0000
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     <linux-xfs@vger.kernel.org>,
+        Linux Next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Brian Foster" <bfoster@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Allison Henderson <allison.henderson@oracle.com>
+Subject: [PATCH] xfs: fix unused variable build warning in xfs_log.c
+Date:   Thu, 4 Feb 2021 19:18:14 -0800
+Message-ID: <20210205031814.414649-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zwipi3XuVJ2FCTtb1VezoeB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1612495123; bh=ASnYnjm4ba2tgEUkk1b0klQ5FfM48WwNnO1q6DJgM1c=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=SL4/B2oMY4KpQU9uD3g6V1R6HO00UTizJybPXf7jx0BGfgUyiofPP8/aW+P0LZ4Lx
+         R/FqZ8FwdgYv7F8tu4lz139P63b9cqZqYPJJ7ht0YZf6ydJ8AmYxDZkQMeqiuOFETo
+         8BmwfeOJPxnRPWfLvzfDz3l86fEABAExGzenMMqnTo6oI0rSrqPjbAyd2OAUyJhE3F
+         +dh4Z8mtcbJeBOxdsIpbzH+o1xSXvryzCyZ8V/uUOWVaqxHXFy7ra0s0RxRO+LKkwN
+         cYqMmDJG8yuKrq6fmQDfleUgvC2MfSwerZiIH6fw+bpSvgAZ9Dtr2Ry2ZSyDpoNeLz
+         irz+1iu3ooFHg==
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/zwipi3XuVJ2FCTtb1VezoeB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Delete the unused "log" variable in xfs_log_cover().
 
-Hi all,
+Fixes: 303591a0a9473 ("xfs: cover the log during log quiesce")
+Cc: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: Allison Henderson <allison.henderson@oracle.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+Hi,
 
-After merging the amdgpu tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+I just ran into this on today's linux-next, so here you go!
 
+thanks,
+John Hubbard
+NVIDIA
 
-Caused by commit
+ fs/xfs/xfs_log.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-  13a75af50484 ("drm/amd/display: Fix unused variable warning")
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index 58699881c100..5a9cca3f7cbf 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1108,7 +1108,6 @@ static int
+ xfs_log_cover(
+ 	struct xfs_mount	*mp)
+ {
+-	struct xlog		*log =3D mp->m_log;
+ 	int			error =3D 0;
+ 	bool			need_covered;
+=20
 
-interacting with commit
-
-  4c3a3292730c ("drm/amd/display: fix unused variable warning")
-
-from the drm tree.
-
-I reverted the drm tree commit for now.
-
+base-commit: 0e2c50f40b7ffb73a039157f7c38495c6d99e86f
 --=20
-Cheers,
-Stephen Rothwell
+2.30.0
 
---Sig_/zwipi3XuVJ2FCTtb1VezoeB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAcqXgACgkQAVBC80lX
-0GwSagf+Oews8YCbCtU+/5+h8Og5tffUqqVFMZXXwHSVO4wo5JjWgtkwm8MS9you
-qB5B1pDA9msLAUW010IukWwkppTLI2ceF3SlwIOnBj9aUgl0y9kjyYdTHJYhsRm6
-ouKjuM8uVH5qLGpSB0mi6hlpVFHEYTe3m1T1jk3tmqFeaHB0+33n5Ac30uT5QC1M
-zKfm5a0EBW/pSEuZAWY9W67RPeSdocki1jUHUagZcax2w+Lcn1+LWlLWoWCUvRi0
-54I9Liv0vLjrjwwWXWs50X648MdDxCtU+uu47ozTYBCqmiEEvHqpPMaGaSlbA+ZN
-Oyin8IXfpMF3uB74ZqoJLDnVro7EUA==
-=ng4a
------END PGP SIGNATURE-----
-
---Sig_/zwipi3XuVJ2FCTtb1VezoeB--
