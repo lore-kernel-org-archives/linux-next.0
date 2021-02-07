@@ -2,119 +2,92 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB1DC433E0
-	for <linux-next@archiver.kernel.org>; Fri,  5 Feb 2021 23:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84273C433E0
+	for <linux-next@archiver.kernel.org>; Sun,  7 Feb 2021 11:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0978964FAD
-	for <linux-next@archiver.kernel.org>; Fri,  5 Feb 2021 23:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40E7C64E44
+	for <linux-next@archiver.kernel.org>; Sun,  7 Feb 2021 11:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbhBEXTm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 5 Feb 2021 18:19:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:29557 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231197AbhBEKLH (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 5 Feb 2021 05:11:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612519727;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XQAmpeiwjTLNRxNDH8Fc0DNgLit8cCAihA/yreIw74s=;
-        b=SmHKGsH8BlYA+/sxYVdBVLNhEUUN5pQUmzzh35IfuVRgpesEuWfyh76O/HVxp2GZ7ege0c
-        vuTy2xEQg14C4D6tQaebJF5AiUnHlYYHPFy34bJq2/tMvJb/F6fdb2BgLOvZHtn8DNGABj
-        IkmhUyMhS73p1JYiWeO+sI90foEkaP4=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-68-19LXNp7RN261zTwnnl0Gmw-1; Fri, 05 Feb 2021 05:08:43 -0500
-X-MC-Unique: 19LXNp7RN261zTwnnl0Gmw-1
-Received: by mail-wr1-f71.google.com with SMTP id j8so5017191wrx.17
-        for <linux-next@vger.kernel.org>; Fri, 05 Feb 2021 02:08:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XQAmpeiwjTLNRxNDH8Fc0DNgLit8cCAihA/yreIw74s=;
-        b=CP8hjQG1CZdCLeOuVRPtpSwd9KFtKZiu5S4fDZ4iowMNKaUKl8rB/MJN6rSPr5RQlw
-         dZI03dZyaWwTtuiShH8mA9hwzjte/0Mxe9FXnUPf8TupxX6A4ZFykKUIrOvUMMQQSpWv
-         qt2LbUkNY8OceIN0YnjwXUbqta5P/k8qvDKro+BuxkAL9xdhpPwdiUnVDa0Hxwxa80k/
-         LslddOaGtASTF4tTV/dmh08F0dmUwDVOWKTZG2jth7/XIQfflb/1BugaSdKQ63Yee+jD
-         u2yYmmnV0iM/KC6qCtnxmKwgIloBcgx5xN4O+hxzqAq9mQVjyjsFfyP0ya/zDPhIb8Lt
-         IIBQ==
-X-Gm-Message-State: AOAM531jYuWUE+ves9YSdOBErIZ6wLptLTtToyM2rOdSr4vI7kSv1q3U
-        i1+dhFborv0LfmXQlERcv0DqafR0IcgcLzmciDYEVtSOI/3Bjxb7XXVUTNwo/twk5P0HFJlU35d
-        k3oVZljBiFg+JOG06JsKrGrdenK3BCMBBVCGFhg1jiMxU9q4eoHuMEFiaD3NhQLFKr2XVVZJfKQ
-        ==
-X-Received: by 2002:adf:f303:: with SMTP id i3mr4098916wro.60.1612519721787;
-        Fri, 05 Feb 2021 02:08:41 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJygnV5PVQbw8IB48V2+j6ejVS7WeCWn7No/UZJIzRZQZzqTlpByGGeGJZYMFj/b3HUjRWFm7w==
-X-Received: by 2002:adf:f303:: with SMTP id i3mr4098899wro.60.1612519721586;
-        Fri, 05 Feb 2021 02:08:41 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
-        by smtp.gmail.com with ESMTPSA id y63sm8267192wmd.21.2021.02.05.02.08.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Feb 2021 02:08:40 -0800 (PST)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>, KVM <kvm@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S229596AbhBGK7q (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 7 Feb 2021 05:59:46 -0500
+Received: from ozlabs.org ([203.11.71.1]:46721 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229590AbhBGK7p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 7 Feb 2021 05:59:45 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DYR3n3lvHz9sCD;
+        Sun,  7 Feb 2021 21:59:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1612695542;
+        bh=/I7fNZAOAjhvTsy13VVZEWwmE79v1IGag6Aa52s48MQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Y49DNtSjkVemEyEMu+XXZTr6kJeADvpb8zF++cqSlNcyKyydFSViByjBkJ88dDl2n
+         Ky/YX/oqQZ8aM8Z8jE49KQmOqYkH3Lq2mT8B6CQVLtpNs48qqj9hW7vxrsl7krzTX1
+         RWlmJ1QLT8VLU3l5Bke0nE8mPNcWLPVf+E/VgoOfG2sVS/3BJHQCEeZd6PuOcQDyVu
+         KWMkZRb5NA8nymQk+5Et7zPCvNOPi0khs+ZztgqEUdSvUKl+hCp8b7WFOCMdBSUuFG
+         sN+ChfNnCuVszJORnx+phz9t95YrTfrQ1m3i7JsUPc1dTZANk1OdlxlFCdwzisi+dk
+         W1kmBN2MtdVgA==
+Date:   Sun, 7 Feb 2021 21:59:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20210205160224.279c6169@canb.auug.org.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: build failure after merge of the kvm tree
-Message-ID: <cac800cb-2e3e-0849-1a97-ef10c29b4e10@redhat.com>
-Date:   Fri, 5 Feb 2021 11:08:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+Subject: linux-next: Fixes tag needs some work in the soundwire tree
+Message-ID: <20210207215900.1223b0ca@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20210205160224.279c6169@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/T.Ffr+Nq7jbltv01kb3MCkK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 05/02/21 06:02, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the kvm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> ERROR: modpost: ".follow_pte" [arch/powerpc/kvm/kvm.ko] undefined!
-> 
-> Caused by commit
-> 
->    bd2fae8da794 ("KVM: do not assume PTE is writable after follow_pfn")
-> 
-> follow_pte is not EXPORTed.
-> 
-> I have used the kvm tree from next-20210204 for today.
-> 
+--Sig_/T.Ffr+Nq7jbltv01kb3MCkK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen, can you squash in the following for the time being?
+Hi all,
 
-diff --git a/mm/memory.c b/mm/memory.c
-index feff48e1465a..15cbd10afd59 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4775,6 +4775,7 @@ int follow_pte(struct mm_struct *mm, unsigned long 
-address,
-  out:
-  	return -EINVAL;
-  }
-+EXPORT_SYMBOL_GPL(follow_pte);
+In commit
 
-  /**
-   * follow_pfn - look up PFN at a user virtual address
+  531f45f2bdf6 ("soundwire: export sdw_write/read_no_pm functions")
 
-A similar patch has been posted already, but Jason Gunthorpe asked to 
-add some kerneldoc comments.  Therefore it will not be in kvm/next for a 
-few more days.
+Fixes tag
 
-Paolo
+  Fixes: 60ee9be25571 ('soundwire: bus: add PM/no-PM versions of
 
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more than one line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/T.Ffr+Nq7jbltv01kb3MCkK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAfx/QACgkQAVBC80lX
+0GySrQf/dWcUHlrOsaFEk0zcNaSGyg5nXtINOiWGlIsC77aVBS73AW643pLdXUVa
+C3WNM2raBTXyR/DbqUZpCmKSGhTfmdTNmRgloSmGq/PX9xpFU8f4aY3DYq/KB0EN
+67bk3YPDFzN3RDMwq6WAebgBZLqQBnfYmT8hXMfjM/sXJ9oj0znczqlsgGhn+8LL
+ZvXwIQhAPSOnOGP9qm4DvAiTyqRFOOMWTLb34gvinuhBgE1Be/7TafGrInIrHWD8
+S2x6EM8oYNOh7D9hQvFK+cPDId4iUbGXn0uTRQcDMfSy7hqlJjGYNR6yIJ6x/l7g
+Fd1NXo+cKwAJ5XXkoRe3/FA+ShXaAA==
+=EUMx
+-----END PGP SIGNATURE-----
+
+--Sig_/T.Ffr+Nq7jbltv01kb3MCkK--
