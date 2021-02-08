@@ -2,116 +2,198 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FFDC433E0
-	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 08:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E2AC432C3
+	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 09:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5E564E82
-	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 08:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E9F064E9D
+	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 09:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbhBHIzR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Feb 2021 03:55:17 -0500
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:41399 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231180AbhBHIxP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2021 03:53:15 -0500
-Received: by mail-oi1-f182.google.com with SMTP id v193so9400538oie.8;
-        Mon, 08 Feb 2021 00:52:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zHudw0TAP+YeZRvB+TR6ZUnftiytNBVnLvjklahW0oo=;
-        b=tzQEalYLCl8saKCZDrhDmcgTboQ3hemZWHvXmDdeFLqydnWrRFfM+v7LY5CBEndolt
-         ub2iDdiKWidZv+LU74EYmF0/FCeb7lxhxS34jQXvhWcpHc2xdLZP2zzb10pESYTsBo4/
-         6rjCPcckvbNtXlK1Ymd9fcjstzOSSkfAoCnQ44B98OA5HlSSS39lVLHQX1DKvxl0MjbL
-         rpIZvGg+uF32gQ4Kme+pTqXRPUSbFWJcLXfd6c3/JpCzkaOkEH5i0/yHSvgc1QRHUaSz
-         t37MF1srSS+Lkz7FQ1JEwBN2/cGb+HdpaLR/clvmJklDvfym3LWEQTYMngcALVL3DQ9K
-         te5w==
-X-Gm-Message-State: AOAM531hlodfM9msX1bdih0jhFU9220uCAp7ye3LiGuZGJaV/cpfpovu
-        2khwVlR+9zXGB1o/Gl6RtWejNm5J4bXeyyphl9A=
-X-Google-Smtp-Source: ABdhPJyxve59tNdWgfofA/nLNkbqjjIxo/R+1WXcOfsVCAIYZGcgAKwETZyEVWm957bgHDuco4qw21G5ziyOd5Lq81Y=
-X-Received: by 2002:aca:744:: with SMTP id 65mr10411020oih.153.1612774353903;
- Mon, 08 Feb 2021 00:52:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20210208113208.35449879@canb.auug.org.au> <20210208073037.0b9fe4b9@coco.lan>
- <CAMuHMdVTSCtwbTqBOag_sYHfDnVevZHxZyYOgHMVx936x=e1ZA@mail.gmail.com> <20210208094901.087762b8@coco.lan>
-In-Reply-To: <20210208094901.087762b8@coco.lan>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 8 Feb 2021 09:52:22 +0100
-Message-ID: <CAMuHMdXb99O9j0ji65=GqXOu1iArBgjhzYEGHmO_mM=ursDp9w@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the v4l-dvb tree
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S231252AbhBHJIj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Feb 2021 04:08:39 -0500
+Received: from mga07.intel.com ([134.134.136.100]:7283 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231466AbhBHJFV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Feb 2021 04:05:21 -0500
+IronPort-SDR: Dh4l6rl+LiLQVgnzpslZXfVOPkugB6yCu1HpTkhKLJ2g0L4g2XFRK48JjZfn7TMcY6TlOzZDtI
+ cGjgsG/ociYw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9888"; a="245752498"
+X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
+   d="scan'208";a="245752498"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 01:03:33 -0800
+IronPort-SDR: EkpsQ6l7sKsAk/f61mrx1SjcJQ2xoIvc2flDNIq9WRAEa0ZLgv0xq8CseGFqjQfuPwdZELVgI+
+ RjLLMYpUQ0vw==
+X-IronPort-AV: E=Sophos;i="5.81,161,1610438400"; 
+   d="scan'208";a="358659066"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2021 01:03:29 -0800
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 000452082C; Mon,  8 Feb 2021 11:03:26 +0200 (EET)
+Date:   Mon, 8 Feb 2021 11:03:26 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: fix max9271 build dependencies
+Message-ID: <20210208090326.GO32460@paasikivi.fi.intel.com>
+References: <20210208113208.35449879@canb.auug.org.au>
+ <20210208065315.1914616-1-mchehab+huawei@kernel.org>
+ <20210208072701.GI32460@paasikivi.fi.intel.com>
+ <20210208083616.3iulzo56mhn4ymmq@uno.localdomain>
+ <20210208084147.GN32460@paasikivi.fi.intel.com>
+ <20210208085907.rmwjtcpcnfkcpisj@uno.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210208085907.rmwjtcpcnfkcpisj@uno.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Mauro,
-
-On Mon, Feb 8, 2021 at 9:49 AM Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
-> Em Mon, 8 Feb 2021 09:33:14 +0100
-> Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
-> > On Mon, Feb 8, 2021 at 7:35 AM Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
-> > > Em Mon, 8 Feb 2021 11:32:08 +1100
-> > > Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-> > >
-> > > > After merging the v4l-dvb tree, today's linux-next build (x86_64
-> > > > allmodconfig) produced this warning:
-> > > >
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_serial_link' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_configure_i2c' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_high_threshold' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_configure_gmsl_link' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_clear_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_enable_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_disable_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_verify_id' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_address' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_deserializer_address' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > > WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_translation' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-> > > >
-> > > > Introduced by commit
-> > > >
-> > > >   a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module")
-> > > >
-> > >
-> > > It sounds to be due to a Makefile mess:
-> > >
-> > >         drivers/media/i2c/Makefile:rdacm20-camera_module-objs   := rdacm20.o max9271.o
-> > >         drivers/media/i2c/Makefile:rdacm21-camera_module-objs   := rdacm21.o max9271.o
-> > >
-> > > Neither drivers should be including max9271.o as their objects, but, instead,
-> > > be addressing max9271 dependency via Kconfig.
+On Mon, Feb 08, 2021 at 09:59:07AM +0100, Jacopo Mondi wrote:
+> Hi Sakari,
+> 
+> On Mon, Feb 08, 2021 at 10:41:47AM +0200, Sakari Ailus wrote:
+> > Hi Jacopo,
 > >
-> > Wouldn't
+> > On Mon, Feb 08, 2021 at 09:36:16AM +0100, Jacopo Mondi wrote:
+> > > Hello everyone,
+> > >
+> > > On Mon, Feb 08, 2021 at 09:27:01AM +0200, Sakari Ailus wrote:
+> > > > Hi Mauro,
+> > > >
+> > > > Thanks for the patch.
+> > >
+> > > Sorry, that's cleary an oversight from my side.
+> > > Thanks for tackling it.
+> > >
+> > > >
+> > > > On Mon, Feb 08, 2021 at 07:53:15AM +0100, Mauro Carvalho Chehab wrote:
+> > > > > As described on its c file, the Maxim MAX9271 GMSL serializer isn't a
+> > > > > self-contained driver, as MAX9271 is usually embedded in camera modules
+> > > > > with at least one image sensor and optional additional components,
+> > > > > such as uController units or ISPs/DSPs.
+> > > > >
+> > > > > After chanseset a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module"),
+> > > > > there are now two drivers currently needing it: rdacm20 and rdacm21.
+> > > > >
+> > > > > Building with allmodconfig is now causing those warnings:
+> > > > >
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_serial_link' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_configure_i2c' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_high_threshold' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_configure_gmsl_link' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_clear_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_enable_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_disable_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_verify_id' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_address' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_deserializer_address' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > > 	WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_translation' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+> > > > >
+> > > > > Address the issue by adding a Kconfig item for it, that it is
+> > > > > seleced if either one of the modules that need max9271 is used.
+> > > > >
+> > > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > > Fixes: a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module")
+> > > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > > > ---
+> > > > >  drivers/media/i2c/Kconfig  | 10 ++++++++++
+> > > > >  drivers/media/i2c/Makefile |  8 ++++----
+> > > > >  2 files changed, 14 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> > > > > index 2d3dc0d82f9e..a6802195d583 100644
+> > > > > --- a/drivers/media/i2c/Kconfig
+> > > > > +++ b/drivers/media/i2c/Kconfig
+> > > > > @@ -712,6 +712,16 @@ config VIDEO_ST_MIPID02
+> > > > >  	  module will be called st-mipid02.
+> > > > >  endmenu
+> > > > >
+> > > > > +#
+> > > > > +# Camera ancillary chips
+> > > > > +#
+> > > > > +
+> > > > > +# MAX9271 is usually embedded in camera modules
+> > > > > +config VIDEO_MAX9271_SERIALIZER
+> > > > > +	tristate
+> > > > > +	default y
+> > > > > +	depends on VIDEO_RDACM20 || VIDEO_RDACM21
+> > > > > +
+> > > >
+> > > > I'd instead make the RDACM drivers depend on this one instead. The RDACM20
+> > > > driver directly depends on the symbols in the MAX9271 driver.
+> > > >
+> > >
+> > > OTOH I it makes sense to have MAX9271 depend on the camera modules, as
+> > > selecting the serializer alone is not that useful.
+> > >
+> > > Could the two camera modules symbols instead select the MAX9271 one ?
 > >
-> >     obj-$(CONFIG_VIDEO_RDACM20)     += rdacm20.o max9271.o
-> >     obj-$(CONFIG_VIDEO_RDACM21)     += rdacm21.o max9271.o
+> > MAX9271 could be used elsewhere than in RDACM* devices.
+> 
+> Shouldn't other camera modules that include such serializer select its
+> symbol then ?
+> 
 > >
-> > work, too?
->
-> Not 100% sure, but I guess this would cause problems with allyesconfig.
+> > Also, as select does not handle dependencies, all drivers that need MAX9271
+> > would have to include the dependencies of MAX9271.
+> >
+> 
+> Wouldn't select just select the MAX9271 symbol, which will list its own
+> dependencies ?
 
-Duplicates will be filtered out.
-An example using this method is drivers/net/ethernet/8390/Makefile.
+You can have anything there but it'll be ignored.
 
-Gr{oetje,eeting}s,
+Documentation/kbuild/kconfig-language.rst:
 
-                        Geert
+        select should be used with care. select will force
+        a symbol to a value without visiting the dependencies.
+
+> 
+> 
+> > >
+> > > > >  #
+> > > > >  # V4L2 I2C drivers that are related with Camera support
+> > > > >  #
+> > > > > diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> > > > > index 6bd22d63e1a7..63bb16e51876 100644
+> > > > > --- a/drivers/media/i2c/Makefile
+> > > > > +++ b/drivers/media/i2c/Makefile
+> > > > > @@ -125,10 +125,10 @@ obj-$(CONFIG_VIDEO_IMX319)	+= imx319.o
+> > > > >  obj-$(CONFIG_VIDEO_IMX334)	+= imx334.o
+> > > > >  obj-$(CONFIG_VIDEO_IMX355)	+= imx355.o
+> > > > >  obj-$(CONFIG_VIDEO_MAX9286)	+= max9286.o
+> > > > > -rdacm20-camera_module-objs	:= rdacm20.o max9271.o
+> > > > > -obj-$(CONFIG_VIDEO_RDACM20)	+= rdacm20-camera_module.o
+> > > > > -rdacm21-camera_module-objs	:= rdacm21.o max9271.o
+> > > > > -obj-$(CONFIG_VIDEO_RDACM21)	+= rdacm21-camera_module.o
+> > > > > +obj-$(CONFIG_VIDEO_RDACM20)	+= rdacm20.o
+> > > > > +obj-$(CONFIG_VIDEO_RDACM21)	+= rdacm21.o
+> > > > >  obj-$(CONFIG_VIDEO_ST_MIPID02) += st-mipid02.o
+> > > > >
+> > > > > +obj-$(CONFIG_VIDEO_MAX9271_SERIALIZER) += max9271.o
+> > > > > +
+> > > > >  obj-$(CONFIG_SDR_MAX2175) += max2175.o
+> > > >
+> > > > --
+> > > > Kind regards,
+> > > >
+> > > > Sakari Ailus
+> >
+> > --
+> > Sakari Ailus
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sakari Ailus
