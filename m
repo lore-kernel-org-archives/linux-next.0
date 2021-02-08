@@ -2,78 +2,73 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20214C433DB
-	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 09:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E25C433E0
+	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 09:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2B7364E88
-	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 09:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F54C64E8F
+	for <linux-next@archiver.kernel.org>; Mon,  8 Feb 2021 09:13:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbhBHJL3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 8 Feb 2021 04:11:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231281AbhBHJJZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 8 Feb 2021 04:09:25 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 473C664E5A;
-        Mon,  8 Feb 2021 09:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612775307;
-        bh=tQSOKSuUKy0z9iWHGjlMuG6HuDujV8ShI8+HV1Qgb7w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=CbFQv8K7kbDtKUTabFC44AfFprjbiARtgfycTv/IktTNcgKiqgz8R0QCsZZ7yvB1P
-         2/unU8OHGHB8fk3/twOW7AvZ2ZRgIghy48C/Kb8z8qXCbAOHhliDc/InR85MiTTWLI
-         ZsSO3UaOj4nxOuPTZyV7qpXrFvacR0+sKwl2CicVNzL3vK01olmXzRNbiRlypPH7Kj
-         wO/gFMT1pZVh7EVi19wTnwn7DQZZCd8L73hVFu4Ph2mgZaUHg0B5w9sUuUdbXHVfkg
-         mvyfBelh0IVi7pf8lA5kbk/Ys2wMS1zYLrcS3px8tiOYWMTq1brPvl2WSH7cT6c+BB
-         g+svRniFpYkuA==
-Date:   Mon, 8 Feb 2021 10:08:22 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+        id S230216AbhBHJM0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 8 Feb 2021 04:12:26 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:42535 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231138AbhBHJKb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2021 04:10:31 -0500
+Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 90E413BB846
+        for <linux-next@vger.kernel.org>; Mon,  8 Feb 2021 09:02:24 +0000 (UTC)
+X-Originating-IP: 93.34.118.233
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id DF08A40002;
+        Mon,  8 Feb 2021 08:58:43 +0000 (UTC)
+Date:   Mon, 8 Feb 2021 09:59:07 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
 To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         linux-next@vger.kernel.org
 Subject: Re: [PATCH] media: i2c: fix max9271 build dependencies
-Message-ID: <20210208100822.76ca0c2e@coco.lan>
-In-Reply-To: <20210208084147.GN32460@paasikivi.fi.intel.com>
+Message-ID: <20210208085907.rmwjtcpcnfkcpisj@uno.localdomain>
 References: <20210208113208.35449879@canb.auug.org.au>
-        <20210208065315.1914616-1-mchehab+huawei@kernel.org>
-        <20210208072701.GI32460@paasikivi.fi.intel.com>
-        <20210208083616.3iulzo56mhn4ymmq@uno.localdomain>
-        <20210208084147.GN32460@paasikivi.fi.intel.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+ <20210208065315.1914616-1-mchehab+huawei@kernel.org>
+ <20210208072701.GI32460@paasikivi.fi.intel.com>
+ <20210208083616.3iulzo56mhn4ymmq@uno.localdomain>
+ <20210208084147.GN32460@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210208084147.GN32460@paasikivi.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Em Mon, 8 Feb 2021 10:41:47 +0200
-Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
+Hi Sakari,
 
+On Mon, Feb 08, 2021 at 10:41:47AM +0200, Sakari Ailus wrote:
 > Hi Jacopo,
-> 
+>
 > On Mon, Feb 08, 2021 at 09:36:16AM +0100, Jacopo Mondi wrote:
 > > Hello everyone,
-> > 
-> > On Mon, Feb 08, 2021 at 09:27:01AM +0200, Sakari Ailus wrote:  
+> >
+> > On Mon, Feb 08, 2021 at 09:27:01AM +0200, Sakari Ailus wrote:
 > > > Hi Mauro,
 > > >
-> > > Thanks for the patch.  
-> > 
+> > > Thanks for the patch.
+> >
 > > Sorry, that's cleary an oversight from my side.
 > > Thanks for tackling it.
-> >   
+> >
 > > >
-> > > On Mon, Feb 08, 2021 at 07:53:15AM +0100, Mauro Carvalho Chehab wrote:  
+> > > On Mon, Feb 08, 2021 at 07:53:15AM +0100, Mauro Carvalho Chehab wrote:
 > > > > As described on its c file, the Maxim MAX9271 GMSL serializer isn't a
 > > > > self-contained driver, as MAX9271 is usually embedded in camera modules
 > > > > with at least one image sensor and optional additional components,
@@ -125,47 +120,59 @@ Sakari Ailus <sakari.ailus@linux.intel.com> escreveu:
 > > > > +	tristate
 > > > > +	default y
 > > > > +	depends on VIDEO_RDACM20 || VIDEO_RDACM21
-> > > > +  
+> > > > +
 > > >
 > > > I'd instead make the RDACM drivers depend on this one instead. The RDACM20
 > > > driver directly depends on the symbols in the MAX9271 driver.
-
-While such solution is technically OK, it will make harder for the ones
-wanting to use the RDACM drivers, because those two drivers will be
-ridden at the config menu, until MAX9271 got selected.
-
-With the above solution, this driver will be auto-selected if either
-RDACM20 or RDACM21 is needed.
-
-Btw, this is exactly the same strategy we use for tuner I2C modules:
-the user doesn't need to know that his board uses tuner "foo" or "bar".
-All it needs is to know that it will require, for instance, the em28xx
-driver.
-
-> > >  
-> > 
+> > >
+> >
 > > OTOH I it makes sense to have MAX9271 depend on the camera modules, as
 > > selecting the serializer alone is not that useful.
-> > 
-> > Could the two camera modules symbols instead select the MAX9271 one ?  
-> 
+> >
+> > Could the two camera modules symbols instead select the MAX9271 one ?
+>
 > MAX9271 could be used elsewhere than in RDACM* devices.
 
-Sure, but then it is just a matter of adding the other driver there:
+Shouldn't other camera modules that include such serializer select its
+symbol then ?
 
-	depends on VIDEO_RDACM20 || VIDEO_RDACM21 || VIDEO_FOO
-
-To be frank, I doubt that we'll end having dozens of boards with this.
-If we end having lots of drivers, we can work on a different
-solution.
-
-> 
+>
 > Also, as select does not handle dependencies, all drivers that need MAX9271
 > would have to include the dependencies of MAX9271.
+>
 
-Yes. "Depends on" handles any dependencies that are required for building
-MAX9271. In this specific case, the dependencies are the same, so select
-could equally work.
+Wouldn't select just select the MAX9271 symbol, which will list its own
+dependencies ?
 
-Thanks,
-Mauro
+
+> >
+> > > >  #
+> > > >  # V4L2 I2C drivers that are related with Camera support
+> > > >  #
+> > > > diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> > > > index 6bd22d63e1a7..63bb16e51876 100644
+> > > > --- a/drivers/media/i2c/Makefile
+> > > > +++ b/drivers/media/i2c/Makefile
+> > > > @@ -125,10 +125,10 @@ obj-$(CONFIG_VIDEO_IMX319)	+= imx319.o
+> > > >  obj-$(CONFIG_VIDEO_IMX334)	+= imx334.o
+> > > >  obj-$(CONFIG_VIDEO_IMX355)	+= imx355.o
+> > > >  obj-$(CONFIG_VIDEO_MAX9286)	+= max9286.o
+> > > > -rdacm20-camera_module-objs	:= rdacm20.o max9271.o
+> > > > -obj-$(CONFIG_VIDEO_RDACM20)	+= rdacm20-camera_module.o
+> > > > -rdacm21-camera_module-objs	:= rdacm21.o max9271.o
+> > > > -obj-$(CONFIG_VIDEO_RDACM21)	+= rdacm21-camera_module.o
+> > > > +obj-$(CONFIG_VIDEO_RDACM20)	+= rdacm20.o
+> > > > +obj-$(CONFIG_VIDEO_RDACM21)	+= rdacm21.o
+> > > >  obj-$(CONFIG_VIDEO_ST_MIPID02) += st-mipid02.o
+> > > >
+> > > > +obj-$(CONFIG_VIDEO_MAX9271_SERIALIZER) += max9271.o
+> > > > +
+> > > >  obj-$(CONFIG_SDR_MAX2175) += max2175.o
+> > >
+> > > --
+> > > Kind regards,
+> > >
+> > > Sakari Ailus
+>
+> --
+> Sakari Ailus
