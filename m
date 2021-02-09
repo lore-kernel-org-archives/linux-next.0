@@ -2,105 +2,49 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3965FC433DB
-	for <linux-next@archiver.kernel.org>; Tue,  9 Feb 2021 16:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541F9C433DB
+	for <linux-next@archiver.kernel.org>; Tue,  9 Feb 2021 16:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA0B564EAA
-	for <linux-next@archiver.kernel.org>; Tue,  9 Feb 2021 16:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D6B64EB8
+	for <linux-next@archiver.kernel.org>; Tue,  9 Feb 2021 16:07:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232637AbhBIQFJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 9 Feb 2021 11:05:09 -0500
-Received: from mga04.intel.com ([192.55.52.120]:21364 "EHLO mga04.intel.com"
+        id S232715AbhBIQHK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 9 Feb 2021 11:07:10 -0500
+Received: from verein.lst.de ([213.95.11.211]:47225 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232658AbhBIQFH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 Feb 2021 11:05:07 -0500
-IronPort-SDR: uKFrfQy7tykSJ8gFmA7IXBiJulPa3Whs0TFpMG1KjZpMsi4Jz1qVMbeEj5LKwSpa0uxzOHL6lN
- +6McP9Af3dlw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="179345506"
-X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
-   d="scan'208";a="179345506"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:04:07 -0800
-IronPort-SDR: 5QOZUHYWgVW4FWaJoqSbcCyj9CopCHrLKKg2MX7LFPsJxJzSt0oSVwdaA5eqcLtbAulHcPj/ws
- melkR84hTkWQ==
-X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
-   d="scan'208";a="436219055"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:04:06 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1l9VUh-003Fgw-Eq; Tue, 09 Feb 2021 18:04:03 +0200
-Date:   Tue, 9 Feb 2021 18:04:03 +0200
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S232658AbhBIQHJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Feb 2021 11:07:09 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 64E3567373; Tue,  9 Feb 2021 17:06:27 +0100 (CET)
+Date:   Tue, 9 Feb 2021 17:06:27 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christoph Hellwig <hch@lst.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Message-ID: <YCKycybX+8L9zzCw@smile.fi.intel.com>
-References: <20210205115153.799dc024@canb.auug.org.au>
- <CAHp75VfiyAtxg+wqZ30kSzCfFFsLndLjzrUc1njZG0x6vQeyBQ@mail.gmail.com>
- <CAHp75Vdrnmnu3vfmtEmnU=dH9tjoZtSZUtgDNXp29E90tT+j7A@mail.gmail.com>
- <3936997.7vkU7uULjK@kreacher>
- <CAHp75VcUP1475T_jWQkZkjhZrfNEZ6UaOopm5v1WBOPoriTE3Q@mail.gmail.com>
- <CAHp75VfS=LgZfY6KTZeM7B+PgKpV3x_4zytszdaS=43A7BJEZQ@mail.gmail.com>
- <CAJZ5v0jbg8KWmmiAV0YrvndcbaY3CApUbPsTYVgxH-0HspZW3A@mail.gmail.com>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: linux-next: build failure after merge of the modules tree
+Message-ID: <20210209160627.GA9188@lst.de>
+References: <20210209210843.3af66662@canb.auug.org.au> <YCKnRPRTDyfGxnBC@gunter>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jbg8KWmmiAV0YrvndcbaY3CApUbPsTYVgxH-0HspZW3A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <YCKnRPRTDyfGxnBC@gunter>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 03:32:38PM +0100, Rafael J. Wysocki wrote:
-> On Mon, Feb 8, 2021 at 8:48 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Mon, Feb 8, 2021 at 9:47 PM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Mon, Feb 8, 2021 at 9:30 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > > > On Friday, February 5, 2021 12:15:22 PM CET Andy Shevchenko wrote:
-> > > > > On Fri, Feb 5, 2021 at 11:14 AM Andy Shevchenko
-> > > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > > On Friday, February 5, 2021, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Feb 09, 2021 at 04:16:20PM +0100, Jessica Yu wrote:
+> Hmm, these errors don't look like it's related to that particular commit. I was
+> able to reproduce these weird autoksym errors even without any modules-next
+> patches applied, and on a clean v5.11-rc7 tree.
 
-> > > > > >> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-> > > > > >> failed like this:
-> > > > > >>
-> > > > > >
-> > > > > > Rafael, maybe I was unclear when explaining to you the dependencies with the series of series, but all three parts should go ordered. In any case it’s easy to fix. I will send you a PR late today of the immutable tag (part 1) that needs to be included in order to avoid the above.
-> > > > >
-> > > > > PR had just been sent to linux-acpi@ and Rafael in Cc.
-> > > >
-> > > > I haven't seen that PR, though, in any of my inboxes etc.
-> > > >
-> > > > Can you please point me to an archive or similar where I can find it?
-> > >
-> > > Sure, lore has it
-> > >
-> > > https://lore.kernel.org/linux-acpi/YB0mPPgpIpQzhNXS@smile.fi.intel.com/T/#u
-> >
-> > If it is possible, please pull that PR and on top of that (re-)apply
-> > the MFD related series.
-> 
-> Done (merged into the bleeding-edge branch).
-
-Looks perfect, thanks! I will send a last part soon (tomorrow at last).
-
-> I was confused by it apparently asking Linus to pull. :-)
-
-Ah, sorry, it looks like I forgot to update the text when sending it again...
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+I OTOH can't reproduce it at all with either linux-next or module-next
+and the powerpc allyesconfig..
