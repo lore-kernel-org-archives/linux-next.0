@@ -2,119 +2,172 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25748C433E0
-	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 21:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6C4C433E0
+	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 22:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA03764E02
-	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 21:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD9F464EEC
+	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 22:09:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230005AbhBJVAW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Feb 2021 16:00:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231193AbhBJVAV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 10 Feb 2021 16:00:21 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 194F764DE7;
-        Wed, 10 Feb 2021 20:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612990779;
-        bh=8UVcBcBHgwUxXmdgoCQ0LoimmZZgbh9qAu0ypgoozQM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=O/7DHup661kD7BHH5z8EHVcdfxNpadTFO7zBNfdUcfayg7KJcoNwsnei/VmtDu/ft
-         1AS19f9C3h0nMWSbGTnpkesv0ACKcdsyIHojzH9BS7jm9gjm3E5ztstpUWbp7Y+fSY
-         frQS1JoJptmgYK4O0A6BRfjqZIlt4MAshvlS/rigIUJyN+V0ZCmAFo95rCExXnBbkQ
-         HY5CmLtckc/uf8pMorCohr9FpbWPGhAY2IrADVKhSHxkH9+3JCIndCsGOGftq3I8SB
-         XQ2UxhFYd27xbTyjVALvg1r8pWPL8xIlpDtsM+vrm2pKVZY+zC3CnGGnd3t0s2fGU2
-         1Fp86/Btwq1UQ==
-Received: by mail-ed1-f47.google.com with SMTP id v7so4634444eds.10;
-        Wed, 10 Feb 2021 12:59:39 -0800 (PST)
-X-Gm-Message-State: AOAM530fNqxxP8OqmMbiUV1IZIlYe4XfUJko0qmrJV/EBo+JeBSkcps1
-        YddUOJjkjNZ0HD9x7YgkLpnZ7B1tc3Y5VvGAEw==
-X-Google-Smtp-Source: ABdhPJxacO0wf1xtajhT6TgBmNau1cOl6EP0XT0wnGuAql3GiyYkRv8xoZQ8EpumIQDdN7LoduVFbTVtabNCICboevM=
-X-Received: by 2002:a50:ee10:: with SMTP id g16mr5022978eds.62.1612990777710;
- Wed, 10 Feb 2021 12:59:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20210210214720.02e6a6be@canb.auug.org.au> <YCQjfqH415zIhhyz@kroah.com>
- <CAGETcx88Ln2XxuLN7P2BVhzB=OQxPLLsBN7WLL1j2JtR4+Z8ow@mail.gmail.com>
- <CAGETcx9zM2OdbNDcC7pXGtY9yqRgb-wt0YzFv6wfNgQi0gM+8w@mail.gmail.com>
- <CAL_JsqLrRQs2Q_ui2SLdEBJ7FuYNpC-_K+9yoQjyMDbhaRbLiQ@mail.gmail.com> <CAGETcx9dPER2NoOx5vcS7BbCNw=Bao20kKk82uMe_8Bjf-XoFw@mail.gmail.com>
-In-Reply-To: <CAGETcx9dPER2NoOx5vcS7BbCNw=Bao20kKk82uMe_8Bjf-XoFw@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 10 Feb 2021 14:59:26 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+54eRFoSwmo0jSqo9oj88zrLhOQLNRgPtctfZgB_0ahQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+54eRFoSwmo0jSqo9oj88zrLhOQLNRgPtctfZgB_0ahQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S233370AbhBJWJf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Feb 2021 17:09:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232880AbhBJWJb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2021 17:09:31 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7F5C061574
+        for <linux-next@vger.kernel.org>; Wed, 10 Feb 2021 14:08:50 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id m1so3294856wml.2
+        for <linux-next@vger.kernel.org>; Wed, 10 Feb 2021 14:08:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=wKFzeYvRIfRRujFYeB3I9KIR3XAD4SNxcudP28nmt7Y=;
+        b=QFp+i3TNGvPsUwXkX2ihGA4Etg+Wx5kO1fCCq8rk/7MrjtPV05JOc3v9ETrWiRIMZ6
+         41jQAQqX0Kzr3Q14yQALiO5howsVzs7F4BkkSNvMCSyiY/j5u0d0lLde/fgKwH5Ag5T7
+         SO10KE5WEjOZn9vS2khJlaXeM+31HAMbWH0SMCN9G63QlkjiKEfX7XlfGzUjcE8yunV2
+         RtW7Pee25d03kRgg4T8OYjysMsw7EMmy/YgTagJHvpfM9zniHmZMKBXZoO2pLfNv8EtW
+         O7v0yR8EYy3pqUVRia5he/X7QtJqFE18pGdIB4R/8WvR+/gH2C0MPmoJ354DdBQA6NGh
+         TufQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=wKFzeYvRIfRRujFYeB3I9KIR3XAD4SNxcudP28nmt7Y=;
+        b=OHNUaI7KCp/hO4AeJxmXF7dI1HDRRVaI3ZgfgzYHrVEYPHm/x3bibpH1vCncWodZHq
+         PNZRgi5o7WHXgX/o2nV9YetPKH2596PzvUBwh9jb0FufsFpCSEmI64ePvXe3xBgAc1uD
+         +IytJ2odEuKF1KOJKdNY1USSwV088kwp9YIVCRftnHGr1+iOjRnxxxSxupa4gSUhHNPL
+         g0W9LQX9/nv43g8WMxuvBPQ+b1kQddcFWfynv6m/k2cq/o9YqMpGM3u7NiW33IZn1cKX
+         wYOn0rU1UJtVLm37M6OJjhZuTmOYnSiqflzWDjfP3Wr8X1lYwLsB9uFveBoe9zAarknN
+         CTUA==
+X-Gm-Message-State: AOAM5334GLbVtQRBSxmbPqB3ClJ0qmoe4pki2MzIpyOuDtxiM+jhqVwU
+        isx9Wrs1Ym59Pwbd2tjdk8FJ2Wkf/K+h/w==
+X-Google-Smtp-Source: ABdhPJz8sz+tGqmc3jaUmyTqU9v2rgN63fl+qoXIl1SQCx59Nf4axlTlTI2KiK3Wg0PEc0wBY61Xpw==
+X-Received: by 2002:a1c:2d47:: with SMTP id t68mr1207224wmt.189.1612994928990;
+        Wed, 10 Feb 2021 14:08:48 -0800 (PST)
+Received: from x1 ([91.110.221.237])
+        by smtp.gmail.com with ESMTPSA id n187sm4955293wmf.29.2021.02.10.14.08.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Feb 2021 14:08:48 -0800 (PST)
+Date:   Wed, 10 Feb 2021 22:08:46 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leonro@nvidia.com>,
+        Parav Pandit <parav@nvidia.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: linux-next: build warning after merge of the rdma tree
+Message-ID: <20210210220846.GC124276@x1>
+References: <20210210211149.3498db8a@canb.auug.org.au>
+ <20210210134742.GY4247@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210210134742.GY4247@nvidia.com>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 2:44 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> On Wed, Feb 10, 2021 at 12:15 PM Rob Herring <robh+dt@kernel.org> wrote:
-> >
-> > On Wed, Feb 10, 2021 at 1:17 PM Saravana Kannan <saravanak@google.com> wrote:
-> > >
-> > > On Wed, Feb 10, 2021 at 11:06 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > >
-> > > > On Wed, Feb 10, 2021 at 10:18 AM Greg KH <greg@kroah.com> wrote:
-> > > > >
-> > > > > On Wed, Feb 10, 2021 at 09:47:20PM +1100, Stephen Rothwell wrote:
-> > > > > > Hi all,
-> > > > > >
-> > > > > > After merging the driver-core tree, today's linux-next build (sparc64
-> > > > > > defconfig) failed like this:
-> > > > > >
-> > > > > > drivers/of/property.o: In function `parse_interrupts':
-> > > > > > property.c:(.text+0x14e0): undefined reference to `of_irq_parse_one'
-> > > > > >
-> > > > > > Caused by commit
-> > > > > >
-> > > > > >   f265f06af194 ("of: property: Fix fw_devlink handling of interrupts/interrupts-extended")
-> > > > > >
-> > > > > > CONFIG_OF_IRQ depends on !SPARC so of_irq_parse_one() needs a stub.
-> >
-> > It's always Sparc!
-> >
-> > > > > > I have added the following patch for today.
-> > > > > >
-> > > > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > > > Date: Wed, 10 Feb 2021 21:27:56 +1100
-> > > > > > Subject: [PATCH] of: irq: make a stub for of_irq_parse_one()
-> > > > > >
-> > > > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > > > ---
-> > > > > >  include/linux/of_irq.h | 9 +++++++--
-> > > > > >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > > >
-> > > > Thanks Stephen!
-> > >
-> > > Actually the stub needs to return an error. 0 indicates it found the interrupt.
-> >
-> > I have a slight preference if you could add an 'if
-> > (!IS_ENABLED(CONFIG_OF_IRQ))' at the caller instead.
-> >
-> > If you grep of_irq_parse_one, you'll see there's only a few users
-> > which means it's on my hit list to make it private. Stub functions
-> > give the impression 'use everywhere'.
->
-> I already sent out a fix :(
+On Wed, 10 Feb 2021, Jason Gunthorpe wrote:
 
-Okay, it's fine. I misread Greg's mail.
+> On Wed, Feb 10, 2021 at 09:11:49PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the rdma tree, today's linux-next build (htmldocs) produced
+> > this warning:
+> > 
+> > drivers/infiniband/core/device.c:859: warning: Function parameter or member 'dev' not described in 'ib_port_immutable_read'
+> > drivers/infiniband/core/device.c:859: warning: Function parameter or member 'port' not described in 'ib_port_immutable_read'
+> > 
+> > Introduced by commit
+> > 
+> >   7416790e2245 ("RDMA/core: Introduce and use API to read port immutable data")
+> 
+> drivers/infinband is W=1 clean right now in linux-next
+> 
+> But how can I build *only* drivers/infiniband using W=1 so I can keep
+> it that way?
+> 
+> The rest of the kernel is not clean and creates too much warning noise
+> to be usable, even with my mini config.
+> 
+> Just doing a 'make W=1 drivers/infiniband' is sort of OK, but then I
+> end up compiling things twice
+> 
+> Does anyone know a good solution?
 
-> Will that check optimize out the code and not cause build errors? If
-> so, I can send out a patch later.
+I have 2 solutions that I use;
 
-Yes, it will not trigger link errors. You could still get compile
-errors if say a struct member is ifdef'ed out.
+When building locally, I have a special flag for testing branches I
+maintain.  The flag indicates that the output should be passed through
+a parsing script which highlights entries I care about.  The script
+handles lots of other options such as building for different
+architectures, running smatch and sparse, etc, but the bit you might
+care about goes something like this:
 
-Rob
+ eval $make $makeoptions $extraoptions $flagoptions $diroptions 2>&1 | (\
+ while read line; do
+     if echo $line | grep -i "${DIRSGREP}" > /dev/null; then
+         print_red "$line" >&2;
+     else
+         echo $line;
+     fi
+ done) | tail
+
+This hides almost all output that I don't care about and highlights
+the information that is of interest to me in red.
+
+Another solution is to use a builder (I personally use Tuxsuite) to
+run 70 different builds (architectures/configs) on *both* a common
+base (latest -next, kernel release, stable release, etc) and the head
+of the branch I care about and compare the two.  Tuxsuite is nice
+since it returns a JSON file with all of the results, so comparison
+becomes trivial.
+
+Output of a failed build might look like this:
+
+ $ build-test stable v4.9.257                    # where v4.9.257 is the common base
+ Using Tuxbuild to compare build failures/warnings
+  
+ Tuxbuild the base [v4.9.257] 
+ Total 0 (delta 0), reused 0 (delta 0)
+ To [remote_repo]/linux.git
+  * [new tag]                   tuxbuild-to-test-1414 -> tuxbuild-to-test-1414
+ Tuxbuild the current branch [tb-some-topic-branch]
+ Total 0 (delta 0), reused 0 (delta 0)
+ To [remote_repo]/linux.git
+  * [new tag]                   tuxbuild-to-test-1415 -> tuxbuild-to-test-1415
+ Waiting for child processes to finish 
+ Evaluating the results 
+ 
+ Errors were caused
+  
+ [v4.9.257] tb-some-topic-branch c18034406e3b ("subsystem: Descriptive commit message")
+
+  arc axs101_defconfig gcc-9
+      https://builds.tuxbuild.com/1oIa24eac9ANKJLLMBDgP6zwE5d/ 	 Pass (0 errors - 0 warnings) : v4.9.257
+      https://builds.tuxbuild.com/1oIa4WZ1jw4tJtt3mLqTNiX4C1a/ 	 Fail (6 errors - 3 warnings) : tb-some-topic-branch 
+
+  arm allmodconfig gcc-8
+      https://builds.tuxbuild.com/1oIa21QYn23XxgnDKUh9as5Pgvc/ 	 Pass (0 errors - 0 warnings) : v4.9.257
+      https://builds.tuxbuild.com/1oIa4YT8nEIjaFOaFLuRVId2D7I/ 	 Fail (0 errors - 9 warnings) : tb-some-topic-branch 
+
+  arm64 defconfig gcc-9
+      https://builds.tuxbuild.com/1oIa2AR63BljDuvKHKet8Qqga7L/ 	 Pass (1 errors - 3 warnings) : v4.9.257
+      https://builds.tuxbuild.com/1oIa4biSryBYrj4JoZlRGpgx8AF/ 	 Fail (2 errors - 8 warnings) : tb-some-topic-branch 
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
