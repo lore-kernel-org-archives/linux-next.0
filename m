@@ -2,161 +2,288 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3621C433DB
-	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 07:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E04C433E6
+	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 07:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6660164DD8
-	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 07:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D3E64E02
+	for <linux-next@archiver.kernel.org>; Wed, 10 Feb 2021 07:24:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbhBJHDu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 10 Feb 2021 02:03:50 -0500
-Received: from mo-csw-fb1114.securemx.jp ([210.130.202.173]:45498 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbhBJHDs (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2021 02:03:48 -0500
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1114) id 11A5asLG028801; Wed, 10 Feb 2021 14:36:54 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 11A5Y82U011470; Wed, 10 Feb 2021 14:34:08 +0900
-X-Iguazu-Qid: 2wGqzdZmd9QW53S1Hk
-X-Iguazu-QSIG: v=2; s=0; t=1612935248; q=2wGqzdZmd9QW53S1Hk; m=hYskWyOAMKP44whQCy6aV9uT1RX7jHUgJVl532InDVE=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1112) id 11A5Y1Mw019294;
-        Wed, 10 Feb 2021 14:34:02 +0900
-Received: from enc01.toshiba.co.jp ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id 11A5Y1Nc013789;
-        Wed, 10 Feb 2021 14:34:01 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 11A5Y1Yi024311;
-        Wed, 10 Feb 2021 14:34:01 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fDteWqBukzvIqwUVqnGXj/k1wSHP4gs/SQwtrhgKhJ9byMdveIh+f2nIcYUVOtn9FkK3WIAt3+cL+U4MBTuqACfLnF6L0+hnovFZmePFOhC8XewCjusHEbocCFZzQSBpLD387yXvsmpubG/UcLZDekcuV97LJDjT8bOc1MWURnp7uiS4xnBVqzfRbv3zApi7F8Tq+8poWQQ67fSaNEYMFSMWvZWubJ4HU9+4ON1A/Q6f43PK/sk/1A8mgqiWARq1h9l5LvMM8ubYokgE/MGV0ReAw3DXMTkEPCAVeZAsI8nNJyHLgfT35VnLt+KpMMq7l/ANoVz55J4mpX7wfIQ/aA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZnZyIXExNQZNRBec68qkIQKQi+wpatekQ3bTMpRAm+U=;
- b=hB4p14CHhXHi1lqF50BVEfpVMF5CUZLDj+ayMfO6vXlWsq5vYtfRIx8VETcLHqgs/4wAqO0tCDb9dfelfmUOXw1Ayls/WWTF9oZyht9eaKyGnzh/4hNJ+i7WjSGaMWeeY9ErxkjcobRC2pC4eZX3EgD0wGyGSMdOYxqnS6AMXWTU/Xa2gXZgAcDrJd4LFVi5Hfz33zDaQsgJCHDln1oyYMcSj8W5kVZAZOwDfBSonxGrlsJIOZxVGPOTuhXe4sOkn2HjeFyXfBde0+nJznC5JbG3DZhXQWXRPb9BdKbq2Ee2k9pnztH4wkDKbz66qtR8KvPs/t3ixDL48N+OI5a/WQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From:   <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     <arnd@kernel.org>, <geert@linux-m68k.org>
-CC:     <sfr@canb.auug.org.au>, <brgl@bgdev.pl>, <olof@lixom.net>,
-        <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>,
-        <bgolaszewski@baylibre.com>, <linux-kernel@vger.kernel.org>,
-        <linux-next@vger.kernel.org>
-Subject: RE: linux-next: manual merge of the gpio-brgl tree with the arm-soc
- tree
-Thread-Topic: linux-next: manual merge of the gpio-brgl tree with the arm-soc
- tree
-Thread-Index: AQHW9Tt2Y/QaGZ7Br0qfv4Sly9Ky16pPqokAgAAaVgCAASvngA==
-Date:   Wed, 10 Feb 2021 05:33:59 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB2983BB81E025AABF7D633C18928D9@OSBPR01MB2983.jpnprd01.prod.outlook.com>
-References: <20210128170331.4f2ac87b@canb.auug.org.au>
- <CAMuHMdWAOXpJGTRM7O7ix4uG-hpH-kDiueN51oA0YEZ0vJdZfw@mail.gmail.com>
- <CAK8P3a1Fv=Bei+Zkq43yn_dek=RB96_yXrtJ-ZA5K4nf06joOw@mail.gmail.com>
-In-Reply-To: <CAK8P3a1Fv=Bei+Zkq43yn_dek=RB96_yXrtJ-ZA5K4nf06joOw@mail.gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=toshiba.co.jp;
-x-originating-ip: [103.91.184.0]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 98ad7a4d-1b3b-4483-d536-08d8cd85777c
-x-ms-traffictypediagnostic: OSAPR01MB5171:
-x-microsoft-antispam-prvs: <OSAPR01MB5171BF7056AB8A1FB80AC1DB928D9@OSAPR01MB5171.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:397;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Flhe7jsau3ZbWNVWkYBmRpKdet9AUMp4c57REMsfjYoWRPOXN8itY2xXTxgoOh4yLSDZrVIb72r+n8Yn3e3g6e5uDdGF5ow/QDa1uEHuVsHACcrVHDfBKzZXwcDVrQf09Gn8uYzbIggFOmDkRyYqWanOQJ1OHqAVdunK3R27zapkQGjax0d5YtmKL7QztfiFP1KCDqq5d4qrFc4huKSvJFXPDX8R+IipcKKHVTs0iAQhzbT1e946TwvP8l9OLWBSBafnaCde+OdiGSTLW/D1XBtyfsR3YgPThrkJRUqy6Wfx2O7Nos3G920/FqJ4+4+HsC3dywf4HQnWWs3Y3Rcj8ALuqatYuB2k3VzeflzfqMoxb/dAbGBolhUTZRB1+PoP3C2M4Pw6SpRW7IROvIdR+bRRR3WKGNe6Dx+orJCkmzA3v/1yF691QmpG0WP6mfC0rLVcrCu4oGEnXx23AvUCB5Orro769nALGQ+8ZvEg6oad1NCMQqpOw/DlAa75Hy0eTm7p4xbnvhkLUckXkvQSC0TrO6y1b17Yvs9n5stNtBvNrXiF6cw/O8l+ZoDztO3FRNT5mro+jVqTzF/hTTYzjw3aRG+8b72Ua1NHxRCiI7k=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB2983.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(376002)(346002)(396003)(39860400002)(478600001)(66946007)(2906002)(8676002)(186003)(83380400001)(33656002)(76116006)(53546011)(9686003)(86362001)(66556008)(7696005)(110136005)(4326008)(6506007)(71200400001)(66446008)(966005)(66476007)(8936002)(26005)(5660300002)(52536014)(64756008)(54906003)(316002)(55016002)(7416002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?dWx4SzZWaGgxUkRwRzV6T1NncHp6QWRHUjFLYVROMUxWTkNMVXdXNEl3a3pU?=
- =?utf-8?B?TnhCL3FOa0tzWmFUdnRrajNWcmdkWURJdEtuSTJ1T3JHQ3ZLMzhPbXVZR2NU?=
- =?utf-8?B?OGVFb2ZFeFRaWEd3aEQzQnJJbW5FZWNQWDAwWHVvMEdPTG4wY3ZYYWlQb1U5?=
- =?utf-8?B?aE5RK0plZVBpN1h2UnJBbU1hTUVWOSs5S2hXRnJWMHVNNVhrSTdwb2F3a1BN?=
- =?utf-8?B?ZDlVY29lbVh6cGRkZ2FtZkdnV05HTXJxQzBjV1NXejJkNmV3ck0yMDFIa0Fh?=
- =?utf-8?B?U09rQWl1Sytub0xkNEFXUmtyc1M5ZFRjWldzQytKc29qc0NQNjRqU29vem5G?=
- =?utf-8?B?Wk9PSWl2WklCM09SaUY4ZUJwdHpBbVIyQTh4WkkvYkVRNkhwVHZmWVlPdjRu?=
- =?utf-8?B?eXl0dDZKaUZ2RnI2aUgySjVuWFJRNW9ORXMzUmFsVHJldkN3d0Fadm85dU1X?=
- =?utf-8?B?anBqQWRPWkkwTXJQZHRWaGNmQXlWTFV3dG9xaWEwMXFUKzd0MHAvTGlvc0RM?=
- =?utf-8?B?RjNvZW9DcDRCREFZUG9RWmZSUTdJWTVERWhicjJkRnBWbHlWcEZYTElLZkJv?=
- =?utf-8?B?SWdQRnpsTXpDYXlvZjREelVFWDU4d1JwalAraU15QzJPZzFjZmdudXEyQkVM?=
- =?utf-8?B?dUZYVXQ3N2hWU0d4OGZXVzJzaDY4Y0YxZVhnQ05Rai9ENmVIRWErZTliSzVP?=
- =?utf-8?B?Y1VCWHlROWIwdGZ3dVRkOEFYcVMzUUhSV05HbEtFd0hPdXExbVBWUTNZNmVx?=
- =?utf-8?B?WG9rVFhoWTc2dHkvZ1hKaERhMTJza2EwRk5ySDMvbzdTbHE1RVBEL0VNVVNo?=
- =?utf-8?B?QVYyL0VWcUx5cllpckpCYjB6bXdBNUtBMTNtS0QxbWNxbmtKUW5MalpSWTlO?=
- =?utf-8?B?dExlaEF3Sk9oazJIYjJBYlY3SFFaSzBPZi9aV0M1aE1zVlFZS21ESEtSUk9B?=
- =?utf-8?B?bVg3a3ZRWWlhME5OREV1aWZLaUZnU3JxY2djL1FoaHgzTytGczhWekJ6YXZx?=
- =?utf-8?B?U2p2TldVdGdFeHZ3VHVuN2hUZHQyVXlWRWtiTGZCWTdGY1hzNHRpT3RvMy9h?=
- =?utf-8?B?WWljUXgzS0FhWkRkc0ZoVVlrbFlqTDlpd1Z2Z1ZyK3hMNDUxYlFKTm5paUhl?=
- =?utf-8?B?b2FzUmlCbEFNNFpCbm5Qa3pETVhOa1h6aTljbGdta0dVemFCTU96YnBqQjJX?=
- =?utf-8?B?K3lJdnMwdEpmUC9hSFlJSFV0NnZwRXM2emQ4U2tRNnVvbUVuRVNXYzNPYWty?=
- =?utf-8?B?c0Vob3NSS2hnYUdEa3p3WDZ5aHFzTFRaTmwwbzMvaGh5TUJzTVVYZVFWa3ox?=
- =?utf-8?B?Y3dXdWR0dkZIQkcrdGZyMUJNUDBHQThxMSsrYXM3WjY2dmNoZ2EvZ1lBRHJY?=
- =?utf-8?B?SnA2RFU5VHZHbW5mS2wyV010dnZXaE1aMTlKRVFSdlRRMGxzTDY3SzBrd255?=
- =?utf-8?B?aUlNOWNsTFF3Q0xqT0QxdWdpM1YycUYvemJOcXVBWmNZUlVXL3lVTjdlY3h4?=
- =?utf-8?B?WGNRT0Y4MDc2TkxNYTgycWhBUFA2cjdwNUN1Y0JNdXVrcXVwNmpGQVc1dTdC?=
- =?utf-8?B?YXpBQkRvL2ZkUWk0OHFtejhaMEpueVc1Q08zZk1XMjArc3pxcnA2cGlrNXZE?=
- =?utf-8?B?NUh3QkphOVdna2ExL00vUHRDV2hWbDZDcis0R25IYnlvcXMwdkpORUFJbVdV?=
- =?utf-8?B?THI5SklLVDh6Yjg0WllyOEdoV2xsSVZydDlHVm5tWjROMTVubldBQVRrWDgz?=
- =?utf-8?Q?nKwnMdVSIoDgme8PcI=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S232456AbhBJHY3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 10 Feb 2021 02:24:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232431AbhBJHYM (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2021 02:24:12 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBBFDC06174A;
+        Tue,  9 Feb 2021 23:23:31 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id q85so790151qke.8;
+        Tue, 09 Feb 2021 23:23:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=bH3CLqRvXgD6BHuxlu5Bhk4vl9wgjCKKNXoHMPR2Lcc=;
+        b=Yzt5Hpj9i7PfYZhFApfZABl/PTdrcxUVYhOrJW1bgBxqcRtMdg5tsGs1k3/NwmDNay
+         xMvGyGvqQuqOkKYCyVtX/rsmUsFP7A1T/eOw+fmo+2QkfZdyDA7w359qI+IX1hpAXxw3
+         BUEh3a8nypugaZFPI5Oc60VT6H7DIRZqjpgbYUZ7YeVtNZXVLlj8XhFegm1aC4LzXOui
+         bRjDHpwoBA/t0SXJESNeonSGBJK/UVKH++Iz6pIeAA+VvtY3Jb8IvdjeU1GipmbiDTp4
+         hU9PdI1p0Nih54uRp98T5FYOw4mM2ugggHEkZ9sIW/1s5IbjmxwvOiscSw0SC5uNss6v
+         8iEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=bH3CLqRvXgD6BHuxlu5Bhk4vl9wgjCKKNXoHMPR2Lcc=;
+        b=WDwX+fiIosjhZEiB4DKW7X+zUwkhzFlGdkz49mgwJiobeHiVb9dELKaFQFTqaG7aIh
+         q2EwDlNr+FG7N6PDX9fwVWzb66S951f5xdI4jIJYX3gpeThL0wnhnJ7U04hTM73ZEpva
+         dwk4aUvhA8wXAMasFvcsVnGpRZp7oNZnehdmYaJ6AipIwyrLj6POBXQZAc79vlhayhlz
+         DCoPwCMspQxnBsF4DOBvqv6jyyH+fz9r1U+/E9srcyaStAFHb9FX5hsSwWuxVFcqMFnD
+         mkEFKvwtDcWzPKXKGai3sZkaSy6v6RdG0bCfc6ltRLGrE02OgoJCv1pCDbMU+V14gHEg
+         wjxQ==
+X-Gm-Message-State: AOAM530zypqBVGY7c74vMslG2HpZwPjIza7+8q0hr+kfqxBmY5R5907v
+        RD+J4m9VoIUyXT46bM6G5DcwJiQtNsYV1KGblgM=
+X-Google-Smtp-Source: ABdhPJzPIkI/irmo4GENEMD8ZncH2Gf9+Gkzoe4LA/sBa7nG+9/Ob63hbDyWlyDi/aWXu1ddZO8B6hVC2WsENXa8n1M=
+X-Received: by 2002:a37:d01:: with SMTP id 1mr2142832qkn.247.1612941810860;
+ Tue, 09 Feb 2021 23:23:30 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98ad7a4d-1b3b-4483-d536-08d8cd85777c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2021 05:33:59.0591
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hQBJHV6wwHSG4It2p4eM0w9jBIrZltiNTEwG4bopVy1CIaoxR2tXJ+oStk7qmsWzXQM07Dtq1MB9iD+fOWNVIdZnqGzF3ie+r1WRF+KcuxORTocO85yvnPXY1LDqoLh9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB5171
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Date:   Wed, 10 Feb 2021 09:22:54 +0200
+Message-ID: <CAJ1xhMX6O__JbVi7izHvEcGVoBT_6h95fhsZPqQuSzVkhPugBA@mail.gmail.com>
+Subject: [nouveau] WARNING: possible circular locking dependency detected in linux-next
+To:     Ben Skeggs <bskeggs@redhat.com>, Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     sumit.semwal@linaro.org,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ML nouveau <nouveau@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        Linux-Next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-SGkgYWxsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFybmQgQmVy
-Z21hbm4gW21haWx0bzphcm5kQGtlcm5lbC5vcmddDQo+IFNlbnQ6IFR1ZXNkYXksIEZlYnJ1YXJ5
-IDksIDIwMjEgODozNiBQTQ0KPiBUbzogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1t
-NjhrLm9yZz4NCj4gQ2M6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pjsg
-QmFydG9zeiBHb2xhc3pld3NraSA8YnJnbEBiZ2Rldi5wbD47IE9sb2YgSm9oYW5zc29uIDxvbG9m
-QGxpeG9tLm5ldD47DQo+IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+OyBBUk0gPGxpbnV4
-LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47IEJhcnRvc3ogR29sYXN6ZXdza2kNCj4g
-PGJnb2xhc3pld3NraUBiYXlsaWJyZS5jb20+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0IDxs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgTGludXggTmV4dCBNYWlsaW5nIExpc3QNCj4g
-PGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPjsgaXdhbWF0c3Ugbm9idWhpcm8o5bKp5p2+IOS/
-oea0iyDilqHvvLPvvLfvvKPil6/vvKHvvKPvvLQpIDxub2J1aGlybzEuaXdhbWF0c3VAdG9zaGli
-YS5jby5qcD4NCj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6IG1hbnVhbCBtZXJnZSBvZiB0aGUg
-Z3Bpby1icmdsIHRyZWUgd2l0aCB0aGUgYXJtLXNvYyB0cmVlDQo+IA0KPiBPbiBUdWUsIEZlYiA5
-LCAyMDIxIGF0IDExOjAxIEFNIEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4ay5v
-cmc+IHdyb3RlOg0KPiA+IE9uIFRodSwgSmFuIDI4LCAyMDIxIGF0IDc6MDUgQU0gU3RlcGhlbiBS
-b3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+IHdyb3RlOg0KPiANCj4gPiA+IGRpZmYgLS1j
-YyBhcmNoL2FybTY0L2Jvb3QvZHRzL3Rvc2hpYmEvdG1wdjc3MDgtcm0tbWJyYy5kdHMNCj4gPiA+
-IGluZGV4IDM3ZGE0MTgzOTNlMCw5NTAwMTBhMjkwZjAuLjAwMDAwMDAwMDAwMA0KPiA+ID4gLS0t
-IGEvYXJjaC9hcm02NC9ib290L2R0cy90b3NoaWJhL3RtcHY3NzA4LXJtLW1icmMuZHRzDQo+ID4g
-PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3Rvc2hpYmEvdG1wdjc3MDgtcm0tbWJyYy5kdHMN
-Cj4gPiA+IEBAQCAtNDIsNyAtNDIsNiArNDIsMTEgQEBADQo+ID4gPiAgICAgICAgIGNsb2NrLW5h
-bWVzID0gImFwYl9wY2xrIjsNCj4gPiA+ICAgfTsNCj4gPiA+DQo+ID4gPiAgKyZ3ZHQgew0KPiA+
-ID4gICsgICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gPiAgKyAgICAgIGNsb2NrcyA9IDwmd2R0
-X2Nsaz47DQo+ID4gPiAgK307DQo+ID4gPiArKw0KPiA+ID4gKyAmZ3BpbyB7DQo+ID4gPiArICAg
-ICAgIHN0YXR1cyA9ICJva2F5IjsNCj4gPiA+ICsgfTsNCj4gPg0KPiA+IFByb2JhYmx5IHNvbWUg
-c29ydCBvcmRlciBzaG91bGQgYmUgdGFrZW4gaW50byBhY2NvdW50IChncGlvIGJlZm9yZSB1YXJ0
-MCksDQo+ID4gYWxzbyBhdm9pZG5nIHRoZSBjb25mbGljdD8NCj4gPg0KPiANCj4gV2Ugbm9ybWFs
-bHkgZG8gdGhpcyBieSBhc2tpbmcgZXZlcnlvbmUgdG8gc2VuZCB0aGUgZHRzIGNoYW5nZXMgZm9y
-DQo+IGluY2x1c2lvbiB0aHJvdWdoIHRoZSBzb2MgdHJlZSByYXRoZXIgdGhhbiB0aGUgc3Vic3lz
-dGVtIHRoYXQgY29udGFpbnMNCj4gdGhlIGRyaXZlci4gV2h5IGlzIHRoaXMgb25lIGluIHRoZSBn
-cGlvLWJyZ2wgdHJlZT8NCg0KUGVyaGFwcyB0aGlzIGlzIEJhcnRvc3oncyBtaXN0YWtlLg0KTGlu
-dXMgaGFzIGNvbW1lbnRlZCB0aGF0IGdwaW8gbWwgaXMgY2FwdHVyZWQgdmlhIHRoZSBzb2MgdHJl
-ZS4NCiAgaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtZ3Bpby9DQUNScGtkYi0tR1N5LTB2
-bkFGUzlQaWs0VGpyTlJUclllWnIyUkJaRDZTRk04em90eVFAbWFpbC5nbWFpbC5jb20vDQoNCkJh
-cnRvc3osIGNvdWxkIHlvdSByZW1vdmUgY29tbWl0ICIgYXJtOiBkdHM6IHZpc2NvbnRpOiBBZGQg
-RFQgc3VwcG9ydCBmb3IgVG9zaGliYSBWaXNjb250aTUgR1BJTyBkcml2ZXIiIGZyb20NCnlvdXIg
-dHJlZT8NCg0KQmVzdCByZWdhcmRzLA0KICBOb2J1aGlybw0K
+I've been seeing these warnings for a couple of weeks now. Any
+pointers on how to address this would be much appreciated.
+
+[   57.207457] ======================================================
+[   57.207470] WARNING: possible circular locking dependency detected
+[   57.207483] 5.11.0-rc7-next-20210209 #142 Tainted: G        W
+[   57.207497] ------------------------------------------------------
+[   57.207508] Xorg/459 is trying to acquire lock:
+[   57.207521] ffff888016edc518 (&cli->mutex){+.+.}-{3:3}, at:
+nouveau_bo_move+0x4bf/0x2ec0 [nouveau]
+--------------------------------------------------------
+[faddr2line]
+nouveau_bo_move+0x4bf/0x2ec0:
+nouveau_bo_move_m2mf at
+/home/sasha/linux-next/drivers/gpu/drm/nouveau/nouveau_bo.c:804
+(inlined by) nouveau_bo_move at
+/home/sasha/linux-next/drivers/gpu/drm/nouveau/nouveau_bo.c:1024
+
+/home/sasha/linux-next/drivers/gpu/drm/nouveau/nouveau_bo.c:800,804
+if (drm_drv_uses_atomic_modeset(drm->dev))
+        mutex_lock(&cli->mutex);
+else
+        mutex_lock_nested(&cli->mutex, SINGLE_DEPTH_NESTING);
+ret = nouveau_fence_sync(nouveau_bo(bo), chan, true, ctx->interruptible);
+--------------------------------------------------------
+[   57.207923]
+               but task is already holding lock:
+[   57.207934] ffff88801f49e9a0
+(reservation_ww_class_mutex){+.+.}-{3:3}, at:
+nouveau_bo_pin+0xc1/0xb60 [nouveau]
+--------------------------------------------------------
+[faddr2line]
+nouveau_bo_pin+0xc1/0xb60:
+ttm_bo_reserve at /home/sasha/linux-next/./include/drm/ttm/ttm_bo_driver.h:152
+(inlined by) nouveau_bo_pin at
+/home/sasha/linux-next/drivers/gpu/drm/nouveau/nouveau_bo.c:424
+
+/home/sasha/linux-next/include/drm/ttm/ttm_bo_driver.h:148,154
+if (interruptible)
+        ret = dma_resv_lock_interruptible(bo->base.resv, ticket);
+else
+        ret = dma_resv_lock(bo->base.resv, ticket);
+if (ret == -EINTR)
+        return -ERESTARTSYS;
+return ret;
+--------------------------------------------------------
+[   57.208317]
+               which lock already depends on the new lock.
+
+[   57.208329]
+               the existing dependency chain (in reverse order) is:
+[   57.208340]
+               -> #1 (reservation_ww_class_mutex){+.+.}-{3:3}:
+[   57.208373]        __ww_mutex_lock.constprop.0+0x18a/0x2d40
+[   57.208395]        nouveau_bo_pin+0xc1/0xb60 [nouveau]
+[   57.208753]        nouveau_channel_prep+0x2c6/0xba0 [nouveau]
+[   57.209105]        nouveau_channel_new+0x127/0x2020 [nouveau]
+[   57.209457]        nouveau_abi16_ioctl_channel_alloc+0x33b/0xdf0 [nouveau]
+[   57.209809]        drm_ioctl_kernel+0x1cb/0x260
+[   57.209826]        drm_ioctl+0x420/0x850
+[   57.209841]        nouveau_drm_ioctl+0xdf/0x210 [nouveau]
+[   57.210198]        __x64_sys_ioctl+0x122/0x190
+[   57.210214]        do_syscall_64+0x33/0x40
+[   57.210230]        entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   57.210247]
+               -> #0 (&cli->mutex){+.+.}-{3:3}:
+[   57.210280]        __lock_acquire+0x2a01/0x5ab0
+[   57.210298]        lock_acquire+0x1a9/0x690
+[   57.210314]        __mutex_lock+0x125/0x1140
+[   57.210329]        nouveau_bo_move+0x4bf/0x2ec0 [nouveau]
+[   57.210686]        ttm_bo_handle_move_mem+0x1b6/0x570 [ttm]
+[   57.210719]        ttm_bo_validate+0x316/0x420 [ttm]
+[   57.210750]        nouveau_bo_pin+0x3c4/0xb60 [nouveau]
+[   57.211107]        nv50_wndw_prepare_fb+0x117/0xcb0 [nouveau]
+[   57.211460]        drm_atomic_helper_prepare_planes+0x1ec/0x600
+[   57.211477]        nv50_disp_atomic_commit+0x189/0x530 [nouveau]
+[   57.211833]        drm_atomic_helper_update_plane+0x2ac/0x380
+[   57.211849]        drm_mode_cursor_universal+0x3f3/0xb40
+[   57.211865]        drm_mode_cursor_common+0x27b/0x930
+[   57.211880]        drm_mode_cursor_ioctl+0x95/0xd0
+[   57.211895]        drm_ioctl_kernel+0x1cb/0x260
+[   57.211910]        drm_ioctl+0x420/0x850
+[   57.211925]        nouveau_drm_ioctl+0xdf/0x210 [nouveau]
+[   57.212281]        __x64_sys_ioctl+0x122/0x190
+[   57.212297]        do_syscall_64+0x33/0x40
+[   57.212312]        entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   57.212328]
+               other info that might help us debug this:
+
+[   57.212339]  Possible unsafe locking scenario:
+
+[   57.212350]        CPU0                    CPU1
+[   57.212360]        ----                    ----
+[   57.212370]   lock(reservation_ww_class_mutex);
+[   57.212390]                                lock(&cli->mutex);
+[   57.212410]                                lock(reservation_ww_class_mutex);
+[   57.212430]   lock(&cli->mutex);
+[   57.212449]
+                *** DEADLOCK ***
+
+[   57.212460] 3 locks held by Xorg/459:
+[   57.212473]  #0: ffffc9000044fb38
+(crtc_ww_class_acquire){+.+.}-{0:0}, at:
+drm_mode_cursor_common+0x1fd/0x930
+[   57.212520]  #1: ffff88800d9f2098
+(crtc_ww_class_mutex){+.+.}-{3:3}, at: modeset_lock+0xdb/0x4c0
+[   57.212564]  #2: ffff88801f49e9a0
+(reservation_ww_class_mutex){+.+.}-{3:3}, at:
+nouveau_bo_pin+0xc1/0xb60 [nouveau]
+[   57.212949]
+               stack backtrace:
+[   57.212961] CPU: 0 PID: 459 Comm: Xorg Tainted: G        W
+5.11.0-rc7-next-20210209 #142
+[   57.212979] Hardware name: Gigabyte Technology Co., Ltd.
+P35-S3G/P35-S3G, BIOS F4 07/10/2008
+[   57.212992] Call Trace:
+[   57.213007]  dump_stack+0x9a/0xcc
+[   57.213029]  check_noncircular+0x25f/0x2e0
+[   57.213049]  ? print_circular_bug+0x460/0x460
+[   57.213075]  ? alloc_chain_hlocks+0x1e4/0x530
+[   57.213095]  __lock_acquire+0x2a01/0x5ab0
+[   57.213119]  ? nvkm_ioctl+0x34a/0x6d0 [nouveau]
+[   57.213400]  ? lockdep_hardirqs_on_prepare+0x3e0/0x3e0
+[   57.213421]  ? memcpy+0x39/0x60
+[   57.213440]  ? nvif_object_mthd+0x20e/0x250 [nouveau]
+[   57.213717]  lock_acquire+0x1a9/0x690
+[   57.213736]  ? nouveau_bo_move+0x4bf/0x2ec0 [nouveau]
+[   57.214097]  ? lock_release+0x610/0x610
+[   57.214115]  ? lockdep_hardirqs_on_prepare+0x3e0/0x3e0
+[   57.214134]  ? memcpy+0x39/0x60
+[   57.214152]  ? nvif_object_mthd+0x20e/0x250 [nouveau]
+[   57.214431]  __mutex_lock+0x125/0x1140
+[   57.214448]  ? nouveau_bo_move+0x4bf/0x2ec0 [nouveau]
+[   57.214808]  ? nouveau_bo_move+0x4bf/0x2ec0 [nouveau]
+[   57.215167]  ? ttm_bo_wait+0x88/0xc0 [ttm]
+[   57.215201]  ? mutex_lock_io_nested+0xfe0/0xfe0
+[   57.215220]  ? nouveau_mem_map+0x1d3/0x3b0 [nouveau]
+[   57.215579]  ? nvif_vmm_put+0x140/0x140 [nouveau]
+[   57.215856]  ? nouveau_gem_ioctl_info+0xb0/0xb0 [nouveau]
+[   57.216220]  nouveau_bo_move+0x4bf/0x2ec0 [nouveau]
+[   57.216586]  ? unmap_mapping_pages+0xca/0x240
+[   57.216605]  ? spin_bug+0x100/0x100
+[   57.216621]  ? do_wp_page+0xf20/0xf20
+[   57.216640]  ? nouveau_bo_move_ntfy.constprop.0+0x620/0x620 [nouveau]
+[   57.217000]  ? _raw_spin_unlock+0x1a/0x30
+[   57.217017]  ? ttm_bo_add_move_fence.constprop.0+0x1a0/0x2a0 [ttm]
+[   57.217055]  ttm_bo_handle_move_mem+0x1b6/0x570 [ttm]
+[   57.217092]  ttm_bo_validate+0x316/0x420 [ttm]
+[   57.217127]  ? ttm_bo_bounce_temp_buffer+0x1e0/0x1e0 [ttm]
+[   57.217162]  ? lockdep_hardirqs_on_prepare+0x3e0/0x3e0
+[   57.217181]  ? __mutex_unlock_slowpath+0xe2/0x610
+[   57.217203]  ? nouveau_bo_placement_set+0xa6/0x420 [nouveau]
+[   57.217564]  nouveau_bo_pin+0x3c4/0xb60 [nouveau]
+[   57.217927]  ? nouveau_bo_sync_for_device+0x3c0/0x3c0 [nouveau]
+[   57.218289]  ? find_held_lock+0x2d/0x110
+[   57.218309]  nv50_wndw_prepare_fb+0x117/0xcb0 [nouveau]
+[   57.218669]  ? nv50_wndw_destroy+0x200/0x200 [nouveau]
+[   57.219028]  ? rcu_read_lock_sched_held+0x3a/0x70
+[   57.219047]  ? module_assert_mutex_or_preempt+0x39/0x70
+[   57.219065]  ? __module_address+0x30/0x310
+[   57.219086]  drm_atomic_helper_prepare_planes+0x1ec/0x600
+[   57.219105]  ? lockdep_init_map_type+0x2c3/0x770
+[   57.219126]  nv50_disp_atomic_commit+0x189/0x530 [nouveau]
+[   57.219488]  drm_atomic_helper_update_plane+0x2ac/0x380
+[   57.219510]  drm_mode_cursor_universal+0x3f3/0xb40
+[   57.219533]  ? setplane_internal+0x5f0/0x5f0
+[   57.219557]  ? ww_mutex_lock_interruptible+0x2f/0x160
+[   57.219577]  drm_mode_cursor_common+0x27b/0x930
+[   57.219598]  ? lockdep_hardirqs_on_prepare+0x3e0/0x3e0
+[   57.219617]  ? drm_mode_cursor_universal+0xb40/0xb40
+[   57.219642]  ? find_held_lock+0x2d/0x110
+[   57.219661]  ? drm_mode_setplane+0x850/0x850
+[   57.219677]  drm_mode_cursor_ioctl+0x95/0xd0
+[   57.219694]  ? drm_mode_setplane+0x850/0x850
+[   57.219711]  ? lock_acquire+0x1a9/0x690
+[   57.219732]  ? drm_is_current_master+0x65/0x120
+[   57.219750]  drm_ioctl_kernel+0x1cb/0x260
+[   57.219767]  ? drm_setversion+0x800/0x800
+[   57.219789]  drm_ioctl+0x420/0x850
+[   57.219807]  ? drm_mode_setplane+0x850/0x850
+[   57.219824]  ? drm_version+0x390/0x390
+[   57.219841]  ? __pm_runtime_resume+0x7a/0x100
+[   57.219862]  ? do_user_addr_fault+0x25f/0xaf0
+[   57.219882]  ? lockdep_hardirqs_on_prepare+0x273/0x3e0
+[   57.219900]  ? _raw_spin_unlock_irqrestore+0x34/0x40
+[   57.219917]  ? trace_hardirqs_on+0x32/0x120
+[   57.219940]  nouveau_drm_ioctl+0xdf/0x210 [nouveau]
+[   57.220301]  __x64_sys_ioctl+0x122/0x190
+[   57.220321]  do_syscall_64+0x33/0x40
+[   57.220338]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   57.220356] RIP: 0033:0x7f4e52905f6b
+[   57.220374] Code: ff ff ff 85 c0 79 8b 49 c7 c4 ff ff ff ff 5b 5d
+4c 89 e0 41 5c c3 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 10 00 00
+00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d d5 ae 0c 00 f7 d8 64 89
+01 48
+[   57.220392] RSP: 002b:00007fff974a0258 EFLAGS: 00000246 ORIG_RAX:
+0000000000000010
+[   57.220413] RAX: ffffffffffffffda RBX: 00007fff974a0290 RCX: 00007f4e52905f6b
+[   57.220428] RDX: 00007fff974a0290 RSI: 00000000c01c64a3 RDI: 000000000000000a
+[   57.220442] RBP: 00000000c01c64a3 R08: 0000000000000040 R09: 0000000000000001
+[   57.220455] R10: 00007f4e52d761c0 R11: 0000000000000246 R12: 0000565035263610
+[   57.220469] R13: 000000000000000a R14: 0000000000000000 R15: 0000000000000209
+[  158.611112] perf: interrupt took too long (2503 > 2500), lowering
+kernel.perf_event_max_sample_rate to 79000
+[  319.835187] perf: interrupt took too long (3138 > 3128), lowering
+kernel.perf_event_max_sample_rate to 63000
+[  358.920047] nouveau 0000:01:00.0: Direct firmware load for
+nouveau/nv84_xuc00f failed with error -2
+[  358.920095] nouveau 0000:01:00.0: vp: unable to load firmware
+nouveau/nv84_xuc00f
+[  358.920107] nouveau 0000:01:00.0: vp: init failed, -2
+[  358.920523] nouveau 0000:01:00.0: Direct firmware load for
+nouveau/nv84_xuc103 failed with error -2
+[  358.920556] nouveau 0000:01:00.0: bsp: unable to load firmware
+nouveau/nv84_xuc103
+[  358.920565] nouveau 0000:01:00.0: bsp: init failed, -2
+
+Thanks.
+Alexander Kapshuk
