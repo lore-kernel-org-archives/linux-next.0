@@ -2,76 +2,134 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCDEC433DB
-	for <linux-next@archiver.kernel.org>; Mon, 15 Feb 2021 10:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC086C433DB
+	for <linux-next@archiver.kernel.org>; Mon, 15 Feb 2021 11:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B41064DB1
-	for <linux-next@archiver.kernel.org>; Mon, 15 Feb 2021 10:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BF1164D9D
+	for <linux-next@archiver.kernel.org>; Mon, 15 Feb 2021 11:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbhBOKvY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 15 Feb 2021 05:51:24 -0500
-Received: from 17.mo6.mail-out.ovh.net ([46.105.36.150]:57218 "EHLO
-        17.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbhBOKvV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2021 05:51:21 -0500
-X-Greylist: delayed 6874 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Feb 2021 05:51:20 EST
-Received: from player693.ha.ovh.net (unknown [10.110.115.149])
-        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 3489523EA94
-        for <linux-next@vger.kernel.org>; Mon, 15 Feb 2021 09:56:02 +0100 (CET)
-Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player693.ha.ovh.net (Postfix) with ESMTPSA id 18B261B083216;
-        Mon, 15 Feb 2021 08:55:52 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-104R0052bc91e7f-3b4f-47e7-9a55-0b1cfc3b4324,
-                    B556E4132F97FCF51F74662465CB03FCA76A52B8) smtp.auth=rafal@milecki.pl
-X-OVh-ClientIp: 194.187.74.233
-Subject: Re: linux-next: build failure after merge of the mtd tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S229873AbhBOLD2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 15 Feb 2021 06:03:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:59269 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229779AbhBOLD2 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Mon, 15 Feb 2021 06:03:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613386921;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tWBUts84ZakMrFm1RZc/6Za4l9KVFtjkE6h0wbdwb28=;
+        b=Gs2/Bmi3xVZ4nEfNxQh7gz8GjBa2qneio8C/IpZ8keuG1s/JiRZ43Sx49Fqc04oDuS9pHu
+        cIAoIptMMY7yKP3q+Xu7936oZuz9Uk0bHTgb/+Nm1P2OzNqnpAhotTJIFZ2t9GwEFA5Of9
+        TVQPvqNt0GKUDvJXHrKP0MkHt00vXtc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-246-l4gY89tcNDiNC-OtyvNqTA-1; Mon, 15 Feb 2021 06:01:59 -0500
+X-MC-Unique: l4gY89tcNDiNC-OtyvNqTA-1
+Received: by mail-wr1-f72.google.com with SMTP id s18so9457782wrf.0
+        for <linux-next@vger.kernel.org>; Mon, 15 Feb 2021 03:01:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tWBUts84ZakMrFm1RZc/6Za4l9KVFtjkE6h0wbdwb28=;
+        b=Inh2lKUHAb9fSdgOd6xKfPL9WW+8MidNW3DCcsTWllsCqkDQouVWJ7ipJXyFWt5we+
+         yTvARWfAMslarg/MhKAeyIeqehb0Cgq5rA0HR4F8AiNrLAWiJlFGki/y6cRq/UB/S/j6
+         5PIC5lVlh7fQCqfCLflViI8RYCJt5VDEoCQJ4VcwJTCuXGMZ4b4ZuMKbHNlYG6Q+hcjB
+         iePWnnc9MSAeH7tdou3OIQiEduSPK4bF5dHCAuTo7+Z7Yq6TykAAXXYnbSBe4y1LoCOM
+         9sfLUr/kx8t6tiqOVBAs2RmxmRezsMLKvckpYHlQtVBf4RMMDmiUudbg0XST8E9DGpmU
+         LQlA==
+X-Gm-Message-State: AOAM533mnr9gj118sdABHJSyNgUjhABLgBg543HEEpVUhLQdfAXtaJXP
+        aFXCEYtCmCQwn4ADPf49piYyWYEgSn0z9g1mC35eSHemwhG9YaK5YtgKlWvunAhFW+RUe0zLakC
+        kmWt6t+LR+btFMGcXI8hF4A==
+X-Received: by 2002:adf:9f54:: with SMTP id f20mr18149950wrg.362.1613386917382;
+        Mon, 15 Feb 2021 03:01:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwXQq08i+/RQsXj5NKZe5iGT+5VgnUN92wMUe264vdcFESWjc/jTZFgDiK6vCqqQA2VKRGdBg==
+X-Received: by 2002:adf:9f54:: with SMTP id f20mr18149925wrg.362.1613386917119;
+        Mon, 15 Feb 2021 03:01:57 -0800 (PST)
+Received: from linux.home (2a01cb058918ce00dd1a5a4f9908f2d5.ipv6.abo.wanadoo.fr. [2a01:cb05:8918:ce00:dd1a:5a4f:9908:f2d5])
+        by smtp.gmail.com with ESMTPSA id x4sm22579304wrn.64.2021.02.15.03.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Feb 2021 03:01:56 -0800 (PST)
+Date:   Mon, 15 Feb 2021 12:01:54 +0100
+From:   Guillaume Nault <gnault@redhat.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Davide Caratti <dcaratti@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20210215122854.4103ef4d@canb.auug.org.au>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Message-ID: <b5b62cbc-88a3-c865-d3be-8a86018d822c@milecki.pl>
-Date:   Mon, 15 Feb 2021 09:55:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20210215110154.GA28453@linux.home>
+References: <20210215114354.6ddc94c7@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20210215122854.4103ef4d@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 3972456348547190357
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduledrieejgdelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeehnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeehveellefgjefgtddtleeijeegudffheejudffgeeigffhjeelgfevleegheekieenucffohhmrghinhepohiilhgrsghsrdhorhhgpdhkvghrnhgvlhdrohhrghenucfkpheptddrtddrtddrtddpudelgedrudekjedrjeegrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrieelfedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehrrghfrghlsehmihhlvggtkhhirdhplhdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210215114354.6ddc94c7@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen!
+On Mon, Feb 15, 2021 at 11:43:54AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   tools/testing/selftests/net/forwarding/tc_flower.sh
+> 
+> between commit:
+> 
+>   d2126838050c ("flow_dissector: fix TTL and TOS dissection on IPv4 fragments")
+> 
+> from the net tree and commits:
+> 
+>   203ee5cd7235 ("selftests: tc: Add basic mpls_* matching support for tc-flower")
+>   c09bfd9a5df9 ("selftests: tc: Add generic mpls matching support for tc-flower")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc tools/testing/selftests/net/forwarding/tc_flower.sh
+> index b11d8e6b5bc1,a554838666c4..000000000000
+> --- a/tools/testing/selftests/net/forwarding/tc_flower.sh
+> +++ b/tools/testing/selftests/net/forwarding/tc_flower.sh
+> @@@ -3,7 -3,9 +3,9 @@@
+>   
+>   ALL_TESTS="match_dst_mac_test match_src_mac_test match_dst_ip_test \
+>   	match_src_ip_test match_ip_flags_test match_pcp_test match_vlan_test \
+> - 	match_ip_tos_test match_indev_test match_ip_ttl_test"
+> + 	match_ip_tos_test match_indev_test match_mpls_label_test \
+> + 	match_mpls_tc_test match_mpls_bos_test match_mpls_ttl_test \
+>  -	match_mpls_lse_test"
+> ++	match_mpls_lse_test match_ip_ttl_test"
 
-On 15.02.2021 02:28, Stephen Rothwell wrote:
-> After merging the mtd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/mtd/parsers/bcm4908-partitions.o
-> ERROR: modpost: "bcm4908_partitions_post_parse" [drivers/mtd/parsers/ofpart.ko] undefined!
-> 
-> Caused by commit
-> 
->    09cf6ee6d21c ("mtd: parsers: ofpart: support BCM4908 fixed partitions")
-> 
-> I have used the mtd tree from next-20210212 for today.
+That's technically right. But I think it'd be nicer to have
+"match_ip_ttl_test" appear between "match_ip_tos_test" and
+"match_indev_test", rather than at the end of the list.
 
-Thank you for the report!
+Before these commits, ALL_TESTS listed the tests in the order they were
+implemented in the rest of the file. So I'd rather continue following
+this implicit rule, if at all possible. Also it makes sense to keep
+grouping all match_ip_*_test together.
 
-It has been fixed by the
-[PATCH] mtd: parsers: ofpart: fix building as module
-https://patchwork.ozlabs.org/project/linux-mtd/patch/20210215072844.16136-1-zajec5@gmail.com/
-https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git/commit/?h=mtd/next&id=bc6dcf44da2bea215ae3edbdac5d350e96de3996
+>   NUM_NETIFS=2
+>   source tc_common.sh
+>   source lib.sh
+
