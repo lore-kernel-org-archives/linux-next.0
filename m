@@ -2,111 +2,81 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709CCC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0EAC433E9
 	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EBD464ED4
+	by mail.kernel.org (Postfix) with ESMTP id 11BFA64EE1
 	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:03:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232750AbhCCMZH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:25:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234061AbhCBX4L (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2021 18:56:11 -0500
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3DC8C061794;
-        Tue,  2 Mar 2021 15:42:25 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S232546AbhCCMYz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:24:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23351 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1575634AbhCBWuW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2021 17:50:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614725332;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Jhx9CWMX6eV8IRnARb9NZKuvwk/xzmCaFzQ1tALA8U=;
+        b=HDuYIE93v8xhFxEwhnb6P7hFF7NZRFH0ravI+mLvtbGM5CaQhOeItEzlBjLE/WudersXtW
+        25/YBUhd8AKA/yiGWKJ6CVtRlnmeuRIEaIgHjzCqjXSvJT6SPYA/CKD1pJfw7MEr2LFwLO
+        Z2GjoZsQG0YHMo5zGSsDcUa/tUIwayc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-106-Af-lyMbUM7GNPxJvVLykTw-1; Tue, 02 Mar 2021 17:48:48 -0500
+X-MC-Unique: Af-lyMbUM7GNPxJvVLykTw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Dqtqm2Km3z9sRN;
-        Wed,  3 Mar 2021 10:38:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1614728329;
-        bh=HZ2vAoGNj5OWqgNZ6FEohcALW6fx5sLB+t19FtoWZ/c=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EOdNEMh+8kjh3oEAzvh/qpeex7G/ohmgYkwBJbtONz6Xn6Sh1wHy5vgDarFkn61Zf
-         rAWL1hMVq/vRYZ1govkG0q3pKXLHnScHFv3DBwbG6cq/k2yDgefAu5qIEGzhNWksps
-         LZwTWhmteVUkzgpDpemy+zRaqOqrtDLREusk1Fa97v5G2DneXDHVs6IS0OszD4Xr2I
-         35vN2xrhoo9n3fRKZvImDZZ/qLfi6S6qUFJy5EXMY1PDbytBGRXryXT+ibQny6jSz1
-         AxhUUvJQ+D+cAMyIBzgSi5z28MlsTXj8/D1WIlQEtROmI0z0dlJHG16CU4nNAibLCW
-         20Y2J4ebEP7zQ==
-Date:   Wed, 3 Mar 2021 10:38:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54B828030D4;
+        Tue,  2 Mar 2021 22:48:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 67A156F7E5;
+        Tue,  2 Mar 2021 22:48:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210303091608.0ad071f8@canb.auug.org.au>
+References: <20210303091608.0ad071f8@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     dhowells@redhat.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20210303103842.1a0ccc8f@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the fscache tree
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//bSgc_o_9XaAkHSyXXwXL6Y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1979125.1614725323.1@warthog.procyon.org.uk>
+Date:   Tue, 02 Mar 2021 22:48:43 +0000
+Message-ID: <1979126.1614725323@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//bSgc_o_9XaAkHSyXXwXL6Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> After merging the fscache tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> fs/afs/file.c: In function 'afs_req_issue_op':
+> fs/afs/file.c:291:6: warning: unused variable 'ret' [-Wunused-variable]
+>   291 |  int ret;
+>       |      ^~~
+> 
+> Introduced by commit
+> 
+>   799fbdf96cd5 ("afs: Use new fscache read helper API")
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+I've updated my branch to remove the variable.
 
-In file included from drivers/usb/usbip/usbip_common.c:18:
-drivers/usb/usbip/usbip_common.h: In function 'usbip_kcov_handle_init':
-drivers/usb/usbip/usbip_common.h:348:20: error: implicit declaration of fun=
-ction 'kcov_common_handle' [-Werror=3Dimplicit-function-declaration]
-  348 |  ud->kcov_handle =3D kcov_common_handle();
-      |                    ^~~~~~~~~~~~~~~~~~
-drivers/usb/usbip/usbip_common.h: In function 'usbip_kcov_remote_start':
-drivers/usb/usbip/usbip_common.h:353:2: error: implicit declaration of func=
-tion 'kcov_remote_start_common' [-Werror=3Dimplicit-function-declaration]
-  353 |  kcov_remote_start_common(ud->kcov_handle);
-      |  ^~~~~~~~~~~~~~~~~~~~~~~~
-drivers/usb/usbip/usbip_common.h: In function 'usbip_kcov_remote_stop':
-drivers/usb/usbip/usbip_common.h:358:2: error: implicit declaration of func=
-tion 'kcov_remote_stop'; did you mean 'usbip_kcov_remote_stop'? [-Werror=3D=
-implicit-function-declaration]
-  358 |  kcov_remote_stop();
-      |  ^~~~~~~~~~~~~~~~
-      |  usbip_kcov_remote_stop
+David
 
-Caused by commit
-
-  eae7a59d5a1e ("kcov: Remove kcov include from sched.h and move it to its =
-users.")
-
-I have used the tip tree from next-20210302 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//bSgc_o_9XaAkHSyXXwXL6Y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmA+zIIACgkQAVBC80lX
-0Gx8PQf/aMVg3kN2CKbrWQW4T8oQ9HXvQYtPaEL/5wBV2P0c+8i8ZG6VC90cK4Il
-6wPDwRxiKDbyb+8ozIsOUWA8ToOZFd5sxSBJjJq0o6C9lrTMT+iUNiR57C4cS8N+
-GDmDdqVFlV9M8ZT1kTNQFt+0Tzw4PiSh1gALW94MZ11aMWpp3081Vjucb0+CHAYY
-WHAg2zwCh5NRnEwQ4mJWm2j+ATfv2ruhKZDtQIT1lWwWBbNT+Y+mfLNm1hza2ZOc
-IleTNt/hW15BaLdot5zDQnaVo1TskOZ28OLR8WFeL+7YZAkMceInXZGOvCndoIXR
-guPQa81tIXi6ZttpsF85zcn9b2EHuw==
-=W10b
------END PGP SIGNATURE-----
-
---Sig_//bSgc_o_9XaAkHSyXXwXL6Y--
