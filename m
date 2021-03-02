@@ -2,105 +2,131 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4825BC433E0
-	for <linux-next@archiver.kernel.org>; Tue,  2 Mar 2021 19:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05499C43331
+	for <linux-next@archiver.kernel.org>; Tue,  2 Mar 2021 19:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB4764F25
+	by mail.kernel.org (Postfix) with ESMTP id BCA3664F25
 	for <linux-next@archiver.kernel.org>; Tue,  2 Mar 2021 19:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243918AbhCBSfC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 2 Mar 2021 13:35:02 -0500
-Received: from ozlabs.org ([203.11.71.1]:48077 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241661AbhCBCJu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Mar 2021 21:09:50 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DqLCl0gdqz9s1l;
-        Tue,  2 Mar 2021 13:09:07 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1614650947;
-        bh=43rR5Zp4k5I4zGrVf/+RiKC5vErMo3wYmtY4bmcRmsA=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=HpZ+Oh2iNxKicmC1PzodQXqkyHpjRTYDNBRIJMEmpSjqqcp/CRqCahnUFZ4qMV7nu
-         CdY9REoh5BBo15+ot1ixnH3s/uIPcX3e1qLi9ZB1bgpIIEILc1JQ/1Boue0nYfV5ET
-         IGZC61B8sHEsrSFswrLhjNvDaNeRqCBfhpMtRp7PRFRSqQf3lDlHsagyz73snTg18/
-         6N4nYjAspa4DML1rw2Q9xm0xCWN/E/vSbEMPrmWCrBGKdc7l2b8w3+umg83e2ixVGd
-         NAszUP8NPrPNzwRGVuZg0+EK/TJEUe8JataAJin7GaInqTqkGF6fQwUl/ZjA19s7ht
-         eyYp85nTV0fiA==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
+        id S1577225AbhCBShY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 2 Mar 2021 13:37:24 -0500
+Received: from antares.kleine-koenig.org ([94.130.110.236]:54968 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1381691AbhCBIbu (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2021 03:31:50 -0500
+Received: from antares.kleine-koenig.org (localhost [127.0.0.1])
+        by antares.kleine-koenig.org (Postfix) with ESMTP id 62256B1BA39;
+        Tue,  2 Mar 2021 09:30:49 +0100 (CET)
+Received: from antares.kleine-koenig.org ([94.130.110.236])
+        by antares.kleine-koenig.org (antares.kleine-koenig.org [94.130.110.236]) (amavisd-new, port 10024)
+        with ESMTP id eKGK8R-UPJng; Tue,  2 Mar 2021 09:30:48 +0100 (CET)
+Received: from taurus.defre.kleine-koenig.org (unknown [IPv6:2a02:8071:b5c8:7b00:36f3:9aff:fec2:7e46])
+        by antares.kleine-koenig.org (Postfix) with ESMTPSA;
+        Tue,  2 Mar 2021 09:30:48 +0100 (CET)
 Subject: Re: linux-next: build failure after merge of the powerpc-fixes tree
-In-Reply-To: <20210302112131.5bb7b08b@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
 References: <20210302112131.5bb7b08b@canb.auug.org.au>
-Date:   Tue, 02 Mar 2021 13:09:03 +1100
-Message-ID: <87pn0is3wg.fsf@mpe.ellerman.id.au>
+ <87pn0is3wg.fsf@mpe.ellerman.id.au>
+From:   =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
+Message-ID: <6113ab65-7b3c-07f0-2813-76ddaa4c7236@kleine-koenig.org>
+Date:   Tue, 2 Mar 2021 09:30:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <87pn0is3wg.fsf@mpe.ellerman.id.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="rzZpUA4AhhBZ0hqwZjgvzr69OjxvLCLK7"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi all,
->
-> After merging the powerpc-fixes tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> drivers/net/ethernet/ibm/ibmvnic.c:5399:13: error: conflicting types for 'ibmvnic_remove'
->  5399 | static void ibmvnic_remove(struct vio_dev *dev)
->       |             ^~~~~~~~~~~~~~
-> drivers/net/ethernet/ibm/ibmvnic.c:81:12: note: previous declaration of 'ibmvnic_remove' was here
->    81 | static int ibmvnic_remove(struct vio_dev *);
->       |            ^~~~~~~~~~~~~~
->
-> Caused by commit
->
->   1bdd1e6f9320 ("vio: make remove callback return void")
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--rzZpUA4AhhBZ0hqwZjgvzr69OjxvLCLK7
+Content-Type: multipart/mixed; boundary="gQWsuGHVas7owk6hu4v1tveWztpbPdDEK";
+ protected-headers="v1"
+From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Message-ID: <6113ab65-7b3c-07f0-2813-76ddaa4c7236@kleine-koenig.org>
+Subject: Re: linux-next: build failure after merge of the powerpc-fixes tree
+References: <20210302112131.5bb7b08b@canb.auug.org.au>
+ <87pn0is3wg.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87pn0is3wg.fsf@mpe.ellerman.id.au>
 
-Gah, is IBMVNIC in any of our defconfigs?! ... no it's not.
+--gQWsuGHVas7owk6hu4v1tveWztpbPdDEK
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-> I have applied the following patch for today:
+Hello,
 
-Thanks, I'll squash it in.
+On 3/2/21 3:09 AM, Michael Ellerman wrote:
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>> Hi all,
+>>
+>> After merging the powerpc-fixes tree, today's linux-next build (powerp=
+c
+>> allyesconfig) failed like this:
+>>
+>> drivers/net/ethernet/ibm/ibmvnic.c:5399:13: error: conflicting types f=
+or 'ibmvnic_remove'
+>>   5399 | static void ibmvnic_remove(struct vio_dev *dev)
+>>        |             ^~~~~~~~~~~~~~
+>> drivers/net/ethernet/ibm/ibmvnic.c:81:12: note: previous declaration o=
+f 'ibmvnic_remove' was here
+>>     81 | static int ibmvnic_remove(struct vio_dev *);
+>>        |            ^~~~~~~~~~~~~~
+>>
+>> Caused by commit
+>>
+>>    1bdd1e6f9320 ("vio: make remove callback return void")
+>=20
+> Gah, is IBMVNIC in any of our defconfigs?! ... no it's not.
 
-cheers
+Would you accept a patch to add the driver to one of the defconfigs as=20
+an excuse for the build breakage I created? Which would be appropriate?=20
+ppc64_defconfig?
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 2 Mar 2021 11:06:37 +1100
-> Subject: [PATCH] vio: fix for make remove callback return void
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/ethernet/ibm/ibmvnic.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-> index eb39318766f6..fe3201ba2034 100644
-> --- a/drivers/net/ethernet/ibm/ibmvnic.c
-> +++ b/drivers/net/ethernet/ibm/ibmvnic.c
-> @@ -78,7 +78,6 @@ MODULE_LICENSE("GPL");
->  MODULE_VERSION(IBMVNIC_DRIVER_VERSION);
->  
->  static int ibmvnic_version = IBMVNIC_INITIAL_VERSION;
-> -static int ibmvnic_remove(struct vio_dev *);
->  static void release_sub_crqs(struct ibmvnic_adapter *, bool);
->  static int ibmvnic_reset_crq(struct ibmvnic_adapter *);
->  static int ibmvnic_send_crq_init(struct ibmvnic_adapter *);
-> -- 
-> 2.30.0
->
-> -- 
-> Cheers,
-> Stephen Rothwell
+>> I have applied the following patch for today:
+>=20
+> Thanks, I'll squash it in.
+
+Also thanks for catching to Stephen and to Michael for the fixup.
+
+Best regards
+Uwe
+
+
+--gQWsuGHVas7owk6hu4v1tveWztpbPdDEK--
+
+--rzZpUA4AhhBZ0hqwZjgvzr69OjxvLCLK7
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmA997IACgkQwfwUeK3K
+7Alusgf/ZA0f/3fntS+TPuUVpXIPbiu6zO761TKBOhnMsfdAxYGc4rgbvOmbNuWq
+Vsi9LKxvxPAasfr25zto/oF3eX9pH6bq4kl4gfYbDolGnI5Uy4Ez4N3pz5b3OVyQ
+MMG1fKLHz3hksGRCf8EEg4wAoEPtxILg50jeI68cU82Y+USc4G01RuTg8ZooYYTY
+81fNfbcj9nNOG3iGe9fyJoEaCDtIiMK5GZrJ9osOD/bl6VUF1jl+41FbXZohS5Ii
+Jx4U4i8gL7V0iIfVsd0RYa5FzKqdRc1vwuUM2tx9dBVsp+ASQ7isKdoAm7EL82Lg
+lIJGFbazOpXfLPCSjRIUiJa7DFrvfA==
+=W0cN
+-----END PGP SIGNATURE-----
+
+--rzZpUA4AhhBZ0hqwZjgvzr69OjxvLCLK7--
