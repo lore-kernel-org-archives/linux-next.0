@@ -6,83 +6,92 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F93C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCE5C433E9
 	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5557164ED9
+	by mail.kernel.org (Postfix) with ESMTP id 978E164ED9
 	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241331AbhCCM30 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:29:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:41317 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354862AbhCCGGu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 Mar 2021 01:06:50 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Dr3QS6ShQz9sWQ;
-        Wed,  3 Mar 2021 17:05:52 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1614751553;
-        bh=WBKyhqjMCja39+zPcpMIQhPbKNpGkNdhm6QLIuisrXU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HNTWWJnvNsbRJk6oG7HzjsPdvUymBDsPXB8Nt8ZB0No0vteuxIIc1VEwv5clSHUJa
-         xkZTuqbEbQNE+bY4y6vPZdZpVALoZoMCV8nxExD8EtlJ60UPENTKilDZ3y87BGVPIX
-         vprIvApaFJzPLmTVn3oQ16fCu/c71KP5Ke05hBthJU+/BB5RWDBh7oY828L3sH+wZ6
-         czgzn8Woga57IHYjep8MfHB/kUhfFC0jpNivSb7Z781XN3QwGO5AiEZAosqiKUNiYi
-         9Iz9hijzdmgnGxW1fpRDikykeCTHNnUSOUihDWM9b69+K6GLF9Axd5VvQoxRFxMEcb
-         jfytxj0YUyxnA==
-Date:   Wed, 3 Mar 2021 17:05:51 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Ray Chi <raychi@google.com>,
+        id S1347282AbhCCM3k (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:29:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1842904AbhCCKWP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2021 05:22:15 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABC3C08EB2D;
+        Wed,  3 Mar 2021 01:44:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=SVv+ZnIXJHfmfGHOs6kF4sffZ6um7ub7BvAp8uvXGp4=; b=Vd9Kj9fscK/x8E19uzOwzZzoHt
+        t3orsPzowVCn2uyUTMb8iasQKJNwR2KnaS0ERk3wgTx8Ak5PyLoVlQ5/0X/tVO9exYIXXoLm7oRgV
+        YvMMhOhb2M4GJGPpOL8dMI54Y7bML2vbml0OTePssRz14EruqbHLmnrq7qAd2pghn3c+GSPgLU6Ep
+        9uR1XcVc8WKwvnZ1zVH4+DEAj01giZXm4eaiPQ1uS4Ve7I4jli4JESJGn22jf6tlNiTWFoTviqC0o
+        3zfGvBaK0SYOTawouXM3Ye/8DPZlbmnGjlaV1/UP55iWzprY1/n6soEnExd4gz4ly1vApysah5B1A
+        nP/T9IaQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lHO3Z-0023Xu-Al; Wed, 03 Mar 2021 09:44:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7A5213017B7;
+        Wed,  3 Mar 2021 10:44:32 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 326CB264F0E2E; Wed,  3 Mar 2021 10:44:32 +0100 (CET)
+Date:   Wed, 3 Mar 2021 10:44:32 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the usb tree
-Message-ID: <20210303170551.0d1d686e@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <YD9agIC1d6bOGYu3@hirez.programming.kicks-ass.net>
+References: <20210303103842.1a0ccc8f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SL1SD.VNdDFF092fzAQq3Ae";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210303103842.1a0ccc8f@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/SL1SD.VNdDFF092fzAQq3Ae
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 03, 2021 at 10:38:42AM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> In file included from drivers/usb/usbip/usbip_common.c:18:
+> drivers/usb/usbip/usbip_common.h: In function 'usbip_kcov_handle_init':
+> drivers/usb/usbip/usbip_common.h:348:20: error: implicit declaration of f=
+unction 'kcov_common_handle' [-Werror=3Dimplicit-function-declaration]
+>   348 |  ud->kcov_handle =3D kcov_common_handle();
+>       |                    ^~~~~~~~~~~~~~~~~~
+> drivers/usb/usbip/usbip_common.h: In function 'usbip_kcov_remote_start':
+> drivers/usb/usbip/usbip_common.h:353:2: error: implicit declaration of fu=
+nction 'kcov_remote_start_common' [-Werror=3Dimplicit-function-declaration]
+>   353 |  kcov_remote_start_common(ud->kcov_handle);
+>       |  ^~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/usb/usbip/usbip_common.h: In function 'usbip_kcov_remote_stop':
+> drivers/usb/usbip/usbip_common.h:358:2: error: implicit declaration of fu=
+nction 'kcov_remote_stop'; did you mean 'usbip_kcov_remote_stop'? [-Werror=
+=3Dimplicit-function-declaration]
+>   358 |  kcov_remote_stop();
+>       |  ^~~~~~~~~~~~~~~~
+>       |  usbip_kcov_remote_stop
+>=20
+> Caused by commit
+>=20
+>   eae7a59d5a1e ("kcov: Remove kcov include from sched.h and move it to it=
+s users.")
+>=20
+> I have used the tip tree from next-20210302 for today.
 
-Hi all,
-
-After merging the usb tree, today's linux-next build (htmldocs) produced
-this warning:
-
-drivers/usb/dwc3/core.h:1273: warning: Function parameter or member 'usb_ps=
-y' not described in 'dwc3'
-
-Introduced by commit
-
-  59fa3def35de ("usb: dwc3: add a power supply for current control")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SL1SD.VNdDFF092fzAQq3Ae
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmA/Jz8ACgkQAVBC80lX
-0Gy/iQf/TMG56+AgxUYTUPoig14cxBePMaCv6IuRsUzeLzeI/1t7Xc14txe9RwRG
-o7pHC4ErLvFixGhI1OW2kc5X1oQYTIvU0FDYInJh2m62wCHwH8YUzC5/1fAMO8Pi
-8kdi4Wtn18Rt2dfZbPDIqZsH4KzmE7OnXSw6bOK2zH0voTI6cLsfQgtyQ+MLKpGj
-gJDJpzgdyGxvKFLdy5OsfNbNoDwhnqAmpZanVXjnT0BOQwVkfnAJzT7nZY2TzJ+S
-3bsYwijtip71q57DGPpXdzZnI3foIOjUk7Sl9RgABCNqL0YcodtsNe8eEBwS3BQB
-kTNFNUAFBZmEZ3VgCB4z6yYWbcVvUw==
-=fTMc
------END PGP SIGNATURE-----
-
---Sig_/SL1SD.VNdDFF092fzAQq3Ae--
+Damn, sorry about that. I've rebased tip/sched/core and all should be
+well now.
