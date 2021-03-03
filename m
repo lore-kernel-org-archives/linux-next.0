@@ -6,89 +6,85 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B542AC433E0
-	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63B8C433DB
+	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B5F864EBB
-	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E8B64EBB
+	for <linux-next@archiver.kernel.org>; Wed,  3 Mar 2021 13:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239414AbhCCM3V (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Mar 2021 07:29:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
+        id S1343707AbhCCM3h (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Mar 2021 07:29:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237577AbhCCGEf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2021 01:04:35 -0500
+        with ESMTP id S1354915AbhCCGI0 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2021 01:08:26 -0500
 Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FC0C061788;
-        Tue,  2 Mar 2021 22:03:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD58C061756;
+        Tue,  2 Mar 2021 22:07:46 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Dr3N61dWhz9sSC;
-        Wed,  3 Mar 2021 17:03:50 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Dr3Sc0g41z9sW5;
+        Wed,  3 Mar 2021 17:07:44 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1614751430;
-        bh=a33PT/OlAHd0La983MMJmgSCDK0my5f3B0rEjS7pdOo=;
+        s=201702; t=1614751664;
+        bh=0o5aIi2qjzi0mE36JTrLm3NjOuZ7+Jo6eQZPy66Pq7Y=;
         h=Date:From:To:Cc:Subject:From;
-        b=BMEyM/Sp7Kd0cXDESb97vg1RXzjB/b74dl7/5Z1oCROGA2ZD+W/9b2m0XRYTfYDUS
-         m7k7I7xDKK3nbz3MGpv+WAufENF9R/G+52qowjbvUMmTeu4Pf4uu7NVhH6ltGg5cpl
-         HXoUGghS+jQjP9qYbQkSTmpvPuZH/b31aHb74x5+lTqtuIcy0jrAodHoEUsz78ni76
-         1AXLx8wATeDDRhsaz+qW7ABH+CTCQ0dJd30nZq31zW4lvR38ZeKrg7v/ght50DRRK2
-         cJKJZURn17oKAY0Dr4XPs9Bs/k5dSW+BoecrTnI4o8eCowb36+qOeFfm58EI7kg7Qh
-         XfHug2uR5wAEg==
-Date:   Wed, 3 Mar 2021 17:03:49 +1100
+        b=IC8zn6KUlXL0KBzXBgyD/QSNb/bLY4XACsP6niPFZntVgIMu+VKtUPZ6h0/fM7Qu6
+         pq1IVUoCNUayXJDXxwTSRs4khOaNCRZtgwgO+TlZny9Fw7e071rk8VV11OKjLlpQZo
+         pDSurBovxQnR5FrB9pzcJJKNUncLHak+MGc82TWFlP1lfI9AWcIwp8VYpyEhDyPqzg
+         kzNHon1nmPaG9gEnlGZedzz6z4+q+FKAmiwSseiGJqiyN6+sU4GQ4l7Fiw3K716QtF
+         ezJPI24ARGv3flamaJYtyo6wsI2SVCMmwwFhpr4AM8s5pAIrUuZ5xWV7IzC1Z+Dpt1
+         yfMOPChNGI9Jg==
+Date:   Wed, 3 Mar 2021 17:07:43 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the scsi-mkp tree
-Message-ID: <20210303170349.2165b7b2@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the fscache tree
+Message-ID: <20210303170743.69ceaeb8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/F/dNil_+2hkOe3x+sgnomVw";
+Content-Type: multipart/signed; boundary="Sig_/XdPmex1RJKaKBXh9yKZIVeF";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/F/dNil_+2hkOe3x+sgnomVw
+--Sig_/XdPmex1RJKaKBXh9yKZIVeF
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the scsi-mkp tree, today's linux-next build (htmldocs)
-produced these warnings:
+After merging the fscache tree, today's linux-next build (htmldocs)
+produced this warning:
 
-include/linux/blk-mq.h:395: warning: Function parameter or member 'set_rq_b=
-udget_token' not described in 'blk_mq_ops'
-include/linux/blk-mq.h:395: warning: Function parameter or member 'get_rq_b=
-udget_token' not described in 'blk_mq_ops'
+Documentation/filesystems/netfs_library.rst: WARNING: document isn't includ=
+ed in any toctree
 
 Introduced by commit
 
-  9dda23635dbe ("scsi: blk-mq: Add callbacks for storing & retrieving budge=
-t token")
+  cefbac2d6fc5 ("netfs: Documentation for helper library")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/F/dNil_+2hkOe3x+sgnomVw
+--Sig_/XdPmex1RJKaKBXh9yKZIVeF
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmA/JsUACgkQAVBC80lX
-0GwCNQf/VytuNNDe4PPle0wiSNKCoSYWQFcbGNxyC5pxV4jx6sRYv1WgDd/h05uG
-otC9G5WkEiBG6cxP086bNBqKD1TjURVHkgEchgiPPNnuFNYpSFxJRNGoN14/sh1A
-pFfbfa578966hX2ZAhe5Zg6jWZKjHz+cFFxLahbGLsNJbB542/ZTJMgjYaA2DxfJ
-8Q9Vaf5wMNupXdlWBS/t9oDocddoiHu6uLX1Mbp59IB98Nje+GLEFHHrAe1TwxMk
-RRkESmJiNegx1RCz8zGXQQ7gLFhBfFeS4efUXiec1gtiYv6WIHn4sMZzkpNg5AHV
-+PI1kM8XW0Lo5yP9N3WwlygMSsudaw==
-=JNJ6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmA/J68ACgkQAVBC80lX
+0GzV5QgAlToWg9Uw3xHSibsruvaK3HXnKZ2hIat2x/DLCCpkoKEBrmH1MY78PlZQ
+Ma6OeCMGVAZ5RD1xn1noLEhdikeI/Afit9zLhqsII+jojWSF+gcQeF6l0ioz+qwW
+/VpUN8pLMtWCXznAhNUP8d4nFcb4c0tA3cYu9/IISSwcS330PraO1Yb1zsaFv5Ow
+255Vx8RD+9VJchuDBu0N0oeAD28IFI9YdboIExKBFQjzuZoO5/n0dsm4mTJWJCKG
+MUuvDQzOZjzZ8RV20ZCbKBVvaalDK0/P7NLDhMUF34ZoCLnaxk71uBur1ldQpxwu
+and2k6o6TxqEQOINMLqGMchYfrGtSQ==
+=RsUL
 -----END PGP SIGNATURE-----
 
---Sig_/F/dNil_+2hkOe3x+sgnomVw--
+--Sig_/XdPmex1RJKaKBXh9yKZIVeF--
