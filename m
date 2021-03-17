@@ -2,80 +2,117 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312BFC433E9
-	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 10:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94DBC433DB
+	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 10:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA43B64F72
-	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 10:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA9A64F3C
+	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 10:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbhCQKEb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 17 Mar 2021 06:04:31 -0400
-Received: from mga04.intel.com ([192.55.52.120]:60414 "EHLO mga04.intel.com"
+        id S230438AbhCQKym (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 17 Mar 2021 06:54:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36966 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230044AbhCQKEA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 17 Mar 2021 06:04:00 -0400
-IronPort-SDR: 1JeqLWGYcCQ7TMKrLdGe5UVOwVJP3G9qeDPv8pdvqU9EHM/XFbTUKGNHK60//4oiHcK1AnM0ud
- ihgP+9mLXdxw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9925"; a="187059856"
-X-IronPort-AV: E=Sophos;i="5.81,255,1610438400"; 
-   d="scan'208";a="187059856"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 03:03:58 -0700
-IronPort-SDR: wdF42FOBhSLVxPRUlRvbNDBu9g64InEd/ShhtrjDurfGnQB/eGpImS4hQLaT7UIGbJFFPukVQb
- FazB16q3R5HA==
-X-IronPort-AV: E=Sophos;i="5.81,255,1610438400"; 
-   d="scan'208";a="440402824"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 03:03:54 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lMT1r-00DE4M-W2; Wed, 17 Mar 2021 12:03:51 +0200
-Date:   Wed, 17 Mar 2021 12:03:51 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        id S230473AbhCQKyh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 17 Mar 2021 06:54:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 2AB8CAC75;
+        Wed, 17 Mar 2021 10:54:36 +0000 (UTC)
+Date:   Wed, 17 Mar 2021 11:54:32 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ian Rogers <irogers@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the gpio-brgl-fixes tree
-Message-ID: <YFHUB731xqyJhE3e@smile.fi.intel.com>
-References: <20210317090200.2fe81618@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20210317105432.GA32135@zn.tnic>
+References: <20210317150858.02b1bbc8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210317090200.2fe81618@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210317150858.02b1bbc8@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 09:02:00AM +1100, Stephen Rothwell wrote:
++ Ian.
+
+On Wed, Mar 17, 2021 at 03:08:58PM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> In commit
+> After merging the tip tree, today's linux-next build (native perf)
+> failed like this:
 > 
->   6cb59afe9e5b ("gpiolib: Assign fwnode to parent's if no primary one provided")
+> In file included from util/intel-pt-decoder/intel-pt-insn-decoder.c:15:
+> util/intel-pt-decoder/../../../arch/x86/lib/insn.c:14:10: fatal error: asm/inat.h: No such file or directory
+>    14 | #include <asm/inat.h> /*__ignore_sync_check__ */
+>       |          ^~~~~~~~~~~~
 > 
-> Fixes tag
-> 
->   Fixes: 2afa97e9868f ("gpiolib: Read "gpio-line-names" from a firmware node")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> Maybe you meant
-> 
-> Fixes: b41ba2ec54a7 ("gpiolib: Read "gpio-line-names" from a firmware node")
+> This is a powerpc build of perf.  I can't see what caused this failure,
+> so I have used the version of the tip tree from next-20210316 for today.
 
-Right. I have two hashes in my tree for the same commit :-(
-In any case it has older commit in another Fixes tag which is okay.
+Yah, this has come up in the past during review but the wrong version
+somehow snuck in, sorry. ;-\
+
+Can you guys verify this fixes the build issue? I don't have a ppc build
+setup.
+
+Thx.
+
+---
+From 50d91054fc421e2a90923706d5ca79e941e28300 Mon Sep 17 00:00:00 2001
+From: Borislav Petkov <bp@suse.de>
+Date: Wed, 17 Mar 2021 11:33:04 +0100
+Subject: [PATCH] tools/insn: Restore the relative include paths for cross
+ building
+
+Building perf on ppc causes:
+
+  In file included from util/intel-pt-decoder/intel-pt-insn-decoder.c:15:
+  util/intel-pt-decoder/../../../arch/x86/lib/insn.c:14:10: fatal error: asm/inat.h: No such file or directory
+     14 | #include <asm/inat.h> /*__ignore_sync_check__ */
+        |          ^~~~~~~~~~~~
+
+Restore the relative include paths so that the compiler can find the
+headers.
+
+Fixes: 93281c4a9657 ("x86/insn: Add an insn_decode() API")
+Reported-by: Ian Rogers <irogers@google.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+NOT-Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ tools/arch/x86/lib/insn.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/arch/x86/lib/insn.c b/tools/arch/x86/lib/insn.c
+index cd4dedde3265..999fbd4c9bea 100644
+--- a/tools/arch/x86/lib/insn.c
++++ b/tools/arch/x86/lib/insn.c
+@@ -11,8 +11,8 @@
+ #else
+ #include <string.h>
+ #endif
+-#include <asm/inat.h> /*__ignore_sync_check__ */
+-#include <asm/insn.h> /* __ignore_sync_check__ */
++#include "../include/asm/inat.h" /* __ignore_sync_check__ */
++#include "../include/asm/insn.h" /* __ignore_sync_check__ */
+ 
+ #include <linux/errno.h>
+ #include <linux/kconfig.h>
+-- 
+2.29.2
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
