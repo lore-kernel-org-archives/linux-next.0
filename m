@@ -2,117 +2,80 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD80C433E9
-	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 08:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C65C433DB
+	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 08:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D76B64F99
-	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 08:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E744D64FB1
+	for <linux-next@archiver.kernel.org>; Wed, 17 Mar 2021 08:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229658AbhCQIQn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 17 Mar 2021 04:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbhCQIQN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 17 Mar 2021 04:16:13 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BB1C06174A;
-        Wed, 17 Mar 2021 01:16:13 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id n132so40055736iod.0;
-        Wed, 17 Mar 2021 01:16:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AiXh5OFsnN34IitZz1rkVk6moqaTbWiaMgRZ+6LYhf8=;
-        b=gAPnk0yECXq3HyzTLDsOs+NhCxSyJmPDWkC64+ApYo1YnCgqDmc83K+vgu7pHY3qza
-         zwv9V3CO62rt/vydmtLxHcnMvllRWgSPWNNb8W/vopxVHx1giz7MroScEX+NVf52UA3w
-         DwA98pQuO7pUYMJkj5uc5VXCau/Vm8tE1IgznDB+hqEjUEVbLoJrPjt84z1l328YXyjY
-         TWBu96tcOE+w4Gjh7ft6UaYocNI5kFp0ZvKkedAoudwqbZ9V154YFd8WJQTQAECL3iHj
-         DY7niU9Cqwm1J4U7tlqTXjfh4xGov3tgOcj2rVKXiQNIL2zf9FzgYMwcfpwPbIXrKNle
-         1X6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AiXh5OFsnN34IitZz1rkVk6moqaTbWiaMgRZ+6LYhf8=;
-        b=R2B4FSClhEaSCip9xgPd23mqFGZoag64eMgXbY7PANw0YTvoR6VI4jp0OsdmHZtPTC
-         VSCYrEBx9P2vrZh5AwFPMcjYh/6rsb7L+tASWBLxZuLsI3CYs6hHo6uR+hxEE8P7/9Qg
-         7cBtrKTLi/6NpYkdnOBw0eBlR5uZVFBK3A9sQrEqfUCiD+z29QwurAzsieSc8e7hiESw
-         rO5ifMH6N/5JP2J5afTRJbiqo9hZkmnQ3/REgDuvZQaR5vsFsxWW+FgxWMfk6cYQSGYg
-         5YJb7IFEJegk+5Jf8HYMkQSzC0GEYYaWVSFIGRNG2ysBoGEcCNC33wJzlWtRDfJ4YhUH
-         vlcA==
-X-Gm-Message-State: AOAM531271Z83FpVlNc7Ndc69lj7ZRCyXVUsZxjIAmLOkD+0nsaCaTJa
-        cUpr2qNAslX3wije1/0UFvbXUYxN7hX++RXITB4=
-X-Google-Smtp-Source: ABdhPJxdslQWxWHgCfvHpEkB6dz2eb3BbcFgd8hsk2MYpirqFTEXFB8/VV6tyn8gX5McHuvBjPaLLyZSzVtBP8xwcPw=
-X-Received: by 2002:a05:6602:2e82:: with SMTP id m2mr5967050iow.70.1615968973050;
- Wed, 17 Mar 2021 01:16:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210316155001.699efbb4@canb.auug.org.au> <d3c9bca8-3709-3613-c4cd-6da2aa96c2b9@infradead.org>
-In-Reply-To: <d3c9bca8-3709-3613-c4cd-6da2aa96c2b9@infradead.org>
-From:   Alexandru Ardelean <ardeleanalex@gmail.com>
-Date:   Wed, 17 Mar 2021 10:16:01 +0200
-Message-ID: <CA+U=DspHhL=Of2axKW6FiF3oG8S7FEP4QBLEZHc5VQ4LzmvqNQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Mar 16 (AD9467 & ADI_AXI_ADC)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S229702AbhCQIRR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 17 Mar 2021 04:17:17 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34626 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229725AbhCQIRD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 17 Mar 2021 04:17:03 -0400
+IronPort-SDR: vS5HK3EkLj6IPBhT7afGLqcfEnwNtNCtPYwCpi2oODnqe02rlDIKif6EwJ+xkAgwZIMTWW2pxE
+ qK7xDXX52Lag==
+X-IronPort-AV: E=McAfee;i="6000,8403,9925"; a="250777314"
+X-IronPort-AV: E=Sophos;i="5.81,255,1610438400"; 
+   d="scan'208";a="250777314"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 01:17:02 -0700
+IronPort-SDR: e1PsqvAwC9dddgoN84+g4oj0/qAanFPE8+SBfYapaXmFVXe6hG+MSTOERmDRmdDH4HgW/qocrp
+ JgAcDh9gH0Cw==
+X-IronPort-AV: E=Sophos;i="5.81,255,1610438400"; 
+   d="scan'208";a="412552370"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.158.173])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 01:17:00 -0700
+Date:   Wed, 17 Mar 2021 16:21:05 +0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Message-ID: <20210317082105.GA163071@chenyu-desktop>
+References: <20210317185605.3f9c70cc@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210317185605.3f9c70cc@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 11:20 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+Hi Stephen,
+On Wed, Mar 17, 2021 at 06:56:05PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the net-next tree, today's linux-next build (sparc64
+> defconfig) produced this warning:
+> 
+> drivers/net/ethernet/intel/e1000e/netdev.c:6926:12: warning: 'e1000e_pm_prepare' defined but not used [-Wunused-function]
+>  static int e1000e_pm_prepare(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   ccf8b940e5fd ("e1000e: Leverage direct_complete to speed up s2ram")
+> 
+> CONFIG_PM_SLEEP is not set for this build.
 >
-> On 3/15/21 9:50 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > News: there will be no linux-next release on Friday this week.
-> >
-> > Warning: Some of the branches in linux-next are still based on v5.12-rc1,
-> > so please be careful if you are trying to bisect a bug.
-> >
-> > News: if your -next included tree is based on Linus' tree tag
-> > v5.12-rc1{,-dontuse} (or somewhere between v5.11 and that tag), please
-> > consider rebasing it onto v5.12-rc2. Also, please check any branches
-> > merged into your branch.
-> >
-> > Changes since 20210315:
->
->
-> on i386 or x86_64:
->
-> WARNING: unmet direct dependencies detected for ADI_AXI_ADC
->   Depends on [n]: IIO [=y] && HAS_IOMEM [=y] && OF [=n]
->   Selected by [y]:
->   - AD9467 [=y] && IIO [=y] && SPI [=y]
->
->
-> AD9467 should not select ADI_AXI_ADC when OF is not enabled,
-> so possibly AD9467 should depend on OF.
+Thanks for reporting. I think we need to add the '__maybe_unused' attribute as in case
+CONFIG_PM_SLEEP is not set. Tony, it seems that the original v1 patch should eliminate
+this warning, could you please help double check and apply that version?
 
-Hmm, this becomes a bit complicated.
-We got here because we needed to add a depends on HAS_IOMEM for the
-ADI_AXI_ADC (due to the s390 arch).
-Maybe a better fix would be for AD9467 to depend on ADI_AXI_ADC.
-The AD9467 driver can't function without the ADI_AXI_ADC driver.
+thanks,
+Chenyu
+ 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-It is a little early to move this to a "high-speed ADC" subgroup.
 
->
->
-> Full randconfig file is attached.
->
->
-> --
-> ~Randy
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
