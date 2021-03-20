@@ -2,62 +2,62 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD84C433C1
-	for <linux-next@archiver.kernel.org>; Sat, 20 Mar 2021 11:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C95C433E0
+	for <linux-next@archiver.kernel.org>; Sat, 20 Mar 2021 11:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5D561946
-	for <linux-next@archiver.kernel.org>; Sat, 20 Mar 2021 11:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E97D61972
+	for <linux-next@archiver.kernel.org>; Sat, 20 Mar 2021 11:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbhCTLQo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 20 Mar 2021 07:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40242 "EHLO
+        id S229780AbhCTLkA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 20 Mar 2021 07:40:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbhCTLQM (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 20 Mar 2021 07:16:12 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95427C06178A;
-        Sat, 20 Mar 2021 04:16:12 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id a143so1066279ybg.7;
-        Sat, 20 Mar 2021 04:16:12 -0700 (PDT)
+        with ESMTP id S229949AbhCTLjc (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 20 Mar 2021 07:39:32 -0400
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A92CC061764;
+        Fri, 19 Mar 2021 23:08:08 -0700 (PDT)
+Received: by mail-yb1-xb2d.google.com with SMTP id 8so543485ybc.13;
+        Fri, 19 Mar 2021 23:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nbCYfgiOtpWpaHW3UiZCAz94mqRPq79OLUJJtrbRI7I=;
-        b=saJooZ4QrInaIbgLt/0TQ3KfUuHi93CFnRBZGfCVMa169EMUxKgXQEsup67xw7zWVm
-         RGn7HXCP1/e9rX6n64NQE9GC9WpxKcp1MUjjSpZI/jUTlTsavzKi4WTwDwuuWI/90ZUk
-         IBsgecR4tixEFWVm+XoBpKDnrP3BBvCBU2IBqM+Ce6WKzN7PSp09e1JSks8tTMsQtbXe
-         HrBzJyBsiGnvEJf0BM1ARZS+zEXTmiUAAvQ9fW0A6MUIHA2nvddHnzZLPtO1vlp6qiS2
-         +HusYyo48lAx7b34v70zwVsInwcnDMOn3J6mpHtXq2KiCXXPDUup0TWz97tM0E6O+vTh
-         WVOA==
+        bh=9b/gI/Y8C2M3ITolu7fT0Rqbq/JBTn9cm6d+0pcaHfc=;
+        b=Y6B3nKQMoV4PHyfV3kFnNcY+E0YnL4szQZ8YM1Wz1R9L7WK1nvyTHYG6qp8y1LMQKB
+         JFhAV4KuyV7QKC671TD4l6ro2H5TGlOGGi2xaf0P6SzNW2LvRv2ppQAXL/SCVcMvlNOx
+         5FmY02eSv80T82Qwi9ajGzcv+/yQ3TmdKLubGJz3gEuZgwgyojQ0IarbAFGN5VTTCIQj
+         h1y+4Tg9pE7SizrAUHsNFbfHZ8Yr7ZZUFv7S8TQoEbo9qjwrwtFpFeO7QB29AFj8m5uw
+         qvgf/V+B/m3FCPwy+jkIhntVSiPOfIeu351aPrq1gLcWDxyggPnE5RKT5E2cWg2xhsRW
+         jExw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nbCYfgiOtpWpaHW3UiZCAz94mqRPq79OLUJJtrbRI7I=;
-        b=q11rnOvQiYV6fKGo8DecoBZvKSr9M+nVfF1xH7M65NOciZIO6J5KiQ550Ak5UEwfOx
-         me1R2O1fELdgUKiKZOSXZMR1GpL9RZDWAub1AcRm5jhmT6JeUlm+3+OUix3nDvLK4UOJ
-         mOoQjG+P8+lqZyfAeDmyc5TsofYtN2V1FkhwMs9vNFcC63KnULVJFQpcBRdxmsGNLTlS
-         dxBX2AshUFXKS7noV/I4I9pACkaGXsCY/EQtKvp9RO1wbRj1Wxp8+qMuRkuwvC5bOymA
-         apRRcVKmcLqAOqHqwwWGb44+a+54cBifsSk50k4EcDRxMMkH5FXKuUN/k4mEUDq81j1/
-         K3FQ==
-X-Gm-Message-State: AOAM530mGMNhEerMqwr9Albqiu7MYnF98k6j+FWCW90kp3j+zgs5iWoc
-        iWDlMtHnPWBnRannXZRFSsngrp0GZ8hASOubS7R+sH4t1Z4q5Q==
-X-Google-Smtp-Source: ABdhPJwpVYQmBzRJ8WziWDH454+t7Zpo8F7a5QFtiwS8atfzbqFD0ejdoeiqA29DPIqFSKL5k22epEdp7XU49U3ZH2Y=
-X-Received: by 2002:a5b:449:: with SMTP id s9mr11448764ybp.115.1616222982003;
- Fri, 19 Mar 2021 23:49:42 -0700 (PDT)
+        bh=9b/gI/Y8C2M3ITolu7fT0Rqbq/JBTn9cm6d+0pcaHfc=;
+        b=ZwCsYktA/Z0hMOW3IwHgc00XoUi0X64XM+/Kj4JMhDVsjR6I4H4Kyiz+5NbZIRjy9d
+         K6qc2Tin2I1JTUNoIXQXTgkjf/QCyAcMsU/Q8nJc8p/jS4/7HGAtIAOLkAnKg0/1Uhoq
+         RnK4SRE/uH1NBq7G1ZbW0qNpKpMBV/cZSzxFu8yJkyIcqGiE88ug1CIEd8ReFpxkkpc6
+         AlK4HXvnUNFrfit64TR1Sm/aSt6cwmr70Ef9xk6NQ/N4IJcj4NHwLTPXYGIMVEemw5aK
+         1dH7L0ctqc3JRc5391fH/0s4WCNtwJ90ZG4VIgy+cdjkQbgNWLRTpmiedYywot4XEI3x
+         EAiQ==
+X-Gm-Message-State: AOAM5325maon+UKAa8do9L5jXM7MS/QqHs1DfRD5zjH5tovBh/GWtbgy
+        aI8sK1viA9k5YEhJoj/+bTU+eko5DCGgjsKE97U=
+X-Google-Smtp-Source: ABdhPJzMGoiuSwIk+T2zYSq/zT/Q/iTVkz824OQLK5ExS/aRGEHQqtpPGbWmNr8z7Zs2XIGndn2DC5zNKBLU1bH6apo=
+X-Received: by 2002:a25:d6d5:: with SMTP id n204mr10970837ybg.22.1616220487932;
+ Fri, 19 Mar 2021 23:08:07 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210319175950.509fcbd0@canb.auug.org.au> <YFS1h6h+71sRlwFR@osiris>
- <20210320162734.1630cc55@elm.ozlabs.ibm.com> <CANiq72nKJBVsuvqr17qa0xnkQTUz9aaAGRi8SfXZAn-G=RYQXw@mail.gmail.com>
-In-Reply-To: <CANiq72nKJBVsuvqr17qa0xnkQTUz9aaAGRi8SfXZAn-G=RYQXw@mail.gmail.com>
+ <20210320162734.1630cc55@elm.ozlabs.ibm.com>
+In-Reply-To: <20210320162734.1630cc55@elm.ozlabs.ibm.com>
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 20 Mar 2021 07:49:31 +0100
-Message-ID: <CANiq72n+-9vtpvvHTD=QzpskCbZEvTWhDXUaHrkwsJn4M3fjXg@mail.gmail.com>
+Date:   Sat, 20 Mar 2021 07:07:57 +0100
+Message-ID: <CANiq72nKJBVsuvqr17qa0xnkQTUz9aaAGRi8SfXZAn-G=RYQXw@mail.gmail.com>
 Subject: Re: linux-next: Tree for Mar 19
 To:     Stephen Rothwell <sfr@rothwell.id.au>
 Cc:     Heiko Carstens <hca@linux.ibm.com>,
@@ -78,53 +78,21 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Sat, Mar 20, 2021 at 7:07 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Sat, Mar 20, 2021 at 6:33 AM Stephen Rothwell <sfr@rothwell.id.au> wrote:
 >
-> Sorry for that, and thanks a lot for taking a look. For the Rust
-> support I had to increase a few limits, mainly the symbol length. Let
-> me check and I'll report back.
+> Daniel Axtens reported the same breakage on powerpc.  I bisected it to
+> the same commit.  More experimentation shows that if you reverse just
+> the change to include/linux/moduleparam.h the above warnings go away.
+> So
+>
+> -#define MAX_PARAM_PREFIX_LEN (256 - sizeof(unsigned long))
+> +#define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
+>
+> fixes it up.  Not sure what that does to the rust support ...
 
-Reproduced on s390. However, under defconfig, one also needs to revert
-kernel/livepatch/core.c to avoid triggering the assert, i.e.:
-
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-index a33f3dcde593..eed280fae433 100644
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -18,7 +18,7 @@
- #endif
-
- /* Chosen so that structs with an unsigned long line up. */
--#define MAX_PARAM_PREFIX_LEN (256 - sizeof(unsigned long))
-+#define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
-
- #define __MODULE_INFO(tag, name, info)                                   \
-        static const char __UNIQUE_ID(name)[]                             \
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 080ebb94d012..1e1699cc3fd6 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -213,7 +213,7 @@ static int klp_resolve_symbols(Elf64_Shdr
-*sechdrs, const char *strtab,
-         * we use the smallest/strictest upper bound possible (248, based on
-         * the current definition of MODULE_NAME_LEN) to prevent overflows.
-         */
--       BUILD_BUG_ON(MODULE_NAME_LEN < 248 || KSYM_NAME_LEN != 512);
-+       BUILD_BUG_ON(MODULE_NAME_LEN < 56 || KSYM_NAME_LEN != 512);
-
-        relas = (Elf_Rela *) relasec->sh_addr;
-        /* For each rela in this klp relocation section */
-@@ -227,7 +227,7 @@ static int klp_resolve_symbols(Elf64_Shdr
-*sechdrs, const char *strtab,
-
-                /* Format: .klp.sym.sym_objname.sym_name,sympos */
-                cnt = sscanf(strtab + sym->st_name,
--                            ".klp.sym.%247[^.].%511[^,],%lu",
-+                            ".klp.sym.%55[^.].%511[^,],%lu",
-                             sym_objname, sym_name, &sympos);
-                if (cnt != 3) {
-                        pr_err("symbol %s has an incorrectly formatted name\n",
+Sorry for that, and thanks a lot for taking a look. For the Rust
+support I had to increase a few limits, mainly the symbol length. Let
+me check and I'll report back.
 
 Cheers,
 Miguel
