@@ -2,110 +2,61 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07515C433F2
-	for <linux-next@archiver.kernel.org>; Mon, 29 Mar 2021 08:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35ACFC433E3
+	for <linux-next@archiver.kernel.org>; Mon, 29 Mar 2021 08:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E79EE61932
-	for <linux-next@archiver.kernel.org>; Mon, 29 Mar 2021 08:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1656460234
+	for <linux-next@archiver.kernel.org>; Mon, 29 Mar 2021 08:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbhC2I3U (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Mar 2021 04:29:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42291 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234607AbhC2I2r (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 29 Mar 2021 04:28:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617006527;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zk0Gbd3YvZUDEfTpNPL5QSpZw7gTVP3YO60kykKGUEc=;
-        b=Pr59ehd5nuIy/kBDHYNcVIKsl9csEYz9Mt58SMakUFOo5yXMesY5wCJJmEWFelHZK1dINT
-        w2yj6PGoVblGsJCViVJUH4ahG3rDb64WUo7ma1TELcwLqaUcWTlldmYpby2VjbLOqR0Qyb
-        2iEleEnmO5Gw69pEIofi3/7t0O8TA8A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-351-g7o-8gjtOxCnDdrWtD2WDA-1; Mon, 29 Mar 2021 04:28:42 -0400
-X-MC-Unique: g7o-8gjtOxCnDdrWtD2WDA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 822B887A83B;
-        Mon, 29 Mar 2021 08:28:40 +0000 (UTC)
-Received: from krava (unknown [10.40.195.107])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5401062954;
-        Mon, 29 Mar 2021 08:28:37 +0000 (UTC)
-Date:   Mon, 29 Mar 2021 10:28:37 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
+        id S234627AbhC2IsN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Mar 2021 04:48:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235956AbhC2Ir4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 Mar 2021 04:47:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8D38A60234;
+        Mon, 29 Mar 2021 08:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617007676;
+        bh=uKsoIvfPCQyym8ZsIsyx6cMAB8DVSvAj2lQgJQ4dH+c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eniDypj/6h4V96nAXfsyjYF4wRxli1rlswMGyiBHzpMXzfsKVUZdFPDa1qvrR17a+
+         lZT9ayap7nxWOGoNWpoWwG0vurMsHlecv2Z5K4rsShdriruvyCrSqofHvOhlLuSCIq
+         ZM3MkNmV91eYcc04VqBnzpPakFgcAM86B967fwa8KK0RoepHm5VIjfhnshI/0r4jVn
+         1K388UZ0B5qr8i2XV3TE3Egc8GU473u9qzeQUSaZF0W+LvwRnkKBYt+jOvyBChwWSe
+         6+JNSFn5nx9WTp82ruTqshz2Rwv/2N+5C8t1WmeRDYSERvAdwfrYIJWPcAFZk+s81v
+         BwHdl08+8OsIQ==
+Date:   Mon, 29 Mar 2021 09:47:52 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Qi Liu <liuqi115@huawei.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
-Message-ID: <YGGPtUcstloL8sC2@krava>
-References: <20210329122916.5921aad9@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the arm-perf tree
+Message-ID: <20210329084751.GA2965@willie-the-truck>
+References: <20210326195240.7b937560@canb.auug.org.au>
+ <c39fe821-3eee-9f2a-3539-6a1f2f415414@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210329122916.5921aad9@canb.auug.org.au>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <c39fe821-3eee-9f2a-3539-6a1f2f415414@hisilicon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 12:29:16PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Mar 26, 2021 at 05:07:41PM +0800, Shaokun Zhang wrote:
+> Apologies for the mistake.
 > 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->   include/linux/bpf.h
-> 
-> between commit:
-> 
->   861de02e5f3f ("bpf: Take module reference for trampoline in module")
-> 
-> from the bpf tree and commit:
-> 
->   69c087ba6225 ("bpf: Add bpf_for_each_map_elem() helper")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc include/linux/bpf.h
-> index fdac0534ce79,39dce9d3c3a5..000000000000
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@@ -40,7 -40,7 +40,8 @@@ struct bpf_local_storage
->   struct bpf_local_storage_map;
->   struct kobject;
->   struct mem_cgroup;
->  +struct module;
-> + struct bpf_func_state;
->   
->   extern struct idr btf_idr;
->   extern spinlock_t btf_idr_lock;
+> Will, shall I send a new version v5 to fix this issue or other?
 
-ack, thanks
-jirka
+Please send additional patches on top now that these are queued.
 
+Thanks,
+
+Will
