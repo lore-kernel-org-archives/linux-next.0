@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0430BC433B4
-	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4138C433ED
+	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B486161003
-	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F6161075
+	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:01:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232406AbhCaV7y (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Mar 2021 17:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58770 "EHLO
+        id S232455AbhCaWAZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Mar 2021 18:00:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229968AbhCaV7Z (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2021 17:59:25 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9217EC061574
-        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:59:16 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso1996339pjb.4
-        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:59:16 -0700 (PDT)
+        with ESMTP id S230291AbhCaWAC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2021 18:00:02 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7B4C06174A
+        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 15:00:02 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id s21so7388pjq.1
+        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 15:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=hPDVqO9jhT1E0nArrlGckXeQM+tkHjymdZg5zK09hK4=;
-        b=Hlv/sqJ0AI2X14MfAlqWl8fb/roPE0ykMGEYBZ91oOzcNll4Ls8OIztzs79toVtl1k
-         EMG7MUfuTnbQf5eLb0ZPnC1TzmMiBhfuEH1kZFFCITl0RQfaveHyDy2PuMKw/nlTYsL0
-         o1PL8d/UJA+/ZdSzVQA1JgjDJSSEDBuG0qBEA=
+        bh=N4kurWnRUYXmR7z3KJBvyrU6Pp/Hk6bRXMnVv4qhpUw=;
+        b=UysDK0tFln0ROMFobMSknIiOBcjN2FLMe1B5kPNlHcEJ4pLaoSNernczPzgy5Hy3oe
+         /PSdtkEkNThR7t2At8UL0rasJyr8rkd/B0cCIWX/kOB5Ds6bQpQD97vfzxY5iM3DKfcK
+         B6iYWAMPVx1skNQZQ3LRdc/wzUHra7q54y1Eg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=hPDVqO9jhT1E0nArrlGckXeQM+tkHjymdZg5zK09hK4=;
-        b=p5iw4y7iCeCGir6XUB0SbPpWRK03ODOWpqTZpc3KacINYOFB4ptQXpFd2Um+KiDjX+
-         BYe9TQNq25/7KBBcKv/yRDu3MMhjsnJd3KavLBDH050vU4ubknZuqJfzwBpdl0yNyb9F
-         S2jG+jOzd4BbN3ICcgJspEB0O+rZywrQk9mcXmxzkYz8DqC4OOrCrLzV6iQQzhOwLzSI
-         he7R0zGvyRZaXuMYRpq46VunglCyziJfpwcifoLJmxRe7KQzt8Yjxv3xghRz9L05IfPX
-         zLsIaXYjHRvDpb5NFSdoVxohw7DeCRRwQBfCQ9Ggiw/8w2XLBwSxkemF9SNxcEuOEI2/
-         rhVA==
-X-Gm-Message-State: AOAM532yb1RYEBUY5CE4B7A9VtG6mkYonGkttyzdvuoNZlNqO+a5SYYu
-        k3PCeG/qxge+fn694hE+07EzvQ==
-X-Google-Smtp-Source: ABdhPJy5g4ciUYLbK9rveBjK8Sl7N4JLu8lxXPOokzW9YSghJbnZLMQ6yz5xr7oP6xEA+eANlv29tA==
-X-Received: by 2002:a17:90b:291:: with SMTP id az17mr5316766pjb.206.1617227956130;
-        Wed, 31 Mar 2021 14:59:16 -0700 (PDT)
+        bh=N4kurWnRUYXmR7z3KJBvyrU6Pp/Hk6bRXMnVv4qhpUw=;
+        b=NIHxndVic4/BpgdeKW3ji74+lu9FM0JOsZMGQXHjkfFtVLxW9fg8M9xsVBdpEdJcPy
+         mGNYpyhiiTuLzCMD1dTQmgeRN2fBa3vBfRdAG5jDjzmtngV3qoUTsr1o5ipsT88oqLPa
+         pnIXfKVD/AJKLKtC05JzaExVnrGeJrfCTFyNCNdgFUJhwuKjrZ4tGS+wKVL69URxTW2d
+         DG1MxOCYC9cv8AegsDzjES9W3qiNuf3zNsENl1IOgPrxLyvS5nYC6fA2CJv00HnvH1f1
+         Gv+nIgDk5Bx1h31FJlorLIAdxjvu3yjN6ssKa79QEvmU/Giu+QRso4VSeanTs4Q9WlFT
+         WXew==
+X-Gm-Message-State: AOAM530n49A9T0G/4uJBKjiEY8tMuYQ+S3tZLw24i67tsi6Lyk+vvwbx
+        Hd4hbt4Q4EraptXGjpXhLpBLYw==
+X-Google-Smtp-Source: ABdhPJx+yVIizrn3TNkV0avPOzlugxQ8k0ukioAmiQ8vY0Mc4vNDxrGOASSexikBSeOz5hVkW3Tx+A==
+X-Received: by 2002:a17:90a:fe05:: with SMTP id ck5mr5768761pjb.19.1617228001967;
+        Wed, 31 Mar 2021 15:00:01 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w67sm3564296pgb.87.2021.03.31.14.59.15
+        by smtp.gmail.com with ESMTPSA id i10sm12087380pjm.1.2021.03.31.15.00.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 14:59:15 -0700 (PDT)
+        Wed, 31 Mar 2021 15:00:01 -0700 (PDT)
 From:   coverity-bot <keescook@chromium.org>
 X-Google-Original-From: coverity-bot <keescook+coverity-bot@chromium.org>
-Date:   Wed, 31 Mar 2021 14:59:15 -0700
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+Date:   Wed, 31 Mar 2021 15:00:00 -0700
+To:     Torin Cooper-Bennun <torin@maxiluxsystems.com>
+Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-next@vger.kernel.org
-Subject: Coverity: nf_log_syslog_init(): Control flow issues
-Message-ID: <202103311459.1514349C@keescook>
+Subject: Coverity: m_can_receive_skb(): Error handling issues
+Message-ID: <202103311500.C1214192BE@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -77,26 +77,26 @@ You're getting this email because you were associated with the identified
 lines of code (noted below) that were touched by commits:
 
   None
-    8d02e7da87a0 ("netfilter: nf_log_bridge: merge with nf_log_syslog")
+    1be37d3b0414 ("can: m_can: fix periph RX path: use rx-offload to ensure skbs are sent from softirq context")
 
 Coverity reported the following:
 
-*** CID 1503586:  Control flow issues  (DEADCODE)
-/net/netfilter/nf_log_syslog.c: 1047 in nf_log_syslog_init()
-1041     	ret = nf_log_register(NFPROTO_NETDEV, &nf_netdev_logger);
-1042     	if (ret < 0)
-1043     		goto err4;
-1044
-1045     	nf_log_register(NFPROTO_BRIDGE, &nf_bridge_logger);
-1046     	if (ret < 0)
-vvv     CID 1503586:  Control flow issues  (DEADCODE)
-vvv     Execution cannot reach this statement: "goto err5;".
-1047     		goto err5;
-1048
-1049     	return 0;
-1050     err5:
-1051     	nf_log_unregister(&nf_netdev_logger);
-1052     err4:
+*** CID 1503583:  Error handling issues  (CHECKED_RETURN)
+/drivers/net/can/m_can/m_can.c: 470 in m_can_receive_skb()
+464     */
+465     static void m_can_receive_skb(struct m_can_classdev *cdev,
+466     			      struct sk_buff *skb,
+467     			      u32 timestamp)
+468     {
+469     	if (cdev->is_peripheral)
+vvv     CID 1503583:  Error handling issues  (CHECKED_RETURN)
+vvv     Calling "can_rx_offload_queue_sorted" without checking return value (as is done elsewhere 7 out of 8 times).
+470     		can_rx_offload_queue_sorted(&cdev->offload, skb, timestamp);
+471     	else
+472     		netif_receive_skb(skb);
+473     }
+474
+475     static void m_can_read_fifo(struct net_device *dev, u32 rxfs)
 
 If this is a false positive, please let us know so we can mark it as
 such, or teach the Coverity rules to be smarter. If not, please make
@@ -104,8 +104,8 @@ sure fixes get into linux-next. :) For patches fixing this, please
 include these lines (but double-check the "Fixes" first):
 
 Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
-Addresses-Coverity-ID: 1503586 ("Control flow issues")
-Fixes: 8d02e7da87a0 ("netfilter: nf_log_bridge: merge with nf_log_syslog")
+Addresses-Coverity-ID: 1503583 ("Error handling issues")
+Fixes: 1be37d3b0414 ("can: m_can: fix periph RX path: use rx-offload to ensure skbs are sent from softirq context")
 
 Thanks for your attention!
 
