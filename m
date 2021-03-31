@@ -7,61 +7,58 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8E0C433ED
-	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 21:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24BFC433ED
+	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC5361003
-	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 21:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A21A601FD
+	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232103AbhCaV7V (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Mar 2021 17:59:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
+        id S229968AbhCaV7y (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Mar 2021 17:59:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231650AbhCaV6t (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2021 17:58:49 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C06EC061574
-        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:58:49 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id v23so8616614ple.9
-        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:58:49 -0700 (PDT)
+        with ESMTP id S232356AbhCaV7p (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2021 17:59:45 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8209AC061574
+        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:59:45 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id k23-20020a17090a5917b02901043e35ad4aso1916423pji.3
+        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=aLvbbSg+nxeDRUMldq1Wx2IqBsTOFpHEEazFsFmVoe8=;
-        b=b67VgFU5TQTWoFWE6XmF1o9Ffe1xnxHE8wvW/Ezr7/gvw8W/WWWdbtRSsEzt6LVMme
-         5AdHujfamXYRbVgh5SgA7II95s2ML2nlosopO72+VCeTD8mxRWdUGqevn5e+QAq/ShBh
-         ChfDpBiOJ8kIVS19W+0YutSFP8TqhyIYwc0i8=
+        bh=o6cVP/Hyd+IJoAbbWeUqu70F8kY7jqZxnvxhQO4a7+E=;
+        b=J12K7YicqdLYYU1F6pb1bg/UgvJ7wVtUVaqnUZqNXzT3MDNvZFWYxPyUemdEjMP8TA
+         37Eah0fGI9crTuDJcKy7d4P3t4tK3iWzt4N/ZyyEwBfCP3urj8Zbc3LgQMpox8SdqLqb
+         FP6E1XWz+T84zJTnqc3APgoEcBgA4oSqjA+98=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=aLvbbSg+nxeDRUMldq1Wx2IqBsTOFpHEEazFsFmVoe8=;
-        b=BKnF6msQ2Pd3Zu+fFK9fN3C6lagjZTg3jaFlIJSRXy48qadyz6R3yL7Nk1kPf2J9aX
-         iHAqnrCsskVvyH+sP3aCVlxvjQV5+bwE90Mr0JtUIuCbVUAt3zEh8CGnfbb8UBmtSIWz
-         WHeon4xop5Ayq3C8EqSmbpUBkbRIEDzkMrUKHR1qxkj5xStfeE2ZwF2Bi/WU88lwY1Ys
-         JAxFn8iGKHneSU9MsaBITdIrPfVFvevxaQu75MknEmLSKA8ev1Uzd9vBTxhr/rFwnJRW
-         L/5V0zPbIJ1DwHppxFq0lOvoDR+FhNPy9UclTjErfpcAyO//sB1Lq+19vnKpicsAzoEu
-         EDyw==
-X-Gm-Message-State: AOAM532WBV90dapKsLTIx6R9uzo7dFpGRcflqmCDg5d+MVOHMWNPoiki
-        F1sSKeQjP4NdRjndsTmroRcD+A==
-X-Google-Smtp-Source: ABdhPJyoXMC3JhjZld3WnxUIRPIMeyG86q9+fgPkb+r1gwMvyGk6zA/vqs2pgA1xNwU9qhO1aMCE1A==
-X-Received: by 2002:a17:902:b7c9:b029:e6:3d74:5dc5 with SMTP id v9-20020a170902b7c9b02900e63d745dc5mr5087652plz.16.1617227928854;
-        Wed, 31 Mar 2021 14:58:48 -0700 (PDT)
+        bh=o6cVP/Hyd+IJoAbbWeUqu70F8kY7jqZxnvxhQO4a7+E=;
+        b=PnD0HWH8/Lq+rUbFW4KL8w6k9DrNxjiZrIoyRVNPV1rqSFDpi30kSbRLdoxNXhEkF0
+         YgEFeJ+TtWwxhsyKs5CDqZojX3dXJdRckuvMGCI2WedRjtRjIQMNNpef1cdB8vzOmWG5
+         UzC3Z4w92xwq/LANX/GafPcNUxQ7hk3u077R40q06trJe33M1gX6z9E5SXqIhT4Kbo0d
+         CPcFLVsrzYJTQF3ihtDwF6N7xDz5UTzdhHh6nshGAJbOj99FmbtzPCoxVxop/RKR+TTr
+         fa+VTI/RgDAGJpRpvqcoLLGNQw7cohBQyLHdBgWX1oDpSIjcQTh2g5k4cuunqmAWqqEF
+         QENQ==
+X-Gm-Message-State: AOAM530RMWeNuz9I0M6fJmiaEzau4YBP0YbD4JDR2QJwD6ICTzv7cfgG
+        bwBv2muu+pjN/QHk70AGVMj+8h6lYFU5pg==
+X-Google-Smtp-Source: ABdhPJw3IAweAz7FWYovvvotd5+zDf41UIjG/njGExPOfV4vCqAqmICRiktNQOJv4aLP+csI3Ckkxw==
+X-Received: by 2002:a17:90a:d58a:: with SMTP id v10mr5613036pju.36.1617227985157;
+        Wed, 31 Mar 2021 14:59:45 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y8sm3536427pge.56.2021.03.31.14.58.48
+        by smtp.gmail.com with ESMTPSA id 11sm3393600pfn.146.2021.03.31.14.59.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 14:58:48 -0700 (PDT)
+        Wed, 31 Mar 2021 14:59:44 -0700 (PDT)
 From:   coverity-bot <keescook@chromium.org>
 X-Google-Original-From: coverity-bot <keescook+coverity-bot@chromium.org>
-Date:   Wed, 31 Mar 2021 14:58:47 -0700
-To:     Huy Nguyen <huyn@mellanox.com>
-Cc:     Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Boris Pismenny <borisp@mellanox.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+Date:   Wed, 31 Mar 2021 14:59:44 -0700
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-next@vger.kernel.org
-Subject: Coverity: rx_ft_put(): Error handling issues
-Message-ID: <202103311458.E693CAAD@keescook>
+Subject: Coverity: mcp251xfd_dump_rx_ring(): Memory - illegal accesses
+Message-ID: <202103311459.93EB7DEBDC@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -79,26 +76,26 @@ You're getting this email because you were associated with the identified
 lines of code (noted below) that were touched by commits:
 
   None
-    5e466345291a ("net/mlx5e: IPsec: Add IPsec steering in local NIC RX")
+    e0ab3dd5f98f ("can: mcp251xfd: add dev coredump support")
 
 Coverity reported the following:
 
-*** CID 1503588:  Error handling issues  (CHECKED_RETURN)
-/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_fs.c: 323 in rx_ft_put()
-317     	fs_prot = &accel_esp->fs_prot[type];
-318     	mutex_lock(&fs_prot->prot_mutex);
-319     	if (--fs_prot->refcnt)
-320     		goto out;
-321
-322     	/* disconnect */
-vvv     CID 1503588:  Error handling issues  (CHECKED_RETURN)
-vvv     Calling "mlx5e_ttc_fwd_default_dest" without checking return value (as is done elsewhere 4 out of 5 times).
-323     	mlx5e_ttc_fwd_default_dest(priv, fs_esp2tt(type));
-324
-325     	/* remove FT */
-326     	rx_destroy(priv, type);
-327
-328     out:
+*** CID 1503585:  Memory - illegal accesses  (OVERRUN)
+/drivers/net/can/spi/mcp251xfd/mcp251xfd-dump.c: 190 in mcp251xfd_dump_rx_ring()
+184     static void mcp251xfd_dump_rx_ring(const struct mcp251xfd_priv *priv,
+185     				   struct mcp251xfd_dump_iter *iter)
+186     {
+187     	struct mcp251xfd_rx_ring *rx_ring;
+188     	unsigned int i;
+189
+vvv     CID 1503585:  Memory - illegal accesses  (OVERRUN)
+vvv     Overrunning array of 1 8-byte elements at element index 1 (byte offset 15) by dereferencing pointer "priv->rx + i".
+190     	mcp251xfd_for_each_rx_ring(priv, rx_ring, i)
+191     		mcp251xfd_dump_rx_ring_one(priv, iter, rx_ring);
+192     }
+193
+194     static void mcp251xfd_dump_tx_ring(const struct mcp251xfd_priv *priv,
+195     				   struct mcp251xfd_dump_iter *iter)
 
 If this is a false positive, please let us know so we can mark it as
 such, or teach the Coverity rules to be smarter. If not, please make
@@ -106,8 +103,8 @@ sure fixes get into linux-next. :) For patches fixing this, please
 include these lines (but double-check the "Fixes" first):
 
 Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
-Addresses-Coverity-ID: 1503588 ("Error handling issues")
-Fixes: 5e466345291a ("net/mlx5e: IPsec: Add IPsec steering in local NIC RX")
+Addresses-Coverity-ID: 1503585 ("Memory - illegal accesses")
+Fixes: e0ab3dd5f98f ("can: mcp251xfd: add dev coredump support")
 
 Thanks for your attention!
 
