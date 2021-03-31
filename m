@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C0AC433B4
-	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B00C433B4
+	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78FC861059
-	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C985060551
+	for <linux-next@archiver.kernel.org>; Wed, 31 Mar 2021 22:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232523AbhCaWAZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 Mar 2021 18:00:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58904 "EHLO
+        id S229959AbhCaWDt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 Mar 2021 18:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbhCaWAD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2021 18:00:03 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FD5C061574
-        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:59:52 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id f17so8613132plr.0
-        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 14:59:52 -0700 (PDT)
+        with ESMTP id S229812AbhCaWDc (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2021 18:03:32 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C54CDC061574
+        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 15:03:31 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id x126so15492554pfc.13
+        for <linux-next@vger.kernel.org>; Wed, 31 Mar 2021 15:03:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=XTclIebc2gFw1AUuvlOqXBN/cAE04kAcYPmgSPAB9m8=;
-        b=ReObV+EuPukLxWh/51FutC15x91tOj+OUIMeKAzr/+bQMYDA9CEDsvj6D9wZkY5ToR
-         JjqbaV+DRZT3KX+uGG/m1MJ+5Rgas1N8c2Q9JiSmG/56dD9nsYTikbyWq6GtT99T1HlI
-         k4upMOeq088mRelDGhDTwIuVq45P6PN8kvM6A=
+        bh=SMV832ttk4WjCenh3yESAWa51iUjuB88llZr9+O/pMc=;
+        b=GtGaqk9nralj48qa3mmWipTjjuzNHvfUhZC0c9Ryu2BMYGbX37R9GjcdRMQThee/ZA
+         0m46Vp6QvNWLD00QL57IHPll+n7T6iyNNy+TSvXdQPk/+v8hzUUzEw3yIiDJMHhcsOJK
+         j98vvDQhh9SYfmmwz1b1h2H2+zXKnszgJf7P8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=XTclIebc2gFw1AUuvlOqXBN/cAE04kAcYPmgSPAB9m8=;
-        b=M6xN4Ce+ecChHAycCNNANrdtg6tSOECT1gHzbaw8P7jpwyfOmp1TAEKecQNvmHTIqk
-         lbpvcCCiShsPPlOURelnscKfWw2YYISDwJBU0BE/UVJ4Rz0TEcwS1hmWauK71pZhJS/w
-         vyBbfrTuIa75flG+uN+sccw92ykvsZB7EEdWpw7ZWTOrscDnU1USPCBbcpauqp+8WNyi
-         bmhLn4jlGshd3gq6IFI2NrmLfjs1AICdWU6H8dPZq6pn7xdQiMCplK/ZikQD7pJnVBLZ
-         DnCEO1hCHbc4bizUZvKFUFnYhV+kNW2RwvnW8Q8Ajuz7sU6Vr5yh8XEhoj5eWhgJ9sbD
-         huJQ==
-X-Gm-Message-State: AOAM531NFFYoa7ZcUtSuqfZatUobkmd7/2QxOKmmIbkdfZbR8bxbnMlF
-        5rl4x90b8IkbLE6TN8hIf2THIw==
-X-Google-Smtp-Source: ABdhPJwyQYa7wjDnYdv3AI7M654iXH6YkzCqKci09+3ot/Qq+AaJ0+V9X1HaY2WGNBNUALZvGs0pbw==
-X-Received: by 2002:a17:90a:7344:: with SMTP id j4mr5251307pjs.223.1617227992142;
-        Wed, 31 Mar 2021 14:59:52 -0700 (PDT)
+        bh=SMV832ttk4WjCenh3yESAWa51iUjuB88llZr9+O/pMc=;
+        b=q1AP0+axiodwX8LiqMKygxQMrYYqXMhhRmKcpDVleIoS6GjrUDF3g4VYxjfVYWoLv/
+         Yx53F+jF+ljz/fcYZS24BcNLgXT8uQMqoziXj/7wgsGMXyqBMcVKqFI+M+3CIGtGpQ7t
+         M7wUhBnDlI4E668DKMHxQbOR0h0fHdQbWmObpaDgrjG9GMCnt3/lcpPYouMQmXGQspqZ
+         sYxjtKUwYM83gUiF9CiCeG/OlUJVHNllsDVzFi1SVH5I6hdzCpg1DIO4t41msYnWmbTO
+         J8MsstP5Tq0pZg8b67FBIvk04qJgAdmQ5ItCQrhDjFzHqgcdwRI3FG0B4v4G/Nwr3qK1
+         z/ww==
+X-Gm-Message-State: AOAM531Fyikks+1Tyl4ZJsJylqA3USRIkFoUhG83Tq0/QOr4SOQ/nxCJ
+        bOM21Jv0nE4Wk0ndRnywJm/Q1A==
+X-Google-Smtp-Source: ABdhPJxKjpscVXvSBSc9LjK8RcKOhiNkGsEEh/gldp7s5jL6T/O5Zh3v2Qo8uWLZR4k127GoYOhuOQ==
+X-Received: by 2002:a63:1e4b:: with SMTP id p11mr5134192pgm.301.1617228211306;
+        Wed, 31 Mar 2021 15:03:31 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t12sm3602156pga.85.2021.03.31.14.59.51
+        by smtp.gmail.com with ESMTPSA id q19sm3252217pff.91.2021.03.31.15.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 14:59:51 -0700 (PDT)
+        Wed, 31 Mar 2021 15:03:30 -0700 (PDT)
 From:   coverity-bot <keescook@chromium.org>
 X-Google-Original-From: coverity-bot <keescook+coverity-bot@chromium.org>
-Date:   Wed, 31 Mar 2021 14:59:51 -0700
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
+Date:   Wed, 31 Mar 2021 15:03:30 -0700
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paul Moore <paul@paul-moore.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-next@vger.kernel.org
-Subject: Coverity: qcom_swrm_irq_handler(): Control flow issues
-Message-ID: <202103311459.82A93D8@keescook>
+Subject: Coverity: nf_tables_commit(): USE_AFTER_FREE
+Message-ID: <202103311502.EDF441BE1@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -78,26 +78,198 @@ You're getting this email because you were associated with the identified
 lines of code (noted below) that were touched by commits:
 
   None
-    c7d49c76d1d5 ("soundwire: qcom: add support to new interrupts")
+    bb4052e57b5b ("audit: log nftables configuration change events once per table")
 
 Coverity reported the following:
 
-*** CID 1503584:  Control flow issues  (NO_EFFECT)
-/drivers/soundwire/qcom.c: 446 in qcom_swrm_irq_handler()
-440     			if (!value)
-441     				continue;
-442
-443     			switch (value) {
-444     			case SWRM_INTERRUPT_STATUS_SLAVE_PEND_IRQ:
-445     				devnum = qcom_swrm_get_alert_slave_dev_num(swrm);
-vvv     CID 1503584:  Control flow issues  (NO_EFFECT)
-vvv     This less-than-zero comparison of an unsigned value is never true. "devnum < 0".
-446     				if (devnum < 0) {
-447     					dev_err_ratelimited(swrm->dev,
-448     					    "no slave alert found.spurious interrupt\n");
-449     				} else {
-450     					sdw_handle_slave_status(&swrm->bus, swrm->status);
-451     				}
+*** CID 1503581:    (USE_AFTER_FREE)
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+
+Notes from a human:
+
+This appears to be callable after potential calls to "nft_trans_destroy(trans);"
+
+
+
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
+/net/netfilter/nf_tables_api.c: 8257 in nf_tables_commit()
+8251     							   NFT_MSG_DELFLOWTABLE);
+8252     				nft_unregister_flowtable_net_hooks(net,
+8253     						&nft_trans_flowtable(trans)->hook_list);
+8254     			}
+8255     			break;
+8256     		}
+vvv     CID 1503581:    (USE_AFTER_FREE)
+vvv     Dereferencing freed pointer "trans".
+8257     		nf_tables_commit_audit_collect(&adl, trans->ctx.table,
+8258     					       trans->msg_type);
+8259     	}
+8260
+8261     	nft_commit_notify(net, NETLINK_CB(skb).portid);
+8262     	nf_tables_gen_notify(net, skb, NFT_MSG_NEWGEN);
 
 If this is a false positive, please let us know so we can mark it as
 such, or teach the Coverity rules to be smarter. If not, please make
@@ -105,8 +277,8 @@ sure fixes get into linux-next. :) For patches fixing this, please
 include these lines (but double-check the "Fixes" first):
 
 Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
-Addresses-Coverity-ID: 1503584 ("Control flow issues")
-Fixes: c7d49c76d1d5 ("soundwire: qcom: add support to new interrupts")
+Addresses-Coverity-ID: 1503581 ("USE_AFTER_FREE")
+Fixes: bb4052e57b5b ("audit: log nftables configuration change events once per table")
 
 Thanks for your attention!
 
