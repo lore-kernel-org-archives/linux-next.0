@@ -2,81 +2,87 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42646C47082
-	for <linux-next@archiver.kernel.org>; Mon, 31 May 2021 07:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D31C47080
+	for <linux-next@archiver.kernel.org>; Mon, 31 May 2021 21:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF1661220
-	for <linux-next@archiver.kernel.org>; Mon, 31 May 2021 07:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DCD861287
+	for <linux-next@archiver.kernel.org>; Mon, 31 May 2021 21:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbhEaHi6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 31 May 2021 03:38:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
+        id S232207AbhEaV7J (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 31 May 2021 17:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230388AbhEaHiE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 31 May 2021 03:38:04 -0400
+        with ESMTP id S232057AbhEaV7E (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 31 May 2021 17:59:04 -0400
 Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AA78C061763;
-        Mon, 31 May 2021 00:36:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5635C061574;
+        Mon, 31 May 2021 14:57:19 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4FtnCT6D0rz9s24;
-        Mon, 31 May 2021 17:36:05 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Fv8K82rn4z9sSn;
+        Tue,  1 Jun 2021 07:57:16 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1622446566;
-        bh=edAeV7h2A8p3l1up77KsPISLlfxdBbE0RuunYMtKkAo=;
-        h=Date:From:To:Subject:From;
-        b=mC3xssSdANLRzs0lDYd26OcdH9r432Fxe5Mr8B7axraf6ZA+7jmARvOQr3ZVpqhc1
-         9uwpy4WNGV/JOH36KhStG0Dcsznp98N+qRaaq0oNkAUAZodxWmqKsTOgsaHBjhOt3x
-         ifCYtMP3JNId+iryxOe4aIvb39DVV/lXEqEE+V70piDeyzo/14kqq24h8QIARckWSd
-         nzdhFGX4di9wDdmb7dVgfwWNe/fTEVhFhTRCmgXsdlET7r5u1UYdf3sbY/L2OHTGSn
-         KZKiMr2lMC/Zx8Xb7PfP0wrB937CLJXVg2N0mrSXFcEFwj+p4khy20nOeBn1R+iScl
-         aQ8SLUYrG5DIg==
-Date:   Mon, 31 May 2021 17:36:05 +1000
+        s=201702; t=1622498236;
+        bh=6JdKm/y7YGw2JLTKdlhkSnBOoth0OxzC7+YPxdgCZAg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=elUY5TnwTQvqrLU5mXOudZR6jYWElcTyUQOwC2ig4+urOQxxdyEwsKHWATc8dLdZ4
+         tvaiSa87CKCJj9B3ftkqXO86pP99j6NkxmXXPka1+ZNebMBKbqxohmHuqh/x63CwsN
+         gnCWRr9dusgNjRaMGz6fhVSttQe8S2LxDOPMXXl0CrtCZWFH+wVMybkj4u+xWcbhAK
+         2NryPf0mQjCU/KvqBrRQo+4zRdNOiGtY6wlGZ9hq1sMR1etKm2TyUXaPlJcW0ykEWM
+         p9ATJoC9A3/24x7QGXEPDSO2jDEKq6xTwOe6HFn71839el6qNkMDB4ZYQ8DESV6c7z
+         IwN64phwzxbwA==
+Date:   Tue, 1 Jun 2021 07:57:13 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: no release today
-Message-ID: <20210531173605.479f7927@canb.auug.org.au>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the risc-v-fixes
+ tree
+Message-ID: <20210601075713.6cffe979@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DO6OBqS+dazAZha.j/0STlX";
+Content-Type: multipart/signed; boundary="Sig_/re.ShItbnm08reIvCuXBAT8";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/DO6OBqS+dazAZha.j/0STlX
+--Sig_/re.ShItbnm08reIvCuXBAT8
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-I have not done a release today.  Back to normal tomorrow.
+Commit
+
+  345f7d3d5e58 ("riscv: mm: Fix W+X mappings at boot")
+
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/DO6OBqS+dazAZha.j/0STlX
+--Sig_/re.ShItbnm08reIvCuXBAT8
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmC0keUACgkQAVBC80lX
-0GyNHwf+LKtRFmHb/zTZd1kLFcap6NLLpPFQ+sWhvj+95jwWfcqYQWsQZmAWoQ71
-nDCtpccD32yQSv/dtDLp5UO5FFZzYJKrh6qKgDpqf3rDYkZ4b2E+VPHa+4FvVq4C
-r38QE/HJSlsHm9C03ZD2OgHepUYXdDeACWvpZ7QOclXBXjSXAk8gxN6JYHHlBQR4
-z/1qW96w85Yo0m/Ud1SCUjaxSg6kXaOuaUW4RRamvsJZiOK+bA2vFVVoAmnWrOVH
-3fgbGVfsY4ZHVJPBCZDFh0FGwkFUATrK6qgPK5DhVcoxXVSU6NwLSOqcAA40tWp8
-mtvoB0WEVjUakmKTEfllYYEiXti6Bg==
-=jT7e
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmC1W7kACgkQAVBC80lX
+0Gwz0wf+Mlk5eOliCxp7SMAYQJIp9cS+by/bZh98pNu7GdP71y0X5bNQVV3Foz2y
+PraXiNMLpLQl4E60QVPgtgQQ86GmT/gp1MGUn79Q9tLyp8sx5jJOnm/SF5UUcgws
+/mUGRyfXWsHd7vL2kQVV6Df+EubwR3bdqZA85ae0DtUhGXSPjR5AJL1iW5hcm4Es
+BoGcAGyr5hcLWLLupFqX58Wn0lJyx+NKeVRMzbOgMajnmlgbUyNfrKml6BgLHFuw
+RdvUA03fz7Sbm1reg0QXMmOVnpN7XNaBh3WVQvcA7wUUFKVdWYGcknMeEdZBMwsp
+vdQfu3n260U7xzvZQTU7fUFDoyEgjw==
+=T8ic
 -----END PGP SIGNATURE-----
 
---Sig_/DO6OBqS+dazAZha.j/0STlX--
+--Sig_/re.ShItbnm08reIvCuXBAT8--
