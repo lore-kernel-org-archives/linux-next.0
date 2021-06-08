@@ -7,57 +7,60 @@ X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FF6C47082
-	for <linux-next@archiver.kernel.org>; Tue,  8 Jun 2021 18:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893EDC47082
+	for <linux-next@archiver.kernel.org>; Tue,  8 Jun 2021 18:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0746008E
-	for <linux-next@archiver.kernel.org>; Tue,  8 Jun 2021 18:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DF1361376
+	for <linux-next@archiver.kernel.org>; Tue,  8 Jun 2021 18:01:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233025AbhFHSDa (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Jun 2021 14:03:30 -0400
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:39795 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232850AbhFHSDa (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Jun 2021 14:03:30 -0400
-Received: by mail-pg1-f181.google.com with SMTP id y12so5304912pgk.6
-        for <linux-next@vger.kernel.org>; Tue, 08 Jun 2021 11:01:37 -0700 (PDT)
+        id S232850AbhFHSDm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Jun 2021 14:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232634AbhFHSDm (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Jun 2021 14:03:42 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D13FC061574
+        for <linux-next@vger.kernel.org>; Tue,  8 Jun 2021 11:01:33 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id m13-20020a17090b068db02901656cc93a75so14553995pjz.3
+        for <linux-next@vger.kernel.org>; Tue, 08 Jun 2021 11:01:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=NjtyfMDgd+rnknroEztQP5rU8QI9dCS085QaDI8wQPg=;
-        b=ht+yXJoFZWGp8FbFzW33L5cYCm2h+VsB338FHH+/bciU1iJ43mVGKPWau5mF27I4DQ
-         iUkoKDWMxbMD0eyrHAZ3kCBq8DqxDqWY3kGbTgiL6Tf+7Mo1YBkCYywXHXgD7o5BJ5L0
-         movAamIpGM9zC05kO4b7765QJHEHjrSQJvQZo=
+        bh=jo8D2n23hM+knqAh8Y6p5wJjz4mPjnO6o3a6tM++si8=;
+        b=jwO5/vJz6uVw0D/zE7HqZFMDHaUYP2t4vWW/A3nWnzyBYhERNTUEDlUXaG/3RL7AJB
+         TqEY5Vd3lNeu+7dlvkEDX83c4J27kLflu1ZdvTg5cldSTWJaHVPOlu+b8HalkICsRNhP
+         +PqpzUuaPP55g/rGjX2Xa+SXu9tUuSjSeBhzs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=NjtyfMDgd+rnknroEztQP5rU8QI9dCS085QaDI8wQPg=;
-        b=EL6n8cA8/2pcfWWv71/XP64l8Yx2Fi3NWi2Iozwr0E9sAdPgDGUTze2TAyEY1D7FxG
-         d3DdQmUQd1nXUlMrI+Gd/PYU777TFz/1rz8Fs1yHDufRN7NISTmxAQ5nyYaNKuUZmEpk
-         5G5D2vs+Wcu0NoYMIfkunF0j/5KezTOayNiS0w2qnQn0dfa52PK1Ubo4amrkLnN004hG
-         I8vYNougpD3NQ4RmH/OzLtDKRUwzJqGh92W10y8MXAmKLlHRTkmHq15vwc4Uxbgz+pau
-         Pl+2Uxy5eCDyysuO2n/083RlmPuaQbQh0v3XzaDHwpSIyS8JaYKdlfcevADUizSqGRj1
-         +7+g==
-X-Gm-Message-State: AOAM530gVivrnw+AHgkoE3E9CKHnl1UP3KFWI5s+Y4ajKLQpUACGj16Z
-        6x7uE1PE8Lqv0WbJHy0cHde2zw==
-X-Google-Smtp-Source: ABdhPJy6S9sr1VhJ+/18s45vxmEIerf5eYzR6wc+vMYFptG24ctQuNhDqhFo+IkqisSKM2UU4ORwuQ==
-X-Received: by 2002:a63:b40d:: with SMTP id s13mr23745047pgf.271.1623175236933;
-        Tue, 08 Jun 2021 11:00:36 -0700 (PDT)
+        bh=jo8D2n23hM+knqAh8Y6p5wJjz4mPjnO6o3a6tM++si8=;
+        b=P7qlwqlrqMW1T5SJY+BKY2UrFL8WxBvzS3/dRi/sMzp77iaR8CGsk3CPPnh4vFchPE
+         3BA7QL4twhMhxsnNt0S4VnleHrnJH34kxrxwc3iIvCfJZu2sYCjoiX2+ubMenIl572CM
+         BjMAl2lUtVvi40dxsMpmouMELJWqtQyyDGrquAXU/AZOHcwv+J94Dbnf3Ukxh7EDo9Me
+         hI4LrGI8sByhwEtGzfqtmy20bfuzrp2wfyrVnnCzC8j7OfL95dINwZYg5coF568ztbFs
+         ubdv9vu0w3AFhvwPn8RL7776+/nnQCa8McMZ+roUuincfYM23yjMandtANMr/t09I/jh
+         iPJg==
+X-Gm-Message-State: AOAM530utbTAG5J+VhdrfxBnkdsnMirL6Opj6BKLGte2Gzyd/FdYq5F/
+        Yc+V2QXALvpv7oVJlim032zpkw==
+X-Google-Smtp-Source: ABdhPJwjWwiD/mH+2c5X25EqBu17fYvpbkb0X/LC9/+B8CFtnRv3iNOWz5TXhehqd4TJjjWAQRjS0A==
+X-Received: by 2002:a17:902:9b8a:b029:10e:a83d:7dcf with SMTP id y10-20020a1709029b8ab029010ea83d7dcfmr1224556plp.7.1623175291791;
+        Tue, 08 Jun 2021 11:01:31 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b2sm2932433pfv.106.2021.06.08.11.00.36
+        by smtp.gmail.com with ESMTPSA id 21sm10944892pfh.103.2021.06.08.11.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jun 2021 11:00:36 -0700 (PDT)
+        Tue, 08 Jun 2021 11:01:31 -0700 (PDT)
 From:   coverity-bot <keescook@chromium.org>
 X-Google-Original-From: coverity-bot <keescook+coverity-bot@chromium.org>
-Date:   Tue, 8 Jun 2021 11:00:35 -0700
+Date:   Tue, 8 Jun 2021 11:01:30 -0700
 To:     Mustafa Ismail <mustafa.ismail@intel.com>
 Cc:     Jason Gunthorpe <jgg@nvidia.com>,
         Shiraz Saleem <shiraz.saleem@intel.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-next@vger.kernel.org
-Subject: Coverity: irdma_reg_user_mr(): TAINTED_SCALAR
-Message-ID: <202106081059.A515282@keescook>
+Subject: Coverity: irdma_clr_wqes(): BUFFER_SIZE
+Message-ID: <202106081101.37506CC0CD@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -75,90 +78,41 @@ You're getting this email because you were associated with the identified
 lines of code (noted below) that were touched by commits:
 
   Wed Jun 2 19:55:18 2021 -0300
-    b48c24c2d710 ("RDMA/irdma: Implement device supported verb APIs")
-
-(Editor's note: I believe the issues below are basically summarized as
-"the contents of req came from userspace and did not get validated before
-being used for things like array indexing, etc")
+    551c46edc769 ("RDMA/irdma: Add user/kernel shared libraries")
 
 Coverity reported the following:
 
-*** CID 1505160:    (TAINTED_SCALAR)
-/drivers/infiniband/hw/irdma/verbs.c: 2812 in irdma_reg_user_mr()
-2806     		list_add_tail(&iwpbl->list, &ucontext->qp_reg_mem_list);
-2807     		iwpbl->on_list = true;
-2808     		spin_unlock_irqrestore(&ucontext->qp_reg_mem_list_lock, flags);
-2809     		break;
-2810     	case IRDMA_MEMREG_TYPE_CQ:
-2811     		use_pbles = (req.cq_pages > 1);
-vvv     CID 1505160:    (TAINTED_SCALAR)
-vvv     Passing tainted variable "req.rq_pages" to a tainted sink.
-2812     		err = irdma_handle_q_mem(iwdev, &req, iwpbl, use_pbles);
-2813     		if (err)
-2814     			goto error;
-2815
-2816     		ucontext = rdma_udata_to_drv_context(udata, struct irdma_ucontext,
-2817     						     ibucontext);
-/drivers/infiniband/hw/irdma/verbs.c: 2799 in irdma_reg_user_mr()
-2793     	iwmr->type = req.reg_type;
-2794     	iwmr->page_cnt = ib_umem_num_dma_blocks(region, iwmr->page_size);
-2795
-2796     	switch (req.reg_type) {
-2797     	case IRDMA_MEMREG_TYPE_QP:
-2798     		use_pbles = ((req.sq_pages + req.rq_pages) > 2);
-vvv     CID 1505160:    (TAINTED_SCALAR)
-vvv     Passing tainted variable "req.cq_pages" to a tainted sink.
-2799     		err = irdma_handle_q_mem(iwdev, &req, iwpbl, use_pbles);
-2800     		if (err)
-2801     			goto error;
-2802
-2803     		ucontext = rdma_udata_to_drv_context(udata, struct irdma_ucontext,
-2804     						     ibucontext);
-/drivers/infiniband/hw/irdma/verbs.c: 2799 in irdma_reg_user_mr()
-2793     	iwmr->type = req.reg_type;
-2794     	iwmr->page_cnt = ib_umem_num_dma_blocks(region, iwmr->page_size);
-2795
-2796     	switch (req.reg_type) {
-2797     	case IRDMA_MEMREG_TYPE_QP:
-2798     		use_pbles = ((req.sq_pages + req.rq_pages) > 2);
-vvv     CID 1505160:    (TAINTED_SCALAR)
-vvv     Passing tainted variable "req.sq_pages" to a tainted sink.
-2799     		err = irdma_handle_q_mem(iwdev, &req, iwpbl, use_pbles);
-2800     		if (err)
-2801     			goto error;
-2802
-2803     		ucontext = rdma_udata_to_drv_context(udata, struct irdma_ucontext,
-2804     						     ibucontext);
-/drivers/infiniband/hw/irdma/verbs.c: 2799 in irdma_reg_user_mr()
-2793     	iwmr->type = req.reg_type;
-2794     	iwmr->page_cnt = ib_umem_num_dma_blocks(region, iwmr->page_size);
-2795
-2796     	switch (req.reg_type) {
-2797     	case IRDMA_MEMREG_TYPE_QP:
-2798     		use_pbles = ((req.sq_pages + req.rq_pages) > 2);
-vvv     CID 1505160:    (TAINTED_SCALAR)
-vvv     Passing tainted variable "req.rq_pages" to a tainted sink.
-2799     		err = irdma_handle_q_mem(iwdev, &req, iwpbl, use_pbles);
-2800     		if (err)
-2801     			goto error;
-2802
-2803     		ucontext = rdma_udata_to_drv_context(udata, struct irdma_ucontext,
-2804     						     ibucontext);
-/drivers/infiniband/hw/irdma/verbs.c: 2812 in irdma_reg_user_mr()
-2806     		list_add_tail(&iwpbl->list, &ucontext->qp_reg_mem_list);
-2807     		iwpbl->on_list = true;
-2808     		spin_unlock_irqrestore(&ucontext->qp_reg_mem_list_lock, flags);
-2809     		break;
-2810     	case IRDMA_MEMREG_TYPE_CQ:
-2811     		use_pbles = (req.cq_pages > 1);
-vvv     CID 1505160:    (TAINTED_SCALAR)
-vvv     Passing tainted variable "req.sq_pages" to a tainted sink.
-2812     		err = irdma_handle_q_mem(iwdev, &req, iwpbl, use_pbles);
-2813     		if (err)
-2814     			goto error;
-2815
-2816     		ucontext = rdma_udata_to_drv_context(udata, struct irdma_ucontext,
-2817     						     ibucontext);
+*** CID 1505156:    (BUFFER_SIZE)
+/drivers/infiniband/hw/irdma/uk.c: 104 in irdma_clr_wqes()
+98     	u32 wqe_idx;
+99
+100     	if (!(qp_wqe_idx & 0x7F)) {
+101     		wqe_idx = (qp_wqe_idx + 128) % qp->sq_ring.size;
+102     		wqe = qp->sq_base[wqe_idx].elem;
+103     		if (wqe_idx)
+vvv     CID 1505156:    (BUFFER_SIZE)
+vvv     You might overrun the 32 byte destination string "wqe" by writing the maximum 4096 bytes from "qp->swqe_polarity ? 0 : 255".
+104     			memset(wqe, qp->swqe_polarity ? 0 : 0xFF, 0x1000);
+105     		else
+106     			memset(wqe, qp->swqe_polarity ? 0xFF : 0, 0x1000);
+107     	}
+108     }
+109
+/drivers/infiniband/hw/irdma/uk.c: 106 in irdma_clr_wqes()
+100     	if (!(qp_wqe_idx & 0x7F)) {
+101     		wqe_idx = (qp_wqe_idx + 128) % qp->sq_ring.size;
+102     		wqe = qp->sq_base[wqe_idx].elem;
+103     		if (wqe_idx)
+104     			memset(wqe, qp->swqe_polarity ? 0 : 0xFF, 0x1000);
+105     		else
+vvv     CID 1505156:    (BUFFER_SIZE)
+vvv     You might overrun the 32 byte destination string "wqe" by writing the maximum 4096 bytes from "qp->swqe_polarity ? 255 : 0".
+106     			memset(wqe, qp->swqe_polarity ? 0xFF : 0, 0x1000);
+107     	}
+108     }
+109
+110     /**
+111      * irdma_uk_qp_post_wr - ring doorbell
 
 If this is a false positive, please let us know so we can mark it as
 such, or teach the Coverity rules to be smarter. If not, please make
@@ -166,8 +120,8 @@ sure fixes get into linux-next. :) For patches fixing this, please
 include these lines (but double-check the "Fixes" first):
 
 Reported-by: coverity-bot <keescook+coverity-bot@chromium.org>
-Addresses-Coverity-ID: 1505160 ("TAINTED_SCALAR")
-Fixes: b48c24c2d710 ("RDMA/irdma: Implement device supported verb APIs")
+Addresses-Coverity-ID: 1505156 ("BUFFER_SIZE")
+Fixes: 551c46edc769 ("RDMA/irdma: Add user/kernel shared libraries")
 
 Thanks for your attention!
 
