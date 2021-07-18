@@ -2,91 +2,84 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0ED9C636CA
-	for <linux-next@archiver.kernel.org>; Sun, 18 Jul 2021 22:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B94C636CA
+	for <linux-next@archiver.kernel.org>; Sun, 18 Jul 2021 22:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADA436109E
-	for <linux-next@archiver.kernel.org>; Sun, 18 Jul 2021 22:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF683610CB
+	for <linux-next@archiver.kernel.org>; Sun, 18 Jul 2021 22:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233125AbhGRWWf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 18 Jul 2021 18:22:35 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:36113 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229585AbhGRWW1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 18 Jul 2021 18:22:27 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GSfXb34Vmz9sRf;
-        Mon, 19 Jul 2021 08:19:27 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1626646767;
-        bh=lGJade7f6Gmlbv7+Tcrbi04X7FCxS2n77Iwvwhi8Iv4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pzYgrR3xbjQ4FardN7hgg40OB5nCkCFRR1fXgEd+Lg6RyYKadTuV1xL+4CAhrxPwc
-         LB63d7dZ4l6Y11DAT9at6pPGXY/pb7A1gbQaHejJMThv204ir7swPA9X61tmSPMVCa
-         i6Om7jsSmwbEd8BDrNEffwjgwZRpUoJzoOv3uNwVJHHDPehR+5+58XYGgpBtxlPzJ+
-         p30zgliPGuQlEkCFyPHPFPZCp/DPMSzoN/P5Q0Izjkc5MLfbqT7L5oEite2HPqNday
-         C+1z/nBdYcSksAu5CdxJpEyOcnPqwnXbGQG3u59LrJBrOzF/Rv/fHRqtD7HhOuvmSq
-         7TyXa5KGTvL9Q==
-Date:   Mon, 19 Jul 2021 08:19:26 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S233379AbhGRWvQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 18 Jul 2021 18:51:16 -0400
+Received: from mail-pl1-f181.google.com ([209.85.214.181]:42690 "EHLO
+        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231846AbhGRWvQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 18 Jul 2021 18:51:16 -0400
+Received: by mail-pl1-f181.google.com with SMTP id v14so8590077plg.9;
+        Sun, 18 Jul 2021 15:48:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pzlrHZ05KMXoN+FW5nS9GCk+7BNweOh85d73iVbocLw=;
+        b=USDA4gxvg2QcX7H28ZMVsVISiAaQE21E83kzkE9vvHNOq1oacnFomB+YQwNqTZlu8T
+         wW2jdebXLqBnpWfKzEQE8Wd264EXMEJwvcLerOU+uvtwEWypOEgPmVnepguTziHw3TMB
+         3lHb3cKHqdP6l1Asy5Gi0LuP9SeeeKJjeVzfAxQhFUPcFJVRdqbMHM4cmO8jF774kdNm
+         nAHGmurpPq5J5PU3VUODNy6pOURLTY36C3L9YISTuCLezogRylhfD9+rD7+ZLR5oStfD
+         xooHNqFFPCvn2HJIhFk975GVEpYekpk1nLGHh7nGpw2PLZiwvHaVAkrDQynFV34NnpPc
+         bOfg==
+X-Gm-Message-State: AOAM530ySG8tFY7lFhPV59BKZOVw2iOUTd7kno+aEBJhyG9fMkj2sdM6
+        Dfw1lMuvYqkR20OJewIMV0w=
+X-Google-Smtp-Source: ABdhPJyYJYZ0g1g+LvbNhKG9EqJwnRDvbqWrUe2tpIcNdiUOcjsywRlQZPYRbn3815a0+4BmwRNB0g==
+X-Received: by 2002:a17:90a:4417:: with SMTP id s23mr27028229pjg.228.1626648497289;
+        Sun, 18 Jul 2021 15:48:17 -0700 (PDT)
+Received: from localhost ([2601:647:5b00:6f70:be34:681b:b1e9:776f])
+        by smtp.gmail.com with ESMTPSA id v7sm8200257pjk.37.2021.07.18.15.48.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Jul 2021 15:48:16 -0700 (PDT)
+Date:   Sun, 18 Jul 2021 15:48:15 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the fpga tree
-Message-ID: <20210719081926.5ea11131@canb.auug.org.au>
+Subject: Re: linux-next: Fixes tag needs some work in the fpga tree
+Message-ID: <YPSvr1r51Y2MkSZc@epycbox.lan>
+References: <20210719081926.5ea11131@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//6D10d/MrW.NuwxBhH/EH9e";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210719081926.5ea11131@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_//6D10d/MrW.NuwxBhH/EH9e
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On Mon, Jul 19, 2021 at 08:19:26AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   6c17b7ff1d11 ("fpga: zynqmp-fpga: Address warning about unused variable")
+> 
+> Fixes tag
+> 
+>   Fixes: c09f7471127e ("fpga manager: Adding FPGA Manager support for
+> 
+> has these problem(s):
+> 
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+> 
+> Please do not split Fixes tags over more than one line.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-In commit
+D'oh. Do people fix these things generally with a rebase?
 
-  6c17b7ff1d11 ("fpga: zynqmp-fpga: Address warning about unused variable")
-
-Fixes tag
-
-  Fixes: c09f7471127e ("fpga manager: Adding FPGA Manager support for
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes tags over more than one line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//6D10d/MrW.NuwxBhH/EH9e
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmD0qO4ACgkQAVBC80lX
-0GyELQf+IOKpZ2sgUBzMCEUn6MfIwC5hVVKWOS70XAhJePkxIZIsothZzzCwCH7P
-PBFuEyv3GQYWrit/UE5ht+S5CPpF6k0HCJ3CpF9ZFZ5WhUPY8jEKwFQenqJgx1/b
-ORPQjcxpUlPR6DjIE7ZJIA1JWsMrEKveZXVdef4spSU9HEOyKeSsNmqF/2QMaKuz
-gAIRi9NKy4/CeHwmj2hp7K5B9qUgK+EIF5ZRMc0BcZm9kV5fSFcczAOTe+Z5m39J
-5sKwo66yTXfDybhZFFU1sZoyZWhRw1oCNh4cJxKX6ZQQgqSy3zKCfa0IQ/9Kaq3f
-MsrEraMjk6awyAUSGRBF7l/ldsuWdA==
-=iddK
------END PGP SIGNATURE-----
-
---Sig_//6D10d/MrW.NuwxBhH/EH9e--
+- Moritz
