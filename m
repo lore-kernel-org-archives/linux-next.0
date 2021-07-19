@@ -2,142 +2,58 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333FFC636CA
-	for <linux-next@archiver.kernel.org>; Mon, 19 Jul 2021 00:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D083C12002
+	for <linux-next@archiver.kernel.org>; Mon, 19 Jul 2021 05:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12D5660241
-	for <linux-next@archiver.kernel.org>; Mon, 19 Jul 2021 00:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E37D06117A
+	for <linux-next@archiver.kernel.org>; Mon, 19 Jul 2021 05:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233759AbhGSAym (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 18 Jul 2021 20:54:42 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52091 "EHLO ozlabs.org"
+        id S233710AbhGSFt1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 19 Jul 2021 01:49:27 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:51444 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233530AbhGSAym (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 18 Jul 2021 20:54:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GSjwD2stzz9sRf;
-        Mon, 19 Jul 2021 10:51:39 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1626655902;
-        bh=SmOQ1yrThLkTVeJ5jlo9RWwKgnEmPbixTf/sBetw5EA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sSIm38iQ5mDjFfpTn+S0Or0UMrOOfG9blitMhdkzDRIsiDjfT50Ul9gFfiVJG7UVu
-         R/RKa+yMADKc+MLHpktkjYbPBOWMFvXT4MdaWV7/kOqUd8BKQAkoEtVXdxP9kU0pyU
-         mSFAuvG3flOsDB1Eo9m+Pv2lqXEmcCi8fgLFwV/6UHYUZKfkcnXPQpAgCK1soAzoCX
-         YmGWg/6+TC1X+I5OrGYkUXWKE+F8JpD/AxrqggSWKvlliuoY25BHyOZosz0ceYfpvL
-         j+WHASIpdKjrIMrweDDkJlmkJYs1JXwBiAXJqPlwUT4j0ewvg9HHhahfWLKq+XKHrW
-         QeeburEQdu+0A==
-Date:   Mon, 19 Jul 2021 10:51:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Cody Haas <chaas@riotgames.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        id S229906AbhGSFt1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 19 Jul 2021 01:49:27 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
+        id 1m5M6e-0004bd-W8; Mon, 19 Jul 2021 13:46:21 +0800
+Received: from herbert by gondobar with local (Exim 4.92)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1m5M6a-0004OP-Po; Mon, 19 Jul 2021 13:46:16 +0800
+Date:   Mon, 19 Jul 2021 13:46:16 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stephan Mueller <smueller@chronox.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Crypto List <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Lisa Watanabe <lwatanabe@riotgames.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Zvi Effron <zeffron@riotgames.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20210719105138.2426741b@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the crypto tree
+Message-ID: <20210719054616.GA16860@gondor.apana.org.au>
+References: <20210719081320.1d205c98@canb.auug.org.au>
+ <6604f8be7a73f727cbfae7f93a74da706e46befc.camel@chronox.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/tbaoWTj/FgoKmq9_RejeweE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6604f8be7a73f727cbfae7f93a74da706e46befc.camel@chronox.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/tbaoWTj/FgoKmq9_RejeweE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 19, 2021 at 07:43:29AM +0200, Stephan Mueller wrote:
+>
+> Herbert, how do we go about this fix? I can surely prepare another patch. But
+> considering that the old patch is already in the git tree, are you considering
+> to revert it?
 
-Hi all,
+I think we should keep this in mind for future submissions.
 
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  net/bpf/test_run.c
-
-between commit:
-
-  5e21bb4e8125 ("bpf, test: fix NULL pointer dereference on invalid expecte=
-d_attach_type")
-
-from the net tree and commit:
-
-  47316f4a3053 ("bpf: Support input xdp_md context in BPF_PROG_TEST_RUN")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/bpf/test_run.c
-index 1cc75c811e24,cda8375bbbaf..000000000000
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@@ -697,15 -756,24 +756,27 @@@ int bpf_prog_test_run_xdp(struct bpf_pr
-  	struct netdev_rx_queue *rxqueue;
-  	struct xdp_buff xdp =3D {};
-  	u32 retval, duration;
-+ 	struct xdp_md *ctx;
-  	u32 max_data_sz;
-  	void *data;
-- 	int ret;
-+ 	int ret =3D -EINVAL;
- =20
- +	if (prog->expected_attach_type =3D=3D BPF_XDP_DEVMAP ||
- +	    prog->expected_attach_type =3D=3D BPF_XDP_CPUMAP)
- +		return -EINVAL;
-- 	if (kattr->test.ctx_in || kattr->test.ctx_out)
-- 		return -EINVAL;
-+ 	ctx =3D bpf_ctx_init(kattr, sizeof(struct xdp_md));
-+ 	if (IS_ERR(ctx))
-+ 		return PTR_ERR(ctx);
-+=20
-+ 	if (ctx) {
-+ 		/* There can't be user provided data before the meta data */
-+ 		if (ctx->data_meta || ctx->data_end !=3D size ||
-+ 		    ctx->data > ctx->data_end ||
-+ 		    unlikely(xdp_metalen_invalid(ctx->data)))
-+ 			goto free_ctx;
-+ 		/* Meta data is allocated from the headroom */
-+ 		headroom -=3D ctx->data;
-+ 	}
- =20
-  	/* XDP have extra tailroom as (most) drivers use full page */
-  	max_data_sz =3D 4096 - headroom - tailroom;
-
---Sig_/tbaoWTj/FgoKmq9_RejeweE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmD0zJoACgkQAVBC80lX
-0GwqOQgAhhIjnZxsNIulTAgCbUTi7bmTRXkBcabxW2Pyxv1XSyXC9TTgJAqFJvVR
-zpvfmOVJAbVuEeur08Xn+yeafXkxS8qA9XPCeuCYf71bw/Drzqu//wOWLurFcizT
-7j4HbxaaigoyNG+XbIwA2bCjB2fsi6PU4vYK5eh1WxTydQDS48mx+F7CbyJP3SYs
-tb3JdY5UGDVN7Oqh/HoShgP9dJXxARALccqXXrLztEX90wlAYf7BVe19PVxnpB1B
-/oqRdliy7GF7ZE3rlheHmTakwKuUA2oqj95BI5Fhp/Nn547Okrq8VbFcKe2cI5Im
-dBTK1tV54BQGdW4kn6y6InZ4s3HewQ==
-=mnov
------END PGP SIGNATURE-----
-
---Sig_/tbaoWTj/FgoKmq9_RejeweE--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
