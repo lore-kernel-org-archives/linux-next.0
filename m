@@ -2,83 +2,159 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DF4C4338F
-	for <linux-next@archiver.kernel.org>; Sun, 25 Jul 2021 23:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43516C4320A
+	for <linux-next@archiver.kernel.org>; Mon, 26 Jul 2021 07:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A584060EB4
-	for <linux-next@archiver.kernel.org>; Sun, 25 Jul 2021 23:27:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27F8460C51
+	for <linux-next@archiver.kernel.org>; Mon, 26 Jul 2021 07:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229956AbhGYWq1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 25 Jul 2021 18:46:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229547AbhGYWq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 25 Jul 2021 18:46:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C0BC4608FE;
-        Sun, 25 Jul 2021 23:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627255616;
-        bh=K3Ipz5/fSzqnumrv7X+VcBJf96RklfBddytOAzqbouY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QGlJ2Rpd7ZMs2sm5julAlk0FIwLdphRYYjNozzQtUhdhkRahzk/IBy0zUUj64ezpY
-         S5e0RNuNSNw7VEg9YzwGdzrbgTb4Rec2rg49zk/cF1k1bK+xyJL1/bgyj9MPWMKy95
-         APn+kGs0K6NjT4IJzh+CYxGbA3jUzi434BpFkLlmmMDQJAN98AEIsqyB61eXkxTLFa
-         O5m4lfecrEAMirY868CMlKZaFa3Kt0pUF+tJjrj11947fFoZa5nw/2OdR5NFgO7jO0
-         3Ld4lD7BfRfi/hCQmJBITc04YQ3oiVNRzb7Z/wI8GFXhcadDCZpxBA9h4PKwhKfLcD
-         u1OTSPt6SSJSg==
-Date:   Mon, 26 Jul 2021 00:26:47 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Jul 23
-Message-ID: <20210725232647.GA4670@sirena.org.uk>
-References: <20210723180812.47cfa78b@canb.auug.org.au>
+        id S232210AbhGZGeC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 26 Jul 2021 02:34:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37810 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232252AbhGZGeA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Mon, 26 Jul 2021 02:34:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627283669;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=um4df6F+Tcs1NedbhaEs9ICFL4JEkb2ohkfDmaRpXVs=;
+        b=HdnxcrnE9PyzpgE4b4yqNeXuzbLGuc5mu+BoNa8WdKmEgkUsbrZweEAbaDgdVG599z1bPn
+        /tgVP/+z3SG4Jx0LyZGJeuHrMvy/bCcfROrLbYV1EAC2ShAhCETm5A1dOjXkv9B8655s8D
+        kAghvLQmEWyTkHZGzHHZ3yjrQwRTKTI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-51-DuXvIpiHP6-3yPk8qvagjw-1; Mon, 26 Jul 2021 03:14:28 -0400
+X-MC-Unique: DuXvIpiHP6-3yPk8qvagjw-1
+Received: by mail-wr1-f71.google.com with SMTP id o8-20020a5d4a880000b029013a10564614so4330946wrq.15
+        for <linux-next@vger.kernel.org>; Mon, 26 Jul 2021 00:14:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=um4df6F+Tcs1NedbhaEs9ICFL4JEkb2ohkfDmaRpXVs=;
+        b=RI65eCrPzceWdDckz/geHtYHTFcn52y5c0gB4r7szlyDwBlfmjnRd1KXPYocwCFtdj
+         5xpKAyphmF+2bMu5fcV/SsRpyhwzo1kh1qEPEkLi/sFy55lJEeV8jRkCbu4MvJ12XlwR
+         Av1QY93L5NL0MN1wafu09RUKns46XQ/jm9LSjTpBJfRyohj9etqIrHVmR7MIFlG7YZSn
+         ovagGqlJ/iSImY1IG02aYKsmBBPeCYKvlFV/zE1ad4KdTy8KVr0jMMzI1o5mR9QHPDbT
+         hkx3eU1VmYtSpf+5APFZChP8IxmI3b/241J/Gx322TuZ0PFapqkgCr+HuJ0Lsd171l4V
+         JQKQ==
+X-Gm-Message-State: AOAM531ALmf3TOP/HXkRJS8nQxzUwx9YxbGEfh9zizAZwxsqvQa8+pOJ
+        yPqg01Ka02oovv++CGp2sTKvDzfeWjYgyYJNduoF4+vf0jkazYY0QaIffTltkrJtyBLawkzcZ/6
+        VWvM5A3WDGed07TTFSx35eQ==
+X-Received: by 2002:a05:600c:a08:: with SMTP id z8mr11306681wmp.52.1627283667217;
+        Mon, 26 Jul 2021 00:14:27 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyrJ5ioNqCfkDgUWTA7YxeWf82kzHlJSCsGt9E8hJ1xGP6IhEO9RD5CtVqgDVl+ePM/lAAEqw==
+X-Received: by 2002:a05:600c:a08:: with SMTP id z8mr11306664wmp.52.1627283667006;
+        Mon, 26 Jul 2021 00:14:27 -0700 (PDT)
+Received: from [192.168.3.132] (p4ff23b33.dip0.t-ipconnect.de. [79.242.59.51])
+        by smtp.gmail.com with ESMTPSA id d203sm7830431wmd.38.2021.07.26.00.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Jul 2021 00:14:26 -0700 (PDT)
+Subject: Re: mmotm 2021-07-23-15-03 uploaded (mm/memory_hotplug.c)
+To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+References: <20210723220400.w5iKInKaC%akpm@linux-foundation.org>
+ <5966f6a2-bdba-3a54-c6cb-d21aaeb8f534@infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <5394da5e-29f0-ff7d-e614-e2805400a8bb@redhat.com>
+Date:   Mon, 26 Jul 2021 09:14:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Content-Disposition: inline
-In-Reply-To: <20210723180812.47cfa78b@canb.auug.org.au>
-X-Cookie: Vini, vidi, Linux!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5966f6a2-bdba-3a54-c6cb-d21aaeb8f534@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On 24.07.21 20:49, Randy Dunlap wrote:
+> On 7/23/21 3:04 PM, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2021-07-23-15-03 has been uploaded to
+>>
+>>     https://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> https://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+>> You will need quilt to apply these patches to the latest Linus release (5.x
+>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>> https://ozlabs.org/~akpm/mmotm/series
+>>
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>>
+> 
+> on x86_64:
+> # CONFIG_CMA is not set
+> 
+> mm-memory_hotplug-memory-group-aware-auto-movable-online-policy.patch
+> 
+> 
+> 
+> ../mm/memory_hotplug.c: In function ‘auto_movable_stats_account_zone’:
+> ../mm/memory_hotplug.c:748:33: error: ‘struct zone’ has no member named ‘cma_pages’; did you mean ‘managed_pages’?
+>     stats->movable_pages += zone->cma_pages;
+>                                   ^~~~~~~~~
+>                                   managed_pages
+> ../mm/memory_hotplug.c:750:38: error: ‘struct zone’ has no member named ‘cma_pages’; did you mean ‘managed_pages’?
+>     stats->kernel_early_pages -= zone->cma_pages;
+>                                        ^~~~~~~~~
+>                                        managed_pages
+> 
+> 
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks Randy, the following on top should make it fly:
 
-On Fri, Jul 23, 2021 at 06:08:12PM +1000, Stephen Rothwell wrote:
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index bfdaa28eb86f..fa1a0afd32ba 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -741,13 +741,15 @@ static void auto_movable_stats_account_zone(struct auto_movable_stats *stats,
+         if (zone_idx(zone) == ZONE_MOVABLE) {
+                 stats->movable_pages += zone->present_pages;
+         } else {
++               stats->kernel_early_pages += zone->present_early_pages;
++#ifdef CONFIG_CMA
+                 /*
+                  * CMA pages (never on hotplugged memory) behave like
+                  * ZONE_MOVABLE.
+                  */
+                 stats->movable_pages += zone->cma_pages;
+-               stats->kernel_early_pages += zone->present_early_pages;
+                 stats->kernel_early_pages -= zone->cma_pages;
++#endif /* CONFIG_CMA */
+         }
+  }
+  struct auto_movable_group_stats {
 
-> News: I will be on vacation for 2 week froms Saturday, so the next
-> linux-next release will be August 9.
 
-While Stephen is (hopefully!) enjoying his vacation I'll try to provide
-some holiday cover, I'm getting my second vaccine dose on Monday so
-between the time that'll take, potential side effects and the general
-time it takes to get the first -next build on a new system I'm not sure
-exactly when I'll get going.
+-- 
+Thanks,
 
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
+David / dhildenb
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmD98zcACgkQJNaLcl1U
-h9Akywf/bK/j6o9dpvb3ebwujQE5uvVmHDL4MGJChNd4Os9wvf4RV4yYoETCBxt0
-azNytDEpLNIgXFAJXAeclCNo68IidTemvZnMWthqxBIX9mU30twYW/6WHNIBgB+p
-3S5o+SR1FlHpvDwo7ErA3WhLxwYKUzfCyMb3gqY0T+GXeoXl/ZIZfCyWFvxMJD7o
-pudCxgH24dNy+1zBT0OF2vql/PrfWRPy4FTlJFWSKDEUs2a/TXvvqKY+/ierWxnA
-6JKnAyhqiPq/yE0XKkvwGEPsrs1V4zkqMhKMAaNKMJmahJUyopighbNYTCYbd/NO
-iX4n73kSiLptDN32VsBW4LG33AQjBQ==
-=ouJC
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
