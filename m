@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17E0C4338F
-	for <linux-next@archiver.kernel.org>; Fri, 30 Jul 2021 13:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D7EC4338F
+	for <linux-next@archiver.kernel.org>; Fri, 30 Jul 2021 13:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A73A260F9B
-	for <linux-next@archiver.kernel.org>; Fri, 30 Jul 2021 13:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0E1B60F5E
+	for <linux-next@archiver.kernel.org>; Fri, 30 Jul 2021 13:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbhG3NxS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 30 Jul 2021 09:53:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46398 "EHLO mail.kernel.org"
+        id S239081AbhG3Nx6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 30 Jul 2021 09:53:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231137AbhG3NxS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 30 Jul 2021 09:53:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A2C3360F12;
-        Fri, 30 Jul 2021 13:53:12 +0000 (UTC)
+        id S231247AbhG3Nx5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 30 Jul 2021 09:53:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC96260F94;
+        Fri, 30 Jul 2021 13:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627653193;
+        s=k20201202; t=1627653232;
         bh=asftvaqZKAxKgDpzEbphWN/AE9bWu70isAH4OxawG3E=;
         h=From:To:Cc:Subject:Date:From;
-        b=T64AgJ7IAYiJOHBy6phjGd+g1drkO5fP1Eu/N6B+dJR0pW7KH3sO62N1rgezy3d97
-         BQQGu+MopkRGSjokW9hWGG/uCmQBtlVlm6La+3+zR8XSQdabZXpluMr14ZXKXDtPtR
-         GKKcgvMBOA0UTJ+x5pHDPV6PS2inHBd1HSPPY4EVcbe3zn6KpcVc9HEA2hNhAdQL3+
-         7y8wYL6B1cbIdOlxH633ym6cFcdvOCG8/fhGdEdwcZhrgYxDZ8sof/OHi/WLeZcmA8
-         ngELEFQdA4D7//BuFcqZuMrAn6DPVtemqSiuSBsAYqM23wz7YYYitWQiLVXklzBsJI
-         p6zH4XcBE3lZg==
+        b=pTyy5qWkeMV5lwB/uhJGG8NSIrVB7IO4UMC1fo5PSm3eTTzWDTVXkAd/lsp5zvA5S
+         nWy3Z5LiptkuFda7ljtDI2k0tXfBrCNFEWEIOUaorPAMvBomiFjjO0rd4rIK/9vpqw
+         AIOMD5jOch3eg7Fo3mHOj5LNJ7korBIrMAHEbU6/dwiyoaV2qelL3aMAf5D+Ugc4WB
+         U4bKqdpVbwZNFdn8Vl+cKy5KIm0y0UxgFAYDqKpCFrhWLXeHFHxMEaQOEHARmshEcK
+         ddb9Ogc8WD0iOELrW3AbY1sJVu/EuuUbnh1zagn9PaP3N5TnslIJjVHqnQOpqZFufc
+         U2QxzQ42obs7A==
 From:   Mark Brown <broonie@kernel.org>
 To:     Greg KH <greg@kroah.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Phillip Potter <phil@philpotter.co.uk>
 Subject: build failure after merge of the staging tree
-Date:   Fri, 30 Jul 2021 14:52:19 +0100
-Message-Id: <20210730135219.21723-1-broonie@kernel.org>
+Date:   Fri, 30 Jul 2021 14:53:40 +0100
+Message-Id: <20210730135340.17863-1-broonie@kernel.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
