@@ -2,103 +2,120 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DF4C43214
-	for <linux-next@archiver.kernel.org>; Sat,  7 Aug 2021 02:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77329C4338F
+	for <linux-next@archiver.kernel.org>; Sun,  8 Aug 2021 23:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6A1611C6
-	for <linux-next@archiver.kernel.org>; Sat,  7 Aug 2021 02:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 570AC60F35
+	for <linux-next@archiver.kernel.org>; Sun,  8 Aug 2021 23:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbhHGCCT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 6 Aug 2021 22:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43476 "EHLO
+        id S230076AbhHHXDY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 8 Aug 2021 19:03:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbhHGCCS (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 6 Aug 2021 22:02:18 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E95C061798;
-        Fri,  6 Aug 2021 19:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=N2L9zgxhslmE4lxK1f+s/dL0EtHvvhBzVdO8xeW26qM=; b=NDaDydaDf4F7NvgrJtfOF6LRo4
-        diDN9RJq65WnzQzOTOMGMydYt+oYkdYIc7IRqPXouOTQiJJf+cWIZYhXT4Q+C4rGN55R9KA/Dll3z
-        Ui1Zao7OyutpMRMMVjXhYwRcXV5yPS3tBLhQQnuWo8VlFDXHHIuBjhO1ebmZvsiC8k0gZdTNtjoMi
-        swqEdCa1sHRDb+IVCUBTRAtKUwUBb67V8YL9NJvNEhQ87+EgAeK9HioRRgMYeB4hioHjG6/jMJZyZ
-        32XJ5SoJUqlxXp5LOOIejd8C/Eh2c7k/eZpCgqeQd0J6OWPNEiDs8kf/nKVkAXmUZdJAZ9GBM/p0m
-        5BK/LB7Q==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCBel-006VPe-Lz; Sat, 07 Aug 2021 02:01:48 +0000
-Subject: Re: [PATCH 2/2] mm/damon/Kconfig: Remove unnecessary PAGE_EXTENSION
- setup
-To:     SeongJae Park <sj38.park@gmail.com>, akpm@linux-foundation.org
-Cc:     SeongJae Park <sjpark@amazon.de>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        willy@infradead.org, linux-damon@amazon.com
-References: <20210806092246.30301-1-sjpark@amazon.de>
- <20210806095153.6444-1-sj38.park@gmail.com>
- <20210806095153.6444-2-sj38.park@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8e33d30e-76ff-9f45-8318-9dcd7a2145fd@infradead.org>
-Date:   Fri, 6 Aug 2021 19:01:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        with ESMTP id S229942AbhHHXDY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 8 Aug 2021 19:03:24 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FC6C061760;
+        Sun,  8 Aug 2021 16:03:00 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GjZW25BD9z9s5R;
+        Mon,  9 Aug 2021 09:02:54 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1628463776;
+        bh=FdPjKZIYMQXQ+oBXEBzVzpzieXyHd8DHXvzoDOSQYQQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hLEbmd6Fc0JZcPtHVRj6erCeOJBlv+jqri2owYQlF3bHQbdlJTXagJ1DQSgPZpF+w
+         /TZqKylF+DXJwywk93SmwxMmMKdu4pJPmc715y8ZMDgzrLaU1WuE9w+8mkhHcsdtFs
+         27SEkVXu4++fiMkh5DBcQ8vi8fgxUGNQ3P/XB4Y5qM6bYrPpy0wW1j0zZmSaU39PCk
+         IL3vt3xGjukMS9HCWiMLLPojb5ysmEepQEtlBnuoao3FJKigAuBfttK5p+arTgVQOB
+         2Pa+aYgMrfD3JkX8IYVlSBHoTzXPdOP3vM8oafW2ODmHv/QMXF8za075WK20QE//e4
+         ArRNO1wwpUUrQ==
+Date:   Mon, 9 Aug 2021 09:02:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Subject: Re: linux-next: manual merge of the qcom tree with the usb tree
+Message-ID: <20210809090252.477dd77b@canb.auug.org.au>
+In-Reply-To: <20210806112353.GA33586@sirena.org.uk>
+References: <20210806102138.27373-1-broonie@kernel.org>
+        <YQ0YKiFVx0KrkW5s@kroah.com>
+        <20210806112353.GA33586@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20210806095153.6444-2-sj38.park@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/L_kmg7AJqdtdaKEkVzx4f0d";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 8/6/21 2:51 AM, SeongJae Park wrote:
-> From: SeongJae Park <sjpark@amazon.de>
-> 
-> Commit 13d49dbd0123 ("mm/damon: implement primitives for the virtual
-> memory address spaces") of linux-mm[1] makes DAMON_VADDR to set
-> PAGE_IDLE_FLAG.  PAGE_IDLE_FLAG sets PAGE_EXTENSION if !64BIT.  However,
-> DAMON_VADDR do the same work again.  This commit removes the unnecessary
-> duplicate.
-> 
-> [1] https://github.com/hnaz/linux-mm/commit/13d49dbd0123
-> 
-> Fixes: 13d49dbd0123 ("mm/damon: implement primitives for the virtual memory address spaces")
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: SeongJae Park <sjpark@amazon.de>
+--Sig_/L_kmg7AJqdtdaKEkVzx4f0d
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Hi Mark,
 
-Thanks.
+On Fri, 6 Aug 2021 12:23:53 +0100 Mark Brown <broonie@kernel.org> wrote:
+>
+> On Fri, Aug 06, 2021 at 01:08:26PM +0200, Greg Kroah-Hartman wrote:
+> > On Fri, Aug 06, 2021 at 11:21:38AM +0100, Mark Brown wrote: =20
+>=20
+> > > diff --cc arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > > index 78c55ca10ba9,31686950004e..000000000000
+> > > --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi =20
+> >=20
+> > Love the fix, did something go wrong?  :) =20
+>=20
+> The fix will be whatever was in HEAD.
 
-> ---
->   mm/damon/Kconfig | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/mm/damon/Kconfig b/mm/damon/Kconfig
-> index 455995152697..37024798a97c 100644
-> --- a/mm/damon/Kconfig
-> +++ b/mm/damon/Kconfig
-> @@ -27,7 +27,6 @@ config DAMON_KUNIT_TEST
->   config DAMON_VADDR
->   	bool "Data access monitoring primitives for virtual address spaces"
->   	depends on DAMON && MMU
-> -	select PAGE_EXTENSION if !64BIT
->   	select PAGE_IDLE_FLAG
->   	help
->   	  This builds the default data access monitoring primitives for DAMON
-> 
+I used the following instead.  Is that wrong?
 
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-~Randy
+diff --cc arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 78c55ca10ba9,31686950004e..000000000000
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@@ -2566,7 -2572,7 +2572,7 @@@
+  			power-domains =3D <&gcc USB30_GDSC>;
+  			status =3D "disabled";
+ =20
+- 			dwc3@6a00000 {
+ -			usb3_dwc3: usb@6a00000 {
+++			usb3_dwc3: dwc3@6a00000 {
+  				compatible =3D "snps,dwc3";
+  				reg =3D <0x06a00000 0xcc00>;
+  				interrupts =3D <0 131 IRQ_TYPE_LEVEL_HIGH>;
 
+--Sig_/L_kmg7AJqdtdaKEkVzx4f0d
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmEQYpwACgkQAVBC80lX
+0GyHlAf/W9uSTM/OYgp2jMw9MfpMLzaJW1bF/LlALFksD5+89ZeRM6xPZCVufZDx
+fpkIG6CUWc7tcZHMc+0JA/91FGz+tCny1TYgHnQDnLoSw9SGc92NN5zfUtE/gWhH
+WyT+DHCr6UB425hTQRSLjc7idwJ5D31D2j+sjWUIJ/i9Krrcn1yx/eKoZJpJzFT2
+n4zMsdYNVCp15oggIAKsU9vcGkk5hv5QirqZx7yb3k6U50/KsalUYPXsj4C6dgsy
+cwBQKZXVR3c1GstGTqaSb/vuQxg57Y/tbspBimQG9Ij4uRAEr84VL/rtKX5YzWNZ
+De3E1KSBm87Su1sZO9Ue3xUzsDzhcw==
+=0F9S
+-----END PGP SIGNATURE-----
+
+--Sig_/L_kmg7AJqdtdaKEkVzx4f0d--
