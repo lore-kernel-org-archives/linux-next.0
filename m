@@ -2,184 +2,297 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED40C432BE
-	for <linux-next@archiver.kernel.org>; Wed, 11 Aug 2021 15:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2B5C4338F
+	for <linux-next@archiver.kernel.org>; Wed, 11 Aug 2021 17:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DECAB60FA0
-	for <linux-next@archiver.kernel.org>; Wed, 11 Aug 2021 15:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23B861019
+	for <linux-next@archiver.kernel.org>; Wed, 11 Aug 2021 17:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232993AbhHKPQx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 11 Aug 2021 11:16:53 -0400
-Received: from mga03.intel.com ([134.134.136.65]:4200 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233121AbhHKPPw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 11 Aug 2021 11:15:52 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10072"; a="215169007"
-X-IronPort-AV: E=Sophos;i="5.84,313,1620716400"; 
-   d="scan'208";a="215169007"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 08:15:25 -0700
-X-IronPort-AV: E=Sophos;i="5.84,313,1620716400"; 
-   d="scan'208";a="672904533"
-Received: from mdroper-desk1.fm.intel.com (HELO mdroper-desk1.amr.corp.intel.com) ([10.1.27.134])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 08:15:25 -0700
-Date:   Wed, 11 Aug 2021 08:15:24 -0700
-From:   Matt Roper <matthew.d.roper@intel.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: [Intel-gfx] linux-next: Signed-off-by missing for commit in the
- drm-intel tree
-Message-ID: <20210811151524.GE1556418@mdroper-desk1.amr.corp.intel.com>
-References: <20210715141854.1ad4a956@canb.auug.org.au>
- <162823181614.15830.10618174106053255881@jlahtine-mobl.ger.corp.intel.com>
- <YRE2RwQ6XlUqbgmn@phenom.ffwll.local>
- <20210809161939.GS1556418@mdroper-desk1.amr.corp.intel.com>
- <YRIcTTsEF0Kg7F8K@phenom.ffwll.local>
- <8735rgo3hi.fsf@intel.com>
- <YROc0KkBbuAwrx0f@phenom.ffwll.local>
+        id S229590AbhHKRFO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 11 Aug 2021 13:05:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229905AbhHKRFO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 11 Aug 2021 13:05:14 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE6DC0613D3
+        for <linux-next@vger.kernel.org>; Wed, 11 Aug 2021 10:04:50 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id h9so5723246ljq.8
+        for <linux-next@vger.kernel.org>; Wed, 11 Aug 2021 10:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=knf4e9QJIMKImSV5qeMhnbOncjZp3zFKh9Lv4EXo6MI=;
+        b=NgvSaEE+J2Qu7IXRxAXxxmGfKrrGRgvjfOOMN5JxtrVEEVcQ6O9IfINCVJNQdaYyuM
+         7EWKQwjVhgcEkWEoxlD622BKsi6s2wodFsXQHYJquatAarIapQfcpBC21Nog6B1v+46a
+         6nM90V6kXQzxeoXWb4vgBusi5v841vFBexg8LnKHHUkTFaAfqd1uODmk3zAv6FcSeDAK
+         TFMp494sN6PSfzRF4WZEe7in7LV7DY6oz3OXpdv0G6X8e2r9CVbieT+NQxrwC6He+5Rd
+         jtdREVKld0kccBwUKQYx5X+XQsmr89I3J1327uVBU+VW5pWRM3lilBP3cUDtrot0lyt1
+         i3rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=knf4e9QJIMKImSV5qeMhnbOncjZp3zFKh9Lv4EXo6MI=;
+        b=nri/7CfbjlqMPtzII/i/WR5IBjaoxNacB3FXtVly4b8zPb3ROkb4qB+wcaztkpZaRY
+         C2P7d9qwUJt6idIqBps7b6pHt453xzW1AqGGdnofkf4zGj9/conYWcgd+v6+ilA/0E6d
+         q8LzkKSur8+Xg+EPIPudgkyFgEAm0jQcNQjCpl3Acy1z01NH0W93T25/xyLrTNwdIrzI
+         Ds7fTme943bEiaYwicA9X+IXfMzBNWtpUPxk3GxrjUFk76EeRuKE9uQLjqJ+iRpHpOeA
+         v4fgdbFc3liyjc8JD9jCBzSBdGhhTsXhRibsPcUGn6P1o8PuyrSuZ72Otef2mL9DBlpl
+         Pulg==
+X-Gm-Message-State: AOAM532ncVAFOiq92PNpWl355Ey3FhKUnujih538rM7b0+uQl1CyfJZb
+        THn7i3ziUyDVbeiSPzrm2cF5XxlC+VoIuA7J7OtqTw==
+X-Google-Smtp-Source: ABdhPJwTokZ4kAaFQv9Jxk1a+fTmq1O0FERIIcZVPTaV5KnJIwVTRDNgPvKDt7D1S2aGqBQsIGzoTg28Yh71PEqRcfI=
+X-Received: by 2002:a2e:9ec1:: with SMTP id h1mr24109147ljk.0.1628701488538;
+ Wed, 11 Aug 2021 10:04:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YROc0KkBbuAwrx0f@phenom.ffwll.local>
+References: <20210811172605.72d6650e@canb.auug.org.au>
+In-Reply-To: <20210811172605.72d6650e@canb.auug.org.au>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 11 Aug 2021 10:04:36 -0700
+Message-ID: <CAKwvOdkv+L6LQO2NPr7EmGS3mp3AN=5CBfFkS0v6YU4j4YAm6A@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the kbuild tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Adam Bratschi-Kaye <ark.email@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Finn Behrens <me@kloenk.de>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Wedson Almeida Filho <wedsonaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Aug 11, 2021 at 11:48:00AM +0200, Daniel Vetter wrote:
-> On Wed, Aug 11, 2021 at 10:16:41AM +0300, Jani Nikula wrote:
-> > On Tue, 10 Aug 2021, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > > On Mon, Aug 09, 2021 at 09:19:39AM -0700, Matt Roper wrote:
-> > >> On Mon, Aug 09, 2021 at 04:05:59PM +0200, Daniel Vetter wrote:
-> > >> > On Fri, Aug 06, 2021 at 09:36:56AM +0300, Joonas Lahtinen wrote:
-> > >> > > Hi Matt,
-> > >> > > 
-> > >> > > Always use the dim tooling when applying patches, it will do the right
-> > >> > > thing with regards to adding the S-o-b.
-> > >> > 
-> > >> > fd.o server rejects any pushes that haven't been done by dim, so how did
-> > >> > this get through?
-> > >> 
-> > >> I definitely used dim for all of these patches, but I'm not sure how I
-> > >> lost my s-o-b on this one.  Maybe when I edited the commit message after
-> > >> 'dim extract-tags' I accidentally deleted an extra line when I removed
-> > >> the extract-tags marker?  It's the only patch where the line is missing,
-> > >> so it's almost certainly human error on my part rather than something
-> > >> dim did wrong.
-> > >
-> > > Yeah that's an expected failure model, and dim is supposed to catch that
-> > > by rechecking for sobs when you push. See dim_push_branch ->
-> > > checkpatch_commit_push_range in dim. So you can hand-edit stuff however
-> > > you want, dim /should/ catch it when pushing. That it didn't is kinda
-> > > confusing and I'd like to know why that slipped through.
-> > 
-> > One of the failures that happened here was that the commit was part of a
-> > topic branch that was merged and pushed directly. All merges should
-> > happen via pull requests on the list, and applied (preferrably by
-> > maintainers or at least with their acks recorded on the merge) using dim
-> > apply-pull which should also have the checks.
-> 
-> Ah yes if the merge is applied directly instead of using apply-pull then
-> that's not good. I guess that's why we have the rule that only maintainers
-> should handle topic branches ...
+On Wed, Aug 11, 2021 at 12:26 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the rust tree got a conflict in:
+>
+>   Makefile
+>
+> between commit:
+>
+>   6f5b41a2f5a6 ("Makefile: move initial clang flag handling into scripts/Makefile.clang")
+>   231ad7f409f1 ("Makefile: infer --target from ARCH for CC=clang")
+>   f12b034afeb3 ("scripts/Makefile.clang: default to LLVM_IAS=1")
+>
+> from the kbuild tree and commit:
+>
+>   e17f1b1f3e01 ("Makefile: generate `CLANG_FLAGS` even in GCC builds")
+>
+> from the rust tree.
+>
+> I fixed it up (Makefile fix up at the bottom, plus the following patch)
+> and can carry the fix as necessary. This is now fixed as far as
+> linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 11 Aug 2021 17:18:36 +1000
+> Subject: [PATCH] fixup for rust integration with Makefile.clang creation
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  Makefile               | 17 -----------------
+>  scripts/Makefile.clang | 19 +++++++++++++------
+>  2 files changed, 13 insertions(+), 23 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 5d504a1dcb06..3638ce07f208 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -625,24 +625,7 @@ endif
+>  # and from include/config/auto.conf.cmd to detect the compiler upgrade.
+>  CC_VERSION_TEXT = $(subst $(pound),,$(shell LC_ALL=C $(CC) --version 2>/dev/null | head -n 1))
+>
+> -TENTATIVE_CLANG_FLAGS := -Werror=unknown-warning-option
+> -
+> -ifneq ($(CROSS_COMPILE),)
+> -TENTATIVE_CLANG_FLAGS  += --target=$(notdir $(CROSS_COMPILE:%-=%))
+> -endif
+> -ifeq ($(LLVM_IAS),1)
+> -TENTATIVE_CLANG_FLAGS  += -integrated-as
+> -else
+> -TENTATIVE_CLANG_FLAGS  += -no-integrated-as
+> -GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
+> -TENTATIVE_CLANG_FLAGS  += --prefix=$(GCC_TOOLCHAIN_DIR)$(notdir $(CROSS_COMPILE))
+> -endif
+> -
+> -export TENTATIVE_CLANG_FLAGS
+> -
+> -ifneq ($(findstring clang,$(CC_VERSION_TEXT)),)
+>  include $(srctree)/scripts/Makefile.clang
+> -endif
 
-Hmm, I wasn't aware of this rule.  I double checked with Rodrigo before
-doing so and he thought merging a branch directly to intel-next and
-gt-next with the foundational definitions and tables should be an okay
-approach here (and he did an extra backmerge in preparation to make sure
-it went smoothly).
+Thanks Stephen for taking the time to resolve this and send a patch.
+We owe you one. We knew this conflict was coming.
 
-Anyway, definitely my fault; I'll keep this in mind for the future.
+Miguel, would you mind rolling this patch into your tree, then
+crediting Stephen if possible (on the patch that adds
+TENTATIVE_CLANG_FLAGS)?
+
+I think the above `ifneq ($(findstring clang,$(CC_VERSION_TEXT)),)`
+should stay in the top level Makefile though. It does look nicer to
+bury it in scripts/Makefile.clang, but I worry that someone doing a
+GCC build might trip the $(error) in that file (if CROSS_COMPILE was
+set and we're building a non-llvm-supported target).
+
+Also, if you're rebasing the related patches, I hope we can use a
+shorter identifier than TENTATIVE_CLANG_FLAGS? If they're used for
+bindgen, maybe BINDGEN_FLAGS?
+
+>
+>  # Include this also for config targets because some architectures need
+>  # cc-cross-prefix to determine CROSS_COMPILE.
+> diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+> index 3ae63bd35582..555b5255d9b3 100644
+> --- a/scripts/Makefile.clang
+> +++ b/scripts/Makefile.clang
+> @@ -12,24 +12,31 @@ CLANG_TARGET_FLAGS_s390             := s390x-linux-gnu
+>  CLANG_TARGET_FLAGS_x86         := x86_64-linux-gnu
+>  CLANG_TARGET_FLAGS             := $(CLANG_TARGET_FLAGS_$(SRCARCH))
+>
+> +TENTATIVE_CLANG_FLAGS := -Werror=unknown-warning-option
+> +
+>  ifeq ($(CROSS_COMPILE),)
+>  ifeq ($(CLANG_TARGET_FLAGS),)
+>  $(error Specify CROSS_COMPILE or add '--target=' option to scripts/Makefile.clang)
+>  else
+> -CLANG_FLAGS    += --target=$(CLANG_TARGET_FLAGS)
+> +TENTATIVE_CLANG_FLAGS  += --target=$(CLANG_TARGET_FLAGS)
+>  endif # CLANG_TARGET_FLAGS
+>  else
+> -CLANG_FLAGS    += --target=$(notdir $(CROSS_COMPILE:%-=%))
+> +TENTATIVE_CLANG_FLAGS  += --target=$(notdir $(CROSS_COMPILE:%-=%))
+>  endif # CROSS_COMPILE
+>
+>  ifeq ($(LLVM_IAS),0)
+> -CLANG_FLAGS    += -no-integrated-as
+> +TENTATIVE_CLANG_FLAGS  += -no-integrated-as
+>  GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
+> -CLANG_FLAGS    += --prefix=$(GCC_TOOLCHAIN_DIR)$(notdir $(CROSS_COMPILE))
+> +TENTATIVE_CLANG_FLAGS  += --prefix=$(GCC_TOOLCHAIN_DIR)$(notdir $(CROSS_COMPILE))
+>  else
+> -CLANG_FLAGS    += -integrated-as
+> +TENTATIVE_CLANG_FLAGS  += -integrated-as
+>  endif
+> -CLANG_FLAGS    += -Werror=unknown-warning-option
+> +
+> +export TENTATIVE_CLANG_FLAGS
+> +
+> +ifneq ($(findstring clang,$(CC_VERSION_TEXT)),)
+> +CLANG_FLAGS    += $(TENTATIVE_CLANG_FLAGS)
+>  KBUILD_CFLAGS  += $(CLANG_FLAGS)
+>  KBUILD_AFLAGS  += $(CLANG_FLAGS)
+>  export CLANG_FLAGS
+> +endif
+> --
+> 2.30.2
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc Makefile
+> index fcda81da6c20,c814b209b6c9..000000000000
+> --- a/Makefile
+> +++ b/Makefile
+> @@@ -581,10 -613,28 +623,25 @@@ endi
+>   # Some architectures define CROSS_COMPILE in arch/$(SRCARCH)/Makefile.
+>   # CC_VERSION_TEXT is referenced from Kconfig (so it needs export),
+>   # and from include/config/auto.conf.cmd to detect the compiler upgrade.
+>  -CC_VERSION_TEXT = $(subst $(pound),,$(shell $(CC) --version 2>/dev/null | head -n 1))
+>  +CC_VERSION_TEXT = $(subst $(pound),,$(shell LC_ALL=C $(CC) --version 2>/dev/null | head -n 1))
+>
+> + TENTATIVE_CLANG_FLAGS := -Werror=unknown-warning-option
+> +
+> + ifneq ($(CROSS_COMPILE),)
+> + TENTATIVE_CLANG_FLAGS += --target=$(notdir $(CROSS_COMPILE:%-=%))
+> + endif
+> + ifeq ($(LLVM_IAS),1)
+> + TENTATIVE_CLANG_FLAGS += -integrated-as
+> + else
+> + TENTATIVE_CLANG_FLAGS += -no-integrated-as
+> + GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
+> + TENTATIVE_CLANG_FLAGS += --prefix=$(GCC_TOOLCHAIN_DIR)$(notdir $(CROSS_COMPILE))
+> + endif
+> +
+> + export TENTATIVE_CLANG_FLAGS
+> +
+>   ifneq ($(findstring clang,$(CC_VERSION_TEXT)),)
+>  -CLANG_FLAGS   += $(TENTATIVE_CLANG_FLAGS)
+>  -KBUILD_CFLAGS += $(CLANG_FLAGS)
+>  -KBUILD_AFLAGS += $(CLANG_FLAGS)
+>  -export CLANG_FLAGS
+>  +include $(srctree)/scripts/Makefile.clang
+>   endif
+>
+>   # Include this also for config targets because some architectures need
+> @@@ -713,12 -763,11 +770,12 @@@ $(KCONFIG_CONFIG)
+>   # This exploits the 'multi-target pattern rule' trick.
+>   # The syncconfig should be executed only once to make all the targets.
+>   # (Note: use the grouped target '&:' when we bump to GNU Make 4.3)
+>  -quiet_cmd_syncconfig = SYNC    $@
+>  -      cmd_syncconfig = $(MAKE) -f $(srctree)/Makefile syncconfig
+>  -
+>  +#
+>  +# Do not use $(call cmd,...) here. That would suppress prompts from syncconfig,
+>  +# so you cannot notice that Kconfig is waiting for the user input.
+> - %/config/auto.conf %/config/auto.conf.cmd %/generated/autoconf.h: $(KCONFIG_CONFIG)
+> + %/config/auto.conf %/config/auto.conf.cmd %/generated/autoconf.h %/generated/rustc_cfg: $(KCONFIG_CONFIG)
+>  -      +$(call cmd,syncconfig)
+>  +      $(Q)$(kecho) "  SYNC    $@"
+>  +      $(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
+>   else # !may-sync-config
+>   # External modules and some install targets need include/generated/autoconf.h
+>   # and include/config/auto.conf but do not care if they are up-to-date.
+> @@@ -848,8 -926,13 +939,13 @@@ els
+>   DEBUG_CFLAGS  += -g
+>   endif
+>
+>  -ifneq ($(LLVM_IAS),1)
+>  +ifndef CONFIG_AS_IS_LLVM
+>   KBUILD_AFLAGS += -Wa,-gdwarf-2
+> + ifdef CONFIG_DEBUG_INFO_REDUCED
+> + DEBUG_RUSTFLAGS += -Cdebuginfo=1
+> + else
+> + DEBUG_RUSTFLAGS += -Cdebuginfo=2
+> + endif
+>   endif
+>
+>   ifndef CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+> @@@ -1201,9 -1327,12 +1305,12 @@@ archprepare: outputmakefile archheader
+>   prepare0: archprepare
+>         $(Q)$(MAKE) $(build)=scripts/mod
+>         $(Q)$(MAKE) $(build)=.
+> + ifdef CONFIG_RUST
+> +       $(Q)$(MAKE) $(build)=rust
+> + endif
+>
+>   # All the preparing..
+>  -prepare: prepare0 prepare-objtool prepare-resolve_btfids
+>  +prepare: prepare0
+>
+>   PHONY += remove-stale-files
+>   remove-stale-files:
 
 
-Matt
-
-> 
-> Not sure how we can fix this in dim? Maybe a check whether the patches
-> your pushing contain a merge commit, which prompts an additional query
-> like
-> 
-> "Merge commits should only be done by repo maintainers, not committers.
-> Confirm that you are a maintainer of $repo?"
-> 
-> It's not the first time this slipped through and caused some fun. Similar
-> to how we have the confirmation check if you push a lot of patches.
-> 
-> Thoughts?
-> -Daniel
-> 
-> 
-> > 
-> > 
-> > BR,
-> > Jani.
-> > 
-> > >
-> > >> > Matt, can you pls figure out and type up the patch to
-> > >> > plug that hole?
-> > >> 
-> > >> Are you referring to a patch for dim here?  The i915 patch has already
-> > >> landed, so we can't change its commit message now.
-> > >
-> > > Yeah dim, not drm-intel, that can't be fixed anymore because it's all
-> > > baked in.
-> > > -Daniel
-> > >
-> > >> 
-> > >> 
-> > >> Matt
-> > >> 
-> > >> > 
-> > >> > Thanks, Daniel
-> > >> > 
-> > >> > > 
-> > >> > > Regards, Joonas
-> > >> > > 
-> > >> > > Quoting Stephen Rothwell (2021-07-15 07:18:54)
-> > >> > > > Hi all,
-> > >> > > > 
-> > >> > > > Commit
-> > >> > > > 
-> > >> > > >   db47fe727e1f ("drm/i915/step: s/<platform>_revid_tbl/<platform>_revids")
-> > >> > > > 
-> > >> > > > is missing a Signed-off-by from its committer.
-> > >> > > > 
-> > >> > > > -- 
-> > >> > > > Cheers,
-> > >> > > > Stephen Rothwell
-> > >> > 
-> > >> > -- 
-> > >> > Daniel Vetter
-> > >> > Software Engineer, Intel Corporation
-> > >> > http://blog.ffwll.ch
-> > >> 
-> > >> -- 
-> > >> Matt Roper
-> > >> Graphics Software Engineer
-> > >> VTT-OSGC Platform Enablement
-> > >> Intel Corporation
-> > >> (916) 356-2795
-> > 
-> > -- 
-> > Jani Nikula, Intel Open Source Graphics Center
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
 
 -- 
-Matt Roper
-Graphics Software Engineer
-VTT-OSGC Platform Enablement
-Intel Corporation
-(916) 356-2795
+Thanks,
+~Nick Desaulniers
