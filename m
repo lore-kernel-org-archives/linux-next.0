@@ -2,113 +2,105 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561FBC4338F
-	for <linux-next@archiver.kernel.org>; Thu, 12 Aug 2021 12:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F77C4338F
+	for <linux-next@archiver.kernel.org>; Thu, 12 Aug 2021 14:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 377976108C
-	for <linux-next@archiver.kernel.org>; Thu, 12 Aug 2021 12:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8236103E
+	for <linux-next@archiver.kernel.org>; Thu, 12 Aug 2021 14:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236349AbhHLMak (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 12 Aug 2021 08:30:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49232 "EHLO
+        id S235689AbhHLORl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 12 Aug 2021 10:17:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235913AbhHLMak (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Aug 2021 08:30:40 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E74C061765;
-        Thu, 12 Aug 2021 05:30:14 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GlmH45fDKz9sRN;
-        Thu, 12 Aug 2021 22:30:08 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1628771410;
-        bh=zqEbvwdlwDD/eaDwXJ2i6n8QNKo+UY+GXEC6FU5uTGw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=B9gFpG6Cm1Bf7XQalAmqa5RgDxPLz0qTbkOFE2yAqzJTY0Efq+ZIjFkj29JIApcX0
-         /TKTHX9hBg/8tNNnbqYC5FrVKxdlOLiYygeKDZ0YUt/jJrmaAd/SOtYxrafdjwXscp
-         bQOJCV60q7JCRSPXlKCKhj9dEHcjCNFFdpU07wJTvziER39AW3zlV0K/ImZCxpXkvv
-         2k2/hM1EoE0sLwnN5KNjwcGlEl6uuRz+TPPg56qjY1ywVvbuCq6sMyrR4vt2sAcLkz
-         0ZQv/djF4mdrqBI5YEHyWF4p163u56IR5j6009saCwIOE0e26XAIMg19lWWyE98F7G
-         9orwS85wwPBzg==
-Date:   Thu, 12 Aug 2021 22:30:06 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Changbin Du <changbin.du@gmail.com>,
-        Alexandre Ghiti <alex@ghiti.fr>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tags needs some work in the risc-v-fixes tree
-Message-ID: <20210812223006.642bb3a3@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kWDYIZ+FiuFwchISJs+dedY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        with ESMTP id S234997AbhHLORk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Aug 2021 10:17:40 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5CCC061756
+        for <linux-next@vger.kernel.org>; Thu, 12 Aug 2021 07:17:15 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id nt11so9833546pjb.2
+        for <linux-next@vger.kernel.org>; Thu, 12 Aug 2021 07:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Pch++DVEjAnWg+xt4kEu7hkcd3VsPliA8XsFfWS3u4E=;
+        b=ChjtkxID7AdLnbi3aFhoaikWk0/pxeZO8Exgu09/SNasYOGHNvH7FXqOMGxMaTd0/m
+         zfFpHST0CxEGs1uxP7N1TQO6U+P9lmmlXdP1IUuucjxWA6DgOog6NxPp0clf5cGmaaJD
+         LAWIdnvEQA5Pym7GsZVS6tgW/saQxlGjVj5x9JEwTFwH+3wVMLMxaeVK/KNGm1WMD6kq
+         xFGoiYMf5o6KZzAon4+C4rGglTvAyG80tTkpm/vBTWMu6zi9kro2KoKuhLjmiAsRn+BF
+         /VCEhCxdQspNuiD2CDrFJwgX4Lj9A0/7wwWq4a/KQuYBSVpJOmwXuMKOl2dl10Lewa3X
+         yCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Pch++DVEjAnWg+xt4kEu7hkcd3VsPliA8XsFfWS3u4E=;
+        b=IrMJcsXguYZx3I7LDVaDXeHLa34zpTAsR5Lpw45JmJ3qOFmldMkA939nHoolMTd4FI
+         SVSKVWhLG/PPQIvJv+Kh+TqpqVk+Ov5MKMVuhmnWSRxlbYdQ37nuxCvSOg5s1Aqsc4nC
+         O05BrYMv74QwBhBM0TlzVFUmlt+3PZFTnItvdxQ5dDMnkiLv5QkI4PjGx6TAZtFXOQyp
+         X8ZZrk7oooQNtLnXnSKEfuZetnTvsO7t2AMUP6mLhYmqqVeDa0qLbUfABhNVK6pi6N+9
+         XyUftroyBBO13pJBGvHYRNb0ScDXMCDV5riJ1ODknHQw/nQYZ1D2aVKHZUmudH82W/VV
+         GgTw==
+X-Gm-Message-State: AOAM5310kmqofftuUS2q6sufAyFKCv+ATOrz5mj4+UECRLLenWyVVHzx
+        gVHFNoi2SSgEhhgY4jfjKj18AA==
+X-Google-Smtp-Source: ABdhPJwAx2Bev4ONYakSQQo212BVykUPU/0AphBThNhzYITS25wVGjv7nMvprYnW32Pe3fJdmuwIDQ==
+X-Received: by 2002:a17:90a:1108:: with SMTP id d8mr16654639pja.190.1628777834935;
+        Thu, 12 Aug 2021 07:17:14 -0700 (PDT)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id t22sm3977702pgv.35.2021.08.12.07.17.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Aug 2021 07:17:14 -0700 (PDT)
+Date:   Thu, 12 Aug 2021 07:17:14 -0700 (PDT)
+X-Google-Original-Date: Thu, 12 Aug 2021 07:17:12 PDT (-0700)
+Subject:     Re: linux-next: Fixes tags needs some work in the risc-v-fixes tree
+In-Reply-To: <20210812223006.642bb3a3@canb.auug.org.au>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>, changbin.du@gmail.com,
+        alex@ghiti.fr, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Message-ID: <mhng-c97dfa08-8901-4de6-b692-beab38b5802a@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/kWDYIZ+FiuFwchISJs+dedY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 12 Aug 2021 05:30:06 PDT (-0700), Stephen Rothwell wrote:
+> Hi all,
+>
+> In commit
+>
+>   007666bcc606 ("riscv: Fix comment regarding kernel mapping overlapping with IS_ERR_VALUE")
+>
+> Fixes tag
+>
+>   Fixes: db6b84a368b4 ("riscv: Make sure the kernel mapping does not
+>
+> has these problem(s):
+>
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+>
+> Please do not split Fixes tags over more than one line.
+>
+> In commit
+>
+>   589be135381f ("riscv: kexec: do not add '-mno-relax' flag if compiler doesn't support it")
+>
+> Fixes tag
+>
+>   Fixes: fba8a8674f ("RISC-V: Add kexec support")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-Hi all,
-
-In commit
-
-  007666bcc606 ("riscv: Fix comment regarding kernel mapping overlapping wi=
-th IS_ERR_VALUE")
-
-Fixes tag
-
-  Fixes: db6b84a368b4 ("riscv: Make sure the kernel mapping does not
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes tags over more than one line.
-
-In commit
-
-  589be135381f ("riscv: kexec: do not add '-mno-relax' flag if compiler doe=
-sn't support it")
-
-Fixes tag
-
-  Fixes: fba8a8674f ("RISC-V: Add kexec support")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kWDYIZ+FiuFwchISJs+dedY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmEVFE4ACgkQAVBC80lX
-0Gz7jgf/cg2rvZhijVA80tndFsnoDUVPBJNlZCUN9FXGIxxA3L/H4mkDMdXkyVMU
-fn/CNDyjFEIYjQ3OS8bE+FibBWC5d80kxqQA4BK2nDhqxyP9xnlbPuRmC/M8vev+
-FMC3+t+6Agm3FNVXIaemBIozM7+IUCLlki6nzfbJwQQXL8fbyCgoIKnPWxF9C+Hm
-nRs0nCfymwu2L92sHJVdNz2UsInfIbYHbVeUYf8CZ5cySaffnWT4jtCOgfye00x+
-ssbx3h0o7RWO0WbDXq13lgKpp92LU0GghaV9+uFKmooNeoAzj/Jb+px/4mWghNG+
-sdGoFPmmzEy1f+klLZg/Smx3X1cvPw==
-=xNg6
------END PGP SIGNATURE-----
-
---Sig_/kWDYIZ+FiuFwchISJs+dedY--
+Thanks, these should be fixed.
