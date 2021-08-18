@@ -2,130 +2,82 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F72C4338F
-	for <linux-next@archiver.kernel.org>; Wed, 18 Aug 2021 09:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FED5C4338F
+	for <linux-next@archiver.kernel.org>; Wed, 18 Aug 2021 11:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B95A0610A7
-	for <linux-next@archiver.kernel.org>; Wed, 18 Aug 2021 09:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F017C60EE0
+	for <linux-next@archiver.kernel.org>; Wed, 18 Aug 2021 11:29:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230253AbhHRJS7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 18 Aug 2021 05:18:59 -0400
-Received: from mga09.intel.com ([134.134.136.24]:14187 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230118AbhHRJS6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 18 Aug 2021 05:18:58 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10079"; a="216284259"
-X-IronPort-AV: E=Sophos;i="5.84,330,1620716400"; 
-   d="scan'208";a="216284259"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2021 02:18:23 -0700
-X-IronPort-AV: E=Sophos;i="5.84,330,1620716400"; 
-   d="scan'208";a="531480216"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2021 02:18:21 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mGHiA-00B3qD-PH; Wed, 18 Aug 2021 12:18:14 +0300
-Date:   Wed, 18 Aug 2021 12:18:14 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the i2c
- tree
-Message-ID: <YRzQVpCLwRDcKEN2@smile.fi.intel.com>
-References: <20210818165439.1fc613e2@canb.auug.org.au>
+        id S235207AbhHRL3t (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 18 Aug 2021 07:29:49 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3659 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234913AbhHRL3t (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Aug 2021 07:29:49 -0400
+Received: from fraeml741-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GqQcz6wVqz6BHQS;
+        Wed, 18 Aug 2021 19:28:19 +0800 (CST)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ fraeml741-chm.china.huawei.com (10.206.15.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Wed, 18 Aug 2021 13:29:12 +0200
+Received: from [10.202.227.179] (10.202.227.179) by
+ lhreml724-chm.china.huawei.com (10.201.108.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Wed, 18 Aug 2021 12:29:11 +0100
+Subject: Re: [PATCH] scsi: ibmvfc: Stop using scsi_cmnd.tag
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     <tyreld@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <jejb@linux.ibm.com>, <linux-scsi@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <hare@suse.de>, <bvanassche@acm.org>, <hch@lst.de>,
+        <linux-next@vger.kernel.org>, <sfr@canb.auug.org.au>
+References: <1629207817-211936-1-git-send-email-john.garry@huawei.com>
+ <yq14kbnmqoh.fsf@ca-mkp.ca.oracle.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <69c51e23-48b9-4672-e559-d2e257ade29f@huawei.com>
+Date:   Wed, 18 Aug 2021 12:29:10 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210818165439.1fc613e2@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <yq14kbnmqoh.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.179]
+X-ClientProxiedBy: lhreml748-chm.china.huawei.com (10.201.108.198) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 04:54:39PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the akpm-current tree got a conflict in:
-> 
->   include/linux/units.h
-> 
-> between commit:
-> 
->   26471d4a6cf8 ("units: Add SI metric prefix definitions")
-> 
-> from the i2c tree and commits:
-> 
->   d874da9a830f ("units: change from 'L' to 'UL'")
->   390618bdc78a ("units: add the HZ macros")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-This is correct fix, thank you, Stephen!
+Hi Martin,
 
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
+>> Use scsi_cmd_to_rq(scsi_cmnd)->tag in preference to scsi_cmnd.tag.
 > 
-> diff --cc include/linux/units.h
-> index 4a25e0cc8fb3,8b8dc8a84d93..000000000000
-> --- a/include/linux/units.h
-> +++ b/include/linux/units.h
-> @@@ -4,25 -4,13 +4,29 @@@
->   
->   #include <linux/math.h>
->   
->  +/* Metric prefixes in accordance with Système international (d'unités) */
->  +#define PETA	1000000000000000ULL
->  +#define TERA	1000000000000ULL
->  +#define GIGA	1000000000UL
->  +#define MEGA	1000000UL
->  +#define KILO	1000UL
->  +#define HECTO	100UL
->  +#define DECA	10UL
->  +#define DECI	10UL
->  +#define CENTI	100UL
->  +#define MILLI	1000UL
->  +#define MICRO	1000000UL
->  +#define NANO	1000000000UL
->  +#define PICO	1000000000000ULL
->  +#define FEMTO	1000000000000000ULL
->  +
-> - #define MILLIWATT_PER_WATT	1000L
-> - #define MICROWATT_PER_MILLIWATT	1000L
-> - #define MICROWATT_PER_WATT	1000000L
-> + #define HZ_PER_KHZ		1000UL
-> + #define KHZ_PER_MHZ		1000UL
-> + #define HZ_PER_MHZ		1000000UL
-> + 
-> + #define MILLIWATT_PER_WATT	1000UL
-> + #define MICROWATT_PER_MILLIWATT	1000UL
-> + #define MICROWATT_PER_WATT	1000000UL
->   
->   #define ABSOLUTE_ZERO_MILLICELSIUS -273150
->   
+> Applied to 5.15/scsi-staging and rebased for bisectability.
+> 
 
+Thanks, and sorry for the hassle. But I would still like the maintainers 
+to have a look, as I was curious about current usage of scsi_cmnd.tag in 
+that driver.
 
+> Just to be picky it looks like there's another scsi_cmmd tag lurking in
+> qla1280.c but it's sitting behind an #ifdef DEBUG_QLA1280.
+> 
 
--- 
-With Best Regards,
-Andy Shevchenko
+That driver does not even compile with DEBUG_QLA1280 set beforehand. 
+I'll fix that up and send as separate patches in case you want to 
+shuffle the tag patch in earlier, which is prob not worth the effort.
 
+I've done a good few more x86 randconfigs and tried to audit the code 
+for more references, so hopefully that's the last.
 
+Thanks
