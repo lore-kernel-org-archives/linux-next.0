@@ -2,102 +2,162 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872C7C4338F
-	for <linux-next@archiver.kernel.org>; Mon, 23 Aug 2021 06:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E02CC4338F
+	for <linux-next@archiver.kernel.org>; Mon, 23 Aug 2021 07:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58E516127B
-	for <linux-next@archiver.kernel.org>; Mon, 23 Aug 2021 06:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F0B76127B
+	for <linux-next@archiver.kernel.org>; Mon, 23 Aug 2021 07:51:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbhHWGfr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 23 Aug 2021 02:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60756 "EHLO
+        id S235100AbhHWHvn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 23 Aug 2021 03:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbhHWGfq (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 23 Aug 2021 02:35:46 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335D5C061575;
-        Sun, 22 Aug 2021 23:35:04 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id h13so24627782wrp.1;
-        Sun, 22 Aug 2021 23:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qSV/e6QyHif3aJ5CG58TgVpcSD8xLK7XuClJ7iB4h84=;
-        b=s4ev/IgiHuIFr5xnopqiQZRs20uU/t0h2JNQZlsDqPaBqfsR/w5PGZktTCle5ypukR
-         q9qYu6TrrwG08jWZQjFlyUGFT6HO0PSttR3IkTNlrXbUUXHAOmwTuV2oj4qc4q4HxLmU
-         /qAdU7f0caLOtYWXiaDy2Q4cSDyzYDXBk/RovNjn1c6/4Cg20kqKe3TKFATT9LNaV2JR
-         +jRwe6ADy/6NJi0HbTH7XOsJdJwz4yGO23OSrdt5ifHEQt77MnvciwIWwtuNMpcqrj0q
-         X5hDmeoZFRSIuWXGqk5wpLBo0V54/ch9mJdaD7n/kStlnURFcDfBzrgfPYttUaR4FPVL
-         p2rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qSV/e6QyHif3aJ5CG58TgVpcSD8xLK7XuClJ7iB4h84=;
-        b=bhz67+Atp8Tn3DpENqXrpQZ1BSgB2quLzwAikI2lMlh7dl49OA4U6lK/W7CSJSiFn5
-         n8ipwxelO+CWivwzoosysFLQgeP3GrCbQKKrhdm2Rz61+TO2oSz4U7cvDrY1fEcF9NSN
-         0f2xjzJOUHOrE8C+acPr5A23kmRo8sPu/Wkh22TLnYsHtM7pp4okmMq5sv0KsU8/XkUM
-         SuKAS9jEk63aZnqS6+rU2HLwP3+QDwIM3bypmBuJ+moWXxT7M5x8Bo1mmmoqQRSx5uv6
-         7Hr570YL8H5M0qjf72VB17g40B8jjFn2OwhhYC7DuRoE2I93/BKLjodcfqeGJF1VA7WP
-         b6sg==
-X-Gm-Message-State: AOAM53261wZ8z/eBN34Z2eV4wHUJoab3cVHGsLflsxjen3xyTfXoqxzQ
-        vGfdERpD0unjkNmJRiO+zSPGk085Ujr7gA==
-X-Google-Smtp-Source: ABdhPJw9dO/0knZ51VRdOTtD6rx3KHx7jFCK6IapWDUPd09TgcbryXdTAwCPpXPDU0IhlMgIAe1z4Q==
-X-Received: by 2002:adf:eb89:: with SMTP id t9mr12317037wrn.66.1629700502635;
-        Sun, 22 Aug 2021 23:35:02 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f08:4500:ed43:740c:fec5:7f46? (p200300ea8f084500ed43740cfec57f46.dip0.t-ipconnect.de. [2003:ea:8f08:4500:ed43:740c:fec5:7f46])
-        by smtp.googlemail.com with ESMTPSA id o34sm17404318wms.10.2021.08.22.23.34.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Aug 2021 23:35:02 -0700 (PDT)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <20210823120929.7c6f7a4f@canb.auug.org.au>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <fbac0963-385d-b593-e087-e1e75f62fcbf@gmail.com>
-Date:   Mon, 23 Aug 2021 08:34:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        with ESMTP id S235243AbhHWHvR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 23 Aug 2021 03:51:17 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 593ECC061756;
+        Mon, 23 Aug 2021 00:50:35 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GtPYJ73ySz9sWd;
+        Mon, 23 Aug 2021 17:50:28 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1629705032;
+        bh=9dAHDCrMei61o4XJtPqjbdNJts5lkuem+/e8bvOvHNA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Eh1fOSt6Rsa06Kcm6zUhe5LMinVpSwezbm4AvqbDqfoCf8Wx8QP+NfHTf5hwPPM3r
+         seE9Pm8OmZKF0xk29DoKKPZAx8HVFzC8qkHEW0NciYckpNHIxL18k6IgUg0kAsqPB1
+         4kZ6VOhB46EsB/R5gHx65lL4wT2rl8YrfYDcZV5KUcDNVE7LlI0TH2qov6acKnTWKa
+         haVCYou/apmos6kKyAGlW7ST4LnEQMsbdpZIlaCJWw7UjpNPvtxGdtCJWR46mG7/ME
+         fjFSQmdREx4bk93AUY7FjVMOS9j4RKaZvUSalutLmeyUmI1nmJKU1Kn2WoBwE3Ojrh
+         egCMWHuXWU77Q==
+Date:   Mon, 23 Aug 2021 17:50:27 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>, Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Jason Gunthorpe <jgg@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leonro@nvidia.com>,
+        Maor Gottlieb <maorg@nvidia.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas =?UTF-8?B?SGVsbHN0?= =?UTF-8?B?csO2bQ==?= 
+        <thomas.hellstrom@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the hmm tree
+Message-ID: <20210823175027.3f3fabd7@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20210823120929.7c6f7a4f@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_//zQi18i=ahDnMC3+VaHQ0Vw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 23.08.2021 04:09, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/net/ethernet/broadcom/bnx2.c: In function 'bnx2_read_vpd_fw_ver':
-> drivers/net/ethernet/broadcom/bnx2.c:8055:6: error: implicit declaration of function 'pci_vpd_find_ro_info_keyword'; did you mean 'pci_vpd_find_info_keyword'? [-Werror=implicit-function-declaration]
->  8055 |  j = pci_vpd_find_ro_info_keyword(data, BNX2_VPD_LEN,
->       |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |      pci_vpd_find_info_keyword
-> 
-> Caused by commit
-> 
->   ddc122aac91f ("bnx2: Search VPD with pci_vpd_find_ro_info_keyword()")
-> 
-> I have used the net-next tree from next-20210820 for today.
-> 
-This series was supposed to go through the PCI tree. It builds on recent patches
-that are in the PCI tree, but not in linux-next yet.
-I mentioned this dependency in the cover letter for the last series, but forgot
-it this time. Sorry.
+--Sig_//zQi18i=ahDnMC3+VaHQ0Vw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the hmm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+drivers/gpu/drm/i915/gem/i915_gem_ttm.c: In function 'i915_ttm_tt_get_st':
+drivers/gpu/drm/i915/gem/i915_gem_ttm.c:396:7: error: implicit declaration =
+of function '__sg_alloc_table_from_pages'; did you mean 'sg_alloc_table_fro=
+m_pages'? [-Werror=3Dimplicit-function-declaration]
+  396 |  sg =3D __sg_alloc_table_from_pages
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |       sg_alloc_table_from_pages
+drivers/gpu/drm/i915/gem/i915_gem_ttm.c:396:5: warning: assignment to 'stru=
+ct scatterlist *' from 'int' makes pointer from integer without a cast [-Wi=
+nt-conversion]
+  396 |  sg =3D __sg_alloc_table_from_pages
+      |     ^
+
+Caused by commit
+
+  fcbfe956561b ("lib/scatterlist: Provide a dedicated function to support t=
+able append")
+
+interacting with commit
+
+  213d50927763 ("drm/i915/ttm: Introduce a TTM i915 gem object backend")
+
+from the drm tree.
+
+I have applied the following merge resolution patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 23 Aug 2021 17:46:27 +1000
+Subject: [PATCH] drm/i915/ttm: fix up for "lib/scatterlist: Provide a
+ dedicated function to support tableappend"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/i915/gem/i915_gem_ttm.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c b/drivers/gpu/drm/i915=
+/gem/i915_gem_ttm.c
+index 771eb2963123..d3d95934a047 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
+@@ -382,7 +382,6 @@ i915_ttm_region(struct ttm_device *bdev, int ttm_mem_ty=
+pe)
+ static struct sg_table *i915_ttm_tt_get_st(struct ttm_tt *ttm)
+ {
+ 	struct i915_ttm_tt *i915_tt =3D container_of(ttm, typeof(*i915_tt), ttm);
+-	struct scatterlist *sg;
+ 	struct sg_table *st;
+ 	int ret;
+=20
+@@ -393,13 +392,13 @@ static struct sg_table *i915_ttm_tt_get_st(struct ttm=
+_tt *ttm)
+ 	if (!st)
+ 		return ERR_PTR(-ENOMEM);
+=20
+-	sg =3D __sg_alloc_table_from_pages
++	ret =3D sg_alloc_table_from_pages_segment
+ 		(st, ttm->pages, ttm->num_pages, 0,
+ 		 (unsigned long)ttm->num_pages << PAGE_SHIFT,
+-		 i915_sg_segment_size(), NULL, 0, GFP_KERNEL);
+-	if (IS_ERR(sg)) {
++		 i915_sg_segment_size(), GFP_KERNEL);
++	if (ret) {
+ 		kfree(st);
+-		return ERR_CAST(sg);
++		return ERR_PTR(ret);
+ 	}
+=20
+ 	ret =3D dma_map_sgtable(i915_tt->dev, st, DMA_BIDIRECTIONAL, 0);
+--=20
+2.32.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//zQi18i=ahDnMC3+VaHQ0Vw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmEjU0QACgkQAVBC80lX
+0GwyKAf/djlPvQh5mFxB1HX6H6VwiNvnFMAqdCuLA9ur0ir8JX93LCvE6yDM8MGu
+fNhZdfFoF4ZBogs/VAnCqnHMmRe5onD6HJ7TAOtCt2BllQHoKLT4XMY4R3TYES2X
+gt2lL9kHBBJCJuo40CBr1VIAHsHWH8qPRZZOWrkSa9GsoWaNS2Pz3uWOsiwkC3p7
+prmCs1HACO9LS8V1Q2zhfweMHZXv6VQIceF3XfcOm1hFqeYvHpVTU+rgVFdxbyTG
+FkXMRrxp/hTDM+wltFqyDp5aMgTw9wIGvlrB0taIreHsMVCcW6ycl8hlbmHHQS4c
+3Y57a/W6nW+ExSY+sq+7q1HecMTS/w==
+=rnAY
+-----END PGP SIGNATURE-----
+
+--Sig_//zQi18i=ahDnMC3+VaHQ0Vw--
