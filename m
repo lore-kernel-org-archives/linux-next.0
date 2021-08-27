@@ -2,118 +2,113 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCBCC4320E
-	for <linux-next@archiver.kernel.org>; Fri, 27 Aug 2021 13:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36A8C4320A
+	for <linux-next@archiver.kernel.org>; Fri, 27 Aug 2021 15:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 480C860FE7
-	for <linux-next@archiver.kernel.org>; Fri, 27 Aug 2021 13:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9239160F14
+	for <linux-next@archiver.kernel.org>; Fri, 27 Aug 2021 15:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245162AbhH0NM7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:12:59 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:43373 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232767AbhH0NM6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:12:58 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5E584580A17;
-        Fri, 27 Aug 2021 09:12:09 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 27 Aug 2021 09:12:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=bkR1Q1QpGYWyLY9OclKKSQyOpWv
-        3rkNsGzg6KtErcvQ=; b=SMPCX1uzkWNEKE2KKOZGeqi4LcN/4X/yLql5VY79sH5
-        YNobd09+hrfpSWtL84k5YbkBPLEUa2UkTRIMr+BzXy4Urw0VCoV42JIVNgZTkQtx
-        dwcBRdgTyKSaSm3o6vBsO98DO5ddX7J754bCCzZHgK20+fFvMlVbf/8zwtp+aKwt
-        9yq6trb7CwS8LX74MFKyFaPDJkzJWt3HzZHLXcjE4Z67OPLU8hmaZU2DuRNuNlXA
-        eVr5Tm0TVvlDps2RrzJcLYVifLjWtMjL/3OLX952ecfEvHkvuS275PNQF3j2/OlV
-        iUx5CPIXMZaDZeZZGBlx3jyNMUDF7cL2vwr3O7+ih2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=bkR1Q1
-        QpGYWyLY9OclKKSQyOpWv3rkNsGzg6KtErcvQ=; b=FdMNuE9rP8BkLo8dZI16Kl
-        /oI8AIIDkJG37l+TmEXs80TgQ7z30yeGc/EXabAaMoGEsTtZbqNLEhnR6//r4wNB
-        aeeCgXyfQGfFaX4pOstjgC9oViz70g859XyiEd+Np3BdaUjbjluvWv9zCQPHRtOs
-        0YhwMDhuN4qFPsddjnrsXC7GE9giOaXOf956FFIqkApEckCxDY5y6akXJYlXGiWl
-        DsTUapg8MlnvlaKMGtM+9p08uz5qo86K3vukJaTOyaMdmmPB7lGIBAwnihc39jzx
-        LCFQ5HFhyI01opGc/QkCZeddLs2K78ZIwIH6VItgM8bcvf8GJ6QaFzJzISUvlx/g
-        ==
-X-ME-Sender: <xms:p-QoYaDzUwE1PdFnCA_HoBoQGxxGO2huxxf6Sfos8uM9ONMCBteGUg>
-    <xme:p-QoYUiXFp12qH3mRfCktMSlPHBBs_-_6X80XS_BuFz3RMi8-QgI1VO2rj5dQTPB4
-    utSi7bcRNsX9g>
-X-ME-Received: <xmr:p-QoYdlxSQxFvWiPdoDgswrtGygPtTqBtPaCRNPVgmaIFDMLGvEgrWX1pNKp>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddufedgiedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomh
-X-ME-Proxy: <xmx:p-QoYYzbfZ5p3BLPCEnVaN0fAQLux04zjWofeumIpaD3nxq5npSUew>
-    <xmx:p-QoYfQGKpjtZrwktMVOGBrwCBPsvXXZ30zqIC85IvzkD9nkn46ATQ>
-    <xmx:p-QoYTbK-g3cABuCz3WD5PliZZPTR7kvWWdxUXZ4oyvR6bkfuYa70Q>
-    <xmx:qeQoYbpDWauCj2sQmscTHZ2vxzhPNpCfHUFbl_CeH6d64aLTpYFXbQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Aug 2021 09:12:07 -0400 (EDT)
-Date:   Fri, 27 Aug 2021 15:12:02 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Jakub Kicinski <kuba@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S245400AbhH0POT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 27 Aug 2021 11:14:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233587AbhH0POT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 27 Aug 2021 11:14:19 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABF3C061757
+        for <linux-next@vger.kernel.org>; Fri, 27 Aug 2021 08:13:30 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id n12so4114731plk.10
+        for <linux-next@vger.kernel.org>; Fri, 27 Aug 2021 08:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wNcmjrgT+pU+GmhhBaKch+j5CYTuccBi6r9ayZ8AZ60=;
+        b=U5tDJ9/RQAYnU3F2ma/wk72GTxi+fHt4hEeoQs1qIN7ZMPEy6HulJhciZk7evjIZMQ
+         07nV6skA9QSQm6MNgm2WVLQY459u5PNlqtEl+huRZXXpGb5c6nwQUm2nwy7vSsCO/bHG
+         A1BRNOEK+ZHGUhRPBIXH0sVgLlmEJQJTJYOEQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wNcmjrgT+pU+GmhhBaKch+j5CYTuccBi6r9ayZ8AZ60=;
+        b=p9i8fzIVV21ZrURYLFbB4d1Yzzwyt2C0qAava5lyLK2EoAyRdb1l8xKn2HlFyTV4r2
+         +4YfJdAB92+Uha/bFSjAHZb2gUOpKQutccharseFiVhTYQgeeU0ZqoVeWIcmQ8CV6okM
+         GcdWiMD0E2q4I+LjSN9CF8+EWuPQGchDWmMfzDI9QYbsO43cN5xbRnywXOxpVfINvrDO
+         TEs6tRZw348LwO4SLyrbQlsd0RCb+Ez+ksIiA5eD3Eak2Pn+vcMEjfVneJSPbbKHmXZn
+         PNh1O3sx/mDLU02/0jlR9FrFEtXyMUj5k8lfA45XkeILAsdNfA26e0OKF+1aPEhfLGb6
+         ED1w==
+X-Gm-Message-State: AOAM531XkckHFPw+A3Cx9CIPlTHXfXIpg6vzj/o5OtfZwM8406gUX0Pw
+        rCNrjFqLs5HvJuWcojlFqh933w==
+X-Google-Smtp-Source: ABdhPJxUcgLEHFsn0Yuu8AZiBkgBaBNil2cWE6ZrY4Cs5N+rhLI+1oVhHNCz0OBHaTIn7V/pSHXTig==
+X-Received: by 2002:a17:90a:2ec6:: with SMTP id h6mr23348104pjs.79.1630077209688;
+        Fri, 27 Aug 2021 08:13:29 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 188sm2699820pfz.193.2021.08.27.08.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Aug 2021 08:13:29 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with Linus' tree
-Message-ID: <YSjkosA6yMrMmaNk@kroah.com>
-References: <20210827164904.6b1d1f0e@canb.auug.org.au>
+        linux-hardening@vger.kernel.org
+Subject: [PATCH] Compiler Attributes: Add __alloc_size for better bounds checking fix
+Date:   Fri, 27 Aug 2021 08:13:27 -0700
+Message-Id: <20210827151327.2729736-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210827164904.6b1d1f0e@canb.auug.org.au>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1741; h=from:subject; bh=bQiqqUs8UgNqYHyn8tJ+VrFYud+KD23pl32jsqxD5V0=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhKQEW1o69iAiX3Ex2Z+uUHJT1dh2Os0spjaIJ2W7I YuuIJpaJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYSkBFgAKCRCJcvTf3G3AJh1FD/ 4oSWVyoj7gFVEqWWWp8f2YNTe2Yhq/m+pdF2Y3qfMOgCpl2x+LKls5kQAW0pHx9aQOzNlJzEVq79Xm n5keqN3S2zsBThMt82K4Fe1egwVB8mg80nW2VzNHPG9+C9MexwMM+as2KBe6zbXmDd3QWFgBXFnyFJ whENJz/bd0ZmyuHKUQVD0FGWmBex8MoSC1x3WWVVM9+UlqKzahi+0QSYZJNOMKyHzsbFGDae5bpAeV kCaXOD/omaROpKxuavMYfMvDQqbVJE0FFOtZBMs30IbATeqfYcubirJV+2Blz81i4djZSBSRjAmSzW mVSwqizQl3Toe6fogXeR3qENg7+X4myHbeip3NRBGo0t2q5d5tJq8XLIqv5+ua9ZF59dn9XghG82Yi glRfSW9R59f1PkD8pFtuHjTDW/oL+S6Ma9umbymMDMxfTawLImJUbabTBF/c4DHCNqz2u4n+R8/edJ I8/Z3ZDopJNF0+ZJbCn/+CGIXCiWCHOvM7ECcAUo4YthtFIfUCLyH/4zfAllLbCtok6Ta61Lrv/WX0 RxoK3s1wybRavDYnbhEkt/usspwZtJqMJ9c8cluBMAOGXdrgW4qJB5eVH8QAGZvSVTaiELCyD+V0ma Dtb20IJyw9O2O3TdSt6nZSe4PKF5bxINnb+jp4t3dyw77/fAGgQzaUUeJpEg==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 04:49:04PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got conflicts in:
-> 
->   drivers/bus/mhi/core/main.c
->   net/qrtr/mhi.c
-> 
-> between commit:
-> 
->   9ebc2758d0bb ("Revert "net: really fix the build..."")
-> 
-> from the origin tree and commit:
-> 
->   0092a1e3f763 ("bus: mhi: Add inbound buffers allocation flag")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (the commit in Linus' tree is basically a revert of the
-> char-misc tree, so I effectively reverted the latter) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
+Adjust the warning logic to deal with pre-9.1 gcc behaviors.
 
-Hm, what should I do in my tree here?
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Hi Andrew, this is meant to replace:
+compiler-attributes-add-__alloc_size-for-better-bounds-checking-fix.patch
+Thanks!
+---
+ Makefile | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Kalle, what commit should I make in the char-misc tree now to handle
-this issue, and make the merge with Linus's tree "simple"?  Or any other
-ideas?
+diff --git a/Makefile b/Makefile
+index 41ed29b5af2b..141a851930e6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1096,8 +1096,17 @@ endif
+ 
+ ifdef CONFIG_CC_IS_GCC
+ # The allocators already balk at large sizes, so silence the compiler
+-# warnings for bounds checks involving those possible values.
+-KBUILD_CFLAGS += -Wno-alloc-size-larger-than
++# warnings for bounds checks involving those possible values. While
++# -Wno-alloc-size-larger-than would normally be used here, earlier versions
++# of gcc (<9.1) weirdly don't handle the option correctly when _other_
++# warnings are produced (?!). Using -Walloc-size-larger-than=SIZE_MAX
++# doesn't work (as it is documented to), silently resolving to "0" prior to
++# version 9.1 (and producing an error more recently). Numeric values larger
++# than PTRDIFF_MAX also don't work prior to version 9.1, which are silently
++# ignored, continuing to default to PTRDIFF_MAX. So, left with no other
++# choice, we must perform a versioned check to disable this warning.
++# https://lore.kernel.org/lkml/20210824115859.187f272f@canb.auug.org.au
++KBUILD_CFLAGS += $(call cc-ifversion, -ge, 0901, -Wno-alloc-size-larger-than)
+ endif
+ 
+ # disable invalid "can't wrap" optimizations for signed / pointers
+-- 
+2.30.2
 
-thanks,
-
-greg k-h
