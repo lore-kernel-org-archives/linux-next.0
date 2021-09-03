@@ -2,76 +2,79 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED43C433F5
-	for <linux-next@archiver.kernel.org>; Fri,  3 Sep 2021 08:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24784C433EF
+	for <linux-next@archiver.kernel.org>; Fri,  3 Sep 2021 09:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71B10610C8
-	for <linux-next@archiver.kernel.org>; Fri,  3 Sep 2021 08:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00D83610A2
+	for <linux-next@archiver.kernel.org>; Fri,  3 Sep 2021 09:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348457AbhICIzE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 3 Sep 2021 04:55:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39452 "EHLO mail.kernel.org"
+        id S1348437AbhICJBd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 3 Sep 2021 05:01:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348423AbhICIzD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 3 Sep 2021 04:55:03 -0400
+        id S234865AbhICJBc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 3 Sep 2021 05:01:32 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B25060E77;
-        Fri,  3 Sep 2021 08:54:04 +0000 (UTC)
-Received: from sofa.misterjones.org ([185.219.108.64] helo=hot-poop.lan)
+        by mail.kernel.org (Postfix) with ESMTPSA id 404C861051;
+        Fri,  3 Sep 2021 09:00:33 +0000 (UTC)
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <maz@kernel.org>)
-        id 1mM4xW-008o6c-7A; Fri, 03 Sep 2021 09:54:02 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-next@vger.kernel.org, kernel-team@android.com,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] Documentation: Fix irq-domain.rst build warning
-Date:   Fri,  3 Sep 2021 09:53:43 +0100
-Message-Id: <20210903085343.923036-1-maz@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        id 1mM53n-008oEi-7J; Fri, 03 Sep 2021 10:00:31 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, kernel-team@android.com, sfr@canb.auug.org.au
+Date:   Fri, 03 Sep 2021 10:00:31 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the irqchip tree
+In-Reply-To: <20210903164723.176c889e@canb.auug.org.au>
+References: <20210813194457.445205e6@canb.auug.org.au>
+ <20210903164723.176c889e@canb.auug.org.au>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <ee143a532bf2441b36da947b9b2cb57b@kernel.org>
+X-Sender: maz@kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Correctly escape the * not to be used as emphasis. Also take this
-opportunity to clarify the fate of the rest of the legacy APIs.
+Hi Stephen,
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- Documentation/core-api/irq/irq-domain.rst | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On 2021-09-03 07:47, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Fri, 13 Aug 2021 19:44:57 +1000 Stephen Rothwell
+> <sfr@canb.auug.org.au> wrote:
+>> 
+>> After merging the irqchip tree, today's linux-next build (htmldocs)
+>> produced this warning:
+>> 
+>> Documentation/core-api/irq/irq-domain.rst:178: WARNING: Inline 
+>> emphasis start-string without end-string.
+>> 
+>> Introduced by commit
+>> 
+>>   991007ba6cca ("Documentation: Update irq_domain.rst with new lookup 
+>> APIs")
+> 
+> I am still getting this warning.
 
-diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-api/irq/irq-domain.rst
-index 6979b4af2c1f..9c0e8758037a 100644
---- a/Documentation/core-api/irq/irq-domain.rst
-+++ b/Documentation/core-api/irq/irq-domain.rst
-@@ -175,9 +175,10 @@ for IRQ numbers that are passed to struct device registrations.  In that
- case the Linux IRQ numbers cannot be dynamically assigned and the legacy
- mapping should be used.
- 
--As the name implies, the *_legacy() functions are deprecated and only
-+As the name implies, the \*_legacy() functions are deprecated and only
- exist to ease the support of ancient platforms. No new users should be
--added.
-+added. Same goes for the \*_simple() functions when their use results
-+in the legacy behaviour.
- 
- The legacy map assumes a contiguous range of IRQ numbers has already
- been allocated for the controller and that the IRQ number can be
+Thanks for the reminder. Fix now queued.
+
+         M.
 -- 
-2.30.2
-
+Jazz is not dead. It just smells funny...
