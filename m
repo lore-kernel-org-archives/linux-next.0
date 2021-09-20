@@ -2,116 +2,98 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E031C433EF
-	for <linux-next@archiver.kernel.org>; Tue, 21 Sep 2021 01:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58590C433EF
+	for <linux-next@archiver.kernel.org>; Tue, 21 Sep 2021 02:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE76961211
-	for <linux-next@archiver.kernel.org>; Tue, 21 Sep 2021 01:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454DF611ED
+	for <linux-next@archiver.kernel.org>; Tue, 21 Sep 2021 02:22:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbhIUBVW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 20 Sep 2021 21:21:22 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:41317 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229524AbhIUBTV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 20 Sep 2021 21:19:21 -0400
+        id S1348584AbhIUCXp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 20 Sep 2021 22:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33286 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236554AbhIUBvB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Sep 2021 21:51:01 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0572C0A0E3A;
+        Mon, 20 Sep 2021 15:24:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1632187072;
-        bh=6wyYmrb2kcZgr8Efd7F0inCq6YkAUqw/Xp0N6jTKS6M=;
+        s=201702; t=1632176679;
+        bh=XMUqjWgyGQ2e3tTXYtDEQwx/3FIE578ukRsWrFJY3IA=;
         h=Date:From:To:Cc:Subject:From;
-        b=WjswO1BN0dvBnvkNyPnJ1nplsEB+LKXCm/fUKXF8Nhk2pzx/7ow4te2N766WtZmtv
-         SoeI4l4ukFSZzIv2rWAsOa0kEBdUgaYID3i9L3m8/Nenb7CHnMSuElGw+r1pNJ0lz9
-         Pc0kQG2kzHGCfbuhB+Hjedva324V9j9jGR/L1bl02YoETkoUr6MyHU9ZvD2jBxKaVY
-         zLV+qwlqHaGaYEO5cVai26ENWK9vAZLmATI+tlxbtpLoBWqgUPW3CNQ/qBovP0Bf9A
-         ocU9t8ycK+Z9fHiT2KjZetpmggKQ3IUSP5qQPSedHUlOmZuEAZTSGKQ1Wh+R+onaby
-         N6d7of6uqbQDg==
+        b=fgCheR8kjiJ/ovOKEoyp0dJV2otwj7CGmx/u5tIwZT/JfuQMdL0GmNVIC18/22hBL
+         DKP3FDjTp39h8OPuks1FSJlR4NwzTmjkURdf7jgwhMDN9BLMlueUtHySXcjsgBsi3X
+         It3eZtPQsxN6t6+KDD7GzR3nCJDAYB5mz2AZUi2mTHEl6MsO+FVe7b6eMbTmgJiG6k
+         LB3R1iGfK5l0U7ol3MJF9cwjvArxinhts8XfsIaEIk1iSOzqvQUKM+/jYqklSOqYFw
+         K+l2y94pFc+16MtBacZ7OdAnA8km4+m9tsTe9m6n5UPDuVaKphiznGrup7QnIu/Y2Q
+         2zd/u9LfJkJog==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4HD3Sv6BlRz9t0Z;
-        Tue, 21 Sep 2021 11:17:51 +1000 (AEST)
-Date:   Tue, 21 Sep 2021 11:17:50 +1000
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4HCzd33zlCz9sW5;
+        Tue, 21 Sep 2021 08:24:39 +1000 (AEST)
+Date:   Tue, 21 Sep 2021 08:24:38 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
+To:     Andy Gross <agross@kernel.org>
+Cc:     Kuogee Hsieh <khsieh@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the selinux tree with Linus' tree
-Message-ID: <20210921111750.6f7bd218@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the qcom tree
+Message-ID: <20210921082438.26550938@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pp/+xWKgy9H3j7Y1el9onwW";
+Content-Type: multipart/signed; boundary="Sig_/AanEt6iy8KMgYdUCkz1EGpR";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/pp/+xWKgy9H3j7Y1el9onwW
+--Sig_/AanEt6iy8KMgYdUCkz1EGpR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the selinux tree got a conflict in:
+In commit
 
-  fs/io-wq.c
+  33c4296d99ef ("arm64: dts: qcom: sc7280: fix display port phy reg propert=
+y")
 
-between commit:
+Fixes tag
 
-  dd47c104533d ("io-wq: provide IO_WQ_* constants for IORING_REGISTER_IOWQ_=
-MAX_WORKERS arg items")
+  Fixes: 9886e8fd8438 ("arm64: dts: qcom: sc7280: Add USB related nodes")
 
-from Linus' tree and commit:
+has these problem(s):
 
-  5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_u=
-ring")
+  - Target SHA1 does not exist
 
-from the selinux tree.
+Maybe you meant
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Fixes: bb9efa59c665 ("arm64: dts: qcom: sc7280: Add USB related nodes")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/io-wq.c
-index b5fd015268d7,dac5c5961c9d..000000000000
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@@ -14,7 -14,7 +14,8 @@@
-  #include <linux/rculist_nulls.h>
-  #include <linux/cpu.h>
-  #include <linux/tracehook.h>
-+ #include <linux/audit.h>
- +#include <uapi/linux/io_uring.h>
- =20
-  #include "io-wq.h"
- =20
-
---Sig_/pp/+xWKgy9H3j7Y1el9onwW
+--Sig_/AanEt6iy8KMgYdUCkz1EGpR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmFJMr4ACgkQAVBC80lX
-0GxvUwf/S59kX8Ly3PbcBDa/NTtXyyAyq3A7zPP5fd/7X1vH2PUGQnzcYZWKQXrN
-XAahUOG6H0+xP8A3a/lRZp8EjCNznTIE5kIf+g5qlY10wgCQryoF9KEkwsh5PmdH
-liEvqdPKuv0I5PEwqnv4KTFOh2B9Yf+LOUkkdHI5pGRBeb5bSD28663ldR8LXkSa
-CawJwCFcV70TugiLIngz5qeSnSfeO3gIsWFO9B7l+GIjU3Sptxj+jWfA5YzCFuLN
-cpu1HenLhhdGBLE9o1MAWDn/+vuyDdX9w+ERWgt26mi64TQxy5M7Qrn28vlXLuTP
-jmdlPE7fgqNBVRbLD9VpgfvDJs8SQg==
-=lTRn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmFJCiYACgkQAVBC80lX
+0GzTEgf9GMpA6/0oLEANjaTycMU/csnakl/92kqrbrZ07RKE8NSkxtemAzRZ3l1F
+W/NQicO4tH3wEqTCeiYsL62VIjTDKUc0JPkZCH6bIdy2BTi/FkHZTuN206MgJxI6
+NHDUCgDu9BA+84GxlLzLrFDLPMtf6mOCz1srvuRhkuaK/IhonBCl8HEvJ4TXlYxF
+E5AScGbHh/DQEEcoxCGY7GTqu6gJrxtylWYaaY6SK+uMYH4CTWByOBgTOAKGctuS
+Ugf7SEStl6qRvsKa60CMu6OqtObZwTVar1sVQ6CfT906wV0DHHll6L/ukpkYqCQ9
+O/p9v+CUVhM5QW3Qf/jCFyjaDAAMtg==
+=8y5T
 -----END PGP SIGNATURE-----
 
---Sig_/pp/+xWKgy9H3j7Y1el9onwW--
+--Sig_/AanEt6iy8KMgYdUCkz1EGpR--
