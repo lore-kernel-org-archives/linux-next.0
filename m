@@ -2,96 +2,119 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAA2C433EF
-	for <linux-next@archiver.kernel.org>; Mon, 27 Sep 2021 11:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D391C433F5
+	for <linux-next@archiver.kernel.org>; Mon, 27 Sep 2021 12:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E029960F4F
-	for <linux-next@archiver.kernel.org>; Mon, 27 Sep 2021 11:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C20A60F46
+	for <linux-next@archiver.kernel.org>; Mon, 27 Sep 2021 12:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233959AbhI0L1f (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 27 Sep 2021 07:27:35 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:37944 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233948AbhI0L1f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 27 Sep 2021 07:27:35 -0400
-X-Greylist: delayed 441 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Sep 2021 07:27:34 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 3D5B0204FD;
-        Mon, 27 Sep 2021 13:18:35 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id cP7QXzLWCL_C; Mon, 27 Sep 2021 13:18:34 +0200 (CEST)
-Received: from mailout2.secunet.com (mailout2.secunet.com [62.96.220.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id C18F9201E4;
-        Mon, 27 Sep 2021 13:18:34 +0200 (CEST)
-Received: from cas-essen-01.secunet.de (unknown [10.53.40.201])
-        by mailout2.secunet.com (Postfix) with ESMTP id BC00D80004A;
-        Mon, 27 Sep 2021 13:18:34 +0200 (CEST)
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 27 Sep 2021 13:18:34 +0200
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-01.secunet.de
- (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14; Mon, 27 Sep
- 2021 13:18:34 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-        id C8E233183C2B; Mon, 27 Sep 2021 13:18:33 +0200 (CEST)
-Date:   Mon, 27 Sep 2021 13:18:33 +0200
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Nicolas Dichtel <nicolas.dichtel@6wind.com>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S234317AbhI0MjB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 27 Sep 2021 08:39:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234239AbhI0MjA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 27 Sep 2021 08:39:00 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E511FC061575
+        for <linux-next@vger.kernel.org>; Mon, 27 Sep 2021 05:37:22 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 136-20020a1c048e000000b0030d05169e9bso417890wme.4
+        for <linux-next@vger.kernel.org>; Mon, 27 Sep 2021 05:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind.com; s=google;
+        h=reply-to:subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=guXnrK7D0JoZ+FNV6YGF0sMrXPKV49xy8opMucdOIKs=;
+        b=eK8z1ArT1Sm2lu01amNzyfif1NmqSWHC9f8TrecrT704YY7Wa2vHiT0oAMn0B6jZ/H
+         88u5+LZUIP194tuwCXMQW59GrF9Ivgq/LV92EsEdOj2A0b36Q9/CEkf74ZWoiaIAcGV1
+         EQShRTstqREB4Q54i4+Be/OXiZRiVUxXTqK08bmkWbYIIgBUTtbaXeSASMNpxkZuw3O8
+         Gys/o1SYQCy+a/vNPGSYRiIj8UPMLDl52HBNByZVRd0iCRhMkf/7tuVvgikT679aQxj/
+         w2NxBWWweEWuCGb/xIArkLDuX56cmu8jOAxgqdbNmi1ZBBFKOGhkWCuNoWvBrgYVtOBX
+         Y1mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=guXnrK7D0JoZ+FNV6YGF0sMrXPKV49xy8opMucdOIKs=;
+        b=biIx14BzaJ11uH//SCz2HTrf60YVwnRsVNmlCkGd0yQqSlQJZt3V2yQ2MlJIC0ZCCv
+         hO/JmwcYhKmUHGMAsjEfYuadnyVQVhMHUzJql+PF+j2bmfZ6YkdEns0winExIpStK7Xe
+         IL/Z+85rNCUTjO+bWdVvtYE3h8eicyONaVPKNukNvqd3nzT1kpkmgyppaXalTXbLy5cr
+         MDSm3QpyCK+Qukv4vlQFf+GXVS1Eg/3gK/BImfyHc9D5r9QduxURUL2xNMvkLcnjDMXT
+         zTxYfV1GYnWNY+elI3vY1mtNRmsO5lhCZGsUsK79A4+3u4M6hpKCDvZze/MHud9oFgzB
+         f69A==
+X-Gm-Message-State: AOAM530Ooz6vpTPvt8sjMzinAZdNuifSDLdDUqjBf69URSU/X0s61oPM
+        FLxAs5eJNI3Andk3xanx+OZArLbmFmDidw==
+X-Google-Smtp-Source: ABdhPJxMueQL0W0LtlYQkIb4CN8jZ2/EubCdI9/bVyfdJSTtSblg6X9BZhAjviUcxDV4ooulircWAA==
+X-Received: by 2002:a05:600c:2e46:: with SMTP id q6mr15486473wmf.182.1632746241462;
+        Mon, 27 Sep 2021 05:37:21 -0700 (PDT)
+Received: from ?IPv6:2a01:e0a:410:bb00:d99f:4811:e8ed:bd3c? ([2a01:e0a:410:bb00:d99f:4811:e8ed:bd3c])
+        by smtp.gmail.com with ESMTPSA id j21sm17507341wmj.40.2021.09.27.05.37.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Sep 2021 05:37:21 -0700 (PDT)
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: linux-next: Fixes tag needs some work in the ipsec tree
+To:     Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the ipsec tree
-Message-ID: <20210927111833.GH1407957@gauss3.secunet.de>
 References: <20210927064921.06973f44@canb.auug.org.au>
  <a3680eb9-44d0-efe9-7037-9799a66786f7@6wind.com>
+ <20210927111833.GH1407957@gauss3.secunet.de>
+From:   Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Organization: 6WIND
+Message-ID: <d263cbeb-0a39-5fb3-ca4a-9dedfef24611@6wind.com>
+Date:   Mon, 27 Sep 2021 14:37:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+In-Reply-To: <20210927111833.GH1407957@gauss3.secunet.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3680eb9-44d0-efe9-7037-9799a66786f7@6wind.com>
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-01.secunet.de (10.53.40.197)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 09:55:07AM +0200, Nicolas Dichtel wrote:
-> Hi Stephen,
+Le 27/09/2021 à 13:18, Steffen Klassert a écrit :
+> On Mon, Sep 27, 2021 at 09:55:07AM +0200, Nicolas Dichtel wrote:
+>> Hi Stephen,
+>>
+>> Le 26/09/2021 à 22:49, Stephen Rothwell a écrit :
+>>> Hi all,
+>>>
+>>> In commit
+>>>
+>>>   93ec1320b017 ("xfrm: fix rcu lock in xfrm_notify_userpolicy()")
+>>>
+>>> Fixes tag
+>>>
+>>>   Fixes: 703b94b93c19 ("xfrm: notify default policy on update")
+>>>
+>>> has these problem(s):
+>>>
+>>>   - Target SHA1 does not exist
+>>>
+>>> Maybe you meant
+>>>
+>>> Fixes: 88d0adb5f13b ("xfrm: notify default policy on update")
+>>>
+>> In fact, the sha1 comes from the ipsec tree, which is regularly rebased.
 > 
-> Le 26/09/2021 � 22:49, Stephen Rothwell a �crit�:
-> > Hi all,
-> > 
-> > In commit
-> > 
-> >   93ec1320b017 ("xfrm: fix rcu lock in xfrm_notify_userpolicy()")
-> > 
-> > Fixes tag
-> > 
-> >   Fixes: 703b94b93c19 ("xfrm: notify default policy on update")
-> > 
-> > has these problem(s):
-> > 
-> >   - Target SHA1 does not exist
-> > 
-> > Maybe you meant
-> > 
-> > Fixes: 88d0adb5f13b ("xfrm: notify default policy on update")
-> > 
-> In fact, the sha1 comes from the ipsec tree, which is regularly rebased.
+> The testing branch of the ipsec tree might be rebased if I have
+> a bad commit there. The master branch of the ipsec tree will not
+> be rebased, as this branch is publicly used.
+> 
+>> The original patch is only in this tree for now.
+>> Steffen, maybe this fix could be squashed with the original commit?
+> 
+> As said, I never rebased the master branch so far and would only do
+> so in case of emergency.
+> 
+Ok, thanks for the clarification and sorry for this wrong sha1, which probably
+comes from my tree.
 
-The testing branch of the ipsec tree might be rebased if I have
-a bad commit there. The master branch of the ipsec tree will not
-be rebased, as this branch is publicly used.
 
-> The original patch is only in this tree for now.
-> Steffen, maybe this fix could be squashed with the original commit?
 
-As said, I never rebased the master branch so far and would only do
-so in case of emergency.
+Regards,
+Nicolas
