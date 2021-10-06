@@ -2,87 +2,68 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFB3C433F5
-	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 09:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0118C433EF
+	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 12:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC64610A2
-	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 09:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C804D610A8
+	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 12:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbhJFJ6S (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 6 Oct 2021 05:58:18 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:60264 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbhJFJ6Q (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Oct 2021 05:58:16 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 8649020349;
-        Wed,  6 Oct 2021 09:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1633514183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3L5N3fehICC6g2ndAXooovCCqlbZExX6ZHId9I7luWk=;
-        b=ESdjf4RfULucI78UpRcoYUmFrJL+gNdV5T1xw9dBM0sgauZYS7og9llXgKkRjX+9Cktvhk
-        H7+OTpHCJ8eHyrN1czNlSt6dEv5xQKMYnHfq2oWPcNfBte38wLZGb7s4jhb6aWhGT0UsgB
-        9sYVmVV3vob6Y7Mo4jgP6KkILg10ROU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1633514183;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3L5N3fehICC6g2ndAXooovCCqlbZExX6ZHId9I7luWk=;
-        b=zUfyd/YMGPbbwXnjLmUYAt3IVzUh2LGbki8LrL1LeKBPXfy3bkejGqjtAXsTa4daX8g/h5
-        va/brW5gi2ez/CCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 75FE213B73;
-        Wed,  6 Oct 2021 09:56:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id fL2zHMdyXWHIXwAAMHmgww
-        (envelope-from <bp@suse.de>); Wed, 06 Oct 2021 09:56:23 +0000
-Date:   Wed, 6 Oct 2021 11:56:15 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <YV1yvwWkLXlmcyWm@zn.tnic>
-References: <20211006135826.3e1783f1@canb.auug.org.au>
- <YV1s1GJ+e/qASPy7@zn.tnic>
- <20211006205444.52e088a9@canb.auug.org.au>
+        id S238260AbhJFMTH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 6 Oct 2021 08:19:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238149AbhJFMTH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 6 Oct 2021 08:19:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 344BE610A8;
+        Wed,  6 Oct 2021 12:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633522635;
+        bh=zhaIhy9xAWppuinFCPt2q5Eyec8s/90iX3C8CxUoCi0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Kqsm0tT+vh54LOLFeFBLCGiZTLW3VaaxH3BJ/OSZDFDTJHKcuF0TIPtW3PAOvZ01D
+         iLXn2WFhDlOHOaZk5U5DaUbzU36SMCSbEoxD12iGYIHQMd0Q5TKFy5ob17fpn1GsKI
+         6zIT3M1K36HBSsLTgjd+DfRLW2AVUrHht0/Bp3+bKoFuWGfex3LlNCzr7peuQIh8sC
+         rM6ujiKjMgfamivufFatRovu0V5fnmgUnKppCpYGVVkOKPP0BsjafR3Ev0uAomvG1u
+         gfBiLj266duQ+D5l3PZyhAFHhbBjaaD40n7SPZxXEn6O8qACk3wX5Zkx2fH2vnyeEQ
+         BPfankRyC1+rQ==
+Received: by mail-oi1-f171.google.com with SMTP id s24so3716522oij.8;
+        Wed, 06 Oct 2021 05:17:15 -0700 (PDT)
+X-Gm-Message-State: AOAM531TKPSwnlbfh0uTko5Y3rdkdMSA9KltOEWIYEFy8VQDjpirNpAh
+        se3nLpiivccs41P1a3WIZBKeeYiGZGawlBZSfew=
+X-Google-Smtp-Source: ABdhPJwhXFikBhe7REfEQjccZwTIt+uypowQ8cYyzj97z3cDfXW6byjpMWFIcNtY5olDQNsfrZ5uo7JsT652siLJRe4=
+X-Received: by 2002:aca:3081:: with SMTP id w123mr7103442oiw.114.1633522634545;
+ Wed, 06 Oct 2021 05:17:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211006205444.52e088a9@canb.auug.org.au>
+References: <20211006080520.1a7e34fc@canb.auug.org.au>
+In-Reply-To: <20211006080520.1a7e34fc@canb.auug.org.au>
+From:   Shawn Guo <shawnguo@kernel.org>
+Date:   Wed, 6 Oct 2021 20:17:03 +0800
+X-Gmail-Original-Message-ID: <CAJBJ56JkgjuqRe6hfnkeMemLLpRcjHh4eTzt3irC1QQ0L1Xfzw@mail.gmail.com>
+Message-ID: <CAJBJ56JkgjuqRe6hfnkeMemLLpRcjHh4eTzt3irC1QQ0L1Xfzw@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the imx-mxs tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+On Wed, Oct 6, 2021 at 5:05 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Commits
+>
+>   7c4a8b989a99 ("soc: imx: imx8m-blk-ctrl: add DISP blk-ctrl")
+>   5b340e7813d4 ("soc: imx: add i.MX8M blk-ctrl driver")
+>   592d47ea2f24 ("soc: imx: gpcv2: support system suspend/resume")
+>   be4756d4bb83 ("soc: imx: gpcv2: keep i.MX8M* bus clocks enabled")
+>   d0118b6be392 ("soc: imx: gpcv2: add domain option to keep domain clocks enabled")
+>   68c3c82c034f ("soc: imx: gpcv2: add lockdep annotation")
+>
+> are missing a Signed-off-by from their committer.
 
-On Wed, Oct 06, 2021 at 08:54:44PM +1100, Stephen Rothwell wrote:
-> Works for me, thanks.
-> 
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au> # ppc64le compile
+Fixed.  Thanks for reporting, Stephen!
 
-Thx!
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
+Shawn
