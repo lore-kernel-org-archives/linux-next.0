@@ -2,68 +2,61 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0118C433EF
-	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 12:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75097C433F5
+	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 12:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C804D610A8
-	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 12:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 575BD60F59
+	for <linux-next@archiver.kernel.org>; Wed,  6 Oct 2021 12:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238260AbhJFMTH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 6 Oct 2021 08:19:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52442 "EHLO mail.kernel.org"
+        id S238796AbhJFMvL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 6 Oct 2021 08:51:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238149AbhJFMTH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 6 Oct 2021 08:19:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 344BE610A8;
-        Wed,  6 Oct 2021 12:17:15 +0000 (UTC)
+        id S238730AbhJFMvE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 6 Oct 2021 08:51:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 94EDE60F59;
+        Wed,  6 Oct 2021 12:49:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633522635;
-        bh=zhaIhy9xAWppuinFCPt2q5Eyec8s/90iX3C8CxUoCi0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Kqsm0tT+vh54LOLFeFBLCGiZTLW3VaaxH3BJ/OSZDFDTJHKcuF0TIPtW3PAOvZ01D
-         iLXn2WFhDlOHOaZk5U5DaUbzU36SMCSbEoxD12iGYIHQMd0Q5TKFy5ob17fpn1GsKI
-         6zIT3M1K36HBSsLTgjd+DfRLW2AVUrHht0/Bp3+bKoFuWGfex3LlNCzr7peuQIh8sC
-         rM6ujiKjMgfamivufFatRovu0V5fnmgUnKppCpYGVVkOKPP0BsjafR3Ev0uAomvG1u
-         gfBiLj266duQ+D5l3PZyhAFHhbBjaaD40n7SPZxXEn6O8qACk3wX5Zkx2fH2vnyeEQ
-         BPfankRyC1+rQ==
-Received: by mail-oi1-f171.google.com with SMTP id s24so3716522oij.8;
-        Wed, 06 Oct 2021 05:17:15 -0700 (PDT)
-X-Gm-Message-State: AOAM531TKPSwnlbfh0uTko5Y3rdkdMSA9KltOEWIYEFy8VQDjpirNpAh
-        se3nLpiivccs41P1a3WIZBKeeYiGZGawlBZSfew=
-X-Google-Smtp-Source: ABdhPJwhXFikBhe7REfEQjccZwTIt+uypowQ8cYyzj97z3cDfXW6byjpMWFIcNtY5olDQNsfrZ5uo7JsT652siLJRe4=
-X-Received: by 2002:aca:3081:: with SMTP id w123mr7103442oiw.114.1633522634545;
- Wed, 06 Oct 2021 05:17:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211006080520.1a7e34fc@canb.auug.org.au>
-In-Reply-To: <20211006080520.1a7e34fc@canb.auug.org.au>
-From:   Shawn Guo <shawnguo@kernel.org>
-Date:   Wed, 6 Oct 2021 20:17:03 +0800
-X-Gmail-Original-Message-ID: <CAJBJ56JkgjuqRe6hfnkeMemLLpRcjHh4eTzt3irC1QQ0L1Xfzw@mail.gmail.com>
-Message-ID: <CAJBJ56JkgjuqRe6hfnkeMemLLpRcjHh4eTzt3irC1QQ0L1Xfzw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the imx-mxs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        s=k20201202; t=1633524552;
+        bh=E5lZpXanoKV/1QIoaU3zZX3ltqIP1NnyAvFloPV4JbQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TRcnFP8kaXhX9QIaNANQEvNfhUa58NLmSC5BQIlMfkuRQclBSZmyJF2TJPEIGg0/3
+         c8frrOjd2sMyi38it4tEN05c9g8nw1qXwTtp1OOtSzo7OjC9eHiH72Wxxx441tMhVY
+         WGjcZhg/nWMF4FK0391vGOyyy3zsC0u3lzF4FLAuXpId9d3VS7r+cGwgl2JLPt97cc
+         KRR6Xi7HCdHnyGkqZK5w/HcJkzXgEGJ2bs11gLQJiBJZMd23l62GXALb+BG1kP9a3s
+         TMXZHNIhINj7XIQ22XJrgl7Mox0LVKtO71w09gDD8a04Arlnz8D49zPCRj78xxCJpt
+         k5a88kJP87m+w==
+Date:   Wed, 6 Oct 2021 05:49:11 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Stephen Rothwell <sfr@rothwell.id.au>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Message-ID: <20211006054911.790cbf46@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20211006144322.640b966a@elm.ozlabs.ibm.com>
+References: <20211006122315.4e04fb87@canb.auug.org.au>
+        <20211005185217.7fb12960@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <20211006144322.640b966a@elm.ozlabs.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Oct 6, 2021 at 5:05 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commits
->
->   7c4a8b989a99 ("soc: imx: imx8m-blk-ctrl: add DISP blk-ctrl")
->   5b340e7813d4 ("soc: imx: add i.MX8M blk-ctrl driver")
->   592d47ea2f24 ("soc: imx: gpcv2: support system suspend/resume")
->   be4756d4bb83 ("soc: imx: gpcv2: keep i.MX8M* bus clocks enabled")
->   d0118b6be392 ("soc: imx: gpcv2: add domain option to keep domain clocks enabled")
->   68c3c82c034f ("soc: imx: gpcv2: add lockdep annotation")
->
-> are missing a Signed-off-by from their committer.
+On Wed, 6 Oct 2021 14:43:22 +1100 Stephen Rothwell wrote:
+> On Tue, 5 Oct 2021 18:52:17 -0700 Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > Applied, thanks. Is this the last one? ;)  
+> 
+> No idea :-(
+> 
+> > I wonder what happened to the kbuild bot :S  
+> 
+> Does it do ppc builds?
 
-Fixed.  Thanks for reporting, Stephen!
-
-Shawn
+I thought it did, I get a build status email periodically with a list
+of 135 builds. PPC is well represented there.
