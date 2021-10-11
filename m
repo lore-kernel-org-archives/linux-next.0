@@ -2,115 +2,120 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3C7C433F5
-	for <linux-next@archiver.kernel.org>; Mon, 11 Oct 2021 12:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D51C433F5
+	for <linux-next@archiver.kernel.org>; Mon, 11 Oct 2021 12:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 852F26103C
-	for <linux-next@archiver.kernel.org>; Mon, 11 Oct 2021 12:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E922A60F23
+	for <linux-next@archiver.kernel.org>; Mon, 11 Oct 2021 12:42:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235282AbhJKMYJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 11 Oct 2021 08:24:09 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:14325 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235265AbhJKMYJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2021 08:24:09 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HSd8Z4KrBz8yVD;
-        Mon, 11 Oct 2021 20:17:18 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Mon, 11 Oct 2021 20:22:07 +0800
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2308.8; Mon, 11 Oct 2021 20:22:06 +0800
-Message-ID: <5077aa7e-0167-33b6-35f0-0ea7df8f2375@huawei.com>
-Date:   Mon, 11 Oct 2021 20:22:05 +0800
+        id S235100AbhJKMo6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 11 Oct 2021 08:44:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47686 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235034AbhJKMo6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2021 08:44:58 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435BEC06161C
+        for <linux-next@vger.kernel.org>; Mon, 11 Oct 2021 05:42:58 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id z20so67142145edc.13
+        for <linux-next@vger.kernel.org>; Mon, 11 Oct 2021 05:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aH+daMH8/JBhYD/VNld/K3vNCe4mWktvAcObPC4aWG4=;
+        b=xLAEEpeguQ0woOp63ioI84nC66mr/vNC4iM/XmaXMiR9QYFGYakzTcnCnaHK0Zc1e9
+         F6SVKNckvU9wm9BB5+GFFc5UNe+g/qDBgYlf7xCE6cKla83nQsT0yJy3JCE7ac6G9KJq
+         XADRbelRbMcY+njlJNQLn1PW7duC4Vj6rnp0iM7FWu9pPI//hOj0ra+tRNKgsOEbqqhL
+         vX6oQOe0/+oBUJhXHqiH+UYFE+t6drOSbO7orVfi6uwUrGSpthmNLpMq/WxwZbuqJA53
+         qKDIBq882XZzIobYK11lbxtPNhoujcK7bDUlmekVqSfHwHnN4AIswFT6iM2pJDUpoNgy
+         9sNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aH+daMH8/JBhYD/VNld/K3vNCe4mWktvAcObPC4aWG4=;
+        b=Y7tFFMlIM/Uv1Mlm62Leoc0AKIDGmvNawmbOUP1huKqWfvM2O9p/kG1r4mfB1UEthM
+         jaYBE/PLx3777yypwp6dYkbl50MAYsqTAMTUDgGADa4Q9M9e/UJIFlpGqv+yfzY6GLrM
+         65U19XhRWX1SGvDj2KI2XeRj/pJLRZl9+yw1XqYm9PulJJ8NVya8FmLMucb6pF4xiIA5
+         QaBDhOp+fOQHe17q0/4Dwbjo9Cx1uZ2wUuMT4/AXUNCB7Y42+BUzf9GpPwcr2VTjAHuX
+         J+j6tl2OxqjIBiGJvwNb1mWSL3xE3FIAMs4hcLSHXDqQxTptpQS9ocO+uAWV8syrK2pu
+         gbzA==
+X-Gm-Message-State: AOAM53375onq3Vg/dnV4uA7w5GNIILYMXv2WZoTn/cRe6rdc2NozJCd4
+        A7/8Sb/f3l9w5j55F66PrFZkejU/aqpJBzf90ree+3i6CwlyRQ==
+X-Google-Smtp-Source: ABdhPJykj6TCtLZRl69RScymhuL6xnVXERm419IM+Tqe+l6k+vL0tbI4Gbo/sD+X5hpP0r9q9iM2ImzMDT4aN+LSPZ4=
+X-Received: by 2002:a50:9993:: with SMTP id m19mr40386265edb.357.1633956175595;
+ Mon, 11 Oct 2021 05:42:55 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.1
-Subject: Re: [PATCH] mm: kasan: Fix redefinition of
- 'kasan_populate_early_vm_area_shadow'
-Content-Language: en-US
-To:     <naresh.kamboju@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <andreyknvl@gmail.com>, <dvyukov@google.com>, <glider@google.com>,
-        <kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
-        <ryabinin.a.a@gmail.com>, <sfr@canb.auug.org.au>,
-        Linux Kernel Functional Testing <lkft@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
 References: <CA+G9fYv1Vbc-Y_czipb-z1bG=9axE4R1BztKGqWz-yy=+Wcsqw@mail.gmail.com>
- <20211011123211.3936196-1-wangkefeng.wang@huawei.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20211011123211.3936196-1-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggeme714-chm.china.huawei.com (10.1.199.110) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
+In-Reply-To: <CA+G9fYv1Vbc-Y_czipb-z1bG=9axE4R1BztKGqWz-yy=+Wcsqw@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 11 Oct 2021 18:12:44 +0530
+Message-ID: <CA+G9fYtD2EFu7-j1wPLCiu2yVpZb_wObXXXebKNSW5o4gh9vgA@mail.gmail.com>
+Subject: Re: mm/kasan/init.c:282:20: error: redefinition of 'kasan_populate_early_vm_area_shadow'
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Cc:     Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
++ Andrew Morton <akpm@linux-foundation.org>
 
-
-On 2021/10/11 20:32, Kefeng Wang wrote:
-> Move kasan_populate_early_vm_area_shadow() from mm/kasan/init.c to
-> mm/kasan/shadow.c, make it under CONFIG_KASAN_VMALLOC to fix the
-> redefinition issue.
-> 
+On Mon, 11 Oct 2021 at 17:08, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> Regression found on x86_64 gcc-11 built with KASAN enabled.
+> Following build warnings / errors reported on linux next 20211011.
+>
+> metadata:
+>     git_describe: next-20211011
+>     git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+>     git_short_log: d3134eb5de85 (\"Add linux-next specific files for 20211011\")
+>     target_arch: x86_64
+>     toolchain: gcc-11
+>
+> build error :
+> --------------
+> mm/kasan/init.c:282:20: error: redefinition of
+> 'kasan_populate_early_vm_area_shadow'
+>   282 | void __init __weak kasan_populate_early_vm_area_shadow(void *start,
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/mm.h:34,
+>                  from include/linux/memblock.h:13,
+>                  from mm/kasan/init.c:9:
+> include/linux/kasan.h:463:20: note: previous definition of
+> 'kasan_populate_early_vm_area_shadow' with type 'void(void *, long
+> unsigned int)'
+>   463 | static inline void kasan_populate_early_vm_area_shadow(void *start,
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> make[3]: *** [scripts/Makefile.build:288: mm/kasan/init.o] Error 1
+> make[3]: Target '__build' not remade because of errors.
+>
+>
 > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: kasan-dev@googlegroups.com
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
-> Hi Andrew,
-> Could you help to merge this into previos patch
->   "kasan: arm64: fix pcpu_page_first_chunk crash with KASAN_VMALLOC",
-> sorry for the build error.
-
-Correct Andrew's mail.
-
-> 
->   mm/kasan/init.c   | 5 -----
->   mm/kasan/shadow.c | 5 +++++
->   2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/kasan/init.c b/mm/kasan/init.c
-> index d39577d088a1..cc64ed6858c6 100644
-> --- a/mm/kasan/init.c
-> +++ b/mm/kasan/init.c
-> @@ -279,11 +279,6 @@ int __ref kasan_populate_early_shadow(const void *shadow_start,
->   	return 0;
->   }
->   
-> -void __init __weak kasan_populate_early_vm_area_shadow(void *start,
-> -						       unsigned long size)
-> -{
-> -}
-> -
->   static void kasan_free_pte(pte_t *pte_start, pmd_t *pmd)
->   {
->   	pte_t *pte;
-> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-> index 8d95ee52d019..4a4929b29a23 100644
-> --- a/mm/kasan/shadow.c
-> +++ b/mm/kasan/shadow.c
-> @@ -254,6 +254,11 @@ core_initcall(kasan_memhotplug_init);
->   
->   #ifdef CONFIG_KASAN_VMALLOC
->   
-> +void __init __weak kasan_populate_early_vm_area_shadow(void *start,
-> +						       unsigned long size)
-> +{
-> +}
-> +
->   static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
->   				      void *unused)
->   {
-> 
+>
+> build link:
+> -----------
+> https://builds.tuxbuild.com/1zLv2snHfZN8QV01yA9MB8NhUZt/build.log
+>
+> build config:
+> -------------
+> https://builds.tuxbuild.com/1zLv2snHfZN8QV01yA9MB8NhUZt/config
+>
+> # To install tuxmake on your system globally
+> # sudo pip3 install -U tuxmake
+> tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-11
+> --kconfig defconfig --kconfig-add
+> https://builds.tuxbuild.com/1zLv2snHfZN8QV01yA9MB8NhUZt/config
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
