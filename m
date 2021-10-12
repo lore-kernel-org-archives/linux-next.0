@@ -2,145 +2,192 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E90FC433F5
-	for <linux-next@archiver.kernel.org>; Tue, 12 Oct 2021 04:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00E9C433F5
+	for <linux-next@archiver.kernel.org>; Tue, 12 Oct 2021 07:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20FFF60EE5
-	for <linux-next@archiver.kernel.org>; Tue, 12 Oct 2021 04:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9B7B6108F
+	for <linux-next@archiver.kernel.org>; Tue, 12 Oct 2021 07:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231442AbhJLEue (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 12 Oct 2021 00:50:34 -0400
-Received: from gandalf.ozlabs.org ([150.107.74.76]:55433 "EHLO
-        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbhJLEud (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 12 Oct 2021 00:50:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4HT38F4bP5z4xb9;
-        Tue, 12 Oct 2021 15:48:29 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1634014111;
-        bh=FJNzj0iQa+QNUJ+e+1TYvef3simjmmBQ7rllRp9fYRc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qngT4LJoE3IZjN6xmikS9obwg9Jh2apsGq+j8Th1NFmsGS5gXJmqBswLfu+g2c7yR
-         MXegVhiJVGF5MQgk3/s2l3LKwfHt+GEn15CwVUw/zZbTSiuZ32Z7Gh+r0aC+htp/Zu
-         DG1NKjCHjpc4etmSb3S2nFb9r6Ut+4oYQlSw3+G39iBXMaWweU1BGB/XGgEo6q/A5G
-         pKkvRcFoIZamoT0c8HLqHCJ+RwESXuGxh0Ocez0FYYunSB0Z6L7wm89tkhftVnSK/p
-         eo9E7d/jr0BjWmfBBoEyG8XKUCjdPHwe6Sa2776oq0WKqDQhoyJ4clJ+8NYz736isB
-         a/h2cyTVpauqg==
-Date:   Tue, 12 Oct 2021 15:48:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S234260AbhJLHhn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 12 Oct 2021 03:37:43 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:17937 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234082AbhJLHhn (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 12 Oct 2021 03:37:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1634024142; x=1665560142;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=JnajjZ4WxUBcaEw+nx+jgD2W+ODYf4Y30ZAYWEcq4fM=;
+  b=1OynkErJzVT1MxY3xqjF6IcV7VYBvN4yY2k/WSqi2eXo27/YngWjR3gQ
+   L2w14jbNKlwml5F7aJarWjZ2KJqYEq9WM0G2WbfkomIqMx5VAkHuvceF0
+   tYGsVKkHYhInQkNIHbqh79IvX8a2ne3lrGlHgntQNjDZ7FYaDsWdioJmc
+   N55ywtsq0NQ21UDRbW4kDqUc/A27lIQ800bGuaSZCriakZXqI1xGGYStH
+   WvoehUQDw3dinc7rUhN9dHvwZFSgj/eI6R93nOnfUtwSjeDDwjp63r450
+   oF4P/Ggn1KDcDMoBvE8TqYXMUsWfovbtNbFyHl9PyVrYbGaTAy8NWuAcW
+   Q==;
+IronPort-SDR: x/nWZIk+9MABBkvWZ+F2BITSZzSZPU9dw/RDL5ToAonYiP6Jt6lxezQHCbPbSsY3HLe2HUglDK
+ 8F4YSDVm8hPD3RhaDRl2bAk8oiFRM1c4s95MkcbvfZ0CnLEPXrgrMqMlIjgCPKWEdnC2jAISY3
+ RRIARLOEwqXlLqq2WPUodQlGavGPtQUgiU8tJ0Z4U6pnDusgYaGLBtLj4uXTEK0iLYOkxhc17S
+ jCfSgZo2D005rAX7GhOsUCAphWZQ3XU63kLH5QbX6r5LmiGk7w+bA2KPjs3Z3p/sN5C7YXbf/g
+ apODWeVKOJxqJqBpZJhDHxwH
+X-IronPort-AV: E=Sophos;i="5.85,367,1624345200"; 
+   d="scan'208";a="139955500"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Oct 2021 00:35:41 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 12 Oct 2021 00:35:40 -0700
+Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Tue, 12 Oct 2021 00:35:39 -0700
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the rcu tree with the tip tree
-Message-ID: <20211012154828.312f870f@canb.auug.org.au>
+References: <20211012110309.17d51c3e@canb.auug.org.au>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <97e578a3-b12e-1975-717d-a0cf663673f0@microchip.com>
+Date:   Tue, 12 Oct 2021 09:35:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Kb.nPBRY5QO_NX+JtXLlX3y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20211012110309.17d51c3e@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Kb.nPBRY5QO_NX+JtXLlX3y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 12/10/2021 at 02:03, Stephen Rothwell wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Hi all,
+> 
+> After merging the arm-soc tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> Error: arch/arm/boot/dts/sama7g5.dtsi:167.3-7 syntax error
+> FATAL ERROR: Unable to parse input tree
+> 
+> Caused by commit
+> 
+>    9be4be3ed1ec ("Merge branch 'arm/dt' into for-next")
+> 
+> I added the following patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 12 Oct 2021 10:37:29 +1100
+> Subject: [PATCH] merge fix for missing semicolon
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hi all,
+This patch is valid.
 
-Today's linux-next merge of the rcu tree got a conflict in:
+When solving this merge conflict in at91-next here:
+https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git/commit/?id=dbbb39806c65b0ab3f330fc7a855bc13b20ad2ce
 
-  kernel/rcu/tasks.h
+I had following patch to have the nodes in alphabetical order:
 
-between commit:
+--- a/arch/arm/boot/dts/sama7g5.dtsi 
 
-  9b3c4ab3045e ("sched,rcu: Rework try_invoke_on_locked_down_task()")
++++ b/arch/arm/boot/dts/sama7g5.dtsi 
 
-from the tip tree and commit:
+@@@ -159,11 -137,22 +159,27 @@@ 
 
-  18f08e758f34 ("rcu-tasks: Add trc_inspect_reader() checks for exiting cri=
-tical section")
+                         clocks = <&clk32k 0>;
+                 };
 
-from the rcu tree.
++               adc: adc@e1000000 { 
 
-I fixed it up (I hope - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
++                       compatible = "microchip,sama7g5-adc"; 
 
---=20
-Cheers,
-Stephen Rothwell
++                       reg = <0xe1000000 0x200>; 
 
-diff --cc kernel/rcu/tasks.h
-index 171bc848e8e3,e4a32db9f712..000000000000
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@@ -928,10 -919,10 +919,10 @@@ reset_ipi
-  }
- =20
-  /* Callback function for scheduler to check locked-down task.  */
- -static bool trc_inspect_reader(struct task_struct *t, void *arg)
- +static int trc_inspect_reader(struct task_struct *t, void *arg)
-  {
-  	int cpu =3D task_cpu(t);
-- 	bool in_qs =3D false;
-+ 	int nesting;
-  	bool ofl =3D cpu_is_offline(cpu);
- =20
-  	if (task_curr(t)) {
-@@@ -951,18 -942,18 +942,18 @@@
-  		n_heavy_reader_updates++;
-  		if (ofl)
-  			n_heavy_reader_ofl_updates++;
-- 		in_qs =3D true;
-+ 		nesting =3D 0;
-  	} else {
-  		// The task is not running, so C-language access is safe.
-- 		in_qs =3D likely(!t->trc_reader_nesting);
-+ 		nesting =3D t->trc_reader_nesting;
-  	}
- =20
-- 	// Mark as checked so that the grace-period kthread will
-- 	// remove it from the holdout list.
-- 	t->trc_reader_checked =3D true;
--=20
-- 	if (in_qs)
-- 		return 0;  // Already in quiescent state, done!!!
-+ 	// If not exiting a read-side critical section, mark as checked
-+ 	// so that the grace-period kthread will remove it from the
-+ 	// holdout list.
-+ 	t->trc_reader_checked =3D nesting >=3D 0;
-+ 	if (nesting <=3D 0)
- -		return !nesting;  // If in QS, done, otherwise try again later.
-++		return (!nesting) ? 0 : -EINVAL;  // If in QS, done, otherwise try agai=
-n later.
- =20
-  	// The task is in a read-side critical section, so set up its
-  	// state so that it will awaken the grace-period kthread upon exit
++                       interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>; 
 
---Sig_/Kb.nPBRY5QO_NX+JtXLlX3y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
++                       clocks = <&pmc PMC_TYPE_GCK 26>; 
 
------BEGIN PGP SIGNATURE-----
++                       assigned-clocks = <&pmc PMC_TYPE_GCK 26>; 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmFlE5wACgkQAVBC80lX
-0Gxl5gf8Ca1lWACFU7u842u1TQLwdNTyy5HhXOKhl97fnGDr42+SqdcBpyvvmWFC
-ZDjxPOednIagRBPYf176EHx6ugqGC+vAq1YUK58GLxAaNhKoeltAxYhZZPHi4f6S
-2dONeS51ic+m6swXyyWm700k26djbYqQCgdwjkTJydlc4W+e0HpRYfNEDhdlxROj
-0iY1+Wu3cYiWKU8/aofpOj6p5MV4hTkAjB4qQrvg0OzUn5qPwvWACwX0BOjqBmFN
-9dUNl7LKXP8BoD4lmdo5orxdKThzgfQh7Us46vVhs2zRnxAgqjp0ePiW/8xT6KY2
-9c5pDm7gLZ2Ws/8C2Nrbyvos8v8HRA==
-=2qKt
------END PGP SIGNATURE-----
++                       assigned-clock-rates = <100000000>; 
 
---Sig_/Kb.nPBRY5QO_NX+JtXLlX3y--
++                       clock-names = "adc_clk"; 
+
++                       dmas = <&dma0 AT91_XDMAC_DT_PERID(0)>; 
+
++                       dma-names = "rx"; 
+
++                       atmel,min-sample-rate-hz = <200000>; 
+
++                       atmel,max-sample-rate-hz = <20000000>; 
+
++                       atmel,startup-time-ms = <4>; 
+
++                       status = "disabled"; 
+
++               }; 
+
++ 
+
+  +              chipid@e0020000 { 
+
+  +                      compatible = "microchip,sama7g5-chipid"; 
+
+  +                      reg = <0xe0020000 0x8>; 
+
+  +              }; 
+
+  + 
+
+                 sdmmc0: mmc@e1204000 {
+                         compatible = "microchip,sama7g5-sdhci", 
+"microchip,sam9x60-sdhci";
+                         reg = <0xe1204000 0x4000>;
+
+
+Sorry for not having mentioned this conflict in the pull-request.
+
+Best regards,
+   Nicolas
+
+> ---
+>   arch/arm/boot/dts/sama7g5.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/sama7g5.dtsi b/arch/arm/boot/dts/sama7g5.dtsi
+> index efcaa6ad7533..f98977f3980d 100644
+> --- a/arch/arm/boot/dts/sama7g5.dtsi
+> +++ b/arch/arm/boot/dts/sama7g5.dtsi
+> @@ -162,7 +162,7 @@ ps_wdt: watchdog@e001d180 {
+>                  chipid@e0020000 {
+>                          compatible = "microchip,sama7g5-chipid";
+>                          reg = <0xe0020000 0x8>;
+> -               }
+> +               };
+> 
+>                  adc: adc@e1000000 {
+>                          compatible = "microchip,sama7g5-adc";
+> --
+> 2.33.0
+> 
+> --
+> Cheers,
+> Stephen Rothwell
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
+
+-- 
+Nicolas Ferre
