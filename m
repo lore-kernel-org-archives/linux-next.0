@@ -2,83 +2,109 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CFDC433FE
-	for <linux-next@archiver.kernel.org>; Fri, 15 Oct 2021 10:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A919C433EF
+	for <linux-next@archiver.kernel.org>; Fri, 15 Oct 2021 10:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4116B60FDA
-	for <linux-next@archiver.kernel.org>; Fri, 15 Oct 2021 10:14:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7264261027
+	for <linux-next@archiver.kernel.org>; Fri, 15 Oct 2021 10:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237866AbhJOKQg (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 15 Oct 2021 06:16:36 -0400
-Received: from gandalf.ozlabs.org ([150.107.74.76]:37355 "EHLO
-        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232942AbhJOKQb (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 15 Oct 2021 06:16:31 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4HW2Dv6Gc2z4xbc;
-        Fri, 15 Oct 2021 21:14:23 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1634292864;
-        bh=r9P18IKJABoUfS037g6WJ3WsogQ7ZEkZgs5PQbKuf8c=;
-        h=Date:From:To:Cc:Subject:From;
-        b=aS8fEmGwYgGZf5Sb8VRmLq58tjozKEN3NI6LLGRxvmmG203iJ69G6d+Sx3vRVcc35
-         dhOBRjUpoOoo03e5PJruse2RZl+/VH7Hb7+iZ1TwQXRULAc3vTBnsD4u0sFrbtf0ZZ
-         K5Xj+/udAjXnxPeJniqy6USo4WihfuFy3MSXgClopRz9k3BzZb61pPQvjhSgIWzmp9
-         /rJSUwt7714+Lc7Ofojb5QrfRA/2WdaC24iZKS7g+5nvtyMWSQS7NfsQ3jNrRZ6e/h
-         9n1M/4BW43eUr3cAFbqkFqW89qSgqQ8/NZBxJhlaqAYiDgW4O8aDzur1h/UTprCtWH
-         79ES5Fnjw2VMQ==
-Date:   Fri, 15 Oct 2021 21:14:23 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S237807AbhJOKRq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 15 Oct 2021 06:17:46 -0400
+Received: from mga05.intel.com ([192.55.52.43]:22698 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237905AbhJOKR0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 15 Oct 2021 06:17:26 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10137"; a="314085993"
+X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
+   d="scan'208";a="314085993"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2021 03:15:13 -0700
+X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
+   d="scan'208";a="492402292"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.159])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2021 03:15:11 -0700
+Received: from andy by smile with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1mbN32-000Oz6-PT;
+        Fri, 15 Oct 2021 16:14:56 +0300
+Date:   Fri, 15 Oct 2021 16:14:56 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the spi-fixes tree
-Message-ID: <20211015211423.2d8d3c0b@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <YWl+0PFixaNqgIxb@smile.fi.intel.com>
+References: <20211015202908.1c417ae2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/szMFqjigKSyOGfI.KIC9dXG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211015202908.1c417ae2@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/szMFqjigKSyOGfI.KIC9dXG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
++Cc: Rasmus
 
-Hi all,
+On Fri, Oct 15, 2021 at 08:29:08PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> In file included from include/linux/rcupdate.h:28,
+>                  from include/linux/rculist.h:11,
+>                  from include/linux/pid.h:5,
+>                  from include/linux/sched.h:14,
+>                  from arch/arm/kernel/asm-offsets.c:11:
+> include/linux/bottom_half.h: In function 'local_bh_disable':
+> include/linux/bottom_half.h:19:24: error: '_THIS_IP_' undeclared (first use in this function)
+>    19 |  __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
+>       |                        ^~~~~~~~~
+> include/linux/bottom_half.h:19:24: note: each undeclared identifier is reported only once for each function it appears in
+> include/linux/bottom_half.h: In function 'local_bh_enable':
+> include/linux/bottom_half.h:32:23: error: '_THIS_IP_' undeclared (first use in this function)
+>    32 |  __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
+>       |                       ^~~~~~~~~
+> 
+> Presumably caused by a commit in the series that starts with
+> 
+>   dcaf7a5f413b ("kernel.h: drop unneeded <linux/kernel.h> inclusion from other headers")
+> 
+> I have applied the following patch for today (though there may be a
+> better solution).
 
-After merging the spi-fixes tree, today's linux-next build (htmldocs)
-produced this warning:
+Thanks! As a quick fix looks good, but I think we need a separate header for
+those _*_IP_ macros.
 
-include/linux/spi/spi.h:671: warning: Function parameter or member 'add_loc=
-k' not described in 'spi_controller'
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 15 Oct 2021 19:58:46 +1100
+> Subject: [PATCH] bottom_half.h needs kernel.h
+> 
+> for _THIS_IP_ on arm at least
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/bottom_half.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
+> index eed86eb0a1de..11d107d88d03 100644
+> --- a/include/linux/bottom_half.h
+> +++ b/include/linux/bottom_half.h
+> @@ -2,6 +2,7 @@
+>  #ifndef _LINUX_BH_H
+>  #define _LINUX_BH_H
+>  
+> +#include <linux/kernel.h>
+>  #include <linux/preempt.h>
+>  
+>  #if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_TRACE_IRQFLAGS)
 
-Introduced by commit
+-- 
+With Best Regards,
+Andy Shevchenko
 
-  6098475d4cb4 ("spi: Fix deadlock when adding SPI controllers on SPI buses=
-")
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/szMFqjigKSyOGfI.KIC9dXG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmFpVH8ACgkQAVBC80lX
-0Gzcbgf+MwQnDN4fv14b9cOzpUud3VrWQxfXrCCPib7cof5BGWWsE/N/2FvLf6ZC
-MkWbXTmPLobzeBxrmBL6qaYERP8KzSOua1M8yGv9b6TxBfeXXz/exxranBbqYyf/
-R3FmRJQi1j+XjFDYj6I9WhtAu6HE6tVhritpJ0c14ANC6tI9MZhBMQsS0Ng3wsU0
-aqnSa2X7IbCkNmixT4rQ44W5REtlAoHsOSK74nvyvZqraT3vGYOszrnwHRirypF9
-/my3i/bIyP+nhZhnDtAvljAzprVQEq2Hm10RpnN3SV7ejreDRR/PqZxYuLX71lwx
-DKKeSMWkDvI45IbjnCK6YPpl/UR9fQ==
-=WwpC
------END PGP SIGNATURE-----
-
---Sig_/szMFqjigKSyOGfI.KIC9dXG--
