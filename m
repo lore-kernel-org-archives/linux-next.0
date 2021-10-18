@@ -2,70 +2,99 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715A8C433EF
-	for <linux-next@archiver.kernel.org>; Mon, 18 Oct 2021 14:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD47C433F5
+	for <linux-next@archiver.kernel.org>; Mon, 18 Oct 2021 17:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52E9060F59
-	for <linux-next@archiver.kernel.org>; Mon, 18 Oct 2021 14:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58EC610A1
+	for <linux-next@archiver.kernel.org>; Mon, 18 Oct 2021 17:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbhJRO2t (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 18 Oct 2021 10:28:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46804 "EHLO mail.kernel.org"
+        id S233317AbhJRRKx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 18 Oct 2021 13:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230344AbhJRO2t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 18 Oct 2021 10:28:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8933960F46;
-        Mon, 18 Oct 2021 14:26:37 +0000 (UTC)
+        id S231739AbhJRRKw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 18 Oct 2021 13:10:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EC5DB60FC3;
+        Mon, 18 Oct 2021 17:08:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634567197;
-        bh=/qlL1QpEiHNB+Fa0tvPabw11CPvcxSH8+Uj8YGqsaT4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=NeCa8PFsYwl8DjTBVBMdcvWUU0qnH0uBNpZr/5isKt8OCDdji1VlxA9LR8qxSFWiB
-         VGjmo645PeTx6OFbwqgwWgxo6Z9HdVMERXjCSsnGgJjzK/kOruXZksN7Lbm0w0T/0j
-         JovpYNHi+a76a4jl4wIBCJ2cuBZU6wuaaKZAYl6Im7dV7FzqmHsK9dUFZXsKcOGYZq
-         x9X/GgqpAlhwBRYk8D/NinarBFWT8IUaCWTQFNPS3uPXk2OCanqQSMtA+kmI3iWy06
-         bCiacjQM2dzlILt8E6C7jbZAW6YJjPSXbW/BO4SNly+ZLU0F+yCrwDaBTjbiqz5e6Q
-         AN7Zs8DwFYyhw==
-Date:   Mon, 18 Oct 2021 09:26:36 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
+        s=k20201202; t=1634576921;
+        bh=rnqH7xQLQwahEjIjKpK9LRzICcShFH40bJhxOwZthU0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a01NpQT11bLt58cMuXYcuXlq3AAG+cEYHjuEWCQQRCdMEWxNA0ZldCMCwpeE8+6Y3
+         aWJMtNj1S3x5ESMcVPmTfN0MLLrK+e410ib608SjvPVqc2ylErS5yB4+Jji42E5bOZ
+         0vBs//bXWtqPlvyRrvmkbYx4+AJ0k8Od4dM+eshnKdbTVYz5oGp1IGq/BBTX82emns
+         wJ2e0dAbcDuJoJd8DBc3AV7cIZ9tieoI7ZXquMBBZYPpsdhvr2MaASsxVSKGVRhGtR
+         3YLzIFwwmUmFubnBNDnXwwNj+LUHcRdJlWaZ29FDhZpX4vHjr/ksdKNH+fObtMeSC6
+         jO52jEFbQqnBQ==
+Date:   Mon, 18 Oct 2021 12:13:15 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Message-ID: <20211018142636.GA2230544@bhelgaas>
+Subject: Re: linux-next: build failure after merge of the kspp-gustavo tree
+Message-ID: <20211018171315.GA1233957@embeddedor>
+References: <20211018181559.5d3bcf7e@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211018095525.39bea5b0@canb.auug.org.au>
+In-Reply-To: <20211018181559.5d3bcf7e@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 09:55:25AM +1100, Stephen Rothwell wrote:
+Thanks, Stephen.
+--
+Gustavo
+
+On Mon, Oct 18, 2021 at 06:15:59PM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> After merging the pci tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> After merging the kspp-gustavo tree, today's linux-next build (powerpc
+> pseries_le_defconfig) failed like this:
 > 
-> drivers/misc/cxl/pci.c: In function 'cxl_vphb_error_detected':
-> drivers/misc/cxl/pci.c:1816:15: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->  1816 |   err_handler = afu_drv->err_handler;
->       |               ^
-> drivers/misc/cxl/pci.c: In function 'cxl_pci_slot_reset':
-> drivers/misc/cxl/pci.c:2041:16: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->  2041 |    err_handler = afu_drv->err_handler;
->       |                ^
-> drivers/misc/cxl/pci.c: In function 'cxl_pci_resume':
-> drivers/misc/cxl/pci.c:2090:16: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->  2090 |    err_handler = afu_drv->err_handler;
->       |                ^
+> In file included from include/linux/perf_event.h:49,
+>                  from arch/powerpc/perf/callchain.c:9:
+> include/linux/ftrace.h:49:41: error: 'struct ftrace_regs' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+>    49 |           struct ftrace_ops *op, struct ftrace_regs *fregs);
+>       |                                         ^~~~~~~~~~~
 > cc1: all warnings being treated as errors
+> 
+> (many of these)
 > 
 > Caused by commit
 > 
->   115c9d41e583 ("cxl: Factor out common dev->driver expressions")
+>   c45ede6c2781 ("ftrace: Fix -Wmissing-prototypes errors")
 > 
-> I have used the pci tree from next-20211015 for today.
+> I have added the following fixup for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 18 Oct 2021 17:56:30 +1100
+> Subject: [PATCH] fixup for "ftrace: Fix -Wmissing-prototypes errors"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/ftrace.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 871b51bec170..ada656c6824d 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -45,6 +45,7 @@ struct ftrace_ops;
+>  void arch_ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip);
+>  #else
+>  # define FTRACE_FORCE_LIST_FUNC 0
+> +struct ftrace_regs;
+>  void arch_ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+>  			       struct ftrace_ops *op, struct ftrace_regs *fregs);
+>  #endif
+> -- 
+> 2.33.0
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Sorry about this.  I think I fixed it and updated my -next branch.
+
