@@ -2,79 +2,83 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB67C433F5
-	for <linux-next@archiver.kernel.org>; Tue, 26 Oct 2021 21:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACACC433EF
+	for <linux-next@archiver.kernel.org>; Tue, 26 Oct 2021 22:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2176109D
-	for <linux-next@archiver.kernel.org>; Tue, 26 Oct 2021 21:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40CAE610A2
+	for <linux-next@archiver.kernel.org>; Tue, 26 Oct 2021 22:04:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237419AbhJZVwu convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 26 Oct 2021 17:52:50 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:60218 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237347AbhJZVwu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Oct 2021 17:52:50 -0400
-X-Greylist: delayed 465 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Oct 2021 17:52:50 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8E09F60A59CC;
-        Tue, 26 Oct 2021 23:42:39 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id yPay7fhyuR19; Tue, 26 Oct 2021 23:42:38 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 5FA4560A59EB;
-        Tue, 26 Oct 2021 23:42:38 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id QzmD8z1Rlq0E; Tue, 26 Oct 2021 23:42:38 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 3E75D60A59CC;
-        Tue, 26 Oct 2021 23:42:38 +0200 (CEST)
-Date:   Tue, 26 Oct 2021 23:42:38 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Petr Cvachoucek <cvachoucek@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Message-ID: <1956798646.39039.1635284558179.JavaMail.zimbra@nod.at>
-In-Reply-To: <20211027080727.7e9df9be@canb.auug.org.au>
-References: <20211027080727.7e9df9be@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the ubifs tree
+        id S236159AbhJZWHM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 26 Oct 2021 18:07:12 -0400
+Received: from gandalf.ozlabs.org ([150.107.74.76]:60077 "EHLO
+        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239740AbhJZWFu (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Oct 2021 18:05:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Hf5Rx4g7sz4xbP;
+        Wed, 27 Oct 2021 09:03:25 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1635285805;
+        bh=2yKEt2bc6U3UyqI9j7lbu4DXc9hA6a3sqCn3+MN1STk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZUUqRhSFJQMSLV/wqR70hZMfLf8bPnSOlLOOzTMasFkJqsN7JKclJwTCvaFxUIcvX
+         PpkonYLKqXxYeef8UwDF+9QdWDDxEGgnXYUr5JfyxyT//gVCBmiMSZMgLM9Tczx9EQ
+         x1g1cfdpZumdS7mbdVBWcCZfqTDEkCYrAV+rCAb+niYErI9GXvdCH0gexkscPkdfDU
+         PJ3RcFopnC7+YhcNmU9vEiMKn7fNhsfbcvr+OY+SO5dYkXrUukPf6mtXDluYYwDzpO
+         bVQEn5uGR6lsFYiA4T+DRoPKTLmmCYfqiYUlHlKuL0xIQYsJsGRea1x51vlTjK9+ny
+         GsTPD3/CaRl4Q==
+Date:   Wed, 27 Oct 2021 09:03:24 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Alexander Gordeev <agordeev@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>, linux-next@vger.kernel.org
+Subject: Re: Upcoming merge conflict between akpm-current/current and s390
+ trees
+Message-ID: <20211027090324.5391ab99@canb.auug.org.au>
+In-Reply-To: <your-ad-here.call-01635257155-ext-6484@work.hours>
+References: <your-ad-here.call-01635257155-ext-6484@work.hours>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF93 (Linux)/8.8.12_GA_3809)
-Thread-Topic: linux-next: Signed-off-by missing for commit in the ubifs tree
-Thread-Index: XCC3FGo2I1wf6+aW9Rx+6en2c/S6lw==
+Content-Type: multipart/signed; boundary="Sig_/Oz/LMd9lJ1qjdsGR4y7GOL=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen,
+--Sig_/Oz/LMd9lJ1qjdsGR4y7GOL=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
------ Ursprüngliche Mail -----
-> Von: "Stephen Rothwell" <sfr@canb.auug.org.au>
-> An: "richard" <richard@nod.at>
-> CC: "Petr Cvachoucek" <cvachoucek@gmail.com>, "linux-kernel" <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
-> <linux-next@vger.kernel.org>
-> Gesendet: Dienstag, 26. Oktober 2021 23:07:27
-> Betreff: linux-next: Signed-off-by missing for commit in the ubifs tree
+Hi Vasily,
 
-> Hi all,
-> 
-> Commit
-> 
->  e7259f574fca ("ubifs: Error path in ubifs_remount_rw() seems to wrongly free
->  write buffers")
-> 
-> is missing a Signed-off-by from its author.
+On Tue, 26 Oct 2021 16:05:55 +0200 Vasily Gorbik <gor@linux.ibm.com> wrote:
+>
+> updating s390 tree for linux-next today I hit a merge conflict with
+> akpm-current/current. Please find conflict resolution below.
 
-Thanks for letting me know.
+Thanks for the heads up and merge resolution.
 
-Petr, if you don't mind I'll add the following line:
-Signed-off-by: Petr Cvachoucek <cvachoucek@gmail.com>
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-//richard
+--Sig_/Oz/LMd9lJ1qjdsGR4y7GOL=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmF4eywACgkQAVBC80lX
+0GyjfAf/VuXVNYJXg6w2Xp+Rac/Hw0n8lK2l7W10tAbSzExDbjt872Ae8LYr5EsQ
+cuR+EEjjXIMvNk3uih6M/fVpQdvguD185Ntk06ksW49pZYxVkhJGlN4dFAMVzxX0
+wNXSb46ySD28hga58P3CUfN4kKLvo84Fq3c11wcnoH7OmWxDv8sT00mxxVFamARa
+PkfGp2aHG0jdD3wfvQ83rqTcDVNSEVTqJTdJWk3OvBPC/AVhAWTazfM9YCom3f7K
+VsBUxT/Lvlws8I/Kf7PERn7/jH+7d5EFCnlEX6e+3Ql1dalbV9VZSBl2ZwzSZjY9
+VN77ALmU0ToH3OZKrnvDMoUlTPKHTA==
+=3O+g
+-----END PGP SIGNATURE-----
+
+--Sig_/Oz/LMd9lJ1qjdsGR4y7GOL=--
