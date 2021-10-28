@@ -2,163 +2,88 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 341E6C433FE
-	for <linux-next@archiver.kernel.org>; Thu, 28 Oct 2021 09:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF27C433F5
+	for <linux-next@archiver.kernel.org>; Thu, 28 Oct 2021 09:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC03610C7
-	for <linux-next@archiver.kernel.org>; Thu, 28 Oct 2021 09:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06EE9610FC
+	for <linux-next@archiver.kernel.org>; Thu, 28 Oct 2021 09:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbhJ1JL6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 28 Oct 2021 05:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhJ1JL6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 28 Oct 2021 05:11:58 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee2:21ea])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBCC8C061570;
-        Thu, 28 Oct 2021 02:09:31 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Hg09y6rtTz4xcC;
-        Thu, 28 Oct 2021 20:09:26 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1635412170;
-        bh=6bxZMa6u3BdmZNcWDX7MjL0GNbyqtdo/SRu92As+UL8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hG3JmjhWcSB4EDi4Xu/QR5Tt6PY/1DrDw866wpE3S/pNzUfAjEMtxtmfnG+M6v4EM
-         YP62Kxpl5SeM5fjMy8yyPz6nJwJxKWEtJ6vbbrN1MlWnuXR3LEtpOqVgkyu76wFUv2
-         rQq4MDBMefCm+2CO8+bCe7k0dR/ND5zOCY3RYCkNqwOBV7XSaGhxlFe74ChZIprNFx
-         PLndJv2nnFE83pVkiksk4sclFxafYnis1QesBSHeGLYsijZ9VZiPOb7fhSneawIs9G
-         iEPcfHkmvebuZgAtDU/eEbO1pXSz+983PQnjryYUqkb4F9P6s/mm5CjOq7Gqn44a+Y
-         vzXUlFO/5/Vkg==
-Date:   Thu, 28 Oct 2021 20:09:25 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Adam Bratschi-Kaye <ark.email@gmail.com>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Ayaan Zaidi <zaidi.ayaan@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Boris-Chengbiao Zhou <bobo1239@web.de>,
-        Douglas Su <d0u9.su@outlook.com>, Finn Behrens <me@kloenk.de>,
-        Fox Chen <foxhlchen@gmail.com>, Gary Guo <gary@garyguo.net>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Sumera Priyadarsini <sylphrenadin@gmail.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Yuki Okushi <jtitor@2k36.org>
-Subject: Re: linux-next: manual merge of the rust tree with the kbuild tree
-Message-ID: <20211028200925.64f16df2@canb.auug.org.au>
-In-Reply-To: <20211015182404.0355bef6@canb.auug.org.au>
-References: <20211015182404.0355bef6@canb.auug.org.au>
+        id S230071AbhJ1J0v (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 28 Oct 2021 05:26:51 -0400
+Received: from elvis.franken.de ([193.175.24.41]:45139 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229626AbhJ1J0v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 28 Oct 2021 05:26:51 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1mg1dv-0002j1-00; Thu, 28 Oct 2021 11:24:15 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id ED26FC2770; Thu, 28 Oct 2021 11:23:18 +0200 (CEST)
+Date:   Thu, 28 Oct 2021 11:23:18 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     Yanteng Si <siyanteng01@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>, kw@linux.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        chenhuacai@kernel.org, sterlingteng@gmail.com,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] MIPS: cm/cpc: export some missing symbols to be
+ able to use them from driver code
+Message-ID: <20211028092318.GA6574@alpha.franken.de>
+References: <cover.1635390750.git.siyanteng@loongson.cn>
+ <112fea0c8c1b65a762ac98412216239160721263.1635390750.git.siyanteng@loongson.cn>
+ <CAMhs-H9LUQ6Km=sA992LH=+E0MbGuMf9YhM6w2HoyeqE0QbzJQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vvi=bl.Rr0pN0CqAV8ZNVTF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMhs-H9LUQ6Km=sA992LH=+E0MbGuMf9YhM6w2HoyeqE0QbzJQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/vvi=bl.Rr0pN0CqAV8ZNVTF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 28, 2021 at 06:11:18AM +0200, Sergio Paracuellos wrote:
+> On Thu, Oct 28, 2021 at 6:05 AM Yanteng Si <siyanteng01@gmail.com> wrote:
+> >
+> > Since commit 2bdd5238e756 ("PCI: mt7621: Add MediaTek MT7621 PCIe host controller driver")
+> > the MT7621 PCIe host controller driver is built as a module but modpost complains once these
+> > drivers become modules.
+> >
+> > ERROR: modpost: "mips_cm_unlock_other" [drivers/pci/controller/pcie-mt7621.ko] undefined!
+> > ERROR: modpost: "mips_cpc_base" [drivers/pci/controller/pcie-mt7621.ko] undefined!
+> > ERROR: modpost: "mips_cm_lock_other" [drivers/pci/controller/pcie-mt7621.ko] undefined!
+> > ERROR: modpost: "mips_cm_is64" [drivers/pci/controller/pcie-mt7621.ko] undefined!
+> > ERROR: modpost: "mips_gcr_base" [drivers/pci/controller/pcie-mt7621.ko] undefined!
+> >
+> > Let's just export them.
+> >
+> > Signed-off-by: Yanteng Si <siyanteng@loongson.cn>
+> > ---
+> >  arch/mips/kernel/mips-cm.c  | 5 +++++
+> >  arch/mips/kernel/mips-cpc.c | 1 +
+> >  2 files changed, 6 insertions(+)
+> >
+> 
+> Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-Hi all,
+could we instead make the pcie-mt761 driver non modular ? Exporting
+all MIPS specific stuff for just making an essential driver modular
+doesn't IMHO make much sense.
 
-On Fri, 15 Oct 2021 18:24:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the rust tree got a conflict in:
->=20
->   Makefile
->=20
-> between commit:
->=20
->   09708df61f2b ("kbuild: split DEBUG_CFLAGS out to scripts/Makefile.debug=
-")
->=20
-> from the kbuild tree and commit:
->=20
->   dc08d49444e9 ("Kbuild: add Rust support")
->=20
-> from the rust tree.
->=20
-> I fixed it up (I used the Makefile conflicting part from the former and
-> applied the patch below) and can carry the fix as necessary. This is
-> now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your
-> tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Thomas.
 
-The fixup patch now looks like this:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 15 Oct 2021 18:16:09 +1100
-Subject: [PATCH] Kbuild: fix for "kbuild: split DEBUG_CFLAGS out to
- scripts/Makefile.debug"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- scripts/Makefile.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/scripts/Makefile.debug b/scripts/Makefile.debug
-index 9f39b0130551..c664af3ccc6b 100644
---- a/scripts/Makefile.debug
-+++ b/scripts/Makefile.debug
-@@ -1,4 +1,5 @@
- DEBUG_CFLAGS	:=3D
-+DEBUG_RUSTFLAGS :=3D
-=20
- ifdef CONFIG_DEBUG_INFO_SPLIT
- DEBUG_CFLAGS	+=3D -gsplit-dwarf
-@@ -10,6 +11,12 @@ ifndef CONFIG_AS_IS_LLVM
- KBUILD_AFLAGS	+=3D -Wa,-gdwarf-2
- endif
-=20
-+ifdef CONFIG_DEBUG_INFO_REDUCED
-+DEBUG_RUSTFLAGS +=3D -Cdebuginfo=3D1
-+else
-+DEBUG_RUSTFLAGS +=3D -Cdebuginfo=3D2
-+endif
-+
- ifndef CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
- dwarf-version-$(CONFIG_DEBUG_INFO_DWARF4) :=3D 4
- dwarf-version-$(CONFIG_DEBUG_INFO_DWARF5) :=3D 5
-@@ -31,3 +38,6 @@ endif
-=20
- KBUILD_CFLAGS +=3D $(DEBUG_CFLAGS)
- export DEBUG_CFLAGS
-+
-+KBUILD_RUSTFLAGS +=3D $(DEBUG_RUSTFLAGS)
-+export DEBUG_RUSTFLAGS
---=20
-2.33.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vvi=bl.Rr0pN0CqAV8ZNVTF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmF6aMUACgkQAVBC80lX
-0Gwa0Qf+LZYWYOrgNlZxCXHxfx0/2s9nJjvXc+upbheQHszM6ho9nOolaMchN+RF
-h4lA7IeYvbvOArK5LM3wIxPAIb0vUTNooXrW2+u+NkSLEroUMfcSXfeLcxaD5Pd8
-longZPyCobQ6lIEZXLXFe4q2cJP4Fj/1SJQccyCCXLgJ+rVHlljqRv1wZ041KXU8
-jkcgEWIpOETLgKwIp/qSJah6EyTfFNwr6F1beE2BgGNhzjTkdFsI0t9+W8CTfa14
-JRT3+FjEXmcPDSgAIpPZxTfkhppm9ZenlMp9a8F6WhPxNGVb/ym2seXyqTFGPBuc
-S0R/Div6hklj/wppqNzlKxZeW+tcoQ==
-=3618
------END PGP SIGNATURE-----
-
---Sig_/vvi=bl.Rr0pN0CqAV8ZNVTF--
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
