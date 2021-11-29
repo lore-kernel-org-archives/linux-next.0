@@ -2,40 +2,40 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FA6C433EF
-	for <linux-next@archiver.kernel.org>; Mon, 29 Nov 2021 14:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCACC433EF
+	for <linux-next@archiver.kernel.org>; Mon, 29 Nov 2021 17:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237385AbhK2Oxr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 29 Nov 2021 09:53:47 -0500
-Received: from mga17.intel.com ([192.55.52.151]:53002 "EHLO mga17.intel.com"
+        id S242548AbhK2Rb3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 29 Nov 2021 12:31:29 -0500
+Received: from mga04.intel.com ([192.55.52.120]:55584 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345031AbhK2Ovq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 29 Nov 2021 09:51:46 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10182"; a="216674772"
+        id S237175AbhK2R32 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 Nov 2021 12:29:28 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10183"; a="234746255"
 X-IronPort-AV: E=Sophos;i="5.87,273,1631602800"; 
-   d="scan'208";a="216674772"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2021 06:37:14 -0800
+   d="scan'208";a="234746255"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2021 09:24:13 -0800
 X-IronPort-AV: E=Sophos;i="5.87,273,1631602800"; 
-   d="scan'208";a="499351229"
+   d="scan'208";a="511773514"
 Received: from eliteleevi.tm.intel.com ([10.237.54.20])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2021 06:37:11 -0800
-Date:   Mon, 29 Nov 2021 16:29:36 +0200 (EET)
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2021 09:24:11 -0800
+Date:   Mon, 29 Nov 2021 19:16:35 +0200 (EET)
 From:   Kai Vehmanen <kai.vehmanen@linux.intel.com>
 X-X-Sender: kvehmane@eliteleevi.tm.intel.com
-To:     Mark Brown <broonie@kernel.org>
-cc:     Takashi Iwai <tiwai@suse.de>,
+To:     Takashi Iwai <tiwai@suse.de>
+cc:     Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 Subject: Re: linux-next: manual merge of the sound-asoc tree with the
  sound-current tree
-In-Reply-To: <YaTDKNOOP2I2dbI+@sirena.org.uk>
-Message-ID: <alpine.DEB.2.22.394.2111291602310.3554566@eliteleevi.tm.intel.com>
-References: <20211129113554.59416109@canb.auug.org.au> <s5ho8635n9g.wl-tiwai@suse.de> <YaTDKNOOP2I2dbI+@sirena.org.uk>
+In-Reply-To: <s5h8rx758g3.wl-tiwai@suse.de>
+Message-ID: <alpine.DEB.2.22.394.2111291913470.3554566@eliteleevi.tm.intel.com>
+References: <20211129113554.59416109@canb.auug.org.au> <s5ho8635n9g.wl-tiwai@suse.de> <YaTDKNOOP2I2dbI+@sirena.org.uk> <alpine.DEB.2.22.394.2111291602310.3554566@eliteleevi.tm.intel.com> <s5h8rx758g3.wl-tiwai@suse.de>
 User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7 02160 Espoo
 MIME-Version: 1.0
@@ -46,18 +46,21 @@ X-Mailing-List: linux-next@vger.kernel.org
 
 Hi,
 
-On Mon, 29 Nov 2021, Mark Brown wrote:
+On Mon, 29 Nov 2021, Takashi Iwai wrote:
 
-> On Mon, Nov 29, 2021 at 10:23:07AM +0100, Takashi Iwai wrote:
+> On Mon, 29 Nov 2021 15:29:36 +0100, Kai Vehmanen wrote:
+> > the asoc for-5.17 branch does have all the needed changes and the 
+> > linux-next merged version seems ok. We've already sent many further 
+> > changes that touch this area of code to asoc for-5.17. Let me know if some 
 > 
-> > Mark, could you resolve in the latter branch?
-> 
-> I'll just leave them for now, Linus got angry about merging up fixes
-> just to resolve conflicts so if it's not an actual dependency...
+> The question is rather whether this discrepancy would cause a problem
+> for further developments.  If back-merging 5.16 stuff makes things
+> easier, it should be done so.  OTOH, if it's just for resolving the
+> conflict in the final tree, we can leave it.
 
-the asoc for-5.17 branch does have all the needed changes and the 
-linux-next merged version seems ok. We've already sent many further 
-changes that touch this area of code to asoc for-5.17. Let me know if some 
-actions are needed to help.
+I believe it's the latter case, it would be just for resolving conflict
+in the final tree. The patches we have queued up for 5.17 but not yet 
+sent, all apply cleanly on top of asoc for-5.17, so back-merge is not 
+needed for this.
 
 Br, Kai
