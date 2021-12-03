@@ -2,84 +2,103 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015E3C433EF
-	for <linux-next@archiver.kernel.org>; Fri,  3 Dec 2021 09:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58139C433EF
+	for <linux-next@archiver.kernel.org>; Fri,  3 Dec 2021 13:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379269AbhLCJIo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 3 Dec 2021 04:08:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243758AbhLCJIo (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Dec 2021 04:08:44 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2C5C06173E;
-        Fri,  3 Dec 2021 01:05:20 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id y16so2824010ioc.8;
-        Fri, 03 Dec 2021 01:05:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hpHmb8fethI2k7K6CB6NbA3dcvUxz9E13FAFhSEgRqc=;
-        b=hYm4+5lL77QIxnm6FZtbulkdjUSQDQt9/Gz8kaSu+ipSnyNy2ooN1te+OFyWaDuQ1G
-         FR8N/eeaK1BxJkKGMCT/7uNLbA8tt3tKZCd1PpDYExomklFxl1R1zkpjXeEbfGFWGzay
-         0S8iAwh65ZLbM9BEyCzYcfXrBojA9RQfiQCiu0i/o4mDnCxIqZoc8Ay/7AZh1qwCRRv6
-         qVnkBFDsfwBTabUA1MawdW4hcfCdCjaDu1fWMVWQKO0AMq+s8COnqL9F9bMM8zemHbwM
-         h8Jtisk68RpALWwaaZhJOQl4MDE80Z2Drdk8feuwwBo4NEG+BAImCKcZ6iQPwha+BNDb
-         /oJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hpHmb8fethI2k7K6CB6NbA3dcvUxz9E13FAFhSEgRqc=;
-        b=IqpknACVEhi5altwSKENHjqzp8A0rCZu/WL4Cb3bcivoi8HAgjkKwtx3A4XBE3Aq0s
-         YYRwqb9bxeHAEdRfH2YOBj9N5l2RAlFIkPc/8RkZ/BjcaHmqp+5j5t7bavgF5sKKmOz6
-         aohg3otMecWQkRRXl0rwHqjfRGTAy/1pl75w3LlcwVXZr1h1uMPjcUp4XoC1ka308iLp
-         gPSkcRN3rlGGUteNDD/eXAd6q8iJ8A3FoL4bpwSJ2SxCY7sZrZAJ4JzL8KNdzufW5mSB
-         5QT/iAn+o4SH/bdJMgOuT6F9y8OB+05j2JGsd4IQB4HgDG36eBo7LgMI1vGx9q20fkwl
-         tEfg==
-X-Gm-Message-State: AOAM530c2vTrr/Cb3iNBXyPGEtej+FOw6eEwccefLI1Y166QWZ2ZSOxU
-        /uycRNcH1qcY00mgudU5QgaFRjpryeeaH60iTFS4dtsfpmw=
-X-Google-Smtp-Source: ABdhPJz8AsxwdtWTj8AhL6g86pHyPc+94skz6mL1GOshnr5YEYBW9wc9SOFrBzoZ5r30UqypeQVQkYwfpz1VRcOaYZ0=
-X-Received: by 2002:a6b:b7c8:: with SMTP id h191mr16428134iof.155.1638522320377;
- Fri, 03 Dec 2021 01:05:20 -0800 (PST)
+        id S1381212AbhLCNo5 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 3 Dec 2021 08:44:57 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:32895 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1381211AbhLCNow (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Dec 2021 08:44:52 -0500
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 4F7CC240011;
+        Fri,  3 Dec 2021 13:41:24 +0000 (UTC)
+Date:   Fri, 3 Dec 2021 14:41:23 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        sean@geanix.com, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-mtd@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        linux-block <linux-block@vger.kernel.org>
+Subject: Re: [next] WARNING: CPU: 2 PID: 66 at kernel/locking/rwsem.c:1298
+ __up_read
+Message-ID: <20211203144123.16c49eb4@xps13>
+In-Reply-To: <20211202141958.638f224b@collabora.com>
+References: <CA+G9fYuupqqemLbgoVL2kYL4d2AtZLBo1xcshWWae7gX5Ln-iA@mail.gmail.com>
+        <CADYN=9KeKhZ-OSbx1QHKYfXu+p-nXVjubbay1sXd_g75LLSZRg@mail.gmail.com>
+        <20211202141958.638f224b@collabora.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20211203162035.406a055a@canb.auug.org.au>
-In-Reply-To: <20211203162035.406a055a@canb.auug.org.au>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 3 Dec 2021 10:05:09 +0100
-Message-ID: <CANiq72nu_2s=eGy9KbOZDU8LKUw6bczP1Sea1Pewuwvue7ovdQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the kbuild tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Adam Bratschi-Kaye <ark.email@gmail.com>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Boris-Chengbiao Zhou <bobo1239@web.de>,
-        Finn Behrens <me@kloenk.de>, Gary Guo <gary@garyguo.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Wei Liu <wei.liu@kernel.org>, Wu XiangCheng <bobwxc@email.cn>,
-        Yuki Okushi <jtitor@2k36.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Dec 3, 2021 at 6:20 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hello,
 
-Looks good to me. Thanks!
+boris.brezillon@collabora.com wrote on Thu, 2 Dec 2021 14:19:58 +0100:
 
-Cheers,
-Miguel
+> On Thu, 2 Dec 2021 13:28:46 +0100
+> Anders Roxell <anders.roxell@linaro.org> wrote:
+> 
+> > On Tue, 30 Nov 2021 at 18:01, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:  
+> > >
+> > > [Please ignore this email if it is already reported]
+> > >
+> > > Regression found on qemu_arm64.
+> > > Following kernel warnings reported on Linux next-20211130 while booting.    
+> > 
+> > I bisected down to 1ebe2e5f9d68 ("block: remove GENHD_FL_EXT_DEVT")
+> > 
+> > and when I reverted 1ebe2e5f9d68 ("block: remove GENHD_FL_EXT_DEVT") and the
+> > 3 releated patches so patch 1ebe2e5f9d68 was reverted cleanly I
+> > managed to boot without
+> > a warning.
+> > 
+> > Related patches from next-20211130:
+> > 9f18db572c97 ("block: don't set GENHD_FL_NO_PART for hidden gendisks")
+> > 430cc5d3ab4d ("block: cleanup the GENHD_FL_* definitions")
+> > a4561f9fccc5 ("sr: set GENHD_FL_REMOVABLE earlier")
+> > 
+> > With this said, if I revert 9d6abd489e70 ("mtd: core: protect access
+> > to MTD devices while in suspend")
+> > I didn't see the warning either.  
+> 
+> I think 9d6abd489e70 ("mtd: core: protect access to MTD devices while
+> in suspend") is at fault here. Miquel, would you mind
+> reverting/dropping the "mtd: core: protect access to mtd devices while
+> in  suspend" series?
+
+FYI I've just dropped the entire series. The change will probably be
+effective in linux-next starting from next Monday.
+
+> 
+> > 
+> > Any idea what can be wrong here or what a fix could be?
+> > 
+> > Only apply this patch from Geert
+> > https://lore.kernel.org/lkml/c26dfdf9ce56e92d23530a09db386b283e62845d.1638289204.git.geert+renesas@glider.be/
+> > makes the warning go away too.
+> > 
+> > Cheers,
+> > Anders  
+> 
+
+
+Thanks,
+Miquèl
