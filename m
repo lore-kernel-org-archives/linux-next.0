@@ -2,92 +2,146 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E95C433F5
-	for <linux-next@archiver.kernel.org>; Mon,  6 Dec 2021 09:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45739C433EF
+	for <linux-next@archiver.kernel.org>; Mon,  6 Dec 2021 12:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240673AbhLFJbP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 6 Dec 2021 04:31:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240658AbhLFJbP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Dec 2021 04:31:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090CAC061746;
-        Mon,  6 Dec 2021 01:27:47 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C53B611C3;
-        Mon,  6 Dec 2021 09:27:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92C1C341C1;
-        Mon,  6 Dec 2021 09:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638782866;
-        bh=+KEH1wyCTVQV8yYlRLefpheJ5q0/Kh2n/Ai79tQXaW4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=a2lc2BOU6NKqfzUGKCy4Mjr96l6xPg6Nt2qTZsyliv7rrHouWQgq5sdXqv5MRDynh
-         Jk/SyZ+ePSUg7i/cCv7K8k4ICdBaHdr8kZkCWX075IsHPMC7jjlKmerS7B3nVSykGg
-         Falvkn7scIl2ykEeu6HS/n2/7yEg5UNdWXkQPyr7XFpdi/wbJAq+RzEObYjS0QfNR1
-         394blKn414PL7DrwunsXpF7hEz+qyVA7ZEbnKtREzyOFyN5frS7NiCeSTQLKga4WmX
-         PtwGkgRvfmGc0PqPHuaSaJN43C9fF/msEeg51EUcHxo4wX6DMaOA+t0WxWlkb1SFDB
-         9QW+9ETp884AA==
-Date:   Mon, 6 Dec 2021 10:27:41 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+        id S243454AbhLFM5B (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 6 Dec 2021 07:57:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243423AbhLFM5A (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Dec 2021 07:57:00 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B6BRJ24023793;
+        Mon, 6 Dec 2021 12:53:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=H6m35SoZ4Ana9r8BQ7GvxH1od4yyAkLYvYTpN25udGI=;
+ b=N169qN0UvunE7WLAy4UlwXPoGMr5Tu6ju62yi5eAvIcqZUdFdPy7905ju9z8zLTgTIi7
+ aIq52qLRTwO+/CbQYkzCBohOcElNszzNoD+kVdBFiScKQ1DSvBPLPboV5UdYZuWBCdCo
+ sg3rHkTdR2k1cRRNSvhszoelfPsVbSHC35kiFdxf0ygGBPdiWbKcyxx0oAhrm6vaUNle
+ oEUc/etRkm9iqQvhhgZjsHVi975fatG0iiONqqDHKPwKO0dg/EyZ8eTt7pPpSDnkpfMm
+ 5H3kTAx1XF1Jrldth9Ak8ngilXZ6FlUAqexM96AHgnYg7JteMYrIPzow1fqRdGnmS1ut Hw== 
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3csfa8cgw3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Dec 2021 12:53:18 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B6Chkqd012344;
+        Mon, 6 Dec 2021 12:53:16 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma03ams.nl.ibm.com with ESMTP id 3cqyy9mtnh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Dec 2021 12:53:16 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B6CrD4L29295094
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Dec 2021 12:53:13 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 81011A4060;
+        Mon,  6 Dec 2021 12:53:13 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46DE2A4064;
+        Mon,  6 Dec 2021 12:53:13 +0000 (GMT)
+Received: from osiris (unknown [9.145.12.237])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  6 Dec 2021 12:53:13 +0000 (GMT)
+Date:   Mon, 6 Dec 2021 13:53:11 +0100
+From:   Heiko Carstens <hca@linux.ibm.com>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     James Hilliard <james.hilliard1@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc:     Greg KH <greg@kroah.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the v4l-dvb-next tree
-Message-ID: <20211206102741.209d1e94@coco.lan>
-In-Reply-To: <20211206200639.203bcea3@canb.auug.org.au>
-References: <20211206200639.203bcea3@canb.auug.org.au>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-redhat-linux-gnu)
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Message-ID: <Ya4Ht2K9x2+lUtuR@osiris>
+References: <20211206193050.17ad78aa@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211206193050.17ad78aa@canb.auug.org.au>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: O7WWFLt4nlmKSXaxGScShcl1yqnDb2Cc
+X-Proofpoint-GUID: O7WWFLt4nlmKSXaxGScShcl1yqnDb2Cc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-06_04,2021-12-06_02,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 spamscore=0 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112060077
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Em Mon, 6 Dec 2021 20:06:39 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-
+On Mon, Dec 06, 2021 at 07:30:50PM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> In commit
+> After merging the driver-core tree, today's linux-next build (htmldocs)
+> produced this warning:
 > 
->   c1c95d709941 ("media: uvcvideo: Increase UVC_CTRL_CONTROL_TIMEOUT to 5 seconds.")
+> Documentation/admin-guide/cputopology.rst:49: WARNING: Block quote ends without a blank line; unexpected unindent.
 > 
-> Fixes tag
+> Introduced by commit
 > 
->   Fixes:
-> 
-> has these problem(s):
-> 
->   - No SHA1 recognised
-> 
-Thanks! This is not actually a fixes tag, just a text to tell what
-runtime errors were addressed. 
+>   f1045056c726 ("topology/sysfs: rework book and drawer topology ifdefery")
 
-So, I'm changing the description to:
+Thanks for reporting!
 
-    media: uvcvideo: Increase UVC_CTRL_CONTROL_TIMEOUT to 5 seconds.
-    
-    Some uvc devices appear to require the maximum allowed USB timeout
-    for GET_CUR/SET_CUR requests.
-    
-    So lets just bump the UVC control timeout to 5 seconds which is the
-    same as the usb ctrl get/set defaults:
-    USB_CTRL_GET_TIMEOUT 5000
-    USB_CTRL_SET_TIMEOUT 5000
-    
-    It fixes the following runtime warnings:
-       Failed to query (GET_CUR) UVC control 11 on unit 2: -110 (exp. 1).
-       Failed to query (SET_CUR) UVC control 3 on unit 2: -110 (exp. 2).
+Greg, please find below a patch which fixes this. I added a full
+changelog just in case you don't want to rebase your branch so it can
+be applied on top, instead of being merged into the existing patch.
 
+From 7450195242db825520efbddef5df6f337dbf686f Mon Sep 17 00:00:00 2001
+From: Heiko Carstens <hca@linux.ibm.com>
+Date: Mon, 6 Dec 2021 13:37:20 +0100
+Subject: [PATCH] topology/sysfs: get rid of htmldoc warning
 
-in order to make it clearer.
+Stephen Rothwell reported the following warning caused by commit
+f1045056c726 ("topology/sysfs: rework book and drawer topology
+ifdefery"):
 
-Thanks,
-Mauro
+Documentation/admin-guide/cputopology.rst:49: WARNING: Block quote
+ends without a blank line; unexpected unindent.
+
+To fix this remove the extra indentation again.
+
+Fixes: f1045056c726 ("topology/sysfs: rework book and drawer topology ifdefery")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+---
+ Documentation/admin-guide/cputopology.rst | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/admin-guide/cputopology.rst b/Documentation/admin-guide/cputopology.rst
+index 677ba1c2c820..d29cacc9b3c3 100644
+--- a/Documentation/admin-guide/cputopology.rst
++++ b/Documentation/admin-guide/cputopology.rst
+@@ -37,15 +37,15 @@ To be consistent on all architectures, include/linux/topology.h
+ provides default definitions for any of the above macros that are
+ not defined by include/asm-XXX/topology.h:
+ 
+- 1) topology_physical_package_id: -1
+- 2) topology_die_id: -1
+- 3) topology_cluster_id: -1
+- 4) topology_core_id: 0
+- 5) topology_book_id: -1
+- 6) topology_drawer_id: -1
+- 7) topology_sibling_cpumask: just the given CPU
+- 8) topology_core_cpumask: just the given CPU
+- 9) topology_cluster_cpumask: just the given CPU
++1) topology_physical_package_id: -1
++2) topology_die_id: -1
++3) topology_cluster_id: -1
++4) topology_core_id: 0
++5) topology_book_id: -1
++6) topology_drawer_id: -1
++7) topology_sibling_cpumask: just the given CPU
++8) topology_core_cpumask: just the given CPU
++9) topology_cluster_cpumask: just the given CPU
+ 10) topology_die_cpumask: just the given CPU
+ 11) topology_book_cpumask:  just the given CPU
+ 12) topology_drawer_cpumask: just the given CPU
+-- 
+2.32.0
+
