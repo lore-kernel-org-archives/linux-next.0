@@ -2,116 +2,89 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E75C352A7
-	for <linux-next@archiver.kernel.org>; Wed, 15 Dec 2021 16:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77672C433F5
+	for <linux-next@archiver.kernel.org>; Wed, 15 Dec 2021 18:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244337AbhLOP7w (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 15 Dec 2021 10:59:52 -0500
-Received: from mout.perfora.net ([74.208.4.196]:44183 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232587AbhLOP7v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 15 Dec 2021 10:59:51 -0500
-X-Greylist: delayed 783 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Dec 2021 10:59:51 EST
-Received: from localhost.localdomain ([194.191.235.54]) by mrelay.perfora.net
- (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MLePl-1mxF7p3NJb-000tVI;
- Wed, 15 Dec 2021 16:30:51 +0100
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-phy@lists.infradead.org
-Cc:     linux-imx@nxp.com, linux-next@vger.kernel.org,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Brown <broonie@kernel.org>, linux-pci@vger.kernel.org,
-        Tim Harvey <tharvey@gateworks.com>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH] phy: freescale: pcie: fix building for x86_64 as a module
-Date:   Wed, 15 Dec 2021 16:30:36 +0100
-Message-Id: <20211215153037.688885-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.33.1
+        id S238648AbhLOSGO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 15 Dec 2021 13:06:14 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:34108 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238548AbhLOSGN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 15 Dec 2021 13:06:13 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 67D4BB8204E;
+        Wed, 15 Dec 2021 18:06:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77039C36AE2;
+        Wed, 15 Dec 2021 18:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639591571;
+        bh=8Vukks1X4DUWPbSz+K9uq/FbIbt5tKotx6wmBIKGRfU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=erarZoMxOT2M7a+BV9BL0KV6RKrY+lgtoXf9lA0ibUKkb3D+rzFNPizrbzNQ47PRb
+         csY5p1FwGjzBO1aYx2wR9x12ppspxOs3IK2nv3C5cnci9YB370tQ8j/uKWVZKtJf6L
+         SJka1mgeRyjRkKeLOnMWQ7yELXL1uXGeXlCp+Lv6lTu770GKVsDyYZjsuNgIHlJBV1
+         K5hH8WZD6tXCYHtUJOt57RUOoBe0gOUEk+oKQUvk3GRkGwTOMoHwLWRBriASakazbY
+         9aPBKo1NSxHPaXSB9kSMKxHkMPZRACm+j+5kgrYURA3FEzpP/v/VhKvKgbpCqMz5ol
+         Nx5cKHPgMjNhA==
+Date:   Wed, 15 Dec 2021 18:06:03 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Dec 14
+Message-ID: <Yboui5aym4eB6oP8@sirena.org.uk>
+References: <20211214223228.1745315-1-broonie@kernel.org>
+ <YboPz454GCe6ZA7g@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:/cHhHSs4N+2DNJ5wTLoubYD0rUh2l5oYb3aX9HXa0UVqu9pMzMH
- x28Ezyml0wRYEPJv55bAaYjT+GdEyE0EyrLF5WXgnYvHdA46RWoxI5rFwvao8GE/Z0Ko8Wn
- zHYpeRMGj4Oez1fAUsPK6WdyDVU06FLWr/izt4+nhuLOghlYZmREkXYt9P3HEp+IMegRn+/
- 7cpvofDSXIf8K/oJxQ23Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:j9pVH4IC4Ko=:L/0+fEZ1sh5vEjL38EdZNa
- ZdUk5+nc3/JZMH9e65FYO4YxeSpeV8Q9/wFTvh+KJ26lcOzDG2P736wCK8BXCOIrkrcS/Lk00
- UwlXBpZvpsu0qxxleOV7c4NRNGbVu/OG3/x6QSh85ZizqUqRXnQ34qv9lOxScCA78UkhcC09N
- SlKWoj67Ade6nkH81iD2m5M0WkQyC69VFDlMVPCphfhlyN9XMvsp1wRGZUGP2Ob/8MNlTny9p
- Z0soAHNOZQi8NJg33mqTjVuluF8BNf7gkrD+b+w/mRO5whvIhOLx7ACap6gpMn4yKNrLcUxag
- 6qHkoAei7cAd4AAsBneQp4kqny5u++sBSXAXUNsNbu7vXspVVx7I8tajJDUmFJqIdlFL73AWi
- SvVrRWYsplHIXM3wXkrFd3fH0b+ungUzj8NBRegOsECr/ZH8CCdLT8nW/5fvPoIFJc78U5O9/
- Qiaena3e6vwsK3kWZD9NpXgt4f8ppecDciHoWWVIeWSmCL14z7L7UPDZuXTcGGXYOOTzWZCyy
- ixQoIazO2B5Pq1iML6BxUtFKLRwZdLO/n184pUWrBqnnWg9Mkg36wEDP3P9YTXuG/YYD+oAdo
- cAioKSkOYXG5T5Nd4EjSCDh1rx7Zvj84wU5iUExWycoEj5tgC5pKft0RCNFNUTr3J4TKpk5CU
- UEL5q03GWPRgkv/N5MJQkO6lFrnc/8IJHAy32E/6a3N5kRoWi0cwbBHVQbZXkoJ5eB1A=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SoLG3GS5cOfv0PWZ"
+Content-Disposition: inline
+In-Reply-To: <YboPz454GCe6ZA7g@smile.fi.intel.com>
+X-Cookie: No solicitors.
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-x86_64 allmodconfig build failed like this:
+--SoLG3GS5cOfv0PWZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-/tmp/next/build/drivers/phy/freescale/phy-fsl-imx8m-pcie.c: In function
- 'imx8_pcie_phy_init':
-/tmp/next/build/drivers/phy/freescale/phy-fsl-imx8m-pcie.c:41:37:
- error: implicit declaration of function 'FIELD_PREP'
- [-Werror=implicit-function-declaration]
-   41 | #define IMX8MM_GPR_PCIE_REF_CLK_EXT FIELD_PREP(IMX8MM_GPR_PCIE_
-REF_CLK_SEL, 0x2)
-      |                                     ^~~~~~~~~~
-/tmp/next/build/drivers/phy/freescale/phy-fsl-imx8m-pcie.c:85:7: note:
- in expansion of macro 'IMX8MM_GPR_PCIE_REF_CLK_EXT'
-   85 |       IMX8MM_GPR_PCIE_REF_CLK_EXT :
-      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+On Wed, Dec 15, 2021 at 05:54:55PM +0200, Andy Shevchenko wrote:
 
-Fix this by explicitly including linux/bitfield.h.
+Please note that due to people replying with random bug reports against
+the actual code in -next replying to the -next message isn't a super
+good way of getting my attention you can get lost in the noise.
 
-While at it sort includes alphabethically and add a new line before the
-dt-bindings one as usually done.
+> Thanks, I see tags now.
 
-Fixes: 1aa97b002258a190d77
-("phy: freescale: pcie: Initialize the imx8 pcie standalone phy driver")
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+I fixed the bug with the script, it doesn't check for errors when
+tagging unfortunately.
 
----
+> The other issue I have noticed is that gpio-intel branches [1] are out of the
+> merge. I haven't got any email about any issues with them.
 
- drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Do you have the latest and greatest list of repositories to merge?
 
-diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-index f6502463d49a..f1eb03ba25d6 100644
---- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-+++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-@@ -3,10 +3,11 @@
-  * Copyright 2021 NXP
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
--#include <linux/delay.h>
- #include <linux/mfd/syscon.h>
- #include <linux/mfd/syscon/imx7-iomuxc-gpr.h>
- #include <linux/module.h>
-@@ -14,6 +15,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-+
- #include <dt-bindings/phy/phy-imx8-pcie.h>
- 
- #define IMX8MM_PCIE_PHY_CMN_REG061	0x184
--- 
-2.33.1
+You can see in the merge log that it's getting skipped due to an issue
+with the previous tree (which also has a build failure causing me to
+need to revert it) upsetting the script.
 
+--SoLG3GS5cOfv0PWZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmG6LooACgkQJNaLcl1U
+h9AC2gf9G3fxaP3PBpfPy0TJpRqzg4J1rHvS77ZvBusgqVOAgrMTzoazdIddWY2b
+edjZrppaZmRg2t76RzZ50eEfcdLZoPDP/MqIoBW6fmgPcmAExfj2i4KlZqeWH035
+8LxP5G+92fv6j4DY2CXDm7HC3QCySc/8SUDgP8ebO1U8K5NeXbhalZyDgJVGVoj+
+VIkDvumbcVwzUuVDc3WGJRcm1lwaFVt46RuF9fdE0A2Tg4xvseZ9xtGpyOqJZsku
+Q+CUJZg63uXxDYtMZfADZqBFdFgIvyhaNiJaPvV1kk+256nKczMYwR2+LIZDtLYg
+vIOkQiw+MsaSkd/vD99kSDXm/Nkz5A==
+=/AdQ
+-----END PGP SIGNATURE-----
+
+--SoLG3GS5cOfv0PWZ--
