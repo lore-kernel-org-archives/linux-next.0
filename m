@@ -2,92 +2,87 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89161C433EF
-	for <linux-next@archiver.kernel.org>; Wed, 15 Dec 2021 15:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9E2C433EF
+	for <linux-next@archiver.kernel.org>; Wed, 15 Dec 2021 16:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243891AbhLOPVz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 15 Dec 2021 10:21:55 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:46794 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243856AbhLOPVy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 15 Dec 2021 10:21:54 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 357FDB81FBE;
-        Wed, 15 Dec 2021 15:21:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2423AC33CF2;
-        Wed, 15 Dec 2021 15:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639581615;
-        bh=iV9y8WX18pADcC4QTmY9Es2S3Ox/ct9sA+YFJ4++suE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I5zy0R1xSIP7q6y3HNK8lmGyXjkmA88xqFMM8bEynhZp1VapNobnTQM7R90JsBDqL
-         yQ4oXr20idIdtI+4vz7oW/32vhuQoj8f9lN7dTOmG8lVTyC1bk6gKYqzvxh0Wu/jqs
-         LBba4gf+X0fpVFeWihIYFYK1NrAxrjKoJrYT+FqYhESUMcKHHhCVayrnVi/vvX1O5F
-         wFpS86A23mRlDcOV8wHhjf8S7VS4/Gt3ncfVA4r7iJ8yor3OVnV6PVFozoqRIW2VMr
-         yG7oabIHTWDiJLcPeQ3i52UYG0qalcHex/0H6KYbfoUqhrCH9ANL/ebaZkVe7VmlB5
-         0SPm5bsla1BDg==
-Date:   Wed, 15 Dec 2021 20:50:04 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     "kishon@ti.com" <kishon@ti.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "tharvey@gateworks.com" <tharvey@gateworks.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hongxing.zhu@nxp.com" <hongxing.zhu@nxp.com>
-Subject: Re: linux-next: build failure after merge of the phy-next tree
-Message-ID: <YboHpPfynVmOP+ac@matsya>
-References: <20211215134915.3622957-1-broonie@kernel.org>
- <82dcdd84d9111dcde3fb43504ffec5592e2c8356.camel@toradex.com>
+        id S244250AbhLOPzx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 15 Dec 2021 10:55:53 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35328 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244245AbhLOPzw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 15 Dec 2021 10:55:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639583752; x=1671119752;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RRsWa48y/byo17HMgXnE4YpysdyN8WNOzyMTAo/9P/k=;
+  b=Jy0JwEYTOhS1LkUlbN1dVhHEHdwTCUhSyL/ck3BOoa5/lRaJRE6yomNh
+   bjzuwTcLyDkEcFIJMJZv2Oqo3vhkBILMCK6AHocV8sNthS1VEL6SnQOUM
+   007k3Pxb4eJ6m4bCHn+n6axvrNA0GaO8OWr3nr3VGmUs/uc/dvvH1OSgF
+   izOP3JcwSvz23G6HrczRbftNjmj755zAhvuEY7nnTMnVOCJWWOicRdPpt
+   WiioeZ1wnSLCWZPT8nY4cmzY2+tkvgyFLZuHCG59Bgz8xGEAc//1BhL5a
+   uw83dczyRiKnZO847OwMBPtDf8kQLjhh4UlSz/rd83mG49I0SzI4+rU2R
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10198"; a="219940220"
+X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
+   d="scan'208";a="219940220"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2021 07:55:52 -0800
+X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
+   d="scan'208";a="465647970"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2021 07:55:51 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1mxWcJ-006fgn-H6;
+        Wed, 15 Dec 2021 17:54:55 +0200
+Date:   Wed, 15 Dec 2021 17:54:55 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     broonie@kernel.org
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Dec 14
+Message-ID: <YboPz454GCe6ZA7g@smile.fi.intel.com>
+References: <20211214223228.1745315-1-broonie@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <82dcdd84d9111dcde3fb43504ffec5592e2c8356.camel@toradex.com>
+In-Reply-To: <20211214223228.1745315-1-broonie@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 15-12-21, 14:14, Marcel Ziswiler wrote:
-> On Wed, 2021-12-15 at 13:49 +0000, broonie@kernel.org wrote:
-> > Hi all,
-> > 
-> > After merging the phy-next tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
+On Tue, Dec 14, 2021 at 10:32:22PM +0000, broonie@kernel.org wrote:
+> Hi all,
 > 
-> I admit I never tried building any of this as a module. I assume neither did Richard (now on CC) or anybody
-> else.
+> News: Releases may or may not happen over the next few days since I'm
+> getting a vacciene dose tomorrow.
 > 
-> > /tmp/next/build/drivers/phy/freescale/phy-fsl-imx8m-pcie.c: In function 'imx8_pcie_phy_init':
-> > /tmp/next/build/drivers/phy/freescale/phy-fsl-imx8m-pcie.c:41:37: error: implicit declaration of function
-> > 'FIELD_PREP' [-Werror=implicit-function-declaration]
-> 
-> Hm, that should come from include/linux/bitfield.h. However, that seems not explicitly included. Likely, in the
-> module case it no longer finds it. That's a problem.
-> 
-> >    41 | #define IMX8MM_GPR_PCIE_REF_CLK_EXT FIELD_PREP(IMX8MM_GPR_PCIE_REF_CLK_SEL, 0x2)
-> >       |                                     ^~~~~~~~~~
-> > /tmp/next/build/drivers/phy/freescale/phy-fsl-imx8m-pcie.c:85:7: note: in expansion of macro
-> > 'IMX8MM_GPR_PCIE_REF_CLK_EXT'
-> >    85 |       IMX8MM_GPR_PCIE_REF_CLK_EXT :
-> >       |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > cc1: all warnings being treated as errors
-> > 
-> > Caused by commit
-> > 
-> >   1aa97b002258a190d77 ("phy: freescale: pcie: Initialize the imx8 pcie standalone phy driver")
-> > 
-> > I have used the phy-next tree from yesterday.
-> 
-> Yes, I also noticed it having been applied there now.
-> 
-> Anyway, let me cook up a fix for this. Thanks for reporting.
+> Changes since 20211213:
 
-I have fixed it up: https://lore.kernel.org/all/20211215060834.921617-1-vkoul@kernel.org/
+> The drm-intel tree gained a conflict with the drm-intel-fixes tree.
+> 
+> The dmaengine tree gained a conflict with the dmaengine-fixes tree.
+> 
+> Non-merge commits (relative to Linus' tree): 6251
+>  6873 files changed, 291130 insertions(+), 138903 deletions(-)
 
-will push now
+Thanks, I see tags now.
+
+The other issue I have noticed is that gpio-intel branches [1] are out of the
+merge. I haven't got any email about any issues with them.
+
+Do you have the latest and greatest list of repositories to merge?
+
+[1]: For example in next-20211203
+
+e24d0a695952 Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git
+
 
 -- 
-~Vinod
+With Best Regards,
+Andy Shevchenko
+
+
