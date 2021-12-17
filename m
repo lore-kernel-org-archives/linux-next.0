@@ -2,136 +2,117 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC3FC433F5
-	for <linux-next@archiver.kernel.org>; Fri, 17 Dec 2021 16:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E30BC43217
+	for <linux-next@archiver.kernel.org>; Fri, 17 Dec 2021 17:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239352AbhLQQx6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:53:58 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:59954 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239349AbhLQQx5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 17 Dec 2021 11:53:57 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51]:43922)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1myGUW-0031FY-IN; Fri, 17 Dec 2021 09:53:56 -0700
-Received: from ip68-227-161-49.om.om.cox.net ([68.227.161.49]:39432 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1myGUV-003tH4-BT; Fri, 17 Dec 2021 09:53:55 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Mike Christie <michael.christie@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20211217183425.5ace9d3c@canb.auug.org.au>
-Date:   Fri, 17 Dec 2021 10:53:49 -0600
-In-Reply-To: <20211217183425.5ace9d3c@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 17 Dec 2021 18:34:25 +1100")
-Message-ID: <87ilvnfa02.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S239651AbhLQRHU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 17 Dec 2021 12:07:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:57858 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239649AbhLQRHU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 17 Dec 2021 12:07:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639760839;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2+WRMJfHlXftJ9YeoYXvWKoQ/evPaqEvHg4A06Tryvs=;
+        b=g6jzlncyysZwniBw6OvSxPpYehBt7fIKm0NOjpEKa+g5g0nRT4/5jj0rYuSf9Wm+tPHfR6
+        ZeC8YkF04IJPICKMJByOpByri79iaViy/GAPkqSxLO3Jkk7s/btKTALMftRaqgj8+E8oY7
+        zRRM0J1sClDS0k4Yr+n5vVQixeYPfmU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-217-DDqa_lPRMz-zo3OwIq4pQw-1; Fri, 17 Dec 2021 12:07:18 -0500
+X-MC-Unique: DDqa_lPRMz-zo3OwIq4pQw-1
+Received: by mail-wr1-f69.google.com with SMTP id f13-20020adfe90d000000b001a15c110077so809352wrm.8
+        for <linux-next@vger.kernel.org>; Fri, 17 Dec 2021 09:07:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=2+WRMJfHlXftJ9YeoYXvWKoQ/evPaqEvHg4A06Tryvs=;
+        b=0fj4cbIK2plZA+SUdnE2bYHE1iWDgIukubuVeBHKHDtIfwfNbQNcEUyb91Vw72eCjB
+         TIRo92BudIwEeJvJtJUiMGAKEijs/9EEVg2+zvpdnrmuS+59Bjb2d0/fCYqTMDc+/8gg
+         szn2VJK1UryYKmu3nrVZJCHa7CtvavneMJfwvWb63F9+s94/RA74QYlwWYJaxukTM9Dm
+         M1ElLjSIo8u7peTGXI5RxN4wckDquBgZUv/JYlGEv2K1bOQ6/kHOQDszC2qDo1ip5V/A
+         1aH3bl8zocgx7DryShhi9nx8c4nPMTTPq0Izu1gIEGbgB+JuXiS3ImLmhNaugQrlL9Os
+         lC3Q==
+X-Gm-Message-State: AOAM530YHSsmuHtjdsYeKUQlX71/s9l1/c9S0UqZoDqRUxcMOUpEKnm3
+        sTCcTk2MROfwGaYVCuAsHopPO4dUuzTDOcOP9Id+ByEisrFPerkMHdCwR99q0ubfbK1ViRBziut
+        Y60nG2rPuuyJxNknxVdLoTw==
+X-Received: by 2002:a05:6000:1d1:: with SMTP id t17mr3197094wrx.569.1639760837288;
+        Fri, 17 Dec 2021 09:07:17 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzPrYWvecakOGWsrLS6D0tWwhJI2tzgqzCBikFjyuarJQEgYziFKpjwXCffRMF6yVCr1Gcj9A==
+X-Received: by 2002:a05:6000:1d1:: with SMTP id t17mr3197082wrx.569.1639760837095;
+        Fri, 17 Dec 2021 09:07:17 -0800 (PST)
+Received: from ?IPV6:2001:b07:6468:f312::ac3? ([2001:b07:6468:f312::ac3])
+        by smtp.googlemail.com with ESMTPSA id s8sm9077955wra.9.2021.12.17.09.07.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 09:07:16 -0800 (PST)
+Message-ID: <6e2518c1-78d0-8103-69ea-40a625259ef8@redhat.com>
+Date:   Fri, 17 Dec 2021 18:07:15 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1myGUV-003tH4-BT;;;mid=<87ilvnfa02.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.161.49;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18lR3N1Wl6cWSXZGnQwJAwk7CfvhljKO4E=
-X-SA-Exim-Connect-IP: 68.227.161.49
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: linux-next: build failure after merge of the userns tree
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: linux-next: manual merge of the kvm tree with the kvm tree
+Content-Language: en-US
+To:     Michael Ellerman <mpe@ellerman.id.au>, broonie@kernel.org,
+        KVM <kvm@vger.kernel.org>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "Maciej S . Szmigiero" <maciej.szmigiero@oracle.com>,
+        Sean Christopherson <seanjc@google.com>
+References: <20211215131033.2541027-1-broonie@kernel.org>
+ <87wnk5kvfz.fsf@mpe.ellerman.id.au>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <87wnk5kvfz.fsf@mpe.ellerman.id.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On 12/16/21 05:47, Michael Ellerman wrote:
+> broonie@kernel.org writes:
+>> Hi all,
+>>
+>> Today's linux-next merge of the kvm tree got a conflict in:
+>>
+>>    arch/powerpc/kvm/book3s_hv.c
+>>
+>> between commit:
+>>
+>>    511d25d6b789f ("KVM: PPC: Book3S: Suppress warnings when allocating too big memory slots")
+>>
+>> from the kvm tree and commits:
+> 
+> That's from the powerpc tree.
+> 
+>>    537a17b314930 ("KVM: Let/force architectures to deal with arch specific memslot data")
+>>    eaaaed137eccb ("KVM: PPC: Avoid referencing userspace memory region in memslot updates")
+>>
+>> from the kvm tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+> 
+> Thanks.
+> 
+> Paolo, if you want to avoid the conflict going to Linus, I have that
+> commit (and others) in a topic branch here (based on rc2):
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=topic/ppc-kvm
 
-> Hi all,
->
-> After merging the userns tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> ERROR: modpost: ".do_exit" [drivers/vhost/vhost.ko] undefined!
->
-> Caused by commit
->
->   eb55e716ac1a ("exit: Stop exporting do_exit")
->
-> interacting with commit
->
->   bbf761db7dbb ("vhost: use user_worker to check RLIMITs")
->
-> from the vhost tree.
->
-> I have added the following merge fix patch.
+Will pull, thanks!
 
-Thanks.
+Paolo
 
-I will dig in a little more but this is not the correct fix.
-
-make_task_dead is for the guts of oops, when the process is borked.
-
-I need to track down and see what is going on with the new
-user_work_create/start thing.
-
-This looks like we need a user_work_exit helper that does what these
-new user work kernel threads need.
-
-I will follow up because yikes!  At first glance user_helpers look
-like what kthreads were added to avoid.  Getting userspace and kernel
-space state confused.
-
-Eric
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 17 Dec 2021 18:24:30 +1100
-> Subject: [PATCH] fix up for "vhost: use user_worker to check RLIMITs"
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/vhost/vhost.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 8cf259d798c0..b605a79533bb 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -374,7 +374,7 @@ static int vhost_worker(void *data)
->  	}
->  
->  	complete(worker->exit_done);
-> -	do_exit(0);
-> +	make_task_dead(0);
->  }
->  
->  static void vhost_vq_free_iovecs(struct vhost_virtqueue *vq)
->
-> This lead to:
->
-> ERROR: modpost: ".make_task_dead" [drivers/vhost/vhost.ko] undefined!
->
-> so I added the following as well.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 17 Dec 2021 18:30:09 +1100
-> Subject: [PATCH] fix 2 for "vhost: use user_worker to check RLIMITs"
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  kernel/exit.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 6c4b04531f17..dfa3e8f6ffeb 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -890,6 +890,7 @@ void __noreturn make_task_dead(int signr)
->  
->  	do_exit(signr);
->  }
-> +EXPORT_SYMBOL_GPL(make_task_dead);
->  
->  SYSCALL_DEFINE1(exit, int, error_code)
->  {
