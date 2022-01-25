@@ -2,151 +2,108 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33364C433EF
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jan 2022 05:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB23C433EF
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jan 2022 05:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349497AbiAYFQJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jan 2022 00:16:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45680 "EHLO
+        id S234059AbiAYFdq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jan 2022 00:33:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391196AbiAYFD5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jan 2022 00:03:57 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB6DC0AD1A1
-        for <linux-next@vger.kernel.org>; Mon, 24 Jan 2022 19:35:58 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id w190so11907418pfw.7
-        for <linux-next@vger.kernel.org>; Mon, 24 Jan 2022 19:35:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9x/Lsa7ti7gTSupQfhnG6ZXqf3XFn7FMKDh1kMENpvw=;
-        b=OMYsr3z2K+XI/ZQ+BWmynvWMXqDyN50mi/156DKaicA8Rq1srJ9KHg/MEuYUKlumnT
-         khIzm+PT8QwnBKfFhhBZD3936ZzZp4mBsnH010vHbZtwKHsTGxzwjQf6ktZDQ9RL+HC+
-         UWTNZ/vY2xZZM5bQDWFQv1M9j837LeV4nk538=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9x/Lsa7ti7gTSupQfhnG6ZXqf3XFn7FMKDh1kMENpvw=;
-        b=kUciLzUhpQ1SDSAmITH3vzn1aP54FXWmEQUzfA9tc0J4ftkCq92P8SrBOzkZNvwMKi
-         tmrYY+JHacc/qmc+971oR8Yx8qJXQA7Y3/+xw5nuCALZS99RxBB0FK1m4zofCr1ksfgA
-         zGW1O6FnFyFb4DDsH0UhuIOS6puPJn4YksOmzeKMfqXFfRt2a1g41KiSV/zfJunv0A7X
-         zW6kFjQuHFejGEclxx2tY3iMCXOgTyj6PyMi0/WbC8vOgz12XUHThWkObctvaMNGxM01
-         cOlSpUAmGzQ39ofznm1KFjtmyjEoTqfuoVSGcQXVxWA7Sc59nK3Qej1ax64nOJmaw8Oe
-         4Trw==
-X-Gm-Message-State: AOAM533SpKKGm8QqI20he7PeY8B/dj/rX5tJm1K1xxUL1QjvdIKxgNMH
-        2QNw0jvMf5yiVGRVx/Q1HEkMPw==
-X-Google-Smtp-Source: ABdhPJzOSHR28VSWx0ruqnBVgXS6IERsb1Z/aoPvcziYyRFHW8j/TUdZRzIE1/2HprGg7JLj893NDg==
-X-Received: by 2002:a63:8c06:: with SMTP id m6mr13843903pgd.498.1643081757547;
-        Mon, 24 Jan 2022 19:35:57 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d4sm5854164pgw.30.2022.01.24.19.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jan 2022 19:35:57 -0800 (PST)
-Date:   Mon, 24 Jan 2022 19:35:56 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Sterba <dsterba@suse.cz>, David Sterba <dsterba@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
+        with ESMTP id S230260AbiAYF3Y (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jan 2022 00:29:24 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee2:21ea])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9B7C068083;
+        Mon, 24 Jan 2022 19:50:10 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JjXtR4TKWz4xNn;
+        Tue, 25 Jan 2022 14:50:07 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1643082608;
+        bh=mh/3fZT6a0RmxN01aJ4+imsp/te7qFkTGoUMaKYybE0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=s1HCFCzcEshpkJgMrTJVAI/NUkEFxOpNeChit6W+Z4ca/eYWivM28jAhhVJocyrdY
+         BES0VRvRmg72QigCyXa3wdVdDLYyAohJlfYvBvA6nr3ITFuBVkBUFYbib8wWR0HlmK
+         f0EVMx4Ij4nKlXuyN3rWQHBFRyrDl15gRwSxdgjpBXPl81fAipmAlOkiFSHhAGy+7i
+         CGx0qJIfdpb+8R1DKjXVGBxnq+hTftGJvjX79OQOIUZjwO/y9YPu9CBm+z5S0uP1Vj
+         QluU7b/sckdB+AOVxp6LT1u8Nz1KMs0vk+lR5Npn2LFMU2BDM/IsIiKnXDfIlrG0sW
+         N0MZoqZvU/kkw==
+Date:   Tue, 25 Jan 2022 14:50:06 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-ID: <202201241924.20B85B89@keescook>
-References: <20220125115757.20bc45e8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kspp tree
+Message-ID: <20220125145006.677e3709@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220125115757.20bc45e8@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/agPJiRZ7dyij3hrjwZjaV=g";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 11:57:57AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the kspp tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> In file included from include/linux/string.h:253,
->                  from include/linux/bitmap.h:11,
->                  from include/linux/cpumask.h:12,
->                  from arch/x86/include/asm/cpumask.h:5,
->                  from arch/x86/include/asm/msr.h:11,
->                  from arch/x86/include/asm/processor.h:22,
->                  from arch/x86/include/asm/cpufeature.h:5,
->                  from arch/x86/include/asm/thread_info.h:53,
->                  from include/linux/thread_info.h:60,
->                  from arch/x86/include/asm/preempt.h:7,
->                  from include/linux/preempt.h:78,
->                  from include/linux/spinlock.h:55,
->                  from include/linux/wait.h:9,
->                  from include/linux/mempool.h:8,
->                  from include/linux/bio.h:8,
->                  from fs/btrfs/ioctl.c:7:
-> In function 'fortify_memcpy_chk',
->     inlined from 'btrfs_ioctl_encoded_write' at fs/btrfs/ioctl.c:5082:3:
-> include/linux/fortify-string.h:316:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->   316 |                         __write_overflow_field(p_size_field, size);
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> include/linux/fortify-string.h:324:25: error: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
->   324 |                         __read_overflow2_field(q_size_field, size);
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-> 
-> Caused by commit
-> 
->   602670289b69 ("fortify: Detect struct member overflows in memcpy() at compile-time")
-> 
-> interacting with commit
-> 
->   504e1ebb6316 ("btrfs: add BTRFS_IOC_ENCODED_WRITE")
-> 
-> from the btrfs tree.
+--Sig_/agPJiRZ7dyij3hrjwZjaV=g
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+Hi all,
 
-I found the btrfs patch here:
-https://lore.kernel.org/all/ec08e6f559ab47b3300ca5a67e8fc984fd3f040f.1637179348.git.osandov@fb.com/
+After merging the kspp tree, today's linux-next build (powerpc
+allmodconfig) failed like this:
 
-> 
-> I applied the following hack:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 25 Jan 2022 11:47:17 +1100
-> Subject: [PATCH] fix up for "btrfs: add BTRFS_IOC_ENCODED_WRITE"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/btrfs/ioctl.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index 73ad918a05a9..d34620034f8e 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -5079,9 +5079,14 @@ static int btrfs_ioctl_encoded_write(struct file *file, void __user *argp,
->  		}
->  		args.iov = compat_ptr(args32.iov);
->  		args.iovcnt = args32.iovcnt;
-> -		memcpy(&args.offset, &args32.offset,
-> -		       sizeof(args) -
-> -		       offsetof(struct btrfs_ioctl_encoded_io_args, offset));
-> +		args.offset = args32.offset;
-> +		args.flags = args32.flags;
-> +		args.len = args32.len;
-> +		args.unencoded_len = args32.unencoded_len;
-> +		args.unencoded_offset = args32.unencoded_offset;
-> +		args.compression = args32.compression;
-> +		args.encryption = args32.encryption;
-> +		memcpy(args.reserved, args32.reserved, sizeof(args.reserved));
->  #else
->  		return -ENOTTY;
->  #endif
+In file included from include/linux/string.h:253,
+                 from include/linux/bitmap.h:11,
+                 from include/linux/cpumask.h:12,
+                 from include/linux/mm_types_task.h:14,
+                 from include/linux/mm_types.h:5,
+                 from include/linux/buildid.h:5,
+                 from include/linux/module.h:14,
+                 from samples/trace_events/trace-events-sample.c:2:
+In function '__fortify_strcpy',
+    inlined from 'perf_trace_foo_rel_loc' at samples/trace_events/./trace-e=
+vents-sample.h:519:1:
+include/linux/fortify-string.h:47:33: error: '__builtin_strcpy' offset 12 i=
+s out of the bounds [0, 4] [-Werror=3Darray-bounds]
+   47 | #define __underlying_strcpy     __builtin_strcpy
+      |                                 ^
+include/linux/fortify-string.h:445:24: note: in expansion of macro '__under=
+lying_strcpy'
+  445 |                 return __underlying_strcpy(p, q);
+      |                        ^~~~~~~~~~~~~~~~~~~
 
-I'll see if I can construct something shorter using struct_group().
+Exposed by (probably) commit
 
--Kees
+  602670289b69 ("fortify: Detect struct member overflows in memcpy() at com=
+pile-time")
 
--- 
-Kees Cook
+Introduced by commit
+
+  b466b1332164 ("samples/trace_event: Add '__rel_loc' using sample event")
+
+I have reverted that latter commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/agPJiRZ7dyij3hrjwZjaV=g
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmHvc24ACgkQAVBC80lX
+0GyCyQf9HBst7Vl72mAAAEPbbaN8wCF9qqSzOB94V/f6bSaJpS7ZFMfq4Pfbnu+C
+SF+RTynwdLo2Nz4CtkFGFgonI4BR0wfNv8M3GEvQU2ckBfHZewYXC6NTQc1uY+gy
+yKItZhQhshc2ZSYlxPBb3HVpXdFhrCW8S+78kbnP2pQ4AE8U2qfsqDuwjcmefpms
+FEhX7gNjRIxQ+PMT60eUT7YXiHY1KwM5q6rRWLI5cyLe42AmvoxIKYVWsRtaae6Y
+EV2N4gS533rWjUfOSaEJ6hCs6JOfmkbsjOmXOD8Jua7ku/dUzBC3M7OxMdWzLiUs
+gPymP7U74TLwqgDgdPoGtJveJKA5ww==
+=hvev
+-----END PGP SIGNATURE-----
+
+--Sig_/agPJiRZ7dyij3hrjwZjaV=g--
