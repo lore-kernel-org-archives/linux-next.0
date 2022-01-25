@@ -2,144 +2,76 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4435C433EF
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jan 2022 14:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7114CC433F5
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jan 2022 15:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbiAYOhC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jan 2022 09:37:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388297AbiAYOdL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jan 2022 09:33:11 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 259A1C06175F;
-        Tue, 25 Jan 2022 06:32:01 -0800 (PST)
+        id S1388415AbiAYPET (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jan 2022 10:04:19 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:43930 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358068AbiAYPB5 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jan 2022 10:01:57 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EB0C0B8180A;
-        Tue, 25 Jan 2022 14:31:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D2DC340E0;
-        Tue, 25 Jan 2022 14:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643121118;
-        bh=TjiX/pJ3jr1qZrQo1Hb5I+RhGqJRpdiNcaSW38hFvnM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e1hvj+wKBMDc9NHJ/xRYFOPWv5n/MtaAM3F4UlC2BsUaiRgMLLxmsB902n4OgqXu3
-         zp1HhY5+TwltC9oFSD/J3iIMa6+Q2mdF0eVNvr+tW+6Lcktjr+m2H+4zoGY/PkIfoz
-         Ab4TV2TWjYDvWJyhlL0frwnaJKQ+ENBZGnEYcqlW+O2tQU3H/b7rRjSdYPIrAKJCf1
-         LSNIEQ229hJjpl/I1dbUNGpg+uTvbbz3QNdvlwmwBdbKWPNfScWnRr/AUCmagRbRJU
-         edsg8f3i5R1Sk/nCutJrdIEgJe0Z4b5YAwVsCP65mtpuR2IPmumAsPMxSnTPAxyKC6
-         6UH8vt6C+SJzg==
-Date:   Tue, 25 Jan 2022 23:31:54 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4D02BB81814;
+        Tue, 25 Jan 2022 15:01:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44222C340E0;
+        Tue, 25 Jan 2022 15:01:40 +0000 (UTC)
+Date:   Tue, 25 Jan 2022 10:01:38 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-Id: <20220125233154.dac280ed36944c0c2fe6f3ac@kernel.org>
-In-Reply-To: <20220125222732.98ce2e445726e773f40e122e@kernel.org>
-References: <20220125145006.677e3709@canb.auug.org.au>
-        <202201242230.C54A6BCDFE@keescook>
-        <20220125222732.98ce2e445726e773f40e122e@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: linux-next: runtime warning in next-20220125
+Message-ID: <20220125100138.0d19c8ca@gandalf.local.home>
+In-Reply-To: <20220125162146.13872bdb@canb.auug.org.au>
+References: <20220125160505.068dbb52@canb.auug.org.au>
+        <20220125162146.13872bdb@canb.auug.org.au>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 25 Jan 2022 22:27:32 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Tue, 25 Jan 2022 16:21:46 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> > /*
-> >  * struct trace_event_data_offsets_<call> {
-> >  *      u32                             <item1>;
-> >  *      u32                             <item2>;
-> >  *      [...]
-> >  * };
-> >  *
-> >  * The __dynamic_array() macro will create each u32 <item>, this is
-> >  * to keep the offset of each array from the beginning of the event.
-> >  * The size of an array is also encoded, in the higher 16 bits of
-> >  * <item>.
-> >  */
+> Hi all,
+> 
+> On Tue, 25 Jan 2022 16:05:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > My qemu boot test of a powerpc pseries_le_defconfig kernel produces the
+> > following trace:
 > > 
-> > So, I think -Warray-bounds is refusing to see the destination as
-> > anything except a u32, but being accessed at 4 (sizeof(u32)) + 8
-> > (address && 0xffff) (?)
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:417 trace_event_raw_init+0x194/0x730
+> > Modules linked in:
+> > CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.17.0-rc1 #2
+> > NIP:  c0000000002bdbb4 LR: c0000000002bdcb0 CTR: c0000000002bdb70
+> > 
+> > I have no idea what has caused this :-(  Maybe commit
+> > 
+> >   5544d5318802 ("SUNRPC: Same as SVC_RQST_ENDPOINT, but without the xid")  
 > 
-> Ah, I got it. Yes, that's right. __data_loc() will access the data
-> from the __entry, but the __rel_loc() points the same address from
-> the encoded field ("__rel_loc_foo" in this case) itself.
-> This is introduced for the user application event, which doesn't
-> know the actual __entry size because the __entry includes some
-> kernel internal defined fields.
+> Actually, reverting commits
 > 
-> > But if this is true, I would imagine there would be plenty of other
-> > warnings? I'm currently stumped.
+>   6ff851d98af8 ("SUNRPC: Improve sockaddr handling in the svc_xprt_create_error trace point")
+>   5544d5318802 ("SUNRPC: Same as SVC_RQST_ENDPOINT, but without the xid")
+>   e2d3613db12a ("SUNRPC: Record endpoint information in trace log")
 > 
-> That is because __rel_loc is used only in the sample code in the kernel
-> for testing. Other use-cases comes from user-space.
-> Hmm, can we skip this boundary check for this example?
+> makes the warning go away.
+> 
 
-If the -Warray-bounds determines the destination array size from
-the type of given pointer, we can just change the macro as below;
+We added a new way to save items on the ring buffer, but did not update the
+safety checks to know about them. I'll fix this shortly.
 
-#define __get_rel_dynamic_array(field) 
-			((void *)__entry +                                 \
-			 offsetof(typeof(*__entry), __rel_loc_##field) +   \
-			 sizeof(__entry->__rel_loc_##field) +              \
-			 (__entry->__rel_loc_##field & 0xffff))
-
-This must works same as __get_dynamic_array() macro.
-
-Could you try this patch?
-
-From 2982ba01367ec1f746a4f128512436e5325a7f9d Mon Sep 17 00:00:00 2001
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Tue, 25 Jan 2022 23:19:30 +0900
-Subject: [PATCH] tracing: Avoid -Warray-bounds warning for __rel_loc macro
-
-Since -Warray-bounds checks the destination size from the
-type of given pointer, __assign_rel_str() macro gets warned
-because it passes the pointer to the 'u32' field instead of
-'trace_event_raw_*' data structure.
-Pass the data address calculated from the 'trace_event_raw_*'
-instead of 'u32' __rel_loc field.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kees Cook <keescook@chromium.org>
----
- include/trace/trace_events.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 8c6f7c433518..65d927e059d3 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -318,9 +318,10 @@ TRACE_MAKE_SYSTEM_STR();
- #define __get_str(field) ((char *)__get_dynamic_array(field))
- 
- #undef __get_rel_dynamic_array
--#define __get_rel_dynamic_array(field)	\
--		((void *)(&__entry->__rel_loc_##field) +	\
--		 sizeof(__entry->__rel_loc_##field) +		\
-+#define __get_rel_dynamic_array(field)					\
-+		((void *)__entry + 					\
-+		 offsetof(typeof(*__entry), __rel_loc_##field) +	\
-+		 sizeof(__entry->__rel_loc_##field) +			\
- 		 (__entry->__rel_loc_##field & 0xffff))
- 
- #undef __get_rel_dynamic_array_len
--- 
-2.25.1
+-- Steve
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
