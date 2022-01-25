@@ -2,147 +2,180 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44751C433EF
-	for <linux-next@archiver.kernel.org>; Tue, 25 Jan 2022 05:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63367C433EF
+	for <linux-next@archiver.kernel.org>; Tue, 25 Jan 2022 06:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241154AbiAYFzf convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 25 Jan 2022 00:55:35 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:43610 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240463AbiAYFxa (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jan 2022 00:53:30 -0500
-Received: by mail-io1-f69.google.com with SMTP id a185-20020a6bcac2000000b00604c268546dso13884305iog.10
-        for <linux-next@vger.kernel.org>; Mon, 24 Jan 2022 21:53:25 -0800 (PST)
+        id S231254AbiAYGPx (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 25 Jan 2022 01:15:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S256040AbiAYFUM (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Jan 2022 00:20:12 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDBA8C06136A
+        for <linux-next@vger.kernel.org>; Mon, 24 Jan 2022 19:43:45 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id u10so13580167pfg.10
+        for <linux-next@vger.kernel.org>; Mon, 24 Jan 2022 19:43:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Hqb18lApb/EFs0zyR5xR3AKweon3zrpFVJcMur2wQdo=;
+        b=oO7BhMsRUneAngIb6wlqB5HdF/xeGN3DL6ZG/u6ECkSxMoHNPpOOfAxzqAVgDtaT4n
+         BqgVUmMg7H/tUSffs8I7Gu+5usatPhZmWCP6dwG5G66u/ppefFTP/PzhcbM+ahaNgq3m
+         buQUbZQoUcLRALeKNkHYbuTNLU9Dxu0PcIcBE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=YnPINOM1amYfIANn8VMtbF+2lfN7hx/91F1ilinavvA=;
-        b=0KVzj6PuNYOHxf+safsY69N5Q962W4Oijr/WFqI6XZn3tgzAU9+cg7WW/tfHrUWbLd
-         uP2DUkPFw7LfcONw6WWTfQP9LCwlJMl26xs/zXgTCElIx/KmibO1LezqSk5z2rqqshRy
-         tqjYxz7rILNQgnG9t+ZS4VzW5+LJyujmzE4DSvkBj0wdDJDXbdPvD5Hqmy8DYToV6qt4
-         O0mzDIAbeO6oirMX7t0zrnMXPxuBCyjTe4jWnzMYZBHTIyPb7XX3jCXq5icg3n0eParL
-         XqJavGKcKS+KgP8YRLoq91blyJJcBN5Z0jYkLobwUojcjTjEcbBh5B8BMxkp0qhBpPiQ
-         isJg==
-X-Gm-Message-State: AOAM5304XogafYHOM+vxqN5FG5Wzsyi876YuUhFtfg08+JySQELLYFeg
-        cJYKf0mFJTUZfvO2wIfyOPfe3RolW3lgFTlO0F2h8NOEUSON
-X-Google-Smtp-Source: ABdhPJyqkxV2fmhs0t/VEgAx1yiCBRbAf7kZkcQud7agrvYWIiL9H/hPuO9K4fhArqVmkH6lD4wLRXkVsMkOttv5MSH+/Xzh/wfS
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Hqb18lApb/EFs0zyR5xR3AKweon3zrpFVJcMur2wQdo=;
+        b=ngFu2ZoyVC/0fFFSMMkecUcYwRUxolrdEQ7ig7WFjEAfhFxuW1wzR+4SBFS9cWGZb0
+         enNgab60KpMMR5MGb3rhpe3e0j97dJZtbtP1/yspA2GX2E52WCobNrIgpc5gb2dVXmzR
+         pJuexZoHhJKPc440Yl1dXnzRW0SSUiLqBqR18ctxFvkpkFDZsCgAr/b/wCuQ0TGyHbQb
+         1C0b2KWXKwVNaxP/O25oTuDvhRMTBi+isnnxC4khmjSM1ky+bdmOa7dxZvy1UJtaKp3I
+         aWb2T7CqrCjFTStyAlxiwUpbmlTWsTa7LQvLFn0pQbBaD2dgDW/SbtxiaaBkn16DSrNT
+         AflQ==
+X-Gm-Message-State: AOAM532UUZs9ugfmsWLRtPN1a7xUmA5XY5qGP5DKiwjghpShgO5Yv/Ja
+        d887EvDYCfkBnGuUqPNS92QnOg==
+X-Google-Smtp-Source: ABdhPJwYG5x88nJPkog09GJ1OJns/HDR/CaUdlxBNhDCDDEWbRfi9mn7oaVXJoVP7XPSNW9ZK0FocA==
+X-Received: by 2002:aa7:8218:0:b0:4c7:ef9b:8151 with SMTP id k24-20020aa78218000000b004c7ef9b8151mr11663250pfi.77.1643082225441;
+        Mon, 24 Jan 2022 19:43:45 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p18sm19244628pfh.98.2022.01.24.19.43.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jan 2022 19:43:45 -0800 (PST)
+Date:   Mon, 24 Jan 2022 19:43:44 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Steven Royer <seroyer@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Message-ID: <202201241938.DA2AB1AB4@keescook>
+References: <20220125142430.75c3160e@canb.auug.org.au>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:18a:: with SMTP id a10mr3587310jaq.67.1643090004286;
- Mon, 24 Jan 2022 21:53:24 -0800 (PST)
-Date:   Mon, 24 Jan 2022 21:53:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000a23c405d661b424@google.com>
-Subject: [syzbot] linux-next boot error: WARNING in trace_event_raw_init
-From:   syzbot <syzbot+1d26fcb1fe004a77c13b@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        mingo@redhat.com, rostedt@goodmis.org, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220125142430.75c3160e@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hello,
+On Tue, Jan 25, 2022 at 02:24:30PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the kspp tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> 
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_send_messages':
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1934:44: error: array subscript 'struct viosrp_crq[0]' is partly outside array bounds of 'u64[1]' {aka 'long long unsigned int[1]'} [-Werror=array-bounds]
+>  1934 |                                         crq->valid = VALID_CMD_RESP_EL;
+>       |                                            ^~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1875:13: note: while referencing 'msg_hi'
+>  1875 |         u64 msg_hi = 0;
+>       |             ^~~~~~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1935:44: error: array subscript 'struct viosrp_crq[0]' is partly outside array bounds of 'u64[1]' {aka 'long long unsigned int[1]'} [-Werror=array-bounds]
+>  1935 |                                         crq->format = cmd->rsp.format;
+>       |                                            ^~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1875:13: note: while referencing 'msg_hi'
+>  1875 |         u64 msg_hi = 0;
+>       |             ^~~~~~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1938:52: error: array subscript 'struct viosrp_crq[0]' is partly outside array bounds of 'u64[1]' {aka 'long long unsigned int[1]'} [-Werror=array-bounds]
+>  1938 |                                                 crq->status = VIOSRP_ADAPTER_FAIL;
+>       |                                                    ^~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1875:13: note: while referencing 'msg_hi'
+>  1875 |         u64 msg_hi = 0;
+>       |             ^~~~~~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1940:44: error: array subscript 'struct viosrp_crq[0]' is partly outside array bounds of 'u64[1]' {aka 'long long unsigned int[1]'} [-Werror=array-bounds]
+>  1940 |                                         crq->IU_length = cpu_to_be16(cmd->rsp.len);
+>       |                                            ^~
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1875:13: note: while referencing 'msg_hi'
+>  1875 |         u64 msg_hi = 0;
+>       |             ^~~~~~
+> 
+> Exposed by commit
+> 
+>   4ba545781e20 ("Makefile: Enable -Warray-bounds")
+> 
+> Probably introduced by commit
+> 
+>   88a678bbc34c ("ibmvscsis: Initial commit of IBM VSCSI Tgt Driver")
+> 
+> I applied the following hack for now:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 25 Jan 2022 14:18:36 +1100
+> Subject: [PATCH] scsi: hack for building with -Warray-bounds
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> index 61f06f6885a5..89fcf98c61c3 100644
+> --- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> +++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+> @@ -1872,11 +1872,11 @@ static void srp_snd_msg_failed(struct scsi_info *vscsi, long rc)
+>   */
+>  static void ibmvscsis_send_messages(struct scsi_info *vscsi)
+>  {
+> -	u64 msg_hi = 0;
+> +	u64 msg_hi[2] = { };
+>  	/* note do not attempt to access the IU_data_ptr with this pointer
+>  	 * it is not valid
+>  	 */
+> -	struct viosrp_crq *crq = (struct viosrp_crq *)&msg_hi;
+> +	struct viosrp_crq *crq = (struct viosrp_crq *)msg_hi;
+>  	struct ibmvscsis_cmd *cmd, *nxt;
+>  	long rc = ADAPT_SUCCESS;
+>  	bool retry = false;
+> @@ -1940,7 +1940,7 @@ static void ibmvscsis_send_messages(struct scsi_info *vscsi)
+>  					crq->IU_length = cpu_to_be16(cmd->rsp.len);
+>  
+>  					rc = h_send_crq(vscsi->dma_dev->unit_address,
+> -							be64_to_cpu(msg_hi),
+> +							be64_to_cpu(msg_hi[0]),
+>  							be64_to_cpu(cmd->rsp.tag));
+>  
+>  					dev_dbg(&vscsi->dev, "send_messages: cmd %p, tag 0x%llx, rc %ld\n",
 
-syzbot found the following issue on:
+This looks correct to me. struct viosrp_crq is 16 bytes wide. The only
+suggestion I might make would be either avoid the bare '2':
 
-HEAD commit:    d25ee8853025 Add linux-next specific files for 20220125
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=119946e0700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=498f66b8e27b8823
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d26fcb1fe004a77c13b
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+	u64 msg_hi[sizeof(struct viosrp_crq) / sizeof(u64)] = { };
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1d26fcb1fe004a77c13b@syzkaller.appspotmail.com
-
-On node 0, zone DMA: 1 pages in unavailable ranges
-On node 0, zone DMA: 97 pages in unavailable ranges
-On node 0, zone Normal: 3 pages in unavailable ranges
-kasan: KernelAddressSanitizer initialized
-ACPI: PM-Timer IO Port: 0xb008
-ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
-IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
-ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
-ACPI: Using ACPI (MADT) for SMP configuration information
-smpboot: Allowing 2 CPUs, 0 hotplug CPUs
-PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
-PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x0009ffff]
-PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000effff]
-PM: hibernation: Registered nosave memory: [mem 0x000f0000-0x000fffff]
-PM: hibernation: Registered nosave memory: [mem 0xbfffd000-0xbfffffff]
-PM: hibernation: Registered nosave memory: [mem 0xc0000000-0xfffbbfff]
-PM: hibernation: Registered nosave memory: [mem 0xfffbc000-0xffffffff]
-[mem 0xc0000000-0xfffbbfff] available for PCI devices
-Booting paravirtualized kernel on KVM
-clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-setup_percpu: NR_CPUS:8 nr_cpumask_bits:8 nr_cpu_ids:2 nr_node_ids:2
-percpu: Embedded 69 pages/cpu s242952 r8192 d31480 u1048576
-kvm-guest: PV spinlocks enabled
-PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
-Fallback order for Node 0: 0 1 
-Fallback order for Node 1: 1 0 
-Built 2 zonelists, mobility grouping on.  Total pages: 2064125
-Policy zone: Normal
-Kernel command line: earlyprintk=serial net.ifnames=0 sysctl.kernel.hung_task_all_cpu_backtrace=1 ima_policy=tcb nf-conntrack-ftp.ports=20000 nf-conntrack-tftp.ports=20000 nf-conntrack-sip.ports=20000 nf-conntrack-irc.ports=20000 nf-conntrack-sane.ports=20000 binder.debug_mask=0 rcupdate.rcu_expedited=1 no_hash_pointers page_owner=on sysctl.vm.nr_hugepages=4 sysctl.vm.nr_overcommit_hugepages=4 secretmem.enable=1 root=/dev/sda console=ttyS0 vsyscall=native numa=fake=2 kvm-intel.nested=1 spec_store_bypass_disable=prctl nopcid vivid.n_devs=16 vivid.multiplanar=1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2 netrom.nr_ndevs=16 rose.rose_ndevs=16 dummy_hcd.num=8 watchdog_thresh=55 workqueue.watchdog_thresh=140 sysctl.net.core.netdev_unregister_timeout_secs=140 panic_on_warn=1 BOOT_IMAGE=/boot/bzImage root=/dev/sda1 console=ttyS0
-Unknown kernel command line parameters "spec_store_bypass_disable=prctl BOOT_IMAGE=/boot/bzImage", will be passed to user space.
-mem auto-init: stack:off, heap alloc:on, heap free:off
-Stack Depot allocating hash table with memblock_alloc
-Memory: 6842036K/8388204K available (139293K kernel code, 34308K rwdata, 29800K rodata, 4580K init, 24828K bss, 1545912K reserved, 0K cma-reserved)
-SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=2
-Dynamic Preempt: full
-Running RCU self tests
-rcu: Preemptible hierarchical RCU implementation.
-rcu: 	RCU lockdep checking is enabled.
-rcu: 	RCU restricting CPUs from NR_CPUS=8 to nr_cpu_ids=2.
-rcu: 	RCU callback double-/use-after-free debug is enabled.
-rcu: 	RCU debug extended QS entry/exit.
-	All grace periods are expedited (rcu_expedited).
-	Trampoline variant of Tasks RCU enabled.
-	Tracing variant of Tasks RCU enabled.
-rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
-rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:417 test_event_printk kernel/trace/trace_events.c:417 [inline]
-WARNING: CPU: 0 PID: 0 at kernel/trace/trace_events.c:417 trace_event_raw_init+0x1aa/0xfe0 kernel/trace/trace_events.c:437
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.17.0-rc1-next-20220125-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:test_event_printk kernel/trace/trace_events.c:417 [inline]
-RIP: 0010:trace_event_raw_init+0x1aa/0xfe0 kernel/trace/trace_events.c:437
-Code: 58 f8 ff 40 84 ed 75 87 e8 33 54 f8 ff 48 8b 5c 24 18 31 ff 48 89 de e8 b4 56 f8 ff 48 85 db 0f 84 c2 fe ff ff e8 16 54 f8 ff <0f> 0b 4c 8b 74 24 18 31 ff 41 bc 01 00 00 00 4c 89 f3 83 e3 01 48
-RSP: 0000:ffffffff8b807e38 EFLAGS: 00010093
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: ffffffff8b8bc6c0 RSI: ffffffff8180166a RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffff8180165c R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffffff8beda8a0 R14: 00000000000000cb R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88823ffff000 CR3: 000000000b88e000 CR4: 00000000000406b0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- event_init+0x112/0x1b0 kernel/trace/trace_events.c:2512
- event_trace_enable kernel/trace/trace_events.c:3629 [inline]
- trace_event_init+0xc6/0x3cc kernel/trace/trace_events.c:3724
- start_kernel+0x1fd/0x49b init/main.c:1023
- secondary_startup_64_no_verify+0xc3/0xcb
- </TASK>
+or adjust struct viosrp_crq so the casting isn't needed at all:
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+truct viosrp_crq {
+	union {
+		u64 hi;
+		struct {
+		        u8 valid;               /* used by RPA */
+		        u8 format;              /* SCSI vs out-of-band */
+		        u8 reserved;
+		        u8 status;              /* non-scsi failure? (e.g. DMA failure) */
+		        __be16 timeout;         /* in seconds */
+		        __be16 IU_length;       /* in bytes */
+		};
+	};
+        __be64 IU_data_ptr;     /* the TCE for transferring data */
+};
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+	struct viosrp_crq crq = { };
+	...
+ 			rc = h_send_crq(vscsi->dma_dev->unit_address,
+					be64_to_cpu(crq.hi),
+					be64_to_cpu(cmd->rsp.tag));
+
+
+
+-- 
+Kees Cook
