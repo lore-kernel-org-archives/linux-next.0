@@ -2,173 +2,117 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EB9C433FE
-	for <linux-next@archiver.kernel.org>; Wed,  9 Feb 2022 06:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA3FC433FE
+	for <linux-next@archiver.kernel.org>; Wed,  9 Feb 2022 08:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232836AbiBIGbY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 9 Feb 2022 01:31:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33372 "EHLO
+        id S234696AbiBIIHn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 9 Feb 2022 03:07:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236149AbiBIG3v (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Feb 2022 01:29:51 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111D3C1036BF
-        for <linux-next@vger.kernel.org>; Tue,  8 Feb 2022 22:29:55 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id i21so1102111pfd.13
-        for <linux-next@vger.kernel.org>; Tue, 08 Feb 2022 22:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=t7Pso+3QoXGsogMS6hV0WyTdsXPn3Pz6smVFNsJ53Sw=;
-        b=ubjgnRmTZ0inIpF3/O6VzFd7K00TROM+n22aelh5Nf0LJjcI99bKJ/vo7g1ARvDf5w
-         ZTs9cIoyUU3o8PWJUN2osoRb/BagpyybtiFFTRjtavuGn9AtdJ1RDbRw5TNJtZtsY8Bv
-         BqRFGB7xedfXKuuQD9peiThYLQ0teafMQjQICH+11h31mbPXF8mA5oe/jm086f61/HFB
-         qB1y74FdXcYdS4PRxTATKn0hc2axJ1bZYOU8eiK8abUbi6oEZ+KCS9gAjXYdzdWKWgps
-         toztfYGv2ZEllj81m5C/tDnndHwzTxPPBb0hWvptS3xf+lci9vdOGrzOArJPaZYec34M
-         pjTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=t7Pso+3QoXGsogMS6hV0WyTdsXPn3Pz6smVFNsJ53Sw=;
-        b=54Gi0lcPi7UKVovLPr2lJydJ/4fHLNhG5RMCLOjfK86XnaFiqRGQO/ttXgan1Gmb0H
-         lcJjwd45dU7SDTsDUwQC6Qf/SoHusXSVGZ9migOWIQxbqmPCbP8JFkHEj+wEFiMUh2XY
-         iiRiL6BP0VN6LAV2QJgraDpCz7B43tGvELoVaTh2AvkfI8uvCGM06mjnbisf7Ez3ChdU
-         FlzBzu35Ktx1eOSAYMaGKGOXoD1yY6JKRAItYt+N6vuhCvQF3Tq66IU5JJY0YT+ObOkf
-         6af1xtqRTQDPodWgAOX1KW4Ui+LNPV/HlFHKFYW9ST06sMLP3xUfUuFl1Bklo6h8gj+Y
-         ebNw==
-X-Gm-Message-State: AOAM532hRvO6guVE3cWJPtuwTSmrLZzuL6oBYHTSE6WZVFBOUT0QG2Fd
-        r/mXw4WVwTvRSPOqn2dORSEv/66IGbbnMFG4
-X-Google-Smtp-Source: ABdhPJzrnrYMUKPV1BTj9coOLXm5ExEmHDZsf9arukJ78T80SGA3mRRXsYmGiwXG5+P0FMDSvRwOZA==
-X-Received: by 2002:a63:4650:: with SMTP id v16mr762728pgk.155.1644388194431;
-        Tue, 08 Feb 2022 22:29:54 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id e17sm1266255pfv.84.2022.02.08.22.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 22:29:54 -0800 (PST)
-Message-ID: <62035f62.1c69fb81.5a93f.3b19@mx.google.com>
-Date:   Tue, 08 Feb 2022 22:29:54 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229473AbiBIIHj (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Feb 2022 03:07:39 -0500
+X-Greylist: delayed 274 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 00:07:42 PST
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [IPv6:2001:4b98:dc4:8::240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CEDC0613CA;
+        Wed,  9 Feb 2022 00:07:41 -0800 (PST)
+Received: from relay2-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::222])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 2B6A0CA913;
+        Wed,  9 Feb 2022 08:03:12 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 447D540013;
+        Wed,  9 Feb 2022 08:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1644393785;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kA7zyjjd/UqaeOL0y3OaVUdPRii6jxTKcWJ8icBD3Jc=;
+        b=VcpR0WbO4Txvr6QJ94SdrWy+TAxMDUnNi9jUO5NtGxfzQpV2u3X3KUjrXQEXlHY8ybgigm
+        QpKS/Sz7hsrBrcCxlAt4VxB01eHFNvI/E9SxcIocc9C/sNrOC+n5Sq/RYT5VgxacI80mdP
+        qLNxmgro5fTRyyH3Zw0HJg7RWglNVx/6XxmqeIu5mtGc22CFgqcG7ZE9+FjoVCOWQ59IDM
+        GAh2+I92rvJMWD6D8w76geG2NS3fXHpCq0mjbWIz5zVNkUiPfcHglE7UUSiydpYnsJexAJ
+        /oAp8tzdlgtZL6qD23Q0dqqGlQgrj4LcC/3cEIoSlMxJ49WY6SFxnyB98hQRqQ==
+Date:   Wed, 9 Feb 2022 09:03:00 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Roger Quadros <rogerq@kernel.org>,
+        linux-mtd@lists.infradead.org,
+        Uwe =?UTF-8?B?S2xl?= =?UTF-8?B?aW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>
+Subject: Re: mmotm 2022-02-08-15-31 uploaded (drivers/mtd/nand/raw/Kconfig)
+Message-ID: <20220209090300.43241711@xps13>
+In-Reply-To: <b18fc937-9cc2-bb7b-fb58-3ba2555371c7@infradead.org>
+References: <20220208233156.E2CA6C004E1@smtp.kernel.org>
+        <b18fc937-9cc2-bb7b-fb58-3ba2555371c7@infradead.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: next
-X-Kernelci-Branch: pending-fixes
-X-Kernelci-Kernel: v5.17-rc3-310-g301c67a59c13
-Subject: next/pending-fixes baseline: 345 runs,
- 2 regressions (v5.17-rc3-310-g301c67a59c13)
-To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes baseline: 345 runs, 2 regressions (v5.17-rc3-310-g301c67=
-a59c13)
+Hi Randy,
 
-Regressions Summary
--------------------
+rdunlap@infradead.org wrote on Tue, 8 Feb 2022 22:30:23 -0800:
 
-platform                 | arch   | lab           | compiler | defconfig   =
-           | regressions
--------------------------+--------+---------------+----------+-------------=
------------+------------
-da850-lcdk               | arm    | lab-baylibre  | gcc-10   | davinci_all_=
-defconfig  | 1          =
+> On 2/8/22 15:31, Andrew Morton wrote:
+> > The mm-of-the-moment snapshot 2022-02-08-15-31 has been uploaded to
+> >=20
+> >    https://www.ozlabs.org/~akpm/mmotm/
+> >=20
+> > mmotm-readme.txt says
+> >=20
+> > README for mm-of-the-moment:
+> >=20
+> > https://www.ozlabs.org/~akpm/mmotm/
+> >=20
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >=20
+> > You will need quilt to apply these patches to the latest Linus release =
+(5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
+ in
+> > https://ozlabs.org/~akpm/mmotm/series
+> >=20
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > followed by the base kernel version against which this patch series is =
+to
+> > be applied. =20
+>=20
+> on i386:
+>=20
+> WARNING: unmet direct dependencies detected for OMAP_GPMC
+>   Depends on [n]: MEMORY [=3Dy] && OF_ADDRESS [=3Dn]
+>   Selected by [y]:
+>   - MTD_NAND_OMAP2 [=3Dy] && MTD [=3Dy] && MTD_RAW_NAND [=3Dy] && (ARCH_O=
+MAP2PLUS || ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST [=3Dy]) && HAS_IOMEM [=
+=3Dy]
+>=20
+>=20
+> Full randconfig file is attached.
 
-minnowboard-turbot-E3826 | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-nfig+debug | 1          =
++ Uwe, + K3 people + Krzysztof
 
+Uwe already raised the issue, and this was proposed:
 
-  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
-v5.17-rc3-310-g301c67a59c13/plan/baseline/
+https://lore.kernel.org/linux-mtd/20220127105652.1063624-1-miquel.raynal@bo=
+otlin.com/T/
 
-  Test:     baseline
-  Tree:     next
-  Branch:   pending-fixes
-  Describe: v5.17-rc3-310-g301c67a59c13
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  SHA:      301c67a59c13b10302bd6f6f4daf5866bce25fbc =
+Maybe we should have added K3 people in Cc but their MAINTAINERS entry
+is incomplete so get_maintainers.pl did not immediately found them.
 
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-           | regressions
--------------------------+--------+---------------+----------+-------------=
------------+------------
-da850-lcdk               | arm    | lab-baylibre  | gcc-10   | davinci_all_=
-defconfig  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/620325e2977529aae6c629d9
-
-  Results:     5 PASS, 1 FAIL, 0 SKIP
-  Full config: davinci_all_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.17-rc3-3=
-10-g301c67a59c13/arm/davinci_all_defconfig/gcc-10/lab-baylibre/baseline-da8=
-50-lcdk.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.17-rc3-3=
-10-g301c67a59c13/arm/davinci_all_defconfig/gcc-10/lab-baylibre/baseline-da8=
-50-lcdk.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/620325e2977529a=
-ae6c629dd
-        failing since 16 days (last pass: v5.16-11577-gffd79fec234d, first =
-fail: v5.17-rc1-180-g86539e2bdb99)
-        3 lines
-
-    2022-02-09T02:24:28.699837  kern  :alert : BUG: Bad page state in proce=
-ss kworker/u2:0  pfn:c3000
-    2022-02-09T02:24:28.700113  kern  :alert : BUG: Bad page state in proce=
-ss kworker/u2:0  pfn:c3400
-    2022-02-09T02:24:28.700295  kern  :alert : BUG: Bad page state in proce=
-ss kworker/u2:0  pfn:c3800   =
-
- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-           | regressions
--------------------------+--------+---------------+----------+-------------=
------------+------------
-minnowboard-turbot-E3826 | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-nfig+debug | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/620327c8970fc40c09c6297f
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+debug
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v5.17-rc3-3=
-10-g301c67a59c13/x86_64/x86_64_defconfig+debug/gcc-10/lab-collabora/baselin=
-e-minnowboard-turbot-E3826.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v5.17-rc3-3=
-10-g301c67a59c13/x86_64/x86_64_defconfig+debug/gcc-10/lab-collabora/baselin=
-e-minnowboard-turbot-E3826.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/x86/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/620327c8970fc40c09c62=
-980
-        failing since 0 day (last pass: v5.17-rc3-197-g418dccbc3ba5, first =
-fail: v5.17-rc3-225-g8b6f2853101d) =
-
- =20
+Thanks,
+Miqu=C3=A8l
