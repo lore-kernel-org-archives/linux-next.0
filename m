@@ -2,89 +2,99 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF470C433EF
-	for <linux-next@archiver.kernel.org>; Wed,  9 Feb 2022 21:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDA5C433F5
+	for <linux-next@archiver.kernel.org>; Thu, 10 Feb 2022 02:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233235AbiBIVT6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 9 Feb 2022 16:19:58 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:47856 "EHLO
+        id S229882AbiBJCZS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 9 Feb 2022 21:25:18 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233188AbiBIVT5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Feb 2022 16:19:57 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B82EAC014F32;
-        Wed,  9 Feb 2022 13:19:56 -0800 (PST)
+        with ESMTP id S229469AbiBJCZQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Feb 2022 21:25:16 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7904822BCC;
+        Wed,  9 Feb 2022 18:25:17 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JvCSp48DDz4xNn;
-        Thu, 10 Feb 2022 08:19:54 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JvLF41rmvz4xcZ;
+        Thu, 10 Feb 2022 13:25:12 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1644441594;
-        bh=rxJNC65oBBpL7X2RVHQafH79h6Jp/lTESREKPAVVvp4=;
+        s=201702; t=1644459913;
+        bh=D+DjfAKMXi5ZeAZiu2dE72zIwqk88EIi86SvqawOGw8=;
         h=Date:From:To:Cc:Subject:From;
-        b=RgOfOo/Xpi4tVu4Lh81UDvCOEzTXJztTxDCH20R8Op4RG1PzMf37xmVDNmUCUDJEK
-         Ev2XZpFTPqTGuyuPUsYJpg4iPg8OKa0OhYeZt33RN3vIW6c46fEVdGjeOWLqVqQ58V
-         5YC3Nz3yrntnbuKPB4bJlQOEjq2B2ffjUr6YN//ZBtmb2kskdWWQro8r4LspCnz5Bn
-         Hh2xvUYmHaiFT8RT3395NM7tYgDyTfgJQ3MzEDQ3HvqAbdnhn+unkp8VIgAlb0SCNt
-         p9qY2qIWp5TAOPv5ARkKdsYHR299T6OZ5cRQKntON0QdQ3Cfkxdq54RcSn8yHm8+K9
-         mZUiBx8e0Nj/w==
-Date:   Thu, 10 Feb 2022 08:19:53 +1100
+        b=W6Jfedq8r5SZVRHpVoRk67DH9Fa4nwuN+h8A1CELYz+0QVAC3tkLYyU5TXBoMDeSp
+         Qq/fmHvAUqxqUD+YWrgyrh7efCTRwvnor+ttJm1UnVe+WzNsWxc/ROZh2vy+S4JJjM
+         MGassANnWlFmf46Radn9zbrtPz8Clj3JVspbLDzcAx7jaQ/NoJJBtiHadI3MqKOhuG
+         RpbnkMwhiOfA4JMfRw2LDREKmeJBzZGfoEcPSDJmr6gb8G5nS67NADQ/AFFE3SCZmc
+         dSe7z1XcfT7xUMF4aAtVuuFHvFAFy3c8phrhPtjBahCF20z3kcbtWUy2j5xDUWgtJb
+         hcBrWEoIkaeAg==
+Date:   Thu, 10 Feb 2022 13:25:06 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Yang Wang <KevinYang.Wang@amd.com>,
+To:     Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Cc:     Cosmin Tanislav <cosmin.tanislav@analog.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the amdgpu tree
-Message-ID: <20220210081953.48ff4dde@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>
+Subject: linux-next: manual merge of the spi tree with the hwmon-staging
+ tree
+Message-ID: <20220210132506.051144fb@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5LVAXIeXe3Ook3DL7G9=qlt";
+Content-Type: multipart/signed; boundary="Sig_/pZxQmqOA4f0WuT9GPIXjHtV";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/5LVAXIeXe3Ook3DL7G9=qlt
+--Sig_/pZxQmqOA4f0WuT9GPIXjHtV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+Today's linux-next merge of the spi tree got a conflict in:
 
-  41bea173d9b2 ("drm/amd/pm: drm/amd/pm: disable GetPptLimit message in sri=
-ov mode")
+  drivers/hwmon/adt7310.c
 
-Fixes tag
+between commits:
 
-  Fixes: f3527a6483fbcc ("drm/amd/pm: Enable sysfs required by rocm-smi too=
-lfor One VF mode")
+  9c950b125f78 ("hwmon: (adt7x10) Remove empty driver removal callback")
 
-has these problem(s):
+from the hwmon-staging tree and commit:
 
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
+  a0386bba7093 ("spi: make remove callback a void function")
+
+from the spi tree.
+
+I fixed it up (I just used the former version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/5LVAXIeXe3Ook3DL7G9=qlt
+--Sig_/pZxQmqOA4f0WuT9GPIXjHtV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIEL/kACgkQAVBC80lX
-0GzKHgf+P+/lUv03I2Shis4TJFcMclj6wxdAHlcL5m+RM5T0De+JyIqvskmvbW/K
-+IpE8KwQtz91Ehc5E7XzcFZYJaX+IzZSd5k7vlyMX8fBXEN3eTBhfuybNNN58PkU
-oPbJiRRIYNaD6YyyyVhfFYSayabwN5GJywdsx4b6FEUEQ0BlnxzC2HevODiFrLp/
-14+qDxG+UoSS0oershDDMkMMA/OXJ0G402ekuXjKCT0LuF+sY390Prda1QNTndFr
-B5XpfeyhzxtKNwabK0DGZPRjUyUu79A51pFNOAeTqTZRaUrzhUOU81PU/Lwz0/EP
-6ivBsZMHCGhg1TfFNbIyG7vIRSvQjQ==
-=81xY
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIEd4IACgkQAVBC80lX
+0Gz+XggAhrfUjMFc0bg3rXBvjg7x8CqRjr9IVh5JO3IPPsRGZfcxAa1XsVoZ22IA
+Pepvi5L47TFuxW/SQF5g3IlV4fzM5URGcrBpkV6K1qUwIpU3glXGmny9qlp4YPy1
+tSy4MfoiAi4oWx5e9h19saPvyXGNbDMy5v9viEsbTnhmxhDlnScXqRxGB9daRj+X
+mhdZ2uncZoliWF9cJMl1/O6laPISMD2rZrslPZu4oLBemZP4GFF5ii7bDSr4fXUH
+fB14dlJuB4jHjJ9pCSYPGff34st1vAHti0zA2TX1ztA0FVMGOM+jKyDlLF5y5DmA
+n8h7q/t62gQnlRF3tWRJcW4r4zrNYg==
+=SiyM
 -----END PGP SIGNATURE-----
 
---Sig_/5LVAXIeXe3Ook3DL7G9=qlt--
+--Sig_/pZxQmqOA4f0WuT9GPIXjHtV--
