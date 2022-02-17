@@ -2,107 +2,112 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8AEC433F5
-	for <linux-next@archiver.kernel.org>; Thu, 17 Feb 2022 06:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B7DC433F5
+	for <linux-next@archiver.kernel.org>; Thu, 17 Feb 2022 06:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235690AbiBQGlG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 17 Feb 2022 01:41:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34106 "EHLO
+        id S229471AbiBQGoX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 17 Feb 2022 01:44:23 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235688AbiBQGlF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Feb 2022 01:41:05 -0500
-X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Feb 2022 22:40:52 PST
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D612A520E;
-        Wed, 16 Feb 2022 22:40:52 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id E55DF2B000CC;
-        Thu, 17 Feb 2022 01:33:32 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 17 Feb 2022 01:33:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=bScFzG/9Q+cvU4qTsd2N9JV5iBRYrTzK32M9S+
-        WSUno=; b=dNpR7rJSEng1YnYyzUAFQclOnlGpMpQhgSuD2dQlOQDcro6NZzDrHA
-        gOlXig0esP9AIvJGDhwkAWOHpg/N6B+rqGLPNOXC8RAzZp4z8tu9s+DCmidkrldb
-        9l1TPlH34WQ/C79QuxQNO5OXSAcb6Mj72sADxy/IoPAqtGTx1OkTRDMk40woGsr3
-        veHUnNnptlBkHP0zb4gwFGp600JmVN0QqLukkW2zS5N5tNB2VGX2U/iX7xSr8lhw
-        +pmIIyJvljMP91p8MtxKlavssumPseDP2Wv3MBHnvXs/Jh2niUwuKICWJWwAqy/G
-        qmYpXK/j6y4fDJkAZF4y/ULahA51UwAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=bScFzG/9Q+cvU4qTs
-        d2N9JV5iBRYrTzK32M9S+WSUno=; b=AE6OdSDHp7UVdsK9ejK4lM1VOrA1yhkMa
-        TEF8rTiwik6Pcz5IZ9c1hIoHXekHHU3QNKwQIJrSIthHFst2ILwcnxdGn1hFA9qo
-        ALVUf0MssJyTihBLy+qe2grX55VjD4V2qOqC9LtRouqpkqS8qgWKJXO2BZjXwbZ7
-        z3Y6u+ZLN5ylx9+AUnVxfEl8WIRxt7+EyXfm1oNasY+tVWd0gR0c+86EaNNp/sRZ
-        5p3dGnVLpJ+JaqLzpny4u65uTe/ym0Dt3YutmvkEOvSTWd3hi0nSddaWaDB4AWbj
-        CfS7u9u+lZvHUaeZWYSsf8vp8ptFxqMhwxoZXGOkMplVfgS5PhS+w==
-X-ME-Sender: <xms:O-wNYnb6EByCWVxBYBMx7R2hAkwmdIxrLP09QOBIhPfWbGWaL3hy3w>
-    <xme:O-wNYmbE_rRSAF_RpbEsPmyD9Ivg3JpsyWpEiuzmL7hu7595F_KQTbmd5KxmxDjzA
-    HuFUnb5UopIjQ>
-X-ME-Received: <xmr:O-wNYp-bVW60RkMLDC4FbQjyPn3850WcgfHJ2GZKudi4zEIZz5iYmTGez4IxiP0qarq7tLETfNXSJpKPv5eHzsMc3KvBkz0k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrjeejgdelhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepveeuheejgf
-    ffgfeivddukedvkedtleelleeghfeljeeiueeggeevueduudekvdetnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
-    gtohhm
-X-ME-Proxy: <xmx:O-wNYtqIu4HICIEzvxWIpR7MEJNpm0V07zqOc2_7TXKOrtYhpEm36A>
-    <xmx:O-wNYirlCCvv_DIzl63CwMFPYXID2qCRJqzdg6dFYhNGs04Y3NHA2A>
-    <xmx:O-wNYjTrS4BAuihdupdDu6mn61M-wrn3Yv4ADCezZmTm-7OdxIztFA>
-    <xmx:POwNYvgVeyZlVtnYRSrR3X6tugIZhn3pEVD86fRjzplf-PhawB0mYureDmU>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 17 Feb 2022 01:33:31 -0500 (EST)
-Date:   Thu, 17 Feb 2022 07:33:28 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        with ESMTP id S235650AbiBQGoW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Feb 2022 01:44:22 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F8E17895D;
+        Wed, 16 Feb 2022 22:44:08 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JzlfZ58r5z4xNq;
+        Thu, 17 Feb 2022 17:44:06 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1645080247;
+        bh=8tq5gxmpNk+6Ty5exOnUc93rvTlkCc/6KPKXJAre4Q8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=rsWMPL+mJhQT1BBmf019U0l5E0HKiYTJ+46pbvLIgtmPB65ne1Q/8tVB1Y/GACCCZ
+         Alai5ot7ivWaJ0HjROQmPeWPTvo17+HC5wJI0vjxGYSUPHNQsbeTEYYgZjyFTGRZM5
+         B66HzC2rZ/JA/TgPMPIxCXxiAZIXzvPOjAGg7niiAKS8VEjos7rEIH1RFY/IeGn4Z7
+         k8rMHJQP1xzsrcoOfAc6wxj6+0KZe/vBxKP+9NB7pxwP/Pl3a3/4IsMhpIcOyUSIPU
+         6UhGb3NJQV360gE34IFiALH6QBFOmZCN/HunTqSgwXfunfNrmfPjri+B0WiNppssZE
+         ty2FGpT85X9yA==
+Date:   Thu, 17 Feb 2022 17:44:05 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Liam Howlett <liam.howlett@oracle.com>
+Cc:     Hugh Dickins <hughd@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Michael Straube <straube.linux@gmail.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- kspp-gustavo tree
-Message-ID: <Yg3sOIChxwSuI8aU@kroah.com>
-References: <20220217141603.7a0ef4ed@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the folio tree with the maple tree
+Message-ID: <20220217174405.0af8d2e7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220217141603.7a0ef4ed@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/rBqtWN2whSTkDjfvEYusGnp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Feb 17, 2022 at 02:16:03PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->   drivers/staging/r8188eu/include/ieee80211.h
-> 
-> between commit:
-> 
->   fbe9ccfe809d ("treewide: Replace zero-length arrays with flexible-array members")
-> 
-> from the kspp-gustavo tree and commit:
-> 
->   6c36bcbfcef7 ("staging: r8188eu: remove unused structs from ieee80211.h")
-> 
-> from the staging tree.
-> 
-> I fixed it up (the latter removed the structs updated by the former) and
-> can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+--Sig_/rBqtWN2whSTkDjfvEYusGnp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The merge sounds correct, thanks.
+Hi all,
 
-greg k-h
+Today's linux-next merge of the folio tree got a conflict in:
+
+  mm/oom_kill.c
+
+between commit:
+
+  4a9727878b42 ("mm/oom_kill: Use maple tree iterators instead of vma linke=
+d list")
+
+from the maple tree and commit:
+
+  ad56e23dec9a ("mm/munlock: delete munlock_vma_pages_all(), allow oomreap")
+
+from the folio tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/oom_kill.c
+index 9cbc05fa356c,6b875acabd1e..000000000000
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@@ -526,8 -525,8 +526,8 @@@ bool __oom_reap_task_mm(struct mm_struc
+  	 */
+  	set_bit(MMF_UNSTABLE, &mm->flags);
+ =20
+ -	for (vma =3D mm->mmap ; vma; vma =3D vma->vm_next) {
+ +	for_each_vma(vmi, vma) {
+- 		if (!can_madv_lru_vma(vma))
++ 		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+  			continue;
+ =20
+  		/*
+
+--Sig_/rBqtWN2whSTkDjfvEYusGnp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIN7rYACgkQAVBC80lX
+0GxpuggAkg/YKYb0xYLXWmjvTSE4SV9ZXn+3fCsZOrS517GsU1FV1O4rkXdEeTSw
+ffp2GDWAKaJ3f0P49BK3rIRu8HzBAY/oo6o1szdkeKUf1ktRRPidWfHVcszdiQLR
+xCYgYIS8jeN/MdVr3InfQghRqDe5jVJ5+HaRMsW/E6o9GzgF5SJz7vLt0bgSEAmh
+E6VlI3gu30mQtqshctk8yxAR2n4VhVL3/P8cw2kCS4AoFKwux+a4vVJ+mTXy+MD6
+MFk3/8AKre6AJxahYu8gHLWJ40CMMfNCmCvYXvsRjMQmfcdv86+1hXQYMgCt2bjQ
+T+B1HUcCL5iLPxo6IB27pdJbOE3C3g==
+=IumU
+-----END PGP SIGNATURE-----
+
+--Sig_/rBqtWN2whSTkDjfvEYusGnp--
