@@ -2,200 +2,119 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A7AC433EF
-	for <linux-next@archiver.kernel.org>; Thu, 17 Feb 2022 06:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFCAC433EF
+	for <linux-next@archiver.kernel.org>; Thu, 17 Feb 2022 06:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235121AbiBQGWd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 17 Feb 2022 01:22:33 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35290 "EHLO
+        id S234157AbiBQGia (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 17 Feb 2022 01:38:30 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbiBQGWc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Feb 2022 01:22:32 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD608120F7F;
-        Wed, 16 Feb 2022 22:22:18 -0800 (PST)
+        with ESMTP id S229471AbiBQGi2 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Feb 2022 01:38:28 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E333F2A4A2D;
+        Wed, 16 Feb 2022 22:38:14 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Jzl9K5xxsz4xZ2;
-        Thu, 17 Feb 2022 17:22:13 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JzlWk73vNz4xZ2;
+        Thu, 17 Feb 2022 17:38:10 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1645078934;
-        bh=uKWNm3J+WC7L/u81wG0mBLFfBOhF1YJaiPHErcbfWSE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=CYzOlECFm6db9nftI75S9LCIJvuAPuRyy3yKU0WmdYsqcjsjAmWs3ml8sVT1+VB08
-         F2l6lUhvNpPwvya80cNm7J16sn9ywZZt+mvW3HGT8HzkcaxraeoQx5HRBrowILFkdD
-         2IOMPHfalK5PiJ30eIo+lhOfIXzuvcVJLBABWmyL3mKAUgZ+9HJbXjdYEXeUTDKpmK
-         c9uYRtoKJYHg9FEx2o7igPAp+0wLlq+yTBBlNbwDD35pbatcv8Hf9O/tFMUwUG/AV+
-         eHsv85sSKbAXFaYRynoUVob2Kn7Mxgm42RLIcaIVUpsfvOXIPbIXf48hXejO4cygq8
-         rQWPj3R8jpj7A==
-Date:   Thu, 17 Feb 2022 17:22:13 +1100
+        s=201702; t=1645079891;
+        bh=NfiT6Z/FphCnGdtRQ5In2XFUm4cObElfqMJYEzwKqtE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Zjbh2Q90gdjwWb9fodE4ptMHoU2IDCv6UdHbEQps/MCIX0YbMC9IEL7iNARLevA1e
+         5uNg6qvf2mQ3B2k/UwTEwNajmsKHjV5uAcj5IhggpXR1uKMMs6yzeY5jDNJ2eFHkrb
+         1dV6I0KNZhcICATjEJvbmwrmKQW4XJHtdmc3qGApMV9auuimLKQU+JPqus9dHYHyrI
+         fIrc8Bq01TBAzBOzylyWdVXiufmMHIM6FHIYyIAZ3tL766XXbxIUMKYCDAIQWMjB49
+         gvZuAcSmHYjKRJRWerUYdrDmNc8WwP7Mgren7ZFF4V8LueCx2PH0K4g/UGqfRDsdsX
+         Y7L7ppArAdhvg==
+Date:   Thu, 17 Feb 2022 17:38:10 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Liam Howlett <liam.howlett@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>
-Cc:     Karolina Drobnik <karolinadrobnik@gmail.com>,
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the maple tree with the memblock tree
-Message-ID: <20220217172213.355ca4f5@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ folio tree
+Message-ID: <20220217173810.0addd3ed@canb.auug.org.au>
+In-Reply-To: <20220216215124.169c42a52e31575cedc4dea5@linux-foundation.org>
+References: <20220215180043.23879691@canb.auug.org.au>
+        <YgumpQrC+cuYe91H@casper.infradead.org>
+        <20220216172109.72fd0a38@canb.auug.org.au>
+        <Yg1hf0iHdKcjnq6l@casper.infradead.org>
+        <20220217163026.5e48ccb1@canb.auug.org.au>
+        <20220216215124.169c42a52e31575cedc4dea5@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/hvt/4DAfGD6OLjPgp=HGPgj";
+Content-Type: multipart/signed; boundary="Sig_/Ftj20MpvReDRDUvFxi5d.bN";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/hvt/4DAfGD6OLjPgp=HGPgj
+--Sig_/Ftj20MpvReDRDUvFxi5d.bN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the maple tree got a conflict in:
+On Wed, 16 Feb 2022 21:51:24 -0800 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> On Thu, 17 Feb 2022 16:30:26 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >=20
+> > On Wed, 16 Feb 2022 20:41:35 +0000 Matthew Wilcox <willy@infradead.org>=
+ wrote: =20
+> > >
+> > > So where do we go from here?  I can see ways of resolving this if
+> > > Andrew switches to git, but he won't, so that's out.  Perhaps I can
+> > > publish a git tree of Hugh's mlock patches and Christoph's series,
+> > > and you can pull that before Andrew's tree so git resolves the confli=
+cts
+> > > early before trying to resolve conflicts against my tree? =20
+> >=20
+> > My response for any other subsystem would be that you need to go
+> > through the maintainer's tree.  In this case that means feeding a patch
+> > series to Andrew and updating that patch series.
+> >=20
+> > Alternatively, you need to find someone (with Andrew's agreement) who
+> > can maintain a git tree that includes all Andrew's MM patches and any
+> > other topic branches and deals with all the conflicts and can feed it
+> > all to Linus.  Linux-next would also include that tree/branch.
+> >=20
+> > Andrew, do you have any comments? =20
+>=20
+> Let's try Matthew's idea - I'll get Hugh's and Christoph's series via
+> linux-next and shall figure out the rest.
 
-  tools/testing/radix-tree/linux.c
+OK, but I am on vacation from tomorrow until Feb 28th, so I will assume
+you will have it all ready for me by then.
 
-between commit:
+> I assume mapletree will throw another spanner in the works?
 
-  5a198c3f9b0b ("tools: Move gfp.h and slab.h from radix-tree to lib")
-
-from the memblock tree and commit:
-
-  3a77b4e41d4f ("radix tree test suite: Add support for slab bulk APIs")
-
-from the maple tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+We will see shortly (I just merged it and will merge the folio tree on
+top to give you an indication of the conflicts there).
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/testing/radix-tree/linux.c
-index 81539f543954,3383d748c650..000000000000
---- a/tools/testing/radix-tree/linux.c
-+++ b/tools/testing/radix-tree/linux.c
-@@@ -77,6 -118,97 +117,71 @@@ void kmem_cache_free(struct kmem_cache=20
-  	pthread_mutex_unlock(&cachep->lock);
-  }
- =20
-+ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **=
-list)
-+ {
-+ 	if (kmalloc_verbose)
-+ 		pr_debug("Bulk free %p[0-%lu]\n", list, size - 1);
-+=20
-+ 	pthread_mutex_lock(&cachep->lock);
-+ 	for (int i =3D 0; i < size; i++)
-+ 		kmem_cache_free_locked(cachep, list[i]);
-+ 	pthread_mutex_unlock(&cachep->lock);
-+ }
-+=20
-+ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t si=
-ze,
-+ 			  void **p)
-+ {
-+ 	size_t i;
-+=20
-+ 	if (kmalloc_verbose)
-+ 		pr_debug("Bulk alloc %lu\n", size);
-+=20
-+ 	if (!(gfp & __GFP_DIRECT_RECLAIM)) {
-+ 		if (cachep->non_kernel < size)
-+ 			return 0;
-+=20
-+ 		cachep->non_kernel -=3D size;
-+ 	}
-+=20
-+ 	pthread_mutex_lock(&cachep->lock);
-+ 	if (cachep->nr_objs >=3D size) {
-+ 		struct radix_tree_node *node;
-+=20
-+ 		for (i =3D 0; i < size; i++) {
-+ 			node =3D cachep->objs;
-+ 			cachep->nr_objs--;
-+ 			cachep->objs =3D node->parent;
-+ 			p[i] =3D node;
-+ 			node->parent =3D NULL;
-+ 		}
-+ 		pthread_mutex_unlock(&cachep->lock);
-+ 	} else {
-+ 		pthread_mutex_unlock(&cachep->lock);
-+ 		for (i =3D 0; i < size; i++) {
-+ 			if (cachep->align) {
-+ 				posix_memalign(&p[i], cachep->align,
-+ 					       cachep->size * size);
-+ 			} else {
-+ 				p[i] =3D malloc(cachep->size * size);
-+ 			}
-+ 			if (cachep->ctor)
-+ 				cachep->ctor(p[i]);
-+ 			else if (gfp & __GFP_ZERO)
-+ 				memset(p[i], 0, cachep->size);
-+ 		}
-+ 	}
-+=20
-+ 	for (i =3D 0; i < size; i++) {
-+ 		uatomic_inc(&nr_allocated);
-+ 		uatomic_inc(&cachep->nr_allocated);
-+ 		uatomic_inc(&cachep->nr_tallocated);
-+ 		if (kmalloc_verbose)
-+ 			printf("Allocating %p from slab\n", p[i]);
-+ 	}
-+=20
-+ 	return size;
-+ }
-+=20
- -void *kmalloc(size_t size, gfp_t gfp)
- -{
- -	void *ret;
- -
- -	if (!(gfp & __GFP_DIRECT_RECLAIM))
- -		return NULL;
- -
- -	ret =3D malloc(size);
- -	uatomic_inc(&nr_allocated);
- -	if (kmalloc_verbose)
- -		printf("Allocating %p from malloc\n", ret);
- -	if (gfp & __GFP_ZERO)
- -		memset(ret, 0, size);
- -	return ret;
- -}
- -
- -void kfree(void *p)
- -{
- -	if (!p)
- -		return;
- -	uatomic_dec(&nr_allocated);
- -	if (kmalloc_verbose)
- -		printf("Freeing %p to malloc\n", p);
- -	free(p);
- -}
- -
-  struct kmem_cache *
-  kmem_cache_create(const char *name, unsigned int size, unsigned int align,
-  		unsigned int flags, void (*ctor)(void *))
-
---Sig_/hvt/4DAfGD6OLjPgp=HGPgj
+--Sig_/Ftj20MpvReDRDUvFxi5d.bN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIN6ZUACgkQAVBC80lX
-0GzMDgf/XF8wAJxcZUeeD/W8mIqhuldt3LiU2Z0ZMvvnvoGhcWEdEazf93m93tN8
-PfCPeRfA3B8AsUSN32ehlPZsb8NCMg5/YFHe5WTQmcZyMzs+qeF3x3DZprVqHvON
-WNM/qtld8oFxFIn4tu/4jw7nrIQOLsJE32swrYGxaxrDvthIerabspveWidKLpx4
-iGYMGr/U944ighDVubkPYe3nvm7v2qfPQ2YmbdPXut7AQUt12nM8Bo3gdfEXXn0i
-x2w3XX6DbttFp8QFkMjo0Z8HqYEX4cIiGxKNRTqmqFrFBuQi4c9Z/6Lnq3FvuGCV
-WU9GjbylRByCk8AovNIPIfTQJ4KvZA==
-=qPM/
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIN7VIACgkQAVBC80lX
+0Gzd7wgAmUHMPGOsq8XAudsVLb7yLaEPG0toc1opecMUkGQHUt5dvButrx3rTGCQ
+nI1ZZUpGtE0H6Lma6L1rgQjYXnR431nigtqLpDpP7aOBr/7nYGD9znrJz56WN1ze
+4PQfG/VuPNfEKKNpfS79Qcj7QkiCbxbJVTZXJyXSNTBMHZc/RVfebx8yZ7DmwLrD
+Mq8pmx6J7FT0ZtjLGKwoClxWDaXKdtg/n+NPS7fLy4XYX7W528y4oI4WXgxtp6sh
+o+mD0BxJmUHR0tBGerZUfRiEVJ5IbdVoYLNAWn4LWRWWSeN0NuP1RG1SDXCoz+jJ
+qBbY8mAJayeEtYPOTeARNKArVCtA+w==
+=rAel
 -----END PGP SIGNATURE-----
 
---Sig_/hvt/4DAfGD6OLjPgp=HGPgj--
+--Sig_/Ftj20MpvReDRDUvFxi5d.bN--
