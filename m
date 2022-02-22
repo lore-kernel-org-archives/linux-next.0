@@ -2,133 +2,150 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD6EC433F5
-	for <linux-next@archiver.kernel.org>; Tue, 22 Feb 2022 05:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328A4C433F5
+	for <linux-next@archiver.kernel.org>; Tue, 22 Feb 2022 07:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbiBVF55 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 22 Feb 2022 00:57:57 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:32818 "EHLO
+        id S229472AbiBVHpI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 22 Feb 2022 02:45:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbiBVF54 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2022 00:57:56 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E408B7D011
-        for <linux-next@vger.kernel.org>; Mon, 21 Feb 2022 21:57:31 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id bg10so39435524ejb.4
-        for <linux-next@vger.kernel.org>; Mon, 21 Feb 2022 21:57:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=p/PmgnBMBE+a+LwnMw7RC+TxwSBL0sVYbhSV1c+Rplg=;
-        b=HlroeRgk73cYJrya57IgoHaHYLeOQRZ8CFTKMyFrCQHZQft9rOKWBt3CMXGj8Hwp9y
-         OGy7sNphB9Uqe6NWrSnzVQST3fDo8GycVwSxApBKE3AyeyubM14vpJoCdrwaTkK5kp7n
-         cQyH7ksBDdcAQf+va82zEfbNiMIfQ7/cIXkVCcOwQbjxF1f5sLftHexJzTNZLmjXJvrQ
-         WTVOPvI57wSmoZTTx1AVEgdWqYkpSr6ypiNnPHrvNh6daYJjvApt9/Ud15DRX8oTYctF
-         MPEysQxdr7jBz9rTvY+DeVJw5EiPD0hc4QIeTMefTCLu+iCc3VWzd2Og153uAUiWlD09
-         0APg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=p/PmgnBMBE+a+LwnMw7RC+TxwSBL0sVYbhSV1c+Rplg=;
-        b=tZAQEUsG3a2pFeaimYdNPIp8zwwFsopuCYWI4R31epc+cDX443fGYoAdlsKvJKKlTs
-         nICD1b1GiGU2NvQ6fy840a+hEO1+6aT++5j5wzaRB6h23xEmoUW1XvAMeFeHY72+Wa4t
-         K6DX9+eCtfd0yMSKg/LE4YEL0iyJiQt7oEZCd1lX0FuT/ssUjPNwVsHEG1iS2ouR1dl0
-         mZR93bThOWZYLRdbQ0Got0hsz90hVpX6sCVYlGn9v2dds0zmI/HXEyNPxCiaRIY0i8a6
-         spk1BUwKjSaoUtSB632St8LKJeDyqkGk64Ne/ZN9sQzVrS4/cHw25dijnCd15Oa1LFH4
-         Sf6Q==
-X-Gm-Message-State: AOAM530B4ctzgOehco+DtlLJdne3iLZ1zqS2zHzFixxcEHO2MsHdupK8
-        P8kkXJ341Ik0CiVId/G9rNiqAvfvns7uYX1rjVT5aw==
-X-Google-Smtp-Source: ABdhPJz8UvpHNGjwosxt0eNuD825WY1Yan8kUpAgvw5cnK0YhJVzisH6PHoeBKC7hmKBNTUEoKrxFSkN0+HDrNt/e8M=
-X-Received: by 2002:a17:906:b201:b0:6b5:58c8:e43c with SMTP id
- p1-20020a170906b20100b006b558c8e43cmr17564278ejz.441.1645509450470; Mon, 21
- Feb 2022 21:57:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20220221215911.2948692-1-broonie@kernel.org>
-In-Reply-To: <20220221215911.2948692-1-broonie@kernel.org>
-From:   Jinpu Wang <jinpu.wang@ionos.com>
-Date:   Tue, 22 Feb 2022 06:57:19 +0100
-Message-ID: <CAMGffEm_J9WcP2eoopwX8eEnRz9n4EycWxwgzP4c+NFr0eYXkw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the block tree
+        with ESMTP id S229843AbiBVHpE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2022 02:45:04 -0500
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD1B2133966;
+        Mon, 21 Feb 2022 23:44:28 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 636185C0154;
+        Tue, 22 Feb 2022 02:44:25 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 22 Feb 2022 02:44:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=yfRp+YUFI/2FMxEFyLbvDWA7xuEPRQXxUvM5Ey
+        G2eSw=; b=eCj08t+VA37FE46gUvOLnZwouqcohh6wP21mmjBrD1zQTZBRL3Mvlo
+        RRbsQmsMpi6qOVCvDSZoC55QILNLiGWNluAZLUeEylTcNz8npVsklxO+L5BCx884
+        Ru3ATtKuIaAgT+AZ1Ib2wnIieXtqFY1ZxBYrp+7SmVR2Zw5mxl+2Sg3GS6S1Fd47
+        ej8/WeIOEFcvw3O+Q9nCbJpqEU+cu3Vdt9dZtx9Bxrx1kn19iaZrYcu2LMoUnPBG
+        3bmTvGR6mftjxcRUbcqkEcSm14WZaE0oN2Dm9mQZkSm16YShQDo39bkX/9Hr8ZM6
+        E2FifGUMsEv6QB53LnI/rWhq6GCJZsEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=yfRp+YUFI/2FMxEFy
+        LbvDWA7xuEPRQXxUvM5EyG2eSw=; b=B3UFwwF1JJKl1U+UQUqzteo7azATfEOwH
+        nX+ec47d0VaH/fGr6IvaozijawxsJeE9Z3GKKSbcC6YaEExX7J8I/lTqHp5rxGmd
+        EyRmm3EHCdNkEzhNUVGrtQGLPQc6i/y286hCQapMnMB1HZUKmOhRKNRmiocG7g+B
+        yZT52ANhuvvrDOuARDUwSDE0j2BdNrydU7g8O1Ja4n+bIqV1wc2UFcHPUwMeeSHV
+        88OjdAuNcTNVakMkDfXi0Ve8ObtoU9YomzheJgX5PbOAdfM+eN4GULlotQT6a0Zc
+        G3A5g2Bc2Hjf2GWne0ZL6ZhjXsNrbsMwmyo2yEc5Ao4OFCzHLNSkA==
+X-ME-Sender: <xms:WZQUYplkFnjm8d2n-TmJ1hl81z3rW7HHZyqtopj3HdZpAsEjifQX4w>
+    <xme:WZQUYk1n7PK1TYKf9CQ91aqC5xrAgc3iIGLV4BhN-G8no-A0m6FDGwEhYavSYaYi4
+    gqugZw1lY2v7w>
+X-ME-Received: <xmr:WZQUYvqB08vSfg3ZlfhGyHq1Mz_P6LX264nydNkQjltPL397K4UBsqPIF8-2db-5CNKzhZJnKTSMYDz1K1BPb4gMqyXHAJ48>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeejgddutdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
+    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
+    drtghomh
+X-ME-Proxy: <xmx:WZQUYplfMLMMDUMhUv1glyF_TByhiPdMsI50ofGhByaA7VOgzPO_iw>
+    <xmx:WZQUYn3uy8z7NB6meP4GMnVwW-BMituosVoQMMBGT0i5Brogb4MjCw>
+    <xmx:WZQUYot1Oy2CmE7vBtywTl5BVJvgN5CSqRQwbrnlh4Nos2CZYUr9Xg>
+    <xmx:WZQUYhoiOkvsEc4dt7u1NTrocvrGVqEgQaw9w8olCG4Mzr31NZDjNg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Feb 2022 02:44:24 -0500 (EST)
+Date:   Tue, 22 Feb 2022 08:44:22 +0100
+From:   Greg KH <greg@kroah.com>
 To:     broonie@kernel.org
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Gioh Kim <gi-oh.kim@ionos.com>,
-        Jens Axboe <axboe@kernel.dk>,
+Cc:     Hans de Goede <hdegoede@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Md Haris Iqbal <haris.iqbal@ionos.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Message-ID: <YhSUVkm/lIm1x3ks@kroah.com>
+References: <20220221203917.1899359-1-broonie@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220221203917.1899359-1-broonie@kernel.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Feb 21, 2022 at 10:59 PM <broonie@kernel.org> wrote:
->
+On Mon, Feb 21, 2022 at 08:39:17PM +0000, broonie@kernel.org wrote:
 > Hi all,
->
-> Today's linux-next merge of the scsi-mkp tree got a conflict in:
->
->   drivers/block/rnbd/rnbd-clt.c
->
+> 
+> Today's linux-next merge of the usb tree got a conflict in:
+> 
+>   drivers/usb/dwc3/dwc3-pci.c
+> 
 > between commit:
->
->   448025c103938 ("block/rnbd: client device does not care queue/rotationa=
-l")
->
-> from the block tree and commit:
->
->   e8e9884730b36 ("scsi: rnbd: Remove WRITE_SAME support")
->
-> from the scsi-mkp tree.
->
+> 
+>   d7c93a903f33f ("usb: dwc3: pci: Add "snps,dis_u2_susphy_quirk" for Intel Bay Trail")
+> 
+> from the usb.current tree and commit:
+> 
+>   582ab24e096fd ("usb: dwc3: pci: Set "linux,phy_charger_detect" property on some Bay Trail boards")
+> 
+> from the usb tree.
+> 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
 > conflicts should be mentioned to your upstream maintainer when your tree
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
-Hi Broonie,
+> 
+> diff --cc arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> index 4e7efa97724bd,a614b9f73e2cd..0000000000000
+> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> diff --cc drivers/usb/dwc3/dwc3-pci.c
+> index 06d0e88ec8af9,4330c974b31ba..0000000000000
+> --- a/drivers/usb/dwc3/dwc3-pci.c
+> +++ b/drivers/usb/dwc3/dwc3-pci.c
+> @@@ -120,13 -119,14 +120,21 @@@ static const struct property_entry dwc3
+>   	{}
+>   };
+>   
+>  +static const struct property_entry dwc3_pci_intel_byt_properties[] = {
+>  +	PROPERTY_ENTRY_STRING("dr_mode", "peripheral"),
+>  +	PROPERTY_ENTRY_BOOL("snps,dis_u2_susphy_quirk"),
+>  +	PROPERTY_ENTRY_BOOL("linux,sysdev_is_parent"),
+>  +	{}
+>  +};
+>  +
+> + static const struct property_entry dwc3_pci_intel_phy_charger_detect_properties[] = {
+> + 	PROPERTY_ENTRY_STRING("dr_mode", "peripheral"),
+> + 	PROPERTY_ENTRY_BOOL("snps,dis_u2_susphy_quirk"),
+> + 	PROPERTY_ENTRY_BOOL("linux,phy_charger_detect"),
+> + 	PROPERTY_ENTRY_BOOL("linux,sysdev_is_parent"),
+> + 	{}
+> + };
+> + 
+>   static const struct property_entry dwc3_pci_mrfld_properties[] = {
+>   	PROPERTY_ENTRY_STRING("dr_mode", "otg"),
+>   	PROPERTY_ENTRY_STRING("linux,extcon-name", "mrfld_bcove_pwrsrc"),
+> @@@ -169,10 -169,10 +177,14 @@@ static const struct software_node dwc3_
+>   	.properties = dwc3_pci_intel_properties,
+>   };
+>   
+>  +static const struct software_node dwc3_pci_intel_byt_swnode = {
+>  +	.properties = dwc3_pci_intel_byt_properties,
+>  +};
+>  +
+> + static const struct software_node dwc3_pci_intel_phy_charger_detect_swnode = {
+> + 	.properties = dwc3_pci_intel_phy_charger_detect_properties,
+> + };
+> + 
+>   static const struct software_node dwc3_pci_intel_mrfld_swnode = {
+>   	.properties = dwc3_pci_mrfld_properties,
+>   };
 
-Thanks for fixing it up, it looks good. We will pay attention on this next =
-time!
+Looks good, thanks!
 
-Regards!
-Jinpu Wang
->
-> diff --cc drivers/block/rnbd/rnbd-clt.c
-> index 1f63f308eb394,dc192d2738854..0000000000000
-> --- a/drivers/block/rnbd/rnbd-clt.c
-> +++ b/drivers/block/rnbd/rnbd-clt.c
-> @@@ -1606,13 -1607,13 +1603,13 @@@ struct rnbd_clt_dev *rnbd_clt_map_devi=
-c
->         }
->
->         rnbd_clt_info(dev,
-> -                      "map_device: Device mapped as %s (nsectors: %zu, l=
-ogical_block_size: %d, physical_block_size: %d, max_write_same_sectors: %d,=
- max_discard_sectors: %d, discard_granularity: %d, discard_alignment: %d, s=
-ecure_discard: %d, max_segments: %d, max_hw_sectors: %d, wc: %d, fua: %d)\n=
-",
->  -                     "map_device: Device mapped as %s (nsectors: %zu, l=
-ogical_block_size: %d, physical_block_size: %d, max_discard_sectors: %d, di=
-scard_granularity: %d, discard_alignment: %d, secure_discard: %d, max_segme=
-nts: %d, max_hw_sectors: %d, rotational: %d, wc: %d, fua: %d)\n",
-> ++                     "map_device: Device mapped as %s (nsectors: %zu, l=
-ogical_block_size: %d, physical_block_size: %d, max_discard_sectors: %d, di=
-scard_granularity: %d, discard_alignment: %d, secure_discard: %d, max_segme=
-nts: %d, max_hw_sectors: %d, wc: %d, fua: %d)\n",
->                        dev->gd->disk_name, dev->nsectors,
->                        dev->logical_block_size, dev->physical_block_size,
-> -                      dev->max_write_same_sectors, dev->max_discard_sect=
-ors,
-> +                      dev->max_discard_sectors,
->                        dev->discard_granularity, dev->discard_alignment,
->                        dev->secure_discard, dev->max_segments,
->  -                     dev->max_hw_sectors, dev->rotational, dev->wc, dev=
-->fua);
->  +                     dev->max_hw_sectors, dev->wc, dev->fua);
->
->         mutex_unlock(&dev->lock);
->         rnbd_clt_put_sess(sess);
+greg k-h
