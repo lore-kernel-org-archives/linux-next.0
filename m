@@ -2,88 +2,65 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B3DC433EF
-	for <linux-next@archiver.kernel.org>; Tue, 22 Feb 2022 23:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBCCC433EF
+	for <linux-next@archiver.kernel.org>; Wed, 23 Feb 2022 00:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236346AbiBWAAO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 22 Feb 2022 19:00:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35216 "EHLO
+        id S229840AbiBWAHL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 22 Feb 2022 19:07:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236202AbiBWAAN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2022 19:00:13 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65C02654;
-        Tue, 22 Feb 2022 15:59:45 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3183261227;
-        Tue, 22 Feb 2022 23:59:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E00C340E8;
-        Tue, 22 Feb 2022 23:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645574384;
-        bh=nKpRT4I7rBEMlNQ22UrRDmjM7DxTxcBYObIPyBwFRvU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DvLA8wUdq6tbNOhUPBnoxDc5JxsShl+RuYsIlvsAcsZx0LantEzAp7zNl+tL0PP0X
-         49HTNa9OPZI7azPwY8HeLd08Fub8Hs3L8dZHfo1EdI5TfExKi2llU2ezwi92xfmuLr
-         F0JZuYktur1iLAzbviH/YJrC50m5y6RuMtmRzadJKV5p38o8GyceR88yzwAxaZV8Ce
-         Tr1VuEXDinn3gGYXl0ovsUrg9qhB05KmypKa2sGZlXYhf/zGWZ1Nx8OQPuO44oZZ2N
-         kp3KPfQaVyAHjZLNnUdr9W5TLAGz/fZjQRidOShZRWsypF0FOC/aIrObpIrhBr2rja
-         gN7KuJUXSoQBg==
-From:   broonie@kernel.org
-To:     Liam Howlett <liam.howlett@oracle.com>
-Cc:     Dave Anglin <dave.anglin@bell.net>, Helge Deller <deller@gmx.de>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        with ESMTP id S229544AbiBWAHJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2022 19:07:09 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18A5332F;
+        Tue, 22 Feb 2022 16:06:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gn7VX6NcCSnnWpzXISJ6YEhhClDI/b+YJQ1Q15ZLTI0=; b=QeHhToOsm5NH3+gAlvUonK5hRB
+        /yZ1MpKHVhAK4lS2kKdQLPZqmh6+Tm8GVhJp+gfRJxYxpRKmKsXJ9Wju9dN6i2QHbL46uZWcdD91L
+        VWaOTYCk4Y19dm4gmLrFbgZo43f4BUQL0uuktZ3pXnV3BQCDeGAo3MA1hWZ3OdWzNNBzGHD2aEZEl
+        eRFUtcajeM7EpG6So50hUxQ+7W2nrdK8VFHYMAc7WDh4pQlV5sQrIjnritpxDf3JJxeV/AYJjB3T0
+        M08WGM0ARyj5hv/JqNUo2cCjRE51K6bbnadFOeN3FeddpMq0W0eOUEtweYYGzYaozZlHprKjWh4I3
+        MydQYtnA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nMfAq-00C0NO-V7; Wed, 23 Feb 2022 00:06:28 +0000
+Date:   Tue, 22 Feb 2022 16:06:28 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     broonie@kernel.org, Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: linux-next: manual merge of the maple tree with the parisc tree
-Date:   Tue, 22 Feb 2022 23:59:39 +0000
-Message-Id: <20220222235939.906617-1-broonie@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        sujiaxun <sujiaxun@uniontech.com>,
+        tangmeng <tangmeng@uniontech.com>,
+        zhanglianjie <zhanglianjie@uniontech.com>,
+        Zhen Ni <nizhen@uniontech.com>
+Subject: Re: linux-next: manual merge of the sysctl tree with the tip tree
+Message-ID: <YhV6hKamk3DRILPu@bombadil.infradead.org>
+References: <20220222235218.906101-1-broonie@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220222235218.906101-1-broonie@kernel.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi all,
+On Tue, Feb 22, 2022 at 11:52:18PM +0000, broonie@kernel.org wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the sysctl tree got conflicts in:
+> 
+>   include/linux/sched/sysctl.h
+>   kernel/sysctl.c
+> 
+> between commit:
+> 
+>   c8eaf6ac76f40 ("sched: move autogroup sysctls into its own file")
 
-Today's linux-next merge of the maple tree got a conflict in:
+Peter, would you prefer if I just take this one commit? The syctl
+changes keep coming. Let me know!
 
-  arch/parisc/kernel/cache.c
-
-between commit:
-
-  389f36b709496 ("parisc: Add vDSO support")
-
-from the parisc tree and commit:
-
-  57723d1d4d3fc ("parisc: Remove mmap linked list from cache handling")
-
-from the maple tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/parisc/kernel/cache.c
-index e7b8e74dad8e1,c3a8d29b6f9fe..0000000000000
---- a/arch/parisc/kernel/cache.c
-+++ b/arch/parisc/kernel/cache.c
-@@@ -582,8 -585,8 +585,8 @@@ void flush_cache_mm(struct mm_struct *m
-  	}
-  
-  	preempt_disable();
- -	if (mm->context == mfsp(3)) {
- +	if (mm->context.space_id == mfsp(3)) {
-- 		for (vma = mm->mmap; vma; vma = vma->vm_next)
-+ 		for_each_vma(vmi, vma)
-  			flush_user_cache_tlb(vma, vma->vm_start, vma->vm_end);
-  		preempt_enable();
-  		return;
+  Luis
