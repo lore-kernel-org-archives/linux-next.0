@@ -2,58 +2,72 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D16DC433F5
-	for <linux-next@archiver.kernel.org>; Fri, 25 Feb 2022 12:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F2BC433EF
+	for <linux-next@archiver.kernel.org>; Fri, 25 Feb 2022 15:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232744AbiBYM1E (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 25 Feb 2022 07:27:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39378 "EHLO
+        id S239277AbiBYPvD (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 25 Feb 2022 10:51:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240643AbiBYM1E (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Feb 2022 07:27:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9111D8;
-        Fri, 25 Feb 2022 04:26:31 -0800 (PST)
+        with ESMTP id S235600AbiBYPvC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Feb 2022 10:51:02 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C60056BDD7;
+        Fri, 25 Feb 2022 07:50:30 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 023D0B82F57;
-        Fri, 25 Feb 2022 12:26:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70300C340E7;
-        Fri, 25 Feb 2022 12:26:27 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 75D65B83273;
+        Fri, 25 Feb 2022 15:50:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFBFC340F3;
+        Fri, 25 Feb 2022 15:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645791988;
-        bh=XkDvs01GLoZYv9sesuOyEQE8tyc99VVk49LVS++JMPc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PPOvhOy22xjCyJJjQYxv6IJL9td9BEwfm5xkoCFbXOs6gbZagGmTIkRTq/SRGa85N
-         iG9pKzwnZf2sqJ5ZuxFALhqEtnsZTtQ4SPYKgF/Eq1MZBZaKbFpJP4HGWbpyr1wZAt
-         qyCbW/SJ+sfsA/bUyWoWbtMTUPhjBHpCWweZnGBuYgDU+D/tLB4IbOwFW7sszl5C8C
-         COZkpvOthdju/7vIGuiW5XqPMxYtuSgudGm6DK+k696+2ZSFBum18bEgnIq02vhLHV
-         D2hpA/M+mCEBJ9x37vvduebqAImTi6CfdjoC2txGQksU71wrV8k+W1mp/D+QrZZB0i
-         RpgKoqxSq+OyQ==
-From:   broonie@kernel.org
-To:     Nicolas Ferre <nicolas.ferre@atmel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: build failure after merge of the at91 tree
-Date:   Fri, 25 Feb 2022 12:26:19 +0000
-Message-Id: <20220225122619.1290024-1-broonie@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        s=k20201202; t=1645804228;
+        bh=d0igNZb3rq+qjUus0DIv+K7xgzdKHc9djeRmXZtOURA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CJ3dUAfSNRUDUTKIi6sXkZOIYB/2h3qfayy0xGUwd26hIgXS3GNFUHhBgSaLOE2jM
+         nKggG0l1546wnfpkP/i3zb/fH+HiYqE2w2dnAjEj2RZ10qEPRJOdmFDrvZmFxLxFOT
+         45hu1QeKM5ix5IRrY2z/RWF4qKDOHpdJ5gKg1Vec7agdOaJoT3vA/3YJGKuIXMtwNb
+         dSUoTaC3rLZnHBq5XMik5fwfOBMV0ZZnXPqGUhvU1NRX5imf9o40hafJdchdwDC1IC
+         2BBicXw2TGiFihEpY0zQl8UjGaR0cJVMgFYh7EOPSzBaFi+DrqMRSU9hnRmRqSvSdG
+         NfM2msJGZYN2Q==
+From:   Will Deacon <will@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Liam Howlett <liam.howlett@oracle.com>
+Cc:     catalin.marinas@arm.com, kernel-team@android.com,
+        Will Deacon <will@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: Change elfcore for_each_mte_vma() to use VMA iterator
+Date:   Fri, 25 Feb 2022 15:50:14 +0000
+Message-Id: <164579275059.2849601.5773490330369594969.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220218023650.672072-1-Liam.Howlett@oracle.com>
+References: <20220218014642.lop2ohx4ov6fekyl@revolver> <20220218023650.672072-1-Liam.Howlett@oracle.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi all,
+On Fri, 18 Feb 2022 02:37:04 +0000, Liam Howlett wrote:
+> This is an untested fix for the merge conflict of maple tree next and
+> arm64 next.
+> 
+> Instead of using the linked list, use the vma iterator.
+> 
+> 
 
-After merging the at91 tree, today's linux-next build (arm multi_v7_defconfig)
-failed like this:
+Applied to arm64 (for-next/coredump), thanks!
 
-Error: /tmp/next/build/arch/arm/boot/dts/sama7g5.dtsi:140.21-22 syntax error
-FATAL ERROR: Unable to parse input tree
+[1/1] arm64: Change elfcore for_each_mte_vma() to use VMA iterator
+      https://git.kernel.org/arm64/c/3a4f7ef4bed5
 
-I didn't identify the specific commit that caused the issue, I have used
-the at91 tree from yesterday instead.
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
