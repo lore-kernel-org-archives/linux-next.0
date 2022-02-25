@@ -2,46 +2,48 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7398C433EF
-	for <linux-next@archiver.kernel.org>; Fri, 25 Feb 2022 16:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1086C433F5
+	for <linux-next@archiver.kernel.org>; Fri, 25 Feb 2022 16:37:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242701AbiBYQPM (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 25 Feb 2022 11:15:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35470 "EHLO
+        id S238285AbiBYQi2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 25 Feb 2022 11:38:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242705AbiBYQPF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Feb 2022 11:15:05 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 455191A8CB7;
-        Fri, 25 Feb 2022 08:14:33 -0800 (PST)
+        with ESMTP id S240317AbiBYQi1 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Feb 2022 11:38:27 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B025BD1C;
+        Fri, 25 Feb 2022 08:37:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EBDE3B83278;
-        Fri, 25 Feb 2022 16:14:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A29CC340E7;
-        Fri, 25 Feb 2022 16:14:28 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5A14AB83281;
+        Fri, 25 Feb 2022 16:37:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2B9C340E7;
+        Fri, 25 Feb 2022 16:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645805670;
-        bh=xkC4nSLHICZXNHLPzus0cNfYAdOEoTaFaMgu+1Pf2Vc=;
+        s=k20201202; t=1645807072;
+        bh=dRaPP8U/qTouq/QANC7IxWpVYFkRYB9CeMb80MzSHhk=;
         h=From:To:Cc:Subject:Date:From;
-        b=KWzljE6iP0Y97AxNUAcL/+fpHDJq+enejnltiHRu5mlxaBfZ3P2f5S6vvhYvFMRlZ
-         5lx4hDKWtwpPHnv/RCFL47/gTQjHP9l5p9lm97amNS8k1YorS/bndcY1pO8qSbZD27
-         UFiumJwdp/SnxZLlsDA3SRUYI+h2rEe27MmIPedORKgyuwW9x4N6PEg9fhNea4ROx3
-         HvAAIWTzr+vwekPDlVXPJQpPnFepl/t4ET8jAuvjwj8ePtqN0BG2zVDZf1LMsikXwF
-         tN9CjGuTx6eAMomX5NQLgIQ9rOnPti0UqMPV8104E87n5ornDX3kD+RhhdTwuETlth
-         QfwWHvwjwubog==
+        b=Vf69LTEOSafT8UIUHydSmL5goIF3wOUmpFO31AQYB5oJbw7Rj9odEjyRadWBN6ery
+         J2HiB7MOxCc7Bmago6rwxetuKUcBDSX9MqhBdCOCnVpkFTX2vyJsxZ3wnhJTJNhqy5
+         mGh+HPKOsbLDLF/8B1AICFiV2CBCjT6VerROgKyK6zYnDtp0yLBuYg7jtkAGvDsFb7
+         e4j17/59RU/+XMHpa2tiNV4BhUizfk5OeggdVf+y3dJlYDpKqBvIuEUjB0Rd7U9/hA
+         eFO39VhRcyGtqOfRrzIuX85Yj6qU7bAsFyK6u3ouiuDz/50aYfbrSd02VFHTofN4qA
+         c6njHZguMFh7A==
 From:   broonie@kernel.org
 To:     Dave Airlie <airlied@linux.ie>,
         DRI <dri-devel@lists.freedesktop.org>
-Cc:     Jani Nikula <jani.nikula@intel.com>,
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Guchun Chen <guchun.chen@amd.com>,
+        Leslie Shi <Yuliang.Shi@amd.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes tree
-Date:   Fri, 25 Feb 2022 16:14:25 +0000
-Message-Id: <20220225161425.456356-1-broonie@kernel.org>
+        Tomohito Esaki <etom@igel.co.jp>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Date:   Fri, 25 Feb 2022 16:37:47 +0000
+Message-Id: <20220225163747.888284-1-broonie@kernel.org>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,16 +55,15 @@ Hi all,
 
 Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/gpu/drm/i915/display/intel_snps_phy.c
+  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
 
 between commit:
 
-  28adef861233c ("drm/i915/dg2: Print PHY name properly on calibration error")
+  e2b993302f40c ("drm/amdgpu: bypass tiling flag check in virtual display case (v2)")
 
-from the drm-intel-fixes tree and commits:
+from the drm-fixes tree and commit:
 
-  c5274e86da5fe ("drm/i915/snps: convert to drm device based logging")
-  84073e568eec7 ("drm/i915/dg2: Print PHY name properly on calibration error")
+  2af104290da5e ("drm: introduce fb_modifiers_not_supported flag in mode_config")
 
 from the drm tree.
 
@@ -73,4 +74,17 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-[Used drm version]
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index c4387b38229c2,9e5fc4cdb8ec9..0000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@@ -1141,7 -1148,7 +1148,7 @@@ int amdgpu_display_framebuffer_init(str
+  	if (ret)
+  		return ret;
+  
+- 	if (!dev->mode_config.allow_fb_modifiers && !adev->enable_virtual_display) {
+ -	if (dev->mode_config.fb_modifiers_not_supported) {
+++	if (dev->mode_config.fb_modifiers_not_supported && !adev->enable_virtual_display) {
+  		drm_WARN_ONCE(dev, adev->family >= AMDGPU_FAMILY_AI,
+  			      "GFX9+ requires FB check based on format modifier\n");
+  		ret = check_tiling_flags_gfx6(rfb);
