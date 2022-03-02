@@ -2,159 +2,108 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC5FC433EF
-	for <linux-next@archiver.kernel.org>; Wed,  2 Mar 2022 22:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D528C43217
+	for <linux-next@archiver.kernel.org>; Wed,  2 Mar 2022 23:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243582AbiCBWSw (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 2 Mar 2022 17:18:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
+        id S229535AbiCBXqH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 2 Mar 2022 18:46:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240739AbiCBWSu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Mar 2022 17:18:50 -0500
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5813D34BBD
-        for <linux-next@vger.kernel.org>; Wed,  2 Mar 2022 14:18:06 -0800 (PST)
-Received: by mail-il1-x12b.google.com with SMTP id i1so2570886ila.7
-        for <linux-next@vger.kernel.org>; Wed, 02 Mar 2022 14:18:06 -0800 (PST)
+        with ESMTP id S229497AbiCBXqG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Mar 2022 18:46:06 -0500
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 966D24EF54;
+        Wed,  2 Mar 2022 15:43:57 -0800 (PST)
+Received: by mail-oi1-x22b.google.com with SMTP id p15so3299065oip.3;
+        Wed, 02 Mar 2022 15:43:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SRcrXrbjAkSUZ9K2sfExxRVmg7Xf9wQCXzpvkYMoGAY=;
-        b=Oyp5KCl3qEk1HVjktZEALObEMHLPjVP9jdV3etdyc7CKCgn8nw1o1/0En5qILxWDz8
-         DyVKpBuETJatlNRQ8owc6sjP17GGhsTSYvOKcbG9DNMfd6s09by7vrs+2jO8xnDt12dl
-         CRLoD1wpV9MwyaLmOJIx7wGRSTvNTUIOUqODM=
+        bh=Lp3igCTBUuzlbWnkmK/gfxOOr4818cn0YOZlkpHeS+Y=;
+        b=Vyo3B7vRjlNFrwo7KK5xiCzmwAwgIeI+e6v3ufQAUXsoASn7b969YNcvCcuHiPea2I
+         YzFEwcOXeQBM+zdx0YKGj/JH8ti7+Vs+Kjid3MQcyAMeGZb5Lfoh1oXcOoJMwqfJx4rK
+         dnag0LkQhg7Hr/3NsJJagy9JkpZw1E7UDlPUr78P5YpeubzK/lv4uT27mgpJXCVpV6NW
+         sWU0oj8795lkxGzRCXDeA6vbp/+413Smrlt5Edf7ciI6ut74AhfP5dua3VMezb7mfOMU
+         kS00SwNL1Vnp5v3Hro5skR7n0xjoPMUoBjKWTwz0j9Kd/sSZJkxfiROEw4lZOtwnJo/W
+         pgVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SRcrXrbjAkSUZ9K2sfExxRVmg7Xf9wQCXzpvkYMoGAY=;
-        b=dVa9mZzB0XZ2f2nj6BZZWlBWs7vPkuB7wghGP1V2p0rcGqGO45XY2PE8IsVW0ZbDhK
-         Ghaccw1BP5okV+anCyhK7TWsx6dDKWKmQErypy3ijfmC2uEll4Aq+1ewEpeZK5DvGDlA
-         YjrtMKkICMn6V6gclFouUCyW3WSDMpRW9xiWHNrgKVD2ZMO9vKQ0Uyd1ySiwIKefWVv0
-         /lARhcr+Ytz6Q6uqaZNIygVw1G6qxskACJNo9PzqZXvix5R8vSV2GZy9tnYq8Wj0T6CF
-         SqHRfch+WkjGqk5R2O0XsVaNIzRbizmS0o60AHeZrj6SiiVjT3J6cknbMd12wvZ/cIQY
-         iuaA==
-X-Gm-Message-State: AOAM532EehGsqY/cc8t4dmfnW+MNElsgxBXwZUr6EGzHxLDGKb3ySP+V
-        UZHWbgzbA496G8lD+6G9GqYKtTKx+NWNHuxQbdkVbF1C6KN1IIsW
-X-Google-Smtp-Source: ABdhPJzgLW1DYN12tl3/oWDOzZVO9FPPMe5Px5umn5KctlrjVzjKjHobseggnLRnrRxg01kEcSUNt4C6vS3SRQBjxbA=
-X-Received: by 2002:a05:6e02:1c09:b0:2be:8ce6:8551 with SMTP id
- l9-20020a056e021c0900b002be8ce68551mr29696582ilh.48.1646259485718; Wed, 02
- Mar 2022 14:18:05 -0800 (PST)
+        bh=Lp3igCTBUuzlbWnkmK/gfxOOr4818cn0YOZlkpHeS+Y=;
+        b=7FyZXGum2T/cJa5pGGQJ9LPEQenmmSMAQzaPBrYxo5t7Nr5si8Dm2Zx/Ejp/P4zrcK
+         lZ3xI7Ejr9uB/pS78Nwd2oAqQ++cTgh0Ozmrtk9HDhl/WV9bmyA2T8xWJABM/Ja9iWox
+         5QihIdXKvsbbEbQrgSy8kGiJlez4lXK6GcL+Zmjh9b5eeH1LIAwZ7knRnURMquyDP2Y+
+         sjC+OhunIRXK415R1VsDLh1v+M1V+ujyOrVGnQK4n1sS8Z5bCqVMTz2+7nQf5HlfjpFA
+         muhAbJWrUrWjgnFCJuu0GSXdkvrS8hPT2Pdw48DRLE6y7y6eZHfuoNPahFN4dCSO9LHp
+         pqIw==
+X-Gm-Message-State: AOAM531DTBOdAwwCxPK++hRopJWTYVnJgS9yVZtVrn9EAw3nHlM7PMlS
+        yPtorFNTDdNqWe389tVKeLOP+UvD4+0eBcc3Roo=
+X-Google-Smtp-Source: ABdhPJzbX9RgtlE7iKrIsuSOmMNrhk6U1PLpHkbJ75YlDSAlitrKKmBHBsXT/m5122I+aCzffWcKZKxZUXkdSGaNGo4=
+X-Received: by 2002:a05:6808:3091:b0:2d4:c180:d586 with SMTP id
+ bl17-20020a056808309100b002d4c180d586mr2139157oib.120.1646264632489; Wed, 02
+ Mar 2022 15:43:52 -0800 (PST)
 MIME-Version: 1.0
-References: <CA+G9fYtRBNVJdrFYnrRC22CfXg5iVwbb+EWMqZGARO-DHagapQ@mail.gmail.com>
-In-Reply-To: <CA+G9fYtRBNVJdrFYnrRC22CfXg5iVwbb+EWMqZGARO-DHagapQ@mail.gmail.com>
-From:   Rob Clark <robdclark@chromium.org>
-Date:   Wed, 2 Mar 2022 14:18:36 -0800
-Message-ID: <CAJs_Fx5xSDeHur+=xhQCUXfOYrNPWMpnXn79Z6yf4pHu76uhUQ@mail.gmail.com>
-Subject: Re: [next] arm64: db410c: Internal error: Oops: 96000004 - msm_gpu_pm_suspend
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
-        lkft-triage@lists.linaro.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Vinod Koul <vinod.koul@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Linux Kernel Functional Testing <lkft@linaro.org>
+References: <20220303075733.481987a8@canb.auug.org.au> <4804f1e7-8a25-ad8c-dd63-589ed34260c6@amd.com>
+In-Reply-To: <4804f1e7-8a25-ad8c-dd63-589ed34260c6@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 2 Mar 2022 18:43:41 -0500
+Message-ID: <CADnq5_PEobgWeJu8jipJx0gxSiiDiKLp372+5GLvTqncdG6zHA@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the amdgpu tree
+To:     Luben Tuikov <luben.tuikov@amd.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Should be fixed by:
+On Wed, Mar 2, 2022 at 5:11 PM Luben Tuikov <luben.tuikov@amd.com> wrote:
+>
+> In our local branch it is:
+>
+>     60862e45da3b5a drm/amd/display: Don't fill up the logs
+>     ...
+>     Fixes: 5898243ba7acdb ("drm/amd/display: Add dsc pre-validation in atomic check")
+>
+> Which exists:
+>
+>     5898243ba7acdb drm/amd/display: Add dsc pre-validation in atomic check
+>
+> So maybe something happened in merging, etc.
 
-https://patchwork.freedesktop.org/patch/475238/?series=100448&rev=1
+That's the commit in our development branch, but that doesn't directly
+correspond to the -next branch.  I've fixed it up and pushed a new
+-next branch.
 
-t-b's welcome
+Alex
 
-On Wed, Mar 2, 2022 at 12:35 PM Naresh Kamboju
-<naresh.kamboju@linaro.org> wrote:
 >
-> [Please ignore this email if it is already reported]
+> Regards,
+> Luben
 >
-> Linux next-20220302 running on Qcom db410c the following kernel crash
-> reported [1].
+> On 2022-03-02 15:57, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > In commit
+> >
+> >   d15628d483a5 ("drm/amd/display: Don't fill up the logs")
+> >
+> > Fixes tag
+> >
+> >   Fixes: 5898243ba7acdb ("drm/amd/display: Add dsc pre-validation in atomic check")
+> >
+> > has these problem(s):
+> >
+> >   - Target SHA1 does not exist
+> >
+> > Maybe you meant
+> >
+> > Fixes: 17ce8a6907f7 ("drm/amd/display: Add dsc pre-validation in atomic check")
+> >
 >
-> metadata:
->   git_ref: master
->   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
->   git_sha: adaedcf826dccf01b69d9a1f1997c9446c6b2c54
->   git_describe: next-20220302
->   kernel-config: https://builds.tuxbuild.com/25pJv2XjzFav5peWxwfhaU3LFEN/config
->
->
-> Kernel crash:
->
->  Failed to start Entropy Daemon based on the HAVEGE algorithm
-> [   12.104662] Unable to handle kernel NULL pointer dereference at
-> virtual address 0000000000000010
-> [   12.121151]   ESR = 0x96000004
-> [   12.121211]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [   12.123137]   SET = 0, FnV = 0
-> [   12.128687]   EA = 0, S1PTW = 0
-> [   12.131464]   FSC = 0x04: level 0 translation fault
-> [   12.134572] Data abort info:
-> [   12.139457]   ISV = 0, ISS = 0x00000004
-> [   12.142566]   CM = 0, WnR = 0
-> [   12.146165] user pgtable: 4k pages, 48-bit VAs, pgdp=000000008235d000
-> [   12.149360] [0000000000000010] pgd=0000000000000000, p4d=0000000000000000
-> [   12.156339] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [   12.162370] Modules linked in: videobuf2_dma_contig adv7511(+)
-> crct10dif_ce qcom_wcnss_pil cec qrtr qcom_q6v5_mss qcom_camss
-> snd_soc_lpass_apq8016 qcom_pil_info snd_soc_lpass_cpu rtc_pm8xxx
-> videobuf2_dma_sg qcom_spmi_vadc snd_soc_msm8916_analog qcom_q6v5
-> snd_soc_msm8916_digital snd_soc_apq8016_sbc snd_soc_lpass_platform
-> qcom_pon v4l2_fwnode snd_soc_qcom_common qcom_spmi_temp_alarm
-> qcom_sysmon qcom_vadc_common venus_core msm qcom_common v4l2_async
-> qcom_glink_smem qmi_helpers v4l2_mem2mem videobuf2_memops mdt_loader
-> qnoc_msm8916 gpu_sched icc_smd_rpm display_connector drm_dp_helper
-> videobuf2_v4l2 drm_kms_helper qcom_stats videobuf2_common qcom_rng
-> i2c_qcom_cci rpmsg_char drm socinfo rmtfs_mem fuse
-> [   12.207393] CPU: 0 PID: 66 Comm: kworker/0:4 Not tainted
-> 5.17.0-rc6-next-20220302 #1
-> [   12.207407] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> [   12.207415] Workqueue: pm pm_runtime_work
-> [   12.243952] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   12.247862] pc : hrtimer_active+0x14/0x80
-> [   12.254628] lr : hrtimer_cancel+0x28/0x70
-> [   12.258795] sp : ffff80000b423b70
-> [   12.262786] x29: ffff80000b423b70 x28: 0000000000000000 x27: 0000000000000000
-> [   12.266092] x26: ffff80000ad5d2e0 x25: 00000002d138d917 x24: ffff00000d8dbb80
-> [   12.273210] x23: ffff00000326c010 x22: ffff00000f6b2020 x21: ffff00000f6b2000
-> [   12.280328] x20: ffff00000f6b20f8 x19: ffff00000f6b2318 x18: 0000000000000000
-> [   12.287447] x17: ffff800035bf3000 x16: ffff800008004000 x15: 0000000000004000
-> [   12.294564] x14: 0000000000000000 x13: 0000000000000000 x12: ffff80000a8b7000
-> [   12.301682] x11: 0000087facb61180 x10: 0000000000000bc0 x9 : ffff8000081d3a78
-> [   12.308800] x8 : ffff000003c68000 x7 : 0000000000000018 x6 : 000000001483ced5
-> [   12.315918] x5 : 00ffffffffffffff x4 : 0000000000000000 x3 : 0000000000000000
-> [   12.323036] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff00000f6b2318
-> [   12.330156] Call trace:
-> [   12.337263]  hrtimer_active+0x14/0x80
-> [   12.339524]  msm_devfreq_suspend+0x30/0x60 [msm]
-> [   12.343348]  msm_gpu_pm_suspend+0x44/0x144 [msm]
-> [   12.348035]  adreno_suspend+0x6c/0x174 [msm]
-> [   12.352634]  pm_generic_runtime_suspend+0x38/0x50
-> [   12.356885]  genpd_runtime_suspend+0xb4/0x314
-> [   12.361487]  __rpm_callback+0x50/0x180
-> [   12.365824]  rpm_callback+0x74/0x80
-> [   12.369470]  rpm_suspend+0x110/0x634
-> [   12.372856]  pm_runtime_work+0xd0/0xd4
-> [   12.376676]  process_one_work+0x1dc/0x450
-> [   12.380235]  worker_thread+0x154/0x450
-> [   12.384314]  kthread+0x100/0x110
-> [   12.387959]  ret_from_fork+0x10/0x20
-> [   12.391351] Code: aa1e03e9 d503201f d503233f f9401802 (b9401041)
-> [   12.394913] ---[ end trace 0000000000000000 ]---
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
+> Regards,
 > --
-> Linaro LKFT
-> https://lkft.linaro.org
-> [1] https://lkft.validation.linaro.org/scheduler/job/4643232#L2396
+> Luben
