@@ -2,70 +2,71 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79457C433EF
-	for <linux-next@archiver.kernel.org>; Tue, 15 Mar 2022 14:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE58C43219
+	for <linux-next@archiver.kernel.org>; Tue, 15 Mar 2022 14:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238491AbiCOOQj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 15 Mar 2022 10:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
+        id S1349375AbiCOOnU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 15 Mar 2022 10:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231822AbiCOOQj (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2022 10:16:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E784EA0B;
-        Tue, 15 Mar 2022 07:15:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0486A61699;
-        Tue, 15 Mar 2022 14:15:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6AF0C340E8;
-        Tue, 15 Mar 2022 14:15:25 +0000 (UTC)
-Date:   Tue, 15 Mar 2022 10:15:24 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Chuck Lever III <chuck.lever@oracle.com>
+        with ESMTP id S1347777AbiCOOnT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2022 10:43:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBDA55BCC;
+        Tue, 15 Mar 2022 07:42:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=RmMj67xB8euM1RYehVlWq8W09wCNdWF88eGn88NV1Z0=; b=aMJ+EBriPSUzakRINtFFdLzOZq
+        VlQGy1fNoLOdtGW5uIJUOmCt87EdxT0TtHr0BwFJQ6OmikwRgX3E9EKPKaXIydOegw/m9CNPm6xBE
+        Aa7PfJw8ky2zsxRLIOMrSaDDmpLiopgAHLIGFgWedlaY2jIcSh02O+SV1NfDFqqb5HF7Im+djX4lP
+        Ue7xj1yeH2Wixijmz/ddbSQ4YSB69hNT3JvQiYbgbprAtz2XfdG9XsZIKT90Z6Bcs70UlUb9af8BV
+        ARprZZiSGE7lSGs4gBzk8FNB6zxkkU5OsQHONNNEOHO3RRTE/IIbCzUJlKm6qHuZiXt3y0kIQwena
+        GoiB71Yg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nU8N7-0057SZ-DK; Tue, 15 Mar 2022 14:42:01 +0000
+Date:   Tue, 15 Mar 2022 14:42:01 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ftrace tree with the nfsd tree
-Message-ID: <20220315101524.6215285d@gandalf.local.home>
-In-Reply-To: <A1869114-7192-4DF2-BD0F-B2A970F79CC2@oracle.com>
-References: <20220315145828.413e9301@canb.auug.org.au>
-        <A1869114-7192-4DF2-BD0F-B2A970F79CC2@oracle.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the folio tree
+Message-ID: <YjCluUjWNZ9wg4fW@casper.infradead.org>
+References: <20220315212610.0f996842@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220315212610.0f996842@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 15 Mar 2022 13:33:30 +0000
-Chuck Lever III <chuck.lever@oracle.com> wrote:
-
-> >  af6b9668e85f ("tracing: Move the defines to create TRACE_EVENTS into their own files")
-> > 
-> > from the ftrace tree.
-> > 
-> > Well, this is a pain :-(  
-
-Welcome to the include/trace directory ;-)
-
+On Tue, Mar 15, 2022 at 09:26:10PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Apologies. Steven, can you take the sockaddr patches in your tree
-> and resolve the x86_64 build issue?
+> After merging the folio tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> mm/readahead.c: In function 'read_cache_pages_invalidate_page':
+> mm/readahead.c:54:17: error: implicit declaration of function 'do_invalidatepage'; did you mean 'd_invalidate'? [-Werror=implicit-function-declaration]
+>    54 |                 do_invalidatepage(page, 0, PAGE_SIZE);
+>       |                 ^~~~~~~~~~~~~~~~~
+>       |                 d_invalidate
+> 
+> Caused by commit
+> 
+>   f1fdabbaae8e ("fs: Turn do_invalidatepage() into folio_invalidate()")
+> 
+> I have used the folio tree from next-20220310 for today.
 
-My apologies, I forgot that there was changes in other trees that affect
-this.
+Sorry about that.  Originally, I'd removed that entire function in an
+earlier commit, but had to shuffle that commit to after the NFS tree
+merges.
 
-Anyway, I'll go and do a merge myself and see what happens. The point of
-linux-next is to resolve these kinds of issues. I believe the reason you
-took those changes was because you have a dependency on them, and I think
-they should stay in your tree.
+There's a new for-next for your merge resolution tomorrow ... not much
+I can do about the conflicts, but all your resolutions seemed
+reasonable.  Fixed a couple of other build bugs noted by the build bots
+(ceph & hostfs)
 
-Let me do the merge myself and verify what Stephen did was correct or needs
-to be updated. This will also need to be done for Linus as well.
 
-Thanks,
-
--- Steve
