@@ -2,50 +2,53 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4FCC433F5
-	for <linux-next@archiver.kernel.org>; Thu, 17 Mar 2022 21:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089D4C433F5
+	for <linux-next@archiver.kernel.org>; Thu, 17 Mar 2022 21:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbiCQVMR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 17 Mar 2022 17:12:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36064 "EHLO
+        id S230138AbiCQVQK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 17 Mar 2022 17:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229989AbiCQVMQ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2022 17:12:16 -0400
+        with ESMTP id S230125AbiCQVQK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2022 17:16:10 -0400
 Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D87472274DC;
-        Thu, 17 Mar 2022 14:10:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5A3247C26;
+        Thu, 17 Mar 2022 14:14:52 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KKKYj6gkBz4xc2;
-        Fri, 18 Mar 2022 08:10:49 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KKKfK64NNz4xw7;
+        Fri, 18 Mar 2022 08:14:49 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1647551452;
-        bh=5Gbcgm1/eQ2SEUxZw4dVP+MOI4Cn/0ChyocP6oFoSlE=;
+        s=201702; t=1647551691;
+        bh=MZK+qMZWlkhk6Pszi8zLGu3p8NpkMEGMJLuYRUBSOjU=;
         h=Date:From:To:Cc:Subject:From;
-        b=oUz2lYwdHlGU0iI6i/ZePJ3wO83e/Q13JkUavaEvz3wQUA+lc2wxznN7jBIEA6BzC
-         fkzIHd/LtoT52mMZ+ZOUxDk13CaNsyKEjSgkUdIydRqU/VCyxIFljLmgzJvqCYvGLI
-         ZyOeFnYklT8xwH7me/yJJ1UNSp6r9aFet+98WTuQXQ0ekaYFM7aGwrl+6oZdXdtHVk
-         HRsZXYYw8x0pfuI5/W0g61eSgC0tH3SZY0VRxC843qO1wU2HpGRtBNgFcVObQFcISC
-         ricy3nBH5nW+U8eeTndxPqeo1SHkuJ04u/2lFUA0w9n01jqLArkfkmlgnEl2kxg62N
-         ndrNOEuru0+CA==
-Date:   Fri, 18 Mar 2022 08:10:29 +1100
+        b=PEJY4CXHG93LvI4P9n1PN3z5LX5uf9zb548RypM2C7IEwXrjMCSd788YSD/W0sEbH
+         O9gPMAINYA/68YCT7eMReI84ftvpgSky4g5LLtXZG3122ZDZfrkr7Fzq3yZiwPsyTb
+         I77NvCQP8TBopYWpNIvrz3fmj03OC49Xju40vhiPTBnTiTS55JAKxww4853Z98142R
+         fNfkO5j9E7TT1mg8yBOQSkGFOnAtmdMNlGYcnAvM4N2OUFEbaqRMPxSSaePReWcdLO
+         V2aBd6J+OD7FjGj5Q5ZwS5B1uWrY5Frcpoy2WLDpVbvyIeaQNgRzb34sGdS7G2c63c
+         CsQgaUiuH8nXw==
+Date:   Fri, 18 Mar 2022 08:14:48 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Fengnan Chang <changfengnan@vivo.com>,
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Kaixi Fan <fankaixi.li@bytedance.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the f2fs tree
-Message-ID: <20220318081029.55bb053b@canb.auug.org.au>
+Subject: linux-next: Fixes tag needs some work in the bpf-next tree
+Message-ID: <20220318081448.586adc42@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8ip6J./a2n9MBq0oguPPdYR";
+Content-Type: multipart/signed; boundary="Sig_/SM1ktpCV0NyCJ=79+77cuM7";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/8ip6J./a2n9MBq0oguPPdYR
+--Sig_/SM1ktpCV0NyCJ=79+77cuM7
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -53,39 +56,37 @@ Hi all,
 
 In commit
 
-  3459538a3654 ("f2fs: fix compressed file start atomic write may cause dat=
-a corruption")
+  a50cbac6d81a ("selftests/bpf: Fix tunnel remote IP comments")
 
 Fixes tag
 
-  Fixes: 7eab7a696827 ("f2fs: compress: remove unneeded read when rewrite w=
-hole
+  Fixes: 933a741e ("selftests/bpf: bpf tunnel test.")
 
 has these problem(s):
 
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes tags over more than one line.
+  - SHA1 should be at least 12 digits long
+    This can be fixed for the future by setting core.abbrev to 12 (or
+    more) or (for git v2.11 or later) just making sure it is not set
+    (or set to "auto").
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/8ip6J./a2n9MBq0oguPPdYR
+--Sig_/SM1ktpCV0NyCJ=79+77cuM7
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIzo8UACgkQAVBC80lX
-0Gy3oAf/aAaoLaajxrSCEtZ7WTEw3qZ8uMDf03hv2lIXD7SvBGL8NI4ggVv3K9QS
-2Xc5BcUpXcEmCFdfGX4KZuxOMsgHnFg4lQZqRoUC5Uw+C1GEjGZzZXSQpkVg+bRK
-pRtQAYFT+57Uz7xieQRAyXuxB1GY4+C46KCnd6RpsvQXAs9rr46c+Zmuof6/AI1v
-GCbGKt965ceKGb265cborRddg+Wq10WjX/tUSAgoKngRgFgZ9KIAxgIYGcryXHGy
-N+Sh8r5HGhTh3SeM0B13b+TDduVrDvxq2EmzDjiQgXbNFatfq0AGKwawfY2XyTWf
-ottJVQsjSofSvcSQSAgNu5f3yNtawg==
-=uddZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmIzpMgACgkQAVBC80lX
+0Gz/4wf+On4vnxj/D2y0yuq4X2GXj7qJSK1hYLct1XPJV8RZnbMuUuN3e98EqcOv
+tGZmE1Ndc3NncRQ/zC6iRVyLZZXibcRdLl5iwyP6xPKtkurts8iaMAVcPdz8AASW
+Vgk+OVMwcPxparEl1DDckmf1OE8HdYFVotYuXVirvFsF6R370IuqZN1DwmG5nNQM
+x8ZgsjAUcvI30gPVy+vTlBWShP2HURFbS3yV56PR3lavYvd4Q7LADO9y2s7JCl4S
+t8FNLrKHN96JuTnrG4orprlgSPONGS+QbFGw55+8txI/A6kWlPgb1hyF1e2f9P4Q
+xF+FVgKcluJb8GhiVaLkRKBcwST8Rw==
+=1Q2P
 -----END PGP SIGNATURE-----
 
---Sig_/8ip6J./a2n9MBq0oguPPdYR--
+--Sig_/SM1ktpCV0NyCJ=79+77cuM7--
