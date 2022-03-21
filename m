@@ -2,49 +2,67 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC488C433EF
-	for <linux-next@archiver.kernel.org>; Mon, 21 Mar 2022 23:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B056C433F5
+	for <linux-next@archiver.kernel.org>; Mon, 21 Mar 2022 23:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232471AbiCUXOo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 21 Mar 2022 19:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47900 "EHLO
+        id S231533AbiCUXTp (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 21 Mar 2022 19:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231717AbiCUXOU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2022 19:14:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5C2734BE18;
-        Mon, 21 Mar 2022 16:02:59 -0700 (PDT)
+        with ESMTP id S233059AbiCUXSR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2022 19:18:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 729945C35A;
+        Mon, 21 Mar 2022 16:07:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E4D861290;
-        Mon, 21 Mar 2022 21:45:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C7CEC340E8;
-        Mon, 21 Mar 2022 21:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647899133;
-        bh=PLATsyQnK/O0pIHqhHWMWdIfCJuI1483DX+TA0bTLOg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GGSFdgbJv3Cjk4DlKoaGX6GmbjYj2N+msTu/8T0fGL42WZ1/HBdFX/X/mVfDYZ+FV
-         uVpb/HkEVBbm7bJRctk8RsWvHGJWwsfgcrFB1r6QkDxJVl5/2SweXcgiupjQyAbp+5
-         I59ZYTIeBJQqdFcXck8LuwrOmzDOVN/PlsIYXkiq+COVbNb7Oc9A341q0YmOv2yF6B
-         l6/fskCqA/xl7B8lDilPkmckO6j3CeHTGFvavHsXXqflPjJIyj3oqxRJLbifiEa+8q
-         UClaFiETzaod2lfN435a4r+K/RN6h6hjuq5DQvWr/UcjipoUuD96fMjjQ/TtwH2PWX
-         3ppLAJbOO1TXA==
-Date:   Mon, 21 Mar 2022 14:45:31 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Saeed Mahameed <saeedm@nvidia.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 78056B81A66;
+        Mon, 21 Mar 2022 22:55:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D08C340E8;
+        Mon, 21 Mar 2022 22:55:04 +0000 (UTC)
+Date:   Mon, 21 Mar 2022 18:55:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Maxim Mikityanskiy <maximmi@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20220321144531.2b0503a1@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <20220321183941.74be2543@canb.auug.org.au>
-References: <20220321183941.74be2543@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        linux-toolchains <linux-toolchains@vger.kernel.org>,
+        Andrew Cooper <Andrew.Cooper3@citrix.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the tip tree
+Message-ID: <20220321185503.0dcb5d9c@gandalf.local.home>
+In-Reply-To: <CAADnVQKg7GPVpg-22B2Ym5HFVoGaquoFZDEkRwTDgXzm+L8OOw@mail.gmail.com>
+References: <20220321140327.777f9554@canb.auug.org.au>
+        <Yjh11UjDZogc3foM@hirez.programming.kicks-ass.net>
+        <Yjh3xZuuY3QcZ1Bn@hirez.programming.kicks-ass.net>
+        <Yjh4xzSWtvR+vqst@hirez.programming.kicks-ass.net>
+        <YjiBbF+K4FKZyn6T@hirez.programming.kicks-ass.net>
+        <YjiZhRelDJeX4dfR@hirez.programming.kicks-ass.net>
+        <YjidpOZZJkF6aBTG@hirez.programming.kicks-ass.net>
+        <CAHk-=wigO=68WA8aMZnH9o8qRUJQbNJPERosvW82YuScrUTo7Q@mail.gmail.com>
+        <YjirfOJ2HQAnTrU4@hirez.programming.kicks-ass.net>
+        <CAHk-=wguO61ACXPSz=hmCxNTzqE=mNr_bWLv6GH5jCVZLBL=qw@mail.gmail.com>
+        <20220322090541.7d06c8cb@canb.auug.org.au>
+        <CAADnVQJnZpQjUv-dw7SU-WwTOn_tZ8xmy5ydRn=g_m-9UyS2kw@mail.gmail.com>
+        <20220322094526.436ca4f7@elm.ozlabs.ibm.com>
+        <CAADnVQKg7GPVpg-22B2Ym5HFVoGaquoFZDEkRwTDgXzm+L8OOw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -52,94 +70,24 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, 21 Mar 2022 18:39:41 +1100 Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> In file included from include/linux/string.h:253,
->                  from include/linux/bitmap.h:11,
->                  from include/linux/cpumask.h:12,
->                  from arch/x86/include/asm/cpumask.h:5,
->                  from arch/x86/include/asm/msr.h:11,
->                  from arch/x86/include/asm/processor.h:22,
->                  from arch/x86/include/asm/timex.h:5,
->                  from include/linux/timex.h:65,
->                  from include/linux/time32.h:13,
->                  from include/linux/time.h:60,
->                  from include/linux/ktime.h:24,
->                  from include/linux/timer.h:6,
->                  from include/linux/netdevice.h:24,
->                  from include/trace/events/xdp.h:8,
->                  from include/linux/bpf_trace.h:5,
->                  from drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c:33:
-> In function 'fortify_memset_chk',
->     inlined from 'mlx5e_xmit_xdp_frame' at drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c:438:3:
-> include/linux/fortify-string.h:242:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->   242 |                         __write_overflow_field(p_size_field, size);
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   9ded70fa1d81 ("net/mlx5e: Don't prefill WQEs in XDP SQ in the multi buffer mode")
-> 
-> exposed by the kspp tree.
-> 
-> I have applied the following fix patch for today (a better one is
-> probably possible).
+On Mon, 21 Mar 2022 15:50:17 -0700
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 
-Hi Saeed, 
-
-thoughts? 
-
-Would be great to get this sorted by tomorrow.
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 21 Mar 2022 18:29:24 +1100
-> Subject: [PATCH] fxup for "net/mlx5e: Don't prefill WQEs in XDP SQ in the multi buffer mode"
+> > Peter has other concerns, please read the thread and consider them.  
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c | 3 +--
->  include/linux/mlx5/qp.h                          | 5 +++++
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> index f35b62ce4c07..8f321a6c0809 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> @@ -435,8 +435,7 @@ mlx5e_xmit_xdp_frame(struct mlx5e_xdpsq *sq, struct mlx5e_xmit_data *xdptxd,
->  		u8 num_pkts = 1 + num_frags;
->  		int i;
->  
-> -		memset(&cseg->signature, 0, sizeof(*cseg) -
-> -		       sizeof(cseg->opmod_idx_opcode) - sizeof(cseg->qpn_ds));
-> +		memset(&cseg->trailer, 0, sizeof(cseg->trailer));
->  		memset(eseg, 0, sizeof(*eseg) - sizeof(eseg->trailer));
->  
->  		eseg->inline_hdr.sz = cpu_to_be16(inline_hdr_sz);
-> diff --git a/include/linux/mlx5/qp.h b/include/linux/mlx5/qp.h
-> index 61e48d459b23..8bda3ba5b109 100644
-> --- a/include/linux/mlx5/qp.h
-> +++ b/include/linux/mlx5/qp.h
-> @@ -202,6 +202,9 @@ struct mlx5_wqe_fmr_seg {
->  struct mlx5_wqe_ctrl_seg {
->  	__be32			opmod_idx_opcode;
->  	__be32			qpn_ds;
-> +
-> +	struct_group(trailer,
-> +
->  	u8			signature;
->  	u8			rsvd[2];
->  	u8			fm_ce_se;
-> @@ -211,6 +214,8 @@ struct mlx5_wqe_ctrl_seg {
->  		__be32		umr_mkey;
->  		__be32		tis_tir_num;
->  	};
-> +
-> +	); /* end of trailer group */
->  };
->  
->  #define MLX5_WQE_CTRL_DS_MASK 0x3f
+> Masami is an expert in kprobe. He copy pasted a bit of kprobe logic
+> to make it into 'multi kprobe' (he calls it fprobe).
+> I believe he knows what he's doing.
+> Steven reviewed and tested that set.
+> We've tested it as well and don't have any correctness or api concerns.
 
+I tested it from a ftrace perspective, not an IBT or other work being done
+in the x86 world.
+
+I'm fine with the work being done in kernel/tracing/ but it still requires
+the arch maintainer's acks for anything in arch/. I was under the
+impression that the arch specific code was Cc'ing the arch maintainers
+(which I always do when I touch their code). But I missed that they were
+not. That's my fault, I should have caught that.
+
+-- Steve
