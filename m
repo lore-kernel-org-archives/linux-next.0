@@ -2,105 +2,144 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E6BC433F5
-	for <linux-next@archiver.kernel.org>; Mon, 21 Mar 2022 23:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC488C433EF
+	for <linux-next@archiver.kernel.org>; Mon, 21 Mar 2022 23:13:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231770AbiCUXEs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 21 Mar 2022 19:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45812 "EHLO
+        id S232471AbiCUXOo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 21 Mar 2022 19:14:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231888AbiCUXEg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2022 19:04:36 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF31E185946;
-        Mon, 21 Mar 2022 15:50:29 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id w4so13950601ply.13;
-        Mon, 21 Mar 2022 15:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DjDIX8FrnNGu2sjrMpbegjPBjATRwYY4jn7Ao70Kxyo=;
-        b=IaV+U83i5jJzWL8L+pKxUmTUm0rPMYYOsiZUl+5853A/3WhOMJimBY37LgFdAg9+C4
-         raODH5QYd1S8pEOSUHR5KU8kDwcLUZTp5htU64Lvpqruj45p1VilJKYTK503JNGKJcsW
-         0soXjGYIZpy2b+1izOhgzubWaySAQ0guXKN6PifYwEtKEO3IHZSkl4mPfSlvn1cziW+X
-         V2KAQXldEzaaom5rZoP2aVRv/dLfn4cBi8sM+L5IPA22AxetjrV99i0XMeWeFKGFDRXv
-         XQWxPa/vvXQ2ViqzsELJRMzdQV9Pd+pKv4slWwPClhaELCZyUWB4fsRNDZDwAROHhHe5
-         QSPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DjDIX8FrnNGu2sjrMpbegjPBjATRwYY4jn7Ao70Kxyo=;
-        b=Be6LPVV+R9OXfzjFSlyWnyK4oGhj/a1acJNZiAsCDMm8KBnSZUpBwSGcviUhHWDcnV
-         hlrbExmlQ1Ya7BDw45+r5XJz9p02DnZ2IiP0XOvCoJEzN2GfZ+xujlTB5T1S5cQOwKFD
-         wO8sA/tPAq7mzQv5hXa3kKX0lev7I3VAvF2iD+D4Hu5F4JFGSVSb5kD+1wfYzJDUvTD8
-         0gVZEeJxQxBWkOAi3qgg+B9s2953irb624W3Y3ZGMWbg6WQlDmtHeEM8Jro5N5+wZAxh
-         1M97XtnJ/YLVPjiiDhtFMO9TMxN4HlhXb2VTLOqPs+T5ZCj86+gEa1mGPKkebl9Sqphg
-         7CMw==
-X-Gm-Message-State: AOAM530rHLW2o8IAZj4IjosCUA5+R4qAfLCccy4kweFnJFC+rJKWA4Fz
-        8E0Lk+/Vj3flu6SzV+/C6xwYiiOd14AyEwDJlVY=
-X-Google-Smtp-Source: ABdhPJw9lrVe9NKMoe6AyhEoPhg1LpuOlXp8HBaE8bBK/xHhap0NsTF5dieSqAx7Rc6F2gLPnSouhFRil+H7jvXDXcE=
-X-Received: by 2002:a17:90b:3d03:b0:1c6:74bf:418a with SMTP id
- pt3-20020a17090b3d0300b001c674bf418amr1494432pjb.33.1647903029013; Mon, 21
- Mar 2022 15:50:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220321140327.777f9554@canb.auug.org.au> <Yjh11UjDZogc3foM@hirez.programming.kicks-ass.net>
- <Yjh3xZuuY3QcZ1Bn@hirez.programming.kicks-ass.net> <Yjh4xzSWtvR+vqst@hirez.programming.kicks-ass.net>
- <YjiBbF+K4FKZyn6T@hirez.programming.kicks-ass.net> <YjiZhRelDJeX4dfR@hirez.programming.kicks-ass.net>
- <YjidpOZZJkF6aBTG@hirez.programming.kicks-ass.net> <CAHk-=wigO=68WA8aMZnH9o8qRUJQbNJPERosvW82YuScrUTo7Q@mail.gmail.com>
- <YjirfOJ2HQAnTrU4@hirez.programming.kicks-ass.net> <CAHk-=wguO61ACXPSz=hmCxNTzqE=mNr_bWLv6GH5jCVZLBL=qw@mail.gmail.com>
- <20220322090541.7d06c8cb@canb.auug.org.au> <CAADnVQJnZpQjUv-dw7SU-WwTOn_tZ8xmy5ydRn=g_m-9UyS2kw@mail.gmail.com>
- <20220322094526.436ca4f7@elm.ozlabs.ibm.com>
-In-Reply-To: <20220322094526.436ca4f7@elm.ozlabs.ibm.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Mon, 21 Mar 2022 15:50:17 -0700
-Message-ID: <CAADnVQKg7GPVpg-22B2Ym5HFVoGaquoFZDEkRwTDgXzm+L8OOw@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the tip tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        linux-toolchains <linux-toolchains@vger.kernel.org>,
-        Andrew Cooper <Andrew.Cooper3@citrix.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>,
+        with ESMTP id S231717AbiCUXOU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2022 19:14:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5C2734BE18;
+        Mon, 21 Mar 2022 16:02:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E4D861290;
+        Mon, 21 Mar 2022 21:45:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C7CEC340E8;
+        Mon, 21 Mar 2022 21:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647899133;
+        bh=PLATsyQnK/O0pIHqhHWMWdIfCJuI1483DX+TA0bTLOg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GGSFdgbJv3Cjk4DlKoaGX6GmbjYj2N+msTu/8T0fGL42WZ1/HBdFX/X/mVfDYZ+FV
+         uVpb/HkEVBbm7bJRctk8RsWvHGJWwsfgcrFB1r6QkDxJVl5/2SweXcgiupjQyAbp+5
+         I59ZYTIeBJQqdFcXck8LuwrOmzDOVN/PlsIYXkiq+COVbNb7Oc9A341q0YmOv2yF6B
+         l6/fskCqA/xl7B8lDilPkmckO6j3CeHTGFvavHsXXqflPjJIyj3oqxRJLbifiEa+8q
+         UClaFiETzaod2lfN435a4r+K/RN6h6hjuq5DQvWr/UcjipoUuD96fMjjQ/TtwH2PWX
+         3ppLAJbOO1TXA==
+Date:   Mon, 21 Mar 2022 14:45:31 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Saeed Mahameed <saeedm@nvidia.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Networking <netdev@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Maxim Mikityanskiy <maximmi@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Message-ID: <20220321144531.2b0503a1@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20220321183941.74be2543@canb.auug.org.au>
+References: <20220321183941.74be2543@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Mar 21, 2022 at 3:46 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Alexei,
->
-> On Mon, 21 Mar 2022 15:12:05 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> >
-> > That makes little sense. It's not an unusual merge conflict.
-> > Peter's endbr series conflict with Masami's fprobe.
-> > Peter has a trivial patch that fixes objtool warning.
-> > The question is how to land that patch.
-> > I think the best is for Linus to apply it after bpf-next->net-next gets
-> > merged.
->
-> Peter has other concerns, please read the thread and consider them.
+On Mon, 21 Mar 2022 18:39:41 +1100 Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from include/linux/string.h:253,
+>                  from include/linux/bitmap.h:11,
+>                  from include/linux/cpumask.h:12,
+>                  from arch/x86/include/asm/cpumask.h:5,
+>                  from arch/x86/include/asm/msr.h:11,
+>                  from arch/x86/include/asm/processor.h:22,
+>                  from arch/x86/include/asm/timex.h:5,
+>                  from include/linux/timex.h:65,
+>                  from include/linux/time32.h:13,
+>                  from include/linux/time.h:60,
+>                  from include/linux/ktime.h:24,
+>                  from include/linux/timer.h:6,
+>                  from include/linux/netdevice.h:24,
+>                  from include/trace/events/xdp.h:8,
+>                  from include/linux/bpf_trace.h:5,
+>                  from drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c:33:
+> In function 'fortify_memset_chk',
+>     inlined from 'mlx5e_xmit_xdp_frame' at drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c:438:3:
+> include/linux/fortify-string.h:242:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>   242 |                         __write_overflow_field(p_size_field, size);
+>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   9ded70fa1d81 ("net/mlx5e: Don't prefill WQEs in XDP SQ in the multi buffer mode")
+> 
+> exposed by the kspp tree.
+> 
+> I have applied the following fix patch for today (a better one is
+> probably possible).
 
-Masami is an expert in kprobe. He copy pasted a bit of kprobe logic
-to make it into 'multi kprobe' (he calls it fprobe).
-I believe he knows what he's doing.
-Steven reviewed and tested that set.
-We've tested it as well and don't have any correctness or api concerns.
+Hi Saeed, 
+
+thoughts? 
+
+Would be great to get this sorted by tomorrow.
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 21 Mar 2022 18:29:24 +1100
+> Subject: [PATCH] fxup for "net/mlx5e: Don't prefill WQEs in XDP SQ in the multi buffer mode"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c | 3 +--
+>  include/linux/mlx5/qp.h                          | 5 +++++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> index f35b62ce4c07..8f321a6c0809 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> @@ -435,8 +435,7 @@ mlx5e_xmit_xdp_frame(struct mlx5e_xdpsq *sq, struct mlx5e_xmit_data *xdptxd,
+>  		u8 num_pkts = 1 + num_frags;
+>  		int i;
+>  
+> -		memset(&cseg->signature, 0, sizeof(*cseg) -
+> -		       sizeof(cseg->opmod_idx_opcode) - sizeof(cseg->qpn_ds));
+> +		memset(&cseg->trailer, 0, sizeof(cseg->trailer));
+>  		memset(eseg, 0, sizeof(*eseg) - sizeof(eseg->trailer));
+>  
+>  		eseg->inline_hdr.sz = cpu_to_be16(inline_hdr_sz);
+> diff --git a/include/linux/mlx5/qp.h b/include/linux/mlx5/qp.h
+> index 61e48d459b23..8bda3ba5b109 100644
+> --- a/include/linux/mlx5/qp.h
+> +++ b/include/linux/mlx5/qp.h
+> @@ -202,6 +202,9 @@ struct mlx5_wqe_fmr_seg {
+>  struct mlx5_wqe_ctrl_seg {
+>  	__be32			opmod_idx_opcode;
+>  	__be32			qpn_ds;
+> +
+> +	struct_group(trailer,
+> +
+>  	u8			signature;
+>  	u8			rsvd[2];
+>  	u8			fm_ce_se;
+> @@ -211,6 +214,8 @@ struct mlx5_wqe_ctrl_seg {
+>  		__be32		umr_mkey;
+>  		__be32		tis_tir_num;
+>  	};
+> +
+> +	); /* end of trailer group */
+>  };
+>  
+>  #define MLX5_WQE_CTRL_DS_MASK 0x3f
+
