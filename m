@@ -2,87 +2,159 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54C3C433EF
-	for <linux-next@archiver.kernel.org>; Mon, 21 Mar 2022 14:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A19C4332F
+	for <linux-next@archiver.kernel.org>; Mon, 21 Mar 2022 15:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346039AbiCUOak (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 21 Mar 2022 10:30:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37192 "EHLO
+        id S242882AbiCUP3j (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 21 Mar 2022 11:29:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349204AbiCUO1w (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2022 10:27:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A03C13F22;
-        Mon, 21 Mar 2022 07:21:13 -0700 (PDT)
+        with ESMTP id S1350211AbiCUP3i (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2022 11:29:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA10FDEE7;
+        Mon, 21 Mar 2022 08:28:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C9FE8B81648;
-        Mon, 21 Mar 2022 14:16:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88048C340E8;
-        Mon, 21 Mar 2022 14:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647872163;
-        bh=hCDpnium04L+NX98eEF16B611YIyYCDehSO1Lv/GK5Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=m6ZOJwLTrYt/LUfTxurjawz2XhZxdcUobTBvnxXsYD2VMuffI2oTFFbpxePM6/rnU
-         2ZwiPGsLynn2+81ORsVpu8wTM770Z/e/DIS9dDv2lsc+QQzP9fG2LJUh+0sDHUFbaM
-         EjqgCpXZsPN8u3FIl+biRb0twzHJC1bCyh3Pr214ba8DpFcDnOhpI17I7xPQ2v04YG
-         LPF93Rs3QaK8fzj7wFYAA1sbOJmnxXuoazUmmU54mphGcpFvnpKlzGvzgX/C6lrMKD
-         hC49iEXsoaTW1CkmN2qVSs1jKWHT2IXkLud39oAxKwNMuXW/5FzNFkd40bIkVOXCgm
-         J43z5Wt9hIZWQ==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nWIpE-00FyOT-QH; Mon, 21 Mar 2022 14:16:00 +0000
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5659961047;
+        Mon, 21 Mar 2022 15:28:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3725BC340E8;
+        Mon, 21 Mar 2022 15:28:07 +0000 (UTC)
+Date:   Mon, 21 Mar 2022 11:28:05 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        mhiramat@kernel.org, ast@kernel.org, hjl.tools@gmail.com,
+        rick.p.edgecombe@intel.com, rppt@kernel.org,
+        linux-toolchains@vger.kernel.org, Andrew.Cooper3@citrix.com,
+        ndesaulniers@google.com
+Subject: Re: linux-next: build warnings after merge of the tip tree
+Message-ID: <20220321112805.1393f9b9@gandalf.local.home>
+In-Reply-To: <Yjh3xZuuY3QcZ1Bn@hirez.programming.kicks-ass.net>
+References: <20220321140327.777f9554@canb.auug.org.au>
+        <Yjh11UjDZogc3foM@hirez.programming.kicks-ass.net>
+        <Yjh3xZuuY3QcZ1Bn@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Date:   Mon, 21 Mar 2022 14:16:00 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the irqchip tree
-In-Reply-To: <20220322000617.0a351d78@canb.auug.org.au>
-References: <20220322000617.0a351d78@canb.auug.org.au>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <3f500c7bae56e4d7ca2840cf9a0be35c@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 2022-03-21 13:06, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   686121ebe6fc ("irqchip/gic-v4: Wait for GICR_VPENDBASER.Dirty to
-> clear before descheduling")
-> 
-> Fixes tag
-> 
->   Fixes: 57e3cebd022f ("KVM: arm64: Delay the polling of the
-> GICR_VPENDBASER.Dirty
-> 
-> has these problem(s):
-> 
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
-> 
-> Please do not split Fixes tags over more than one line.
+On Mon, 21 Mar 2022 14:04:05 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Copy paste trikes back. Now fixed.
+> Ahh, something tracing. I'll go do some patches on top of it.
+> 
+> Also, folks, I'm thinking we should start to move to __fexit__, if CET
+> SHSTK ever wants to come to kernel land return trampolines will
+> insta-stop working.
+> 
+> Hjl, do you think we could get -mfexit to go along with -mfentry ?
 
-Thanks,
+If we do every add a -mfexit, we will need to add a __ftail__ call.
+Because, the current function exit tracing works for functions, even with
+tail calls.
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+
+int funcA () {
+	[..]
+	return funcB();
+}
+
+Can turn into:
+
+	[..]
+	pop all stack from funcA
+	load reg params to funcB
+	jmp funcB
+
+Then when funcB does does it's
+
+	[..]
+	ret
+
+It will pop the call site of funcA (not the call site of funcB) and return
+to wherever called funcA with the proper return values.
+
+This currently works with function graph and kretprobe tracing because of
+the shadow stack. Let's say we traced both funcA and funcB
+
+funcA:
+	call __fentry__
+
+			Replace caller address with graph_trampoline and
+			store the return caller into the shadow stack.
+
+	[..]
+	jmp funcB
+
+funcB:
+	call __fentry__
+
+			Replace caller address with graph_trampoline and
+			store the return caller (which is the
+			graph_trampoline that was switched earlier) in the
+			shadow stack.
+
+	[..]
+	ret
+
+			Returns to the graph_trampoline and we trace the
+			return of funcB. Then we pop off the shadow stack
+			and jump to that. But the shadow stack had a call
+			to the graph_trampoline, which gets called again.
+
+			Returns to the graph_trampoline and we trace the
+			return of funcA. Then we pop off the shadow stack
+			and jump to that, which is the original caller to
+			funcA.
+
+That is, the current algorithm traces the end of both funcA and funcB
+without issue, because of how the shadow stack works.
+
+Now if we add a __fexit__, we will need a way to tell the tracers how to
+record this scenario. That is why I'm thinking of a jmp to __ftail__.
+
+Perhaps something like:
+
+funcA:
+	call __fentry__
+	[..]
+	push address of funcB
+	jmp __ftail__
+	jmp funcB
+
+Where, __ftail__ would do at the end:
+
+	ret
+
+To jump to funcB and we skip the jmp to funcB anyway.
+
+And to "nop" it out, we would have to convert it to.
+
+funcA:
+	call __fentry__
+	[..]
+	jmp 1
+	jmp __ftail__
+1:	jmp funcB
+
+
+This is one way I can think of if we include a __fexit__. But to maintain
+backward compatibility to function graph tracing (which is a requirement),
+we need to be able to handle such cases.
+
+Perhaps this is a good topic to bring up at Plumbers? :-)
+
+Do I need to submit a tracing MC, or can we have this conversation at a
+compiler / toolchain MC?
+
+-- Steve
