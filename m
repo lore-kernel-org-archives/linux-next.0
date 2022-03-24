@@ -2,124 +2,229 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E84E3C433EF
-	for <linux-next@archiver.kernel.org>; Thu, 24 Mar 2022 07:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6434CC433EF
+	for <linux-next@archiver.kernel.org>; Thu, 24 Mar 2022 08:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237386AbiCXHpZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 24 Mar 2022 03:45:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40528 "EHLO
+        id S1348622AbiCXIgL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 24 Mar 2022 04:36:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348624AbiCXHpX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2022 03:45:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BC2957DE24
-        for <linux-next@vger.kernel.org>; Thu, 24 Mar 2022 00:43:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1648107829;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2JkyU0YyumtNPR5ZrTimMZIYIDQ559h+78LrW1gfIvI=;
-        b=U8HuFyMyS+msyb8h6YIpVyEr2/6oCL7idmZQz7CrNcI7O/9yEm3X23/Mm0ky50SaiAVspB
-        Tz0lQg6GtmYeMuSgwAJv/7sAXwSgkoMCXGZJgM4wZUU6DuUC7RFCLC/2l5ERPxW/A5MTGZ
-        p/UvgbM/KZAY4XgmnUtvvPLHwDCShjc=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-141-es5jKlZgN-m2lzCpFvXGgg-1; Thu, 24 Mar 2022 03:39:22 -0400
-X-MC-Unique: es5jKlZgN-m2lzCpFvXGgg-1
-Received: by mail-ed1-f72.google.com with SMTP id c31-20020a509fa2000000b004190d43d28fso2475324edf.9
-        for <linux-next@vger.kernel.org>; Thu, 24 Mar 2022 00:39:22 -0700 (PDT)
+        with ESMTP id S1346806AbiCXIgJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2022 04:36:09 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E917B9BBAA
+        for <linux-next@vger.kernel.org>; Thu, 24 Mar 2022 01:34:37 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id j2so7253294ybu.0
+        for <linux-next@vger.kernel.org>; Thu, 24 Mar 2022 01:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=H9C4iWK8tDBUB2K5MoYQ8IdbBv0hhGC6J226BwafzxE=;
+        b=H7odm9u2iOSLi/nihkTQfBQorXUM+ZN70jCp94YAZ3j+ckOqi0H4n6jyrQiYWl2Egr
+         IAsZaCKqNrLx46C464qulxmTb1o5WcBGqhKTlFmK+azFulF0rBFzfj/o5p5bSp1uNrgE
+         IoUMcTLRd7Cpdsl5GsoKQxZXbwnGAcG4a86yTv4x6CMOALKPhuzCGVADuB8uEcMBfs4I
+         V/M+efs8nV+tZ3p3EAbOM2SedtGBpqSB+5uZihZIy0tkmFFpv8BzN0Eubaqvv7hp4zv7
+         sd6839XCDs1tMm9XtakWMAjl4QSQbmcHpvBVcgU83FJgtvriKQx2wanW4agjgTg2GyE8
+         QfjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=2JkyU0YyumtNPR5ZrTimMZIYIDQ559h+78LrW1gfIvI=;
-        b=i5SvY2+V4gbss0gUANbAy/QlinX6xVDzGUt2JQspfx+F0V6VBXtRSRC9sU7moKQkiD
-         9SYnUdW00eAkF9MBsspaa0H9Gh9htc5a6Hl7ZLWOSoFeah3zRmytZSFtUcUpTqTzGFhS
-         O3p4XPPCy2ogY00GI8Zd4P21ecUOUDvR3kCfDRgvbQ/lCK6R21KrViQRkNNaXAsgY6Ms
-         69+9KnR5uCrUznZyloPkF2QVOzxIZ1sFZaEUO8uKZudqr+HMppH96aNwEtWSaPJnwLjx
-         tKed04cUfVCy6mdxIWZes0PSxg90eYAN6inMwgbQWebO7qlkcvF/Gsf7S0+uOqBV76vU
-         o95Q==
-X-Gm-Message-State: AOAM531ZynqI/TRZaHZSC/I6k/Kf6OHBvIDSHtsVeGSrpWx2zNdiSgnS
-        E7296xOZ4j5iSvojR7fh7Re6YtIcwFKdWgVoxU4Yc7X0zXef2czjuIF/8+9CvSbprBum/1vNuc6
-        1E2jOfiVEnfVJL2KWyyDIDw==
-X-Received: by 2002:a17:907:7e96:b0:6da:f7ee:4a25 with SMTP id qb22-20020a1709077e9600b006daf7ee4a25mr4174286ejc.436.1648107560835;
-        Thu, 24 Mar 2022 00:39:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyB4biCBrcPL9gKQvLvT/ULJgefYHh1wmqJtXbE2bRdN6Ru88VKldaGAXNfrtmHkIVSMVNoFA==
-X-Received: by 2002:a17:907:7e96:b0:6da:f7ee:4a25 with SMTP id qb22-20020a1709077e9600b006daf7ee4a25mr4174277ejc.436.1648107560680;
-        Thu, 24 Mar 2022 00:39:20 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c1e:bf00:cdb2:2781:c55:5db0? (2001-1c00-0c1e-bf00-cdb2-2781-0c55-5db0.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:cdb2:2781:c55:5db0])
-        by smtp.gmail.com with ESMTPSA id r16-20020a056402019000b00418ed60c332sm1018992edv.65.2022.03.24.00.39.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 00:39:20 -0700 (PDT)
-Message-ID: <2f33bdce-a002-708a-dd65-7bfb6ebc4cd9@redhat.com>
-Date:   Thu, 24 Mar 2022 08:39:19 +0100
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=H9C4iWK8tDBUB2K5MoYQ8IdbBv0hhGC6J226BwafzxE=;
+        b=N54ff1uplaSZchZxDxm2mhAaS6zJmq5oMcqMewuel5vrh1GANrJ7Msa64c2RtXDcQo
+         HTcH2IrA9xDLkw9qj/Sb1zOKqvMR2c/+BTyZZ2SxXacV/0MjdYeZe4uWJGI4BFr05xur
+         2IvyRY4nm98IzIMbOuzDtiwmfYeUZTcE41GPWJ/XZlyX5Wz4RgP/lff+K2sMaMGe0N93
+         dGxOVNkIze7mApRV1w9MM1epZJupVWoeQ2N/FWh5O0XTCefUvaHrc6AbZAR4OcspPFmM
+         DyTD9FeV4l04GUSUkCW5U5kYKjL9V34N6s523TyJ3D+wATLu8ssqlZ4TbU863kuNKact
+         6nrw==
+X-Gm-Message-State: AOAM530OClvuETZPYS9UzlB/TLucDfTRe1q274ade8kTRY1P3puQrnD4
+        WyKymqwmbJazTYvlGdDqpbPgbPaAIValq3p5WpFCGg==
+X-Google-Smtp-Source: ABdhPJzrkUM3IpVhOLboqwyW3cmXm7ecsw+EVoB/yCuf6ABxuBjLQrPhojDDbzjBImQU5zArt++DZ0Fmw9ZG3R0Oahc=
+X-Received: by 2002:a25:548:0:b0:633:81bd:e319 with SMTP id
+ 69-20020a250548000000b0063381bde319mr3600207ybf.603.1648110877037; Thu, 24
+ Mar 2022 01:34:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: linux-next: build warnings after merge of the drivers-x86 tree
-Content-Language: en-US
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Gross <markgross@kernel.org>
-Cc:     "David E. Box" <david.e.box@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20220301201659.45ac94cd@canb.auug.org.au>
- <20220324183329.22c97ea1@canb.auug.org.au>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20220324183329.22c97ea1@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 24 Mar 2022 14:04:23 +0530
+Message-ID: <CA+G9fYtZpazsDTQo9N-4U=T5QvEKTu_xDi=W+1_7ng51306LYg@mail.gmail.com>
+Subject: next: BUG: sleeping function called from invalid context at block/blk-sysfs.c:766
+To:     linux-block <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ming Lei <ming.lei@redhat.com>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi,
+While running kselftest zram test cases on Linux next-20220324 the kernel BUG
+reported on arm64 Qcom db845 development board.
 
-On 3/24/22 08:33, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Tue, 1 Mar 2022 20:16:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the drivers-x86 tree, today's linux-next build (htmldocs)
->> produced these warnings:
->>
->> Documentation/ABI/testing/sysfs-driver-intel_sdsi:2: WARNING: Unexpected indentation.
->> Documentation/ABI/testing/sysfs-driver-intel_sdsi:2: WARNING: Block quote ends without a blank line; unexpected unindent.
->> Documentation/ABI/testing/sysfs-driver-intel_sdsi:2: WARNING: Definition list ends without a blank line; unexpected unindent.
->>
->> Introduced by commit
->>
->>   2546c6000430 ("platform/x86: Add Intel Software Defined Silicon driver")
-> 
-> I am still seeing these warnings.
+metadata:
+  git_ref: master
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: b61581ae229d8eb9f21f8753be3f4011f7692384
+  git_describe: next-20220323
+  kernel_version: 5.17.0
+  kernel-config: https://builds.tuxbuild.com/26mKdspULB326eo6s22cXZzYhmt/config
 
-I replied to your original report on March 1st, but I never got a reply
-to my reply:
+Log:
+[    0.000000] Linux version 5.17.0-next-20220323 (tuxmake@tuxmake)
+(aarch64-linux-gnu-gcc (Debian 11.2.0-18) 11.2.0, GNU ld (GNU Binutils
+for Debian) 2.38) #1 SMP PREEMPT @1648023452
+[    0.000000] Machine model: Thundercomm Dragonboard 845c
 
-"""
-Thank you for the report.
+# running zram tests
+# --------------------
+# create '1' zram device(s)
+# zram load module successful
+# set max_comp_streams to zram device(s)
+# FAIL can't set max_streams '2', get
+# /sys/block/zram0/max_comp_streams = '8' (1/1)
+# z[  626.759707] zram0: detected capacity change from 0 to 4096
+ram max streams: OK
+# test that we can set compression algorithm
+# supported algs: lzo [lzo-rle] lz4 lz4hc 842
+# /sys/block/zram0/comp_algorithm = 'lzo' (1/1)
+# zram set compression algorithm: OK
+# set disk size to zram device(s)
+# /sys/block/zram0/disksize = '2097152' (1/1)
+# zram set disksizes: OK
+# set memory limit to zram device(s)
+# /sys/block/zram0/mem_limit = '2M' (1/1)
+# zram set memory limit: OK
+# make ext4 filesystem on /dev/zram0
+# zram mkfs.ext4: OK
+# mount /dev/zram0
+[  626.812708] EXT4-fs (zram0): mounted filesystem without journal.
+Quota mode: none.
+[  626.820412] ext4 filesystem being mounted at
+/opt/kselftests/default-in-kernel/zram/zram0 supports timestamps until
+2038 (0x7fffffff)
+# zram mount of zram device(s): OK
+# fill zram0...
+# zram0 can be filled with '1932' KB
+# zram used 12M, zram disk sizes 2097152M
+# zram compression ratio: 174762.66:1: OK
+# zram cleanup
+[  636.589363] zram0: detected capacity change from 4096 to 0
+# zram rmmod zram
+[  636.607315] zram: Removed device: zram0
+[  636.682510] BUG: sleeping function called from invalid context at
+block/blk-sysfs.c:766
+[  636.690716] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid:
+0, name: swapper/0
+[  636.698836] preempt_count: 101, expected: 0
+[  636.703169] RCU nest depth: 0, expected: 0
+[  636.707410] INFO: lockdep is turned off.
+[  636.711471] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.17.0-next-20220323 #1
+[  636.718729] Hardware name: Thundercomm Dragonboard 845c (DT)
+[  636.724485] Call trace:
+[  636.726988]  dump_backtrace+0xc0/0x134
+[  636.730823]  show_stack+0x24/0x7c
+[  636.734210]  dump_stack_lvl+0x8c/0xb8
+[  636.737949]  dump_stack+0x18/0x34
+[  636.741333]  __might_resched+0x1c8/0x240
+[  636.745334]  __might_sleep+0x5c/0x94
+[  636.748981]  blk_release_queue+0x38/0x100
+[  636.753070]  kobject_put+0xa4/0x210
+[  636.756631]  blk_put_queue+0x20/0x30
+[  636.760278]  blkg_free.part.0+0x68/0xa0
+[  636.764191]  __blkg_release+0x50/0x74
+[  636.767926]  rcu_core+0x410/0xb90
+[  636.771316]  rcu_core_si+0x1c/0x2c
+[  636.774789]  __do_softirq+0x14c/0x654
+[  636.778522]  __irq_exit_rcu+0x17c/0x1b0
+[  636.782436]  irq_exit_rcu+0x1c/0x44
+[  636.785998]  el1_interrupt+0x38/0x64
+[  636.789645]  el1h_64_irq_handler+0x18/0x24
+[  636.793813]  el1h_64_irq+0x64/0x68
+[  636.797284]  cpuidle_enter_state+0xe4/0x380
+[  636.801544]  cpuidle_enter+0x44/0x5c
+[  636.805191]  do_idle+0x240/0x2d0
+[  636.808484]  cpu_startup_entry+0x34/0x3c
+[  636.812479]  rest_init+0x1c8/0x2d0
+[  636.815951]  arch_call_rest_init+0x1c/0x28
+[  636.820126]  start_kernel+0x73c/0x77c
+[  636.823861]  __primary_switched+0xc0/0xc8
+# zram01 : [PASS]
+#
+# create '1' zram device(s)
+[  636.859790] zram: Added device: zram0
+# zram load module successful
+# set max_comp_streams to zram device(s)
+# FAIL can't set max_streams '2', get
+# /sys/block/zram0/max_comp_streams = '[  637.901396] zram0: detected
+capacity change from 0 to 2048
+8' (1/1)
+# zram max streams: OK
+# set disk size to zram device(s)
+# /sys/block/zram0/disksize = '1048576' (1/1)
+# zram set disksizes: OK
+# set memory limit to zram device(s)
+# /sys/block/zram0/mem_limit = '1M' (1/1)
+# zram set memory limit: OK
+# make swap with zram device(s)
+[  637.935258] Adding 1020k swap on /dev/zram0.  Priority:-2 extents:1
+across:1020k SS
+# done with /dev/zram0
+# zram making zram mkswap and swapon: OK
+# zram swapoff: OK
+# zram cleanup
+[  637.995603] zram0: detected capacity change from 2048 to 0
+# zram rmmod zram
+[  638.012764] zram: Removed device: zram0
+[  638.110836] BUG: sleeping function called from invalid context at
+block/blk-sysfs.c:766
+[  638.118965] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid:
+0, name: swapper/7
+[  638.126928] preempt_count: 101, expected: 0
+[  638.131179] RCU nest depth: 0, expected: 0
+[  638.135349] INFO: lockdep is turned off.
+[  638.139350] CPU: 7 PID: 0 Comm: swapper/7 Tainted: G        W
+  5.17.0-next-20220323 #1
+[  638.147964] Hardware name: Thundercomm Dragonboard 845c (DT)
+[  638.153687] Call trace:
+[  638.156170]  dump_backtrace+0xc0/0x134
+[  638.159977]  show_stack+0x24/0x7c
+[  638.163332]  dump_stack_lvl+0x8c/0xb8
+[  638.167049]  dump_stack+0x18/0x34
+[  638.170408]  __might_resched+0x1c8/0x240
+[  638.174387]  __might_sleep+0x5c/0x94
+[  638.178004]  blk_release_queue+0x38/0x100
+[  638.182071]  kobject_put+0xa4/0x210
+[  638.185599]  blk_put_queue+0x20/0x30
+[  638.189216]  blkg_free.part.0+0x68/0xa0
+[  638.193106]  __blkg_release+0x50/0x74
+[  638.196811]  rcu_core+0x410/0xb90
+[  638.200168]  rcu_core_si+0x1c/0x2c
+[  638.203612]  __do_softirq+0x14c/0x654
+[  638.207314]  __irq_exit_rcu+0x17c/0x1b0
+[  638.211196]  irq_exit_rcu+0x1c/0x44
+[  638.214727]  el1_interrupt+0x38/0x64
+[  638.218346]  el1h_64_irq_handler+0x18/0x24
+[  638.222493]  el1h_64_irq+0x64/0x68
+[  638.225934]  cpuidle_enter_state+0xe4/0x380
+[  638.230170]  cpuidle_enter+0x44/0x5c
+[  638.233787]  do_idle+0x240/0x2d0
+[  638.237060]  cpu_startup_entry+0x34/0x3c
+[  638.241034]  secondary_start_kernel+0x148/0x170
+[  638.245616]  __secondary_switched+0xa0/0xa4
+# zram02 : [PASS]
 
-So I just did:
+steps to produce:
+   # cd  /opt/kselftests/default-in-kernel/zram/
+   # ./zram.sh
 
-touch Documentation/ABI/testing/sysfs-driver-intel_sdsi
-make htmldocs &> log
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-In a repo with drivers-x86/for-next checked out and checked the generated log files.
-But I'm not seeing these WARNINGs.
 
-Also 'find Documentation/output/ -name "*sdsi*"' does not output anything,
-is there anything special (maybe some extra utilities?) which I need to also enable
-building of htmldocs for the files in Documentation/ABI ?
-"""
+--
+Linaro LKFT
+https://lkft.linaro.org
 
-If someone can let me know how to reproduce these warnings I would be happy
-to fix them.
-
-Regards,
-
-Hans
-
+[1] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220323/testrun/8654494/suite/linux-log-parser/test/check-kernel-bug-4772266/log
+[2] https://lkft.validation.linaro.org/scheduler/job/4772266#L5186
