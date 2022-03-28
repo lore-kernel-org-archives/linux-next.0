@@ -2,110 +2,158 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138F7C433F5
-	for <linux-next@archiver.kernel.org>; Mon, 28 Mar 2022 22:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5051C433F5
+	for <linux-next@archiver.kernel.org>; Mon, 28 Mar 2022 23:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230025AbiC1Wn4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 28 Mar 2022 18:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47220 "EHLO
+        id S230255AbiC1XFu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 28 Mar 2022 19:05:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbiC1Wnz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Mar 2022 18:43:55 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9299C3E0E1;
-        Mon, 28 Mar 2022 15:42:14 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22SIoBSJ022626;
-        Mon, 28 Mar 2022 21:44:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=NnyKKtxu4F/uRqTniTyXZXQEPsrsBOiKJquWbfplKjU=;
- b=UgJPFOZOqqrh5V3eC37/2lYWrF20vzq8imS+3r8KNdMzDCAtnxpZ4mLyclvc1dE+qTS/
- u4F0g6S2V/g688teMV4y3IUrrbv8Epfdj/Mz9K8OfQ1zvBMKIAfZQYnVjdgH5j3dMgMx
- hnqdK8yp6bbC70ouEdejO56PIZaSGGazw5UHk9dShfLOZtCfb2xZHzNNKkBecheCB1TY
- PF1YzQqPjdnGyDz6+mxb8Dtt0mKb3TIYvKzQSnzNu9P0JdPoR8afG5x2gcNG/G73Su0J
- 90YGP6Zyd8oehcCjiMyCwrpkv8X2/G/MEyeN0KMoFjJlN4AurX2m3eLzIcB0s3DVTdOQ Fw== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3f3j6pumfn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 28 Mar 2022 21:44:33 +0000
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22SLhVBJ027436;
-        Mon, 28 Mar 2022 21:44:32 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma05fra.de.ibm.com with ESMTP id 3f1tf8v1q7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 28 Mar 2022 21:44:32 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22SLiS6q32965062
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Mar 2022 21:44:28 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9BA02A4051;
-        Mon, 28 Mar 2022 21:44:28 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 473E8A404D;
-        Mon, 28 Mar 2022 21:44:28 +0000 (GMT)
-Received: from localhost (unknown [9.171.75.40])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 28 Mar 2022 21:44:28 +0000 (GMT)
-Date:   Mon, 28 Mar 2022 23:44:26 +0200
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-next@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: s390 defconfig fails to build after
- 4afeb670710efa5cd5ed8b1d9f2d22d6ce332bcc
-Message-ID: <your-ad-here.call-01648503866-ext-8764@work.hours>
-References: <YkH/rRikE2CilpqU@dev-arch.thelio-3990X>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YkH/rRikE2CilpqU@dev-arch.thelio-3990X>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 53qM4UR7Q3VuN8sDrnYgv1aTgYu-X5lx
-X-Proofpoint-ORIG-GUID: 53qM4UR7Q3VuN8sDrnYgv1aTgYu-X5lx
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        with ESMTP id S230204AbiC1XFt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Mar 2022 19:05:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E733928E20;
+        Mon, 28 Mar 2022 16:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=U9j9t01F+ucI6Et2jJhTVqbcgEOCuGM/GuyWi4T98rM=; b=CNtXdsuMNOMSUAjqig33jMXU09
+        QAGFaqPIE6KsDSJDokCRuC0x7PB7MIIJ5INQAR7du+Be1jhsc8kDcqNxWvI+J9GqxvvpuYdWdfzop
+        tYX20LihE1CVIIvXmTFuaZUZ4xiJ/Eq1DIq5LgJ1wTLxTjceHWety3Pv5Zm7AsI08ti4EVEAnouGi
+        icxhai1XUr8Im2sexpiP0XIvN7laIfau3HV3UMudIhUrR9FX+LzOWWTGDd7+g37S93Y83hYfwutEl
+        QJxLRPVKsMM9V5RFSsPIPsjaRaWnVEyzZ67iURDlbvXsI8t1D06Cs6BJOmCDJXRhIkPGsJ+zyjk6+
+        00ZcN5cg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nYyP3-00HLby-SO; Mon, 28 Mar 2022 23:04:01 +0000
+Date:   Tue, 29 Mar 2022 00:04:01 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the akpm-current tree
+Message-ID: <YkI+4SzcoaqZIQIG@casper.infradead.org>
+References: <20220209170245.08968c92@canb.auug.org.au>
+ <d2701072-99e6-762b-bc80-64bda193c792@google.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-28_10,2022-03-28_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=756
- mlxscore=0 malwarescore=0 clxscore=1011 adultscore=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 impostorscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2203280116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2701072-99e6-762b-bc80-64bda193c792@google.com>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Mar 28, 2022 at 11:34:21AM -0700, Nathan Chancellor wrote:
-> Hi all,
+On Wed, Feb 09, 2022 at 08:03:26AM -0800, Hugh Dickins wrote:
+> On Wed, 9 Feb 2022, Stephen Rothwell wrote:
+> > include/linux/mm_types.h:272: warning: Function parameter or member '__filler' not described in 'folio'
+> > include/linux/mm_types.h:272: warning: Function parameter or member 'mlock_count' not described in 'folio'
 > 
-> Apologies if this has been reported or fixed already, I did not see a
-> report when searching lore.kernel.org and it is reproducible as of
-> commit 7dcfe50f58d2 ("s390/pci: rename get_zdev_by_bus() to
-> zdev_from_bus()") in s390/linux.git.
+> Thank you for including the patches and reporting this, Stephen.
+> Is this a warning you can live with for a week or two?
 > 
-> Our continuous integration noticed a build failure on next-20220328 in
-> arch/s390/kernel/entry.S, which does not appear to be compiler specific,
-> as I can reproduce this with GCC easily:
-> 
-> https://builds.tuxbuild.com/2716QwFVG9408TJ43vkEc7trVCI/build.log
-> 
-> $ make -skj"$(nproc)" ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- defconfig arch/s390/kernel/entry.o
-> arch/s390/kernel/entry.S: Assembler messages:
-> arch/s390/kernel/entry.S:335: Error: Unrecognized opcode: `jgnop'
-> arch/s390/kernel/entry.S:493: Error: Unrecognized opcode: `jgnop'
-> arch/s390/kernel/entry.S:494: Error: Unrecognized opcode: `jgnop'
+> I've never tried generating htmldocs (I'm tempted just to replace a few
+> "/**"s by "/*"s!), and I'm fairly sure Matthew will have strong feelings
+> about how this new union (or not) will be better foliated - me messing
+> around with doc output here is unlikely to be helpful at this moment.
 
-Thank you for reporting this!
+I have a substantial question, and then some formatting / appearance
+questions.
 
-jgnop mnemonic has been introduced with binutils commit
-b10b530a4566 ("IBM Z: Add support for HLASM extended mnemonics")
+The first is, what does mlock_count represent for a multi-page folio
+that is partially mlocked?  If you allocate an order-9 page then mmap()
+13 pages of it and mlockall(), does mlock_count increase by 1, 13 or 512?
 
-and is part of binutils-2_36 and newer.
+Then we have a tradeoff between prettiness of the source code and
+prettiness of the htmldocs.  At one maximum, we can make it look like
+this in the htmldocs:
 
-I fixed it by using old "brcl 0,0" alternative here:
-https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git/commit/?h=features&id=faf79934e65aff90284725518a5ec3c2241c65ae
+struct folio {
+  unsigned long flags;
+  struct list_head lru;
+  unsigned int mlock_count;
+  struct address_space *mapping;
+  pgoff_t index;
+  void *private;
+  atomic_t _mapcount;
+  atomic_t _refcount;
+#ifdef CONFIG_MEMCG;
+  unsigned long memcg_data;
+#endif;
+};
+
+but at the cost of making the source code look like this:
+
+struct folio {
+        /* private: don't document the anon union */
+        union {
+                struct {
+        /* public: */
+                        unsigned long flags;
+        /* private: */
+                        union {
+        /* public: */
+                                struct list_head lru;
+        /* private: */
+                                struct {
+                                        void *__filler;
+        /* public: */
+                                        unsigned int mlock_count;
+        /* private: */
+                                };
+                        };
+        /* public: */
+                        struct address_space *mapping;
+
+At the other extreme, the htmldocs can look more complicated:
+
+struct folio {
+  unsigned long flags;
+  union {
+    struct list_head lru;
+    struct {
+      unsigned int mlock_count;
+    };
+  };
+  struct address_space *mapping;
+  pgoff_t index;
+  void *private;
+  atomic_t _mapcount;
+  atomic_t _refcount;
+#ifdef CONFIG_MEMCG;
+  unsigned long memcg_data;
+#endif;
+};
+
+with the source code changes being merely:
+
+@@ -227,6 +227,7 @@ struct page {
+  * struct folio - Represents a contiguous set of bytes.
+  * @flags: Identical to the page flags.
+  * @lru: Least Recently Used list; tracks how recently this folio was used.
++ * @mlock_count: Number of times any page in this folio is mlocked.
+  * @mapping: The file this page belongs to, or refers to the anon_vma for
+  *    anonymous memory.
+  * @index: Offset within the file, in units of pages.  For anonymous memory,
+@@ -256,7 +257,9 @@ struct folio {
+                        union {
+                                struct list_head lru;
+                                struct {
++       /* private: */
+                                        void *__filler;
++       /* public: */
+                                        unsigned int mlock_count;
+                                };
+                        };
+
+Various steps in between are possible, such as removing the anonymous
+struct from the documentation, but leaving the union.  We could also
+choose to document __filler, but that seems like a poor choice to me.
+
+Anyway, that's all arguable and not really too important.  My mild
+preference is for the private/public markers around __filler alone,
+but I'll happily abide by the preferences of others.
+
+The important part is what mlock_count really means.  We can be
+reasonably verbose here (two or three lines of text, I'd suggest).
