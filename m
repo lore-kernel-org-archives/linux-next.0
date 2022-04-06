@@ -2,184 +2,115 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F9BC433EF
-	for <linux-next@archiver.kernel.org>; Wed,  6 Apr 2022 14:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A9EC433EF
+	for <linux-next@archiver.kernel.org>; Wed,  6 Apr 2022 16:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235008AbiDFOxW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 6 Apr 2022 10:53:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41428 "EHLO
+        id S237323AbiDFQVj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 6 Apr 2022 12:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235361AbiDFOw6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Apr 2022 10:52:58 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2813F29B7;
-        Tue,  5 Apr 2022 18:33:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S237478AbiDFQVO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Apr 2022 12:21:14 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236A01CFF82;
+        Tue,  5 Apr 2022 19:45:07 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 97A7CB8203A;
-        Wed,  6 Apr 2022 01:32:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481BFC385AB;
-        Wed,  6 Apr 2022 01:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649208778;
-        bh=XpvRyWQibs5U7H0NRwftD7kh9ztYJOg4NmB70y/JR0c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BUidOn6eR29LJmE2NHApcc449KHBc1lxLFlFrYVlnFeV+tyqGdB42oP4tC5ZTeP/R
-         UcWKho4QCrgsem7C166iXrO68B+2bTBBJqm6cV3VzkBRJvbOwPcKLcH4lSZV6J6XdT
-         jrMKQu+rMK8lpeQUC3aYQD53q4P2IUEqhHd4JjZvi4QJopmyMZG1LRUbf+p2XiAIqs
-         SKptDQG83bXtk2JUkH1EHs0WAr7+4VhIEKk3RlRWnOcZxfPb7GJHlTFjDLWhHManLG
-         LIR8b4E4sm6+zq5FUl6xnGii1j+I4gMZZBrMsfuhq8FKYbbBpltRrfG782f3MvDELk
-         QiJjQo0p8vosA==
-Received: by mail-vk1-f171.google.com with SMTP id g25so458110vkl.6;
-        Tue, 05 Apr 2022 18:32:58 -0700 (PDT)
-X-Gm-Message-State: AOAM5324Pyodj3mu/eVpQAMdtx+i8LHFiktwVUSyhH+DDK1CVzj2cUK3
-        By4HKeWZKws9AIm3QgjLDfQHHXJh0pXVfLh3vkA=
-X-Google-Smtp-Source: ABdhPJzav7/zsbYcqRTWKyLRMmW/wUoG3z2ctFpfrzr8BqmpNb/HTabQkiDzQ/qWUmxCkD3Sp5ceqOVOwtSovwFqWmg=
-X-Received: by 2002:a1f:f283:0:b0:33f:5e3e:921b with SMTP id
- q125-20020a1ff283000000b0033f5e3e921bmr2261970vkh.2.1649208777147; Tue, 05
- Apr 2022 18:32:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAJF2gTQkGZnwXrXsbx8drL0AicVpOMW=JmOcrieuvyEf91XPhg@mail.gmail.com>
- <mhng-cfa7bfb9-bab8-423c-85ad-ecd407d6e806@palmer-ri-x1c9> <CAJF2gTQgU=V+snWp7a8_txsX49BzAct1nkB18k-p4BZEd+s+eQ@mail.gmail.com>
-In-Reply-To: <CAJF2gTQgU=V+snWp7a8_txsX49BzAct1nkB18k-p4BZEd+s+eQ@mail.gmail.com>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Wed, 6 Apr 2022 09:32:46 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTT+pHSkF-mHa9Gq6fm5jmDqaoC5z0yEgMiyEA3DWH+P7g@mail.gmail.com>
-Message-ID: <CAJF2gTT+pHSkF-mHa9Gq6fm5jmDqaoC5z0yEgMiyEA3DWH+P7g@mail.gmail.com>
-Subject: Re: [next] riscv: Linux next-20220404 riscv defconfig builds failed.
-To:     Palmer Dabbelt <palmer@rivosinc.com>
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KY84c40gZz4xXv;
+        Wed,  6 Apr 2022 12:45:04 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1649213106;
+        bh=1+sqTb0wM2qZfgwqUDRrCmRK6iregCrgSZT9Fz4WIpY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=nx6MQaIXz9w7QZh9oAn32NiPKAKDRlblu6g/ms217t8xbnyMpiEzd+XdHgha8DLuE
+         5ucOKKt1oGy2TWe7Y9nHKypGd/RRweDE1gevZ14IHRWDyuNz7S3XhQX3QLR1VOUwc5
+         ENCHYmshfv87L2rqL7KTGmF1joEo8C4+rNUW5OXtWWY392qLdGLcOaUk8VmHCq2cCt
+         /x7U7j+BfloOTHUrHn8c9Wfo02ZWPV3+j1CQZtcmRK0Xyt2j4JMvACzZrQ6DzouNIb
+         npIORKWC0pbzSe7MgOPv3g1h/mhWOGwbYQLqesHHm4JcDtZtREeFhisQum11l+mNxq
+         qp0a5R2v9oqZQ==
+Date:   Wed, 6 Apr 2022 12:45:03 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Guo Ren <guoren@linux.alibaba.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: linux-next: manual merge of the rcu tree with the tip tree
+Message-ID: <20220406124503.25e8ed68@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/js5uG5LcJijHlYphM5dKCDW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Apr 6, 2022 at 9:13 AM Guo Ren <guoren@kernel.org> wrote:
->
-> On Wed, Apr 6, 2022 at 12:15 AM Palmer Dabbelt <palmer@rivosinc.com> wrote:
-> >
-> > On Mon, 04 Apr 2022 22:17:24 PDT (-0700), guoren@kernel.org wrote:
-> > > On Tue, Apr 5, 2022 at 12:57 AM Nathan Chancellor <nathan@kernel.org> wrote:
-> > >>
-> > >> On Mon, Apr 04, 2022 at 03:28:41PM +0530, Naresh Kamboju wrote:
-> > >> > Linux next-20220404 riscv defconfig builds failed.
-> > >> >
-> > >> > Regressions found on riscv:
-> > >> >    - riscv-riscv-clang-14-defconfig
-> > >> >    - riscv-riscv-gcc-10-defconfig
-> > >> >    - riscv-riscv-clang-13-defconfig
-> > >> >    - riscv-riscv-clang-12-defconfig
-> > >> >    - riscv-riscv-clang-11-defconfig
-> > >> >    - riscv-riscv-gcc-11-defconfig
-> > >> >    - riscv-riscv-gcc-8-defconfig
-> > >> >    - riscv-riscv-gcc-9-defconfig
-> > >> >    - riscv-riscv-clang-nightly-defconfig
-> > >> >
-> > >> >
-> > >> > arch/riscv/kernel/compat_signal.c:7:10: fatal error:
-> > >> > linux/tracehook.h: No such file or directory
-> > >> >   7 | #include <linux/tracehook.h>
-> > >> >     |          ^~~~~~~~~~~~~~~~~~~
-> > >> > compilation terminated.
-> > >> > make[3]: *** [scripts/Makefile.build:289:
-> > >> > arch/riscv/kernel/compat_signal.o] Error 1
-> > >>
-> > >> For what it's worth, I also see:
-> > >>
-> > >> $ make -skj"$(nproc)" ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- defconfig all
-> > >> arch/riscv/kernel/compat_vdso/compat_vdso.lds.S:3:10: fatal error: ../vdso/vdso.lds.S: No such file or directory
-> > >>     3 | #include <../vdso/vdso.lds.S>
-> > >>       |          ^~~~~~~~~~~~~~~~~~~~
-> > >> compilation terminated.
-> > >> make[2]: *** [scripts/Makefile.build:462: arch/riscv/kernel/compat_vdso/compat_vdso.lds] Error 1
-> > >> arch/riscv/kernel/compat_vdso/rt_sigreturn.S:3:10: fatal error: ../vdso/rt_sigreturn.S: No such file or directory
-> > >>     3 | #include <../vdso/rt_sigreturn.S>
-> > >>       |          ^~~~~~~~~~~~~~~~~~~~~~~~
-> > >> compilation terminated.
-> > >> arch/riscv/kernel/compat_vdso/note.S:3:10: fatal error: ../vdso/note.S: No such file or directory
-> > >>     3 | #include <../vdso/note.S>
-> > >>       |          ^~~~~~~~~~~~~~~~
-> > >> compilation terminated.
-> > >> arch/riscv/kernel/compat_vdso/getcpu.S:3:10: fatal error: ../vdso/getcpu.S: No such file or directory
-> > >>     3 | #include <../vdso/getcpu.S>
-> > >>       |          ^~~~~~~~~~~~~~~~~~
-> > >> compilation terminated.
-> > >> make[2]: *** [arch/riscv/kernel/compat_vdso/Makefile:43: arch/riscv/kernel/compat_vdso/rt_sigreturn.o] Error 1
-> > >> make[2]: *** [arch/riscv/kernel/compat_vdso/Makefile:43: arch/riscv/kernel/compat_vdso/note.o] Error 1
-> > >> make[2]: *** [arch/riscv/kernel/compat_vdso/Makefile:43: arch/riscv/kernel/compat_vdso/getcpu.o] Error 1
-> > >> arch/riscv/kernel/compat_vdso/flush_icache.S:3:10: fatal error: ../vdso/flush_icache.S: No such file or directory
-> > >>     3 | #include <../vdso/flush_icache.S>
-> > >>       |          ^~~~~~~~~~~~~~~~~~~~~~~~
-> > >> compilation terminated.
-> > >> make[2]: *** [arch/riscv/kernel/compat_vdso/Makefile:43: arch/riscv/kernel/compat_vdso/flush_icache.o] Error 1
-> > >>
-> > >> I am guessing this code was never tested with $(srctree) == $(objtree).
-> > > Thx for pointing it out:
-> > > I always use:
-> > > make -skj"$(nproc)" ARCH=riscv
-> > > CROSS_COMPILE=riscv64-unknown-linux-gnu- EXTRA_CFLAGS+=-g
-> > > O=../build-riscv/ defconfig all
-> > >
-> > > When I change to:
-> > > make -skj"$(nproc)" ARCH=riscv
-> > > CROSS_COMPILE=riscv64-unknown-linux-gnu- EXTRA_CFLAGS+=-g defconfig
-> > > all
-> > >
-> > > I got your problem.
-> >
-> > Just to be clear: this one wasn't supposed to go in via the csky tree,
-> > and had other build issues that were being found by the autobuilders
-> > (which is why it hadn't gone in via the riscv tree).  I do in-tree
-> > builds somewhat regularly so that probably would have caught it if
-> > nothing else did, but my guess is that some other autobuilder would have
-> > found it first (some of the earlier patches
-> The problem and other build issues (arm64 & 5.18-rc1 conflict) all
-> have been solved in v12:
-> https://lore.kernel.org/linux-riscv/20220405071314.3225832-1-guoren@kernel.org/
->
-> >
-> > Guo: please stop pushing things to linux-next that break the builds
-> > and/or aren't aimed at your tree.  This just makes things unnecessarly
-> > complicated.  If you don't want to deal with the build issues that's OK,
-> > just LMK when you send the patch sets out and I'll deal with them, but
-If you could deal with build issues that would be very thankful. I
-just hope these patch series could get into for-next earlier before
-the next merge window.
-So I utilized next-tree-20220404 to find out what problems with that
-(of course these patches should be from your tree).
+--Sig_/js5uG5LcJijHlYphM5dKCDW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The autobuilder for next-tree is more strict, and now seems almost all
-problems have been solved.
+Hi all,
 
-> > having linux-next's build break causes fallout for a lot of users.
-> Yesterday, I made my
-> https://github.com/c-sky/csky-linux/commits/linux-next with
-> linux-5.18-rc1 tag commit version.
-> So this only affected linux-next-20220404.
->
->
-> --
-> Best Regards
->  Guo Ren
->
-> ML: https://lore.kernel.org/linux-csky/
+Today's linux-next merge of the rcu tree got conflicts in:
 
+  kernel/sched/core.c
+  include/linux/sched.h
 
+between commit:
 
--- 
-Best Regards
- Guo Ren
+  cfe43f478b79 ("preempt/dynamic: Introduce preemption model accessors")
 
-ML: https://lore.kernel.org/linux-csky/
+from the tip tree and commit:
+
+  42e3e3c6a774 ("EXP preempt/dynamic: Introduce preempt mode accessors")
+
+from the rcu tree.
+
+Well, this is just a pain.  Paul, please don't put expierimental things
+in you linuc-nect included branch.  I have dropped the rcu tree today.
+
+The rules I use for the linux-next tree are:
+
+"You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary."
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/js5uG5LcJijHlYphM5dKCDW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJM/q8ACgkQAVBC80lX
+0Gxivgf+OuWWEyB8TtgNsIXnwXz6OpNaQiaTzj04k5qrP+a5xlFfVWrhh43GS8BR
+eqv0fVdli4tiZTpqqdKFVc3+t4H9cs1jIKmCxK61p/E0u5xx/eqPL0K6/bgtdWmV
+yK2w5HvrbxKA3eMt4M5or7Ehv+9HfyK2VlsrAVDVaGukXeqiAMkBVbD5p++o2zh4
+EWxuFsXwH3xf/nOPC45XNFfamrxAQguKMYZlhtyMKbYEXG9CrPg8BVtcxxNuBDca
+SOCjb2fadtXxnXYvORErWWxK0XEi91n6mEPOyVg2F7Il0M5dCwQgu7SUu6NBMjBr
+OgqGuRxoYxsmt3TPxfmfniu5FmCbKA==
+=QCxQ
+-----END PGP SIGNATURE-----
+
+--Sig_/js5uG5LcJijHlYphM5dKCDW--
