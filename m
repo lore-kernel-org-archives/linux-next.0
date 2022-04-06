@@ -2,115 +2,79 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A9EC433EF
-	for <linux-next@archiver.kernel.org>; Wed,  6 Apr 2022 16:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B60C433F5
+	for <linux-next@archiver.kernel.org>; Wed,  6 Apr 2022 16:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237323AbiDFQVj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47342 "EHLO
+        id S237726AbiDFQd2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 6 Apr 2022 12:33:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237478AbiDFQVO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Apr 2022 12:21:14 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236A01CFF82;
-        Tue,  5 Apr 2022 19:45:07 -0700 (PDT)
+        with ESMTP id S237802AbiDFQcU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Apr 2022 12:32:20 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1084B3F15F8;
+        Tue,  5 Apr 2022 18:32:44 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KY84c40gZz4xXv;
-        Wed,  6 Apr 2022 12:45:04 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KY6T65Vntz4xXS;
+        Wed,  6 Apr 2022 11:32:42 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1649213106;
-        bh=1+sqTb0wM2qZfgwqUDRrCmRK6iregCrgSZT9Fz4WIpY=;
+        s=201702; t=1649208762;
+        bh=Rxxn1TD2UuepLVLS1hwWe9JcrPraf9Iiaa5Ny2qSNaw=;
         h=Date:From:To:Cc:Subject:From;
-        b=nx6MQaIXz9w7QZh9oAn32NiPKAKDRlblu6g/ms217t8xbnyMpiEzd+XdHgha8DLuE
-         5ucOKKt1oGy2TWe7Y9nHKypGd/RRweDE1gevZ14IHRWDyuNz7S3XhQX3QLR1VOUwc5
-         ENCHYmshfv87L2rqL7KTGmF1joEo8C4+rNUW5OXtWWY392qLdGLcOaUk8VmHCq2cCt
-         /x7U7j+BfloOTHUrHn8c9Wfo02ZWPV3+j1CQZtcmRK0Xyt2j4JMvACzZrQ6DzouNIb
-         npIORKWC0pbzSe7MgOPv3g1h/mhWOGwbYQLqesHHm4JcDtZtREeFhisQum11l+mNxq
-         qp0a5R2v9oqZQ==
-Date:   Wed, 6 Apr 2022 12:45:03 +1000
+        b=POlWXFTfFDSukK/5umCIKmt8FS0l7ph+FeMDUjz6xirkctNMlI6turW4LwC20ylCD
+         CmMiyF2VcEuYMZJa/oJiJSf0fUsrx3xedWm25kS2H+d7DDPcLg1cD6vwSPX9qUHzrO
+         vugQB9vrnv2j7WSn54uvOUv62e8gRTRT0+7YyTSPwNDR3XllEImr50GPwrjBss5NHE
+         WPmXvU9np/YIhDgwk2iT63shZnXOGDXFzBc/WYcSSQCvGGrTSydOrR9vP45SVUr4tA
+         TwRl82WwMr6K4H4cUne7omHlcicmomQxBCMF4v93RmPNXkqWQSNpijszlr+5Iajynl
+         StXD0T6gJIRQw==
+Date:   Wed, 6 Apr 2022 11:32:42 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: linux-next: manual merge of the rcu tree with the tip tree
-Message-ID: <20220406124503.25e8ed68@canb.auug.org.au>
+To:     Peter Chen <peter.chen@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: please clean up the usb-chipidea-fixes/next trees
+Message-ID: <20220406113242.3d7aefbd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/js5uG5LcJijHlYphM5dKCDW";
+Content-Type: multipart/signed; boundary="Sig_/.mfo3fXxDzL/nFbg7+KZ.0e";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/js5uG5LcJijHlYphM5dKCDW
+--Sig_/.mfo3fXxDzL/nFbg7+KZ.0e
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the rcu tree got conflicts in:
+[Try again to an address that may work ...]
 
-  kernel/sched/core.c
-  include/linux/sched.h
-
-between commit:
-
-  cfe43f478b79 ("preempt/dynamic: Introduce preemption model accessors")
-
-from the tip tree and commit:
-
-  42e3e3c6a774 ("EXP preempt/dynamic: Introduce preempt mode accessors")
-
-from the rcu tree.
-
-Well, this is just a pain.  Paul, please don't put expierimental things
-in you linuc-nect included branch.  I have dropped the rcu tree today.
-
-The rules I use for the linux-next tree are:
-
-"You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary."
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+The usb-chipidea-fixes and -next trees have not been updated since Oct,
+2021 and the -fixes tree is generating a conflict when merged.  Please
+clean them it up WRT Linus' tree as the only patches in them have been
+merged as other commits.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/js5uG5LcJijHlYphM5dKCDW
+--Sig_/.mfo3fXxDzL/nFbg7+KZ.0e
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJM/q8ACgkQAVBC80lX
-0Gxivgf+OuWWEyB8TtgNsIXnwXz6OpNaQiaTzj04k5qrP+a5xlFfVWrhh43GS8BR
-eqv0fVdli4tiZTpqqdKFVc3+t4H9cs1jIKmCxK61p/E0u5xx/eqPL0K6/bgtdWmV
-yK2w5HvrbxKA3eMt4M5or7Ehv+9HfyK2VlsrAVDVaGukXeqiAMkBVbD5p++o2zh4
-EWxuFsXwH3xf/nOPC45XNFfamrxAQguKMYZlhtyMKbYEXG9CrPg8BVtcxxNuBDca
-SOCjb2fadtXxnXYvORErWWxK0XEi91n6mEPOyVg2F7Il0M5dCwQgu7SUu6NBMjBr
-OgqGuRxoYxsmt3TPxfmfniu5FmCbKA==
-=QCxQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJM7boACgkQAVBC80lX
+0GxM4QgAozPVYrwAvoW2lTiAICEVaP8psjHfXi7yX3n6XOTpjR8wUp2iKxvlbC2D
+NazdATRNOAslPWH7tLegAmYGZvRcYSbezPWdOGC8qZLS9LGShtz0Brby2wF4b9It
+y68uRcpvWr92XJs4uNotDQI0XfDq0IKQPL0n31agN0Bz5hh/ta3mIuiZJJ0WNRZ9
+f6HKkXd8BiA/MVTK6dauE7wNGAINpB5OHB/4gzfK89nENpF6mpTLTzB38QZyoQaa
+r0/H2Zry1a6Rw828IzUH6+08eB+PyIZb7ZvvYJk7OsW5JCXVmxj+HPX162+jZBKU
+v2lRL+2RxqavCtSExDFRLe/OnAUVsQ==
+=HKB9
 -----END PGP SIGNATURE-----
 
---Sig_/js5uG5LcJijHlYphM5dKCDW--
+--Sig_/.mfo3fXxDzL/nFbg7+KZ.0e--
