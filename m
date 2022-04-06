@@ -2,81 +2,110 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACE9C433F5
-	for <linux-next@archiver.kernel.org>; Wed,  6 Apr 2022 16:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C29E9C433EF
+	for <linux-next@archiver.kernel.org>; Wed,  6 Apr 2022 17:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237688AbiDFQfG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57506 "EHLO
+        id S239418AbiDFRn2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 6 Apr 2022 13:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237718AbiDFQez (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Apr 2022 12:34:55 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0D741C17F;
-        Tue,  5 Apr 2022 18:46:00 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        with ESMTP id S239952AbiDFRm6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Apr 2022 13:42:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0995B323884;
+        Wed,  6 Apr 2022 09:28:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 5E0FD839BA;
-        Wed,  6 Apr 2022 03:45:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1649209555;
-        bh=v3oFc7B9bk2XqycnFoV04ixZ2YcCpeqjwMggrSrn75U=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=o4J3v1s3ENNJEYYwqYgvj1wHS6f9tcldZPd7pkPdyzU6mW3Rol9t91MY41+ydOFqP
-         0+mAXb9BdNRZ2rgPZJELmfBa6E4gzP2kSyYospn3W4EdT82ZcOnH7cB2Z65VruxKdR
-         mOqgA4gc3aKwE8vKKIvh6unJbnqA7H0GJOPFkoyUuK1PErGEavYAv622jrZA8FJHTe
-         AFRZP+T+p11ZJOuJOaODsOnGV3lBVABwYHlSCsCZGYEhQJh1PEp+WXBohaylgwS4kZ
-         35eOXXxc7NIJJJznSlFPJRyzhqXWcV9M+Mg0oblqaqIj+YdwmsVHAJ3ajIvwgY1t0h
-         fcGjS6QUK0LAw==
-Message-ID: <481e40a3-bf84-1b04-b6e6-2a74a0b4b6fe@denx.de>
-Date:   Wed, 6 Apr 2022 03:45:49 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: linux-next: build warning after merge of the drm-misc tree
-Content-Language: en-US
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Robert Foss <robert.foss@linaro.org>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id B7ABAB824CD;
+        Wed,  6 Apr 2022 16:28:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9AFC385A3;
+        Wed,  6 Apr 2022 16:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649262501;
+        bh=RO6oFh4/G2Dex/wyHDpkixhfO/24KmgeZmhyqDepGCU=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=n85auwxTRUdd1nnTgXWAIcEu2FZwejkbMRK610T7d7+18gL80AOV7kUGrR7XQDhBM
+         +AEVH+sOg8R8zIi5VGn8OFqErztJnyMlyBHyu0iq0EuNWZ4wjD2+BmrYihhX5SOwLU
+         Ie6i3zPtGlPhrqsHGqAJ5PeB11zpcDuH6a34i65UhxF4kLAs5TCxbtT6QMG3fw8Qi4
+         mNi4KS4fbsbRAhktTS1kYhO/kbTUcymPEBf9RRrGtSaklPQ2WrCb1fP0lOHSa4D22W
+         2SkLWD4ULhOf0xPTBWEnABGhJoKwmSzfhmg+ZN6U+iAk+AggUJK+iPv0QvqcLU/+Iu
+         lS6JU5vWQDvUA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 110485C0B85; Wed,  6 Apr 2022 09:28:21 -0700 (PDT)
+Date:   Wed, 6 Apr 2022 09:28:21 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20220406105828.6d238651@canb.auug.org.au>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20220406105828.6d238651@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
+Message-ID: <20220406162821.GM4285@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20220406124503.25e8ed68@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406124503.25e8ed68@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 4/6/22 02:58, Stephen Rothwell wrote:
+On Wed, Apr 06, 2022 at 12:45:03PM +1000, Stephen Rothwell wrote:
 > Hi all,
-
-Hi,
-
-> After merging the drm-misc tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
 > 
-> WARNING: modpost: drivers/gpu/drm/bridge/chipone-icn6211.prelink.o(.exit.data+0x0): Section mismatch in reference from the variable __cfi_jt_cleanup_module to the function .init.text:cleanup_module()
-> The variable __exitdata __cfi_jt_cleanup_module references
-> a function __init cleanup_module().
-> This is often seen when error handling in the exit function
-> uses functionality in the init path.
-> The fix is often to remove the __init annotation of
-> cleanup_module() so it may be used outside an init section.
+> Today's linux-next merge of the rcu tree got conflicts in:
 > 
-> Introduced by commit
+>   kernel/sched/core.c
+>   include/linux/sched.h
 > 
->    8dde6f7452a1 ("drm: bridge: icn6211: Add I2C configuration support")
+> between commit:
 > 
-> The chipone_exit function should not be marked __init.
+>   cfe43f478b79 ("preempt/dynamic: Introduce preemption model accessors")
+> 
+> from the tip tree and commit:
+> 
+>   42e3e3c6a774 ("EXP preempt/dynamic: Introduce preempt mode accessors")
+> 
+> from the rcu tree.
+> 
+> Well, this is just a pain.  Paul, please don't put expierimental things
+> in you linuc-nect included branch.  I have dropped the rcu tree today.
 
-Thanks, fix is submitted.
+Gah!  Please accept my apologies for the hassle!
 
-Sigh.
+In the short term, I have reset rcu/next to the commit preceding
+42e3e3c6a774 ("EXP preempt/dynamic: Introduce preempt mode accessors").
+This could cause some trouble for a few corner-case -next users, but...
+
+Longer term, this is excellent news, because it means that I can drop
+that commit from my tree entirely and rebase my stack on top of the
+version of that same commit that is just now in -tip.
+
+> The rules I use for the linux-next tree are:
+> 
+> "You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary."
+
+Understood, and thank you.
+
+The next time that I am forced to choose between propagating a bug into
+-next on the one hand and precisely following the above rules on the
+other, I will consult with you beforehand.  Please accept my apologies
+for failing to have done so this time.
+
+							Thanx, Paul
