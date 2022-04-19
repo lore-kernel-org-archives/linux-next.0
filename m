@@ -2,117 +2,84 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9D8C433EF
-	for <linux-next@archiver.kernel.org>; Tue, 19 Apr 2022 05:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E187C433F5
+	for <linux-next@archiver.kernel.org>; Tue, 19 Apr 2022 06:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238489AbiDSFhO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 19 Apr 2022 01:37:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
+        id S237280AbiDSGgF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 19 Apr 2022 02:36:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230301AbiDSFhN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2022 01:37:13 -0400
+        with ESMTP id S237377AbiDSGgD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2022 02:36:03 -0400
 Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FDF71F60F;
-        Mon, 18 Apr 2022 22:34:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A51B2AE06;
+        Mon, 18 Apr 2022 23:33:21 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KjCD10cMlz4xXW;
-        Tue, 19 Apr 2022 15:34:24 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KjDWz2Qmvz4xXS;
+        Tue, 19 Apr 2022 16:33:19 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1650346465;
-        bh=LASvUK9v/c4iVL7PX/RcYrawCz7wjdGe7O3W4abbhJg=;
+        s=201702; t=1650349999;
+        bh=4FwEif2YPiKAZKoA68FV0y4+Spendma+CKRcCjHFzu0=;
         h=Date:From:To:Cc:Subject:From;
-        b=XAwLGFd646aP5BRAuht3wKcw3DZ/zZCO+jYSbDTjU6nHtstfI8uCr+jZc/H78D6sh
-         NSu751OhhVckf/NG9CX64u7wgJOxNHPNUlF3pRq9OlCuxP7lFengXttDniDenkbG+3
-         lZF9r4QN5bDo/Rno5Qub2/dW+eVBlQBwI0zPXFiTPkTThCcth6iL9SFbUW+VTcvaQl
-         b1z1hXzmBkzpc3DoGoxXPTEqqIq/gchuyxrPNCb6SWXdi57/wn97E+swOEpjgk9hIm
-         ZdGFlhJBHg06A8F5fuFDl+xxP3fR4b8ZEYTM3uW0vz7Q5sVe0Jec1apEq5I37K9+W0
-         cggihrWAvVVSA==
-Date:   Tue, 19 Apr 2022 15:34:23 +1000
+        b=LlyUlVr11bwWnIUUE2dTsynX+zMYJYIDY8KYcmOWOwt60N01UtxeYyvZkuZR16MWm
+         oAbIbW4mVwdqzyaW95XJ/yDrbLyttniZPgSkvjCjIf0qqyjxPuniVH782A0LYqRIoO
+         7OXlkenWaxRXbdxDdEmvZKNgCTstb5zw3KxhoILy+NJGr9HtbfAy6R+apTy5ZHr/j2
+         lhG3dTN2Ux4MdTk+EghUM6dpSo45MfgPu8k+U6zVE2K7KDNd5jaN5OHd7Y1Jnqc3v1
+         JO1prsFjYA7yKv2YFsC3QQ1nUFmBD5ATUMwijYWx0MGz49m+fsdHNqdNMQ/zx0ykCA
+         Favkdih34/aMg==
+Date:   Tue, 19 Apr 2022 16:33:18 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     KVM <kvm@vger.kernel.org>, Peter Gonda <pgonda@google.com>,
+To:     Greg KH <greg@kroah.com>
+Cc:     Jiri Slaby <jirislaby@kernel.org>, Jiri Slaby <jslaby@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kvm tree
-Message-ID: <20220419153423.644c0fa1@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tty tree
+Message-ID: <20220419163318.0682ffb8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DcR__SR_4Xx_1cFlZkvC3gW";
+Content-Type: multipart/signed; boundary="Sig_/9YjLyh_6G07rkaRMZSCgp3D";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/DcR__SR_4Xx_1cFlZkvC3gW
+--Sig_/9YjLyh_6G07rkaRMZSCgp3D
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the kvm tree, today's linux-next build (arm64 defconfig)
-failed like this:
+After merging the tty tree, today's linux-next build (htmldocs) produced
+this warning:
 
-arch/arm64/kvm/psci.c: In function 'kvm_prepare_system_event':
-arch/arm64/kvm/psci.c:184:32: error: 'struct <anonymous>' has no member nam=
-ed 'flags'
-  184 |         vcpu->run->system_event.flags =3D flags;
-      |                                ^
+Documentation/driver-api/index.rst:14: WARNING: toctree contains reference =
+to nonexisting document 'driver-api/tty'
 
-Caused by commit
+Introduced by commit
 
-  c24a950ec7d6 ("KVM, SEV: Add KVM_EXIT_SHUTDOWN metadata for SEV-ES")
-
-In this commit, the uapi structure changes do not match the documentation
-changes :-(  Does it matter that the ABI may be changed by this commit
-(depending on the alignment of the structure members)?
-
-I have added the following patch or today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 19 Apr 2022 15:25:17 +1000
-Subject: [PATCH] fix up for "KVM, SEV: Add KVM_EXIT_SHUTDOWN metadata for S=
-EV-ES"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/uapi/linux/kvm.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index dd1d8167e71f..68ce07185f03 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -448,6 +448,7 @@ struct kvm_run {
- #define KVM_SYSTEM_EVENT_NDATA_VALID    (1u << 31)
- 			__u32 type;
- 			__u32 ndata;
-+			__u64 flags;
- 			__u64 data[16];
- 		} system_event;
- 		/* KVM_EXIT_S390_STSI */
---=20
-2.35.1
+  b96cd8b05ead ("Documentation: move tty to driver-api")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/DcR__SR_4Xx_1cFlZkvC3gW
+--Sig_/9YjLyh_6G07rkaRMZSCgp3D
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJeSd8ACgkQAVBC80lX
-0Gzqhgf9E3HBLYVdNuA4RE47McIbBq/Lun8JbASZFHYeDAmbwPYH+e2XpnKj3iHz
-6iOQ373UROq9qv5GPMTpz1QZtVjzipwTm/yAWDcwBvlWdlRW1JWs9m3PMVkfF4hF
-NeK81BeP97RkdHrvqAW+o3VdYUc+R59XCoUebfNfY55EaaPxBSLE0dmq8rSsD1/C
-vKZhjzG2jDC9FPaJjiSPfzM59qwwjoYCvtg3L4BKUYdiegzU79oKJ57U60ja5Po8
-tSmL/FSXqX8dOSviCS77dUsiztBcKsjkSKXaYQBR6kumkWl2/PWwZpWCn3s93Lo8
-n4LOnkrdc5eWa7j7/sbYrRHXeTsnyA==
-=fZAm
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJeV64ACgkQAVBC80lX
+0GyfFQf9FzecDnFNZL4rho4NTT0Yp+c0p5rhx1V8MAa6pFebBJA0KkFwN1v985Nu
+T/92V9Qq3xavn4lQJ1XSqfq+kI8AnKHFaW2I5Lzu2dkHBtCHpTiom9RbmKYOLhfu
+0EmgBw417JECbp1UOorNYbLPVDL+jvguFt9V5K4BvfBdM4PPUtWq5UWCeM0jP7vA
+ISmqxGj9gqkRBWgk8wFtMyDMaDWllLKo8EctbjM25dnywZySpWcaHUmhiDJ31Fe6
+gMsyz4QwNcGNfQdyIoyBJqbk+PgYwh2CBqtOgnXTlkMOHTkx6VxiTPXeUhAl2SpM
+IV7oQ3TjoX6cH0c4ehoYYdABao/nxg==
+=R+DT
 -----END PGP SIGNATURE-----
 
---Sig_/DcR__SR_4Xx_1cFlZkvC3gW--
+--Sig_/9YjLyh_6G07rkaRMZSCgp3D--
