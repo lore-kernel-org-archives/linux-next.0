@@ -2,102 +2,88 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7946EC4332F
-	for <linux-next@archiver.kernel.org>; Thu, 21 Apr 2022 16:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49FFC433F5
+	for <linux-next@archiver.kernel.org>; Thu, 21 Apr 2022 18:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230423AbiDUQ1v (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 21 Apr 2022 12:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36844 "EHLO
+        id S1390832AbiDUSJJ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 21 Apr 2022 14:09:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390684AbiDUQWv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Apr 2022 12:22:51 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B4D63AE;
-        Thu, 21 Apr 2022 09:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650558001; x=1682094001;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3A6zp59+CXbCtLUTRaBcmCTCcB/VbVNvDqbxb0ss9Wc=;
-  b=EXBZbzjA8WH51v04aZqdN5UKuxK4m6PYPdE/m8yHJW7GWvbnEH6ZRFkU
-   hZlPoEfcy17KlEndu/BcvP/WbZnePNXk3W6OoPhu/w3JkCm0cBJ/yCe1z
-   svLevC5OoKVT8gFSKa8xhBdWUpb+2zt1wXh2up365rxasgTGCqTXVCHj2
-   zO3bwZ0R2MzSD+vH4MdBaHd61rBPX7DIG6m0+ZA4Nch0y/7Y6kgpwEFK4
-   u4ycv0EO8qfJxNmOVj8pz+F1+GS2IrB+N+AuUCQ883HKL4af2A/9MDvvE
-   jcgdDjvkVwP91fDqaBltrhks9zUqyY1suGWOUMCgNpKpmRsmiWiMTDCSk
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10324"; a="263872592"
-X-IronPort-AV: E=Sophos;i="5.90,279,1643702400"; 
-   d="scan'208";a="263872592"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 09:20:00 -0700
-X-IronPort-AV: E=Sophos;i="5.90,279,1643702400"; 
-   d="scan'208";a="648200010"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.78])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 09:20:00 -0700
-Date:   Thu, 21 Apr 2022 09:19:59 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        with ESMTP id S1388197AbiDUSJI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Apr 2022 14:09:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2D98F4B431
+        for <linux-next@vger.kernel.org>; Thu, 21 Apr 2022 11:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1650564377;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P4HhsPKolmLzyXIAPmiV7kISwst2cNULrzQjVoJrkBM=;
+        b=bluGOUs3I25bADX8OWOYdAj4OI2B2kQqWJA2MOMUEcEwNj8Z09sHiUMeAiN8DZRoAqnUuh
+        SX2oRZyQuh1q1wzlgmrAi+PyO/gFz+qjNPvaaanIr1BUm/xJ3alwxp7xg903oG00svvOkC
+        h4RrRkryLte+VjYVPxT5fCVC0xht2UE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-637-gqNW3mCbNv66Ew_prwUUrQ-1; Thu, 21 Apr 2022 14:06:16 -0400
+X-MC-Unique: gqNW3mCbNv66Ew_prwUUrQ-1
+Received: by mail-wm1-f70.google.com with SMTP id r204-20020a1c44d5000000b0038eaca2b8c9so4818802wma.7
+        for <linux-next@vger.kernel.org>; Thu, 21 Apr 2022 11:06:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=P4HhsPKolmLzyXIAPmiV7kISwst2cNULrzQjVoJrkBM=;
+        b=jcC0HyYRvC94UZKyQjd1whsYI9BFSByAHm4Ejle5aPgDsEo22zJtTJaxdaTIukPFMj
+         9RNbIbg305uT/n1Eg+OrgBuuMN2ElGWYed4D77Q/tb4nkE0OOng/wYG76khegHMLQPOC
+         9r2/Nv1sZBCzkQm7WyGoUXgYhw2pelfeXiVStwUZGjn1eLNN75L1Kns0X+r3Hdf63ESG
+         /sdzNWjuorNwUGs4j+bw3KsE8Qie2ZQ/tyA7w6Cu0Yn31zns42k5HViV8UoFj3Yv6a5r
+         1VnuzOysa+4C1rxiqNzlR6tBmu2RhHOeCYj835XpFLeUbxZ5EFia28OSfAAX5AkOc8lv
+         AfAQ==
+X-Gm-Message-State: AOAM531ESpf0qjRfkSynAfciUfCIzYMjgivSOI95CvplHZrzmcwy6AuO
+        Mz6ShJjHL2GIyVZ/m/DvGUcPN5dUPQkmpzgT+0k8BsGJiYDpDGbe5cUF1gVec+vNrrUS2/dby6Y
+        0VCRoJxweQdPgquLPeN4TbQ==
+X-Received: by 2002:adf:c547:0:b0:207:9abc:cfa1 with SMTP id s7-20020adfc547000000b002079abccfa1mr685941wrf.390.1650564374863;
+        Thu, 21 Apr 2022 11:06:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzpj0yPuDnWazYb01yXoAAQ/3svcqqwyjpGpys9U+6aoIt5zXweO/RmwFo4BxAOOvuaPQ/iSg==
+X-Received: by 2002:adf:c547:0:b0:207:9abc:cfa1 with SMTP id s7-20020adfc547000000b002079abccfa1mr685888wrf.390.1650564374014;
+        Thu, 21 Apr 2022 11:06:14 -0700 (PDT)
+Received: from ?IPV6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.googlemail.com with ESMTPSA id y11-20020a056000168b00b0020a919422ccsm3463856wrd.109.2022.04.21.11.06.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Apr 2022 11:06:13 -0700 (PDT)
+Message-ID: <b87bc46c-36ba-f428-1e91-6315f3534fa4@redhat.com>
+Date:   Thu, 21 Apr 2022 20:06:11 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: linux-next: build failure after merge of the kvm tree
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     KVM <kvm@vger.kernel.org>, Peter Gonda <pgonda@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH v2] topology/sysfs: Fix allnoconfig build breakage.
-Message-ID: <YmGEL2klp4S97UiH@agluck-desk3.sc.intel.com>
-References: <20220421152645.3a849198@canb.auug.org.au>
- <YmD+geU9CmjoVnN9@kroah.com>
- <YmF8Hrq5kgDdfvtS@agluck-desk3.sc.intel.com>
- <YmF+FTxgu2U4/oPA@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YmF+FTxgu2U4/oPA@kroah.com>
+References: <20220419153423.644c0fa1@canb.auug.org.au>
+ <Yl7c06VX5Pf4ZKsa@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <Yl7c06VX5Pf4ZKsa@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-drivers/base/topology.c: In function 'topology_is_visible':
-drivers/base/topology.c:158:24: warning: unused variable 'dev' [-Wunused-variable]
-  158 |         struct device *dev = kobj_to_dev(kobj);
+On 4/19/22 18:01, Sean Christopherson wrote:
+> Yeah, it's a bit of mess.  I believe we have a way out, waiting on Paolo to weigh in.
+> 
+> https://lore.kernel.org/all/YlisiF4BU6Uxe+iU@google.com
 
-This is because the topology_ppin(dev->id) macro expands to:
+Sent out my proposal.  For ARM, it is also binary backwards-compatible 
+for 64-bit userspace.
 
-	(cpu_data(dev->id).ppin)
-
-and with CONFIG_SMP=n the cpu_data() macro expands to boot_cpu_data
-(ignoring its argument) with the end result:
-
-	boot_cpu_data.ppin
-
-Fix by just checking whether the boot_cpu has a PPIN instead of whether
-this specific CPU has one.
-
-Fixes: c3702a746ff5 ("topology/sysfs: Hide PPIN on systems that do not support it.")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-
----
-I don't believe it will ever be possible to have no PPIN on the boot CPU,
-but somehow have PPINs on other CPUs (or vice versa)
-
- drivers/base/topology.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index 706dbf8bf249..11a56a10188d 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -155,9 +155,7 @@ static struct attribute *default_attrs[] = {
- static umode_t topology_is_visible(struct kobject *kobj,
- 				   struct attribute *attr, int unused)
- {
--	struct device *dev = kobj_to_dev(kobj);
--
--	if (attr == &dev_attr_ppin.attr && !topology_ppin(dev->id))
-+	if (attr == &dev_attr_ppin.attr && !boot_cpu_data.ppin)
- 		return 0;
- 
- 	return attr->mode;
--- 
-2.35.1
+Paolo
 
