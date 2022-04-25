@@ -2,77 +2,93 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94163C4332F
-	for <linux-next@archiver.kernel.org>; Mon, 25 Apr 2022 13:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAE2C433F5
+	for <linux-next@archiver.kernel.org>; Mon, 25 Apr 2022 22:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbiDYNic (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 25 Apr 2022 09:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
+        id S237927AbiDYWZK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 25 Apr 2022 18:25:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233373AbiDYNib (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Apr 2022 09:38:31 -0400
-X-Greylist: delayed 4063 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 25 Apr 2022 06:35:26 PDT
-Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [IPv6:2a01:4f8:a0:821d::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E58F3BF48;
-        Mon, 25 Apr 2022 06:35:25 -0700 (PDT)
-Received: from [192.168.0.33] (cpc78119-cwma10-2-0-cust590.7-3.cable.virginm.net [81.96.50.79])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S1343666AbiDYWEL (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Apr 2022 18:04:11 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA75C2AED;
+        Mon, 25 Apr 2022 15:01:05 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id D9F421401A7;
-        Mon, 25 Apr 2022 13:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-        s=donut; t=1650893725;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rlwvbe+Z2OQ/7mh2RTFrn+ryjaf4NWqAjeVDFWGwoXU=;
-        b=hQErJoU0gKx6hFJvdwE4BElpEDlyNYSM+UeLDgCY/k4DNgCiu7qe8HAfexH0BvxBQZj/y5
-        YZhSlZsqNGibx158AY9S5xL4wdCL+UUmP5YAIpzT/rryn1GCXe4ZEiFiIqeS/jt5cA5cUs
-        eVfyrv0lhFay7PgQ3olX8yDg0GZ1k6w=
-Message-ID: <dbc168d8-5f37-7f75-16d0-18f3b8df4bd9@postmarketos.org>
-Date:   Mon, 25 Apr 2022 14:35:24 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: linux-next: Fixes tags need some work in the pinctrl tree
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KnJqg1kSNz4xXg;
+        Tue, 26 Apr 2022 08:01:03 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1650924064;
+        bh=dgnFnh2YS/OljHj75zTIC3khtGaTUqgjpX5MlFKzM4Q=;
+        h=Date:From:To:Cc:Subject:From;
+        b=nBrOzIE/jnw2fYnZHezA76Go/OuTmo0B5vnyRcV5ESPlZaiMNvqht9xniXg3qSq5h
+         GwuETu2D7zZwpsZo2N9k2nrV7JpA9IWjLKtz7Jqe0EcufcJORFlu3Lv1LHX6mWJFG0
+         rcWBCI92sPk2+vN2lJfE6R2oYiqME/fo4TVIiT3KmT5R6YvjMsM7wPwiuUmk0FJ8V+
+         MNrCCW2wd57tn4O9l7MyTp4ktjmEtDjZYKmLJ4RHpUF9zhff1ay9NPZEJon8V+QaaC
+         Ah1cUNGPLd6ZVyHbQiUhV5/cxRALe3NA/C2YDZn4tierXxtyOYkZg7ubCnLS6BZEkw
+         kSf5/d0EEC2NA==
+Date:   Tue, 26 Apr 2022 08:01:02 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20220421091055.12d6465c@canb.auug.org.au>
- <CACRpkdaD1G9J+jTJH4oGrcF_dinMjBjHCGMJqRZh8FC0dy+Xfw@mail.gmail.com>
- <bf90c37b-0184-845c-dd6a-c2f4a038b075@postmarketos.org>
- <CACRpkday2DXDNJJJ7srC5-Fj_d9iiqX-nqY9np1TnsBsOG6sCg@mail.gmail.com>
-From:   Caleb Connolly <kc@postmarketos.org>
-In-Reply-To: <CACRpkday2DXDNJJJ7srC5-Fj_d9iiqX-nqY9np1TnsBsOG6sCg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: linux-next: Fixes tag needs some work in the risc-v-fixes tree
+Message-ID: <20220426080102.7263b1ad@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/4W=bcibjLyqA/AB+tXQ81R8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/4W=bcibjLyqA/AB+tXQ81R8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 25/04/2022 14:33, Linus Walleij wrote:
-> On Mon, Apr 25, 2022 at 2:27 PM Caleb Connolly <kc@postmarketos.org> wrote:
-> 
->> The patch shouldn't be backported to stable as it will introduce a bug if ported
->> without the second patch (and as above, I don't think this series should be
->> backported at all). Could you let me know how to get this dropped from backporting?
-> 
-> If Greg or Sasha etc propose the patch for stable (which will not happen
-> automatically unless you explicitly add Cc: stable@vger.kernel.org)
-> they send out a proposal "I will add this patch to stable", with CC to the
-> author, and then you can say you don't want it backported.
-> 
-> Many Fixes:-tagged patches do not get picked up for stable, it is not
-> what the tag means, if you want things to be picked for stable, the
-> rule is Cc: stable@, it's just that sometimes the stable maintainers
-> (and an AI!) pick some Fixes: patches anyways.
-Ah ok, that's a relief. Thanks for the explanation!
-> 
-> Yours,
-> Linus Walleij
+In commit
+
+  760d10a5b792 ("RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG=
+_CTRL")
+
+Fixes tag
+
+  Fixes: 617d32938d1b ("rpmsg: Move the rpmsg control device from rpmsg_cha=
+r to rpmsg_ctrl", 2022-01-24)
+
+has these problem(s):
+
+  - Subject has leading but no trailing quotes
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
+
+Please do not add the date field, it doesn't add anything.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4W=bcibjLyqA/AB+tXQ81R8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJnGh4ACgkQAVBC80lX
+0GzZBwf+NwiZvKB/2XcuIYCSy15T4iTXkawUORbcQ7+NjS6oJrC9KdUsxh9K1/uc
+1NMzV69oPG7e/K5OAcLFa7kiXKdBBYm+fPjEuRNnAMzwbB5zefRyX487Qmdb1oZu
+IGv6WAKNQVZSmXopDp2fQgL8LIDV+JWL/5YipZ06vLPRnGtAcUGDUKfX8UjX9FIU
+9iuRYh4u0wMxYXiz5ATPpKIs4Ff6AXxOzCPyMd/zN1TdFdSlwsx+jmSQnGIW4EKx
+XKavL5xNId3m5cAQJ0ISdsdXA0dzprCSPjubWtEYyqnUHhpBaLfBtZHv1+JYm7EH
+vXwHWTTCVSd/Ayd2bzZI7tse6GRS3g==
+=KGrS
+-----END PGP SIGNATURE-----
+
+--Sig_/4W=bcibjLyqA/AB+tXQ81R8--
