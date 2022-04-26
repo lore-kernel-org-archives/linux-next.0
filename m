@@ -2,124 +2,93 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16149C4332F
-	for <linux-next@archiver.kernel.org>; Tue, 26 Apr 2022 08:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAF3C433F5
+	for <linux-next@archiver.kernel.org>; Tue, 26 Apr 2022 09:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345286AbiDZIkP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 26 Apr 2022 04:40:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34966 "EHLO
+        id S239498AbiDZJMd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 26 Apr 2022 05:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345699AbiDZIjZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Apr 2022 04:39:25 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACDED3F335;
-        Tue, 26 Apr 2022 01:30:45 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KnZpB4td1z4ySS;
-        Tue, 26 Apr 2022 18:30:42 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1650961843;
-        bh=6qdUyVxgeCgLFwTIptoWNyNCeFYc5FP46XpU2AKVH6g=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kLpjEZwiKBoGP/x65ktIG/TEyWbEceeKdebGPLHMaFS2BLu/Fdd/hwIVf5SmxqVRG
-         oBZIXrtYXnQD8mEd9Xf4f7hJhXbrC/7BhJ0HpEy48T3IlAEmNcGm7E/KZJGLH+IMxo
-         1exdA+RBNpKJAJJTUl2HB08RTjmhJC9bC0sNtVpZO5U5MPSSIPprXa2Q6bj6QMDhGz
-         zKXb1GOV4uVY+7wpLa7x9MOevmMmnrI70H/RDkYcNiOtiIP+QjccWrEdAxHdvGl+rH
-         BcPVbdaIP54Ag0RiJXqry6ZDnESwMZRmznS7PS64PbvJ8PrDX5+TqyyHdNMb1migVN
-         s3O9TNfF0S65Q==
-Date:   Tue, 26 Apr 2022 18:30:41 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20220426183041.2593d35f@canb.auug.org.au>
+        with ESMTP id S1346254AbiDZJH3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Apr 2022 05:07:29 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 962161759D4;
+        Tue, 26 Apr 2022 01:48:28 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id e2so18129214wrh.7;
+        Tue, 26 Apr 2022 01:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=iHo8yEw9vi6ApvW9lREs3BsO/SztyDLEl+71H8g0jpU=;
+        b=VN1eJoSUpgw+fEiVLbAQqhxhv2kBlRYd8XppnJMJZihec2fPd9TDx1BawH28JfstJ4
+         MZGiQzfZyiade6E40jIsx2nB2EHHy4ghLMSIVu3f/1AEIK1j8MmMOT0EdcQR0Fa/KYu/
+         YenaRIDsLY0GZOFU7xhlRt915PShWqXv8pk8AJa3mNJD8h48/MVhKEUKjq87k9d+Q9dF
+         67G8ODzTX8xqtN4Thyv+u2ISk4AcFdK63c2xoYkumqzsp01RXkqZE7MBmZxhV/DF4WI+
+         4sZzFl59rGb59ctGzr33iTIilpZGoNcDyMxaaeq9el0k6lbQgPaRcayoqUPC1c0SmY7Z
+         Wzqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=iHo8yEw9vi6ApvW9lREs3BsO/SztyDLEl+71H8g0jpU=;
+        b=DZvc71mDU9/OnEdtDObdTwXfg4Vf73JVskdHAi/QSgPRpif+EgzFqRbirbnuFOlb3x
+         pz3L5iiatMEJ6yT8NeimzsQ7J2LYTpt5lp9l+mxEy2E1fIX9vzG1ZgDptuOYzgCPQFe2
+         EYcQO5bS5gxOD+tuz5qoYiFE/SuwnGxfDCuKTR2iGxTEVNbzs3XZZeXoSMeYtwrAcHkU
+         Fg5v0GEm8SaQuuG1SfuEICRpHnX6R4KzU4LROTQDupY+rhBLN2lZTgAgZZgXHqaHTbNn
+         C/gIe4AykST+T9ZX1vJgORGGDTn0oxmg1NtcFUfhs4qOaAWZyFS64rC4pU0N580drvfl
+         Kztw==
+X-Gm-Message-State: AOAM530NaWRQENU8A+4kZurSt+xBBQGllmHLc61aHBsMrj1QNRFkx6ne
+        9J7FvrWHBLfj1dK9tDy/KQ3uaR+X+dL+Hw==
+X-Google-Smtp-Source: ABdhPJwK/gdxNbR5wcwzCjZbJ0uPzi5O3qeN6FpU1jS1wRJBjccxbWHo8LB3JeEZkNOTKlhLjf7S3g==
+X-Received: by 2002:a05:6000:18a8:b0:20a:8a52:5c7e with SMTP id b8-20020a05600018a800b0020a8a525c7emr17783246wri.355.1650962907085;
+        Tue, 26 Apr 2022 01:48:27 -0700 (PDT)
+Received: from [192.168.0.43] (static-35-180-85-188.ipcom.comunitel.net. [188.85.180.35])
+        by smtp.gmail.com with ESMTPSA id g13-20020a5d64ed000000b0020a9e488976sm11890834wri.25.2022.04.26.01.48.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 01:48:26 -0700 (PDT)
+Message-ID: <60b73431-ea41-bcca-8374-1836488b399c@gmail.com>
+Date:   Tue, 26 Apr 2022 10:48:25 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NxqUWlCimMaacaTvPYFSjET";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: linux-next: Signed-off-by missing for commit in the mediatek tree
+Content-Language: en-US
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20220426080706.26c6816b@canb.auug.org.au>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20220426080706.26c6816b@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/NxqUWlCimMaacaTvPYFSjET
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On 26/04/2022 00:07, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>    775ef8aaa66e ("arm64: dts: mediatek: align thermal zone node names with dtschema")
+>    c8b8db1a173d ("arm64: dts: mediatek: align operating-points table name with dtschema")
+>    c01d9aa630b8 ("arm64: dts: mediatek: mt8183: align Google CROS EC PWM node name with dtschema")
+>    75a3c81bc634 ("arm64: dts: hisilicon: align 'freq-table-hz' with dtschema in UFS")
+> 
+> are missing a Signed-off-by from their committer.
+> 
 
-After merging the sound-asoc tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+These patches are taken by Krysztof and merge into my tree via a tag [1] to 
+avoid any conflicts. Please let me know if there is anything I need to do to fix 
+this problem.
 
-ld: sound/soc/sof/mediatek/mt8186/mt8186-clk.o:(.opd+0x18): multiple defini=
-tion of `adsp_clock_on'; sound/soc/sof/mediatek/mt8195/mt8195-clk.o:(.opd+0=
-x60): first defined here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-clk.o: in function `.adsp_clock_on=
-':
-mt8186-clk.c:(.text.adsp_clock_on+0x0): multiple definition of `.adsp_clock=
-_on'; sound/soc/sof/mediatek/mt8195/mt8195-clk.o:mt8195-clk.c:(.text.adsp_c=
-lock_on+0x0): first defined here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-clk.o:(.opd+0x30): multiple defini=
-tion of `adsp_clock_off'; sound/soc/sof/mediatek/mt8195/mt8195-clk.o:(.opd+=
-0x78): first defined here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-clk.o: in function `.adsp_clock_of=
-f':
-mt8186-clk.c:(.text.adsp_clock_off+0x0): multiple definition of `.adsp_cloc=
-k_off'; sound/soc/sof/mediatek/mt8195/mt8195-clk.o:mt8195-clk.c:(.text.adsp=
-_clock_off+0x0): first defined here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-loader.o:(.opd+0x0): multiple defi=
-nition of `sof_hifixdsp_boot_sequence'; sound/soc/sof/mediatek/mt8195/mt819=
-5-loader.o:(.opd+0x0): first defined here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-loader.o: in function `.sof_hifixd=
-sp_boot_sequence':
-mt8186-loader.c:(.text.sof_hifixdsp_boot_sequence+0x0): multiple definition=
- of `.sof_hifixdsp_boot_sequence'; sound/soc/sof/mediatek/mt8195/mt8195-loa=
-der.o:mt8195-loader.c:(.text.sof_hifixdsp_boot_sequence+0x0): first defined=
- here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-loader.o:(.opd+0x18): multiple def=
-inition of `sof_hifixdsp_shutdown'; sound/soc/sof/mediatek/mt8195/mt8195-lo=
-ader.o:(.opd+0x18): first defined here
-ld: sound/soc/sof/mediatek/mt8186/mt8186-loader.o: in function `.sof_hifixd=
-sp_shutdown':
-mt8186-loader.c:(.text.sof_hifixdsp_shutdown+0x0): multiple definition of `=
-.sof_hifixdsp_shutdown'; sound/soc/sof/mediatek/mt8195/mt8195-loader.o:mt81=
-95-loader.c:(.text.sof_hifixdsp_shutdown+0x0): first defined here
+Regards,
+Matthias
 
-Caused by commits
-
-  570c14dc92d5 ("ASoC: SOF: mediatek: Add mt8186 sof fw loader and dsp ops")
-  210b3ab932f7 ("ASoC: SOF: mediatek: Add mt8186 dsp clock support")
-
-I have reverted those commits and the following
-
-  0e0b83cc7ec7 ("ASoC: SOF: mediatek: Add DSP system PM callback for mt8186=
-")
-
-for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NxqUWlCimMaacaTvPYFSjET
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJnrbEACgkQAVBC80lX
-0Gz9egf/bQzoSbhllOei4arxYI2pvPMl/chnh5rTJIvf5PE5nYFNITFpcyZzlxZ3
-gwi2cBvWLM6M89d/c8lP06X6CpFc3HoOl+sNS8Ib+tXlyHw7KBTGO/5W4hXacqpi
-zdodoL4fW/uP956vHEwVG0Fnymt0/YlvL1J22JpUl78xdQh5AyMFB+iAzUoNRAyE
-vADYZ5balFjYiA0MNn7Pi48aLjssqx5+Klf3KVYevIvuOUfOQTwuaS7lyitjCtC2
-1WralgP9RWB216l2gzosjeBY4qIHTWbZczXrFqCLZEnNhQWlC3jemNQkrn4L2dPS
-cScN5UVR75A5L0QRu+ssMuaAUsmDZQ==
-=9T3O
------END PGP SIGNATURE-----
-
---Sig_/NxqUWlCimMaacaTvPYFSjET--
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-v5.19/arm-dts64-cleanups
