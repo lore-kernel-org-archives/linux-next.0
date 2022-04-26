@@ -2,86 +2,129 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D4CC433EF
-	for <linux-next@archiver.kernel.org>; Tue, 26 Apr 2022 07:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59885C43219
+	for <linux-next@archiver.kernel.org>; Tue, 26 Apr 2022 08:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240109AbiDZHkP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:40:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52026 "EHLO
+        id S1345273AbiDZIkK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 26 Apr 2022 04:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344086AbiDZHkJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Apr 2022 03:40:09 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C013FD09;
-        Tue, 26 Apr 2022 00:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650958622; x=1682494622;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=S3egy43WTJExLU3u7/k2FT8QCl0oLX3uS9BX5mAWDfo=;
-  b=XcA+cL+wgB+W1k7iSFPniozzMSxbeHS1t4nDiyJKL95vcRv2P8wI5NLP
-   dtXQ051jkZ2p53lMEX5C1MLkBchg2iT4QXjExJ7d1KMP0lDUQH9WmpAkM
-   35ny3nfqEm+AHrr9ZomeaiqC8D4JEunL5ycPOa4gIv1Ktfoley8Am1Iqr
-   3iPIAl7a0VqG7vd6sIDQIyhkR3Vp7znOEteYyF7kw/UKtk91mXu2xCxlr
-   loFB7AYMAK6GzJNk4Hd+DDkfiGWVnPgp2BnU43gmmE1hz8JIe401kExb0
-   fS5SQM0rV+fF30U79+q2XfkgMgzSHh2qww7ZZndcfgEYxuSQNf6SgSDaZ
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10328"; a="247417826"
-X-IronPort-AV: E=Sophos;i="5.90,290,1643702400"; 
-   d="scan'208";a="247417826"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 00:36:56 -0700
-X-IronPort-AV: E=Sophos;i="5.90,290,1643702400"; 
-   d="scan'208";a="532528422"
-Received: from vhlushch-mobl.ger.corp.intel.com (HELO localhost) ([10.249.132.136])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 00:36:52 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Zhi Wang <zhi.a.wang@intel.com>,
+        with ESMTP id S1345739AbiDZIj1 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Apr 2022 04:39:27 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050C3403CF;
+        Tue, 26 Apr 2022 01:30:50 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KnZpJ590lz4ySW;
+        Tue, 26 Apr 2022 18:30:48 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1650961849;
+        bh=czivHZ+lHH63w67c3ZACNKHQwiMOwH0QCqtUPgwwvkY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=O0ddEM8aWOARzU3HQ4thaICH0oW6pKC0o1Wx3m353ZeRhbk4GF520x/4x0+CblV7u
+         U5VQ09sni2bDzd4CCUzCX4aHTD7mt7hZIC1xsB9aTe3sDVqlyz2mydn0GrjFxREaVB
+         EZwS1avtkOEcfxCE9WHDT9NTBsILOVa2kbwhbRZaFZJCxXpZMtqEatWeis156gdTYQ
+         guzV2la6qSMbaTFZBz7uWLWlLBdtL3wHy8p4J78ax3pYhO5+rdn4WxIe/sQSb0JbVL
+         mpKpK5aBFpaYJpMRXNvnQCzbFk4/HU/taJLoXO+rSxG+zyvR0WopkAYGnuU12eQlRs
+         VFTsRznQpyabw==
+Date:   Tue, 26 Apr 2022 18:30:48 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= 
+        <amadeuszx.slawinski@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-In-Reply-To: <20220426120802.574a9659@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20220426120802.574a9659@canb.auug.org.au>
-Date:   Tue, 26 Apr 2022 10:36:50 +0300
-Message-ID: <87a6c8uwh9.fsf@intel.com>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20220426183048.5f1cb899@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_//xfg1wYZ3AWTI/N/W5SjHei";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 26 Apr 2022, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the drm-intel tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: modpost: "intel_runtime_pm_put" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
->
-> Possibly caused by commit
->
->   8b750bf74418 ("drm/i915/gvt: move the gvt code into kvmgt.ko")
->
-> or one of tehe follow ups.
->
-> I have used the drm-intel tree from next-20220422 for today.
+--Sig_//xfg1wYZ3AWTI/N/W5SjHei
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Details at [1], fix at [2].
+Hi all,
 
-BR,
-Jani.
+After merging the sound-asoc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-[1] https://lore.kernel.org/r/87ilqxuyu3.fsf@intel.com
-[2] https://lore.kernel.org/r/20220425220331.24865-1-zhi.a.wang@intel.com
+sound/soc/intel/avs/path.c: In function 'avs_copier_create':
+sound/soc/intel/avs/path.c:186:31: error: invalid use of undefined type 'st=
+ruct nhlt_specific_cfg'
+  186 |                 data =3D ep_blob->caps;
+      |                               ^~
+sound/soc/intel/avs/path.c:187:36: error: invalid use of undefined type 'st=
+ruct nhlt_specific_cfg'
+  187 |                 data_size =3D ep_blob->size;
+      |                                    ^~
+sound/soc/intel/avs/path.c:210:31: error: invalid use of undefined type 'st=
+ruct nhlt_specific_cfg'
+  210 |                 data =3D ep_blob->caps;
+      |                               ^~
+sound/soc/intel/avs/path.c:211:36: error: invalid use of undefined type 'st=
+ruct nhlt_specific_cfg'
+  211 |                 data_size =3D ep_blob->size;
+      |                                    ^~
 
+Caused by commit
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+  274d79e51875 ("ASoC: Intel: avs: Configure modules according to their typ=
+e")
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 26 Apr 2022 17:49:37 +1000
+Subject: [PATCH] fixup for "ASoC: Intel: avs: Configure modules according t=
+o their type"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/soc/intel/avs/path.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/intel/avs/path.c b/sound/soc/intel/avs/path.c
+index 3d46dd5e5bc4..6f47ac44de87 100644
+--- a/sound/soc/intel/avs/path.c
++++ b/sound/soc/intel/avs/path.c
+@@ -9,6 +9,7 @@
+ #include <sound/intel-nhlt.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
++#include <sound/intel-nhlt.h>
+ #include "avs.h"
+ #include "path.h"
+ #include "topology.h"
+--=20
+2.35.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//xfg1wYZ3AWTI/N/W5SjHei
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJnrbgACgkQAVBC80lX
+0GwRlwgAhchvrLBL9nPU25RzDVnerN3LCUd0syA1/9xlw4aig7ZRj7V7+XuBKKr0
+oIbDDP6EjODXIz+LeypGGMDcBD5wzpaDtedCY6mdV8nrsGK7DYmnv1lLW4uPF4GC
+G1BWKzvyAavdjscXRLBLOPgebYUV/NI9SQyf2jhmr9yWolcFw5SfRK7kH0+ra92+
+7R5NH6IU1i//3fty567PSYauKeVTB2/5GCl7ISO/hsYiLvu8QPo9ssTwJ35M6cl6
+AlhmH5ZjaFsWxd+D7niu7Vxyyu2G6x7ZjEtHxR2soXrdclRpQazwVBPJvo/5kU+u
+matStPxcUJmx2AwqEsHGrf5tNF55fA==
+=zCsj
+-----END PGP SIGNATURE-----
+
+--Sig_//xfg1wYZ3AWTI/N/W5SjHei--
