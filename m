@@ -2,70 +2,79 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F08AC433FE
-	for <linux-next@archiver.kernel.org>; Tue,  3 May 2022 20:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF9FC433F5
+	for <linux-next@archiver.kernel.org>; Tue,  3 May 2022 21:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234984AbiECUJP (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 3 May 2022 16:09:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37758 "EHLO
+        id S231761AbiECVb0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 3 May 2022 17:31:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237119AbiECUI5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2022 16:08:57 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73CD72DFA;
-        Tue,  3 May 2022 13:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6y73UrLkuBeZbqQWQxE1t7/fvOkdPG7FrQgvW5TbCZk=; b=uV47lbaYCI77SzKFgjANFlLdPi
-        L02iSgJfX9+DktwQKv2+gW04aiFG88sPWwCOpfbWVfsKcu5mcv6/fSFU+nTtYhp4/nG6vb6sK6vO1
-        VuOYw0zbi0N5oB1BXqerDMF7l1psgHzPI174q4fF7eoDfL7w+JUkH5bAerAOHbru+Yd3kpigqC8Qv
-        qaW65HJ2rsoeJpsMNjSwiawKJyE5v7ztmXTNDLnq1z+n3rPjhh/MtEwPoeXxzP0/w7t/fjkR8jMOD
-        yUESiFI99BpsJg2J6h3EUzozTZNBVnIfNljmTXGlRhcUON7mxblWtRdlKKftawmCl9vCGYK6Z3Mag
-        IuaQzkHg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlylv-007UQd-7t; Tue, 03 May 2022 20:05:23 +0000
-Date:   Tue, 3 May 2022 13:05:23 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Bagas Sanjaya <bagasdotme@gmail.com>
-Cc:     linux-doc@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Russ Weight <russell.h.weight@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        with ESMTP id S229451AbiECVb0 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2022 17:31:26 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050674162E;
+        Tue,  3 May 2022 14:27:51 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KtCjb589Xz4xXg;
+        Wed,  4 May 2022 07:27:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1651613267;
+        bh=MlslygHg+ZIm0HDbSi/5ulCiI1C3HY1jnz5QkaqB3i8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ar7XZRr2deUzgEjudZefwQbcenETm2jikNtdIlmwzdFuBeG4/WKOsRDj57bVw6A0q
+         FlvgeyA+2ImdmPnL1joJM213D0fufBZVPgRfAUzy+6xuheey2KutJcMJfEXTwm0KO/
+         7WlJjlCEBuc+DUXfN1ywv8NvwOcxlfzfPPbr1dq1plFTWZbPFZ5wfP8AnSj1q+0OXG
+         8u0HzXhbVVOQRaQeziC5kRYu9230l1m0I/atrue6BsoisoJuAGBHZxMIRB7IgU19da
+         0O6eAkbB99baDO1W6s8TGN4N/k1v/W6D2Cv3rP+GBg+0EDDUnx/6ngOIirRugH0AzY
+         ruiObDLXHS4qA==
+Date:   Wed, 4 May 2022 07:27:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: [PATCH] firmware_loader: describe 'module' parameter of
- firmware_upload_register()
-Message-ID: <YnGLA92KGlloOsLf@bombadil.infradead.org>
-References: <20220502051456.30741-1-bagasdotme@gmail.com>
+Subject: linux-next: Signed-off-by missing for commit in the stm32 tree
+Message-ID: <20220504072746.0f59f2d9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220502051456.30741-1-bagasdotme@gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: multipart/signed; boundary="Sig_/LR6sDwWRFFlp8hfR5pzjMQz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, May 02, 2022 at 12:14:56PM +0700, Bagas Sanjaya wrote:
-> Stephen Rothwell reported kernel-doc warning:
-> 
-> drivers/base/firmware_loader/sysfs_upload.c:285: warning: Function parameter or member 'module' not described in 'firmware_upload_register'
-> 
-> Fix the warning by describing the 'module' parameter.
-> 
-> Fixes: 97730bbb242cde ("firmware_loader: Add firmware-upload support")
-> Link: https://lore.kernel.org/linux-next/20220502083658.266d55f8@canb.auug.org.au/
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Russ Weight <russell.h.weight@intel.com>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+--Sig_/LR6sDwWRFFlp8hfR5pzjMQz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Hi all,
 
-  Luis
+Commit
+
+  ee5596ec15d8 ("dt-bindings: rcc: Add optional external ethernet RX clock =
+properties")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LR6sDwWRFFlp8hfR5pzjMQz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJxnlIACgkQAVBC80lX
+0GwncAf/dmpuimEmXhlqOYlm9viNzHNw4fXvR8usQ8KqSrbrPNHJPtEErfyUuV5b
+91Sy7iOZHQ/lEeSjXClHs1IhpBPWkXJXE74yYM3RFFv40evn0ZR+VBmRpWeACQf3
+ewi4rPZEHJiKCaEnozbbBfPRYHCe+OEeEvgA6xrdGhLEGQlpiqzPXnnAo/cLNNxm
+se3CeZMHGGhpboso7SocupLJILxre1R17fVvoj8wet2kor/8o+UQsUjizYI+OGFS
+nAJFgBb+jLcGBLuNTmOl1+HG+n0TzK3EViVfu6qTXrpF0c+57K09OZir/8GXMQfC
+kBckFaaFml36vGcW9B2s//k2WwlSWw==
+=f0KK
+-----END PGP SIGNATURE-----
+
+--Sig_/LR6sDwWRFFlp8hfR5pzjMQz--
