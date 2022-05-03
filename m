@@ -2,92 +2,115 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860C8C433EF
-	for <linux-next@archiver.kernel.org>; Tue,  3 May 2022 21:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6569C433F5
+	for <linux-next@archiver.kernel.org>; Tue,  3 May 2022 21:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242921AbiECVfo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 3 May 2022 17:35:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50484 "EHLO
+        id S243105AbiECVtt (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 3 May 2022 17:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242923AbiECVfn (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2022 17:35:43 -0400
-X-Greylist: delayed 595 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 May 2022 14:32:09 PDT
-Received: from zeus.flokli.de (mail.zeus.flokli.de [88.198.15.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1012130F50
-        for <linux-next@vger.kernel.org>; Tue,  3 May 2022 14:32:08 -0700 (PDT)
-Received: from localhost (unknown [95.179.247.40])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S243086AbiECVtr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2022 17:49:47 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9F9205DE
+        for <linux-next@vger.kernel.org>; Tue,  3 May 2022 14:46:13 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: flokli@flokli.de)
-        by zeus.flokli.de (Postfix) with ESMTPSA id 751E713053D4;
-        Tue,  3 May 2022 21:22:09 +0000 (UTC)
-Date:   Tue, 3 May 2022 23:22:10 +0200
-From:   Florian Klink <flokli@flokli.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        ValdikSS <iam@valdikss.org.ru>
-Subject: Re: linux-next: Signed-off-by missing for commits in the hid tree
-Message-ID: <20220503212210.mqv3kxderfxesrue@tp.flokli.de>
-References: <20220503073428.219a0ed8@canb.auug.org.au>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KtD6n2SsXz4xXk;
+        Wed,  4 May 2022 07:46:09 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1651614369;
+        bh=pdEtVERhrzQwtlNhiUxoOuddpZbXNyUsbU4ICDk15oU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Hb97MB4YUuHZAtaYRuzhkgDVvfaZg648wYeTKEnPgwUcB7sy0EV0BEua40wbBxqUh
+         Qb8Y9pQ1Agqr+BcE1W2CTLV2r82xrgJpQkmqAnJVVWc85pCaqCCJ0RMzzlG0D/P8HR
+         kTsujBXLJx6QBnGjp39GusBeWjtUHBk7KaPO2pCfJxiSMRoaO6WqU8voY80iuRd5Pf
+         JEf1x8nka+H7kLY4jG/bYxCfusfFZ6aUU/V9pXVU6KZcRJ4jK0xGLPQtXrxoEUGZI2
+         oGQFmqfEq7HI9jXbpYVD2sEC600mb+Wf086kSQk0uLGqZdfAdoX6wY7YYriV3jfiqy
+         lXxaUp7f16p/Q==
+Date:   Wed, 4 May 2022 07:46:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dipen Patel <dipenp@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-next@vger.kernel.org
+Subject: Re: HTE tree for linux-next
+Message-ID: <20220504074608.1ebe2061@canb.auug.org.au>
+In-Reply-To: <YnEmqsfZu7uWsm8s@orome>
+References: <YnEmqsfZu7uWsm8s@orome>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4jchgaoyic3wz72q"
-Content-Disposition: inline
-In-Reply-To: <20220503073428.219a0ed8@canb.auug.org.au>
+Content-Type: multipart/signed; boundary="Sig_/YAgoULOZQAxRWvCW6r1ryM7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+--Sig_/YAgoULOZQAxRWvCW6r1ryM7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---4jchgaoyic3wz72q
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+Hi Thierry,
 
-Hey Stephen,
-
-On 22-05-03 07:34:28, Stephen Rothwell wrote:
->Hi all,
+On Tue, 3 May 2022 14:57:14 +0200 Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
 >
->Commits
->
->  5c9b8fae88bc ("HID: lenovo: Add note about different report numbers")
->  a0a5c2a69699 ("HID: lenovo: Sync Fn-lock state on button press for Compact and TrackPoint II keyboards")
->  24401f291dcc ("HID: lenovo: Add support for ThinkPad TrackPoint Keyboard II")
->
->are missing a Signed-off-by from their author.
->
+> Dipen has been working on a new subsystem for hardware timestamping and
+> Linus Walleij suggested to put it in linux-next to give it a bit of soak
+> time before we propose it for inclusion in mainline.
+>=20
+> To simplify things, I've pushed a branch with the patches to the Tegra
+> repository for now, but longer term the plan is to get Dipen set up with
+> the necessary keys to maintain this in a separate tree.
+>=20
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git#hte/for-ne=
+xt
+>=20
+> Can you add this to the list of trees for linux-next?
 
-Yes, this is "intentional"/expected. See
-https://lore.kernel.org/all/20220121124116.cj6xtxvzw7rbkcs6@tp/.
+Added from today with you and Dipen as contacts.
 
-TL;DR: ValdikSS doesn't want to use a real name, and asked someone else
-to send this over (what I did).
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
- From my email linked there:
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-> It seems the "real name" requirement only applies to the Signed-Off-By
-> (not Author) field, and sending a contribution provided by some other
-> person is covered by (c) in the DCO 1.1.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-Regards,
-Florian
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---4jchgaoyic3wz72q
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YAgoULOZQAxRWvCW6r1ryM7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEdQpT8aoDC+ls4wqU86BgVS9TAioFAmJxnQIACgkQ86BgVS9T
-AioWSQf/VnCCI6BpVnr8UEdcvuhoXUBINxKuXbzd33QwU2nqY4B8zpnrUT4WDgCa
-MYegYkEotroZy9UMWTGHuXYinPAjKIDdQwlbxCeGxpqsdnwATi3d/B3oGZAYDQBj
-OUUQ36bMPWzP9Euv6D/x+ImX+qS5tXeFgiUnT9Kl8qfJTc3cAxL4QHywly+qmxgW
-SziBhbI9kzQpfbfeazZNlxMW8OjUFLcwZKASBfaHn5qZIyDs5SrtV3kmmarNDBWg
-Y7hKjbrMQVSTN9Kj6wi82HrpUqs1uk3fCjfPjDtpw5301g6ErqiBaa3WIxFYcEMc
-RqoDQrIuSXlh37fgB71J5Y7jNzQbew==
-=7cP3
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJxoqAACgkQAVBC80lX
+0GweJgf+PAfWFLx0UDxjWndf+GDMqu57HSAQ+HUSolW5lHrzxfAoVptklYOhuNVS
+zrrtXTSp96VcUGNwW3k9XAnh2rVLm/4iexjqpFI0pi5/1YQwZqRF2IYT8s5qBKvB
+oqX/+bUlTY4LWn4X01W0LFld9ilflrD1ozQBsqdmhmc1Hpb2KWCIx6X2cc8gnByB
+tjdS1JrPwUJ0R/WDn/+vbrC5j6c6CVaM1uSwhRvj8COK7R3DerXX8JDqZwDJ1tyG
+t8XHqy2eqC+wsPe9mJDNbZdjLcqRbk/yq6EUCL7DqeoG5o+GYevrDpX+mIVeBCIQ
+fqAHKwg2M8M6p/3zb+eCzxpWkTOgiw==
+=QoEW
 -----END PGP SIGNATURE-----
 
---4jchgaoyic3wz72q--
+--Sig_/YAgoULOZQAxRWvCW6r1ryM7--
