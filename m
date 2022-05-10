@@ -2,106 +2,100 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25550C433F5
-	for <linux-next@archiver.kernel.org>; Tue, 10 May 2022 14:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 296A6C433F5
+	for <linux-next@archiver.kernel.org>; Tue, 10 May 2022 14:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345255AbiEJOnv (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 10 May 2022 10:43:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58764 "EHLO
+        id S243471AbiEJOop (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 10 May 2022 10:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345761AbiEJOmJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2022 10:42:09 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8D72FBBDA
-        for <linux-next@vger.kernel.org>; Tue, 10 May 2022 06:59:08 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id y21so20137486edo.2
-        for <linux-next@vger.kernel.org>; Tue, 10 May 2022 06:59:08 -0700 (PDT)
+        with ESMTP id S242593AbiEJOoi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2022 10:44:38 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B007140863;
+        Tue, 10 May 2022 07:03:49 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id v65so18606115oig.10;
+        Tue, 10 May 2022 07:03:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=svE7D7raICTcswKmlZyGfw+j5n0q0z/eO2/j4YJcVVE=;
-        b=clYZ3E4PvpwShzWS+GRxHqDLlGwakjZVKIZjvmSaSq5b2DQ3XbXuI4cyHQMt/rkvxY
-         B9mmnwhRmMOgcJxs3bSN4ijt0M8+R1GpNSbuhMokBi9fFy6dz135FUS7fdJDcIS4/uI4
-         2csnOogXyyHMwyTdp70YzxUkRZEkh4OCOG/8cKafwuRA4BceeqLLOHeTMgipUwpTD0Gl
-         p3lsVcwhQNRvrxpSaxe3QxrZcS3L2U47OvrmUv+b5qjE9JmhOteyRNMWU+HVuqCDRLQL
-         d0eQ4XDLPswOvFGVHc6vvIIL0/60PB7/UFzFCyTyewA8tglFrQppwZnIcufd1WKkmeYW
-         NLEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=svE7D7raICTcswKmlZyGfw+j5n0q0z/eO2/j4YJcVVE=;
-        b=0/F/aXlf6ARzDB4+368LZZt5DGdjCcejW8jUeMovA5a+iF5TOx8IFZ2iclcxs6E8BS
-         mvJHY5lFmimJGhzY8rkkZrSrEntEe2FF4Uw+iLN39sRr3Q5JGaDlkM1pilEhBNpABaRl
-         2uD4uU08Ppc5ZudEL2XdUB6/AoKmB6ikaTOyM9ZG0Cw+og+vtRrMHgs3vm6plz51u/7q
-         GElh6VYCxR5rp6QaFVt5ebJt1ORDPso4ML8SDk9OwOFLfI0F9rSF/7NKYCHK3bzF7dra
-         U42MzP7RSXv8QIFcZK5iwrVfqHB9EpeH/dxyMPj7SQ8Kvpm4R+J60YNr7hbJ/J5M80Pj
-         qkUQ==
-X-Gm-Message-State: AOAM532uMpjfcvhrPub2ot0Y1qJmIMB/wL9RnGqkcOKZBEMxxeKXH1+2
-        B1vmf1PXJH8H2OVYgfVdL0aAoQ==
-X-Google-Smtp-Source: ABdhPJwNYcAh0SYi4grd77JDHU1ZiH4pCjfhn2XQt9Yp0qugct3X74wDvVvnd+WAg0WonxkQqGd9dA==
-X-Received: by 2002:aa7:d459:0:b0:427:bd8f:61f8 with SMTP id q25-20020aa7d459000000b00427bd8f61f8mr23743119edr.157.1652191146619;
-        Tue, 10 May 2022 06:59:06 -0700 (PDT)
-Received: from [192.168.0.253] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id z16-20020a170906241000b006fb6d9d25bfsm781919eja.22.2022.05.10.06.59.05
+        bh=U1JMRWz4tHJAu3Gv+myx1Xb+EidiUMO/E1TJfGfSyqA=;
+        b=Z1alJz5Sa7M5Uqz0J+gVmyo+d8QpIIxRXvp4bs6UAiRyQNwddoDzf9GerSP/xf9R81
+         9nXWtFW2oU1UHvitqd0y0OI28JCh2XxMvJN74DlzRAXdtswGGjC39l901et4CPZZwYut
+         Q4UCbX/8nLwSg1EdrdulygB04m2aRymqfBf80ipzz4i51mlsW8QivF7C8haypo2K2YB5
+         X1nD/KIlLXTcbZdGjkQR+y7mlzpqKeM+Gq0sdYbN/Nsk0SD4HuuAc/baRI1sKMtURPjD
+         v+H28kCiK4+l1IkNT6rVB8Ay+xSscmlHnM8MpFEuKq3Txj2KsbX0CTVOUa+gzUpOER0v
+         Bm0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=U1JMRWz4tHJAu3Gv+myx1Xb+EidiUMO/E1TJfGfSyqA=;
+        b=v2awaO2iZIO5zjeRfdxY5xgNjDm+j9yypc/FnWtD/mgThi6AUqlb9wgsu1mRUEsVI9
+         b5FHfwkUxXwNRX878sGCCwt1jd/HqvcpJzoH8UGAwa+C2jsChuYSjs3vSg08ZU8FpxhN
+         opfKal650Bq3zTg0LfR4PHh3ZNefEKyhe4LZA/pHKaE/bEEXIAf/8Eu19HVY+jTqmxN+
+         n8U3G7/q8xqIbnZQVR7EzlCG4oB8zg4SV8D9irui5KIFcZvl/2q704Ud9SLOJbgSp5Fa
+         /TpCcEq5WOYYpLbkXh6+7tfgwgF4oHJgBQgJSDhcxE++zmhcK0DTjMfHGMUTJ5iz1wz6
+         Cxrw==
+X-Gm-Message-State: AOAM533HlPF7MHWcf4/zKi35CLxiuk0duQHzNwvV8ZNrVoKWHvZN6sDk
+        JeX4UUK0OEIOaYIi1b4zXzvEkK0+cpR9Jg==
+X-Google-Smtp-Source: ABdhPJxclQOGuqU3UJlaoL7qGT9UC/IzL0vensrE4bo1vFuZbVt/+Tt8eDidFC3p8hOnhvN7OUDDhQ==
+X-Received: by 2002:a05:6808:219b:b0:326:6a98:468d with SMTP id be27-20020a056808219b00b003266a98468dmr133193oib.32.1652191428830;
+        Tue, 10 May 2022 07:03:48 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j28-20020a056830241c00b0060603221264sm5680108ots.52.2022.05.10.07.03.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 May 2022 06:59:06 -0700 (PDT)
-Message-ID: <5ca7ddc9-dfe6-a897-a0b7-09d04316cf28@linaro.org>
-Date:   Tue, 10 May 2022 15:59:05 +0200
+        Tue, 10 May 2022 07:03:47 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <69d1a3be-1a39-6c92-0db7-7318033e9a52@roeck-us.net>
+Date:   Tue, 10 May 2022 07:03:42 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: linux-next: manual merge of the mvebu tree with the arm-soc tree
+Subject: Re: linux-next: build warning after merge of the hwmon-staging tree
 Content-Language: en-US
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc:     ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20220510094102.099d5e54@canb.auug.org.au>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220510094102.099d5e54@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
+To:     Zev Weiss <zev@bewilderbeest.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20220510201104.06eead74@canb.auug.org.au>
+ <YnpCqh9+koMal9sD@hatter.bewilderbeest.net>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <YnpCqh9+koMal9sD@hatter.bewilderbeest.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 10/05/2022 01:41, Stephen Rothwell wrote:
-> Hi all,
+On 5/10/22 03:47, Zev Weiss wrote:
+> On Tue, May 10, 2022 at 03:11:04AM PDT, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the hwmon-staging tree, today's linux-next build (powerpc
+>> allyesconfig) produced this warning:
+>>
+>> WARNING: unmet direct dependencies detected for SENSORS_NCT6775
+>>    Depends on [n]: HWMON [=y] && !PPC [=y] && (ACPI_WMI [=n] || ACPI_WMI [=n]=n)
+>>    Selected by [y]:
+>>    - SENSORS_NCT6775_I2C [=y] && HWMON [=y] && I2C [=y]
+>>
+>> Probably introduced by commit
+>>
+>>    58f1d9ebfce6 ("hwmon: (nct6775) Add i2c driver")
+>>
 > 
-> Today's linux-next merge of the mvebu tree got a conflict in:
+> Ah -- yes, thanks.  The Kconfig symbols in that patch series underwent
+> some changes between revisions during review and I missed a couple of
+> places that should have been updated.  I believe the patch below should
+> fix it.
 > 
->   arch/arm64/boot/dts/marvell/armada-3720-uDPU.dts
-> 
-> between commit:
-> 
->   2f00bb4a69c7 ("arm64: dts: marvell: align SPI NOR node name with dtschema")
-> 
-> from the arm-soc tree and commit:
-> 
->   5e9b59bd3737 ("arm64: dts: uDPU: update partition table")
-> 
-> from the mvebu tree.
-> 
-> I fixed it up (I just used the former) and can carry the fix as
-> necessary.
 
-Thanks Stephen, that's the correct resolution.
+I squashed the patch below into the patch introducing the i2c driver
+to avoid later bisect issues.
 
-Arnd, Olof,
-
-This conflict will come to you when Gregory sends Marvel SoC pull request.
-
-The correct resolution is to take my commit 2f00bb4a69c7 ("arm64: dts:
-marvell: align SPI NOR node name with dtschema"), so the node name
-should be "flash", not "spi-flash".
-
-Best regards,
-Krzysztof
+Thanks,
+Guenter
