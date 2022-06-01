@@ -2,33 +2,33 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1F5C433EF
-	for <linux-next@archiver.kernel.org>; Wed,  1 Jun 2022 16:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0649C43334
+	for <linux-next@archiver.kernel.org>; Wed,  1 Jun 2022 16:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243343AbiFAQAQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 1 Jun 2022 12:00:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47086 "EHLO
+        id S1349714AbiFAQId (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 1 Jun 2022 12:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355989AbiFAQAO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2022 12:00:14 -0400
+        with ESMTP id S1355979AbiFAQIb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2022 12:08:31 -0400
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DAB05DBEE;
-        Wed,  1 Jun 2022 09:00:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C165F59309;
+        Wed,  1 Jun 2022 09:08:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
         :In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
         Sender:Reply-To:Content-ID:Content-Description;
-        bh=Y4MMjPUMJE17uRA1W8JeqNIa3gV1RDtW27U/YpItROE=; b=PNPjea3Bdl437M1+0zPKZ4cwLN
-        hFYNzny9457JNo5FUnAC5pAYinngm5Tzi532WmplRYl6mclmGlkBTPQV3EWbzjL1lJsdCgFHoFuKE
-        xkLOTIBC7a3cNimiGIlT1XQgleDQ8LF8XeG1gAtwaqa4Iib1MdVEEyvODkxXbwqgTlo6BYnm50u2f
-        T4VZjAUy88+ZiooYd85oj0NRQS8ZrJWdoH3QHSQWCpMEohMg0rVlF13Rh0cfgNc+F58qRHyEGWpcy
-        jNiQZA2jP0hH7K9WKcTKhXLA7jvLD8Jvrqc783shML119GeiVR3I97cMu2AHW7pekIpxw5XCaxa82
-        yN+8YoxA==;
+        bh=tTMeQSlVN/jki7gY30nXBiHUEabl86oFmR3MDB8WTos=; b=kyiJeT+HyMH3qWkHr4M/GNDhVQ
+        he0vs1nHlDJumZTaCqAhyI7XGiLhP5COE+01Z7IJa+HwSy366FQWqStsxj1JqUM1nOswZsj7WWVeI
+        4udEx97HSIXoUBnAgUA5MwNAseseUtVRx+w2cAKqZa+5neeh9UoFA37oFcXJs1Wo4h9wKKPB9KJo1
+        t/Fdq7UooJyG1DN1qOm11lM0GpIH1WuWScjUsUQD6R24cKP2YYp0H/jsz0B1tliYLhv2pX0u2dcpG
+        bB5mNALQC3eacnn7udZ6FPO5djIC58FGvpGACjmtP0Qe6JVqooWssI7hS0A8MX+pqK2iEoAbhqdoi
+        VUq+pJaA==;
 Received: from [2601:1c0:6280:3f0::aa0b]
         by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nwQlH-003pGW-Rj; Wed, 01 Jun 2022 15:59:57 +0000
-Message-ID: <86c1aaa4-df2e-d541-e24e-2d1cc9537500@infradead.org>
-Date:   Wed, 1 Jun 2022 08:59:51 -0700
+        id 1nwQtS-003pQZ-7K; Wed, 01 Jun 2022 16:08:23 +0000
+Message-ID: <b9c831a3-44ab-0374-34f8-8bd8bc311e5c@infradead.org>
+Date:   Wed, 1 Jun 2022 09:08:16 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
@@ -48,7 +48,7 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-
+Hi--
 
 On 5/31/22 23:39, Li Zhengyu wrote:
 > When CONFIG_MODULES is not set/enabled:
@@ -60,14 +60,13 @@ On 5/31/22 23:39, Li Zhengyu wrote:
 > 
 > Replace Elf_Rela by Elf64_Rela to avoid relying on CONFIG_MODULES.
 > 
-> Signed-off-by: Li Zhengyu <lizhengyu3@huawei.com>
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+BTW, does this mean that RISC-V kexec is only available on 64BIT
+and not on 32BIT?
 
 thanks.
 
+> Signed-off-by: Li Zhengyu <lizhengyu3@huawei.com>
 > ---
 >  arch/riscv/kernel/elf_kexec.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
