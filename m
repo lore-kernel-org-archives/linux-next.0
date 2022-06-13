@@ -2,81 +2,82 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA83C433EF
-	for <linux-next@archiver.kernel.org>; Mon, 13 Jun 2022 21:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFA2C433EF
+	for <linux-next@archiver.kernel.org>; Mon, 13 Jun 2022 22:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbiFMVw2 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 13 Jun 2022 17:52:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
+        id S231726AbiFMWP7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 13 Jun 2022 18:15:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232466AbiFMVw1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 13 Jun 2022 17:52:27 -0400
+        with ESMTP id S230494AbiFMWP6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 13 Jun 2022 18:15:58 -0400
 Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF9D38B7;
-        Mon, 13 Jun 2022 14:52:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038642C67F;
+        Mon, 13 Jun 2022 15:15:57 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4LMQK458Gmz4xDK;
-        Tue, 14 Jun 2022 07:52:24 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4LMQrC1q5qz4xYS;
+        Tue, 14 Jun 2022 08:15:55 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1655157144;
-        bh=5HHX31o+k4qbX7zPWevVGl9YIIAqDkOXYpujf8Bm5TE=;
+        s=201702; t=1655158555;
+        bh=CPqoRx6jFf/Uk//ngMt58JurfE00cR2plqehG6AYzk0=;
         h=Date:From:To:Cc:Subject:From;
-        b=q4YVHFFr+Pk7N0kTZ1Q80MFvct+0lCRofI2kdmpiICFDq9ldYlRzfuWF3R3HhdIoq
-         LJgp8GIPyLIWhqG6Op2S+nI34iZovMtFe2/6D2YNZuFfGc0Ws4X89+X/wBdIsHOma9
-         kGs0/L+qWYhKAPOGcpZwLLjQTcehL9EFwL5Oub1goBA0Y8cxdrEmaUx3SfCs/dBxPV
-         5CZBUpGhLvIOlVEu8PwJ4AyAw1o9k1OMTNhiOHC41l5tiRzHDxsjRQ4CZ/7dXvvtVB
-         CmMr26VVni7zgyeH2dPSGDnYEpgJmoal7g0IWZK4G/v3WVydOAn8AYW5HQ0vm13oJm
-         aqoNfUNbOfXKQ==
-Date:   Tue, 14 Jun 2022 07:52:23 +1000
+        b=SJFlxhw46CIu8v+9QZmIlSkwz9Kb1aw18UMKo6V9IBL8L+d9KHB08/QADvbYcGW2l
+         TJQV6qqmYIGe12IThQr3H6HTr7oyt0cmtlUXWMKI2z8Eb7iUFOtCub+qdg/0DrEG0y
+         2roC4giGGWI3et005vAY6wqq9CduhFUc8DU/Lb88uHmfpnfjlabVYspyKHkz0/9C/Z
+         jcc2YxLJYGv2fiOLbb8Kb3UormSa4WWo7PmLp/SHmsMoj6uYmvhoExLoV3S+zRdjST
+         Y1AEuulvfw2Ps6SrK9MJeKLyMnESegSwVXns5kLswb7/qZC3pTNe3ZNUdEZlUYUYE0
+         39Je0amaZWvZA==
+Date:   Tue, 14 Jun 2022 08:15:54 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Jack Qiu <jack.qiu@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: bad commits in the v9fs tree
-Message-ID: <20220614075223.5c2ea764@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the f2fs tree
+Message-ID: <20220614081554.2be34f1a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/r19VvcKNGz6tSEya1Spl+t.";
+Content-Type: multipart/signed; boundary="Sig_/w1k2f2relOWYd8oA5cH+AJo";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/r19VvcKNGz6tSEya1Spl+t.
+--Sig_/w1k2f2relOWYd8oA5cH+AJo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commits
+Commit
 
-  04608d78b66c ("Linux 5.19-rc1")
-  9383b9134c66 ("fix the breakage in close_fd_get_file() calling convention=
-s change")
+  dd43bcc205ab ("f2fs: optimize error handling in redirty_blocks")
 
-look like they were rebased or cherry-picked from Linus' tree.from
-Linus' tree.  From commits f2906aa86338 and 40a1926022d1 respectively.
+is missing a Signed-off-by from its author.
+
+Maybe all patch postings to the linux-f2fs-devel@lists.sourceforge.net
+should have an explicit From: line at the top of the body.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/r19VvcKNGz6tSEya1Spl+t.
+--Sig_/w1k2f2relOWYd8oA5cH+AJo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmKnsZcACgkQAVBC80lX
-0Gw4cAf+OJhmOXRsmX6aEyy/V4av8Dvr3v15X3Tcd3O5yITN+W4isBz+WV9L9VYK
-fQa+j2Y84YIoHxE2WMQTXvplSuvvQKcTeL2Orr0i+A7JGhCQ31xt5UDNKeByOloQ
-ZE3nxjUk5c2lf+E2VdDR7BRksAHvxyF1NaTAmWkcUA3iL+LxA3SRxuapcbQSLLDv
-1jjuTK1px2Llak+se5vGDrAtF8vvCDO55x40Yl3d5g41T846p/XrxsbTbHjkCStw
-OiV4z69Xu7s2/bXoCZKPhgSF2+LiJAX4PspNX4dcqv5MpbI9gDzx4KaxkPsXWI7j
-Tv92ap59mGEDUlj4ZSLZw2QGlvLalQ==
-=uy2D
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmKntxoACgkQAVBC80lX
+0GzeuggAmqpIJ+Fq+YnAvxIQ9dMGGizzicjgQ3StNgOLYZFAB6FEBXx+JJxWrKWB
+03KW44uPpeFxhefd5U42dYXDIW3X9s6dlPvHDM4tBof0R2rwxinnHzjIYWLTixr3
+iSuZSmXj8S1z8ZkwxaPVvtpulY7+xmNE87HDaeMovRcdJTUGEaDjJItyVH+DaaOO
+EquWtDw9R6tnGYHf/pom5CCkfn9zpStRpnFQVZ+s5ahABIEQtjZGW8SXC5EhH44K
+eCHrjM2GYYu/nkyj5mETumz3/PUkLqpH5y98YelA7BNI3tN0HZJtbZsyN6Z29gG+
+0yjhwJlSC4ORp0NEOg6547pbL2cxzQ==
+=1MTK
 -----END PGP SIGNATURE-----
 
---Sig_/r19VvcKNGz6tSEya1Spl+t.--
+--Sig_/w1k2f2relOWYd8oA5cH+AJo--
