@@ -2,49 +2,49 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6C4C43334
-	for <linux-next@archiver.kernel.org>; Wed, 15 Jun 2022 20:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9A9C43334
+	for <linux-next@archiver.kernel.org>; Wed, 15 Jun 2022 20:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231317AbiFOUZe (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 15 Jun 2022 16:25:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49156 "EHLO
+        id S1344540AbiFOU2J (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 15 Jun 2022 16:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233573AbiFOUZd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 15 Jun 2022 16:25:33 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41D850E0D
-        for <linux-next@vger.kernel.org>; Wed, 15 Jun 2022 13:25:31 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id r5so5675816pgr.3
-        for <linux-next@vger.kernel.org>; Wed, 15 Jun 2022 13:25:31 -0700 (PDT)
+        with ESMTP id S1344979AbiFOU2I (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 15 Jun 2022 16:28:08 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30962A24F
+        for <linux-next@vger.kernel.org>; Wed, 15 Jun 2022 13:28:01 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id v17-20020a17090a899100b001ead067eaf9so3255699pjn.0
+        for <linux-next@vger.kernel.org>; Wed, 15 Jun 2022 13:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=fSbaUdWMc4ZCN4x6T7HO7Oazr6+FjS4D1nOKI+4v+qI=;
-        b=eoBnV1ab6mcOB4xykNYFQaZW+Qi3dcgSQdsqak3tENQPcuOUClkzPwbUWUNWFP+QVK
-         bQwrpLsOSl1k9EqZEIsTmvr6JEEssRSqiHDlJNMXVJ30VXU0dndaTEks0xtZFx1PwQpi
-         jGw5dC7e0N7xdUVRy+kS0fs6FXid54A1kOOiE=
+        bh=yMCklTCfBEfu1+s01fVuvmfQuZAk4CVG1//MJ4TRqY8=;
+        b=V9exO7kqwC3fJwLiBdLMNh7e2NTzSQPXYlgtV/Gr15Ud7DWzNv4ABtfWWzkYx6I0d0
+         jAE87FSYs1r/hE1VEXszBB3otRDLkzTSY2oD5gVjSL+dr+xqDOWYRbrI8Mza3mLBu9xS
+         i1W019LbMw4Eqn/kHzng56gm7n//xzDVnp5qI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=fSbaUdWMc4ZCN4x6T7HO7Oazr6+FjS4D1nOKI+4v+qI=;
-        b=ai1jbXxzaHFDK7WbWHkd99Iuyk1ulTlGh2htwWkrkKK8UAjmr+kbrsdOwG2djKUxI4
-         344s3dGfvfrlQItbleuTd4kKH8mMlhkfEnEALVsSgiU8WTu9DmJbqx6lPrL6RaXfZ13o
-         Lyh8xFsNo4Cn6Opal+E9olvNIvawHdaUUX95UNpgwaSsbIaWnE38LrOXDotseIuQ+7se
-         2WIoXgRWNDoyj4IxqdWwf5p0tmuT+8qR7gmqealUdkWGvXweqsbbxhPuQ3dO44pZsw/D
-         9pmBt1YRbFOdIVElkhUKbBiNNHRz/pwBfzeq+Np0FA1MJsqYKWYmDiEN4abhkNa7Ge16
-         XQDA==
-X-Gm-Message-State: AJIora+aLH/8K4YkeEwnzdM2CThMp8hDXEaxhpb+hq99P2BOFA76y3K+
-        14cvbzqGHXHyUKsV5skB/Kx9pA==
-X-Google-Smtp-Source: AGRyM1tESwgbtAytnIPSYcv5RqPofftOKrovVEa2JmH58Vpoe8CgFFE/Ium5XvKSgg8sm3hMrzT/lg==
-X-Received: by 2002:a63:135b:0:b0:3fd:876c:975a with SMTP id 27-20020a63135b000000b003fd876c975amr1347239pgt.538.1655324731197;
-        Wed, 15 Jun 2022 13:25:31 -0700 (PDT)
+        bh=yMCklTCfBEfu1+s01fVuvmfQuZAk4CVG1//MJ4TRqY8=;
+        b=huW1R5jr5zPE2Z6kNbzBRcv9ISDtjUhU8v9yjIqIpXoIb3uDn8S20huKelK8quIb/t
+         de7yXSMt3q48vmxNsxMCCU3zV6S+gPSI6L9ktO9Wy5kSZw9liJMZS1znycCyEdqvOL5u
+         4jt/7Qr04kYtboj+59/TW3JhhUDc4CfBLdXrfjt0vA0M5IJ3ZIuJnJKseECbLCWDd0WL
+         DOf+1qLb5veV0gpvDXepRVGghYYP7euwtzRQwvsiNqXp2DLsj8DmxWx/9D/lsdEiaxf0
+         m8QnjiLcGu83aR1DB/dbCFjh8nHWdN6ZebBmXfPkRD6EjlDFXLC+n6CcY1se9Yw0xVMx
+         rEvg==
+X-Gm-Message-State: AJIora9jWSrG7/ux9wmwt4OeS8scZ2vy46b4Ycwsg7FEyEZwdqGFvhvP
+        SnaukcbRS2s8oeFv6aHgRZ7ceg==
+X-Google-Smtp-Source: AGRyM1uu5Dj1T24l5+1U0VQ9oLk+j18+zuRzHRA+X9Uf9ODZyTJweqIyHMLMG/GPb6MqP4jTJFW+aw==
+X-Received: by 2002:a17:90b:4ac1:b0:1e6:7c82:9aee with SMTP id mh1-20020a17090b4ac100b001e67c829aeemr12042611pjb.234.1655324881349;
+        Wed, 15 Jun 2022 13:28:01 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b13-20020a1709027e0d00b00163aba9a2a5sm40235plm.106.2022.06.15.13.25.30
+        by smtp.gmail.com with ESMTPSA id x15-20020a63b34f000000b003fe28130b12sm10146453pgt.62.2022.06.15.13.28.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 13:25:30 -0700 (PDT)
-Date:   Wed, 15 Jun 2022 13:25:30 -0700
+        Wed, 15 Jun 2022 13:28:01 -0700 (PDT)
+Date:   Wed, 15 Jun 2022 13:28:00 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Nathan Chancellor <nathan@kernel.org>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
@@ -53,7 +53,7 @@ Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Sami Tolvanen <samitolvanen@google.com>, llvm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Subject: Re: Contextual conflict between kspp and rcu trees
-Message-ID: <202206151323.4D78044D8@keescook>
+Message-ID: <202206151326.E34CDE453@keescook>
 References: <Yqo5SequJuC2qX6S@dev-arch.thelio-3990X>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -64,31 +64,6 @@ List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
 On Wed, Jun 15, 2022 at 12:55:53PM -0700, Nathan Chancellor wrote:
-> Hi Stephen et al.,
-> 
-> There is a contextual conflict between commit e1d337335207 ("cfi: Fix
-> __cfi_slowpath_diag RCU usage with cpuidle") in the kspp tree and commit
-> dcc0c11aa87b ("rcu/context-tracking: Remove rcu_irq_enter/exit()") in
-> the rcu tree, which is visible when building ARCH=arm64 defconfig +
-> CONFIG_LTO_CLANG_THIN=y + CONFIG_CFI_CLANG=y with clang:
-> 
->   kernel/cfi.c:298:3: error: call to undeclared function 'rcu_irq_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->                   rcu_irq_enter();
->                   ^
->   kernel/cfi.c:298:3: note: did you mean 'ct_irq_enter'?
->   ./include/linux/context_tracking_irq.h:6:6: note: 'ct_irq_enter' declared here
->   void ct_irq_enter(void);
->        ^
->   kernel/cfi.c:307:3: error: call to undeclared function 'rcu_irq_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->                   rcu_irq_exit();
->                   ^
->   kernel/cfi.c:307:3: note: did you mean 'ct_irq_exit'?
->   ./include/linux/context_tracking_irq.h:7:6: note: 'ct_irq_exit' declared here
->   void ct_irq_exit(void);
->        ^
->   2 errors generated.
-> 
-> 
 > Per the above RCU commit and commit 6c5218715286 ("context_tracking:
 > Take IRQ eqs entrypoints over RCU"), it appears that the following diff
 > is the proper fix up. Would you mind applying it to the merge of
@@ -96,8 +71,9 @@ On Wed, Jun 15, 2022 at 12:55:53PM -0700, Nathan Chancellor wrote:
 > but it would not be a bad idea for Sami and Frederic to verify that it
 > is correct so that Kees/Paul can mention it to Linus :)
 
-Ah! Thanks for tracking this down! Maybe dcc0c11aa87b should be updated
-to leave an alias until the next merge window?
+Actually, the CFI fix (and a few others) are meant to be sent for
+-rc3, so if the ct_irq_enter() change is in -next, this can maybe get
+sorted out?
 
 -- 
 Kees Cook
