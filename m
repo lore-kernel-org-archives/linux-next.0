@@ -2,62 +2,57 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D18A3C433EF
-	for <linux-next@archiver.kernel.org>; Thu,  7 Jul 2022 16:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F86C43334
+	for <linux-next@archiver.kernel.org>; Thu,  7 Jul 2022 16:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236037AbiGGQLk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 7 Jul 2022 12:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
+        id S235996AbiGGQV4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 7 Jul 2022 12:21:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236049AbiGGQL0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2022 12:11:26 -0400
-X-Greylist: delayed 215 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Jul 2022 09:10:18 PDT
+        with ESMTP id S235976AbiGGQVz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2022 12:21:55 -0400
 Received: from sender-of-o53.zoho.in (sender-of-o53.zoho.in [103.117.158.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 154345A2FA;
-        Thu,  7 Jul 2022 09:10:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1657210195; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C7C27B08
+        for <linux-next@vger.kernel.org>; Thu,  7 Jul 2022 09:21:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1657209967; cv=none; 
         d=zohomail.in; s=zohoarc; 
-        b=CObAYOgV35zS3R3raTi9n7O2w4JBuhywsZufHhPEXbI/jSD4RTAuLy+/Vfl5GRP0q1ytOpwkkOEmjbry4VW07WXY12fxsv7DVWUpgtLxDe/yDg6ep0bHwS15+xHzrVHpGorg1j1/nidh8xxbkDYkizeAVockPjYICOGPyBDmfXs=
+        b=ajmrtNb+aAAH0PerbDvalHj+zAqt6OQ7qHTE5aoNT180K/9GCYjFuyBT3qNgL3PtlSL5UCnOEWOsnfU5ZgVWFND9BLC/LoZRhe3Spxrx40FmmAxsvNTcUsrUm2B/0onZfcTr84YD7SiPFNYY0Jm/zNEFUR/TxdlOJq/AuKKcYkw=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1657210195; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=/gSZARatcisMo59OnwdFpAj4ZMFOcjkUzgk7epbNE2I=; 
-        b=YEQfHYVWOE8HiZJ5VL/3uz12OOaJbTbnjOcwoalVovhSVT01lQypYcoGuh6Qbd/Yd5EqHOUNtXmY9fyZhBi/JYveo1m0mTQIQhWv+rHsrqoFi59PrlhgbHnOgDsFQlqOQjQ40t5vqEa17+Hb9g+NlwwxlHNhFNIjbK1f20LwctU=
+        t=1657209967; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=+eQqgz8qWKtIP9TBIA7Um8SNanpPTx4XyuYdwKxD60M=; 
+        b=GIRCrebO+4YsJCYuIrJJKUIEIEYSvfTpg4YdV0O80ZziaijSSrnCiI+hjGm/K2T/l9dEaurcNnTjByBBVCU9AlxGiO2/wKscyANUbFfnGsIFGPMG5GoDh0pwh+Xa2gyBi+Lurgd9IfE+gMYw1DuNCvJlQKILt5R+pkNqKb+jsWw=
 ARC-Authentication-Results: i=1; mx.zohomail.in;
         dkim=pass  header.i=siddh.me;
         spf=pass  smtp.mailfrom=code@siddh.me;
         dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1657210195;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1657209967;
         s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=/gSZARatcisMo59OnwdFpAj4ZMFOcjkUzgk7epbNE2I=;
-        b=TauEg0PanYubxQhxt4GXU5UYGMq+WoavDW/9QtyYudro4Px0WKAC5LYy+QetPazG
-        pf+G7dybsIfARRSzh4+D5F49N3aJv0bTvoh7TSMdV5fYWHDXMapIuUKbM3JiQB/Acqf
-        +BBEJP+erB7b25gSfUHcW7SjP2Q14r0MRhR3Vso0=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1657210184231166.44837593893465; Thu, 7 Jul 2022 21:39:44 +0530 (IST)
-Date:   Thu, 07 Jul 2022 21:39:44 +0530
+        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+        bh=+eQqgz8qWKtIP9TBIA7Um8SNanpPTx4XyuYdwKxD60M=;
+        b=YlRccmHs/gYXMcKcuHKxkZSL+by/K19C6xMNfjaWGjXVKvU6Kbll84LvysTm40Xf
+        F3ZfW1AbhTQjXmF+tehwYTLB+SSijmTR0Indt2zhsvDW0+BwGQ0jAKuysge779WhwEX
+        HYvt5LgENVZp4ooMvRucOlJo5maIhlbwesFNZgCM=
+Received: from localhost.localdomain (103.249.233.159 [103.249.233.159]) by mx.zoho.in
+        with SMTPS id 1657209966196325.0145447766257; Thu, 7 Jul 2022 21:36:06 +0530 (IST)
 From:   Siddh Raman Pant <code@siddh.me>
-To:     "syzbot" <syzbot+fe013f55a2814a9e8cfd@syzkaller.appspotmail.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "linux-mtd" <linux-mtd@lists.infradead.org>,
-        "linux-next" <linux-next@vger.kernel.org>,
-        "miquel.raynal" <miquel.raynal@bootlin.com>,
-        "richard" <richard@nod.at>, "sfr" <sfr@canb.auug.org.au>,
-        "syzkaller-bugs" <syzkaller-bugs@googlegroups.com>,
-        "vigneshr" <vigneshr@ti.com>
-Message-ID: <181d96ca20b.6fc4a90525206.7370482761379113134@siddh.me>
-In-Reply-To: <0000000000005fcfa605e339458c@google.com>
-References: <0000000000005fcfa605e339458c@google.com>
-Subject: Re: [syzbot] linux-next boot error: general protection fault in
- add_mtd_device
+To:     syzbot+fe013f55a2814a9e8cfd@syzkaller.appspotmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-next@vger.kernel.org, miquel.raynal@bootlin.com,
+        richard@nod.at, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com, vigneshr@ti.com
+Message-ID: <20220707160545.7731-1-code@siddh.me>
+Subject: Re: [syzbot] linux-next boot error: general protection fault in add_mtd_device
+Date:   Thu,  7 Jul 2022 21:35:45 +0530
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <00000000000040624a05e2a6f2db@google.com>
+References: <00000000000040624a05e2a6f2db@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+#syz test linux-next master
+
