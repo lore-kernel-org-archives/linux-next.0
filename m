@@ -2,228 +2,88 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C588C433EF
-	for <linux-next@archiver.kernel.org>; Sat, 16 Jul 2022 05:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E877C433EF
+	for <linux-next@archiver.kernel.org>; Sun, 17 Jul 2022 03:27:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiGPFdz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 16 Jul 2022 01:33:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53462 "EHLO
+        id S232163AbiGQD1j (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 16 Jul 2022 23:27:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiGPFdy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2022 01:33:54 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB508AE49
-        for <linux-next@vger.kernel.org>; Fri, 15 Jul 2022 22:33:51 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id v7so6340059pfb.0
-        for <linux-next@vger.kernel.org>; Fri, 15 Jul 2022 22:33:51 -0700 (PDT)
+        with ESMTP id S229678AbiGQD1h (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2022 23:27:37 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E3FA14D20;
+        Sat, 16 Jul 2022 20:27:36 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id j12so6325338plj.8;
+        Sat, 16 Jul 2022 20:27:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=WoeyufOymv3rDh4ZpxmLjUwGCbuTEOO2c7PjryyNoG0=;
-        b=XvxKrj5ahTyUlG2AXoqEpeacf1YEv4dxQorf9lIA2AZwmTr/WqVi8TyREbzChzp/xL
-         TBQe9jWaFbbcSWGkS0NfaHQ8/DWlKD6mQAYEEvQIEgBBtakf11p7hOZRKFmJKK5O1M48
-         x6BwH2NCM8ah9znoLA4C74tuoAky+LTee9DRGry8pAc38vw6xGm6JAZm69GqddLORTew
-         FNDrKZhGIoNVkp+FJLeZ9sa6ykcw1E+qsdE+QQeiPdwTFm3PzbM3VE4bIgRgjUeRnOpd
-         7Bnbmev6bWie2S9ijgVuKmAdkExAFlytt9AesyQVERBK4eliissSPOH/xlMfhGgoOIYv
-         lIfQ==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=NBRPKTA2TVmxc9QPQeqKJ56d/+3FAMBPvBKl+2Xs87o=;
+        b=aeXw4SZLmPAh+BWFYg7vSBTNkt+8maz/6V3+YAO+hcXWkEOJjpRfQJ3Q0juzXIuajq
+         YD5nxyfB2HWlT4KxcYITS+Rg5HA6Qbj77YlkF2CF9+r2+fGBMQKXi0/YtHI69fKsjCJE
+         0KiqAmash26aKDdg6NOltfT19D69Vl9ncSJviqoFAHsvuG1tSXx7aHSQfhJbDSSmfaoE
+         gcX5sJgXry1gg6nlX/UJ6vuVjFT+pArs+WoybBE//rJhCPZK4X+Q807yujgtwQ7hrx/4
+         SU8KNOC6StbEMkUWPRVACPWEcTP16gJfqzDdLq3LYZCBAiBK3wwuxpS91qFXsHleBZ1o
+         KzgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=WoeyufOymv3rDh4ZpxmLjUwGCbuTEOO2c7PjryyNoG0=;
-        b=y7nqOONOy3BDABKSd1xzfv7pmyR6RcX3COp73ZB6C/upWQIblzbmFZTAVoys2hZWny
-         L5r1Lf5qJUndPJKY+u/XLMVFD8ZVtJazVB060NMvkDV2/BGtYCpT1OczbKBpWEr7q0re
-         gFtubQBeocA9/vwrAW/qEunznH0IpSK7ITID4T8JHqptrTCkjz1WMlTDQToP2IciTs5y
-         ux0GBxAcLk+KLRjSHACZaluywoXVXjkcwnmcNiw3cpcb7z8Hzh1VNNNokBSrr+g6pUqV
-         yIpmu0bWaJsEta+j1bR7kIY0x/YCBp9MwMtD6kJV+OHUXgh1TZgjokHpDZ0Ncyo6wdW3
-         U03w==
-X-Gm-Message-State: AJIora9PYpMVFtoXY7wVEd0m1ZY0MhUqAV/HvRP9oWZrbX0qu+VhP/wi
-        n+koHQQTSCDGyuOJqhZscJZV7klKSJN7EMy1
-X-Google-Smtp-Source: AGRyM1s3PYon87V6ZIQRe8edUrsZeZ3eT3aeOsHW9J2UdrXJpupQUKzwrZmeDkHDLshL46ulpAu2/g==
-X-Received: by 2002:a63:688a:0:b0:412:6728:4bf3 with SMTP id d132-20020a63688a000000b0041267284bf3mr15632697pgc.339.1657949631209;
-        Fri, 15 Jul 2022 22:33:51 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id z16-20020aa79490000000b0052512fdaa43sm4819982pfk.163.2022.07.15.22.33.50
-        for <linux-next@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=NBRPKTA2TVmxc9QPQeqKJ56d/+3FAMBPvBKl+2Xs87o=;
+        b=atgnSk3BE+TU+nbE4FDsayiVomWRW254a5o2dq1ZfPVDEaJ4srrx0y6YDLx7oEZ3GR
+         Pq7C7S+sAzHpTJ9V3mU9254DqYH9twhPLcugqF+Cnjv+zzPOwgLN8wi1VYMQfg2Ef9n4
+         Hze6J/K4Ppn64EL3aBtjvdFkKR4z+3njwvUAsYGWhnKFB7oBshqMxiUUU0bUzL9nGaxq
+         b9PC5+OFXx3Fn1HGz0u3o8em680pLZbU2/7JUnyyz1S+QtHRqq4UKyaIh9Wn4oj2FI+5
+         kUInSpCM4E9VsETdvUwQmPR1P2YVb9v3khJr0iD+taZpfp8TvzcE4q/hdUoWHh33Vrzj
+         BVEA==
+X-Gm-Message-State: AJIora/9G8wcUl1HcsLQMFNrMcvvVGHT4yHGjIJUDYn54GjLgXkRgcpY
+        22iIKBNgbwno1rDIway2JxudkmaLaXI=
+X-Google-Smtp-Source: AGRyM1uDCrblu7+K6IRjnfP1hNo16ztJa/KIdjyX64EOFy+HLILXk7X3BywAviUKC4BK9zFOCDJj+A==
+X-Received: by 2002:a17:90b:3811:b0:1ef:d704:24cf with SMTP id mq17-20020a17090b381100b001efd70424cfmr24460035pjb.14.1658028455563;
+        Sat, 16 Jul 2022 20:27:35 -0700 (PDT)
+Received: from debian.me (subs09a-223-255-225-66.three.co.id. [223.255.225.66])
+        by smtp.gmail.com with ESMTPSA id k6-20020aa79986000000b00528c22038f5sm6833189pfh.14.2022.07.16.20.27.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jul 2022 22:33:50 -0700 (PDT)
-Message-ID: <62d24dbe.1c69fb81.35425.7f89@mx.google.com>
-Date:   Fri, 15 Jul 2022 22:33:50 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 16 Jul 2022 20:27:35 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 5E20F10008F; Sun, 17 Jul 2022 10:27:30 +0700 (WIB)
+Date:   Sun, 17 Jul 2022 10:27:30 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: next-20220715 build fail due to 579b9239c1f386 (powerpc,
+ ps3_defconfig, GCC 12.1.0)
+Message-ID: <YtOBoh6MEtJmJ+g5@debian.me>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: next-20220715
-X-Kernelci-Branch: master
-X-Kernelci-Tree: next
-Subject: next/master build: 14 builds: 2 failed, 12 passed, 2 errors,
- 10 warnings (next-20220715)
-To:     linux-next@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/master build: 14 builds: 2 failed, 12 passed, 2 errors, 10 warnings (n=
-ext-20220715)
+Hi everyone,
 
-Full Build Summary: https://kernelci.org/build/next/branch/master/kernel/ne=
-xt-20220715/
+I built next-20220715 tree, using powerpc64-unknown-linux-gnu-gcc
+(GCC 12.1.0) and ps3_defconfig. The build errored on W=1 build
+(-Werror=missing-prototypes):
 
-Tree: next
-Branch: master
-Git Describe: next-20220715
-Git Commit: 6014cfa5bf32cf8c5c58b3cfd5ee0e1542c8a825
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-Built: 3 unique architectures
+  CC      arch/powerpc/mm/book3s64/pgtable.o
+  CC      arch/powerpc/kernel/process.o
+arch/powerpc/mm/book3s64/pgtable.c:478:5: error: no previous prototype for 'pmd_move_must_withdraw' [-Werror=missing-prototypes]
+  478 | int pmd_move_must_withdraw(struct spinlock *new_pmd_ptl,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
-Build Failures Detected:
+The errored line is introduced by commit 579b9239c1f386 ("powerpc/radix: Fix
+kernel crash with mremap()")
 
-arm:
-    cros://chromeos-5.10/armel/chromiumos-arm.flavour.config: (clang-13) FA=
-IL
-    cros://chromeos-5.10/armel/chromiumos-rockchip.flavour.config: (clang-1=
-3) FAIL
+Looking at the commit, it seems like GCC didn't see the prototype which had
+already been given, or am I missing something?
 
-Errors and Warnings Detected:
+Thanks.
 
-arm64:
-
-arm:
-    cros://chromeos-5.10/armel/chromiumos-arm.flavour.config (clang-13): 1 =
-error, 5 warnings
-    cros://chromeos-5.10/armel/chromiumos-rockchip.flavour.config (clang-13=
-): 1 error, 5 warnings
-
-x86_64:
-
-Errors summary:
-
-    2    lib/maple_tree.c:4292:20: error: stack frame size (1096) exceeds l=
-imit (1024) in function 'mas_wr_modify' [-Werror,-Wframe-larger-than]
-
-Warnings summary:
-
-    10   clang: warning: argument unused during compilation: '-march=3Darmv=
-7-a' [-Wunused-command-line-argument]
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/arm64/chromiumos-arm64.flavour.config (arm64, clang-13=
-) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/arm64/chromiumos-arm64.flavour.config+arm64-chromebook=
- (arm64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mismatch=
-es
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/arm64/chromiumos-mediatek.flavour.config+arm64-chromeb=
-ook (arm64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section misma=
-tches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/arm64/chromiumos-qualcomm.flavour.config+arm64-chromeb=
-ook (arm64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section misma=
-tches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/arm64/chromiumos-rockchip64.flavour.config+arm64-chrom=
-ebook (arm64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mis=
-matches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/armel/chromiumos-arm.flavour.config (arm, clang-13) =
-=E2=80=94 FAIL, 1 error, 5 warnings, 0 section mismatches
-
-Errors:
-    lib/maple_tree.c:4292:20: error: stack frame size (1096) exceeds limit =
-(1024) in function 'mas_wr_modify' [-Werror,-Wframe-larger-than]
-
-Warnings:
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/armel/chromiumos-rockchip.flavour.config (arm, clang-1=
-3) =E2=80=94 FAIL, 1 error, 5 warnings, 0 section mismatches
-
-Errors:
-    lib/maple_tree.c:4292:20: error: stack frame size (1096) exceeds limit =
-(1024) in function 'mas_wr_modify' [-Werror,-Wframe-larger-than]
-
-Warnings:
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-    clang: warning: argument unused during compilation: '-march=3Darmv7-a' =
-[-Wunused-command-line-argument]
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/x86_64/chromeos-amd-stoneyridge.flavour.config+x86-chr=
-omebook (x86_64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/x86_64/chromeos-intel-denverton.flavour.config+x86-chr=
-omebook (x86_64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/x86_64/chromeos-intel-pineview.flavour.config+x86-chro=
-mebook (x86_64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/x86_64/chromiumos-x86_64.flavour.config (x86_64, clang=
--13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cros://chromeos-5.10/x86_64/chromiumos-x86_64.flavour.config+x86-chromebook=
- (x86_64, clang-13) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mismatc=
-hes
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, clang-13) =E2=80=94 PASS, 0 errors, 0 wa=
-rnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook (x86_64, clang-13) =E2=80=94 PASS, 0 errors=
-, 0 warnings, 0 section mismatches
-
----
-For more info write to <info@kernelci.org>
+-- 
+An old man doll... just what I always wanted! - Clara
