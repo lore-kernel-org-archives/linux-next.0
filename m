@@ -2,51 +2,50 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443C7C43334
-	for <linux-next@archiver.kernel.org>; Wed, 20 Jul 2022 13:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAEBC43334
+	for <linux-next@archiver.kernel.org>; Wed, 20 Jul 2022 13:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240836AbiGTNMr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 20 Jul 2022 09:12:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42092 "EHLO
+        id S229554AbiGTNRD (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 20 Jul 2022 09:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236361AbiGTNMl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2022 09:12:41 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3827C5A46E;
-        Wed, 20 Jul 2022 06:12:38 -0700 (PDT)
+        with ESMTP id S230018AbiGTNRD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2022 09:17:03 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227FB43E5D;
+        Wed, 20 Jul 2022 06:17:02 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Lnx2F2KxSz4xG2;
-        Wed, 20 Jul 2022 23:12:36 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Lnx7J0g2Dz4xFy;
+        Wed, 20 Jul 2022 23:17:00 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1658322757;
-        bh=UgcaYd52fK9rxL9lClImIpu0JM8bSZKpwP4533wob6s=;
+        s=201702; t=1658323020;
+        bh=bi0g3gigB7KEiM3FxbXUu3NzA7MS0+rAKkrOWm1pVGE=;
         h=Date:From:To:Cc:Subject:From;
-        b=K3efgTV4RjUXtVxV7I4HTb0JpRvWfmRWMgF0o+JnWa7WMw2vSjP93oshdj/zaRuSS
-         pFQxvNIv6nmWKR4oFOg25Obdf3v2WVVAgE2igNQVent7WiSrR4nhhQ0IZYtnBJ5ASO
-         Z5kuiKfZ/eplAUlj+1xBuxeYvS7mP76hTQdNugiJ2kPV3d9jjUS1lT0y/T8HD7p2lX
-         EPF3gHnsSDARV0qMVv3sHX3qbweVahDMiwOotUWdfoQNKhNxpz7R9xX86urhMx68ja
-         ruT4AKeCBXO6gOewUR6wIo9DeKTS8m3+U2Oj4owlD/G/i7HiOmfmuEmxrvvcma1Pt6
-         LCkF2+J/G0eSg==
-Date:   Wed, 20 Jul 2022 23:12:34 +1000
+        b=djdjsDhYBciTgaN2LBK5i5shrChjpNk4+//IHAiu0b+snb4OR5/SDj4g/7Nq8mtui
+         SjO6TPwoF7GGGHUbUptfhgInlRJnzDAOjBYXriT2QKs4vGQyc3qHGwN8QZyTRZ4Qml
+         LBhoJgQu4aHYqqyWXf9nr4CiXh3dS1BUKMLlpvYjYweE5N3Qc4dRrp6OjR/PkdOA7P
+         YzBIUDkOU8bB6OW+QpHt9gJEUg0CEdS14Fkn35m3VPf2UiSh5j3RyNChLb6lzcdOMN
+         xAmHxwRc8n2E5Jq9rswuSLVhYkpr8Kd8tqDdmWHuCKLuFjtPOyE222Zk/ISgDDdTDY
+         ZM56FGkLYv/YQ==
+Date:   Wed, 20 Jul 2022 23:16:59 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>, Song Liu <song@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the arm64 tree
-Message-ID: <20220720231234.71813cff@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the block tree
+Message-ID: <20220720231659.5187722d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ePAZfnM7yWnX5H8yTzoEVOz";
+Content-Type: multipart/signed; boundary="Sig_/A3vXLXau1KbtTOAO6_OA8D0";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ePAZfnM7yWnX5H8yTzoEVOz
+--Sig_/A3vXLXau1KbtTOAO6_OA8D0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -54,7 +53,7 @@ Hi all,
 
 Commit
 
-  c2cbc16df707 ("arm64: fix KASAN_INLINE")
+  32389bb813f9 ("md: stop using for_each_mddev in md_notify_reboot")
 
 is missing a Signed-off-by from its author.
 
@@ -62,20 +61,20 @@ is missing a Signed-off-by from its author.
 Cheers,
 Stephen Rothwell
 
---Sig_/ePAZfnM7yWnX5H8yTzoEVOz
+--Sig_/A3vXLXau1KbtTOAO6_OA8D0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmLX/0MACgkQAVBC80lX
-0Gw8kQf6A66uQc3ZoA6SuxypHAOXTon6FX+dozBhtqu32o3kfB9NzPJBjX4viVN8
-MuWcGEpsmwGwKXr7ETEqEf3dM0xRpDG4Xk04K0blERmRZe9xtVg5X1K9DrhwgLgC
-qCBu1TNKsbEi9wpwg86wGE+2iJylOnMTKqyGkQU/Nb0HtCbxd0geu0Q3VRZPMl+q
-DG9pwG6Wg4Ux5YHzOge6YguiwsaZ0Gauiiqj3yHROZVJiKQ4elOSnKDrhP6zGWiP
-cljWI0IlLsV+bttc0hWeyvdTrWjSTtqbdwRN6PB3gCM18p/j8slCmu//1xS0Ep3v
-sTQfgH5J/BIFlHmryEC83k+d0YML0w==
-=C0Fk
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmLYAEsACgkQAVBC80lX
+0GytlQf9GyfnI+BCSrkPvuexJT/UnpSDGB5MB/49vcg1rEzbn19mNUosgR42iUWe
+1I4tvdeIrxDnfvUYx01iFlwfvptK+i5jDFT738XAl+ehn12FGcEL/YhCsSPJq+1f
+rLxMk6vVIPidUfnGzHKSvjDGdkUksOMTx4373QIBF4yeUEY+ZFoSR9Tud2QMN7gf
+5DFKlpFck0xNQJIRKTWMuISflmScN6nSzev+IhS9JIzHVVccR1QRKGYpKAyglK96
+NP98Hc+VjUIbqXxh7soYAqAWuwUkC1zw5/VC4b5wmy9WqmP8TF0Pmf3FgDDvVtmt
+36xykupxJfzIQX4IgzniZ4JA700l7g==
+=+4wd
 -----END PGP SIGNATURE-----
 
---Sig_/ePAZfnM7yWnX5H8yTzoEVOz--
+--Sig_/A3vXLXau1KbtTOAO6_OA8D0--
