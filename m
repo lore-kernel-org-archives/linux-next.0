@@ -2,82 +2,86 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0305C43334
-	for <linux-next@archiver.kernel.org>; Mon, 25 Jul 2022 11:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7302CC433EF
+	for <linux-next@archiver.kernel.org>; Mon, 25 Jul 2022 11:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231723AbiGYLnk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 25 Jul 2022 07:43:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41572 "EHLO
+        id S230032AbiGYLu5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 25 Jul 2022 07:50:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbiGYLnk (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2022 07:43:40 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49602AE49;
-        Mon, 25 Jul 2022 04:43:39 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4LryqF5dZDz4x1c;
-        Mon, 25 Jul 2022 21:43:37 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1658749417;
-        bh=oNsR/iRPF8Qj28zfvZsfPnf3s9VgSDaqUV71drIQG64=;
-        h=Date:From:To:Cc:Subject:From;
-        b=K3f400Cq/iHQ3B5KMFjaTYA69wU1HDekP77Q798gN05WOOjk8MnounvTrvk7fZANb
-         9+YHQmBbEjRFEV/3vFnLiO/G0T9KZy5phEQSwjtNt1jzG0bVjKyCwHS8cnz3O65P3M
-         H7wKFiw2Wab4XaPrFYP6LAZJQnbcPwN789lp91uuCZ8kdRGBC7Mhg4DEDbf79DyapI
-         +ZWJA6P/u6RuvSN4kCejsYyRuJMZ6UKuZCCdtArQNUuVbBBS+yYXLKQBF4LMXU5G+l
-         EZcf0yBNbtZdWcqBvoNQlS1ZY2Hij3M96r5NiOJ9ORdrLghMywcxZAfxqU6jVHAAB6
-         ZzIl26XhsU7ww==
-Date:   Mon, 25 Jul 2022 21:43:36 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+        with ESMTP id S230246AbiGYLu5 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2022 07:50:57 -0400
+X-Greylist: delayed 2402 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 25 Jul 2022 04:50:55 PDT
+Received: from 5.mo561.mail-out.ovh.net (5.mo561.mail-out.ovh.net [87.98.178.36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C5F383
+        for <linux-next@vger.kernel.org>; Mon, 25 Jul 2022 04:50:54 -0700 (PDT)
+Received: from player687.ha.ovh.net (unknown [10.108.4.72])
+        by mo561.mail-out.ovh.net (Postfix) with ESMTP id 5AFC524142
+        for <linux-next@vger.kernel.org>; Mon, 25 Jul 2022 10:33:54 +0000 (UTC)
+Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player687.ha.ovh.net (Postfix) with ESMTPSA id 4FFA92CE895EB;
+        Mon, 25 Jul 2022 10:33:49 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-108S002738e379f-7450-47b0-8359-6da69f772e69,
+                    4E37C95A03F31501693E8CB0BA0B4A523DB5F384) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp: 194.187.74.233
+Message-ID: <df8f4765-a804-cb50-bbb5-475925ba2036@milecki.pl>
+Date:   Mon, 25 Jul 2022 12:33:48 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101
+ Thunderbird/96.0
+Subject: Re: linux-next: build warnings after merge of the broadcom tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Florian Fainelli <f.fainelli@gmail.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the hid tree
-Message-ID: <20220725214336.6ffc050a@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=Q_cUMPkaqnT9bB7dEWKc7m";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20220725095913.31e859ec@canb.auug.org.au>
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+In-Reply-To: <20220725095913.31e859ec@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 8183603476842064765
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrvddtkedgvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpedtgeetheeutddvudekuddtkeetveehteegleehffetkeehjeetfffgveegkeefueenucfkpheptddrtddrtddrtddpudelgedrudekjedrjeegrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrheikeejrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedu
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/=Q_cUMPkaqnT9bB7dEWKc7m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On 25.07.2022 01:59, Stephen Rothwell wrote:
+> After merging the broadcom tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
+> 
+> arch/arm/boot/dts/bcm5301x.dtsi:240.21-246.5: Warning (pci_bridge): /axi@18000000/pcie@12000: missing ranges for PCI bridge (or not a bridge)
+> arch/arm/boot/dts/bcm5301x.dtsi:248.21-254.5: Warning (pci_bridge): /axi@18000000/pcie@13000: missing ranges for PCI bridge (or not a bridge)
+> arch/arm/boot/dts/bcm5301x.dtsi:256.21-262.5: Warning (pci_bridge): /axi@18000000/pcie@14000: missing ranges for PCI bridge (or not a bridge)
 
-Commit
+This is expected. My commit ef126d3f58d25 ("ARM: dts: BCM5301X: Add
+basic PCI controller properties") reduced following warnings:
 
-  7af32d156ad7 ("Revert "HID: nintendo: Fix unused-const-variable compiler =
-warning"")
+arch/arm/boot/dts/bcm47081-buffalo-wzr-600dhp2.dtb: pcie@12000: 'device_type' is a required property
+         From schema: /lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
+arch/arm/boot/dts/bcm47081-buffalo-wzr-600dhp2.dtb: pcie@12000: 'ranges' is a required property
+         From schema: /lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
+arch/arm/boot/dts/bcm47081-buffalo-wzr-600dhp2.dtb: pcie@12000: '#address-cells' is a required property
+         From schema: /lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
+arch/arm/boot/dts/bcm47081-buffalo-wzr-600dhp2.dtb: pcie@12000: '#size-cells' is a required property
+         From schema: /lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
 
-is missing a Signed-off-by from its author and committer.
 
-Reverts are commits as well.
+down to this one:
 
---=20
-Cheers,
-Stephen Rothwell
+arch/arm/boot/dts/bcm47081-buffalo-wzr-600dhp2.dtb: pcie@12000: 'ranges' is a required property
+         From schema: /lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
 
---Sig_/=Q_cUMPkaqnT9bB7dEWKc7m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+and basically does the right thing (adds required properties).
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmLegegACgkQAVBC80lX
-0GzWrQgAmXaISJRtpoaR3CRxpySFySXDDlwtyFIeImQIgLLH51japMgsydd7Ggut
-SSpiT6aEsUpzFU5Lor+c5prROVekQbglKFwtv2CQ1Tn3bMXXQGskXL4oJwcfw7XB
-cTZRUg/m+ExULTgJ2SpyuZCKTHthcv4N6NHnwh7HLeUbv/Q47P1pqQG2m/zBGHx0
-tNs61ttfv5NqY7yu4b1wARX8P8VvnjBmAouNC3MOj8k+OAm2BKRfGS+XyXyPUMBd
-ZL1JZ2dZP8Tr8K55jZqgB/3vEHc0y/dqQPucHE86sNiwfc5hKnWstCmVPP5uCEbZ
-4I0q2sSwgulc4sjB3pGgdhINylRfjw==
-=OlB7
------END PGP SIGNATURE-----
 
---Sig_/=Q_cUMPkaqnT9bB7dEWKc7m--
+I'm fully aware "ranges" need to be added (it's mentioned in the commit)
+and it's one of next things on my BCM5301X list.
+
+So while my commits triggers that problem it also reduces warnings so
+I'd say it's acceptable.
