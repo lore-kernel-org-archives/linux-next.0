@@ -2,148 +2,112 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF08C04A68
-	for <linux-next@archiver.kernel.org>; Thu, 28 Jul 2022 03:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561DCC04A68
+	for <linux-next@archiver.kernel.org>; Thu, 28 Jul 2022 05:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234586AbiG1Deb (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 27 Jul 2022 23:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48418 "EHLO
+        id S231166AbiG1FfG (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 28 Jul 2022 01:35:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbiG1De0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Jul 2022 23:34:26 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6EB5C340;
-        Wed, 27 Jul 2022 20:34:23 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id ha11so820505pjb.2;
-        Wed, 27 Jul 2022 20:34:23 -0700 (PDT)
+        with ESMTP id S229538AbiG1FfF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2022 01:35:05 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5192F5465D
+        for <linux-next@vger.kernel.org>; Wed, 27 Jul 2022 22:35:03 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id oy13so1301301ejb.1
+        for <linux-next@vger.kernel.org>; Wed, 27 Jul 2022 22:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=j10ToGanO3cd/vYuHa5Kn8foeTs8uMlyZtELPg2UY1U=;
-        b=ZCpCWijzlJKFs64G+1k7Jl5GKh6G4zOE6ybwGhhR/exQ9bGqHu5jiznO5HvWlqa/rJ
-         6blTRDDSiBqKmbeZa1uCPh2Nyo9/0lSgoBae4muND+4qWPGNamj5AmdAYBJUEm7SGqbw
-         HXf6QFOrlDBQfF0eLDtdaVtzxe79XUj6OMXvc70gPfydf9HkHcRXdr6fvkFRltTf5//h
-         6Fy6RAqzfsW2N7ZbZKzdwib5zi2mCAOr5ScVrstEYPdirvZgJ8zOFm9HKdRn/Y5LPWwJ
-         ZY60cdEvLCP8iXWLUhJQo99JJiatYHysQCuaGzKDYXD6AMFLvjVx1VTyMSLscmEAgq2B
-         xtsg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sbR9raOV1zF+9/IjbCz4W1LZZHaNay6Pd9Un1mvpRiU=;
+        b=rToq43S7L9MRXvydWLR5igo2zcboAd2C5cejRmQzNE3woT9iU24zx/9sZzHmIRxMyk
+         bN7Az7+7dzs2RFq1JnDFGXDJQ4Z1KcHW97f8gQ3lrGMmEFy3EYSoLkMYa2ium8DGGySo
+         MNNxnDYP7eEfVdDM03cv4NZc31uetlrKx7lDz5KcvKty+B5OE2x6HeLR2olOms0hB+Fi
+         Bu02efRuP/LCFkVmfy5yVz+tyiChYa34rNQRBOx5dclMSwXpaL280kCG2kBskohwKOxn
+         GU1qdiwfHqg61iIB6FZt7l7Z+vZDBMeHFy1yhVX0Ic82+64qZ1I9RQ2fq6eRwtk0uSqG
+         2BLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=j10ToGanO3cd/vYuHa5Kn8foeTs8uMlyZtELPg2UY1U=;
-        b=3dLL3LT2qKsh8dbz4Bx4kgWtoBbBlMC6LVGI3xXskWibh6XCSGPyuGySavy565uRXE
-         N0jObY7l9dbf70Zn3zjpy9VfmvG6sei46CJ9nhIgmdbRrtUxtIt0WPAyDSANFEicoLbC
-         r9Akq1d9C55tSWBuO/qLd73TWyFWGK+ScZGff2mlDZPCpZElTS/jR9vGsMtyy8xTrDwy
-         Fi9wBGe1payuBtHLM0y652fEVT8MDqfp7DdE/W8cynjCVi4XrxZrJaXditXGBlBlgFr4
-         RwGhFiWA83Nte7GKnjmPfzIF7BWFiOxhS27M6mnhLxh0v6qenthx5M04/e+ld+UrZSY3
-         5+cA==
-X-Gm-Message-State: AJIora/UMYlmY4NBEjWpdw8lPgGbHY69mATFZqdWVGakJyWk6aFTVtTA
-        2F4NRNdyYo4GYunhmFD63oA=
-X-Google-Smtp-Source: AGRyM1stnTgNjHqQvTX8yokSMFJC+fEv40VFSklSquPlJzshMGe0L5wVcYIHWCUudBsD3zBQBgCCow==
-X-Received: by 2002:a17:902:d54f:b0:16d:3bce:c40e with SMTP id z15-20020a170902d54f00b0016d3bcec40emr24861840plf.87.1658979262545;
-        Wed, 27 Jul 2022 20:34:22 -0700 (PDT)
-Received: from debian.me (subs28-116-206-12-54.three.co.id. [116.206.12.54])
-        by smtp.gmail.com with ESMTPSA id m17-20020a170902db1100b0016d33b8a231sm8418629plx.270.2022.07.27.20.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jul 2022 20:34:21 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id 5F5C7104A8C; Thu, 28 Jul 2022 10:34:16 +0700 (WIB)
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     linux-doc@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-doc-tw-discuss@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH 2/3] Documentation: use different label names for each arch's elf_hwcaps.rst
-Date:   Thu, 28 Jul 2022 10:33:32 +0700
-Message-Id: <20220728033332.27836-3-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220727220050.549db613@canb.auug.org.au>
-References: <20220727220050.549db613@canb.auug.org.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sbR9raOV1zF+9/IjbCz4W1LZZHaNay6Pd9Un1mvpRiU=;
+        b=Go323rAS9ajj4fyerVLes/lnhjU5fZRsJ9pSxl7JxwGoBFoxmj0VUjQJ//+NMdazgg
+         Sg+MYqAUTt3X3ZLOi+3fB7r6iF6x1eqQKholmqYz60e1lyT+PQ6vBOGs986Ita+E4ubU
+         uR8KNjyN61De/UaQiDZOTY4QuzTyulTcWmDN3IXyroYqiKXnb/5moSbeOImC/wBPFdNS
+         qcMo3boNImcU3s84oSzzmGPp2UMdaIGldBCJ6dGmkqZTG9OD0rtC9Dc7XzJg5T7D+1Ne
+         FDDtojdJ6MU7zjxGQGB8DiJF8QGxT0kUmzetzvbobTCXMS2Z+2rwNBcO+CpJkOCSD1ub
+         pS2g==
+X-Gm-Message-State: AJIora+aAs6L7jrHik8CHCHywVhiuoKYbty4J6G5VPBhtL8Qcnzdzpo/
+        JrAuKD8CXVTBG0WVAJ14a5pOwg/7sLWBausZChu+lQ==
+X-Google-Smtp-Source: AGRyM1sAlC/g2qMEZqaOZnp+L70k1DPQR5wX7uHWbhD+3nSoTyyN1BhOU3xKKS7zIwCMQxeAjd5T75k5nbC7zhZkjes=
+X-Received: by 2002:a17:907:7294:b0:72b:1ae:9c47 with SMTP id
+ dt20-20020a170907729400b0072b01ae9c47mr19979458ejc.253.1658986501786; Wed, 27
+ Jul 2022 22:35:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CA+G9fYt_cc5SiNv1Vbse=HYY_+uc+9OYPZuJ-x59bROSaLN6fw@mail.gmail.com>
+ <CAGETcx8bGwDkPP=d2MtcY69YmTyckUSa8xAwNVOPOyTR8jPk=A@mail.gmail.com>
+In-Reply-To: <CAGETcx8bGwDkPP=d2MtcY69YmTyckUSa8xAwNVOPOyTR8jPk=A@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 28 Jul 2022 11:04:49 +0530
+Message-ID: <CA+G9fYv0DFZi2rMPQTHvK8yD7g0LZTxN76iKZxP4pi4+8Rstxg@mail.gmail.com>
+Subject: Re: [next] arm: PM: domains: Delete usage of driver_deferred_probe_check_state()
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Sphinx reported duplicate label warning:
+Hi Saravana,
 
-WARNING: duplicate label elf_hwcaps_index, other instance in Documentation/arm64/elf_hwcaps.rst
+On Thu, 28 Jul 2022 at 00:19, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Tue, Jul 26, 2022 at 11:44 PM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
+> >
+> > Linux next arm BeagleBoard x15 device boot failed due to the
+>
+> Can you point me to the dts file that corresponds to this board
+> please? And if you know which devices are power domains, that'd be
+> handy too. For now, I'm reverting this patch.
+metadata:
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: 9250d2f72dc46a808b6aa23bf50dd670f1f52ddc
+  git_describe: v5.19-rc7-13490-g9250d2f72dc4
+  git_ref: master
+  kernel_version: 5.19.0-rc8
+  kernel-config: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH/config
+  artifact-location: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH
+  toolchain: gcc-10
 
-The warning is caused by elf_hwcaps_index label name is already used for
-arm64 documentation, whileas powerpc use the same name.
+I am sharing a few urls, metadata, test job link and device details link.
 
-Disambiguate the label name for each architecture's documentation. While
-at it, also adjust original reference in translated documentation.
+      kernel:
+        url: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH/zImage
+      dtb:
+        url: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH/dtbs/am57xx-beagle-x15.dtb
+      modules:
+        url: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH/modules.tar.xz
 
-Link: https://lore.kernel.org/linuxppc-dev/20220727220050.549db613@canb.auug.org.au/
-Fixes: 3df1ff42e69e91 ("powerpc: add documentation for HWCAPs")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/arm64/elf_hwcaps.rst                    | 2 +-
- Documentation/powerpc/elf_hwcaps.rst                  | 2 +-
- Documentation/translations/zh_CN/arm64/elf_hwcaps.rst | 2 +-
- Documentation/translations/zh_TW/arm64/elf_hwcaps.rst | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Test jobs url:
+       - https://lkft.validation.linaro.org/scheduler/job/5326314#L1982
 
-diff --git a/Documentation/arm64/elf_hwcaps.rst b/Documentation/arm64/elf_hwcaps.rst
-index 3d116fb536c538..63b75080ec4544 100644
---- a/Documentation/arm64/elf_hwcaps.rst
-+++ b/Documentation/arm64/elf_hwcaps.rst
-@@ -1,4 +1,4 @@
--.. _elf_hwcaps_index:
-+.. _elf_hwcaps_arm64:
- 
- ================
- ARM64 ELF hwcaps
-diff --git a/Documentation/powerpc/elf_hwcaps.rst b/Documentation/powerpc/elf_hwcaps.rst
-index bb7438cebf36e8..3366e5b18e6759 100644
---- a/Documentation/powerpc/elf_hwcaps.rst
-+++ b/Documentation/powerpc/elf_hwcaps.rst
-@@ -1,4 +1,4 @@
--.. _elf_hwcaps_index:
-+.. _elf_hwcaps_powerpc:
- 
- ==================
- POWERPC ELF HWCAPs
-diff --git a/Documentation/translations/zh_CN/arm64/elf_hwcaps.rst b/Documentation/translations/zh_CN/arm64/elf_hwcaps.rst
-index 9aa4637eac979c..39a94ff5383c01 100644
---- a/Documentation/translations/zh_CN/arm64/elf_hwcaps.rst
-+++ b/Documentation/translations/zh_CN/arm64/elf_hwcaps.rst
-@@ -1,6 +1,6 @@
- .. include:: ../disclaimer-zh_CN.rst
- 
--:Original: :ref:`Documentation/arm64/elf_hwcaps.rst <elf_hwcaps_index>`
-+:Original: :ref:`Documentation/arm64/elf_hwcaps.rst <elf_hwcaps_arm64>`
- 
- Translator: Bailu Lin <bailu.lin@vivo.com>
- 
-diff --git a/Documentation/translations/zh_TW/arm64/elf_hwcaps.rst b/Documentation/translations/zh_TW/arm64/elf_hwcaps.rst
-index 3eb1c623ce31b0..76164d851d0b5e 100644
---- a/Documentation/translations/zh_TW/arm64/elf_hwcaps.rst
-+++ b/Documentation/translations/zh_TW/arm64/elf_hwcaps.rst
-@@ -2,7 +2,7 @@
- 
- .. include:: ../disclaimer-zh_TW.rst
- 
--:Original: :ref:`Documentation/arm64/elf_hwcaps.rst <elf_hwcaps_index>`
-+:Original: :ref:`Documentation/arm64/elf_hwcaps.rst <elf_hwcaps_arm64>`
- 
- Translator: Bailu Lin <bailu.lin@vivo.com>
-             Hu Haowen <src.res@email.cn>
--- 
-An old man doll... just what I always wanted! - Clara
+Device details link,
+      - https://www.ti.com/tool/BEAGLEBOARD-X15
 
+metadata:
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: 9250d2f72dc46a808b6aa23bf50dd670f1f52ddc
+  git_describe: v5.19-rc7-13490-g9250d2f72dc4
+  git_ref: master
+  kernel_version: 5.19.0-rc8
+  kernel-config: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH/config
+  artifact-location: https://builds.tuxbuild.com/2CWh3jswUGEkjvfXQPGXdOceMFH
+  toolchain: gcc-10
+
+- Naresh
