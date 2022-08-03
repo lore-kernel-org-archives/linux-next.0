@@ -2,106 +2,112 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E69EC19F28
-	for <linux-next@archiver.kernel.org>; Wed,  3 Aug 2022 13:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC092C19F28
+	for <linux-next@archiver.kernel.org>; Wed,  3 Aug 2022 14:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237124AbiHCNYU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 3 Aug 2022 09:24:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44974 "EHLO
+        id S236517AbiHCOOc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 3 Aug 2022 10:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236318AbiHCNYU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Aug 2022 09:24:20 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB7B63E6
-        for <linux-next@vger.kernel.org>; Wed,  3 Aug 2022 06:24:19 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id v3so20652637wrp.0
-        for <linux-next@vger.kernel.org>; Wed, 03 Aug 2022 06:24:19 -0700 (PDT)
+        with ESMTP id S234733AbiHCOOb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Aug 2022 10:14:31 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467C411C12
+        for <linux-next@vger.kernel.org>; Wed,  3 Aug 2022 07:14:30 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id b12so7822534ils.9
+        for <linux-next@vger.kernel.org>; Wed, 03 Aug 2022 07:14:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=85Z5S1iN+/J1slaGRiTGkYvAQoX6IpH8OXS3rjHMVr4=;
-        b=MyrqTM91dzwYerfXrXZ/cXTOA1Z6HQOjjV8VJEraHmsYJfXe5LAu3ZQiwW4O7//Rdc
-         6A81gMe6090bd8c/kjGWwuuQGFe3R2Wx69tvbxcv7TF+nRUD0kfDrAvNnNrOoFayoCp5
-         U/e6b0zQ8t5pY85hbndFtK1TgsJQe/ceeWPDm41jZBSO66k0J/iRsNUdCDvDZsSfOiBA
-         Wn+xCWEwRISv5m+CtYPXB2V7j83+iEJtFHjINrn27oacTn41IRi9eoc7rF7JOxTMFryu
-         PTHXHeElBwjdB2pbXW5KCRXP2+OKTL9cPA46bqF2SOgjrk//n39z7xXAVZzJXJa+AWGF
-         bImw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=coSWDI5TPd206clMrpDHmTCH9S1/Zas/lvnlK0aNvZE=;
+        b=tmoJe5DcfLGdmWoMUbd50bNL+RfThJhg1Y3Q6ryxOIOH5QQirM7YLK9GQfjlx6jbFr
+         HNI4AdwMwK8oHwtxdIpZrl8/T8BAuc/m8UHGo+Uh22X2JfpvTBO3ouj5VDkdHrErk+mO
+         wUBvYaegHJg8eKr7jzu1sIAcEZF5x+CTlvWB14BNAtGZBeSSi1QNt7qqQM9nL0DH7Qf9
+         iWNOp/mMntG0vi5XdaWqIyE+KjfUiIg7xu9lUr4ctjNrqN1HtjU4OWwwg8nNHAmQkRKi
+         iCXvqEY3mdk2ddOo6GLflSCZji2Ys15gAqdLIyKg6MzMBQeAsPtU+GDOkrtvZDaQsPHx
+         oMbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=85Z5S1iN+/J1slaGRiTGkYvAQoX6IpH8OXS3rjHMVr4=;
-        b=JmemvZtPBXWZ98Q2RSdWeyCtUmqZXhaWZp94XeIYpm7+QwSHsgfBSUgo8mCWS4BUnR
-         Mh+BrRZzlBx8GI/Ien28U6hqIsVUdQmY1looAauoFCFERGXg5GLIzIqpEizJ+GIf1V60
-         3gAvgcKKvtsZCDc13WKFa7CHxYe3LBmRpjcqyS23pCS196kgYv/+VHLYDs7OXgXARt3i
-         5p+JMHOHbZjm7YnddkFPy9ITJaDFol4JlO2s91q7XES/5sZh5IrPyrfe4BXggZpat1yS
-         P0KModSbfTq0+ev9ipm5h4A5Ez+sbarRyUU4u2bQGFyKVsk16CNyWCAuFt7r2pkhjwMf
-         njwg==
-X-Gm-Message-State: ACgBeo3/Nc1XsbqXiaT4z09QJUPNGmMkmHe0L3IK6huuvaB06+FEcE1q
-        AsqLtdNxNyxQ85EOrPbV6mo5YQ==
-X-Google-Smtp-Source: AA6agR6SQuP403ZTGG7r8Fx2umHGu27U/OGO7H74VcE3w2OyPAkTBdWf1PbUbtghqBO32EAYSOKbXw==
-X-Received: by 2002:a05:6000:170b:b0:220:6535:26d8 with SMTP id n11-20020a056000170b00b00220653526d8mr8570089wrc.577.1659533057704;
-        Wed, 03 Aug 2022 06:24:17 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:6e48:fbdd:280d:6dac? ([2a05:6e02:1041:c10:6e48:fbdd:280d:6dac])
-        by smtp.googlemail.com with ESMTPSA id a1-20020adfe5c1000000b0021e491fd250sm12232819wrn.89.2022.08.03.06.24.16
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=coSWDI5TPd206clMrpDHmTCH9S1/Zas/lvnlK0aNvZE=;
+        b=zIzrnnWX+GSd07VZL89AdJ7mlyUQ2eny/ObFylkem4wp2ySNM/WTkKzqBzWB8O16Ry
+         lzqEkWN2gQdBH0F0hmFB+pVog+X11GRA141uB+PSDdNGcNRaqWt3XRCVNRDovWfcGzDs
+         p1scgdmazIzgyfnFdMWRF5elLp1E9hlr0UBhVAeH8106EVn15+ffAwYJASPhRGKBeH6j
+         ZU2rsoVMf+Myfj43oQhySQC/cwoks9BetrJpGh0jzYf5bULihO9aY+HE5Xokh5G9+CeW
+         mehfJeI4DZHY36IXjcYUMDEvA6OmlWSSAkX5TXR4YMTBxwRwwZLHB1e0I5+eln47S7+B
+         R6Pg==
+X-Gm-Message-State: AJIora/miL8ma8CSooEo8S6bw+8r0M3EK829vYRc0etFPO1luHTC2Qld
+        YtdZP3MPWHClARoZK6Q8OyVVYmtKveKWyQ==
+X-Google-Smtp-Source: AGRyM1sJ2DZdUFuDRvolZP2VpM79J+5a4bsqB7qAIkfSlUYfimdhUQGByoup9L5s4uyBDetZw9f+mQ==
+X-Received: by 2002:a05:6e02:13c5:b0:2de:25c1:242 with SMTP id v5-20020a056e0213c500b002de25c10242mr9990149ilj.283.1659536069471;
+        Wed, 03 Aug 2022 07:14:29 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id v18-20020a02b912000000b0034264f6a809sm249856jan.14.2022.08.03.07.14.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Aug 2022 06:24:17 -0700 (PDT)
-Message-ID: <17261234-9a06-bc12-b188-0fc8e90b3c23@linaro.org>
-Date:   Wed, 3 Aug 2022 15:24:16 +0200
+        Wed, 03 Aug 2022 07:14:28 -0700 (PDT)
+Message-ID: <6e61b631-fea0-7152-1e24-4f67cfd33f48@kernel.dk>
+Date:   Wed, 3 Aug 2022 08:14:27 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: linux-next: build failure after merge of the thermal tree
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: linux-next: manual merge of the vfs tree with the origin tree
 Content-Language: en-US
-To:     broonie@kernel.org, Zhang Rui <rui.zhang@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     broonie@kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20220803130500.223005-1-broonie@kernel.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20220803130500.223005-1-broonie@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220803121815.54438-1-broonie@kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220803121815.54438-1-broonie@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 03/08/2022 15:05, broonie@kernel.org wrote:
+On 8/3/22 6:18 AM, broonie@kernel.org wrote:
 > Hi all,
 > 
-> After merging the thermal tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> Today's linux-next merge of the vfs tree got a conflict in:
 > 
-> /tmp/next/build/drivers/iio/adc/sun4i-gpadc-iio.c: In function 'sun4i_gpadc_probe':
-> /tmp/next/build/drivers/iio/adc/sun4i-gpadc-iio.c:640:44: error: passing argument 1 of 'thermal_of_zone_register' from incompatible pointer type [-Werror=incompatible-pointer-types]
->    640 |   info->tzd = thermal_of_zone_register(info->sensor_device,
->        |                                        ~~~~^~~~~~~~~~~~~~~
->        |                                            |
->        |                                            struct device *
-> In file included from /tmp/next/build/drivers/iio/adc/sun4i-gpadc-iio.c:31:
-> /tmp/next/build/include/linux/thermal.h:301:29: note: expected 'struct device_node *' but argument is of type 'struct device *'
->    301 | struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
->        |                             ^~~~~~~~~~~~~~~~~~~~~~~~
-> /tmp/next/build/drivers/iio/adc/sun4i-gpadc-iio.c: In function 'sun4i_gpadc_remove':
-> /tmp/next/build/drivers/iio/adc/sun4i-gpadc-iio.c:684:2: error: implicit declaration of function 'thermal_zone_of_sensor_unregister'; did you mean 'thermal_zone_device_unregister'? [-Werror=implicit-function-declaration]
->    684 |  thermal_zone_of_sensor_unregister(info->sensor_device, info->tzd);
->        |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->        |  thermal_zone_device_unregister
-> cc1: all warnings being treated as errors
+>   fs/io_uring.c
 > 
-> Caused by commit
+> between commit:
 > 
->     990ee4496499ef61c06bbf ("iio/drivers/sun4i_gpadc: Switch to new of thermal API")
+>   ed29b0b4fd835 ("io_uring: move to separate directory")
+> 
+> from the origin tree and commit:
+> 
+>   164f4064ca81e ("keep iocb_flags() result cached in struct file")
+> 
+> from the vfs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 2b784795103cc..b20ba87e4926f 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -661,7 +661,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+>  	if (!io_req_ffs_set(req))
+>  		req->flags |= io_file_get_flags(file) << REQ_F_SUPPORT_NOWAIT_BIT;
+>  
+> -	kiocb->ki_flags = iocb_flags(file);
+> +	kiocb->ki_flags = file->f_iocb_flags;
+>  	ret = kiocb_set_rw_flags(kiocb, rw->flags);
+>  	if (unlikely(ret))
+>  		return ret;
 
-Fixed and linux-next branch updated
-
-
+That's the right resolution, mentioned that in my pull request as well.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Jens Axboe
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
