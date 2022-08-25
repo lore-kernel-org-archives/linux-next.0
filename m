@@ -2,82 +2,89 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D174BC04AA5
-	for <linux-next@archiver.kernel.org>; Thu, 25 Aug 2022 12:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2473AECAA27
+	for <linux-next@archiver.kernel.org>; Thu, 25 Aug 2022 17:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235195AbiHYMDO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 25 Aug 2022 08:03:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41626 "EHLO
+        id S242791AbiHYRmO (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 Aug 2022 13:42:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234778AbiHYMDN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2022 08:03:13 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6601F80F41
-        for <linux-next@vger.kernel.org>; Thu, 25 Aug 2022 05:03:12 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id y3so12705881ejc.1
-        for <linux-next@vger.kernel.org>; Thu, 25 Aug 2022 05:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=RamDCEaIXyiXm4WM32o+F3fWmNmvLw/8sbPKL5+G2Rg=;
-        b=mjUFxyOYKahYZ1YokYcS9/JWT/bVnPFgRpU5ux2g/FsNjtjJOlvcL2J1FU1DhWMqAd
-         K739WMS7wbee5N+upICA4QNuNzRvtL7YnWPaRVPYFkpcvS+2JclXDZekLZp+Lxlt19Rt
-         cZAe2BmqoDFJ97TPoWBYLt0XhPzw46l6lxcWiqJo78LYYtBA8RVx6fgnvSqtbhOxrGwm
-         sNzRaKObuEtIEE7hiXI+wO4a2otdahZg0eafhXUdytkmPEbtrxuptuiyicscuYqOVG+x
-         CG1GDJwVnEN+vXsugUzz9j9k3H5s4JAtHNjQMlVV0jZL+V3oWwKeAf+EI+87CS08OaaQ
-         gSDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=RamDCEaIXyiXm4WM32o+F3fWmNmvLw/8sbPKL5+G2Rg=;
-        b=OrYGKzOa+V+0rOnXpgfDp+JP7FXAlBEHhBsWQ6HQgJnJnTdj6fh+XzxhnuACuu7OLy
-         2tloDGBJLCRoRoyoHiPZSU5SQShK0O6owaHUvcJVT77AKhlZjse7FXEzx/aP4wQ0vxWD
-         P0rj/X4DbT1FEaulH0Jhf7DKRVT1TZAw3Q7eIaSSK4ap0QZP1pm2BNpOfX9Xx1+7p6n/
-         sG7H10F178rRS9xhD//xqIQOCDuyImUQrVHWeZUwcVytJHe9bqi7gmsh5teayGbOUZiK
-         sNi6sxlp6C24ooiNSuSvX2Xb0eXJNe0jGxfUAhAgkMwoJAER98OPILMG2JCqSVHkQMEY
-         JYKQ==
-X-Gm-Message-State: ACgBeo3JSdgvVvezEZTDwxYnfics23UxQgkEetCpc4xpeO9p4/G9S2Ou
-        MYIBZG66nFmaoHZlEx+Q4pMiagC/Fokj6yr62OnYWA==
-X-Google-Smtp-Source: AA6agR7LTpZVv3rPaiNB0JxqigRBk7MQBLLYjvHtD2V3JZjR2I725zkwq4l2Da1yoAIiTKYsAU9mae+WaFReWV+bf1c=
-X-Received: by 2002:a17:907:6d93:b0:73d:8593:9608 with SMTP id
- sb19-20020a1709076d9300b0073d85939608mr2332160ejc.203.1661428990978; Thu, 25
- Aug 2022 05:03:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220823075314.63d0a03c@canb.auug.org.au>
-In-Reply-To: <20220823075314.63d0a03c@canb.auug.org.au>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 25 Aug 2022 14:02:59 +0200
-Message-ID: <CACRpkda4jL8vH5ZRQgp+CgsokLB0+r9dRW2jXY-OK2frp0PWaA@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     =?UTF-8?B?Sm/Do28gSC4gU3BpZXM=?= <jhlspies@gmail.com>,
+        with ESMTP id S234681AbiHYRmN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2022 13:42:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE44B2D9E;
+        Thu, 25 Aug 2022 10:42:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B1D92B82A68;
+        Thu, 25 Aug 2022 17:42:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E607C433C1;
+        Thu, 25 Aug 2022 17:42:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661449329;
+        bh=w857NjmZvn15PF0UZAGRqvuU5wVMAAdo1gnTqJ7Yi4w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qU0rnAnuAnH9bxn1gEwWsMcPXK5ez7TiLi22yFvOmtIqE5w+j7wt81NPs4bqgFJ3u
+         0oJ+NDqTVLAdbjjxWF6qQ06pGsM/PuXFhHYV5UyDgAZ6ZA0h/I2RRDJqZSPcUuNMmy
+         +RvTBk6VwWuKo4OAw8/0b2+JZnv1G8LZjTrgmrAW3muFEb9YncoJo1r08qaKyXBjCf
+         xQeWYfDZ8ytZGauhjSawjYcHv2BQatl77q3oBsNlH2saUFurp9XgcbQoF3dLQbb0Ob
+         HrRL1kQPz7MT3UJUTHNsRywx4TP5jShjmjWvQFxJE1NPXZphYtqAk2g6tg7jYB/NhP
+         s4/rDNnZsqL/g==
+Date:   Thu, 25 Aug 2022 10:42:08 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "=?UTF-8?B?aW1hZ2Vkb25n?=(=?UTF-8?B?6JGj5qKm6b6Z?=)" 
+        <imagedong@tencent.com>, linux-doc@vger.kernel.org
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Linux Next Mailing List" <linux-next@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [Internet]linux-next: build warning after merge of the net-next
+ tree
+Message-ID: <20220825104208.592a2df2@kernel.org>
+In-Reply-To: <07263247-4906-4A72-A1A2-CAB41F115EB7@tencent.com>
+References: <20220825154105.534d78ab@canb.auug.org.au>
+        <07263247-4906-4A72-A1A2-CAB41F115EB7@tencent.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, Aug 22, 2022 at 11:53 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 25 Aug 2022 07:55:36 +0000 imagedong(=E8=91=A3=E6=A2=A6=E9=BE=99) w=
+rote:
+> > After merging the net-next tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> >=20
+> > Documentation/networking/kapi:26: net/core/skbuff.c:780: WARNING: Error=
+ in declarator or parameters
+> > Invalid C declaration: Expecting "(" in parameters. [error at 19]
+> >   void __fix_address kfree_skb_reason (struct sk_buff *skb, enum skb_dr=
+op_reason reason)
+> >   -------------------^
+> >=20
+> > Introduced by commit
+> >=20
+> >   c205cc7534a9 ("net: skb: prevent the split of kfree_skb_reason() by g=
+cc")
+> >  =20
+>=20
+> Yeah, I commited this patch. May I ask what command did you use to
+> produce this warning? I tried the following command, but not success:
+>=20
+>   make V=3D2 SPHINXDIRS=3D"networking" htmldocs
+>=20
+> Hmm.......what does this warning means? Does it don't like this
+> function attribute?
 
-> In commit
->
->   2648ede07315 ("pinctrl: rockchip: Enhance support for IRQ_TYPE_EDGE_BOTH")
->
-> Fixes tag
->
->   Fixes: 936ee26 ("gpio/rockchip: add driver for rockchip gpio")
->
-> has these problem(s):
->
->   - SHA1 should be at least 12 digits long
->     This can be fixed for the future by setting core.abbrev to 12 (or
->     more) or (for git v2.11 or later) just making sure it is not set
->     (or set to "auto").
+It popped up for me on a clean build of
 
-I went in and fixed it up manually, thanks!
+	make htmldocs
 
-Yours,
-Linus Walleij
+There's a lot of other warnings but you should see this one, too.
+
+I think you need to add the new keyword to one of the tables in
+Documentation/conf.py
