@@ -2,106 +2,88 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1E5ECAAA1
-	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 23:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B30CFC38145
+	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 23:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229447AbiIFXgI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Sep 2022 19:36:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43238 "EHLO
+        id S229531AbiIFX4U (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Sep 2022 19:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbiIFXgH (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 19:36:07 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E52674DF5;
-        Tue,  6 Sep 2022 16:36:07 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-12243fcaa67so32033892fac.8;
-        Tue, 06 Sep 2022 16:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=7fI7GSQEqzfTbxrtg0p1r0owGwfzmjJSW9DpLrWCgIc=;
-        b=d9TLgsDmvl68FCD/rIKT+9o+eHronhkechLJbLPFu0/PmQ2az8Yi+kDsA2+lJReMRj
-         7wI3BCJGIvDKg3YsvpdhbBtQP4r9PIl5YohE1C6cO7Y0SNNurt+6o7QGugTfNzvhHcxr
-         bRxbKNfSozmNHBJLbkvXkwuDfSQ5Wa+QX2N6cGNLs5NTRozcTQ5UDnwFBbcd4a/tJ9Gk
-         E5osJPfJJUbVDHVZsxQRsDl42IwvvNH0Nmm+7VsHAuJt4BiHELS3S/T+jHhyltYOL6wp
-         6HeEQDWSyuxj1n/rB3o/Jhyfb7iSOd1pnZQFG5H4L/fjLo9AfWfvgmzfTFHUUMIRJZWa
-         heBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=7fI7GSQEqzfTbxrtg0p1r0owGwfzmjJSW9DpLrWCgIc=;
-        b=FxxsBdwgNW5lgrzLQ3gWV59XZxFnEsuUYWQ4aD8yYlUCFv50u6NVMlInvNTtwgRKdM
-         P8NeHwl1P5aVk6P9govBXt/lxNL+49P2uv+veAQP4jp7R66i3APuOs0jkpd9CYlz9HzJ
-         j549le6N6YhW9ssFeMO3md0jGRLYhjgn2xTLPt4u+sQkSyuO4WXvmtDvpWB5GB7zGm+v
-         L4Rr5ZHkyCJ/42XKUVYmTR2jgBJsD8XsgkPggamGAPBF0Mf0yb0ApUnBySc8Taviuo/7
-         hQ06OmNtH/TFtfoyxntzZJ73aahzLnPxd8e+jA5+qjmgPrIU4j6l+pI4WESjK73TGuXk
-         mNOQ==
-X-Gm-Message-State: ACgBeo0BxTGRJLu4RxcpcsMNb7WB9XJvQaPipQxlQLQ9iKZhgohoVbp6
-        +nuY89OXS0hg24PP35zqLEA=
-X-Google-Smtp-Source: AA6agR7zZb77ZwaCfAlECdF3kNlSriboTt5SSacEBTaPERsG+TCNe0XQVOt1ni6Y2tZrTzaz5UGcag==
-X-Received: by 2002:a05:6808:1389:b0:345:fde:79eb with SMTP id c9-20020a056808138900b003450fde79ebmr10790885oiw.21.1662507366364;
-        Tue, 06 Sep 2022 16:36:06 -0700 (PDT)
-Received: from ?IPV6:2804:431:c7f5:f684:ee06:25a5:3122:5cd3? ([2804:431:c7f5:f684:ee06:25a5:3122:5cd3])
-        by smtp.gmail.com with ESMTPSA id x2-20020a9d3782000000b00639443424f8sm6405852otb.8.2022.09.06.16.36.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Sep 2022 16:36:05 -0700 (PDT)
-Message-ID: <8e4350df-0c73-6ca2-a25f-28a40a1856db@gmail.com>
-Date:   Tue, 6 Sep 2022 20:35:49 -0300
+        with ESMTP id S229469AbiIFX4T (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 19:56:19 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F7C93518;
+        Tue,  6 Sep 2022 16:56:17 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MMj2m0sqnz4xDK;
+        Wed,  7 Sep 2022 09:56:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1662508576;
+        bh=nUhOC8SAw4+WvD9//eLwBTzORyWn6BIWh0ARwrbPPdU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PQJFI1CkqhnDf0BeJNGo1UZQhYc60vzINIdhf9H0gQYi7v3Q0r3DgjDH4BWsNqd6J
+         j6ObpzeuMUj5BCJ71nmOjg2osb82wwFR/nSp4es9esLfcF8Sgkefl+Xbe5vUs9dzlv
+         bNa+mYJUAuZG3ZS+Nutly3Et7AdfZvgeqd7ldgo7tKsIgd/ghYn9JSoY26THP2Zyxe
+         3igoAsx2KDyPXH0BIuCqpV1ALAbcLRfrX1dLpmk4gxGY+9p81D89PYniZYtnEIWB7s
+         xqmY9hKW5P9gsZ4YID5rCHgg7sO6Pqs1nFcGMoiYo/fVjfjAvqPFBNldl7ov5ZEzHG
+         XpPHlHWI9GsuQ==
+Date:   Wed, 7 Sep 2022 05:44:37 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Stefan Roesch <shr@fb.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the btrfs tree
+Message-ID: <20220907054437.6500d591@canb.auug.org.au>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: build failure of next-20220906 due to 396369d67549 ("drm: vkms:
- Add support to the RGB565 format")
-Content-Language: en-US
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Melissa Wen <melissa.srw@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>
-References: <YxducgSzR6/zyHD7@debian>
- <CADVatmNfc1YT02v5-FaMoGN==MOx5ZJ=o8YMQAH19Gvf91betA@mail.gmail.com>
-From:   Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
-In-Reply-To: <CADVatmNfc1YT02v5-FaMoGN==MOx5ZJ=o8YMQAH19Gvf91betA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/vrnYs/U5Qsg3n=+Geuflo/y";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 9/6/22 18:26, Sudip Mukherjee wrote:
-> On Tue, Sep 6, 2022 at 4:59 PM Sudip Mukherjee (Codethink)
-> <sudipm.mukherjee@gmail.com> wrote:
->>
->> Hi All,
->>
->> The builds of next-20220906 fails for mips, xtensa and arm allmodconfig.
->>
->> The errors in mips and xtensa are:
->>
->> ERROR: modpost: "__divdi3" [drivers/gpu/drm/vkms/vkms.ko] undefined!
->> ERROR: modpost: "__udivdi3" [drivers/gpu/drm/vkms/vkms.ko] undefined!
->>
->> The error in arm is:
->>
->> ERROR: modpost: "__aeabi_uldivmod" [drivers/gpu/drm/vkms/vkms.ko] undefined!
->> ERROR: modpost: "__aeabi_ldivmod" [drivers/gpu/drm/vkms/vkms.ko] undefined!
->>
->>
->> Trying to do a git bisect to find out the offending commit.
-> 
-> git bisect points to 396369d67549 ("drm: vkms: Add support to the
-> RGB565 format")
+--Sig_/vrnYs/U5Qsg3n=+Geuflo/y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Are these architectures incapable of doing 64bits int division?
+Hi all,
 
-> 
-> 
+After merging the btrfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+ERROR: modpost: ".balance_dirty_pages_ratelimited_flags" [fs/btrfs/btrfs.ko=
+] undefined!
+
+Caused by commit
+
+  145103680cd0 ("btrfs: make balance_dirty_pages nowait compatible")
+
+balance_dirty_pages_ratelimited_flags() is not currently exported to module=
+s.
+
+I have used the btrfs tree from next-20220906 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vrnYs/U5Qsg3n=+Geuflo/y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMXoyYACgkQAVBC80lX
+0GwUiwf/ZSwIPUN9Otc5AXLnmkpy99f0wtt0PZ+M4ZbYh4tPf8cJ6yFDBpUtJxKi
+E9cPV9SqgxWfKkww2OOw2dzGlrza3BcZF9+rZH/r/AoGkfhreQ52C54vDPTVxxv5
+umcRl2TTl7cKI4u1BT1AVnClpPmVCy+ySyqWQvQfZLWJiUcQngFenZM1vZ9j3Gmv
+yuga4QOYzf9RCFKHHvW4+z4B73+oF3NJbCpJZ1hqrhLux1hZdI9YNIat3Xxn4R/h
+daddmFN800qrWJLKJpLYcdPX6LjboHKPpTTVj88YDzyC1LlyJDeMZXSxgyooHqbB
+bQ1Kfk8yOrwmy9FOg0+ktXrV9yrVYg==
+=16j0
+-----END PGP SIGNATURE-----
+
+--Sig_/vrnYs/U5Qsg3n=+Geuflo/y--
