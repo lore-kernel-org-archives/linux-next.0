@@ -2,86 +2,103 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23047C38145
-	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 22:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E547DC38145
+	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 22:12:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbiIFWCE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Sep 2022 18:02:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
+        id S229487AbiIFWMd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Sep 2022 18:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiIFWCD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 18:02:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AAC998A68;
-        Tue,  6 Sep 2022 15:02:02 -0700 (PDT)
+        with ESMTP id S229482AbiIFWMc (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 18:12:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70889F0D4;
+        Tue,  6 Sep 2022 15:12:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5499BB81A6E;
-        Tue,  6 Sep 2022 22:02:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF485C433D6;
-        Tue,  6 Sep 2022 22:01:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 48479615B0;
+        Tue,  6 Sep 2022 22:12:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EDA6C433C1;
+        Tue,  6 Sep 2022 22:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662501720;
-        bh=ylBcyli4K47L4sCG6iztFPiU4Pl14tn0xxsRkalII3g=;
+        s=k20201202; t=1662502350;
+        bh=YLor/aNRqp6Ff9o1HUmyK/bQsNc6c5Q+mE1K1VOmqBk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FTRbo0W5TPfFLldf29bpW/bQzzhpTMFTN6t9raF/Q1UZyBEKfTvroHaCXyaB/OK/o
-         aKdOZynbt5QvcAbzQoRy8w5AI6oAz60GNnfS4Rmz8cvtssCBljhz/GeVqRD4n9xBUE
-         vXmUGGe475nieEIH9k5gwkHVXkcXt76iR3S9OVG3AXBtI1VHcDH7WBEf3V5rFuElOM
-         Su4jDsDZC2u2h1q/VGIOM4PaSr1+h43OMceF36+TbOCKVmIcJE+Ew5LdvlGEjBZOQ1
-         fffcISiah0Sw0sM5xLE2mGg//5w5dAxKMFC5qhzXhNZO5PjcXYu+3xuLDhTyaHuvfI
-         ei9XYUB1FWmjA==
-Date:   Tue, 6 Sep 2022 23:01:55 +0100
-From:   Mark Brown <broonie@kernel.org>
+        b=TFGcimLmrqBAShEGqbUXWvHVTCjY5gvJXjNwfW4HiMg+FVpHHMJn0ovDTHjI+IP90
+         +C4bdFBMXs8h+R344F9i8e6BbQ3EjzL/criSDPIEq1k9h0EaEa45+TcIc3cojMUvAJ
+         8ZXD6BMBhdNa6ka00KuHwbr1T83kAwK/bcUWg7vBYcXWTPufoBflv5GfTLgNZ6p/Ov
+         Sv0/BrQZk9QcEkHzsfJGBPwPM4Zq2PNj2yXhlVv/7hGDohgUSjWE7JaBIixLSoDJah
+         ztYz774d8UNL/qUfkcAUHUk0903HQRn5Mvq/C2W4so+T7jXj7VRnrKUlkI2B9obZSz
+         J1jQZCpFdJiJw==
+Date:   Tue, 6 Sep 2022 15:12:28 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux Crypto List <linux-crypto@vger.kernel.org>,
+        Alexander Potapenko <glider@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm64 tree
-Message-ID: <YxfDU0oDU5510em9@sirena.org.uk>
-References: <20220907033142.1fe410e2@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Robert Elliott <elliott@hpe.com>
+Subject: Re: linux-next: manual merge of the mm tree with the crypto tree
+Message-ID: <YxfFzGObDWsylCK+@quark>
+References: <20220906202017.5093fd23@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="M0lV5QyiYzuG73Jd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220907033142.1fe410e2@canb.auug.org.au>
-X-Cookie: divorce, n:
+In-Reply-To: <20220906202017.5093fd23@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+On Tue, Sep 06, 2022 at 08:20:17PM +1000, Stephen Rothwell wrote:
+> diff --git a/arch/x86/crypto/Kconfig b/arch/x86/crypto/Kconfig
+> index 9bb0f7939c6b..856f5d8ca65f 100644
+> --- a/arch/x86/crypto/Kconfig
+> +++ b/arch/x86/crypto/Kconfig
+> @@ -5,6 +5,7 @@ menu "Accelerated Cryptographic Algorithms for CPU (x86)"
+>  config CRYPTO_CURVE25519_X86
+>  	tristate "Public key crypto: Curve25519 (ADX)"
+>  	depends on X86 && 64BIT
+> +	depends on !KMSAN # avoid false positives from assembly
+>  	select CRYPTO_LIB_CURVE25519_GENERIC
+>  	select CRYPTO_ARCH_HAVE_LIB_CURVE25519
+>  	help
+> @@ -16,6 +17,7 @@ config CRYPTO_CURVE25519_X86
+>  config CRYPTO_AES_NI_INTEL
+>  	tristate "Ciphers: AES, modes: ECB, CBC, CTS, CTR, XTR, XTS, GCM (AES-NI)"
+>  	depends on X86
+> +	depends on !KMSAN # avoid false positives from assembly
+>  	select CRYPTO_AEAD
+>  	select CRYPTO_LIB_AES
+>  	select CRYPTO_ALGAPI
+> @@ -32,6 +34,7 @@ config CRYPTO_AES_NI_INTEL
+>  config CRYPTO_BLOWFISH_X86_64
+>  	tristate "Ciphers: Blowfish, modes: ECB, CBC"
+>  	depends on X86 && 64BIT
+> +	depends on !KMSAN # avoid false positives from assembly
+>  	select CRYPTO_SKCIPHER
+>  	select CRYPTO_BLOWFISH_COMMON
+>  	imply CRYPTO_CTR
+> @@ -44,6 +47,7 @@ config CRYPTO_BLOWFISH_X86_64
+>  config CRYPTO_CAMELLIA_X86_64
+>  	tristate "Ciphers: Camellia with modes: ECB, CBC"
+>  	depends on X86 && 64BIT
+> +	depends on !KMSAN # avoid false positives from assembly
+>  	select CRYPTO_SKCIPHER
+>  	imply CRYPTO_CTR
+>  	help
+> @@ -55,6 +59,7 @@ config CRYPTO_CAMELLIA_X86_64
+>  config CRYPTO_CAMELLIA_AESNI_AVX_X86_64
+>  	tristate "Ciphers: Camellia with modes: ECB, CBC (AES-NI/AVX)"
+>  	depends on X86 && 64BIT
+> +	depends on !KMSAN # avoid false positives from assembly
+>  	select CRYPTO_SKCIPHER
+>  	select CRYPTO_CAMELLIA_X86_64
+>  	select CRYPTO_SIMD
 
---M0lV5QyiYzuG73Jd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Are there any options in arch/x86/crypto/Kconfig that *don't* need a dependency
+on !KMSAN?  If not, this could be done in a much simpler way.
 
-On Wed, Sep 07, 2022 at 03:31:42AM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Commit
->=20
->   000aef672bf2 ("kselftest/arm64: Install signal handlers before output i=
-n FP stress tests")
->=20
-> is missing a Signed-off-by from its author.
-
-Resent a version with the signoff added, sorry.
-
---M0lV5QyiYzuG73Jd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmMXw1IACgkQJNaLcl1U
-h9Cclgf+Kfj3Lfvi2bWVRrTYrTjxR4iq10k4v4hk5d1jRQ8Es9TTrX9PL2ksc1Jx
-CqxRndrOKBgJPkZ+Tz7MLvGB381GJJ9/tw8Ku4tndIdxaML6hKA9kWQ3cq64bz8V
-JxRFkE2/i2quiSUEFksIWtSnziDily1cwWCqnKStfjWAWN5LePGMP30s0uvUJD/i
-f0GIgaDeAJxXHlPKY0+IIAVqVrFdLoePkd4V0cI6xGLDdZlRVSn3QfRQOCX+EnQw
-pOH0UlIeQZxlXNRNsNlCcBnh6PXsGcv48kPGMUyNkM/S788H4HkQ27eTQ1wpi2mr
-KnW/mOGmb1Ew5IX+iEL6MHaaI9psug==
-=1CId
------END PGP SIGNATURE-----
-
---M0lV5QyiYzuG73Jd--
+- Eric
