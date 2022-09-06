@@ -2,105 +2,81 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92346C54EE9
-	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 21:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD94CC38145
+	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 21:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiIFVum (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Sep 2022 17:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56518 "EHLO
+        id S229627AbiIFVx4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Sep 2022 17:53:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiIFVui (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 17:50:38 -0400
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA7C8169D;
-        Tue,  6 Sep 2022 14:50:36 -0700 (PDT)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 286JpqwO024241;
-        Tue, 6 Sep 2022 14:50:34 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=date : from : to :
- cc : subject : in-reply-to : message-id : references : mime-version :
- content-type; s=pfpt0220; bh=jQU6reTeYH+IJprwVs9mmFbt7uN5byGxcZN1tT/HGfU=;
- b=SDsdukzkFs4WA8U76J3JkrWSz18SUTkwZdQngfzMlNc0P018ax1y/eLTgAaE7QV51TVp
- L+M3cYwBzEaVz4ajcCC3YWUjFQbLZq7mEVEwPo1iYeJz6gryonq7r07mJwdkpranSGLL
- m+kJrYxUIQ8ItKXIx47zXqXkx1COrqxzRX8k3gkrfrmbXXUVRa20te0omht8hLlHYJme
- VqA97QiNRQK7O0PwVW2Et1iwhFGLR22R84ivoCGKvXMNxl2L7bD8WtJ7tZm7WhdJnNxL
- VV7b6KHPuCTpXxAXGCm0rcoTb8F/r3+z9L5N/X8dSVeRhTF1NJCnXzF1+9bjUz/7iwMc Lg== 
-Received: from dc5-exch02.marvell.com ([199.233.59.182])
-        by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3jc6epua5j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 06 Sep 2022 14:50:34 -0700
-Received: from DC5-EXCH02.marvell.com (10.69.176.39) by DC5-EXCH02.marvell.com
- (10.69.176.39) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 6 Sep
- 2022 14:50:31 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH02.marvell.com
- (10.69.176.39) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Tue, 6 Sep 2022 14:50:31 -0700
-Received: from mvluser05.qlc.com (unknown [10.112.10.135])
-        by maili.marvell.com (Postfix) with ESMTP id B1A9A3F7096;
-        Tue,  6 Sep 2022 14:50:31 -0700 (PDT)
-Received: from localhost (aeasi@localhost)
-        by mvluser05.qlc.com (8.14.4/8.14.4/Submit) with ESMTP id 286LoVcH024613;
-        Tue, 6 Sep 2022 14:50:31 -0700
-X-Authentication-Warning: mvluser05.qlc.com: aeasi owned process doing -bs
-Date:   Tue, 6 Sep 2022 14:50:30 -0700
-From:   Arun Easi <aeasi@marvell.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-CC:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Nilesh Javali <njavali@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        <GR-QLogic-Storage-Upstream@marvell.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>
-Subject: Re: [EXT] build failure of next-20220906 due to 8bfc149ba24c ("scsi:
- qla2xxx: Enhance driver tracing with separate tunable and more")
-In-Reply-To: <20220906174140.41b46a5f@gandalf.local.home>
-Message-ID: <4f075c88-19b4-f0fd-a735-90a072c70879@marvell.com>
-References: <YxdZ/9XOsWilvVSd@debian>
- <44fe9ca0-e1d7-1e4f-9fd8-0f48a84dca72@marvell.com>
- <CADVatmMsYk+tgJDASx2uoskLzY=b4m7SNo+3R6SXT=0vEnu+vA@mail.gmail.com>
- <20220906170346.52c3f592@gandalf.local.home>
- <e9f5eb5e-3830-d19b-dcb0-05f7a36fcb2d@marvell.com>
- <20220906174140.41b46a5f@gandalf.local.home>
+        with ESMTP id S229536AbiIFVxz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 17:53:55 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC2C985B9;
+        Tue,  6 Sep 2022 14:53:53 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MMfKS3l9sz4xGG;
+        Wed,  7 Sep 2022 07:53:48 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1662501228;
+        bh=P1UZW97JpfiJjJNwh5Z/whP3vo9XvHY8OmNfyz0LgNs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Oz25eLLPtUcfrKiZPZ4zDIBgAHP8fAJHdSZVrCKyTnUrvyK+EV6fVQWxZ2wIdnqlV
+         wLcvrP+FdLpupJ/5Z9Tdu2g1TLu77tJ1cgSXgc/snpD+QyvUN/zYyB+0KVbm4X/r3r
+         sFck5g8IXzn/GHCiyVMkas3Nkyv/maGs70m3UNiX58+MqCeoDb4xvNenqaV3z6ZHTf
+         2JT1shxbPyZsCX3Dfjnbr+F/XIAC6p3U2PMOLhZl2XedyKfu89ZDRWw19yhLoZ98YF
+         KvlZicyDOcpkmsKcqu0VKSg5smlfIJjTu8BxyB/yGxtsXEkai1vmtR6qZ6bfNg7a3V
+         1E1k69kmh4/2w==
+Date:   Wed, 7 Sep 2022 03:31:42 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the arm64 tree
+Message-ID: <20220907033142.1fe410e2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Proofpoint-ORIG-GUID: zfBspUCi02Zf9F2IFyByeMPkiCRqAJOK
-X-Proofpoint-GUID: zfBspUCi02Zf9F2IFyByeMPkiCRqAJOK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-06_09,2022-09-06_02,2022-06-22_01
+Content-Type: multipart/signed; boundary="Sig_/6l6AviH5J5QVXm+_yHv5Bmg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 6 Sep 2022, 2:41pm, Steven Rostedt wrote:
+--Sig_/6l6AviH5J5QVXm+_yHv5Bmg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 6 Sep 2022 14:26:31 -0700
-> Arun Easi <aeasi@marvell.com> wrote:
-> 
-> > Steve, I was thinking both the fixes stay at least for a short 
-> > term the one in qla2xxx to avoid tree dependencies.
-> > 
-> > Since, the qla_def.h change goes as:
-> > 
-> > +#ifndef CONFIG_TRACING
-> > +#ifndef trace_array_get_by_name
-> > 
-> > ..it should co-exist when the "#define trace_array_get_by_name" gets 
-> > merged in include/linux/trace.h. BTW, I will send out the changes to 
-> > trace.h today.
-> > 
-> > Other alternatives/suggestions welcome.
-> 
-> I doubt I'll have anything that conflicts with an update to
-> include/linux/trace.h, as it is seldom modified.
-> 
-> Just sent a patch out that updates that file and I'll review it, and then
-> you can push it through your tree.
-> 
+Hi all,
 
-Sounds good. Thanks Steve.
+Commit
 
-Regards,
--Arun
+  000aef672bf2 ("kselftest/arm64: Install signal handlers before output in =
+FP stress tests")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6l6AviH5J5QVXm+_yHv5Bmg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMXg/8ACgkQAVBC80lX
+0GwjQAf/dappteMw8xgyyIJ265ILHV+qYAdKHBX2FgdfRSxfrC4TH3bFEvl1Y3Q5
+Vayh/D6oCvGGQIzh/BoG1FV83ajYuVAq6aVOgsXdfdu0c6eY4qNit4PX6jhtNAKi
+Jgs5JmBL5Ao+/RpwcNip57798466ekorXRU7f5vOiSDaav+XNbSZEhaaITWrpRsF
+s3ruxO6fCoGxoKccDGL5OCOArsHmM/t+jWL6MLVUEM+iWZuZBilNsjNHqOGpifkQ
+yRP8t5l+wOpIQoZsO/QKVYtVAZGE4IwGYTMgt/vnHGaquccqnK6ApLi7RqHX/BUL
+Xl4Sjklm0u5mc/MyljZBm85sFyNfeA==
+=6GX7
+-----END PGP SIGNATURE-----
+
+--Sig_/6l6AviH5J5QVXm+_yHv5Bmg--
