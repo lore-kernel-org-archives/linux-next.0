@@ -2,101 +2,110 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF29C38145
-	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 19:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5927ECAAA1
+	for <linux-next@archiver.kernel.org>; Tue,  6 Sep 2022 20:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbiIFTrR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Sep 2022 15:47:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33528 "EHLO
+        id S229584AbiIFU6m (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Sep 2022 16:58:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbiIFTrM (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 15:47:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF08D86B76;
-        Tue,  6 Sep 2022 12:47:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5E6AD1FA09;
-        Tue,  6 Sep 2022 19:47:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1662493629;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DwH1ufYcHzC/feIIZGsKI+YtePgH8+k2pybBbAJK9J0=;
-        b=uaHr6eqCoS75A2c6MQDXSTw5AZoFT92trHaxq/GbXJ9Ecsa+NFk5yaelb8reeG4wNpVFtv
-        ilgmc9vlfL7gU7oa7uhO4ekX3xUgALDLHi1NpPNaf1Dhxm0xh1SNNR0nMyAf+C8zGJV4i6
-        sZxMN6ffSp9/un8JYQ3Fd7xtTZzuijE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1662493629;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DwH1ufYcHzC/feIIZGsKI+YtePgH8+k2pybBbAJK9J0=;
-        b=jCEZ9xumltgwPiq5/DORbUlZuKzdXlkOSnzC1ZozjfEr/KZ05Yb63+/rampBPcLVXl+Z/8
-        f0KhDT35/G7VQhAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 259C113A7A;
-        Tue,  6 Sep 2022 19:47:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Ymw9CL2jF2NeCAAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Tue, 06 Sep 2022 19:47:09 +0000
-Date:   Tue, 6 Sep 2022 21:41:46 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Sterba <dsterba@suse.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the btrfs tree with the btrfs-fixes
- tree
-Message-ID: <20220906194146.GV13489@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20220906095055.498d90ea@canb.auug.org.au>
- <20220906101549.1cfee0d4@canb.auug.org.au>
+        with ESMTP id S231503AbiIFU6V (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2022 16:58:21 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDE5B9419;
+        Tue,  6 Sep 2022 13:57:49 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id e126so11844227ybh.1;
+        Tue, 06 Sep 2022 13:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=jkzG4HHSHzfaT1CUe2Sl37GnDklYHWbN1sqPuco7wbU=;
+        b=hnC+f2ZMzZJtX8gDp2ZMSrwIFn6nEHFjYnU6A2H0xxd+DyAEyntbAAUuA2bvFm/6gT
+         IP4A+StS8OyREGCayiLei5kSZQbR/1bRbRwH5FASBYl2Y9i3UMFwlDz6mQ8lbMy7WqEh
+         c+ig3lPeyxwZEkHW5iE2y6IqelaEoeGkSUUgPon2HzdeQ0hssbK1A1recKWBRhDLGwGU
+         bCzMUF7O8ETOIhxuWT26+85IuKDAdmpD3Qu9ufD8uo1u9HKbYBL4g20RNhlpxdx8W+gL
+         trSFqRfCXZ0LmsCceYXv1fl3FFWiIDNsJ/paIxBntaDoWDe/tho5QdkFPbw4pq+4fGIL
+         /ThA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=jkzG4HHSHzfaT1CUe2Sl37GnDklYHWbN1sqPuco7wbU=;
+        b=NJWkddLh3QKMVp2JFhrK7GAd58U1IT1ZcxgxAByE9Go7LwfzDvzXVVCgSbho3dTY6o
+         ogpJ1eVlu+4+DuC1XeOtS/Uzdx3RNdWu8OaQWE/5yzrLEngqBPQMzAoCnrbGqrRshJ5O
+         lyAJEt21JAK5oQxPli7pm0TCu0FygOWfryybEo9T4fxvvUDYGYZ/rChlDGR5dmPiYk5r
+         WNNC4FKMFn7B1APDdiW667LI2DtfF1/FmgZLs89sRjJwbwKIwf1c2w4CLsgUAL7DhRSQ
+         oW7fhtYFoElc0zHGlyRlfdlmoZG6qJjfBVBinKRSUlmIhxycfAPBNo5JwcUIhq1JGXz8
+         NvSA==
+X-Gm-Message-State: ACgBeo2CH/ccRBZs/bYcLkB1CQ8LAkXYvdOlAKRHNw/6PhFQ2DefxF/q
+        +0SWIsHhEi0eQ4r5UQUjaG+j3Sng5Lwwff8ec1/dR7tFV6ThJA==
+X-Google-Smtp-Source: AA6agR7OG7DWtLeWGmLyD7UKW5D6RTKajsKz0KoBSFX89WWVijzL6Q3U87zMphnJtWACkDzecnyfmQr+GaQCg6fPUH8=
+X-Received: by 2002:a25:3b46:0:b0:69c:a60e:2e57 with SMTP id
+ i67-20020a253b46000000b0069ca60e2e57mr396769yba.364.1662497866247; Tue, 06
+ Sep 2022 13:57:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220906101549.1cfee0d4@canb.auug.org.au>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <YxdZ/9XOsWilvVSd@debian> <44fe9ca0-e1d7-1e4f-9fd8-0f48a84dca72@marvell.com>
+In-Reply-To: <44fe9ca0-e1d7-1e4f-9fd8-0f48a84dca72@marvell.com>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Tue, 6 Sep 2022 21:57:10 +0100
+Message-ID: <CADVatmMsYk+tgJDASx2uoskLzY=b4m7SNo+3R6SXT=0vEnu+vA@mail.gmail.com>
+Subject: Re: [EXT] build failure of next-20220906 due to 8bfc149ba24c ("scsi:
+ qla2xxx: Enhance driver tracing with separate tunable and more")
+To:     Arun Easi <aeasi@marvell.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Nilesh Javali <njavali@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-scsi@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Sep 06, 2022 at 10:15:49AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Tue, 6 Sep 2022 09:50:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Sep 6, 2022 at 5:05 PM Arun Easi <aeasi@marvell.com> wrote:
+>
+> Hi Sudip,
+>
+> On Tue, 6 Sep 2022, 7:32am, Sudip Mukherjee (Codethink) wrote:
+>
+> > External Email
 > >
-> > Today's linux-next merge of the btrfs tree got a conflict in:
-> > 
-> >   fs/btrfs/zoned.c
-> > 
-> > between commit:
-> > 
-> >   6ca64ac27631 ("btrfs: zoned: fix mounting with conventional zones")
-> > 
-> > from the btrfs-fixes tree and commit:
-> > 
-> >   e5182af66852 ("btrfs: convert block group bit field to use bit helpers")
-> > 
-> > from the btrfs tree.
-> > 
-> > I fixed it up (the former removed some of the code modified by the latter)
-> > and can carry the fix as necessary. This is now fixed as far as linux-next
-> > is concerned, but any non trivial conflicts should be mentioned to your
-> > upstream maintainer when your tree is submitted for merging.  You may
-> > also want to consider cooperating with the maintainer of the conflicting
-> > tree to minimise any particularly complex conflicts.
-> 
-> Actually the fix up is below ...
+> > ----------------------------------------------------------------------
+> > Hi All,
+> >
+> > The builds of loongarch loongson3_defconfig have failed to build
+> > next-20220906 with the error:
+> >
+> > drivers/scsi/qla2xxx/qla_os.c: In function 'qla_trace_init':
+> > drivers/scsi/qla2xxx/qla_os.c:2854:25: error: implicit declaration of function 'trace_array_get_by_name'; did you mean 'trace_array_set_clr_event'? [-Werror=implicit-function-declaration]
+> >  2854 |         qla_trc_array = trace_array_get_by_name("qla2xxx");
+> >       |                         ^~~~~~~~~~~~~~~~~~~~~~~
+> >       |                         trace_array_set_clr_event
+> >
+> > drivers/scsi/qla2xxx/qla_os.c: In function 'qla_trace_uninit':
+> > drivers/scsi/qla2xxx/qla_os.c:2869:9: error: implicit declaration of function 'trace_array_put' [-Werror=implicit-function-declaration]
+> >  2869 |         trace_array_put(qla_trc_array);
+> >       |         ^~~~~~~~~~~~~~~
+> >
+> >
+> > git bisect pointed to 8bfc149ba24c ("scsi: qla2xxx: Enhance driver tracing with separate tunable and more").
+> >
+> > I will be happy to test any patch or provide any extra log if needed.
+> >
+> >
+>
+> This looks like is happening due to CONFIG_TRACING not being enabled (same
+> as what kernel test bot reported). Could you try out the fix attached?
 
-Thanks, looks correct to me. I've pushed a new for-next snapshot that
-has the conflict resolved too.
+Thanks, that fixed the build for me. The patch did not apply directly
+on next-20220906, so I had to modify it a little bit.
+
+Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+
+-- 
+Regards
+Sudip
