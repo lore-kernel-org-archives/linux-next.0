@@ -2,96 +2,87 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6F6C6FA82
-	for <linux-next@archiver.kernel.org>; Wed,  7 Sep 2022 23:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C02FECAAD3
+	for <linux-next@archiver.kernel.org>; Thu,  8 Sep 2022 00:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbiIGXd1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Sep 2022 19:33:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45118 "EHLO
+        id S229598AbiIHAG4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Sep 2022 20:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbiIGXd0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2022 19:33:26 -0400
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7561EC3F62;
-        Wed,  7 Sep 2022 16:33:25 -0700 (PDT)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 287Dd22m021501;
-        Wed, 7 Sep 2022 16:33:22 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : subject
- : date : message-id : mime-version : content-type; s=pfpt0220;
- bh=Hc31V8ZuqZz5YhbVQYoEhOrae4ibNDQKAwszi1N7H8o=;
- b=ISylTUr4Q1Rfq8w3VfpntidlymmubYeHOUjnrJtUS3J+8BHHCUswZA6FeBkwkV/w/T52
- ABafw7aGOjSE+f9lQ2wUvkP8YUsYAyHVI5YwlE2TzNnQ99EqBcEttO9nI5/c4434kChX
- tUeLhff66OdX8cPapwRsa8eVU2KogMa6anOLFaecBCPPqd/gjLjzqSRrivf9ItMDRNBO
- iL2ARPqTtDJ18ngahCEbfM8g8HzO69673AoEUHpVRK47La0ykPJvUu86xJeTh7kC3wzb
- wqGrZ4flIi/OKhfkPD8rs/0VpPjtQjM6YSYh50i+DcnPQFAR9mwp5bkklFA2Q7BAclAF Mw== 
-Received: from dc5-exch02.marvell.com ([199.233.59.182])
-        by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3jc6eq0tgb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 07 Sep 2022 16:33:22 -0700
-Received: from DC5-EXCH01.marvell.com (10.69.176.38) by DC5-EXCH02.marvell.com
- (10.69.176.39) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 7 Sep
- 2022 16:33:20 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH01.marvell.com
- (10.69.176.38) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 7 Sep 2022 16:33:19 -0700
-Received: from dut6246.localdomain (unknown [10.112.88.36])
-        by maili.marvell.com (Postfix) with ESMTP id E74A03F7126;
-        Wed,  7 Sep 2022 16:33:19 -0700 (PDT)
-Received: by dut6246.localdomain (Postfix, from userid 0)
-        id BEB1E228060; Wed,  7 Sep 2022 16:33:19 -0700 (PDT)
-From:   Arun Easi <aeasi@marvell.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Martin Petersen <martin.petersen@oracle.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-next@vger.kernel.org>,
-        <GR-QLogic-Storage-Upstream@marvell.com>,
-        Arun Easi <aeasi@marvell.com>
-Subject: [PATCH v3 0/1] Tracing: Compile error with qla2xxx
-Date:   Wed, 7 Sep 2022 16:33:07 -0700
-Message-ID: <20220907233308.4153-1-aeasi@marvell.com>
-X-Mailer: git-send-email 2.9.5
+        with ESMTP id S229706AbiIHAGz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2022 20:06:55 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9001A2239;
+        Wed,  7 Sep 2022 17:06:52 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MNKDS31WLz4xGG;
+        Thu,  8 Sep 2022 10:06:48 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1662595608;
+        bh=3EUyxahfukD0ViHoh9sN+PpgdhRGr2/m7jhYBZd76tc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=nEjLVyzDRkHldjp0uV0o7tfh+QtUBHoFUlqa3B+b76J4pFdUlbz2UpRri/G1UFtvl
+         a8nqxHEGL7vDqFpSWMR57P5wxcL7lWyQpGWxqUL5wrrWfEEls5a+aRHTNPUczac22A
+         J8ILQ81rGmIQb+k7ftW8FZwzEq6Y6NcOoexr8vwR1ns6lWs///NaS1HFr8JA1tmr1B
+         C6so9GeWRikfYw3GpWMGAFmYKNm34fsEOL5w2KRtE4N1UUwSXh4r/gy5WwWJ2j4qaj
+         puza9tV5Eqstr+KxqF421+EP2PmkHtWSDf0pzpXSKLW3tpU4FM1VAPiJBUFdx9iNfY
+         Bp84Amrq5A4Gg==
+Date:   Thu, 8 Sep 2022 10:06:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kbuild tree
+Message-ID: <20220908100646.4cb5f02e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: GJQTJkYrv6t67i2Yu92tfQHhIQOq_I0q
-X-Proofpoint-GUID: GJQTJkYrv6t67i2Yu92tfQHhIQOq_I0q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-07_10,2022-09-07_02,2022-06-22_01
+Content-Type: multipart/signed; boundary="Sig_/g+HYsHO+bsWipx8H4+U4E3F";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Steve, et.al,
+--Sig_/g+HYsHO+bsWipx8H4+U4E3F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please find a patch to fix compile error coming from qla2xxx driver
-when CONFIG_TRACING is disabled.
+Hi all,
 
-Hi Martin,
+After merging the kbuild tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Please apply this patch to the SCSI tree once Steve approves it. Here
-is a link to the discussion:
-    https://lore.kernel.org/linux-scsi/YxdZ%2F9XOsWilvVSd@debian/T/#m6efb601ed65c907124a03cfd5f3f38f1eb8c5925
+ld: vmlinux.a: member arch/powerpc/kernel/prom_init_check in archive is not=
+ an object
+make[2]: *** [scripts/Makefile.vmlinux_o:61: vmlinux.o] Error 1
+make[1]: *** [Makefile:1166: vmlinux.o] Error 2
+make: *** [Makefile:222: __sub-make] Error 2
+Command exited with non-zero status 2
 
-Changes from V2:
-    * Incorporated Bart's review comments (use of git clang-format)
+I don't know what caused this.
 
-Changes from V1:
-    * Incorporated Steve's review comments (change to inline etc.)
+I have used the kbuild tree from next-20220907 with the top 4 commits
+reverted again.
 
-Regards,
--Arun
+--=20
+Cheers,
+Stephen Rothwell
 
-Arun Easi (1):
-  tracing: Fix compile error in trace_array calls when TRACING is
-    disabled
+--Sig_/g+HYsHO+bsWipx8H4+U4E3F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
- include/linux/trace.h | 36 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.9.5
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMZMhYACgkQAVBC80lX
+0GzZnAf9FJq38wWf7bd7VV49TQ4nMc8sDvJxz//Lm3on87kLLYb9mjMAQJB6ot1E
+fxJZRAWmZWAdiOilSlFDVcIfktPNPxdJQEQqEui1s/BOorNGuLXbplOgx2b1QrVZ
+F8yXA7+DRv/Pz5gLxhPdGmdvtyS6LPSvEP9Lo8ETtVc5BMPOgVFQaXgNiddRbixg
+Yu7qZ9Joi5VXP68K760PQxLmOMAhXit8iML4g6f2Sxq/D2SJfrhs5Z2S3KQ1t7Bl
+9TQKtmeHMi5DWJrvgEKdJcRT8qDXsbw9eBToh1xE7apYyzjT7/nC/5TIUyw0xlK9
+uSk38KpZj2bFg14/3p7rdIUIkJ7VwQ==
+=rVsr
+-----END PGP SIGNATURE-----
 
-base-commit: efca52749564601de2045eb71dbe756b7bade4e8
+--Sig_/g+HYsHO+bsWipx8H4+U4E3F--
