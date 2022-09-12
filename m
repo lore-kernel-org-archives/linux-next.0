@@ -2,127 +2,108 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DEAC6FA8E
-	for <linux-next@archiver.kernel.org>; Mon, 12 Sep 2022 21:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDF6C6FA83
+	for <linux-next@archiver.kernel.org>; Mon, 12 Sep 2022 22:18:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbiILVt5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 12 Sep 2022 17:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34296 "EHLO
+        id S229562AbiILWSq (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 12 Sep 2022 18:18:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbiILVtz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Sep 2022 17:49:55 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D6FB7CF;
-        Mon, 12 Sep 2022 14:49:53 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MRKy22vMMz4xFt;
-        Tue, 13 Sep 2022 07:49:46 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1663019388;
-        bh=CHb/HFS/YBUK6LYyCv0Ig6t6CoCQ9NnN9We46PpcpMM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gcuL+UE4DAC44wpK3nXAbvF2+K8mwss7m6RSNWaj8Mh8awM2Wt/FiEQf2vI9qPrnY
-         h/5aGQBKy+bfc0BS8MEjgJAHhu/shzbvce0n2hpOsptgWcxJTQNKx0F2N2FV/FLIX6
-         SpOIdzVbwdR2CAbCf35ZlU9hH8uoI9CBJiK1auFJZ1qFAmdHTLKQFFVg89Kc6/niwL
-         IlOLw8YTX9/eppj7U8UoqKtkLMot+bqQ6uYXyp+oVE9NWmlAIfgPhpcJ83VDjIpTS2
-         AUlCCsqj86uQnYPR07+4K1Fi+TPku0C2oWOxWOynty4hjlmoB9cqwzwOQjpkVRGxpz
-         C0++lys4Fdl6w==
-Date:   Tue, 13 Sep 2022 06:30:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Eric Biggers <ebiggers@kernel.org>
+        with ESMTP id S230215AbiILWSU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Sep 2022 18:18:20 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B24A152834;
+        Mon, 12 Sep 2022 15:16:36 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id q9so420466pgq.8;
+        Mon, 12 Sep 2022 15:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date;
+        bh=HMsg24DgWn9pseOs15nZNZF3gasImsq/1+/HBiMz7zM=;
+        b=XeejMlKnn3k/2+rKlg10fHdnnRTFqpQ2qV/ohuVnxt0athlfrrjaf/erEApEmGsURA
+         tuwdkBLoruW/fmik1lzCqKnCibQ8uTe1aX86X4z//2Rc83RuYX4aN3bSaVaTm0YDbnYY
+         61rlLNCH/b6xnXgXyev+idVVGAr1NSo/qgYYqcrTqgF7PKKHylECsXzFxq0EPV9psGDz
+         iqluN5WfpnJ9ItbrJqx71wrluVtXNDGPYQhomfgbvA2xVFe3Y1lB2Rp5CDZgEzzWqBIe
+         jm0wc2YvTPLhDXnq6W1LR8Q+r0aFo+tZL6m6pRYLivZG02n6X9E2/tH5argszecAxjec
+         3Lvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=HMsg24DgWn9pseOs15nZNZF3gasImsq/1+/HBiMz7zM=;
+        b=VYoXNVclaiKh0VL/SQTj7bYPPf9vm2yZAGChIgOVNHw1JefO7Y2gE4gQvWxDN/hzp5
+         0iJyrzl2dVePxIB2Zd5bJODJ4U7uUE2rscfgYm8EtqZK+EteXusABJQIPdJIqAImlWXV
+         Ibr5eX2Oms5xdLafbb0iSAXolj7p/OhO2xdQBEF8pyzE3M5uzFlytDUcaJ2Rfbhrxu6h
+         1+DzlDTmm/sBMssbNnBtMdVRjk/Y4bkAvIsTOBk+DHejXDYMZ0qhWc/NK0tPEoWDSRLQ
+         +QYXHP+qZf2n8MRuC4WtZeeTd7mDF+cUoA26QrSurCCx5Sy3k8UXSs5vKMFd3nqqxAKp
+         cJSg==
+X-Gm-Message-State: ACgBeo0vVh2nB4I7AXQNsNtnlsXaVON07C6k6ELo6Om5YXH13g1dXmpz
+        LGU0T0MkD4gCBB5fee/Mbiw=
+X-Google-Smtp-Source: AA6agR62BngsLBHv6tGuYOzt7emkERNocqceIsWr3JBR9rcG2Fakapt2kwpnC44iHIcT3qGAagiJ7g==
+X-Received: by 2002:a62:3384:0:b0:538:58ab:8fee with SMTP id z126-20020a623384000000b0053858ab8feemr24409123pfz.7.1663020994100;
+        Mon, 12 Sep 2022 15:16:34 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
+        by smtp.gmail.com with ESMTPSA id bd7-20020a656e07000000b0041c35462316sm6037455pgb.26.2022.09.12.15.16.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Sep 2022 15:16:33 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Mon, 12 Sep 2022 12:16:32 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v5 0/8] make statx() return DIO alignment information
-Message-ID: <20220913063025.4815466c@canb.auug.org.au>
-In-Reply-To: <Yx6DNIorJ86IWk5q@quark>
-References: <20220827065851.135710-1-ebiggers@kernel.org>
-        <YxfE8zjqkT6Zn+Vn@quark>
-        <Yx6DNIorJ86IWk5q@quark>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Chengming Zhou <zhouchengming@bytedance.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the cgroup tree
+Message-ID: <Yx+vwLUYNl4U3IAv@slm.duckdns.org>
+References: <20220912161812.072aaa3b@canb.auug.org.au>
+ <Yx7iEv/wy5Olgu0M@hirez.programming.kicks-ass.net>
+ <Yx9+IIQqizUB/DJu@slm.duckdns.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ySqoajbBqbhy0s/Yyi/jEcM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yx9+IIQqizUB/DJu@slm.duckdns.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ySqoajbBqbhy0s/Yyi/jEcM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Eric,
+On Mon, Sep 12, 2022 at 08:44:48AM -1000, Tejun Heo wrote:
+> On Mon, Sep 12, 2022 at 09:38:58AM +0200, Peter Zijlstra wrote:
+> > On Mon, Sep 12, 2022 at 04:18:12PM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > After merging the cgroup tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > 
+> > Hmm,. TJ should I base sched/psi on top of drivers-core-next and your
+> > cgroup tree?
+> 
+> Yeah, this is kinda nasty. Lemme just pull drivers-core-next into
+> cgorup/for-6.1 so that folks don't have to worry about this and you can just
+> pull that one.
 
-On Sun, 11 Sep 2022 19:54:12 -0500 Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Tue, Sep 06, 2022 at 03:08:51PM -0700, Eric Biggers wrote:
-> > On Fri, Aug 26, 2022 at 11:58:43PM -0700, Eric Biggers wrote: =20
-> > > This patchset makes the statx() system call return direct I/O (DIO)
-> > > alignment information.  This allows userspace to easily determine
-> > > whether a file supports DIO, and if so with what alignment restrictio=
-ns. =20
-> >=20
-> > Al, any thoughts on this patchset, and do you plan to apply it for 6.1?=
-  Ideally
-> > this would go through the VFS tree.  If not, I suppose I'll need to hav=
-e it
-> > added to linux-next and send the pull request myself.
-> >=20
-> > - Eric =20
->=20
-> Seems that it's up to me, then.
->=20
-> Stephen, can you add my git branch for this patchset to linux-next?
->=20
-> URL: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-> Branch: statx-dioalign
->=20
-> This is targeting the 6.1 merge window with a pull request to Linus.
+I initially thought that driver-core-next was conflicting with
+cgroup/for-6.1 but this is simpler. It's a straight forward conflict between
+the PSI patchset in the tip tree and changes in cgroup/for-6.1 which are
+cleaning up some cftype handling, and the patch that Stephen applied is
+correct. So, we can do one of the following two:
 
-Added from today.
+1. Leave it as-is. Stephen's patch is correct and we can just let Linus know
+   how to resolve it on the pull requests.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+2. Pull cgroup/for-6.1 into the tip tree and preemptively resolve the
+   conflict there.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+I'm leaning towards #1 but #2 is fine too. Peter, what do you wanna do?
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/ySqoajbBqbhy0s/Yyi/jEcM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMfluEACgkQAVBC80lX
-0GzrXAf9ESId1RmQujmRO/suIb7p60bPOkr5l/1EmdjlqHgMfXoP0bDKsbHNd3Do
-ZOf+Qj8BPc1KuPXgGEqZ8bWxEMOu5NtVl82bbhQwaMZbaObcE+CW34aaenRKRBCq
-kPAHrUAe3SGkuyVjQJFX0I0PdGe7WYoar4MhO3ULl1USnIEF0p6GCXXe1DvR2LRA
-6ZMdZbx+g9cPc2ya5lzpHLIkTaDSjjjE/blGA0UFuUYAyRUVEw0rGig1iPnQA+EP
-dr+aQ+9vZ1OICIy2tSpsplEl2Otk4rTA0EAB/BVYTDOBgMQQ6CLZN9o+1tHnmsuK
-/BZ7ql3uk0XzQR2n0awIeOjS13b5Sg==
-=u95+
------END PGP SIGNATURE-----
-
---Sig_/ySqoajbBqbhy0s/Yyi/jEcM--
+-- 
+tejun
