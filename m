@@ -2,127 +2,60 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17377ECAAD8
-	for <linux-next@archiver.kernel.org>; Fri, 16 Sep 2022 09:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D79FC6FA82
+	for <linux-next@archiver.kernel.org>; Fri, 16 Sep 2022 14:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbiIPJY1 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 16 Sep 2022 05:24:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53630 "EHLO
+        id S231663AbiIPO0E (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 16 Sep 2022 10:26:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiIPJY0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Sep 2022 05:24:26 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05080642FA
-        for <linux-next@vger.kernel.org>; Fri, 16 Sep 2022 02:24:25 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-3378303138bso252409207b3.9
-        for <linux-next@vger.kernel.org>; Fri, 16 Sep 2022 02:24:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=ICLxIYLKXePaeX7uqOrK23uRDuhGBueBgNNfHGZTbYo=;
-        b=iKuPoaJFZuGpISn2LNxjPZDTYltZp2yYz7EjsSDOTMSrsmWKISyQWE+8R0W3Noaxdh
-         J67WD0GhPNbs2ZfwpPxNgbFMM4v//+o2m6W92oNOWGoQp8Pm2HMq1js5UI1sFo87fUI9
-         MvqGeHVFn9D1YGWApSlPSYmnXrGlHwaLfjdQFN0BwObXO3DUgO3RrA6T3xaQqEPGLzXQ
-         0EXws5GnRh/SMbPaMkkyLZ+getRmmxwYdyMEUYQYwgzjcGGlv3ejcfImrZFEFoXl2eih
-         RHAeAef5dhW/OI5ZfMGUohaRMTire37kk8EJdr2qZumLOUhrmXM2g5T6Apj/GBOEG16z
-         rgaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=ICLxIYLKXePaeX7uqOrK23uRDuhGBueBgNNfHGZTbYo=;
-        b=hpc97svDeuReCkFvedlNgdqrVOjspwQTarXwQea++1oQQQQKHPYlY1UtOSj9n4Vaeo
-         Cv78nE4yhJBho8QnYSVu95cZb46z+Uy4yfQF6fFzCIy9gGMfOE7h4BC228ipHPgZlAkV
-         kdX+gHqfEtiHn891KyBQPvz7z+0BaQug8ZJSKRSbDujXxkwHHqR+RQuON3s15wNwHM12
-         unHqe/UZ4gM6+8VqCOeSL3jJJdDl9ftgShyXpaqcWvFAVxsOTG3NTd/lzR3dFaVY0Siy
-         RXa8CgGplml+c6luY1+deq4gpQ0DpM7gIJH4P3lCT7BEhz3WzFnitZUC/S0mj8hDtlyc
-         Lm2A==
-X-Gm-Message-State: ACrzQf1SH6DH7uq6TqARRWYoX65FimdCkAOCyS5ZHLIA1dd4SaIAgIBG
-        CemGRbKVAb5vFdlh0wOblGAkCiimCX8OqttVc65OvJIQIUFHxw==
-X-Google-Smtp-Source: AMsMyM4IEyu4SELoiPZYqJXqFSsxD8xWUmDmdqx1BOynAfW+NapM9J/HLecVe0kFGIteirFbOOlJXPKdVbsta53L3Cs=
-X-Received: by 2002:a0d:d64b:0:b0:345:2455:a1c with SMTP id
- y72-20020a0dd64b000000b0034524550a1cmr3593259ywd.295.1663320264035; Fri, 16
- Sep 2022 02:24:24 -0700 (PDT)
+        with ESMTP id S232123AbiIPOZl (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Sep 2022 10:25:41 -0400
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B52FB274C
+        for <linux-next@vger.kernel.org>; Fri, 16 Sep 2022 07:25:34 -0700 (PDT)
+Date:   Fri, 16 Sep 2022 14:25:22 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1663338328; x=1663597528;
+        bh=DBHlN1er6GV7uvQ1HRnMThx3wdZi16sie8Gw8+uolos=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID;
+        b=Un3nkJsa9RN91NSvMQrqkfnYkDbeIE681cQuV9JxNT/ZFXBc9JR3i5eDMsU+Q4R+7
+         GsUjWcU1GtEIgPZyJRfwzuJBalsMqQiSpIWNOTYbqc1KiCu+03KCQ3kDkp18AoPsW+
+         1ZHFbgu0StHUXrBxGdL7iSsUPyEh/VIaQXcAP1RqxWQE+kNYHipeFql+PH5JkNAsOG
+         GP4bhSg5H46+Vi6aSXB9BCTynDJnV2x+MiNF+j2aORNm/3qyffmeoI9OtNQzgnNRgL
+         HGQ0HBrvCEa+VtkO6S5Ehem63jCu9+LcRTgy1GotzFk7Dxl64xr1H3aKg32OpErXm2
+         vXL+rI/sjMiSQ==
+To:     "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+From:   Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
+Cc:     "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
+Subject: What is the difference between linux-next and linux-kernel mailing lists?
+Message-ID: <3eqrFna3vX_qv5tM9LT_0Mqf7zyT1B5OPa8UcwIvO_CW9eFNly54zZmShglkINpHxXCNo-nDdeabRQ2VkPTwvizp_atYq7LsiuMKqGERug0=@protonmail.com>
+Feedback-ID: 39510961:user:proton
 MIME-Version: 1.0
-References: <20220909095811.2166073-1-glider@google.com> <20220909095811.2166073-2-glider@google.com>
-In-Reply-To: <20220909095811.2166073-2-glider@google.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 16 Sep 2022 11:23:47 +0200
-Message-ID: <CAG_fn=UT24yoY=amdXF5gXQjM9jw8bMamjC-mqJndiXNtNhvLA@mail.gmail.com>
-Subject: Re: [PATCH -next 2/2] crypto: x86: kmsan: disable accelerated configs
- in KMSAN builds
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Robert Elliott <elliott@hpe.com>,
-        Linux Crypto List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+Subject: What is the difference between linux-next and linux-kernel mailing=
+ lists?
 
-Please use this patch to replace "crypto: x86: kmsan: disable
-accelerated configs in KMSAN builds" when merging linux-mm into
-linux-next (assuming arch/x86/crypto/Kconfig is still in -next).
+Good day from Singapore,
 
-On Fri, Sep 9, 2022 at 11:58 AM Alexander Potapenko <glider@google.com> wro=
-te:
->
-> KMSAN is unable to understand when initialized values come from assembly.
-> Disable accelerated configs in KMSAN builds to prevent false positive
-> reports.
->
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: Robert Elliott <elliott@hpe.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: linux-crypto@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-next@vger.kernel.org
-> ---
->  crypto/Kconfig | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/crypto/Kconfig b/crypto/Kconfig
-> index 40423a14f86f5..4a2915bd40d1f 100644
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -1430,7 +1430,9 @@ endif
->  if SPARC
->  source "arch/sparc/crypto/Kconfig"
->  endif
-> -if X86
-> +# KMSAN is unable to understand when initialized values come from assemb=
-ly.
-> +# Disable accelerated configs to prevent false positive reports.
-> +if X86 && !KMSAN
->  source "arch/x86/crypto/Kconfig"
->  endif
->
-> --
-> 2.37.2.789.g6183377224-goog
->
+What is the difference between linux-next and linux-kernel mailing lists?
 
+What goes into linux-next mailing list and what goes into linux-kernel mail=
+ing list?
 
---=20
-Alexander Potapenko
-Software Engineer
+Thank you.
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+Regards,
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+Mr. Turritopsis Dohrnii Teo En Ming
+Targeted Individual in Singapore
+16 Sep 2022 Friday
+Blogs:
+https://tdtemcerts.blogspot.com
+https://tdtemcerts.wordpress.com
