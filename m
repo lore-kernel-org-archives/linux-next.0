@@ -2,86 +2,96 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B21FECAAA1
-	for <linux-next@archiver.kernel.org>; Mon, 19 Sep 2022 21:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7F5ECAAA1
+	for <linux-next@archiver.kernel.org>; Mon, 19 Sep 2022 22:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbiISVxX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 19 Sep 2022 17:53:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35206 "EHLO
+        id S229540AbiISWEc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 19 Sep 2022 18:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiISVxW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2022 17:53:22 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4E743E72
-        for <linux-next@vger.kernel.org>; Mon, 19 Sep 2022 14:53:18 -0700 (PDT)
+        with ESMTP id S229611AbiISWEb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2022 18:04:31 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA621D0;
+        Mon, 19 Sep 2022 15:04:30 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MWdhr2LLKz4xD1;
-        Tue, 20 Sep 2022 07:53:15 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MWdxj3BQ5z4xGC;
+        Tue, 20 Sep 2022 08:04:24 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1663624397;
-        bh=0qpG1+BK/leDKYCrr71DaFA3CpugTJTt1W69titvYMI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=K2qR9c0WPFozVm1CAKLswzIEtqCeGHR4EUJPNHHrh2omtzpqTkhS073bQoioZvOXh
-         UOSAhQxdAUMj0Cqu3X0eeI0X3U8Kd7+sHJTwiveFb6ooEy8JdgRB3UjQDaF0LrzDL6
-         NplvvNLjp9hQZFxdHB/WPIN7jgmD94LI6YbEVrUs83NStSA4j+s7qoFD5pe/oGGZCo
-         iof13CVWCIHY71eOzA8pMdOMQX7t03nxWS7SEhCBa/ksTfRRGoQmqtVNoTlOFsti+M
-         Q35TE2kJ90QTc9zRk3CUVPmob7ZzXXxRPPOUlFgMH3eKiRL+zKrpwqoFQnbCmaGz5E
-         TScO6zuP3Mmuw==
-Date:   Tue, 20 Sep 2022 04:00:46 +1000
+        s=201702; t=1663625066;
+        bh=Wmeah96pU6QyJLP44bwQ43l9G2pSQWtlT47Qh4PRDqA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=aUHvDr1CClwAUF8uzwqVLcSHhqfJ4dGdv9AAmqLwAp1CBnvpj1tSJqTIuVk6HPRfu
+         KaVdGwaClNaNBoiUGOLDKzROZfdWPcb9AuiY9GnxBkgcrRbCZwEsYrYZIZshsQuAii
+         lMMc+WASpGma65zeBB67Eh8XSj8QH8sbGYWV4VSY+c4TNr0InP1/WVCrF9ohzszDcX
+         fmOOxbxC3jXEjzxnwdYJy2xCU0+HTn7Ccw+1l+T2UBgEsYbApQRfzUeiov3fS95VQa
+         xvvUEWyKP5c0TpJMjWNTVIseFu15OpvmOEhWmPV4Gdpiz/P9N6ENlhHW/KeXVDr1UB
+         GrgVJk6TKjRoQ==
+Date:   Tue, 20 Sep 2022 04:13:09 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linux-um <linux-um@lists.infradead.org>
-Subject: Re: UML next tree update
-Message-ID: <20220920040046.36c17bea@canb.auug.org.au>
-In-Reply-To: <440491920.241014.1663618325760.JavaMail.zimbra@nod.at>
-References: <440491920.241014.1663618325760.JavaMail.zimbra@nod.at>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc:     Lin Yujun <linyujun809@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mips tree
+Message-ID: <20220920041309.5edf2451@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Qph8p5cfGEUCiZ2bwgXYt1a";
+Content-Type: multipart/signed; boundary="Sig_//cxmJ4nPUHyqle5APy+B+Nl";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Qph8p5cfGEUCiZ2bwgXYt1a
+--Sig_//cxmJ4nPUHyqle5APy+B+Nl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Richard,
+Hi all,
 
-On Mon, 19 Sep 2022 22:12:05 +0200 (CEST) Richard Weinberger <richard@nod.a=
-t> wrote:
->
-> please set the UML next trees to:
-> git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git next
-> git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git fixes
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git will be no longe=
-r used.
+In commit
 
-Done from today.
+  1e6d11fe72e3 ("MIPS: SGI-IP30: Fix platform-device leak in bridge_platfor=
+m_create()")
+
+Fixes tag
+
+  Fixes: fd27234f24ae ("MIPS: add support for SGI Octane (IP30)")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+	git log -1 --format=3D'Fixes: %h ("%s")'
+
+So
+
+Fixes: fd27234f24ae ("MIPS: SGI-IP30: Free some unused memory")
+
+or
+
+Fixes: 7505576d1c1a ("MIPS: add support for SGI Octane (IP30)")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Qph8p5cfGEUCiZ2bwgXYt1a
+--Sig_//cxmJ4nPUHyqle5APy+B+Nl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMork8ACgkQAVBC80lX
-0GyL9Qf+Ma6VjlhKS3jgNuIO4tTI/LxBHzBB2PBvi9AVRXw6NOkiDpH4Cajxkyez
-RFMH0ZVgi9wurpHf4Cv/lgnQuiks/KrAI27WgeKC8u+FlvnHAisLOEqWNqkLsnWa
-JqkqP5OSZzO/UboU6EYsIzMC6W9NrkxjHWjBzlyAwW52xfRpOOrH29uihM1Sski/
-lxXp6z2FoZ7xcLD24i8FXkm5USoROHRw1RrKdIXgprkZsrsklts3HtkssqRTobKP
-H9wSXPYjN54vqR3KhZM3tVoqiDublRm8Km7Q6mCYOpBj3sIp5vNKjpSfW6j2Y8vL
-70QTjqUprgqXtcBW52jy00zwgzwrCg==
-=t0Op
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMosTYACgkQAVBC80lX
+0Gxibgf+OBsN/kVzgCM368OvEYJpqcvsde57oil11wE64fzfMoUodCx+0J6iSA2Q
+JVJCjFzjccnI1tv8PHi9SGLhK07Zg+Jiinu4IseRHUmkF3/OUWa2lHc/NvSogGU8
+aA2bI0WuoX/iYfTSFrHatXOK4NEntUBYNRyBP9gf67JNLk7s6nCzwSfE8ync/BZo
+49RqfMTqT7xyOd3gDvIL/jlDOm/BEWHkpEjeSHt/JFBAcSMTRO/ljMdI18RvRHl2
+Fxxr3rD7RMnDJoI3FSyRUp4DFNsl0UDmTnDJJDf82ypKMSDHlzUHLQzpybNLnF6V
+TA3ntFnOAJR67oeRhfb1BKLEAZIQlg==
+=8jfI
 -----END PGP SIGNATURE-----
 
---Sig_/Qph8p5cfGEUCiZ2bwgXYt1a--
+--Sig_//cxmJ4nPUHyqle5APy+B+Nl--
