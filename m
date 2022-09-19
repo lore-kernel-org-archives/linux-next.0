@@ -2,77 +2,86 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB11ECAAD3
-	for <linux-next@archiver.kernel.org>; Mon, 19 Sep 2022 21:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B21FECAAA1
+	for <linux-next@archiver.kernel.org>; Mon, 19 Sep 2022 21:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbiISVES (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 19 Sep 2022 17:04:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37018 "EHLO
+        id S229498AbiISVxX (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 19 Sep 2022 17:53:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbiISVER (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2022 17:04:17 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D76FB4BA62;
-        Mon, 19 Sep 2022 14:04:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229570AbiISVxW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2022 17:53:22 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4E743E72
+        for <linux-next@vger.kernel.org>; Mon, 19 Sep 2022 14:53:18 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 76367B81C67;
-        Mon, 19 Sep 2022 21:04:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 605D7C433C1;
-        Mon, 19 Sep 2022 21:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1663621454;
-        bh=LW7CYJSRHFYN/gb5MZn9Kw9lSzELow4U9z0Yp02eXio=;
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MWdhr2LLKz4xD1;
+        Tue, 20 Sep 2022 07:53:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1663624397;
+        bh=0qpG1+BK/leDKYCrr71DaFA3CpugTJTt1W69titvYMI=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ST6LBWXH2TL0dHV0RZsg5+qtNblclbm+ONEACfp7IdCv6a9FymN2EOWKTyb32CQxW
-         fsRDfhrbfT0d6KLO4pLU/dS8Tqlwj64ewQjEMcP1ZD/DlJPTA2ZoTBRAvfymBxXs2o
-         2kOYVa0wwaJ0+Yi3hDKDyFPBnvkTKFSJCDODMV34=
-Date:   Mon, 19 Sep 2022 14:04:01 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Zach O'Keefe" <zokeefe@google.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the mm tree
-Message-Id: <20220919140401.c63f8a81b239e9b8139f54d8@linux-foundation.org>
-In-Reply-To: <YyiBF5V6I7SYHqJy@google.com>
-References: <20220919082105.73c0e270@canb.auug.org.au>
-        <YyiBF5V6I7SYHqJy@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        b=K2qR9c0WPFozVm1CAKLswzIEtqCeGHR4EUJPNHHrh2omtzpqTkhS073bQoioZvOXh
+         UOSAhQxdAUMj0Cqu3X0eeI0X3U8Kd7+sHJTwiveFb6ooEy8JdgRB3UjQDaF0LrzDL6
+         NplvvNLjp9hQZFxdHB/WPIN7jgmD94LI6YbEVrUs83NStSA4j+s7qoFD5pe/oGGZCo
+         iof13CVWCIHY71eOzA8pMdOMQX7t03nxWS7SEhCBa/ksTfRRGoQmqtVNoTlOFsti+M
+         Q35TE2kJ90QTc9zRk3CUVPmob7ZzXXxRPPOUlFgMH3eKiRL+zKrpwqoFQnbCmaGz5E
+         TScO6zuP3Mmuw==
+Date:   Tue, 20 Sep 2022 04:00:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>
+Subject: Re: UML next tree update
+Message-ID: <20220920040046.36c17bea@canb.auug.org.au>
+In-Reply-To: <440491920.241014.1663618325760.JavaMail.zimbra@nod.at>
+References: <440491920.241014.1663618325760.JavaMail.zimbra@nod.at>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Qph8p5cfGEUCiZ2bwgXYt1a";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, 19 Sep 2022 07:47:51 -0700 "Zach O'Keefe" <zokeefe@google.com> wrote:
+--Sig_/Qph8p5cfGEUCiZ2bwgXYt1a
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Apologies here.  Yes, the correct Fixes tag should be, based off latest
-> mm-unstable,
-> 
-> Fixes: 8d88fef0b3d8 ("selftests/vm: add thp collapse file and tmpfs testing")
-> 
-> Now, I'm quite confused as to has this happened as I've been generating
-> citations using something similar to the --format string you reference, but
-> perhaps this time I chose to do it manually and messed it up.  Anyways, will
-> write something to catch these mistakes in the future.
+Hi Richard,
 
-The hashes in mm-unstable change every day.
+On Mon, 19 Sep 2022 22:12:05 +0200 (CEST) Richard Weinberger <richard@nod.a=
+t> wrote:
+>
+> please set the UML next trees to:
+> git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git next
+> git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git fixes
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git will be no longe=
+r used.
 
-Doesn't matter, I'll queue fixes against mm-unstable's foo.patch as
-foo-fix.patch and I'll squash foo-fix.patch into foo.patch before
-moving f.patch into mm-stable.
+Done from today.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-> Andrew, there are a few changes incoming to the "mm: add file/shmem support to
-> MADV_COLLAPSE" series based off recent reviews (including another patch with
-> a commit description change).  Perhaps it's easier for me to send a new (v4)
-> series to mm-unstable to address these?  Otherwise, I'm not sure how to
-> request these metadata changes.
+--Sig_/Qph8p5cfGEUCiZ2bwgXYt1a
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-As described above, the metadata gets fixed at this end.  mm-unstable
-is called "unstable" for a reason ;)
+-----BEGIN PGP SIGNATURE-----
 
-But yes, I think a replacement series would be best in this case.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMork8ACgkQAVBC80lX
+0GyL9Qf+Ma6VjlhKS3jgNuIO4tTI/LxBHzBB2PBvi9AVRXw6NOkiDpH4Cajxkyez
+RFMH0ZVgi9wurpHf4Cv/lgnQuiks/KrAI27WgeKC8u+FlvnHAisLOEqWNqkLsnWa
+JqkqP5OSZzO/UboU6EYsIzMC6W9NrkxjHWjBzlyAwW52xfRpOOrH29uihM1Sski/
+lxXp6z2FoZ7xcLD24i8FXkm5USoROHRw1RrKdIXgprkZsrsklts3HtkssqRTobKP
+H9wSXPYjN54vqR3KhZM3tVoqiDublRm8Km7Q6mCYOpBj3sIp5vNKjpSfW6j2Y8vL
+70QTjqUprgqXtcBW52jy00zwgzwrCg==
+=t0Op
+-----END PGP SIGNATURE-----
+
+--Sig_/Qph8p5cfGEUCiZ2bwgXYt1a--
