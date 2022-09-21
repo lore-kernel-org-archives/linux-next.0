@@ -2,136 +2,87 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4D3ECAAD8
-	for <linux-next@archiver.kernel.org>; Wed, 21 Sep 2022 09:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7010BECAAD8
+	for <linux-next@archiver.kernel.org>; Wed, 21 Sep 2022 11:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231578AbiIUJTV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 21 Sep 2022 05:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49218 "EHLO
+        id S229521AbiIULye (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 21 Sep 2022 07:54:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230504AbiIUJTA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2022 05:19:00 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC5288E44A
-        for <linux-next@vger.kernel.org>; Wed, 21 Sep 2022 02:18:22 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id q21so7672629edc.9
-        for <linux-next@vger.kernel.org>; Wed, 21 Sep 2022 02:18:22 -0700 (PDT)
+        with ESMTP id S229596AbiIULyd (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2022 07:54:33 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 881A9115C;
+        Wed, 21 Sep 2022 04:54:31 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id n12so9433144wrx.9;
+        Wed, 21 Sep 2022 04:54:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares.net; s=google;
-        h=in-reply-to:from:references:cc:to:content-language:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
-        bh=g9hIzzknQ13g39V8zpuvSuUDV45dCJUmErfkHCUCb8c=;
-        b=NYwy1GLqAsBJD7t33Akjui0Lw79QpqGY9V+l6RjjMPtpTrZIwVW4J6FsuZE1LR+0Cm
-         V/L4MrzwTLRWYQHh03VZOL40WVAGx+gzyqOiZjNjUlNPXTBjSUoeqd+gKcv6UQqPFH0U
-         MEgcuRJUKE+bpTD9v4bchtMJ2aeD4Db35Lo7cFro9DbaVLz9rNlEbuyuqCgJmAXrvOQy
-         chSq+cYuDwRVxlmguvhBFI51ZvSVMokkZD/xX7pGlV/SWYj+/nsv12Grztrraj0LemLX
-         BC7u0mGI0Jdo0RzaEeHGoxKIgSXDEH3dYe33H1S4lhrYx/HH+0KmXLZVGJ6lAeVN5J2k
-         sPUQ==
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date;
+        bh=Gm0rzX0C2VtueedqY6oyqUEL0KO+3EFqhigkVvANuMY=;
+        b=m716+RhwFQujGe+RzkJCE1Od2LTIec4PvVl6l4NfPom4melvVT3xQ6pXvAeU933Pb+
+         ASrqpe67ibMWf0b+aKwQK5+LQ1e1G+JC146clhdx6j3XQevv/FWssty6+bwYpe61Oy7a
+         YcKV7V8NBYrKy4DoamDp+dPNfbELR8kCVMOJH0UfThJc7A/CAV+QLWqeILuLRA8aiRBd
+         fAvJrBDaMv57YBu4jI/AGY7Gb1Eirm7JQzT2FzH8XQH3B1IMf5sd6tyuEPV/eBvAOM6y
+         wGFNjAGo/CB58aD18But9zZHUrXvBnI2aRV5Majkdrq/ZFtuG19yZROqq58N3UEQveUB
+         tAsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:from:references:cc:to:content-language:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date;
-        bh=g9hIzzknQ13g39V8zpuvSuUDV45dCJUmErfkHCUCb8c=;
-        b=Ux5CJOWa5dWZsavviCeucdSBHx3bIylr4whAvKoOLY1SssHVuzNCZjU88ZceY/mRgf
-         H4MdgRmEdLjiotKUjymsGit5MGxAHJcFxRDXS6/AxR9t3/QaCIWyqcN1QUzAxEV13Y4G
-         0ifYErOjSIMfpt5rJAtjUiBpn7J/w1N6+qpOWkHmRMX1LOEsgcphclvKvG+aiRE6jUSv
-         8UFN7lKkIOkU9JzFUZiAl7Kmo+kFxFee4A4llUjCdNfN9QSrvJqiXnt4rsC95vEcF5eH
-         CYKY/uhtNtAVjRcp9/h8/LThckpN6EnZT1i8aw6TWMOyIHQBhiI0QOxHMNUH8ufxE4h/
-         26cQ==
-X-Gm-Message-State: ACrzQf0OmohEtMwjc6mRQq5m/twmLo/lbVvJDzyHAdF5crLYaOuu/7xP
-        8ApJTwYPHVKPs0TCCyo8qeDieA==
-X-Google-Smtp-Source: AMsMyM6bPQ7zayJ+9UZNoM2Gek0kEtRZlXiCyyRJsqf5v+folfznpu2y8B5YkymscGMGAOTjv8C3Bg==
-X-Received: by 2002:aa7:c415:0:b0:44d:f432:3e84 with SMTP id j21-20020aa7c415000000b0044df4323e84mr24335129edq.56.1663751898858;
-        Wed, 21 Sep 2022 02:18:18 -0700 (PDT)
-Received: from ?IPV6:2a02:578:8593:1200:e650:9a94:d180:442c? ([2a02:578:8593:1200:e650:9a94:d180:442c])
-        by smtp.gmail.com with ESMTPSA id gs13-20020a170906f18d00b007724b8e6576sm1073164ejb.32.2022.09.21.02.18.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Sep 2022 02:18:18 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------PnZdDX0mbgnHJpzmr15LlbVj"
-Message-ID: <2b4722a2-04cd-5e8f-ee09-c01c55aee7a7@tessares.net>
-Date:   Wed, 21 Sep 2022 11:18:17 +0200
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=Gm0rzX0C2VtueedqY6oyqUEL0KO+3EFqhigkVvANuMY=;
+        b=DMBEvmZc2qMWTxSrKw6GmIlMfrTvb/3masl6k95JXHpvuBo9wkoS3BcXgB/WLQB+J0
+         1JvsKVJ6RQZRNUyjyPcvBM6RG1Fg9tEjW4JMZovQvcUPDPSChO4EXsPZy+IJznbbKdyR
+         aMyCiFIZMu0jh2z1UydYjH5EvNVhgzQyJXmFj+1pKk3ApJNVpUCTiRCk1+xnXu0nsdE+
+         03N9dHd+joVMneCgZ0Kmi9mSCDKWzpjfEuYqfV9FZtILAq79wTWJyCMKfK24kYRUnfRG
+         08qZ0HGWw2fC5nE96pzk2tFn8Sa3KCdD3t9/ZawlN4b1GVG7ifMKO++9OFKwztBYdlT+
+         /ISQ==
+X-Gm-Message-State: ACrzQf2QRRqk7c2CwWhFcxKwLpYO7Phwjop+tQeGzFAcCmzCXSqc+P5m
+        GbrW/VuPwUeIEaqdmm3hhm9xtokXnOA=
+X-Google-Smtp-Source: AMsMyM6+bLaCCLfq2Y5Gvku94ch4fAR7cPcVVUAclbpniaRgBr/TItFM9zB1YWmXyaAc/ycMQLLlcQ==
+X-Received: by 2002:a5d:59c8:0:b0:22b:237c:3e1b with SMTP id v8-20020a5d59c8000000b0022b237c3e1bmr1636584wry.635.1663761269897;
+        Wed, 21 Sep 2022 04:54:29 -0700 (PDT)
+Received: from debian ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id y15-20020a05600c364f00b003b31c560a0csm2487422wmq.12.2022.09.21.04.54.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Sep 2022 04:54:29 -0700 (PDT)
+Date:   Wed, 21 Sep 2022 12:54:27 +0100
+From:   "Sudip Mukherjee (Codethink)" <sudipm.mukherjee@gmail.com>
+To:     Eliav Farber <farbere@amazon.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+Subject: build failure of next-20220921 due to 94c025b6f735 ("hwmon:
+ (mr75203) modify the temperature equation according to series 5 datasheet")
+Message-ID: <Yyr7c4IjjcnWZ3mr@debian>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Content-Language: en-GB
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Benjamin Poirier <bpoirier@nvidia.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        MPTCP Upstream <mptcp@lists.linux.dev>
-References: <20220921110437.5b7dbd82@canb.auug.org.au>
-From:   Matthieu Baerts <matthieu.baerts@tessares.net>
-In-Reply-To: <20220921110437.5b7dbd82@canb.auug.org.au>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------PnZdDX0mbgnHJpzmr15LlbVj
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Hi All,
 
-Hi Stephen,
+The builds of arm, mips and xtensa allmodconfig have failed to build
+next-20220921.
 
-On 21/09/2022 03:04, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->   tools/testing/selftests/drivers/net/bonding/Makefile
-> 
-> between commit:
-> 
->   bbb774d921e2 ("net: Add tests for bonding and team address list management")
-> 
-> from the net tree and commit:
-> 
->   152e8ec77640 ("selftests/bonding: add a test for bonding lladdr target")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
-Thank you for sharing this fix (and all the others!).
+Error from xtensa and mips build:
+ERROR: modpost: "__udivdi3" [drivers/hwmon/mr75203.ko] undefined!
+ERROR: modpost: "__divdi3" [drivers/hwmon/mr75203.ko] undefined!
 
-I also had this conflict on my side[1] and I resolved it differently,
-more like what is done in the -net tree I think, please see the patch
-attached to this email.
+Error from arm build:
+ERROR: modpost: "__aeabi_uldivmod" [drivers/hwmon/mr75203.ko] undefined!
+ERROR: modpost: "__aeabi_ldivmod" [drivers/hwmon/mr75203.ko] undefined!
 
-I guess I should probably use your version. It is just I saw it after
-having resolved the conflict on my side :)
-I will check later how the network maintainers will resolve this
-conflict and update my tree if needed.
+git bisect pointed to 94c025b6f735 ("hwmon: (mr75203) modify the temperature equation according to series 5 datasheet")
 
-Cheers,
-Matt
+I will be happy to test any patch or provide any extra log if needed.
 
-[1] https://github.com/multipath-tcp/mptcp_net-next/commit/c02e0180887c
+
 -- 
-Tessares | Belgium | Hybrid Access Solutions
-www.tessares.net
---------------PnZdDX0mbgnHJpzmr15LlbVj
-Content-Type: text/x-patch; charset=UTF-8;
- name="c02e0180887cdb8c2bc98fcbb0ad6a6d7c68578c.patch"
-Content-Disposition: attachment;
- filename="c02e0180887cdb8c2bc98fcbb0ad6a6d7c68578c.patch"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWNjIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2RyaXZlcnMvbmV0L2JvbmRpbmcv
-TWFrZWZpbGUKaW5kZXggMGY5NjU5NDA3OTY5LGQyMDlmN2E5OGI2Yy4uMWVkMDFlOTYwZDUx
-Ci0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2RyaXZlcnMvbmV0L2JvbmRpbmcvTWFr
-ZWZpbGUKKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvZHJpdmVycy9uZXQvYm9uZGlu
-Zy9NYWtlZmlsZQpAQEAgLTEsOSAtMSw3ICsxLDEwIEBAQAogICMgU1BEWC1MaWNlbnNlLUlk
-ZW50aWZpZXI6IEdQTC0yLjAKICAjIE1ha2VmaWxlIGZvciBuZXQgc2VsZnRlc3RzCiAgCiAt
-VEVTVF9QUk9HUyA6PSBib25kLWJyZWFrLWxhY3BkdS10eC5zaAogLVRFU1RfUFJPR1MgKz0g
-Ym9uZC1sbGFkZHItdGFyZ2V0LnNoCiArVEVTVF9QUk9HUyA6PSBib25kLWJyZWFrLWxhY3Bk
-dS10eC5zaCBcCisrCSAgICAgIGJvbmQtbGxhZGRyLXRhcmdldC5zaCBcCiArCSAgICAgIGRl
-dl9hZGRyX2xpc3RzLnNoCiArCiArVEVTVF9GSUxFUyA6PSBsYWdfbGliLnNoCiAgCiAgaW5j
-bHVkZSAuLi8uLi8uLi9saWIubWsK
-
---------------PnZdDX0mbgnHJpzmr15LlbVj--
+Regards
+Sudip
