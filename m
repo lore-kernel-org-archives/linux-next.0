@@ -2,99 +2,236 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F16C433F5
-	for <linux-next@archiver.kernel.org>; Mon,  3 Oct 2022 08:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C55C433FE
+	for <linux-next@archiver.kernel.org>; Mon,  3 Oct 2022 18:26:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbiJCIOL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 3 Oct 2022 04:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59182 "EHLO
+        id S229461AbiJCS0i (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 3 Oct 2022 14:26:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbiJCINt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2022 04:13:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F368D4BD09;
-        Mon,  3 Oct 2022 00:49:24 -0700 (PDT)
+        with ESMTP id S229819AbiJCS0g (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2022 14:26:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0A522295;
+        Mon,  3 Oct 2022 11:26:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 557AD60DC4;
-        Mon,  3 Oct 2022 07:47:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17591C433D6;
-        Mon,  3 Oct 2022 07:47:28 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3415FB81203;
+        Mon,  3 Oct 2022 18:26:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE27C433D6;
+        Mon,  3 Oct 2022 18:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664783250;
-        bh=qIA7SuX6qZbjWhvfQnpRqwjejMZeenj5lDBV5ylAw7M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OwWBXO6U5imcOKv3ixnoVkeoNgbiTY/V/tKsNpVJi88QxJ0PFpNXEMmyiFHeAdCbs
-         zExzwkKXgfK+k8teN2V+sqH8AZJ8VxbhF3/5FpS6Nide+Ln/MIQXAe3lG9eywpB2/O
-         +XFIhYZZ3Ubd7+oV1E2stgsQowp8MX96ssl26Lxs7kkhCVQGRqDrR3A0CGIWJ0B4t2
-         Go8U19vuUfHfHf1nnUYgmeDNU07t1mVlZgA2L8B3zDAzcmh+hZqZTTngGmLBoxfFen
-         G0/zwBLFdwMScc8Rizrn1s2VxT3vpINILwKhhyPcFYBlZO+cLqK7mjlYVtPjggrMoI
-         QHOgzAJ+UyvHA==
-Date:   Mon, 3 Oct 2022 08:47:25 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     broonie@kernel.org, Bjorn Andersson <andersson@kernel.org>,
+        s=k20201202; t=1664821592;
+        bh=qQ+lKO5aMUr9c/skIopg9XS88/sx1Dq4BqDdMW7rr3w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ANzKjsMOOhVTwP0q6+11SyNVWD2Yo2r8Euj8BFoJdPN3sP5TGBpjV8anlYBf1y6zy
+         Vv0AjC95AVOzt/LbJL/rKuF4Zf8KquORziUnBHtYFw9/UrtxXIpdeRgCBmn87Ry1OH
+         kjp2W33T0PHaZTNRBawx22svahDm/Wtlh19U8iFbc+V9mUaBHzwM0g35vYWp5nlR1j
+         MbdBB1lHxIoeDBd0paGBIloaKKGzDUyXSuX+0HlnkQzZLPLYxDGxJzqajP7pTW/2uO
+         4nCKkZNBqjO+Q6iS3wC5PAoC4Fi2eizg47D7nojMdvsqA7Pmv9viGIeIO5/xqe0/Rf
+         UlgtJ0QoOg4og==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1ofQ98-00EMd8-Be;
+        Mon, 03 Oct 2022 19:26:30 +0100
+Date:   Mon, 03 Oct 2022 19:26:29 +0100
+Message-ID: <8635c4bw6i.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     broonie@kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the qcom tree
-Message-ID: <YzqTjb9YbECU+EEt@google.com>
-References: <20220930115816.128513-1-broonie@kernel.org>
- <1e9a21a3-d6c3-3f76-18dc-ff14e8609846@linaro.org>
- <Yzbk/6SQdpNQTahV@google.com>
- <ef71ab54-d337-1c4c-9b90-ca39b1c1ed17@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef71ab54-d337-1c4c-9b90-ca39b1c1ed17@linaro.org>
+        x86@kernel.org
+Subject: Re: linux-next: Tree for Sep 30 (i386 non-SMP non-APIC w/ IRQ_DOMAIN: build errors)
+In-Reply-To: <bb1a7d75-521e-b578-f47f-e5bab652c2c7@infradead.org>
+References: <20220930154710.548289-1-broonie@kernel.org>
+        <bb1a7d75-521e-b578-f47f-e5bab652c2c7@infradead.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: rdunlap@infradead.org, tglx@linutronix.de, bp@alien8.de, broonie@kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, 30 Sep 2022, Krzysztof Kozlowski wrote:
++ Borislav and the x86 mailing list
 
-> On 30/09/2022 14:45, Lee Jones wrote:
-> > On Fri, 30 Sep 2022, Krzysztof Kozlowski wrote:
-> > 
-> >> On 30/09/2022 13:58, broonie@kernel.org wrote:
-> >>> Hi all,
-> >>>
-> >>> Today's linux-next merge of the mfd tree got a conflict in:
-> >>>
-> >>>   Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> >>>
-> >>
-> >> Thanks Mark.
-> >>
-> >>> between commit:
-> >>>
-> >>>   4f2e28b2cc2e0 ("dt-bindings: mfd: qcom,tcsr: add several devices")
-> >>
-> >> It seems this commit was picked by both Bjorn/qcom and Lee/MFD.
-> >>
-> >>>
-> >>> from the qcom tree and commits:
-> >>>
-> >>>   f8c1940165bea ("dt-bindings: mfd: qcom,tcsr: Add several devices")
-> >>>   a328ae8504dbc ("dt-bindings: mfd: qcom,tcsr: Drop simple-mfd from IPQ6018")
-> >>
-> >> This commit depends on the duplicated one (on "Add several devices"), so
-> >> I think all set can stay in MFD and instead Bjorn could drop his copy of
-> >> the commit.
-> > 
-> > Not sure why Bjorn is picking up MFD patches?
-> > 
-> > Was this a mistake Bjorn?
-> 
-> 
-> This was a part of big set MFD + ARM64 dts, so I guess it just slipped in:
-> 
-> https://lore.kernel.org/all/20220819083209.50844-1-krzysztof.kozlowski@linaro.org/
+On Sat, 01 Oct 2022 22:25:37 +0100,
+Randy Dunlap <rdunlap@infradead.org> wrote:
+>=20
+> Hi--
+>=20
+> On 9/30/22 08:47, broonie@kernel.org wrote:
+> > Hi all,
+> >=20
+> > Stephen should be back on Monday and normal service resumed.
+> >=20
+> > Changes since 20220929:
+> >=20
+>=20
+> i386 randconfig:
+>=20
+> # CONFIG_SMP is not set
+> # CONFIG_X86_UP_APIC is not set
+> CONFIG_IRQ_DOMAIN=3Dy
+> CONFIG_IRQ_SIM=3Dy
+> CONFIG_IRQ_DOMAIN_HIERARCHY=3Dy
+> CONFIG_GENERIC_MSI_IRQ=3Dy
+> CONFIG_GENERIC_MSI_IRQ_DOMAIN=3Dy
+>=20
+>=20
+> (a)
+>   CC      drivers/phy/phy-can-transceiver.o
+> In file included from ../include/asm-generic/gpio.h:11,
+>                  from ../include/linux/gpio.h:62,
+>                  from ../drivers/phy/phy-can-transceiver.c:11:
+> ../include/linux/gpio/driver.h:31:33: error: field =E2=80=98msiinfo=E2=80=
+=99 has incomplete type
+>    31 |         msi_alloc_info_t        msiinfo;
+>       |
 
-Thanks for the info.
+There is plenty of similar issues with drivers/gpio.
 
-Fair enough.  It happens.
+This looks like x86 without APIC support lacks a proper definition of
+'struct irq_alloc_info'. I can make one up to get things to compile,
+but I wonder if that makes any sense the first place.
 
--- 
-Lee Jones [李琼斯]
+[warning: anything below only shows that I know nothing about x86]
+
+Can x86 practically deal with MSIs without the APIC? If not, we should
+instead find a way to forbid MSIs when APIC isn't selected. Or make
+APIC support mandatory.
+
+>=20
+> (b)
+>   CC      arch/x86/kernel/hpet.o
+> ../arch/x86/kernel/hpet.c: In function =E2=80=98hpet_msi_init=E2=80=99:
+> ../arch/x86/kernel/hpet.c:520:46: error: invalid use of incomplete typede=
+f =E2=80=98msi_alloc_info_t=E2=80=99 {aka =E2=80=98struct irq_alloc_info=E2=
+=80=99}
+>   520 |         irq_domain_set_info(domain, virq, arg->hwirq, info->chip,=
+ NULL,
+>       |                                              ^~
+> ../arch/x86/kernel/hpet.c:521:49: error: invalid use of incomplete typede=
+f =E2=80=98msi_alloc_info_t=E2=80=99 {aka =E2=80=98struct irq_alloc_info=E2=
+=80=99}
+>   521 |                             handle_edge_irq, arg->data, "edge");
+>       |                                                 ^~
+>   CC      fs/jfs/jfs_xtree.o
+> ../arch/x86/kernel/hpet.c: In function =E2=80=98hpet_create_irq_domain=E2=
+=80=99:
+> ../arch/x86/kernel/hpet.c:550:13: error: =E2=80=98x86_vector_domain=E2=80=
+=99 undeclared (first use in this function)
+>   550 |         if (x86_vector_domain =3D=3D NULL)
+>       |             ^~~~~~~~~~~~~~~~~
+> ../arch/x86/kernel/hpet.c:550:13: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+> ../arch/x86/kernel/hpet.c: In function =E2=80=98hpet_assign_irq=E2=80=99:
+> ../arch/x86/kernel/hpet.c:598:31: error: storage size of =E2=80=98info=E2=
+=80=99 isn=E2=80=99t known
+>   598 |         struct irq_alloc_info info;
+>       |                               ^~~~
+> ../arch/x86/kernel/hpet.c:600:9: error: implicit declaration of function =
+=E2=80=98init_irq_alloc_info=E2=80=99 [-Werror=3Dimplicit-function-declarat=
+ion]
+>   600 |         init_irq_alloc_info(&info, NULL);
+>       |         ^~~~~~~~~~~~~~~~~~~
+> ../arch/x86/kernel/hpet.c:601:21: error: =E2=80=98X86_IRQ_ALLOC_TYPE_HPET=
+=E2=80=99 undeclared (first use in this function)
+>   601 |         info.type =3D X86_IRQ_ALLOC_TYPE_HPET;
+>       |                     ^~~~~~~~~~~~~~~~~~~~~~~
+> ../arch/x86/kernel/hpet.c:598:31: warning: unused variable =E2=80=98info=
+=E2=80=99 [-Wunused-variable]
+>   598 |         struct irq_alloc_info info;
+>       |                               ^~~~
+> ../arch/x86/kernel/hpet.c:607:1: error: control reaches end of non-void f=
+unction [-Werror=3Dreturn-type]
+>   607 | }
+>       | ^
+
+Same question: is HPET usable without the APIC? If so, the MSI part
+should probably be guarded by something else.
+
+>=20
+>=20
+> (c)
+>   CC      kernel/irq/msi.o
+> ../kernel/irq/msi.c: In function =E2=80=98msi_domain_ops_get_hwirq=E2=80=
+=99:
+> ../kernel/irq/msi.c:585:19: error: invalid use of incomplete typedef =E2=
+=80=98msi_alloc_info_t=E2=80=99 {aka =E2=80=98struct irq_alloc_info=E2=80=
+=99}
+>   585 |         return arg->hwirq;
+>       |                   ^~
+> In file included from ../arch/x86/include/asm/string.h:3,
+>                  from ../include/linux/string.h:20,
+>                  from ../arch/x86/include/asm/page_32.h:22,
+>                  from ../arch/x86/include/asm/page.h:14,
+>                  from ../arch/x86/include/asm/thread_info.h:12,
+>                  from ../include/linux/thread_info.h:60,
+>                  from ../arch/x86/include/asm/preempt.h:7,
+>                  from ../include/linux/preempt.h:78,
+>                  from ../include/linux/rcupdate.h:27,
+>                  from ../include/linux/rculist.h:11,
+>                  from ../include/linux/pid.h:5,
+>                  from ../include/linux/sched.h:14,
+>                  from ../include/linux/ratelimit.h:6,
+>                  from ../include/linux/dev_printk.h:16,
+>                  from ../include/linux/device.h:15,
+>                  from ../kernel/irq/msi.c:12:
+> ../kernel/irq/msi.c: In function =E2=80=98msi_domain_ops_prepare=E2=80=99:
+> ../kernel/irq/msi.c:591:30: error: invalid application of =E2=80=98sizeof=
+=E2=80=99 to incomplete type =E2=80=98msi_alloc_info_t=E2=80=99 {aka =E2=80=
+=98struct irq_alloc_info=E2=80=99}
+>   591 |         memset(arg, 0, sizeof(*arg));
+>       |                              ^
+> ../arch/x86/include/asm/string_32.h:195:52: note: in definition of macro =
+=E2=80=98memset=E2=80=99
+>   195 | #define memset(s, c, count) __builtin_memset(s, c, count)
+>       |                                                    ^~~~~
+> ../kernel/irq/msi.c: In function =E2=80=98msi_domain_ops_set_desc=E2=80=
+=99:
+> ../kernel/irq/msi.c:598:12: error: invalid use of incomplete typedef =E2=
+=80=98msi_alloc_info_t=E2=80=99 {aka =E2=80=98struct irq_alloc_info=E2=80=
+=99}
+>   598 |         arg->desc =3D desc;
+>       |            ^~
+> ../kernel/irq/msi.c: In function =E2=80=98__msi_domain_alloc_irqs=E2=80=
+=99:
+> ../kernel/irq/msi.c:858:9: error: variable =E2=80=98arg=E2=80=99 has init=
+ializer but incomplete type
+>   858 |         msi_alloc_info_t arg =3D { };
+>       |         ^~~~~~~~~~~~~~~~
+> ../kernel/irq/msi.c:858:26: error: storage size of =E2=80=98arg=E2=80=99 =
+isn=E2=80=99t known
+>   858 |         msi_alloc_info_t arg =3D { };
+>       |                          ^~~
+> ../kernel/irq/msi.c:858:26: warning: unused variable =E2=80=98arg=E2=80=
+=99 [-Wunused-variable]
+>   CC      lib/clz_tab.o
+> ../kernel/irq/msi.c: In function =E2=80=98msi_domain_ops_get_hwirq=E2=80=
+=99:
+> ../kernel/irq/msi.c:586:1: error: control reaches end of non-void functio=
+n [-Werror=3Dreturn-type]
+>   586 | }
+>       | ^
+
+This is related to (a).
+
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
