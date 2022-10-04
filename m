@@ -2,80 +2,110 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75777C433F5
-	for <linux-next@archiver.kernel.org>; Tue,  4 Oct 2022 02:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97366C433F5
+	for <linux-next@archiver.kernel.org>; Tue,  4 Oct 2022 02:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbiJDCHc (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 3 Oct 2022 22:07:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58292 "EHLO
+        id S229534AbiJDC0x (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 3 Oct 2022 22:26:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbiJDCHb (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2022 22:07:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8181233E09;
-        Mon,  3 Oct 2022 19:07:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C33E161242;
-        Tue,  4 Oct 2022 02:07:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E00C433C1;
-        Tue,  4 Oct 2022 02:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664849249;
-        bh=GrIeasiJuVaprQD27vGwfGnBfgThFVrHTF2uXis4t5k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GNXl/tSMi1TDSOsQpmWStL3UCrm6D4Dd/txbssqmC5Gf0IakHrHznbq9ThlHkrQFp
-         y64qLBQpv5wyhKNkekKc/TSxtlK6Wx/VV1jmevD2r1Ah1A8jdJVbBvlEDBSiNNZUnO
-         Q3GxQ8szAOZ8PEbPGgmiUJ2FwaLqhuXAaYibLpTpGBLxkUq36Bh/begA4mPHw1ShTT
-         35oC7RyZAx/KS24/3QUQ0cz+XeV1Vf6Zl/WMk26SmuouqMJjeRDvgUdpzTNHt1MbbQ
-         a9oRC578VKZTUp4eaUTeRhMKe3Bl7aCB7Rjuu3l+vSBkKYTfYLEdZ0JWiPVYu8ZlaW
-         Xlrt2NoKBh9cA==
-Date:   Mon, 3 Oct 2022 19:07:27 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
+        with ESMTP id S229484AbiJDC0w (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2022 22:26:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A9F1006C
+        for <linux-next@vger.kernel.org>; Mon,  3 Oct 2022 19:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664850292;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fVkcg9C8JIxqxOQDwg0gOT0h8GaFXdcY7F7efzgxrAg=;
+        b=cgbmSpn4p5uSEgWa0MVRXOuFVfqkRl0LQvUUrWaqVhHibC1bMibP2SIA6rwbvfzXo9DRx7
+        JcVJGJVbCn5JZ6h5y4gw4RBmvKkF+k7mRiSGHFfA5mhK0mUKpOCw95Ut+j4FIhfpJSdODW
+        Ykdp36u/wMkOa/nsH5WjkgRB/1y5BeE=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-648-OENb7rIhOy6iZEbtcz-FHw-1; Mon, 03 Oct 2022 22:24:50 -0400
+X-MC-Unique: OENb7rIhOy6iZEbtcz-FHw-1
+Received: by mail-lj1-f198.google.com with SMTP id w11-20020a05651c102b00b0026dde7ed4caso1342487ljm.8
+        for <linux-next@vger.kernel.org>; Mon, 03 Oct 2022 19:24:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=fVkcg9C8JIxqxOQDwg0gOT0h8GaFXdcY7F7efzgxrAg=;
+        b=6/TT4nCmrtHOapAWK5EHMNHj01hSwqbC1n6CIFc27zC7ylEKvdUiyITezQ3iqJVYU2
+         620a/NKAxWbMwxpMATulFV2JQPy7UsUS6dLcatHx7hRnyp1sd+L8nMM8o6UgErGhhEFx
+         x/arEsK5vwPmaHr8bmtD5mBtrLVEj4xzTAoYMLkNRcpMczPNhT83LcrRaAygp/1YO6+3
+         cujixfZ0Np21XOmH8AcBUZI3JcDoPkf5DK0b5QqbqAlhQP+vcUeZjp4QmbbpD7gI1Y/a
+         iYNa4u/b+7UqF5koz7L3RMM6KDslAmQBbCis45ovza91/8hk/9eoSaTXIvYAFXpIr/nK
+         G61w==
+X-Gm-Message-State: ACrzQf23TGAXQtQt9OctbDwwBxnig1Wg9Ir6/zVyJNezaHqgsGBAHRJh
+        2ZrFuiGU0kJ4OTYlniHV3sioQoJ36PM5JN1tz21VN/HEhWgmbR/8NPmhwXkUtZM78Dm6CylFLa2
+        hhGDGmpdL3cqrkp0p/g9wk5O5YdIMQcnr81kF8w==
+X-Received: by 2002:a05:6512:3d9f:b0:4a2:4986:281 with SMTP id k31-20020a0565123d9f00b004a249860281mr1516692lfv.123.1664850288950;
+        Mon, 03 Oct 2022 19:24:48 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM43JpG4+HkP34BMh00KTDXXzJi6U2FMyVKrOOV9rwvThgPq3E1KX8F6iiYpkGCS/29GDwP66I2XdKeeelgNxP8=
+X-Received: by 2002:a05:6512:3d9f:b0:4a2:4986:281 with SMTP id
+ k31-20020a0565123d9f00b004a249860281mr1516681lfv.123.1664850288711; Mon, 03
+ Oct 2022 19:24:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220930105434.111407-1-broonie@kernel.org> <20221004132047.435d42db@canb.auug.org.au>
+In-Reply-To: <20221004132047.435d42db@canb.auug.org.au>
+From:   David Airlie <airlied@redhat.com>
+Date:   Tue, 4 Oct 2022 12:24:37 +1000
+Message-ID: <CAMwc25oshRcJBoCT70B+b42bh5sPqgyoHuBx6K6ZLrwBMHnJzw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        David Vernet <void@manifault.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+Cc:     broonie@kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Aurabindo Pillai <aurabindo.pillai@amd.com>,
+        Hamza Mahfooz <hamza.mahfooz@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stanislav Fomichev <sdf@google.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
-Message-ID: <20221003190727.0921e479@kernel.org>
-In-Reply-To: <20221004122428.653bd5cd@canb.auug.org.au>
-References: <20221004122428.653bd5cd@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        DRI <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, 4 Oct 2022 12:24:28 +1100 Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->   kernel/bpf/helpers.c
-> 
-> between commit:
-> 
->   8addbfc7b308 ("bpf: Gate dynptr API behind CAP_BPF")
-> 
-> from the bpf tree and commits:
-> 
->   8a67f2de9b1d ("bpf: expose bpf_strtol and bpf_strtoul to all program types")
->   5679ff2f138f ("bpf: Move bpf_loop and bpf_for_each_map_elem under CAP_BPF")
->   205715673844 ("bpf: Add bpf_user_ringbuf_drain() helper")
+On Tue, Oct 4, 2022 at 12:21 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi broonie@kernel.org,
+>
+> On Fri, 30 Sep 2022 11:54:34 +0100 broonie@kernel.org wrote:
+> >
+> > After merging the drm tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >
+> > /tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_stream.c: In function 'dc_stream_remove_writeback':
+> > /tmp/next/build/drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_stream.c:527:55: error: array subscript [0, 0] is outside array bounds of 'struct dc_writeback_info[1]' [-Werror=array-bounds]
+> >   527 |     stream->writeback_info[j] = stream->writeback_info[i];
+> >       |                                 ~~~~~~~~~~~~~~~~~~~~~~^~~
+> > cc1: all warnings being treated as errors
+> >
+> > Caused by
+> >
+> >     5d8c3e836fc224 ("drm/amd/display: fix array-bounds error in dc_stream_remove_writeback()")
+> >
+> > I have reverted that commit for today.
+>
+> I am still getting this failure.  The full error is:
+>
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_stream.c: In function 'dc_stream_remove_writeback':
+> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_stream.c:527:83: error: array subscript [0, 0] is outside array bounds of 'struct dc_writeback_info[1]' [-Werror=array-bounds]
+>   527 |                                 stream->writeback_info[j] = stream->writeback_info[i];
+>       |                                                             ~~~~~~~~~~~~~~~~~~~~~~^~~
+> In file included from drivers/gpu/drm/amd/amdgpu/../display/dc/dc.h:1269,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/dc/inc/core_types.h:29,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/dc/basics/dc_common.h:29,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_stream.c:27:
+> drivers/gpu/drm/amd/amdgpu/../display/dc/dc_stream.h:241:34: note: while referencing 'writeback_info'
+>   241 |         struct dc_writeback_info writeback_info[MAX_DWB_PIPES];
+>       |                                  ^~~~~~~~~~~~~~
 
-Thanks! 
+I'm not seeing it here, what gcc is this with?
 
-Unrelated to the conflict but do you see this when building the latest
-by any chance? Is it just me and my poor old gcc 8.5?
+Dave.
 
-vmlinux.o: warning: objtool: ___ksymtab+bpf_dispatcher_xdp_func+0x0: data relocation to !ENDBR: bpf_dispatcher_xdp_func+0x0
-vmlinux.o: warning: objtool: bpf_dispatcher_xdp+0xa0: data relocation to !ENDBR: bpf_dispatcher_xdp_func+0x0
