@@ -2,76 +2,77 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6559C433FE
-	for <linux-next@archiver.kernel.org>; Wed,  5 Oct 2022 12:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D73C433F5
+	for <linux-next@archiver.kernel.org>; Wed,  5 Oct 2022 14:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbiJEMzH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 5 Oct 2022 08:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60914 "EHLO
+        id S229940AbiJEOHT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 5 Oct 2022 10:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229790AbiJEMzF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2022 08:55:05 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC6531DC6;
-        Wed,  5 Oct 2022 05:55:04 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id w10so9951732edd.4;
-        Wed, 05 Oct 2022 05:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKnfwKM3GfRfs1GdFXL3EzRBmRr1ntc133LstIFT5HA=;
-        b=o8QZPc5baW5MF1RQoJHAZH7Gt6DAVEiyOTNqCpenkZ/Dl5z9UvI5H3fyFiQDIK4bNg
-         8cFH0jFD9HXfmdSsw2rB7YnGc0WNCyXNNMiT4zCg69K+sM5KZk00aK/qXiUAhfIGiGw3
-         hWg7SpUmZGGt+zhkcT04eN66aKclL0eMvEfnExbzBQDRdstHUV+yiDNhuX/ZaX8x7viZ
-         EQflDDyyW8t7y/pPTuicCw/TO2ma7EmB/EFjPgoWOpN3e0+mNrHys146rf7RsHDtSh4z
-         mp98Gw8k6GoEv63xjZ1xGnK+DlTVKtX74it0iuHKbYK6XJlp6cyPKivTELOShdhfENpx
-         LPpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oKnfwKM3GfRfs1GdFXL3EzRBmRr1ntc133LstIFT5HA=;
-        b=krpFjX5kXNZy3mHZwqwhgq4mHPXtNBoF66+3hAEmsBFUByekYICjpkvLqQr69pqZPE
-         8Reuh7q2ZI69n4/JgpAVkLUJMEE7+TdmLs4X9Vak9wlTNEVA4wXJwONLPgpo3WLpU7/K
-         k7gi+EfnK3xYmsTel/eSX5faunhToI0avSOu/cF2CIUDBdnPYcNQBVzOH61X6fbpPXG4
-         IpXcSw3TAmPN2OgSXn3myB+tL8c3qVGbouF1CEAuEjW+vl4pEM1EVTUqPy7BHNCkLJnA
-         KsiQ4I5fW9tLoe58R4LUjuD2wHtQnqN74mzW9F60tgy9P3/M3vEBCv3sttfoivjFXxpW
-         yMGw==
-X-Gm-Message-State: ACrzQf1ZbhfTdcMPDVQzs14ltx75lcNh3D8pnXuvY/yozZGQX1+UvLIt
-        BwRydHjXJXgUPIXCMzMe3In+PiWdCPcv83gsTeZj+IbI05w=
-X-Google-Smtp-Source: AMsMyM4mEKd/pYQZ/4I5Ga208z8FXCa8herdyafq8+yOwo59j75Fhorq9MRycpNLUkv7W2+EH3+ORbMqUgxxYATCSmY=
-X-Received: by 2002:a05:6402:1356:b0:459:3c9e:81d4 with SMTP id
- y22-20020a056402135600b004593c9e81d4mr10066457edw.148.1664974502908; Wed, 05
- Oct 2022 05:55:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <Yz1t6rPLOzKT8Id+@debian> <CAAhV-H7FoDEEtqF_ZOwTGPeGK-4wpzsxEqvO+iuq=KpEuDUofQ@mail.gmail.com>
-In-Reply-To: <CAAhV-H7FoDEEtqF_ZOwTGPeGK-4wpzsxEqvO+iuq=KpEuDUofQ@mail.gmail.com>
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Wed, 5 Oct 2022 13:54:26 +0100
-Message-ID: <CADVatmOmtd0jfzNvpyMiQnN0nUn3qZFjLnTjxrn7km3p-grwpQ@mail.gmail.com>
+        with ESMTP id S229901AbiJEOHS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2022 10:07:18 -0400
+Received: from xry111.site (xry111.site [89.208.246.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80587694E;
+        Wed,  5 Oct 2022 07:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+        s=default; t=1664978835;
+        bh=ZECf7KU7iOtafZ/0dVIWw4XP10VzhUl+beIW14xajGs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=EuwaX8ZTGMEpX9G1rX17oNj+i9mW50v02g13o4NKOGgKIZ9wtrvAemwbG4JRj/l3V
+         /LopbJT0lM72TxG2x2lYsjqi8Rz4+W6GId/7KRK8vv783Pq6cil46bDLfglz1/Jci+
+         k88H1cZWZZU24AiuCCuMHs9TMIeJVm072nJvHa8A=
+Received: from [IPv6:240e:358:1191:4a00:dc73:854d:832e:3] (unknown [IPv6:240e:358:1191:4a00:dc73:854d:832e:3])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+        (Client did not present a certificate)
+        (Authenticated sender: xry111@xry111.site)
+        by xry111.site (Postfix) with ESMTPSA id EB82165C3E;
+        Wed,  5 Oct 2022 10:07:09 -0400 (EDT)
+Message-ID: <ad45e0e0409b07ecb719743e4febb2853143986d.camel@xry111.site>
 Subject: Re: build failure of next-20221005 due to 4078ec1ef5ed ("LoongArch:
  Use TLB for ioremap()")
-To:     Huacai Chen <chenhuacai@kernel.org>
-Cc:     Huacai Chen <chenhuacai@loongson.cn>,
-        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+From:   Xi Ruoyao <xry111@xry111.site>
+To:     Huacai Chen <chenhuacai@loongson.cn>
+Cc:     WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Wed, 05 Oct 2022 22:06:56 +0800
+In-Reply-To: <CADVatmOmtd0jfzNvpyMiQnN0nUn3qZFjLnTjxrn7km3p-grwpQ@mail.gmail.com>
+References: <Yz1t6rPLOzKT8Id+@debian>
+         <CAAhV-H7FoDEEtqF_ZOwTGPeGK-4wpzsxEqvO+iuq=KpEuDUofQ@mail.gmail.com>
+         <CADVatmOmtd0jfzNvpyMiQnN0nUn3qZFjLnTjxrn7km3p-grwpQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.0 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Oct 5, 2022 at 1:30 PM Huacai Chen <chenhuacai@kernel.org> wrote:
->
-> Hi, Sudip,
->
-> This seems a false positive. When the implementation of iounmap() is
-> empty (but this is completely legal I think), these drivers will cause
-> "unused variable error".
+Hi Huacai,
 
-And that error will fail the build as allmodconfig will have CONFIG_WERROR=y.
+Try:
 
--- 
-Regards
-Sudip
+#define iounmap(addr) ((void)(addr))
+
+This is how we normally silence an unused variable or parameter warning.
+Not sure if the kernel uses the same convention though.
+
+On Wed, 2022-10-05 at 13:54 +0100, Sudip Mukherjee wrote:
+> On Wed, Oct 5, 2022 at 1:30 PM Huacai Chen <chenhuacai@kernel.org>
+> wrote:
+> >=20
+> > Hi, Sudip,
+> >=20
+> > This seems a false positive. When the implementation of iounmap() is
+> > empty (but this is completely legal I think), these drivers will
+> > cause
+> > "unused variable error".
+>=20
+> And that error will fail the build as allmodconfig will have
+> CONFIG_WERROR=3Dy.
+>=20
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
