@@ -2,99 +2,84 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC31C433F5
-	for <linux-next@archiver.kernel.org>; Thu,  6 Oct 2022 05:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D8EC433FE
+	for <linux-next@archiver.kernel.org>; Thu,  6 Oct 2022 05:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbiJFFZz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 6 Oct 2022 01:25:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35232 "EHLO
+        id S230143AbiJFFbu (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 6 Oct 2022 01:31:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbiJFFZy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2022 01:25:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67297EFD6;
-        Wed,  5 Oct 2022 22:25:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6CEC661844;
-        Thu,  6 Oct 2022 05:25:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9888C433B5;
-        Thu,  6 Oct 2022 05:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665033952;
-        bh=COGl5uV0nSso0ASdfQpE3uWYO735hZcandisnHobVps=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QU44qG4Rm1M0zo9iHJPLh5Zj524EOifybS++udldoMyZWSqogiejpjindLfsdbkXi
-         hIo5mZumUMD6ZXiSZfORmxbC1MBM6soHIFaMzVIntXHr5Su9l/kxgoMtCHDlwG58RI
-         cVMXx4lT1vrUiwok/LrtWulWfs24AaH/4tptKksRVoLgqxODpcPtcpLvaAoaMW3oeX
-         Cw6KizHXhiKMaFYMjyipdEGwBUhwLnFkuojrjavw+zJDBmnnT5vXRkGbLMa0tgYGcy
-         LR81XyFoFtlbA/TUK5uii4Uq1jceG5Z9JuC7GE2cGDQIS0bxfVlCNz1k8hX3hQ/NtE
-         hAjLXEJiMLBOQ==
-Received: by mail-ed1-f50.google.com with SMTP id s30so1271035eds.1;
-        Wed, 05 Oct 2022 22:25:52 -0700 (PDT)
-X-Gm-Message-State: ACrzQf1dah5iAMQfwkn3agg20iWdxIYVRvm2L9wJqRp6+kTWE+GCQQYk
-        lpKBzAizoQaAN6gXYcqviSUwzeUOTMxLFn0Xugw=
-X-Google-Smtp-Source: AMsMyM5NkOQxKS3BuwzOSC9pLfMrTJCGhnRFLhXo2lty1XKLpQ6+AS8o2HupP+dFpHMwKEOTnYORcQkSlc9VcVbt2nY=
-X-Received: by 2002:a05:6402:c81:b0:458:c428:173a with SMTP id
- cm1-20020a0564020c8100b00458c428173amr2920220edb.298.1665033951020; Wed, 05
- Oct 2022 22:25:51 -0700 (PDT)
+        with ESMTP id S230114AbiJFFbs (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2022 01:31:48 -0400
+X-Greylist: delayed 1050 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 22:31:46 PDT
+Received: from 6.mo575.mail-out.ovh.net (6.mo575.mail-out.ovh.net [46.105.63.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FABF1F619
+        for <linux-next@vger.kernel.org>; Wed,  5 Oct 2022 22:31:46 -0700 (PDT)
+Received: from player693.ha.ovh.net (unknown [10.109.146.20])
+        by mo575.mail-out.ovh.net (Postfix) with ESMTP id B1E1525A69
+        for <linux-next@vger.kernel.org>; Thu,  6 Oct 2022 05:14:14 +0000 (UTC)
+Received: from RCM-web4.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player693.ha.ovh.net (Postfix) with ESMTPSA id 77DD82F565B78;
+        Thu,  6 Oct 2022 05:14:05 +0000 (UTC)
 MIME-Version: 1.0
-References: <Yz1t6rPLOzKT8Id+@debian> <CAAhV-H7FoDEEtqF_ZOwTGPeGK-4wpzsxEqvO+iuq=KpEuDUofQ@mail.gmail.com>
- <CADVatmOmtd0jfzNvpyMiQnN0nUn3qZFjLnTjxrn7km3p-grwpQ@mail.gmail.com> <ad45e0e0409b07ecb719743e4febb2853143986d.camel@xry111.site>
-In-Reply-To: <ad45e0e0409b07ecb719743e4febb2853143986d.camel@xry111.site>
-From:   Huacai Chen <chenhuacai@kernel.org>
-Date:   Thu, 6 Oct 2022 13:25:38 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7VPCT3aYeNFeLzLKYW8r3rGnk_X61a1wc-GTROPD2aSg@mail.gmail.com>
-Message-ID: <CAAhV-H7VPCT3aYeNFeLzLKYW8r3rGnk_X61a1wc-GTROPD2aSg@mail.gmail.com>
-Subject: Re: build failure of next-20221005 due to 4078ec1ef5ed ("LoongArch:
- Use TLB for ioremap()")
-To:     Xi Ruoyao <xry111@xry111.site>
-Cc:     Huacai Chen <chenhuacai@loongson.cn>,
-        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 06 Oct 2022 07:14:05 +0200
+From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: linux-next: build warnings after merge of the broadcom tree
+In-Reply-To: <20221006111725.01ed0eac@canb.auug.org.au>
+References: <20220725095913.31e859ec@canb.auug.org.au>
+ <df8f4765-a804-cb50-bbb5-475925ba2036@milecki.pl>
+ <20220815105419.4df1005b@canb.auug.org.au>
+ <20220831091654.45d5ed41@canb.auug.org.au>
+ <20221005114841.4540d325@canb.auug.org.au>
+ <abbe10d1-4c2a-5fad-3f92-e55c514d3ce2@gmail.com>
+ <CACPK8Xecn8ZREAqcLcuZHjA=NhaanRMKu4W39okAkBFX4aaOnw@mail.gmail.com>
+ <f8416a63-3460-4b43-8532-2d5eacea4457@app.fastmail.com>
+ <20221006111725.01ed0eac@canb.auug.org.au>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <d019295b10f2d84e945d8e55ecc52e4f@milecki.pl>
+X-Sender: rafal@milecki.pl
+X-Originating-IP: 194.187.74.233
+X-Webmail-UserID: rafal@milecki.pl
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 7216455456440429336
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeigedgleehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggffhffvvefujghffgfkgihitgfgsehtkehjtddtreejnecuhfhrohhmpeftrghfrghlpgfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeevjefhffffveeludejfedtvdfftdekgffghfegieeliedvfeeigfejteejjeekfeenucfkpheptddrtddrtddrtddpudelgedrudekjedrjeegrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrheileefrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehjeeh
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi, Ruoyao,
+On 2022-10-06 02:17, Stephen Rothwell wrote:
+> On Wed, 05 Oct 2022 09:21:21 +0200 "Arnd Bergmann" <arnd@arndb.de> 
+> wrote:
+>> 
+>> Agreed. Alternatively, we could just remove the pcie@ nodes from
+>> bcm5301x as a hotfix, as they are clearly not usable in the
+>> current form, and none of the three versions (5.19, Rafał's
+>> patch missing ranges, and Florian's patch with incorrect ranges)
+>> actually conform to the binding.
+>> 
+>> I'll tentatively apply the revert for now so I can send the pull
+>> request tonight. If someone comes up with a better fix, I can
+>> use that instead.
+> 
+> I applied the revert to the merge of the arm-soc tree today and *all*
+> the warnings are gone.
 
-On Wed, Oct 5, 2022 at 10:14 PM Xi Ruoyao <xry111@xry111.site> wrote:
->
-> Hi Huacai,
->
-> Try:
->
-> #define iounmap(addr) ((void)(addr))
-This can solve the problem, and arm use the same way:
-#define tlb_flush(tlb)  ((void) tlb)
+As explained by Joel, there are dtc and yaml warnings.
 
-but I don't know whether this is the correct way.
+Not "*all*" warnings are gone
+dtc warnings are gone
+yaml warnings are back
 
-Huacai
-
->
-> This is how we normally silence an unused variable or parameter warning.
-> Not sure if the kernel uses the same convention though.
->
-> On Wed, 2022-10-05 at 13:54 +0100, Sudip Mukherjee wrote:
-> > On Wed, Oct 5, 2022 at 1:30 PM Huacai Chen <chenhuacai@kernel.org>
-> > wrote:
-> > >
-> > > Hi, Sudip,
-> > >
-> > > This seems a false positive. When the implementation of iounmap() is
-> > > empty (but this is completely legal I think), these drivers will
-> > > cause
-> > > "unused variable error".
-> >
-> > And that error will fail the build as allmodconfig will have
-> > CONFIG_WERROR=y.
-> >
->
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
->
+Which may be OK, just clarifying.
