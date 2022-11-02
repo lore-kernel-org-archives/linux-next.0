@@ -2,79 +2,93 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C5BC4332F
-	for <linux-next@archiver.kernel.org>; Tue,  1 Nov 2022 21:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DE5C4332F
+	for <linux-next@archiver.kernel.org>; Wed,  2 Nov 2022 03:56:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbiKAV2v (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:28:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47320 "EHLO
+        id S230199AbiKBD4J (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 1 Nov 2022 23:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbiKAV2t (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2022 17:28:49 -0400
+        with ESMTP id S229516AbiKBDzr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2022 23:55:47 -0400
 Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDDAD1DF2F;
-        Tue,  1 Nov 2022 14:28:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA7CD20F6F;
+        Tue,  1 Nov 2022 20:55:43 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4N236c07kkz4xFr;
-        Wed,  2 Nov 2022 08:28:39 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4N2Cj62gVwz4xG6;
+        Wed,  2 Nov 2022 14:55:38 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1667338120;
-        bh=begiQeirg8nUPiZn4wI0A7c46RT1wVmZbLG90APn0Yg=;
+        s=201702; t=1667361338;
+        bh=sl4r36z74uNseksdR2xQB6ItGayRMwe+68aobS872bg=;
         h=Date:From:To:Cc:Subject:From;
-        b=cGW4why/+Ah15TLjY/7yV7X1577SEcvOeTtdmPTCgORrMMLjr3OROj+5YS3Bhp0Hi
-         4cB5Qgu2LGV4Y7/J94zGbJBOgvMgim52WgaJ0m8mPjcXJDEL+S8hm2RG1qYnJTeKOq
-         8r05f//g39h8QelcaPwu8Yrkel/WLIgmHB3wmMN7gt0o2Xiz2p6lr6w+WN5WnXTsW2
-         1NPTLAiUA39oMRbDQTcmTMfi7RfNfw+6c1SzHZ1A/FJyRRikbH1zc/s3PQ/2GLrhEE
-         Js9zJUGV165pNcNTo/7XnK7aiNvSG2oZwq0qbuws8Hd+nz/mUUTPbGCmdSvko+CCRZ
-         5ioodo/1OVUvg==
-Date:   Wed, 2 Nov 2022 08:28:26 +1100
+        b=DiQ6ERBpfmizSE+9N5j0/mys5tuZ6WnP+bH0WuGizDYYQNLfCeFzkfobB54BL++DQ
+         R2lPC3+vC56UcMkI8oDaf783XUBJQ5BHeo1w/DFRvGyWgK6v82ejlmT6b7R12tLeGo
+         K7YKFnPBGJTURvM8z3PonHbZYgQ/36GfpiDIAwg4FelQTl5ybLbq2OKw+5VSR+nAPL
+         cTAfuqRuwpmv+FZkP/fCzjHRnHaorVnOXbWkL0j02aSDoO5jq4jsqL8t7QlUGShUUR
+         b9N9G9bzYJ7zXPBGTaIFRLvRo0CLA1TGaDXCXvNW2uXZM0VTYY9Bvmcu/orlS38Y5T
+         tQQhm6GULkg1w==
+Date:   Wed, 2 Nov 2022 14:55:32 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the apparmor tree
-Message-ID: <20221102082826.0541eec6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20221102145532.1b6e5891@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0nVuu_HNwXIh2WZWD2glVLR";
+Content-Type: multipart/signed; boundary="Sig_/pT88DRglJwcKsgFEPHT_M/Y";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/0nVuu_HNwXIh2WZWD2glVLR
+--Sig_/pT88DRglJwcKsgFEPHT_M/Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+After merging the mm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  0fc0401eb24c ("apparmor: Add __init annotation to aa_{setup/teardown}_dfa=
-_engine()")
+mm/migrate.c: In function 'unmap_and_move_huge_page':
+mm/migrate.c:1315:13: error: implicit declaration of function 'hugetlb_foli=
+o_subpool'; did you mean 'hugetlb_page_subpool'? [-Werror=3Dimplicit-functi=
+on-declaration]
+ 1315 |         if (hugetlb_folio_subpool(src) && !folio_mapping(src)) {
+      |             ^~~~~~~~~~~~~~~~~~~~~
+      |             hugetlb_page_subpool
+cc1: some warnings being treated as errors
 
-is missing a Signed-off-by from its committer.
+Caused by commit
+
+  fa7dc4d80445 ("mm/hugetlb: convert move_hugetlb_state() to folios")
+
+This build does *not* have CONFIG_HUGETLB_PAGE set.
+
+I have reverted that commit for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/0nVuu_HNwXIh2WZWD2glVLR
+--Sig_/pT88DRglJwcKsgFEPHT_M/Y
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNhj3sACgkQAVBC80lX
-0GxhCgf/QtjtIv3sC7uqNfE7p08DPtzs3JHsj/cPe0dYaYU81ziOOofA6DT5J/Ah
-PHMkwDGK6TlolaQJFzhLWvvMGwePZl5k0QSpIwZY8LkGZBlN/QCCL1CDoSzoVuBA
-CzWltahgh2KWah51PQmemRX5/43H4KmtLG+P8QaSkMIT1wM6gyRaWCDoWXyx5U+c
-HTHCbQycpoZ2yDGQpiGYftiEUnWZsxoR+T2KF69H6H67Oh9ZkCsI78XBIItWcqol
-kLOv6WNC0H/ZtCeiFQ+0+Zb4sJcDiZDPer0wdSWZcFtrqy2yg/GBD3CgGZLkIuBP
-a3VQVjQW3ACBRDn4OTiMBwaQg2Oi+g==
-=iXA8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNh6jQACgkQAVBC80lX
+0GwL/Af+PQqjEx8JanccUpHS4c0USWkOPY2p6hCVh2mjncaAscp4DUb8miUfRRFa
+eF1cDMnmTiQgueNkUm7ICos+D3SpZu12Tjg2QLndd8bo+1sDtPW2K0jcZ/8E6bK0
+r2qcN6cYfJBscJ12trwS0bhPHQ4utL30Ugn7rQXDcd+MWRdPNFk4DgxLiGwwcujh
+hJO4s+/JQXFdWt8h04Zi4Fc9AujRFeK1JhBj0R0pMtXXskDNE/qN+s3g+W9bc2+l
+6am1dZe4FuDmfBRlXlMpcCQsEHj7IJL1wQoYQ16Uv5aaocviGWiyhwQQXLoiCUTb
+8qv5pRbwKNEPXt7LykJZgmUA2y9H8A==
+=csv9
 -----END PGP SIGNATURE-----
 
---Sig_/0nVuu_HNwXIh2WZWD2glVLR--
+--Sig_/pT88DRglJwcKsgFEPHT_M/Y--
