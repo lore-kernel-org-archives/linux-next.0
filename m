@@ -2,84 +2,83 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55657C4332F
-	for <linux-next@archiver.kernel.org>; Thu, 10 Nov 2022 07:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F197C433FE
+	for <linux-next@archiver.kernel.org>; Thu, 10 Nov 2022 07:29:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbiKJHXn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 10 Nov 2022 02:23:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42756 "EHLO
+        id S232584AbiKJH3n (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 10 Nov 2022 02:29:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbiKJHXl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2022 02:23:41 -0500
+        with ESMTP id S232459AbiKJH3n (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2022 02:29:43 -0500
 Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32345F92;
-        Wed,  9 Nov 2022 23:23:40 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A0C13E85;
+        Wed,  9 Nov 2022 23:29:42 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4N7CxM4X8Pz4xGR;
-        Thu, 10 Nov 2022 18:23:35 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4N7D4N1M5bz4xGT;
+        Thu, 10 Nov 2022 18:29:40 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1668065015;
-        bh=eCgZuOrZeK3uav+U6LxiRcLS2WwQlJr1zG7pU+NFb8s=;
+        s=201702; t=1668065380;
+        bh=0I3H4V4YKqZP6S+Fe9HrjGaB0ZUQArhZIm8VwpuUsvg=;
         h=Date:From:To:Cc:Subject:From;
-        b=ocnQ4Z9/9AqI+YFp2ZH/ojygbUHgVs4UMtctC40pD+gwCIRpYfxw0LMgx+F3X9QW4
-         gcaueR7pakFoLv5y1R5IkgPagDTJAbevNdU7djJlbv8f2o2O0IaEN4mgQbmQMD4jKb
-         HcVURZFehtGVfUGCkqinMEQRwxNpkFh4gjztMowHg63s3/zu0s8+P7GkoB2jIKI8HS
-         z8BpgtPBiDJrimwG/mMyR5WdsT0jYjOFxRXmHFDz3/DCyVL/OpAcw9WYCz+JLDX1kL
-         7IXD1nsBY3w0/5FVBfg5Tdc+8T01sjaB40NkMmzdI9qPo+66Jou/6wY4uKFzE3MBFZ
-         7hs0Q5Ypt9a3w==
-Date:   Thu, 10 Nov 2022 18:23:33 +1100
+        b=EHNHgKNdgh39aQ3nhk8SQC0v5KnNP5COFUz5ZfXDb6XH06mnuCSGHmu/ibCZJ+ExP
+         6XwHrUVGAhbi0WddWHvT7wPkSmxNy74oySBOHklno4Znv/o4kyRmV8GjOSpnwowsTg
+         8lQIWmdg1PkHpIlotgJ0606hKs0bzc8ofpj1zQpAJDno0h/Ec2uMpnCh/Aiy8pd+z0
+         WrA1OF8jEfDXmPXFDl56YvHcuQVQ7Irqls7hWvTXV2VRvsBS4t4OqxiHpAvlfPcHcy
+         XLg1ohmV6qW8oVWN3CdLXmKR7i40Ex0yE6fpxNcW6x7RsCbfVEg9FTf6CoQmLoomb6
+         d3wcZvQfbJGBg==
+Date:   Thu, 10 Nov 2022 18:29:38 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Dillon Varone <Dillon.Varone@amd.com>,
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the amdgpu tree
-Message-ID: <20221110182333.5b590d8d@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the iommufd tree
+Message-ID: <20221110182938.40ce2651@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ms1LLnaW_=qH1evLk_pii9L";
+Content-Type: multipart/signed; boundary="Sig_/MVUTXbsDi83fKOnHfhreezG";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/Ms1LLnaW_=qH1evLk_pii9L
+--Sig_/MVUTXbsDi83fKOnHfhreezG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the amdgpu tree, today's linux-next build (htmldocs)
-produced this warning:
+After merging the iommufd tree, today's linux-next build (htmldocs)
+produced these warnings:
 
-drivers/gpu/drm/amd/display/dc/dc.h:869: warning: Function parameter or mem=
-ber 'min_prefetch_in_strobe_ns' not described in 'dc_debug_options'
+drivers/iommu/iommufd/device.c:1: warning: no structured comments found
+drivers/iommu/iommufd/main.c:1: warning: no structured comments found
 
 Introduced by commit
 
-  01c0c124b9ec ("drm/amd/display: Enforce minimum prefetch time for low mem=
-clk on DCN32")
+  f3873afb9d7e ("iommufd: Document overview of iommufd")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Ms1LLnaW_=qH1evLk_pii9L
+--Sig_/MVUTXbsDi83fKOnHfhreezG
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNspvUACgkQAVBC80lX
-0GwlbAf8CrFOIfG3AJVql+81Oa2N5iYuzR+fvUi5DqATWI9OBThAP0/aWpXLdnQp
-LY9uHE34PIlq9To6ruMCGyW6wWZmF2RkTWHvcMLU6ZVUZdXDvEsHoTTDMDfcbH+U
-CRrQD7Aqibp+euy/Dn/1yVPHisbJdxGtV3mARgUCPETr/+CnYMFBqFzUz9k9eVEa
-ce73i4JuzjjUucgkTozg7ZXqOFs3UejAgHD+8RoVVY/kSv0bJo4HLJSQ7SI5Y2bD
-rFnKAxcedfjd5XfpjpzVrjhG73EAZDV2oYMTc0FbIIobg5++hlkRdaWF65L7PadJ
-3Ui5FshtUJmuXwjX/Cv9uEU87z1WQQ==
-=nJjf
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNsqGIACgkQAVBC80lX
+0GyRHQf/bz3pH/eniw+1wfKSy23gJgsvsILfTJw/PzN6VjqkCY/q6U7mkaYhdIXc
+BEIwizfW1cW27j2OlH1Nrd5JeviONnQ8QENeZzcLGoV5Spq3i6CA7GKNuvPLHNJb
+Mx+/G18ETV4bCaVSJC+BVw/yN1M4/Mx2MjRG+8HPDQC64moIfn9NimvbgzTa3wOV
+MH/1ns65677p6X0kPwNwbZqFBbxrjr1L+6Bjm+eXS057QDC1jpo3HbDiwWpNx7KG
+MnMZpB1+tEfoEkCJm8HUrW4dpI+W6XhxZSrc7wP8KUZ22w4I+mWoyIn8A9X6px3Q
+mDGveqphy1mfM9pqrz17aienlOrr/g==
+=gEEF
 -----END PGP SIGNATURE-----
 
---Sig_/Ms1LLnaW_=qH1evLk_pii9L--
+--Sig_/MVUTXbsDi83fKOnHfhreezG--
