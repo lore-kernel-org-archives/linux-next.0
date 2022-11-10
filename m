@@ -2,100 +2,83 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36949C4332F
-	for <linux-next@archiver.kernel.org>; Thu, 10 Nov 2022 07:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5274C4332F
+	for <linux-next@archiver.kernel.org>; Thu, 10 Nov 2022 07:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232767AbiKJHbl (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 10 Nov 2022 02:31:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47422 "EHLO
+        id S232448AbiKJHd4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 10 Nov 2022 02:33:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232837AbiKJHbf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2022 02:31:35 -0500
-X-Greylist: delayed 180 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Nov 2022 23:31:34 PST
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.220])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B019932061
-        for <linux-next@vger.kernel.org>; Wed,  9 Nov 2022 23:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1668065306;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=53kn45NV5vY6ZWYmWvYdin3V1VeMulhMote1E7SCfzQ=;
-    b=iYJBnHw3MqkXuXr9h0MSplYpRIgCGr4n5rWv9Ch51ZyomIlsjdOyYH2yh8T/wnkeYO
-    MGCqD9U4OzkPzLCLq93N1JpqBT45IaIlbupHok7jQgEF6mpoyPNE6eP7d5dsLcBa2QCj
-    ls/kl0xpn2gdyjx/EDULD/fV26G8+LI/vTXpEqoxLYrHveTfWlB33XAiuGgttAdKm7ps
-    6Vmak3WE+1jD7cuc6kJQcfGz+NI+XZbdnmnkU65+kwaxqqBpCtPA+gp9vOML01lL10Nl
-    YkT/r2x6hReudom+NvJP25lwbRgmxDsT5IlGqXosoJAUGxOwXjbbz6vRv5gytdc2ey/2
-    MvFg==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1qCHSa1GLptZHusx3hdIrpKytJSr6hfz3Vg=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPV6:2a00:6020:1cfd:d100::923]
-    by smtp.strato.de (RZmta 48.2.1 AUTH)
-    with ESMTPSA id Dde783yAA7SQeDY
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Thu, 10 Nov 2022 08:28:26 +0100 (CET)
-Message-ID: <54c92bbe-33fa-35ba-dd7f-14a28dcf758a@hartkopp.net>
-Date:   Thu, 10 Nov 2022 08:28:21 +0100
+        with ESMTP id S232459AbiKJHdz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2022 02:33:55 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFC8513CC3;
+        Wed,  9 Nov 2022 23:33:54 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4N7D9F2tyGz4xGR;
+        Thu, 10 Nov 2022 18:33:53 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1668065633;
+        bh=1BivK9y+HHLQFMqmHhkHxBUQnn4r1I9dtpGjtLJ1jXQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=VRyJcHX+9Am3FgMOC4yMu2qao0SJLxN+iOrdS6hbR24Z8yWTnqnhI2BY/vp5n7+bY
+         HMYzYZg37+vA0BL7+nCssF9sjK/SnPjK85vPHqJ2w98WCbwmqja0UBUt0UyH7hVGjg
+         Vc0yP3aLql/q7HLdvR3Kdc8ejzp7vcRO7gk6tRwc+khoTReH4IAIgPSb8Kqs5K5vCF
+         4I+ef37jkcU6ZFQ9qLlvgsZ7ySnzGFRNvdGD2z67mSxeHqgk05fa0l4tY6+oWh53H9
+         71E4UsK1TBD2GzxabzL70LTZ4fPE9I7SqHy/dXZqVVizxnlvRPrLm+nyqNDAzuIjyH
+         Q5hLh7cbLC97A==
+Date:   Thu, 10 Nov 2022 18:33:52 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm tree
+Message-ID: <20221110183352.08cc2303@canb.auug.org.au>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-References: <20221110102509.1f7d63cc@canb.auug.org.au>
-Content-Language: en-US
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <20221110102509.1f7d63cc@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/7K1n.GHSQD2HSGwa=Gqy7=F";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hello Stephen,
+--Sig_/7K1n.GHSQD2HSGwa=Gqy7=F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 10.11.22 00:25, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->    drivers/net/can/pch_can.c
-> 
-> between commit:
-> 
->    ae64438be192 ("can: dev: fix skb drop check")
-> 
-> from the net tree and commit:
-> 
->    1dd1b521be85 ("can: remove obsolete PCH CAN driver")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (I just removed the file) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-> 
+Hi all,
 
-Yes, this is known.
+After merging the mm tree, today's linux-next build (htmldocs) produced
+this warning:
 
-The removal of the PCH CAN driver missed the last net-next phase for 
-Linux 6.1 by some hours and therefore showed up relatively early in the 
-net-next for 6.2.
+include/linux/mm_types.h:268: error: Cannot parse struct or union!
 
-Maybe we should generally try to commit "complete removals" of drivers 
-preferably at the end of a -next phase which would have omitted this 
-conflict.
+Introduced by commit
 
-Thanks for your work!
+  ff02b16f96f5 ("mm: introduce 'encoded' page pointers with embedded extra =
+bits")
 
-Best regards,
-Oliver
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7K1n.GHSQD2HSGwa=Gqy7=F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNsqWAACgkQAVBC80lX
+0GwJ+Af/QqNRiH2z+9AxMVGhJyfYBFwymJm+D5BOLI3x9KCxfZsUljioigMU66FR
+Msfiod79VKDed8YGhYgFNcnjg3YgHq44/EgOgdJmrODP7CMxfGtdn9ZZiQLZHHYM
+YNBz2XRSKE2F5EyKIbqvVWUG5qozw2P6GF6xjpaJ5qy8HMHcq1Fmlw50+f7ZYhkB
+YOrI9D/pVyu10yaEqe5Y/Udf4YVFW/uxpRiMdLYW7pnbRKg4Ed92q6Qg7h31UFyq
+uF1CyA6whONJkwHKgJxGLHHMzVQnZYoSmSWk3g3g86l+VNGj2xCfySL0kw562sna
+Gg4T3jz5dBKHktlCh0G091XcVeihVg==
+=UFPo
+-----END PGP SIGNATURE-----
+
+--Sig_/7K1n.GHSQD2HSGwa=Gqy7=F--
