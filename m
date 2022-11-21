@@ -2,108 +2,78 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D11EC433FE
-	for <linux-next@archiver.kernel.org>; Mon, 21 Nov 2022 21:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB4EC4332F
+	for <linux-next@archiver.kernel.org>; Mon, 21 Nov 2022 22:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231490AbiKUVog (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 21 Nov 2022 16:44:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58976 "EHLO
+        id S231313AbiKUWIN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 21 Nov 2022 17:08:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231441AbiKUVoO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2022 16:44:14 -0500
-Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [205.139.111.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 923C2DE5
-        for <linux-next@vger.kernel.org>; Mon, 21 Nov 2022 13:44:13 -0800 (PST)
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-183-7uzm-LpVPkW4jNd1cgtn2g-1; Mon, 21 Nov 2022 16:42:50 -0500
-X-MC-Unique: 7uzm-LpVPkW4jNd1cgtn2g-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S230235AbiKUWIK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2022 17:08:10 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44AA6C4B73;
+        Mon, 21 Nov 2022 14:08:08 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 445C3811E84;
-        Mon, 21 Nov 2022 21:42:49 +0000 (UTC)
-Received: from hog (unknown [10.39.192.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8047E492B16;
-        Mon, 21 Nov 2022 21:42:47 +0000 (UTC)
-Date:   Mon, 21 Nov 2022 22:41:57 +0100
-From:   Sabrina Dubroca <sd@queasysnail.net>
-To:     Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     syzbot <syzbot+bfb2bee01b9c01fff864@syzkaller.appspotmail.com>,
-        davem@davemloft.net, edumazet@google.com,
-        herbert@gondor.apana.org.au, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] linux-next test error: general protection fault in
- xfrm_policy_lookup_bytype
-Message-ID: <Y3vwpcJcUgqn22Fw@hog>
-References: <000000000000706e6f05edfb4ce0@google.com>
- <Y3uULqIZ31at0aIX@hog>
- <20221121171513.GB704954@gauss3.secunet.de>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NGM2t33nSz4wgv;
+        Tue, 22 Nov 2022 09:08:06 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1669068486;
+        bh=2cbfU9T8uRJY4fIhXEopIzcxfcJGZJINvfcdC9ySs34=;
+        h=Date:From:To:Cc:Subject:From;
+        b=mo4AYP/9YOUQBPoDDsYSy/8CZLZm7k5paJj/i48QizIrS7smDc5LyLTnj29DOhtFQ
+         MA3lI70xdzqLgnkvZT63cemVEp3g30IiDTPo/Cq7lwlg2bdZd+JiNNDM9m4qTA4gyF
+         fjmdACap7VL5WvemRh0xwzx3AbYynFyhsBIq437/WEa3fYoVf0H+DdC7lhUaSxhC7M
+         UVMzys4hbN/nfvPMcOhk3hZmBJUxgxHqAZmSheAhLZCYgEQskLFGF9AAOwjJuNX6jT
+         Sh8/lnZSYfQGkM+P3bnh+/lq6OKsnsfz2TRlTC6FmsymR6SBSMUT8j3JIR68FwjCWu
+         w/FegRvJk+JFg==
+Date:   Tue, 22 Nov 2022 09:08:02 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the pwm tree
+Message-ID: <20221122090802.66c8597f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20221121171513.GB704954@gauss3.secunet.de>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+Content-Type: multipart/signed; boundary="Sig_/_+fOCkHy5IGQ14fy9o2MhYt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-2022-11-21, 18:15:13 +0100, Steffen Klassert wrote:
-> On Mon, Nov 21, 2022 at 04:07:26PM +0100, Sabrina Dubroca wrote:
-> > 2022-11-21, 05:47:38 -0800, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    e4cd8d3ff7f9 Add linux-next specific files for 20221121
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1472370d880000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=a0ebedc6917bacc1
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=bfb2bee01b9c01fff864
-> > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > 
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/b59eb967701d/disk-e4cd8d3f.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/37a7b43e6e84/vmlinux-e4cd8d3f.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/ebfb0438e6a2/bzImage-e4cd8d3f.xz
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+bfb2bee01b9c01fff864@syzkaller.appspotmail.com
-> > > 
-> > > general protection fault, probably for non-canonical address 0xdffffc0000000019: 0000 [#1] PREEMPT SMP KASAN
-> > > KASAN: null-ptr-deref in range [0x00000000000000c8-0x00000000000000cf]
-> > > CPU: 0 PID: 5295 Comm: kworker/0:3 Not tainted 6.1.0-rc5-next-20221121-syzkaller #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-> > > Workqueue: ipv6_addrconf addrconf_dad_work
-> > > RIP: 0010:xfrm_policy_lookup_bytype.cold+0x1c/0x54 net/xfrm/xfrm_policy.c:2139
-> > 
-> > That's the printk at the end of the function, when
-> > xfrm_policy_lookup_bytype returns NULL. It seems to have snuck into
-> > commit c39f95aaf6d1 ("xfrm: Fix oops in __xfrm_state_delete()"), we
-> > can just remove it:
-> > 
-> > diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-> > index 3a203c59a11b..e392d8d05e0c 100644
-> > --- a/net/xfrm/xfrm_policy.c
-> > +++ b/net/xfrm/xfrm_policy.c
-> > @@ -2135,9 +2135,6 @@ static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
-> >  fail:
-> >  	rcu_read_unlock();
-> >  
-> > -	if (!IS_ERR(ret))
-> > -		printk("xfrm_policy_lookup_bytype: policy if_id %d, wanted if_id  %d\n", ret->if_id, if_id);
-> > -
-> >  	return ret;
-> 
-> Hm, this was not in the original patch. Maybe my tree was not
-> clean when I applied it. Do you want to send a patch, or should
-> I just remove it?
+--Sig_/_+fOCkHy5IGQ14fy9o2MhYt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Go ahead, I guess it's more convenient for you.
+Hi all,
 
--- 
-Sabrina
+Commit
 
+  dd1f1da4ada5 ("pwm: tegra: Fix 32 bit build")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/_+fOCkHy5IGQ14fy9o2MhYt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmN79sIACgkQAVBC80lX
+0GzeOAf/U9UPUcr77BMrp8Cb+YhEeb47XOXRA8oHhU21KRrrIof8/yQj4ubPEfT3
+qTLRMiGyqGzyZO4hONAAoxCPS/k/mYzVI58W4Dz18Xa2iPLZQPyMDM5E1qpRpTK7
+H8epFi1vwqglmgUIltC8lbscjn4D3JwddGkmNKGD4hRN4O6REI8x+GyHGYvl6/HH
+lYjE1pmJCDyHDMUl0sGoqKmx5v+PQGbYb3Z2mtzTYUpsCwakze7OO09ByJQ2/ifN
+sSiL+OqHEiofnS8UtxVrKEIDnZFIauhuCch/xCAMHNpUJjf63rOL9p2tKOR40CaY
+0ixNIt+r0xK/0OQQD1PLuCMRlONzkA==
+=hy6C
+-----END PGP SIGNATURE-----
+
+--Sig_/_+fOCkHy5IGQ14fy9o2MhYt--
