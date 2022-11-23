@@ -2,226 +2,180 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247CAC4332F
-	for <linux-next@archiver.kernel.org>; Wed, 23 Nov 2022 08:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3050AC43217
+	for <linux-next@archiver.kernel.org>; Wed, 23 Nov 2022 09:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236644AbiKWImC (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 23 Nov 2022 03:42:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46398 "EHLO
+        id S237233AbiKWJN0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 23 Nov 2022 04:13:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236642AbiKWImB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2022 03:42:01 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3337FF3901;
-        Wed, 23 Nov 2022 00:42:00 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C0BF11F8AF;
-        Wed, 23 Nov 2022 08:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1669192918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FIU8rB0jBxPdshXU3vQfGHebITOdy2BC9J0ZJyhHVhw=;
-        b=fpeL45wJ1w0tROUmRaiKWTXJ83RNc4peu0UVzlXLGYkilraPp3MhSZWXhoprf6g0HlZ81v
-        kF44fXYsS6lQHoC8vuMyUIUjccglpwZCgK1ga+MSHS3r0M9LNHPvQJ3pvIX9udXAPY8TGd
-        yHsvQtR/wvgY3hwjiOGQcEB9f3tlcRw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1669192918;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FIU8rB0jBxPdshXU3vQfGHebITOdy2BC9J0ZJyhHVhw=;
-        b=5x48guDJrIWu45HcQgwoWfecq7PNMVpHehfV08TAzDo93UohPMPjAHUiboy57Aoz+ly4/q
-        b8FyZM3FTrxki3Cw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 92D1213A37;
-        Wed, 23 Nov 2022 08:41:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id aoW9ItbcfWPAeQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 23 Nov 2022 08:41:58 +0000
-Message-ID: <d1a3302d-b0e3-f470-f2c0-c48f990701f2@suse.de>
-Date:   Wed, 23 Nov 2022 09:41:58 +0100
+        with ESMTP id S237225AbiKWJNY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2022 04:13:24 -0500
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199F772119
+        for <linux-next@vger.kernel.org>; Wed, 23 Nov 2022 01:13:22 -0800 (PST)
+Received: by mail-il1-f200.google.com with SMTP id c4-20020a056e020bc400b0030098df879dso12417941ilu.6
+        for <linux-next@vger.kernel.org>; Wed, 23 Nov 2022 01:13:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e5fAgmlcda0f4xm5PCv89wQFpDv+wwAWL/2hkwjR7XQ=;
+        b=TABqyPgHO1Nz8Mz+py4xq51IDUH1t82JjoZuxfJJ+IaK0kao4L1Z3VnwtZNvs5/CQ6
+         aA+e2jptEf2kUvb0xEdY/KKwnvsBLA+ieTYWYmVlbYAtVdXI36cmR8M01o1c2hD6ayvB
+         y5HSuc4puPRO8XvHKR2gVsYWCUSkIcqvDUAixXYiFaP/YobEPHcA0oC119Nn5kwbNuYI
+         CljONSJpVfkl0PVvKQVhkra/h1YlKUf/zqW+KLfYtsDypjQ6MUF+rRH/6bRmImJERiM1
+         CcVx/at1BG+QO1HnUvYF7vla7PeAlulbww4bA6w23q3+N85WFCtZDiefwwacrhOXnF4J
+         i7xA==
+X-Gm-Message-State: ANoB5pmmVICOEwkdgULYyP9egB9EgBAOI7KLki5FteZVoCvSriE3bGTX
+        KEtDR8dRhufrTqFPjRy1Xr0PYfgOGQix/yvFK4YNDBXpNGjK
+X-Google-Smtp-Source: AA0mqf5WwU0U7OH1gTLg9Hapy1BfHoOHdZ/OJHD4W3sOBBiJxe0sESoHamXGD2VVwcZY6N6mb600A1risKLoxwRZFt6DWy2euvcD
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v2 5/6] drm/fb-helper: Schedule deferred-I/O worker after
- writing to framebuffer
-Content-Language: en-US
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <OS0PR01MB592225470AD263665B0E8647860C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <OS0PR01MB592225470AD263665B0E8647860C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------YtdBwOD1MwLhXVusXGrhYRId"
+X-Received: by 2002:a92:1941:0:b0:302:4cd9:c850 with SMTP id
+ e1-20020a921941000000b003024cd9c850mr4585370ilm.69.1669194801456; Wed, 23 Nov
+ 2022 01:13:21 -0800 (PST)
+Date:   Wed, 23 Nov 2022 01:13:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000033ad1105ee1fb33d@google.com>
+Subject: [syzbot] linux-next boot error: WARNING in fb_deferred_io_schedule_flush
+From:   syzbot <syzbot+62debf5fcd57b5a592e1@syzkaller.appspotmail.com>
+To:     daniel@ffwll.ch, deller@gmx.de, dri-devel@lists.freedesktop.org,
+        jayalk@intworks.biz, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------YtdBwOD1MwLhXVusXGrhYRId
-Content-Type: multipart/mixed; boundary="------------C0AxTP0fjJ0eEs6VraromRGQ";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
- "javierm@redhat.com" <javierm@redhat.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Message-ID: <d1a3302d-b0e3-f470-f2c0-c48f990701f2@suse.de>
-Subject: Re: [PATCH v2 5/6] drm/fb-helper: Schedule deferred-I/O worker after
- writing to framebuffer
-References: <OS0PR01MB592225470AD263665B0E8647860C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB592225470AD263665B0E8647860C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Hello,
 
---------------C0AxTP0fjJ0eEs6VraromRGQ
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+syzbot found the following issue on:
 
-SGkNCg0KQW0gMjMuMTEuMjIgdW0gMDk6Mjggc2NocmllYiBCaWp1IERhczoNCj4gSGkgQWxs
-LA0KPiANCj4gVGhlIGJlbG93IHBhdGNoIGluIExpbnV4LW5leHQgMjAyMjExMjMgaXMgY2F1
-c2luZyByZWdyZXNzaW9uIG9uIFJlbmVzYXMge1JaL0cyTSwgUi1DYXIgR2VuLTN9DQo+IFBs
-YXRmb3Jtcy4NCj4gDQo+IFN0ZXBzIHRvIHJlcHJvZHVjZToNCj4gDQo+IFVzZSB0aGUgYXJt
-NjQgZGVmY29uZmlnIHRvIGJ1aWxkIHRoZSBrZXJuZWwgYW5kIHRoZW4gYm9vdCB0aGUgYm9h
-cmQuDQo+IA0KPiBJcyB0aGVyZSBhbnkgcGF0Y2ggdG8gZml4IHRoZSBwcm9ibGVtPyBJIGFt
-IGhhcHB5IHRvIHRlc3QuDQoNCkEgcmV2ZXJ0IGlzIGFscmVhZHkgb24gdGhlIHdheS4gSXQg
-c2hvdWxkIHJlYWNoIGxpbnV4LW5leHQgYnkgbmV4dCB3ZWVrLg0KDQpCZXN0IHJlZ2FyZHMN
-ClRob21hcw0KDQo+IA0KPiBMb2dzOi0NCj4gDQo+IFsgICAyMy43NjI5OTldIENvbnNvbGU6
-IHN3aXRjaGluZyB0byBjb2xvdXIgZnJhbWUgYnVmZmVyIGRldmljZSAyNDB4NjcNCj4gWyAg
-IDIzLjc2MzEyOF0gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+IFsg
-ICAyMy43NjMxMzNdIFdBUk5JTkc6IENQVTogMyBQSUQ6IDI3OCBhdCBkcml2ZXJzL3ZpZGVv
-L2ZiZGV2L2NvcmUvZmJfZGVmaW8uYzozNDAgZmJfZGVmZXJyZWRfaW9fc2NoZWR1bGVfZmx1
-c2grMHgzOC8weDQwDQo+IFsgICAyMy43NjMxNjRdIE1vZHVsZXMgbGlua2VkIGluOiBjZmc4
-MDIxMSgrKSByY2FyX2R1X2RybSgrKSByY2FyX21pcGlfZHNpIHJjYXJfY21tIHJjYXJfbHZk
-cyBzbmRfc29jX2hkbWlfY29kZWMgdnNwMSBkd19oZG1pX2NlYyBkd19oZG1pX2kyc19hdWRp
-byByY2FyX2ZkcDEgdjRsMl9tZW0ybWVtIHZpZGVvYnVmMl92bWFsbG9jIHJjYXJfZHdfaGRt
-aSB2aWRlb2J1ZjJfZG1hX2NvbnRpZyBkd19oZG1pIHZpZGVvYnVmMl9tZW1vcHMgaGNpX3Vh
-cnQgdmlkZW9idWYyX3Y0bDIgY2VjIHZpZGVvYnVmMl9jb21tb24gY3JjdDEwZGlmX2NlIGJ0
-cWNhIGRybV9kaXNwbGF5X2hlbHBlciBzbmRfc29jX2F1ZGlvX2dyYXBoX2NhcmQgZHJtX2Rt
-YV9oZWxwZXIgdmlkZW9kZXYgc25kX3NvY19zaW1wbGVfY2FyZF91dGlscyBidGJjbSB3bGNv
-cmVfc2RpbyBtYyByY2FyX2ZjcCBkaXNwbGF5X2Nvbm5lY3RvciBibHVldG9vdGggcmNhcl9j
-YW4gZHJtX2ttc19oZWxwZXIgZWNkaF9nZW5lcmljIHJlbmVzYXNfdXNiMyBlY2Mgc25kX3Nv
-Y19yY2FyIGRybSByZmtpbGwgY2FuX2RldiBwd21fcmNhciB1c2JfZG1hYyByZW5lc2FzX3Vz
-YmhzIHBoeV9yY2FyX2dlbjNfdXNiMyBpcHY2DQo+IFsgICAyMy43NjMzMTRdIENQVTogMyBQ
-SUQ6IDI3OCBDb21tOiBzeXN0ZW1kLXVkZXZkIE5vdCB0YWludGVkIDYuMS4wLXJjNi1uZXh0
-LTIwMjIxMTIzLTEwNDMyLWc3MzZiNmQ4MWQ5M2MgIzMxNA0KPiBbICAgMjMuNzYzMzIzXSBI
-YXJkd2FyZSBuYW1lOiBIb3BlUnVuIEhpSG9wZSBSWi9HMk0gd2l0aCBzdWIgYm9hcmQgKERU
-KQ0KPiBbICAgMjMuNzYzMzI5XSBwc3RhdGU6IDgwMDAwMDA1IChOemN2IGRhaWYgLVBBTiAt
-VUFPIC1UQ08gLURJVCAtU1NCUyBCVFlQRT0tLSkNCj4gWyAgIDIzLjc2MzMzN10gcGMgOiBm
-Yl9kZWZlcnJlZF9pb19zY2hlZHVsZV9mbHVzaCsweDM4LzB4NDANCj4gWyAgIDIzLjc2MzM0
-NF0gbHIgOiBkcm1fZmJfaGVscGVyX3N5c19pbWFnZWJsaXQrMHhhOC8weGM0IFtkcm1fa21z
-X2hlbHBlcl0NCj4gWyAgIDIzLjc2MzQ3NF0gc3AgOiBmZmZmODAwMDBhYzViM2MwDQo+IFsg
-ICAyMy43NjM0NzhdIHgyOTogZmZmZjgwMDAwYWM1YjNjMCB4Mjg6IDAwMDAwMDAwZmZmZmZm
-ZmYgeDI3OiAwMDAwMDAwMDAwMDAwMDEwDQo+IFsgICAyMy43NjM0ODldIHgyNjogZmZmZjAw
-MDVjMTM1NjAwMCB4MjU6IGZmZmYwMDA1YzNhODA4MDAgeDI0OiBmZmZmMDAwNWMwMjUyOGNj
-DQo+IFsgICAyMy43NjM0OTldIHgyMzogMDAwMDAwMDAwMDAwMDAwMCB4MjI6IDAwMDAwMDAw
-MDAwMDAxODAgeDIxOiAwMDAwMDAwMDAwMDAwMDA4DQo+IFsgICAyMy43NjM1MDldIHgyMDog
-MDAwMDAwMDAwMDAwMDAxMCB4MTk6IGZmZmYwMDA1YzAyNTI4MDAgeDE4OiAwMDAwMDAwMDAw
-MDAwMDAxDQo+IFsgICAyMy43NjM1MTldIHgxNzogMDAwMDAwMDAwMDAwMDAwNCB4MTY6IDAw
-MDAwMDAwMDAwMDAwMDAgeDE1OiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsgICAyMy43NjM1Mjld
-IHgxNDogMDAwMDAwMDAwMDAwMDAyMCB4MTM6IDAwMDAwMDAwMDAwMDAwMDAgeDEyOiAwMDAw
-MDAwMDAwMDAwMDIwDQo+IFsgICAyMy43NjM1MzldIHgxMTogMDAwMDAwMDBmZmZmZmZmZiB4
-MTA6IDAwMDAwMDAwMDAwMDAwMDEgeDkgOiAwMDAwMDAwMDAwMDAwMDAxDQo+IFsgICAyMy43
-NjM1NDldIHg4IDogZmZmZjAwMDVjMTM1NjAxMCB4NyA6IDAwMDAwMDAwMDAwMDAwMDggeDYg
-OiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsgICAyMy43NjM1NTldIHg1IDogMDAwMDAwMDAwMDAw
-MDE5MCB4NCA6IDAwMDAwMDAwMDAwMDAxODAgeDMgOiAwMDAwMDAwMDAwMDAwMDA4DQo+IFsg
-ICAyMy43NjM1NjldIHgyIDogMDAwMDAwMDAwMDAwMDAwMCB4MSA6IDAwMDAwMDAwMDAwMDAw
-MDAgeDAgOiBmZmZmMDAwNWMzYTgwODAwDQo+IFsgICAyMy43NjM1ODBdIENhbGwgdHJhY2U6
-DQo+IFsgICAyMy43NjM1ODVdICBmYl9kZWZlcnJlZF9pb19zY2hlZHVsZV9mbHVzaCsweDM4
-LzB4NDANCj4gWyAgIDIzLjc2MzU5NF0gIGRybV9mYmRldl9mYl9pbWFnZWJsaXQrMHgzOC8w
-eDcwIFtkcm1fa21zX2hlbHBlcl0NCj4gWyAgIDIzLjc2MzY3MV0gIHNvZnRfY3Vyc29yKzB4
-MTVjLzB4MjAwDQo+IFsgICAyMy43NjM2ODBdICBiaXRfY3Vyc29yKzB4M2FjLzB4NTAwDQo+
-IFsgICAyMy43NjM2ODddICBmYmNvbl9jdXJzb3IrMHhlYy8weDExYw0KPiBbICAgMjMuNzYz
-Njk0XSAgaGlkZV9jdXJzb3IrMHgzYy8weGMwDQo+IFsgICAyMy43NjM3MDhdICByZWRyYXdf
-c2NyZWVuKzB4MTI4LzB4MjQwDQo+IFsgICAyMy43NjM3MTddICBkb19iaW5kX2Nvbl9kcml2
-ZXIuaXNyYS4wKzB4MmM4LzB4MzljDQo+IFsgICAyMy43NjM3MjZdICBkb190YWtlX292ZXJf
-Y29uc29sZSsweDE0MC8weDIwMA0KPiBbICAgMjMuNzYzNzM2XSAgZG9fZmJjb25fdGFrZW92
-ZXIrMHg2Yy8weGU0DQo+IFsgICAyMy43NjM3NDJdICBmYmNvbl9mYl9yZWdpc3RlcmVkKzB4
-MWU0LzB4MWYwDQo+IFsgICAyMy43NjM3NDldICByZWdpc3Rlcl9mcmFtZWJ1ZmZlcisweDIx
-NC8weDMxMA0KPiBbICAgMjMuNzYzNzYxXSAgX19kcm1fZmJfaGVscGVyX2luaXRpYWxfY29u
-ZmlnX2FuZF91bmxvY2srMHgzM2MvMHg1MzQgW2RybV9rbXNfaGVscGVyXQ0KPiBbICAgMjMu
-NzYzODM3XSAgZHJtX2ZiX2hlbHBlcl9pbml0aWFsX2NvbmZpZysweDRjLzB4NjAgW2RybV9r
-bXNfaGVscGVyXQ0KPiBbICAgMjMuNzYzOTEyXSAgZHJtX2ZiZGV2X2NsaWVudF9ob3RwbHVn
-KzB4YzQvMHgxNTAgW2RybV9rbXNfaGVscGVyXQ0KPiBbICAgMjMuNzYzOTg3XSAgZHJtX2Zi
-ZGV2X2dlbmVyaWNfc2V0dXArMHg5MC8weDE1NCBbZHJtX2ttc19oZWxwZXJdDQo+IFsgICAy
-My43NjQwNjFdICByY2FyX2R1X3Byb2JlKzB4MTU0LzB4MTg0IFtyY2FyX2R1X2RybV0NCj4g
-WyAgIDIzLjc2NDEwM10gIHBsYXRmb3JtX3Byb2JlKzB4NjgvMHhlMA0KPiBbICAgMjMuNzY0
-MTE1XSAgcmVhbGx5X3Byb2JlKzB4YmMvMHgyZTANCj4gWyAgIDIzLjc2NDEyMl0gIF9fZHJp
-dmVyX3Byb2JlX2RldmljZSsweDc4LzB4ZTANCj4gWyAgIDIzLjc2NDEyOV0gIGRyaXZlcl9w
-cm9iZV9kZXZpY2UrMHhkOC8weDE1Yw0KPiBbICAgMjMuNzY0MTM2XSAgX19kcml2ZXJfYXR0
-YWNoKzB4OTQvMHgxOWMNCj4gWyAgIDIzLjc2NDE0M10gIGJ1c19mb3JfZWFjaF9kZXYrMHg3
-MC8weGQwDQo+IFsgICAyMy43NjQxNDldICBkcml2ZXJfYXR0YWNoKzB4MjQvMHgzMA0KPiBb
-ICAgMjMuNzY0MTU1XSAgYnVzX2FkZF9kcml2ZXIrMHgxNTQvMHgyMGMNCj4gWyAgIDIzLjc2
-NDE2MV0gIGRyaXZlcl9yZWdpc3RlcisweDc4LzB4MTMwDQo+IFsgICAyMy43NjQxNjhdICBf
-X3BsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcisweDI4LzB4MzQNCj4gWyAgIDIzLjc2NDE3Nl0g
-IHJjYXJfZHVfcGxhdGZvcm1fZHJpdmVyX2luaXQrMHgyMC8weDEwMDAgW3JjYXJfZHVfZHJt
-XQ0KPiANCj4gQ2hlZXJzLA0KPiBCaWp1DQo+IA0KPj4gU3ViamVjdDogW1BBVENIIHYyIDUv
-Nl0gZHJtL2ZiLWhlbHBlcjogU2NoZWR1bGUgZGVmZXJyZWQtSS9PIHdvcmtlciBhZnRlcg0K
-Pj4gd3JpdGluZyB0byBmcmFtZWJ1ZmZlcg0KPiANCj4+IFNjaGVkdWxlIHRoZSBkZWZlcnJl
-ZC1JL08gd29ya2VyIGluc3RlYWQgb2YgdGhlIGRhbWFnZSB3b3JrZXIgYWZ0ZXINCj4+IHdy
-aXRpbmcgdG8gdGhlIGZiZGV2IGZyYW1lYnVmZmVyLiBUaGUgZGVmZXJyZWQtSS9PIHdvcmtl
-ciB0aGVuIHBlcmZvcm1zDQo+PiB0aGUgZGlydHktZmIgdXBkYXRlLiBUaGUgZmJkZXYgZW11
-bGF0aW9uIHdpbGwgaW5pdGlhbGl6ZSBkZWZlcnJlZCBJL08NCj4+IGZvciBhbGwgZHJpdmVy
-cyB0aGF0IHJlcXVpcmUgZGFtYWdlIHVwZGF0ZXMuIEl0IGlzIHRoZXJlZm9yZSBhIHZhbGlk
-DQo+PiBhc3N1bXB0aW9uIHRoYXQgdGhlIGRlZmVycmVkLUkvTyB3b3JrZXIgaXMgcHJlc2Vu
-dC4NCj4gDQo+PiBJdCB3b3VsZCBiZSBwb3NzaWJsZSB0byBwZXJmb3JtIHRoZSBkYW1hZ2Ug
-aGFuZGxpbmcgZGlyZWN0bHkgZnJvbSB3aXRoaW4NCj4+IHRoZSB3cml0ZSBvcGVyYXRpb24u
-IEJ1dCBkb2luZyB0aGlzIGNvdWxkIGluY3JlYXNlIHRoZSBvdmVyaGVhZCBvZiB0aGUNCj4+
-IHdyaXRlIG9yIGludGVyZmVyZSB3aXRoIGEgY29uY3VycmVudGx5IHNjaGVkdWxlZCBkZWZl
-cnJlZC1JL08gd29ya2VyLg0KPj4gSW5zdGVhZCwgc2NoZWR1bGluZyB0aGUgZGVmZXJyZWQt
-SS9PIHdvcmtlciB3aXRoIGl0cyByZWd1bGFyIGRlbGF5IG9mDQo+PiA1MCBtcyByZW1vdmVz
-IGxvYWQgb2ZmIHRoZSB3cml0ZSBvcGVyYXRpb24gYW5kIGFsbG93cyB0aGUgZGVmZXJyZWQt
-SS9PDQo+PiB3b3JrZXIgdG8gaGFuZGxlIG11bHRpcGxlIHdyaXRlIG9wZXJhdGlvbnMgdGhh
-dCBhcnJpdmVkIGR1cmluZyB0aGUgZGVsYXkNCj4+IHRpbWUgd2luZG93Lg0KPiANCj4+IHYy
-Og0KPj4gCSoga2VlcCBkcm1fZmJfaGVscGVyX2RhbWFnZSgpIChEYW5pZWwpDQo+PiAJKiB1
-c2UgZmJfZGVmZXJyZWRfaW9fc2NoZWR1bGVfZmx1c2goKSAoRGFuaWVsKQ0KPj4gCSogY2xh
-cmlmeSBjb21tZW50cyAoRGFuaWVsKQ0KPiANCj4+IFNpZ25lZC1vZmYtYnk6IFRob21hcyBa
-aW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPg0KPj4gUmV2aWV3ZWQtYnk6IERhbmll
-bCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+DQoNCi0tIA0KVGhvbWFzIFppbW1l
-cm1hbm4NCkdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUgU29sdXRp
-b25zIEdlcm1hbnkgR21iSA0KTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJt
-YW55DQooSFJCIDM2ODA5LCBBRyBOw7xybmJlcmcpDQpHZXNjaMOkZnRzZsO8aHJlcjogSXZv
-IFRvdGV2DQo=
+HEAD commit:    736b6d81d93c Add linux-next specific files for 20221123
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13780ab1880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84cf3b793149c9bf
+dashboard link: https://syzkaller.appspot.com/bug?extid=62debf5fcd57b5a592e1
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
---------------C0AxTP0fjJ0eEs6VraromRGQ--
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b1f9b28c7e06/disk-736b6d81.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/139697685008/vmlinux-736b6d81.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6ff62230b292/bzImage-736b6d81.xz
 
---------------YtdBwOD1MwLhXVusXGrhYRId
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+62debf5fcd57b5a592e1@syzkaller.appspotmail.com
 
------BEGIN PGP SIGNATURE-----
+QNX4 filesystem 0.2.3 registered.
+qnx6: QNX6 filesystem 1.0.0 registered.
+fuse: init (API version 7.38)
+orangefs_debugfs_init: called with debug mask: :none: :0:
+orangefs_init: module version upstream loaded
+JFS: nTxBlock = 8192, nTxLock = 65536
+SGI XFS with ACLs, security attributes, realtime, quota, no debug enabled
+9p: Installing v9fs 9p2000 file system support
+NILFS version 2 loaded
+befs: version: 0.9.3
+ocfs2: Registered cluster interface o2cb
+ocfs2: Registered cluster interface user
+OCFS2 User DLM kernel interface loaded
+gfs2: GFS2 installed
+ceph: loaded (mds proto 32)
+NET: Registered PF_ALG protocol family
+xor: automatically using best checksumming function   avx       
+async_tx: api initialized (async)
+Key type asymmetric registered
+Asymmetric key parser 'x509' registered
+Asymmetric key parser 'pkcs8' registered
+Key type pkcs7_test registered
+alg: self-tests for CTR-KDF (hmac(sha256)) passed
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 240)
+io scheduler mq-deadline registered
+io scheduler kyber registered
+io scheduler bfq registered
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+input: Sleep Button as /devices/LNXSYSTM:00/LNXSLPBN:00/input/input1
+ACPI: button: Sleep Button [SLPF]
+ACPI: \_SB_.LNKC: Enabled at IRQ 11
+virtio-pci 0000:00:03.0: virtio_pci: leaving for legacy driver
+ACPI: \_SB_.LNKD: Enabled at IRQ 10
+virtio-pci 0000:00:04.0: virtio_pci: leaving for legacy driver
+ACPI: \_SB_.LNKB: Enabled at IRQ 10
+virtio-pci 0000:00:06.0: virtio_pci: leaving for legacy driver
+virtio-pci 0000:00:07.0: virtio_pci: leaving for legacy driver
+N_HDLC line discipline registered with maxframe=4096
+Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+00:03: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+00:04: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
+00:05: ttyS2 at I/O 0x3e8 (irq = 6, base_baud = 115200) is a 16550A
+00:06: ttyS3 at I/O 0x2e8 (irq = 7, base_baud = 115200) is a 16550A
+Non-volatile memory driver v1.3
+Linux agpgart interface v0.103
+ACPI: bus type drm_connector registered
+[drm] Initialized vgem 1.0.0 20120112 for vgem on minor 0
+[drm] Initialized vkms 1.0.0 20180514 for vkms on minor 1
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at drivers/video/fbdev/core/fb_defio.c:340 fb_deferred_io_schedule_flush+0x9f/0xf0 drivers/video/fbdev/core/fb_defio.c:340
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.0-rc6-next-20221123-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+RIP: 0010:fb_deferred_io_schedule_flush+0x9f/0xf0 drivers/video/fbdev/core/fb_defio.c:340
+Code: c1 e8 03 80 3c 30 00 75 38 48 8b 35 43 81 27 0a bf 08 00 00 00 e8 c1 05 06 fd 48 83 c4 10 5b 5d e9 66 76 34 fd e8 61 76 34 fd <0f> 0b 48 83 c4 10 5b 5d e9 54 76 34 fd e8 6f 97 82 fd e9 7a ff ff
+RSP: 0000:ffffc900000672d8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88801e2d0000 RCX: 0000000000000000
+RDX: ffff888140150000 RSI: ffffffff844c552f RDI: ffff88801e2d0418
+RBP: 0000000000000000 R08: 0000000000000001 R09: ffffffff9133aa47
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000000
+R13: 0000000000000008 R14: ffff88801e281940 R15: 00000000000000d0
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88823ffff000 CR3: 000000000c48e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ drm_fb_helper_damage drivers/gpu/drm/drm_fb_helper.c:602 [inline]
+ drm_fb_helper_sys_imageblit+0x2c9/0x380 drivers/gpu/drm/drm_fb_helper.c:883
+ drm_fbdev_fb_imageblit+0x17d/0x260 drivers/gpu/drm/drm_fbdev_generic.c:157
+ soft_cursor+0x514/0xa30 drivers/video/fbdev/core/softcursor.c:74
+ bit_cursor+0xf13/0x17a0 drivers/video/fbdev/core/bitblit.c:377
+ fbcon_cursor+0x3e0/0x550 drivers/video/fbdev/core/fbcon.c:1330
+ hide_cursor+0x85/0x280 drivers/tty/vt/vt.c:907
+ redraw_screen+0x5b8/0x740 drivers/tty/vt/vt.c:1012
+ vc_do_resize+0xed6/0x1170 drivers/tty/vt/vt.c:1342
+ fbcon_init+0x1061/0x1920 drivers/video/fbdev/core/fbcon.c:1125
+ visual_init+0x326/0x620 drivers/tty/vt/vt.c:1074
+ do_bind_con_driver.isra.0+0x52f/0x910 drivers/tty/vt/vt.c:3694
+ do_take_over_console+0x450/0x5c0 drivers/tty/vt/vt.c:4273
+ do_fbcon_takeover+0xe8/0x210 drivers/video/fbdev/core/fbcon.c:530
+ do_fb_registered drivers/video/fbdev/core/fbcon.c:3008 [inline]
+ fbcon_fb_registered+0x34a/0x460 drivers/video/fbdev/core/fbcon.c:3028
+ do_register_framebuffer drivers/video/fbdev/core/fbmem.c:1597 [inline]
+ register_framebuffer+0x6b7/0xb60 drivers/video/fbdev/core/fbmem.c:1703
+ __drm_fb_helper_initial_config_and_unlock+0xe30/0x13e0 drivers/gpu/drm/drm_fb_helper.c:2117
+ drm_fb_helper_initial_config drivers/gpu/drm/drm_fb_helper.c:2183 [inline]
+ drm_fb_helper_initial_config+0x4a/0x60 drivers/gpu/drm/drm_fb_helper.c:2175
+ drm_fbdev_client_hotplug+0x2b4/0x3d0 drivers/gpu/drm/drm_fbdev_generic.c:406
+ drm_fbdev_generic_setup+0x165/0x440 drivers/gpu/drm/drm_fbdev_generic.c:488
+ vkms_create drivers/gpu/drm/vkms/vkms_drv.c:208 [inline]
+ vkms_init+0x569/0x5ed drivers/gpu/drm/vkms/vkms_drv.c:233
+ do_one_initcall+0x141/0x790 init/main.c:1306
+ do_initcall_level init/main.c:1379 [inline]
+ do_initcalls init/main.c:1395 [inline]
+ do_basic_setup init/main.c:1414 [inline]
+ kernel_init_freeable+0x6f9/0x782 init/main.c:1634
+ kernel_init+0x1e/0x1d0 init/main.c:1522
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmN93NYFAwAAAAAACgkQlh/E3EQov+Dq
-YQ//eImqx+UP5CaEzt43qbgFD9rVga1oKV3Ed70pbfOZOZPBJdWcjlo1sDHYMMN4Px8+eRsfNrHZ
-VqcVYmZXgzfJHgt/y+lbhypvNLyVq2MGlOSqKy74P2LVPqSY4He150vLSlWENn/RedvpASKWcF48
-no9Su7qLpPsKb7vb5WfbWxD5+ypJk/4h0QiYqrJkiNQ1BygrmgSXwB3S773qztzSkgqHHUN/cn/o
-Bj76pC2G+JSC4XXFSK+FFex/HN/hynstNFIFj891AyqZgVjxwUt1PF/trGRP7D6Dvy4Cai8oDqCs
-qR81eG11hNV7e0KmM5PN8MKrAoVZ24jX4nMkuw6/GOW6rCoDILA3v+yu4nhOnw6TxjfqfXNGYg1n
-ltr1XIubp7qXaV4Lk/MLYUje83yJGKGVqbUr7lImWlkZ93YP4E7Pb/toPdZQqooTS87omr4iOW7u
-fRbOg94b9nAU2XylDX/3BbSAT0eL64+S3ia5cSpRg4JIyOJgHuiHYV3LJa6nOf5NeUWu4cQsdDE/
-KBhVa8D7A5EksKO4XBeCKNAK7L0ngPQxbCUgnG7E/IHPXS3898R62TLkTNuRbcykC6Hb8fU6hnQn
-xRmbF7JAoNFONrJdQFMfi0RMuo6RtU4zwoYguJeYPo5q2zd2T1BCqrLkvSqOOxA4BBOK9kEPCpms
-ah4=
-=AAix
------END PGP SIGNATURE-----
 
---------------YtdBwOD1MwLhXVusXGrhYRId--
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
