@@ -2,89 +2,123 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2305C433FE
-	for <linux-next@archiver.kernel.org>; Mon, 28 Nov 2022 21:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC7C43217
+	for <linux-next@archiver.kernel.org>; Mon, 28 Nov 2022 23:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233481AbiK1V1W (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 28 Nov 2022 16:27:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57266 "EHLO
+        id S234480AbiK1Xja (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 28 Nov 2022 18:39:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233072AbiK1V1V (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2022 16:27:21 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 939822611C;
-        Mon, 28 Nov 2022 13:27:19 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NLdpY0wQxz4x2c;
-        Tue, 29 Nov 2022 08:27:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1669670837;
-        bh=MWziLs6nPPhw3ZyePQKffCNuS8no1eTujDFnHVUc6lU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=a3agnTwLzFi0fhwgMzr+GkY/E/L87TSRP5R3hzN399YVO4dBqTgHZHTUYtGC410yH
-         ykMkHmOoeVZI29LnyGYLKfL0U9+eZWo/muwLXu9kFVnQC45aqqQQ12l3PES0SWhvFW
-         Mcb+RcN1LSKj/zFDfe4Dox8g7vD3G+nycIfVO3lKjSis1fFH7bBBMJu0zKd37F4Wzu
-         D1UvZFncgLC5DEVF3agiOpRV+0+M9QLZUUHbiIew8xfRDrOlD1HZT8563y258Jicwt
-         CajNVdgxZxZX/s2VP1wY34kNxw3qh65eXewy4FyiUiQ98yuITmE5cIq7ozpjXwr1Ju
-         +JgSdXxFN3fLg==
-Date:   Tue, 29 Nov 2022 08:27:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the block tree
-Message-ID: <20221129082715.78e44566@canb.auug.org.au>
+        with ESMTP id S234698AbiK1Xj2 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2022 18:39:28 -0500
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479585FBB
+        for <linux-next@vger.kernel.org>; Mon, 28 Nov 2022 15:39:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1669678767; x=1701214767;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CKWGkAJZOpqvsRiv6iiFtDdJkkDaLWB71/7EyG0/hlw=;
+  b=RKeXn64tebAIyn9SUjLygkcydAqItUltt8kuDdEjTNU9O51GvgWiSJO2
+   DelSY+j+Ak4ecaxCNlOlRZ6JCvUC3KqDJ8kHLHL5RZVQ80polB3ZXD2Dh
+   wYPifuM+HODd34OAxVOlZhVR1hplTxL699xwwLZNlLuOnsYRT2teAOxh5
+   VbFat04Zg/px+9IeAh36BO+cAWlrC0iKISe4XkFZ2uc4HB/WT4Bw43L61
+   V3pGi5GyDwgQiI27mB8ywod2sFkTMnVh41v/5eTQiCwq1zxVnvCXfxha1
+   M9rn2kwEfAcedU2StpsF7WdUlvfHKNLjhe6dOkFslcKHADX4rDpfhJxQ1
+   w==;
+X-IronPort-AV: E=Sophos;i="5.96,201,1665417600"; 
+   d="scan'208";a="329497040"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 29 Nov 2022 07:39:26 +0800
+IronPort-SDR: +KRpBk+jvhlJxO9gCmtPJoD6ykkd/7H7gL2cnMve8BAQDZzgRBhrWsJCC8xWD7EgSqoW6Rpxn/
+ mZSGS+1RDgoYWKKn4xeql5Anp2Zl7ELKnnB6jzshPdUB+Pt6pIoTI4osrOQ76mAHxyiCRH/+lg
+ z+dq6E7G/qvulIUT/c0rYHB+19TQg4S6QcC2/UuJKagHlN63qiRwilwW8ZSo3zk7/IGaKrNmD6
+ ZkW1kS0rxkXb4s0RMSL1M/ThPUZAnu9DEhFKpA3cwydCAYGUpNTezxIc94KdSLHMjflcsBSjdO
+ rWw=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Nov 2022 14:58:07 -0800
+IronPort-SDR: J1ezDXIHB6HbaxJnr1BPPaGh3PvfCQDNWl59FNkkWwquPjdxkZfqUrRk+QCp7VSJ6quGDT8u83
+ 0meMZ/FNWpEH/u8x2TqZ03oJ14A1ZKTPaElZPR8H5dAEfdcdjfKBrMhAfc9r+JwzRd7iprJx8S
+ q2ka1vJSLGR26GRWMO2crT8DgI9sADTe+XaiJwXtMkEX88v3an4XDp3XyxiZZM+WIzDcvi22Ng
+ ypN4nUwOjZaoybTVUc65yBqINz1DJXFjGd803BLRA+Yy/iuR36uA7IOSmZfFbA/ePtImAFzdjs
+ YO4=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Nov 2022 15:39:27 -0800
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4NLhl23Cd7z1RvTp
+        for <linux-next@vger.kernel.org>; Mon, 28 Nov 2022 15:39:26 -0800 (PST)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1669678766; x=1672270767; bh=CKWGkAJZOpqvsRiv6iiFtDdJkkDaLWB71/7
+        EyG0/hlw=; b=TH33QpIju2od0JJjgMhJh51ZiGLvuI5P1zoI0B7QZProO1P11d1
+        fS251GW9UF6gA4O8Rw3w/0YkRK1PQpR7tGOC0DGWyPNlDGJwH+IzVWlo0HLQu0sR
+        a0lTqCrz6ZUd4rsGcuQzPvS/r+0hIJXbbDZ8iCOEsZnpcKWjnMngGxaYJXXh2UVW
+        VbvIXe8MTGwHt08eN9a3OvXhpUS8HYFkabXQDh1wl8XDWxjjeRA+BLjbDabxiCl5
+        PRyPBeK2Dy+gU4H8FDa3L8AZjSr8E1wFPvRtvi8iiVAo4Z+egLwA5XWqKsdxcJWG
+        22oIJxjj603T/rTv0WTSHlS94dqU4ZWe5jA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id BrAB8lDBXJkw for <linux-next@vger.kernel.org>;
+        Mon, 28 Nov 2022 15:39:26 -0800 (PST)
+Received: from [10.149.53.254] (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4NLhl13M9hz1RvLy;
+        Mon, 28 Nov 2022 15:39:25 -0800 (PST)
+Message-ID: <ab5368d2-5f65-68cb-9703-23d6e451b775@opensource.wdc.com>
+Date:   Tue, 29 Nov 2022 08:39:24 +0900
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uIVkaxbK_TscEmA+D6_pZmV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+Content-Language: en-US
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20221129082715.78e44566@canb.auug.org.au>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20221129082715.78e44566@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/uIVkaxbK_TscEmA+D6_pZmV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/29/22 06:27, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>   4b49197f9fbd ("block: mq-deadline: Rename deadline_is_seq_writes()")
+> 
+> Fixes tag
+> 
+>   Fixes: 015d02f4853 ("block: mq-deadline: Do not break sequential write streams to zoned HDDs")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     This can be fixed for the future by setting core.abbrev to 12 (or
+>     more) or (for git v2.11 or later) just making sure it is not set
+>     (or set to "auto").
 
-Hi all,
+Oops. Sorry about that. It seems I cannot count up to 12 anymore :)
+It should be:
 
-In commit
+Fixes: 015d02f48537 ("block: mq-deadline: Do not break sequential write
+streams to zoned HDDs")
 
-  4b49197f9fbd ("block: mq-deadline: Rename deadline_is_seq_writes()")
+Jens, can you fix this ?
 
-Fixes tag
+-- 
+Damien Le Moal
+Western Digital Research
 
-  Fixes: 015d02f4853 ("block: mq-deadline: Do not break sequential write st=
-reams to zoned HDDs")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    This can be fixed for the future by setting core.abbrev to 12 (or
-    more) or (for git v2.11 or later) just making sure it is not set
-    (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uIVkaxbK_TscEmA+D6_pZmV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmOFJ7QACgkQAVBC80lX
-0GzwAQf/Wn36GO3PV5QoKzZXeqQlv5lx2Tyk7AcrU3JeUddUDY7UK+9OKPPYTf3q
-89XNlGwZXMVhpwM2EOrBrZnM1SIyBdaTF/yQzTXLNAwBNVu3+4kpUBing1qSM9Jc
-ZRQIbloJTLA33GQMPv6E+uKX5PhS8nYcp/4zlg6XX4/gcg1CYYdqKsC0a7du8dRe
-rrUn4LOexpcQymj88PdPeA+gQ9CWtPqTJXachmpYXuJqTTJaZl8QQrc8+8hNBK3J
-XX4PHu5G02rloYSMOKrAyZyM8bqPeaD50oAgUFowANsHW3eP/e8pXbuAaGcsXSPJ
-mX4HDMbSb/AzKjPUMsrYNWDoL473mw==
-=ljWT
------END PGP SIGNATURE-----
-
---Sig_/uIVkaxbK_TscEmA+D6_pZmV--
