@@ -2,60 +2,97 @@ Return-Path: <linux-next-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3CCC4332F
-	for <linux-next@archiver.kernel.org>; Tue, 20 Dec 2022 07:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4654C10F1E
+	for <linux-next@archiver.kernel.org>; Tue, 20 Dec 2022 07:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233079AbiLTHPn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 20 Dec 2022 02:15:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38586 "EHLO
+        id S232798AbiLTHhj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 20 Dec 2022 02:37:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233365AbiLTHPT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2022 02:15:19 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9347717052;
-        Mon, 19 Dec 2022 23:09:27 -0800 (PST)
-Received: from [192.168.231.135] (unknown [213.194.155.136])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        with ESMTP id S232678AbiLTHhi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2022 02:37:38 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52552F027;
+        Mon, 19 Dec 2022 23:37:36 -0800 (PST)
+Received: from localhost.localdomain (unknown [213.194.155.136])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: rcn)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3A9426601810;
-        Tue, 20 Dec 2022 07:04:24 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 69AD76601810;
+        Tue, 20 Dec 2022 07:37:34 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1671519864;
-        bh=xGn+8/nr0ZMmrYqa/W8ZhrdrWgKeEjTFd2dNCbdGsT0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=QQ376SxNm2GMhdQuqmdk7uEga4F+MnytbBrxizLE85NO7xZWPaRumM9OyK1zhQDrM
-         +9SlrNRw2rc6sPo+Omh5aDeVhmXd/YNLSuwwnTzoT0NI/JSKc4dXNytQgBDbNFimdC
-         J17S6J7/CN8zh30g8mDGpnJvSsygXdsXA1V4duzbF94/OR6iSTeYdWXgOhOZhkpPAi
-         zzfKAVAxi2JK3wxbQF9f1CfAD5DrdYz3rQwSWJqnemt/mtm/OCzWYX6/a7g7xFgXv/
-         4gvQbXrAKGhXgpBK5xVcEesZ7Zo72Qa6P6ji11dTdgoCi0BlMFAkjjYYev6zpWKhNA
-         K9FCmOenTLtIQ==
-Message-ID: <bf024c42-89e8-b60e-28c0-1afdd3e0ae53@collabora.com>
-Date:   Tue, 20 Dec 2022 08:04:20 +0100
+        s=mail; t=1671521854;
+        bh=A7n0VSq8cd0ak7dktr+xYbXSUP6klaKvgvHdAFhnEWQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nHIVtLA7sGGmGpRU+qFlf0MltTc+ydchH+x82IqnCS8C+M3MsZKAfGsNnk6eK0Ct+
+         4qJDCU8w/Ows0fwOAO5Inq46XiGY0NXJBsb1Ty3Pyi5w8cIQl9MjZlCtjmd+JS5VpA
+         Nyfe078iV4QT+BYI3KU1M4JVqRPQBC6bbmzkNArG2PBrDOsZ5yAqmaQKlm6dV3ExDN
+         rqoYpGGwy8K6cIwTKyUIArBsVq73eLdBcBv1MNlSCLK+xr1hC8+ohngqko9ZRIg40h
+         sxyRZN5IF7WAgJQ35VvjLnt13qNGTLhibRbKn+Q2o/9QW7ZpV1xM+3OKFgG/3Ufvof
+         bLt8jxGxSlW6A==
+From:   =?UTF-8?q?Ricardo=20Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>
+To:     mst@redhat.com
+Cc:     sfr@canb.auug.org.au, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kernel@collabora.com
+Subject: [PATCH] virtio: fix virtio_config_ops kerneldocs
+Date:   Tue, 20 Dec 2022 08:37:09 +0100
+Message-Id: <20221220073709.2687151-1-ricardo.canuelo@collabora.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: linux-next: build warning after merge of the vhost tree
-Content-Language: en-US
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20221220105956.4786852d@canb.auug.org.au>
- <20221220010040-mutt-send-email-mst@kernel.org>
-From:   =?UTF-8?Q?Ricardo_Ca=c3=b1uelo?= <ricardo.canuelo@collabora.com>
-In-Reply-To: <20221220010040-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 20/12/22 7:01, Michael S. Tsirkin wrote:
-> Ricardo I assume you will fix this? Patch on top is ok.
+Fixes two warning messages when building htmldocs:
 
-Yes, I'll take a look.
+    warning: duplicate section name 'Note'
+    warning: expecting prototype for virtio_config_ops().
+             Prototype was for vq_callback_t() instead
 
-Cheers,
-Ricardo
+Signed-off-by: Ricardo Cañuelo <ricardo.canuelo@collabora.com>
+---
+ include/linux/virtio_config.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+index 4b517649cfe8..f9a33062c089 100644
+--- a/include/linux/virtio_config.h
++++ b/include/linux/virtio_config.h
+@@ -16,8 +16,10 @@ struct virtio_shm_region {
+ 	u64 len;
+ };
+ 
++typedef void vq_callback_t(struct virtqueue *);
++
+ /**
+- * virtio_config_ops - operations for configuring a virtio device
++ * struct virtio_config_ops - operations for configuring a virtio device
+  * Note: Do not assume that a transport implements all of the operations
+  *       getting/setting a value as a simple read/write! Generally speaking,
+  *       any of @get/@set, @get_status/@set_status, or @get_features/
+@@ -68,8 +70,8 @@ struct virtio_shm_region {
+  * @finalize_features: confirm what device features we'll be using.
+  *	vdev: the virtio_device
+  *	This sends the driver feature bits to the device: it can change
+- *	the dev->feature bits if it wants.
+- * Note: despite the name this can be called any number of times.
++ *	the dev->feature bits if it wants. Note: despite the name this
++ *	can be called any number of times.
+  *	Returns 0 on success or error status
+  * @bus_name: return the bus name associated with the device (optional)
+  *	vdev: the virtio_device
+@@ -91,7 +93,6 @@ struct virtio_shm_region {
+  *	If disable_vq_and_reset is set, then enable_vq_after_reset must also be
+  *	set.
+  */
+-typedef void vq_callback_t(struct virtqueue *);
+ struct virtio_config_ops {
+ 	void (*get)(struct virtio_device *vdev, unsigned offset,
+ 		    void *buf, unsigned len);
+-- 
+2.25.1
+
