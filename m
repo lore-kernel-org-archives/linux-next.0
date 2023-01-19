@@ -2,52 +2,53 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A93C00A5A
-	for <linux-next@archiver.kernel.org>; Thu, 19 Jan 2023 04:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04717C00A5A
+	for <linux-next@archiver.kernel.org>; Thu, 19 Jan 2023 04:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjASE3W (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 18 Jan 2023 23:29:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43850 "EHLO
+        id S229570AbjASEkN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 18 Jan 2023 23:40:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbjASE1N (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2023 23:27:13 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6802369209;
-        Wed, 18 Jan 2023 20:26:08 -0800 (PST)
+        with ESMTP id S229816AbjASEjt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2023 23:39:49 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097F76E823;
+        Wed, 18 Jan 2023 20:37:40 -0800 (PST)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ny8hG2CFVz4xG5;
-        Thu, 19 Jan 2023 15:26:06 +1100 (AEDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ny8w84K42z4xN1;
+        Thu, 19 Jan 2023 15:36:24 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1674102367;
-        bh=sKiPb+hJuV9kvsCN8Nze1icqrIj365SG7+AJwResrVc=;
+        s=201702; t=1674102985;
+        bh=uXiJRrSwOenfyHVojoKNT3dWtAN7By4hWLamYXeB4OU=;
         h=Date:From:To:Cc:Subject:From;
-        b=JydZF0aOrb6gM+d/Rksd2AoxShP7UGnSdsaRUNGHTXh8bgHtSA7hc9A1cV3fv5M+r
-         S5N6aC23rXS+OlGcly2NVeNHVNIBzw9h72v91DcQwWOiU3HUosX6+gN2dJlbZ/oQNk
-         p9Zbpfv3+Up3L+J/JC0ZJE5bj7ENSQ2Df6VByBLrsXY3YWhgYqngLAHzpmzcdJSkn9
-         8r2MWIqGPWYdEvS9hQsgO1yDnkUd6sONoWQ0tAuOPtx2rLtdwTkMk7F/0GtQ4vgWXa
-         Aa/VqpFgBnki7pUyTl/QdrZq3PzhGUpm+sR8NSQoFr5JuZ2g4KDdzdoDhpcNFEQBRu
-         Y1FC730c5Zb1w==
-Date:   Thu, 19 Jan 2023 15:26:05 +1100
+        b=cTjDBfuEFiK8a2nTR549PA/KFUjwioeJdgoFAiz+F/2RgRuz118EJUeaRWIvbZimD
+         +PkScaGHoaSBdN0OBCTGZ9bLCWviLih9ArUaqpaR8vbkwfDAKVRzQn1lseknOgTtmq
+         UZ7wxFF4jhDz0vijvJrLrY8Vf8+LVvJgugetjf3ROkOPy560uz6sz8N5JOA2EVa56r
+         X0dtTxzMUZOkJptUt9XvxN3F4Obdab4KGWKoER/5yzkwZiad8qkTa+cA4ehAvFk71v
+         aJTV0/x/2LRiJiDOWWIm5l1DBWAQqUmM1ReohBmXJWpQFtQvEuID93HFaOz7WK8rGT
+         xTutHYoQSOvVA==
+Date:   Thu, 19 Jan 2023 15:36:23 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Colin Cross <ccross@android.com>,
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Colin Cross <ccross@android.com>,
         Olof Johansson <olof@lixom.net>,
         Thierry Reding <treding@nvidia.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, Wayne Chang <waynec@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the usb tree
-Message-ID: <20230119152605.03588e9b@canb.auug.org.au>
+Subject: linux-next: duplicate patch in the phy-next tree
+Message-ID: <20230119153623.339d6739@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ppeLoDsFsgbD.ooY/.g3L89";
+Content-Type: multipart/signed; boundary="Sig_/q=jRzdn=08Bi_=8oKQBQw4j";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/ppeLoDsFsgbD.ooY/.g3L89
+--Sig_/q=jRzdn=08Bi_=8oKQBQw4j
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -56,13 +57,11 @@ Hi all,
 The following commit is also in the tegra tree as a different commit
 (but the same patch):
 
-  2648f68bd0ac ("dt-bindings: usb: Add NVIDIA Tegra234 XUSB host controller=
- binding")
+  fb1ff01307ee ("dt-bindings: phy: tegra-xusb: Convert to json-schema")
 
 this is commit
 
-  20cdc1607ea0 ("dt-bindings: usb: Add NVIDIA Tegra234 XUSB host controller=
- binding")
+  56052eee689a ("dt-bindings: phy: tegra-xusb: Convert to json-schema")
 
 in the tegra tree.
 
@@ -70,20 +69,20 @@ in the tegra tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/ppeLoDsFsgbD.ooY/.g3L89
+--Sig_/q=jRzdn=08Bi_=8oKQBQw4j
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmPIxl0ACgkQAVBC80lX
-0GxS1ggAgo+m4fx1jsJSih8X8HyrLJXQyH3mgUNeuD2jVKiI/KbEs//iTEKDFEXT
-aLMKhYcxxiSGhf5iMDmlU38LE5iyAQRtn/GwE9B7UIL/X3Z83s521TI9tFfAZEVK
-ZcqqpeCHRZIaTo1qKf13TPCszJ9bn82T09GqowICNZRo7P4ONg8dcsiqK55AUpSu
-Gg0Iobc8RAOZTIPueEH3ceFQGdHYZkE0ciApcGpHtG4OMBcpD4IHJ+PGXQn7pFKb
-p/3O/K2J4j32LlzY/HhmaigOi0l2foDVb+pPPIFTsj5jD8IhHl9JGTCqU5gH8Bsz
-QtrqkLJRo+X0nwICiepDNUi8CqGjDg==
-=mdkO
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmPIyMcACgkQAVBC80lX
+0GybCwf9E7NVsD+a5Axi7bs/Y52qQG3PLkGtFRh1z0QDu89H0D4kUb2I76mtNFLq
+O5Pv99BgHqULUt/Zy6+veq5Opfqz1ktdH5oXUvawiWzvKicCkzRKLT3Rhw0GkU68
+W4Z966Li0NozLGy2wsiYe6bskI2ziv++kD+P3TDhA3wnH+DswzSwfKeL1cY1WCsn
+9IWS20PoJR8VMt4O4gyc7zL7dHis28OLTXJnYt+QLfhxdb8aXjkadWJXj9jsxW4y
+EjSk3sXB4LbMiEaD7Mflms2XjyniPJ8uewixbVC5/x10PwNfPh0D/DgnU4qrPye6
+YpQeVmAI3zdFXElb1cgevZxQA3uDKg==
+=AVRR
 -----END PGP SIGNATURE-----
 
---Sig_/ppeLoDsFsgbD.ooY/.g3L89--
+--Sig_/q=jRzdn=08Bi_=8oKQBQw4j--
