@@ -2,49 +2,49 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9084C54EAA
-	for <linux-next@archiver.kernel.org>; Fri, 27 Jan 2023 09:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FBBC38142
+	for <linux-next@archiver.kernel.org>; Fri, 27 Jan 2023 09:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232084AbjA0JcR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 27 Jan 2023 04:32:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46386 "EHLO
+        id S232908AbjA0JeD (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 27 Jan 2023 04:34:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232632AbjA0JcO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 27 Jan 2023 04:32:14 -0500
+        with ESMTP id S232087AbjA0JeB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 27 Jan 2023 04:34:01 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 518C42E0D0;
-        Fri, 27 Jan 2023 01:32:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 559755245;
+        Fri, 27 Jan 2023 01:33:29 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D227261A3F;
-        Fri, 27 Jan 2023 09:32:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3B1C433EF;
-        Fri, 27 Jan 2023 09:32:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 30F6C61A6A;
+        Fri, 27 Jan 2023 09:33:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F55C433D2;
+        Fri, 27 Jan 2023 09:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674811928;
-        bh=ry/oIi0OHXzdRTXNsss+PckkCY4X4TbKoAbI71uIw24=;
+        s=k20201202; t=1674812002;
+        bh=1EV/RnP8DvYM6uELbc/15GzbHO8VKuA4S3baHHRG40U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tKQhgIhLpVwrGYHjlhbIHiUxqNUHnKe/n2gIKDebQMMIqYU7KT9kR+QN7EfAKWwzd
-         GlN6pK7YuLZh/2VqJie7wd0ylB2NtYsmETspW7Xz0T6MfwnWXtqDZaZoGzeLLCBRoO
-         BYUWUDFHr0lBwVid73N0OX2DM4OQ1frlYm5+89Nddv22BjHEpmKpMLhu8rl7mES5uV
-         eHJFRgV+1uZbefi2wJAtG354UIgfBzF90wMX3i8C850di3V6s+mHV/5KzRQZQBbCtz
-         hAt/4W5luPgEuGXObP+Mz84eBTRLNMSMI7owsvLt9B+qDY2prLVnDHCIYjsb1rIKoJ
-         OJIPpIGk1qgPA==
-Date:   Fri, 27 Jan 2023 09:32:03 +0000
+        b=FOZb8DRMofXEX3LTMx1Z/bCNmCZpXvvEbOXequu28TbLkz+Ju+Xaq14Otw/AWl7xD
+         n0qvYziPKCgV3cdcf74MgnqDyQvRWfAZAibsj5Y7XXY6zMxt6pgQj2sNg8kR+qZYQs
+         RMucdmT92zIs15W6AR5J5/R3zcReoK33VB3Z8T3vupRMLOqXotOfJamf9HFMSyqbnN
+         bUTkPlthf6/YcabTnJlUoxheXrYSqB9oq0TtJVmJWpZCr+rC6+RkWkTDu3rsT/cbdt
+         VV1BgbRjrThAZfsvpYYVRZ3P9SMwKZlMSx68aNRPA4mYxYcM8QJuXMW2Kj3BNV8Jcs
+         H8EXmGedmCv0A==
+Date:   Fri, 27 Jan 2023 09:33:18 +0000
 From:   Lee Jones <lee@kernel.org>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the backlight tree
-Message-ID: <Y9OaE6M9CaGYvVZD@google.com>
-References: <20230127161233.5c21c04f@canb.auug.org.au>
+Subject: Re: linux-next: duplicate patch in the mfd tree
+Message-ID: <Y9OaXnD71r8EBazv@google.com>
+References: <20230127160913.7deebd22@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230127161233.5c21c04f@canb.auug.org.au>
+In-Reply-To: <20230127160913.7deebd22@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
@@ -56,16 +56,15 @@ On Fri, 27 Jan 2023, Stephen Rothwell wrote:
 > The following commit is also in the arm-soc tree as a different commit
 > (but the same patch):
 > 
->   6e9b5cad13f0 ("backlight: Remove pxa tosa support")
+>   dd77f5fa97d3 ("mfd: Remove toshiba tmio drivers")
 > 
-> This ia commit
+> This is commit
 > 
->   9041bd1aff23 ("backlight: remove pxa tosa support")
+>   e9b016cfd62d ("mfd: remove toshiba tmio drivers")
 > 
 > in the arm-soc tree.
 
-This should be removed from the arm-soc tree.
-
+This one too please.
 
 -- 
 Lee Jones [李琼斯]
