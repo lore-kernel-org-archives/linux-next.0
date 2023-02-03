@@ -2,105 +2,145 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAFCC61DA4
-	for <linux-next@archiver.kernel.org>; Fri,  3 Feb 2023 09:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608C6C636D6
+	for <linux-next@archiver.kernel.org>; Fri,  3 Feb 2023 10:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbjBCJfr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 3 Feb 2023 04:35:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52804 "EHLO
+        id S232973AbjBCKCz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 3 Feb 2023 05:02:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231819AbjBCJfm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2023 04:35:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310CE10A83
-        for <linux-next@vger.kernel.org>; Fri,  3 Feb 2023 01:34:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675416898;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=s/ArePDBe9fA6hX2Xbg6u19DGsOzAxJ4bWXlXPkV5R8=;
-        b=SaMycmA7HUfs21GXj0aNtPOkbcBN4RuUaAsdW9FPcEyQfMi5rNr6POkwX/wBIMMybNXcZ7
-        xl24nTQkbnOxms6EZ1MW0LnPm6dHKykzO6SdNeA9LNZVw9acVHcjotbwCTxnORWVgeEcA+
-        HPoCdGuWJiOU6tqLfPlx90nuMIe1nYg=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-206--OzX3-RLN6it8AVk1WY_FA-1; Fri, 03 Feb 2023 04:34:26 -0500
-X-MC-Unique: -OzX3-RLN6it8AVk1WY_FA-1
-Received: by mail-ed1-f70.google.com with SMTP id d21-20020aa7c1d5000000b004a6e1efa7d0so2980542edp.19
-        for <linux-next@vger.kernel.org>; Fri, 03 Feb 2023 01:34:26 -0800 (PST)
+        with ESMTP id S232883AbjBCKCv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2023 05:02:51 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1AD99AFF2;
+        Fri,  3 Feb 2023 02:02:46 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id k13so4772940plg.0;
+        Fri, 03 Feb 2023 02:02:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1qkWGtLYvayKN703HCl0JMt6iGHIHxr57/oh7Oq4+1w=;
+        b=CjqBewy3gcGmReNeU0w+GPmiJvC0WCkFKlywd0p2UyqeTnW6NEGQYBP5lUGWg0C7Cz
+         SGnXepk9eVCAtVJviTMMSywzQNHUfau2lwG+7PwF3XO8kE8Hn3jkWYDwqpsT4aLuO7c3
+         FfCLw+O4V06Wkg0e1UY50V8GOZe3It2BGlyhjxPq0cU8T4dHLw/5bDSiZ5Bu/oIxv/PD
+         uITon58JWxVCIaptAAb19fcP5URnmDf7ON5MpqBa0cQgoKpf9FqToSDC+PQjCuJzlTkj
+         VICtolL+GqtltJq5/nQGjjnjG0crJWIxRa9tKit009UUOlfwA2C+3EiP31+1kwoPeAjZ
+         CmAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s/ArePDBe9fA6hX2Xbg6u19DGsOzAxJ4bWXlXPkV5R8=;
-        b=QVe2p1xJRV8O6pfTaVdH9KrFSRX9hE98HyXT8sn4dVmQj69i2ykgIa9NR2aFFv9seM
-         rr/07QD7RKpRDN37M5C9QvYVAALLUbe+Rw8CK16/NBUnCb+BRM1fG6ZdJ7xLo9S7HTlK
-         5ghgW8Yz65VlaU6JmPQArGYe7m1iX6rjbN2KNtIaAcIqsYy37KDv2iZk0lJF4hBwxl7F
-         cC9XnMFPrxQpmltW1ptjqu44hbpLwYJkfWAZyzTaDeFoQ/uIsurRj+N5CoEIeQxqSfw9
-         SNSKcCFul0c8PMcUA2I1tArsR/Hg8NVtej5AUAt0hGaKWBM8Fe21Hzbzo0uRnG+kxiZ7
-         xIPw==
-X-Gm-Message-State: AO0yUKWsVcO1PLpc8KlkZz61WZzbfoZ7Ljv6NHfsCm6iXcTihc2p+KWs
-        sB9v3CtEevYE0PJ3qJXh42nKTxfVs60+Zrkp0YNxCasFFbcfUWtt8dBSLD9sowl2LeQiBvlc2DN
-        u+JWSwC2SKJFLCuTNp3FMsA==
-X-Received: by 2002:a05:6402:34cd:b0:4a3:43c1:842f with SMTP id w13-20020a05640234cd00b004a343c1842fmr6059312edc.3.1675416865185;
-        Fri, 03 Feb 2023 01:34:25 -0800 (PST)
-X-Google-Smtp-Source: AK7set8fPiBPyymxXvRsz+X2l9LTm8jgA1M5+3SkglNsycNaWE/90eTB4Wt5BoP0sVycITXkRU6hgw==
-X-Received: by 2002:a05:6402:34cd:b0:4a3:43c1:842f with SMTP id w13-20020a05640234cd00b004a343c1842fmr6059298edc.3.1675416865035;
-        Fri, 03 Feb 2023 01:34:25 -0800 (PST)
-Received: from redhat.com ([2.52.156.122])
-        by smtp.gmail.com with ESMTPSA id u2-20020a509502000000b0049e08f781e3sm879926eda.3.2023.02.03.01.34.23
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1qkWGtLYvayKN703HCl0JMt6iGHIHxr57/oh7Oq4+1w=;
+        b=LWcblHXvFP9a8ov6uNKkwBgp41ch782QWQTmcD2p0mEOO/SQIFbevh3j3rnijF9Z1R
+         72ZmybqyZlaqoRwB+PoOoSEs912Wq6mgKfAq+XGC6PE7LYQThqSGNjytpL5AxYdd8Bv2
+         N2tQV1I39iMfHKd4m3xa2XR3V9Kbc1SSKTEY25q6g78fdaFyoLNtAZ5EeMvlWTAZdoNF
+         lgFbP+g9i+1DaA8q5gyW6tVpcBcis7AaPj+EUImov9PodqClJWjMo7YJe2BYb6KiepiM
+         fcukABj3Q7n4FYyzHGBhR5LGw4rWsWFCfuEurIGp0ZPMNtjK7Va/nzwio4TnFuHDhU/W
+         SZ3w==
+X-Gm-Message-State: AO0yUKVZqcl0O0o1HLfvGvpQnrnNQ42Bdbd4K37QSw1yTKf0aa2WrqsI
+        LvWvOTeL/+gXEWlp7RoEbAo=
+X-Google-Smtp-Source: AK7set+TY8YewT7QpLDSyIye4tTcIX+xyOgTtQnxf8cYJX2y7CHy2FUZyUr8czgco+Qgz8WleDPpNA==
+X-Received: by 2002:a17:903:1cb:b0:196:cea:487a with SMTP id e11-20020a17090301cb00b001960cea487amr12244038plh.53.1675418566245;
+        Fri, 03 Feb 2023 02:02:46 -0800 (PST)
+Received: from debian.me (subs09b-223-255-225-232.three.co.id. [223.255.225.232])
+        by smtp.gmail.com with ESMTPSA id t1-20020a1709027fc100b00192a96f4916sm1169971plb.259.2023.02.03.02.02.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Feb 2023 01:34:24 -0800 (PST)
-Date:   Fri, 3 Feb 2023 04:34:21 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Laurent Vivier <lvivier@redhat.com>,
+        Fri, 03 Feb 2023 02:02:45 -0800 (PST)
+Received: by debian.me (Postfix, from userid 1000)
+        id 943FF1054A4; Fri,  3 Feb 2023 17:02:41 +0700 (WIB)
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Intel Graphics Development List <intel-gfx@lists.freedesktop.org>,
+        DRI Development List <dri-devel@lists.freedesktop.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the vhost tree
-Message-ID: <20230203043406-mutt-send-email-mst@kernel.org>
-References: <20230203132629.30cf161c@canb.auug.org.au>
- <20230203133303.5cf19f41@canb.auug.org.au>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Gustavo Sousa <gustavo.sousa@intel.com>,
+        Balasubramani Vivekanandan <balasubramani.vivekanandan@intel.com>,
+        Matt Atwood <matthew.s.atwood@intel.com>,
+        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
+        Srinivasan Shanmugam <srinivasan.s@intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH 1/3] drm/i915/doc: Escape wildcard in method names
+Date:   Fri,  3 Feb 2023 17:02:13 +0700
+Message-Id: <20230203100215.31852-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230203100215.31852-1-bagasdotme@gmail.com>
+References: <20230203100215.31852-1-bagasdotme@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230203133303.5cf19f41@canb.auug.org.au>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2692; i=bagasdotme@gmail.com; h=from:subject; bh=N5hMks1GtbHQ4KjQuMm3ct/vgc6qjkdSsj8Qt7muNd4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDMl3bi/T9n/L4m1z50o+N2Nmf+60zI1M4f2PbZftbaz7oLF+ 2tpfHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZhIQikjw61trnfPyZYL61RXMb20TP gY4WYdNO+K6wbJ/FN3m5MSUhkZOo+fdbl9OT5dW8fxxV3D+ynKQXq/qjx2zDt34XHYj4eq3AA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Fri, Feb 03, 2023 at 01:33:03PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Fri, 3 Feb 2023 13:26:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > The following commits are also in Linus Torvalds' tree as different
->                                     ^^^^^^^^^^^^^^^
-> Actually not in Linus' tree, just the net-next tree (semi-automation
-> sometimes fails :-)).
+Stephen Rothwell reported htmldocs warnings:
 
-Dropped from my tree thanks for the heads up!
+Documentation/gpu/i915:64: drivers/gpu/drm/i915/gt/intel_workarounds.c:32: WARNING: Inline emphasis start-string without end-string.
+Documentation/gpu/i915:64: drivers/gpu/drm/i915/gt/intel_workarounds.c:57: WARNING: Inline emphasis start-string without end-string.
+Documentation/gpu/i915:64: drivers/gpu/drm/i915/gt/intel_workarounds.c:66: WARNING: Inline emphasis start-string without end-string.
 
+Escape wildcards in *_ctx_workarounds_init(), *_gt_workarounds_init(), and
+*_whitelist_build() to fix above warnings.
 
-> > commits (but the same patches):
-> > 
-> >   022659ee3363 ("virtio_net: notify MAC address change on device initialization")
-> >   d0aa1f8e8d63 ("virtio_net: disable VIRTIO_NET_F_STANDBY if VIRTIO_NET_F_MAC is not set")
-> > 
-> > These are commits
-> > 
-> >   9f62d221a4b0 ("virtio_net: notify MAC address change on device initialization")
-> >   7c06458c102e ("virtio_net: disable VIRTIO_NET_F_STANDBY if VIRTIO_NET_F_MAC is not set")
-> > 
-> > in the net-next tree.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Link: https://lore.kernel.org/linux-next/20230203134622.0b6315b9@canb.auug.org.au/
+Fixes: 0c3064cf33fbfa ("drm/i915/doc: Document where to implement register workarounds")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ drivers/gpu/drm/i915/gt/intel_workarounds.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpu/drm/i915/gt/intel_workarounds.c b/drivers/gpu/drm/i915/gt/intel_workarounds.c
+index 3111df350f5722..a00ec692d980c0 100644
+--- a/drivers/gpu/drm/i915/gt/intel_workarounds.c
++++ b/drivers/gpu/drm/i915/gt/intel_workarounds.c
+@@ -30,7 +30,7 @@
+  *   creation to have a "primed golden context", i.e. a context image that
+  *   already contains the changes needed to all the registers.
+  *
+- *   Context workarounds should be implemented in the *_ctx_workarounds_init()
++ *   Context workarounds should be implemented in the \*_ctx_workarounds_init()
+  *   variants respective to the targeted platforms.
+  *
+  * - Engine workarounds: the list of these WAs is applied whenever the specific
+@@ -55,7 +55,7 @@
+  * - GT workarounds: the list of these WAs is applied whenever these registers
+  *   revert to their default values: on GPU reset, suspend/resume [1]_, etc.
+  *
+- *   GT workarounds should be implemented in the *_gt_workarounds_init()
++ *   GT workarounds should be implemented in the \*_gt_workarounds_init()
+  *   variants respective to the targeted platforms.
+  *
+  * - Register whitelist: some workarounds need to be implemented in userspace,
+@@ -64,7 +64,7 @@
+  *   this is just a special case of a MMIO workaround (as we write the list of
+  *   these to/be-whitelisted registers to some special HW registers).
+  *
+- *   Register whitelisting should be done in the *_whitelist_build() variants
++ *   Register whitelisting should be done in the \*_whitelist_build() variants
+  *   respective to the targeted platforms.
+  *
+  * - Workaround batchbuffers: buffers that get executed automatically by the
+-- 
+An old man doll... just what I always wanted! - Clara
 
