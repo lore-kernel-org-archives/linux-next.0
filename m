@@ -2,55 +2,54 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1173FC63797
-	for <linux-next@archiver.kernel.org>; Fri,  3 Feb 2023 10:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C56C64EC4
+	for <linux-next@archiver.kernel.org>; Fri,  3 Feb 2023 10:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232979AbjBCKCz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Fri, 3 Feb 2023 05:02:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
+        id S233084AbjBCKC5 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Fri, 3 Feb 2023 05:02:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233043AbjBCKCv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2023 05:02:51 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204C599D7F;
-        Fri,  3 Feb 2023 02:02:47 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id m13so4699641plx.13;
-        Fri, 03 Feb 2023 02:02:47 -0800 (PST)
+        with ESMTP id S233048AbjBCKCw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2023 05:02:52 -0500
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4F293AF0;
+        Fri,  3 Feb 2023 02:02:48 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id ay1so3182855pfb.7;
+        Fri, 03 Feb 2023 02:02:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8uI1M7MlCo9XnTZpJcBOEs5KyjjwQHQ4dPVV8UJc85M=;
-        b=QnIGxN6Lwu4aUFzN5zi5SuwFMdtnPJzPMWMZ9vIadX4m92djFC+2E4YcRW3eNF4v1Z
-         Mg+ZxOCTI2vhUDl00H4wghHXab/rBKeEOrfVkQ3smacWDfBbshqwz/xoC/CEz3dbvOnz
-         zdxlcD/D7y5jj2cdyoBY36E7SmR0SET3MT06VrTFvpDcpve8cOcLCxvfld0k0i7AINqk
-         oTs/z7xROlKl6OoqvnGQPnnbtWhdgqj1cAQi+oTVJxLhe6mlSrD4TYjIoNkrLrshcLKf
-         VUE7BfCWF58nSlTSjkY7sKBLRYQ4Hi1Ds1fYtEjD/yM1JcHeeMaCUJEuTh7CJ+lQuzc8
-         vRvA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZM2kRnUMq/5JxUqAj92h8CE9Ys20GpS+bcD8sHbxGY=;
+        b=MoBwsiFh+PQwRc+ml6iuRDqdl5/NFddPFYIwdi7shrfKdxQojJlglETNVcoxcFbeq7
+         UQJl43hvF2JW+oxHrqZ+PYm/8YFRae3V0NrPaa5mTWI15gXYGncVGae9cCjpG4CRqMiA
+         9Pj/x71a+1UhhPgRzHSlzVh6c2OeFmzl6woB/kPM1ATos4UIxHPHaPyDOJtH8wzgGaPO
+         DkOEa4bmsfqANA9W0VKMMobCnKbwjAegUkH6avPb67JGriW6ySxlSlYNDw8esdDqQ5tq
+         zt+gRScqxTBmdYI7AEl0bwX4sIa2Wv8t0T5OYVEzI8GAeVcWMrOHsv8qoHjy703uRwYJ
+         T6rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8uI1M7MlCo9XnTZpJcBOEs5KyjjwQHQ4dPVV8UJc85M=;
-        b=omMr1Uz9kW4/6Zw5qOIrOuRKh6YSx57xELAVWz4O/+lcynDD99tpRLWPne8k9y+o1T
-         bLKERA9ytQtFEmfzs5Tke4pgoRrJcI6uyCCMfu3ye/MG1NdM93mQWK83gx6upm8Srttn
-         LcWNdYG6dSdDfXwqpl/YToFmcuNj3dRC8Jc3OzMfdsTFh52noOk6pQKmCK2GF2lI8xD9
-         wNoaZ52R2xQN0RzrpCJgYyp/eInzQWciB+GSmQOVS/+LDlvanRYKGI8B9kk+cEJqqcZL
-         Ck5u5K4R18vHMNcO1pJSDALRJctBM4ye5ZX4a0xOckWFfpDhT+j1wztTHBq1kaO0sjfr
-         lmXg==
-X-Gm-Message-State: AO0yUKVFsRsTS2SH8P0dN4w4xrqLBcTWW/C/J+UNwvHIqQneme56vpX0
-        +yWml74P4y6pP0qPBQhQKow=
-X-Google-Smtp-Source: AK7set++bw9bsEbt2KDe2FpE3hso9t1lCk8CgQqRkD77rwyegzc0cHcYY7ckjMXVEQKuFQCurWx5pg==
-X-Received: by 2002:a17:902:c60b:b0:196:6c71:ae6 with SMTP id r11-20020a170902c60b00b001966c710ae6mr7016429plr.47.1675418566581;
-        Fri, 03 Feb 2023 02:02:46 -0800 (PST)
-Received: from debian.me (subs09b-223-255-225-232.three.co.id. [223.255.225.232])
-        by smtp.gmail.com with ESMTPSA id 17-20020a170902c15100b00198e54b814bsm446379plj.119.2023.02.03.02.02.45
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qZM2kRnUMq/5JxUqAj92h8CE9Ys20GpS+bcD8sHbxGY=;
+        b=yWpB9vR5kwExjTmrJujLyl8oQ9owArNYiFDrnATnlYitXOO+D7Q/HV0ozAHnRw4FuO
+         vjPfBIL0U1R/Wkm87YIoZdS2MH6VFpb/7CLoMSFShRUeNH1lltALWpuatIpP6NG8NRbr
+         jYUFL+kwiQbZRsqFjGZEuMrzagEVRdp7qCDj6LUZ4H31Cksa011H/7SHMqm6ZPnBn2Jt
+         aC4BVJvSeGJScTulQ2+d38Ce1U7aL3Byq4lUFuZ7HfXbTm5FJ2Zt1zCTIbx5aD7DWoNe
+         p0rOFJ6uI0TOl6ickmeI2cFMcrXbHfh76a6sTvo72rlUcn3uBfwd5wJopG1md8j7aJG6
+         cmmA==
+X-Gm-Message-State: AO0yUKXt8sNxrldSSuWMFXLgBGIP6Ydv/vdcUzXS0xJTLlfSWSU9hj8O
+        c8xvIScXhQZoCDnx/AL2Skg=
+X-Google-Smtp-Source: AK7set90g3y3uA58nDdc57a7ikxwpTnV8UfDIaEQROixtGcb1zi0SwtESdeyB1ms4FZFJ3dF2+AdIg==
+X-Received: by 2002:a05:6a00:1d85:b0:593:a3f1:7c04 with SMTP id z5-20020a056a001d8500b00593a3f17c04mr8761934pfw.8.1675418567508;
+        Fri, 03 Feb 2023 02:02:47 -0800 (PST)
+Received: from debian.me (subs10b-223-255-225-232.three.co.id. [223.255.225.232])
+        by smtp.gmail.com with ESMTPSA id h2-20020a056a00230200b005898fcb7c1bsm1322187pfh.177.2023.02.03.02.02.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Feb 2023 02:02:45 -0800 (PST)
+        Fri, 03 Feb 2023 02:02:46 -0800 (PST)
 Received: by debian.me (Postfix, from userid 1000)
-        id 4FCE8103AAB; Fri,  3 Feb 2023 17:02:41 +0700 (WIB)
+        id 01B981055BB; Fri,  3 Feb 2023 17:02:41 +0700 (WIB)
 From:   Bagas Sanjaya <bagasdotme@gmail.com>
 To:     Intel Graphics Development List <intel-gfx@lists.freedesktop.org>,
         DRI Development List <dri-devel@lists.freedesktop.org>,
@@ -77,48 +76,35 @@ Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Hans de Goede <hdegoede@redhat.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH 3/3] media: v4l2-core: Describe privacy_led field of v4l2_subdev
-Date:   Fri,  3 Feb 2023 17:02:15 +0700
-Message-Id: <20230203100215.31852-4-bagasdotme@gmail.com>
+        Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/3] htmldocs fixes for next-20230203
+Date:   Fri,  3 Feb 2023 17:02:12 +0700
+Message-Id: <20230203100215.31852-1-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230203100215.31852-1-bagasdotme@gmail.com>
-References: <20230203100215.31852-1-bagasdotme@gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1302; i=bagasdotme@gmail.com; h=from:subject; bh=+06fGKU6Nu7LzM7YPNBQVCSnWE/UvPRGzGU+ENUc+Os=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDMl3bi97x7Uk37XrbU3jvdw/VyfZPP6VUZN3yDyc0Zxbhjeu U6G5o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABO5as7IMEN/6zU/CY4XCc47HsSFPN zLb/ji8fMw0acOyv+ZLu+ME2RkuOTSE70p0XbLRQVDkxSF2/eeee4ofKnqsO/d5c2c7T9fMQIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=683; i=bagasdotme@gmail.com; h=from:subject; bh=nAqFypAiZuomaGsgK+qGsO/TWXGkM+TOboIWhpu6fPE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDMl3bs/Zx6DeNWPyHO/4uWqzTIRO5L1fe3PivJY695cfLve9 2OpQ2lHKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJ9C1h+B84Z3HYYaODyTlujAbnnS eXeDVt2p+5bN2Vxf9OeC6IOjyBkWHPo5c2AmbLPigoTbEp/KQVInNX7vySwz7vK2fMMn66dg8fAA==
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen Rothwell reported htmldocs warning:
+Here are small htmldocs fixes for htmldocs warnings that are recently
+reported for next-20230203. Each patch can be applied separately by
+respective maintainers.
 
-include/media/v4l2-subdev.h:1088: warning: Function parameter or member 'privacy_led' not described in 'v4l2_subdev'
+Bagas Sanjaya (3):
+  drm/i915/doc: Escape wildcard in method names
+  drm/scheduler: Fix elapsed_ns kernel-doc error
+  media: v4l2-core: Describe privacy_led field of v4l2_subdev
 
-Describe privacy_led field to fix the warning.
+ drivers/gpu/drm/i915/gt/intel_workarounds.c | 6 +++---
+ include/drm/gpu_scheduler.h                 | 2 +-
+ include/media/v4l2-subdev.h                 | 1 +
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-Link: https://lore.kernel.org/linux-next/20230203135303.32da1fc6@canb.auug.org.au/
-Fixes: 10d96e289fbd77 ("media: v4l2-core: Make the v4l2-core code enable/disable the privacy LED if present")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- include/media/v4l2-subdev.h | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index 1ef5bbbf9d38c8..3e7a97c0657e1c 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -1033,6 +1033,7 @@ struct v4l2_subdev_platform_data {
-  * @active_state: Active state for the subdev (NULL for subdevs tracking the
-  *		  state internally). Initialized by calling
-  *		  v4l2_subdev_init_finalize().
-+ * @privacy_led: Privacy LED associated with the sub-device.
-  * @enabled_streams: Bitmask of enabled streams used by
-  *		     v4l2_subdev_enable_streams() and
-  *		     v4l2_subdev_disable_streams() helper functions for fallback
+base-commit: 4fafd96910add124586b549ad005dcd179de8a18
 -- 
 An old man doll... just what I always wanted! - Clara
 
