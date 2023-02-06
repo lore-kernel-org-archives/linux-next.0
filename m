@@ -2,43 +2,43 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87234C05027
-	for <linux-next@archiver.kernel.org>; Mon,  6 Feb 2023 08:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF428C636D3
+	for <linux-next@archiver.kernel.org>; Mon,  6 Feb 2023 08:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbjBFIhk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 6 Feb 2023 03:37:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54286 "EHLO
+        id S229764AbjBFIny (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 6 Feb 2023 03:43:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbjBFIhk (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2023 03:37:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0EE166EB;
-        Mon,  6 Feb 2023 00:37:39 -0800 (PST)
+        with ESMTP id S229943AbjBFInb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2023 03:43:31 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CEF131;
+        Mon,  6 Feb 2023 00:43:16 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C839F60D36;
-        Mon,  6 Feb 2023 08:37:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A5FEC433EF;
-        Mon,  6 Feb 2023 08:37:38 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 64A26CE1796;
+        Mon,  6 Feb 2023 08:43:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFC8C433D2;
+        Mon,  6 Feb 2023 08:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675672658;
-        bh=d9r2+zhB4SZhtgXOcoj7sMId6D1ENMDEFBbMiGW6S9g=;
+        s=k20201202; t=1675672993;
+        bh=57y0EWkH3miEk1KLvH0xWe7BtjFKnV5WFFGC/dIC9iA=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TE1wjo+5tjefBNoz+dypRB2reOeL0GqAHTHmyNcTT8+X8+kr60ihjbqjKszuoCzDU
-         xuzoPOE/o8OXDk7QZDhaAn33wSAEqXlLddXXenqY3cGLj9jxv1OlEjZ9fidY6byEWc
-         NxG8RWSTWTNPKHfEqQNxUq6fzQIo2+bNGUlLq78+ah1woH6O84U/yAEGX11i4jWRfA
-         J98icgShAYUVEGKB0qXD+gsNEHJyNFIe2bZo4UDOHUFlv4dm1XEX6+mLWZ6IAHFm8+
-         pgHfswX5c507oT1eCjf3e23Jc5dgGud8zD87a+vea+5G2r0HFM/CqiVttn7StthP32
-         wGX8wrWdwFUvA==
+        b=LOBZ39Frre/Fks5S2bNGLIhgYUC9C/u9GeC23Ec0rZinV00b7h5xryFUU22XIUMG/
+         CQhbbo/tBAW532cmINso/17kbc7WbIAfMPynSrtyhzVmPu0tjDw1jslHB88rDjcDCF
+         orKIsolAK8LgB99br6Zj3/oF29S8BAzdcXblFBa57LCHaddGreC2el9b3lpKUGSwET
+         JrjxQAlJ9OMBS//eBFG6NzHR5dc20WYHhZxxbllC9nGA2qN0kxxn7DWCJWv0YcHUoU
+         k/MWWml5k9GVhpIQUsvh7kBqmKtZSMe/l0NIB2pmSogr4VeUAtXy4rldQOTGZ3KeAr
+         7xwF3mJ5PKw1g==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.95)
         (envelope-from <maz@kernel.org>)
-        id 1pOx0J-007vyf-NY;
-        Mon, 06 Feb 2023 08:37:35 +0000
-Date:   Mon, 06 Feb 2023 08:37:35 +0000
-Message-ID: <861qn31968.wl-maz@kernel.org>
+        id 1pOx5j-007w5S-9b;
+        Mon, 06 Feb 2023 08:43:11 +0000
+Date:   Mon, 06 Feb 2023 08:43:11 +0000
+Message-ID: <86zg9ryyjk.wl-maz@kernel.org>
 From:   Marc Zyngier <maz@kernel.org>
 To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Christoffer Dall <cdall@cs.columbia.edu>,
@@ -50,8 +50,9 @@ Cc:     Christoffer Dall <cdall@cs.columbia.edu>,
         Oliver Upton <oliver.upton@linux.dev>,
         Quentin Perret <qperret@google.com>
 Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-In-Reply-To: <20230206124451.11532a04@canb.auug.org.au>
+In-Reply-To: <861qn31968.wl-maz@kernel.org>
 References: <20230206124451.11532a04@canb.auug.org.au>
+        <861qn31968.wl-maz@kernel.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -65,43 +66,45 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Mon, 06 Feb 2023 01:44:51 +0000,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 06 Feb 2023 08:37:35 +0000,
+Marc Zyngier <maz@kernel.org> wrote:
 > 
-> [1  <text/plain; US-ASCII (quoted-printable)>]
-> Hi all,
+> On Mon, 06 Feb 2023 01:44:51 +0000,
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > [1  <text/plain; US-ASCII (quoted-printable)>]
+> > Hi all,
+> > 
+> > Today's linux-next merge of the kvm-arm tree got a conflict in:
+> > 
+> >   arch/arm64/kernel/hyp-stub.S
+> > 
+> > between commit:
+> > 
+> >   f122576f3533 ("arm64/sme: Enable host kernel to access ZT0")
+> > 
+> > from the arm64 tree and commit:
+> > 
+> >   e2d4f5ae1771 ("KVM: arm64: Introduce finalise_el2_state macro")
+> > 
+> > from the kvm-arm tree.
+> > 
+> > I fixed it up (the code modified by the former was moved by the latter,
+> > so I applied the following merge fix patch) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.
+> > 
+> > I hope I got this right :-)
 > 
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
+> Thanks for giving it a go!
 > 
->   arch/arm64/kernel/hyp-stub.S
-> 
-> between commit:
-> 
->   f122576f3533 ("arm64/sme: Enable host kernel to access ZT0")
-> 
-> from the arm64 tree and commit:
-> 
->   e2d4f5ae1771 ("KVM: arm64: Introduce finalise_el2_state macro")
-> 
-> from the kvm-arm tree.
-> 
-> I fixed it up (the code modified by the former was moved by the latter,
-> so I applied the following merge fix patch) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-> 
-> I hope I got this right :-)
+> Catalin, we'll probably end-up taking the arm64/for-next/tpidr2 branch
+> into the kvmarm tree in order to minimise the damage.
 
-Thanks for giving it a go!
-
-Catalin, we'll probably end-up taking the arm64/for-next/tpidr2 branch
-into the kvmarm tree in order to minimise the damage.
-
-Please shout if you want to solve this the other way around (taking
-the finalise_el2_state refactoring in the arm64 tree).
+Scratch that, it is the sme2 branch.
 
 	M.
 
