@@ -2,72 +2,113 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF2AC05027
-	for <linux-next@archiver.kernel.org>; Tue, 14 Feb 2023 15:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36FDC05027
+	for <linux-next@archiver.kernel.org>; Tue, 14 Feb 2023 15:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbjBNPbW (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 14 Feb 2023 10:31:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51686 "EHLO
+        id S229622AbjBNPhZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 14 Feb 2023 10:37:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233371AbjBNPbP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2023 10:31:15 -0500
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E6E32BEE8;
-        Tue, 14 Feb 2023 07:31:13 -0800 (PST)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 164146E3;
-        Tue, 14 Feb 2023 15:31:12 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 164146E3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1676388672; bh=Fp5csFRWszyLivFwCUpl22lK9pDYU3+CWdxQKY0LBjo=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=F093ahBp6GuAkwEAqZBY5cHCAffZOHdZ2uIKUlRAcjvjXzRlNgHXhmlZlIz4ho4zk
-         iXOI0m1vuUIukgz8s0b2L6brQoHWVNkkGhwnkeCZou4WDnLYEeKMoq/VxZQKcTct2J
-         cAeKUoOiqO5WpCtygLAwrmHZB79bJFrVxGvkZo2YTEh5YxazpZh1JyYqpLuZOMxc0E
-         97ij4zta0Zz1kAQ5wQXDKtz47Hs/ozWkCIXOofHraM2mkmRVEXISazogNniT/ryfzv
-         HZWMz/K5vusCbBSArS+rPt3UzCuzl5BK83yHiCzYy0lPatIiK5VV+X4D0aXJX14ECX
-         rxEPa9awU3U2A==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Wang Yong <wang.yong12@zte.com.cn>,
-        Yanteng Si <siyanteng@loongson.cn>
-Subject: Re: linux-next: manual merge of the mm tree with the jc_docs tree
-In-Reply-To: <20230214133929.7d8ed00f@canb.auug.org.au>
-References: <20230214133929.7d8ed00f@canb.auug.org.au>
-Date:   Tue, 14 Feb 2023 08:31:11 -0700
-Message-ID: <87wn4kl0w0.fsf@meer.lwn.net>
+        with ESMTP id S232654AbjBNPhX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2023 10:37:23 -0500
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92F3E5FC6;
+        Tue, 14 Feb 2023 07:37:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=b7LTeIXXRhjHNZKLwP2eUBOvy8A+bNKHoN43DEwbShs=; b=ZJ60tcltd9tUxPXvvq0xlFyIL6
+        54nH3MAS0etSF71Vg31JUcBLXpBh0L+qyMjnH0cxJZnhy+fNVHyAzg6tUysiafwkXr6EGN1bBLvH8
+        EYt+sO5hnoq5doF2AgnlkNiLoWPL6qsbM1FtrRNneXwa9ml2PbJyjXR/IJ2cuIvmKzCrsRHcWDyHW
+        pNejNvINpl6m6Rt/Z/UQdUP58lzgNnEq801+MLxXOmpukMds0dFq1ldemt3EOaEF2sESv/EOD4B5P
+        2whxU1KzDZJfq7oBespZomiCoXfkBFdsr7hb1C+wZ5VkYomLpJgiFCa2lMYkziYJc7yEVbHqvKP/D
+        ysJjZYXQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pRxLi-009fnp-0h;
+        Tue, 14 Feb 2023 15:36:49 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A87A4302E5D;
+        Tue, 14 Feb 2023 12:22:17 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DC38A20B4E943; Tue, 14 Feb 2023 12:22:17 +0100 (CET)
+Date:   Tue, 14 Feb 2023 12:22:17 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Xen Devel <xen-devel@lists.xenproject.org>,
+        Per Bilse <per.bilse@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the xen-tip tree
+Message-ID: <Y+tu6Xqqb6cdiDAA@hirez.programming.kicks-ass.net>
+References: <20230214124700.22f0a62e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9N+tlQnp6RT7SrtH"
+Content-Disposition: inline
+In-Reply-To: <20230214124700.22f0a62e@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
+--9N+tlQnp6RT7SrtH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 14, 2023 at 12:47:00PM +1100, Stephen Rothwell wrote:
 > Hi all,
->
-> Today's linux-next merge of the mm tree got a conflict in:
->
->   Documentation/translations/zh_CN/accounting/delay-accounting.rst
->
-> between commit:
->
->   6ab587e8e8b4 ("docs/zh_CN: Update the translation of delay-accounting to 6.1-rc8")
->
-> from the jc_docs tree and commit:
->
->   f66f8a7e4730 ("delayacct: improve the average delay precision of getdelay tool to microsecond")
->
-> from the mm tree.
+>=20
+> The following commits are also in the tip tree as different commits
+> (but the same patches):
+>=20
+>   415dab3c1796 ("drivers/xen/hypervisor: Expose Xen SIF flags to userspac=
+e")
+>   336f560a8917 ("x86/xen: don't let xen_pv_play_dead() return")
+>   f697cb00afa9 ("x86/xen: mark xen_pv_play_dead() as __noreturn")
+>=20
+> These are commits
+>=20
+>   859761e770f8 ("drivers/xen/hypervisor: Expose Xen SIF flags to userspac=
+e")
+>   076cbf5d2163 ("x86/xen: don't let xen_pv_play_dead() return")
+>   1aff0d2658e5 ("x86/xen: mark xen_pv_play_dead() as __noreturn")
+>=20
+> in the tip tree.
 
-This has really been one of those cycles, hasn't it?
+This was intentional (dependencies) and the plan is to only offer the
+tip branch for merge after the Xen tree goes in.
 
-Thanks for all the resolutions; I think I may have to offer Linus a
-special branch just to keep him from going nuts with all of these.
+--9N+tlQnp6RT7SrtH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-jon
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmPrbuMACgkQdkfhpEvA
+5Lq1xQ//X0sV6gQk3sHy5WQPnx4D4OcH0oiOyu9ytASjCEVL/wxNlB3TOAW9TV1e
+eWTTdx3NoTI8A2i3u8SEYzlGN6+p/jCJdIlfwyeRTpJ5l6f0U+xKN2LYc7yn7h34
+faixh10wtlG//RzdJjVsOMkORjKiZuV7BYSViVNu9Trc5AhcpP53wevx5wk7VN9E
+wTM7wJM6r3/g3SGM7f5ZNB4rr0SnZGoNNcO9dEeBOPK5PR5iGSQJtPMSS/2lKk5i
+KQimr0N7jR6aRPzsN0+zAECnE0WW71N/4UCUZ5tGJIMZreCBhZTyXC+D+tTerxkM
+C53RaFq6zRx+wQVN7waVHLuboKKO5vaGYrt8gy9sVkaoo6sdtz94QuHldG6FCg4b
+3APdN43UCd0vB2WX4yEmnAsgOY4AqkebEAcFyCEME+nEpA2zr/tjCXG7JfKqQNG8
+Ujy84aM2mKs4fVmaPhunXCv9IxHLcyTriVsnmcYi+gn68913NsFVqHiAr4/Lf9dO
+QfCyAqWEcxxfoqiy8ebOumivjXNn8Mz5lSWD/oEJTI11rtzleRJLwrt7W9JE6gI3
+HRZK1/x7Mc8kbQIvACqx4paxa0B/8+/67xruENgjv7EbUxjIoX7uYeIixfol7OMf
+eKgsJ25N7IvxWnSDUtXeHI5BvyKHX/4B/aVacyyDJHva4R5dHQA=
+=YOXl
+-----END PGP SIGNATURE-----
+
+--9N+tlQnp6RT7SrtH--
