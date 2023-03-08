@@ -2,84 +2,63 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1C7C678D5
-	for <linux-next@archiver.kernel.org>; Wed,  8 Mar 2023 21:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF82C678D5
+	for <linux-next@archiver.kernel.org>; Wed,  8 Mar 2023 23:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjCHVyV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 8 Mar 2023 16:54:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56628 "EHLO
+        id S229522AbjCHXVf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 8 Mar 2023 18:21:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjCHVyU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Mar 2023 16:54:20 -0500
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8763AA103B;
-        Wed,  8 Mar 2023 13:54:18 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S229513AbjCHXVf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Mar 2023 18:21:35 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A1784F49;
+        Wed,  8 Mar 2023 15:21:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4PX5gX4xKrz4xDr;
-        Thu,  9 Mar 2023 08:54:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1678312456;
-        bh=yJm+Ip1EhdItp6u14zwPrUZNA7hnWdOqeBiQzwKd7oc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OF9IuN7MWWsu9TJCIc0RSIfVuY2s0UwcqzIRV1SXiE0Czpi8fPE2G7T2okyYCfSzN
-         wYV+FiNdkAB122A0ZFZ0TrS3TccPDGSbuLUoLX1YrmuCEWGAVCmsDP0FBgxrqG6rg6
-         ZsuvVj/tlI+Xw5EQGG5mUwRoZwIqB5tnAFge4ImNVQkZoGhHXLUOQHTCUFki2UcpwF
-         oUq4T6sYvyWKw5Lu8wQ5mSDjnWWKQbaKiYI6QLLnRUBsV/y7AT7gznhxkwTebIymhT
-         AKIMZk2tlWAejHXvmAWA0CEVOTAgAbKWKKipaJ353RtaP4I5BIoSLXOmmB+XPc2l19
-         TDgcZ6xx9jHoQ==
-Date:   Thu, 9 Mar 2023 08:54:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Simon Horman <horms@verge.net.au>
+        by sin.source.kernel.org (Postfix) with ESMTPS id CC537CE2217;
+        Wed,  8 Mar 2023 23:21:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F2DC433D2;
+        Wed,  8 Mar 2023 23:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678317691;
+        bh=Nyd5VyYg1GAaFFeuWw+WXKla70V3r35YAr7xcRLnO/0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OqwAeriKs4BCmK2DnJQOVlDf56HU/lVYRea4ePx0PC6DQmenwVruLeOpKDIY+n/XD
+         36RlbYdfVTgIcbUgR3DaqJZTRhJEhgqqdc43OlI+QX8a5S0AYpPxMBhkWLQhwgx/EP
+         xxTfe6XMI+FzId3BvuSG45YsZ8Q/6zmBWgbTkx1hI0Tzs0fDw/mvad5VTmQpqMM8GP
+         3v6SQdhuj4pP1e7ZNk3irNTar87/dpXcaqlndvvbNkxqpbVn6GZj3W4rrBJahGKsLi
+         QvclrQRlGlbxtwvTiheZX9Jc/pLfZIxMhoxWWnvCl+l/2jGw7iVloGqWXMf6Y64PTJ
+         TmxDC0QOwE+1Q==
+Message-ID: <baff7de11dca4b429d2f4316775c6227d9c01576.camel@kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the file-locks
+ tree
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: error while fetching the ipvs-next tree
-Message-ID: <20230309085415.0b738f0a@canb.auug.org.au>
+Date:   Wed, 08 Mar 2023 18:21:29 -0500
+In-Reply-To: <20230309084800.58ec0343@canb.auug.org.au>
+References: <20230309084800.58ec0343@canb.auug.org.au>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6LrLnrRKW222J/UTkdhzwyw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/6LrLnrRKW222J/UTkdhzwyw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2023-03-09 at 08:48 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Commit
+>=20
+>   4cbb75d0fdc9 ("fs/locks: Remove redundant assignment to cmd")
+>=20
+> is missing a Signed-off-by from its committer.
+>=20
 
-Hi all,
-
-Attempting to fetch the ipvs-next tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs-next.git#master)
-today produces this error:
-
-fatal: couldn't find remote ref refs/heads/master
-
-Should I switch to using the "main" branch?
-
-I also notice thet the ipvs tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git) has both a
-"master" and "main" branch.  Should I be using "main" there as well?
-
+Good catch, thanks. It should be fixed now.
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6LrLnrRKW222J/UTkdhzwyw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmQJBAcACgkQAVBC80lX
-0Gxx6Qf/QDSQEldUdrn3BI0f87Vk+Tu+GjdXVyrrelDJoPNWo7DDNXdRjcomJW5V
-faw79Ui1NlJsKwJOkRdQ0MkEWL4UBc2Wka6TusllNSlzqWhXEvVwYIYJUDUg6B3D
-aw61b/0Wjp/Rm8xInDf2tl/GL0rbDFEQWYm0DtnVXdmIvHausijoDVlHjvPoO29C
-UFTG72NC4duBaCVq+YuAe1Ky05N1NnMEkGZ7XEEjCIO/jaQQRxswIJd1Yepfg3ev
-Hi3xLZBvM2W74S8Yhw4aPCgiC2DlHure5n7RC+8aOf+uJz/T+jgP9NHV0h5wRuwt
-F/3fdkmq3gJAWeghNc1A/R1TU/paMw==
-=LcQh
------END PGP SIGNATURE-----
-
---Sig_/6LrLnrRKW222J/UTkdhzwyw--
+Jeff Layton <jlayton@kernel.org>
