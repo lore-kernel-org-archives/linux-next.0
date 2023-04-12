@@ -2,41 +2,42 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D44C76196
-	for <linux-next@archiver.kernel.org>; Wed, 12 Apr 2023 02:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1A8C7619A
+	for <linux-next@archiver.kernel.org>; Wed, 12 Apr 2023 02:35:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbjDLCCH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 11 Apr 2023 22:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59120 "EHLO
+        id S229469AbjDLCfZ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 11 Apr 2023 22:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjDLCCG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Apr 2023 22:02:06 -0400
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28DD330EB;
-        Tue, 11 Apr 2023 19:02:03 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VfuH7zf_1681264919;
-Received: from 30.97.48.227(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VfuH7zf_1681264919)
+        with ESMTP id S229452AbjDLCfZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Apr 2023 22:35:25 -0400
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4FA172B;
+        Tue, 11 Apr 2023 19:35:23 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R291e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VfuJbUW_1681266919;
+Received: from 30.221.132.52(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VfuJbUW_1681266919)
           by smtp.aliyun-inc.com;
-          Wed, 12 Apr 2023 10:02:01 +0800
-Message-ID: <734e4630-15b5-112b-9d67-89f5cb60018b@linux.alibaba.com>
-Date:   Wed, 12 Apr 2023 10:01:59 +0800
+          Wed, 12 Apr 2023 10:35:20 +0800
+Message-ID: <67aed69a-b28a-587b-b88b-3d8ffc88e767@linux.alibaba.com>
+Date:   Wed, 12 Apr 2023 10:35:19 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.1
+ Gecko/20100101 Thunderbird/102.6.1
 Subject: Re: linux-next: manual merge of the erofs tree with the vfs-idmapping
  tree
+Content-Language: en-US
 To:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Gao Xiang <xiang@kernel.org>,
         Christian Brauner <christian@brauner.io>,
-        Seth Forshee <sforshee@kernel.org>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>
+        Seth Forshee <sforshee@kernel.org>
 Cc:     "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
 References: <20230412101942.75e3efa9@canb.auug.org.au>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
 In-Reply-To: <20230412101942.75e3efa9@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
@@ -44,20 +45,20 @@ X-Mailing-List: linux-next@vger.kernel.org
 
 
 
-On 2023/4/12 08:19, Stephen Rothwell wrote:
+On 4/12/23 8:19 AM, Stephen Rothwell wrote:
 > Hi all,
 > 
 > Today's linux-next merge of the erofs tree got a conflict in:
 > 
->    fs/erofs/xattr.c
+>   fs/erofs/xattr.c
 > 
 > between commit:
 > 
->    a5488f29835c ("fs: simplify ->listxattr() implementation")
+>   a5488f29835c ("fs: simplify ->listxattr() implementation")
 > 
 > from the vfs-idmapping tree and commit:
 > 
->    3f43a25918ac ("erofs: handle long xattr name prefixes properly")
+>   3f43a25918ac ("erofs: handle long xattr name prefixes properly")
 > 
 > from the erofs tree.
 > 
@@ -69,8 +70,15 @@ On 2023/4/12 08:19, Stephen Rothwell wrote:
 > complex conflicts.
 > 
 
-Thanks, it looks good to me. Also hopefully Jingbo
-could test the merged patch as well.
+Hi,
 
+Thanks for the fix up. It looks good to me.
+
+It passes the corresponding testcase [1].
+
+[1]
+https://lore.kernel.org/all/20230411103004.104064-1-jefflexu@linux.alibaba.com/
+
+-- 
 Thanks,
-Gao Xiang
+Jingbo
