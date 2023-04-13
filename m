@@ -2,107 +2,92 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C408BC77B6E
-	for <linux-next@archiver.kernel.org>; Thu, 13 Apr 2023 16:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7227BC77B6E
+	for <linux-next@archiver.kernel.org>; Thu, 13 Apr 2023 16:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjDMQQy (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 13 Apr 2023 12:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56316 "EHLO
+        id S229593AbjDMQXz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 13 Apr 2023 12:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbjDMQQx (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Apr 2023 12:16:53 -0400
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD6BCF;
-        Thu, 13 Apr 2023 09:16:51 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Vg0Kxv8_1681402607;
-Received: from 192.168.3.7(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Vg0Kxv8_1681402607)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Apr 2023 00:16:48 +0800
-Message-ID: <699f01a7-8c0e-98d9-d2c7-eaf08552f543@linux.alibaba.com>
-Date:   Fri, 14 Apr 2023 00:16:46 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.1
-Subject: Re: linux-next: manual merge of the erofs tree with the vfs-idmapping
- tree
-To:     Mark Brown <broonie@kernel.org>, Gao Xiang <xiang@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
+        with ESMTP id S229498AbjDMQXy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Apr 2023 12:23:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D0DC869E;
+        Thu, 13 Apr 2023 09:23:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D60A60C92;
+        Thu, 13 Apr 2023 16:23:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C64C433D2;
+        Thu, 13 Apr 2023 16:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681403033;
+        bh=63ksHATfE+J5PG5GH23Gfmun9q/zhyYaJcyPhs9226A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jsHIQbINJ2+esLoKal0Ert4zH7CcoIm8NMcGSVLF6YHVqNi8dxIfnYOw+zs7GZeLN
+         Bjst3jIqhjTiTJWJZP23X0Pne6Xq6sV5swycdVf/dMZ6nKNnS3ts0tF02iBBiENWP2
+         NUTZA/jOrwiUDnOFcR4Nz8ZYhCdngyEUYKGy3UIWTkNItNfWI0m/8pi7Sw3U+h3DnR
+         ecGA4rcQ6EGY217jj/aalPFhWfuZ0cGwm+jH4mOf6XAPQq5+y5mFyNgNm1O/QmiqbG
+         vLATOJE7wwXJ+p3FnnviwNFJa5lDyp5nPJSy4qa42JEz49JBxr8fgNEBozIDvPlo0Q
+         9pR6ZIDTFgcgQ==
+Date:   Thu, 13 Apr 2023 17:23:48 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc:     Gao Xiang <xiang@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
         Jingbo Xu <jefflexu@linux.alibaba.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the erofs tree with the
+ vfs-idmapping tree
+Message-ID: <664140af-3d95-416c-8f89-cad7beeaac19@sirena.org.uk>
 References: <20230413144651.3519980-1-broonie@kernel.org>
  <4f9fdec2-cc2a-4bc7-9ddc-87809395f493@sirena.org.uk>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <4f9fdec2-cc2a-4bc7-9ddc-87809395f493@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <699f01a7-8c0e-98d9-d2c7-eaf08552f543@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7zx0GPVmMMe9mQfB"
+Content-Disposition: inline
+In-Reply-To: <699f01a7-8c0e-98d9-d2c7-eaf08552f543@linux.alibaba.com>
+X-Cookie: Idleness is the holiday of fools.
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Mark,
 
-On 2023/4/13 23:49, Mark Brown wrote:
-> On Thu, Apr 13, 2023 at 03:46:51PM +0100, broonie@kernel.org wrote:
-> 
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
-> 
-> No, that's wrong.  This:
+--7zx0GPVmMMe9mQfB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks.  Actually I didn't update the corresponind xattr patches (just
-rebase some older commits, also I'd like to avoid in the future, but
-sometimes it's impossible at least if some RVB is added...)
+On Fri, Apr 14, 2023 at 12:16:46AM +0800, Gao Xiang wrote:
 
-I think it could be resolved as before by Stephen:
-https://lore.kernel.org/r/20230412101942.75e3efa9@canb.auug.org.au
+> Thanks.  Actually I didn't update the corresponind xattr patches (just
+> rebase some older commits, also I'd like to avoid in the future, but
+> sometimes it's impossible at least if some RVB is added...)
 
-And which looks the same as below:
+> I think it could be resolved as before by Stephen:
+> https://lore.kernel.org/r/20230412101942.75e3efa9@canb.auug.org.au
 
-> 
-> diff --cc fs/erofs/xattr.c
-> index 015462763bdd5,a04724c816e5f..0000000000000
-> --- a/fs/erofs/xattr.c
-> +++ b/fs/erofs/xattr.c
-> @@@ -483,12 -517,28 +513,25 @@@ static int xattr_entrylist(struct xattr
->    {
->    	struct listxattr_iter *it =
->    		container_of(_it, struct listxattr_iter, it);
-> - 	unsigned int prefix_len;
-> - 	const char *prefix;
-> + 	unsigned int base_index = entry->e_name_index;
-> + 	unsigned int prefix_len, infix_len = 0;
-> + 	const char *prefix, *infix = NULL;
->   -	const struct xattr_handler *h;
-> +
-> + 	if (entry->e_name_index & EROFS_XATTR_LONG_PREFIX) {
-> + 		struct erofs_sb_info *sbi = EROFS_SB(_it->sb);
-> + 		struct erofs_xattr_prefix_item *pf = sbi->xattr_prefixes +
-> + 			(entry->e_name_index & EROFS_XATTR_LONG_PREFIX_MASK);
-> +
-> + 		if (pf >= sbi->xattr_prefixes + sbi->xattr_prefix_count)
-> + 			return 1;
-> + 		infix = pf->prefix->infix;
-> + 		infix_len = pf->infix_len;
-> + 		base_index = pf->prefix->base_index;
-> + 	}
->    
-> - 	prefix = erofs_xattr_prefix(entry->e_name_index, it->dentry);
->   -	h = erofs_xattr_handler(base_index);
->   -	if (!h || (h->list && !h->list(it->dentry)))
-> ++	prefix = erofs_xattr_prefix(base_index, it->dentry);
->   +	if (!prefix)
->    		return 1;
->   -
->   -	prefix = xattr_prefix(h);
->    	prefix_len = strlen(prefix);
->    
->    	if (!it->buffer) {
+> And which looks the same as below:
 
-Thanks,
-Gao Xiang
+Probably some context changed which caused me to have to reresolve the
+conflict?  Or perhaps just rerere not syncing properly from Stephen's
+work.
 
+--7zx0GPVmMMe9mQfB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQ4LJMACgkQJNaLcl1U
+h9DslwfzBamgEmLUmCZ4y5gdXu1QHH54PrmzE16k2M/L7HDRV5YTPbENhFsdL1sL
+DYho+9l1dHi+qm0LDIsf4VvIMy1DSvubfZwYIzT5JFSDYKDQbnEHsrPMurxQWZd2
+f13uZmzjrnPUJx9MbGH74ZRHQvFlPNYDj9xI1ygK9+KNcZIcEfm45UYrLjq0jS9L
+ucpz59PGPeRIXR8X3Z72J2jizPzGEgLIyB8/Yy0L8o0Enzhx8fUBIPUGQZD0pJde
+PunTB2L+Fde3Z1VArmi2IvVjNG4/GS1FI1n5UFbHG0WphtX0KX//+aLGSf+9Y/JX
+/GIm1juZpYiPFdsbv3vHn/w7Fbp3
+=2jsS
+-----END PGP SIGNATURE-----
+
+--7zx0GPVmMMe9mQfB--
