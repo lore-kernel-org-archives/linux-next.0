@@ -2,98 +2,129 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F340C77B7C
-	for <linux-next@archiver.kernel.org>; Mon, 17 Apr 2023 17:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC539C77B71
+	for <linux-next@archiver.kernel.org>; Tue, 18 Apr 2023 06:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbjDQRsk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 17 Apr 2023 13:48:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        id S230311AbjDRGWk (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 18 Apr 2023 02:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbjDQRsj (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 17 Apr 2023 13:48:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E415F59C8;
-        Mon, 17 Apr 2023 10:48:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 812CD623C9;
-        Mon, 17 Apr 2023 17:48:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B29C433D2;
-        Mon, 17 Apr 2023 17:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681753716;
-        bh=89s4jIuMXAhIUTAJDlYbcbPQ9HBWG9slfoztr8C81Jg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GM8OrTjBLQ5euREIO0XOxN+XgHYNGwY+eEINd8cdohxNl9v3YOuuLiIfl0YaP6yR9
-         uSXpT7NhMXncsnWtbetUyJwNmvUiJhpZu5B6W83b9ln7XSUchsQSu3J4S4SOf2AJ5z
-         3Efxpcyt8RyEHMcaUJ+J33Obvu6dY01LtgJFQ6jwn0NDwKhzx7HDRh8Jdj05WgzVLL
-         0e51Te/09UvR24QOVyf6cINOcZgeAgFR+xEn7zKPXdOZmGZ4BSrpQqWSRXIsIA1TZN
-         5qcok8DJwnfLONVXIkn8wOzLbE8um9bJ1qf4xb4cWBht6o0T/or3ijf1gAigajhPYK
-         +exoAs2fQEf1A==
-From:   broonie@kernel.org
-To:     Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Apr 17
-Date:   Mon, 17 Apr 2023 18:48:32 +0100
-Message-Id: <20230417174832.1060254-1-broonie@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S230493AbjDRGWS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 18 Apr 2023 02:22:18 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD8E96E93;
+        Mon, 17 Apr 2023 23:21:52 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 71F05320095A;
+        Tue, 18 Apr 2023 02:21:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 18 Apr 2023 02:21:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1681798906; x=1681885306; bh=YT
+        A83JB8NZJ0cEtw5geG3dWiLcQH0r4iV18W0+fd9HQ=; b=7j8LPbe6kwjAN3vbit
+        veOsBwtLXEmetjTSRB3ZRSy6acPEpMIAyWSKzvA9BsNBBrUlxxJsJe2u79dY6ZLU
+        QAosfOdJHlIsy9twndZFnOUdzocQ88055EP6+F0i1T48JmT+8Wv/KhEsEsxW+vUm
+        lOgGAyC3wyrh+GB2iNLzcr8CCUMUs33JcqUidcJk+ded6nQa2eMXpkoW86SztTh4
+        UTiebyOXtcyP8P78MZS8mpcVyKO5GLx4OawBpX7nZs7W9WiIN77A1Jc2k6aQ80zX
+        i/PDp1MpoElyPEii3yRb8Z6gdI4nha3ljSElGkUHH3iWq4WWos8nEyV5X2U6lLIx
+        5C/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1681798906; x=1681885306; bh=YTA83JB8NZJ0c
+        Etw5geG3dWiLcQH0r4iV18W0+fd9HQ=; b=ev5PtLbM9gGh8iCgRRNgHueYAxEEQ
+        tS5uwEmqncZ1rsQp8h4JGI7wC6g8lFK4OBwpMqbjO/op8jZWGk5sLlC3F88zA0Bh
+        8dCCmX7AAySYnRXBWt5DXCDbkbreNjXZdSoH1MVFwV3Ifgvig0QEmMO30Enlc2oA
+        SMJ+FVnL2L0CuZjQsNavPkfqS0YeF4hN+Fv3Fh3XqnUyYAJwoaY5l1PSrQJeFy87
+        YP/Nem4aGSYge7MD4Zkemhvp4DEJK95dt8IoQ/3JCacVic1LLg3dA2GOVYLFVBD9
+        aiptO2l+B2F+tjt/PNGVtKJVu1l0+KTXdZBPCqM1bMxJuOr2161Iis9WQ==
+X-ME-Sender: <xms:-TY-ZKtLnRfxm0QdulcXmHBNdx3Z_NnccWv6ZQNrVotdkqofParMGQ>
+    <xme:-TY-ZPf1jrOENeWoqPQ2tB9X0Jz3r00WenkjkCu0e1YYXI_hA_KyCTkVNK72b5SyZ
+    4VW66Rn2T1eyw>
+X-ME-Received: <xmr:-TY-ZFz87s3y-k0OKUp79XL5gw3FS9WVp1-5GbeVWjllcHVNnPLlXsS30A6FXshTR9tfTBDqi6fXrNDbS8BBilKaeb6Vrd_1yYnuGw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeljedguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehge
+    dvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhroh
+    grhhdrtghomh
+X-ME-Proxy: <xmx:-TY-ZFOHLxedCocud62sRdy39vG3TP_uGtQXUwFfxZJtIGqJWyVXBQ>
+    <xmx:-TY-ZK_0mInvjfmi4TkDyGyMIpe2UjGUhagSOxdyfkdmAAUicHUd5w>
+    <xmx:-TY-ZNUEMNatTmS_ZHDubcAh1kO1weHyldo5UFgsjQUl4OtDJicV1g>
+    <xmx:-jY-ZL0QcjH5gd0HkypDCImFyboIJm9alm-WxqNdVxbySJOFoZK4lg>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Apr 2023 02:21:44 -0400 (EDT)
+Date:   Tue, 18 Apr 2023 08:21:41 +0200
+From:   Greg KH <greg@kroah.com>
+To:     broonie@kernel.org
+Cc:     Jason Gunthorpe <jgg@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the driver-core tree with the iommu
+ tree
+Message-ID: <ZD429c4kpvU0AF9v@kroah.com>
+References: <20230417160920.3387706-1-broonie@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230417160920.3387706-1-broonie@kernel.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi all,
+On Mon, Apr 17, 2023 at 05:09:20PM +0100, broonie@kernel.org wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in:
+> 
+>   include/linux/iommu.h
+> 
+> between commit:
+> 
+>   f7f9c054a227a ("iommu: Remove iommu_group_get_by_id()")
+> 
+> from the iommu tree and commit:
+> 
+>   b18d0a0f92a8f ("iommu: make the pointer to struct bus_type constant")
+> 
+> from the driver-core tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc include/linux/iommu.h
+> index ad238d6e4677b,0fd4e6734d5b2..0000000000000
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@@ -455,11 -455,12 +455,11 @@@ static inline const struct iommu_ops *d
+>   	return dev->iommu->iommu_dev->ops;
+>   }
+>   
+> - extern int bus_iommu_probe(struct bus_type *bus);
+> - extern bool iommu_present(struct bus_type *bus);
+> + extern int bus_iommu_probe(const struct bus_type *bus);
+> + extern bool iommu_present(const struct bus_type *bus);
+>   extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
+>   extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+> - extern struct iommu_domain *iommu_domain_alloc(struct bus_type *bus);
+> + extern struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus);
+>  -extern struct iommu_group *iommu_group_get_by_id(int id);
+>   extern void iommu_domain_free(struct iommu_domain *domain);
+>   extern int iommu_attach_device(struct iommu_domain *domain,
+>   			       struct device *dev);
 
-Changes since 20230414:
+Merge looks good to me, thanks!
 
-The sh tree gained a conflict against the mm-unstable tree.
-
-The pci tree gained a conflict with Linus' tree.
-
-The bluetooth tree gained a conflict with Linus' tree.
-
-The drm-next tree gained a conflict against the drm-intel-fixes tree.
-
-The driver-core conflict gained a conflict with the iommu tree.
-
-Non-merge commits (relative to Linus' tree): 11516
- 11898 files changed, 781881 insertions(+), 407199 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a ppc64_defconfig
-for powerpc, an allmodconfig for x86_64, a multi_v7_defconfig for arm
-and a native build of tools/perf. After the final fixups (if any), I do
-an x86_64 modules_install followed by builds for x86_64 allnoconfig,
-powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
-and pseries_le_defconfig and i386, arm64, s390, sparc and sparc64
-defconfig and htmldocs. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 357 trees (counting Linus' and 102 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
+greg k-h
