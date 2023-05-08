@@ -2,49 +2,50 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15425C77B7C
-	for <linux-next@archiver.kernel.org>; Mon,  8 May 2023 00:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C2DC77B7D
+	for <linux-next@archiver.kernel.org>; Mon,  8 May 2023 00:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231706AbjEHAx4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 7 May 2023 20:53:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58040 "EHLO
+        id S229960AbjEHA4c (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 7 May 2023 20:56:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbjEHAxz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 7 May 2023 20:53:55 -0400
+        with ESMTP id S229577AbjEHA4b (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 7 May 2023 20:56:31 -0400
 Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E01F86BF;
-        Sun,  7 May 2023 17:53:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35E757AA2;
+        Sun,  7 May 2023 17:56:30 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4QF2q05z8sz4x44;
-        Mon,  8 May 2023 10:53:48 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4QF2t46B4Qz4x1R;
+        Mon,  8 May 2023 10:56:28 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1683507228;
-        bh=L1k7OwBjx0C3uEGz4kyCR89Cq5ffm4eC2cL6nh2rydk=;
+        s=201702; t=1683507389;
+        bh=JOYnKno/4+Y/0Mv0KqROwiCkkHiJv96y4AOVgHzWVZA=;
         h=Date:From:To:Cc:Subject:From;
-        b=UuR4SBAy7/scCBW21Vuzn3YpgDif+WZkA/pxmuRgV2UdMSS2mmJKPtO8nOsuXqjV+
-         3tZunsl9cOCqD4ecnp790I7NhYwblThJGDJSTV8oT/M1obQyQCBbMV9vrOl9SySf6P
-         DTY0b1ycOt+tGubsywcrtmB+Paenr0lkC/ajmRrwhf8jXzyTE6rRw3DQgWXaXtIaVt
-         6MaSZgGVOeRTM5byKW/YchuHzl6Y3TVqESvvSnYopITpyOhUu23OpJUHhxzaA07ZC5
-         PgW9fpzWdxQ25gkYmTZzNIPs6w60O1KOwIFG8dAayzwsHHrh++36kkTvH3QaUKgHqE
-         eiggR1hPflqrg==
-Date:   Mon, 8 May 2023 10:53:46 +1000
+        b=PcTm5VQ4ZVDTvFqHqp7HuUKGfNCT0srXvW9vcEuERAmOs5L2rNe2LBDFOBUNqJ4+U
+         Aq2VGem0523swKQ21zAJhYFCpEuK7X4Dy6xX+aSQUGWm2skZ969oxNlzDoPn1tT8Cc
+         8cXpjO4xN5u5fBUPTSdC8CcAwzP20a53MU8HyfV7/6MbhcLCDJ3FL7v/JYHOjHTMEW
+         8avEVLA/DE2K9ggP+faFShtU09petDZT/MP9qeDDiw65NXO1PmElQ167JQqEFGR3yZ
+         P0c0lIB13NzXW0Wu/vQoPg1ZLE1B4Cqziy7xNtdezKJ68k0S4tH3i+DaH49fq2b0zV
+         lRVUETdpmvxmw==
+Date:   Mon, 8 May 2023 10:56:26 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+To:     Christian Brauner <christian@brauner.io>,
+        Seth Forshee <sforshee@kernel.org>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the perf tree
-Message-ID: <20230508105346.24d4dc39@canb.auug.org.au>
+Subject: linux-next: duplicate patches in the vfs-idmapping tree
+Message-ID: <20230508105626.4b7fbef1@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/cuvbzRnl6Jqr2JJyQ3GexLV";
+Content-Type: multipart/signed; boundary="Sig_/rB8b/wFVrykcK3lMm0lFbjo";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/cuvbzRnl6Jqr2JJyQ3GexLV
+--Sig_/rB8b/wFVrykcK3lMm0lFbjo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -53,42 +54,27 @@ Hi all,
 The following commits are also in Linus Torvalds' tree as different
 commits (but the same patches):
 
-  1f30bd499605 ("perf symbols: Fix return incorrect build_id size in elf_re=
-ad_build_id()")
-  419bd54a3875 ("perf list: Fix memory leaks in print_tracepoint_events()")
-  4692917156b2 ("perf script: Print raw ip instead of binary offset for cal=
-lchain")
-  494fc963a281 ("perf lock contention: Fix struct rq lock access")
-  4e05971903f0 ("perf unwind: Suppress massive unsupported target platform =
-errors")
-  5d27a645f609 ("perf tracepoint: Fix memory leak in is_valid_tracepoint()")
-  7e5fd3db2371 ("perf lock contention: Rework offset calculation with BPF C=
-O-RE")
-  aec1164e09cc ("perf script: Add new parameter in kfree_skb tracepoint to =
-the python scripts using it")
-  db483eee8670 ("perf build: Fix unescaped # in perf build-test")
-  e7767ec67a10 ("perf cs-etm: Add fix for coresight trace for any range of =
-CPUs")
-  e7cac3fd8ca6 ("perf list: Modify the warning message about scandirat(3)")
+  85ef56bc2d65 ("ocfs2: reduce ioctl stack usage")
+  ec30adeb289d ("pipe: set FMODE_NOWAIT on pipes")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/cuvbzRnl6Jqr2JJyQ3GexLV
+--Sig_/rB8b/wFVrykcK3lMm0lFbjo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmRYSBoACgkQAVBC80lX
-0GzS0wgAhoO6nWWyThmweWEThcjdzI9gIczDSALkGipmuIBeOwusQmUzgQ+uVx9V
-dQgQuifxCL+PLuvNa6XqXtxepFQS114uRzMDjua1GSpyBtRDRqq62wT0R1DpWJhK
-PrTeUX7UD7PvFluSXEIEZm0t5sfC9OOvZy4/Bn2Ki0CelfTh2Pq9gBAgwS2u1+9n
-S2IlH5c1F0ZjQdz7NPo6XAdstx4Zrm/pys6GXNyo1b8tMSPqDN6PCwWIejJZb5TU
-0E4QsxCVazbech4vWAcp/IUifzzN0HJQaNt1+qmEEF+GusTW9KbmH1J7IifBq6Jp
-C3wx6d3xMbtfLEpCnuL5VsJHM7bzDA==
-=S2MJ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmRYSLoACgkQAVBC80lX
+0Gwv1Qf/d483RYnQmgW0O1uILxXyseH/C+SA9MyMK8RVawqiAW7qU5t5B3PGzzmA
+qWDYG+BdBDku0Y0vBmMfoceztpkRBq9+FyiLYKU8vTMMCe+2Ozylvj5dH3CHa5tW
+eqB2hWRttjpqq5gz8c/soAY34evoLh91Tb2U3PYy9naDy66qcCse4NZuntlbc/2s
+tmbdJlYPqlTAfvNTpN8iRfRzIS/jprZNgWiL8H17/Xo/e7odd/Vg63a0VLdF6tuW
+NUiyGJbCzqvbpcTnGB29QDRfP8yRhOPuxpWXJV+UhJXNQ44H3zOYWnhc/kSV0Qbv
+web9UwSf7P66L2/1IoXuYJhL1Fl38A==
+=3O+H
 -----END PGP SIGNATURE-----
 
---Sig_/cuvbzRnl6Jqr2JJyQ3GexLV--
+--Sig_/rB8b/wFVrykcK3lMm0lFbjo--
