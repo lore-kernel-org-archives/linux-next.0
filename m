@@ -2,87 +2,82 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE73C77B73
-	for <linux-next@archiver.kernel.org>; Wed, 31 May 2023 13:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44240C77B7A
+	for <linux-next@archiver.kernel.org>; Thu, 25 May 2023 12:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232598AbjEaNZr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 May 2023 09:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45868 "EHLO
+        id S240828AbjEYMBf (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 25 May 2023 08:01:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233178AbjEaNZm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 May 2023 09:25:42 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3BEB128
-        for <linux-next@vger.kernel.org>; Wed, 31 May 2023 06:25:41 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5689335d2b6so37230907b3.3
-        for <linux-next@vger.kernel.org>; Wed, 31 May 2023 06:25:41 -0700 (PDT)
+        with ESMTP id S239928AbjEYMBf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 25 May 2023 08:01:35 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5232E99;
+        Thu, 25 May 2023 05:01:34 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-561d5a16be0so6508877b3.2;
+        Thu, 25 May 2023 05:01:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685539541; x=1688131541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fB0ipJPMm2rGF8sYHVKFVeFZVg6tsQPk0Fbm/0GB+ZA=;
-        b=OkIXsSIro8PmB3eVXXVblwo0+IvNv61W9g6ZXtPUKjyd3szYBvVs95tejOdWTIg+Q2
-         huu77at3xyWmSGt9hiw8WVtZ4n1UG3Sc2XVGP11LLELVEWLSDLVaplelASHjeZonGyd4
-         pm+1i0nMVJwP5h/vGuh7E7IDXavRNq15fBplPH+0aQzP6JSo0IxycriPCpQplWXdun0N
-         j2mfAzsRdaYAc3vz30lSKvv7fNx1/syMyUk2ipJfEzFNOoNxxxMFaw9e/kQv3KP/LlvQ
-         TT8mDVW/4TnfsquOJzfyXcY/YpSDOfoY2BO3/ECbEsXL3xoVPEcYxLsDGPH3KKzMAbyK
-         B9IQ==
+        d=gmail.com; s=20221208; t=1685016093; x=1687608093;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wzjXUs7hQMg4YnTSQBBTOV9Px0ea6Z5OIL5Ul9L3HtM=;
+        b=qslfBorePk4sEMwlJxSs+2CvZubmE9HsGmyLKXanyypE0uNCxG5B2+OTuE/wjHKRsN
+         7+ywINy+o4uA+3/q4CeE+4ajhm9HIOj2YlTWoZ+SgLRj/DPTcO/EYbPA6judbz7G19Fn
+         Y6leI7H/7coiJMdlvU5zSp0O1kWVlktcqJCpGVtWmSWmOQmXzldqUjRKChhwF0xT89r5
+         unxjblF1d5bs3hDGqRCZREH7rrCDv6bD8wYR70UQt998crosqq1ykC8xR+XaJvQ78a8r
+         lidF9SCOpwbwU5FTUYU3L+DXhU/MYyO85/IaJ9zoWWA39okGp4gWABqYtjq9ZTL2k/yf
+         kwTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685539541; x=1688131541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fB0ipJPMm2rGF8sYHVKFVeFZVg6tsQPk0Fbm/0GB+ZA=;
-        b=czKyizKtxXm+H6T7aNDCikWUaCVBxXFF/OVVWIsNvbR3qWvqtxtsXpMyOH6/+puyrc
-         qFfMnIFxpOYasZ/UajzkD5zplFaOT/H2Ih45c1L7BMOSWQg/p39TEFrTzJv61ItVavOq
-         g/eJHw1EuDswziLIZDmVzg+DAHd59PdUxLcqQbXmc4d5biOct5RG1fdSmCh/7dGdASG9
-         UdOQZFpwGIDQ9b0FilWi3Sr8ydQ+wnX74omovpihgQiBDlkBFhd3bYC+YdTy0zj9D1gD
-         oJOKiwa60KBNYyY9rkp07RyidEDrdX9TduSxORYwzlMYO0rv+3yGZChYbgT4Pz7gZz74
-         7gow==
-X-Gm-Message-State: AC+VfDz7CiY9j+faRe5Y5jGJsF1f4qgHdTJn1jezxt+mpLRwqsa2KVPY
-        wDTGys99HckDO8hDVEPfYIaCTVadtolpJj4LfbLkWg==
-X-Google-Smtp-Source: ACHHUZ5clsb5efhsDOL+wVqLr3HCnTlOhux7PAZi5smqMgqncIBI3VSw8E5cfc8meoA9/m/QT7vxpZnbaVgSVSRGBLk=
-X-Received: by 2002:a81:df12:0:b0:565:4eee:a4d4 with SMTP id
- c18-20020a81df12000000b005654eeea4d4mr5693650ywn.10.1685539540818; Wed, 31
- May 2023 06:25:40 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685016093; x=1687608093;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wzjXUs7hQMg4YnTSQBBTOV9Px0ea6Z5OIL5Ul9L3HtM=;
+        b=M0x3pDGV6OdsGWpekkPWMiQ4IVnscxJW9DBI8erEYO4atoxQ9ii1HtXWSrcKBTVmns
+         8RrVIBZIbcT7eiP8lFML6V+JFEgq7qYoQOkAH38dFtGhxAmmvBAnyoTlwDfK52rfAas4
+         oUo4aprxbVyPeMckw1WABCdVEGt/laccooljTKmaUTSfJJwEWcu3erZcgt2gm/9oIg5R
+         9B1PKjVKYNCDYLkC/Ag1d+OexxzYMK0/9uwe1FTize8y1ZZJhF/aDzMOuzs8SWCBr2QJ
+         6Jwu0yhE5bTahLe08mLuKHHw0ikzaMi2CgC3b4NXz5/ZVd4/G2mE8zTahtRtSAFbHz9c
+         qbGw==
+X-Gm-Message-State: AC+VfDwKTb61GVpUdf8t4schsnqvk+bM/Ust2linR+FJtEdGKdkmKb6b
+        NAbwIDzTw2DwE2izJrJs1zarCmY8GkAWMOslsd2Z3L0gxsoqtw==
+X-Google-Smtp-Source: ACHHUZ7PSqNM4uSLtY7h6h9M4+h+zxTzZ7WFMg9s5g8zeJjjwEjf2VrsenLJX6tgVIWpw53Kys5LruHllqLTviPNyeg=
+X-Received: by 2002:a81:7105:0:b0:561:a41d:61cd with SMTP id
+ m5-20020a817105000000b00561a41d61cdmr22435505ywc.46.1685016093347; Thu, 25
+ May 2023 05:01:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230530074943.5b196424@canb.auug.org.au> <20230530145625.2znyjfd2bujfii5l@ripper>
-In-Reply-To: <20230530145625.2znyjfd2bujfii5l@ripper>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 31 May 2023 15:25:29 +0200
-Message-ID: <CACRpkdZZS+UConPEyuiWxJNoC36Y+udbE0ZXnk4jRgNQ3FtF1w@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the qcom tree
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andy Gross <agross@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
+From:   Murphy Zhou <jencce.kernel@gmail.com>
+Date:   Thu, 25 May 2023 20:01:22 +0800
+Message-ID: <CADJHv_ujo+QUE7f420t4XACGw4RvVpckKSJcJ_9_Z0b2gdmr+g@mail.gmail.com>
+Subject: 
+To:     Linux-Next <linux-next@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, May 30, 2023 at 4:53=E2=80=AFPM Bjorn Andersson <andersson@kernel.o=
-rg> wrote:
+Hi Christoph,
 
-> >   Fixes: 04715461abf7 ("ARM: dts: qcom-msm8660: align RPM regulators no=
-de name with bindings")
-> >
-> > has these problem(s):
-> >
-> >   - Target SHA1 does not exist
-> >
-> > Maybe you meant
-> >
-> > Fixes: 85055a1eecc1 ("ARM: dts: qcom-msm8660: align RPM regulators node=
- name with bindings")
-> >
->
-> Thank you Stephen, the tag has now been corrected.
+The linux-next tree, since the next-20230522 tag, LTP/writev07[1]
+starts to fail on xfs, not on other fs. It was pass on the previous
+tag next-20230519.
 
-Sorry for messing this up, thanks for fixing!
+After those 2 commits reverted on the top of 0522 tree, it passed.
 
-Yours,
-Linus Walleij
+    iomap: update ki_pos in iomap_file_buffered_write
+    iomap: assign current->backing_dev_info in iomap_file_buffered_write
+
+(the second one was reverted because the first one depends on it)
+
+The test case writev07 forms an iovec with a bad address in the middle,
+then writes to the file, expecting a fault return and file not being written.
+Now it fails with a fault return but the file has been written.
+
+Looks like it is related to the pos update, could you help to take a look ?
+
+Thanks,
+Murphy
+
+
+[1] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/writev/writev07.c
