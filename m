@@ -2,84 +2,67 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56417C77B7C
-	for <linux-next@archiver.kernel.org>; Wed, 31 May 2023 07:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86D0C77B7A
+	for <linux-next@archiver.kernel.org>; Wed, 31 May 2023 08:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234681AbjEaHXn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 31 May 2023 03:23:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34268 "EHLO
+        id S234768AbjEaIUa (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 31 May 2023 04:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234528AbjEaHXS (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 May 2023 03:23:18 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 900F9E52;
-        Wed, 31 May 2023 00:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685517787; x=1717053787;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RQamFbPHk7jhRFeasP//s4TdVJOiGc/kNVR3XMXPQf0=;
-  b=LFJrLKtM+SpQH3JpBgW7sCK1kIQwFUzh5qiTe5G6/IlvDh7otVJmtmsS
-   ktu66KOdKNlz7gtpCGyq2f7hvjo9E4UEECmqQ1swEYBTouFbUHfGVQfkP
-   ACq1hY3n+TC05kJBmgcyJrq8B7ftPrVoZ7I9vb4giQbsa4eyCA5F6X5/Y
-   RGkxft4O+GfKMgFVF4mrIIVdJLSCV2o5dY9qWM22AC79YJ7lSbycfvd3m
-   4x2vYNZM3C6WAkCFxVIZY141bzUN0eNE6Qks5JM+UTVyylz4oeydnymaz
-   931Zj15IKvGCo2bjA+2+auFiVJ049FBfhP+rV3Iu0GoJqdg1QSGprD7WA
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10726"; a="334781366"
-X-IronPort-AV: E=Sophos;i="6.00,205,1681196400"; 
-   d="scan'208";a="334781366"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2023 00:23:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10726"; a="739837831"
-X-IronPort-AV: E=Sophos;i="6.00,205,1681196400"; 
-   d="scan'208";a="739837831"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orsmga001.jf.intel.com with ESMTP; 31 May 2023 00:23:04 -0700
-Date:   Wed, 31 May 2023 23:22:38 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-        Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the fpga-fixes tree
-Message-ID: <ZHdmPm1F56QGrKME@yilunxu-OptiPlex-7050>
-References: <20230531101925.39360756@canb.auug.org.au>
+        with ESMTP id S231876AbjEaIU3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 31 May 2023 04:20:29 -0400
+X-Greylist: delayed 555 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 31 May 2023 01:20:28 PDT
+Received: from mail.quaich.pl (mail.quaich.pl [51.38.112.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD958BE
+        for <linux-next@vger.kernel.org>; Wed, 31 May 2023 01:20:28 -0700 (PDT)
+Received: by mail.quaich.pl (Postfix, from userid 1002)
+        id 26746A2FD8; Wed, 31 May 2023 08:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=quaich.pl; s=mail;
+        t=1685520647; bh=wfvwbFJA200jrsHeP2otbNIBGUSi9OMiPBdlGaZSRdc=;
+        h=Date:From:To:Subject:From;
+        b=sUod73MQaCo9ZcXeGBehn8++wQdskIeDNgNX7dvygVIIfVO1YYOsegNYhdYIOmNGh
+         qr3FvyV85MuoOFnx/KHgAhi0RP1WcJCe9nOlzYvbjRbJI/U1+ZwHQ1kK9hWiRT+uA2
+         c6yQOPT2nqqRkJt8yNQK03aEOnchygk2BdZH2Rvn1LSwZ98G58Ve9Dv1auHuh+khpU
+         fbShVBrDs8GBfgAMXoOCJiYDit1JpG0i8G5IssPRf6p65yLlXiKZnf47M2gynIBg9z
+         fv8WxPDmX//ighuZ9SLW2TK/BecaXcKGRnXDKPWjJRvEN4wmv357U5dQr13pj0IrXe
+         fs+jnfpHsVm5g==
+Received: by quaich.pl for <linux-next@vger.kernel.org>; Wed, 31 May 2023 08:10:23 GMT
+Message-ID: <20230531064520-0.1.8h.i7i0.0.6k2op5om9n@quaich.pl>
+Date:   Wed, 31 May 2023 08:10:23 GMT
+From:   =?UTF-8?Q? "Tomasz_Wiewi=C3=B3r" ?= <tomasz.wiewior@quaich.pl>
+To:     <linux-next@vger.kernel.org>
+Subject: =?UTF-8?Q?Negocjacje-wska=C5=BAnik_skuteczno=C5=9Bci?=
+X-Mailer: mail.quaich.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230531101925.39360756@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 2023-05-31 at 10:19:25 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commits are also in the char-misc.current tree as different
-> commits (but the same patches):
-> 
->   d8bdc50012fe ("dt-bindings: fpga: replace Ivan Bornyakov maintainership")
->   feeb9c9219bd ("MAINTAINERS: update Microchip MPF FPGA reviewers")
+Szanowni Pa=C5=84stwo,
 
-I'll remove them in FPGA tree as they are already accepted by char-misc
+jako specjali=C5=9Bci w dziedzinie badania potrzeb i projektowania progra=
+m=C3=B3w szkoleniowych, wiemy, jak wa=C5=BCne jest zapewnienie odpowiedni=
+ch narz=C4=99dzi i wiedzy, aby skutecznie zwi=C4=99kszy=C4=87 efektywno=C5=
+=9B=C4=87 zespo=C5=82u, szczeg=C3=B3lnie w du=C5=BCych organizacjach.
 
-Thanks,
-Yilun
+Zamkni=C4=99te szkolenia s=C4=85 najlepszym rozwi=C4=85zaniem dla tych, k=
+t=C3=B3rzy chc=C4=85 skupi=C4=87 si=C4=99 na konkretnych potrzebach i zag=
+adnieniach.=20
 
-> 
-> These are commits
-> 
->   9da6225bc737 ("dt-bindings: fpga: replace Ivan Bornyakov maintainership")
->   929f4e7c06ca ("MAINTAINERS: update Microchip MPF FPGA reviewers")
-> 
-> in the char-misc.current tree.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Nasza metodyka opiera si=C4=99 na identyfikacji obszar=C3=B3w, kt=C3=B3re=
+ wymagaj=C4=85 poprawy, a nast=C4=99pnie dostarczaniu spersonalizowanych =
+rozwi=C4=85za=C5=84, kt=C3=B3re pomagaj=C4=85 osi=C4=85gn=C4=85=C4=87 cel=
+e biznesowe.
+
+Z powodzeniem prowadzili=C5=9Bmy projekty szkoleniowe dla renomowanych ma=
+rek, takich jak: PZU, Bank Pekao S.A., PWC, Ronson Development, Gedeon Ri=
+chter i wielu innych.
+
+Mo=C5=BCemy niezobowi=C4=85zuj=C4=85co porozmawia=C4=87 o mo=C5=BCliwo=C5=
+=9Bciach zorganizowania szkolenia dla Pa=C5=84stwa firmy?
 
 
+Pozdrawiam
+Tomasz Wiewi=C3=B3r
