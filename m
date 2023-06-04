@@ -2,63 +2,90 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8707EC77B7A
-	for <linux-next@archiver.kernel.org>; Sat,  3 Jun 2023 09:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D764DC77B73
+	for <linux-next@archiver.kernel.org>; Sun,  4 Jun 2023 00:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbjFCJ34 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sat, 3 Jun 2023 05:29:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
+        id S229712AbjFDAXF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sat, 3 Jun 2023 20:23:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230084AbjFCJ3z (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 3 Jun 2023 05:29:55 -0400
-X-Greylist: delayed 89945 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 03 Jun 2023 02:29:54 PDT
-Received: from mail.webtopbits.pl (mail.webtopbits.pl [195.231.64.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A18E49
-        for <linux-next@vger.kernel.org>; Sat,  3 Jun 2023 02:29:54 -0700 (PDT)
-Received: by mail.webtopbits.pl (Postfix, from userid 1001)
-        id BB544A3876; Fri,  2 Jun 2023 09:30:44 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webtopbits.pl;
-        s=mail; t=1685694647;
-        bh=Eh8ECMiYd4baGAwPAzhz8mhJACXX7NSRkYjh+plaY18=;
-        h=Date:From:To:Subject:From;
-        b=b2q1X4NZjxMBosWXTLpPBvtiSVyB5sAjuqa9bnes4vNLhcTlBU7v1k0RFLsefxENr
-         fLF3RTSfHfw9ZdvxqqLkKq6d1/BCpAtR+jteClgUpBeaWIhGh+7B/gkhBZRjC5tKkq
-         R+iatLY8j1h23ZaUv4DyISH4Uy6LsXQiWzGcqrbGMRpoIePK5iFkr5DX4A2QL/A2TB
-         jAKq8HVUawhXyD6t6xS8Nm3TsRbHZmhhqPHu0xtvTjD7wC/wZo8w/uG5xDZH6iBTsk
-         BixZ2A/7TZ1o7CbOqnaHhBuBPHmS+TCm8L65SWaZE8E9ZB0bvN8wRHcfGf0rXzRzux
-         5SnKu55SulESg==
-Received: by mail.webtopbits.pl for <linux-next@vger.kernel.org>; Fri,  2 Jun 2023 08:30:38 GMT
-Message-ID: <20230602085530-0.1.8w.5jvd.0.ucq48krqqf@webtopbits.pl>
-Date:   Fri,  2 Jun 2023 08:30:38 GMT
-From:   "Kamil Durjasz" <kamil.durjasz@webtopbits.pl>
-To:     <linux-next@vger.kernel.org>
-Subject: =?UTF-8?Q?Wy=C5=BCsza_konwersja_w_e-sklepie_?=
-X-Mailer: mail.webtopbits.pl
+        with ESMTP id S229658AbjFDAXE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 3 Jun 2023 20:23:04 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D12A19A;
+        Sat,  3 Jun 2023 17:23:01 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4QYcrs11C6z4x3x;
+        Sun,  4 Jun 2023 10:22:52 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1685838176;
+        bh=AUJ7jHGZlU1IgO9OqyJ4jwSVRZvI7dVMmKTNxQxKoeI=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=qd2YyRXsuhpUARRns0XW/38b+R1sW7dr4usqM/UPRmx59J5EK5CrM7vQ4ROSYmYcg
+         4UILf3rybeo9IVOT6KNFMUY2uox4B+heOXB4A0kqAIOgjeuEv5hoc6sSy6L0B0imXg
+         yVii0FpGZVB4mwB5tgEDHEANGRPnikIhFd3Waos+0a73UAszqP6EODPT49dqN4k1Lm
+         h1xrxTiQJ8Hrnbb/iQp2q2vIXA3niI7q7Ls2loypcmzfXq67Vt/zY27jAKKzBNEToh
+         jHuBh0k8NWaQImrEUUhu3MEr3yfCqzS6aEWGlahbygEZPNHqVtTBPNKFg/1I3KWdKE
+         EuBtbBTyBoqGQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Timothy Pearson <tpearson@raptorengineering.com>
+Subject: Re: linux-next: Tree for Jun 2 (arch/powerpc/kernel/iommu.c)
+In-Reply-To: <2d188c87-ef34-3812-7330-a985f756d959@infradead.org>
+References: <20230602140143.0af52cee@canb.auug.org.au>
+ <2d188c87-ef34-3812-7330-a985f756d959@infradead.org>
+Date:   Sun, 04 Jun 2023 10:22:51 +1000
+Message-ID: <87h6rogjok.fsf@mail.lhotse>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Randy Dunlap <rdunlap@infradead.org> writes:
+> On 6/1/23 21:01, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> Changes since 20230601:
+>> 
+>
+> On powerpc64, a randconfig failed with:
+>
+> In file included from ../include/linux/list.h:5,
+>                  from ../include/linux/preempt.h:11,
+>                  from ../include/linux/spinlock.h:56,
+>                  from ../include/linux/mmzone.h:8,
+>                  from ../include/linux/gfp.h:7,
+>                  from ../include/linux/slab.h:15,
+>                  from ../arch/powerpc/kernel/iommu.c:15:
+> ../arch/powerpc/kernel/iommu.c: In function 'spapr_tce_setup_phb_iommus_initcall':
+> ../arch/powerpc/kernel/iommu.c:1391:36: error: 'hose_list' undeclared (first use in this function); did you mean 'zonelist'?
+>  1391 |         list_for_each_entry(hose, &hose_list, list_node) {
+>       |                                    ^~~~~~~~~
+...
 
-w jaki spos=C3=B3b docieraj=C4=85 Pa=C5=84stwo do odbiorc=C3=B3w?
+hose_list is in pci-common.c which is built when PCI=y.
 
-Tworzymy pot=C4=99=C5=BCne narz=C4=99dzia sprzeda=C5=BCy, kt=C3=B3re pozw=
-alaj=C4=85 kompleksowo rozwi=C4=85za=C4=87 problemy potencjalnych klient=C3=
-=B3w i skutecznie wp=C5=82yn=C4=85=C4=87 na ich decyzje zakupowe.=20
+PSERIES and POWERNV force PCI=y.
 
-Skupiamy si=C4=99 na Pa=C5=84stwa potrzebach zwi=C4=85zanych z obs=C5=82u=
-g=C4=85 sklepu, oczekiwaniach i planach sprzeda=C5=BCowych. Szczeg=C3=B3=C5=
-=82owo dopasowujemy grafik=C4=99, funkcjonalno=C5=9Bci, struktur=C4=99 i =
-mikrointerakcje do Pa=C5=84stwa grupy docelowej, co przek=C5=82ada si=C4=99=
- na oczekiwane rezultaty.
+But this config has neither:
 
-Ch=C4=99tnie przedstawi=C4=99 dotychczasowe realizacje, aby mogli Pa=C5=84=
-stwo przekona=C4=87 si=C4=99 o naszych mo=C5=BCliwo=C5=9Bciach. Mog=C4=99=
- si=C4=99 skontaktowa=C4=87?
+# CONFIG_PPC_POWERNV is not set
+# CONFIG_PPC_PSERIES is not set
+CONFIG_HAVE_PCI=y
+# CONFIG_PCI is not set
+# CONFIG_COMMON_CLK_RS9_PCIE is not set
 
 
-Pozdrawiam
-Kamil Durjasz
+Probably the spapr_tce code should be wrapped in an #ifdef that is only
+enabled when POWERNV || PSERIES is enabled.
+
+cheers
