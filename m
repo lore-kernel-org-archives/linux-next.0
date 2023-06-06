@@ -2,90 +2,129 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B231EC77B7A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA91FC7EE33
 	for <linux-next@archiver.kernel.org>; Tue,  6 Jun 2023 09:35:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234840AbjFFJfd convert rfc822-to-8bit (ORCPT
+        id S235988AbjFFJfe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:35:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
+        Tue, 6 Jun 2023 05:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237586AbjFFJev (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Jun 2023 05:34:51 -0400
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A1A6170C;
-        Tue,  6 Jun 2023 02:34:46 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-bacf685150cso7397792276.3;
-        Tue, 06 Jun 2023 02:34:46 -0700 (PDT)
+        with ESMTP id S237733AbjFFJf1 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Jun 2023 05:35:27 -0400
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C7CE6B;
+        Tue,  6 Jun 2023 02:35:26 -0700 (PDT)
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-558cf19575dso1490483eaf.3;
+        Tue, 06 Jun 2023 02:35:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686044085; x=1688636085;
+        d=1e100.net; s=20221208; t=1686044126; x=1688636126;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8JdV/d7SCfU8eJkEBOkqIv7Lgaup3KtW7wGYKu2r4OA=;
-        b=RUB24bPTAgWlxng+NFeR/LlPcM+Vug+3cq69g/n0n2s8AqAKpX0kSQYtd/r/mPQuyf
-         6/rUV/czaxeqsHoYbiT0zClELX5poGv39EJMcGcLs0YbFO7qBGxkZflKKsFRI1HXEUcb
-         0SnDygzaFmPNO+ocQxB4ti2vheki9ndXWzqrUhnzsmvEZippGFZI38kzY5OZ+3sqWFt4
-         M9qvzmQ4Ufga2mIZTodqw9SnzviZ4/yF208cCW6OrGyjTCb+kxeerZr4psJf7OOZM7Tg
-         VWzT0hktMKOfIg3oIEcexxkB2KIQRDDB+c1hebC+zr2WQkBkGeGvXSc7mtUnj5Jg4Rwj
-         aJRA==
-X-Gm-Message-State: AC+VfDyJ9H1C/SFgKurYI1kxjBdoZh+4j8R5DfHYaIGem1ZC9MmEhnqd
-        5HtGTrsfjMIpDhCb9nw6KIYV7VpByjZPDg==
-X-Google-Smtp-Source: ACHHUZ5pV7njFg2DpQ9Z4mjkvWo1dKr6k5fM/rdIXE3aC+73B3OZ/2gp4DWeMnitXKFk9K01LCf/yg==
-X-Received: by 2002:a25:fc3:0:b0:bac:7aba:ae4d with SMTP id 186-20020a250fc3000000b00bac7abaae4dmr1243954ybp.28.1686044085056;
-        Tue, 06 Jun 2023 02:34:45 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id v12-20020a25fc0c000000b00bb0ae4221b8sm3134146ybd.43.2023.06.06.02.34.43
+        bh=/ZvMEy864MwTP2VbOIQdW/FR/SOtiCNc16GfTX7zCXs=;
+        b=DL3It4Ca5xJL/vrKrqFBS9qmXsmu3UKzAg1VS+THcByn5cqRrkqYYoRy7Cx563ryEF
+         +jQ8LwKnGZug6cXlyR9SDaHb2Lh+h0CWc9y/8gNGOmZyAXo1v1Y7JohAKdmu0NkIo1Mb
+         aecOs4cvMhjA5j5jQIIam/rlVdRLCoaNYlS/goZjkHTaSILCJd8p2RsG1mn9tY504Ibn
+         KVb+rzaSVZzPQavhuOoGaw/rcnAoOPKQMYMx1B6iez2mTBUb0XAY9SSBC9PPrlJXudUS
+         KsDh8rUXLN2UxwzfhA4Av4lDw/bC5sQozlUJFUHwOaE4fvm6sz2CGhwxhNRhxdODEkSf
+         0k4A==
+X-Gm-Message-State: AC+VfDwP0Whb3napDvq0mUv1kUApSnDUoDg0JZJe6C8GtoNLFgzTd1jf
+        4puVAT1yrGXLkR90d6VEvoA8am9aMjL3jw==
+X-Google-Smtp-Source: ACHHUZ74uwk7tLOm3rALLOfpRcP3tLWD/D7I3Nks2fgxWfU5uoiBSZm7WX8ZjKo+uHkFWxJyeu3ILA==
+X-Received: by 2002:a4a:a688:0:b0:558:b5b2:72fe with SMTP id f8-20020a4aa688000000b00558b5b272femr1155642oom.2.1686044125525;
+        Tue, 06 Jun 2023 02:35:25 -0700 (PDT)
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com. [209.85.210.47])
+        by smtp.gmail.com with ESMTPSA id j15-20020a9d7f0f000000b006a43519523fsm4207977otq.1.2023.06.06.02.35.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 02:34:44 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-565eb83efe4so74827467b3.0;
-        Tue, 06 Jun 2023 02:34:43 -0700 (PDT)
-X-Received: by 2002:a81:61d6:0:b0:561:3fb7:1333 with SMTP id
- v205-20020a8161d6000000b005613fb71333mr1868251ywb.43.1686044083648; Tue, 06
- Jun 2023 02:34:43 -0700 (PDT)
+        Tue, 06 Jun 2023 02:35:25 -0700 (PDT)
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6b16cbe4fb6so1808314a34.1;
+        Tue, 06 Jun 2023 02:35:25 -0700 (PDT)
+X-Received: by 2002:a0d:cb47:0:b0:565:c96b:f526 with SMTP id
+ n68-20020a0dcb47000000b00565c96bf526mr1400799ywd.19.1686043729823; Tue, 06
+ Jun 2023 02:28:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230522105257.562cb1ec@canb.auug.org.au> <ZGr6aB9uJVnyfJQ9@gondor.apana.org.au>
- <20230523103637.20175fbc@canb.auug.org.au> <ZGwmAp5RPqAjVMCg@gondor.apana.org.au>
- <CAMuHMdU5pBh8bk21Xrzk0Ocs7cAF+QTLn60uKOHa1z=TB6Lcuw@mail.gmail.com> <ZH786WIea+k3S/jW@gondor.apana.org.au>
-In-Reply-To: <ZH786WIea+k3S/jW@gondor.apana.org.au>
+References: <CA+G9fYv0a-XxXfG6bNuPZGT=fzjtEfRGEYwk3n6M1WhEHUPo9g@mail.gmail.com>
+ <CA+G9fYueN0xti1SDtYVZstPt104sUj06GfOzyqDNrd3s3xXBkA@mail.gmail.com>
+ <CAMuHMdX7hqipiMCF9uxpU+_RbLmzyHeo-D0tCE_Hx8eTqQ7Pig@mail.gmail.com> <11bd37e9-c62e-46ba-9456-8e3b353df28f@app.fastmail.com>
+In-Reply-To: <11bd37e9-c62e-46ba-9456-8e3b353df28f@app.fastmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 6 Jun 2023 11:34:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVo3zPrR9DXW3Pgs3WC1xH_HuwuOqVzjBf6bvDUoMDhXg@mail.gmail.com>
-Message-ID: <CAMuHMdVo3zPrR9DXW3Pgs3WC1xH_HuwuOqVzjBf6bvDUoMDhXg@mail.gmail.com>
-Subject: Re: [PATCH] crypto: starfive - Depend on AMBA_PL08X instead of
- selecting it
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Linux Crypto List <linux-crypto@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>,
-        Jia Jie Ho <jiajie.ho@starfivetech.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
+Date:   Tue, 6 Jun 2023 11:28:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUH2Grrv6842YWXHDmd+O3iHdwqTVjYf8f1nbVRzGA+6w@mail.gmail.com>
+Message-ID: <CAMuHMdUH2Grrv6842YWXHDmd+O3iHdwqTVjYf8f1nbVRzGA+6w@mail.gmail.com>
+Subject: Re: arm: shmobile_defconfig: ld.lld: error: undefined symbol: lynx_pcs_destroy
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        clang-built-linux <llvm@lists.linux.dev>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        maxime.chevallier@bootlin.com,
+        Simon Horman <simon.horman@corigine.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Herbert,
+Hi Arnd,
 
-On Tue, Jun 6, 2023 at 11:31 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Tue, Jun 06, 2023 at 11:12:05AM +0200, Geert Uytterhoeven wrote:
+On Tue, Jun 6, 2023 at 11:16 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Jun 6, 2023, at 11:01, Geert Uytterhoeven wrote:
+> > On Tue, Jun 6, 2023 at 10:53 AM Naresh Kamboju
+> > <naresh.kamboju@linaro.org> wrote:
+> >> On Tue, 6 Jun 2023 at 14:17, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >> > Following build regressions found while building arm shmobile_defconfig on
+> >> > Linux next-20230606.
+> >> >
+> >> > Regressions found on arm:
+> >> >
+> >> >  - build/clang-16-shmobile_defconfig
+> >> >  - build/gcc-8-shmobile_defconfig
+> >> >  - build/gcc-12-shmobile_defconfig
+> >> >  - build/clang-nightly-shmobile_defconfig
+> >>
+> >> And mips defconfig builds failed.
+> >> Regressions found on mips:
+> >>
+> >>   - build/clang-16-defconfig
+> >>   - build/gcc-12-defconfig
+> >>   - build/gcc-8-defconfig
+> >>   - build/clang-nightly-defconfig
 > >
-> > > ---8<---
-> > > A platform option like AMBA should never be selected by a driver.
-> > > Use a dependency instead.
-> >
-> > FTR:
-> >
-> > arch/arm/mach-s3c/Kconfig.s3c64xx=config S3C64XX_PL080
-> > arch/arm/mach-s3c/Kconfig.s3c64xx-      def_bool DMADEVICES
-> > arch/arm/mach-s3c/Kconfig.s3c64xx:      select AMBA_PL08X
+> > Please give my fix a try:
+> > https://lore.kernel.org/linux-renesas-soc/7b36ac43778b41831debd5c30b5b37d268512195.1686039915.git.geert+renesas@glider.be
 >
-> Well that isn't a driver I think so it might be OK?
+> This won't work when PCS_LYNX is a loadable module and
+> STMMAC is built-in. I think we should just select PCS_LYNX
 
-Thanks, please ignore ;-)
+Oops, you're right, forgot about that case.
+What about using IS_REACHABLE() instead?
+No, that won't work either, as DWMAC_SOCFPGA can be modular,
+with STMMAC builtin.
+
+> unconditionally from stmmac even if no front-end driver
+> using it is enabled.
+>
+> I tried to come up with a way to move the dependency into
+> the altera specific front-end, but couldn't find an obvious
+> or simple way to do this.
+>
+> Having a proper abstraction for PCS drivers instead of
+> directly calling into exported driver symbols might help
+> here, but that would add complexity elsewhere.
 
 Gr{oetje,eeting}s,
 
