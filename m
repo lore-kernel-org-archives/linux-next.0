@@ -2,99 +2,64 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E44C77B7A
-	for <linux-next@archiver.kernel.org>; Tue,  6 Jun 2023 09:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50309C7EE2C
+	for <linux-next@archiver.kernel.org>; Tue,  6 Jun 2023 09:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236820AbjFFJUr (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:20:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60522 "EHLO
+        id S235703AbjFFJcV (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 6 Jun 2023 05:32:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237402AbjFFJUi (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Jun 2023 05:20:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818D5E6B;
-        Tue,  6 Jun 2023 02:20:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F2A362F85;
-        Tue,  6 Jun 2023 09:20:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3138BC433D2;
-        Tue,  6 Jun 2023 09:20:14 +0000 (UTC)
-Date:   Tue, 6 Jun 2023 10:20:11 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christoffer Dall <cdall@cs.columbia.edu>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
+        with ESMTP id S236198AbjFFJcQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Jun 2023 05:32:16 -0400
+Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F6231719;
+        Tue,  6 Jun 2023 02:31:53 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1q6T29-00HHnh-Kz; Tue, 06 Jun 2023 17:31:22 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 06 Jun 2023 17:31:21 +0800
+Date:   Tue, 6 Jun 2023 17:31:21 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Linux Crypto List <linux-crypto@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>,
+        Jia Jie Ho <jiajie.ho@starfivetech.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <ZH76SzsUvfYRBx4r@arm.com>
-References: <20230606114927.227a66a5@canb.auug.org.au>
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCH] crypto: starfive - Depend on AMBA_PL08X instead of
+ selecting it
+Message-ID: <ZH786WIea+k3S/jW@gondor.apana.org.au>
+References: <20230522105257.562cb1ec@canb.auug.org.au>
+ <ZGr6aB9uJVnyfJQ9@gondor.apana.org.au>
+ <20230523103637.20175fbc@canb.auug.org.au>
+ <ZGwmAp5RPqAjVMCg@gondor.apana.org.au>
+ <CAMuHMdU5pBh8bk21Xrzk0Ocs7cAF+QTLn60uKOHa1z=TB6Lcuw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230606114927.227a66a5@canb.auug.org.au>
+In-Reply-To: <CAMuHMdU5pBh8bk21Xrzk0Ocs7cAF+QTLn60uKOHa1z=TB6Lcuw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 11:49:27AM +1000, Stephen Rothwell wrote:
-> diff --cc arch/arm64/kernel/cpufeature.c
-> index a74f41c7280f,4a2ab3f366de..000000000000
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@@ -2662,35 -2641,17 +2662,46 @@@ static const struct arm64_cpu_capabilit
->   		.cpu_enable = cpu_enable_dit,
->   		ARM64_CPUID_FIELDS(ID_AA64PFR0_EL1, DIT, IMP)
->   	},
->  +	{
->  +		.desc = "Memory Copy and Memory Set instructions",
->  +		.capability = ARM64_HAS_MOPS,
->  +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->  +		.matches = has_cpuid_feature,
->  +		.cpu_enable = cpu_enable_mops,
->  +		ARM64_CPUID_FIELDS(ID_AA64ISAR2_EL1, MOPS, IMP)
->  +	},
->  +	{
->  +		.capability = ARM64_HAS_TCR2,
->  +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->  +		.sys_reg = SYS_ID_AA64MMFR3_EL1,
->  +		.sign = FTR_UNSIGNED,
->  +		.field_pos = ID_AA64MMFR3_EL1_TCRX_SHIFT,
->  +		.field_width = 4,
->  +		.min_field_value = ID_AA64MMFR3_EL1_TCRX_IMP,
->  +		.matches = has_cpuid_feature,
->  +	},
->  +	{
->  +		.desc = "Stage-1 Permission Indirection Extension (S1PIE)",
->  +		.capability = ARM64_HAS_S1PIE,
->  +		.type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
->  +		.sys_reg = SYS_ID_AA64MMFR3_EL1,
->  +		.sign = FTR_UNSIGNED,
->  +		.field_pos = ID_AA64MMFR3_EL1_S1PIE_SHIFT,
->  +		.field_width = 4,
->  +		.min_field_value = ID_AA64MMFR3_EL1_S1PIE_IMP,
->  +		.matches = has_cpuid_feature,
->  +	},
-> + 	{
-> + 		.desc = "Enhanced Virtualization Traps",
-> + 		.capability = ARM64_HAS_EVT,
-> + 		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> + 		.sys_reg = SYS_ID_AA64MMFR2_EL1,
-> + 		.sign = FTR_UNSIGNED,
-> + 		.field_pos = ID_AA64MMFR2_EL1_EVT_SHIFT,
-> + 		.field_width = 4,
-> + 		.min_field_value = ID_AA64MMFR2_EL1_EVT_IMP,
-> + 		.matches = has_cpuid_feature,
-> + 	},
->   	{},
->   };
+On Tue, Jun 06, 2023 at 11:12:05AM +0200, Geert Uytterhoeven wrote:
+>
+> > ---8<---
+> > A platform option like AMBA should never be selected by a driver.
+> > Use a dependency instead.
+> 
+> FTR:
+> 
+> arch/arm/mach-s3c/Kconfig.s3c64xx=config S3C64XX_PL080
+> arch/arm/mach-s3c/Kconfig.s3c64xx-      def_bool DMADEVICES
+> arch/arm/mach-s3c/Kconfig.s3c64xx:      select AMBA_PL08X
 
-Thanks Stephen. It looks fine.
+Well that isn't a driver I think so it might be OK?
 
+Cheers,
 -- 
-Catalin
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
