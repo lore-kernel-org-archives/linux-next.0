@@ -2,93 +2,85 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D486C77B7A
-	for <linux-next@archiver.kernel.org>; Wed,  7 Jun 2023 04:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361E7C7EE23
+	for <linux-next@archiver.kernel.org>; Wed,  7 Jun 2023 04:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjFGEfj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 7 Jun 2023 00:35:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48596 "EHLO
+        id S232951AbjFGEl0 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 7 Jun 2023 00:41:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232123AbjFGEfQ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Jun 2023 00:35:16 -0400
+        with ESMTP id S232821AbjFGElZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Jun 2023 00:41:25 -0400
 Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A35219A4;
-        Tue,  6 Jun 2023 21:35:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CBA583;
+        Tue,  6 Jun 2023 21:41:24 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4QbZJd45N5z4x2c;
-        Wed,  7 Jun 2023 14:35:13 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4QbZRj3jLBz4x3g;
+        Wed,  7 Jun 2023 14:41:20 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1686112513;
-        bh=iqhGsOdNkB4BZgM6RpJLFNNh91haTCn93KcBqMa2SRg=;
+        s=201702; t=1686112882;
+        bh=L5fDwdous2yWpaw5MIUpaxze8IZTU/Z/NG8MZPHw1RI=;
         h=Date:From:To:Cc:Subject:From;
-        b=kMik/DrU+2Q8IVYZFCDESBBd6CS5EDW4IqG5ZiABD48SDUI82Qe08bARi/KjbEAlK
-         EmciNjorUv1dWC44OHmtQBRhKnIbv3QShofH8t1qxlcCDOiBznM3NVOa8lBWggyMOy
-         9rDvTGUvW7KsUmB6yPrxfuqiKsfuFe55au/bAzfhSsoNKlPgs0zDu/oZ+QAergt+X8
-         Qhp2gJtWzAe+asyxyuZqYxIY+w+rcuH8NnWgU7V0MTDSFBnG4b/ZaRgOzEHo94Es7F
-         myNrMcsIRmAoW/pD9zqPrIq1/8i0A0l0OST0/r/gb0mY1SyFvev7UBHaxsOW1sKrzV
-         4UVrQ/NjotL+w==
-Date:   Wed, 7 Jun 2023 14:35:12 +1000
+        b=feYEmHISrGBoaNyMuD25v4JVD+gYWVp1m00iWWdG3Ge9XccBdT8dhiGx6OE/C3OBW
+         hbLe15i3jNx0mSstebvNCK8RE0cKbU2yVE7GyGy5Utc+gMNFYhnzUk+dWXERhaA7J/
+         VGw/jrHEevqhlx3XvDCS6BnExR94hKShHb9Yp729P8ES9r7cz31KXt3Rmcaxc0lpWJ
+         FoZWiHLxsCd4EGqkg17TiNINWLutBFP27AF8FxxgK1bJtyW+WqiAODu79i9p+6H0cr
+         L3fbRXSuccRJhESbnzBiMlER7Qv0F8Q+Hx1n03sNrhP8IsWjfPB2zwZrHGs+yCsKUT
+         9Sw6t+CcOQ0eg==
+Date:   Wed, 7 Jun 2023 14:41:20 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the mm-hotfixes tree
-Message-ID: <20230607143512.109cd8c5@canb.auug.org.au>
+Subject: linux-next: duplicate patch in the pm tree
+Message-ID: <20230607144120.01ce4655@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BHUENl5S=4km3I3ZiQUO9SD";
+Content-Type: multipart/signed; boundary="Sig_/i9DfzRcBIBgqRY7qAwEW.rU";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/BHUENl5S=4km3I3ZiQUO9SD
+--Sig_/i9DfzRcBIBgqRY7qAwEW.rU
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In commit
+The following commit is also in nvdimm-fixes tree as a different commit
+(but the same patch):
 
-  ade5d74c84d4 ("lazy tlb: consolidate lazy tlb mm switching fix")
+  8f0e8597a7fa ("ACPI: NFIT: Add declaration in a local header")
 
-Fixes tag
+This is commit
 
-  Fixes: a665eec0a22e1 ("powerpc/64s/radix: Fix mm_cpumask trimming race vs=
- k>
+  40d3f4a65a07 ("acpi: nfit: add declaration in a local header")
 
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
-I guess this is just a quoted commit message in this commit message that
-has confused my script :-(
+in the nvdimm-fixes tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/BHUENl5S=4km3I3ZiQUO9SD
+--Sig_/i9DfzRcBIBgqRY7qAwEW.rU
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmSACQAACgkQAVBC80lX
-0GwoIwf/ee99PttqQRpP/wyg+CQr4NQ96qsRfQICMsO7IrJA59AzQd0GRn7tb7DY
-sgkePdYZKnEtnE+kfo+XH3wfyCZtlkOlVc6SN9jIvaTzYX1mQ2I7+emp5BaHSse7
-5vDZKHUIPH6P2R18x2Eo7TLDJWDbWJr+zEk1GlZ/7TLRbJwkmo4O7ldRp/xEucEC
-Q6JhTtyBLYEJ+uNb3pFdWSED8BEaU0IPr3N9+T2awSh5+4eCp5UJXVm37T1ym1GC
-yMKpHDVBa/GYuaNRcIzmzEgQ+8gCSxHBFBIay/UCoP3TZdquwsQXOlf8AweWFbqO
-VmJ3wWToHfo6ntaKGpfaMm3Qyq/5pw==
-=qN/p
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmSACnAACgkQAVBC80lX
+0GyY+Qf/YOIVQHsPtedkGjXR21JxRBsg0CJvr+Zz8PpWpWjX4zdoRjox42HvuhyS
+RaiENxcbD8l6gGWN110BQ+wRyn9UnIkmJaBXDPWHLRLPrjj1DdpmbxdGVE8S+gQv
+NPzOvJobdqlLw0sDSUuw2rGaUKHkRb3J7yVvix9a8DsvS6E/uYYmI3X3d+LdGUrY
+5Gsq4opc4lHDg3PUpgBTovmK6xkeb0zamBXoXacVjfvRs93uWA5ZF2ytcWilc7dw
+ejDcjLYAaHxoOPrdrsp0KhRmX0QDHIzNu2p5d2Dh3WZYn2wT9hUhT+xki7evJzmc
+wPAxwAJ2F+ZeTH11yh98HesWdMhpmg==
+=7Cht
 -----END PGP SIGNATURE-----
 
---Sig_/BHUENl5S=4km3I3ZiQUO9SD--
+--Sig_/i9DfzRcBIBgqRY7qAwEW.rU--
