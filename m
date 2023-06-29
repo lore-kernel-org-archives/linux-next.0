@@ -2,80 +2,86 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62467EB64D9
-	for <linux-next@archiver.kernel.org>; Thu, 29 Jun 2023 05:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5793EB64DD
+	for <linux-next@archiver.kernel.org>; Thu, 29 Jun 2023 06:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbjF2F7A (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 29 Jun 2023 01:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36206 "EHLO
+        id S231204AbjF2GX7 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 29 Jun 2023 02:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231286AbjF2F6z (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Jun 2023 01:58:55 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0F9010B
-        for <linux-next@vger.kernel.org>; Wed, 28 Jun 2023 22:58:54 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-54fb23ff7d3so186185a12.0
-        for <linux-next@vger.kernel.org>; Wed, 28 Jun 2023 22:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1688018334; x=1690610334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+w/+XUzFde638vXlgROkXuKaEwpU3Rqly43W4sUrfQ=;
-        b=c8HCrFrzyR6kAvj7BAlMhIhllWO/AmUeNBm9ElSuL0AhqoPufVjXW8zph2vPXLxfRB
-         szobyGYO2yADJFWV9ubtxy5oTmxT2UCyEXzxSlXFve/dRmVG+cJkXS9lA0kWWQwOvyW/
-         De9BCr4yzWoONW5lz9x2WyvpYmsfUrIP4T96o=
+        with ESMTP id S231492AbjF2GXy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Jun 2023 02:23:54 -0400
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 406D92D56
+        for <linux-next@vger.kernel.org>; Wed, 28 Jun 2023 23:23:53 -0700 (PDT)
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-562ff11acf5so377145eaf.3
+        for <linux-next@vger.kernel.org>; Wed, 28 Jun 2023 23:23:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688018334; x=1690610334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+w/+XUzFde638vXlgROkXuKaEwpU3Rqly43W4sUrfQ=;
-        b=ewgGDRCvCw3O4NqzQ7H7U/hYMSSd3VOdGLsZ1di04aO/XedbVqdNaWbkiZjDg06Edj
-         LOlpQr74lnTfLSXvFOYVc+yDtL/MWVXYeIJmyVFN5/liInWrhwEg/Sgby6MLlNsD4eNC
-         d+mUC2v5MsfL9kL5tBRUiiXK+XNpQK4WXFbo/o7EMhwXlMWKQkH8u1En4D269PtrnUg5
-         C6AlLZUpsYVdBWOQMwsxbh0j26p03ht/3gpbIVYWu68b4J743Ajqm4YaLRZR4dke6IVH
-         ccZmNbdorQTqiOaNxTDF9BzYuWWmbhJ3syicGACSbdzwhQKNO8h5/lLKdwxyn7BAQ0L6
-         V1TQ==
-X-Gm-Message-State: AC+VfDzry6n3cT7pGiGepfH/amuljfoJOFxB9Nb65uB/19M7E1CZOluf
-        feMWGVW7aTH2GR70+xuKwFaUQA==
-X-Google-Smtp-Source: ACHHUZ4rDS7tekSRoJ1jo+McQvFqinp3GaKs7mJZ6S4LIbc+Ojv+5PaJ5NEXEUUlxPckRuw2hY/8uQ==
-X-Received: by 2002:a05:6a20:8e0c:b0:122:ff52:7331 with SMTP id y12-20020a056a208e0c00b00122ff527331mr23099788pzj.52.1688018334197;
-        Wed, 28 Jun 2023 22:58:54 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id y8-20020a1709029b8800b001b23eb0b4bbsm8505458plp.147.2023.06.28.22.58.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 22:58:53 -0700 (PDT)
-Date:   Wed, 28 Jun 2023 22:58:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     Andrei Vagin <avagin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the seccomp tree
-Message-ID: <202306282258.219B185B@keescook>
-References: <20230629124055.7edf4493@canb.auug.org.au>
- <CANaxB-z0gLxOU-EVnag=pi3cC164stbOVOMmaGMwNs_g43z9_w@mail.gmail.com>
+        d=1e100.net; s=20221208; t=1688019832; x=1690611832;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IpcX8yoGQwtDbbS2InhwrDWLqMJ+UOKxIROuGAmi4E4=;
+        b=SdpB9qsP6hQmeceI9o8LuWMDY8tVMAjDHYKvy0d+MOV0r3QrNMbziZZ9OtNhtgu1kW
+         1iYNSCIOqqtW0q8+yn1yiBh854nWPRR1gOgT79/W/A2Wtqdw27x1hEKvISS/KhOe86tl
+         SdeKKnTZoRGm35cC6cLCK0SlDMwWTUEj21G7ItYsFHbRIxseB01yCeoJKMEIFM4+2KiL
+         mGBwjx3EUfGywD9K366pE15ajnDpG7k1i2/yDUpMZSjDU50qJcWNehKe6upC+pOOIXIa
+         trDfbfKcVPWDfmIiw0rSTifR20ya4+hGS1OhgLvK3QfXC5RjPf1uKbMpoRe4fiE0fct6
+         MLTw==
+X-Gm-Message-State: AC+VfDyjoZToaKBHAqAHGK1a/1kdLk+vEd6ey12vrMd0gbWTDbHJTGQQ
+        gjVBVLGbYXCf52eO3CimWRcZqIxeUQ1gOUuRzWthhVf+RpJN
+X-Google-Smtp-Source: ACHHUZ4OWqm0vehdzke3e3J+zETMbhDo9DI9nEBAGnL7yoqoyvW+/2sgnywN3ZZ+y+SSlxsWCFji9OEyNL2l7l4rcUPxsNr0edsv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANaxB-z0gLxOU-EVnag=pi3cC164stbOVOMmaGMwNs_g43z9_w@mail.gmail.com>
+X-Received: by 2002:aca:de43:0:b0:39c:bfd3:7e with SMTP id v64-20020acade43000000b0039cbfd3007emr12130030oig.10.1688019832673;
+ Wed, 28 Jun 2023 23:23:52 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 23:23:52 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000801b1a05ff3ebee0@google.com>
+Subject: [syzbot] linux-next build error (15)
+From:   syzbot <syzbot+4c222134dc629d256ee8@syzkaller.appspotmail.com>
+To:     linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, lsahlber@redhat.com, pc@manguebit.com,
+        samba-technical@lists.samba.org, sfr@canb.auug.org.au,
+        sfrench@samba.org, sprasad@microsoft.com,
+        syzkaller-bugs@googlegroups.com, tom@talpey.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 10:27:09PM -0700, Andrei Vagin wrote:
-> Probably something went wrong when the patch was applied. I've checked
-> that the patch contains this file:
-> 
-> https://patchew.org/linux/20230308073201.3102738-1-avagin@google.com/20230308073201.3102738-7-avagin@google.com/
-> 
-> Kees, could you take a look at this?
+Hello,
 
-Hmm, it seems something else went wrong too, due to:
-616b14b47a86 ("perf build: Conditionally define NDEBUG")
+syzbot found the following issue on:
 
-I've added "#undef NDEBUG" to the file too.
+HEAD commit:    8b14b70331aa Add linux-next specific files for 20230629
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11079dbf280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=83c17849d18e7a86
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c222134dc629d256ee8
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
--- 
-Kees Cook
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4c222134dc629d256ee8@syzkaller.appspotmail.com
+
+fs/smb/client/cifs_debug.c:169:1: error: label at end of compound statement
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
