@@ -2,99 +2,99 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 029E6C001DC
-	for <linux-next@archiver.kernel.org>; Mon, 24 Jul 2023 01:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FDDC001DE
+	for <linux-next@archiver.kernel.org>; Mon, 24 Jul 2023 02:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229998AbjGXBP4 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Sun, 23 Jul 2023 21:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
+        id S231431AbjGXCRY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Sun, 23 Jul 2023 22:17:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229973AbjGXBPu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Jul 2023 21:15:50 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B80E6D;
-        Sun, 23 Jul 2023 18:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1690161281;
-        bh=HktgO5vl0G8C9YUbjPBosi8STA1pHpsO3kbIOf94AMA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Gb7iizTfYzIsg+YV8piLq5lx3+Aj0JWfU5wPWsm5f6QafFEEIV2TwusDe1FZ7nl9r
-         dGlRvRFMdfLcdCyL0TCCtiqL4ir3z4NUHFV0+xLlSnldDQxRMobRGLK3q9ebNyIiqz
-         bEIX08yvklTOBE91zRmq0+LO/zn2txkNu2Z2CoDtzXJ/6yLhalNc/BllMNPWBK6/7w
-         ji/uDSqnYkT3yvD5T+8Wwp/4sw/rymm/9xSw0RgsOyC1lRov1gTFD72DQP+UH/P3uh
-         R0+ws3EFp+tSGtDr59Ni/O5A4T17Pg69oYwkpO9dKC9HoPwA0JLbstGmApOP2ctLEC
-         I6tE7FqjjtSPA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4R8MdY1Plyz4wyZ;
-        Mon, 24 Jul 2023 11:14:41 +1000 (AEST)
-Date:   Mon, 24 Jul 2023 11:14:39 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Azeem Shaikh <azeemshaikh38@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Mario Limonciello <mario.limonciello@amd.com>
-Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
-Message-ID: <20230724111439.572dc274@canb.auug.org.au>
+        with ESMTP id S231448AbjGXCRH (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Jul 2023 22:17:07 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F07191
+        for <linux-next@vger.kernel.org>; Sun, 23 Jul 2023 19:16:25 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3a1ebb85f99so2958575b6e.2
+        for <linux-next@vger.kernel.org>; Sun, 23 Jul 2023 19:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1690164936; x=1690769736;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=o+ND33l7DGcfgdzuazHgI256/4wtaTEwRk8rIvWZohc=;
+        b=FNNwKNlo8IP9eoQU49S7ik42Hm/ScFAq144l0Q7QNuQG9lQGOcxF0hX1NuJ56NSFmn
+         icFsB2d6kW09nlHW6iv1fGRKuWUJagiB3eTqq6jo7dbJvPFzK6c8E1MuC62t4gQrjO6+
+         ckBo1QO4mzmm3tVmOQSS0OJrys1HIhtdUoA20Dn+qQdjatisi3J+R/vE5yPFfHoWf1aG
+         TzS6CEKxnmbUCSJ62SgFXV5VBeb/b2JxHePPF/0APIjVahWFEtS2Q6H+EiMbH4I1hv3s
+         8CxWyQ9N5wcQMH3FMldjhI/EpIThe1ScPCn9/8sn4Oq0gACuhaPEOOGaPDUNvvQ94B/U
+         DBcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690164936; x=1690769736;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o+ND33l7DGcfgdzuazHgI256/4wtaTEwRk8rIvWZohc=;
+        b=NjGPQF81npj1ImUeob7sQl5LqMzN0biCvFC3zHfV0YS1NmVhBhOsXHjsJRfC1qEI97
+         hzrEROpLWwLgArZGLAId8EXNknS0qaMEv5/5YGO/G5r/zNH0tYBz4pAc68DfC5XZROEX
+         tT7G5YtM2tdtjfVK0BjAAu0K2otr4bdO19ee3FJ3l/ZUxvgn8/Jkoo5Q9bVRy+H6CaEE
+         c7hcDrImNwqS2NgjnMJEfiAw3U2b8yJUC0vwZgFnDWVYMpt/aEnS2LK44KfigeM01Oke
+         X3KGRVeAvDiPFt90yYdD2i7hEI6d14dcemmMog7/DIzSh85aaWJ5wOLgj+WfUa/vy50w
+         jEPA==
+X-Gm-Message-State: ABy/qLYlsJhAaMcFxBzt//m44SaXdaJs6v47EpxMe1Ii8BLsDxp+USyM
+        f7dWTuRsEpWYvmXPeROCaBdnc8XoBpJ0Hm9D6zU=
+X-Google-Smtp-Source: APBJJlFwS+KXuUNigo47o5vI/VrdmhAOZlCbu5JfoOoLVnRXS/dgDuTGu7Rag3zXIjVAEdU0RRSYDA==
+X-Received: by 2002:a05:6808:8a:b0:3a4:88e1:de3d with SMTP id s10-20020a056808008a00b003a488e1de3dmr8230593oic.39.1690164935761;
+        Sun, 23 Jul 2023 19:15:35 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id c1-20020a639601000000b00563826c66eesm5492704pge.61.2023.07.23.19.15.34
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jul 2023 19:15:35 -0700 (PDT)
+Message-ID: <64bddec7.630a0220.4cfa2.8fd7@mx.google.com>
+Date:   Sun, 23 Jul 2023 19:15:35 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sH0=iM1FqtxAIdANAVmW=Ms";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: next
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Kernel: v6.5-rc3-160-g3ab5fb77387e6
+X-Kernelci-Report-Type: build
+Subject: next/pending-fixes build: 2 builds: 0 failed,
+ 2 passed (v6.5-rc3-160-g3ab5fb77387e6)
+To:     linux-next@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/sH0=iM1FqtxAIdANAVmW=Ms
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+next/pending-fixes build: 2 builds: 0 failed, 2 passed (v6.5-rc3-160-g3ab5f=
+b77387e6)
 
-Hi all,
+Full Build Summary: https://kernelci.org/build/next/branch/pending-fixes/ke=
+rnel/v6.5-rc3-160-g3ab5fb77387e6/
 
-Today's linux-next merge of the amdgpu tree got a conflict in:
+Tree: next
+Branch: pending-fixes
+Git Describe: v6.5-rc3-160-g3ab5fb77387e6
+Git Commit: 3ab5fb77387e65d14e9b3e715a7329b5fcdc7a22
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Built: 2 unique architectures
 
-  drivers/gpu/drm/amd/amdgpu/atom.c
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
-between commit:
+Detailed per-defconfig build reports:
 
-  992b8fe106ab ("drm/radeon: Replace all non-returning strlcpy with strscpy=
-")
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
-from Linus' tree and commit:
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
 
-  adf64e214280 ("drm/amd: Avoid reading the VBIOS part number twice")
-
-from the amdgpu tree.
-
-I fixed it up (the latter removed the line updates by the former, so I
-just used the latter) and can carry the fix as necessary. This is now
-fixed as far as linux-next is concerned, but any non trivial conflicts
-should be mentioned to your upstream maintainer when your tree is
-submitted for merging.  You may also want to consider cooperating with
-the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sH0=iM1FqtxAIdANAVmW=Ms
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmS90H8ACgkQAVBC80lX
-0GxM1wf/XLdl4hKitJtv2dj6XaBUCAGjV3XA3nimtUShbdu6EUsci2mCIBVIPmiJ
-pGViVk11DRbVp9ozTv9KRaukjWODu3CBfyQAzqDtK/9CBv1LXuwMAVirAznkaJ+s
-qHEbqUUYdlbm0Vmz3dLe73ZVhD8efsZqlroLC7EXPGNUPBEoSu0BXhr6qF9lVxeS
-vkVl+v39J9YSk6jA2+T0uuv1nPKDAsN7GLZ+6O48/+oXoL7OFN8N3jui0TyAzJqe
-lDeXfjIBRH4J+lR7OAHKBc45sVfE7kBO7yuFz0mAkUs9c1N+m1zJ+pq4N0tBwjBH
-qww2btwR7mgoKSV5qwLGEyIWT+Gsvg==
-=qYcI
------END PGP SIGNATURE-----
-
---Sig_/sH0=iM1FqtxAIdANAVmW=Ms--
+---
+For more info write to <info@kernelci.org>
