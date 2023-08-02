@@ -2,155 +2,106 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C4EC00528
-	for <linux-next@archiver.kernel.org>; Wed,  2 Aug 2023 11:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1C7C04E69
+	for <linux-next@archiver.kernel.org>; Wed,  2 Aug 2023 14:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234165AbjHBLZi (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 2 Aug 2023 07:25:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
+        id S233568AbjHBOsF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 2 Aug 2023 10:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232354AbjHBLZh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Aug 2023 07:25:37 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7F5211E;
-        Wed,  2 Aug 2023 04:25:35 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 372BP8ag113788;
-        Wed, 2 Aug 2023 06:25:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1690975508;
-        bh=+s17pGQ5nw8OJy0W+2beGPow7MJvggP/LQi00STyfv8=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=CXmO842bQMTv5DfngvyShfos6PHbze20mbZ01psfDs3ZI0TYU133tAu4Cj5yztkBX
-         TGrRIAbJlWNqC90w4icblogPt39JEx6iZa1Xk4j3Nh12SC+G46yt5iPOYrgftqIYFP
-         h3ehBrzZ2HIY/penttrFqCdYdC4fMOG1MNzAwZ3c=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 372BP85c014809
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Aug 2023 06:25:08 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
- Aug 2023 06:25:08 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 2 Aug 2023 06:25:08 -0500
-Received: from [10.249.141.75] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 372BP2Vf103322;
-        Wed, 2 Aug 2023 06:25:02 -0500
-Message-ID: <97281aba-a78c-7f75-fc15-af43e4df4907@ti.com>
-Date:   Wed, 2 Aug 2023 16:55:01 +0530
+        with ESMTP id S234542AbjHBOsC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Aug 2023 10:48:02 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D0C11982
+        for <linux-next@vger.kernel.org>; Wed,  2 Aug 2023 07:48:00 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1bbd2761f1bso58111345ad.2
+        for <linux-next@vger.kernel.org>; Wed, 02 Aug 2023 07:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1690987680; x=1691592480;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VppVRXoXQvKZJkFtuRWaz8mbgEZARAeuezBGRcJyOiM=;
+        b=hFYWlhmljE/klwppV++NKW84d/Eesf+FCOvycpSLv1wwCQpDOYdQA/icP3xC4HHRIF
+         7Rvw1vD7plGgiNUFEdgMDG9B+49Prm8n3Uf6scoED+cjMOwuZHCogoPVhnADisSPHX3p
+         HBDr52caGrX81FAcSeufVdwOc1PdpTXeZz/FI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690987680; x=1691592480;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VppVRXoXQvKZJkFtuRWaz8mbgEZARAeuezBGRcJyOiM=;
+        b=SVoJhYHZ0DJ0q8LmtpOLPlJrrvv0hnzp6vt+MZcEVgNt7g+FSMgVofTYd4V7QPjiDc
+         TKLFg4DLVxrYevq5rMXG89CKhiLKj5H5RyxcNgDVdr3m+kYtCuRdDAo33ikR6wp0ol2R
+         WpZ3DOiu4sEpeepJYsyUfrFN9G+JgYe8PKM1W6WYyiqbHz81R8xmvI1zSJWlo7kYzlox
+         RKXNuCyBtoDrG5zc9+9PpVVoImwGiXSWIVRBH+63NC0qPX+6M6lGiO967qos4qca9ful
+         KjrQDT2K+EFfhUjiLZa9kfcc/gyuYAAKcS6MXYHhWw7pyXwlSO+fbZTHtnZK2YY2YKFg
+         lP3Q==
+X-Gm-Message-State: ABy/qLYNl0DXiV08HhvxNjw2XB6okMw30P8IBgDuTwLFKMsSHFC+pPBn
+        aes800sXr/IyJdhbMvTG3atN8Q==
+X-Google-Smtp-Source: APBJJlEnKVmSw5s+REAmb9vIHaq2YjWuJwo5aDKSmHQblkNG/fsPSQTcTnzDbOCmKARtJsRK9TdsIg==
+X-Received: by 2002:a17:902:ec82:b0:1bb:9c45:130f with SMTP id x2-20020a170902ec8200b001bb9c45130fmr19124197plg.69.1690987680161;
+        Wed, 02 Aug 2023 07:48:00 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:6fae:ec4e:7f84:d593])
+        by smtp.gmail.com with ESMTPSA id b21-20020a170902d31500b001b89891bfc4sm12524139plc.199.2023.08.02.07.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Aug 2023 07:47:59 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] drm/panel: Fix todo indentation for panel prepared/enabled cleanup
+Date:   Wed,  2 Aug 2023 07:47:28 -0700
+Message-ID: <20230802074727.2.Iaeb7b0f7951aee6b8c090364bbc87b1ae198a857@changeid>
+X-Mailer: git-send-email 2.41.0.585.gd2178a4bd4-goog
+In-Reply-To: <20230802074727.1.I4036706ad5e7f45e80d41b777164258e52079cd8@changeid>
+References: <20230802074727.1.I4036706ad5e7f45e80d41b777164258e52079cd8@changeid>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 11/12] scsi: ufs: Simplify transfer request header
- initialization
-To:     Bart Van Assche <bvanassche@acm.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, Avri Altman <avri.altman@wdc.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Bao D . Nguyen" <quic_nguyenb@quicinc.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Bean Huo <beanhuo@micron.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Can Guo <quic_cang@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Asutosh Das <quic_asutoshd@quicinc.com>,
-        Po-Wen Kao <powen.kao@mediatek.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Arthur Simchaev <Arthur.Simchaev@wdc.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Nishanth Menon <nm@ti.com>, <d-gole@ti.com>,
-        <linux-next@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20230727194457.3152309-1-bvanassche@acm.org>
- <20230727194457.3152309-12-bvanassche@acm.org>
-Content-Language: en-US
-From:   "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20230727194457.3152309-12-bvanassche@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Bart,
+In commit d2aacaf07395 ("drm/panel: Check for already prepared/enabled
+in drm_panel") the formatting for a code block was not quite
+right. This caused an error when building htmldocs:
 
-On 7/28/2023 1:11 AM, Bart Van Assche wrote:
-> Make the code that initializes UTP transfer request headers easier to
-> read by using bitfields instead of __le32 where appropriate.
->
-> Cc: Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> Cc: Eric Biggers <ebiggers@google.com>
-> Cc: Avri Altman <avri.altman@wdc.com>
-> Cc: Bean Huo <beanhuo@micron.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->   [...]
->   
-> +static void ufshcd_check_header_layout(void)
-> +{
-> +	BUILD_BUG_ON(((u8 *)&(struct request_desc_header){
-> +				.cci = 3})[0] != 3);
-> +
-> +	BUILD_BUG_ON(((u8 *)&(struct request_desc_header){
-> +				.ehs_length = 2})[1] != 2);
-> +
-> +	BUILD_BUG_ON(((u8 *)&(struct request_desc_header){
-> +				.enable_crypto = 1})[2]
-> +		     != 0x80);
-> +
-> +	BUILD_BUG_ON((((u8 *)&(struct request_desc_header){
-> +					.command_type = 5,
-> +					.data_direction = 3,
-> +					.interrupt = 1,
-> +				})[3]) != ((5 << 4) | (3 << 1) | 1));
-> +
-> +	BUILD_BUG_ON(((__le32 *)&(struct request_desc_header){
-> +				.dunl = cpu_to_le32(0xdeadbeef)})[1] !=
-> +		cpu_to_le32(0xdeadbeef));
-> +
-> +	BUILD_BUG_ON(((u8 *)&(struct request_desc_header){
-> +				.ocs = 4})[8] != 4);
-> +
-> +	BUILD_BUG_ON(((u8 *)&(struct request_desc_header){
-> +				.cds = 5})[9] != 5);
-> +
-> +	BUILD_BUG_ON(((__le32 *)&(struct request_desc_header){
-> +				.dunu = cpu_to_le32(0xbadcafe)})[3] !=
-> +		cpu_to_le32(0xbadcafe));
-> +}
-> +
+  Documentation/gpu/todo.rst:469: ERROR: Unexpected indentation.
 
-While building next-20230801 for ARM64 architecture,
+Fix the error by using the proper syntax for a code block.
 
-this patch is giving compilation error
+Fixes: d2aacaf07395 ("drm/panel: Check for already prepared/enabled in drm_panel")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/r/20230802141724.0edce253@canb.auug.org.au
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-In function ‘ufshcd_check_header_layout’,
-     inlined from ‘ufshcd_core_init’ at drivers/ufs/core/ufshcd.c:10629:2:
-././include/linux/compiler_types.h:397:38: error: call to 
-‘__compiletime_assert_554’ declared with attribute error: BUILD_BUG_ON 
-failed: ((u8 *)&(struct request_desc_header){ .enable_crypto = 1})[2] != 
-0x80
-   397 |  _compiletime_assert(condition, msg, __compiletime_assert_, 
-__COUNTER__)
+ Documentation/gpu/todo.rst | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
+index aa0052f9b93b..139980487ccf 100644
+--- a/Documentation/gpu/todo.rst
++++ b/Documentation/gpu/todo.rst
+@@ -465,7 +465,8 @@ Clean up checks for already prepared/enabled in panels
+ 
+ In a whole pile of panel drivers, we have code to make the
+ prepare/unprepare/enable/disable callbacks behave as no-ops if they've already
+-been called. To get some idea of the duplicated code, try:
++been called. To get some idea of the duplicated code, try::
++
+   git grep 'if.*>prepared' -- drivers/gpu/drm/panel
+   git grep 'if.*>enabled' -- drivers/gpu/drm/panel
+ 
+-- 
+2.41.0.585.gd2178a4bd4-goog
 
-compiler information
-
-wget 
-https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu.tar.xz
-
-tar -Jxvf gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu.tar.xz
-
-Build steps
-
-make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- defconfig
-
-make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- Image
-
-
->   [...]
