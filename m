@@ -2,103 +2,98 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93156C41513
-	for <linux-next@archiver.kernel.org>; Wed,  2 Aug 2023 14:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49813C001E0
+	for <linux-next@archiver.kernel.org>; Wed,  2 Aug 2023 14:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234429AbjHBOsE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 2 Aug 2023 10:48:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45314 "EHLO
+        id S234498AbjHBOto (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 2 Aug 2023 10:49:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234509AbjHBOsB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Aug 2023 10:48:01 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9F28E0
-        for <linux-next@vger.kernel.org>; Wed,  2 Aug 2023 07:47:58 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1bbf3da0ea9so32676805ad.2
-        for <linux-next@vger.kernel.org>; Wed, 02 Aug 2023 07:47:58 -0700 (PDT)
+        with ESMTP id S234511AbjHBOtg (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Aug 2023 10:49:36 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCEC4210A
+        for <linux-next@vger.kernel.org>; Wed,  2 Aug 2023 07:49:33 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99c1d03e124so411783866b.2
+        for <linux-next@vger.kernel.org>; Wed, 02 Aug 2023 07:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1690987678; x=1691592478;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=34jvrY9iaBvcRp6RfXdi/NZwehC55dKloV135LCo6Q4=;
-        b=ApOIy6Oof+Qo/7c+FEtdZW+BbrbkSOoTTUlpREhL52s9a/El38htUsBtKsr3weJLV2
-         +dXMUNVFK2+BE/xrnKRHAvNi9FIBpWXkaWXaTtXCl42zHmAoBHaN6lSMr9nZMOEIOlD5
-         3y/xyRf8LbatSRznjLxKSft9jkvkndOkzb/hc=
+        d=chromium.org; s=google; t=1690987771; x=1691592571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aKHkYl6IMr8QnTnvT30Nci/brg8p0pHZBfK3BKGZxuI=;
+        b=Pq+bTdD5N+DD8rAc1KC2k90a8XMV7LkhjQxc3v2pKh8PnyU7kWBUdsFCQYpNZVV6EC
+         hzVPKhAtO4Dpsdb/K/SlkDd+P9SNEHV3MuzO6agsVMjk+NVzIYXSPtfWY+zU55J+LMFw
+         U4vErh2k/QNPBEBRDrUuqt7etJP9KBld9i0PU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690987678; x=1691592478;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=34jvrY9iaBvcRp6RfXdi/NZwehC55dKloV135LCo6Q4=;
-        b=Dr6bR9sbccJnsiJxlVDoGn+QmZb4UpsJnenmWOFnDnLCpvN5DK5z1axmJ2rbAKUmeQ
-         Gq2inmiIcOfOb/BLhtWgI54ZFqE70EcJWt3X4re1qQjMOlTprjFFJDYIuwQg+CBFlQ/r
-         t0oVC30QsTT0GgJ8k1MDtAWcjXNXFdayrGqY0a709QlxLciH6MSGdCvcuOgkFuWEpbsn
-         xZrvhKlGukyn35cduyLJoJOhnosrEsiAbRU7oS51HRy77k6PW4iAKm93yYu5jZVr+8Ph
-         uhr0TGJmDX+xwnONUaKTvpkGtk9903mkjeMrBwOBS+iQxjg2f2ZqbMDE6Niop6KNoteP
-         braw==
-X-Gm-Message-State: ABy/qLYRPhjLh3vf0MhcGemHvyyVNu1SyPhYTDbFwoucvtMM34O0AFOr
-        1iIly7aRT89YfROWfLPpVSWGwA==
-X-Google-Smtp-Source: APBJJlFPjUDZubqVQL75MLrA9AfOwS26wqtyyCObOSfWkCHMjUe1pBsewbKiHvHWQOXGvHbT0dlkoQ==
-X-Received: by 2002:a17:902:ed8c:b0:1b8:28f6:20e6 with SMTP id e12-20020a170902ed8c00b001b828f620e6mr13850468plj.34.1690987678407;
-        Wed, 02 Aug 2023 07:47:58 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:6fae:ec4e:7f84:d593])
-        by smtp.gmail.com with ESMTPSA id b21-20020a170902d31500b001b89891bfc4sm12524139plc.199.2023.08.02.07.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Aug 2023 07:47:57 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] drm/panel: Fix kernel-doc typo for `follower_lock`
-Date:   Wed,  2 Aug 2023 07:47:27 -0700
-Message-ID: <20230802074727.1.I4036706ad5e7f45e80d41b777164258e52079cd8@changeid>
-X-Mailer: git-send-email 2.41.0.585.gd2178a4bd4-goog
+        d=1e100.net; s=20221208; t=1690987771; x=1691592571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aKHkYl6IMr8QnTnvT30Nci/brg8p0pHZBfK3BKGZxuI=;
+        b=kLbCLGkaM8UbWkjVT2zKGiNwH7zU2X9CRlDedGsw4iAG1htuHxWnZh+b/+SAqgH18C
+         Hnjw5Gf7yQBotmlb7KiHhNNepRr/mE4shh/yhAwK6WjpXLjflI2uQpmED+42VfsRA4oZ
+         VOeY9iIW9blcE7N6Vby2ccTdzb0s8Q74qbLb+TguFKamAcQZvRkEywyemeD0/g4TPVoc
+         Zf2VBtv8XYtKavj9cxIolyv2HiHd9T3RJe4dpc0tMq1kK40Zm7QsI/M6F0gAocYe+f+n
+         XOPxWxABLvgX16SItIF2/ZTDDL7ULJaL2EzSOmcUkN4BesL+vsnN9S8SHDU98g9kDcwA
+         EdDA==
+X-Gm-Message-State: ABy/qLYQ5/NdTE/PFtkq2+b//W/VH12BpCqrj1v8CdYclsft32FBpZpZ
+        1rk6x3s1KfVE6HFFOqoPa9d3GlJVjE2mpKyyTMOhU7iT
+X-Google-Smtp-Source: APBJJlGUpV/g4X7rK/rSPbxXarvaZDkdZ/DJNzSjAzxrapsg5EJNIbB3mT75MzDdNsY1VI/nFw/ggQ==
+X-Received: by 2002:a17:907:2bdc:b0:992:d013:1132 with SMTP id gv28-20020a1709072bdc00b00992d0131132mr5284618ejc.1.1690987771126;
+        Wed, 02 Aug 2023 07:49:31 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a21-20020a17090682d500b0099bd8c1f67esm9246000ejy.109.2023.08.02.07.49.30
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Aug 2023 07:49:30 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5229e0603edso11012a12.1
+        for <linux-next@vger.kernel.org>; Wed, 02 Aug 2023 07:49:30 -0700 (PDT)
+X-Received: by 2002:a50:9f84:0:b0:521:f642:7183 with SMTP id
+ c4-20020a509f84000000b00521f6427183mr415975edf.1.1690987770404; Wed, 02 Aug
+ 2023 07:49:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230802141724.0edce253@canb.auug.org.au>
+In-Reply-To: <20230802141724.0edce253@canb.auug.org.au>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 2 Aug 2023 07:49:18 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V4RmorrEu9oGrW+ovBXn+nC_APVhH-M+mHHXYoYLYRPQ@mail.gmail.com>
+Message-ID: <CAD=FV=V4RmorrEu9oGrW+ovBXn+nC_APVhH-M+mHHXYoYLYRPQ@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the drm-misc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-In the kernel doc for the `follower_lock` member of `struct drm_panel`
-there was a typo where it was called `followers_lock`. This resulted
-in a warning when making "htmldocs":
+Hi,
 
-  ./include/drm/drm_panel.h:270: warning:
-  Function parameter or member 'follower_lock' not described in 'drm_panel'
+On Tue, Aug 1, 2023 at 9:17=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>
+> Hi all,
+>
+> After merging the drm-misc tree, today's linux-next build (htmldocs)
+> produced this warning:
+>
+> Documentation/gpu/todo.rst:469: ERROR: Unexpected indentation.
+>
+> Introduced by commit
+>
+>   d2aacaf07395 ("drm/panel: Check for already prepared/enabled in drm_pan=
+el")
 
-Fix the typo.
+Thanks for the report. I've posted:
 
-Fixes: de0874165b83 ("drm/panel: Add a way for other devices to follow panel state")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/r/20230802142136.0f67b762@canb.auug.org.au
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+https://lore.kernel.org/all/20230802074727.2.Iaeb7b0f7951aee6b8c090364bbc87=
+b1ae198a857@changeid/
 
- include/drm/drm_panel.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+To fix this one.
 
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index d6c73f79c131..10015891b056 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -238,7 +238,7 @@ struct drm_panel {
- 	struct list_head followers;
- 
- 	/**
--	 * @followers_lock:
-+	 * @follower_lock:
- 	 *
- 	 * Lock for followers list.
- 	 */
--- 
-2.41.0.585.gd2178a4bd4-goog
-
+-Doug
