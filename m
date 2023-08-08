@@ -2,71 +2,100 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A34C04E69
-	for <linux-next@archiver.kernel.org>; Tue,  8 Aug 2023 17:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5864AC04A6A
+	for <linux-next@archiver.kernel.org>; Tue,  8 Aug 2023 17:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233603AbjHHRC3 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60044 "EHLO
+        id S233528AbjHHRFB (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232608AbjHHRBg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Aug 2023 13:01:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B577E83FF;
-        Tue,  8 Aug 2023 09:01:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C94E6247B;
-        Tue,  8 Aug 2023 10:00:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A741C433C7;
-        Tue,  8 Aug 2023 10:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1691488845;
-        bh=BGUL+qNSCUWi9ZEQC6QhBehpq2QULwLyZTNcXPm/ovU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2EY1SRBTnioimod2ujKyEau2Qnr4sdRQja7UuuRRyI2wH6u4+yhLvc4QUqRnqtYFP
-         89+osvVUdrFemY7ObuzHBB7Q6jVYe+dyqgxIajj6RuDPc4BhkbcmnkJZQ8YPXNVgTp
-         NiUapof4K/RgWTVmW/jlURswvN+lYQyK6i7486us=
-Date:   Tue, 8 Aug 2023 12:00:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ladislav Michl <oss-lists@triops.cz>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-usb@vger.kernel.org, linux-mips@vger.kernel.org,
-        lkft-triage@lists.linaro.org, Thinh.Nguyen@synopsys.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: Re: [PATCH] usb: dwc3: dwc3-octeon: Verify clock divider
-Message-ID: <2023080830-wincing-goldmine-def9@gregkh>
-References: <ZNIM7tlBNdHFzXZG@lenoch>
+        with ESMTP id S229928AbjHHRET (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Aug 2023 13:04:19 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A255C0CE;
+        Tue,  8 Aug 2023 09:01:55 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-522ab557632so7769686a12.0;
+        Tue, 08 Aug 2023 09:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691510474; x=1692115274;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wVJtUMt/BxMqwUFh+dHgnZF1r8XeCDF5odP/kn3cxz0=;
+        b=UP4ke88wT6rw7s4obg4WhmguB/ppbK4Z90v0PPgDZugD48ER5dhOnJXFdg4ITEep6E
+         UWG8uDKIovsLXBz++gT/HxuQszgsBaRC3YTQMWXJaEt9c0kbk10jThHh5evtyfiPRpLo
+         1hcFAmEYbXaw4oI3QvJEfaN96s4/e1IWQfocoiagY+eME3X98tTz+Honl0wdkq54r2Nn
+         wR14wmaoVYElrL65AChWdKg1kk/twBRvJEsZLkcuknlV3brwmZjZUni/Dir9PbOePmcS
+         SbA4qUceLUo0d5octECVD16W7ZaKZgOoN09iZHla9aE8vJK+xTXA3H5TepFsFdT24Hg6
+         eltQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691510474; x=1692115274;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wVJtUMt/BxMqwUFh+dHgnZF1r8XeCDF5odP/kn3cxz0=;
+        b=AX5KGsKOxbZGBQH4NTcvgnmDTotQaipZ0cowqh36YyrtJtMWV7Zgol5iuAJJb0gjiv
+         s4IzmACwUpDyGAgFaXiQi33C5k3/dMCUSDJEgY9rJxxf8XEoE0AZCCF4qbrZjGKEuO8W
+         u0SKZF4545yzFybpwS5vQMVI/VHtWp+tTyXQWV6gzCRGzthqsfrcbOrj6xZuKF+fyvWO
+         Ji+zX7cRHn0X0urSumHKjrPHdwHn6m+5sEzyFaapSPviieeDZ4b/2X8s32PQVTqqooJU
+         HBz/sOdyLrvNco6SeunR5ewetfFhSX7VSpWnBzvcBhOHzQWXBhnwp+W/gLl1cH75tS1Q
+         pZSQ==
+X-Gm-Message-State: AOJu0YwHkEl1DUtitQlx199fq2LINSzeUJnnUejSNV3fnNa1l1NlXBpj
+        G/+OZOKWS9lVLszhzPhI2guCji71wgE=
+X-Google-Smtp-Source: AGHT+IHekyGUIBsdZLnGJtKwLjfmqf/nwXuqIVItxJnBXOcDL5IYT9fu0CviRy0Yt0Hox5cwVcQCWw==
+X-Received: by 2002:a2e:9c8a:0:b0:2b6:b6c4:6e79 with SMTP id x10-20020a2e9c8a000000b002b6b6c46e79mr8090041lji.1.1691475969105;
+        Mon, 07 Aug 2023 23:26:09 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:16f8:1500::5? (dc78bmyyyyyyyyyyyyyct-3.rev.dnainternet.fi. [2001:14ba:16f8:1500::5])
+        by smtp.gmail.com with ESMTPSA id e22-20020a2e8ed6000000b002ba123cb784sm2121390ljl.99.2023.08.07.23.26.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Aug 2023 23:26:08 -0700 (PDT)
+Message-ID: <f7a20a95-48fa-edc0-9724-bfb4484c155a@gmail.com>
+Date:   Tue, 8 Aug 2023 09:26:08 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZNIM7tlBNdHFzXZG@lenoch>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: linux-next: Signed-off-by missing for commit in the iio tree
+Content-Language: en-US, en-GB
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20230808083925.7109a675@canb.auug.org.au>
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20230808083925.7109a675@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 11:37:50AM +0200, Ladislav Michl wrote:
-> From: Ladislav Michl <ladis@linux-mips.org>
+Thanks Stephen!
+
+On 8/8/23 01:39, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Although valid USB clock divider will be calculated for all valid
-> Octeon core frequencies, make code formally correct limiting
-> divider not to be greater that 7 so it fits into H_CLKDIV_SEL
-> field.
+> Commits
 > 
-> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230808/testrun/18882876/suite/build/test/gcc-8-cavium_octeon_defconfig/log
-> ---
->  Greg, if you want to resent whole serie, just drop me a note.
->  Otherwise, this patch is meant to be applied on to of it.
+>    a00cf70f16c9 ("iio: light: bd27008: Support BD27010 RGB")
+>    16a9947646f7 ("iio: light: bu27008: add chip info")
+>    ae8c47c51e5c ("dt-bindings: iio: ROHM BU27010 RGBC + flickering sensor")
+> 
+> are missing a Signed-off-by from their committer.
+> 
 
-On top of what series?
+I am 99% sure I had SoB tags added in patches. Seems like they have been 
+lost in the action.
 
-confused,
+Jonathan, do you need me to respin patches or how do you think we should 
+fix this?
 
-greg k-h
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
