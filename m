@@ -2,157 +2,99 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432DFC001B0
-	for <linux-next@archiver.kernel.org>; Tue,  8 Aug 2023 17:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD39C04A6A
+	for <linux-next@archiver.kernel.org>; Tue,  8 Aug 2023 17:39:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231537AbjHHRcL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:32:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46652 "EHLO
+        id S234770AbjHHRjT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:39:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234758AbjHHRb1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Aug 2023 13:31:27 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6BA7ECC
-        for <linux-next@vger.kernel.org>; Tue,  8 Aug 2023 09:13:37 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id ada2fe7eead31-44756c21105so3806214137.1
-        for <linux-next@vger.kernel.org>; Tue, 08 Aug 2023 09:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1691511179; x=1692115979;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aG4Be33mMpkCNVMZIxmyY7s+TDhQZJdB16xMZkEWkTo=;
-        b=gV3hjKGXrcBjSsbJkZZRKvr1DNkhK4aX1+ejZQ4OdDlbUbF6Hbt96g7WCNcwSj1xGF
-         aSiXiJ17goiH0nkVSlVzBjslgVv6LGAMiY48MYhwuKusHxEcCY+jWHxO4PQ5Ochcdqku
-         X3oJSmClDsby+8xFlcItwqBZ/L2BjkUcBhrtn5jEtSiGXLjmxWpMJ4dYuMhujrxX++tD
-         R2jPAkQs483hhmLb8MyVDXY0wzBrGxM+Q+gYCEf3gMLn85M3J910G0RKPUB94nfVKtQ6
-         dqw99ogBUFZ2LA1O+aBTecBqmhSHXhU9iRwxtwPrLlG6z89oblKrf0VbqpVR2cj1Nsny
-         k5aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691511179; x=1692115979;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aG4Be33mMpkCNVMZIxmyY7s+TDhQZJdB16xMZkEWkTo=;
-        b=bNF/YvTBqc85+EpJ2NsZQRbOnxS0KaKUgIQJcBbGDoK5O5HyZLQyZKVWRF3O65pLub
-         Q0LQn/zPpskzorKWFNBwMnlzFT2nXh0zstRRNC/3L+THhjcQw/KDVyQ/aSPxC3jcj80Y
-         LupOYgNDpZEl+CnYgrWfAPxobM9sV3jYX+qFD2BNjBYBmR7vnoPWTAoThjXTl+O2tSAJ
-         dgFIhmHMNVlkBm0N4Drf2ibTxBrZHCz+88fByjwToOCUkBtXKeowbJkcaHouDWiP/bFW
-         0Q2YpP81m79SumjVtvnOnwHYJDbYVmvKuadnF2vsRTKGSKnC+fyNrQrXA+WpTUaPTtz+
-         TedQ==
-X-Gm-Message-State: AOJu0YwJ2e+b+hTWDX5LgV/JhxiybV5TB1tnfZC9zR4ZSVAgFsZ+3xah
-        FcBv+XII95ClbD+lZ56wRWGLyXum7DiHc1SPFARKbQ==
-X-Google-Smtp-Source: AGHT+IGXr+ecrP0PrAa4f0FHTqVAqjzc1Kfl2OhdXiW+qgy9D9zG8xzQLfaSRetOvkzrpEMKddfvnw==
-X-Received: by 2002:a17:902:c945:b0:1bc:3908:14d with SMTP id i5-20020a170902c94500b001bc3908014dmr11852007pla.2.1691468392215;
-        Mon, 07 Aug 2023 21:19:52 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id p8-20020a170902a40800b001b8b73da7b1sm7757656plq.227.2023.08.07.21.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 21:19:50 -0700 (PDT)
-Message-ID: <64d1c266.170a0220.aed27.e2eb@mx.google.com>
-Date:   Mon, 07 Aug 2023 21:19:50 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S233354AbjHHRip (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Aug 2023 13:38:45 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22961195A;
+        Tue,  8 Aug 2023 09:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1691481373;
+        bh=okc1bHJRjvmsHv8sh2mNg8kwKuXa47ayMSGEUB6jnqc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=REL6224q0qV7HWdfF6abIJ6hhcwLw8kt68mfSyk1XTzvtncAT7Gisdm1lHeJnCSCC
+         nyzCgTUTkQYlPLhAIRLNIVw4YwqVwd8DnVSzaQd0FgRU32rxZ+Ocuz2mWGYt7aTLam
+         il/SIgIVla+xYBYelZK4x43HsWUOLixyl7HBbrudYmw8IRRJj+TjZaj/2wDolvtGEK
+         jyATFlWc3kLfVy/mgfHr91SC5sTRpmmSBjgSMVQygzSCo0CW2HEUPi0LAVmYQy9b36
+         8ngBF6CvisRPJRwE72b3zxQVb6GyI9AH0dLmG17vsW3/nme7y1jKgcfZRI2VvawWkq
+         jeQoXhCXzW97g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RKlqw6FcVz4wbv;
+        Tue,  8 Aug 2023 17:56:12 +1000 (AEST)
+Date:   Tue, 8 Aug 2023 17:56:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the iio tree
+Message-ID: <20230808175600.145ecf97@canb.auug.org.au>
+In-Reply-To: <f7a20a95-48fa-edc0-9724-bfb4484c155a@gmail.com>
+References: <20230808083925.7109a675@canb.auug.org.au>
+        <f7a20a95-48fa-edc0-9724-bfb4484c155a@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v6.5-rc5-223-g453869586392
-X-Kernelci-Tree: next
-X-Kernelci-Branch: pending-fixes
-Subject: next/pending-fixes baseline: 61 runs,
- 2 regressions (v6.5-rc5-223-g453869586392)
-To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; boundary="Sig_/1dJkSKdaUgS2DlXXEws0e=X";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-next/pending-fixes baseline: 61 runs, 2 regressions (v6.5-rc5-223-g45386958=
-6392)
+--Sig_/1dJkSKdaUgS2DlXXEws0e=X
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Regressions Summary
--------------------
+Hi Matti,
 
-platform           | arch  | lab         | compiler | defconfig | regressio=
-ns
--------------------+-------+-------------+----------+-----------+----------=
---
-kontron-pitx-imx8m | arm64 | lab-kontron | gcc-10   | defconfig | 2        =
-  =
+On Tue, 8 Aug 2023 09:26:08 +0300 Matti Vaittinen <mazziesaccount@gmail.com=
+> wrote:
+>
+> Thanks Stephen!
+>=20
+> On 8/8/23 01:39, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Commits
+> >=20
+> >    a00cf70f16c9 ("iio: light: bd27008: Support BD27010 RGB")
+> >    16a9947646f7 ("iio: light: bu27008: add chip info")
+> >    ae8c47c51e5c ("dt-bindings: iio: ROHM BU27010 RGBC + flickering sens=
+or")
+> >=20
+> > are missing a Signed-off-by from their committer.
+> >  =20
+>=20
+> I am 99% sure I had SoB tags added in patches. Seems like they have been =
+lost in the action.
 
+The missing SOB is from the committer not the author.
 
-  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
-v6.5-rc5-223-g453869586392/plan/baseline/
+--=20
+Cheers,
+Stephen Rothwell
 
-  Test:     baseline
-  Tree:     next
-  Branch:   pending-fixes
-  Describe: v6.5-rc5-223-g453869586392
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  SHA:      453869586392a5c4f570ba90c557219a65fff41a =
+--Sig_/1dJkSKdaUgS2DlXXEws0e=X
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTR9RAACgkQAVBC80lX
+0GwiZwf+K+LTEteRRWwhgKpwsXcEKINsk2BZluaTUVkkzn9+QdbvDMuwURwKGkMk
+dVnJi81LVP6eSPbcVmu+m6S92nXEO1OToZGVxvM3NO7+wA8YLiz7NupWSFUYxK4i
+vjjFXI1+2TXiqbEdiOSmXz9szo0syfChAu10FrNrX4vbqyqPwmvvc4jM8YkUIwD3
+2AcPMm/o31vxarOAenQrULtZlsmQn6rKb7F5el5D1Q/m+pJ20fTCBwrGB6AVodgb
+3T98eAzy5rG4wdhuY/i2JEMQs5NOeAVAwpSJbeqglMT769W/eMzWkii6FARG0//J
+gLVgvH2tRGHh4uy82kBFZe4CyZQb6A==
+=TWRp
+-----END PGP SIGNATURE-----
 
-Test Regressions
----------------- =
-
-
-
-platform           | arch  | lab         | compiler | defconfig | regressio=
-ns
--------------------+-------+-------------+----------+-----------+----------=
---
-kontron-pitx-imx8m | arm64 | lab-kontron | gcc-10   | defconfig | 2        =
-  =
-
-
-  Details:     https://kernelci.org/test/plan/id/64d1917095eada8fb435b42d
-
-  Results:     51 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//next/pending-fixes/v6.5-rc5-22=
-3-g453869586392/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-pitx-im=
-x8m.txt
-  HTML log:    https://storage.kernelci.org//next/pending-fixes/v6.5-rc5-22=
-3-g453869586392/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-pitx-im=
-x8m.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/64d1917095eada8fb435b430
-        new failure (last pass: v6.5-rc5-186-g6c8c4ff08090a)
-
-    2023-08-08T00:50:30.786335  / # #
-    2023-08-08T00:50:30.888578  export SHELL=3D/bin/sh
-    2023-08-08T00:50:30.889320  #
-    2023-08-08T00:50:30.990694  / # export SHELL=3D/bin/sh. /lava-373942/en=
-vironment
-    2023-08-08T00:50:30.991056  =
-
-    2023-08-08T00:50:31.091731  / # . /lava-373942/environment/lava-373942/=
-bin/lava-test-runner /lava-373942/1
-    2023-08-08T00:50:31.092184  =
-
-    2023-08-08T00:50:31.096998  / # /lava-373942/bin/lava-test-runner /lava=
--373942/1
-    2023-08-08T00:50:31.162860  + export 'TESTRUN_ID=3D1_bootrr'
-    2023-08-08T00:50:31.163001  + cd /lava-373942/1/tests/1_bootrr =
-
-    ... (10 line(s) more)  =
-
-
-  * baseline.bootrr.dwc3-usb1-probed: https://kernelci.org/test/case/id/64d=
-1917095eada8fb435b440
-        new failure (last pass: v6.5-rc5-186-g6c8c4ff08090a)
-
-    2023-08-08T00:50:33.562403  /lava-373942/1/../bin/lava-test-case
-    2023-08-08T00:50:33.562830  <8>[   18.280734] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Ddwc3-usb1-probed RESULT=3Dfail>
-    2023-08-08T00:50:33.563110  /lava-373942/1/../bin/lava-test-case   =
-
- =20
+--Sig_/1dJkSKdaUgS2DlXXEws0e=X--
