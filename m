@@ -2,99 +2,81 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE53C001B0
-	for <linux-next@archiver.kernel.org>; Tue,  8 Aug 2023 21:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977FDC001DB
+	for <linux-next@archiver.kernel.org>; Tue,  8 Aug 2023 22:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbjHHViL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 8 Aug 2023 17:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43536 "EHLO
+        id S230486AbjHHWPo (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 8 Aug 2023 18:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230232AbjHHViG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Aug 2023 17:38:06 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB47B2E7C7
-        for <linux-next@vger.kernel.org>; Tue,  8 Aug 2023 09:29:48 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fe216edaf7so35270e87.0
-        for <linux-next@vger.kernel.org>; Tue, 08 Aug 2023 09:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691512171; x=1692116971;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lh7vVq+lBNgLIRPH9xxdchgiIa0a10vMXaN7DcI4VXc=;
-        b=J+w/CFNAwMXR7/WLNcBnw9CHgdC9ozsFVYrR77X2s0GKWqlvXNczC6Bd9sPzd7oEnq
-         2aML1Ux5OhENDKfWN+Ff5BdR2ZFfQfBObivCNnHHBCZIC0O5SsgvEr70D6kPC78kSXxS
-         HeHz0CI5zrfIh85bCJYR45LXcQnCw8mO43YvsQP2z/8xksGPHnMRg3/noIRiEm8PiB00
-         mUt7FvBIznsmUbwUcL1fvnTZEuDsV0VGgPcT8odz+PNQdfdxUvrZKqXPL2gltugEfVDi
-         m2OuQJwzIKMV3YdOAMS+UgC4+ib5sjRTLKTTO7u5Dey3zy3GReAz7AtUpH1HFWipkGo+
-         /qZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691512171; x=1692116971;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lh7vVq+lBNgLIRPH9xxdchgiIa0a10vMXaN7DcI4VXc=;
-        b=dndBzxJuS7siK4SUmbPkYZ75oIWA9/Dt899IvCNRVmu/5di2ji7X+YSpXgDZ8wr/wV
-         CyttSlRovTdyHxnd5r2NUz4WKcNT3bE8PF2Sghbk4kxx+FcsyMuHWrXs9+uNoa+IZi6S
-         Xw1Oj2OxcZXyk/KeQM1au/xJPdLLmsT5Ps9DSY2UfZc8PJaeeLj/iliq6p5TJhhR0Cu6
-         DbjLRyd1+H/JM8RQB9J6xa5HcF8SMufMWusR5m1qEJ7d6xKpfPMaBHLlAvdbss6GnQNc
-         KUHo2dnZHA0ZcDsCYrVcAYDy0GPhCHsahz9cjxrr8ap1viYeW6GcdUT2n5KfoD5kWBR3
-         j0Sw==
-X-Gm-Message-State: AOJu0YxCsEWDBS3+KfeSzWIFyrjcePAd8psViGSD2TgqXsT5q8hkJk9x
-        Lj/blwLvFhiKPE1VXepPEkBfeO29Mko=
-X-Google-Smtp-Source: AGHT+IFVdet6P7pamaYQCdT/9KDI9EZx6uC0iW72eggWnpMt/hWSErFnz0Z77X1f5cmXEaHHANP6WA==
-X-Received: by 2002:a05:6512:10cf:b0:4f8:4b19:9533 with SMTP id k15-20020a05651210cf00b004f84b199533mr2325210lfg.19.1691476147113;
-        Mon, 07 Aug 2023 23:29:07 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:16f8:1500::5? (dc78bmyyyyyyyyyyyyyct-3.rev.dnainternet.fi. [2001:14ba:16f8:1500::5])
-        by smtp.gmail.com with ESMTPSA id n11-20020ac2490b000000b004fe20737eddsm1760212lfi.254.2023.08.07.23.29.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Aug 2023 23:29:06 -0700 (PDT)
-Message-ID: <77da4183-465b-54be-5429-821f7cafb909@gmail.com>
-Date:   Tue, 8 Aug 2023 09:29:06 +0300
+        with ESMTP id S229899AbjHHWPn (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Aug 2023 18:15:43 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C0E10F7;
+        Tue,  8 Aug 2023 15:15:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1691532936;
+        bh=thKNqYKxYm0ppZesSrFSwrwcnW1fyw5bW2bBB/OwfLM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OsdnV5Xzeq0rORcbEzoaQaNpgXAZXKdgZF15pF6qWVCrdxo4UmQHnCv6JllER749M
+         lZRbnHn+NvUXlkDvm/62cDwOexNQqTOqHhdBiE85gUo3Ki9zdT1Mb4otliOmqEGipQ
+         J09hCVZ+0oPLbnwut4gD64G5yNzrBzyq2Z5tZsJysj8LiyN67IF/aH/JP9n0GbWC7J
+         jLxogJDD4qUyOuK7Yr1cMVY5/nu+GARr/PIvxcM99BVuljobFPjMJKvYLRO/0BMk0m
+         XRehPfIEXmH0yl1e20jRZfNfhU4RmTigvZuDmoW1eMqHGEIo7/PsYhNOaE1daxGT9K
+         //7cRyJWEh/hw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RL6vX3mYTz4wbv;
+        Wed,  9 Aug 2023 08:15:36 +1000 (AEST)
+Date:   Wed, 9 Aug 2023 08:15:24 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Lee Jones <lee@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: unexpected file in the mfd tree
+Message-ID: <20230809081524.006da553@canb.auug.org.au>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: linux-next: Signed-off-by missing for commit in the iio tree
-Content-Language: en-US, en-GB
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20230808083925.7109a675@canb.auug.org.au>
- <f7a20a95-48fa-edc0-9724-bfb4484c155a@gmail.com>
-In-Reply-To: <f7a20a95-48fa-edc0-9724-bfb4484c155a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/KQGZ8vpq90rHKR+mPTI5fc9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On 8/8/23 09:26, Matti Vaittinen wrote:
-> Thanks Stephen!
-> 
-> On 8/8/23 01:39, Stephen Rothwell wrote:
->> Hi all,
->>
->> Commits
->>
->>    a00cf70f16c9 ("iio: light: bd27008: Support BD27010 RGB")
->>    16a9947646f7 ("iio: light: bu27008: add chip info")
->>    ae8c47c51e5c ("dt-bindings: iio: ROHM BU27010 RGBC + flickering 
->> sensor")
->>
->> are missing a Signed-off-by from their committer.
->>
-> 
-> I am 99% sure I had SoB tags added in patches. 
+--Sig_/KQGZ8vpq90rHKR+mPTI5fc9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-100% sure now :)
+Hi all,
 
-https://lore.kernel.org/all/cover.1690958450.git.mazziesaccount@gmail.com/
+Commit
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+  bb60922c31d0 ("mfd: Explicitly include correct DT includes")
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+added this unexpected file:
 
+  drivers/mfd/rz-mtu3.c.rej
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KQGZ8vpq90rHKR+mPTI5fc9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTSvnwACgkQAVBC80lX
+0GxcSwf9HppF+pL9dvbFonlaTMmi67LPLFZYqu2xNoLymk2b+pbnlEZjBAi2EQgG
+GMQGUvGQdS0k6wi44GYpAFUo6AR18UA5eDHa4sH7GO3o8qyraddWnmlmVS/twxCC
+kQyZVums0tKxIqh+6I4yO9GLJImcwqCxZfouVYBoLnUwsSTojjBMwODihpObm2u5
+8DJSy3SIBNHArFs+npqpdhW1A3o4fyvCSCxoK2Bf4eUnhtmv6fMbPkyEwPEzinCP
+9HvLiOenmy7NAsMFT07d1qLp+loHOudm12lKkqjne0JHs25dyLiNaVTnW0oDpwVh
+j3T2ZbpJHhZCzKG6QanN3hmVVOTkoQ==
+=Q12J
+-----END PGP SIGNATURE-----
+
+--Sig_/KQGZ8vpq90rHKR+mPTI5fc9--
