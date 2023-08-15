@@ -2,96 +2,89 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F89C04FDF
-	for <linux-next@archiver.kernel.org>; Tue, 15 Aug 2023 06:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F29A7C41513
+	for <linux-next@archiver.kernel.org>; Tue, 15 Aug 2023 07:25:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234964AbjHOG7I (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 15 Aug 2023 02:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51034 "EHLO
+        id S234784AbjHOHZH (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 15 Aug 2023 03:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235364AbjHOG67 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2023 02:58:59 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DD0E45;
-        Mon, 14 Aug 2023 23:58:58 -0700 (PDT)
+        with ESMTP id S234873AbjHOHY7 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2023 03:24:59 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854B2170C;
+        Tue, 15 Aug 2023 00:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1692082737;
-        bh=tRD9V3SZZ/ZdRZnXIe4M5/31IA4xtgNRtQavwRuaq9g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Cj7D6z2eiwcOaG8wAqSvM41Kmr1fNtqJ1zseMYuk9wbv+HKUHAFl3eHgnF+uyA6fF
-         IYpX1yUym1AmpSyiqz1MoYgPJWG0w8l7PPmUIMwGSTKj3HfaVVYGu/1WSxFvX0YdFb
-         u4rQGSwaZlPM/ZeXg5r2F9uw1Go2FAF15IRkM4kfVGd1qRrdOoBvKh1HyQT/ST6DGB
-         DqezbH1kSH/XrB7jfm2RA9fAQRBXNx8fcjSZ3wJP21Gs2r3F+9R6ip8yklWvWnuz2a
-         +0mre9uIOJdhva+qJYMUnhUTehrVOxbbACRtjfCFyKzpWiNG1n79EIU0FKvFkglVA3
-         Ben1f8D2wHPkg==
+        s=201702; t=1692084295;
+        bh=WVROmxHmcXHm9z36Ot89dVtDUF9kZWICXVlnnzdqtbY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=n4Txwx26ZnjiunkoTebpKkdv1r2KvZrAxpLc1+nfCrGDDl6HPEF0+WvsMddldGUk4
+         OS+PTQK0qrZoZuTgg/TgpE+fYdmr3brewcEC/JhJWb+teLUSoT93RG/hYHjdNysS3K
+         zsrelzNsllRx/L1/GkfvYOeZHZIQNn9DQj7jUA5c3e6RYDcoHtoThcWkwLkbbFuKlz
+         eJUBcUbQ0n8BCl545Lh0lEaB+iUv38uq+VzQVDNI9yGF2ptZmwU158agTiR/DklAwV
+         SvRw6Q+XhLy0D/Vxlz5a4EvPV6Vg1KPGDbnIKzLL88dqA5VV58izgpF/Q4BtrPt5OT
+         uTFqdrhFzUT7A==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RQ2Dd1WVDz4wbP;
-        Tue, 15 Aug 2023 16:58:57 +1000 (AEST)
-Date:   Tue, 15 Aug 2023 16:58:56 +1000
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RQ2pb175wz4wbP;
+        Tue, 15 Aug 2023 17:24:54 +1000 (AEST)
+Date:   Tue, 15 Aug 2023 17:24:54 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>
-Cc:     Henning Schild <henning.schild@siemens.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+To:     Greg KH <greg@kroah.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Ripard <mripard@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the drivers-x86 tree
-Message-ID: <20230815165856.051fb20f@canb.auug.org.au>
-In-Reply-To: <20230815165725.30a01fe9@canb.auug.org.au>
-References: <20230815165725.30a01fe9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Message-ID: <20230815172454.138a386b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vM9okV9eVpnsW5WUw8RmpCh";
+Content-Type: multipart/signed; boundary="Sig_/GV5=6m781WIX8U9LZaZq3bS";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/vM9okV9eVpnsW5WUw8RmpCh
+--Sig_/GV5=6m781WIX8U9LZaZq3bS
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi all,
 
-On Tue, 15 Aug 2023 16:57:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi all,
->=20
-> The following commit is also in the watchdog tree as a different commit
-> (but the same patch):
->=20
->   3fce06406c59 ("watchdog: make Siemens Simatic watchdog driver default o=
-n platform")
->=20
-> This is commit
->=20
->   926df9ae133d ("watchdog: make Siemens Simatic watchdog driver default o=
-n platform")
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-in the watchdog tree.
+ERROR: modpost: missing MODULE_LICENSE() in drivers/base/test/root-device-t=
+est.o
+ERROR: modpost: missing MODULE_LICENSE() in drivers/base/test/platform-devi=
+ce-test.o
+
+Caused by commits
+
+  06188bc80ccb ("drivers: base: Add basic devm tests for root devices")
+  b4cc44301b9d ("drivers: base: Add basic devm tests for platform devices")
+
+I have used the driver-core tree from next-20230809 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/vM9okV9eVpnsW5WUw8RmpCh
+--Sig_/GV5=6m781WIX8U9LZaZq3bS
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTbIjAACgkQAVBC80lX
-0GxMDAf/UN9T/RUR1QdmngnG1ieHcdCYFKJW50MrcsiZsbY3WWbfSX0C/myQkoKh
-PXM2cM1rzBnLyy7Y9aVOtC0HW5dqqL4HEFj8p/4sTRmbk0s3jxPblIWsAUqQPZLI
-b+xivDhq3PNCzsBOaW5jegjYoJdFd/8s+1trOGdCnACB5jmce7SYPc6HApXmbIHk
-vRN/UlPURQb6J8sk07U7wFx2YSFEV9njrouzlngujvkGZL9D7k16eYN0Vcl7wgSE
-6hrPG9E7kr6PkZSm37K49M1nO9yb961SU1hQzEZET7xIFD/xi0t+S7tf4CfDLgYn
-S21x7qgKEN3XVbdy7AZ0slp61eJP2Q==
-=H1cx
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTbKEYACgkQAVBC80lX
+0GwJ8gf8D9poKK6wW1IRp6EFtAJIb9Z37x1mN0JlQLC+TGmDsHSFPI975LXrMNy3
+dOCll2d8PrSvwi0jgFAl1en0e8ZMqhkUSSrsudtIPczOERO+LNqpnqH8Z3ikn1RB
+8anEGNgiw2ab4QufeREFbcsHPAQNXvCJigJJyAKUffAfu2PtTh5C0t39IVtxHZOt
+B7upZArfF66MHBfcnlVRO/UboO4mKIf8gextGRcArJ6rJuH4yJG4Y4TSMFsquzwX
+/ezhu5J0e+dD9fyLALXNbfFiMI5UYkdyc4BYCyGdg93n3GKoAz1sUtEGMZAvIeHD
+iZdNI6RTYfJeM0+m5sEwikeYTkLDQQ==
+=SjAV
 -----END PGP SIGNATURE-----
 
---Sig_/vM9okV9eVpnsW5WUw8RmpCh--
+--Sig_/GV5=6m781WIX8U9LZaZq3bS--
