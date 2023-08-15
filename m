@@ -2,86 +2,118 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F9C001DE
-	for <linux-next@archiver.kernel.org>; Tue, 15 Aug 2023 07:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53772C0015E
+	for <linux-next@archiver.kernel.org>; Tue, 15 Aug 2023 08:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231424AbjHOHcj (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 15 Aug 2023 03:32:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42372 "EHLO
+        id S235511AbjHOIBF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 15 Aug 2023 04:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235433AbjHOHcB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2023 03:32:01 -0400
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Aug 2023 00:32:00 PDT
-Received: from pokefinder.org (pokefinder.org [135.181.139.117])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 70D0810C
-        for <linux-next@vger.kernel.org>; Tue, 15 Aug 2023 00:32:00 -0700 (PDT)
-Received: from localhost (i5E861B55.versanet.de [94.134.27.85])
-        by pokefinder.org (Postfix) with ESMTPSA id 759AFA42767;
-        Tue, 15 Aug 2023 09:12:27 +0200 (CEST)
-Date:   Tue, 15 Aug 2023 09:12:22 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andi Shyti <andi.shyti@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Yicong Yang <yangyicong@hisilicon.com>
-Subject: Re: linux-next: manual merge of the i2c tree with the i2c-host-fixes
- tree
-Message-ID: <ZNslVp/UM1EUeOBi@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Yicong Yang <yangyicong@hisilicon.com>
-References: <20230815115735.04151abc@canb.auug.org.au>
+        with ESMTP id S235522AbjHOIAg (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2023 04:00:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20A311733
+        for <linux-next@vger.kernel.org>; Tue, 15 Aug 2023 00:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692086391;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2KZLo74+LHcrwYdc0Zg+AGvqD5Lwoz/F20AvTdhQ8cE=;
+        b=V7V5gy7sVKY6Pyir0KgJW/uT60W1aqOEiNS2aGy9txnfMcxKXwzGTwU3mc8nHAL0FUxc+V
+        IS5vvho4Xfp3YVZN2SPBJ7vBp806AsyrPBu7pZWOSmZB+dDsETtOqlPhqgUHc4Do6Yb1d0
+        pdCWxh8ZmSfRHirSY2TJ1tBsUOP96ng=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-301-gM3-yOE7Pl-BITQAUHD3DA-1; Tue, 15 Aug 2023 03:59:49 -0400
+X-MC-Unique: gM3-yOE7Pl-BITQAUHD3DA-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-94a34a0b75eso305892866b.1
+        for <linux-next@vger.kernel.org>; Tue, 15 Aug 2023 00:59:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692086388; x=1692691188;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2KZLo74+LHcrwYdc0Zg+AGvqD5Lwoz/F20AvTdhQ8cE=;
+        b=V1mah3hBYR3w4lz750+khRtNCxUFWGBh/4LpTkaPTrv1MtFW30wB4IgKaLeufSOUDv
+         pF68jYvmAfidrcOGejbg+Of1DOonhHWKE2jAZzTkZb3n0uS7Im6UxLduP8cUK4TmUTFC
+         aSXjklsKjbzrLogIiGGf5mRk24/GBzkbSLxeFZwHF87GDqyC3TR//VJ9Ense/oG01jNd
+         cw9AQilbk+y6hQ+qzglAZn8e7BQfg+yR4ql3JMl1k2AallHQolz4V7lBynPl/VYxnZsi
+         vu8pVDfyNkdZonNu5YeBNLQd/hObAg5AupemFPGtSaV1JN1PpXWS5BzH0UMM5XPDCcst
+         N8BQ==
+X-Gm-Message-State: AOJu0Yw18yWrAAfRk04zEKvlrkZ+f/5ZVa39+fRVq7SplhQ75vmPKi5P
+        xaRKm4McxPdz3tWwkDAfSjquzBG1KJJfc9Uw2jfQZgyAzwPSNlEy3EjbL8MKvjR0ChNOAMMsNO5
+        ni+AbjCYzu4x2TMFNt6Q0e9m711Z9Ww==
+X-Received: by 2002:a17:906:5a62:b0:99b:49ce:b4cc with SMTP id my34-20020a1709065a6200b0099b49ceb4ccmr9304308ejc.64.1692086388521;
+        Tue, 15 Aug 2023 00:59:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvBZsOwV9G6hiMJbLnkCKX+bcgTZ5xKfSflUX/u7PlyMb4b3+3j0ki6z/Mq3SdqVR+gX/EmQ==
+X-Received: by 2002:a17:906:5a62:b0:99b:49ce:b4cc with SMTP id my34-20020a1709065a6200b0099b49ceb4ccmr9304299ejc.64.1692086388208;
+        Tue, 15 Aug 2023 00:59:48 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id ov14-20020a170906fc0e00b0099290e2c163sm6663756ejb.204.2023.08.15.00.59.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Aug 2023 00:59:46 -0700 (PDT)
+Message-ID: <2f9489b4-2414-9f03-4f66-9838b8ee6be0@redhat.com>
+Date:   Tue, 15 Aug 2023 09:59:45 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yhGoVvIyYezAhEqi"
-Content-Disposition: inline
-In-Reply-To: <20230815115735.04151abc@canb.auug.org.au>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: linux-next: duplicate patch in the drivers-x86 tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mark Gross <markgross@kernel.org>
+Cc:     Henning Schild <henning.schild@siemens.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20230815165725.30a01fe9@canb.auug.org.au>
+ <20230815165856.051fb20f@canb.auug.org.au>
+Content-Language: en-US, nl
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20230815165856.051fb20f@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
+Hi,
 
---yhGoVvIyYezAhEqi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 8/15/23 08:58, Stephen Rothwell wrote:
+> Hi Stephen,
+> 
+> On Tue, 15 Aug 2023 16:57:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Hi all,
+>>
+>> The following commit is also in the watchdog tree as a different commit
+>> (but the same patch):
+>>
+>>   3fce06406c59 ("watchdog: make Siemens Simatic watchdog driver default on platform")
+>>
+>> This is commit
+>>
+>>   926df9ae133d ("watchdog: make Siemens Simatic watchdog driver default on platform")
+> 
+> in the watchdog tree.
 
-Hi Stepehn,
+Guenter, IIRC we agreed that I would merge this one through
+the pdx86 tree?
 
-> from the i2c-host-fixes tree and commit:
+specifically through the platform-drivers-x86-simatic-ipc branch:
 
-I think it makes sense to drop i2c-host-fixes and i2c-host from
-linux-next again. Andi kindly helped out while I was on an unplanned
-hiatus. But now I will populate my own branches again (with largely
-pulling in Andi's branches). Thank you for the quick inclusion of his
-branches and to Andi for helping out!
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=platform-drivers-x86-simatic-ipc
 
-All the best,
+I even Cc-ed you on the pull-req for the the ib-pdx86-simatic-v6.6-2
+tag for which I send a pull-req to Lee because it contains some bits
+which are dependencies for some LED driver patches:
 
-   Wolfram
+https://lore.kernel.org/linux-leds/f16554b9-d34e-4e19-052b-c818ef81d361@redhat.com/
+
+Regards,
+
+Hans
 
 
---yhGoVvIyYezAhEqi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTbJVIACgkQFA3kzBSg
-KbaxwBAAqNp1/PRqHX68aMHTn8M1SnhMV/te8LSD/QQ74BkNcnMCBwnIIF8KHfCB
-0kW72Pls9f4F3NVr6j2oM9pU/hhoCu2ByHMYwC+V4ohaOsF/T3KHtZAv/XM/J9Sw
-glBMHgmI84bc/lKrbLaFfkRv5WCRqPPWb495Q9BoWEdF7kkidCyNJgQyK2mI6T71
-NstQZKhO6uCvY+LxQsCgQ7LmVmJbmi94N3yjfC2ujYiw+iBzBYhDmMIaRh/imirf
-LLcHS/u0pNueX/2jwcbPA9hFdZJpG+bO9SIWj8TRHiJJRdFIy+RMXB74eDRB08Kq
-NPE3zR2U/tulwlQccg+YJp8ALW9NAcvAApGKnVb25Pc9IyfKnx30AGbX3whU2FzS
-0KQIiLvi1y1DEYVTdWkefGlHDZ2QwJW+g3VOhNt9gVe1QSGBZYYY823EtQvLtHb6
-p/H6513uvUyFXr7nsJ9WkoUvSTPvWiRCTfjObhEC9rBsYcONgr+oTTU2cGXuSkTO
-fj0J2dXi+2jmudRgDffAKap7Hc620e+JkGI/rsu0einr/H/bsvHCRtjoaJCi+Eaf
-668xp1fhU0W4ygh+2+NJ+52/3dDZ/xbKNMtWSqsS7DvEw9dX/7Of81Uwm1TmuVRI
-xX3SIgaU20xW03trY1QPj0i0UcKRTjsmT8rKP8djJPEQRpsKYbs=
-=O46B
------END PGP SIGNATURE-----
-
---yhGoVvIyYezAhEqi--
