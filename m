@@ -2,89 +2,85 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1F4C001B0
-	for <linux-next@archiver.kernel.org>; Tue, 15 Aug 2023 11:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3AEC001E0
+	for <linux-next@archiver.kernel.org>; Tue, 15 Aug 2023 11:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236679AbjHOLeU (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 15 Aug 2023 07:34:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
+        id S236794AbjHOLk6 (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 15 Aug 2023 07:40:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236823AbjHOLeJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2023 07:34:09 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0237F10E3;
-        Tue, 15 Aug 2023 04:34:04 -0700 (PDT)
+        with ESMTP id S236900AbjHOLkX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2023 07:40:23 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44F61984;
+        Tue, 15 Aug 2023 04:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1692099242;
-        bh=DtBm+/hYOvO1oRvd8aaePYEzTCG/3G53rxPgWq7IeeY=;
+        s=201702; t=1692099611;
+        bh=yHEMXtdURLy+wUfMMqAfQCip6KzpfNWGsRc4wSefEns=;
         h=Date:From:To:Cc:Subject:From;
-        b=fAaVDoBUq6YyCdFH95YqeaMXPyoAgabuOLtXXpsjcIziDA0SsA6sTzOAdecd5ObJ7
-         kRitWz2DoTmvyXhrnpTFSgWcL3VGFQe7UkK4PPgfOy3DdwyJMu/eU0NsIgbLggDZ/A
-         6R4ebod4kteWvJJWx7Of4QySLx6LpI+nrvuJLcVfnWqGAuI+pQxm25q8VWXQWjHM79
-         iqqJNrvEDIXdHVe7wH6NXyBiw9uCbp4sLw7CJrSoJFX+DSdug+SdSm9h9//RClbltZ
-         73Zd30yWQ7MuA+NgC+IYCT87rC0LPo4KFNUig77yEDsrZSfiKfhBRlfiXWBGiwB4lQ
-         ZAhyxdv9WeI1A==
+        b=KnwTht9f1yUz3Kd8atGjJMkVViuTUE7RqEpTNDF1YghKfsa7F9hDj1nf6OI3vIqwO
+         zFQZU6Uvn8j8dcIeEbP4LAr7GYH5DHMLjDlloQlz+UTb25F6Uf7DVAiTDnn/3adu5f
+         Guz6/+OcC+MJaC/gjlLI/mesfdS7GTONEeZjslm9ZePIWJm+Z5hUH3ejGo+aUldp0z
+         2sEis91H1qsEeTUJzqhoPHV4Dioyu1u0KlKo63HFDcBVRKjVLYehJXbIwmvrZirh1H
+         xNLbBskTJKcxj5ZU7Wh8RSbQtSPfUut3kyyDlNjk7NfVe4TeDr7vfAhAvd7b/wO9/X
+         1gmH11+oO5Yvg==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RQ8L20KFCz4wZs;
-        Tue, 15 Aug 2023 21:34:01 +1000 (AEST)
-Date:   Tue, 15 Aug 2023 21:34:00 +1000
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RQ8T70Nh1z4wbP;
+        Tue, 15 Aug 2023 21:40:11 +1000 (AEST)
+Date:   Tue, 15 Aug 2023 21:40:10 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Ivan Orlov <ivan.orlov0322@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Joel Stanley <joel@jms.id.au>, Jeremy Kerr <jk@ozlabs.org>,
+        Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the driver-core tree
-Message-ID: <20230815213400.49afbd8f@canb.auug.org.au>
+Subject: linux-next: duplicate patches in the fsi tree
+Message-ID: <20230815214010.712651b9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nr8TfKcG9Wb6p3uz8e=4/P9";
+Content-Type: multipart/signed; boundary="Sig_/SJ5Ar.X+KG+Rir3FemKw+Le";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/nr8TfKcG9Wb6p3uz8e=4/P9
+--Sig_/SJ5Ar.X+KG+Rir3FemKw+Le
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-The following commits are also in the hid tree as different commits
-(but the same patches):
+The following commits are also in the char-misc tree as different
+commits (but the same patches):
 
-  32944855bac7 ("HID: hidraw: make hidraw_class structure const")
-  afdf5dd33a91 ("HID: roccat: make all 'class' structures const")
-
-These are commits
-
-  21168bdba6ea ("HID: hidraw: make hidraw_class structure const")
-  fadfcf360161 ("HID: roccat: make all 'class' structures const")
-
-in the hid tree.
+  2ecbdc7eea63 ("dt-bindings: fsi: Document the IBM I2C Responder virtual F=
+SI master")
+  366b119391d1 ("fsi: Add IBM I2C Responder virtual FSI master")
+  5b4ffc4030fb ("fsi: Add I2C Responder SCOM driver")
+  83ec2bf4d7d2 ("docs: ABI: fix spelling/grammar in SBEFIFO timeout interfa=
+ce")
+  c0d1c32d8bcb ("fsi: master-ast-cf: Add MODULE_FIRMWARE macro")
+  f432b1cf7820 ("fsi: fix some spelling mistakes in comment")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/nr8TfKcG9Wb6p3uz8e=4/P9
+--Sig_/SJ5Ar.X+KG+Rir3FemKw+Le
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTbYqkACgkQAVBC80lX
-0GwO+wgAlVxMUJFN/q8FYVnAAw45mrispbHv50TcEbq49MoOq4mUMmKv+DxYBl0k
-RxFi4GiKyIS9d04QmpUit9UqbCd994gJo+ZQj4ebOMWz0vPVTrNa91gDyLc3LwAv
-03NsB9rUE7PAcwDOm01Z6uQnbJKcYNrm8MvnS6dxd0ZXgxNcRjB5J7Etavmeu6o/
-A1obpHEAQz7JgjrFZDWG720PmjkWuevX+KTfYlsBsBFbSLtOJpqXDg8OC9JaRxv9
-LSZYu8cJa4cxbIUaNY15yjJFNKz+Qg2/Aj5yWEvEF9IPwcmpDgb+4CijpGYevjS7
-/QhBcGv+7Vt0pYakWwsCMc8dEsiFQw==
-=ojLt
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTbZBoACgkQAVBC80lX
+0GyxJwgApUBGdJj6uLY7pirlKzB7XB18wsAGkO6nnrQzP6/l3vH5Fzgwkw7pmdbE
+wBmmxYQOQMFuXs3/W3jRnvkrYlOlpOrwHTqlmSN0Qx6Q2419znK8DAxSsVfQFkmN
+qxzIM/QNj3jw0HEkz5EariP36ZT9q7MLQTa4NiyT6gezNObGGT7JxfdGXYtikQk6
+HtrCEYcpat6NE6DrckE4wpWXS97K5cJ6NbuWOWMFrolya/8VPSlxFXLsrjCoxwgZ
+BMyfAHQmH8fmbNlfuXsVNWo2FGPRYMX6wu7QsIihT1doevW0OrBzfO49AKmr5XgN
+0glE0LhV1W+aEdncchdoM/YrOmmf2A==
+=H5pX
 -----END PGP SIGNATURE-----
 
---Sig_/nr8TfKcG9Wb6p3uz8e=4/P9--
+--Sig_/SJ5Ar.X+KG+Rir3FemKw+Le--
