@@ -2,109 +2,199 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DB4C04FE0
-	for <linux-next@archiver.kernel.org>; Wed, 16 Aug 2023 13:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21297C001B0
+	for <linux-next@archiver.kernel.org>; Wed, 16 Aug 2023 14:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245356AbjHPNgN (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 16 Aug 2023 09:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
+        id S1343720AbjHPOjs (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 16 Aug 2023 10:39:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245413AbjHPNgL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Aug 2023 09:36:11 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7026F2136;
-        Wed, 16 Aug 2023 06:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692192970; x=1723728970;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4GR5uM0r2IXARSeo3eQq0DsLiDyIiKq3U4ASSd4oGac=;
-  b=NPfnmkGQzUjrrUh4lqyYm4Hgj657+AZO+IqYWSuTW+fceC4UOI7qhiRG
-   pa0c/HYIc/pELCpRvm6zXurS12C+lr8h7DnD3MWxMbXGyJ+UnXFfP4Hvw
-   mMa9dC0N8tUjTkj/9SoW2onN6jQ/lhPkyVVp6YJNJ/qAXX8XHU9d6Y6UO
-   DMbDoR6hUyY0pBNpzvIYv51PoDvyEzhoMReCXF/3KG2Enhh8KD1g+slAA
-   XioXtfLO2IKIhYCCnF8hPOxj4uc58s3mKWVwttA8aCLD/o7iLz7C3ud6o
-   6v1jQzqszV32ECWYS3wCBCitStQciD8xR1+0Mwn0PTHRfeAjLW3vvxsWf
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="372537576"
-X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
-   d="scan'208";a="372537576"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2023 06:36:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="980748913"
-X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
-   d="scan'208";a="980748913"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2023 06:36:06 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by kekkonen.fi.intel.com (Postfix) with ESMTP id CB2401209BD;
-        Wed, 16 Aug 2023 16:36:03 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1qWGgS-00GC1b-2t;
-        Wed, 16 Aug 2023 16:35:36 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     linux-media@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-next@vger.kernel.org, Wentong Wu <wentong.wu@intel.com>,
-        Zhifeng Wang <zhifeng.wang@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 1/2] media: v4l: usb: Use correct dependency for camera sensor drivers
-Date:   Wed, 16 Aug 2023 16:35:25 +0300
-Message-Id: <20230816133526.3859456-2-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230816133526.3859456-1-sakari.ailus@linux.intel.com>
-References: <20230816133526.3859456-1-sakari.ailus@linux.intel.com>
-MIME-Version: 1.0
+        with ESMTP id S1343739AbjHPOjT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Aug 2023 10:39:19 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1851E2723
+        for <linux-next@vger.kernel.org>; Wed, 16 Aug 2023 07:38:50 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-26b0b4a7cccso4500254a91.1
+        for <linux-next@vger.kernel.org>; Wed, 16 Aug 2023 07:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20221208.gappssmtp.com; s=20221208; t=1692196728; x=1692801528;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z7kyCuHl1t/gCCGpNTbA3hwFj/lf6SuaKvtbsxGuDBs=;
+        b=dZxL0Ptmo/RfqSZAnaNdMqEON3wvqTtz9rCCZbGwRlxrXd7njXeZ9MC0HoDMQnzbMm
+         Mbp7gkbEr8As7DndYa19Nv36eYd2hToSSCFzF826MiTxJFQPanB3TDkisU5ug1n2xO0x
+         lqvfBU8gjYGcjvzm7z1KhnYi76zAKQMvLjSkKN8VKcgO7yrfcLxnnczFGmL7s8fYvGKe
+         iupXY/7su7eB4Qp8Ot15WegMitq0aXkC7C2B4amBqtpQq9iCTqbSvz7oVYvokSqAF4SL
+         qE7Cmnt2iThlim9z5xca3mEZ27llu2nfrUpa7hwX8WY7UkN0OSfjH/LjoRTW/fMpY9+M
+         GNdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692196728; x=1692801528;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z7kyCuHl1t/gCCGpNTbA3hwFj/lf6SuaKvtbsxGuDBs=;
+        b=bI7SKlSN2wSb2ielr/h9Xgp2ugky673quFAtCkDObvStfC13Ku9ea1JX8kc2NUtmPg
+         lCayv0QFmH204Z0NawSZgpWNkNIWzCmMX2y7A+MPwa/sN4ibPizu4XAL/FSwU5aIKCAg
+         1FmcqGgm3st9mD+U0g6EZ1j2/GfdnRSj9Sq0SPL0AijE8f8vDR+lgSSxCZhP9U8O/8HU
+         T/ZArU8rhpnjkppOAencDz3QBunCOPtZsw5oRoZED7us39XjWrjgeFyXrfxcIzM5+4ds
+         Dn9ZSrImAxs9bospXL+KVJRtfGXbRRqKz4NPodXuAN4j+v/tsYnJwG8E3AsstA22RGvK
+         mC5g==
+X-Gm-Message-State: AOJu0YySHDZ5W8BzL5eHiV7gahq76OnSx9934Jfu4IM+D9vGxYSuuRuk
+        S9FVBCDuRS410AN/CivX6TD/Bg==
+X-Google-Smtp-Source: AGHT+IG9lm23RRLom/xb7C80klG2aDXB0ZwUgcZV4fsV/hyXYHdBd19S4I3YH9SwHqrCXPj4TdemSQ==
+X-Received: by 2002:a17:90a:f982:b0:26b:4e59:57e7 with SMTP id cq2-20020a17090af98200b0026b4e5957e7mr1730234pjb.43.1692196727793;
+        Wed, 16 Aug 2023 07:38:47 -0700 (PDT)
+Received: from localhost ([135.180.227.0])
+        by smtp.gmail.com with ESMTPSA id gi23-20020a17090b111700b0025645ce761dsm13120399pjb.35.2023.08.16.07.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Aug 2023 07:38:47 -0700 (PDT)
+Date:   Wed, 16 Aug 2023 07:38:47 -0700 (PDT)
+X-Google-Original-Date: Wed, 16 Aug 2023 07:38:45 PDT (-0700)
+Subject:     Re: [PATCH 00/17] -Wmissing-prototype warning fixes
+In-Reply-To: <20230810141947.1236730-1-arnd@kernel.org>
+CC:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
+        vgupta@kernel.org, linux@armlinux.org.uk,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, guoren@kernel.org,
+        bcain@quicinc.com, chenhuacai@kernel.org, kernel@xen0n.name,
+        geert@linux-m68k.org, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@HansenPartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, christophe.leroy@csgroup.eu, hca@linux.ibm.com,
+        glaubitz@physik.fu-berlin.de, x86@kernel.org, bp@alien8.de,
+        jcmvbkbc@gmail.com, axboe@kernel.dk, sudipm.mukherjee@gmail.com,
+        martin.petersen@oracle.com, richard@nod.at, bhelgaas@google.com,
+        masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
+        linux@roeck-us.net, Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kbuild@vger.kernel.org
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     arnd@kernel.org
+Message-ID: <mhng-ce493a2d-71e9-440f-84d0-522a4f694bbe@palmer-ri-x1c9>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-The Kconfig option that enables compiling camera sensor drivers is
-VIDEO_CAMERA_SENSOR rather than MEDIA_CAMERA_SUPPORT as it was previously.
-Fix this.
+On Thu, 10 Aug 2023 07:19:18 PDT (-0700), arnd@kernel.org wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Most of the patches I sent so far for the -Wmissing-prototype warnings
+> have made it into linux-next now. There are a few that I'm resending
+> now as nobody has picked them up, and then a number of fixes that I
+> found while test-building across all architectures rather than just the
+> ones I usually test.
+>
+> The first 15 patches in this series should be uncontroversial, so
+> I expect that either a subsystem maintainer or Andrew Morton can
+> apply these directly.
+>
+> For the last two patches, these might still need some debate about how
+> to handle them. I added a Kconfig option to turn off most of the missing
+> prototype warnings in the architectures that nobody has fixed yet,
+> see patch 16 for those. The last patch does cause some known warnings
+> and likely unknown ones for architectures other than x86 and arm,
+> so applying it now will bring new problems, but not applying it also
+> means that new warnings creep in, so I think this is mainly a question
+> of what the best timing is for having this in linux-next.
+>
+> Arnd Bergmann (17):
+>   [RESEND] jffs2: mark __jffs2_dbg_superblock_counts() static
+>   [RESEND] irq_work: consolidate arch_irq_work_raise prototypes
+>   [RESEND] ida: make 'ida_dump' static
+>   pci: sysfs: move declarations to linux/pci.h
+>   swim3: mark swim3_init() static
+>   macintosh/ams: mark ams_init() static
+>   scsi: qlogicpti: mark qlogicpti_info() static
+>   microblaze: mark flush_dcache_folio() inline
+>   parport: gsc: mark init function static
+>   zorro: include zorro.h in names.c
+>   scsi: gvp11: remove unused gvp11_setup() function
+>   time: make sysfs_get_uname() function visible in header
+>   stackleak: add declarations for global functions
+>   kprobes: unify kprobes_exceptions_nofify() prototypes
+>   arch: fix asm-offsets.c building with -Wmissing-prototypes
+>   [RFC] arch: turn -Wmissing-prototypes off conditionally
+>   [RFC] Makefile.extrawarn: turn on missing-prototypes again
+>
+>  arch/alpha/Kbuild                        |  2 ++
+>  arch/alpha/include/asm/pci.h             |  3 ---
+>  arch/alpha/kernel/asm-offsets.c          |  2 +-
+>  arch/alpha/lib/Makefile                  |  1 +
+>  arch/arc/Kbuild                          |  2 ++
+>  arch/arc/include/asm/kprobes.h           |  3 ---
+>  arch/arm/include/asm/irq_work.h          |  2 --
+>  arch/arm/include/asm/kprobes.h           |  2 --
+>  arch/arm64/include/asm/irq_work.h        |  2 --
+>  arch/arm64/include/asm/kprobes.h         |  2 --
+>  arch/csky/Kbuild                         |  2 ++
+>  arch/csky/include/asm/irq_work.h         |  2 +-
+>  arch/hexagon/Kbuild                      |  2 ++
+>  arch/ia64/Kbuild                         |  2 ++
+>  arch/ia64/include/asm/kprobes.h          |  2 --
+>  arch/ia64/kernel/asm-offsets.c           |  2 +-
+>  arch/ia64/lib/Makefile                   |  1 +
+>  arch/loongarch/Kbuild                    |  2 ++
+>  arch/loongarch/kernel/asm-offsets.c      | 12 ++++++++++++
+>  arch/m68k/Kbuild                         |  2 ++
+>  arch/m68k/lib/Makefile                   |  1 +
+>  arch/microblaze/Kbuild                   |  2 ++
+>  arch/microblaze/include/asm/cacheflush.h |  2 +-
+>  arch/mips/Kbuild                         |  2 ++
+>  arch/mips/boot/compressed/Makefile       |  3 ++-
+>  arch/mips/include/asm/kprobes.h          |  2 --
+>  arch/nios2/Kbuild                        |  2 ++
+>  arch/nios2/lib/Makefile                  |  1 +
+>  arch/openrisc/Kbuild                     |  2 ++
+>  arch/parisc/Kbuild                       |  2 ++
+>  arch/parisc/lib/Makefile                 |  1 +
+>  arch/powerpc/include/asm/irq_work.h      |  1 -
+>  arch/powerpc/include/asm/kprobes.h       |  2 --
+>  arch/riscv/include/asm/irq_work.h        |  2 +-
+>  arch/s390/include/asm/irq_work.h         |  2 --
+>  arch/s390/include/asm/kprobes.h          |  2 --
+>  arch/sh/Kbuild                           |  2 ++
+>  arch/sh/boot/compressed/Makefile         |  1 +
+>  arch/sh/include/asm/kprobes.h            |  2 --
+>  arch/sparc/Kbuild                        |  2 ++
+>  arch/sparc/include/asm/kprobes.h         |  2 --
+>  arch/sparc/kernel/asm-offsets.c          | 13 ++-----------
+>  arch/sparc/lib/Makefile                  |  1 +
+>  arch/sparc/prom/Makefile                 |  1 +
+>  arch/x86/include/asm/irq_work.h          |  1 -
+>  arch/x86/include/asm/kprobes.h           |  2 --
+>  arch/xtensa/Kbuild                       |  2 ++
+>  arch/xtensa/boot/lib/Makefile            |  2 ++
+>  drivers/block/swim3.c                    |  2 +-
+>  drivers/macintosh/ams/ams-core.c         |  2 +-
+>  drivers/parport/parport_gsc.c            |  2 +-
+>  drivers/scsi/gvp11.c                     |  5 -----
+>  drivers/scsi/qlogicpti.c                 |  2 +-
+>  drivers/zorro/names.c                    |  1 +
+>  fs/jffs2/debug.c                         |  2 +-
+>  include/linux/irq_work.h                 |  3 +++
+>  include/linux/kprobes.h                  |  4 ++++
+>  include/linux/pci.h                      |  5 +++++
+>  include/linux/stackleak.h                |  6 ++++++
+>  init/Kconfig                             | 10 ++++++++++
+>  kernel/time/tick-internal.h              |  3 ++-
+>  lib/test_ida.c                           |  2 +-
+>  scripts/Makefile.extrawarn               |  5 +++--
+>  63 files changed, 101 insertions(+), 63 deletions(-)
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: 7d3c7d2a2914 ("media: i2c: Add a camera sensor top level menu")
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/usb/em28xx/Kconfig | 4 ++--
- drivers/media/usb/go7007/Kconfig | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/em28xx/Kconfig b/drivers/media/usb/em28xx/Kconfig
-index b3c472b8c5a9..cb61fd6cc6c6 100644
---- a/drivers/media/usb/em28xx/Kconfig
-+++ b/drivers/media/usb/em28xx/Kconfig
-@@ -12,8 +12,8 @@ config VIDEO_EM28XX_V4L2
- 	select VIDEO_SAA711X if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEO_TVP5150 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEO_MSP3400 if MEDIA_SUBDRV_AUTOSELECT
--	select VIDEO_MT9V011 if MEDIA_SUBDRV_AUTOSELECT && MEDIA_CAMERA_SUPPORT
--	select VIDEO_OV2640 if MEDIA_SUBDRV_AUTOSELECT && MEDIA_CAMERA_SUPPORT
-+	select VIDEO_MT9V011 if MEDIA_SUBDRV_AUTOSELECT && VIDEO_CAMERA_SENSOR
-+	select VIDEO_OV2640 if MEDIA_SUBDRV_AUTOSELECT && VIDEO_CAMERA_SENSOR
- 	help
- 	  This is a video4linux driver for Empia 28xx based TV cards.
- 
-diff --git a/drivers/media/usb/go7007/Kconfig b/drivers/media/usb/go7007/Kconfig
-index 4ff79940ad8d..b2a15d9fb1f3 100644
---- a/drivers/media/usb/go7007/Kconfig
-+++ b/drivers/media/usb/go7007/Kconfig
-@@ -12,8 +12,8 @@ config VIDEO_GO7007
- 	select VIDEO_TW2804 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEO_TW9903 if MEDIA_SUBDRV_AUTOSELECT
- 	select VIDEO_TW9906 if MEDIA_SUBDRV_AUTOSELECT
--	select VIDEO_OV7640 if MEDIA_SUBDRV_AUTOSELECT && MEDIA_CAMERA_SUPPORT
- 	select VIDEO_UDA1342 if MEDIA_SUBDRV_AUTOSELECT
-+	select VIDEO_OV7640 if MEDIA_SUBDRV_AUTOSELECT && VIDEO_CAMERA_SENSOR
- 	help
- 	  This is a video4linux driver for the WIS GO7007 MPEG
- 	  encoder chip.
--- 
-2.39.2
-
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com> # RISC-V
