@@ -2,55 +2,39 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484E3C3DA58
-	for <linux-next@archiver.kernel.org>; Thu, 17 Aug 2023 18:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78564C531DC
+	for <linux-next@archiver.kernel.org>; Thu, 17 Aug 2023 19:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354448AbjHQSrQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 17 Aug 2023 14:47:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37102 "EHLO
+        id S234737AbjHQTex (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 17 Aug 2023 15:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239056AbjHQSrA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Aug 2023 14:47:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3B02D59;
-        Thu, 17 Aug 2023 11:46:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B198E63540;
-        Thu, 17 Aug 2023 18:46:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A66C433C8;
-        Thu, 17 Aug 2023 18:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692298018;
-        bh=5/NS1z4J2PBo2ezppbVzIbfuP1XdafGF7B169Ez7FV8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=WqTRxH0hBVbOLjDMR3YrV585m80gzxINUXoSQO0jZlgdQ01/7pb0sDcTb4+oy6/L7
-         ZDP1EmI4I6qKWYvae2AkY7MOU/S/VkD4Y9R5vJZJYxplUtZJ0GD5heXeD5xfXcNZH5
-         6id9pYu+0WjRkMBk9LjgPtKnySTO+mc15pROlvYa0ubVWCLT0efCmArcP9oQPhNLB8
-         BwvFRHeV/v6HIhirngGRuXkH9MeM4Rl9qBcJvuV5JhNwCICLuH8pB39CVMwjARZSOp
-         5hqvEkEpRZs271KSk50fOvV3IFuT017K6qA9KTfbUIk4Xxa3c5313MqbQQWtCIL7g7
-         oC9HiVfYOvw5w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 9D326CE0F13; Thu, 17 Aug 2023 11:46:57 -0700 (PDT)
-Date:   Thu, 17 Aug 2023 11:46:57 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
+        with ESMTP id S1354766AbjHQTeu (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 17 Aug 2023 15:34:50 -0400
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CEA3588;
+        Thu, 17 Aug 2023 12:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+        t=1692300887; bh=M18qW+YoHfZZUfbrSb07UFjTPfx6MWf2IpDNTQW/Smc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZNsge/99xQoC9YC/YOlPqqjX95OXx6S/BXZWrGeBeCCP2UE6sb0DviIa7X3te5EVq
+         roHOlpofbP8ZcVwNH+w5lh0sKQLp/ATH+0iTtbOIin5ie+PJ9w7p1tmLksbwDTNvft
+         LSqJWR3tubxFOI4054N9hPXfp0TYAceB2QeTLlxI=
+Date:   Thu, 17 Aug 2023 21:34:45 +0200
+From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
 To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Willy Tarreau <w@1wt.eu>,
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, Willy Tarreau <w@1wt.eu>,
         Christian Brauner <brauner@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
 Subject: Re: linux-next: duplicate patch in the nolibc tree
-Message-ID: <4c037ef2-9159-4528-8ecb-8596cb2a3889@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Message-ID: <d2f5f50e-4e32-4ec9-8417-b617c26e3815@t-8ch.de>
 References: <20230817133811.0a73c624@canb.auug.org.au>
  <e0af8d82-e099-49fa-9fbd-6f6bb63b7706@t-8ch.de>
  <9cfb4fe4-162b-3f26-646b-71bed3493925@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <9cfb4fe4-162b-3f26-646b-71bed3493925@linuxfoundation.org>
@@ -58,8 +42,8 @@ Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 12:27:46PM -0600, Shuah Khan wrote:
-> On 8/17/23 10:30, Thomas Weißschuh wrote:
+On 2023-08-17 12:27:46-0600, Shuah Khan wrote:
+> On 8/17/23 10:30, Thomas WeiÃŸschuh wrote:
 > > On 2023-08-17 13:38:11+1000, Stephen Rothwell wrote:
 > > > The following commit is also in the vfs-brauner tree as a different commit
 > > > (but the same patch):
@@ -81,22 +65,10 @@ On Thu, Aug 17, 2023 at 12:27:46PM -0600, Shuah Khan wrote:
 > 
 > Do the rest of the nolibc patches build without this if we were
 > to drop this patch? Dorpping requires rebase and please see below.
-> 
-> Willy, Paul,
-> 
-> How do we want to handle this so we can avoid rebasing to keep
-> the Commit IDs the same as one ones in Willy's nolibc branch?
 
-The usual way would be for Willy to drop the patch, rebase, and republish
-his branch.  You would then discard the current branch and pull the
-new one.
+Yes, this patch is completely independent.
+It only interacts with the mentioned commit in the vfs tree.
 
-> I would recommend dropping this commit from vfs-brauner if it
-> doesn't cause problems.
+> [..]
 
-It might be good for nolibc patches to be going through Willy's tree.
-
-Or does Christian have some situation where it is necessary to make
-a coordinated vfs/nolibc change?
-
-							Thanx, Paul
+Thomas
