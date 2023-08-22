@@ -2,89 +2,103 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5C8EE4996
-	for <linux-next@archiver.kernel.org>; Tue, 22 Aug 2023 08:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CB8EE49A3
+	for <linux-next@archiver.kernel.org>; Tue, 22 Aug 2023 08:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233694AbjHVILm (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 22 Aug 2023 04:11:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41366 "EHLO
+        id S231561AbjHVIQA (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 22 Aug 2023 04:16:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233683AbjHVILa (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Aug 2023 04:11:30 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE661B5;
-        Tue, 22 Aug 2023 01:11:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692691887; x=1724227887;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=I0Xi8EWiHfosLiR78ce7y0rFELPscG4bhDj4AH5OGbo=;
-  b=GbS0lrf4YalU97SE0fmN/9Vtf0FRgiLPKhgBYy3mgomR5YSBZU2HXjd9
-   q5aEIGWJldje/ez8TRFgtSM/mOdOVZ6x6SihYzFvValVYlN75wiW9gR4B
-   Fn5H10UV3XXb3WMC2cL44KGK3XkVxtfx9FXfACgmX1yZGA6uDtZmgeij7
-   o4z2oUEaGtlhqgoklTKbWHHCYD0RL/j5fhN2T4wQTSOybsfpvMhZm1fGn
-   L0oHXL9BgAE4hmGYqgMd67UYNiCrr0Sy5ouwe7ZXWimE1hfsQjOGSiIM/
-   xpt05GPfNDE6tCPd8/be8wzyrbliAPVgF0IqCh2Z6ZvlCaaAELPeXYn85
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="404815320"
-X-IronPort-AV: E=Sophos;i="6.01,192,1684825200"; 
-   d="scan'208";a="404815320"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2023 01:11:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="739221918"
-X-IronPort-AV: E=Sophos;i="6.01,192,1684825200"; 
-   d="scan'208";a="739221918"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2023 01:11:24 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by kekkonen.fi.intel.com (Postfix) with ESMTP id 0992311FAB1;
-        Tue, 22 Aug 2023 11:11:22 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1qYMTM-00GEj1-2X;
-        Tue, 22 Aug 2023 11:10:44 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     linux-media@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Cc:     hverkuil@xs4all.nl, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-next@vger.kernel.org, Wentong Wu <wentong.wu@intel.com>,
-        Zhifeng Wang <zhifeng.wang@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 1/1] media: via: Use correct dependency for camera sensor drivers
-Date:   Tue, 22 Aug 2023 11:10:34 +0300
-Message-Id: <20230822081034.3869843-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S233732AbjHVIP7 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Aug 2023 04:15:59 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 880D112C;
+        Tue, 22 Aug 2023 01:15:56 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-58d70c441d5so47211917b3.2;
+        Tue, 22 Aug 2023 01:15:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692692155; x=1693296955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5pNwnJY/s7QRWPK/T/LrEvZTxwiXUWa5BGaQPgsWCSc=;
+        b=lcIuyYyQNHfbXtj6dwhiTTXXvJwy8llqpaplGcRE5EiT4a48XtRST5vjPgykhgQnNk
+         4pQ9g3ff5C/hNLh//3IlA2QUs3NJ4wmGnQt/L8ZQEW2DrSKC5+YZPo/49Z8VI/dLoo/I
+         Ut0KHJNgd9PgDUlwJd61Zfd8yndhUfMgITYTA6jUc8RQQkegu7/X6bknWzThICUb/Z/A
+         vLFD2tIolXC9+M8bHoPWlCVfROQswC5Cf/uHFMijpycTvYWVG12NlZXok+SzXEXAIzIH
+         eEP4DNHvvhzjnq774rVBAu5m5IheNDg9VZ+i0kpgt2fJSxW9pNFj1h0fe65Tfh51NR5k
+         DoEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692692156; x=1693296956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5pNwnJY/s7QRWPK/T/LrEvZTxwiXUWa5BGaQPgsWCSc=;
+        b=SY92tvwiUr9jZ+InE1sH/WgcGVC3Fb6mua7oE2b2lBF8aMcACxl7q63d3w4GAAL3iR
+         /o1X9frWtZGJ6zPO+HJ9XfEwOCsue4apRYywn60vb3xNCDGSSQhoGa5LfNc35rsc8QJv
+         2gfMAmDQDwVRLX6qpl+B0r5QuKqhajWbIZYW0pIICcqNgjlY3nYBfqlQMKBGpyVsX/5m
+         MdD8UQU20/AfBekmNkNQhjL0VY9PoJ7KW6350cmUSGl1zEwlxrGD3xJhdkE2IT6fXMLv
+         7sXxOzaaMsgQyPzvOegQvhf51jlpyHZqNdRX4ShZ3E6Ua4XU3AS2osuwZ9s7TaYJYDCI
+         EvBw==
+X-Gm-Message-State: AOJu0Yybcjelwt/QmPxHVqfvVLpIYMvHfIwDp9U5Fz82onIUKr2lzNar
+        PYeNMydnDv0qTm1qR1va3jmeEtM4UCvmubuT3+E=
+X-Google-Smtp-Source: AGHT+IGGNDRQXmWfMrwaU6p8ijvDVDK3Dkt+pLL3D5g3zeq+suu7YJKm9+M1gLTkSar8kgUIy3OaFzYT7O0W0ShyBqw=
+X-Received: by 2002:a25:ac82:0:b0:d0f:65db:dc0e with SMTP id
+ x2-20020a25ac82000000b00d0f65dbdc0emr8918287ybi.39.1692692155717; Tue, 22 Aug
+ 2023 01:15:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230822162333.752217fa@canb.auug.org.au>
+In-Reply-To: <20230822162333.752217fa@canb.auug.org.au>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Tue, 22 Aug 2023 10:15:44 +0200
+Message-ID: <CANiq72=DA1A5YyrWAPHEr+by_pac4R0-GemurbLWYNrSAUNSzw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the kunit-next tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Benno Lossin <benno.lossin@proton.me>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-The via camera controller driver selected ov7670 driver, however now that
-driver has dependencies and may no longer be selected unconditionally.
+On Tue, Aug 22, 2023 at 8:23=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Today's linux-next merge of the rust tree got a conflict in:
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: 7d3c7d2a2914 ("media: i2c: Add a camera sensor top level menu")
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/platform/via/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, we expected this one when we applied an extra patch series
+yesterday. I tested the merged trees to double-check the (now tested)
+examples pass (i.e. the KUnit tree has a patch series which enables
+the testing of the examples in the documentation of Rust code).
 
-diff --git a/drivers/media/platform/via/Kconfig b/drivers/media/platform/via/Kconfig
-index 8926eb0803b2..6e603c038248 100644
---- a/drivers/media/platform/via/Kconfig
-+++ b/drivers/media/platform/via/Kconfig
-@@ -7,7 +7,7 @@ config VIDEO_VIA_CAMERA
- 	depends on V4L_PLATFORM_DRIVERS
- 	depends on FB_VIA && VIDEO_DEV
- 	select VIDEOBUF2_DMA_SG
--	select VIDEO_OV7670
-+	select VIDEO_OV7670 if VIDEO_CAMERA_SENSOR
- 	help
- 	   Driver support for the integrated camera controller in VIA
- 	   Chrome9 chipsets.  Currently only tested on OLPC xo-1.5 systems
--- 
-2.39.2
+> - /// # use kernel::{macros::pin_data, pin_init};
+>  -/// # use kernel::pin_init;
+>  -/// # use macros::{Zeroable, pin_data};
+> ++/// # use kernel::{macros::Zeroable, pin_data, pin_init};
 
+Almost right :) It should be:
+
+    /// # use kernel::{macros::{Zeroable, pin_data}, pin_init};
+
+In case it helps for future similar conflicts, the reason is that
+there are 3 things we are "using" here:
+
+    kernel::macros::Zeroable
+    kernel::macros::pin_data
+    kernel::pin_init
+
+Instead, the current resolution would mean:
+
+    kernel::macros::Zeroable
+    kernel::pin_data
+    kernel::pin_init
+
+Thanks Stephen!
+
+Cheers,
+Miguel
