@@ -2,117 +2,79 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7799CEE4996
-	for <linux-next@archiver.kernel.org>; Tue, 22 Aug 2023 08:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5F5EE4996
+	for <linux-next@archiver.kernel.org>; Tue, 22 Aug 2023 08:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233567AbjHVIIK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 22 Aug 2023 04:08:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35716 "EHLO
+        id S233451AbjHVILQ (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 22 Aug 2023 04:11:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233062AbjHVIIJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Aug 2023 04:08:09 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9234AE9;
-        Tue, 22 Aug 2023 01:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1692691686;
-        bh=9OAl8UNeJmRCk89ZGQRyLugIhvPcIdQswDnXJ0EIDtw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AU2ryrD9D9ZAB9c6jjgMau4MZtS30SP8q7xD+tmRm+6dOR7SAN+0+u6b3BA5TjsoV
-         OzLjmGAQqXf3S2foEMwXuiN0XsCsFIV0nCFr8nyq0DklA1FTHG/qM7AHsL5/JTRXG6
-         f1Ud4ge8Ug2fcoCYKMLal4onScVmTYlQcsg1LYt2MyTj3KhmGMJdJUiSJL48UjQj5x
-         v6ZUzb0DqU51gFcarXFQBeugufXkoFhPRLyjiEvQEdmliO7JMQmL+Gdg5ueEbL0sMQ
-         ic6LuEWZKd4fW6Y4J0PhWGXntAfYftD8PHI6fJgx3zlsH19B0r5mzKsIgozUiTckkn
-         0zzumdN+AOuQg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        with ESMTP id S231950AbjHVILQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Aug 2023 04:11:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139DFE9;
+        Tue, 22 Aug 2023 01:11:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RVMRB1x7tz4wZp;
-        Tue, 22 Aug 2023 18:08:06 +1000 (AEST)
-Date:   Tue, 22 Aug 2023 18:08:05 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A094C6147F;
+        Tue, 22 Aug 2023 08:11:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99528C433C8;
+        Tue, 22 Aug 2023 08:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692691873;
+        bh=dP7XQ0sCXAruh+GpITOqH5w9X6cDXAv3cJsgzKeIU5Q=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=cmF9bCzW3ZTBmxrwDqSFLRomoVyePOb6UicYk6s0az7G6Zgw/xsfCoPX5gpakSpzZ
+         YKZ9tPbcTmtbXJdGnpIvf/3Y54Kc5R/qSQnwJGGADLPCHhX7dpK3Hvtw5jW1TgGQbg
+         ssP6xcaDa537UbAWX80ipw5Qf/PlnbJPdMukidpNLR3DGXayDmusx9PqxWFFt8OGgb
+         qu3qHAyK0gtGtV+27EI/nFQnwIe6IhfH/KkrcpK1NDNlZCgB+RxXk4Lzs2GcpTIppK
+         APmJy5Lbzd6AWl3TFzZ1rGFECKPuQdKHB3UJVtm7eSfU+LMWjpLVDJpPhofZDSdG5S
+         QbS35/3ipEMYw==
+From:   =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the efi tree
-Message-ID: <20230822180805.483c10ee@canb.auug.org.au>
-In-Reply-To: <CAMj1kXGKtpGNYx6hqygya+k_gQaMTiwEZnRGk9rZ=hcbcagKXA@mail.gmail.com>
-References: <20230822164859.26b0b8f6@canb.auug.org.au>
-        <CAMj1kXGKtpGNYx6hqygya+k_gQaMTiwEZnRGk9rZ=hcbcagKXA@mail.gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Subject: Re: linux-next: Tree for Aug 21 (riscv-64 asm)
+In-Reply-To: <5ebf04f8-0cf6-d2b4-fb73-f51fff421b3a@infradead.org>
+References: <20230821164605.7bac05f1@canb.auug.org.au>
+ <5ebf04f8-0cf6-d2b4-fb73-f51fff421b3a@infradead.org>
+Date:   Tue, 22 Aug 2023 10:11:11 +0200
+Message-ID: <87ttsr33a8.fsf@all.your.base.are.belong.to.us>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9/eG_NrfjUci6_wy9/YuMUd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/9/eG_NrfjUci6_wy9/YuMUd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-Hi Ard,
-
-On Tue, 22 Aug 2023 09:32:31 +0200 Ard Biesheuvel <ardb@kernel.org> wrote:
+> On 8/20/23 23:46, Stephen Rothwell wrote:
+>> Hi all,
+>>=20
+>> Changes since 20230818:
+>>=20
 >
-> Hello Stephen,
->=20
-> On Tue, 22 Aug 2023 at 08:49, Stephen Rothwell <sfr@canb.auug.org.au> wro=
-te:
-> >
-> > Hi all,
-> >
-> > After merging the efi tree, today's linux-next build (x86_64 allmodconf=
-ig)
-> > failed like this:
-> >
-> > In file included from drivers/platform/x86/uv_sysfs.c:14:
-> > arch/x86/include/asm/uv/bios.h:118:22: error: expected ')' before '*' t=
-oken
-> >   118 |         u64 (__efiapi *function)(enum uv_bios_cmd, ...);
-> >       |                      ^~
-> >       |                      )
-> >
-> > Caused by commit
-> >
-> >   73632c8c865f ("efi/runtime-wrappers: Remove duplicated macro for serv=
-ice returning void")
-> > =20
->=20
-> Thanks for the report.
->=20
-> I cannot reproduce this with Debian's GCC 12.2.0 when building the
-> efi/next tree either in isolation, or merged into yesterday's next.
->=20
-> Could you please share the compiler version and the .config you used? Tha=
-nks.
+> ../arch/riscv/kernel/traps.c: In function 'do_irq':
+> ../arch/riscv/kernel/traps.c:384:1: error: s0 cannot be used in 'asm' here
+>   384 | }
+>       | ^
+> ../arch/riscv/kernel/irq.c: In function 'do_softirq_own_stack':
+> ../arch/riscv/kernel/irq.c:94:1: error: s0 cannot be used in 'asm' here
+>    94 | }
+>       | ^
+>
+>
+> 2 out of 10 risc-v 64-bit builds failed with these errors.
+>
+> Is this a toolchain problem or something else?
 
-$ x86_64-linux-gnu-gcc --version
-x86_64-linux-gnu-gcc (Debian 12.3.0-4) 12.3.0
-(this is Debian's cross compiler that is ppcle64 hosted)
+Hmm, do you have a link to config/toolchain/log, or similar?
 
-and (see above) it is a x86_64 allmodconfig build.
 
-Maybe there is some interaction with something else in today's
-linux-next (just released).
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9/eG_NrfjUci6_wy9/YuMUd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTkbOUACgkQAVBC80lX
-0Gy8yAf7BZfZJMin9PDBt0c7eEZyagCxLBcsnsLdeOutLDY0PCNpgs3dNrolDJke
-Zvkdkv4r+KJ8/HzFt9rbyyw9/q55njCUP4IHqgkTYOfDEao1GQJa1X3jJE45Pcuo
-sJLixHvv86ELmJEELHsg0oHA+StxK0eeHoPLPVYqXcG0jEDEJut4WhskAh1UXD6h
-NTUxH2IwpVd0gEpcCUlJz0eMBkKN+O9KqXAKR3d8Co36qFhc43coR2/oLynnQbJW
-nKu+xE4JBiKnxZPS6eD7+CXvtOb0GxIGJrp1ce4D3bgYZZpZ5aHntf0FzSvD/Ziv
-aES3SCV3C/+UJIEJ6FJGUTQEZ80ioA==
-=xN05
------END PGP SIGNATURE-----
-
---Sig_/9/eG_NrfjUci6_wy9/YuMUd--
+Thanks!
+Bj=C3=B6rn
