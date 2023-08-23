@@ -2,101 +2,62 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ADBEE49AE
-	for <linux-next@archiver.kernel.org>; Wed, 23 Aug 2023 08:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD2AEE4993
+	for <linux-next@archiver.kernel.org>; Wed, 23 Aug 2023 08:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231206AbjHWInS (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 23 Aug 2023 04:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
+        id S234892AbjHWIzY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 23 Aug 2023 04:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234305AbjHWIcg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Aug 2023 04:32:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B567210F5;
-        Wed, 23 Aug 2023 01:28:54 -0700 (PDT)
+        with ESMTP id S234965AbjHWIwk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Aug 2023 04:52:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E46B1705;
+        Wed, 23 Aug 2023 01:49:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4ABAE614BE;
-        Wed, 23 Aug 2023 08:28:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA90C433C7;
-        Wed, 23 Aug 2023 08:28:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3162865579;
+        Wed, 23 Aug 2023 08:49:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D592AC433C8;
+        Wed, 23 Aug 2023 08:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692779333;
-        bh=sgE48NtgP4eQen2ml46+iGXN2pZhCvwsUI3qxh709IA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=B8XeCEiyNqSPMfc/NUpIMPqso5AROFao4byCojwbb5El1u6vSLFULDLvh/AQ9J9TP
-         xYC4h2NCGDg1FNfUwHHbeRWhOJooIm4+18XN/Zy4G43BH0sr6vXTenjM5wA8rE7Imt
-         fXncqCcjvg9fhu8gG9hy/3DATr+TuHwLPfzJxmsMishCx3lHyZuu/G7OjN1kAw1EHE
-         I+nfxzy/zZ88AweOIeQHsgntA6vUTPBFDsyDnlsAs8aKjWUWAs9Btg8oLiuiahMdG5
-         cqMPbl0IfTurajBVvnWCCPWMFxx/8xrF99N9+NeOfPI7T3Ewe0NH9TNfwt2yCS2bJs
-         PBxkutaUE1+BA==
-From:   =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+        s=k20201202; t=1692780589;
+        bh=+eMghjkLxbUewcYWSKbRAkX0vlBIDr6r3dCdT6cTBSQ=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=DAEAmEH2fxHFQIX6DdyiHMxRmy501avm1T7yaZzviZvOgJJyVWEEY882POObrHCDT
+         kcPoaXPXqsK/zdyuWvrI6EgdOOZt8pUYHXNESvonsZzC+gThRPXhpnN5u8EBxZ8eOa
+         +j4Xl0j3G3swRWx8uZrVPyH+CEckjQ8K9zSOHwOHrfgnioRlLSSzikt9tABxRDYnsr
+         7XUVsje1RzwV/O49IYm4I2CVp07iAbiZaRS5246+I88qrXzSbYyHlHGZ6pdJDtm0Lh
+         yzPwmv6VQkB1bbV9LtkkwRpg279wrSDzxBTG+W/hRfW4rMiYXI7WsG9s+HRzrH0Q1E
+         5q1A7K37vjG9Q==
+From:   =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
 To:     Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         linux-riscv@lists.infradead.org,
         Randy Dunlap <rdunlap@infradead.org>
-Cc:     =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+Cc:     =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
         linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
         Drew Fustini <dfustini@baylibre.com>,
         linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] riscv: Require FRAME_POINTER for some configurations
-Date:   Wed, 23 Aug 2023 10:28:45 +0200
-Message-Id: <20230823082845.354839-1-bjorn@kernel.org>
-X-Mailer: git-send-email 2.39.2
+Subject: Re: [PATCH] riscv: Require FRAME_POINTER for some configurations
+In-Reply-To: <20230823082845.354839-1-bjorn@kernel.org>
+References: <20230823082845.354839-1-bjorn@kernel.org>
+Date:   Wed, 23 Aug 2023 10:49:46 +0200
+Message-ID: <87cyzep2hh.fsf@all.your.base.are.belong.to.us>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-From: Björn Töpel <bjorn@rivosinc.com>
+Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> writes:
 
-Some V configurations implicitly turn on '-fno-omit-frame-pointer',
-but leaving FRAME_POINTER disabled. This makes it hard to reason about
-the FRAME_POINTER config, and also triggers build failures introduced
-in by the commit in the Fixes: tag.
+> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+>
+> Some V configurations implicitly turn on '-fno-omit-frame-pointer',
 
-Select FRAME_POINTER explicitly for these configurations.
-
-Fixes: ebc9cb03b21e ("riscv: stack: Fixup independent softirq stack for CONFIG_FRAME_POINTER=n")
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
----
- arch/riscv/Kconfig  | 1 +
- arch/riscv/Makefile | 3 ---
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 10e7a7ad175a..cd8075c092c3 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -62,6 +62,7 @@ config RISCV
- 	select COMMON_CLK
- 	select CPU_PM if CPU_IDLE || HIBERNATION
- 	select EDAC_SUPPORT
-+	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
- 	select GENERIC_ARCH_TOPOLOGY
- 	select GENERIC_ATOMIC64 if !64BIT
- 	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 6ec6d52a4180..1329e060c548 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -87,9 +87,6 @@ endif
- ifeq ($(CONFIG_CMODEL_MEDANY),y)
- 	KBUILD_CFLAGS += -mcmodel=medany
- endif
--ifeq ($(CONFIG_PERF_EVENTS),y)
--        KBUILD_CFLAGS += -fno-omit-frame-pointer
--endif
- 
- # Avoid generating .eh_frame sections.
- KBUILD_CFLAGS += -fno-asynchronous-unwind-tables -fno-unwind-tables
-
-base-commit: 89bf6209cad66214d3774dac86b6bbf2aec6a30d
--- 
-2.39.2
-
+s/V/RISC-V/
