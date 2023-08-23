@@ -2,144 +2,165 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FBFEE4993
-	for <linux-next@archiver.kernel.org>; Wed, 23 Aug 2023 07:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C50EEE49AF
+	for <linux-next@archiver.kernel.org>; Wed, 23 Aug 2023 08:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232621AbjHWHwK (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 23 Aug 2023 03:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58854 "EHLO
+        id S234274AbjHWIiI (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 23 Aug 2023 04:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231564AbjHWHwK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Aug 2023 03:52:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5DEFCE6;
-        Wed, 23 Aug 2023 00:52:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C21F61920;
-        Wed, 23 Aug 2023 07:52:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09211C433C8;
-        Wed, 23 Aug 2023 07:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692777127;
-        bh=RrVC+nogoaZgt/Y3jUBheREnMWxpQIF1TAB30x8RvjE=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=dEj3Lzw7hAZZPCtkp0+9x+e7toz8Q2K8csXTxCu+eAk9U9sFpYDr7Hi16kGUZ0pNB
-         ht5J8RxLaEGJPvXxfRukfSwVoO7vRtix56SNNwECn25lHhNgE9vU24qrvCd208dz7T
-         76uBf2Mebi5yxvxXz7R6dGM55lIQOqIFGYlbEKMjmF88j1htqj6KYHq4Nh23NQ7d/V
-         f2PG+nFdRscJGXFoCaEx3MgWhO08K8n+MQFXhgpH/UmmPd4tyTHLORNWzCGw67gjWU
-         zGqIHsdO3XdCnMqsrXC+Uji5UgNFn34BKtMO4cavSTSZpC54Ef8gSQjhIhha6zEyX0
-         SwgVZY6Oif3sw==
-From:   =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: linux-next: Tree for Aug 21 (riscv-64 asm)
-In-Reply-To: <877cpmxl95.fsf@all.your.base.are.belong.to.us>
-References: <20230821164605.7bac05f1@canb.auug.org.au>
- <5ebf04f8-0cf6-d2b4-fb73-f51fff421b3a@infradead.org>
- <87ttsr33a8.fsf@all.your.base.are.belong.to.us>
- <0111b49a-8cdf-2c1a-bab3-d1fd647aafa6@infradead.org>
- <87bkeyxmzx.fsf@all.your.base.are.belong.to.us>
- <877cpmxl95.fsf@all.your.base.are.belong.to.us>
-Date:   Wed, 23 Aug 2023 09:52:04 +0200
-Message-ID: <87r0nu19i3.fsf@all.your.base.are.belong.to.us>
+        with ESMTP id S234333AbjHWIev (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Aug 2023 04:34:51 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7B01FE8
+        for <linux-next@vger.kernel.org>; Wed, 23 Aug 2023 01:32:50 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id af79cd13be357-76d873c6e8aso356054985a.1
+        for <linux-next@vger.kernel.org>; Wed, 23 Aug 2023 01:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1692779569; x=1693384369;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+dYLei7AoLeYwnza3yaeaaYWuA3ZWQLjJtiXn15qvsg=;
+        b=t3QDP237qlD0MHZGncV+RxLXjTG5QUjug3V65+/zT8LhNXMv4/UJDjFQiifuoJeLkg
+         FOg54S1uP8Tv3dibYVMejaNePSMBgxWmpUs3o31bQ26a0mdexri/TbxND/6V0vtWdN17
+         YsKq2UY6AL13WJIcxdmzTeS279KzvS7nyCQwfSSV8ZS4mA8dz8caSh0J7WsgasYSq2OS
+         vnLCaPC4ezTuyMq1ozXlAv3bigqYhW0x+08Uq9bLktMlU2KHJHKGgTeexwqRLGln6EQ0
+         HaKho13PQ/ewHLiExAAv2W/ijS510wO4BtZ1CYHNUcOnZwiFFYZEBRNBIn1ebx3N8b3N
+         4N5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692779569; x=1693384369;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+dYLei7AoLeYwnza3yaeaaYWuA3ZWQLjJtiXn15qvsg=;
+        b=hF3R2oFc3F/KJfKobTohqNvx8xvxGAtsuM3DrGyEgQ054gYDxwnpapBIS10yUQvlpL
+         qtYt7wHeksIstoyQi3WKRvXOu6kBUU0ggszfrNvxm6N7j3Wyxz/YWBuPtJFjcF6Ly1U+
+         BMZxImMAzHED/nzxnU0ASx9zFYqTkB4rgKoD/QVQSYxPNIv9FYfN4rP6KFa74cVdjXHX
+         VpVfIF/g+1aA6A6YOHi5jY2Q3+nxPS3Y4/9DMKDfQ4nCr/3cAe3rvpuVlrDt6QwkScxj
+         neqp/RXPoVhfxuHEmeSBd78MNMx4pzqdSo72B24FZrae3Ty4iJ7O1a0m7rm44QYFEqjt
+         O6iQ==
+X-Gm-Message-State: AOJu0YwlXzp59EK9kVZuAg2h9Ie4/pC/7u4L3tBSIKMNnUdqMCs67O9Y
+        9haeTYYLzukdPX2FHVXtrRl4cIo4iNosb2Y7TB4=
+X-Google-Smtp-Source: AGHT+IFUhCGa00l9vHs5BIJLnme7oKG5VFkpReX1B+5v7QYZYAyT/8O5Te8VT6Wk7jX8sBVQ58J7vA==
+X-Received: by 2002:a05:620a:25d1:b0:76c:da86:3169 with SMTP id y17-20020a05620a25d100b0076cda863169mr13504911qko.40.1692779569582;
+        Wed, 23 Aug 2023 01:32:49 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id z19-20020a63e113000000b005646e6634dcsm9303970pgh.83.2023.08.23.01.32.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Aug 2023 01:32:49 -0700 (PDT)
+Message-ID: <64e5c431.630a0220.f0c56.186f@mx.google.com>
+Date:   Wed, 23 Aug 2023 01:32:49 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v6.5-rc7-148-g8221b76fd7de
+X-Kernelci-Tree: next
+X-Kernelci-Branch: pending-fixes
+Subject: next/pending-fixes baseline: 58 runs,
+ 2 regressions (v6.5-rc7-148-g8221b76fd7de)
+To:     linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org,
+        kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> writes:
+next/pending-fixes baseline: 58 runs, 2 regressions (v6.5-rc7-148-g8221b76f=
+d7de)
 
-> Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> writes:
->
->> Randy Dunlap <rdunlap@infradead.org> writes:
->>
->>> Hi,
->>>
->>> On 8/22/23 01:11, Bj=C3=B6rn T=C3=B6pel wrote:
->>>> Randy Dunlap <rdunlap@infradead.org> writes:
->>>>=20
->>>>> On 8/20/23 23:46, Stephen Rothwell wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Changes since 20230818:
->>>>>>
->>>>>
->>>>> ../arch/riscv/kernel/traps.c: In function 'do_irq':
->>>>> ../arch/riscv/kernel/traps.c:384:1: error: s0 cannot be used in 'asm'=
- here
->>>>>   384 | }
->>>>>       | ^
->>>>> ../arch/riscv/kernel/irq.c: In function 'do_softirq_own_stack':
->>>>> ../arch/riscv/kernel/irq.c:94:1: error: s0 cannot be used in 'asm' he=
-re
->>>>>    94 | }
->>>>>       | ^
->>>>>
->>>>>
->>>>> 2 out of 10 risc-v 64-bit builds failed with these errors.
->>>>>
->>>>> Is this a toolchain problem or something else?
->>>>=20
->>>> Hmm, do you have a link to config/toolchain/log, or similar?
->>>
->>> The full randconfig file is attached.
->>>
->>> The toolchain is Arnd's build of gcc 13.1.0 from:
->>>   https://mirrors.edge.kernel.org/pub/tools/crosstool/
->>> (x86_64 host)
->>>
->>> Hm, I see that the latest/current there is gcc 13.2.0.
->>> I'll upgrade later today.
->>
->> Thanks Randy! I can reproduce with GCC 12 on my machine.
->>
->> The config has
->>  | # CONFIG_FRAME_POINTER is not set
->> but for some reason "-fno-omit-frame-pointer" is passed to GCC anyway,
->> which is why GCC complains about s0 (FP on RISC-V) in asm.
->>
->>
->> I'll dig a bit more.
->
-> There are multiple issues:
->  * riscv enables -fno-omit-frame-pointer unconditionally for PERF_EVENTS
->  * CONFIG_FUNCTION_TRACER w/o dynamic ftrace enables -pg, which pulls in
->    -fno-omit-frame-pointer on riscv.
+Regressions Summary
+-------------------
 
-Maybe something like (too crude?):
+platform                 | arch  | lab             | compiler | defconfig |=
+ regressions
+-------------------------+-------+-----------------+----------+-----------+=
+------------
+imx8mm-innocomm-wb15-evk | arm64 | lab-pengutronix | gcc-10   | defconfig |=
+ 1          =
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 10e7a7ad175a..cd8075c092c3 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -62,6 +62,7 @@ config RISCV
-        select COMMON_CLK
-        select CPU_PM if CPU_IDLE || HIBERNATION
-        select EDAC_SUPPORT
-+       select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC=
-_FTRACE)
-        select GENERIC_ARCH_TOPOLOGY
-        select GENERIC_ATOMIC64 if !64BIT
-        select GENERIC_CLOCKEVENTS_BROADCAST if SMP
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 6ec6d52a4180..1329e060c548 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -87,9 +87,6 @@ endif
- ifeq ($(CONFIG_CMODEL_MEDANY),y)
-        KBUILD_CFLAGS +=3D -mcmodel=3Dmedany
- endif
--ifeq ($(CONFIG_PERF_EVENTS),y)
--        KBUILD_CFLAGS +=3D -fno-omit-frame-pointer
--endif
-=20
- # Avoid generating .eh_frame sections.
- KBUILD_CFLAGS +=3D -fno-asynchronous-unwind-tables -fno-unwind-tables
+rk3399-rock-pi-4b        | arm64 | lab-collabora   | gcc-10   | defconfig |=
+ 1          =
+
+
+  Details:  https://kernelci.org/test/job/next/branch/pending-fixes/kernel/=
+v6.5-rc7-148-g8221b76fd7de/plan/baseline/
+
+  Test:     baseline
+  Tree:     next
+  Branch:   pending-fixes
+  Describe: v6.5-rc7-148-g8221b76fd7de
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git
+  SHA:      8221b76fd7defd16b9af1c0a505acbdcbe32e2f1 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                 | arch  | lab             | compiler | defconfig |=
+ regressions
+-------------------------+-------+-----------------+----------+-----------+=
+------------
+imx8mm-innocomm-wb15-evk | arm64 | lab-pengutronix | gcc-10   | defconfig |=
+ 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64e59399b273f4e70cb1e41a
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v6.5-rc7-14=
+8-g8221b76fd7de/arm64/defconfig/gcc-10/lab-pengutronix/baseline-imx8mm-inno=
+comm-wb15-evk.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v6.5-rc7-14=
+8-g8221b76fd7de/arm64/defconfig/gcc-10/lab-pengutronix/baseline-imx8mm-inno=
+comm-wb15-evk.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/64e59399b273f4e70cb1e=
+41b
+        new failure (last pass: v6.5-rc7-128-g0b86d65557b6f) =
+
+ =
+
+
+
+platform                 | arch  | lab             | compiler | defconfig |=
+ regressions
+-------------------------+-------+-----------------+----------+-----------+=
+------------
+rk3399-rock-pi-4b        | arm64 | lab-collabora   | gcc-10   | defconfig |=
+ 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64e594513d9df5c422b1e3b8
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//next/pending-fixes/v6.5-rc7-14=
+8-g8221b76fd7de/arm64/defconfig/gcc-10/lab-collabora/baseline-rk3399-rock-p=
+i-4b.txt
+  HTML log:    https://storage.kernelci.org//next/pending-fixes/v6.5-rc7-14=
+8-g8221b76fd7de/arm64/defconfig/gcc-10/lab-collabora/baseline-rk3399-rock-p=
+i-4b.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/64e594513d9df5c422b1e=
+3b9
+        new failure (last pass: v6.5-rc7-128-g0b86d65557b6f) =
+
+ =20
