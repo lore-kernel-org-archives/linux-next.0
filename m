@@ -2,91 +2,81 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B27C71145
-	for <linux-next@archiver.kernel.org>; Thu, 24 Aug 2023 06:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D277C71153
+	for <linux-next@archiver.kernel.org>; Thu, 24 Aug 2023 06:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240132AbjHXGlz (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 24 Aug 2023 02:41:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
+        id S235450AbjHXGtY (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 24 Aug 2023 02:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240155AbjHXGlY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Aug 2023 02:41:24 -0400
+        with ESMTP id S240216AbjHXGtK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Aug 2023 02:49:10 -0400
 Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A40F610FD;
-        Wed, 23 Aug 2023 23:41:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76ABC10FE;
+        Wed, 23 Aug 2023 23:48:51 -0700 (PDT)
 Received: (from willy@localhost)
-        by mail.home.local (8.17.1/8.17.1/Submit) id 37O6eYn8017295;
-        Thu, 24 Aug 2023 08:40:34 +0200
-Date:   Thu, 24 Aug 2023 08:40:34 +0200
+        by mail.home.local (8.17.1/8.17.1/Submit) id 37O6mQ1d017444;
+        Thu, 24 Aug 2023 08:48:26 +0200
+Date:   Thu, 24 Aug 2023 08:48:26 +0200
 From:   Willy Tarreau <w@1wt.eu>
 To:     Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
 Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christian Brauner <brauner@kernel.org>,
         Shuah Khan <skhan@linuxfoundation.org>,
         "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Zhangjin Wu <falcon@tinylab.org>
-Subject: Re: linux-next: manual merge of the nolibc tree with the vfs-brauner
+        Ryan Roberts <ryan.roberts@arm.com>
+Subject: Re: linux-next: manual merge of the nolibc tree with the mm-stable
  tree
-Message-ID: <ZOb7Ynd8vjC/kygl@1wt.eu>
-References: <20230824141008.27f7270b@canb.auug.org.au>
- <3028a552-bd75-4ded-9211-62d10768d9ea@t-8ch.de>
+Message-ID: <ZOb9OuFh/2pmkRv+@1wt.eu>
+References: <20230817133053.76d9f850@canb.auug.org.au>
+ <28aeee7b-2de5-4f39-8eb5-3e3486eeed1b@t-8ch.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3028a552-bd75-4ded-9211-62d10768d9ea@t-8ch.de>
+In-Reply-To: <28aeee7b-2de5-4f39-8eb5-3e3486eeed1b@t-8ch.de>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 08:27:21AM +0200, Thomas Weißschuh wrote:
+Hi Thomas,
+
+On Thu, Aug 24, 2023 at 08:41:18AM +0200, Thomas Weißschuh wrote:
 > Hi everybody,
 > 
-> On 2023-08-24 14:10:08+1000, Stephen Rothwell wrote:
+> On 2023-08-17 13:30:53+1000, Stephen Rothwell wrote:
 > > Today's linux-next merge of the nolibc tree got a conflict in:
 > > 
-> >   tools/testing/selftests/nolibc/nolibc-test.c
+> >   tools/include/nolibc/stdio.h
 > > 
 > > between commit:
 > > 
-> >   49319832de90 ("selftests/nolibc: drop test chmod_net")
+> >   08d959738a95 ("selftests: line buffer test program's stdout")
 > > 
-> > from the vfs-brauner tree and commit:
+> > from the mm-stable tree and commits:
 > > 
-> >   148e9718e2a2 ("selftests/nolibc: add chmod_argv0 test")
+> >   65ff4d19f792 ("tools/nolibc/stdio: add setvbuf() to set buffering mode")
+> >   2e00a8fc4f47 ("tools/nolibc: setvbuf: avoid unused parameter warnings")
 > > 
 > > from the nolibc tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+> >
+> > I fixed it up (I just used the latter version of this file) and can
+> > carry the fix as necessary. This is now fixed as far as linux-next is
+> > concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
 > 
-> This is fallout from the recent removal of
-> "selftests/nolibc: drop test chmod_net" from the nolibc tree.
+> how do we want to handle this one?
 > 
-> Christian:
-> 
-> You mentioned before that you plan to have this series in
-> -next for some time. If you only submit it to Linux for 6.7 or later
-> then you have to, if I understand the process correctly, rebase your
-> -next branch on Linus' master after 6.6-rc1.
-> 6.6-rc1 should contain the conflicting nolibc changes, so you would need
-> to resolve the conflict during rebasing.
-> The patch is intentionally made to be easy to resolve conflicts for,
-> just delete the line containing "CASE_TEST(chmod_net)".
-> 
-> Everyone:
-> 
-> What is your opinion on that?
+> A small note to Linus in the PRs to him on how to resolve it seem
+> reasonable to me.
+> But I'm fairly new to the process.
 
-I think that if Stephen is okay with temporarily carrying the small fix
-he has (which is correct), it could be the simplest way to resolve it
-until the branches are merged. Otherwise we can try to adjust again.
+My understanding is that Stephen's fix is still in his tree. We may indeed
+need to add a note to Linus in the PR about this one and the other one.
 
 Cheers,
 Willy
