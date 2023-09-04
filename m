@@ -2,66 +2,65 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42C9C83F33
-	for <linux-next@archiver.kernel.org>; Mon,  4 Sep 2023 21:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794A8C83F2C
+	for <linux-next@archiver.kernel.org>; Mon,  4 Sep 2023 21:50:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237757AbjIDVoF (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 4 Sep 2023 17:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56646 "EHLO
+        id S236699AbjIDVum (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 4 Sep 2023 17:50:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232204AbjIDVoF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Sep 2023 17:44:05 -0400
+        with ESMTP id S229561AbjIDVuk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Sep 2023 17:50:40 -0400
 Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB4A71B4;
-        Mon,  4 Sep 2023 14:44:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19BF31B7;
+        Mon,  4 Sep 2023 14:50:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1693863835;
-        bh=voAoM6CYvpZr+FmVVytnP2EqVOXt41NImBFsk08U9Vc=;
+        s=201702; t=1693864234;
+        bh=/uSY4R+0Uqu74+S9RPzi1Sqa5+qa6sCk+6usSEh02HU=;
         h=Date:From:To:Cc:Subject:From;
-        b=fslWcuANGiAbSl8aD0YSOCNe7yrHR7yucJsZa8zTqKyRedNvPMtLNG8Z1/z7+bOuW
-         5vwm4pjY8B87zz6NH10HFLAQGfaOzU17BYqMWlScvxK7vwJYMuHi+/b51FATUHpEYx
-         I1aOdoEHlUP0+atxKz+ZznbcCBzPHUwE08Ndbjz25oj50wCFzXHSxrLGQWH2eRmLTV
-         zdrl8rvOVUVI6crLAhgXGLJ0F2/O49OvFtbmGSZ85l13EYt2cR4hlY0ylYncZhMzwv
-         Tq1lyPCgykJXVFDJ9pVQEtS0cs9NYYti+Gn3Ul4VwDWJNJkRu86/JL5MpaUOf+0IXx
-         Wky1QyQ1Y1wAA==
+        b=KM4W4BlpU0TGNFyE3zM5PoDc7n+/6YJjL75b66hdPgU2asqgnDYOUt9+f8gKdaAEV
+         D85soJbu40AKU8Ye0FuPOaDF0Lr+yBOzKRtjVXYyvq/E3o1jPILqnfGLIv/YdMel/0
+         lMAEbIp9ufJo8Qdyh2HrNFDORJ6JZtml3Keb+1YFC4oAnxvEgl4KlZWYdnIBlZcqUT
+         EpdM5GweZ7VugejjjIUdmRSTk76zjQb5PJwTq2IxqIof07Zz2k6zGJ4dsD1a8kxZil
+         m6VmpkoxM6mAVZ2NLnFIALetk80gbrh2NWA4Ik9VRZ65MG5qNEfykDxuaxS3hZjTYj
+         TeiO/1EksN/8A==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RfhwV6rDBz4wb1;
-        Tue,  5 Sep 2023 07:43:54 +1000 (AEST)
-Date:   Tue, 5 Sep 2023 07:43:50 +1000
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Rfj4B5bBxz4wxN;
+        Tue,  5 Sep 2023 07:50:34 +1000 (AEST)
+Date:   Tue, 5 Sep 2023 07:50:33 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     Palmer Dabbelt <palmer@rivosinc.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the perf-current tree
-Message-ID: <20230905074350.6a9c81f2@canb.auug.org.au>
+Subject: linux-next: duplicate patch in the ftrace tree
+Message-ID: <20230905075033.0df2b7fa@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vGfoc9ZMDsdcTIKH2i+0BJ1";
+Content-Type: multipart/signed; boundary="Sig_/1clXow6U7SjRdYHyOlKQv8F";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/vGfoc9ZMDsdcTIKH2i+0BJ1
+--Sig_/1clXow6U7SjRdYHyOlKQv8F
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
-  10da1b8ed79f ("perf tests mmap-basic: Adapt for riscv")
-  159a8bb06f7b ("libperf: Implement riscv mmap support")
+  bd96000ba862 ("Documentation: tracing: Update fprobe event example with B=
+TF field")
 
-These are commits
+This is commit
 
-  26ba042414a3 ("perf: tests: Adapt mmap-basic.c for riscv")
-  60bd50116484 ("tools: lib: perf: Implement riscv mmap support")
+  a2439a4c9085 ("Documentation: tracing: Update fprobe event example with B=
+TF field")
 
 in Linus' tree.
 
@@ -69,20 +68,20 @@ in Linus' tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/vGfoc9ZMDsdcTIKH2i+0BJ1
+--Sig_/1clXow6U7SjRdYHyOlKQv8F
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmT2T5cACgkQAVBC80lX
-0GzXYQf8DTnpUL7XuPwxnVwlYf2lMrHsueznOpFpxt4e6V40aLeqW6bti85dhTOi
-x6oHxDypMMhCnllMwlPq70DjhG7bt2GZ3we5DbrFMlYuymGwSOuAsns/twhay+Z/
-GyU4Os2UX04CaxBORj0XE9Fc1x57cfFCgXWYqISCNz0oPVembXzqLWivs27e0Jpe
-MekaIKoY0z2R0W4VQHHMyeX4AFQwNxUBngN1Z0FFFBb2fEqsQZvLRlZORDYlBshR
-NaQOEHoLB1BLW4Zxkq1/S3afmbr5B7fz9ILM1tqRpq0+9I73i6+fjTiIAyF15PBZ
-8rY3iFSHx8lPLnvfzlF8zyaMe2yXTA==
-=LSmR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmT2USkACgkQAVBC80lX
+0GzVTgf/TVV8CcMUNWjQNY1XwKkkTcmeIrkq/dHHrWcEQpS3+SCX9yECUXzr+j3Z
+kiNn8/gj++8WTBzKV5RiZuhf4mhiqZtderBt+4JbQyDT3SgC4jGm7mnyQWtG62os
+r8YS6w/7J8lAHV1mbEcfziT92m3CeKgijc1cnrmTFXzvboAozh0MjKdNlOaMyciI
+mMw+cUPWZAU+n1LunYdmcrWyG+Z8TTAGBTbtUZ7hKLs86UErpIyNBYKnwhwKqwLp
+k99LcYyk94kPNA9M71M9/UB2rdUZ2eButTaOMsSDe7CDy4nh6eDDRAA31hlxSO1+
+Zy2MONFuzvpzroS+/4CX7ICQdRbCrQ==
+=P3sH
 -----END PGP SIGNATURE-----
 
---Sig_/vGfoc9ZMDsdcTIKH2i+0BJ1--
+--Sig_/1clXow6U7SjRdYHyOlKQv8F--
