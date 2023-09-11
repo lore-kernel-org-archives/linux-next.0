@@ -2,66 +2,81 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBD7CA0ED4
-	for <linux-next@archiver.kernel.org>; Mon, 11 Sep 2023 21:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DA1CA0EC3
+	for <linux-next@archiver.kernel.org>; Tue, 12 Sep 2023 00:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238271AbjIKVhT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:37:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43478 "EHLO
+        id S231455AbjILArR (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Mon, 11 Sep 2023 20:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235569AbjIKJCO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 11 Sep 2023 05:02:14 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC381CCD
-        for <linux-next@vger.kernel.org>; Mon, 11 Sep 2023 02:02:05 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a989:d413:f41f:af52])
-        by michel.telenet-ops.be with bizsmtp
-        id kZ232A00443UkUk06Z23Pa; Mon, 11 Sep 2023 11:02:03 +0200
-Received: from geert (helo=localhost)
-        by ramsan.of.borg with local-esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1qfcnz-002zLZ-1W;
-        Mon, 11 Sep 2023 11:02:03 +0200
-Date:   Mon, 11 Sep 2023 11:02:03 +0200 (CEST)
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        with ESMTP id S229989AbjILArP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 11 Sep 2023 20:47:15 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B186739AA;
+        Mon, 11 Sep 2023 17:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1694473555;
+        bh=8/gdBF5cccjdyD906oA3RzLacfEDjVs4+hlPei2Tjs0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=dWDVXyMF3uRaVd81zNchSJsVpzGBS6jgpWz0biJjaMQwv1F7evbW36P4OA0DgEsNT
+         GA2zp/k1jWAtLCRN4V6NFQ2n6I3AFevhg8pjJXkLAZ91SMzBoQhJZjx6GzyXfhm9is
+         EK4/FyKhaDU6N5rBO/7qZPVJt+/6HFmPOmZeytdqr1qPdhPcDSM9IUNZPCdaG/2kTT
+         2Rr+eurHA5kHReyg114XvKnOtNn/Y8UFWkZFZgmFFiGbvmfq4hNL5eCwy4OpaJO9Jv
+         lTsarjEpj+/wMRyf1DnJZxinwkxCyyRBSPzHqLm80Il7MlRqpSiFS1ewvPrJP1ZOxT
+         finzHs2zubPcQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Rl2Pt6mStz4xGM;
+        Tue, 12 Sep 2023 09:05:54 +1000 (AEST)
+Date:   Tue, 12 Sep 2023 09:05:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc:     Michael Hennerich <michael.hennerich@analog.com>,
+        Ana-Maria Cusco <ana-maria.cusco@analog.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: stats (Was: Linux 6.6-rc1)
-In-Reply-To: <20230911123839.7ab72f81@canb.auug.org.au>
-Message-ID: <2b3f3296-5263-1746-1f4-d0ad95a52922@linux-m68k.org>
-References: <CAHk-=wgfL1rwyvELk2VwJTtiLNpwxTFeFtStLeAQ-2rTRd34eQ@mail.gmail.com> <20230911123839.7ab72f81@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the iio tree
+Message-ID: <20230912090544.50add67a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: multipart/signed; boundary="Sig_/HZY.JqajCYHC+Jj5o2sO+oy";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
- 	Hi Stephen,
+--Sig_/HZY.JqajCYHC+Jj5o2sO+oy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 11 Sep 2023, Stephen Rothwell wrote:
-> There are also 275 commits in next-20230828 that didn't make it into
-> v6.6-rc1.
+Hi all,
 
-> Top ten commiters:
->
->     11 geert+renesas@glider.be
+Commit
 
-Thanks for your report!
+  6ed193ca529e ("iio: amplifiers: hmc425a: Add Support HMC540S 4-bit Attenu=
+ator")
 
-I had a look, and this was caused due to me rebasing
-renesas-dts-for-v6.6 on top of renesas-fixes-for-v6.5, but forgetting to
-recreate renesas/next afterwards (there were no conflicts).  So all
-eleven commits did make it upstream.
+is missing a Signed-off-by from its author.
 
-Gr{oetje,eeting}s,
+--=20
+Cheers,
+Stephen Rothwell
 
- 						Geert
+--Sig_/HZY.JqajCYHC+Jj5o2sO+oy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmT/nUgACgkQAVBC80lX
+0GzpYwf8C6p1cZP3GEx72KweB5I6Sorc8zvijoElLtvGQht6Z02caaRY08ef+Ydk
+QkAcxdscTtjDwzLPyZ7idTLQw0kS5dBHBcFuwS90rkuLS9NL1/N/wAv6Wku/Ohjx
+eGdPgcN7TTbZ9sEZzFrAOdKtn9F7xdWCla5Gt3e113pNHb73EzjdstHjPyex+6sK
+E6qywrT540pgvvsCrTnaPgThdX95P6MfHk9kl32yxkXThAKQ9HpWTm710CwIw0WK
+yiVMDKX6kuca+J6L0J6hz2Gz6oCg+ng+lV9YDZ+rrIiC0Tii7swNt1qPgkBb7UBs
+aeAzvHFAs0GQs3BODtvsXZUlXLXkyw==
+=KvnM
+-----END PGP SIGNATURE-----
+
+--Sig_/HZY.JqajCYHC+Jj5o2sO+oy--
