@@ -2,85 +2,112 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B92E7D0A6
-	for <linux-next@archiver.kernel.org>; Thu, 21 Sep 2023 19:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7AFE7D0A8
+	for <linux-next@archiver.kernel.org>; Thu, 21 Sep 2023 20:27:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230169AbjIUT2D (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Thu, 21 Sep 2023 15:28:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43538 "EHLO
+        id S231923AbjIUU1p (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Thu, 21 Sep 2023 16:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbjIUT1b (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Sep 2023 15:27:31 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24044A5D69;
-        Thu, 21 Sep 2023 10:59:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1695268569;
-        bh=aSkp4Fw8HQ6q3NIZmUicIwuJ6VX+w+9CVVhVevKPHUg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZXq5ZvYKnxPEYcMGlyfZavaNlN03FlMGCf3AXU9KNcX8brB+mRrytbsDf2OBR2sY+
-         RPDx7LiSlR2K8bvVuOFFzQdv/9YEJhyCZFmwTt3VZ0+bZwsieQuRyczMRiin+3ROb/
-         5+DdMAbAnNVxjIdZFy925dvBc7ytu+OadGV2ZW3v9pxHZnhuPFiz87vZTiK2LEgp7j
-         FAacWbMfZVDoVJMLzHk6XQAY3yQrEIzJuv64LvZ8ihaPKChKrs+oyzCWOUKsl4w3Og
-         3Bj1X4+skedZ7kyFLl63nFOk3qhz1oBDQl3ekBu9lAi8Kq3wuQ58Gfa4+wNzukmJxo
-         SZZmbUjxICASA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RrhQc4DSkz4x3F;
-        Thu, 21 Sep 2023 13:56:08 +1000 (AEST)
-Date:   Thu, 21 Sep 2023 13:56:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ardb@kernel.org>,
-        Joel Granados <j.granados@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the sysctl tree with the
- asm-generic tree
-Message-ID: <20230921135607.7c197457@canb.auug.org.au>
-In-Reply-To: <ZQuyP8GsIP+gSB4U@bombadil.infradead.org>
-References: <20230921115034.5461f62f@canb.auug.org.au>
-        <ZQuyP8GsIP+gSB4U@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/AdtZsNj2mUAVXM+g_MXFjNB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        with ESMTP id S231641AbjIUU13 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Sep 2023 16:27:29 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4EF78ED67
+        for <linux-next@vger.kernel.org>; Thu, 21 Sep 2023 10:45:15 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-50325ce89e9so2068929e87.0
+        for <linux-next@vger.kernel.org>; Thu, 21 Sep 2023 10:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1695318314; x=1695923114; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q8eS5EsLnF+3eMR0Okk+7DiUYY6jE3GaH2tKxaZiXFU=;
+        b=gyLcsLx6ujCv6ceKUj05MxgeQjZjLWJoh4fjNfVjegSGrMaKYmO/72S3WXtKa5AdDh
+         6DRToskPXQtTbfwQd+Lz3jRHePxg0TlClpigrgMjGksZQ+cQT+JrH1fL+53refomVHkV
+         2unkZDGpTv6gj+gemf6FiEBKQVBr7M/zU8FkqV7qau7iwX+LEfJjCi+65coDzbSEFI6M
+         4fm7XCFc9uKPrJA6zQLVtaV8gM5RZDd+HPdmglvypd4fzr3v0UpNKsQkLtXzrFnhKwi+
+         /CZpCDAt7UTJz+ivywgWv6PghhUcZ39pLGTjF3z5hsRIZaKDsDyYK4jm9xA8HAtE42Dp
+         QXIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695318314; x=1695923114;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q8eS5EsLnF+3eMR0Okk+7DiUYY6jE3GaH2tKxaZiXFU=;
+        b=Tb7EOqDvfuZYwMN0oy4hIEIu70EFlgyOdnDjzuQNheXxC+9lRW3eD7mG45/5dH1QNJ
+         cBgxByuYI8f9653vqw/iLjKFv7rSHem1Xb2tkapWVwreT5dmaDpiOthE5gsO1TYLS2O7
+         3YTvtqOGEHXZRxMVio026cyOqMMQAnLui5WTgTcgRa/HKQAsQB9VVOLfbnfSuqNXwLvE
+         IeSOKXZZsBzxQdKbCS/pyzvqwtnzm7L1bqRQ4bvPYYhn3O/xOEH4nvmM9uElrozksaeL
+         qlArgb6hHsl6jPPxeU+/YvdTdtEQddSsI81GlmZyqOfvU39cK0WTcwzofVT5A26dDLx5
+         wrdw==
+X-Gm-Message-State: AOJu0YzFjL99htYIjVCcqxpRke/TrTh7PmW6Pz6W7asFfC5sR7x95h1n
+        2Fhi/uNlg34F1mw/1otEs1K2uqJqw5o+wJu+7TvTfA==
+X-Google-Smtp-Source: AGHT+IH0xC3AnMjYLD8sk+f9VGN5MFIAOGTQLEfy1gXzGtJvdU7IH7Xk3Rmde+6cngEOiB0uUj1Zrg==
+X-Received: by 2002:a2e:86c9:0:b0:2c0:d44:6162 with SMTP id n9-20020a2e86c9000000b002c00d446162mr3655168ljj.12.1695277809976;
+        Wed, 20 Sep 2023 23:30:09 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id j11-20020a170906278b00b00977eec7b7e8sm555508ejc.68.2023.09.20.23.30.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Sep 2023 23:30:09 -0700 (PDT)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 21 Sep 2023 08:30:08 +0200
+Message-Id: <CVODTTU89L11.Y3SSDO2Y9A35@otso>
+Cc:     "Bjorn Andersson" <andersson@kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Linux Next Mailing List" <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the qcom tree
+From:   "Luca Weiss" <luca.weiss@fairphone.com>
+To:     "Stephen Rothwell" <sfr@canb.auug.org.au>,
+        "Andy Gross" <agross@kernel.org>
+X-Mailer: aerc 0.15.2
+References: <20230921084252.3c5ab501@canb.auug.org.au>
+In-Reply-To: <20230921084252.3c5ab501@canb.auug.org.au>
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/AdtZsNj2mUAVXM+g_MXFjNB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Luis,
-
-On Wed, 20 Sep 2023 20:02:23 -0700 Luis Chamberlain <mcgrof@kernel.org> wro=
-te:
+On Thu Sep 21, 2023 at 12:42 AM CEST, Stephen Rothwell wrote:
+> Hi all,
 >
-> Lol, good bye IA64! Glad I got merge conflict to say goodbye.
+> After merging the qcom tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> Error: scripts/dtc/include-prefixes/arm64/qcom/pm7250b.dtsi:44.10-11 synt=
+ax error
+> FATAL ERROR: Unable to parse input tree
+>
+> Caused (exposed) by commit
+>
+>   eee9602ad649 ("arm64: dts: qcom: qcm6490: Add device-tree for Fairphone=
+ 5")
 
-:-)
+Hi, this should be caused by
+"arm64: dts: qcom: pm7250b: make SID configurable"
 
---=20
-Cheers,
-Stephen Rothwell
+It seems I've missed updating one arm32 dts file, I'll send a patch for
+this shortly.
 
---Sig_/AdtZsNj2mUAVXM+g_MXFjNB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Sorry about that.
 
------BEGIN PGP SIGNATURE-----
+diff --git a/arch/arm/boot/dts/qcom/qcom-sdx65-mtp.dts b/arch/arm/boot/dts/=
+qcom/qcom-sdx65-mtp.dts
+index fcf1c51c5e7a..9649c859a2c3 100644
+--- a/arch/arm/boot/dts/qcom/qcom-sdx65-mtp.dts
++++ b/arch/arm/boot/dts/qcom/qcom-sdx65-mtp.dts
+@@ -4,6 +4,10 @@
+  */
+ /dts-v1/;
+=20
++/* PM7250B is configured to use SID2/3 */
++#define PM7250B_SID 2
++#define PM7250B_SID1 3
++
+ #include "qcom-sdx65.dtsi"
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ #include <arm64/qcom/pmk8350.dtsi>
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmULvtcACgkQAVBC80lX
-0GzacAgAir4iveyMm6dSbNiKqKcidjjBcN6ISSe2ITQ6h96Airfmn2NzrXiQdLOI
-JiDUDauddvz4zO1A2bgDsg5h3KafvKKNS6mjYgH0zv2FnoMLO45RDwcxu/tyosI/
-d/3qlx5LrZ4x4VIsTWcsYieVy6m4tztJWwgz899s12qgw7OAnVKos6rPNrYDq82j
-W+Dt7vmDFWW/sgN/FUKsgemChXA4TG3YhMwP71RyZIa2oqWsyYoUZjgPylv89T4r
-zuGsKr1pz6gO5bpgg8HWTL7LbK5bIBTCDnXZ4opX5J/jRxJ7AR5l0j4QDxhZjTwD
-f6f3znGPds8FnPW1QKlLg56ItzVKQA==
-=bgIU
------END PGP SIGNATURE-----
+>
+> I have used the qcom tree from next-20230920 for today.
 
---Sig_/AdtZsNj2mUAVXM+g_MXFjNB--
