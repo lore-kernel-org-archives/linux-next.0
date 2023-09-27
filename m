@@ -2,74 +2,87 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C812E80A82
-	for <linux-next@archiver.kernel.org>; Wed, 27 Sep 2023 04:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDE9E80A86
+	for <linux-next@archiver.kernel.org>; Wed, 27 Sep 2023 05:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbjI0Enn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 27 Sep 2023 00:43:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47236 "EHLO
+        id S229807AbjI0FPd (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 27 Sep 2023 01:15:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbjI0EnB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Sep 2023 00:43:01 -0400
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816563C07;
-        Tue, 26 Sep 2023 21:03:45 -0700 (PDT)
-Received: from [192.168.68.112] (ppp118-210-175-231.adl-adc-lon-bras34.tpg.internode.on.net [118.210.175.231])
-        by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4336120216;
-        Wed, 27 Sep 2023 12:03:39 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=codeconstruct.com.au; s=2022a; t=1695787422;
-        bh=zvBQOZmBgJD19HJPXvR2HTEHcUJHGXV6N2am+FBFV7k=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References;
-        b=Xmg6eoznLCKs8tJqaKA+AskPm5tjbluyWwqapgB6OONEpL7MCScbawR38Qm0jq8JX
-         DlBPcVs05DUXgsL5y3Lyd/uwkajLg6i9o/R6s4ZJfbQAG1iWROPeyO2tWGRPuVLUb5
-         PtVJhlsQm7QLlHm9A1sCaGj/pZl4RY39f7UcHWRGfYoZeyCZ4xipVjj16e+bxH7hWY
-         Ld2RllvmJYwgSRO2uQnTObk6hlIJh60QrBNqHREarvP6sAslkFyomp1KAlr/6Xos6/
-         c9NOw9CV/saOEulPaK6IkoNTZ68u9qob3raJzvTRzFSE67ieYyxfaHeUQ79O3XDciN
-         FlbPTkIMHLI3w==
-Message-ID: <acf1fb48ca1d4c5d2811c54e04a9c1e2e65779b9.camel@codeconstruct.com.au>
-Subject: Re: linux-next: duplicate patch in the mmc tree
-From:   Andrew Jeffery <andrew@codeconstruct.com.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        with ESMTP id S229460AbjI0FOz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Sep 2023 01:14:55 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8601022884;
+        Tue, 26 Sep 2023 20:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1695786566;
+        bh=p/jWd8jSfb8q3fKVDZ/RL8Z4HDCmtxf/r2YVXBG8hEg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=g/vUR2558LsxsmsAduyOFPfwJjylsy508ld8XCptslSYFB+4TWcdpn5Vyx9z99y24
+         cTsD2DREpmupv7Ja59BdyJTrrx/EfB2jbNKByFoh1F8nl7UUifEK5qKwRoQYJgNKwK
+         95mRPvijK+aJio5SDmlwq9D9AfUNIv1jnRwSmDOLih4JnAjTrnPCkgKQ0oiCS5n90t
+         XstKqIbXvyUDcKA5UEdrYkHyQ0cn+eyCg+ZQ63WDY56zgTH8RXq/Bu14msNjGpqbDW
+         i0Qq/PXA/cSxC+0NyBW+sCu+so1cQxF89fj4LRRTFSjKV4JXxqaCXonujdy2qbpZm+
+         YPwayN//N/frA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RwN0537vyz4xGR;
+        Wed, 27 Sep 2023 13:49:25 +1000 (AEST)
+Date:   Wed, 27 Sep 2023 13:49:24 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 Cc:     ARM <linux-arm-kernel@lists.infradead.org>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
         Joel Stanley <joel@jms.id.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Date:   Wed, 27 Sep 2023 13:33:37 +0930
-In-Reply-To: <20230927134924.20dd7fb9@canb.auug.org.au>
-References: <20230927134924.20dd7fb9@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+Subject: linux-next: duplicate patch in the mmc tree
+Message-ID: <20230927134924.20dd7fb9@canb.auug.org.au>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/d8hLCsoFY+VhsMUmDIiEJOQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
-Hi Stephen,
+--Sig_/d8hLCsoFY+VhsMUmDIiEJOQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2023-09-27 at 13:49 +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> The following commit is also in the arm-soc-fixes tree as a different
-> commit (but the same patch):
->=20
->   298df10391f4 ("MAINTAINERS: aspeed: Update Andrew's email address")
->=20
-> This is commit
->=20
->   9c888dbf2164 ("MAINTAINERS: aspeed: Update Andrew's email address")
->=20
-> in the arm-soc-fixes tree.
->=20
+Hi all,
 
-Thanks. I alerted Ulf to Joel picking it up here:
+The following commit is also in the arm-soc-fixes tree as a different
+commit (but the same patch):
 
-https://lore.kernel.org/all/7a7d5a7f19fc793f157508fec7fbc09ca8c4cc4b.camel@=
-codeconstruct.com.au/
+  298df10391f4 ("MAINTAINERS: aspeed: Update Andrew's email address")
 
-Sorry for the noise.
+This is commit
 
-Andrew
+  9c888dbf2164 ("MAINTAINERS: aspeed: Update Andrew's email address")
+
+in the arm-soc-fixes tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/d8hLCsoFY+VhsMUmDIiEJOQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmUTpkQACgkQAVBC80lX
+0GwtlQgAkAdhfppvK0LdZpJG2Z6dX9laz09O/1/eG9UEMdJyXNUC86KCgY/4Ngs/
+RrWktj3EIUM0v7K7F2qLV2EJbHfNVxbM9i5VE78HttHKPdkHFPca+MuLrPn7QxJM
+vegtgrrCX066ZL4EgnMP7KBJKNuo+fSYEu4Z9wniIqrIujISOKG+voDahnMMVVxW
+XfQZ4fb3/mvuNjKESe2tZa/KWKImh9/9rc/UGVc8xGrUJkdp+ZKFphx2FqSmH6HM
+ghQ/LWjcR9YQoEYxUAXjh1LrXE890H11JpOargsJcn22xke7QbLlTQg5GFxQUIKZ
+k4OoVIt+xBgECb5amA7CANFIrjs47A==
+=nmXx
+-----END PGP SIGNATURE-----
+
+--Sig_/d8hLCsoFY+VhsMUmDIiEJOQ--
