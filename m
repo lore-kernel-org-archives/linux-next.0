@@ -2,85 +2,74 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91415E81815
-	for <linux-next@archiver.kernel.org>; Wed, 27 Sep 2023 04:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C812E80A82
+	for <linux-next@archiver.kernel.org>; Wed, 27 Sep 2023 04:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbjI0EaL (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Wed, 27 Sep 2023 00:30:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47384 "EHLO
+        id S229665AbjI0Enn (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Wed, 27 Sep 2023 00:43:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbjI0E3O (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Sep 2023 00:29:14 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B53BF769A;
-        Tue, 26 Sep 2023 19:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1695781966;
-        bh=Y1SdRVKhMsKiJoLM+trJuNnLP2IbtcnaCJML1/uaGMQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TmA+12ZtmMF1Ni7lYGU1Pko5RQQTUAYLGkWDzSbonD/q9E7crtt4YVEKu08w9vK36
-         dhRXCh2HZXLAuRRTzARmHvLe57+YPza5r7bKQoIjf3Ee4WxsLAruBKraakN7wxO/fP
-         yB1wiML/q0fVUm0PvQAI4dv6z8GJ0rRbuSbzI4rRIaxDn2B9tH6e2ZxvGnRHniSMJi
-         w0h1oH2kNDss+k3JihTnvjNNTEbfwBAp7dSDThA+cynohGJuYqxCkXyMhLxxF4/LRq
-         TExK2MGYdmFTKVZOGx0DPncaog1T27YjMSx0NI6RfFBtKkHZ984ho5GJra009SdTrs
-         VnbtXcKhP3LIw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RwLHd4bDyz4x5k;
-        Wed, 27 Sep 2023 12:32:45 +1000 (AEST)
-Date:   Wed, 27 Sep 2023 12:32:43 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-        Yu Liao <liaoyu15@huawei.com>,
+        with ESMTP id S229705AbjI0EnB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Sep 2023 00:43:01 -0400
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816563C07;
+        Tue, 26 Sep 2023 21:03:45 -0700 (PDT)
+Received: from [192.168.68.112] (ppp118-210-175-231.adl-adc-lon-bras34.tpg.internode.on.net [118.210.175.231])
+        by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4336120216;
+        Wed, 27 Sep 2023 12:03:39 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codeconstruct.com.au; s=2022a; t=1695787422;
+        bh=zvBQOZmBgJD19HJPXvR2HTEHcUJHGXV6N2am+FBFV7k=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=Xmg6eoznLCKs8tJqaKA+AskPm5tjbluyWwqapgB6OONEpL7MCScbawR38Qm0jq8JX
+         DlBPcVs05DUXgsL5y3Lyd/uwkajLg6i9o/R6s4ZJfbQAG1iWROPeyO2tWGRPuVLUb5
+         PtVJhlsQm7QLlHm9A1sCaGj/pZl4RY39f7UcHWRGfYoZeyCZ4xipVjj16e+bxH7hWY
+         Ld2RllvmJYwgSRO2uQnTObk6hlIJh60QrBNqHREarvP6sAslkFyomp1KAlr/6Xos6/
+         c9NOw9CV/saOEulPaK6IkoNTZ68u9qob3raJzvTRzFSE67ieYyxfaHeUQ79O3XDciN
+         FlbPTkIMHLI3w==
+Message-ID: <acf1fb48ca1d4c5d2811c54e04a9c1e2e65779b9.camel@codeconstruct.com.au>
+Subject: Re: linux-next: duplicate patch in the mmc tree
+From:   Andrew Jeffery <andrew@codeconstruct.com.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc:     ARM <linux-arm-kernel@lists.infradead.org>,
+        Joel Stanley <joel@jms.id.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the nvdimm tree
-Message-ID: <20230927123243.358cda9f@canb.auug.org.au>
+Date:   Wed, 27 Sep 2023 13:33:37 +0930
+In-Reply-To: <20230927134924.20dd7fb9@canb.auug.org.au>
+References: <20230927134924.20dd7fb9@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/KUde7j0zW3MI/+1q7_vPTPM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/KUde7j0zW3MI/+1q7_vPTPM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On Wed, 2023-09-27 at 13:49 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> The following commit is also in the arm-soc-fixes tree as a different
+> commit (but the same patch):
+>=20
+>   298df10391f4 ("MAINTAINERS: aspeed: Update Andrew's email address")
+>=20
+> This is commit
+>=20
+>   9c888dbf2164 ("MAINTAINERS: aspeed: Update Andrew's email address")
+>=20
+> in the arm-soc-fixes tree.
+>=20
 
-The following commit is also in the nvdimm-fixes tree as a different
-commit (but the same patch):
+Thanks. I alerted Ulf to Joel picking it up here:
 
-  512747bbf0c7 ("ACPI: NFIT: Fix incorrect calculation of idt size")
+https://lore.kernel.org/all/7a7d5a7f19fc793f157508fec7fbc09ca8c4cc4b.camel@=
+codeconstruct.com.au/
 
-This is commit
+Sorry for the noise.
 
-  33908660e814 ("ACPI: NFIT: Fix incorrect calculation of idt size")
-
-in the nvdimm-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/KUde7j0zW3MI/+1q7_vPTPM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmUTlEsACgkQAVBC80lX
-0Gy1Vwf+MYk0Epa0gkI0Fvhho9Qb7xSOUYHD7DRCs/Z1yCmfsBrcPof514/9sMY2
-6k9lRiM3BXaLEakqhd3/SrqIWop+JIdpJSRWlpznZUSKA5QSg5T8+TjKrAsGFi3y
-+vi2oZMFzkr//OpTdSSn4sysUZKIKHdfuk1hKNZo0nXwgFgupvKFTos+lldDwUfd
-nCgEzxfmG2D47ZN/6yWzWnYnfUNVUrUxjBWPQpOYWXmtt59MQLPl6Fdsx4T2xP3P
-7E86/MfmphOkC/ESv7arr0sOaOhA8ABB9C7IARc4SXynEc6ifd8JYOS8teg+XlJ5
-NJrG+tXKFUV7jttQyQsIOZ7JxY6dOg==
-=L0lK
------END PGP SIGNATURE-----
-
---Sig_/KUde7j0zW3MI/+1q7_vPTPM--
+Andrew
