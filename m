@@ -2,123 +2,120 @@ Return-Path: <linux-next-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089F9E8FDBE
-	for <linux-next@archiver.kernel.org>; Tue,  3 Oct 2023 22:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9D8E8FDC0
+	for <linux-next@archiver.kernel.org>; Tue,  3 Oct 2023 23:14:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230421AbjJCWvT (ORCPT <rfc822;linux-next@archiver.kernel.org>);
-        Tue, 3 Oct 2023 18:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56310 "EHLO
+        id S232139AbjJCXOE (ORCPT <rfc822;linux-next@archiver.kernel.org>);
+        Tue, 3 Oct 2023 19:14:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbjJCWvT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 3 Oct 2023 18:51:19 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAABCAB;
-        Tue,  3 Oct 2023 15:51:15 -0700 (PDT)
+        with ESMTP id S231504AbjJCXOE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 3 Oct 2023 19:14:04 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7B99E;
+        Tue,  3 Oct 2023 16:14:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1696373469;
-        bh=AbHgkLw6pkAiF+hp9Xi3YUuEXjip/NWdn8JZOZ7S79A=;
+        s=201702; t=1696374837;
+        bh=Q7qhg5+koDdvp1LrmdDZqKf4+yEoxZq8zg19PJx37lE=;
         h=Date:From:To:Cc:Subject:From;
-        b=RQVGhtncQsHbkRYyOeNG7HA1jL3oHK91Fzsr2oNx1Y31Kz+1loHVwqhFo2qnGaG44
-         JE2oO5uXtcI+A5lhntVof3XtSX1occzDuPxGo4lVh38ujhj5Z1DSRncWChQw+3IOak
-         +x5TGjWB3+o1Ayz0OY+Vj0NoQnTKTpjEQBjKdp0nHLh3Kntn3tQpSRhLwovMKL6fjs
-         1b5BZEGEVeh9j/pWq2kliCdD/RKTJVqgbAK2Y9YmB1Xx+7AeE8bZkvIsvqrt8Rj6Fw
-         k3rogAHqOpKCvmSDT6n1vpmLL/UdtZmVv0wPWhqU/voEgWwAhridMTB8I61cOpHjL+
-         D7gRgMY6wEpWA==
+        b=AZPZsHNWgfn97GOf/nStiTbOp7tol1U+EKHCgpLpbBNVqB2iaku/0g5Xef1rLAI3X
+         attiRE9sXTwyB4v0I9VilRukxNdwadjlAZIyYgtr/qV/muWeil47AbDFYvbWDj9WLo
+         Zn9NJocFuRmQ9nFPftrFuVQCgR42iPOxhXVZDGJ1z4AXhIM99fH8ugTBJ/Vhb2gSRM
+         0E7QAyKni8dvc2GByeIaF4KpX/N8rTr9Bt1x4tJd6gKgNJH0pc8dOhWr/BejS/9lhf
+         N/W++tKbjo7eAsEwO1ZB1FyScdKy81c6vO7L8teWq/qheDgOrTDN3oYkrPA0XknYoo
+         MNANEMcMb9Mkg==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4S0Y2j2nZhz4xPQ;
-        Wed,  4 Oct 2023 09:51:09 +1100 (AEDT)
-Date:   Wed, 4 Oct 2023 09:50:58 +1100
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4S0YY104XQz4xQj;
+        Wed,  4 Oct 2023 10:13:56 +1100 (AEDT)
+Date:   Wed, 4 Oct 2023 10:13:56 +1100
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Laight <david.laight@aculab.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20231004095058.392f8c17@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the kbuild tree
+Message-ID: <20231004101356.4f3a0a9c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=rjFqCZOmRnTDUB+/7gW/nM";
+Content-Type: multipart/signed; boundary="Sig_/a8ztTWT2wsREURC2p4NIvm+";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-next.vger.kernel.org>
 X-Mailing-List: linux-next@vger.kernel.org
 
---Sig_/=rjFqCZOmRnTDUB+/7gW/nM
+--Sig_/a8ztTWT2wsREURC2p4NIvm+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the mm tree, today's linux-next build (native perf) failed
-like this:
+After merging the kbuild tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-In file included from tools/include/linux/bits.h:21,
-                 from tools/include/linux/bitops.h:14,
-                 from tools/include/linux/bitmap.h:6,
-                 from tools/perf/util/header.h:10,
-                 from /home/sfr/next/perf/pmu-events/pmu-events.c:3:
-tools/include/linux/find.h: In function 'find_next_bit':
-tools/include/linux/bits.h:24:17: error: implicit declaration of function '=
-__is_constexpr' [-Werror=3Dimplicit-function-declaration]
-   24 |                 __is_constexpr((l) > (h)), (l) > (h), 0)))
-      |                 ^~~~~~~~~~~~~~
-tools/include/linux/build_bug.h:16:62: note: in definition of macro 'BUILD_=
-BUG_ON_ZERO'
-   16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); }=
-)))
-      |                                                              ^
-tools/include/linux/bits.h:37:10: note: in expansion of macro 'GENMASK_INPU=
-T_CHECK'
-   37 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
-      |          ^~~~~~~~~~~~~~~~~~~
-tools/include/linux/find.h:42:31: note: in expansion of macro 'GENMASK'
-   42 |                 val =3D *addr & GENMASK(size - 1, offset);
-      |                               ^~~~~~~
-tools/include/linux/bits.h:23:28: error: first argument to '__builtin_choos=
-e_expr' not a constant
-   23 |         (BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
-      |                            ^~~~~~~~~~~~~~~~~~~~~
-tools/include/linux/build_bug.h:16:62: note: in definition of macro 'BUILD_=
-BUG_ON_ZERO'
-   16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); }=
-)))
-      |                                                              ^
-tools/include/linux/bits.h:37:10: note: in expansion of macro 'GENMASK_INPU=
-T_CHECK'
-   37 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
-      |          ^~~~~~~~~~~~~~~~~~~
-tools/include/linux/find.h:42:31: note: in expansion of macro 'GENMASK'
-   42 |                 val =3D *addr & GENMASK(size - 1, offset);
-      |                               ^~~~~~~
+In file included from scripts/mod/modpost.c:23:
+scripts/mod/modpost.c: In function 'section_rela':
+scripts/mod/modpost.h:66:24: warning: passing argument 2 of '__endian' disc=
+ards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   66 |         __endian(&(x), &(__x), sizeof(__x));                    \
+      |                        ^~~~~~
+scripts/mod/modpost.c:1437:28: note: in expansion of macro 'TO_NATIVE'
+ 1437 |                 r_offset =3D TO_NATIVE(rela->r_offset);
+      |                            ^~~~~~~~~
+scripts/mod/modpost.h:56:52: note: expected 'void *' but argument is of typ=
+e 'const Elf64_Addr *' {aka 'const long unsigned int *'}
+   56 | static inline void __endian(const void *src, void *dest, unsigned i=
+nt size)
+      |                                              ~~~~~~^~~~
+scripts/mod/modpost.h:66:24: warning: passing argument 2 of '__endian' disc=
+ards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   66 |         __endian(&(x), &(__x), sizeof(__x));                    \
+      |                        ^~~~~~
+scripts/mod/modpost.c:1440:25: note: in expansion of macro 'TO_NATIVE'
+ 1440 |                 taddr =3D TO_NATIVE(rela->r_addend);
+      |                         ^~~~~~~~~
+scripts/mod/modpost.h:56:52: note: expected 'void *' but argument is of typ=
+e 'const Elf64_Sxword *' {aka 'const long int *'}
+   56 | static inline void __endian(const void *src, void *dest, unsigned i=
+nt size)
+      |                                              ~~~~~~^~~~
+scripts/mod/modpost.c: In function 'section_rel':
+scripts/mod/modpost.h:66:24: warning: passing argument 2 of '__endian' disc=
+ards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+   66 |         __endian(&(x), &(__x), sizeof(__x));                    \
+      |                        ^~~~~~
+scripts/mod/modpost.c:1472:28: note: in expansion of macro 'TO_NATIVE'
+ 1472 |                 r_offset =3D TO_NATIVE(rel->r_offset);
+      |                            ^~~~~~~~~
+scripts/mod/modpost.h:56:52: note: expected 'void *' but argument is of typ=
+e 'const Elf64_Addr *' {aka 'const long unsigned int *'}
+   56 | static inline void __endian(const void *src, void *dest, unsigned i=
+nt size)
+      |                                              ~~~~~~^~~~
 
-... and much more ...
+Introduced by commit
 
-Caused by commit
-
-  5bee02eadb5d ("compiler.h: move __is_constexpr() to compiler.h")
-
-I have reverted that commit for today.
+  367df0e19c67 ("modpost: factor out the common boilerplate of section_rel(=
+a)")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/=rjFqCZOmRnTDUB+/7gW/nM
+--Sig_/a8ztTWT2wsREURC2p4NIvm+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmUcmtIACgkQAVBC80lX
-0GwIfQf/ZcE4yCqcXlK7iSUd+e/AKBGHTndJVn0kbSt5780085FlkP0I8xbsf/Sg
-kKtzs7GoAnDvBpjq/oDBvyKvM66u3MU0XuI9ZI4qLb5fThj4xNeIZq50FzlAXy24
-HeiGl1KU6MLakWItd5TlCmfsBmtuhSZJHYBgPLCTQZoL+Rv921CN+K6vuALfrk+z
-bqpnRc5sOhllKMeIYTJ74OWxwEQUElnG8aoWTz06JcSWckqkbI8Mj3as0f/jTYJv
-fbc8zZvjJCp4P4H7yAIascSHmkH0DzYZAk3DGEG8qUPr1fW4agSF2AMSrvZledjZ
-oEpHaH+sKP4vwWxJ2bsbE75sNPcMig==
-=bz8g
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmUcoDQACgkQAVBC80lX
+0Gxg6Af+JtRc4LrnSh+Qnxwhh+eaK7xAkASQdSUIiTv40g29e45vjDI9W0u9AKMZ
+NVh7EvZ6ELxNq/+UL86xHcbhQmv4BdpA+vCcdEIFeUJVKIckBnH5zsNJNuyhKciZ
+t38wfjAK6L9Jpp4hVb/nmPCpke3PTYRigfmogDjTb3cKA0V91xcAOUhIwO0FU94x
+oDSD6wnjtcbMNo/cCyivuQqfiKdA/LyWRVRhPSvFl29Mag7KusJ3E06Nh5XW8dMg
+i0s8ejSo9705GWPhWJCfzvdw6daZ8/2PBxVAOt6Hv8+cG6xDWL0CQYY15RwwLh8i
+XBZwZupUMdmOAGBx9Bs0Ui1sHohbWw==
+=nA1H
 -----END PGP SIGNATURE-----
 
---Sig_/=rjFqCZOmRnTDUB+/7gW/nM--
+--Sig_/a8ztTWT2wsREURC2p4NIvm+--
